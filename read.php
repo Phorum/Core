@@ -128,6 +128,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["POST"]["subject"] = $data[$message_id]["subject"];
 
     $thread_is_closed = (bool)$data[$thread]["closed"];
+    $thread_is_announcement = ($data[$thread]["status"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
 
     $threadnum=count($data[$thread]['meta']['message_ids']);
 
@@ -417,8 +418,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         phorum_db_newflag_add_read($read_messages);
     }
 
-    // do not show the reply box if the message is closed
-    if($thread_is_closed) {
+    // do not show the reply box if the message is closed or an announcement
+    if($thread_is_announcement) {
+    	
+    	$PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadAnnouncement"];
+        include phorum_get_template("message");
+    	
+    } elseif($thread_is_closed) {
 
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadClosed"];
         include phorum_get_template("message");

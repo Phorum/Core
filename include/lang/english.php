@@ -358,6 +358,7 @@
 
         "Template"              =>      "Template",
         "ThankYou"              =>      "Thank You",
+        "ThreadAnnouncement"    =>		"You can't reply to announcements.",
         "ThreadClosed"          =>      "This Thread has been closed",
         "ThreadClosedOk"        =>      "The Thread has been closed.",
         "Thread"                =>      "Thread",
