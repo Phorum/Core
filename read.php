@@ -93,7 +93,7 @@ if(empty($PHORUM["args"][1])) {
 // determining the page if page isn't given and message_id != thread
 $page=0;
 if(!$PHORUM["threaded_read"]) {
-    if(isset($PHORUM['args']['page'])) {
+    if(isset($PHORUM['args']['page']) && is_numeric($PHORUM["args"]["page"]) && $PHORUM["args"]["page"] > 0) {
                 $page=(int)$PHORUM["args"]["page"];
     } elseif($message_id != $thread) {
                 $page=ceil(phorum_db_get_message_index($thread,$message_id)/$PHORUM['read_length']);
