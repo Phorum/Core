@@ -62,6 +62,8 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 // figure out what page we are on
 if (empty($PHORUM["args"]["page"]) || !is_numeric($PHORUM["args"]["page"])){
     $page=1;
+} else {
+	$page=intval($PHORUM["args"]["page"]);
 }
 $offset=$page-1;
 
