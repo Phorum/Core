@@ -145,7 +145,7 @@ function phorum_convert_prepareForum($forumdata) {
                  $reg_perms= 0 | PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_EDIT;
              }
          } else {
-             $pub_perms = 0 | PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_EDIT;
+             $pub_perms = 0 | PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_REPLY;
              $reg_perms = 0 | PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_EDIT;
          }
          
