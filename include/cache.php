@@ -17,20 +17,44 @@ $PHORUM['real_cache']=$PHORUM['cache']."/".md5(__FILE__);
  * or NULL if no data is cached for this key
  */
 function phorum_cache_get($type,$key) {
+	
+	$partpath=$GLOBALS['PHORUM']['real_cache']."/".$type;
 
-    $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
-    if(!file_exists($path)){
-        $ret=NULL;
-    } else {
-        $ret=unserialize(file_get_contents($path));
-        // the data is: array($ttl_time,$data)
-        if($ret[0] < time()) { // timeout
-        	$ret=NULL;	
-        	unlink($path);
-        } else {
-        	$ret=$ret[1];	
-        }
-    }
+	if(is_array($key)) {
+		$ret=array();
+		foreach($key as $realkey) {
+		    $path=$partpath."/".wordwrap(md5($realkey), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
+		    if(file_exists($path)){
+		        $retval=unserialize(file_get_contents($path));
+		        // the data is: array($ttl_time,$data)
+		        if($retval[0] < time()) { // timeout
+		        	unlink($path);
+		        } else {
+		        	$ret[$realkey]=$retval[1];	
+		        }
+		        unset($retval);
+		    }				
+		}
+	} else {
+	    $path=$partpath."/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
+	    if(!file_exists($path)){
+	        $ret=NULL;
+	    } else {
+	        $ret=unserialize(file_get_contents($path));
+	        // the data is: array($ttl_time,$data)
+	        if($ret[0] < time()) { // timeout
+	        	$ret=NULL;	
+	        	unlink($path);
+	        } else {
+	        	$ret=$ret[1];	
+	        }
+	    }
+	}
+	
+	
+	if(is_array($ret) && count($ret) == 0) {
+		$ret=NULL;	
+	}
     
     return $ret;
     

@@ -129,7 +129,11 @@ function phorum_handle_edit_message()
             phorum_user_subscribe($old_message['user_id'], $old_message['forum_id'], $old_message['thread'], 0);
         }elseif(isset($old_message['user_id'])){
             phorum_user_unsubscribe($old_message['user_id'], $old_message['thread'], $old_message['forum_id']);
-        }    
+        }
+        if(isset($PHORUM['cache_messages']) && $PHORUM['cache_messages']) {
+	        // clearing the cache for that message
+	        phorum_cache_remove('message', $old_message["message_id"]);
+        }
         $PHORUM['DATA']['MESSAGE'] = $PHORUM["DATA"]["LANG"]["MsgModEdited"];
     }
 }

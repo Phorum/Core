@@ -6,8 +6,10 @@
  * -> http://pecl.php.net/package/memcache/
  */
 if(!defined("PHORUM")) return;
- 
-$PHORUM['memcache_obj'] = memcache_connect('127.0.0.1', 11211);
+
+$PHORUM['memcache_obj'] = new Memcache;
+$PHORUM['memcache_obj']->connect('127.0.0.1', 11211);
+//$PHORUM['memcache_obj'] = memcache_connect('127.0.0.1', 11211);
 
 
 
@@ -16,9 +18,26 @@ $PHORUM['memcache_obj'] = memcache_connect('127.0.0.1', 11211);
  * or NULL if no data is cached for this key
  */
 function phorum_cache_get($type,$key) {
+	if(is_array($key)) {
+		$getkey=array();
+		foreach($key as $realkey) {
+			$getkey[]=$type."_".$realkey;	
+		}
+	} else {
+		$getkey=$type."_".$key;	
+	}
 
-    $ret=memcache_get($GLOBALS['PHORUM']['memcache_obj'],$type."_".$key);
-    if($ret === false) 
+    $ret=$GLOBALS['PHORUM']['memcache_obj']->get($getkey);
+    
+    // rewriting them as we need to strip out the type :(
+    if(is_array($getkey)) {
+    	$typelen=(strlen($type)+1);
+    	foreach($ret as $retkey => $retdata) {
+    		$ret[substr($retkey,$typelen)]=$retdata;
+    		unset($ret[$retkey]);
+    	}	
+    }
+    if($ret === false || (is_array($ret) && count($ret) == 0)) 
     	$ret=NULL;
     
     return $ret;
@@ -32,7 +51,7 @@ function phorum_cache_get($type,$key) {
  */
 function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL) {
 	
-	$ret=memcache_set($GLOBALS['PHORUM']['memcache_obj'], $type."_".$key, $data, 0, $ttl);
+	$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, $data, 0, $ttl);
     return $ret;   
 }
 
@@ -42,7 +61,7 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL) {
  */
 function phorum_cache_remove($type,$key) {
 
-    $ret=memcache_delete($GLOBALS['PHORUM']['memcache_obj'], $type."_".$key, 0);
+    $ret=$GLOBALS['PHORUM']['memcache_obj']->delete( $type."_".$key, 0);
     
     return $ret;
 } 
@@ -51,7 +70,8 @@ function phorum_cache_remove($type,$key) {
  * Clears all data from the cache
  */
 function phorum_cache_clear() {
-    $ret=memcache_flush($GLOBALS['PHORUM']['memcache_obj']);
+	
+    $ret=$GLOBALS['PHORUM']['memcache_obj']->flush();
     
     return $ret;   
 }
@@ -60,6 +80,7 @@ function phorum_cache_clear() {
  type can be nearly each value to specify a group of data
  used are currently:
  'user'
+ 'message'
 */
 
 

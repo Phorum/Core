@@ -169,6 +169,11 @@ if (count($_POST) > 0) {
 
                     if ($success) {
                         phorum_update_thread_info($message["thread"]); 
+                        if($message['parent_id'] > 0 
+                        && isset($PHORUM['cache_messages']) && $PHORUM['cache_messages']) {
+					        // clearing the cache for that message
+					        phorum_cache_remove('message', $message["message_id"]);
+                        }
                         // subscribe the user to the thread if requested and is registered.
                         if ($message["email_reply"] && $message["user_id"]) {
                             phorum_user_subscribe($message["user_id"], $PHORUM["forum_id"], $message["thread"], PHORUM_SUBSCRIPTION_MESSAGE);

@@ -44,6 +44,11 @@ function phorum_update_thread_info($thread)
         $message["meta"]["message_ids"]=$message_ids;
 
         phorum_db_update_message($thread, $message);
+        
+        if(isset($PHORUM['cache_messages']) && $PHORUM['cache_messages']) {
+        	phorum_cache_put('message-index-mod',$thread,array_keys($messages));	
+        	phorum_cache_put('message-index',$thread,$message_ids);
+        }
     }
 
 }
