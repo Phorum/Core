@@ -203,11 +203,7 @@ if (count($_POST) > 0) {
                 $redir_url = phorum_get_url(PHORUM_ATTACH_URL, $message["message_id"]);
             } else {
         
-                if($PHORUM["redirect_after_post"]=="list"){
-
-                    $redir_url = phorum_get_url(PHORUM_LIST_URL);
-
-                } else {
+                if($PHORUM["redirect_after_post"]=="read"){
 
                     $pages=ceil(($top_post["thread_count"]+1)/$PHORUM["read_length"]);
 
@@ -216,6 +212,10 @@ if (count($_POST) > 0) {
                     } else {
                         $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
                     }
+
+                } else {
+
+                    $redir_url = phorum_get_url(PHORUM_LIST_URL);
                 
                 }
             } 
