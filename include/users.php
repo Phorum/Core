@@ -225,7 +225,7 @@ function phorum_user_save( $user )
     }
     
     // remove that user from the cache
-    if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
     	phorum_cache_remove('user',$user['user_id']); 
     }
 
@@ -466,7 +466,7 @@ function phorum_user_moderate_allowed( $forum_id = 0, $user_data = 0 )
 function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false)
 {
 	$gotmods=false;
-	if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+	if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
 		$mods=phorum_cache_get('user','moderators-'.$forum_id.'-'.$ignore_user_perms);
 		if($mods != null) {
 			$gotmods=true;	
@@ -657,7 +657,7 @@ function phorum_user_get_groups($user_id)
  */
 function phorum_user_save_groups($user_id, $groups)
 {
-	if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+	if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
 		phorum_cache_remove('user',$user_id);
 	}
     return phorum_db_user_save_groups($user_id, $groups);
@@ -670,7 +670,7 @@ function phorum_user_addpost()
 
 function phorum_user_delete($user_id) 
 {
-	if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+	if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
 		phorum_cache_remove('user',$user_id);
 	}	
     return phorum_db_user_delete($user_id);
