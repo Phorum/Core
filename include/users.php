@@ -181,7 +181,7 @@ function phorum_user_get( $user_id, $detailed = true )
                 } 
     			
                 // store users in cache if enabled
-                if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+                if( $detailed && isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
                 	phorum_cache_put('user',$uid,$user);
                 }
                 $tmp_users[$uid] = $user;
