@@ -683,20 +683,27 @@ function phorum_db_update_message($message_id, $message)
 function phorum_db_get_message($value, $field="message_id")
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
-    settype($message_id, "int");
+    $field=mysql_escape_string($field);
+    $multiple=false;
 
     $conn = phorum_db_mysql_connect();
+    
 
     $forum_id_check = "";
     if (!empty($PHORUM["forum_id"])){
         $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id=0) and";
     }
 
-    $value=mysql_escape_string($value);
-    $field=mysql_escape_string($field);
+    if(is_array($value)) {
+    	$checkvar="$field IN('".implode("','",$value)."')";
+    	$multiple=true;
+    } else {
+    	$value=mysql_escape_string($value);
+    	$checkvar="$field='$value'";
+    }
+    
 
-    $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $field='$value'";
+    $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $checkvar";
 
     $res = mysql_query($sql, $conn);
 
@@ -705,18 +712,31 @@ function phorum_db_get_message($value, $field="message_id")
     $rec=array();
 
     if(mysql_num_rows($res)){
-
-        $rec = mysql_fetch_assoc($res);
-    
-        // convert meta field
-        if(empty($rec["meta"])){
-            $rec["meta"]=array();
-        } else {
-            $rec["meta"]=unserialize($rec["meta"]);
-        }
+		if($multiple) {
+			$ret=array();
+			while($rec=mysql_fetch_assoc($res)) {
+		        // convert meta field
+		        if(empty($rec["meta"])){
+		            $rec["meta"]=array();
+		        } else {
+		            $rec["meta"]=unserialize($rec["meta"]);
+		        }	
+		        $ret[$rec['message_id']]=$rec;			
+			}
+		} else {
+	        $rec = mysql_fetch_assoc($res);
+	    
+	        // convert meta field
+	        if(empty($rec["meta"])){
+	            $rec["meta"]=array();
+	        } else {
+	            $rec["meta"]=unserialize($rec["meta"]);
+	        }
+	        $ret=$rec;
+		}
     }
 
-    return $rec;
+    return $ret;
 }
 
 /**
