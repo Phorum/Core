@@ -184,7 +184,12 @@ switch ($mod_step) {
         }
         
         $PHORUM['DATA']['EDIT']['special']=$PHORUM['DATA']['EDIT']['sort'];
-        $PHORUM['DATA']['EDIT']['show_announcement'] = $PHORUM["user"]["admin"];
+        // only allow announcement if message has no replies
+        if($message['thread_count'] < 2) {
+        	$PHORUM['DATA']['EDIT']['show_announcement'] = $PHORUM["user"]["admin"];
+        } else {
+        	$PHORUM['DATA']['EDIT']['show_announcement'] = 0;
+        }
 
         if(isset($PHORUM['DATA']['EDIT']['user_id'])) {
             $PHORUM['DATA']['EDIT']['emailreply']= phorum_db_get_if_subscribed($PHORUM['DATA']['EDIT']['forum_id'],$PHORUM['DATA']['EDIT']['thread'],$PHORUM['DATA']['EDIT']['user_id']);
