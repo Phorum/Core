@@ -215,7 +215,7 @@ if (count($_POST) > 0) {
                     if($pages>1){
                         $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
                     } else {
-                        $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
+                        $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
                     }
 
                 } else {
