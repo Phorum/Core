@@ -143,6 +143,8 @@ $frm->addhelp($row, "Enable Moderator Notifications", "By setting this to Yes, P
 $row=$frm->addrow( "User Post Edit Time Limit (minutes)", $frm->text_box( "user_edit_timelimit", $PHORUM["user_edit_timelimit"], 10) );
 $frm->addhelp($row, "User Post Edit Time Limit (minutes)", "If set to a value larger then 0, this acts as a time limit for post editing. Users will only be able to edit their own posts within this time limit. This only applies if a user has the necessary permissions to edit their post, and does not affect moderators." );
 
+$row=$frm->addrow( "After posting goto", $frm->select_tag( "redirect_after_post", array( "list"=>"Message List Page", "read"=>"Message Read Page" ), $PHORUM["redirect_after_post"] ) );
+
 $frm->addbreak( "HTML Settings" );
 
 $row=$frm->addrow( "Phorum HTML Title", $frm->text_box( "html_title", $PHORUM["html_title"], 50 ) );

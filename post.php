@@ -200,10 +200,27 @@ if (count($_POST) > 0) {
             $message = phorum_hook("post_post", $message);
 
             if ($PHORUM["max_attachments"] > 0 && isset($_POST["attach"])) {
-                phorum_redirect_by_url(phorum_get_url(PHORUM_ATTACH_URL, $message["message_id"]));
+                $redir_url = phorum_get_url(PHORUM_ATTACH_URL, $message["message_id"]);
             } else {
-                phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+        
+                if($PHORUM["redirect_after_post"]=="list"){
+
+                    $redir_url = phorum_get_url(PHORUM_LIST_URL);
+
+                } else {
+
+                    $pages=ceil(($top_post["thread_count"]+1)/$PHORUM["read_length"]);
+
+                    if($pages>1){
+                        $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
+                    } else {
+                        $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
+                    }
+                
+                }
             } 
+
+            phorum_redirect_by_url($redir_url);
 
             exit();
         } else {
