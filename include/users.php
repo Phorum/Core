@@ -20,6 +20,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION )
 
     if ( ( $cookie != PHORUM_SESSION || ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] ) ) && isset( $_COOKIE[$cookie] ) ) { // REAL cookies ;)
         $sessid = $_COOKIE[$cookie];
+        $GLOBALS["PHORUM"]["use_cookies"]=true;
     } elseif ( isset( $PHORUM["args"][$cookie] ) ) { // in the p5-urls
         $sessid = $PHORUM["args"][$cookie];
         $GLOBALS["PHORUM"]["use_cookies"]=false;
