@@ -1,0 +1,24 @@
+This documents aims to explain how to create your own templates.
+
+For now it just started and is not yet finished!!!
+
+
+
+For starters:
+Just take the default-template in <phorum-dir>/templates/default and copy it over
+to another name, i.e. <phorum-dir>/templates/mytemplate .
+Then edit <phorum-dir>/templates/mytemplate/info.php and change at least $name i.e. to
+$name="My very own template";
+
+Thats it, you can now select the new template in the admin as general template and/or 
+for each single forum.
+
+Additional variables in info.php:
+$template_hide=1;
+set this to hide this template from the user's template-selection box. 
+Now only you can set this template through the admin.
+(makes most sense if you set the display-settings to fixed through the admin)
+
+Additional variables in settings.tpl:
+{define bodies_in_list 1}
+set this to 1 to have the message-bodies loaded in the list if your template needs them.

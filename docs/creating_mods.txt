@@ -1,0 +1,391 @@
+Creating Modules for Phorum 5
+=================================
+
+Modules are the prefered way to achieve customization in Phorum 5.
+This document will give you the basics for creating your own.
+
+For much of this document, an example module "foo" will be used.  Of course
+you will not name your module foo, but something much more useful.
+
+Be sure to read the **CAUTIONS** section before making your modules.
+
+
+
+Determine what hook you want to hook into
+------------------------------------------
+
+Phorum uses hooks to run its modules.  Hooks are points in the application
+where Phorum stops and runs its data through the modules.  Your module can
+hook in to as many hooks as you want.  Most of the time, you will only be
+hooking into one hook.  It may be that you need to hook into a spot where
+there are no hooks.  If that is the case, email the dev team or post a
+message in the development forum.  Hooks will be as neccassary, especially
+while Phorum 5 is young.
+
+Hooks that exist at the time of this writing are:
+
+    admin_general
+    --------------
+    These modules can add things to the form on the General Settings page of
+    the admin.  It is passed the InputForm object and must pass back that
+    object.
+
+    after_header
+    -------------
+    after_header functions receive nothing.  They are called just after the
+    header template is included.  Among other things, it can be used to
+    create content at the end of the header, before the main content. You
+    can use the stdblock template and set $PHORUM["DATA"]["BLOCK_TITLE"] and
+    $PHORUM["DATA"]["BLOCK_CONTENT"] with whatever output you like.
+    
+    after_register
+    --------------
+    after_register is called after a successfull registration was done and 
+    all confirmation mails were sent. it gets the userdata of the registered
+    user as argument.
+
+    before_footer
+    --------------
+    This is the same as after_header except these modules are called just
+    before the footer is displayed.
+    
+    before_register
+    --------------
+    before_register is called right before the new user is stored in the database, so its
+    particularly useful if you want to add some data to a newly registered user. 
+    it gets the userdata of the registered user as argument and returns them after its done.
+    
+    cc_save_user
+    ------------
+    cc_user_save is called in the controlcenter if a user is saved, right before storing to the db.
+    It gets the userdata as argument and returns these after its done with them.
+    
+    close_thread
+    -------------
+    close_thread functions receive a thread id after a thread has been closed.
+    Uses for this hook include sending notifications or making log entries
+    in the database when editing takes place.
+
+    common
+    -------
+    common hook functions will be called on every page load.  It is called
+    common because it hooks in at the end of common.php, the file that all
+    Phorum pages include to load settings and such.  If you have some custom
+    settings or want to alter some Phorum settings based on external
+    parameters ( a PHP session or such ) you can use the common hook.
+    common hook functions do not take any paramters.
+
+    delete
+    -------
+    delete hook is called any time a message is deleted.  The function you crate
+    should expect an array of message ids that have ALREADY BEEN DELETED.  This
+    is here so you can clean up anything you may have created with post_post hook
+    or other hooks that stored data tied to messages.
+
+    external
+    --------
+    external hook functions are never called from any of the standard Phorum
+    pages. These modules are called by invoking script.php on the command line
+    with the --module paramater. This can be used to pipe output from some
+    arbitrary command to a specific module, which can do something with that
+    input. If your module does not need any command line input and is meant to be
+    run on a regular basis, you should consider using the scheduled hook.
+
+    format
+    -------
+    format hook functions receive an array of messages and should return
+    that same array after doing whatever it needs to do to it. This hook
+    is called just before messages are sent to the templates.
+
+    hide
+    -----
+    hide functions receive a message id after a message has been hidden.
+    Uses for this hook include sending notifications or making log entries
+    in the database when editing takes place.
+
+    index
+    ------
+    index functions will recieve the array of forums before they are displayed
+    on the index.php page.  It should return the array once it is done.
+
+    lang
+    ------
+    The lang hook is a 'marker', it tells Phorum that your module supports translated
+    language files. Functions on this hook will never be called. Please read the
+    languages section of this file, below.
+
+    list
+    -----
+    list hook functions receive an array of threads (or messages in threaded mode)
+    and should return a list of threads when complete.  This hook is called just
+    before the messages are formatted.
+    
+    moderation
+    ------
+    That hook receives the mod_step as parameter for determining what is done there.
+    Its called in the beginning of moderation.php and i.e. is useful for logging
+    moderator actions and such. You can use the $PHORUM-array to retrieve additional
+    info like user_id and similar.
+
+    move_thread
+    ------------
+    move_thread functions receive a thread id after a thread has been moved.
+    Uses for this hook include sending notifications or making log entries
+    in the database when editing takes place.
+
+    pre_edit
+    ---------
+    pre_edit hook functions receive a message array as it has been created in
+    preperation for passing to phorum_db_update_message.  Using this hook, a
+    module can make changes to a message before it is updated in the database.
+
+    post_edit
+    ----------
+    post_edit hook functions receive a message id.  Uses for this hook include
+    sending notifications or making log entries in the database when editing
+    takes place.
+
+    pm_sent
+    ----------
+    pm_sent hook functions are called whenever a Private message is successfully
+    sent. These functions recieve no parameters, but can see the message that was
+    sent by looking in the $_POST superglobal array.
+
+    pre_post
+    ---------
+    pre_post hook functions receive a message array as it has been created in
+    preperation for passing to phorum_db_post_message.  Using this hook, a
+    module can make changes to a message before it is put in the database.
+
+    post_post
+    ----------
+    post_post hook functions receive a message array as it has been created
+    after it has been passed to phorum_db_post_message and just before the
+    user is redirected back to the list.  Using this hook, a module can take
+    action based on what the message contained or store extra info for the
+    message using the meta_data field.
+
+    profile
+    -------
+    profile hook functions recieve an array consisting of a users profile.
+    After making changes to that in some way, they should return an array
+    of the users profile.
+
+    read
+    -----
+    read hook functions receive an array of messages and should return
+    that same array after doing whatever it needs to do to it.  This hook
+    is called just before the messages are formatted.
+
+    read_user_info
+    ---------------
+    These modules are called from the read page.  The functions will receive
+    an array of user's data.  The primary function for this hook is to allow
+    coder's to alter a user's information before it is displayed in the read
+    page.  Example: add a border around user's sig.
+
+    reopen_thread
+    --------------
+    reopen_thread functions receive a thread id after a thread has been
+    reopened.  Uses for this hook include sending notifications or making log
+    entries in the database when editing takes place.
+
+    scheduled
+    ---------
+    scheduled hook functions work similarly to external ones, except these modules
+    do not take any arguments from the command line. These modules are invoked
+    by running script.php with the --scheduled argument. This command can be
+    scheduled in cron (or some other scheduling service) to run periodically on
+    the web server, allowing modules to do things like generate daily content
+    on a regular schedule.
+    
+    search
+    ------
+    search hook functions receive an array of messages and should return
+    that same array after doing whatever it needs to do to it.  This hook
+    is called just before the messages are formatted.  
+    (it works the same way like the read hook)  
+
+    user_list
+    ---------
+    These modules are called whenever a general purpose list of users is created
+    (whenever phorum_user_get_list() is called).  This hook has an array of
+    usernames for a paramater, and returns an array of usernames. The primary function
+    of this hook is to allow the list of users to be reformatted in some way, such
+    as changing the sort order, or changing the format of the displayed names.
+
+Creating your module files
+------------------------
+
+All modules go into the modules directory.  Each module goes in to its own
+directory in the modules directory.  So, if you have a module named foo, you
+would create a directory named foo in the modules directory.
+
+You will need to create at least 2 files in that directory.  The first is a
+file called info.txt.  This file contains the data for the plugin.  The
+second is the module code.  It should be named the same as the directory.
+So, in our example, we created a directory named foo and will now make a file
+named foo.php in that directory.  You can also create a settings.php file
+that will allow you to save and set settings for your module.  More on that
+in the next section.
+
+In info.txt, you will have at least 3 lines.  A hook line, a title line and
+a desc line.  So, our foo module might look like this:
+
+hook: read|mod_foo
+title: Foo Module
+desc: This module does foo to messages.
+
+The data for the hook like is | delimited.  The first part is the hook that
+this module is hooking into.  The second is the function in our file
+(foo.php) that is called for that hook.  You can have more than one hook line
+and a function can be called for more than one hook if compatible.  So, this
+is also valid:
+
+hook: read|mod_foo
+hook: format|mod_foo
+title: Foo Module
+desc: This module does foo to messages.
+
+'title' is the name of the module that is displayed in the admin when turning
+modules on and off. 'desc' is also displayed there to give a little more info.
+
+There are no other files used/required by Phorum.  However, if you want to
+put other files in your module dir (images, classes, function libs, etc.)
+feel free to do so.  To secure the files from possible hackers, you must put
+this line at the top of the file.
+
+    if(!defined("PHORUM")) return;
+
+
+
+Module Settings
+----------------
+
+Some modules will need to store settings for later use.  You can create a
+page to be used in the admin to set your settings.  To do this, create
+a file called settings.php.  This will be loaded from the admin.  There are
+tools for you to use to create standard input forms and table displays in
+the admin.  The best example here is to look at one of the modules that come
+with Phorum like bbcode or replace.
+
+It is reccomended that you store your settings in the $PHORUM variable via
+the phorum_db_update_settings() function.  To store settings using this, make
+a call like:
+
+    $foodata["foo_count"]=1;
+    $foodata["foo_dir"]="/dirname";
+    phorum_db_update_settings(array("mod_foo"=>$foodata));
+
+$foodata can be anything you like: an array, object, string, etc.  Once
+stored, your settings will be available later in the array $PHORUM["mod_foo"].
+
+To ensure that your settings file is only loaded from the admin, place this
+line at the top of your settings.php file:
+
+    if(!defined("PHORUM_ADMIN")) return;
+
+
+
+Message Data Storage
+---------------------
+
+If you need to store data about messages, you can use the meta array
+attached to each message.  The proper way to store this data is to retreive
+the current meta data using phorum_db_get_message, copy the meta data to a
+new var, make changes as needed and use phorum_db_update_message to update
+the message.
+
+    $message=phorum_db_get_message(12345);
+    $new_mess_struct["meta"]=$message["meta"];
+    $new_mess_struct["meta"]["mod_foo"]["foodata"]="Some Data";
+    phorum_db_update_message(12345, $new_message_struct);
+
+This ensures that meta data is kept intact.  Other modules and even Phorum
+will have data in the meta field.  Please do not squash it.  The meta data is
+stored as a serialized array, so accessing the db directly is not
+recommended.
+
+
+
+User Data Storage
+------------------
+
+If you need to store extra data for a user, you can use the users user_data
+storage.  Like the meta data for messages, user_data stores data that is not
+specifically accounted for in the database.  However, unlike meta data, this
+is an automatic feature of the Phorum user system.  Simply add your data to
+the users array and save.
+
+    $user=phorum_user_get(12345);
+    $user["mod_foo"]["foodata"]="Some Data";
+    phorum_user_save($user);
+
+The custom profile fields are already stored in the this way.
+
+Note: Before being used, a custom profile field must be created in the Phorum
+Admin, under the heading "Custom Profiles".
+
+
+
+
+Language Translation
+--------------------
+
+If your module includes text that will be displayed to end users, you should strongly
+consider making it support multiple languages. This will allow Phorum installations
+in another language to see your module in their own language, rather then only in the
+language you wrote it in.
+
+To do this, you first need to include the following line in your info.txt file:
+hook:  lang|
+
+This tells Phorum that your module supports multiple languages. Next, you must provide
+at least one language file with your module. These are contained inside the lang/ folder
+within your module, and are named in an identical fashion to normal language files.
+
+To include both English and French, you would have a file structure like this:
+/yourmod/info.txt
+/yourmod/yourmod.php
+/yourmod/settings.php (optional)
+/yourmod/lang/english.php
+/yourmod/lang/french.php
+
+The structure of your language files will be identical to that of the main Phorum language
+files. Here is an example which keeps a modules text to itself, avoiding conflicts with other
+modules or Phorum itself:
+
+<?php
+$PHORUM["DATA"]["LANG"]["mod_lang"]["Hello"] = "Hello!";
+?>
+
+This would be accesed in your module using $PHORUM["DATA"]["LANG"]["mod_lang"]["Hello"], or
+LANG->mod_lang->Hello in a template file. You can add as many lines as you need for your module.
+
+*** Notes ***
+-------------
+
+If a Phorum installation is using a language that your module does not include a language
+file for, Phorum will attempt to fallback to English. So it is highly recommend that you
+include english.php in all modules. If both the current language and english.php are not found,
+Phorum will be unable to load a language for your module and will display empty space instead.
+
+Try to only create custom strings when there is nothing already in Phorum that you can reuse.
+Having more text to translate is more work for everybody, especially translators.
+
+
+**CAUTIONS**
+-------------
+
+Making modules that require database changes are discouraged and may not be
+accepted as an approved module.  We want modules to be as transparent as
+possible for upgrades.  Please attempt to store your data in the proper place.
+See Message Data Storage and User Data Storage above for more on that.
+
+
+
+Questions
+----------
+
+If you have questions about creating modules for Phorum, visit the website
+and ask the dev team in the Development Phorum.

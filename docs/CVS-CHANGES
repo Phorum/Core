@@ -1,0 +1,5511 @@
+Phorum 5 CVS Changelog
+---------------------------------------------------------------------------
+
+Release: phorum.5.0.15
+-----------------------
+
+   * # some forgotten change for support for requiring user-fields with
+     a module - ts77 (03/10/2005)
+      - /control.php
+      - /control.php
+
+   * # bump version number - ts77 (03/10/2005)
+      - /common.php
+
+   * Better handle invalid input for page value in url. - brian
+     (03/10/2005)
+      - /list.php
+      - /list.php
+
+   * Better handle invalid input for user_id in url. - brian
+     (03/10/2005)
+      - /profile.php
+      - /profile.php
+
+   * # using $PHORUM["folder_flag"] when it was not set. Caused error on
+     sensitive PHP installs. - brian (03/10/2005)
+      - /read.php
+      - /read.php
+
+   * Redirect URL needs to encode the url parts - brian (03/10/2005)
+      - /search.php
+      - /search.php
+
+   * make checkdnsrr-calls only if function exists - ts77 (03/09/2005)
+      - /include/email_functions.php
+      - /include/email_functions.php
+
+   * fixed bug in email-panel of cc - ts77 (03/09/2005)
+      - /include/controlcenter/email.php
+      - /include/controlcenter/email.php
+
+   * # wrongly placed newline - brian (03/07/2005)
+      - /include/email_functions.php
+      - /include/email_functions.php
+
+   * # changed hook-handling in registration and saving a user to be
+     able to check for additional required fields - ts77 (03/06/2005)
+      - /control.php
+      - /control.php
+      - /register.php
+      - /register.php
+
+   * added mark-thread-read (patch from Panu, thx!) - ts77 (03/05/2005)
+      - /include/lang/english.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # um, holder for search tips - brian (03/02/2005)
+      - /include/lang/english.php
+
+   * # fixed typo - brian (03/02/2005)
+      - /include/lang/english.php
+
+   * First commit of mysql full text search - brian (03/01/2005)
+      - /common.php
+      - /include/db/config.php.sample
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2005022800.php
+      - /include/lang/english.php
+      - /portable/phorum.php
+      - /search.php
+      - /search.php
+      - /templates/default/search.tpl
+      - /templates/default/search.tpl
+
+   * You can reply via PM - brian (03/01/2005)
+      - /include/controlcenter/pm.php
+      - /include/lang/english.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * Subscriptions now changed when threads are moved. - brian
+     (02/28/2005)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * Fixed a possible XSS issue - brian (02/22/2005)
+      - /follow.php
+      - /follow.php
+      - /include/controlcenter/subthreads.php
+      - /include/controlcenter/subthreads.php
+
+   * # made custom fields available for non-detailed view again - ts77
+     (02/22/2005)
+      - /include/db/mysql.php
+
+   * # typo - brian (02/22/2005)
+      - /include/lang/english.php
+      - /include/lang/english.php
+
+   * Forum id carried in group parts of CC now. - brian (02/22/2005)
+      - /templates/default/cc_groupmod.tpl
+      - /templates/default/cc_groupmod.tpl
+      - /templates/default/cc_groups.tpl
+      - /templates/default/cc_groups.tpl
+
+Release: phorum.5.0.14a
+------------------------
+
+   * clearing special-characters from attachment-name (thanks to Jon
+     Oberheide) - ts77 (02/21/2005)
+      - /common.php
+      - /read.php
+      - /read.php
+
+   * # changed last commit to use htmlentities - ts77 (02/21/2005)
+      - /read.php
+      - /read.php
+
+   * Removed Upload files permission option. Never used. - brian
+     (02/21/2005)
+      - /include/admin/groups.php
+      - /include/admin/groups.php
+      - /include/admin/users.php
+      - /include/admin/users.php
+
+Release: phorum.5.0.14
+-----------------------
+
+   * fixed wrong fallback to default-template if user-template is set as
+     empty - ts77 (02/16/2005)
+      - /common.php
+
+   * # bumped version - brian (02/16/2005)
+      - /common.php
+
+   * fixed problem if account is denied before the user has verified the
+     account by mail - ts77 (02/16/2005)
+      - /register.php
+      - /register.php
+      - /register.php
+
+   * # email_notice sends msgid - brian (02/16/2005)
+      - /include/email_functions.php
+
+   * # email_user function now sets X-Mailer header and Message-ID
+     header - brian (02/16/2005)
+      - /include/email_functions.php
+
+   * # only set Message-ID if it is sent in. - brian (02/16/2005)
+      - /include/email_functions.php
+
+   * checking new user-email also against existing emails - ts77
+     (02/16/2005)
+      - /include/controlcenter/email.php
+      - /include/controlcenter/email.php
+
+   * # we don't need to store <> on msgid - brian (02/15/2005)
+      - /post.php
+      - /post.php
+
+   * # email_user function now sets X-Mailer header and Message-ID
+     header - brian (02/15/2005)
+      - /include/email_functions.php
+
+   * # phorum_db_get_message can now get a message based on any field. -
+     brian (02/15/2005)
+      - /include/db/mysql.php
+
+   * # Attachment extensions where lower case always in P3. - brian
+     (02/14/2005)
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3_in.php
+
+   * Renamed settings variables to comply with Phorum standards - sheik
+     (02/08/2005)
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/settings.php
+
+   * # another warning less - ts77 (02/07/2005)
+      - /read.php
+
+   * # fixed an error for user-caching - ts77 (02/07/2005)
+      - /include/db/mysql.php
+
+   * # added preview-hook and added read_user_info to preview too for
+     compliance with read.php - ts77 (02/05/2005)
+      - /post.php
+      - /post.php
+
+   * # some cleanup in cache-layer - ts77 (02/05/2005)
+      - /include/cache.php
+      - /include/constants.php
+
+   * disallowing time-zone-selection works now too if a user already
+     selected a timezone. - ts77 (02/05/2005)
+      - /include/format_functions.php
+      - /include/format_functions.php
+
+   * implemented user-caching with the new cache-layer - ts77
+     (02/05/2005)
+      - /include/admin/groups.php
+      - /include/admin/settings.php
+      - /include/users.php
+
+   * # helper-function for user-cache and deleting custom-fields on
+     user-delete too - ts77 (02/05/2005)
+      - /include/db/mysql.php
+
+   * Removed call to timing functions - sheik (02/05/2005)
+      - /mods/bbcode/bbcode.php
+
+   * Added code for "open links in new window" and "anti-spam tag on
+     links" - sheik (02/05/2005)
+      - /mods/bbcode/bbcode.php
+
+   * Settings file created to make new "open links in new window" and
+     "anti-spam tag on links" options optional - sheik (02/05/2005)
+      - /mods/bbcode/settings.php
+
+   * # some index-links are only there on demand now - ts77
+     (02/05/2005)
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # Attachment errors were getting overwritten by default error
+     message - brian (02/03/2005)
+      - /attach.php
+      - /attach.php
+
+   * # moved cache-layer around - ts77 (02/02/2005)
+      - /common.php
+
+   * # added ttl and some compatibility functions, should work on
+     windows now too - ts77 (02/02/2005)
+      - /include/cache.php
+
+   * # Added comment about strftime on Windows - brian (01/19/2005)
+      - /docs/install.txt
+      - /docs/install.txt
+
+   * # Removed includes of timing.php used for debugging - brian
+     (01/17/2005)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/bbcode.php
+
+   * # fixed it so that the limit on file uploads really does work. -
+     brian (01/12/2005)
+      - /attach.php
+      - /attach.php
+
+   * # urlencode usename in pm url - brian (01/04/2005)
+      - /profile.php
+      - /profile.php
+
+   * added simple file-caching api - ts77 (12/23/2004)
+      - /include/cache.php
+
+   * # added empty cache-api - ts77 (12/22/2004)
+      - /common.php
+      - /include/cache.php
+
+   * # fixed custom-field handling for arrays - ts77 (12/22/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004112602.php
+      - /include/db/upgrade/mysql/2004112603.php
+      - /include/users.php
+
+   * # fix: arrays in custom fields should work now too - ts77
+     (12/18/2004)
+      - /include/db/mysql.php
+
+   * # updating head with changes for protecting against vulnerabilities
+     - brian (12/17/2004)
+      - /include/db/mysql.php
+
+   * # small optional parameter for avoiding a query - ts77
+     (12/16/2004)
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * fixed permission-display in admin - ts77 (12/14/2004)
+      - /include/admin/newforum.php
+
+   * # fixed timezone-user-default (set to -99) - ts77 (11/29/2004)
+      - /include/controlcenter/forum.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004112600.php
+      - /include/format_functions.php
+
+   * # added vroot-db-upgrade, HEAD should be working again - ts77
+     (11/28/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004112800.php
+
+   * MFH: ip-masking in preview too - ts77 (11/28/2004)
+      - /post.php
+
+   * # renamed strip_body to phorum_strip_body for consistency - ts77
+     (11/28/2004)
+      - /include/controlcenter/pm.php
+      - /include/format_functions.php
+      - /read.php
+      - /search.php
+
+   * added stripped body and full body to email-variables, documented
+     email-variables - ts77 (11/28/2004)
+      - /docs/creating_mail_messages.txt
+      - /include/email_functions.php
+
+   * added closed-flag to list-page - ts77 (11/28/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * moved custom profile-fields into their own table and made options
+     for limiting them in size and htmlencoding them - ts77 (11/26/2004)
+      - /control.php
+      - /include/admin/customprofile.php
+      - /include/controlcenter/email.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004112600.php
+      - /include/db/upgrade/mysql/2004112601.php
+      - /include/db/upgrade/mysql/2004112602.php
+      - /include/db/upgrade/mysql/2004112603.php
+      - /include/users.php
+      - /profile.php
+      - /register.php
+
+   * # fixed new upgrade scripts, really working now - ts77
+     (11/26/2004)
+      - /admin.php
+      - /common.php
+      - /include/admin/install.php
+
+   * new upgrade-system: only one upgrade-file at a time, new numbering
+     - ts77 (11/25/2004)
+      - /admin.php
+      - /include/admin/install.php
+
+   * moved format_functions.php out of the condition - ts77
+     (11/23/2004)
+      - /search.php
+      - /search.php
+
+   * changed threaded-list/-read to use padding for indenting and
+     wrapping long subjects - ts77 (11/23/2004)
+      - /include/thread_sort.php
+      - /templates/default/list_threads.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/settings.tpl
+
+   * # storing indent_cnt for later use - ts77 (11/23/2004)
+      - /include/thread_sort.php
+      - /include/thread_sort.php
+
+   * fixed message after editing - ts77 (11/22/2004)
+      - /edit.php
+      - /edit.php
+
+   * Changed email regex to be more compatible with modern domain names.
+     - brian (11/22/2004)
+      - /include/email_functions.php
+      - /include/email_functions.php
+
+   * new hooks cc_user_save, before_register - changed hook
+     after_register - ts77 (11/16/2004)
+      - /control.php
+      - /control.php
+      - /docs/creating_mods.txt
+      - /docs/creating_mods.txt
+      - /register.php
+      - /register.php
+
+   * report a post split out from read.php, allows user to explain the
+     report - tridus (11/16/2004)
+      - /common.php
+      - /include/constants.php
+      - /include/lang/english.php
+      - /read.php
+      - /report.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/report.tpl
+
+   * # moved formatting after the paginating (what gives?) - ts77
+     (11/16/2004)
+      - /search.php
+      - /search.php
+
+   * added "search"-hook - ts77 (11/16/2004)
+      - /docs/creating_mods.txt
+      - /docs/creating_mods.txt
+      - /search.php
+      - /search.php
+
+   * fixed saving passwords (disallowed empty ones) - ts77 (11/16/2004)
+      - /include/controlcenter/password.php
+      - /include/controlcenter/password.php
+
+   * fixed converting pure email-addresses if no bbcode was found - ts77
+     (11/16/2004)
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/bbcode.php
+
+   * showing forum-list-link only if needed - ts77 (11/15/2004)
+      - /index.php
+      - /login.php
+      - /profile.php
+      - /register.php
+      - /search.php
+      - /templates/default/index.tpl
+      - /templates/default/login.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+
+   * # admin functionality for vroots implemented - ts77 (11/12/2004)
+      - /admin.php
+      - /include/admin/deleteforum.php
+      - /include/admin/newfolder.php
+      - /include/admin/newforum.php
+
+   * giving just a message if no forums are visible in a folder - ts77
+     (11/12/2004)
+      - /include/lang/english.php
+      - /index.php
+      - /templates/default/message.tpl
+
+   * changed default for new folders to be visible - ts77 (11/12/2004)
+      - /include/admin/newfolder.php
+
+Release: phorum.5.0.13a
+------------------------
+
+   * reverted more of the entity changes - ts77 (11/11/2004)
+      - /common.php
+      - /index.php
+      - /index.php
+      - /list.php
+      - /list.php
+      - /read.php
+      - /read.php
+
+   * # removed htmlentities on description - ts77 (11/11/2004)
+      - /index.php
+      - /index.php
+
+Release: phorum.5.0.13
+-----------------------
+
+   * Added a lot of code to check for invalid input - brian
+     (11/10/2004)
+      - /common.php
+      - /follow.php
+      - /include/db/mysql.php
+
+   * # bumped version - brian (11/10/2004)
+      - /common.php
+
+   * Requests for passwords for users that have not verified will not be
+     sent a new verification email - brian (11/09/2004)
+      - /login.php
+      - /login.php
+
+   * # added ignore to insert for read flags. avoids duplicate key
+     errors. - brian (11/09/2004)
+      - /include/db/mysql.php
+
+   * some more precautions for html-entities - ts77 (11/08/2004)
+      - /include/format_functions.php
+      - /include/format_functions.php
+      - /index.php
+      - /index.php
+      - /list.php
+      - /list.php
+      - /read.php
+      - /read.php
+
+   * logout works with empty REFERER now too - ts77 (11/08/2004)
+      - /login.php
+      - /login.php
+
+   * fixed wrong message counts in threaded list - ts77 (11/03/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * fixed backurl in controlcenter while being in a forum-folder - ts77
+     (11/02/2004)
+      - /control.php
+      - /control.php
+
+   * # check that attachments var is an array. custom modules may set it
+     different. - brian (11/02/2004)
+      - /moderation.php
+      - /moderation.php
+
+   * removed requirement to specify a description for forum/folder in
+     the admin - ts77 (11/02/2004)
+      - /include/admin/newfolder.php
+      - /include/admin/newforum.php
+
+   * fixed user_template and user_language to allow the "default"-value
+     - ts77 (11/01/2004)
+      - /common.php
+      - /common.php
+
+   * # admin-attachment-posts in moderated forums are auto-approved now
+     too - ts77 (10/29/2004)
+      - /attach.php
+      - /attach.php
+
+   * fixed bug #531, msgs with attachments didn't get the right status
+     in moderated forums - ts77 (10/29/2004)
+      - /attach.php
+      - /attach.php
+
+   * Escape the HTML in name and description when editing - brian
+     (10/28/2004)
+      - /include/admin/newforum.php
+      - /include/admin/newforum.php
+
+Release: phorum.5.0.12
+-----------------------
+
+   * # upped version-number - ts77 (10/27/2004)
+      - /common.php
+
+   * XSS really gone now - ts77 (10/27/2004)
+      - /search.php
+      - /search.php
+
+   * added profile hook to controlcenter-summary too - ts77
+     (10/27/2004)
+      - /include/controlcenter/summary.php
+      - /include/controlcenter/summary.php
+
+   * better defaults for page if not set - ts77 (10/26/2004)
+      - /read.php
+      - /read.php
+
+   * fixed sql-injection issue - ts77 (10/25/2004)
+      - /read.php
+      - /read.php
+
+   * fixed sql-injection issue - ts77 (10/24/2004)
+      - /file.php
+      - /file.php
+
+   * fixed showing pm-inbox after deleting in the pm-sentbox - ts77
+     (10/24/2004)
+      - /include/controlcenter/pm.php
+      - /include/controlcenter/pm.php
+
+   * fixed wrong message-index if not logged in - ts77 (10/24/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * posts in closed threads can't be edited - tridus (10/22/2004)
+      - /edit.php
+      - /edit.php
+      - /read.php
+      - /read.php
+
+   * Fixed session timeout to allow session cookies by using 0 days -
+     brian (10/22/2004)
+      - /include/users.php
+      - /include/users.php
+      - /login.php
+      - /login.php
+
+   * # check for folder id and redirect - brian (10/22/2004)
+      - /post.php
+      - /post.php
+
+   * Updated bbcode module to have classes in some of the markup - brian
+     (10/22/2004)
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/bbcode.php
+
+   * # switch [code] tag back to using <pre> tag - brian (10/22/2004)
+      - /mods/bbcode/bbcode.php
+
+   * fixed bug #526/#528 - ts77 (10/21/2004)
+      - /admin.php
+      - /admin.php
+
+   * fixed move-notification in threaded view - ts77 (10/21/2004)
+      - /include/db/mysql.php
+      - /list.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/list_threads.tpl
+
+   * fixed "message not found" for threaded-read - ts77 (10/21/2004)
+      - /read.php
+
+   * # tmpl-change for move-notify - ts77 (10/21/2004)
+      - /templates/default/list.tpl
+
+   * added (optional) move-notification - ts77 (10/19/2004)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /list.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/move_form.tpl
+
+   * # updated todo for 5.1 - ts77 (10/19/2004)
+      - /todo.txt
+
+   * # fixed PM link in attachment template - tridus (10/16/2004)
+      - /templates/default/attach.tpl
+      - /templates/default/attach.tpl
+
+Release: phorum.5.0.11
+-----------------------
+
+   * # bumped version - brian (10/15/2004)
+      - /common.php
+
+   * # fixed a warning - ts77 (10/14/2004)
+      - /include/format_functions.php
+      - /include/format_functions.php
+
+   * added attachment-conversion (thanks to Clemens Weiss), checking for
+     existing group and user tables now - ts77 (10/14/2004)
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3to5convert.php
+      - /scripts/phorum3to5convert.php
+
+   * # got rid of the files-xref-table - ts77 (10/14/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * added script for updating the post-counts of users after conversion
+     - ts77 (10/13/2004)
+      - /docs/upgrade.txt
+      - /docs/upgrade.txt
+      - /scripts/update_postcount.php
+      - /scripts/update_postcount.php
+
+   * file update_postcount.php was initially added on branch phorum_5_0.
+     - ts77 (10/13/2004)
+      - /scripts/update_postcount.php
+
+   * # same stupid = / == bug - ts77 (10/12/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * # fixed warning on pages > 1 - ts77 (10/11/2004)
+      - /read.php
+      - /read.php
+
+   * fixed hidden messages showing in threaded-list - ts77 (10/11/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * censor-filter now works per-forum too - ts77 (10/09/2004)
+      - /admin.php
+      - /admin.php
+      - /include/admin/badwords.php
+      - /include/admin/badwords.php
+      - /include/admin/banlist.php
+      - /include/admin/banlist.php
+      - /include/format_functions.php
+      - /include/format_functions.php
+
+   * # small template documentation - ts77 (10/09/2004)
+      - /docs/creating_templates.txt
+      - /docs/creating_templates.txt
+
+   * file creating_templates.txt was initially added on branch
+     phorum_5_0. - ts77 (10/09/2004)
+      - /docs/creating_templates.txt
+
+   * # same fix again in newforum.php ... why was that url still there?
+     - ts77 (10/09/2004)
+      - /include/admin/newforum.php
+
+   * # put parens around union queries - brian (10/09/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * bodies only loaded on request now in the message-list - ts77
+     (10/09/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+      - /templates/default/info.php
+      - /templates/default/settings.tpl
+      - /templates/default/settings.tpl
+
+   * deleting subscriptions on deleting a message too - ts77
+     (10/09/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * Better detection of js in HTML mod - brian (10/08/2004)
+      - /mods/html/html.php
+      - /mods/html/html.php
+
+   * Reworked key for getting post count for better performance - brian
+     (10/08/2004)
+      - /include/db/upgrade/mysql/2004100700.php
+      - /include/db/upgrade/mysql/2004100700.php
+
+   * Reworked key for getting post count for better performance - brian
+     (10/07/2004)
+      - /common.php
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * Email validity check now allows for capital letters in the email's
+     domain - brian (10/04/2004)
+      - /include/email_functions.php
+      - /include/email_functions.php
+
+   * Both datestamp and last_post_time are now formatted in threaded and
+     non-threaded mode. - brian (09/30/2004)
+      - /list.php
+      - /list.php
+
+   * Improved performance of getting unapproved list for moderators -
+     brian (09/30/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * Setting tz to default now works properly - brian (09/29/2004)
+      - /include/format_functions.php
+      - /include/format_functions.php
+
+   * Closed posts could be brute force replied to. - brian (09/28/2004)
+      - /post.php
+      - /post.php
+
+   * Fixed warning when adding/editing forums. - brian (09/27/2004)
+      - /include/admin/newforum.php
+      - /include/admin/newforum.php
+
+   * The HTML_TITLE is not set correctly on pages of a read page. -
+     brian (09/25/2004)
+      - /read.php
+
+   * # commit HEAD changes back to stable branch - brian (09/23/2004)
+      - /mods/bbcode/bbcode.php
+
+   * fixed newflags for moved threads - ts77 (09/22/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * fixed ip-display in preview - ts77 (09/20/2004)
+      - /post.php
+      - /post.php
+
+   * # the defafult switch case for moderation.php only sets MESSAGE if
+     it is unset. this allows moderation hooks more freedom. - brian
+     (09/17/2004)
+      - /moderation.php
+      - /moderation.php
+      - /moderation.php
+
+   * Registration emails will now work better for AOL users - brian
+     (09/15/2004)
+      - /register.php
+
+   * # updated FAQ - tridus (09/15/2004)
+      - /docs/faq.txt
+
+   * Fixed possible XSS issue with the linked author - brian
+     (09/15/2004)
+      - /include/format_functions.php
+
+   * # added stuff about replies vs. posts - brian (09/14/2004)
+      - /docs/faq.txt
+
+   * fixed url in redirect after adding/editing a forum - ts77
+     (09/14/2004)
+      - /include/admin/newforum.php
+
+   * Bare urls with capital letters in them were not getting converted
+     properly. - brian (09/14/2004)
+      - /mods/bbcode/bbcode.php
+
+   * Fixed the email and url tags in BBCode - brian (09/14/2004)
+      - /mods/bbcode/bbcode.php
+
+Release: phorum.5.0.10
+-----------------------
+
+   * # bumped version - brian (09/13/2004)
+      - /common.php
+
+   * # fixed multi-line regex issue - brian (09/13/2004)
+      - /mods/bbcode/bbcode.php
+
+   * BBCode module only works for properly formatted codes now. Urls are
+     shortened for better display. - brian (09/13/2004)
+      - /mods/bbcode/bbcode.php
+
+   * # using same notification-function like for posting - ts77
+     (09/10/2004)
+      - /moderation.php
+
+   * Fixed potential XSS in last post author name - brian (09/10/2004)
+      - /list.php
+
+   * correctly removing session-info from all notification-urls - ts77
+     (09/10/2004)
+      - /include/email_functions.php
+
+   * # adding last active forum to access-update - ts77 (09/10/2004)
+      - /include/users.php
+
+   * Session timeout can be 0 now. - brian (09/10/2004)
+      - /include/admin/settings.php
+
+   * # requiring alt on images is stupid. Dumb W3C - brian (09/10/2004)
+      - /templates/default/settings.tpl
+
+   * # missing px on some font sizes - brian (09/10/2004)
+      - /templates/default/settings.tpl
+
+   * Added module localization support - tridus (09/09/2004)
+      - /common.php
+      - /docs/creating_mods.txt
+
+   * # set closed = 0 by default, it could be not set otherwise - ts77
+     (09/09/2004)
+      - /post.php
+
+   * # forum id is now carried through the form at all times - brian
+     (09/08/2004)
+      - /control.php
+
+   * # don't check the PM count unless pms are enabled - brian
+     (09/08/2004)
+      - /common.php
+
+   * # formatting for this file had gotten out of whack - brian
+     (09/08/2004)
+      - /common.php
+
+   * # replies were allowed to closed threads if the request was made -
+     brian (09/08/2004)
+      - /post.php
+
+   * # check if special isset before assigning - brian (09/08/2004)
+      - /post.php
+
+   * # check that a banlist exists before using it. - brian
+     (09/08/2004)
+      - /include/profile_functions.php
+
+   * # the closed value is now saved when a post is made as an
+     announcement - brian (09/08/2004)
+      - /include/db/mysql.php
+
+   * # suppressing error on install - ts77 (09/08/2004)
+      - /include/db/mysql.php
+
+   * added forum_last_active column for forum where the user was last
+     active. - ts77 (09/07/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004090700.php
+
+   * # document pm_sent hook - tridus (09/07/2004)
+      - /docs/creating_mods.txt
+
+   * Email verification is no more inline with RFC 2822 - brian
+     (09/07/2004)
+      - /include/email_functions.php
+
+   * # new function for faster storing of user_data ...
+     phorum_user_save_simple - ts77 (09/07/2004)
+      - /include/users.php
+
+   * # admins can be members of a group in the admin system again -
+     tridus (09/07/2004)
+      - /include/admin/users.php
+
+   * We now give better messages upon new installations. - brian
+     (09/06/2004)
+      - /common.php
+      - /include/db/mysql.php
+
+   * new message-notifications for moderators work correctly now - ts77
+     (09/06/2004)
+      - /include/email_functions.php
+      - /post.php
+
+   * Fixed bug where sticky posts edited by non-moderators stay sticky -
+     brian (09/06/2004)
+      - /include/moderation_functions.php
+
+   * Changes in admin to forums send you back to that forums parent
+     instead of the top. - brian (09/06/2004)
+      - /include/admin/newforum.php
+
+   * anchors for read-links now have a msg-<number> name - ts77
+     (09/05/2004)
+      - /common.php
+      - /templates/default/read.tpl
+
+   * fixed that user-timezone set to default is really ignored for
+     tz-conversion then - ts77 (09/05/2004)
+      - /include/format_functions.php
+
+   * # pcre-link opens in new window now - ts77 (09/05/2004)
+      - /include/admin/banlist.php
+
+   * # removed folders from permission-list - ts77 (09/05/2004)
+      - /include/admin/groups.php
+
+   * # set some sensible defaults for new forums - ts77 (09/05/2004)
+      - /include/admin/newforum.php
+
+   * # showing permissions correctly in error-case too - ts77
+     (09/05/2004)
+      - /include/admin/newforum.php
+
+   * # user-delete checks for some selected users now - ts77
+     (09/05/2004)
+      - /include/admin/users.php
+
+   * # prune-message only shows forums now - ts77 (09/05/2004)
+      - /include/admin/message_prune.php
+
+   * # updated docs to new features of conversion-script - ts77
+     (09/04/2004)
+      - /docs/upgrade.txt
+
+   * conversion-script now handles permissions and groups /
+     group-members too - ts77 (09/03/2004)
+      - /include/db/mysql.php
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3to5convert.php
+
+   * fixed threaded-view paging. threads could be hidden between page 1
+     and 2. - ts77 (09/02/2004)
+      - /include/db/mysql.php
+      - /list.php
+
+   * # don't show the send pm link when pm is disabled - tridus
+     (09/02/2004)
+      - /templates/default/profile.tpl
+
+Release: phorum.5.0.9
+----------------------
+
+   * # bumped version - brian (09/01/2004)
+      - /common.php
+
+   * # emails sent after attaching are correct now. - brian
+     (09/01/2004)
+      - /attach.php
+      - /include/email_functions.php
+      - /post.php
+
+   * # add some code here to help with old P3 linking styles - brian
+     (09/01/2004)
+      - /include/format_functions.php
+
+   * new hook \"moderation\" i.e. for logging moderator actions - ts77
+     (08/31/2004)
+      - /docs/creating_mods.txt
+      - /moderation.php
+      - /scripts/phorum3to5convert.php
+
+   * fixed missing links and vars for mails about attachments - ts77
+     (08/31/2004)
+      - /attach.php
+
+   * # added list hook information - tridus (08/31/2004)
+      - /docs/creating_mods.txt
+
+   * storing forum-offsets in the settings now on conversion - ts77
+     (08/31/2004)
+      - /scripts/phorum3to5convert.php
+
+   * installer now checks if cache is writable on a new install - tridus
+     (08/31/2004)
+      - /include/admin/install.php
+
+   * # a couple of template fixes from steve healy - ts77 (08/31/2004)
+      - /include/controlcenter/summary.php
+      - /include/controlcenter/summary.php
+      - /templates/default/cc_start.tpl
+      - /templates/default/cc_start.tpl
+      - /templates/default/cc_usersettings.tpl
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/message.tpl
+      - /templates/default/read_threads.tpl
+
+   * # escape $password correctly. It is always passed as md5 currently,
+     so not current threat. - brian (08/31/2004)
+      - /include/db/mysql.php
+
+   * # more template fixes - ts77 (08/31/2004)
+      - /templates/default/css.tpl
+      - /templates/default/index.tpl
+
+   * # removed erroneous } - brian (08/29/2004)
+      - /include/db/mysql.php
+
+   * # added optional forum_id parameter for newflag_allread - ts77
+     (08/29/2004)
+      - /include/db/mysql.php
+
+   * fixed \"mark all messages read\" in empty forums - ts77
+     (08/28/2004)
+      - /include/db/mysql.php
+
+   * # messages in moderated forums have their status correctly set
+     again - tridus (08/26/2004)
+      - /post.php
+
+   * # corrected timezone for warsaw - ts77 (08/26/2004)
+      - /include/lang/english.php
+
+   * # you can now attach messages to special threads at post time. -
+     brian (08/25/2004)
+      - /post.php
+
+   * # fixed bug in new array handling in loops - brian (08/22/2004)
+      - /include/templates.php
+
+Release: phorum.5.0.8.RC
+-------------------------
+
+   * bumped release version - brian (08/20/2004)
+      - /common.php
+
+   * # moderation notice now only for messages waiting for approval -
+     brian (08/20/2004)
+      - /common.php
+      - /include/db/mysql.php
+
+   * # newflags for empty forums no longer break - ts77 (08/20/2004)
+      - /list.php
+
+   * # messages have a unique status while waiting for attachments -
+     brian (08/20/2004)
+      - /include/constants.php
+      - /post.php
+
+   * newflags are now moved while moving a message - ts77 (08/20/2004)
+      - /include/db/mysql.php
+      - /todo.txt
+
+   * # created INSTALL file in root dir for those that don't see the
+     docs dir - brian (08/20/2004)
+      - /INSTALL
+
+   * # changes to the install doc - brian (08/20/2004)
+      - /docs/install.txt
+      - /docs/install.txt
+
+   * # typo in html - brian (08/20/2004)
+      - /include/admin/install.php
+
+   * # tweaking the Phorum install - brian (08/20/2004)
+      - /include/admin/install.php
+      - /include/db/mysql.php
+
+   * # remove option to cache user data - brian (08/20/2004)
+      - /include/admin/settings.php
+
+   * # changed phorum_db_user_get to phorum_user_get - brian
+     (08/20/2004)
+      - /include/controlcenter/users.php
+
+   * # typo - brian (08/20/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * # fixed a status check that was using > - brian (08/20/2004)
+      - /include/db/mysql.php
+
+   * # removed the text about Phorum beta and cvs from the header -
+     brian (08/20/2004)
+      - /templates/default/header.tpl
+
+   * # make white the first color in the default template - brian
+     (08/20/2004)
+      - /templates/default/list.tpl
+
+   * # bumped internal version - brian (08/19/2004)
+      - /common.php
+
+   * # improvements to the new count on index - brian (08/19/2004)
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004081900.php
+      - /index.php
+
+   * Added a hook to the index.php page - brian (08/19/2004)
+      - /docs/creating_mods.txt
+      - /index.php
+
+   * Added new message count to forum index - brian (08/19/2004)
+      - /include/db/mysql.php
+      - /index.php
+      - /templates/default/index.tpl
+
+   * # made signature available in the profile-template too - ts77
+     (08/19/2004)
+      - /profile.php
+
+   * # localized default error-message on posting - ts77 (08/19/2004)
+      - /include/lang/english.php
+      - /post.php
+
+   * # correctly set the closed status - brian (08/19/2004)
+      - /include/moderation_functions.php
+
+   * # phorum_user_unsubscribe was not called correctly - brian
+     (08/19/2004)
+      - /include/moderation_functions.php
+
+   * # really fix bug in deleting attachments. only last one removed
+     from meta - brian (08/19/2004)
+      - /include/moderation_functions.php
+
+   * # fix bug in deleting attachments. only last one removed from meta
+     - brian (08/19/2004)
+      - /include/moderation_functions.php
+
+   * # custom fields htmlspecialchars'ed for editing - ts77
+     (08/19/2004)
+      - /include/controlcenter/user.php
+
+   * pm-preview now formatted too - ts77 (08/19/2004)
+      - /include/controlcenter/pm.php
+
+   * Created a function for module writers that will fetch the last x
+     messages with several options - brian (08/19/2004)
+      - /include/db/mysql.php
+
+   * # fixed threaded list alt coloring - brian (08/19/2004)
+      - /templates/default/list_threads.tpl
+
+   * Attachments can now be deleted by users and moderators - brian
+     (08/18/2004)
+      - /edit.php
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /moderation.php
+      - /templates/default/edit.tpl
+
+   * # todos - ts77 (08/18/2004)
+      - /todo.txt
+
+   * # LOOP now supports arrays - brian (08/18/2004)
+      - /include/templates.php
+
+   * # use the proper forum_id when deleting a message - brian
+     (08/18/2004)
+      - /include/db/mysql.php
+
+   * New Smilies - brian (08/17/2004)
+      - /smileys/angry.gif
+      - /smileys/baringteeth.gif
+      - /smileys/confused.gif
+      - /smileys/cool.gif
+      - /smileys/crying.gif
+      - /smileys/disappointed.gif
+      - /smileys/embarrassed.gif
+      - /smileys/footinmouth.gif
+      - /smileys/frowning.gif
+      - /smileys/innocent.gif
+      - /smileys/kissing.gif
+      - /smileys/laughing.gif
+      - /smileys/lipsaresealed.gif
+      - /smileys/nerd.gif
+      - /smileys/rolleyes.gif
+      - /smileys/sick.gif
+      - /smileys/sleepy.gif
+      - /smileys/smile.gif
+      - /smileys/suprised.gif
+      - /smileys/thinking.gif
+      - /smileys/tounge.gif
+      - /smileys/undecided.gif
+      - /smileys/wink.gif
+
+   * # newflag fixes :( - ts77 (08/16/2004)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+      - /read.php
+
+   * # fixed reopen function - brian (08/16/2004)
+      - /include/db/mysql.php
+
+   * # typo - ts77 (08/15/2004)
+      - /scripts/phorum3_in.php
+
+   * # correctly handling "closed"-status now and adding viewcount if
+     available - ts77 (08/15/2004)
+      - /scripts/phorum3_in.php
+
+   * # some fixes for conversion - ts77 (08/15/2004)
+      - /include/db/mysql.php
+
+   * # reverted min-id changes and got rid of the additional column -
+     ts77 (08/14/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /list.php
+
+   * # documented the (rediscovered) profile hook - tridus (08/14/2004)
+      - /docs/creating_mods.txt
+
+   * # tried to fix phorum_db_delete_message - ts77 (08/14/2004)
+      - /include/db/mysql.php
+
+   * # removed print_var - brian (08/13/2004)
+      - /control.php
+
+   * # fixed issue when setting a profile item to blank - brian
+     (08/13/2004)
+      - /control.php
+      - /include/users.php
+
+   * # improved speed for look ups using parent_id by adding forum_id to
+     where clause - brian (08/13/2004)
+      - /include/db/mysql.php
+      - /moderation.php
+
+   * # fixed typo - brian (08/13/2004)
+      - /include/db/upgrade/mysql/2004080601.php
+
+   * added script.php, external and scheduled hooks to run things from
+     command line - tridus (08/12/2004)
+      - /docs/creating_mods.txt
+      - /include/lang/english.php
+      - /script.php
+
+   * # fixed min_id set for already existing read-flag - ts77
+     (08/11/2004)
+      - /list.php
+
+   * moderator notifications are now different for messages needing
+     approval and not needing approval - ts77 (08/11/2004)
+      - /include/lang/english.php
+      - /post.php
+
+   * # added pm_sent-hook. - ts77 (08/11/2004)
+      - /include/controlcenter/pm.php
+
+   * # removed some bad html - brian (08/11/2004)
+      - /templates/default/cc_pm_sent.tpl
+
+   * # fixed newflags, min-id should work now correctly - ts77
+     (08/10/2004)
+      - /common.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /list.php
+      - /read.php
+
+   * # bumped internal version - brian (08/09/2004)
+      - /common.php
+
+   * # enabled author-var in mail-notifications too - ts77 (08/09/2004)
+      - /post.php
+
+   * Moved closed status to its own field for better logic and
+     performance - brian (08/09/2004)
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004080800.php
+      - /post.php
+      - /read.php
+
+   * # added better key for getting latest post time - brian
+     (08/09/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004080800.php
+
+   * # added better key for getting max message id - brian (08/09/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004080800.php
+
+   * # fixed typo in query - brian (08/09/2004)
+      - /include/db/mysql.php
+
+   * # Added key for duplicate message check - brian (08/09/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004080800.php
+
+   * # fixed for missing prefix (old smiley-mod data) - ts77
+     (08/09/2004)
+      - /mods/smileys/smileys.php
+
+   * # fixed upgrade-script (doubled key) - ts77 (08/09/2004)
+      - /include/db/upgrade/mysql/2004080800.php
+
+   * # fixed create-table statement (missing KEY) - ts77 (08/08/2004)
+      - /include/db/mysql.php
+
+   * enhancements for smiley-module (thanks to Cameron Brunner) - ts77
+     (08/08/2004)
+      - /mods/smileys/settings.php
+      - /mods/smileys/smileys.php
+
+   * # cleaned up email-confirmation - ts77 (08/07/2004)
+      - /common.php
+      - /include/controlcenter/email.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004080700.php
+
+   * *** empty log message *** - ts77 (08/07/2004)
+      - /todo.txt
+
+   * # fixed upgrade script - ts77 (08/07/2004)
+      - /include/db/upgrade/mysql/2004080601.php
+
+   * # bumped internal version - brian (08/06/2004)
+      - /common.php
+
+   * # optimized some keys - brian (08/06/2004)
+      - /include/db/mysql.php
+
+   * # made forum description larger and remove unused field in flags
+     table - brian (08/06/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004080600.php
+
+   * # create table for new flags was not updated for new system - brian
+     (08/06/2004)
+      - /include/db/mysql.php
+
+   * # improved regexes in html mod - brian (08/06/2004)
+      - /mods/html/html.php
+
+   * # better key for getting post counts - brian (08/06/2004)
+      - /include/db/upgrade/mysql/2004080601.php
+
+   * # bumped internal version - brian (08/05/2004)
+      - /common.php
+
+   * # readded missing post-increment for users - ts77 (08/05/2004)
+      - /post.php
+
+   * # removed the in clause in list page queries - brian (08/05/2004)
+      - /include/db/mysql.php
+
+   * # better keys for the list page. - brian (08/05/2004)
+      - /include/db/upgrade/mysql/2004080500.php
+
+   * # doh, removed debugging output - ts77 (08/04/2004)
+      - /read.php
+
+   * # some more error-checking in conversion, works now for users too -
+     ts77 (08/04/2004)
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3to5convert.php
+
+   * Improved memory usage of the 3to5 upgrade script. - brian
+     (08/04/2004)
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3to5convert.php
+
+   * # fixed issue where the list lengths were not updated right. -
+     brian (08/04/2004)
+      - /scripts/phorum3_in.php
+
+   * rewrote newflag/readflag storage to be more flexible - ts77
+     (08/03/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /list.php
+      - /post.php
+      - /read.php
+
+   * # fixed missing urls in error-message on read-page - ts77
+     (08/03/2004)
+      - /read.php
+
+   * added email-verification on email-change - ts77 (08/03/2004)
+      - /include/controlcenter/email.php
+      - /include/lang/english.php
+      - /templates/default/cc_usersettings.tpl
+
+   * # removed old newflag-functions - ts77 (08/03/2004)
+      - /include/db/mysql.php
+
+   * # upgrade script for new newflags - ts77 (08/03/2004)
+      - /include/db/upgrade/mysql/2004080300.php
+
+   * # unified email-lengths - ts77 (07/31/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004073100.php
+
+   * # some small enhancements to upgrade-path - ts77 (07/29/2004)
+      - /admin.php
+
+   * fixed saving permissions, missing break in display_fixed - ts77
+     (07/29/2004)
+      - /include/admin/newforum.php
+
+   * # fix to make allowed file upload types easier to read - tridus
+     (07/29/2004)
+      - /include/lang/english.php
+
+Release: phorum.5.0.7a.beta
+----------------------------
+
+   * # bumped version - ts77 (07/28/2004)
+      - /common.php
+
+   * removed debugging output - security issue - ts77 (07/28/2004)
+      - /search.php
+
+   * fixed broken p3-to-p5-conv - ts77 (07/28/2004)
+      - /scripts/phorum3to5convert.php
+
+Release: phorum.5.0.7.beta
+---------------------------
+
+   * bug fix release (07/26/2004)
+
+   * # make some doc changes, formatting, removed chdir() as it was not
+     needed. - brian (07/23/2004)
+      - /scripts/phorum3to5convert.php
+
+   * Improved private messaging. Added formatting, security - brian
+     (07/23/2004)
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+
+   * # corrected showing the changed privacy-settings (was showing the
+     previous settings) - ts77 (07/23/2004)
+      - /include/controlcenter/privacy.php
+
+   * fix table name typo - brian (07/23/2004)
+      - /include/db/mysql.php
+
+   * Added support to look at banned names and emails to the register
+     page - brian (07/22/2004)
+      - /include/profile_functions.php
+      - /post.php
+      - /register.php
+
+   * # now changes ip to host before check field, also reformat - brian
+     (07/22/2004)
+      - /post.php
+
+   * # changed phorum_db_user_get to phorum_user_get - brian
+     (07/22/2004)
+      - /register.php
+
+   * tweaked new installation settings, added smiley defaults - tridus
+     (07/22/2004)
+      - /include/db/mysql.php
+      - /todo.txt
+
+   * # doc update - tridus (07/22/2004)
+      - /docs/creating_mods.txt
+
+   * changed config.php to config.php.sample - tridus (07/22/2004)
+      - /docs/install.txt
+      - /include/db/config.php.sample
+
+   * # added Hostname to list of field names to reduce confusion - brian
+     (07/22/2004)
+      - /include/admin/banlist.php
+
+   * # quick fix to error on registration - tridus (07/21/2004)
+      - /register.php
+
+   * # now really fixed :( - ts77 (07/20/2004)
+      - /include/controlcenter/pm.php
+
+   * # tightened security for replying to a pm - ts77 (07/20/2004)
+      - /include/controlcenter/pm.php
+
+   * # tightened security for deleting a pm - ts77 (07/20/2004)
+      - /include/controlcenter/pm.php
+
+   * Improved followed (bookmarks/subscriptions) threads - brian
+     (07/19/2004)
+      - /common.php
+      - /control.php
+      - /follow.php
+      - /include/constants.php
+      - /include/lang/english.php
+      - /login.php
+      - /post.php
+      - /read.php
+      - /templates/default/cc_subscriptions.tpl
+      - /templates/default/follow.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * allowed for hidden languages/templates - ts77 (07/19/2004)
+      - /common.php
+      - /include/lang/english.php
+      - /templates/default/info.php
+
+   * added fixed display-settings - ts77 (07/19/2004)
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004071900.php
+
+   * # faster check for if there are unapproved group members - tridus
+     (07/19/2004)
+      - /common.php
+      - /include/db/mysql.php
+
+   * # made login.php support redir urls from GET as well as POST. Also
+     check that any redir passed is in the forum. - brian (07/19/2004)
+      - /login.php
+
+   * # removed some user-caching-stuff - ts77 (07/19/2004)
+      - /include/users.php
+
+   * Added hooks to all moderation functions - brian (07/18/2004)
+      - /docs/creating_mods.txt
+      - /include/moderation_functions.php
+      - /moderation.php
+
+   * # check if forum_id is valid when passed. - brian (07/18/2004)
+      - /read.php
+
+   * # you can bookmark a thread from anywhere in the thread, not just
+     the first post - tridus (07/18/2004)
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixed report hook - brian (07/18/2004)
+      - /read.php
+
+   * # bookmark code appeared twice - tridus (07/18/2004)
+      - /read.php
+
+   * # doc update - brian (07/18/2004)
+      - /docs/creating_mods.txt
+
+   * # fixed typo - brian (07/18/2004)
+      - /docs/creating_mods.txt
+
+   * Improved followed (bookmarks/subscriptions) threads - brian
+     (07/18/2004)
+      - /include/controlcenter/subthreads.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_subscriptions.tpl
+
+   * # groups can be deleted - tridus (07/18/2004)
+      - /include/admin/groups.php
+      - /include/db/mysql.php
+
+   * # commented out (unfinished) email-verification for now, will be
+     back later - ts77 (07/18/2004)
+      - /include/controlcenter/email.php
+
+   * # list of members in a group is now run through user_list hook -
+     tridus (07/18/2004)
+      - /include/controlcenter/groupmod.php
+      - /templates/default/cc_groupmod.tpl
+
+   * Improved the email sent when a post is reported. - brian
+     (07/17/2004)
+      - /include/lang/english.php
+      - /read.php
+
+   * added thread-bookmarking (thanks to Arthur Louie) - ts77
+     (07/17/2004)
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /read.php
+      - /templates/default/cc_subscriptions.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # removed some of the previous changes for permission-merging -
+     ts77 (07/17/2004)
+      - /include/users.php
+
+   * # merging group- and forum-perms instead of overwriting - ts77
+     (07/17/2004)
+      - /include/users.php
+
+   * added convertViewCount.php to scripts directory - converts
+     viewcounts to new format - tridus (07/17/2004)
+      - /scripts/convertViewCount.php
+
+   * Improved help text with regards to permissions - brian
+     (07/17/2004)
+      - /include/admin/groups.php
+      - /include/admin/newforum.php
+      - /include/admin/users.php
+
+   * # forgotten file from previous commit - ts77 (07/17/2004)
+      - /include/controlcenter/subthreads.php
+
+   * # trying to fix multiple group-perms for a forum - ts77
+     (07/17/2004)
+      - /include/db/mysql.php
+
+   * # message moderators can now moderate without being in the forum
+     they are moderating - tridus (07/16/2004)
+      - /common.php
+      - /control.php
+      - /include/controlcenter/messages.php
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * Added check of read permissions to attachments. - brian
+     (07/16/2004)
+      - /file.php
+
+   * # post.php did not check if it had a forum_id - brian (07/16/2004)
+      - /post.php
+
+   * # group information doesn't belong in user_data - tridus
+     (07/16/2004)
+      - /include/users.php
+
+   * # added a check in add_user to make sure date_added is set when
+     users are added - brian (07/16/2004)
+      - /include/users.php
+
+   * # make sure moderation urls actually work - tridus (07/16/2004)
+      - /include/controlcenter/messages.php
+
+   * Added tighter security to seaches - brian (07/16/2004)
+      - /include/db/mysql.php
+
+   * # marker is no longer hardcoded - tridus (07/16/2004)
+      - /templates/default/cc_prepost.tpl
+      - /templates/default/list.tpl
+
+   * added float-to-top for threaded mode AND an additional setting for
+     number of threads on the list-page on threaded-mode, paged list for
+     threaded - ts77 (07/15/2004)
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004071500.php
+      - /list.php
+      - /templates/default/list_threads.tpl
+
+   * added user_list hook - tridus (07/15/2004)
+      - /docs/creating_mods.txt
+      - /include/users.php
+
+   * # just line-endings fixed, sorry - ts77 (07/15/2004)
+      - /docs/install.txt
+      - /docs/license.txt
+      - /include/profile_functions.php
+      - /include/thread_sort.php
+
+   * # fixed phorum_db_user_get_list, its now fast and non-weird (as per
+     ts77's idea :-) ) - tridus (07/15/2004)
+      - /include/controlcenter/groupmod.php
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /templates/default/cc_groupmod.tpl
+      - /templates/default/cc_pm_post.tpl
+
+   * # fixed missing GetVars on search-page - ts77 (07/14/2004)
+      - /common.php
+
+   * # list groups in a table form - tridus (07/14/2004)
+      - /templates/default/cc_groupmod.tpl
+
+   * added ability for users to join groups in CC, admin can disallow on
+     a per-group basis - tridus (07/11/2004)
+      - /common.php
+      - /control.php
+      - /include/admin/groups.php
+      - /include/constants.php
+      - /include/controlcenter/groups.php
+      - /include/controlcenter/summary.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004071100.php
+      - /include/lang/english.php
+      - /templates/default/cc_groups.tpl
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_start.tpl
+
+   * # fixed bugs in moderator notifications - tridus (07/11/2004)
+      - /common.php
+      - /include/controlcenter/messages.php
+      - /include/db/mysql.php
+      - /include/users.php
+      - /templates/default/header.tpl
+
+   * # improved phorum_user_get_list, returns more user information,
+     only gets active users - tridus (07/11/2004)
+      - /include/controlcenter/groupmod.php
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # minor groupmod fix (admins are handled better) - tridus
+     (07/11/2004)
+      - /include/users.php
+
+   * groupmod improvements - can filter the list of users, group list
+     shows how many unapproved - tridus (07/11/2004)
+      - /include/controlcenter/groupmod.php
+      - /templates/default/cc_groupmod.tpl
+
+   * # sorry about this, I'm an idiot. It really works properly now. -
+     tridus (07/11/2004)
+      - /include/db/mysql.php
+
+   * # fix to phorum_user_get_list, list is sorted by username again -
+     tridus (07/11/2004)
+      - /include/db/mysql.php
+
+   * added index for unapproved messages-queries - ts77 (07/10/2004)
+      - /common.php
+      - /include/db/upgrade/mysql/2004071000.php
+
+   * # fixed threaded list and a warning - ts77 (07/10/2004)
+      - /include/db/mysql.php
+      - /list.php
+
+   * # fixed a warning - ts77 (07/10/2004)
+      - /read.php
+
+   * # some small additions - ts77 (07/10/2004)
+      - /docs/performance.txt
+
+   * *** empty log message *** - ts77 (07/10/2004)
+      - /scripts/phorum3to5convert.php
+
+   * added read-url to subscriptions-page - ts77 (07/10/2004)
+      - /include/controlcenter/subthreads.php
+      - /templates/default/cc_subscriptions.tpl
+
+   * # added missing key to table-creation - ts77 (07/10/2004)
+      - /include/db/mysql.php
+
+   * added option to show smileys in subject too - ts77 (07/10/2004)
+      - /mods/smileys/settings.php
+      - /mods/smileys/smileys.php
+
+   * # fixed another warning - ts77 (07/10/2004)
+      - /mods/smileys/smileys.php
+
+   * # building common-urls in controlcenter too - ts77 (07/09/2004)
+      - /control.php
+
+   * added users data as USERINFO to the template-vars - ts77
+     (07/09/2004)
+      - /common.php
+
+   * # changed force index to use index for portability - ts77
+     (07/09/2004)
+      - /include/db/mysql.php
+
+   * # changed groupmod label to 'unapproved' to match term used
+     everywhere else - tridus (07/08/2004)
+      - /common.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/controlcenter/groupmod.php
+      - /include/controlcenter/summary.php
+      - /include/lang/english.php
+
+   * # added a flag to phorum_user_get to skip information that some
+     pages don't need - tridus (07/08/2004)
+      - /include/db/mysql.php
+      - /include/users.php
+      - /read.php
+
+   * fixed checking for correct user if reading a PM - ts77
+     (07/08/2004)
+      - /include/controlcenter/pm.php
+
+   * # changed the controlcenter to use tables for its main-layout so
+     they should be aligned better now - ts77 (07/08/2004)
+      - /templates/default/cc_index.tpl
+      - /templates/default/cc_menu.tpl
+
+   * Optimized queries for flat list view. Should help with speed issues
+     some have seen. - brian (07/07/2004)
+      - /include/db/mysql.php
+
+   * # tightened the check for username in registering - ts77
+     (07/05/2004)
+      - /register.php
+
+   * added fallback to default-language if nonexistent language selected
+     - ts77 (07/04/2004)
+      - /common.php
+
+   * allowed macro-expansion in mail-subject too - ts77 (07/03/2004)
+      - /include/email_functions.php
+
+   * added SearchTips to the search-page - ts77 (07/03/2004)
+      - /templates/default/search.tpl
+
+   * added missing signature to post-preview - ts77 (07/01/2004)
+      - /post.php
+
+   * # initialize moderator notice flags - tridus (06/29/2004)
+      - /common.php
+
+   * # fix to let groups be renamed - tridus (06/24/2004)
+      - /include/admin/groups.php
+
+   * # you can't add someone to a group who is already a member - tridus
+     (06/24/2004)
+      - /include/controlcenter/groupmod.php
+
+   * # unapproved post notice was showing too often - tridus
+     (06/23/2004)
+      - /common.php
+
+   * added a notification box to alert users of things that need their
+     attention - tridus (06/21/2004)
+      - /common.php
+      - /include/admin/settings.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/controlcenter/groupmod.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /templates/default/attach.tpl
+      - /templates/default/css.tpl
+      - /templates/default/edit.tpl
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/preview.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+
+   * # initial description of settings that affect performance, could
+     use some additions - tridus (06/20/2004)
+      - /docs/performance.txt
+
+   * initial group moderation interface, can list group members in cc
+     (assign mods in admin) - tridus (06/19/2004)
+      - /control.php
+      - /include/constants.php
+      - /include/controlcenter/groupmod.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_groupmod.tpl
+      - /templates/default/cc_menu.tpl
+
+   * group moderation is fully functional - tridus (06/19/2004)
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/controlcenter/groupmod.php
+      - /include/controlcenter/pm.php
+      - /include/lang/english.php
+      - /templates/default/cc_groupmod.tpl
+      - /templates/default/cc_pm_post.tpl
+      - /todo.txt
+
+   * added optional dropdown list of users when sending a new private
+     message - tridus (06/19/2004)
+      - /include/admin/settings.php
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /include/users.php
+      - /templates/default/cc_pm_post.tpl
+
+   * # stop echoing things for real (I'm a bonehead) - tridus
+     (06/19/2004)
+      - /include/controlcenter/summary.php
+
+   * # stop echoing things for no reason - tridus (06/19/2004)
+      - /include/controlcenter/summary.php
+
+   * added error-checking for too large message-bodies - ts77
+     (06/18/2004)
+      - /include/lang/english.php
+      - /post.php
+
+   * # fixed search bug where read url was wrong - brian (06/14/2004)
+      - /common.php
+      - /search.php
+
+   * added DST-setting, started email-change verification (not finished
+     yet) - ts77 (06/14/2004)
+      - /common.php
+      - /include/controlcenter/email.php
+      - /include/controlcenter/forum.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004061400.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_usersettings.tpl
+
+   * # [code] tag uses <pre> now. - brian (06/14/2004)
+      - /mods/bbcode/bbcode.php
+
+   * # removed settype that caused issues - brian (06/13/2004)
+      - /control.php
+
+   * # some framework for group moderation (also show group membership
+     in CC) - tridus (06/13/2004)
+      - /common.php
+      - /include/constants.php
+      - /include/controlcenter/summary.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004061300.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_start.tpl
+
+   * # added a bit more detail to upgrade.txt - tridus (06/13/2004)
+      - /docs/upgrade.txt
+
+   * # Administrators can now assign Group Moderators - tridus
+     (06/13/2004)
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # fixed typo - tridus (06/13/2004)
+      - /include/constants.php
+
+   * # fixed some typo bugs - brian (06/13/2004)
+      - /templates/default/cc_pm_sent.tpl
+
+   * # cleaned up some possible, but unlikely security issues - brian
+     (06/11/2004)
+      - /attach.php
+      - /control.php
+      - /index.php
+      - /list.php
+      - /moderation.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+
+   * added confirmation before a post is reported - tridus (06/10/2004)
+      - /include/lang/english.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * fixed banlist-checking (was wrong order of arguments) - ts77
+     (06/01/2004)
+      - /post.php
+
+   * # added todo-entry - ts77 (06/01/2004)
+      - /todo.txt
+
+   * # one more check for missing mods - ts77 (05/31/2004)
+      - /common.php
+
+   * fixed setting a wrong password in the user-admin if no password is
+     set. - ts77 (05/30/2004)
+      - /include/admin/users.php
+
+   * merged viewcount-mod into the main-code, allows per-forum setting
+     now - ts77 (05/29/2004)
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+      - /list.php
+      - /read.php
+
+   * # leftover from previous commit - ts77 (05/29/2004)
+      - /include/db/upgrade/mysql/2004052900.php
+
+   * # fixed read_threads-template and added support for marking the
+     current post - ts77 (05/26/2004)
+      - /templates/default/read_threads.tpl
+
+Release: phorum.5.0.6.beta
+---------------------------
+
+   * File Uploads in CC now global option. Fixes bugs with this system -
+     brian (05/25/2004)
+      - /control.php
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/controlcenter/files.php
+
+   * # user can see his own profile now, changed my profile to my
+     controlcenter - ts77 (05/25/2004)
+      - /include/lang/english.php
+      - /profile.php
+
+   * # fixed bug where user list shown when editing as user - brian
+     (05/25/2004)
+      - /include/admin/users.php
+
+   * # removed space after private message text in nav when there are no
+     messages - brian (05/25/2004)
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # clean up to of read page default template - brian (05/25/2004)
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * report a post now works - tridus (05/24/2004)
+      - /include/lang/english.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * approving a whole thread is now implemented - ts77 (05/22/2004)
+      - /include/constants.php
+      - /include/controlcenter/messages.php
+      - /include/lang/english.php
+      - /moderation.php
+      - /templates/default/cc_prepost.tpl
+
+   * # attach was missing the thread-update after adding the file - ts77
+     (05/22/2004)
+      - /attach.php
+
+   * # documented phorum_user_get_moderators a bit more - tridus
+     (05/21/2004)
+      - /include/users.php
+
+   * # phorum_db_user_get_moderators gets moderators in a group as well
+     now - tridus (05/21/2004)
+      - /include/db/mysql.php
+
+   * # tightened security, possible sql-injection and invalid post-data
+     - ts77 (05/20/2004)
+      - /common.php
+      - /include/lang/english.php
+      - /post.php
+
+   * removed page-links from list if the read-view is set to threaded -
+     ts77 (05/20/2004)
+      - /list.php
+
+   * fixed missing sticky/announcement in preview - ts77 (05/20/2004)
+      - /post.php
+      - /templates/default/post_form.tpl
+
+   * tightened checks for valid values in search-links - ts77
+     (05/20/2004)
+      - /search.php
+
+   * fixed missing message-id and -thread in notification messages for
+     attachments - ts77 (05/20/2004)
+      - /attach.php
+
+   * really abort an message-edit if an error occured - ts77
+     (05/20/2004)
+      - /include/moderation_functions.php
+
+   * # finally having the cvs-info in - ts77 (05/20/2004)
+      - /include/db/mysql.php
+
+   * # testing cvs-info - ts77 (05/20/2004)
+      - /include/db/mysql.php
+
+   * # fixed unescaped quotes in the search - ts77 (05/20/2004)
+      - /include/db/mysql.php
+
+   * # moved the read-perm-check back into the pages - ts77
+     (05/18/2004)
+      - /attach.php
+      - /common.php
+      - /edit.php
+      - /index.php
+      - /list.php
+      - /moderation.php
+      - /read.php
+      - /search.php
+
+   * # removed the "subscribe" link - ts77 (05/18/2004)
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * *** empty log message *** - ts77 (05/18/2004)
+      - /templates/default/register.tpl
+
+   * # fixed problems from moving read-permission-check to common.php -
+     ts77 (05/17/2004)
+      - /common.php
+
+   * # added $_GET-var to check_session - ts77 (05/17/2004)
+      - /include/users.php
+
+   * # $show_special was ignored in flat mode - brian (05/17/2004)
+      - /include/db/mysql.php
+
+   * # check to make sure a user really can make a post
+     sticky/announcement - tridus (05/16/2004)
+      - /include/moderation_functions.php
+      - /post.php
+
+   * Added an after_register hook - brian (05/15/2004)
+      - /register.php
+
+   * User searches in admin now list all users when page first accessed
+     - brian (05/15/2004)
+      - /include/admin/users.php
+      - /include/db/mysql.php
+
+   * # removed last commits for download-counts - ts77 (05/14/2004)
+      - /common.php
+      - /include/db/mysql.php
+
+   * improved ban-list checking (does user/email check for registered
+     now too) - ts77 (05/14/2004)
+      - /post.php
+
+   * # some more error-tracking - ts77 (05/09/2004)
+      - /scripts/phorum3_in.php
+
+   * # forgot a change from commit for download-counts - ts77
+     (05/09/2004)
+      - /include/db/mysql.php
+
+   * # initial support for storing download-counts for attachments, no
+     gui, no visible counts - ts77 (05/08/2004)
+      - /common.php
+      - /include/db/mysql.php
+
+   * overwriting temporary password too on password-change - ts77
+     (05/08/2004)
+      - /include/controlcenter/password.php
+
+   * # added an error-message if an unknown user is wanted - ts77
+     (05/07/2004)
+      - /profile.php
+
+   * # removed email-address from registered users on post - ts77
+     (05/07/2004)
+      - /post.php
+
+   * unapproved messages are now marked while reading them - ts77
+     (05/07/2004)
+      - /include/lang/english.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * author-name is changed now on deleting a user (can be disabled with
+     a constant in include/constants.php) - ts77 (05/07/2004)
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+
+   * hidden/unapproved messages are now ignored in thread-info like
+     count and new - ts77 (05/07/2004)
+      - /include/thread_info.php
+
+   * # improved the unapproved messages-view - ts77 (05/07/2004)
+      - /templates/default/cc_prepost.tpl
+
+   * # hidden messages don't show in list view now. - brian
+     (05/06/2004)
+      - /include/db/mysql.php
+
+   * # fixed short-tag - ts77 (05/04/2004)
+      - /include/admin/help.php
+
+   * Title tag now contains some dyanmic information - brian
+     (05/02/2004)
+      - /common.php
+      - /read.php
+
+   * Adding a global HTML title and support for additional tags in the
+     head of the page. - brian (05/02/2004)
+      - /common.php
+      - /include/admin/settings.php
+
+   * Added new constant for string separator for things like the title
+     tag - brian (05/02/2004)
+      - /include/constants.php
+
+   * # added db- and user-functions for deleting a user completely, no
+     gui yet - ts77 (05/02/2004)
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * added user-delete to the admin - ts77 (05/02/2004)
+      - /include/admin/users.php
+
+   * # user-delete now changes the user_id in the message-table to 0 -
+     ts77 (05/02/2004)
+      - /include/db/mysql.php
+
+   * # properly fixed urls followed by punctuation - brian (05/02/2004)
+      - /mods/bbcode/bbcode.php
+
+   * # another try to fix the layout problem in the CC - ts77
+     (05/02/2004)
+      - /templates/default/cc_index.tpl
+      - /templates/default/cc_menu.tpl
+
+   * added an admin option for deleting old messages/threads - ts77
+     (05/01/2004)
+      - /features.txt
+      - /include/admin/header.php
+      - /include/admin/message_prune.php
+      - /include/db/mysql.php
+
+   * # fixed a small layout problem with the pm-views - ts77
+     (05/01/2004)
+      - /templates/default/cc_index.tpl
+
+   * # added phorum_page to every file called directly - ts77
+     (04/30/2004)
+      - /attach.php
+      - /control.php
+      - /edit.php
+      - /file.php
+      - /index.php
+      - /list.php
+      - /login.php
+      - /moderation.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+
+   * Portable code should work now - brian (04/30/2004)
+      - /attach.php
+      - /common.php
+      - /control.php
+      - /include/constants.php
+      - /include/controlcenter/pm.php
+      - /include/controlcenter/users.php
+      - /login.php
+      - /portable/phorum.php
+      - /portable/phorum_settings.php
+      - /register.php
+
+   * enabled IIS-hack - checking for SERVER_SOFTWARE-string - ts77
+     (04/30/2004)
+      - /common.php
+
+   * # fixed possible exploit - brian (04/30/2004)
+      - /common.php
+
+   * # moderators now can't make a post to an announcement anymore -
+     ts77 (04/30/2004)
+      - /moderation.php
+      - /templates/default/edit.tpl
+      - /templates/default/info.php
+
+   * # stripped auth from urls that go out in thread update emails -
+     brian (04/30/2004)
+      - /post.php
+
+   * # all tables with links into the forums table are now handled on
+     deletion of a forum - brian (04/30/2004)
+      - /include/db/mysql.php
+
+   * # revert of part of an earlier change to fix issues with urls
+     getting hosed. - brian (04/30/2004)
+      - /mods/bbcode/bbcode.php
+
+   * many improvements to the templates, better configurability,
+     alternating colors and stuff - ts77 (04/30/2004)
+      - /templates/default/attach.tpl
+      - /templates/default/cc_files.tpl
+      - /templates/default/cc_pm_inbox.tpl
+      - /templates/default/cc_pm_post.tpl
+      - /templates/default/cc_pm_sent.tpl
+      - /templates/default/cc_subscriptions.tpl
+      - /templates/default/cc_users.tpl
+      - /templates/default/cc_usersettings.tpl
+      - /templates/default/css.tpl
+      - /templates/default/edit.tpl
+      - /templates/default/footer.tpl
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/settings.tpl
+
+   * # small weight-fix - ts77 (04/30/2004)
+      - /templates/default/settings.tpl
+
+   * # typo in alter statement - brian (04/30/2004)
+      - /include/db/upgrade/mysql/2004032901.php
+
+   * Added support for meta tags in language files - brian (04/23/2004)
+      - /include/lang/english.php
+      - /templates/default/header.tpl
+
+   * # fixed error in admin when editing forums. - brian (04/22/2004)
+      - /common.php
+
+   * # moved check for read access allowed to common.php - brian
+     (04/20/2004)
+      - /common.php
+      - /list.php
+      - /read.php
+
+   * # Searches by users not allowed to read any forums not return no
+     results. - brian (04/20/2004)
+      - /include/db/mysql.php
+
+   * Added a link to phorum.org in the template footer - brian
+     (04/20/2004)
+      - /templates/default/css.tpl
+      - /templates/default/footer.tpl
+
+   * # first part of the IIS-patch, preparation - ts77 (04/18/2004)
+      - /common.php
+      - /control.php
+      - /file.php
+      - /include/admin/index.php
+      - /include/admin/login.php
+      - /include/admin/logout.php
+      - /include/admin/newfolder.php
+      - /include/admin/newforum.php
+      - /include/admin/settings.php
+      - /include/controlcenter/messages.php
+      - /include/controlcenter/users.php
+      - /index.php
+      - /list.php
+      - /login.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /search.php
+
+   * fixed signature-flag in user-edit of messages - ts77 (04/18/2004)
+      - /edit.php
+
+   * fixed view of usernames with html-characters, html-encoded now -
+     ts77 (04/18/2004)
+      - /include/admin/users.php
+      - /list.php
+      - /profile.php
+      - /read.php
+      - /search.php
+
+   * # fixed last commit - ts77 (04/18/2004)
+      - /login.php
+
+   * *** empty log message *** - ts77 (04/18/2004)
+      - /search.php
+
+   * # email-address can be deleted for anonymous posts too - ts77
+     (04/18/2004)
+      - /include/moderation_functions.php
+
+   * # fixed a typo in there - ts77 (04/15/2004)
+      - /scripts/phorum3to5convert.php
+
+   * # fixed endless loop in get_folder_info - ts77 (04/10/2004)
+      - /admin.php
+
+   * forum-list link goes now back to the parent-folder, not the
+     root-folder - ts77 (04/10/2004)
+      - /common.php
+
+   * email-addresses of anonymous users are now shown in the list too -
+     ts77 (04/10/2004)
+      - /list.php
+
+   * # some warnings and probs fixed which crept up through conversion -
+     ts77 (04/10/2004)
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # conversion stores the registration-date and last-access-date too,
+     some warning is fixed too - ts77 (04/10/2004)
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3to5convert.php
+
+   * # added a link to the parent folder to the browse-list - ts77
+     (04/10/2004)
+      - /include/admin/default.php
+
+   * # removed an additional closing anchor-tag - ts77 (04/09/2004)
+      - /templates/default/post_form.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * fixed hide_email not saved - ts77 (04/08/2004)
+      - /include/controlcenter/email.php
+      - /include/users.php
+
+   * # Fixed typo - brian (04/08/2004)
+      - /include/users.php
+
+   * fixed hidden messages shown in list - ts77 (04/07/2004)
+      - /include/db/mysql.php
+
+   * # fixed bug http://phorum.org/phorum5/read.php?14,5240 - brian
+     (04/05/2004)
+      - /include/users.php
+
+   * # fixed conversion of folders - ts77 (04/04/2004)
+      - /scripts/phorum3to5convert.php
+
+   * Fixed portable code. - brian (04/02/2004)
+      - /common.php
+      - /index.php
+      - /portable/phorum.php
+      - /portable/phorum_admin.php
+      - /portable/phorum_settings.php
+
+   * # remove some debugging - brian (04/02/2004)
+      - /index.php
+
+   * # doc'd admin_general hook - brian (04/02/2004)
+      - /docs/creating_mods.txt
+
+   * # $private_message_counts was unset - brian (04/02/2004)
+      - /include/users.php
+
+   * You can no longer edit settings for a module that is turned off. -
+     brian (04/02/2004)
+      - /include/admin/mods.php
+
+   * # Added some more/better help docs to the settings page. - brian
+     (04/02/2004)
+      - /include/admin/settings.php
+
+   * # The test forum is created as active now. - brian (04/02/2004)
+      - /include/db/mysql.php
+
+   * Searches are now url encoded so that url characters do not break
+     searching. - brian (04/01/2004)
+      - /search.php
+
+   * # fixed user access list - brian (04/01/2004)
+      - /include/users.php
+
+   * # fix edit time limit (typo) - tridus (03/30/2004)
+      - /edit.php
+
+   * User registering from a forum are now treated properly. - brian
+     (03/29/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004032901.php
+
+   * # fix bug counting new private messages - tridus (03/29/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004032900.php
+
+   * # fixed deleting messages in sent-box - ts77 (03/29/2004)
+      - /templates/default/cc_pm_sent.tpl
+
+   * # making new-flags more stable and working with mixed-view - ts77
+     (03/26/2004)
+      - /include/db/mysql.php
+      - /list.php
+
+   * # bumped version - brian (03/24/2004)
+      - /common.php
+
+   * # remove debug info - brian (03/24/2004)
+      - /register.php
+
+   * # fixed email verification of users. - brian (03/24/2004)
+      - /register.php
+
+   * # added a faq item - brian (03/24/2004)
+      - /docs/faq.txt
+
+Release: phorum.5.0.5.beta
+---------------------------
+
+   * # show the correct edit form to users, and let moderators edit
+     author/email information - tridus (03/23/2004)
+      - /edit.php
+      - /include/moderation_functions.php
+      - /moderation.php
+      - /templates/default/edit.tpl
+
+   * # Only Administrators should be able to delete announcements -
+     tridus (03/23/2004)
+      - /include/lang/english.php
+      - /moderation.php
+
+   * # turn off compression for downloads - brian (03/23/2004)
+      - /file.php
+
+   * # show the username of the last user that edited a post - tridus
+     (03/23/2004)
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /read.php
+
+   * # fixed exact phrase search. - brian (03/23/2004)
+      - /include/db/mysql.php
+      - /todo.txt
+
+   * # created pre_edit hook - tridus (03/23/2004)
+      - /docs/creating_mods.txt
+      - /include/moderation_functions.php
+
+   * # fixed saving permissions and groups for a user - ts77
+     (03/23/2004)
+      - /include/users.php
+
+Release: phorum.5.0.4a.beta
+----------------------------
+
+   * # changed call to date() to phorum_date() - brian (03/22/2004)
+      - /search.php
+
+   * # fix boneheaded mistake by brian - brian (03/22/2004)
+      - /include/users.php
+
+   * # fixed error with new user fields. - brian (03/22/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004031700.php
+      - /include/users.php
+
+   * # typo - brian (03/22/2004)
+      - /include/db/mysql.php
+
+   * # altered phorum_user_check_field to optionally return an array -
+     brian (03/22/2004)
+      - /include/db/mysql.php
+
+   * # fix to have the read_flag index on private_messages created in
+     new installations - tridus (03/22/2004)
+      - /include/db/mysql.php
+
+   * # updated description for module - brian (03/22/2004)
+      - /mods/html/info.txt
+
+   * # title block was in the wrong place in stdblock.tpl - brian
+     (03/22/2004)
+      - /templates/default/stdblock.tpl
+
+Release: phorum.5.0.4.beta
+---------------------------
+
+   * # moderators should be able to see the edit message template -
+     tridus (03/21/2004)
+      - /moderation.php
+
+   * # threaded pages working better with stickies now. - brian
+     (03/21/2004)
+      - /include/db/mysql.php
+      - /list.php
+
+   * implemented dates formatted by locale - ts77 (03/21/2004)
+      - /include/format_functions.php
+      - /include/lang/english.php
+
+   * # fixed user-perms for adding a user (needed for conversion) - ts77
+     (03/21/2004)
+      - /include/db/mysql.php
+
+   * # fixed variable - brian (03/21/2004)
+      - /include/db/upgrade/mysql/2004031000.php
+
+   * # added time limited editing option, users can edit their posts for
+     X minutes - tridus (03/20/2004)
+      - /edit.php
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /read.php
+      - /templates/default/edit.tpl
+
+   * # included format_functions for phorum_date() - brian (03/20/2004)
+      - /profile.php
+
+   * # changed the benchmarking functions - brian (03/20/2004)
+      - /include/timing.php
+
+   * # added needed language vars - brian (03/20/2004)
+      - /include/lang/english.php
+
+   * # added a query to update the date fields in the user table with
+     NOW() - brian (03/20/2004)
+      - /include/db/upgrade/mysql/2004031700.php
+
+   * # fixed the additional slashes - ts77 (03/19/2004)
+      - /scripts/phorum3_in.php
+
+   * # fixed bad url subs with punctuation - brian (03/19/2004)
+      - /mods/bbcode/bbcode.php
+
+   * # added some suffixes to the bad word filter - brian (03/18/2004)
+      - /include/format_functions.php
+
+   * # removed a print_var - brian (03/18/2004)
+      - /include/admin/badwords.php
+
+   * # tried to fix that query - ts77 (03/18/2004)
+      - /include/db/upgrade/mysql/2004031000.php
+
+   * Added the date a user is registered and the ability to track when a
+     user last used Phorum. - brian (03/17/2004)
+      - /common.php
+      - /control.php
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/controlcenter/email.php
+      - /include/controlcenter/privacy.php
+      - /include/db/upgrade/mysql/2004031700.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /profile.php
+      - /register.php
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_usersettings.tpl
+      - /templates/default/profile.tpl
+
+   * # fixed issues where folders and forums links are confused. - brian
+     (03/17/2004)
+      - /control.php
+      - /index.php
+      - /list.php
+
+   * # fixed logout bug and applied htmlspecialchars to the referer -
+     brian (03/17/2004)
+      - /login.php
+
+   * Added ability to detect if cookies are off on the browser. - brian
+     (03/17/2004)
+      - /include/users.php
+      - /login.php
+
+   * # fixed private message preview - tridus (03/17/2004)
+      - /include/controlcenter/pm.php
+      - /todo.txt
+
+   * Users can only search forums they are allowed to read now. - brian
+     (03/17/2004)
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # new p3-to-p5-conversion script - ts77 (03/17/2004)
+      - /scripts/phorum3_in.php
+      - /scripts/phorum3to5convert.php
+
+   * # added censor list to menu and reorganized menus some. - brian
+     (03/17/2004)
+      - /include/admin/header.php
+
+   * # fixed deleting of permissions and groups for users - brian
+     (03/17/2004)
+      - /include/admin/users.php
+
+   * # fixed blank uploaded files. - brian (03/17/2004)
+      - /include/controlcenter/files.php
+
+   * # fixed an unset var error - brian (03/17/2004)
+      - /include/controlcenter/forum.php
+
+   * # fixed issue of shifting columns when there is no last post date -
+     brian (03/17/2004)
+      - /templates/default/index.tpl
+
+   * # added option to disable private messaging entirely - tridus
+     (03/15/2004)
+      - /common.php
+      - /include/admin/settings.php
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_menu.tpl
+      - /templates/default/edit.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/preview.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+
+   * # fix users editing posts they shouldn't be able to, and edited
+     posts becoming announcements - tridus (03/15/2004)
+      - /edit.php
+      - /include/moderation_functions.php
+
+   * # set new forum to be active per default - ts77 (03/15/2004)
+      - /include/admin/newforum.php
+
+   * # again, added some helpers for the conversion-scripts - ts77
+     (03/14/2004)
+      - /include/users.php
+
+   * # corrected internal version and fixed adding users and fixed the
+     conversion-script - ts77 (03/13/2004)
+      - /common.php
+      - /include/users.php
+      - /scripts/phorum3to5convert.php
+
+   * # added option of disabling the count of new private messages -
+     tridus (03/13/2004)
+      - /include/admin/settings.php
+      - /include/users.php
+
+   * # fixed adding of http_path - ts77 (03/13/2004)
+      - /include/admin/install.php
+
+   * # added some helpers for the conversion-scripts - ts77
+     (03/13/2004)
+      - /include/db/mysql.php
+
+   * added link to private messages to the default template, with number
+     of new messages - tridus (03/12/2004)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004031201.php
+      - /include/users.php
+      - /templates/default/attach.tpl
+      - /templates/default/edit.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/preview.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+
+   * # upped version and added upgrade script for hidden forums - ts77
+     (03/12/2004)
+      - /common.php
+      - /include/db/upgrade/mysql/2004031200.php
+
+   * # fixed some issues with moderators editing posts - brian
+     (03/12/2004)
+      - /edit.php
+      - /include/moderation_functions.php
+      - /read.php
+
+   * # now hides forums that users can not read if the admin setting is
+     on. - brian (03/11/2004)
+      - /index.php
+
+   * # fixed phorum_user_access_allowed - brian (03/11/2004)
+      - /include/users.php
+
+   * # made phorum_user_access_allowed take a forum id to check. - brian
+     (03/11/2004)
+      - /include/users.php
+
+   * # added option to set the visible aka active setting - brian
+     (03/11/2004)
+      - /include/admin/newfolder.php
+      - /include/admin/newforum.php
+
+   * # added option to hide forums from those that can not read them. -
+     brian (03/11/2004)
+      - /include/admin/settings.php
+
+   * # made phorum_db_get_forums look at active - brian (03/11/2004)
+      - /include/db/mysql.php
+
+   * # removed bad class name - brian (03/11/2004)
+      - /templates/default/list_threads.tpl
+      - /templates/default/read_threads.tpl
+
+   * # added code for after_header and before_footer hooks - brian
+     (03/11/2004)
+      - /templates/default/stdblock.tpl
+
+   * # fixed wrong index deletion - ts77 (03/11/2004)
+      - /include/db/upgrade/mysql/2004031000.php
+
+   * # changed internal version - brian (03/10/2004)
+      - /common.php
+
+   * # changed $PHORUM_CUSTOM_QUERY_STRING to
+     $PHORUM["CUSTOM_QUERY_STRING"] - brian (03/10/2004)
+      - /common.php
+      - /portable/phorum.php
+
+   * # delete files when messages deleted - brian (03/10/2004)
+      - /moderation.php
+
+   * # added option to set users password through the admin - ts77
+     (03/10/2004)
+      - /include/admin/users.php
+
+   * # attachments now don't show in user file lists - brian
+     (03/10/2004)
+      - /include/db/mysql.php
+
+   * # dropped fulltext key - brian (03/10/2004)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004031000.php
+
+   * # fixed subject or body handled as number - ts77 (03/10/2004)
+      - /include/db/mysql.php
+
+   * # added code for after_header and before_footer hooks - brian
+     (03/09/2004)
+      - /common.php
+      - /control.php
+      - /edit.php
+      - /index.php
+      - /list.php
+      - /login.php
+      - /moderation.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+
+   * # fixed user-profile with defaults - ts77 (03/09/2004)
+      - /control.php
+      - /include/controlcenter/forum.php
+      - /templates/default/cc_usersettings.tpl
+
+   * # added the ability to cancel attachments and added a message for
+     redirecting. - brian (03/09/2004)
+      - /attach.php
+      - /include/lang/english.php
+      - /templates/default/attach.tpl
+
+   * # added info about new hooks - brian (03/09/2004)
+      - /docs/creating_mods.txt
+
+   * # replies to stickies sort value are now changed when stickies are
+     changed. - brian (03/09/2004)
+      - /include/moderation_functions.php
+
+   * # stickies no longer mess up threaded view. - brian (03/09/2004)
+      - /include/db/mysql.php
+
+   * # hide email by default - brian (03/08/2004)
+      - /register.php
+
+   * # fixed redirect bug after registering / fixed crlf - brian
+     (03/06/2004)
+      - /login.php
+
+   * # register now tells the user if the username or email already
+     exists separately. - brian (03/05/2004)
+      - /include/lang/english.php
+      - /register.php
+
+   * Added user_info hook so module writers could alter user sigs in
+     read.php - brian (03/05/2004)
+      - /read.php
+
+   * # fixed updating forum-stats on attach - ts77 (03/05/2004)
+      - /attach.php
+
+   * # fixed warning about unresolvable domain - ts77 (03/05/2004)
+      - /include/email_functions.php
+
+   * fixed bug #489, selecting the max-id from wrong database - ts77
+     (03/05/2004)
+      - /scripts/phorum3to5convert.php
+
+   * # fixed bug where the forum url was not accepted if it was a top
+     level domain. - brian (03/05/2004)
+      - /include/admin/settings.php
+
+   * # changed the forgot-pass to send through our common
+     phorum_email_user-function too - ts77 (03/04/2004)
+      - /login.php
+
+   * added send_mail-hook for plugging into the sending of messages -
+     ts77 (03/04/2004)
+      - /include/email_functions.php
+
+   * fixed saving user-data in the cc - ts77 (03/04/2004)
+      - /include/users.php
+
+   * # bug fixed where forums could not be ordered in folders - brian
+     (03/04/2004)
+      - /include/admin/default.php
+
+Release: phorum.5.0.3.beta
+---------------------------
+
+   * # bumped version - brian (03/03/2004)
+      - /common.php
+
+   * # fixed bug with forum_id=0 - ts77 (03/03/2004)
+      - /list.php
+
+   * fixed bug #478 - ts77 (03/03/2004)
+      - /register.php
+
+   * added an idea, group moderators - ts77 (03/03/2004)
+      - /todo.txt
+
+   * # fixed sessions with odd characters - brian (03/03/2004)
+      - /include/users.php
+
+   * # fixed parse error - brian (03/03/2004)
+      - /include/admin/install.php
+
+   * # fixed password entry during install - brian (03/03/2004)
+      - /include/admin/install.php
+
+   * # now escaping serialized data - brian (03/03/2004)
+      - /include/db/mysql.php
+
+   * # fixed bug 475 and made some improvements to the image tag - brian
+     (03/03/2004)
+      - /mods/smileys/settings.php
+      - /mods/smileys/smileys.php
+
+   * # fixed post vars in the templates - brian (03/03/2004)
+      - /templates/default/cc_files.tpl
+      - /templates/default/cc_pm_inbox.tpl
+      - /templates/default/cc_pm_post.tpl
+      - /templates/default/cc_pm_sent.tpl
+      - /templates/default/cc_subscriptions.tpl
+      - /templates/default/cc_users.tpl
+      - /templates/default/cc_usersettings.tpl
+      - /templates/default/edit.tpl
+      - /templates/default/login.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+
+   * # updated message - brian (03/03/2004)
+      - /templates/default/header.tpl
+
+   * added user-selectable template - ts77 (03/02/2004)
+      - /admin.php
+      - /common.php
+      - /features.txt
+      - /include/controlcenter/forum.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_usersettings.tpl
+      - /todo.txt
+
+   * # added some navi-links to login-page, we were kinda lost there -
+     ts77 (03/01/2004)
+      - /login.php
+      - /templates/default/login.tpl
+
+   * # got all of the registration moderation working properly - brian
+     (03/01/2004)
+      - /include/controlcenter/users.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /register.php
+
+   * # changed the user-confirmation parts - ts77 (03/01/2004)
+      - /include/constants.php
+      - /register.php
+
+   * # fixed registration-moderation,also for "both"-mode - ts77
+     (03/01/2004)
+      - /register.php
+
+   * Registration Moderation Added - brian (03/01/2004)
+      - /include/constants.php
+      - /include/controlcenter/users.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_users.tpl
+
+   * # changed register to use phorum_email_user instead of mail() -
+     brian (02/29/2004)
+      - /register.php
+
+   * # removed unused param from phorum_email_user and changed if loop
+     to a foreach, just in case. - brian (02/29/2004)
+      - /include/email_functions.php
+
+   * # fixed non-localized button - ts77 (02/29/2004)
+      - /templates/default/login.tpl
+
+   * # fixed error on exit - brian (02/28/2004)
+      - /include/admin/customprofile.php
+
+   * # fixed preview-formatting of pm's - ts77 (02/28/2004)
+      - /include/admin/settings.php
+      - /include/controlcenter/pm.php
+      - /templates/default/cc_pm_post.tpl
+
+   * # fixed editing of announcements - ts77 (02/27/2004)
+      - /include/moderation_functions.php
+      - /moderation.php
+
+   * # fixed user-permissions - ts77 (02/27/2004)
+      - /include/admin/users.php
+
+   * # removed a debug-output - ts77 (02/27/2004)
+      - /include/db/mysql.php
+
+   * # added a space between subject and new-flag - ts77 (02/27/2004)
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # search did not pass all vars to its pages. - brian (02/26/2004)
+      - /search.php
+
+   * added user-selectable language - ts77 (02/25/2004)
+      - /common.php
+      - /include/controlcenter/forum.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_usersettings.tpl
+      - /todo.txt
+
+   * # search caused an error if the user unchecked all fields. - brian
+     (02/25/2004)
+      - /include/db/mysql.php
+
+   * # fixed attachments together with mods i.e. the views-mod - ts77
+     (02/21/2004)
+      - /read.php
+
+   * # removed user-selectable tz (done) - ts77 (02/21/2004)
+      - /todo.txt
+
+   * # invalid message ids were not displaying the proper message -
+     brian (02/19/2004)
+      - /read.php
+
+   * # fixes from rasta to make it work with recent versions - ts77
+     (02/19/2004)
+      - /scripts/phorum3to5convert.php
+
+   * # another check added for invalid message-id - ts77 (02/19/2004)
+      - /include/db/mysql.php
+
+   * # changed phorum_db_get_messages to send a completely empty array
+     back if no messages - brian (02/19/2004)
+      - /include/db/mysql.php
+
+   * First commit of attachments. - brian (02/13/2004)
+      - /attach.php
+      - /common.php
+      - /images/button.png
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004021200.php
+      - /include/lang/english.php
+      - /include/post_form.php
+      - /mods/bbcode/bbcode.php
+      - /post.php
+      - /read.php
+      - /templates/default/attach.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # first attachments bug fix. - brian (02/13/2004)
+      - /read.php
+
+   * # updated faq - brian (02/13/2004)
+      - /docs/faq.txt
+
+   * # upgrade from current version to current version makes no sense ;)
+     - ts77 (01/27/2004)
+      - /admin.php
+
+   * added mixed view by checking threaded/non-threaded separately in
+     list and read - ts77 (01/24/2004)
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2004012400.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /list.php
+      - /read.php
+      - /templates/default/cc_usersettings.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixed bug with the last post link - brian (01/23/2004)
+      - /list.php
+
+   * # fixes for older_thread/newer-thread ... now honors the hidden
+     flag too - ts77 (01/10/2004)
+      - /include/db/mysql.php
+
+   * # added a module ideas setion. Any good ideas we see posted can go
+     there so they are not forgotten. - brian (01/09/2004)
+      - /todo.txt
+
+   * # fixed a typo in the upgrade-script - ts77 (12/26/2003)
+      - /include/db/upgrade/mysql/2003112001.php
+
+   * # fix for bugs 473, 474 - ts77 (12/19/2003)
+      - /include/thread_info.php
+      - /include/users.php
+
+   * # fix for bug 471 - ts77 (12/13/2003)
+      - /include/db/mysql.php
+
+   * If there is only one forum, index.php now redirects to it. - brian
+     (12/09/2003)
+      - /index.php
+
+   * honor admin-setting of allowed tz-selection or not - ts77
+     (12/09/2003)
+      - /include/controlcenter/forum.php
+      - /templates/default/cc_usersettings.tpl
+
+   * # quick fix with a short-tag - ts77 (12/04/2003)
+      - /include/admin/header.php
+
+   * # fixed bug where perms not saved when empty. - brian (12/04/2003)
+      - /include/admin/newforum.php
+
+   * # the upgrade system now processes all queries without breaking on
+     error - brian (11/26/2003)
+      - /admin.php
+      - /include/db/mysql.php
+
+   * # bumped internal version - brian (11/26/2003)
+      - /common.php
+      - /common.php
+
+   * This is a test of the new cvs update log script. - brian
+     (11/26/2003)
+      - /features.txt
+
+   * # admins could not read forums. - brian (11/26/2003)
+      - /include/users.php
+
+   * # removed mailing list options from the forum settings - brian
+     (11/26/2003)
+      - /include/admin/newforum.php
+      - /include/db/upgrade/mysql/2003112500.php
+
+   * # added confirmation in templates before deleting - brian
+     (11/26/2003)
+      - /include/lang/english.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixing some bad queries in the upgrade scripts - brian
+     (11/26/2003)
+      - /include/db/upgrade/mysql/2003112001.php
+
+   * @ - brian (11/20/2003)
+      - /common.php
+      - /control.php
+      - /include/constants.php
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /profile.php
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_pm_inbox.tpl
+      - /templates/default/cc_pm_post.tpl
+      - /templates/default/cc_pm_read.tpl
+      - /templates/default/cc_pm_sent.tpl
+      - /templates/default/profile.tpl
+      - /todo.txt
+
+   * # fixed the stuff I forgot to put in private messaging - brian
+     (11/20/2003)
+      - /include/controlcenter/pm.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /moderation.php
+      - /templates/default/cc_pm_inbox.tpl
+      - /templates/default/cc_pm_post.tpl
+      - /templates/default/cc_pm_sent.tpl
+
+   * # there are no forum level perms when we are on the main index.
+     this will now skip the check. - brian (11/20/2003)
+      - /include/users.php
+
+   * # fixed varible error - brian (11/09/2003)
+      - /include/db/mysql.php
+
+   * # fixed the hide-email - ts77 (11/02/2003)
+      - /profile.php
+
+   * # fixed group-permissions - ts77 (11/02/2003)
+      - /include/admin/groups.php
+
+   * fixed replies to sticky posts - brian (11/02/2003)
+      - /include/db/mysql.php
+
+   * # bumping version to 5.0.3-alpha for future development - brian
+     (10/31/2003)
+      - /common.php
+
+Release: phorum.5.0.2.alpha
+----------------------------
+
+   * # fixed a display-bug on upgrade and added an todo item - ts77
+     (10/30/2003)
+      - /admin.php
+      - /todo.txt
+
+   * # bumped internal version number - brian (10/30/2003)
+      - /common.php
+
+   * # upgrade script for latest db changes - brian (10/30/2003)
+      - /include/db/upgrade/mysql/2003103000.php
+
+   * stickies did not show up if there were no other messages. - brian
+     (10/29/2003)
+      - /include/db/mysql.php
+
+   * # dammit, I will get this right. fixed a typo - brian (10/28/2003)
+      - /include/format_functions.php
+      - /include/format_functions.php
+
+   * # changed phorum_format_date to use date() for public users or when
+     the user has not selected a time zone - brian (10/28/2003)
+      - /include/format_functions.php
+
+   * # made phorum_date_format use gmdate() instead of date() - brian
+     (10/28/2003)
+      - /include/format_functions.php
+
+   * # removed edit post from available options for public users in
+     forums. - brian (10/28/2003)
+      - /include/admin/newforum.php
+
+   * # fixed calls to addhelp() - brian (10/28/2003)
+      - /include/admin/settings.php
+
+   * # removed timezone from date format. - brian (10/28/2003)
+      - /include/lang/english.php
+
+   * # formatting - brian (10/27/2003)
+      - /control.php
+
+   * # more changes to the permissions system. - brian (10/27/2003)
+      - /include/admin/groups.php
+      - /include/admin/newforum.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/controlcenter/summary.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/post_form.php
+      - /include/users.php
+      - /list.php
+      - /read.php
+
+   * # fixed typo - brian (10/27/2003)
+      - /include/admin/groups.php
+      - /post.php
+
+   * # few doc changes - brian (10/27/2003)
+      - /docs/CVS-RULES
+      - /docs/creating_mods.txt
+      - /docs/faq.txt
+      - /docs/permissions.txt
+
+   * # fixed typo in the constants - ts77 (10/27/2003)
+      - /include/constants.php
+
+   * # fixed timezone-selection - ts77 (10/27/2003)
+      - /include/users.php
+
+   * # fixed bugs in the CC and the installation-permissions - ts77
+     (10/27/2003)
+      - /include/controlcenter/user.php
+      - /include/db/mysql.php
+
+   * # disabled the user-moderation link again - ts77 (10/27/2003)
+      - /templates/default/cc_menu.tpl
+
+   * # small doc with some examples about the new permissions - ts77
+     (10/26/2003)
+      - /docs/permissions.txt
+
+   * # clean up some issues with permissions - brian (10/25/2003)
+      - /include/lang/english.php
+      - /include/post_form.php
+      - /list.php
+      - /read.php
+
+   * # some fixes for the new permissions - ts77 (10/25/2003)
+      - /include/db/mysql.php
+      - /include/users.php
+      - /list.php
+
+   * # Rewrote the entire permissions system. - brian (10/24/2003)
+      - /admin.php
+      - /common.php
+      - /control.php
+      - /edit.php
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/groups.php
+      - /include/admin/newforum.php
+      - /include/admin/settings.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/controlcenter/messages.php
+      - /include/controlcenter/summary.php
+      - /include/controlcenter/user.php
+      - /include/db/mysql.php
+      - /include/post_form.php
+      - /include/users.php
+      - /list.php
+      - /moderation.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /templates/default/cc_menu.tpl
+
+   * # dumped fulltext search for good old likes, added more search
+     options - brian (10/10/2003)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /search.php
+      - /templates/default/search.tpl
+
+   * # fixed forum-ordering - ts77 (10/07/2003)
+      - /include/admin/default.php
+      - /include/db/mysql.php
+
+   * # added some more features from the changelog to the features-list
+     - ts77 (10/05/2003)
+      - /features.txt
+
+   * added user-selectable timezone - ts77 (10/04/2003)
+      - /control.php
+      - /include/admin/settings.php
+      - /include/controlcenter/forum.php
+      - /include/controlcenter/user.php
+      - /include/db/mysql.php
+      - /include/format_functions.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_usersettings.tpl
+
+   * # Splitted the control-center into smaller files - ts77
+     (10/02/2003)
+      - /control.php
+      - /include/constants.php
+      - /include/controlcenter/email.php
+      - /include/controlcenter/forum.php
+      - /include/controlcenter/messages.php
+      - /include/controlcenter/password.php
+      - /include/controlcenter/sig.php
+      - /include/controlcenter/subthreads.php
+      - /include/controlcenter/summary.php
+      - /include/controlcenter/user.php
+      - /include/db/mysql.php
+
+   * # fix potential issue including admin modules. - brian
+     (10/02/2003)
+      - /admin.php
+
+   * # first try on splitting the control-center - ts77 (10/01/2003)
+      - /control.php
+      - /include/controlcenter/files.php
+
+   * #fixed small bug in the search - ts77 (10/01/2003)
+      - /search.php
+
+   * implemented banlists per forum and put banlists in a table - ts77
+     (09/27/2003)
+      - /common.php
+      - /include/admin/banlist.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2003092700.php
+      - /post.php
+
+   * # htmlspecialchars the reply subject - brian (09/25/2003)
+      - /read.php
+
+   * # fixed broken form - brian (09/24/2003)
+      - /templates/default/cc_usersettings.tpl
+
+   * # added option for allowing linking to files from other sites -
+     brian (09/19/2003)
+      - /file.php
+      - /include/lang/english.php
+
+   * # fixed a glitch in the registration email verification - brian
+     (09/19/2003)
+      - /include/constants.php
+      - /include/users.php
+      - /login.php
+
+   * # fixed a glitch in the registration email verification, changed
+     profile.php to view only and simplified registration - brian
+     (09/19/2003)
+      - /include/lang/english.php
+      - /profile.php
+      - /register.php
+      - /templates/default/register.tpl
+
+   * Moderators can now view all users emails. - brian (09/19/2003)
+      - /include/constants.php
+      - /profile.php
+      - /profile.php
+
+   * # added a constant for toggling moderators viewing ip addresses -
+     brian (09/19/2003)
+      - /read.php
+
+   * # fixed error message when check perms for a user and not in a
+     forum - brian (09/19/2003)
+      - /include/users.php
+
+   * Added a user file storage area to CC - brian (09/18/2003)
+      - /include/db/upgrade/mysql/2003091700.php
+
+   * Added a user file storage area to CC - brian (09/17/2003)
+      - /common.php
+      - /control.php
+      - /file.php
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/cc_files.tpl
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_subscriptions.tpl
+
+   * # Improving the Control Panel - brian (09/11/2003)
+      - /common.php
+      - /control.php
+      - /control.php
+      - /control.php
+      - /include/constants.php
+      - /include/db/upgrade/mysql/2003082100.php
+      - /include/lang/english.php
+      - /include/lang/english.php
+      - /moderation.php
+      - /templates/default/cc_index.tpl
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_prepost.tpl
+      - /templates/default/cc_start.tpl
+      - /templates/default/cc_start.tpl
+      - /templates/default/cc_subscriptions.tpl
+      - /templates/default/cc_usersettings.tpl
+
+   * # bumped internal version - brian (09/11/2003)
+      - /common.php
+
+   * # Added the copyright to main scripts - brian (08/27/2003)
+      - /admin.php
+      - /common.php
+      - /control.php
+      - /edit.php
+      - /index.php
+      - /list.php
+      - /login.php
+      - /moderation.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+
+   * # Added the Phorum License to docs - brian (08/27/2003)
+      - /docs/license.txt
+
+   * # fixed bug where preview with post errors yields PHP errors. -
+     brian (08/22/2003)
+      - /post.php
+
+   * # bumped internal version - brian (08/21/2003)
+      - /common.php
+
+   * # fixed typo - brian (08/21/2003)
+      - /list.php
+
+   * # Massive speed increases for large forums. - brian (08/21/2003)
+      - /include/db/mysql.php
+
+   * # fix for bug introduced with latest enhancements - ts77
+     (08/08/2003)
+      - /read.php
+
+   * Add email confirmation of new registrations. - brian (08/01/2003)
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /login.php
+      - /register.php
+      - /register.php
+
+   * # added some more info to the subscription-page in the CC - ts77
+     (07/30/2003)
+      - /control.php
+      - /include/db/mysql.php
+      - /templates/default/cc_subscriptions.tpl
+
+   * # bugfix for preview - ts77 (07/27/2003)
+      - /include/post_form.php
+
+   * added option to show signature in a post or not added default
+     settings for email-notify and add-signature to controlcenter ->
+     boardsettings - ts77 (07/25/2003)
+      - /control.php
+      - /features.txt
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /include/post_form.php
+      - /include/users.php
+      - /post.php
+      - /read.php
+      - /templates/default/cc_usersettings.tpl
+      - /templates/default/edit.tpl
+      - /templates/default/post_form.tpl
+      - /todo.txt
+
+   * # added checks for install/upgrade to show a message about it -
+     ts77 (07/24/2003)
+      - /common.php
+
+   * # redirect after marking all messages read so the markread is not
+     in the url for refreshes. - brian (07/24/2003)
+      - /list.php
+
+   * Added bad word filter. - brian (07/24/2003)
+      - /include/admin/badwords.php
+      - /include/format_functions.php
+
+   * # fixed a typo in that upgrade-script - ts77 (07/20/2003)
+      - /include/db/upgrade/mysql/2003072000.php
+
+   * added duplicate-post check - ts77 (07/19/2003)
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2003072000.php
+
+   * # updated todo, added features.txt (needs to be filled) - ts77
+     (07/19/2003)
+      - /features.txt
+      - /todo.txt
+
+   * # fixed a warning and a bug in threaded view - ts77 (07/17/2003)
+      - /include/db/mysql.php
+      - /templates/default/read_threads.tpl
+
+   * # search now works from the forums list. - brian (07/14/2003)
+      - /common.php
+      - /search.php
+
+   * # tiny fixes for the CC - ts77 (07/12/2003)
+      - /control.php
+      - /include/lang/english.php
+      - /templates/default/cc_menu.tpl
+
+   * # fixed a couple of issues with the latest enhancements
+     ControlCenter (mostly) finished # more parts are enhancements or
+     layout-improvements - ts77 (07/12/2003)
+      - /control.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/thread_info.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_subscriptions.tpl
+
+   * # fixed another warning - ts77 (07/12/2003)
+      - /register.php
+
+   * # introduced new template-function "assign" for assigning
+     template-data to template-data (usefull in loops) ;-) - ts77
+     (07/06/2003)
+      - /include/templates.php
+
+   * # fix for wrong retrieving of users in read-view. - ts77
+     (07/06/2003)
+      - /include/db/mysql.php
+
+   * # some tuning for read-page - ts77 (06/28/2003)
+      - /include/db/mysql.php
+      - /read.php
+
+   * # premature exit in the if - brian (06/26/2003)
+      - /include/post_form.php
+
+   * # got the move up/down working - brian (06/20/2003)
+      - /include/admin/default.php
+
+   * # made read.php selecting the correct page on its own. - ts77
+     (06/17/2003)
+      - /include/db/mysql.php
+      - /read.php
+
+   * moved prepost-moderation from its own page to the control-center -
+     ts77 (06/15/2003)
+      - /control.php
+      - /include/constants.php
+      - /moderation.php
+      - /templates/default/cc_index.tpl
+      - /templates/default/cc_menu.tpl
+      - /templates/default/list.tpl
+
+   * Added list of message-subscriptions to the control-center - ts77
+     (06/15/2003)
+      - /admin.php
+      - /control.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+
+   * # fixed user-edits and a couple of inconsistencies in
+     moderator-functions - ts77 (06/15/2003)
+      - /edit.php
+      - /moderation.php
+
+   * activated display-order in the admin - ts77 (06/15/2003)
+      - /include/admin/default.php
+      - /include/db/mysql.php
+
+   * # file missing from last commit (list of message-subscriptions) -
+     ts77 (06/15/2003)
+      - /templates/default/cc_subscriptions.tpl
+
+   * # user data is truly abstracted now in all ways - brian
+     (06/12/2003)
+      - /control.php
+      - /include/db/mysql.php
+      - /include/users.php
+      - /read.php
+
+   * # added the forum name to the top of the page. - brian
+     (06/12/2003)
+      - /common.php
+      - /templates/default/header.tpl
+
+   * # html mod now restores & - brian (06/12/2003)
+      - /mods/html/html.php
+
+   * # moderators now see the users IP always - brian (06/11/2003)
+      - /read.php
+
+   * added control-center - ts77 (06/10/2003)
+      - /control.php
+      - /include/constants.php
+      - /templates/default/cc_index.tpl
+      - /templates/default/cc_menu.tpl
+      - /templates/default/cc_start.tpl
+      - /templates/default/cc_usersettings.tpl
+
+   * # replaced my profile-link with the controlcenter-link - ts77
+     (06/10/2003)
+      - /common.php
+
+   * # bumped version number - brian (06/10/2003)
+      - /common.php
+
+   * Moderator's ips are no longer shown. - brian (06/10/2003)
+      - /include/lang/english.php
+      - /read.php
+
+Release: phorum.5.0.1.alpha
+----------------------------
+
+   * # fixed bug with hide_email not being disabled and not shown in the
+     profile-edit - ts77 (06/08/2003)
+      - /include/lang/english.php
+      - /profile.php
+
+   * # added "posts"-field to the users-table, its increased on every
+     post a user makes, added upgrade-script for that - ts77 (06/05/2003)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2003060600.php
+      - /include/users.php
+      - /post.php
+
+   * # put css into its own template and added a script to extract the
+     css to a static file - ts77 (06/04/2003)
+      - /scripts/generateStaticCSS.php
+      - /templates/default/css.tpl
+      - /templates/default/header.tpl
+
+   * # bump internval version - brian (06/03/2003)
+      - /common.php
+
+   * # added password_temp to upgrades - brian (06/03/2003)
+      - /include/db/upgrade/mysql/2003060100.php
+
+   * # smaller preliminary changes for control-center - ts77
+     (06/02/2003)
+      - /common.php
+      - /include/constants.php
+      - /include/lang/english.php
+
+   * # fixed last-page-url - ts77 (06/02/2003)
+      - /list.php
+
+   * # fixed some formatting with the [code] tag and how we format
+     around pre, xmp and blockquote tags - brian (06/02/2003)
+      - /include/format_functions.php
+      - /mods/bbcode/bbcode.php
+
+   * # made a new string (LastPostLink) for the link to the latest post
+     in a thread - ts77 (06/02/2003)
+      - /include/lang/english.php
+      - /templates/default/list.tpl
+
+   * # Added post_post hook and renamed post hook to pre_post - brian
+     (06/01/2003)
+      - /docs/creating_mods.txt
+      - /post.php
+      - /templates/default/preview.tpl
+
+   * # formatting - brian (06/01/2003)
+      - /docs/creating_mods.txt
+
+   * # added to and reformatted the faq - brian (06/01/2003)
+      - /docs/faq.txt
+
+   * # added note to the install doc. - brian (06/01/2003)
+      - /docs/install.txt
+
+   * # added a new template-option, include_var ... the given string is
+     a variable in the $PHORUM['DATA']-array and this entry is used as
+     template-name then. - ts77 (05/31/2003)
+      - /include/templates.php
+
+   * # fixed edit post so it has the right special setting upon edit. -
+     brian (05/30/2003)
+      - /edit.php
+      - /include/moderation_functions.php
+      - /templates/default/edit.tpl
+
+   * Added preview - brian (05/30/2003)
+      - /include/lang/english.php
+      - /post.php
+      - /read.php
+      - /templates/default/post_form.tpl
+      - /templates/default/preview.tpl
+
+   * # htmlspecialchars the author when putting it in the linked_author
+     - brian (05/30/2003)
+      - /read.php
+
+   * # now possible to echo a constant - brian (05/30/2003)
+      - /include/templates.php
+
+   * # PRE-ALPHA checking of layoutsettings-mod, allows per-forum
+     setting of colours. - ts77 (05/25/2003)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2003052600.php
+
+   * # fixed a typo and a missing db-field - ts77 (05/25/2003)
+      - /include/db/mysql.php
+      - /list.php
+
+   * # resusing some urls for the new last post feature. - brian
+     (05/25/2003)
+      - /list.php
+      - /list.php
+
+   * Added "last post" feature in list.php to jump to last post in
+     thread - brian (05/25/2003)
+      - /include/lang/english.php
+      - /list.php
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+
+   * Fixed lost password so that it now sends a temp password like
+     Phorum 3 does. - brian (05/25/2003)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/profile_functions.php
+      - /include/users.php
+      - /login.php
+      - /todo.txt
+
+   * # made the profile update create a new session if a user changes
+     their password. - brian (05/25/2003)
+      - /include/users.php
+      - /profile.php
+
+   * # fixed posting / replying with "reply only" access. - ts77
+     (05/25/2003)
+      - /include/post_form.php
+      - /include/users.php
+      - /post.php
+      - /read.php
+
+   * Public users can no longer post using registered names. - brian
+     (05/25/2003)
+      - /include/lang/english.php
+      - /post.php
+      - /todo.txt
+
+   * # fixed url check that did not work with intranets - brian
+     (05/25/2003)
+      - /include/admin/settings.php
+
+   * # attempted to fix temp dir on windows issue. - brian (05/25/2003)
+      - /include/db/mysql.php
+
+   * # put phorum_html_encode back - brian (05/24/2003)
+      - /common.php
+
+   * # fixed some missing language elements - brian (05/24/2003)
+      - /templates/default/read.tpl
+      - /templates/default/search.tpl
+
+   * # Put output buffering around inclusion of template settings to
+     trap any output and kill the header errors. - brian (05/23/2003)
+      - /common.php
+
+   * Added showing of IP to read page. - brian (05/23/2003)
+      - /common.php
+      - /include/lang/english.php
+      - /profile.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * Added quoting on reply. Does not use javascript. - brian
+     (05/23/2003)
+      - /include/format_functions.php
+      - /include/lang/english.php
+      - /read.php
+      - /search.php
+      - /templates/default/post_form.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixed an error in phorum_db_update_forum which lead to unsaved
+     changes - ts77 (05/21/2003)
+      - /include/db/mysql.php
+
+   * # custom profile fields were not saving. - brian (04/30/2003)
+      - /include/users.php
+
+   * # escaped author, used right constanct for secuitry, fiddled with
+     output. - brian (04/30/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # just one new todo-entry - ts77 (04/29/2003)
+      - /todo.txt
+
+   * # new plugin in common.php (common) # db_update_forum takes also an
+     array as forum_id, so that more entries can be updated then # some more
+     colors defineable - ts77 (04/27/2003)
+      - /common.php
+      - /include/db/mysql.php
+      - /templates/default/header.tpl
+      - /templates/default/settings.tpl
+
+   * # updated upgrade-script - ts77 (04/26/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # add to init some vars. - brian (04/25/2003)
+      - /list.php
+
+   * # list_threads was not using linked_author - brian (04/25/2003)
+      - /templates/default/list_threads.tpl
+
+   * # Announcements are now created with forum_id=0 - brian
+     (04/24/2003)
+      - /post.php
+
+   * # removed PHORUM_SECURITY_* constants - brian (04/24/2003)
+      - /include/constants.php
+
+   * # fixed message for disallowed posting. - brian (04/24/2003)
+      - /include/lang/english.php
+      - /include/post_form.php
+
+   * # corrections and improvements (magic_quotes detection) in the
+     upgrade-script - ts77 (04/24/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # removed security for folder as it was wrong. can add back if
+     needed. - brian (04/24/2003)
+      - /include/admin/newfolder.php
+
+   * # made it so the db layer does not assign the forum_id to a message
+     - brian (04/24/2003)
+      - /include/db/mysql.php
+
+Release: phorum.5.0.0.alpha
+----------------------------
+
+   * # set version - brian (04/22/2003)
+      - /common.php
+
+   * # initialize any custom profile fields before loading template -
+     brian (04/22/2003)
+      - /profile.php
+
+   * # added check for PHORUM constant - brian (04/22/2003)
+      - /include/moderation_functions.php
+      - /include/thread_info.php
+      - /include/timing.php
+
+   * # disable help during install and login - brian (04/22/2003)
+      - /include/admin/header.php
+
+   * # removed profile_fields from admin. For now, admin can not edit
+     them. - brian (04/22/2003)
+      - /include/admin/users.php
+
+   * # initial install did not create the settings correctly - brian
+     (04/22/2003)
+      - /include/db/mysql.php
+
+   * # initial install did not create the test forum and message right.
+     - brian (04/22/2003)
+      - /include/db/mysql.php
+
+   * fixed missing localizations of GoTo - ts77 (04/22/2003)
+      - /templates/default/edit.tpl
+      - /templates/default/index.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/search.tpl
+
+   * # edit did not allow edit of email address. - brian (04/22/2003)
+      - /templates/default/edit.tpl
+
+   * # point links in header to the dev.phorum.org server. - brian
+     (04/22/2003)
+      - /templates/default/header.tpl
+
+   * # localization of currentpage fixed too - ts77 (04/22/2003)
+      - /templates/default/list.tpl
+      - /templates/default/read.tpl
+      - /templates/default/search.tpl
+
+   * # fixed the page-nav only shown for moderators - ts77 (04/22/2003)
+      - /templates/default/list_threads.tpl
+
+   * # added check for PHORUM_ADMIN constant - brian (04/22/2003)
+      - /include/db/upgrade/mysql/2003011801.php
+      - /include/db/upgrade/mysql/2003022400.php
+
+   * # upped the internal version number in common.php, preliminary
+     upgrade-docs, fixed admin-setting in the useradmin - ts77 (04/21/2003)
+      - /common.php
+      - /docs/upgrade.txt
+      - /include/admin/users.php
+      - /scripts/phorum3to5convert.php
+
+   * # fixed some further localization issues and messages not being
+     shown - ts77 (04/20/2003)
+      - /include/lang/english.php
+      - /moderation.php
+
+   * # fixed email-validation, some wrong links, warnings about
+     uninitialized fields, profile_fields.php ... - ts77 (04/20/2003)
+      - /include/admin/users.php
+      - /include/db/mysql.php
+      - /include/email_functions.php
+      - /profile.php
+      - /register.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/post_form.tpl
+
+   * # fixed some message editing issues - brian (04/18/2003)
+      - /include/moderation_functions.php
+      - /moderation.php
+
+   * # converted all urls over to a URL array in the DATA array - brian
+     (04/17/2003)
+      - /common.php
+      - /edit.php
+      - /include/post_form.php
+      - /list.php
+      - /login.php
+      - /moderation.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+      - /templates/default/edit.tpl
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/search.tpl
+
+   * # fixed errors after deleting a message. - brian (04/17/2003)
+      - /include/lang/english.php
+      - /moderation.php
+
+   * # cleaned up DATA array - brian (04/17/2003)
+      - /include/moderation_functions.php
+      - /list.php
+      - /moderation.php
+      - /search.php
+      - /templates/default/edit.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/read.tpl
+      - /templates/default/search.tpl
+
+   * # wrapped the mod descriptions. - brian (04/17/2003)
+      - /include/admin/mods.php
+
+   * # removed Allow HTML from admin page - brian (04/17/2003)
+      - /include/admin/newforum.php
+
+   * # removed allow_html from table defs - brian (04/17/2003)
+      - /include/db/mysql.php
+
+   * # added warning about HTML mod allowing users to mess the the page
+     layout. - brian (04/17/2003)
+      - /mods/html/info.txt
+
+   * # fixed broken mail-notification - ts77 (04/15/2003)
+      - /post.php
+
+   * # fixed moderator edit. - brian (04/09/2003)
+      - /moderation.php
+      - /templates/default/edit.tpl
+
+   * Changed language file. All keys to array have no spaces now. -
+     brian (04/09/2003)
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /include/post_form.php
+      - /include/templates.php
+      - /list.php
+      - /login.php
+      - /moderation.php
+      - /mods/bbcode/bbcode.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /templates/default/edit.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/message.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/search.tpl
+
+   * Rewrote large portions of the template engine. - brian
+     (04/09/2003)
+      - /include/lang/english.php
+      - /include/templates.php
+      - /index.php
+      - /list.php
+      - /search.php
+      - /templates/default/edit.tpl
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/move_form.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/search.tpl
+
+   * # post_form.php now handles the decision to show the no post
+     message. - brian (04/08/2003)
+      - /include/post_form.php
+      - /post.php
+      - /read.php
+
+   * # added paging to the search - brian (04/08/2003)
+      - /include/db/mysql.php
+      - /search.php
+      - /templates/default/search.tpl
+
+   * # Added pointer style variables eg. LANG->author. faster! - brian
+     (04/08/2003)
+      - /include/templates.php
+
+   * # fixed user edit vs. moderator edit issue. - brian (04/08/2003)
+      - /templates/default/edit.tpl
+
+   * # template cleanup - brian (04/08/2003)
+      - /templates/default/index.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # moderation.php now calls the needed template directly. - brian
+     (04/08/2003)
+      - /templates/default/move_form.tpl
+
+   * # added some spacing in these forms. - brian (04/08/2003)
+      - /templates/default/post_form.tpl
+
+   * # phorum3to5convert now also converts moderators/admin-users (todo:
+     groups / permissions) - ts77 (04/06/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # template cleanup - brian (04/05/2003)
+      - /include/lang/english.php
+      - /index.php
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/settings.tpl
+
+   * added .htaccess-files in important directories to increase security
+     # some cleanup and docs in the conversion-script - ts77 (04/05/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # included improvements from panu to the conversion-script. - ts77
+     (04/05/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # removed some debugging output from p3top5-conversion - ts77
+     (04/05/2003)
+      - /scripts/phorum3to5convert.php
+
+   * # mereged profile and register templates into one. - brian
+     (04/04/2003)
+      - /profile.php
+      - /register.php
+      - /templates/default/register.tpl
+
+   * # changed how dynamic profile fields are handled. - brian
+     (04/04/2003)
+      - /include/admin/customprofile.php
+      - /include/admin/header.php
+      - /include/users.php
+      - /register.php
+
+   * # moved the formatting mods to a format hook, imagine - brian
+     (04/04/2003)
+      - /include/format_functions.php
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/info.txt
+      - /mods/replace/info.txt
+      - /mods/replace/replace.php
+      - /mods/smileys/info.txt
+      - /mods/smileys/smileys.php
+
+   * # added an {else} template item - brian (04/04/2003)
+      - /include/templates.php
+
+   * added a first version of a conversion script from phorum3.4 to
+     phorum5 - ts77 (04/04/2003)
+      - /include/db/mysql.php
+      - /include/users.php
+      - /scripts/phorum3to5convert.php
+
+   * # template cleanup - brian (04/04/2003)
+      - /include/lang/english.php
+      - /templates/default/header.tpl
+      - /templates/default/login.tpl
+      - /templates/default/register.tpl
+
+   * Added HTML module to allow safe HTML in messages. - brian
+     (04/04/2003)
+      - /mods/html/html.php
+      - /mods/html/info.txt
+
+   * # generic message template for things like registering, deleting,
+     editing, etc. - brian (04/04/2003)
+      - /templates/default/message.tpl
+
+   * # formatting - brian (04/03/2003)
+      - /edit.php
+      - /post.php
+
+   * # fixing last bugs dealing with paging the list page - brian
+     (04/03/2003)
+      - /include/db/mysql.php
+      - /list.php
+      - /post.php
+
+   * Added/fixed paging on the list page. - brian (04/03/2003)
+      - /include/db/mysql.php
+      - /list.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # tweaked the phorum_return_to_list function - brian (04/03/2003)
+      - /include/moderation_functions.php
+
+   * # We just use one post_form template now - brian (04/03/2003)
+      - /include/post_form.php
+
+   * # cleaning up the read templates - brian (04/03/2003)
+      - /include/lang/english.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # Cleaning up the template - brian (04/03/2003)
+      - /templates/default/edit.tpl
+      - /templates/default/header.tpl
+      - /templates/default/login.tpl
+      - /templates/default/message.tpl
+      - /templates/default/post_form.tpl
+
+   * # added a space after the stick and announcement labels. - brian
+     (04/03/2003)
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # moved stripping of {TAGOPEN} and {TAGCLOSE} to post.php - brian
+     (03/31/2003)
+      - /include/format_functions.php
+      - /post.php
+
+   * # strip BB code from messages in search - brian (03/31/2003)
+      - /search.php
+
+   * # fixed unapproved messages, shows only the ones for that forum
+     now. # improved mail-notification, doesn't send to poster and takes the
+     system_email_from_name and system_email_from_address into account now. -
+     ts77 (03/31/2003)
+      - /include/db/mysql.php
+      - /include/email_functions.php
+
+   * # removed call time pass by reference. - brian (03/29/2003)
+      - /include/thread_sort.php
+
+   * # escaping < and > in subject, author and email - brian
+     (03/28/2003)
+      - /include/format_functions.php
+      - /list.php
+      - /read.php
+      - /search.php
+
+   * # added two fields to the forums table def that were missing. -
+     brian (03/28/2003)
+      - /include/db/mysql.php
+
+   * # needed to strip {TAGOPEN} and {TAGCLOSE} before working on the
+     body - brian (03/23/2003)
+      - /include/format_functions.php
+
+   * # fixed missing generated urls if user not allowed to post - ts77
+     (03/21/2003)
+      - /post.php
+
+   * # fix for mark-all-read - ts77 (03/15/2003)
+      - /list.php
+
+   * # Added CODING-STANDARDS File - brian (03/13/2003)
+      - /docs/CODING-STANDARDS
+
+   * fix for update_forum_stats if no posts in forum. - ts77
+     (03/09/2003)
+      - /include/db/mysql.php
+
+   * # fixed another warning in moderator.php - ts77 (03/05/2003)
+      - /moderation.php
+
+   * added display of number of edits and last edit to read-view added
+     switch for allowing edit of posts to the admin - ts77 (02/24/2003)
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /read.php
+      - /todo.txt
+
+   * # fixed some warnings - ts77 (02/24/2003)
+      - /list.php
+
+   * # some more warnings - ts77 (02/24/2003)
+      - /include/admin/groups.php
+      - /include/db/mysql.php
+
+   * # upgrade script for latest table-change - ts77 (02/24/2003)
+      - /include/db/upgrade/mysql/2003022400.php
+
+   * added pre-post moderation # pre-post-moderation, first try. changed
+     update_forum_stats too so that it doesn't # use the timestamp given if
+     the timestamp in the database is newer - ts77 (02/23/2003)
+      - /common.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/email_functions.php
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /include/post_form.php
+      - /include/users.php
+      - /list.php
+      - /moderation.php
+      - /post.php
+      - /read.php
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixed installation. test forum and test message are created. -
+     brian (02/23/2003)
+      - /include/db/mysql.php
+
+   * # fixed email-notification, some missing commits from viewcounter -
+     ts77 (02/22/2003)
+      - /include/db/mysql.php
+      - /post.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/read_threads.tpl
+
+   * # Added message_count and last_post_time back into forums table -
+     brian (02/21/2003)
+      - /include/db/mysql.php
+      - /index.php
+      - /post.php
+
+   * added viewcount-mod, new hook "readthreads" - ts77 (02/21/2003)
+      - /include/lang/english.php
+      - /list.php
+      - /read.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixed datestamp in threaded read view - brian (02/21/2003)
+      - /read.php
+
+   * # edit was messing with the meta array - brian (02/20/2003)
+      - /edit.php
+
+   * # defaults for read_length, list_length, and a quick fix for
+     creation of the initial forum - ts77 (02/20/2003)
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+
+   * # More XHTML stuff. - brian (02/20/2003)
+      - /templates/default/edit.tpl
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+      - /templates/default/settings.tpl
+
+   * # starting XHTML Transistional stuff - brian (02/18/2003)
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+      - /templates/default/settings.tpl
+
+   * # fixed include-error - ts77 (02/16/2003)
+      - /register.php
+
+   * # fixed phorum_db_user_check_field - brian (02/16/2003)
+      - /include/db/mysql.php
+
+   * # fixed float to top - brian (02/16/2003)
+      - /include/db/mysql.php
+
+   * # combined the two functions list.php uses into one. - brian
+     (02/15/2003)
+      - /list.php
+
+   * # moved the edit stats into the meta data - brian (02/15/2003)
+      - /include/db/mysql.php
+      - /include/moderation_functions.php
+
+   * # combined the two functions list.php uses into one. # fixed
+     phorum_db_delete_message, UNLOCK TABLES was not happening. - brian
+     (02/15/2003)
+      - /include/db/mysql.php
+
+   * # fixed missing include in post.php - ts77 (02/14/2003)
+      - /post.php
+
+   * # another todo-entry - ts77 (02/14/2003)
+      - /todo.txt
+
+   * # fixed the wrapper - brian (02/13/2003)
+      - /common.php
+      - /portable/phorum.php
+      - /portable/phorum_settings.php
+
+   * # updating metainfo on edit now - ts77 (02/13/2003)
+      - /edit.php
+      - /include/moderation_functions.php
+      - /moderation.php
+
+   * # experimental code for new newflag handling - ts77 (02/13/2003)
+      - /list.php
+      - /read.php
+
+   * # added constants for subscription type - brian (02/13/2003)
+      - /include/constants.php
+      - /post.php
+
+   * Added a post hook. - brian (02/13/2003)
+      - /post.php
+
+   * # updated the mod docs - brian (02/13/2003)
+      - /docs/creating_mods.txt
+      - /docs/creating_mods.txt
+
+   * # added rant about our HTML choices. - brian (02/13/2003)
+      - /docs/faq.txt
+
+   * # added wrapper info to the docs. - brian (02/13/2003)
+      - /docs/faq.txt
+
+   * # removed faq about wrapping in a function - brian (02/13/2003)
+      - /docs/faq.txt
+
+   * # formatting - brian (02/13/2003)
+      - /include/email_functions.php
+
+   * # fixed non-stripping of < and > - brian (02/13/2003)
+      - /include/format_functions.php
+
+   * # fixed &nbsp; getting passed through to HTML. - brian
+     (02/13/2003)
+      - /include/format_functions.php
+
+   * # trimmed some fat from mysql.php - brian (02/13/2003)
+      - /include/db/mysql.php
+      - /include/thread_info.php
+      - /include/users.php
+
+   * # fixed warning on new installs - brian (02/13/2003)
+      - /include/db/mysql.php
+
+   * # on install, new forum and first message now use the functions -
+     brian (02/13/2003)
+      - /include/db/mysql.php
+
+   * Added a meta field to the message table to store extra info. Useful
+     for mods to use. - brian (02/13/2003)
+      - /include/db/mysql.php
+
+   * # changed some colors in the default template - brian (02/13/2003)
+      - /templates/default/header.tpl
+      - /templates/default/settings.tpl
+
+   * # phorum_import_template now takes two filename, in and out. -
+     brian (02/12/2003)
+      - /common.php
+      - /include/templates.php
+
+   * # formatting - brian (02/12/2003)
+      - /moderation.php
+
+   * # renamed include/valid_email.php to email_functions.php - ts77
+     (02/12/2003)
+      - /include/email_functions.php
+      - /post.php
+
+   * # start of adding the email-notification, not finished yet #
+     valid_email.php should be moved to post_functions.php - ts77
+     (02/12/2003)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /post.php
+
+   * # fixed threaded list on read.php - brian (02/12/2003)
+      - /read.php
+
+   * fixed new-flags while using paging - ts77 (02/12/2003)
+      - /read.php
+
+   * # some fixes for mail-notification - ts77 (02/12/2003)
+      - /include/db/mysql.php
+      - /include/email_functions.php
+
+   * # added global setting for "use_bcc" - ts77 (02/12/2003)
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+
+   * # fixed some install-settings - ts77 (02/12/2003)
+      - /include/db/mysql.php
+
+   * # formatting - brian (02/04/2003)
+      - /common.php
+
+   * # type casting some post vars - brian (02/04/2003)
+      - /edit.php
+
+   * # fixed datestamps - brian (02/04/2003)
+      - /index.php
+
+   * Added paging to the read page including page links on list.php -
+     brian (02/04/2003)
+      - /include/lang/english.php
+      - /list.php
+      - /read.php
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+      - /templates/default/read.tpl
+
+   * # html encoded the email address - brian (02/04/2003)
+      - /profile.php
+
+   * # change max info value to a constant - brian (02/04/2003)
+      - /include/constants.php
+      - /include/db/mysql.php
+
+   * # fixed message edit so that it does not touch the messages
+     forum_id - brian (02/04/2003)
+      - /include/moderation_functions.php
+
+   * # fixed ifloopvar - brian (02/04/2003)
+      - /include/templates.php
+
+   * # stripped trailing newline - brian (02/04/2003)
+      - /include/db/mysql.php
+
+   * # fixed some errors in phorum_db_get_message and
+     phorum_db_get_messages - brian (02/04/2003)
+      - /include/db/mysql.php
+
+   * # fixed some bugs with userlogins to the admin and moderation of
+     messages without userid - ts77 (02/02/2003)
+      - /include/admin/login.php
+      - /include/admin/logout.php
+      - /include/moderation_functions.php
+      - /moderation.php
+
+   * # unsets $PHORUM["user"] if the user is not an admin. - brian
+     (01/30/2003)
+      - /admin.php
+
+   * Fixed more potential cross sight scripting issues with form input.
+     - brian (01/30/2003)
+      - /edit.php
+      - /login.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+
+   * # adds the admin user with admin=1 now - brian (01/30/2003)
+      - /include/admin/install.php
+
+   * Fixed a cross sight scripting issue when echoing sql errors. -
+     brian (01/30/2003)
+      - /include/db/mysql.php
+
+   * # fixed warnings about foreach. - brian (01/29/2003)
+      - /search.php
+
+   * User/Group permissions fully done. - brian (01/23/2003)
+      - /admin.php
+      - /include/admin/groups.php
+      - /include/admin/header.php
+      - /include/admin/newforum.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /list.php
+      - /post.php
+      - /read.php
+
+   * Added Time Zone offset. # All times now stored as INT GMT
+     timestamps - brian (01/23/2003)
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+      - /list.php
+      - /read.php
+
+   * # fixed BACKURL, should have been URLBACK - brian (01/23/2003)
+      - /register.php
+
+   * # started on paging the read page. - brian (01/23/2003)
+      - /read.php
+
+   * Added Time Zone offset. - brian (01/23/2003)
+      - /include/format_functions.php
+
+   * Added group admin - brian (01/23/2003)
+      - /include/admin/groups.php
+
+   * # separated menus - brian (01/23/2003)
+      - /include/admin/header.php
+
+   * # added read_limit for forums - brian (01/23/2003)
+      - /include/admin/newforum.php
+      - /include/db/mysql.php
+
+   * # fixed another warning - ts77 (01/22/2003)
+      - /read.php
+
+   * Added sigs to the read page - brian (01/20/2003)
+      - /include/db/mysql.php
+      - /read.php
+
+   * implemented user-edits of posts. - ts77 (01/19/2003)
+      - /common.php
+      - /include/constants.php
+      - /include/moderation_functions.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # missing files for user-edits - ts77 (01/19/2003)
+      - /edit.php
+      - /templates/default/edit.tpl
+
+   * implemented first try of a new upgrade-system # and added the
+     edit_count, edit_date fields to the tables and use them # still need to
+     output these values - ts77 (01/18/2003)
+      - /admin.php
+      - /common.php
+      - /include/admin/install.php
+      - /include/db/mysql.php
+      - /moderation.php
+
+   * added edit-post parts # cleaned up moderation - ts77 (01/18/2003)
+      - /include/users.php
+      - /login.php
+      - /moderation.php
+
+   * # missing files for upgrade-system - ts77 (01/18/2003)
+      - /include/db/mysql.php
+      - /include/db/upgrade/mysql/2003011801.php
+
+   * # disabled debug again ;) - ts77 (01/17/2003)
+      - /common.php
+
+   * # some parts on adding moderator perms and beginning of edit-post -
+     ts77 (01/17/2003)
+      - /common.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /todo.txt
+
+   * # GET_VARS were not working - brian (01/17/2003)
+      - /common.php
+
+   * # moved redirect to top - brian (01/17/2003)
+      - /list.php
+
+   * # making non-cookie users work - brian (01/17/2003)
+      - /include/users.php
+      - /login.php
+
+   * # added if around moderator urls - brian (01/17/2003)
+      - /read.php
+
+   * # made phorum_format_body take an array to improve speed. - brian
+     (01/17/2003)
+      - /include/format_functions.php
+
+   * # some timing functions for benchmarking - brian (01/17/2003)
+      - /include/timing.php
+
+   * # added option to use cookies or not - brian (01/17/2003)
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+
+   * # removed \n from quote - brian (01/17/2003)
+      - /mods/bbcode/bbcode.php
+
+   * # removed phorum_run function. - brian (01/16/2003)
+      - /common.php
+      - /index.php
+      - /list.php
+      - /login.php
+      - /moderation.php
+      - /post.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+
+   * # reformatting errors - brian (01/16/2003)
+      - /post.php
+
+   * # typo - brian (01/16/2003)
+      - /docs/faq.txt
+
+   * Added new item about our CSS/XHTML stance. - brian (01/16/2003)
+      - /docs/faq.txt
+
+   * # fixed so that only moderators could make things sticky. - brian
+     (01/16/2003)
+      - /include/post_form.php
+
+   * # made it faster by checking for [ - brian (01/16/2003)
+      - /mods/bbcode/bbcode.php
+
+   * # some warnings fixed - ts77 (01/13/2003)
+      - /include/users.php
+      - /post.php
+
+   * added option to add moderated forums to a user through the
+     user-admin. - ts77 (01/13/2003)
+      - /include/admin/users.php
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # started moderation-administration part - ts77 (01/13/2003)
+      - /include/admin/users.php
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * threaded or flat is now a user option. - brian (01/12/2003)
+      - /common.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /templates/default/register.tpl
+
+   * # altered moderation.php to not build HTML / changed ints to
+     constants - brian (01/12/2003)
+      - /common.php
+      - /moderation.php
+
+   * added close/reopen thread # and fixed a small bug in profile - ts77
+     (01/12/2003)
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /moderation.php
+      - /profile.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # moderators can only move threads to forums they moderate - brian
+     (01/12/2003)
+      - /include/users.php
+      - /moderation.php
+
+   * # made some changes to the template for moderation - brian
+     (01/12/2003)
+      - /include/lang/english.php
+      - /list.php
+      - /moderation.php
+      - /templates/default/list.tpl
+      - /templates/default/settings.tpl
+
+   * # improved announcement/sticky stuff - brian (01/12/2003)
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /list.php
+      - /post.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # fixed nav - brian (01/12/2003)
+      - /list.php
+
+   * # changed bare ints to constants - brian (01/12/2003)
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /list.php
+      - /read.php
+
+   * # error checking for sticky posts - brian (01/12/2003)
+      - /post.php
+
+   * fixed sticky and announcement posting - brian (01/12/2003)
+      - /post.php
+
+   * Added announcement support - brian (01/12/2003)
+      - /read.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # removed the moderate_move function - brian (01/12/2003)
+      - /include/moderation_functions.php
+
+   * # formatting - brian (01/12/2003)
+      - /include/db/mysql.php
+      - /include/templates.php
+
+   * # fixed phorum_user_moderate_allow - brian (01/12/2003)
+      - /include/users.php
+
+   * #small bugfix(es) - ts77 (01/12/2003)
+      - /include/db/mysql.php
+
+   * # removed update_stats and getmodforums - brian (01/12/2003)
+      - /include/db/mysql.php
+
+   * # added move thread - brian (01/12/2003)
+      - /include/lang/english.php
+      - /templates/default/list.tpl
+
+   * Added color and size tags to bbcode. - brian (01/12/2003)
+      - /mods/bbcode/bbcode.php
+
+   * fixed sticky and announcement posting / added nav to post form -
+     brian (01/12/2003)
+      - /templates/default/header.tpl
+      - /templates/default/post_form.tpl
+
+   * # gonna save the message on the test forum in the header cause I am
+     tired of retyping it. - brian (01/12/2003)
+      - /templates/default/header.tpl
+
+   * # tweaked moderation - brian (01/12/2003)
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/settings.tpl
+
+   * # tweaked css settings - brian (01/12/2003)
+      - /templates/default/settings.tpl
+
+   * laid groundwork for popup help in admin - brian (01/11/2003)
+      - /admin.php
+      - /images/close.gif
+      - /images/qmark.gif
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/header.php
+      - /include/admin/help.php
+      - /include/admin/newforum.php
+      - /include/dhtml_popup.js
+
+   * some more template-code, "if" allows now loopvars and array-vars
+     too # and deleting a single message is now only possible in if its not
+     the first message in a thread - ts77 (01/11/2003)
+      - /common.php
+      - /include/templates.php
+      - /list.php
+      - /read.php
+      - /templates/default/list_threads.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * added move-thread functionality - ts77 (01/11/2003)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /moderation.php
+
+   * # first changes for move threads, no functionality yet - ts77
+     (01/11/2003)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/moderation_functions.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/header.tpl
+      - /templates/default/read_threads.tpl
+
+   * # some more changes for deleting messages - ts77 (01/11/2003)
+      - /include/templates.php
+      - /list.php
+      - /read.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * enabled list-moderation - ts77 (01/11/2003)
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /list.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+
+   * # msgid not getting created - brian (01/11/2003)
+      - /post.php
+
+   * # fixed td and th tags with follow br tags - brian (01/11/2003)
+      - /include/format_functions.php
+
+   * added code to show menu descriptions in status bar - brian
+     (01/11/2003)
+      - /include/admin/PhorumAdminMenu.php
+
+   * # not saving status or msgid - brian (01/11/2003)
+      - /include/db/mysql.php
+
+   * # changed status in message table - brian (01/11/2003)
+      - /include/db/mysql.php
+
+   * # put items in key order - brian (01/11/2003)
+      - /include/lang/english.php
+
+   * # added some comments - brian (01/11/2003)
+      - /mods/bbcode/bbcode.php
+
+   * #small format change - brian (01/11/2003)
+      - /mods/replace/replace.php
+
+   * # added alt tags to smileys - brian (01/11/2003)
+      - /mods/smileys/settings.php
+      - /mods/smileys/smileys.php
+
+   * # changed moderation wording slightly. - brian (01/11/2003)
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * changed user functions to all be named phorum_user_* - brian
+     (01/10/2003)
+      - /admin.php
+      - /common.php
+      - /include/db/mysql.php
+      - /include/users.php
+      - /include/users.php
+      - /login.php
+      - /profile.php
+      - /register.php
+
+   * added a wrapper to allow multiple Phorum's from one source base -
+     brian (01/10/2003)
+      - /common.php
+      - /portable/phorum.php
+      - /portable/phorum_admin.php
+      - /portable/phorum_settings.php
+
+   * #added a new get_url-URL - ts77 (01/10/2003)
+      - /common.php
+
+   * added first moderation-parts (delete message and delete message
+     with answers) # fixed a number of small typos - ts77 (01/10/2003)
+      - /include/admin/install.php
+      - /include/admin/login.php
+      - /include/admin/users.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /moderation.php
+      - /read.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * # fixed error when min_id was unset for threads - brian
+     (01/10/2003)
+      - /list.php
+
+   * fixed lost password error. - brian (01/10/2003)
+      - /login.php
+
+   * # $user[moderator] not defaulted. - brian (01/10/2003)
+      - /include/users.php
+      - /read.php
+
+   * # fixed error when message id was invalid. - brian (01/10/2003)
+      - /read.php
+
+   * # gave us some space between constants (intead of 1,2,3 =>
+     10,20,30) - brian (01/10/2003)
+      - /include/constants.php
+
+   * # forgot that file for moderation-functions - ts77 (01/10/2003)
+      - /include/moderation_functions.php
+
+   * improved installer - brian (01/10/2003)
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/header.php
+      - /include/admin/install.php
+
+   * # mysql errors in admin are in HTML comments - brian (01/10/2003)
+      - /include/db/mysql.php
+
+   * # fixes for various typos and the first start of moderation - ts77
+     (01/10/2003)
+      - /include/db/mysql.php
+
+   * # trying to get these damn phpdocs to work - brian (01/10/2003)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * # fixed newlines - brian (01/10/2003)
+      - /include/db/mysql.php
+
+   * # add phpdoc comments - brian (01/10/2003)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * # fixed lost password - brian (01/10/2003)
+      - /include/lang/english.php
+
+   * # inline moderation - brian (01/10/2003)
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/read_threads.tpl
+
+   * # update-conflicts - ts77 (01/10/2003)
+      - /templates/default/read_threads.tpl
+
+   * #list.php now redirects if forum_id is empty. - brian (01/08/2003)
+      - /list.php
+
+   * fixed link after register #link could go to list.php but not have a
+     forum_id - brian (01/08/2003)
+      - /register.php
+
+   * # fixed another warning with newflags - ts77 (01/08/2003)
+      - /read.php
+
+   * #added admin field to user array. moved that code to users.php from
+     the db file. - brian (01/08/2003)
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # small corrections to the template and a smaaaaal beginning for
+     moderation - ts77 (01/08/2003)
+      - /include/lang/english.php
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * Added user admin module. - brian (01/07/2003)
+      - /common.php
+      - /include/admin/header.php
+      - /include/admin/users.php
+      - /include/db/mysql.php
+      - /include/users.php
+
+   * # $value could be empty causing an error - brian (01/07/2003)
+      - /post.php
+
+   * #prepare_data was not aware that email was a real field - brian
+     (01/07/2003)
+      - /include/users.php
+
+   * email banning was not working - brian (01/06/2003)
+      - /post.php
+
+   * #min_id was not set - brian (01/06/2003)
+      - /read.php
+
+   * Modified code to include header and footer templates instead of the
+     templates having to do it. - brian (12/19/2002)
+      - /index.php
+      - /list.php
+      - /login.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /search.php
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/register.tpl
+      - /templates/default/search.tpl
+
+   * #template dropdowns could include .. for some reason. - brian
+     (11/24/2002)
+      - /admin.php
+
+   * added mark-all-read-functionality - ts77 (11/23/2002)
+      - /include/db/mysql.php
+      - /list.php
+
+   * # own posts now also marked as read - ts77 (11/23/2002)
+      - /include/db/mysql.php
+
+   * # just todo-upgrade - ts77 (11/20/2002)
+      - /todo.txt
+
+   * #missing ( on create table - brian (11/20/2002)
+      - /include/db/mysql.php
+
+   * #small change to sql statements - brian (11/19/2002)
+      - /include/db/mysql.php
+      - /include/db/mysql.php
+
+   * Improved error handling of table creation - brian (11/19/2002)
+      - /include/db/mysql.php
+
+   * # some more warnings fixed, improved newflag-handling on
+     float-to-top-forums - ts77 (11/14/2002)
+      - /list.php
+
+   * # fixed a notice-message - ts77 (11/13/2002)
+      - /common.php
+
+   * #fixed parse error in preg for tables - brian (11/13/2002)
+      - /include/format_functions.php
+
+   * # some more notices - ts77 (11/13/2002)
+      - /include/db/mysql.php
+
+   * # renamed some fields in the newflags-table - ts77 (11/13/2002)
+      - /include/db/mysql.php
+
+   * # still errors ;-) - ts77 (11/13/2002)
+      - /include/db/mysql.php
+
+   * # fixed a small "notice"-error in newflags-code - ts77
+     (11/13/2002)
+      - /include/db/mysql.php
+
+   * # added debug_out-function to output print_r-data, uses the
+     DEBUG-define in common.php # to determine if output is needed added
+     newflag-support, uses a new table and only works if a user is logged in
+     - ts77 (11/09/2002)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /list.php
+      - /read.php
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/read_threads.tpl
+
+   * #fixing the url stuff - brian (11/09/2002)
+      - /mods/bbcode/bbcode.php
+
+   * # fixed newer/older messages for float to top. - brian
+     (11/08/2002)
+      - /include/db/mysql.php
+      - /read.php
+
+   * #made the code stip <br /> only after table tags - brian
+     (11/08/2002)
+      - /include/format_functions.php
+
+   * #fixing the url stuff - brian (11/08/2002)
+      - /mods/bbcode/bbcode.php
+
+   * bbcode handles the url translation of all kinds. - brian
+     (11/06/2002)
+      - /mods/bbcode/bbcode.php
+
+   * #fixed email address at bottom - brian (11/01/2002)
+      - /docs/CVS-RULES
+
+   * # CVS-RULES file for documentation of cvs use. - ts77 (11/01/2002)
+      - /docs/CVS-RULES
+
+   * #added wrapper phorum_subscribe_user - brian (11/01/2002)
+      - /include/users.php
+
+   * Changed the read hook to run before the body is formatted. mods
+     must use special methods to insert tags. - brian (10/30/2002)
+      - /docs/creating_mods.txt
+      - /include/format_functions.php
+      - /mods/bbcode/bbcode.php
+      - /mods/replace/replace.php
+      - /mods/smileys/smileys.php
+      - /read.php
+
+   * heh, allow_html was reversed. - brian (10/25/2002)
+      - /include/format_functions.php
+
+   * fixed lack of ] - brian (10/21/2002)
+      - /post.php
+
+   * search was skipping the first result. - brian (10/16/2002)
+      - /search.php
+      - /templates/default/search.tpl
+
+   * search template - brian (10/16/2002)
+      - /templates/default/search.tpl
+
+   * fixing modifystamp and thread_count. - brian (10/12/2002)
+      - /include/db/mysql.php
+
+   * made index.php get actual data for posts and last post. - brian
+     (10/11/2002)
+      - /include/db/mysql.php
+      - /index.php
+
+   * removed finish template. - brian (10/07/2002)
+      - /todo.txt
+
+   * $extra not implemented in all places. - brian (10/07/2002)
+      - /include/admin/PhorumInputForm.php
+
+   * check for smiley dir before trying to read from it. - brian
+     (10/07/2002)
+      - /mods/smileys/settings.php
+
+   * adding mod settings admin. - brian (10/06/2002)
+      - /admin.php
+      - /include/admin/header.php
+      - /include/admin/modadmin.php
+      - /include/admin/mods.php
+      - /include/admin/modsettings.php
+
+   * some smiley-examples - ts77 (10/06/2002)
+      - /common.php
+      - /smileys/cool.gif
+      - /smileys/hot.gif
+      - /smileys/smiley12.gif
+      - /smileys/smiley14.gif
+      - /smileys/smiley15.gif
+      - /smileys/smiley16.gif
+      - /smileys/smiley17.gif
+      - /smileys/smiley23.gif
+      - /smileys/smiley24.gif
+      - /smileys/smiley25.gif
+      - /smileys/smilie1.gif
+      - /smileys/smilie10.gif
+      - /smileys/smilie11.gif
+      - /smileys/smilie2.gif
+      - /smileys/smilie3.gif
+      - /smileys/smilie4.gif
+      - /smileys/smilie5.gif
+      - /smileys/smilie6.gif
+      - /smileys/smilie7.gif
+      - /smileys/smilie8.gif
+      - /smileys/smilie9.gif
+
+   * updating error codes, got modules working, added bb code mod, added
+     dns lookup option and email validation. - brian (10/06/2002)
+      - /common.php
+      - /docs/install.txt
+      - /include/admin/settings.php
+      - /include/format_functions.php
+      - /include/lang/english.php
+      - /post.php
+      - /profile.php
+      - /register.php
+
+   * add replace mod and mod creation doc. - brian (10/06/2002)
+      - /docs/creating_mods.txt
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/info.txt
+      - /mods/replace/info.txt
+      - /mods/replace/replace.php
+      - /mods/replace/settings.php
+
+   * added function for admin-form, corrected hooks-code, added
+     smiley-plugin - ts77 (10/06/2002)
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/mods.php
+      - /mods/smileys/info.txt
+      - /mods/smileys/settings.php
+      - /mods/smileys/smileys.php
+
+   * adding mod admin code and email validation code. - brian
+     (10/06/2002)
+      - /include/admin/mods.php
+
+   * fixed some install errors. - brian (10/06/2002)
+      - /include/db/mysql.php
+
+   * actually adding bbcode module now. - brian (10/06/2002)
+      - /mods/bbcode/bbcode.php
+      - /mods/bbcode/info.txt
+
+   * fixes for "headers sent" ... just some newlines removed - ts77
+     (10/06/2002)
+      - /templates/default/settings.tpl
+
+   * more template stuff. more admin stuff. folders working. - brian
+     (08/29/2002)
+      - /admin.php
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/banlist.php
+      - /include/admin/default.php
+      - /include/admin/deletefolder.php
+      - /include/admin/deleteforum.php
+      - /include/admin/editfolder.php
+      - /include/admin/header.php
+      - /include/admin/newfolder.php
+      - /include/admin/newforum.php
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /index.php
+      - /profile.php
+      - /register.php
+      - /templates/default/header.tpl
+      - /templates/default/images/logo.png
+      - /templates/default/post_form.tpl
+
+   * updated more of the template. - brian (08/28/2002)
+      - /common.php
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/profile_functions.php
+      - /include/templates.php
+      - /include/users.php
+      - /login.php
+      - /profile.php
+      - /register.php
+      - /templates/default/header.tpl
+      - /templates/default/login.tpl
+      - /templates/default/register.tpl
+      - /templates/default/settings.tpl
+
+   * tweaking install process. - brian (08/28/2002)
+      - /include/db/mysql.php
+      - /include/users.php
+      - /profile.php
+
+   * got search working. - brian (08/27/2002)
+      - /common.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /post.php
+      - /search.php
+      - /templates/default/header.tpl
+      - /templates/default/list.tpl
+      - /templates/default/read.tpl
+
+   * added ban list to admin. More work on default template. Started
+     phorum.php wrapper script. - brian (08/24/2002)
+      - /common.php
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/banlist.php
+      - /include/admin/header.php
+      - /include/admin/newforum.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /index.php
+      - /post.php
+      - /templates/default/footer.tpl
+      - /templates/default/header.tpl
+      - /templates/default/index.tpl
+      - /templates/default/settings.tpl
+
+   * first shot at a template. added some stubs for needed features. -
+     brian (08/23/2002)
+      - /common.php
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/templates.php
+      - /list.php
+      - /read.php
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/login.tpl
+      - /templates/default/post_form.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+      - /templates/default/register.tpl
+      - /todo.txt
+
+   * got the install wizard working. started on search - brian
+     (08/21/2002)
+      - /admin.php
+      - /include/admin/header.php
+      - /include/admin/install.php
+      - /include/admin/login.php
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /post.php
+      - /search.php
+      - /templates/default/profile.tpl
+      - /templates/default/register.tpl
+
+   * small fix to the caching. - ts77 (08/21/2002)
+      - /include/users.php
+
+   * convert message tables into one table. rename all database
+     functions to phorum_db_?? - brian (08/18/2002)
+      - /admin.php
+      - /common.php
+      - /include/admin/newforum.php
+      - /include/admin/settings.php
+      - /include/db/mysql.php
+      - /include/users.php
+      - /index.php
+      - /list.php
+      - /read.php
+
+   * admin login was not working. - brian (08/10/2002)
+      - /include/users.php
+
+   * got the admin working, got the index.php working. redesigned the
+     tables, added and install.txt - brian (08/09/2002)
+      - /admin.php
+      - /common.php
+      - /docs/install.txt
+      - /images/trans.gif
+      - /include/admin/PhorumAdminMenu.php
+      - /include/admin/PhorumInputForm.php
+      - /include/admin/default.php
+      - /include/admin/editforum.php
+      - /include/admin/footer.php
+      - /include/admin/header.php
+      - /include/admin/index.php
+      - /include/admin/login.php
+      - /include/admin/logout.php
+      - /include/admin/newforum.php
+      - /include/admin/settings.php
+      - /include/constants.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/users.php
+      - /index.php
+      - /post.php
+      - /templates/default/index.tpl
+      - /templates/default/info.php
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/read.tpl
+      - /templates/default/read_threads.tpl
+
+   * lots of changes. Remember this is still pre alpha. - brian
+     (08/08/2002)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/format_functions.php
+      - /include/lang/english.php
+      - /include/profile_functions.php
+      - /include/users.php
+      - /index.php
+      - /list.php
+      - /login.php
+      - /post.php
+      - /profile.php
+      - /read.php
+      - /register.php
+      - /templates/default/index.tpl
+      - /templates/default/list.tpl
+      - /templates/default/list_threads.tpl
+      - /templates/default/profile.tpl
+      - /templates/default/register.tpl
+
+   * fixed read url in flat mode. - brian (07/25/2002)
+      - /list.php
+
+   * no longer passing refs from the db functions, just arrays. - brian
+     (07/12/2002)
+      - /common.php
+      - /include/db/mysql.php
+      - /list.php
+      - /post.php
+      - /read.php
+
+   * lots of fixes. - brian (06/13/2002)
+      - /common.php
+      - /include/db/mysql.php
+      - /include/lang/english.php
+      - /include/thread_sort.php
+      - /include/users.php
+      - /list.php
+      - /login.php
+      - /read.php
+      - /templates/default/login.tpl
+      - /templates/default/read_threads.tpl
+

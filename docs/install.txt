@@ -1,0 +1,76 @@
+Phorum 5 Basic Instalation
+--------------------------------------------
+
+Believe it or not, it is this simple:
+
+1. Create a database and a user for that database. See your database
+   docs for how to do this.  We can't explain them all here.
+
+2. Edit include/db/config.php.sample, save it as include/db/config.php
+   (drop the '.sample')
+
+3. Go to {forum url}/admin.php.
+
+4. Follow directions.
+
+5. Edit Settings - You must save this Settings page before moving on
+   or Phorum will not work.  Mainly, you will need to enter the email
+   information at the very bottom.  The other settings are defaulted
+   or not required.  You may however want to look over them carefully.
+
+6. Test
+
+7. Read faq.txt, and any other files in the docs dir that may help you.
+
+
+Optional change on *nix
+------------------------
+Linux, BSD, Solaris, etc.
+
+In step 5 above (Edit Settings) There is an entry called Cache Directory.
+the installer should set that to /tmp if you appear to be running a *nix
+system.  This will keep compiled PHP versions of your templates in /tmp.
+You can change the cache dir if you do not want to have your files sitting
+in /tmp on the server or if you see error messages like:
+
+Warning:
+fopen(/tmp/tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
+failed to open stream: Permission denied in
+/path/to/phorum/include/templates.php on line 184
+
+If you change the the Cache Directory, the best bet is to set it
+to ./cache and make that dir (that is already there in the Phorum dir)
+writable by the web server.  Most likely this means making it world
+writeable (chmod 777).  If you do not have access to the shell prompt
+of the server and are using only FTP to access the server, please see
+your FTP clients help on setting the permissions for a dir.
+
+
+
+Additional issues for Windows
+------------------------------
+
+In step 5 above (Edit Settings) There is an entry called Cache Directory.
+the installer should set that to C:\Windows\Temp. if it can detect you are
+using Windows.  This should work for most modern Windows versions.  If it
+does not, you will see error messages like:
+
+Warning:
+fopen(c:\windows\temp\tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
+failed to open stream: Permission denied in
+c:\path\to\phorum\include\templates.php on line 184
+
+You will need to change the Cache Directory.  The Phorum team is not very
+familiar with Windows as a web server platform.  We can only tell you that it
+will need to be something that the web server can write to.  ./cache has
+worked for some.
+
+Also, windows does not support strftime fully.  You will need to edit your
+language file and change the lines: 
+
+    $PHORUM['long_date']="%B %e, %Y %I:%M%p";
+    $PHORUM['short_date']="%D %I:%M%p";
+
+to something that will work for you.  You can see 
+http://php.net/manual/en/function.strftime.php for information on the
+formatting options as well as the formats that Windows does not support.

@@ -1,0 +1,30 @@
+Preliminary Upgrade-Instructions
+
+
+Please keep in mind, that these instructions are neither
+complete nor final.
+
+1.) Upgrading from a phorum5-version to another phorum5-version
+
+The simplest upgrade method is just to download a newer phorum5 package, and extract it on top of the current one.
+Then edit include/db/config.php with your database settings, and go to your Phorum. If a database upgrade is
+needed, you will be prompted to go to the admin page.
+
+This preserves all of your settings and modules, but will overwrite hacks and any changes made to the default
+template (templates/default, other templates will be alright). To preserve these changes, you should either extract 
+the new phorum to its own directory and reapply your changes, or back up your existing installation so you can 
+reapply the changes to the new one while it is "live".
+
+
+2.) Upgrading from phorum-3.4.x to phorum5
+
+There is a small script in the scripts dir, named phorum3to5convert.php.
+It contains instructions at the top of itself.
+This script is also not yet complete, it converts forums, messages, users, groups
+and moderators. 
+NOT yet converted are attachments ... permission-LEVELS will never be converted.
+
+Also there is an additional script named "update_postcount.php" in the scripts-directory.
+It updates the number of posts of a user which is shown in their profile.
+If you want correct numbers just run this once AFTER the conversion is done.
+It needs to be copied over to the main phorum5-directory too before its run.

@@ -1,0 +1,931 @@
+Phorum 5 Changelog
+---------------------------------------------------------------------------
+
+Release: phorum.5.0.15
+-----------------------
+
+   * Better handle invalid input for page value in url. - brian
+     (03/10/2005)
+
+   * Better handle invalid input for user_id in url. - brian
+     (03/10/2005)
+
+   * Redirect URL needs to encode the url parts - brian (03/10/2005)
+
+   * make checkdnsrr-calls only if function exists - ts77 (03/09/2005)
+
+   * fixed bug in email-panel of cc - ts77 (03/09/2005)
+
+   * added mark-thread-read (patch from Panu, thx!) - ts77 (03/05/2005)
+
+   * First commit of mysql full text search - brian (03/01/2005)
+
+   * You can reply via PM - brian (03/01/2005)
+
+   * Subscriptions now changed when threads are moved. - brian
+     (02/28/2005)
+
+   * Fixed a possible XSS issue - brian (02/22/2005)
+
+   * Forum id carried in group parts of CC now. - brian (02/22/2005)
+
+Release: phorum.5.0.14a
+------------------------
+
+   * clearing special-characters from attachment-name (thanks to Jon
+     Oberheide) - ts77 (02/21/2005)
+
+   * Removed Upload files permission option. Never used. - brian
+     (02/21/2005)
+
+Release: phorum.5.0.14
+-----------------------
+
+   * fixed wrong fallback to default-template if user-template is set as
+     empty - ts77 (02/16/2005)
+
+   * fixed problem if account is denied before the user has verified the
+     account by mail - ts77 (02/16/2005)
+
+   * checking new user-email also against existing emails - ts77
+     (02/16/2005)
+
+   * Renamed settings variables to comply with Phorum standards - sheik
+     (02/08/2005)
+
+   * disallowing time-zone-selection works now too if a user already
+     selected a timezone. - ts77 (02/05/2005)
+
+   * implemented user-caching with the new cache-layer - ts77
+     (02/05/2005)
+
+   * Removed call to timing functions - sheik (02/05/2005)
+
+   * Added code for "open links in new window" and "anti-spam tag on
+     links" - sheik (02/05/2005)
+
+   * Settings file created to make new "open links in new window" and
+     "anti-spam tag on links" options optional - sheik (02/05/2005)
+
+   * added simple file-caching api - ts77 (12/23/2004)
+
+   * fixed permission-display in admin - ts77 (12/14/2004)
+
+   * MFH: ip-masking in preview too - ts77 (11/28/2004)
+
+   * added stripped body and full body to email-variables, documented
+     email-variables - ts77 (11/28/2004)
+
+   * added closed-flag to list-page - ts77 (11/28/2004)
+
+   * moved custom profile-fields into their own table and made options
+     for limiting them in size and htmlencoding them - ts77 (11/26/2004)
+
+   * new upgrade-system: only one upgrade-file at a time, new numbering
+     - ts77 (11/25/2004)
+
+   * moved format_functions.php out of the condition - ts77
+     (11/23/2004)
+
+   * changed threaded-list/-read to use padding for indenting and
+     wrapping long subjects - ts77 (11/23/2004)
+
+   * fixed message after editing - ts77 (11/22/2004)
+
+   * Changed email regex to be more compatible with modern domain names.
+     - brian (11/22/2004)
+
+   * new hooks cc_user_save, before_register - changed hook
+     after_register - ts77 (11/16/2004)
+
+   * report a post split out from read.php, allows user to explain the
+     report - tridus (11/16/2004)
+
+   * added "search"-hook - ts77 (11/16/2004)
+
+   * fixed saving passwords (disallowed empty ones) - ts77 (11/16/2004)
+
+   * fixed converting pure email-addresses if no bbcode was found - ts77
+     (11/16/2004)
+
+   * showing forum-list-link only if needed - ts77 (11/15/2004)
+
+   * giving just a message if no forums are visible in a folder - ts77
+     (11/12/2004)
+
+   * changed default for new folders to be visible - ts77 (11/12/2004)
+
+Release: phorum.5.0.13a
+------------------------
+
+   * reverted more of the entity changes - ts77 (11/11/2004)
+
+Release: phorum.5.0.13
+-----------------------
+
+   * Added a lot of code to check for invalid input - brian
+     (11/10/2004)
+
+   * Requests for passwords for users that have not verified will not be
+     sent a new verification email - brian (11/09/2004)
+
+   * some more precautions for html-entities - ts77 (11/08/2004)
+
+   * logout works with empty REFERER now too - ts77 (11/08/2004)
+
+   * fixed wrong message counts in threaded list - ts77 (11/03/2004)
+
+   * fixed backurl in controlcenter while being in a forum-folder - ts77
+     (11/02/2004)
+
+   * removed requirement to specify a description for forum/folder in
+     the admin - ts77 (11/02/2004)
+
+   * fixed user_template and user_language to allow the "default"-value
+     - ts77 (11/01/2004)
+
+   * fixed bug #531, msgs with attachments didn't get the right status
+     in moderated forums - ts77 (10/29/2004)
+
+   * Escape the HTML in name and description when editing - brian
+     (10/28/2004)
+
+Release: phorum.5.0.12
+-----------------------
+
+   * XSS really gone now - ts77 (10/27/2004)
+
+   * added profile hook to controlcenter-summary too - ts77
+     (10/27/2004)
+
+   * better defaults for page if not set - ts77 (10/26/2004)
+
+   * fixed sql-injection issue - ts77 (10/25/2004)
+
+   * fixed sql-injection issue - ts77 (10/24/2004)
+
+   * fixed showing pm-inbox after deleting in the pm-sentbox - ts77
+     (10/24/2004)
+
+   * fixed wrong message-index if not logged in - ts77 (10/24/2004)
+
+   * posts in closed threads can't be edited - tridus (10/22/2004)
+
+   * Fixed session timeout to allow session cookies by using 0 days -
+     brian (10/22/2004)
+
+   * Updated bbcode module to have classes in some of the markup - brian
+     (10/22/2004)
+
+   * fixed bug #526/#528 - ts77 (10/21/2004)
+
+   * fixed move-notification in threaded view - ts77 (10/21/2004)
+
+   * fixed "message not found" for threaded-read - ts77 (10/21/2004)
+
+   * added (optional) move-notification - ts77 (10/19/2004)
+
+Release: phorum.5.0.11
+-----------------------
+
+   * bug fix release (10/15/2004)
+
+   * added attachment-conversion (thanks to Clemens Weiss), checking for
+     existing group and user tables now - ts77 (10/14/2004)
+
+   * added script for updating the post-counts of users after conversion
+     - ts77 (10/13/2004)
+
+   * file update_postcount.php was initially added on branch phorum_5_0.
+     - ts77 (10/13/2004)
+
+   * fixed hidden messages showing in threaded-list - ts77 (10/11/2004)
+
+   * censor-filter now works per-forum too - ts77 (10/09/2004)
+
+   * file creating_templates.txt was initially added on branch
+     phorum_5_0. - ts77 (10/09/2004)
+
+   * bodies only loaded on request now in the message-list - ts77
+     (10/09/2004)
+
+   * deleting subscriptions on deleting a message too - ts77
+     (10/09/2004)
+
+   * Better detection of js in HTML mod - brian (10/08/2004)
+
+   * Reworked key for getting post count for better performance - brian
+     (10/08/2004)
+
+   * Reworked key for getting post count for better performance - brian
+     (10/07/2004)
+
+   * Email validity check now allows for capital letters in the email's
+     domain - brian (10/04/2004)
+
+   * Both datestamp and last_post_time are now formatted in threaded and
+     non-threaded mode. - brian (09/30/2004)
+
+   * Improved performance of getting unapproved list for moderators -
+     brian (09/30/2004)
+
+   * Setting tz to default now works properly - brian (09/29/2004)
+
+   * Closed posts could be brute force replied to. - brian (09/28/2004)
+
+   * Fixed warning when adding/editing forums. - brian (09/27/2004)
+
+   * The HTML_TITLE is not set correctly on pages of a read page. -
+     brian (09/25/2004)
+
+   * fixed newflags for moved threads - ts77 (09/22/2004)
+
+   * fixed ip-display in preview - ts77 (09/20/2004)
+
+   * Registration emails will now work better for AOL users - brian
+     (09/15/2004)
+
+   * Fixed possible XSS issue with the linked author - brian
+     (09/15/2004)
+
+   * fixed url in redirect after adding/editing a forum - ts77
+     (09/14/2004)
+
+   * Bare urls with capital letters in them were not getting converted
+     properly. - brian (09/14/2004)
+
+   * Fixed the email and url tags in BBCode - brian (09/14/2004)
+
+Release: phorum.5.0.10
+-----------------------
+
+   * BBCode module only works for properly formatted codes now. Urls are
+     shortened for better display. - brian (09/13/2004)
+
+   * Fixed potential XSS in last post author name - brian (09/10/2004)
+
+   * correctly removing session-info from all notification-urls - ts77
+     (09/10/2004)
+
+   * Session timeout can be 0 now. - brian (09/10/2004)
+
+   * Added module localization support - tridus (09/09/2004)
+
+   * added forum_last_active column for forum where the user was last
+     active. - ts77 (09/07/2004)
+
+   * Email verification is no more inline with RFC 2822 - brian
+     (09/07/2004)
+
+   * We now give better messages upon new installations. - brian
+     (09/06/2004)
+
+   * new message-notifications for moderators work correctly now - ts77
+     (09/06/2004)
+
+   * Fixed bug where sticky posts edited by non-moderators stay sticky -
+     brian (09/06/2004)
+
+   * Changes in admin to forums send you back to that forums parent
+     instead of the top. - brian (09/06/2004)
+
+   * anchors for read-links now have a msg-<number> name - ts77
+     (09/05/2004)
+
+   * fixed that user-timezone set to default is really ignored for
+     tz-conversion then - ts77 (09/05/2004)
+
+   * conversion-script now handles permissions and groups /
+     group-members too - ts77 (09/03/2004)
+
+   * fixed threaded-view paging. threads could be hidden between page 1
+     and 2. - ts77 (09/02/2004)
+
+Release: phorum.5.0.9
+----------------------
+
+   * bug fix release (09/01/2004)
+
+   * new hook \"moderation\" i.e. for logging moderator actions - ts77
+     (08/31/2004)
+
+   * fixed missing links and vars for mails about attachments - ts77
+     (08/31/2004)
+
+   * storing forum-offsets in the settings now on conversion - ts77
+     (08/31/2004)
+
+   * installer now checks if cache is writable on a new install - tridus
+     (08/31/2004)
+
+   * fixed \"mark all messages read\" in empty forums - ts77
+     (08/28/2004)
+
+Release: phorum.5.0.8.RC
+-------------------------
+
+   * bumped release version - brian (08/20/2004)
+
+   * newflags are now moved while moving a message - ts77 (08/20/2004)
+
+   * Added a hook to the index.php page - brian (08/19/2004)
+
+   * Added new message count to forum index - brian (08/19/2004)
+
+   * pm-preview now formatted too - ts77 (08/19/2004)
+
+   * Created a function for module writers that will fetch the last x
+     messages with several options - brian (08/19/2004)
+
+   * Attachments can now be deleted by users and moderators - brian
+     (08/18/2004)
+
+   * New Smilies - brian (08/17/2004)
+
+   * added script.php, external and scheduled hooks to run things from
+     command line - tridus (08/12/2004)
+
+   * moderator notifications are now different for messages needing
+     approval and not needing approval - ts77 (08/11/2004)
+
+   * Moved closed status to its own field for better logic and
+     performance - brian (08/09/2004)
+
+   * enhancements for smiley-module (thanks to Cameron Brunner) - ts77
+     (08/08/2004)
+
+   * *** empty log message *** - ts77 (08/07/2004)
+
+   * Improved memory usage of the 3to5 upgrade script. - brian
+     (08/04/2004)
+
+   * rewrote newflag/readflag storage to be more flexible - ts77
+     (08/03/2004)
+
+   * added email-verification on email-change - ts77 (08/03/2004)
+
+   * fixed saving permissions, missing break in display_fixed - ts77
+     (07/29/2004)
+
+Release: phorum.5.0.7a.beta
+----------------------------
+
+   * removed debugging output - security issue - ts77 (07/28/2004)
+
+   * fixed broken p3-to-p5-conv - ts77 (07/28/2004)
+
+Release: phorum.5.0.7.beta
+---------------------------
+
+   * bug fix release (07/26/2004)
+
+   * Improved private messaging. Added formatting, security - brian
+     (07/23/2004)
+
+   * fix table name typo - brian (07/23/2004)
+
+   * Added support to look at banned names and emails to the register
+     page - brian (07/22/2004)
+
+   * tweaked new installation settings, added smiley defaults - tridus
+     (07/22/2004)
+
+   * changed config.php to config.php.sample - tridus (07/22/2004)
+
+   * Improved followed (bookmarks/subscriptions) threads - brian
+     (07/19/2004)
+
+   * allowed for hidden languages/templates - ts77 (07/19/2004)
+
+   * added fixed display-settings - ts77 (07/19/2004)
+
+   * Added hooks to all moderation functions - brian (07/18/2004)
+
+   * Improved followed (bookmarks/subscriptions) threads - brian
+     (07/18/2004)
+
+   * Improved the email sent when a post is reported. - brian
+     (07/17/2004)
+
+   * added thread-bookmarking (thanks to Arthur Louie) - ts77
+     (07/17/2004)
+
+   * added convertViewCount.php to scripts directory - converts
+     viewcounts to new format - tridus (07/17/2004)
+
+   * Improved help text with regards to permissions - brian
+     (07/17/2004)
+
+   * Added check of read permissions to attachments. - brian
+     (07/16/2004)
+
+   * Added tighter security to seaches - brian (07/16/2004)
+
+   * added float-to-top for threaded mode AND an additional setting for
+     number of threads on the list-page on threaded-mode, paged list for
+     threaded - ts77 (07/15/2004)
+
+   * added user_list hook - tridus (07/15/2004)
+
+   * added ability for users to join groups in CC, admin can disallow on
+     a per-group basis - tridus (07/11/2004)
+
+   * groupmod improvements - can filter the list of users, group list
+     shows how many unapproved - tridus (07/11/2004)
+
+   * added index for unapproved messages-queries - ts77 (07/10/2004)
+
+   * *** empty log message *** - ts77 (07/10/2004)
+
+   * added read-url to subscriptions-page - ts77 (07/10/2004)
+
+   * added option to show smileys in subject too - ts77 (07/10/2004)
+
+   * added users data as USERINFO to the template-vars - ts77
+     (07/09/2004)
+
+   * fixed checking for correct user if reading a PM - ts77
+     (07/08/2004)
+
+   * Optimized queries for flat list view. Should help with speed issues
+     some have seen. - brian (07/07/2004)
+
+   * added fallback to default-language if nonexistent language selected
+     - ts77 (07/04/2004)
+
+   * allowed macro-expansion in mail-subject too - ts77 (07/03/2004)
+
+   * added SearchTips to the search-page - ts77 (07/03/2004)
+
+   * added missing signature to post-preview - ts77 (07/01/2004)
+
+   * added a notification box to alert users of things that need their
+     attention - tridus (06/21/2004)
+
+   * initial group moderation interface, can list group members in cc
+     (assign mods in admin) - tridus (06/19/2004)
+
+   * group moderation is fully functional - tridus (06/19/2004)
+
+   * added optional dropdown list of users when sending a new private
+     message - tridus (06/19/2004)
+
+   * added error-checking for too large message-bodies - ts77
+     (06/18/2004)
+
+   * added DST-setting, started email-change verification (not finished
+     yet) - ts77 (06/14/2004)
+
+   * added confirmation before a post is reported - tridus (06/10/2004)
+
+   * fixed banlist-checking (was wrong order of arguments) - ts77
+     (06/01/2004)
+
+   * fixed setting a wrong password in the user-admin if no password is
+     set. - ts77 (05/30/2004)
+
+   * merged viewcount-mod into the main-code, allows per-forum setting
+     now - ts77 (05/29/2004)
+
+Release: phorum.5.0.6.beta
+---------------------------
+
+   * File Uploads in CC now global option. Fixes bugs with this system -
+     brian (05/25/2004)
+
+   * report a post now works - tridus (05/24/2004)
+
+   * approving a whole thread is now implemented - ts77 (05/22/2004)
+
+   * removed page-links from list if the read-view is set to threaded -
+     ts77 (05/20/2004)
+
+   * fixed missing sticky/announcement in preview - ts77 (05/20/2004)
+
+   * tightened checks for valid values in search-links - ts77
+     (05/20/2004)
+
+   * fixed missing message-id and -thread in notification messages for
+     attachments - ts77 (05/20/2004)
+
+   * really abort an message-edit if an error occured - ts77
+     (05/20/2004)
+
+   * *** empty log message *** - ts77 (05/18/2004)
+
+   * Added an after_register hook - brian (05/15/2004)
+
+   * User searches in admin now list all users when page first accessed
+     - brian (05/15/2004)
+
+   * improved ban-list checking (does user/email check for registered
+     now too) - ts77 (05/14/2004)
+
+   * overwriting temporary password too on password-change - ts77
+     (05/08/2004)
+
+   * unapproved messages are now marked while reading them - ts77
+     (05/07/2004)
+
+   * author-name is changed now on deleting a user (can be disabled with
+     a constant in include/constants.php) - ts77 (05/07/2004)
+
+   * hidden/unapproved messages are now ignored in thread-info like
+     count and new - ts77 (05/07/2004)
+
+   * Title tag now contains some dyanmic information - brian
+     (05/02/2004)
+
+   * Adding a global HTML title and support for additional tags in the
+     head of the page. - brian (05/02/2004)
+
+   * Added new constant for string separator for things like the title
+     tag - brian (05/02/2004)
+
+   * added user-delete to the admin - ts77 (05/02/2004)
+
+   * added an admin option for deleting old messages/threads - ts77
+     (05/01/2004)
+
+   * Portable code should work now - brian (04/30/2004)
+
+   * enabled IIS-hack - checking for SERVER_SOFTWARE-string - ts77
+     (04/30/2004)
+
+   * many improvements to the templates, better configurability,
+     alternating colors and stuff - ts77 (04/30/2004)
+
+   * Added support for meta tags in language files - brian (04/23/2004)
+
+   * Added a link to phorum.org in the template footer - brian
+     (04/20/2004)
+
+   * fixed signature-flag in user-edit of messages - ts77 (04/18/2004)
+
+   * fixed view of usernames with html-characters, html-encoded now -
+     ts77 (04/18/2004)
+
+   * *** empty log message *** - ts77 (04/18/2004)
+
+   * forum-list link goes now back to the parent-folder, not the
+     root-folder - ts77 (04/10/2004)
+
+   * email-addresses of anonymous users are now shown in the list too -
+     ts77 (04/10/2004)
+
+   * fixed hide_email not saved - ts77 (04/08/2004)
+
+   * fixed hidden messages shown in list - ts77 (04/07/2004)
+
+   * Fixed portable code. - brian (04/02/2004)
+
+   * You can no longer edit settings for a module that is turned off. -
+     brian (04/02/2004)
+
+   * Searches are now url encoded so that url characters do not break
+     searching. - brian (04/01/2004)
+
+   * User registering from a forum are now treated properly. - brian
+     (03/29/2004)
+
+Release: phorum.5.0.5.beta
+---------------------------
+
+   * bug fix release (03/23/2004)
+
+Release: phorum.5.0.4a.beta
+----------------------------
+
+   * bug fix release (03/22/2004)
+
+Release: phorum.5.0.4.beta
+---------------------------
+
+   * implemented dates formatted by locale - ts77 (03/21/2004)
+
+   * Added the date a user is registered and the ability to track when a
+     user last used Phorum. - brian (03/17/2004)
+
+   * Added ability to detect if cookies are off on the browser. - brian
+     (03/17/2004)
+
+   * Users can only search forums they are allowed to read now. - brian
+     (03/17/2004)
+
+   * added link to private messages to the default template, with number
+     of new messages - tridus (03/12/2004)
+
+   * Added user_info hook so module writers could alter user sigs in
+     read.php - brian (03/05/2004)
+
+   * fixed bug #489, selecting the max-id from wrong database - ts77
+     (03/05/2004)
+
+   * added send_mail-hook for plugging into the sending of messages -
+     ts77 (03/04/2004)
+
+   * fixed saving user-data in the cc - ts77 (03/04/2004)
+
+Release: phorum.5.0.3.beta
+---------------------------
+
+   * fixed bug #478 - ts77 (03/03/2004)
+
+   * added an idea, group moderators - ts77 (03/03/2004)
+
+   * added user-selectable template - ts77 (03/02/2004)
+
+   * Registration Moderation Added - brian (03/01/2004)
+
+   * added user-selectable language - ts77 (02/25/2004)
+
+   * First commit of attachments. - brian (02/13/2004)
+
+   * added mixed view by checking threaded/non-threaded separately in
+     list and read - ts77 (01/24/2004)
+
+   * If there is only one forum, index.php now redirects to it. - brian
+     (12/09/2003)
+
+   * honor admin-setting of allowed tz-selection or not - ts77
+     (12/09/2003)
+
+   * This is a test of the new cvs update log script. - brian
+     (11/26/2003)
+
+   * fixed replies to sticky posts - brian (11/02/2003)
+
+Release: phorum.5.0.2.alpha
+----------------------------
+
+   * bug fix release (10/30/2003)
+
+   * stickies did not show up if there were no other messages. - brian
+     (10/29/2003)
+
+   * added user-selectable timezone - ts77 (10/04/2003)
+
+   * implemented banlists per forum and put banlists in a table - ts77
+     (09/27/2003)
+
+   * Moderators can now view all users emails. - brian (09/19/2003)
+
+   * Added a user file storage area to CC - brian (09/18/2003)
+
+   * Added a user file storage area to CC - brian (09/17/2003)
+
+   * Add email confirmation of new registrations. - brian (08/01/2003)
+
+   * added option to show signature in a post or not added default
+     settings for email-notify and add-signature to controlcenter ->
+     boardsettings - ts77 (07/25/2003)
+
+   * Added bad word filter. - brian (07/24/2003)
+
+   * added duplicate-post check - ts77 (07/19/2003)
+
+   * ControlCenter (mostly) finished - ts77 (07/12/2003)
+
+   * moved prepost-moderation from its own page to the control-center -
+     ts77 (06/15/2003)
+
+   * Added list of message-subscriptions to the control-center - ts77
+     (06/15/2003)
+
+   * activated display-order in the admin - ts77 (06/15/2003)
+
+   * added control-center - ts77 (06/10/2003)
+
+   * Moderator's ips are no longer shown. - brian (06/10/2003)
+
+Release: phorum.5.0.1.alpha
+----------------------------
+
+   * bug fix release (06/08/2003)
+
+   * $PHORUM['DATA']-array and this entry is used as template-name then.
+     - ts77 (05/31/2003)
+
+   * Added preview - brian (05/30/2003)
+
+   * Added "last post" feature in list.php to jump to last post in
+     thread - brian (05/25/2003)
+
+   * Fixed lost password so that it now sends a temp password like
+     Phorum 3 does. - brian (05/25/2003)
+
+   * Public users can no longer post using registered names. - brian
+     (05/25/2003)
+
+   * Added showing of IP to read page. - brian (05/23/2003)
+
+   * Added quoting on reply. Does not use javascript. - brian
+     (05/23/2003)
+
+Release: phorum.5.0.0.alpha
+----------------------------
+
+   * fixed missing localizations of GoTo - ts77 (04/22/2003)
+
+   * Changed language file. All keys to array have no spaces now. -
+     brian (04/09/2003)
+
+   * Rewrote large portions of the template engine. - brian
+     (04/09/2003)
+
+   * added .htaccess-files in important directories to increase security
+     - ts77 (04/05/2003)
+
+   * added a first version of a conversion script from phorum3.4 to
+     phorum5 - ts77 (04/04/2003)
+
+   * Added HTML module to allow safe HTML in messages. - brian
+     (04/04/2003)
+
+   * Added/fixed paging on the list page. - brian (04/03/2003)
+
+   * fix for update_forum_stats if no posts in forum. - ts77
+     (03/09/2003)
+
+   * added display of number of edits and last edit to read-view added
+     switch for allowing edit of posts to the admin - ts77 (02/24/2003)
+
+   * added pre-post moderation - ts77 (02/23/2003)
+
+   * added viewcount-mod, new hook "readthreads" - ts77 (02/21/2003)
+
+   * Added a post hook. - brian (02/13/2003)
+
+   * Added a meta field to the message table to store extra info. Useful
+     for mods to use. - brian (02/13/2003)
+
+   * fixed new-flags while using paging - ts77 (02/12/2003)
+
+   * Added paging to the read page including page links on list.php -
+     brian (02/04/2003)
+
+   * Fixed more potential cross sight scripting issues with form input.
+     - brian (01/30/2003)
+
+   * Fixed a cross sight scripting issue when echoing sql errors. -
+     brian (01/30/2003)
+
+   * User/Group permissions fully done. - brian (01/23/2003)
+
+   * Added Time Zone offset. - brian (01/23/2003)
+
+   * Added group admin - brian (01/23/2003)
+
+   * Added sigs to the read page - brian (01/20/2003)
+
+   * implemented user-edits of posts. - ts77 (01/19/2003)
+
+   * implemented first try of a new upgrade-system - ts77 (01/18/2003)
+
+   * added edit-post parts - ts77 (01/18/2003)
+
+   * Added new item about our CSS/XHTML stance. - brian (01/16/2003)
+
+   * added option to add moderated forums to a user through the
+     user-admin. - ts77 (01/13/2003)
+
+   * threaded or flat is now a user option. - brian (01/12/2003)
+
+   * added close/reopen thread - ts77 (01/12/2003)
+
+   * fixed sticky and announcement posting - brian (01/12/2003)
+
+   * Added announcement support - brian (01/12/2003)
+
+   * Added color and size tags to bbcode. - brian (01/12/2003)
+
+   * fixed sticky and announcement posting / added nav to post form -
+     brian (01/12/2003)
+
+   * laid groundwork for popup help in admin - brian (01/11/2003)
+
+   * some more template-code, "if" allows now loopvars and array-vars
+     too - ts77 (01/11/2003)
+
+   * added move-thread functionality - ts77 (01/11/2003)
+
+   * enabled list-moderation - ts77 (01/11/2003)
+
+   * added code to show menu descriptions in status bar - brian
+     (01/11/2003)
+
+   * changed user functions to all be named phorum_user_* - brian
+     (01/10/2003)
+
+   * added a wrapper to allow multiple Phorum's from one source base -
+     brian (01/10/2003)
+
+   * added first moderation-parts (delete message and delete message
+     with answers) - ts77 (01/10/2003)
+
+   * fixed lost password error. - brian (01/10/2003)
+
+   * improved installer - brian (01/10/2003)
+
+   * fixed link after register - brian (01/08/2003)
+
+   * Added user admin module. - brian (01/07/2003)
+
+   * email banning was not working - brian (01/06/2003)
+
+   * Modified code to include header and footer templates instead of the
+     templates having to do it. - brian (12/19/2002)
+
+   * added mark-all-read-functionality - ts77 (11/23/2002)
+
+   * Improved error handling of table creation - brian (11/19/2002)
+
+   * added newflag-support, uses a new table and only works if a user is
+     logged in - ts77 (11/09/2002)
+
+   * bbcode handles the url translation of all kinds. - brian
+     (11/06/2002)
+
+   * Changed the read hook to run before the body is formatted. mods
+     must use special methods to insert tags. - brian (10/30/2002)
+
+   * heh, allow_html was reversed. - brian (10/25/2002)
+
+   * fixed lack of ] - brian (10/21/2002)
+
+   * search was skipping the first result. - brian (10/16/2002)
+
+   * search template - brian (10/16/2002)
+
+   * fixing modifystamp and thread_count. - brian (10/12/2002)
+
+   * made index.php get actual data for posts and last post. - brian
+     (10/11/2002)
+
+   * removed finish template. - brian (10/07/2002)
+
+   * $extra not implemented in all places. - brian (10/07/2002)
+
+   * check for smiley dir before trying to read from it. - brian
+     (10/07/2002)
+
+   * adding mod settings admin. - brian (10/06/2002)
+
+   * some smiley-examples - ts77 (10/06/2002)
+
+   * updating error codes, got modules working, added bb code mod, added
+     dns lookup option and email validation. - brian (10/06/2002)
+
+   * add replace mod and mod creation doc. - brian (10/06/2002)
+
+   * added function for admin-form, corrected hooks-code, added
+     smiley-plugin - ts77 (10/06/2002)
+
+   * adding mod admin code and email validation code. - brian
+     (10/06/2002)
+
+   * fixed some install errors. - brian (10/06/2002)
+
+   * actually adding bbcode module now. - brian (10/06/2002)
+
+   * fixes for "headers sent" ... just some newlines removed - ts77
+     (10/06/2002)
+
+   * more template stuff. more admin stuff. folders working. - brian
+     (08/29/2002)
+
+   * updated more of the template. - brian (08/28/2002)
+
+   * tweaking install process. - brian (08/28/2002)
+
+   * got search working. - brian (08/27/2002)
+
+   * added ban list to admin. More work on default template. Started
+     phorum.php wrapper script. - brian (08/24/2002)
+
+   * first shot at a template. added some stubs for needed features. -
+     brian (08/23/2002)
+
+   * got the install wizard working. started on search - brian
+     (08/21/2002)
+
+   * small fix to the caching. - ts77 (08/21/2002)
+
+   * convert message tables into one table. rename all database
+     functions to phorum_db_?? - brian (08/18/2002)
+
+   * admin login was not working. - brian (08/10/2002)
+
+   * got the admin working, got the index.php working. redesigned the
+     tables, added and install.txt - brian (08/09/2002)
+
+   * lots of changes. Remember this is still pre alpha. - brian
+     (08/08/2002)
+
+   * fixed read url in flat mode. - brian (07/25/2002)
+
+   * no longer passing refs from the db functions, just arrays. - brian
+     (07/12/2002)
+
+   * lots of fixes. - brian (06/13/2002)
+
