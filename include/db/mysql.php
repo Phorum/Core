@@ -802,7 +802,8 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
  * the $length given.
  */
 
-function phorum_db_search($search, $offset, $length, $match_type, $match_date, $match_forum, $body, $author, $subject){
+function phorum_db_search($search, $offset, $length, $match_type, $match_date, $match_forum, $body, $author, $subject)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
     $start = $offset * $PHORUM["list_length"];
@@ -841,7 +842,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     $conj = ($match_type=="ALL") ? "and" : "or";
 
-    $sql = "select message_id from {$PHORUM['message_table']} where " . implode(" $conj ", $clause);
+    $sql = "select message_id from {$PHORUM['message_table']} where status > 0 and " . implode(" $conj ", $clause);
 
     if($match_date>0){
         $ts=time()-86400*$match_date;
