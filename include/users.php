@@ -241,7 +241,7 @@ function phorum_user_save_simple($user)
     if ( empty( $user["user_id"] ) ) return false;
     
     // clear the cache only if we are not just updating the activity
-    if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+    if(isset($GLOBALS['PHORUM']['cache_users']) && $GLOBALS['PHORUM']['cache_users']) {
     	if(!(count($user) == 3 && isset($user['date_last_active'])))
         	phorum_cache_remove('user',$user['user_id']); 
     }
