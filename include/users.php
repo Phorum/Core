@@ -33,7 +33,8 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION )
 
     $success = false;
 
-    if ( !empty( $sessid ) ) {
+    if ( !empty( $sessid ) && $GLOBALS["PHORUM"]["use_cookies"]) {
+    	// this part is for cookie-authentication where we have username and password
         list( $user, $md5pass ) = explode( ":", $sessid, 2 );
         $user = urldecode( $user );
         if ( $user_id = phorum_db_user_check_pass( $user, $md5pass ) ) {
@@ -46,12 +47,25 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION )
                 phorum_user_clear_session( $cookie );
             } 
         } 
-    } 
+    } elseif( !empty( $sessid ) && !$GLOBALS["PHORUM"]["use_cookies"]) {
+    	// this part is for uri-authentication where we only have a session-id
+    	$uri_session_id = urldecode( $sessid );
+    	if ( $user_id = phorum_db_user_check_field('sessid',$uri_session_id,'=')) {
+ 			$user = phorum_user_get( $user_id );
+            if ( $user["active"] ) {
+                $GLOBALS["PHORUM"]["user"] = $user;
+                $success = true;
+                phorum_user_create_session( $cookie, false, $user['sessid'] );
+            } else {
+                phorum_user_clear_session( $cookie );
+            }    		
+    	}
+    }
 
     return $success;
 } 
 
-function phorum_user_create_session( $cookie = PHORUM_SESSION, $session_cookie = false )
+function phorum_user_create_session( $cookie = PHORUM_SESSION, $session_cookie = false, $uri_session_id = '' )
 {
     $PHORUM = $GLOBALS["PHORUM"]; 
     // require that the global user exists
@@ -68,6 +82,7 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION, $session_cookie =
             }
             setcookie( $cookie, $sessid, $timeout, $PHORUM["session_path"], $PHORUM["session_domain"] );
         } else {
+        	$sessid = $uri_session_id;
             $GLOBALS["PHORUM"]["DATA"]["GET_VARS"][] = "$cookie=" . urlencode( $sessid );
             $GLOBALS["PHORUM"]["DATA"]["POST_VARS"] .= "<input type=\"hidden\" name=\"$cookie\" value=\"$sessid\" />";
         } 

@@ -112,7 +112,14 @@ if ( count( $_POST ) > 0 ) {
                 // destroy the temp cookie
                 setcookie( "phorum_tmp_cookie", "", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
             }
-            phorum_user_create_session(); 
+            if(!$PHORUM["use_cookies"]) { // create and store the uri-session-id
+            	$uri_session_id=md5($_POST['username'].microtime().$_POST['password']);
+            	$user=array('user_id'=>$PHORUM['user']['user_id'],'sessid'=>$uri_session_id);
+            	phorum_user_save_simple($user);
+            	phorum_user_create_session(PHORUM_SESSION,false,$uri_session_id);
+            } else {
+            	phorum_user_create_session(); 
+            }
             // redirecting to the register page is a little weird.  So, we just go to the list page if we came from the register page.
             if ( isset( $PHORUM['use_cookies'] ) && $PHORUM["use_cookies"] && !strstr( $_POST["redir"], "register." . PHORUM_FILE_EXTENSION ) ) {
                 $redir = $_POST["redir"];
