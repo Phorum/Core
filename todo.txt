@@ -1,0 +1,76 @@
+5.1.x todos (in no order):
+---------------------------
+more speed through caching
+
+default forum options in admin
+
+inheritence of forum settings.
+
+link from list page to the first new message of a thread.
+--Put a link on the followed thread page to the last post in the thread.
+
+completely new template from scratch
+--feature more of the data that forum has
+--use more advanced CSS
+
+redo mysql search to use fulltext/like mix
+
+check for forum being down and give the admin the option to down the forum.
+
+make announcements have a better reason that you can not reply to them.
+
+super-stickies - stickies on all forums
+
+Reply (post-form) in separate page (optional)
+
+more moderation functions: 
+--thread-split/thread-merge
+--move a message to be its own thread
+
+virtual root-folders
+no more folders-forums have sub forums
+
+preview when editing message
+
+reply to a message via pm
+
+"mark thread read" in read-view
+
+support for more db-layers (goal we will need help with)
+
+better attachment workflow
+
+enhanced pm-system
+--folders
+--???
+
+
+
+
+
+
+
+
+
+
+other todo that might get done:
+--------------------------------
+figure out how to not require caching of templates
+
+moderator access to forum properties
+
+configure the order in which modules run in a hook.
+
+allow users to provide urls in place of uploads.
+
+
+todos that could be modules or core parts
+------------------------------------------
+adding options to block users/ips/names/emails from read-view (some icons behind the username?)
+
+optional image security code for posting to prevent scripted posts (um, mod?)
+
+
+todos that have been replaced with modules
+-------------------------------------------
+show attachments inline

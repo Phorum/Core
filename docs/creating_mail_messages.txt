@@ -1,0 +1,31 @@
+
+This is a small HowTo for creating mail-messages the way you want them 
+
+1. The bodies and subjects for the mail-messages are defined in the language-files
+2. you can use some tags in the mail-body and mail-subject which are replaced by 
+   related data from the post its about
+
+
+These are the tags you can use, with their explanations.
+
+User-Notices about a new message:
+- %forumname%, The name of the current forum
+- %author%   , The name of the author of the message
+- %subject%  , The subject of the message
+- %full_body%, The full body of the message including all HTML/BBCode tags, use with care!
+- %plain_body%, The body of the message which is stripped from all HTML/BBCode tags
+- %read_url% , The url where this message can be read
+- %remove_url%, The url to unsubscribe from that thread
+- %noemail_url%, The url to set the subscription to "no email", like a bookmark only
+- %followed_threads_url%, The url to the controlcenter-page where you can look at all your subscribed threads
+
+
+Moderator-Notification about a new message:
+- %forumname%, The name of the current forum
+- %author%   , The name of the author of the message
+- %subject%  , The subject of the message
+- %full_body%, The full body of the message including all HTML/BBCode tags, use with care!
+- %plain_body%, The body of the message which is stripped from all HTML/BBCode tags
+- %read_url% , The url where this message can be read
+- %approve_url%, The url to approve this message (if its a moderated forum and messages need approval)
+
