@@ -1265,7 +1265,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
             // then doing the update to subscriptions
-            $sql="UPDATE {$PHORUM['subscribers_table']} SET forum_id = $toforum where message_id IN($ids_str)";
+            $sql="UPDATE {$PHORUM['subscribers_table']} SET forum_id = $toforum where thread IN($ids_str)";
             $res = mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
             
