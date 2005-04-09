@@ -40,7 +40,11 @@ if(isset($PHORUM["args"]["approve"])){
         if($user["active"] == PHORUM_USER_INACTIVE) { // user has been denied!
              $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
              
-        } else { // user pending somehow
+        } elseif($user["active"] == PHORUM_USER_PENDING_MOD) { // waiting for moderator-approval
+        	$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"]; 
+        	// TODO: this message should be changed in 5.1 to have a unique message!!!
+        	
+        } else { // user pending both or email
             if($user["active"]==PHORUM_USER_PENDING_BOTH){
                 $moduser["active"]=PHORUM_USER_PENDING_MOD;
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
