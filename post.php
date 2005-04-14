@@ -205,7 +205,7 @@ if (count($_POST) > 0) {
         
                 if($PHORUM["redirect_after_post"]=="read"){
 
-                    $pages=ceil(($top_post["thread_count"]+1)/$PHORUM["read_length"]);
+                    $pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
 
                     if($pages>1){
                         $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
