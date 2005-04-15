@@ -66,6 +66,10 @@ if(!empty($PHORUM["PROFILE_FIELDS"])){
     foreach($PHORUM["PROFILE_FIELDS"] as $field){
         if(!isset($user[$field])) $user[$field]=""; 
     }
+    // for security
+    if(isset($user['real_name'])) {
+    	$user['real_name']=htmlspecialchars($user['real_name']);
+    }
 }
 
 $PHORUM["DATA"]["PROFILE"] = $user;
