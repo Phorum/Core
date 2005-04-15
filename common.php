@@ -116,6 +116,11 @@ include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 // get the Phorum settings
 phorum_db_load_settings();
 
+
+// a hook for rewriting vars at the beginning of common.php, 
+//right after loading the settings from the database
+phorum_hook( "common_pre", "" );
+
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
 $PHORUM["DATA"]["HTML_TITLE"] = ( !empty( $PHORUM["html_title"] ) ) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];

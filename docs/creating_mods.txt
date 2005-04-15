@@ -65,6 +65,7 @@ Hooks that exist at the time of this writing are:
     close_thread functions receive a thread id after a thread has been closed.
     Uses for this hook include sending notifications or making log entries
     in the database when editing takes place.
+    
 
     common
     -------
@@ -74,6 +75,12 @@ Hooks that exist at the time of this writing are:
     settings or want to alter some Phorum settings based on external
     parameters ( a PHP session or such ) you can use the common hook.
     common hook functions do not take any paramters.
+    
+	common_pre
+    ----------
+    same as previous just that it hooks in right after loading the settings from the
+    database, before deciding anything on language or template
+        
 
     delete
     -------
