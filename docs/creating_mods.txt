@@ -75,6 +75,11 @@ Hooks that exist at the time of this writing are:
     parameters ( a PHP session or such ) you can use the common hook.
     common hook functions do not take any paramters.
 
+	common_pre
+    ----------
+    same as previous just that it hooks in right after loading the settings from the
+    database, before deciding anything on language or template    
+    
     delete
     -------
     delete hook is called any time a message is deleted.  The function you crate
