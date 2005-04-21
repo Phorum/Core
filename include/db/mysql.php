@@ -3033,7 +3033,7 @@ function phorum_db_create_tables()
     foreach($queries as $sql){
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()){
-            $retmsg = "$err<br />";
+            $retmsg = "$err: $sql <br />";
             phorum_db_mysql_error("$err: $sql");
             break;
         }
