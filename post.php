@@ -168,6 +168,10 @@ if (count($_POST) > 0) {
                     $success = phorum_db_post_message($message);
 
                     if ($success) {
+                    	// retrieving the message again to have it in the correct format
+                    	// (otherwise its a bit messed up in the post-function)
+                    	$message=phorum_db_get_message($message["message_id"]);                    	
+                    	
                         phorum_update_thread_info($message["thread"]); 
                         if($message['parent_id'] > 0 
                         && isset($PHORUM['cache_messages']) && $PHORUM['cache_messages']) {
