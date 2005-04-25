@@ -166,8 +166,13 @@ if (count($_POST) > 0) {
 
                 if (empty($_POST["preview"])) {
                     $success = phorum_db_post_message($message);
+                    
 
                     if ($success) {
+                    	// retrieving the message again to have it in the correct format
+                    	// (otherwise its a bit messed up in the post-function)
+                    	$message=phorum_db_get_message($message["message_id"]);
+                    	
                         phorum_update_thread_info($message["thread"]); 
                         // subscribe the user to the thread if requested and is registered.
                         if ($message["email_reply"] && $message["user_id"]) {
