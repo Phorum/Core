@@ -170,6 +170,7 @@ if (count($_POST) > 0) {
                     if ($success) {
                     	// retrieving the message again to have it in the correct format
                     	// (otherwise its a bit messed up in the post-function)
+                    	$email_reply=$message['email_reply'];
                     	$message=phorum_db_get_message($message["message_id"]);                    	
                     	
                         phorum_update_thread_info($message["thread"]); 
@@ -179,7 +180,7 @@ if (count($_POST) > 0) {
 					        phorum_cache_remove('message', $message["message_id"]);
                         }
                         // subscribe the user to the thread if requested and is registered.
-                        if ($message["email_reply"] && $message["user_id"]) {
+                        if ($email_reply && $message["user_id"]) {
                             phorum_user_subscribe($message["user_id"], $PHORUM["forum_id"], $message["thread"], PHORUM_SUBSCRIPTION_MESSAGE);
                         } 
 
