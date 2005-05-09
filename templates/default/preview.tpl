@@ -11,4 +11,5 @@
 <br />
 <div class="PhorumReadBodyText">{PREVIEW->body}</div><br />
 </div>
+</div>
 <br /><br />

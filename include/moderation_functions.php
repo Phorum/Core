@@ -71,11 +71,13 @@ function phorum_handle_edit_message()
         $PHORUM['DATA']['FRM'] = 2;
         $PHORUM['DATA']['EDIT'] = $old_message;
         $PHORUM['DATA']['EDIT'] = $_POST;
-		if($PHORUM["DATA"]["EDIT"]["sort"] == "sticky"){
-			$PHORUM["DATA"]["EDIT"]["special"] = PHORUM_SORT_STICKY;
-		}elseif($PHORUM["DATA"]["EDIT"]["sort"] == "announcement"){
-			$PHORUM["DATA"]["EDIT"]["special"] = PHORUM_SORT_ANNOUNCEMENT;
-		}
+        if(isset($PHORUM["DATA"]["EDIT"]["sort"])) { 
+    		if($PHORUM["DATA"]["EDIT"]["sort"] == "sticky"){
+    			$PHORUM["DATA"]["EDIT"]["special"] = PHORUM_SORT_STICKY;
+    		}elseif($PHORUM["DATA"]["EDIT"]["sort"] == "announcement"){
+    			$PHORUM["DATA"]["EDIT"]["special"] = PHORUM_SORT_ANNOUNCEMENT;
+    		}
+        }
         $PHORUM['DATA']['EDIT']['emailreply'] = phorum_db_get_if_subscribed($PHORUM['DATA']['EDIT']['forum_id'], $PHORUM['DATA']['EDIT']['thread'], $PHORUM['DATA']['EDIT']['user_id']);
         $PHORUM['DATA']["EDIT"]["mod_step"] = PHORUM_SAVE_EDIT_POST;
         $PHORUM['DATA']["URL"]["ACTION"] = phorum_get_url(PHORUM_MODERATION_ACTION_URL);
