@@ -82,6 +82,11 @@ Hooks that exist at the time of this writing are:
     database, before deciding anything on language or template
         
 
+	common_post_user
+    ----------
+    same as previous just that it hooks in right after loading the user from the database but
+    before the template-loading.
+    
     delete
     -------
     delete hook is called any time a message is deleted.  The function you crate

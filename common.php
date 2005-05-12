@@ -216,6 +216,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     } 
     
 
+    // a hook for rewriting vars in common.php after loading the user
+    phorum_hook( "common_post_user", "" );        
+    
+
     // set up the template
     // user output buffering so we don't get header errors
     ob_start();
