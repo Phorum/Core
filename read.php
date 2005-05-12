@@ -107,59 +107,8 @@ if(!$PHORUM["threaded_read"]) {
 
 // Get the thread
 // ... with caching
-$messages_retrieved=false;
-if(isset($PHORUM['cache_messages']) && $PHORUM['cache_messages']) {
-	// if the user is moderator ... we generate these indexes in thread_info.php
-	if($PHORUM["DATA"]["MODERATOR"]) {
-		$message_index=phorum_cache_get('message-index-mod',$thread);
-	// ... not moderator
-	} else {
-		$message_index=phorum_cache_get('message-index',$thread);
-	}
-	
-	// checking if the index was already generated ...
-	if($message_index === NULL) {
-		include './include/thread_info.php';
-		
-		phorum_update_thread_info($thread);
-		// trying it again ...
-		if($PHORUM["DATA"]["MODERATOR"]) {
-				$message_index=phorum_cache_get('message-index-mod',$thread);
-		// ... not moderator
-		} else {
-				$message_index=phorum_cache_get('message-index',$thread);
-		}	
-	}
-	
-	if($message_index != NULL) {
-		// ... get message_ids which are on this page!
-		sort($message_index);
-		$message_index_slice=array_slice($message_index,($PHORUM["read_length"]*($page-1)),$PHORUM['read_length']);
-		
-		// retrieve computed messages
-		$data=phorum_cache_get('message',$message_index_slice);
-		
-		// check which were in the cache
-		foreach ($message_index_slice as $message_id_tmp) {
-			if(isset($data['message_id_tmp']))
-				unset($message_index_slice[$message_id_tmp]);	
-		}
-		
-		// retrieve missing messages from db
-		$db_messages=phorum_db_get_message($message_index_slice);
-		$data=array_merge($data,$db_messages);
-		
-		// put the missing ones into the cache
-		foreach($db_messages as $message_id_tmp => $message_data) {
-			phorum_cache_put('message',$message_id_tmp,$message_data);	
-		}
-		$messages_retrieved=true;
-	}
-}
-// ... without caching	
-if(!$messages_retrieved) {
-	$data = phorum_db_get_messages($thread,$page);
-}
+$data = phorum_db_get_messages($thread,$page);
+
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
