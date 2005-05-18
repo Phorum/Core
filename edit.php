@@ -33,6 +33,10 @@ $message_id = (isset($_POST["message_id"])) ? (int)$_POST["message_id"] : (int)$
 
 $mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM["args"][1];
 
+if (!empty($_POST["preview"])) {
+	$mod_step=PHORUM_PREVIEW_EDIT_POST;	
+}
+
 if(empty($message_id) || empty($mod_step)){
 	phorum_return_to_list();
 }
@@ -60,6 +64,10 @@ if(!($useredit || $PHORUM["DATA"]["MODERATOR"])){
 else{
     $PHORUM["DATA"]["EDIT"]["edit_allowed"] = 1;
     switch ($mod_step){
+    	case PHORUM_PREVIEW_EDIT_POST: // user wants to preview an edited post
+			phorum_handle_edit_message(true);
+			$getmsg=$PHORUM['DATA']['edit_msg'];
+			
         case PHORUM_MOD_EDIT_POST: // user wants to edit a post (moderators use moderation.php)
             $PHORUM["DATA"]["EDIT"]["useredit"] = 1;
             $PHORUM["DATA"]["FRM"] = 1;
@@ -110,7 +118,9 @@ phorum_build_common_urls();
 
 include phorum_get_template("header");
 phorum_hook("after_header");
-
+if($mod_step == PHORUM_PREVIEW_EDIT_POST) {
+	include phorum_get_template("preview");	
+}
 include phorum_get_template($template);
 
 phorum_hook("before_footer");

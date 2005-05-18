@@ -156,6 +156,7 @@
     define("PHORUM_APPROVE_MESSAGE", $i++);          
     define("PHORUM_HIDE_POST", $i++); 
     define("PHORUM_APPROVE_MESSAGE_TREE", $i++); 
+    define("PHORUM_PREVIEW_EDIT_POST", $i++);
 
     define("PHORUM_CC_SUMMARY", "summary");
     define("PHORUM_CC_SUBSCRIPTION_THREADS", "subthreads");

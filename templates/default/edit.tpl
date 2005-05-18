@@ -73,7 +73,7 @@
 {if MODERATED}
 {LANG->ModeratedForum}<br />
 {/if}
-<div style="margin-top: 3px;" align="right"><input type="submit" class="PhorumSubmit" value=" {LANG->Update} " /></div>
+<div style="margin-top: 3px;" align="right"><input name="preview" type="submit" class="PhorumSubmit" value=" {LANG->Preview} " />&nbsp;<input type="submit" class="PhorumSubmit" value=" {LANG->Update} " /></div>
 
 </form>
 </div>
