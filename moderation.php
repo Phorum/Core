@@ -33,6 +33,11 @@ $msgthd_id = (isset($_POST["thread"])) ? (int)$_POST["thread"] : (int)$PHORUM['a
 
 $mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM['args'][1];
 
+
+if (isset($_POST['preview']) && !empty($_POST["preview"])) {
+	$mod_step=PHORUM_PREVIEW_EDIT_POST;	
+}
+
 if(empty($msgthd_id) || !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
    phorum_return_to_list();
 }
@@ -158,9 +163,15 @@ switch ($mod_step) {
         phorum_hook("reopen_thread", $msgthd_id);
         break;
 
+    case PHORUM_PREVIEW_EDIT_POST:
+		phorum_handle_edit_message(true);
+		// ... go on ...
     case PHORUM_MOD_EDIT_POST: // moderator wants to edit a post
-
-        $message=phorum_db_get_message($msgthd_id);
+		if(isset($PHORUM['DATA']['edit_msg'])) {
+			$message=$PHORUM['DATA']['edit_msg'];
+		} else {
+        	$message=phorum_db_get_message($msgthd_id);
+		}
         $message['forum_id']=$PHORUM['forum_id'];
 
         // expose the actual message fields
@@ -311,7 +322,9 @@ $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
 
 include phorum_get_template("header");
 phorum_hook("after_header");
-
+if($mod_step == PHORUM_PREVIEW_EDIT_POST) {
+	include phorum_get_template("preview");	
+}
 include phorum_get_template($template);
 
 phorum_hook("before_footer");

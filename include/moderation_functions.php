@@ -135,14 +135,16 @@ function phorum_handle_edit_message($preview=false) {
 	        		if($old_message["moderator_post"]){
 	        			$new_message["ip"]=$PHORUM["DATA"]["LANG"]["Moderator"];
 	        		} elseif(is_numeric(str_replace(".", "", $old_message["ip"]))){
-	        			$new_message["ip"]=substr($new_message["ip"],0,strrpos($new_message["ip"],'.')).'.---';
+	        			$new_message["ip"]=substr($old_message["ip"],0,strrpos($old_message["ip"],'.')).'.---';
 	        		} else {
-	        			$new_message["ip"]="---".strstr($new_message["ip"], ".");
+	        			$new_message["ip"]="---".strstr($old_message["ip"], ".");
 	        		}
 
 	        	} else {
 	        		$new_message["ip"]=$PHORUM["DATA"]["LANG"]["IPLogged"];
 	        	}
+	        } else {
+	        	$new_message['ip']=$old_message['ip'];	
 	        }
 			
 	        $new_message=phorum_hook("preview", $new_message);

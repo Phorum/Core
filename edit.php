@@ -33,7 +33,7 @@ $message_id = (isset($_POST["message_id"])) ? (int)$_POST["message_id"] : (int)$
 
 $mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM["args"][1];
 
-if (!empty($_POST["preview"])) {
+if (isset($_POST['preview']) && !empty($_POST["preview"])) {
 	$mod_step=PHORUM_PREVIEW_EDIT_POST;	
 }
 
