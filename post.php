@@ -210,8 +210,12 @@ if (count($_POST) > 0) {
             } else {
         
                 if($PHORUM["redirect_after_post"]=="read"){
-
-                    $pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
+					
+                	if(isset($top_parent)) { // not set for top-posts
+                    	$pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
+                	} else {
+                		$pages=1;	
+                	}
 
                     if($pages>1){
                         $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
