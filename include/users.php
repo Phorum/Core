@@ -546,7 +546,7 @@ function phorum_user_access_list( $permission )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $forums = phorum_db_get_forums();
+    $forums = phorum_db_get_forums(0,null,$PHORUM['vroot']);
     $forum_list = array();
 
     $field = ( $PHORUM["user"]["user_id"] > 0 ) ? "reg_perms" : "pub_perms";

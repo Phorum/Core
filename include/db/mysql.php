@@ -18,21 +18,24 @@ if (!defined("PHORUM")) return;
  * These are the table names used for this database system.
  */
 
-$PHORUM["settings_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_settings";
-$PHORUM["forums_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_forums";
+// tables needed to be "partitioned"
 $PHORUM["message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_messages";
-$PHORUM["user_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_users";
-$PHORUM["user_permissions_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_permissions";
 $PHORUM["user_newflags_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_newflags";
 $PHORUM["subscribers_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_subscribers";
+$PHORUM["files_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_files";
+$PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
+$PHORUM["search_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_search";
+
+// tables common to all "partitions"
+$PHORUM["settings_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_settings";
+$PHORUM["forums_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_forums";
+$PHORUM["user_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_users";
+$PHORUM["user_permissions_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_permissions";
 $PHORUM["groups_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_groups";
 $PHORUM["forum_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_forum_group_xref";
 $PHORUM["user_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_group_xref";
-$PHORUM["files_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_files";
-$PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
-$PHORUM["private_message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
 $PHORUM['user_custom_fields_table'] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_custom_fields";
-$PHORUM["search_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_search";
+$PHORUM["private_message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
 
 /*
 * fields which are always strings, even if they contain only numbers
@@ -86,7 +89,7 @@ function phorum_db_get_thread_list($offset)
         $offset_option="$sortfield > 0 and";
         
         // get the announcements and stickies
-        $sql="select thread as keyid from $table where sort=0 or (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
+        $sql="select thread as keyid from $table where (sort=0 and forum_id={$PHORUM['vroot']}) or (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
         $res = mysql_query($sql, $conn);
             
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -201,7 +204,9 @@ function phorum_db_get_thread_list($offset)
               from 
                 $table 
               where 
-                sort=0 or (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']}) 
+                (sort=0 and forum_id={$PHORUM['vroot']}) 
+                or 
+                (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']}) 
               order by sort, $sortfield desc";
 
         $res = mysql_query($sql, $conn);
@@ -691,7 +696,7 @@ function phorum_db_get_message($value, $field="message_id")
 
     $forum_id_check = "";
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id=0) and";
+        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
     }
 
     if(is_array($value)) {
@@ -754,7 +759,7 @@ function phorum_db_get_messages($thread,$page=0)
 
     $forum_id_check = "";
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id=0) and";
+        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
     }
 
     // are we really allowed to show this thread/message?
@@ -825,7 +830,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $conn = phorum_db_mysql_connect();
 
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id=0) AND";
+        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) AND";
     }
 
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
@@ -872,6 +877,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         // if they are not allowed to search any forums, return the emtpy $arr;
         $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
     }
+    
 
     if($match_type=="AUTHOR"){
 
@@ -1142,7 +1148,7 @@ function phorum_db_update_settings($settings){
  * an array.
  */
 
-function phorum_db_get_forums($forum_ids = 0, $parent_id = null){
+function phorum_db_get_forums($forum_ids = 0, $parent_id = null, $vroot = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($forums_id, "int");
@@ -1155,9 +1161,11 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = null){
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
-    } elseif (func_num_args() > 1) {
+    } elseif ($parent_id !== null) {
         $sql .= " where parent_id = $parent_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
+    }  elseif($vroot !== null) {
+    	$sql .= " where vroot = $vroot";
     }
 
     $sql .= " order by display_order ASC, name";
