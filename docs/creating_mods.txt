@@ -161,6 +161,13 @@ Hooks that exist at the time of this writing are:
     pm_sent hook functions are called whenever a Private message is successfully
     sent. These functions recieve no parameters, but can see the message that was
     sent by looking in the $_POST superglobal array.
+    
+    check_post
+    ----------
+    This hook is run in case the preliminary checks for a message didn't return something bad.
+    It gets the $_POST-array as argument and returns into $error where any output would stop
+    posting the message and would be printed in the error-template for the post-form.
+    Using this hook a module could do additional checks on the data for posting.
 
     pre_post
     ---------

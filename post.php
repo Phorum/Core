@@ -69,6 +69,10 @@ if (count($_POST) > 0) {
                 $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
             } 
         } 
+        
+        if(empty($error)) {
+        	$error=phorum_hook("check_post", $_POST); 	
+        }
 
         if (empty($error)) {
 
