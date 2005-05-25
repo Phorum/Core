@@ -73,8 +73,6 @@ if(!isset($PHORUM["args"]["match_forum"])) $PHORUM["args"]["match_forum"]="ALL";
 
 if(!phorum_search_check_valid_vars()) {
     $redir_url=phorum_get_url(PHORUM_LIST_URL);
-    echo $redir_url;
-    exit();
     phorum_redirect_by_url($redir_url);
 }
 

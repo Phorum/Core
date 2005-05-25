@@ -294,7 +294,7 @@ function phorum_db_get_thread_list($offset)
  *
  * The bulk of this function came from Jim Winstead of mysql.com
  */
-function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0)
+function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = 0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     settype($count, "int");
@@ -327,6 +327,10 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0)
 
     if($thread){
         $sql.=" and thread=$thread";
+    }
+    
+    if($threads_only) {
+        // todo 	
     }
     
     $sql.= " ORDER BY message_id DESC LIMIT $count";
@@ -1148,7 +1152,7 @@ function phorum_db_update_settings($settings){
  * an array.
  */
 
-function phorum_db_get_forums($forum_ids = 0, $parent_id = null, $vroot = null){
+function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($forums_id, "int");
@@ -1161,7 +1165,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = null, $vroot = null){
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
-    } elseif ($parent_id !== null) {
+    } elseif ($parent_id >= 0) {
         $sql .= " where parent_id = $parent_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     }  elseif($vroot !== null) {
