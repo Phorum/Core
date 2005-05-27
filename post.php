@@ -137,7 +137,11 @@ if (count($_POST) > 0) {
                     } elseif (empty($_POST["parent_id"]) && $_POST["special"] == "announcement" && $PHORUM["user"]["admin"]) {
                         $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
                         $message["closed"] = 1;
-                        $message["forum_id"] = 0;
+                        if($PHORUM['vroot']) {
+                        	$message["forum_id"] = $PHORUM['vroot'];
+                        } else {
+                        	$message["forum_id"] = 0;
+                        }
                     } 
                 } 
 
