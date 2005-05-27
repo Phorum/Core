@@ -513,7 +513,7 @@ function phorum_build_common_urls()
     $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POST_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
-    if ( isset( $GLOBALS["PHORUM"]["parent_id"] ) )
+    if ( isset( $GLOBALS["PHORUM"]["parent_id"] ) && !empty($GLOBALS["PHORUM"]["parent_id"]))
         $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $GLOBALS["PHORUM"]["parent_id"] );
     else
         $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
