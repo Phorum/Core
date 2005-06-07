@@ -71,7 +71,7 @@ if (count($_POST) > 0) {
         } 
         
         if(empty($error)) {
-        	$error=phorum_hook("check_post", $_POST); 	
+        	list($_POST,$error)=phorum_hook("check_post", array($_POST,$error)); 	
         }
 
         if (empty($error)) {

@@ -2599,7 +2599,7 @@ function phorum_db_newflag_get_flags($forum_id=0)
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
     
-    $sql="SELECT message_id,forum_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id IN({$forum_id},0)";
+    $sql="SELECT message_id,forum_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id IN({$forum_id},{$PHORUM['vroot']})";
     
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
