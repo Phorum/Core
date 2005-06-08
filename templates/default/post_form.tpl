@@ -45,6 +45,10 @@
     {IF POST->show_announcement true}<option value="announcement"{IF POST->special announcement} selected{/IF}>{LANG->MakeAnnouncement}</option>{/IF}
     </select></td>
 </tr>
+<tr>
+    <td>{LANG->AllowReplies}:&nbsp;</td>
+    <td><input type="checkbox" name="allow_reply" value="1" checked="checked" /></td>
+</tr>
 {/IF}
 {/IF}
 {IF LOGGEDIN true}

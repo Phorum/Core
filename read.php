@@ -420,13 +420,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         phorum_db_newflag_add_read($read_messages);
     }
 
-    // do not show the reply box if the message is closed or an announcement
-    if($thread_is_announcement) {
+    // do not show the reply box if the message is closed or a closed announcement
+    if($thread_is_announcement && $thread_is_closed) {
     	
     	$PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadAnnouncement"];
         include phorum_get_template("message");
-    	
-    } elseif($thread_is_closed) {
+       
+    } elseif($thread_is_closed && !$thread_is_announcement) {
 
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadClosed"];
         include phorum_get_template("message");

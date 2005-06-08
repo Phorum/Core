@@ -33,6 +33,7 @@
         "AddToGroup"            =>      "Add New Member To Group:",
         "again"                 =>      "again",
         "AllDates"              =>      "All Dates",
+        "AllowReplies"			=> 		"Replies are allowed",
         "AllWords"              =>      "All Words",
         "AllowSeeActivity"      =>      "Allow other users to see when I am logged in",
         "AllowSeeEmail"         =>      "Allow other users to see my email address",

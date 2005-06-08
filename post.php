@@ -134,16 +134,19 @@ if (count($_POST) > 0) {
                 if (isset($_POST["special"])) {
                     if (empty($_POST["parent_id"]) && $_POST["special"] == "sticky" && phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
                         $message["sort"] = PHORUM_SORT_STICKY;
+                        $message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply'])?0:1;
+                        
                     } elseif (empty($_POST["parent_id"]) && $_POST["special"] == "announcement" && $PHORUM["user"]["admin"]) {
                         $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
-                        $message["closed"] = 1;
+						$message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply'])?0:1;
+                        
                         if($PHORUM['vroot']) {
                         	$message["forum_id"] = $PHORUM['vroot'];
                         } else {
                         	$message["forum_id"] = 0;
                         }
                     } 
-                } 
+                }
 
                 $message["msgid"] = md5(uniqid(rand())) . "." . preg_replace("/[^a-z0-9]/i", "", $PHORUM["name"]); 
  
@@ -169,6 +172,12 @@ if (count($_POST) > 0) {
                     // this is a sticky thread, set this sort also so threaded view works.
                     if ($top_parent["sort"] == PHORUM_SORT_STICKY) {
                         $message["sort"] = PHORUM_SORT_STICKY;
+                    } 
+                    
+                    // this is an announcement thread, set forum/vroot id and sort
+                    if ($top_parent["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
+                        $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
+                        $message["forum_id"] = $top_parent["forum_id"];
                     } 
                 } 
 
