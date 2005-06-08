@@ -134,11 +134,9 @@ if (count($_POST) > 0) {
                 if (isset($_POST["special"])) {
                     if (empty($_POST["parent_id"]) && $_POST["special"] == "sticky" && phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
                         $message["sort"] = PHORUM_SORT_STICKY;
-                        $message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply'])?0:1;
                         
                     } elseif (empty($_POST["parent_id"]) && $_POST["special"] == "announcement" && $PHORUM["user"]["admin"]) {
                         $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
-						$message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply'])?0:1;
                         
                         if($PHORUM['vroot']) {
                         	$message["forum_id"] = $PHORUM['vroot'];
@@ -146,6 +144,11 @@ if (count($_POST) > 0) {
                         	$message["forum_id"] = 0;
                         }
                     } 
+                }
+                
+                // for moderators we allow to set a thread closed while posting already
+                if($message["moderator_post"]) {
+                	$message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply'])?0:1;
                 }
 
                 $message["msgid"] = md5(uniqid(rand())) . "." . preg_replace("/[^a-z0-9]/i", "", $PHORUM["name"]); 
