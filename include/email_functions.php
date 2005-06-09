@@ -95,12 +95,10 @@ function phorum_email_notice($message)
     $PHORUM=$GLOBALS["PHORUM"];
     include_once("./include/format_functions.php");
 
-    $mail_users = phorum_db_get_subscribed_users($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
+    $mail_users_full = phorum_db_get_subscribed_users($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
     
-    if (count($mail_users)) {
-        $mail_data = array("mailmessage" => $PHORUM["DATA"]["LANG"]['NewReplyMessage'],
-            "mailsubject" => $PHORUM["DATA"]["LANG"]['NewReplySubject'],
-            "forumname" => $PHORUM["DATA"]["NAME"],
+    if (count($mail_users_full)) {
+        $mail_data = array("forumname" => $PHORUM["DATA"]["NAME"],
             "author"    => $message['author'],
             "subject"   => $message['subject'],
             "full_body" => $message['body'],
@@ -119,7 +117,18 @@ function phorum_email_notice($message)
             $mail_data["followed_threads_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["followed_threads_url"]);
 
         } 
-        phorum_email_user($mail_users, $mail_data);
+		// go through the user-languages and send mail with their set lang
+		foreach($mail_users_full as $language => $mail_users) {
+		    if ( file_exists( "./include/lang/$language.php" ) ) {
+				include( "./include/lang/$language.php" );
+		    } else {
+				include("./include/lang/{$PHORUM['language']}.php");
+			}
+			$mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['NewReplyMessage'];
+            $mail_data["mailsubject"] => $PHORUM["DATA"]["LANG"]['NewReplySubject'];
+			phorum_email_user($mail_users, $mail_data);
+
+		}
     } 
 }
 

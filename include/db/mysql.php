@@ -2767,7 +2767,7 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
     if ($PHORUM["DATA"]["LOGGEDIN"])
        $userignore="and b.user_id != {$PHORUM['user']['user_id']}";
 
-    $sql = "select DISTINCT(b.email) from {$PHORUM['subscribers_table']} as a,{$PHORUM['user_table']} as b where a.forum_id=$forum_id and (a.thread=$thread or a.thread=0) and a.sub_type=$type and b.user_id=a.user_id $userignore";
+    $sql = "select DISTINCT(b.email),user_language from {$PHORUM['subscribers_table']} as a,{$PHORUM['user_table']} as b where a.forum_id=$forum_id and (a.thread=$thread or a.thread=0) and a.sub_type=$type and b.user_id=a.user_id $userignore";
 
     $res = mysql_query($sql, $conn);
 
@@ -2776,7 +2776,10 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
         $arr=array();
 
     while ($rec = mysql_fetch_row($res)){
-        $arr[] = $rec[0];
+		if(!empty($rec[1])) // user-language is set
+	        $arr[$rec[1]][] = $rec[0];
+		else // no user-language is set
+			$arr[$PHORUM['language']][]= $rec[0];
     }
 
     return $arr;
