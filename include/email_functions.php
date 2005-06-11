@@ -125,7 +125,7 @@ function phorum_email_notice($message)
 				include("./include/lang/{$PHORUM['language']}.php");
 			}
 			$mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['NewReplyMessage'];
-            $mail_data["mailsubject"] => $PHORUM["DATA"]["LANG"]['NewReplySubject'];
+            $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"]['NewReplySubject'];
 			phorum_email_user($mail_users, $mail_data);
 
 		}
