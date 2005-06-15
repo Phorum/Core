@@ -147,8 +147,8 @@ if (count($_POST) > 0) {
                 }
                 
                 // for moderators we allow to set a thread closed while posting already
-                if($message["moderator_post"]) {
-                	$message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply'])?0:1;
+                if($message["moderator_post"] && $message["thread"]==0) {
+                	$message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply']) ? 0 : 1;
                 }
 
                 $message["msgid"] = md5(uniqid(rand())) . "." . preg_replace("/[^a-z0-9]/i", "", $PHORUM["name"]); 
@@ -165,9 +165,8 @@ if (count($_POST) > 0) {
                     } else {
                         $parent = $top_parent;
                     } 
- 
                     // this thread is not approved, get out.
-                    if (empty($top_parent) || empty($parent) || $top_parent["closed"] || $top_parent["status"] != PHORUM_STATUS_APPROVED || $parent["closed"]) {
+                    if (empty($top_parent) || empty($parent) || $top_parent["closed"] || $top_parent["status"] != PHORUM_STATUS_APPROVED || $parent["status"] != PHORUM_STATUS_APPROVED) {
                         phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
                         exit();
                     } 
