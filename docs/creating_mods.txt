@@ -9,7 +9,8 @@ you will not name your module foo, but something much more useful.
 
 Be sure to read the **CAUTIONS** section before making your modules.
 
-
+There is an example module that you can look over at
+http://phorum.org/phorum5/read.php?16,8108
 
 Determine what hook you want to hook into
 ------------------------------------------
@@ -75,13 +76,13 @@ Hooks that exist at the time of this writing are:
     parameters ( a PHP session or such ) you can use the common hook.
     common hook functions do not take any paramters.
 
-	common_pre
+    common_pre
     ----------
     same as previous just that it hooks in right after loading the settings from the
     database, before deciding anything on language or template or user
     
 
-	common_post_user
+    common_post_user
     ----------
     same as previous just that it hooks in right after loading the user from the database but
     before the template-loading.    
@@ -189,6 +190,18 @@ Hooks that exist at the time of this writing are:
     After making changes to that in some way, they should return an array
     of the users profile.
 
+    quote
+    ------
+    By default, Phorum formats quoted messages with an old school email
+    style of quoting.  The quote hook allows for a module to use an alternate
+    style.  The BBCode module now has a quote hook function.  Because it does
+    not make sense to have more than one quote hook function, you can disable
+    that one part of the BBCode module in the BBCode settings.  The function
+    you create should expect to receive an array that has the author being
+    quoted as the first member and the body as the second member.  It should
+    return the formated quoted body that will be pre-filled into the post
+    form.
+
     read
     -----
     read hook functions receive an array of messages and should return
@@ -232,6 +245,8 @@ Hooks that exist at the time of this writing are:
     of this hook is to allow the list of users to be reformatted in some way, such
     as changing the sort order, or changing the format of the displayed names.
 
+
+
 Creating your module files
 ------------------------
 
@@ -254,7 +269,7 @@ hook: read|mod_foo
 title: Foo Module
 desc: This module does foo to messages.
 
-The data for the hook like is | delimited.  The first part is the hook that
+The data for the hook line is | delimited.  The first part is the hook that
 this module is hooking into.  The second is the function in our file
 (foo.php) that is called for that hook.  You can have more than one hook line
 and a function can be called for more than one hook if compatible.  So, this
@@ -352,7 +367,7 @@ Language Translation
 
 If your module includes text that will be displayed to end users, you should strongly
 consider making it support multiple languages. This will allow Phorum installations
-in another language to see your module in their own language, rather then only in the
+in another language to see your module in their own language, rather than only in the
 language you wrote it in.
 
 To do this, you first need to include the following line in your info.txt file:
@@ -379,9 +394,6 @@ $PHORUM["DATA"]["LANG"]["mod_lang"]["Hello"] = "Hello!";
 
 This would be accesed in your module using $PHORUM["DATA"]["LANG"]["mod_lang"]["Hello"], or
 LANG->mod_lang->Hello in a template file. You can add as many lines as you need for your module.
-
-*** Notes ***
--------------
 
 If a Phorum installation is using a language that your module does not include a language
 file for, Phorum will attempt to fallback to English. So it is highly recommend that you
