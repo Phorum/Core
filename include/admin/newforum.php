@@ -196,6 +196,7 @@
 
     $frm->addrow("List Threads Expanded", $frm->select_tag("threaded_list", array("No", "Yes"), $threaded_list));
 	$frm->addrow("Read Threads Expanded", $frm->select_tag("threaded_read", array("No", "Yes"), $threaded_read));
+    $frm->addrow("Reverse Threading", $frm->select_tag("reverse_threading", array("No", "Yes"), $reverse_threading));
 
     $frm->addrow("Move Threads On Reply", $frm->select_tag("float_to_top", array("No", "Yes"), $float_to_top));
 

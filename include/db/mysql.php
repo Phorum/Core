@@ -84,7 +84,8 @@ function phorum_db_get_thread_list($offset)
         $start = $offset * $PHORUM["list_length_threaded"];
         
         $sortorder = "sort, $sortfield desc, message_id";
-        
+
+//        if($PHORUM["reverse_threading"]) $sortorder=" desc";
         
         $offset_option="$sortfield > 0 and";
         
@@ -128,9 +129,9 @@ function phorum_db_get_thread_list($offset)
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
             if (mysql_num_rows($res) > 0){
-            	while($rec = mysql_fetch_assoc($res)){
-            		$keyids[$rec["keyid"]] = $rec["keyid"];
-            	}
+                while($rec = mysql_fetch_assoc($res)){
+                    $keyids[$rec["keyid"]] = $rec["keyid"];
+                }
 
             }
         }
@@ -704,11 +705,11 @@ function phorum_db_get_message($value, $field="message_id")
     }
 
     if(is_array($value)) {
-    	$checkvar="$field IN('".implode("','",$value)."')";
-    	$multiple=true;
+        $checkvar="$field IN('".implode("','",$value)."')";
+        $multiple=true;
     } else {
-    	$value=mysql_escape_string($value);
-    	$checkvar="$field='$value'";
+        $value=mysql_escape_string($value);
+        $checkvar="$field='$value'";
     }
     
 
@@ -721,28 +722,28 @@ function phorum_db_get_message($value, $field="message_id")
     $rec=array();
 
     if(mysql_num_rows($res)){
-		if($multiple) {
-			$ret=array();
-			while($rec=mysql_fetch_assoc($res)) {
-		        // convert meta field
-		        if(empty($rec["meta"])){
-		            $rec["meta"]=array();
-		        } else {
-		            $rec["meta"]=unserialize($rec["meta"]);
-		        }	
-		        $ret[$rec['message_id']]=$rec;			
-			}
-		} else {
-	        $rec = mysql_fetch_assoc($res);
-	    
-	        // convert meta field
-	        if(empty($rec["meta"])){
-	            $rec["meta"]=array();
-	        } else {
-	            $rec["meta"]=unserialize($rec["meta"]);
-	        }
-	        $ret=$rec;
-		}
+        if($multiple) {
+            $ret=array();
+            while($rec=mysql_fetch_assoc($res)) {
+                // convert meta field
+                if(empty($rec["meta"])){
+                    $rec["meta"]=array();
+                } else {
+                    $rec["meta"]=unserialize($rec["meta"]);
+                }
+                $ret[$rec['message_id']]=$rec;
+            }
+        } else {
+            $rec = mysql_fetch_assoc($res);
+    
+            // convert meta field
+            if(empty($rec["meta"])){
+                $rec["meta"]=array();
+            } else {
+                $rec["meta"]=unserialize($rec["meta"]);
+            }
+            $ret=$rec;
+        }
     }
 
     return $ret;
@@ -777,6 +778,7 @@ function phorum_db_get_messages($thread,$page=0)
            $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval order by message_id LIMIT $start,".$PHORUM["read_length"];
     } else {
            $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval order by message_id";
+//           if($PHORUM["reverse_threading"]) $sql=" desc";
     }
 
     $res = mysql_query($sql, $conn);
@@ -805,11 +807,11 @@ function phorum_db_get_messages($thread,$page=0)
         $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check message_id=$thread $approvedval";
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-		if(mysql_num_rows($res) > 0) {
-	        $rec = mysql_fetch_assoc($res);
-	        $arr[$rec["message_id"]] = $rec;
-	        $arr[$rec["message_id"]]["meta"]=unserialize($rec["meta"]);
-		}
+        if(mysql_num_rows($res) > 0) {
+            $rec = mysql_fetch_assoc($res);
+            $arr[$rec["message_id"]] = $rec;
+            $arr[$rec["message_id"]]["meta"]=unserialize($rec["meta"]);
+        }
     }
     return $arr;
 }
@@ -1027,12 +1029,12 @@ function phorum_db_get_newer_thread($key){
     $conn = phorum_db_mysql_connect();
 
     $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
-	
+    
     // are we really allowed to show this thread/message?
     $approvedval = "";
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
-    }	
+    }    
 
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and $keyfield>$key $approvedval order by $keyfield limit 1";
 
@@ -1058,7 +1060,7 @@ function phorum_db_get_older_thread($key){
     $approvedval = "";
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
         $approvedval="AND {$PHORUM['message_table']}.status=".PHORUM_STATUS_APPROVED;
-    }	
+    }    
 
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and $keyfield<$key $approvedval order by $keyfield desc limit 1";
 
@@ -1762,8 +1764,8 @@ function phorum_db_user_get($user_id, $detailed)
                 $users[$row["user_id"]]["groups"][$row["group_id"]] = $row["group_id"];
                 if(!empty($row["forum_id"])){
                     if(!isset($users[$row["user_id"]]["group_permissions"][$row["forum_id"]])) {
-		    	         $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] = 0;
-		            }
+                         $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] = 0;
+                    }
                     $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] = $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] | $row["permission"];
                 }
             }
@@ -1774,18 +1776,18 @@ function phorum_db_user_get($user_id, $detailed)
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
         while ($row = mysql_fetch_assoc($res)){
-        	if(isset($PHORUM["PROFILE_FIELDS"][$row['type']])) {
-        		if($PHORUM["PROFILE_FIELDS"][$row['type']]['html_disabled']) {
-        			$users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = htmlspecialchars($row["data"]);
-        		} else { // not html-disabled
-	        		if(substr($row["data"],0,6) == 'P_SER:') {
-	        			// P_SER (PHORUM_SERIALIZED) is our marker telling this field is serialized
-	        			$users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = unserialize(substr($row["data"],6));
-	        		} else {
-	        			$users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = $row["data"];
-	        		}
-        		}
-        	}
+            if(isset($PHORUM["PROFILE_FIELDS"][$row['type']])) {
+                if($PHORUM["PROFILE_FIELDS"][$row['type']]['html_disabled']) {
+                    $users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = htmlspecialchars($row["data"]);
+                } else { // not html-disabled
+                    if(substr($row["data"],0,6) == 'P_SER:') {
+                        // P_SER (PHORUM_SERIALIZED) is our marker telling this field is serialized
+                        $users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = unserialize(substr($row["data"],6));
+                    } else {
+                        $users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = $row["data"];
+                    }
+                }
+            }
         }
 
     }
@@ -1820,9 +1822,9 @@ function phorum_db_user_get_fields($user_id, $fields)
     
 
     if(is_array($fields)) {
-    	$fields_str=implode(",",$fields);
+        $fields_str=implode(",",$fields);
     } else {
-    	$fields_str=$fields;	
+        $fields_str=$fields;
     }    
     
     $users = array();
@@ -3294,42 +3296,44 @@ function phorum_db_create_tables()
                     
         // set initial settings
         $settings=array(
-			"title" => "Phorum 5",
-			"cache" => "$tmp_dir",
-			"session_timeout" => "30",
-			"session_path" => "/",
-			"session_domain" => "",
-			"cache_users" => "0",
-			"register_email_confirm" => "0",
-			"default_template" => "default",
-			"default_language" => "english",
-			"use_cookies" => "1",
-			"use_bcc" => "1",
-			"internal_version" => "" . PHORUMINTERNAL . "",
-			"PROFILE_FIELDS" => array('name'=>"real_name",'length'=> 255, 'html_disabled'=>1),
-			"enable_pm" => "1",
-			"user_edit_timelimit" => "0",
-			"enable_new_pm_count" => "1",
-			"enable_dropdown_userlist" => "1",
-			"enable_moderator_notifications" => "1",
-			"show_new_on_index" => "1",
-			"dns_lookup" => "1",
-			"tz_offset" => "0",
-			"user_time_zone" => "1",
-			"user_template" => "0",
-			"registration_control" => "1",
-			"file_uploads" => "0",
-			"file_types" => "",
-			"max_file_size" => "",
-			"file_space_quota" => "",
-			"file_offsite" => "0",
-			"system_email_from_name" => "",
-			"hide_forums" => "1",
-			"enable_new_pm_count" => "1",
-			"track_user_activity" => "0",
-			"html_title" => "Phorum",
-			"head_tags" => "",
-			"cache_users" => 0
+            "title" => "Phorum 5",
+            "cache" => "$tmp_dir",
+            "session_timeout" => "30",
+            "session_path" => "/",
+            "session_domain" => "",
+            "cache_users" => "0",
+            "register_email_confirm" => "0",
+            "default_template" => "default",
+            "default_language" => "english",
+            "use_cookies" => "1",
+            "use_bcc" => "1",
+            "internal_version" => "" . PHORUMINTERNAL . "",
+            "PROFILE_FIELDS" => array('name'=>"real_name",'length'=> 255, 'html_disabled'=>1),
+            "enable_pm" => "1",
+            "user_edit_timelimit" => "0",
+            "enable_new_pm_count" => "1",
+            "enable_dropdown_userlist" => "1",
+            "enable_moderator_notifications" => "1",
+            "show_new_on_index" => "1",
+            "dns_lookup" => "1",
+            "tz_offset" => "0",
+            "user_time_zone" => "1",
+            "user_template" => "0",
+            "registration_control" => "1",
+            "file_uploads" => "0",
+            "file_types" => "",
+            "max_file_size" => "",
+            "file_space_quota" => "",
+            "file_offsite" => "0",
+            "system_email_from_name" => "",
+            "hide_forums" => "1",
+            "enable_new_pm_count" => "1",
+            "track_user_activity" => "0",
+            "html_title" => "Phorum",
+            "head_tags" => "",
+            "cache_users" => 0,
+            "redirect_after_post" => "list",
+            "reply_on_read_page" => 1,
           );
 
         phorum_db_update_settings($settings);
@@ -3357,7 +3361,7 @@ function phorum_db_create_tables()
                   "read_length"=>20,
                   "moderation"=>0,
                   "threaded_list"=>0,
-                  "threaded_read"=>0,				  
+                  "threaded_read"=>0,    
                   "float_to_top"=>1,
                   "display_ip_address"=>0,
                   "allow_email_notify"=>1,

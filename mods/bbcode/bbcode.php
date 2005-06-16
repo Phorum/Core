@@ -20,21 +20,20 @@ function phorum_bb_code($data)
         "/\[center\](.+?)\[\/center\]/is",
         "/\[hr\]/i",
         "/\[code\](.+?)\[\/code\]/is",
-        "/\[quote\](.+?)\[\/quote\]/is",
     );
 
-	// add extra tags to links, if enabled in the admin settings page
+    // add extra tags to links, if enabled in the admin settings page
 
-	$extra_link_tags = "";
+    $extra_link_tags = "";
 
-	if(isset($PHORUM["mod_bb_code"])){ // check for settings file before using settings-dependent variables
-		if ($PHORUM["mod_bb_code"]["links_in_new_window"]){
-			$extra_link_tags .= "target=\"_blank\" ";
-		}
-		if ($PHORUM["mod_bb_code"]["rel_no_follow"]){
-			$extra_link_tags .= "rel=\"no_follow\" ";
-		}
-	}
+    if(isset($PHORUM["mod_bb_code"])){ // check for settings file before using settings-dependent variables
+        if ($PHORUM["mod_bb_code"]["links_in_new_window"]){
+            $extra_link_tags .= "target=\"_blank\" ";
+        }
+        if ($PHORUM["mod_bb_code"]["rel_no_follow"]){
+            $extra_link_tags .= "rel=\"no_follow\" ";
+        }
+    }
 
     $replace = array(
         "<img src=\"$1\" />",
@@ -49,7 +48,18 @@ function phorum_bb_code($data)
         "<center class=\"bbcode\">$1</center>",
         "<hr class=\"bbcode\" />",
         "<pre class=\"bbcode\">$1</pre>",
-        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<br />$1</blockquote>"
+    );
+
+    $quote_search = array(
+        "/\[quote\]/is",
+        "/\[quote ([^\]]+?)\]/is",
+        "/\[\/quote\]/is"
+    );
+
+    $quote_replace = array(
+        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div>",
+        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div><strong>$1</strong><br />",
+        "</div></blockquote>"
     );
 
     foreach($data as $message_id => $message){
@@ -103,6 +113,13 @@ function phorum_bb_code($data)
                 // run the pregs defined above
                 $body = preg_replace($search, $replace, $body);
 
+                // quote has to be handled differently because they can be embedded.
+                // we only do quote replacement if we have matching start and end tags
+                if(strstr($body, "[quote") && substr_count($body, "[quote")==substr_count($body, "[/quote]")){
+                    $body = preg_replace($quote_search, $quote_replace, $body);
+                }
+
+            
             }
 
 
@@ -113,4 +130,13 @@ function phorum_bb_code($data)
     return $data;
 }
 
+
+function phorum_bb_code_quote ($array)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+        
+    if($PHORUM["mod_bb_code"]["quote_hook"]){
+        return "[quote $array[0]]$array[1][/quote]";
+    }
+}
 ?>

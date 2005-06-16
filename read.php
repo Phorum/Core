@@ -61,18 +61,18 @@ if(empty($PHORUM["args"][1])) {
             case "older":
                 $thread = phorum_db_get_older_thread($newervar);
                 break;
- 			case "markthreadread":
- 				// thread needs to be in $thread for the redirection
- 				$thread = (int)$PHORUM["args"][1];
- 				$thread_message=phorum_db_get_message($thread,'message_id');
- 				
- 				$msg_count=count($thread_message['meta']['message_ids']);
- 	
- 				// any messages left to update newinfo with?
- 				if($msg_count > 0){
- 					phorum_db_newflag_add_read($thread_message['meta']['message_ids']);
- 				}
- 				break;                
+            case "markthreadread":
+                // thread needs to be in $thread for the redirection
+                $thread = (int)$PHORUM["args"][1];
+                $thread_message=phorum_db_get_message($thread,'message_id');
+    
+                $msg_count=count($thread_message['meta']['message_ids']);
+     
+                // any messages left to update newinfo with?
+                if($msg_count > 0){
+                    phorum_db_newflag_add_read($thread_message['meta']['message_ids']);
+                }
+                break;
         }
 
         if($thread > 0) {
@@ -365,6 +365,18 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
     }
 
+    if(isset($PHORUM["args"]["quote"])){
+        if($PHORUM["hooks"]["quote"]){
+            $PHORUM["DATA"]["POST"]["body"] = phorum_hook( "quote", array($messages[$message_id]['author'], $messages[$message_id]['body']));
+        }
+        if(empty($PHORUM["DATA"]["POST"]["body"])){
+            $phorum_quote_body = phorum_strip_body($messages[$message_id]['body']);
+            $phorum_quote_body=str_replace("\n", "\n> ", $phorum_quote_body);
+            $phorum_quote_body=wordwrap(trim($phorum_quote_body), 50, "\n> ", true);
+            $PHORUM["DATA"]["POST"]["body"]="{$messages[$message_id]['author']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> $phorum_quote_body\n\n\n";
+        }
+    }
+
     // run read mods
     $messages = phorum_hook("read", $messages);
     
@@ -386,12 +398,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["MESSAGES"] = $messages;
 
-    if(isset($PHORUM["args"]["quote"])){
-        $phorum_quote_body = phorum_strip_body($messages[$message_id]['body']); 
-        $phorum_quote_body=str_replace("\n", "\n> ", $phorum_quote_body);
-        $phorum_quote_body=wordwrap(trim($phorum_quote_body), 50, "\n> ", true);
-        $PHORUM["DATA"]["POST"]["body"]="{$messages[$message_id]['author']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> $phorum_quote_body\n\n\n";
-    }
     
     // alter the HTML_TITLE
     if(!empty($PHORUM["DATA"]["HTML_TITLE"])){
@@ -422,8 +428,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // do not show the reply box if the message is closed or a closed announcement
     if($thread_is_announcement && $thread_is_closed) {
-    	
-    	$PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadAnnouncement"];
+        
+        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadAnnouncement"];
         include phorum_get_template("message");
        
     } elseif($thread_is_closed && !$thread_is_announcement) {
@@ -431,7 +437,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadClosed"];
         include phorum_get_template("message");
 
-    } else {
+    } elseif($PHORUM["reply_on_read_page"]) {
 
 
         if(substr($PHORUM["DATA"]["POST"]["subject"], 0, 4) != "Re: ") $PHORUM["DATA"]["POST"]["subject"] = "Re: " . $PHORUM["DATA"]["POST"]["subject"];

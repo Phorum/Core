@@ -335,9 +335,13 @@ function phorum_get_url()
             if ( !empty( $argv[2] ) && is_numeric( $argv[2] ) ) $suffix = "#msg-$argv[2]";
             break;
         case PHORUM_REPLY_URL:
-            $page = "read";
+            if($PHORUM["reply_on_read_page"]){
+                $page = "read";
+                $suffix = "#REPLY";
+            } else {
+                $page = "reply";
+            }
             $add_forum_id = true;
-            $suffix = "#REPLY";
             break;
         case PHORUM_POST_URL:
             $page = "post";

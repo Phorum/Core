@@ -413,3 +413,25 @@
         font-size: {tinyfontsize};
         font-family: {tinyfont};
     }
+
+
+    /*   BBCode styles  */
+
+    blockquote.bbcode
+    {
+        font-size: {smallfontsize};
+        margin: 0 0 0 10px;
+    }
+
+    blockquote.bbcode div
+    {
+        margin: 0;
+        padding: 5px;
+        border: 1px solid {tablebordercolor};
+    }
+    
+    blockquote.bbcode strong
+    {
+        font-style: italic;
+        margin 0 0 3px 0;
+    }
