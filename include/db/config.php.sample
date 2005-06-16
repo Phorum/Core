@@ -17,6 +17,9 @@
         "password"      =>  "phorum5",
         "table_prefix"  =>  "phorum",
 
+        // optional url for redirecting when database is down
+        // "down_page"     => "http://www.example.com/phorum/down.html",
+
         // only applies to mysql
         "mysql_use_ft"  =>  "1"
     );

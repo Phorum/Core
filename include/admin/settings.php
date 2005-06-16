@@ -163,6 +163,9 @@ $frm->addbreak( "File/Path Settings" );
 $row=$frm->addrow( "HTTP Path", $frm->text_box( "http_path", $PHORUM["http_path"], 30 ) );
 $frm->addhelp($row, "HTTP Path", "This is the base url of your Phorum." );
 
+$row=$frm->addrow( "Disabled URL", $frm->text_box( "disabled_url", $PHORUM["disabled_url"], 50 ) );
+$frm->addhelp($row, "Disabled URL", "This url will be redirected to when the Phorum status is disabled.  If no URL is given, a message in English will be displayed." );
+
 $row=$frm->addrow( "Cache Directory", $frm->text_box( "cache", $PHORUM["cache"], 30 ) );
 $frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster use later.  This setting is the directory where Phorum stores that cache.  Most users will be fine using their servers temp directory.  If your server uses PHP Safe Mode, you will need to create a directory under your Phorum directory and make it writable by the web server." );
 

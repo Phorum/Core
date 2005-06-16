@@ -3334,6 +3334,7 @@ function phorum_db_create_tables()
             "cache_users" => 0,
             "redirect_after_post" => "list",
             "reply_on_read_page" => 1,
+            "status" => "normal",
           );
 
         phorum_db_update_settings($settings);

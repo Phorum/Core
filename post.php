@@ -39,6 +39,17 @@ if($PHORUM["folder_flag"]){
 // set all our URL's
 phorum_build_common_urls();
 
+// check if the Phorum is in read only mode.
+if($PHORUM["status"]=="read-only"){
+    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
+    include phorum_get_template("header");
+    phorum_hook("after_header");
+    include phorum_get_template("message");
+    phorum_hook("before_footer");
+    include phorum_get_template("footer");
+    exit();
+}
+
 if (count($_POST) > 0) {
     // check that this user can post to the forum
     if ((empty($_POST["parent_id"]) && phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||

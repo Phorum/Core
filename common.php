@@ -109,10 +109,20 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) ) {
 
 include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
+if(!phorum_db_check_connection()){
+    if(isset($PHORUM["DBCONFIG"]["down_page"])){
+        header("Location: ".$PHORUM["DBCONFIG"]["down_page"]);
+        exit();
+    } else {
+        echo "The database could not be connected.  If this is a new installation, please go to the admin to complete the installation process";
+        exit();
+    }
+}
+
 // get the Phorum settings
 phorum_db_load_settings();
 
-// a hook for rewriting vars at the beginning of common.php, 
+// a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
@@ -127,6 +137,18 @@ $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head
 // only do this stuff if we are not in the admin
 
 if ( !defined( "PHORUM_ADMIN" ) ) {
+    
+    // if the Phorum is disabled, display a message.
+    if($PHORUM["status"]=="disabled"){
+        if(!empty($PHORUM["disabled_url"])){
+            header("Location: ".$PHORUM["disabled_url"]);
+            exit();
+        } else {
+            echo "This Phorum is currently disabled.  Please contact the web site owner at ".$PHORUM[system_email_from_address]." for more information.";
+            exit();
+        }
+    }
+
     // checking for upgrade or new install
     if ( !isset( $PHORUM['internal_version'] ) ) {
         echo "<html><head><title>Error</title></head><body>No Phorum settings were found.  Either this is a brand new installation of Phorum or there is an error with your database server.  If this is a new install, please go to the admin to complete the installation. If not, check your database server.</body></html>";
@@ -244,6 +266,22 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             } 
         } 
     }    
+
+    // if the Phorum is disabled, display a message.
+    if($PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
+        // set all our URL's
+        phorum_build_common_urls();
+        
+        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
+        include phorum_get_template("header");
+        phorum_hook("after_header");
+        include phorum_get_template("message");
+        phorum_hook("before_footer");
+        include phorum_get_template("footer");
+        exit();
+
+    }
+    
 
     // a hook for rewriting vars at the end of common.php
     phorum_hook( "common", "" );

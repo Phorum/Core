@@ -5,56 +5,45 @@
     class PhorumAdminMenu
     {
         var $_title;
-        var $_columns;
-        var $_width;
+        var $_id;
         var $_links;
 
-        function PhorumAdminMenu ($title="", $width=0, $columns=1)
+        function PhorumAdminMenu ($title="", $id="")
         {
-            $this->reset($title, $width, $columns);
+            $this->reset($title, $id);
         }
 
-        function reset($title="", $width=0, $columns=1)
+        function reset($title="", $id="")
         {
             $this->_title = $title;
-            $this->_width = $width;
-            $this->_columns = $columns;
+            $this->_id = $id;
             $this->_links=array();
         }
 
-        function add($title, $module, $description, $column=1)
+        function add($title, $module, $description)
         {
-            $this->_links[]=array("title"=>$title, "module"=>$module, "description"=>$description, "column"=>$column);
+            $this->_links[]=array("title"=>$title, "module"=>$module, "description"=>$description);
         }
 
 
         function show()
         {
+            if($this->_title){
+                echo "<div class=\"PhorumAdminMenuTitle\">$this->_title</div>\n";
+            }            
+            echo "<div class=\"PhorumAdminMenu\"";
+            if($this->_id) echo " id=\"$this->_id\"";
+            echo ">";
+
             foreach($this->_links as $link){
-                if(empty($cols[$link["column"]])) $cols[$link["column"]]="";
                 $desc=$link["description"];
                 $html ="<a onMouseOver=\"window.status='$desc'; return true;\" onMouseOut=\"window.status=''; return true;\" href=\"$_SERVER[PHP_SELF]";
                 if(!empty($link["module"])) $html.="?module=$link[module]";
-                $html.="\">$link[title]</a>&nbsp;";
-                $cols[$link["column"]][]=$html;
+                $html.="\">$link[title]</a><br />";
+                echo $html;
             }
 
-            ksort($cols);
-
-            echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"3\" class=\"PhorumAdminMenu\"";
-            if(!empty($this->_width)) echo " width=\"$this->_width\"";
-            echo ">\n";
-            echo "<tr>\n";
-            echo "    <th class=\"PhorumAdminMenuTitle\" colspan=\"$this->_columns\">$this->_title</th>\n";
-            echo "</tr>\n";
-            echo "<tr>\n";
-
-            foreach($cols as $links){
-                echo "    <td class=\"PhorumAdminMenuLinks\">".implode("<br />", $links)."</td>\n";
-            }
-
-            echo "</tr>\n";
-            echo "</table>\n";
+            echo "</div>\n";
 
 
         }

@@ -14,110 +14,125 @@
 <title>Phorum Admin</title>
 <style>
 
-    BODY
-    {
-        font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
-        font-size: 13px;
-    }
+body
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+}
 
-    INPUT, TEXTAREA, SELECT, TD
-    {
-        font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
-        font-size: 13px;
-        border-color: #EEEEEE;
-    }
+input, textarea, select, td
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+    border-color: #EEEEEE;
+}
 
-    .input-form-th
-    {
-        font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
-        font-size: 13px;
-        padding: 3px;
-        background-color: #DDDDEA;
-    }
+.input-form-th
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+    padding: 3px;
+    background-color: #DDDDEA;
+}
 
-    .input-form-td
-    {
-        font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
-        font-size: 13px;
-        padding: 3px;
-        background-color: #EEEEFA;
-    }
+.input-form-td
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+    padding: 3px;
+    background-color: #EEEEFA;
+}
 
-    .input-form-td-break, .PhorumAdminTitle
-    {
-        font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        padding: 3px;
-        background-color: Navy;
-        color: White;
-    }
+.input-form-td-break, .PhorumAdminTitle
+{
+    font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 3px;
+    background-color: Navy;
+    color: White;
+}
 
-    .input-form-td-message
-    {
-        font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
-        font-size: 13px;
-        padding: 10px;
-        background-color: White;
-        color: Black;
-    }
+.input-form-td-message
+{
+    font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    padding: 10px;
+    background-color: White;
+    color: Black;
+}
 
-    .PhorumAdminMenu
-    {
-        border-width: 1px;
-        border-style: solid;
-        border-color: Navy;
-        font-size: 13px;
-        margin-bottom: 3px;
-    }
+.PhorumAdminMenu
+{
+    width: 150px;
+    border: 1px solid Navy;
+    font-size: 13px;
+    margin-bottom: 3px;
+    line-height: 18px;
+    padding: 3px;
+}
 
-    .PhorumAdminMenuTitle
-    {
-        background-color: Navy;
-        color:  white;
-        font-size: 14px;
-        font-weight: bold;
-    }
+.PhorumAdminMenuTitle
+{
+    width: 150px;
+    border: 1px solid Navy;
+    background-color: Navy;
+    color:  white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px;
+}
 
-    .PhorumAdminTableRow
-    {
-        background-color: #EEEEFA;
-        color: Navy;
-        padding: 3px;
-        font-size: 13px;
-    }
+.PhorumAdminTableRow
+{
+    background-color: #EEEEFA;
+    color: Navy;
+    padding: 3px;
+    font-size: 13px;
+}
 
-    .PhorumAdminTableHead
-    {
-        background-color: Navy;
-        color: White;
-        padding: 3px;
-        font-weight: bold;
-        font-size: 13px;
-    }
+.PhorumAdminTableHead
+{
+    background-color: Navy;
+    color: White;
+    padding: 3px;
+    font-weight: bold;
+    font-size: 13px;
+}
 
-    .PhorumInfoMessage
-    {
-        font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
-        font-size: 13px;
-        padding: 3px;
-        background-color: #EEEEFA;
-        width: 300px;
-        align: center;
-        text-align: left;
-    }
+.PhorumInfoMessage
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+    padding: 3px;
+    background-color: #EEEEFA;
+    width: 300px;
+    align: center;
+    text-align: left;
+}
 
-    .small
-    {
-        font-size: 10px;
-    }
+.small
+{
+    font-size: 10px;
+}
 
-    .help-td, .help-td a
-    {
-        color: White;
-        padding-bottom: 2px;
-        text-decoration: none;
-    }
+.help-td, .help-td a
+{
+    color: White;
+    padding-bottom: 2px;
+    text-decoration: none;
+}
+
+#phorum-status
+{
+    vertical-align: middle;
+}
+
+#status-form
+{
+    display: inline;
+}
+
 </style>
 <script>
 
@@ -170,8 +185,21 @@ function hide_help()
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
-    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<span class="small"><br />version <?php echo PHORUM; ?></span></td>
-    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">Database <?php echo (phorum_db_check_connection()) ? "Connected" : "Not Connected"; ?><span class="small"><br />Logged In As <?php echo $PHORUM["user"]["username"]; ?></span></td>
+    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
+    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
+<div id="phorum-status">
+<form id="status-form" action="<?=$_SERVER["PHP_SELF"]?>" method="post">
+<input type="hidden" name="module" value="status" />
+Phorum Status:
+<select name="status" onChange="this.form.submit();">
+<option value="normal" <?php if($PHORUM["status"]=="normal") echo "selected"; ?>>Normal</option>
+<option value="read-only"<?php if($PHORUM["status"]=="read-only") echo "selected"; ?>>Read Only</option>
+<option value="admin-only"<?php if($PHORUM["status"]=="admin-only") echo "selected"; ?>>Admin Only</option>
+<option value="disabled"<?php if($PHORUM["status"]=="disabled" || !phorum_db_check_connection()) echo "selected"; ?>>Disabled</option>
+</select>
+</form>
+</div>
+<small>Logged In As <?php echo $PHORUM["user"]["username"]; ?></small></td>
 </tr>
 </table><br />
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -184,7 +212,7 @@ function hide_help()
 <?php
         include_once "./include/admin/PhorumAdminMenu.php";
 
-        $menu =& new PhorumAdminMenu("Main Menu", 150);
+        $menu =& new PhorumAdminMenu("Main Menu");
 
         $menu->add("Admin Home", "", "Takes you to the default Admin page.");
         $menu->add("Phorum Index", "index", "Takes you to the front page of the Phorum.");
@@ -192,7 +220,7 @@ function hide_help()
 
         $menu->show();
 
-        $menu =& new PhorumAdminMenu("Global Settings", 150);
+        $menu =& new PhorumAdminMenu("Global Settings");
 
         $menu->add("General Settings", "settings", "Edit the global settings which affect all forums.");
         $menu->add("Ban Lists", "banlist", "Edits the list of banned names, email addresses and IP addresses.");
@@ -201,7 +229,7 @@ function hide_help()
 
         $menu->show();
 
-        $menu =& new PhorumAdminMenu("Forums", 150);
+        $menu =& new PhorumAdminMenu("Forums");
 
         $menu->add("Manage Forums", "", "Takes you to the default Admin page.");
         $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.");
@@ -209,14 +237,14 @@ function hide_help()
 
         $menu->show();
 
-        $menu =& new PhorumAdminMenu("Users/Groups", 150);
+        $menu =& new PhorumAdminMenu("Users/Groups");
 
         $menu->add("Edit Users", "users", "Allows administrator to edit users including deactivating them.");
         $menu->add("Edit Groups", "groups", "Allows administrator to edit groups and their forum permissions.");
         $menu->add("Custom Profiles", "customprofile", "Allows administrator to add fields to Phorum profile.");
 
         $menu->show();
-        $menu =& new PhorumAdminMenu("Maintenance", 150);        
+        $menu =& new PhorumAdminMenu("Maintenance");
 
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
         

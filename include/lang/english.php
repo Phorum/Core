@@ -31,6 +31,7 @@
         "AddSig"                =>      "Add my signature to this post.",
         "AddSigDefault"         =>      "Enable &quot;Add my signature&quot; as default",
         "AddToGroup"            =>      "Add New Member To Group:",
+        "AdminOnlyMessage"      =>      "This forum is currently disabled.  This is a temporary situation.  Please check back later.",
         "again"                 =>      "again",
         "AllDates"              =>      "All Dates",
         "AllowReplies"			=> 		"Replies are allowed",
@@ -303,6 +304,7 @@
         "QuoteMessage"          =>      "Quote This Message",
 
         "read"                  =>      "read",
+        "ReadOnlyMessage"       =>      "This forum is currently read only.  This is a temporary situation.  Please check back later.",
         "RealName"              =>      "Real Name",
         "Received"              =>      "Received",
         "RegApprovedSubject"    =>      "Your account has been approved.",
