@@ -166,7 +166,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             exit();
         } 
         $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
-    } 
+    } else {
+        // some defaults we might need if no forum is set (i.e. on the index-page)
+        $PHORUM['vroot']=0;   
+    }
 
     // stick some stuff from the settings into the DATA member
     $PHORUM["DATA"]["NAME"] = ( isset( $PHORUM["name"] ) ) ? $PHORUM["name"] : "";
