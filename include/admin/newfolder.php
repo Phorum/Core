@@ -130,7 +130,7 @@
         foreach($folder_data as $folder_id=> $folder){
 
             // remove children from the list
-            if($folder_id!=$_REQUEST["forum_id"] && substr($folder, 0, strlen($this_folder))!=$this_folder){
+            if($folder_id!=$_REQUEST["forum_id"] && substr($folder, 0, strlen($this_folder)+2)!="$this_folder::"){
                 $folders[$folder_id]=$folder;
             }
         }
