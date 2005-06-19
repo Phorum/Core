@@ -157,7 +157,12 @@
 
     $frm->addrow("Forum Description", $frm->textarea("description", htmlspecialchars($description), $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
-    $frm->addrow("Folder", $frm->select_tag("parent_id", phorum_get_folder_info(), $parent_id));
+    $folder_list=phorum_get_folder_info();
+    $frm->addrow("Folder", $frm->select_tag("parent_id", $folder_list, $parent_id));
+    if($vroot > 0) {
+        $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
+    }
+    
     
     $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
 

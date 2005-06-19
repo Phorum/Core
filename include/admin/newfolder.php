@@ -19,7 +19,11 @@
                     }
                     break;
                 case "vroot":
-                    if(!empty($value)) { // yeah, its set as vroot
+                    // did we set this folder as vroot?
+                    if($value > 0 && 
+                        (isset($_POST['forum_id']) && $value != $_POST['forum_id'])) { // existing folder new vroot for everything below
+                        $setvroot=true;   
+                    } elseif($value > 0 && !defined("PHORUM_EDIT_FOLDER")) { // new folder which is vroot for everything below
                         $setvroot=true;   
                     }
                     break;
@@ -32,6 +36,7 @@
 
         if(empty($error)){
             unset($_POST["module"]);
+            unset($_POST["vroot"]); // we set it separately below
 
             if(defined("PHORUM_EDIT_FOLDER")){
                 $cur_folder_id=$_POST['forum_id'];
@@ -45,7 +50,7 @@
                 $res=phorum_db_update_forum($_POST);
                 
             } else {
-                $oldfolder=array('vroot'=>0);
+                $oldfolder=array('vroot'=>0,'parent_id'=>0);
                 // add the folder
                 $res=phorum_db_add_forum($_POST);
                 $cur_folder_id=$res;
@@ -56,15 +61,20 @@
                 $cur_folder_tmp=phorum_db_get_forums($cur_folder_id);
                 $cur_folder=array_shift($cur_folder_tmp);
                                
-                // we had a vroot before but now we removed it
-                if($oldfolder['vroot'] && !$setvroot) { 
+                
+                if(!$setvroot && (
+                        ($oldfolder['vroot'] &&  $oldfolder['vroot'] == $cur_folder_id) || // we had a vroot before but now we removed it
+                        ($oldfolder['parent_id'] != $cur_folder['parent_id'])  // or we moved this folder somewhere else
+                      )
+                   ) 
+                   { 
                     // get the parent_id and set its vroot (if its a folder) to the desc folders/forums
                     if($cur_folder['parent_id'] > 0) { // is it a real folder?
                         $parent_folder=phorum_db_get_forums($cur_folder['parent_id']);
-                        if($parent_folder[$cur_folder['parent_id']]['vroot'] > 0) { // is a vroot set?
-                            // then set the vroot to the vroot of the parent-folder
-                            phorum_admin_set_vroot($cur_folder_id,$parent_folder[$cur_folder['parent_id']]['vroot'],$cur_folder_id);
-                        }
+                        
+                        // then set the vroot to the vroot of the parent-folder (be it 0 or a real vroot)
+                        phorum_admin_set_vroot($cur_folder_id,$parent_folder[$cur_folder['parent_id']]['vroot'],$cur_folder_id);
+                        
                     } else { // just default root ... 
                         phorum_admin_set_vroot($cur_folder_id,0,$cur_folder_id);
                     }
@@ -88,7 +98,8 @@
                         $error="Database error while setting virtual-root info.";
                     }            
                     
-                } // else { // nothing to be done, nothing changed in regard to vroots
+                } // is there an else?
+                
             } else {
                 $error="Database error while adding/updating folder.";
             }
@@ -134,6 +145,16 @@
                 $folders[$folder_id]=$folder;
             }
         }
+        
+        if($vroot == $forum_id) {
+            $vroot=1;   
+        } else {
+            $foreign_vroot=$vroot;
+            $vroot=0;
+            
+        }
+            
+            
 
     } else {
         $frm->hidden("module", "newfolder");
@@ -165,6 +186,9 @@
     $frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language));
     
     $frm->addrow("Virtual Root for descending forums/folders", $frm->checkbox("vroot","1","enabled",($vroot)?1:0));
+    if($foreign_vroot > 0) {
+        $frm->addrow("This folder is in the Virtual Root of:",$folders[$foreign_vroot]);
+    } 
 
     $frm->show();
 
