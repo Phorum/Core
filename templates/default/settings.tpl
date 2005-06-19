@@ -79,6 +79,7 @@
 {var tinyfont Arial, Helvetica, sans-serif}
 {var fixedfont Lucida Console, Andale Mono, Courier New, Courier}
 {var defaultfontsize 12px}
+{var defaultboldfontsize 13px}
 {var largefontsize 16px}
 {var smallfontsize 11px}
 {var tinyfontsize 10px}

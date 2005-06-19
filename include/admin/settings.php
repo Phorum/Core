@@ -134,6 +134,9 @@ $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users ar
 
 $row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_on_index", array( "No", "Yes" ), $PHORUM["show_new_on_index"] ) );
 
+$row=$frm->addrow( "Folder/Forum display style", $frm->select_tag( "use_new_folder_style", array( "Classic", "New" ), $PHORUM["use_new_folder_style"] ) );
+$frm->addhelp($row, "Folder/Forum display style", "Since version 3, Phorum has included folders.  Until version 5.1, forums inside folders did not show until you clicked on the folder.  In 5.1, the list of forums in a folder can now be shown under that folder in the forum list.  This allows admins to organize a large list of forums all on one page." );
+
 $row=$frm->addrow( "Enable Private Messaging", $frm->select_tag( "enable_pm", array( "No", "Yes" ), $PHORUM["enable_pm"] ) );
 
 $row=$frm->addrow( "Count New Private Messages", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );

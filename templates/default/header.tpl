@@ -26,5 +26,6 @@
 {/IF}
 <span class="PhorumTitleText PhorumLargeFont">
 {IF NAME}<a href="{URL->TOP}">{NAME}</a>&nbsp;:&nbsp;{/IF}{TITLE}</span>
-{IF DESCRIPTION}<div class="PhorumFloatingText">{DESCRIPTION}</div>{/IF}
 <img src="templates/default/images/logo.png" alt="The fastest message board....ever." width="170" height="42" />
+<div class="PhorumFloatingText">{DESCRIPTION}&nbsp;</div>
+

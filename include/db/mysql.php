@@ -3335,6 +3335,7 @@ function phorum_db_create_tables()
             "redirect_after_post" => "list",
             "reply_on_read_page" => 1,
             "status" => "normal",
+            "use_new_folder_style" => 1,
           );
 
         phorum_db_update_settings($settings);

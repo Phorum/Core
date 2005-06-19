@@ -1,83 +1,174 @@
+/* Element level classes */
 
-    /* Element level classes */
+body
+{
+    color: {defaulttextcolor};
+    font-size: {defaultfontsize};
+    font-family: {defaultfont};
+    background-color: {bodybackground};
+    margin: 8px;
+}
 
-    body
-    {
-        color: {defaulttextcolor};
-        font-size: {defaultfontsize};
-        font-family: {defaultfont};
-        background-color: {bodybackground};
-        margin: 8px;
-    }
+td, th
+{
+    color: {defaulttextcolor};
+    font-size: {defaultfontsize};
+    font-family: {defaultfont};
+}
 
-    td, th
-    {
-        color: {defaulttextcolor};
-        font-size: {defaultfontsize};
-        font-family: {defaultfont};
-    }
+img
+{
+    border-width: 0px;
+    vertical-align: middle;
+}
 
-    img
-    {
-        border-width: 0px;
-        vertical-align: middle;
-    }
+a
+{
+    color: {linkcolor};
+    text-decoration: none;
+}
+a:active
+{
+    color: {activelinkcolor};
+    text-decoration: none;
+}
+a:visited
+{
+    color: {visitedlinkcolor};
+    text-decoration: none;
+}
 
-    a
-    {
-        color: {linkcolor};
-        text-decoration: none;
-    }
-    a:active
-    {
-        color: {activelinkcolor};
-        text-decoration: none;
-    }
-    a:visited
-    {
-        color: {visitedlinkcolor};
-        text-decoration: none;
-    }        
+a:hover
+{
+    color: {hoverlinkcolor};
+}
 
-    a:hover
-    {
-        color: {hoverlinkcolor};
-    }
+input[type=text], input[type=password], input[type=file], select
+{
+    background-color: {backcolor};
+    color: {defaulttextcolor};
+    font-size: {defaultfontsize};
+    font-family: {defaultfont};
 
-    input[type=text], input[type=password], input[type=file], select
-    {
-/*        border: 1px solid {tablebordercolor}; */
+    vertical-align: middle;
 
-        background-color: {backcolor};
-        color: {defaulttextcolor};
-        font-size: {defaultfontsize};
-        font-family: {defaultfont};
+}
 
-        vertical-align: middle;
+textarea
+{
+    background-color: {backcolor};
+    color: {defaulttextcolor};
+    font-size: {defaultfontsize};
+    font-family: {fixedfont};
+}
 
-    }
+input[type=submit]
+{
+    border: 1px dotted {tablebordercolor};
+    background-color: {navbackcolor};
+    font-size: {defaultfontsize};
+    font-family: {defaultfont};
+    vertical-align: middle;
+}
 
-    textarea
-    {
-        background-color: {backcolor};
-        color: {defaulttextcolor};
-        font-size: {defaultfontsize};
-        font-family: {fixedfont};
-    }
-    
-	input[type=submit]
-	{
-        border: 1px dotted {tablebordercolor};
-        background-color: {navbackcolor};
-        font-size: {defaultfontsize};
-        font-family: {defaultfont};
-        vertical-align: middle;
-	}
+input
+{
+    vertical-align: middle;
+}
 
-	input
-	{
-        vertical-align: middle;
-	}
+
+/* new styles */
+
+#phorum-index
+{
+    width: 100%;
+    border: 1px solid {tablebordercolor};
+    border-bottom-width: 0px;
+}
+
+#phorum-index th
+{
+    border-bottom: 1px solid {tablebordercolor};
+    background-color: {headerbackcolor};
+    padding: 3px 0 3px 0;
+}
+
+#phorum-index td
+{
+    font-family: {largefont};
+    background-color: {backcolor};
+    padding: 3px 0 3px 0;
+    border-bottom: 1px solid {tablebordercolor};
+}
+
+#phorum-index th.forum-name
+{
+    font-family: {largefont};
+    font-size: {largefontsize};
+    padding: 3px 0 3px 3px;
+}
+
+#phorum-index th.forum-name a
+{
+    color: Black;
+}
+
+#phorum-index th.forum-threads
+{
+    width: 120px;    
+    text-align: center;
+    vertical-align: middle;
+}
+
+#phorum-index th.forum-posts
+{
+    width: 120px;    
+    text-align: center;
+    vertical-align: middle;
+}
+
+#phorum-index th.forum-last-post
+{
+    padding: 3px 15px 3px 3px;
+    vertical-align: middle;
+}
+
+#phorum-index td.forum-name
+{
+    font-family: {largefont};
+    font-size: {defaultboldfontsize};
+    font-weight: bold;
+    padding: 5px 0 5px 15px;
+}
+
+#phorum-index td.forum-name p
+{
+    font-size: 13px;
+    font-weight: normal;
+    font-family: {defaultfont};
+    margin: 0 15px 0 0;
+}
+
+#phorum-index td.forum-threads
+{
+    width: 120px;    
+    text-align: center;
+}
+
+#phorum-index td.forum-posts
+{
+    width: 120px;    
+    text-align: center;
+}
+
+#phorum-index td.forum-last-post
+{
+    width: 120px;    
+    padding: 0 15px 0 0;
+}
+
+
+
 
     /* Standard classes for use in any page */
     /* PhorumDesignDiv - a div for keeping the forum-size size */
