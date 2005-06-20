@@ -67,7 +67,7 @@
 {IF MODERATED}
 {LANG->ModeratedForum}<br />
 {/IF}
-<div style="margin-top: 3px;" align="right">{IF ATTACHMENTS}<input name="attach" class="PhorumSubmit" type="submit" value=" {LANG->Attach} " />&nbsp;{/IF}<input name="preview" type="submit" class="PhorumSubmit" value=" {LANG->Preview} " />&nbsp;<input type="submit" class="PhorumSubmit" value=" {LANG->Post} " /></div>
+<div style="margin-top: 3px;" align="right">{IF ATTACHMENTS}<input onClick="alert('{LANG->AttachInfo}');" name="attach" class="PhorumSubmit" type="submit" value=" {LANG->Attach} " />&nbsp;{/IF}<input name="preview" type="submit" class="PhorumSubmit" value=" {LANG->Preview} " />&nbsp;<input type="submit" class="PhorumSubmit" value=" {LANG->Post} " /></div>
 
 </div>
 

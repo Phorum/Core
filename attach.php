@@ -40,11 +40,11 @@ if(!phorum_check_read_common()) {
 // make sure the user can attach messages and that we have a message_id
 if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH) || empty($message_id)) {
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
-	include phorum_get_template("header");
+    include phorum_get_template("header");
     phorum_hook("after_header");
-	include phorum_get_template("message");
+    include phorum_get_template("message");
     phorum_hook("before_footer");
-	include phorum_get_template("footer");
+    include phorum_get_template("footer");
     return;
 }
 
@@ -54,15 +54,14 @@ $message = phorum_db_get_message($message_id);
 // not too old, and does not already have attachments.
 if(empty($message) || 
    $message["user_id"]!=$PHORUM["user"]["user_id"] || 
-   $message["datestamp"]<time()-PHORUM_MAX_TIME_TO_ATTACH ||
-   !empty($message["meta"]["attachments"])){
+   $message["datestamp"]<time()-PHORUM_MAX_TIME_TO_ATTACH){
 
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
-	include phorum_get_template("header");
+    include phorum_get_template("header");
     phorum_hook("after_header");
-	include phorum_get_template("message");
+    include phorum_get_template("message");
     phorum_hook("before_footer");
-	include phorum_get_template("footer");
+    include phorum_get_template("footer");
     return;
 }
 
@@ -76,13 +75,53 @@ if(!empty($_POST)){
         $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
         $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LIST_URL);
 
-    	include phorum_get_template("header");
+        include phorum_get_template("header");
         phorum_hook("after_header");
-    	include phorum_get_template("message");
+        include phorum_get_template("message");
         phorum_hook("before_footer");
-    	include phorum_get_template("footer");
+        include phorum_get_template("footer");
         return;
 
+    } elseif(isset($_POST["finalize"])){
+    
+        if($PHORUM["moderation"] == PHORUM_MODERATE_ON && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+            $save_message["status"]=PHORUM_STATUS_HOLD;
+        } else {
+            $save_message["status"]=PHORUM_STATUS_APPROVED;
+        }
+        
+        phorum_db_update_message($message_id, $save_message);
+
+        if($save_message["status"] > 0){
+            phorum_update_thread_info($message["thread"]);
+            phorum_db_update_forum_stats(false, 1, $message["datestamp"]);
+            // mailing subscribed users
+            phorum_email_notice($message);
+        }        
+
+        if($PHORUM["redirect_after_post"]=="read"){
+            
+            if($message["thread"]!=0){
+                $top_parent = phorum_db_get_message($message["thread"]);
+                $pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
+            } else {
+                $pages=1;
+            }
+            
+            if($pages>1){
+                $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
+            } else {
+                $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+            }
+
+        } else {
+
+            $redir_url = phorum_get_url(PHORUM_LIST_URL);
+        
+        }
+
+        phorum_redirect_by_url($redir_url);
+    
     } elseif(!empty($_FILES)){
 
         $uploaded_files=array();
@@ -127,53 +166,49 @@ if(!empty($_POST)){
 
     } else {
 
-        if($PHORUM["moderation"] == PHORUM_MODERATE_ON && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-            $save_message["status"]=PHORUM_STATUS_HOLD;
-        } else {
-            $save_message["status"]=PHORUM_STATUS_APPROVED;
-        }
         $save_message["meta"]=$message["meta"];
         $save_message["meta"]["attachments"]=$uploaded_files;
         phorum_db_update_message($message_id, $save_message);
         
-        if($save_message["status"] > 0){
-            phorum_update_thread_info($message["thread"]);
-            phorum_db_update_forum_stats(false, 1, $message["datestamp"]);
-            // mailing subscribed users
-            phorum_email_notice($message);
-        }        
-
-        $PHORUM["DATA"]["MESSAGE"] = count($uploaded_files)." ".$PHORUM["DATA"]["LANG"]["AttachDone"];
-        $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
-        $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LIST_URL);
-        
-    	include phorum_get_template("header");
-        phorum_hook("after_header");
-    	include phorum_get_template("message");
-        phorum_hook("before_footer");
-    	include phorum_get_template("footer");
-        return;
+        $redir_url = phorum_get_url(PHORUM_ATTACH_URL, $_POST["message_id"]);
+        phorum_redirect_by_url($redir_url);
+    
     }
 
 }
 
-$PHORUM["DATA"]["MESSAGE"]["author"] = htmlspecialchars($message["author"]);
-$PHORUM["DATA"]["MESSAGE"]["subject"] = htmlspecialchars($message["subject"]);
-$PHORUM["DATA"]["MESSAGE"]["body"] = htmlspecialchars($message["body"]);
+$PHORUM["DATA"]["PREVIEW"]["author"] = htmlspecialchars($message["author"]);
+$PHORUM["DATA"]["PREVIEW"]["subject"] = htmlspecialchars($message["subject"]);
+$PHORUM["DATA"]["PREVIEW"]["body"] = htmlspecialchars($message["body"]);
+$PHORUM["DATA"]["PREVIEW"]["ip"] = htmlspecialchars($message["ip"]);
+$PHORUM["DATA"]["PREVIEW"]["edit_url"] = phorum_get_url(PHORUM_EDIT_URL, PHORUM_MOD_EDIT_POST, $message_id);
 $PHORUM["DATA"]["MESSAGE"]["message_id"] = (int)$message["message_id"];
 $PHORUM["DATA"]["MESSAGE"]["forum_id"] = (int)$message["forum_id"];
+
+if($PHORUM["max_attachments"]>0 && isset($message["meta"]["attachments"])){
+    foreach($message["meta"]["attachments"] as $key=>$file){
+        $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["size"]=(round($file["size"]/1024))."kB";
+        $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["name"]=htmlentities($file['name'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]); // clear all special chars from name to avoid XSS
+        $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
+    }
+    $phorum_attach_inputs = $PHORUM["max_attachments"]-count($message["meta"]["attachments"]);
+} else {
+    $phorum_attach_inputs = $PHORUM["max_attachments"];
+}
+
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_ATTACH_ACTION_URL );
 
 $PHORUM["DATA"]["ATTACH_FILE_TYPES"]=$PHORUM["allow_attachment_types"];
 $PHORUM["DATA"]["ATTACH_FILE_SIZE"]=$PHORUM["max_attachment_size"]."kB";
 
-for($x=1;$x<=$PHORUM["max_attachments"];$x++){
+for($x=1;$x<=$phorum_attach_inputs;$x++){
     $PHORUM["DATA"]["INPUTS"][]["number"]=$x;
 }
 
 include phorum_get_template("header");
 phorum_hook("after_header");
+include phorum_get_template("preview");
 include phorum_get_template("attach");
 phorum_hook("before_footer");
 include phorum_get_template("footer");

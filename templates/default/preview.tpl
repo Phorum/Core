@@ -11,6 +11,17 @@
 <div class="PhorumReadBodyHead">{LANG->Postedby}: <strong>{PREVIEW->author}</strong> ({PREVIEW->ip})</div>
 <br />
 <div class="PhorumReadBodyText">{PREVIEW->body}</div><br />
+{IF PREVIEW->attachments}
+{LANG->Attachments}: 
+{ASSIGN MESSAGE_ATTACHMENTS PREVIEW->attachments}
+{LOOP MESSAGE_ATTACHMENTS}
+<a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
+{/LOOP MESSAGE_ATTACHMENTS}
+{/IF}
 </div>
 </div>
+{IF PREVIEW->edit_url}
+<div class="PhorumNavBlock" style="text-align: left;">
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{PREVIEW->edit_url}">{LANG->EditPost}</a></div>
+{/IF}
 <br /><br />
