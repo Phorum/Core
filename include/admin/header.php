@@ -12,6 +12,15 @@
 <html>
 <head>
 <title>Phorum Admin</title>
+<?php
+
+// load the charset from the default Phorum language if there is one
+if(isset($PHORUM["default_language"])){
+    include_once( "./include/lang/$PHORUM[default_language].php" );
+    echo "<meta content=\"text/html; charset=".$PHORUM["DATA"]["CHARSET"]."\" http-equiv=\"Content-Type\">\n";
+}
+
+?>
 <style>
 
 body
