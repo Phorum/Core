@@ -1,4 +1,4 @@
-<?php echo '<?xml version="1.0" encoding="iso-8859-1"?>'; ?>
+<?php echo '<?' ?>xml version="1.0" encoding="{CHARSET}"<?php echo '?>' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "DTD/xhtml1-transitional.dtd">
 <html lang="<?php echo $PHORUM['locale']; ?>">

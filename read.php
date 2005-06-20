@@ -311,7 +311,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=(round($file["size"]/1024))."kB";
-                $row["attachments"][$key]["name"]=htmlentities($file['name']); // clear all special chars from name to avoid XSS
+                $row["attachments"][$key]["name"]=htmlentities($file['name'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]); // clear all special chars from name to avoid XSS
                 $row["attachments"][$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
             }
         }
@@ -409,8 +409,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["HTML_TITLE"].=$threadsubject;
     }
     
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"] );
-    $PHORUM['DATA']['NAME'] = htmlentities( $PHORUM['DATA']['NAME'] );   
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
+    $PHORUM['DATA']['NAME'] = htmlentities( $PHORUM['DATA']['NAME'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );   
     
     // include the correct template
 
@@ -456,7 +456,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessageTo"];
     
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"] );
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
     // have to include the header here for the Redirect
     include phorum_get_template("header");
     phorum_hook("after_header");
@@ -469,7 +469,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"] );
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
     // have to include the header here for the Redirect
     include phorum_get_template("header");
     phorum_hook("after_header");

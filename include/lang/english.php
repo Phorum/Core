@@ -14,7 +14,11 @@
     // for the needed string
     $PHORUM['locale']="EN";
     
-
+    // charset for use in converting html into safe valid text
+    // also used in the header template for the <xml>
+    // for a list of supported charsets, see http://www.php.net/manual/en/function.htmlentities.php
+    // you may also need to set a meta tag with a charset in it.
+    $PHORUM["DATA"]['CHARSET']="iso-8859-1";
 
     // some languages need additional meta tags
     // to set encoding, etc.
