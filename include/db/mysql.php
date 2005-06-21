@@ -23,7 +23,6 @@ $PHORUM["message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_messages";
 $PHORUM["user_newflags_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_newflags";
 $PHORUM["subscribers_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_subscribers";
 $PHORUM["files_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_files";
-$PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
 $PHORUM["search_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_search";
 
 // tables common to all "partitions"
@@ -36,7 +35,7 @@ $PHORUM["forum_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_forum
 $PHORUM["user_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_group_xref";
 $PHORUM['user_custom_fields_table'] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_custom_fields";
 $PHORUM["private_message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
-
+$PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
 /*
 * fields which are always strings, even if they contain only numbers
 * used in post-message and update-message, otherwise strange things happen
@@ -301,26 +300,29 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     settype($count, "int");
     settype($forum_id, "int");
     settype($thread, "int");
+    $arr = array();
     
     $conn = phorum_db_mysql_connect();
-
-    // are we really allowed to show this thread/message?
-    $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-        $approvedval="AND {$PHORUM['message_table']}.status = ".PHORUM_STATUS_APPROVED;
-    }
 
     $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} WHERE status=".PHORUM_STATUS_APPROVED;
 
     // have to check what forums they can read first.
     // even if $thread is passed, we have to make sure
     // the user can read the forum
-    $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    if($forum_id <= 0) {
+	    $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+	
+	    // if they are not allowed to see any forums, return the emtpy $arr;
+	    if(empty($allowed_forums)) 
+	    	return $arr;
+    } else {
+    	// only single forum, *much* fast this way
+    	if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
+    		return $arr;
+    	}
+    }
 
-    // if they are not allowed to see any forums or the one requested, return the emtpy $arr;
-    if(empty($allowed_forums) || ($forum_id>0 && !in_array($forum_id, $allowed_forums)) ) return $arr;
-
-    if($forum_id!=0){
+    if($forum_id > 0){
         $sql.=" and forum_id=$forum_id";
     } else {
         $sql.=" and forum_id in (".implode(",", $allowed_forums).")";
@@ -331,15 +333,14 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     }
     
     if($threads_only) {
-        // todo 	
+        $sql.= " and parent_id = 0";
+        $sql.= " ORDER BY modifystamp DESC LIMIT $count";
+    } else {
+        $sql.= " ORDER BY message_id DESC LIMIT $count";
     }
-    
-    $sql.= " ORDER BY message_id DESC LIMIT $count";
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    $arr = array();
 
     while ($rec = mysql_fetch_assoc($res)){
         $arr[$rec["message_id"]] = $rec;
