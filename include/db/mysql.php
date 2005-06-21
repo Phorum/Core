@@ -303,8 +303,17 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     $arr = array();
     
     $conn = phorum_db_mysql_connect();
+    
+    // we need to differentiate on which key to use
+    // last_post_time is for sort by modifystamp
+    // forum_max_message is for sort by message-id
+    if($threads_only) {
+    	$use_key='last_post_time';
+    } else {
+    	$use_key='forum_max_message';
+    }
 
-    $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} WHERE status=".PHORUM_STATUS_APPROVED;
+    $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} USE KEY($use_key) WHERE status=".PHORUM_STATUS_APPROVED;
 
     // have to check what forums they can read first.
     // even if $thread is passed, we have to make sure
