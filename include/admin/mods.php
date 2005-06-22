@@ -49,9 +49,19 @@
 
     $d = dir("./mods");
     while (false !== ($entry = $d->read())) {
+        $lines = array();
         if(file_exists("./mods/$entry/info.txt")){
-            $plugins[$entry]=array();
             $lines=file("./mods/$entry/info.txt");
+        } elseif(is_file("./mods/$entry")){
+            $entry=str_replace(".php", "", $entry);
+            $data = file_get_contents("./mods/$entry.php");
+            if($data = stristr($data, "/* phorum module info")){
+                $data = substr($data, 0, strpos($data, "*/"));
+                $lines = preg_split('!(\r|\n|\r\n)!', $data);
+            }
+        }
+        if(count($lines)){
+            $plugins[$entry]=array();
             foreach($lines as $line){
                 if(strstr($line, ":")){
                     $parts=explode(":", trim($line), 2);
@@ -81,6 +91,8 @@
 
     $frm->hidden("module", "mods");
 
+    print_var($PHORUM["mods"]);
+    
     foreach($plugins as $name => $plugin){
 
         if(isset($mods[$name])){

@@ -584,7 +584,9 @@ function phorum_hook( $hook, $arg = "" )
             // load mods for this hook
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
                 include_once "./mods/$mod/$mod.php";
-            } 
+            } elseif ( file_exists( "./mods/$mod.php" ) ) {
+                include_once "./mods/$mod.php";
+            }        
         } 
 
         foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
