@@ -68,8 +68,15 @@
                     }
 
                     $_POST["reg_perms"]=$permission;
-                    break;                    
-
+                    break;
+                case "inherit_id":
+                    if( $_POST["inherit_id"] ) {
+                    	$forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
+                    	if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
+                    		$error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
+                    	}
+                    }
+                    break;
             }
 
             if($error) break;
@@ -94,11 +101,49 @@
             }
             
             if(defined("PHORUM_EDIT_FORUM")){
+            	if( $_POST["inherit_id"] ) {
+            		// Load inherit forum settings
+            		$forum_settings_inherit = phorum_db_get_forums($inherit_id);
+            		// slave settings
+            		$forum_settings_inherit=$forum_settings_inherit[$inherit_id];
+            		$forum_settings_inherit["forum_id"] =$_POST["forum_id"];
+            		$forum_settings_inherit["name"] =$_POST["name"];
+            		$forum_settings_inherit["description"] =$_POST["description"];
+            		$forum_settings_inherit["active"] =$_POST["active"];
+            		$forum_settings_inherit["parent_id"] =$_POST["parent_id"];
+            		$forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
+            		// don't inherit this settings
+            		unset($forum_settings_inherit["message_count"]);
+            		unset($forum_settings_inherit["thread_count"]);
+            		unset($forum_settings_inherit["last_post_time"]);
+            		// we don't need to save the master forum
+            		unset($forum_settings_inherit[$inherit_id]);
+            		$_POST =$forum_settings_inherit;
+            	} else {
+            		unset($_POST["pub_perms"]);
+            		unset($_POST["reg_perms"]);
+            	}
+
                 $res=phorum_db_update_forum($_POST);
+                $forum_settings =$_POST;
+                $forum_inherit_settings =phorum_db_get_forums(false,false,false,intval($_POST["forum_id"]));
+                foreach($forum_inherit_settings as $inherit_setting) {
+                	$forum_settings["forum_id"] =$inherit_setting["forum_id"];
+                	// We don't need to inherit this settings
+                	unset($forum_settings["name"]);
+                	unset($forum_settings["description"]);
+                	unset($forum_settings["active"]);
+                	unset($forum_settings["parent_id"]);
+                	unset($forum_settings["inherit_id"]);
+                	unset($forum_settings["message_count"]);
+                	unset($forum_settings["thread_count"]);
+                	unset($forum_settings["last_post_time"]);
+                	$res_inherit =phorum_db_update_forum($forum_settings);
+                }
             } else {
                 $res=phorum_db_add_forum($_POST);
             }
-
+            
             if($res){
                 phorum_redirect_by_url($_SERVER['PHP_SELF']."?module=default&parent_id=$_POST[parent_id]");
                 exit();
@@ -166,26 +211,58 @@
     
     $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
 
+    // Edit + inherit_id exists
+    if(defined("PHORUM_EDIT_FORUM") && $inherit_id ) {
+    	$forum_settings_inherit = phorum_db_get_forums($inherit_id);
+    	// inherit_forum not exists
+    	if( !$forum_settings_inherit[$inherit_id] ) {
+    		$inherit_id ="0";
+    		unset($forum_settings_inherit);
+    	}
+    	$disabled_form_input="disabled=\"disabled\"";
+    } else {
+    	unset($disabled_form_input);
+    }
+			
+    $frm->addbreak("Inherit Forum Settings");
+
+    $forum_list =phorum_get_forum_info(true);
+    // Remove this Forum
+    unset($forum_list[$forum_id]);
+    $forum_list["0"] ="Disabled";
+    // Check for Slaves
+    $forum_inherit_settings =phorum_db_get_forums(false,false,false,intval($forum_id));
+    if( count($forum_inherit_settings)>0 ) {
+    	$disabled_form_input_inherit="disabled=\"disabled\"";
+    }
+    $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit));
+
+    // Set Settings from inherit forum
+    if( $forum_settings_inherit ) {
+    	$forum_settings =$forum_settings_inherit;
+    	extract($forum_settings[$inherit_id]);
+    }
+    
     $frm->addbreak("Moderation / Permissions");
 
-    $row=$frm->addrow("Moderate Messages", $frm->select_tag("moderation", array(PHORUM_MODERATE_OFF=>"Disabled", PHORUM_MODERATE_ON=>"Enabled"), $moderation));
+    $row=$frm->addrow("Moderate Messages", $frm->select_tag("moderation", array(PHORUM_MODERATE_OFF=>"Disabled", PHORUM_MODERATE_ON=>"Enabled"), $moderation, $disabled_form_input));
 
     $frm->addhelp($row, "Moderate Messages", "This setting determines whether messages are visible to users immediately after they are posted.  If enabled, all messages will remain hidden until approved by a moderator.");
 
-    $frm->addrow("Email Messages To Moderators", $frm->select_tag("email_moderators", array(PHORUM_EMAIL_MODERATOR_OFF=>"Disabled", PHORUM_EMAIL_MODERATOR_ON=>"Enabled"), $email_moderators));
+    $frm->addrow("Email Messages To Moderators", $frm->select_tag("email_moderators", array(PHORUM_EMAIL_MODERATOR_OFF=>"Disabled", PHORUM_EMAIL_MODERATOR_ON=>"Enabled"), $email_moderators, $disabled_form_input));
 
-    $pub_perm_frm = $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $pub_perms & PHORUM_USER_ALLOW_READ)."&nbsp;&nbsp;".
-                    $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $pub_perms & PHORUM_USER_ALLOW_REPLY)."&nbsp;&nbsp;".
-                    $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $pub_perms & PHORUM_USER_ALLOW_NEW_TOPIC)."<br />".
-                    $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $pub_perms & PHORUM_USER_ALLOW_ATTACH);
+    $pub_perm_frm = $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $pub_perms & PHORUM_USER_ALLOW_READ, $disabled_form_input)."&nbsp;&nbsp;".
+                    $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $pub_perms & PHORUM_USER_ALLOW_REPLY, $disabled_form_input)."&nbsp;&nbsp;".
+                    $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $pub_perms & PHORUM_USER_ALLOW_NEW_TOPIC, $disabled_form_input)."<br />".
+                    $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $pub_perms & PHORUM_USER_ALLOW_ATTACH, $disabled_form_input);
 
     $frm->addrow("Public Users", $pub_perm_frm);
 
-    $reg_perm_frm = $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $reg_perms & PHORUM_USER_ALLOW_READ)."&nbsp;&nbsp;".
-                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $reg_perms & PHORUM_USER_ALLOW_REPLY)."&nbsp;&nbsp;".
-                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $reg_perms & PHORUM_USER_ALLOW_NEW_TOPIC)."<br />".
-                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts", $reg_perms & PHORUM_USER_ALLOW_EDIT)."&nbsp;&nbsp;".
-                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $reg_perms & PHORUM_USER_ALLOW_ATTACH);
+    $reg_perm_frm = $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $reg_perms & PHORUM_USER_ALLOW_READ, $disabled_form_input)."&nbsp;&nbsp;".
+                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $reg_perms & PHORUM_USER_ALLOW_REPLY, $disabled_form_input)."&nbsp;&nbsp;".
+                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $reg_perms & PHORUM_USER_ALLOW_NEW_TOPIC, $disabled_form_input)."<br />".
+                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts", $reg_perms & PHORUM_USER_ALLOW_EDIT, $disabled_form_input)."&nbsp;&nbsp;".
+                    $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $reg_perms & PHORUM_USER_ALLOW_ATTACH, $disabled_form_input);
 
     $row=$frm->addrow("Registered Users", $reg_perm_frm);
 
@@ -193,38 +270,38 @@
     
     $frm->addbreak("Display Settings");
 
-    $frm->addrow("Fixed Display-Settings (user can't override them)", $frm->select_tag("display_fixed", array("No", "Yes"), $display_fixed));
+    $frm->addrow("Fixed Display-Settings (user can't override them)", $frm->select_tag("display_fixed", array("No", "Yes"), $display_fixed, $disabled_form_input));
     
-    $frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template));
+    $frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template, $disabled_form_input));
 
-    $frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language));
+    $frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language, $disabled_form_input));
 
-    $frm->addrow("List Threads Expanded", $frm->select_tag("threaded_list", array("No", "Yes"), $threaded_list));
-    $frm->addrow("Read Threads Expanded", $frm->select_tag("threaded_read", array("No", "Yes"), $threaded_read));
-    $frm->addrow("Reverse Threading", $frm->select_tag("reverse_threading", array("No", "Yes"), $reverse_threading));
+    $frm->addrow("List Threads Expanded", $frm->select_tag("threaded_list", array("No", "Yes"), $threaded_list, $disabled_form_input));
+    $frm->addrow("Read Threads Expanded", $frm->select_tag("threaded_read", array("No", "Yes"), $threaded_read, $disabled_form_input));
+    $frm->addrow("Reverse Threading", $frm->select_tag("reverse_threading", array("No", "Yes"), $reverse_threading, $disabled_form_input));
 
-    $frm->addrow("Move Threads On Reply", $frm->select_tag("float_to_top", array("No", "Yes"), $float_to_top));
+    $frm->addrow("Move Threads On Reply", $frm->select_tag("float_to_top", array("No", "Yes"), $float_to_top, $disabled_form_input));
 
-    $frm->addrow("Message List Length (Flat Mode)", $frm->text_box("list_length_flat", $list_length_flat, 10));
-    $frm->addrow("Message List Length (Threaded Mode, Nr. of Threads)", $frm->text_box("list_length_threaded", $list_length_threaded, 10));
+    $frm->addrow("Message List Length (Flat Mode)", $frm->text_box("list_length_flat", $list_length_flat, 10, false, false, $disabled_form_input));
+    $frm->addrow("Message List Length (Threaded Mode, Nr. of Threads)", $frm->text_box("list_length_threaded", $list_length_threaded, 10, false, false, $disabled_form_input));
 
-    $frm->addrow("Read Page Length", $frm->text_box("read_length", $read_length, 10));
+    $frm->addrow("Read Page Length", $frm->text_box("read_length", $read_length, 10, false, false, $disabled_form_input, $disabled_form_input));
 
-    $frm->addrow("Display IP Addresses", $frm->select_tag("display_ip_address", array("No", "Yes"), $display_ip_address));
+    $frm->addrow("Display IP Addresses", $frm->select_tag("display_ip_address", array("No", "Yes"), $display_ip_address, $disabled_form_input));
 
-    $frm->addrow("Allow Email Notification", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify));
+    $frm->addrow("Allow Email Notification", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
 
-    $frm->addrow("Check for Duplicates", $frm->select_tag("check_duplicate", array("No", "Yes"), $check_duplicate));
+    $frm->addrow("Check for Duplicates", $frm->select_tag("check_duplicate", array("No", "Yes"), $check_duplicate, $disabled_form_input));
     
-    $frm->addrow("Count views", $frm->select_tag("count_views", array(0 => "No", 1 => "Yes, show views added to subject", 2 => "Yes, show views as extra column"), $count_views));    
+    $frm->addrow("Count views", $frm->select_tag("count_views", array(0 => "No", 1 => "Yes, show views added to subject", 2 => "Yes, show views as extra column"), $count_views, $disabled_form_input));    
 
     $frm->addbreak("Attachment Settings");
 
-    $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", $max_attachments, 10));
+    $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", $max_attachments, 10, false, false, $disabled_form_input));
 
-    $frm->addrow("Allowed Files (eg: gif;jpg;png)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10));
+    $frm->addrow("Allowed Files (eg: gif;jpg;png)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
-    $frm->addrow("Max File Size In kb", $frm->text_box("max_attachment_size", $max_attachment_size, 10));
+    $frm->addrow("Max File Size In kb", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 
     $frm->show();
 
