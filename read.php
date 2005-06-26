@@ -53,7 +53,9 @@ if(empty($PHORUM["args"][1])) {
     $message_id = (int)$PHORUM["args"][1];
 } else{
     if(!is_numeric($PHORUM["args"][2])) {
-        $newervar=(int)$PHORUM["args"][1];
+    	$dest_url="";
+    	$newervar=(int)$PHORUM["args"][1];
+    	
         switch($PHORUM["args"][2]) {
             case "newer":
                 $thread = phorum_db_get_newer_thread($newervar);
@@ -73,13 +75,41 @@ if(empty($PHORUM["args"][1])) {
                     phorum_db_newflag_add_read($thread_message['meta']['message_ids']);
                 }
                 break;
+            case "gotonewpost":
+                // thread needs to be in $thread for the redirection
+                $thread = (int)$PHORUM["args"][1];
+                $thread_message=phorum_db_get_message($thread,'message_id');    
+                $message_ids=$thread_message['meta']['message_ids'];
+                
+                foreach($message_ids as $mkey => $mid) {
+                		// if already read, remove it from message-array
+                		if(isset($PHORUM['user']['newinfo'][$mid])) {
+                			unset($message_ids[$mkey]);
+                		}
+                		asort($message_ids,SORT_NUMERIC); // make sure they are sorted
+                		
+                		$new_message=array_shift($message_ids); // get the first element
+                		
+                		if(!$PHORUM['threaded_read']) { // get new page
+                			$new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                			$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                		} else { // for threaded
+                			$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
+                		}
+                		
+                }
+                        
+            
+            	break;
         }
 
-        if($thread > 0) {
-            $dest_url = phorum_get_url(PHORUM_READ_URL, $thread);
-        } else{
-            // we are either at the top or the bottom, go back to the list.
-            $dest_url = phorum_get_url(PHORUM_LIST_URL);
+        if(empty($dest_url)) {
+	        if($thread > 0) {
+	            $dest_url = phorum_get_url(PHORUM_READ_URL, $thread);
+	        } else{
+	            // we are either at the top or the bottom, go back to the list.
+	            $dest_url = phorum_get_url(PHORUM_LIST_URL);
+	        }
         }
 
         phorum_redirect_by_url($dest_url);
