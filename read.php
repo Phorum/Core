@@ -78,29 +78,31 @@ if(empty($PHORUM["args"][1])) {
             case "gotonewpost":
                 // thread needs to be in $thread for the redirection
                 $thread = (int)$PHORUM["args"][1];
-                $thread_message=phorum_db_get_message($thread,'message_id');    
+                $thread_message=phorum_db_get_message($thread,'message_id');
                 $message_ids=$thread_message['meta']['message_ids'];
-                
+
                 foreach($message_ids as $mkey => $mid) {
-                		// if already read, remove it from message-array
-                		if(isset($PHORUM['user']['newinfo'][$mid])) {
-                			unset($message_ids[$mkey]);
-                		}
-                		asort($message_ids,SORT_NUMERIC); // make sure they are sorted
-                		
-                		$new_message=array_shift($message_ids); // get the first element
-                		
-                		if(!$PHORUM['threaded_read']) { // get new page
-                			$new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
-                			$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
-                		} else { // for threaded
-                			$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
-                		}
-                		
+                	// if already read, remove it from message-array
+                	if(isset($PHORUM['user']['newinfo'][$mid])) {
+                		unset($message_ids[$mkey]);
+                	}
+
                 }
-                        
+                asort($message_ids,SORT_NUMERIC); // make sure they are sorted
+
+
+                $new_message=array_pop($message_ids); // get the first element
+
+                if(!$PHORUM['threaded_read']) { // get new page
+                	$new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                	$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                } else { // for threaded
+                	$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
+                }
+
+                break;
+
             
-            	break;
         }
 
         if(empty($dest_url)) {
