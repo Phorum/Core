@@ -160,6 +160,7 @@
         "Go"                    =>      "Go",
         "GoToTop"               =>      "Newest Messages",
         "Goto"                  =>      "Goto",
+        "GoToNew"               =>      "Go to new",
         "GotoThread"            =>      "Goto Thread",
         "Group"                 =>      "Group",
         "GroupJoinFail"         =>      "Group could not be joined.",

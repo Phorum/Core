@@ -201,6 +201,7 @@ if ($PHORUM["threaded_list"]){
         $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date"], $row["modifystamp"]);
         $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
         $rows[$key]["url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
+        $rows[$key]["newpost_url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
 
         $rows[$key]["new"] = "";
         
