@@ -220,8 +220,9 @@
     	if( !$forum_settings_inherit[$inherit_id] ) {
     		$inherit_id ="0";
     		unset($forum_settings_inherit);
+    	} else {
+    		$disabled_form_input="disabled=\"disabled\"";
     	}
-    	$disabled_form_input="disabled=\"disabled\"";
     } else {
     	unset($disabled_form_input);
     }
