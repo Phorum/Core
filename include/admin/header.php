@@ -120,6 +120,16 @@ input, textarea, select, td
     text-align: left;
 }
 
+.PhorumAdminError 
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px;
+    color: #000000;
+    border: 1px solid red;
+}
+
 .small
 {
     font-size: 10px;
