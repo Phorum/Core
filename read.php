@@ -218,6 +218,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // URLS which are common for the thread
     if($PHORUM["DATA"]["MODERATOR"]) {
         $URLS["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $thread);
+        $URLS["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $thread);
         $URLS["close_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_CLOSE_THREAD, $thread);
         $URLS["reopen_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_REOPEN_THREAD, $thread);
     }
@@ -247,12 +248,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $row["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
             $row["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
             $row["edit_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOD_EDIT_POST, $row["message_id"]);
+            $row["split_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_SPLIT_THREAD, $row["message_id"]);
             if($row['is_unapproved']) {
               $row["approve_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"]);
             } else {
               $row["hide_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $row["message_id"]);
             }
             $row["move_url"] = $URLS["move_url"];
+            $row["merge_url"] = $URLS["merge_url"];
             $row["close_url"] = $URLS["close_url"];
             $row["reopen_url"] = $URLS["reopen_url"];
         }

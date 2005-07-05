@@ -157,6 +157,10 @@
     define("PHORUM_HIDE_POST", $i++); 
     define("PHORUM_APPROVE_MESSAGE_TREE", $i++); 
     define("PHORUM_PREVIEW_EDIT_POST", $i++);
+    define("PHORUM_MERGE_THREAD", $i++);    
+    define("PHORUM_DO_THREAD_MERGE", $i++);    
+    define("PHORUM_SPLIT_THREAD", $i++);    
+    define("PHORUM_DO_THREAD_SPLIT", $i++);    
 
     define("PHORUM_CC_SUMMARY", "summary");
     define("PHORUM_CC_SUBSCRIPTION_THREADS", "subthreads");
