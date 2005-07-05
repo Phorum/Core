@@ -169,6 +169,9 @@ function phorum_controlcenter_user_save($panel)
     	if (isset($userdata["password"]) && !empty($userdata["password"])) {
     		phorum_user_set_current_user($userdata["user_id"]);
     		phorum_user_create_session();
+    	} else {
+    		// make sure that the user gets reloaded
+    		phorum_user_set_current_user($userdata["user_id"]);
     	}
 
     	// reset the profile
