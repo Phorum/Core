@@ -5,7 +5,7 @@
     $error="";
     $curr="NEW";
 
-    $ban_types = array(PHORUM_BAD_IPS=>"IP Address/Hostname", PHORUM_BAD_NAMES=>"Name/User Name", PHORUM_BAD_EMAILS=>"Email Address");
+    $ban_types = array(PHORUM_BAD_IPS=>"IP Address/Hostname", PHORUM_BAD_NAMES=>"Name/User Name", PHORUM_BAD_EMAILS=>"Email Address", PHORUM_BAD_USERID=>"User-Id (registered User)");
 
     $match_types = array("string", "PCRE");
     

@@ -132,6 +132,7 @@
         "ErrBannedIP"           =>      "You can not post because your IP address or your ISP's has been blocked.  Please contact the forum administrators.",
         "ErrBannedName"         =>      "You can not post because the name you entered has been banned from use.  Please use a different name when posting or contact the forum administrators.",
         "ErrBannedEmail"        =>      "You can not post because the email address you entered has been banned from use.  Please use a different email address when posting or contact the forum administrators.",
+        "ErrBannedUser"         =>      "You can not post because this user has been banned from use.",
         "ErrRegisterdEmail"     =>      "The email address you entered is listed with a currently registered user.  If you are that user, please login.  Otherwise, please use another email address.",
         "ErrRegisterdName"      =>      "The name you entered is already registered by another user.  If you are that user, please login.  Otherwise, please use another name.",
         "ExactPhrase"           =>      "Exact Phrase",

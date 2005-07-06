@@ -66,6 +66,8 @@ if (count($_POST) > 0) {
                 $error = $PHORUM["DATA"]["LANG"]["ErrBannedName"];
             } elseif (!phorum_check_ban_lists($PHORUM["user"]["email"], PHORUM_BAD_EMAILS)) {
                 $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
+            } elseif (!phorum_check_ban_lists($PHORUM["user"]["user_id"], PHORUM_BAD_USERID)) {
+                $error = $PHORUM["DATA"]["LANG"]["ErrBannedUser"];
             } 
         } else { // checks for unregistered
             if (empty($_POST["author"])) {

@@ -20,6 +20,7 @@ define('phorum_page','edit');
 
 include_once("./common.php");
 include_once("./include/moderation_functions.php");
+include_once("./include/profile_functions.php");
 include_once("./include/thread_info.php");
 
 if(!phorum_check_read_common()) {
@@ -52,9 +53,15 @@ else{
     $thread_is_closed = $parent["closed"];
 }
 
+$PHORUM['banlists'] = phorum_db_get_banlists();
+
 // security checks, see if they're allowed to edit this post
-$useredit = (($getmsg["user_id"] == $PHORUM["user"]["user_id"]) && phorum_user_access_allowed(PHORUM_USER_ALLOW_EDIT) &&
-              !$thread_is_closed && ($PHORUM["user_edit_timelimit"] == 0 || $getmsg["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time()));
+$useredit = (($getmsg["user_id"] == $PHORUM["user"]["user_id"]) 
+              && phorum_user_access_allowed(PHORUM_USER_ALLOW_EDIT) 
+              && !$thread_is_closed 
+              && ($PHORUM["user_edit_timelimit"] == 0 
+                  || $getmsg["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time()) 
+              && phorum_check_ban_lists($PHORUM["user"]["user_id"],PHORUM_BAD_USERID));
 
 if(!($useredit || $PHORUM["DATA"]["MODERATOR"])){
     
