@@ -316,6 +316,8 @@ switch ($mod_step) {
    case PHORUM_MERGE_THREAD: // this is the first step of a thread merge	
            if( $PHORUM['DATA']['USERINFO']['moderator_data'] ) {
                    $moderator_data =unserialize($PHORUM['DATA']['USERINFO']['moderator_data']);
+           } else {
+                   $moderator_data =array();       
            }
            $template="merge_form";
            $PHORUM['DATA']['URL']["ACTION"] =phorum_get_url(PHORUM_MODERATION_ACTION_URL);
@@ -346,7 +348,7 @@ switch ($mod_step) {
            }
 
    case PHORUM_DO_THREAD_MERGE: // this is the last step of a thread merge
-           if( $_POST['thread1'] ) {
+           if( isset($_POST['thread1']) && $_POST['thread1']) {
                    settype($_POST['forum_id1'], "int");
                    settype($_POST['thread1'], "int");
                    settype($_POST['thread'], "int"); // Thread 2
@@ -361,7 +363,7 @@ switch ($mod_step) {
                    // update message count / stats
                    phorum_update_thread_info($_POST['thread1']);
                    phorum_db_update_forum_stats(true);
-           }	 else {
+           } else {
                    // Cancel Thread Merge
                    $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
                    $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
