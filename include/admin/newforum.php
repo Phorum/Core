@@ -290,7 +290,7 @@
 
     $frm->addrow("Read Page Length", $frm->text_box("read_length", $read_length, 10, false, false, $disabled_form_input, $disabled_form_input));
 
-    $frm->addrow("Display IP Addresses", $frm->select_tag("display_ip_address", array("No", "Yes"), $display_ip_address, $disabled_form_input));
+    $frm->addrow("Display IP Addresses <small>(note: admins always see it)</small>", $frm->select_tag("display_ip_address", array("No", "Yes"), $display_ip_address));
 
     $frm->addrow("Allow Email Notification", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
 
