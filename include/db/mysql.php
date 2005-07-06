@@ -1420,7 +1420,8 @@ function phorum_db_drop_forum($forum_id)
         $PHORUM['user_newflags_table'],
         $PHORUM['subscribers_table'],
         $PHORUM['forum_group_xref_table'],
-        $PHORUM['forums_table']
+        $PHORUM['forums_table'],
+        $PHORUM['banlist_table']
     );
 
     foreach($tables as $table){
