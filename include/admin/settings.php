@@ -248,6 +248,9 @@ $row=$frm->addrow( "System Emails From Address", $frm->text_box( "system_email_f
 
 $row=$frm->addrow( "Use BCC in sending mails:", $frm->select_tag( "use_bcc", array( "No", "Yes" ), $PHORUM["use_bcc"] ) );
 
+$row=$frm->addrow( "Ignore Admin for moderator-emails:", $frm->select_tag( "email_ignore_admin", array( "No", "Yes" ), $PHORUM["email_ignore_admin"] ) );
+$frm->addhelp($row, "&nbsp;&nbsp;&nbsp;Ignore Admin for moderator-emails", "If you select yes for this option, then the moderator-notifications and report-message emails will not be sent to the admininistrator, only to moderators" );
+
 // calling mods
 $frm=phorum_hook("admin_general", $frm);
 

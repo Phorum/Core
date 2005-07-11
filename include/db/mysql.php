@@ -1703,7 +1703,14 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false) {
    settype($forum_id, "int");
 
    if(!$ignore_user_perms) { // sometimes we just don't need them
-       $sql="SELECT DISTINCT user.user_id, user.email FROM {$PHORUM['user_table']} as user LEFT JOIN {$PHORUM['user_permissions_table']} as perm ON perm.user_id=user.user_id WHERE (perm.permission >= ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0) AND perm.forum_id=$forum_id) OR user.admin=1";
+       if(!$PHORUM['email_ignore_admin']) {
+            $admincheck=" OR user.admin=1";
+       } else {
+            $admincheck="";       
+       }
+              
+        
+       $sql="SELECT DISTINCT user.user_id, user.email FROM {$PHORUM['user_table']} as user LEFT JOIN {$PHORUM['user_permissions_table']} as perm ON perm.user_id=user.user_id WHERE (perm.permission >= ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0) AND perm.forum_id=$forum_id)$admincheck";
 
 
        $res = mysql_query($sql, $conn);
