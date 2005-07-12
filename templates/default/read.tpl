@@ -49,7 +49,7 @@
 {if MODERATOR true}
 <div class="PhorumReadNavBlock" style="text-align: left;">
 <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{if MESSAGES->threadstart true}
-<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>{if MESSAGES->closed false}&bull;<a class="PhorumNavLink" href="{MESSAGES->close_url}">{LANG->CloseThread}</a>{/if}{if MESSAGES->closed true}&bull;<a class="PhorumNavLink" href="{MESSAGES->reopen_url}">{LANG->ReopenThread}</a>{/if}
+<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGES->move_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>{if MESSAGES->closed false}&bull;<a class="PhorumNavLink" href="{MESSAGES->close_url}">{LANG->CloseThread}</a>{/if}{if MESSAGES->closed true}&bull;<a class="PhorumNavLink" href="{MESSAGES->reopen_url}">{LANG->ReopenThread}</a>{/if}
 {/if}
 {if MESSAGES->threadstart false}
 <a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url2}';">{LANG->DelMessReplies}</a>

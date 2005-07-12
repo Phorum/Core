@@ -70,6 +70,22 @@ $offset=$page-1;
 // check the moderation-settings
 $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
+if($PHORUM["DATA"]["MODERATOR"]) {
+        // find out how many forums this user can moderate
+        $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+        
+        $modforums=0;
+        foreach($forums as $id=>$forum){
+                if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
+                   $modforums++;
+                }
+        }
+        if($modforums > 1) {
+                $build_move_url=true;       
+        } else {
+                $build_move_url=false;       
+        }
+}
 // Get the threads
 $rows = array();
 
@@ -158,7 +174,9 @@ if ($PHORUM["threaded_list"]){
               
         $rows[$key]["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
         $rows[$key]["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-        $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+        if($build_move_url) {
+                $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+        }
         $rows[$key]["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
 
         $rows[$key]["new"] = "";
@@ -226,7 +244,9 @@ if ($PHORUM["threaded_list"]){
                     if($PHORUM["DATA"]["MODERATOR"]){
                         $rows[$key]["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
                         $rows[$key]["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-                        $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+                        if($build_move_url) {
+                                $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+                        }
                         $rows[$key]["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
                     }
 

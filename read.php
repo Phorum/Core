@@ -44,6 +44,23 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
+if($PHORUM["DATA"]["MODERATOR"]) {
+        // find out how many forums this user can moderate
+        $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+        
+        $modforums=0;
+        foreach($forums as $id=>$forum){
+                if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
+                   $modforums++;
+                }
+        }
+        if($modforums > 1) {
+                $build_move_url=true;       
+        } else {
+                $build_move_url=false;       
+        }
+}
+
 // setup some stuff based on the url passed
 if(empty($PHORUM["args"][1])) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
@@ -217,7 +234,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // URLS which are common for the thread
     if($PHORUM["DATA"]["MODERATOR"]) {
-        $URLS["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $thread);
+        if($build_move_url) {
+                $URLS["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $thread);
+        }
         $URLS["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $thread);
         $URLS["close_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_CLOSE_THREAD, $thread);
         $URLS["reopen_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_REOPEN_THREAD, $thread);
@@ -254,7 +273,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             } else {
               $row["hide_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $row["message_id"]);
             }
-            $row["move_url"] = $URLS["move_url"];
+            if($build_move_url) {
+                $row["move_url"] = $URLS["move_url"];
+            }
             $row["merge_url"] = $URLS["merge_url"];
             $row["close_url"] = $URLS["close_url"];
             $row["reopen_url"] = $URLS["reopen_url"];
