@@ -139,7 +139,7 @@ $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head
 if ( !defined( "PHORUM_ADMIN" ) ) {
     
     // if the Phorum is disabled, display a message.
-    if($PHORUM["status"]=="disabled"){
+    if(isset($PHORUM["status"]) && $PHORUM["status"]=="disabled"){
         if(!empty($PHORUM["disabled_url"])){
             header("Location: ".$PHORUM["disabled_url"]);
             exit();
