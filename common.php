@@ -271,7 +271,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     }    
 
     // if the Phorum is disabled, display a message.
-    if($PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
+    if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
         // set all our URL's
         phorum_build_common_urls();
         
