@@ -84,7 +84,3 @@
 </div>
 
 </div>
-<br />
-<div class="PhorumStdBlockHeader PhorumHeadingLeft" style="text-align: left;">{LANG->SearchTips}</div>
-<div class="PhorumStdBlock">{LANG->SearchTip}</div>
-
