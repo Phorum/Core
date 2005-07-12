@@ -20,6 +20,8 @@ function phorum_bb_code($data)
         "/\[center\](.+?)\[\/center\]/is",
         "/\[hr\]/i",
         "/\[code\](.+?)\[\/code\]/is",
+        "/\[sub\](.+?)\[\/sub\]/is",
+        "/\[sup\](.+?)\[\/sup\]/is",
     );
 
     // add extra tags to links, if enabled in the admin settings page
@@ -48,6 +50,8 @@ function phorum_bb_code($data)
         "<center class=\"bbcode\">$1</center>",
         "<hr class=\"bbcode\" />",
         "<pre class=\"bbcode\">$1</pre>",
+        "<sub class=\"bbcode\">$1</sub>",
+        "<sup class=\"bbcode\">$1</sup>",
     );
 
     $quote_search = array(
