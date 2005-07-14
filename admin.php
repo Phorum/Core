@@ -30,27 +30,32 @@
     include_once "./include/users.php";
 
 
-    // check for a session
-
-    phorum_user_check_session("phorum_admin_session");
-
-    if(empty($PHORUM["http_path"]) || (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL) || !isset($PHORUM['internal_version'])) {
+    // if we are installing or upgrading, we don't need to check for a session
+    if(!isset($PHORUM['internal_version']) || (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL)) {
         // this is an install
         $module="install";
-    } elseif(!$GLOBALS["PHORUM"]["user"]["admin"]){
-        // if not an admin
-        unset($GLOBALS["PHORUM"]["user"]);
-        $module="login";
+    
     } else {
-        // load the default module if none is specified
-        if(!empty($_REQUEST["module"])){
-            $module = basename($_REQUEST["module"]);
+
+        // check for a session
+        phorum_user_check_session("phorum_admin_session");
+    
+        if(!$GLOBALS["PHORUM"]["user"]["admin"]){
+            // if not an admin
+            unset($GLOBALS["PHORUM"]["user"]);
+            $module="login";
         } else {
-            $module = "default";
+            // load the default module if none is specified
+            if(!empty($_REQUEST["module"])){
+                $module = basename($_REQUEST["module"]);
+            } else {
+                $module = "default";
+            }
+    
         }
-
+    
     }
-
+    
     ob_start();
     if($module!="help") include_once "./include/admin/header.php";
     @include_once "./include/admin/$module.php";
