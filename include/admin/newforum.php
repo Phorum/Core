@@ -121,9 +121,6 @@
             			unset($forum_settings_inherit[$inherit_id]);
             			$_POST =$forum_settings_inherit;
             		}
-            	} else {
-            		unset($_POST["pub_perms"]);
-            		unset($_POST["reg_perms"]);
             	}
 
                 $res=phorum_db_update_forum($_POST);
