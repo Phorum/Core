@@ -169,6 +169,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     } else {
         // some defaults we might need if no forum is set (i.e. on the index-page)
         $PHORUM['vroot']=0;   
+        $PHORUM['parent_id']=0;   
     }
 
     // stick some stuff from the settings into the DATA member
@@ -558,11 +559,24 @@ function phorum_build_common_urls()
     $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POST_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
-    if ( isset( $GLOBALS["PHORUM"]["parent_id"] ) && !empty($GLOBALS["PHORUM"]["parent_id"]))
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $GLOBALS["PHORUM"]["parent_id"] );
+    
+    if(isset($GLOBALS['PHORUM']["use_new_folder_style"]) && $GLOBALS['PHORUM']["use_new_folder_style"] ) { // go to root or vroot
+    
+            $index_id=$GLOBALS["PHORUM"]["vroot"]; // vroot is either 0 (root) or another id
+            
+    } else { // go to parent
+        
+            $index_id=$GLOBALS["PHORUM"]["parent_id"]; // parent_id is always set now
+            
+    }
+    
+    // check if its the full root, avoid adding an id in this case (SE-optimized ;))
+    if ( !empty($index_id))
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $index_id );
     else
         $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
 
+        
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
 
     if ( $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ) {
