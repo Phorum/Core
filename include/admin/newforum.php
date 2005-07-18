@@ -101,26 +101,32 @@
             }
             
             if(defined("PHORUM_EDIT_FORUM")){
+            	
             	if( $_POST["inherit_id"] ) {
-            		// Load inherit forum settings
-            		$forum_settings_inherit = phorum_db_get_forums($inherit_id);
-            		if( $forum_settings_inherit["forum_id"] ) {
-            			// slave settings
-            			$forum_settings_inherit=$forum_settings_inherit[$inherit_id];
-            			$forum_settings_inherit["forum_id"] =$_POST["forum_id"];
-            			$forum_settings_inherit["name"] =$_POST["name"];
-            			$forum_settings_inherit["description"] =$_POST["description"];
-            			$forum_settings_inherit["active"] =$_POST["active"];
-            			$forum_settings_inherit["parent_id"] =$_POST["parent_id"];
-            			$forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
-            			// don't inherit this settings
-            			unset($forum_settings_inherit["message_count"]);
-            			unset($forum_settings_inherit["thread_count"]);
-            			unset($forum_settings_inherit["last_post_time"]);
-            			// we don't need to save the master forum
-            			unset($forum_settings_inherit[$inherit_id]);
-            			$_POST =$forum_settings_inherit;
-            		}
+            	    // Load inherit forum settings
+            	    $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
+            	    if( $forum_settings_inherit[$_POST["inherit_id"]]["forum_id"] ) {
+            	        // slave settings
+
+            	        $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
+            	        $forum_settings_inherit["forum_id"] =$_POST["forum_id"];
+            	        $forum_settings_inherit["name"] =$_POST["name"];
+            	        $forum_settings_inherit["description"] =$_POST["description"];
+            	        $forum_settings_inherit["active"] =$_POST["active"];
+            	        $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
+            	        $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
+            	        // don't inherit this settings
+            	        unset($forum_settings_inherit["message_count"]);
+            	        unset($forum_settings_inherit["thread_count"]);
+            	        unset($forum_settings_inherit["last_post_time"]);
+            	        // we don't need to save the master forum
+            	        unset($forum_settings_inherit[$inherit_id]);
+            	        $_POST =$forum_settings_inherit;
+            	    } else {
+            	        $_POST["inherit_id"] =0;
+            	        unset($_POST["pub_perms"]);
+            	        unset($_POST["reg_perms"]);
+            	    }
             	}
 
                 $res=phorum_db_update_forum($_POST);
