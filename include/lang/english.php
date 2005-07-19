@@ -19,6 +19,9 @@
     // for a list of supported charsets, see http://www.php.net/manual/en/function.htmlentities.php
     // you may also need to set a meta tag with a charset in it.
     $PHORUM["DATA"]['CHARSET']="iso-8859-1";
+    
+    // encoding set for outgoing mails 
+    $PHORUM["DATA"]["MAILENCODING"]="8bit";
 
     // some languages need additional meta tags
     // to set encoding, etc.

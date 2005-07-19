@@ -74,17 +74,19 @@ function phorum_email_user($addresses, $data)
     $send_messages = phorum_hook("send_mail", $hook_data);
     
     if(isset($data["msgid"])){
-        $msgid="\nMessage-ID: $data[msgid]";
+        $msgid="\nMessage-ID: {$data['msgid']}";
     } else {
         $msgid="";
     }
 
 	if($send_messages != 0 && $num_addresses > 0){
+	    $mailheader ="Content-Type: text/plain; charset={$PHORUM["DATA"]["CHARSET"]}\nContent-Transfer-Encoding: {$PHORUM["DATA"]["MAILENCODING"]}\nX-Mailer: Phorum5$msgid\n";
+	    
 		if(isset($PHORUM['use_bcc']) && $PHORUM['use_bcc'] && $num_addresses > 3){
-			mail(" ", $mailsubject, $mailmessage, "X-Mailer: Phorum5$msgid\nFrom: $from_address\nBCC: " . implode(",", $addresses));
+			mail(" ", $mailsubject, $mailmessage, $mailheader."From: $from_address\nBCC: " . implode(",", $addresses));
 		} else {
 			foreach($addresses as $address){
-				mail($address, $mailsubject, $mailmessage, "X-Mailer: Phorum5$msgid\nFrom: $from_address");
+				mail($address, $mailsubject, $mailmessage, $mailheader."From: $from_address");
 			}
 		}
 	}
