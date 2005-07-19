@@ -16,6 +16,19 @@ function phorum_format_messages( $data )
 
     foreach( $data as $key => $message ) {
         // ////////////////////////////////
+        // prepare bad-words list
+        $replace_vals  = array();
+        $replace_words = array();
+        $bad_word_check= false;
+        
+        if ( is_array( $bad_words ) ) {
+            foreach( $bad_words as $item ) {
+                $replace_words[]="/\b".$item['string']."(ing|ed|s|er|es)*\b/";
+                $replace_vals[]="@#$%&";
+                //$body = preg_replace( "/\b$word(ing|ed|s|er|es)*\b/", "@#$%&", $body );
+                $bad_word_check=true;
+            }
+        }
         
         // Work on the body
         
@@ -31,19 +44,22 @@ function phorum_format_messages( $data )
             // replace newlines with <br phorum="true" /> temporarily
             // this way the mods know what Phorum did vs the user
             $body = str_replace( "\n", "<br phorum=\"true\" />\n", $body );
-
-            if ( is_array( $bad_words ) ) {
-                foreach( $bad_words as $item ) {
-                    $word=$item['string'];
-                    $body = preg_replace( "/\b$word(ing|ed|s|er|es)*\b/", "@#$%&", $body );
-                } 
-            } 
+            
+            if($bad_word_check) {
+                   $body = preg_replace( $replace_words, $replace_vals, $body );
+            }
 
             $data[$key]["body"] = $body;
         } 
         // ////////////////////////////////
         
         // Work on the other fields
+        
+        
+        // bad words on subject and author
+        if($bad_word_check) {
+             list($message["subject"],$message["author"]) = preg_replace( $replace_words, $replace_vals, array($message["subject"],$message["author"]));
+        }
         
         // htmlspecialchars does too much
         $safe_author = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $message["author"] );
@@ -54,6 +70,7 @@ function phorum_format_messages( $data )
             }
             $data[$key]["author"] = $safe_author;
         }
+        
         $data[$key]["author"] = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $message["author"] );
 
         $data[$key]["email"] = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $message["email"] );
