@@ -113,7 +113,7 @@ function phorum_date( $picture, $ts )
         
     setlocale(LC_TIME, $PHORUM['locale']); 
 
-    if($PHORUM["user_time_zone"] && isset( $PHORUM["user"]["tz_offset"] ) && $PHORUM["user"]["tz_offset"]!==-99 ){
+    if($PHORUM["user_time_zone"] && isset( $PHORUM["user"]["tz_offset"] ) && $PHORUM["user"]["tz_offset"]!=-99 ){
 
         $ts += $PHORUM["user"]["tz_offset"] * 3600;
         return gmstrftime( $picture, $ts );

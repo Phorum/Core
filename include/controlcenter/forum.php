@@ -46,13 +46,16 @@ function phorum_cc_get_template_info()
 
 if ( count( $_POST ) ) {
     // dst is time + 1 hour
-    if($_POST['tz_offset'] && isset($_POST['is_dst']) && $_POST['is_dst']) {
-        $_POST['tz_offset']=++$_POST['tz_offset']."";
+    if($_POST['tz_offset'] != -99) {
+        if($_POST['tz_offset'] && isset($_POST['is_dst']) && $_POST['is_dst']) {
+            $_POST['tz_offset']=++$_POST['tz_offset']."";
+        }
     }
     // unsetting dst if not checked
     if(!isset($_POST['is_dst'])) {
         $_POST['is_dst']=0;   
     }
+    
     $error = phorum_controlcenter_user_save( $panel );
 } 
 
