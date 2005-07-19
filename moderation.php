@@ -382,7 +382,7 @@ switch ($mod_step) {
            }
            phorum_user_save_simple($user_data_simple);
            break;
-   case PHORUM_SPLIT_THREAD: // this is the first step of a thread merge	
+   case PHORUM_SPLIT_THREAD: // this is the first step of a thread split	
            $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
            $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
            $message =phorum_db_get_message($msgthd_id);
@@ -393,7 +393,7 @@ switch ($mod_step) {
            $template="split_form";
            break;
 
-   case PHORUM_DO_THREAD_SPLIT: // this is the last step of a thread merge
+   case PHORUM_DO_THREAD_SPLIT: // this is the last step of a thread split
            $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgSplitOk'];
            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
            settype($_POST['forum_id'], "int");
