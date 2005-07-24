@@ -239,6 +239,10 @@ if ($PHORUM["threaded_list"]){
         } else {
            $rows[$key]['moved']=0;   
         }
+        
+        // default thread-count
+        $thread_count=$row["thread_count"];
+        
         if ($PHORUM["DATA"]["LOGGEDIN"]){
 
                     if($PHORUM["DATA"]["MODERATOR"]){
@@ -248,6 +252,10 @@ if ($PHORUM["threaded_list"]){
                                 $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
                         }
                         $rows[$key]["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
+                        // count could be different with hidden or unapproved posts
+                        if(!$PHORUM["threaded_read"] && isset($row["meta"]["message_ids_moderator"])) {
+                                $thread_count=count($row["meta"]["message_ids_moderator"]);
+                        }
                     }
 
                     if(!$rows[$key]['moved'] && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
@@ -274,8 +282,11 @@ if ($PHORUM["threaded_list"]){
         }
 
         $pages=1;
-        if(!$PHORUM["threaded_read"] && $row["thread_count"]>$PHORUM["read_length"]){
-            $pages=ceil($row["thread_count"]/$PHORUM["read_length"]);
+        // thread_count computed above in moderators-section
+        if(!$PHORUM["threaded_read"] && $thread_count>$PHORUM["read_length"]){
+            
+            $pages=ceil($thread_count/$PHORUM["read_length"]);
+            
             if($pages<=5){
                 $page_links="";
                 for($x=1;$x<=$pages;$x++){

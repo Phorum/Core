@@ -181,7 +181,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $thread_is_closed = (bool)$data[$thread]["closed"];
     $thread_is_announcement = ($data[$thread]["status"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
 
-    $threadnum=count($data[$thread]['meta']['message_ids']);
+    // we might have more messages for mods
+    if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
+        $threadnum=count($data[$thread]['meta']['message_ids_moderator']);
+    } else {
+        $threadnum=$data[$thread]['thread_count'];
+    }
 
     if(!$PHORUM["threaded_read"] && $threadnum > $PHORUM["read_length"]){
         $pages=ceil($threadnum/$PHORUM["read_length"]);

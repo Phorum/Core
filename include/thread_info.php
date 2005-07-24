@@ -42,6 +42,8 @@ function phorum_update_thread_info($thread)
         $message["meta"]["recent_post"]["author"]=$recent_message["author"];
         $message["meta"]["recent_post"]["message_id"]=$recent_message["message_id"];
         $message["meta"]["message_ids"]=$message_ids;
+        // used only for mods
+        $message["meta"]["message_ids_moderator"]=array_keys($messages);
 
         phorum_db_update_message($thread, $message);
         
