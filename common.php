@@ -570,11 +570,14 @@ function phorum_build_common_urls()
             
     }
     
-    // check if its the full root, avoid adding an id in this case (SE-optimized ;))
-    if ( !empty($index_id))
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $index_id );
-    else
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
+    // only add the index-link if the forum is not hidden
+    if( $GLOBALS["PHORUM"]["active"]) {
+            // check if its the full root, avoid adding an id in this case (SE-optimized ;))
+            if (!empty($index_id))
+                $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $index_id );
+            else
+                $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
+    }
 
         
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
