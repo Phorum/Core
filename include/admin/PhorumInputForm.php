@@ -221,7 +221,7 @@
             $data ="<select name=\"$name\" $extra>\n";
             foreach($values as $value => $text){
                 $data.="<option value=\"$value\"";
-                if($value==$selected) $data.=" selected";
+                if($value==$selected) $data.=" selected=\"selected\"";
                 $data.=">$text</option>\n";
             }
             $data.="</select>\n";

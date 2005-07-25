@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -65,29 +65,29 @@ if($user["active"] == 0){
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
     foreach($PHORUM["PROFILE_FIELDS"] as $field) {
         if (!isset($user[$field['name']])) $user[$field['name']] = "";
-    } 
-} 
+    }
+}
 
 $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = $PHORUM["forum_id"];
 
 $PHORUM["DATA"]["PROFILE"]["date_added"]=phorum_date( $PHORUM['short_date'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
 
-if( !empty($PHORUM["user"]["admin"]) || 
-    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) || 
-    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) || 
+if( !empty($PHORUM["user"]["admin"]) ||
+    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
+    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ||
     !$user["hide_email"]){
-    
+
     $PHORUM["DATA"]["PROFILE"]["email"]=phorum_html_encode($user["email"]);
 } else {
     $PHORUM["DATA"]["PROFILE"]["email"] = $PHORUM["DATA"]["LANG"]["Hidden"];
 }
 
-if( !empty($PHORUM["user"]["admin"]) || 
-    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) || 
-    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS)) || 
+if( !empty($PHORUM["user"]["admin"]) ||
+    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) ||
+    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS)) ||
     !$user["hide_activity"]){
-    
+
     $PHORUM["DATA"]["PROFILE"]["date_last_active"]=phorum_date( $PHORUM['short_date'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 } else {
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);

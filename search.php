@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -36,8 +36,8 @@ function phorum_search_check_valid_vars() {
     $retval=true;
     // these are valid values for some args
     $valid_match_types=array("ALL","ANY","PHRASE","AUTHOR");
-    $valid_match_forum=array("THISONE","ALL");    
-    
+    $valid_match_forum=array("THISONE","ALL");
+
     if(!in_array($PHORUM["args"]["match_type"],$valid_match_types)) {
         $retval=false;
     } elseif(!in_array($PHORUM["args"]["match_forum"],$valid_match_forum)) {
@@ -45,7 +45,7 @@ function phorum_search_check_valid_vars() {
     } elseif(!is_numeric($PHORUM["args"]["match_dates"])) {
         $retval=false;
     }
-    
+
     return $retval;
 }
 
@@ -90,7 +90,7 @@ if(!empty($phorum_search)){
 	$start = ($offset * $PHORUM["list_length"]);
 
     settype($PHORUM["args"]["match_dates"], "int");
-    
+
 	$arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
 
 	if(count($arr["rows"])){
@@ -100,19 +100,19 @@ if(!empty($phorum_search)){
 		foreach($arr["rows"] as $key => $row){
 			$arr["rows"][$key]["number"] = $match_number;
 
-			$arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]); 
+			$arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
 			// strip HTML & BB Code
-			$body = phorum_strip_body($arr["rows"][$key]["body"]); 
+			$body = phorum_strip_body($arr["rows"][$key]["body"]);
 			$arr["rows"][$key]["short_body"] = substr($body, 0, 200);
 			$arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
  			$arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
-      
+
 			$forum_ids[$row["forum_id"]] = $row["forum_id"];
 
 			$match_number++;
 		}
-		
+
 		$forums = phorum_db_get_forums($forum_ids);
 
 		foreach($arr["rows"] as $key => $row){
@@ -124,7 +124,7 @@ if(!empty($phorum_search)){
 		$PHORUM["DATA"]["RANGE_START"] = $start + 1;
 		$PHORUM["DATA"]["RANGE_END"] = $start + count($arr["rows"]);
 		$PHORUM["DATA"]["TOTAL"] = $arr["count"];
-		$PHORUM["DATA"]["SEARCH"]["showresults"] = true; 
+		$PHORUM["DATA"]["SEARCH"]["showresults"] = true;
 		// figure out paging
 		$pages = ceil($arr["count"] / $PHORUM["list_length"]);
 		$page = $offset + 1;
@@ -166,17 +166,17 @@ if(!empty($phorum_search)){
 			$prevpage = $page-1;
 			$PHORUM["DATA"]["URL"]["PREVPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$prevpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}");
 		}
-		
 
-        
+
+
 		$arr["rows"] = phorum_hook("search", $arr["rows"]);
 		$arr["rows"] = phorum_format_messages($arr["rows"]);
-		$PHORUM["DATA"]["MATCHES"] = $arr["rows"];		
-		
+		$PHORUM["DATA"]["MATCHES"] = $arr["rows"];
+
 	}else{
 		$PHORUM["DATA"]["SEARCH"]["noresults"] = true;
 	}
-} 
+}
 
 // set all our URL's
 phorum_build_common_urls();

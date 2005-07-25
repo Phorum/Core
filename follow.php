@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -76,7 +76,7 @@ if(isset($PHORUM["args"]["remove"])){
     $PHORUM["DATA"]["SUBJECT"]=htmlspecialchars($message["subject"]);
     $PHORUM["DATA"]["THREAD"]=$thread;
     $PHORUM["DATA"]["FORUM_ID"]=$PHORUM["forum_id"];
-    $template="follow";    
+    $template="follow";
 }
 
 

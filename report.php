@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -47,7 +47,7 @@ if(!empty($_POST["report"])) {
         }
 
         $mail_users = phorum_user_get_moderators($PHORUM['forum_id']);
-        
+
         if(count($mail_users)){
             $mail_data = array(
                 "mailmessage" => $PHORUM["DATA"]["LANG"]['ReportPostEmailBody'],
@@ -68,7 +68,7 @@ if(!empty($_POST["report"])) {
             );
 
             $mail_data = phorum_hook("report", $mail_data);
-                
+
             phorum_email_user($mail_users, $mail_data);
             $PHORUM["DATA"]["ReportPostMessage"] = $PHORUM["DATA"]["LANG"]['ReportPostSuccess'];
             $report = true;

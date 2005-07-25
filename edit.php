@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -56,27 +56,27 @@ else{
 $PHORUM['banlists'] = phorum_db_get_banlists();
 
 // security checks, see if they're allowed to edit this post
-$useredit = (($getmsg["user_id"] == $PHORUM["user"]["user_id"]) 
-              && phorum_user_access_allowed(PHORUM_USER_ALLOW_EDIT) 
-              && !$thread_is_closed 
-              && ($PHORUM["user_edit_timelimit"] == 0 
-                  || $getmsg["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time()) 
+$useredit = (($getmsg["user_id"] == $PHORUM["user"]["user_id"])
+              && phorum_user_access_allowed(PHORUM_USER_ALLOW_EDIT)
+              && !$thread_is_closed
+              && ($PHORUM["user_edit_timelimit"] == 0
+                  || $getmsg["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())
               && phorum_check_ban_lists($PHORUM["user"]["user_id"],PHORUM_BAD_USERID));
 
 if(!($useredit || $PHORUM["DATA"]["MODERATOR"])){
-    
+
     $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
     $PHORUM["DATA"]["EDIT"]["edit_allowed"] = 0;
     $template = "edit";
 
 } else {
-    
+
     $PHORUM["DATA"]["EDIT"]["edit_allowed"] = 1;
     switch ($mod_step){
         case PHORUM_PREVIEW_EDIT_POST: // user wants to preview an edited post
             phorum_handle_edit_message(true);
             $getmsg=$PHORUM['DATA']['edit_msg'];
-    
+
         case PHORUM_MOD_EDIT_POST: // user wants to edit a post (moderators use moderation.php)
             $PHORUM["DATA"]["EDIT"]["useredit"] = 1;
             $PHORUM["DATA"]["FRM"] = 1;
@@ -85,14 +85,14 @@ if(!($useredit || $PHORUM["DATA"]["MODERATOR"])){
             foreach($getmsg as $key=>$value){
                 if(!is_array($value)){
                     $PHORUM["DATA"]["EDIT"][$key]=htmlspecialchars($value);
-                }    
+                }
             }
 
             // expose the meta data that are scalar values
             foreach($getmsg["meta"] as $key=>$value){
                 if(!is_array($value)){
                     $PHORUM["DATA"]["EDIT"]["meta"][$key]=htmlspecialchars($value);
-                }    
+                }
             }
 
             if(isset($getmsg["meta"]["attachments"])){
@@ -106,7 +106,7 @@ if(!($useredit || $PHORUM["DATA"]["MODERATOR"])){
 
             $PHORUM["DATA"]["EDIT"]["emailreply"] = phorum_db_get_if_subscribed($PHORUM["DATA"]["EDIT"]["forum_id"], $PHORUM["DATA"]["EDIT"]["thread"], $PHORUM["DATA"]["EDIT"]["user_id"]);
             $PHORUM["DATA"]["EDIT"]["mod_step"] = PHORUM_SAVE_EDIT_POST;
-            
+
             $PHORUM["DATA"]["EDIT"]["attaching"] = ($getmsg["status"]==PHORUM_STATUS_ATTACHING);
 
             $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_EDIT_ACTION_URL);

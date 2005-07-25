@@ -1,7 +1,7 @@
-<?php 
+<?php
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-// Copyright (C) 2003  Phorum Development Team                               //
+// Copyright (C) 2005  Phorum Development Team                               //
 // http://www.phorum.org                                                     //
 //                                                                           //
 // This program is free software. You can redistribute it and/or modify      //
@@ -36,7 +36,7 @@ if ( isset( $PHORUM["forum_id"] ) ) {
     $parent_id = (int)$PHORUM["forum_id"];
 } else {
     $parent_id = 0;
-} 
+}
 
 
 if($PHORUM["use_new_folder_style"]){

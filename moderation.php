@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -35,7 +35,7 @@ $mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM
 
 
 if (isset($_POST['preview']) && !empty($_POST["preview"])) {
-	$mod_step=PHORUM_PREVIEW_EDIT_POST;	
+	$mod_step=PHORUM_PREVIEW_EDIT_POST;
 }
 
 if(empty($msgthd_id) || !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
@@ -75,7 +75,7 @@ switch ($mod_step) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
-        }        
+        }
         break;
 
    case PHORUM_DELETE_TREE: // this is a message delete
@@ -99,14 +99,14 @@ switch ($mod_step) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
-        }      
+        }
         break;
 
-   case PHORUM_MOVE_THREAD: // this is the first step of a message move	
+   case PHORUM_MOVE_THREAD: // this is the first step of a message move
 
-        $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);  
-        $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"]; 
-        $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id; 
+        $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
+        $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
+        $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_MOVE;
 
         // get all the forums the moderator may move to
@@ -119,7 +119,7 @@ switch ($mod_step) {
                  $forum_data[strtolower($forum["name"])]=array("forum_id"=>$id, "name"=>$forum["name"]);
             }
         }
-                     
+
         ksort($forum_data);
 
         $PHORUM['DATA']['FRM']=1;
@@ -145,7 +145,7 @@ switch ($mod_step) {
             phorum_db_post_message($newmessage);
         }
         phorum_hook("move_thread", $msgthd_id);
-        break;	   
+        break;
 
    case PHORUM_CLOSE_THREAD: // we have to close a thread
 
@@ -178,14 +178,14 @@ switch ($mod_step) {
         foreach($message as $key=>$value){
             if(!is_array($value)){
                 $PHORUM["DATA"]["EDIT"][$key]=htmlspecialchars($value);
-            }    
+            }
         }
 
         // expose the meta data that are scalar values
         foreach($message["meta"] as $key=>$value){
             if(!is_array($value)){
                 $PHORUM["DATA"]["EDIT"]["meta"][$key]=htmlspecialchars($value);
-            }    
+            }
         }
 
         if(isset($message["meta"]["attachments"]) && is_array($message["meta"]["attachments"])){
@@ -193,7 +193,7 @@ switch ($mod_step) {
                 $PHORUM["DATA"]["EDIT"]["attachments"][]=array("file_id"=>$file_data["file_id"], "file_name"=>htmlspecialchars($file_data["name"]));
             }
         }
-        
+
         $PHORUM['DATA']['EDIT']['special']=$PHORUM['DATA']['EDIT']['sort'];
         // only allow announcement if message has no replies
         if($message['thread_count'] < 2) {
@@ -226,19 +226,19 @@ switch ($mod_step) {
     case PHORUM_APPROVE_MESSAGE: // approving a message
 
         $PHORUM['DATA']['MESSAGE']="1 ".$PHORUM["DATA"]['LANG']['MsgApprovedOk'];
-           
-        $old_message = phorum_db_get_message($msgthd_id); 
+
+        $old_message = phorum_db_get_message($msgthd_id);
         $newpost=array("status"=>PHORUM_STATUS_APPROVED);
-        
+
         // setting the new status
         phorum_db_update_message($msgthd_id, $newpost);
 
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
-        
+
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
-        
+
         if($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
           phorum_email_notice($old_message);
         }
@@ -250,25 +250,25 @@ switch ($mod_step) {
         }
         break;
     case PHORUM_APPROVE_MESSAGE_TREE: // approve a message and all answers to it
-           
-        $old_message = phorum_db_get_message($msgthd_id); 
+
+        $old_message = phorum_db_get_message($msgthd_id);
         $newpost=array("status"=>PHORUM_STATUS_APPROVED);
-        
+
         $mids = phorum_db_get_messagetree($msgthd_id, $old_message["forum_id"]);
         // make an array from the string
         $mids_arr=explode(",",$mids);
-        
+
         // count the entries for later use
         $num_approved=count($mids_arr);
         foreach($mids_arr as $key => $mid) {
             // setting the new status
             phorum_db_update_message($mid, $newpost);
-        
+
         }
-        
+
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
-        
+
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
 
@@ -278,30 +278,30 @@ switch ($mod_step) {
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
-        break;            
-        
+        break;
+
     case PHORUM_HIDE_POST: // hiding a message (and its replies)
-           
-        $old_message = phorum_db_get_message($msgthd_id); 
+
+        $old_message = phorum_db_get_message($msgthd_id);
         $newpost=array("status"=>PHORUM_STATUS_HIDDEN);
-        
+
         $mids = phorum_db_get_messagetree($msgthd_id, $old_message["forum_id"]);
         // make an array from the string
         $mids_arr=explode(",",$mids);
-        
+
         // count the entries for later use
         $num_hidden=count($mids_arr);
         foreach($mids_arr as $key => $mid) {
             // setting the new status
             phorum_db_update_message($mid, $newpost);
-        
+
         }
-        
+
         phorum_hook("hide", $msgthd_id);
-        
+
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
-        
+
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "-$num_hidden", $old_message["datestamp"]);
 
@@ -311,13 +311,13 @@ switch ($mod_step) {
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
-        break;        
-        
-   case PHORUM_MERGE_THREAD: // this is the first step of a thread merge	
+        break;
+
+   case PHORUM_MERGE_THREAD: // this is the first step of a thread merge
            if( $PHORUM['DATA']['USERINFO']['moderator_data'] ) {
                    $moderator_data =unserialize($PHORUM['DATA']['USERINFO']['moderator_data']);
            } else {
-                   $moderator_data =array();       
+                   $moderator_data =array();
            }
            $template="merge_form";
            $PHORUM['DATA']['URL']["ACTION"] =phorum_get_url(PHORUM_MODERATION_ACTION_URL);
@@ -382,7 +382,7 @@ switch ($mod_step) {
            }
            phorum_user_save_simple($user_data_simple);
            break;
-   case PHORUM_SPLIT_THREAD: // this is the first step of a thread split	
+   case PHORUM_SPLIT_THREAD: // this is the first step of a thread split
            $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
            $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
            $message =phorum_db_get_message($msgthd_id);
@@ -405,8 +405,8 @@ switch ($mod_step) {
            phorum_update_thread_info($_POST['message']);
            phorum_db_update_forum_stats(true);
            break;
-        
-        
+
+
     default:
         if(!isset($PHORUM['DATA']['MESSAGE'])) $PHORUM['DATA']['MESSAGE']="";
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
@@ -417,7 +417,7 @@ $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
 include phorum_get_template("header");
 phorum_hook("after_header");
 if($mod_step == PHORUM_PREVIEW_EDIT_POST) {
-	include phorum_get_template("preview");	
+	include phorum_get_template("preview");
 }
 include phorum_get_template($template);
 

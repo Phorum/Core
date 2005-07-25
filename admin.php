@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -34,12 +34,12 @@
     if(!isset($PHORUM['internal_version']) || (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL)) {
         // this is an install
         $module="install";
-    
+
     } else {
 
         // check for a session
         phorum_user_check_session("phorum_admin_session");
-    
+
         if(!$GLOBALS["PHORUM"]["user"]["admin"]){
             // if not an admin
             unset($GLOBALS["PHORUM"]["user"]);
@@ -51,11 +51,11 @@
             } else {
                 $module = "default";
             }
-    
+
         }
-    
+
     }
-    
+
     ob_start();
     if($module!="help") include_once "./include/admin/header.php";
     @include_once "./include/admin/$module.php";
@@ -135,10 +135,10 @@
         $text=urlencode("<p style=\"font-weight: bold\">$title</p>$text");
         return "<a href=\"javascript:show_help('".urlencode($text)."');\"><img style=\"padding-left: 5px; padding-right: 5px; padding-bottom: 1px;\" align=\"absmiddle\" alt=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
     }
-    
+
 
     /*
-     * Sets the given vroot for the descending forums / folders 
+     * Sets the given vroot for the descending forums / folders
      * which are not yet in another descending vroot
      *
      * $folder = folder from which we should go down
@@ -147,9 +147,9 @@
      *
      */
     function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0) {
-        // which vroot 
+        // which vroot
         if($vroot == -1) {
-            $vroot=$folder;   
+            $vroot=$folder;
         }
 
         // get the desc forums/folders
@@ -193,15 +193,15 @@
             }
         }
         return $ret_data;
-    }    
-    
+    }
+
     function phorum_upgrade_tables($fromversion,$toversion) {
-    
+
           $PHORUM=$GLOBALS['PHORUM'];
-          
+
           $msg="";
           $upgradepath="./include/db/upgrade/{$PHORUM['DBCONFIG']['type']}/";
-          
+
           // read in all existing files
           $dh=opendir($upgradepath);
           $upgradefiles=array();
@@ -212,8 +212,8 @@
           }
           unset($file);
           closedir($dh);
-          
-          // sorting by number 
+
+          // sorting by number
           sort($upgradefiles,SORT_NUMERIC);
           reset($upgradefiles);
 
@@ -222,17 +222,17 @@
               if($val == $fromversion.".php")
               break;
           }
-          
-          
-          
+
+
+
           // get the file for the next version (which we will upgrade to)
           list($dump,$file) = each($upgradefiles);
 
           // extract the pure version, needed as internal version
           $pure_version = basename($file,".php");
-          
+
           $upgradefile=$upgradepath.$file;
-          
+
           if(file_exists($upgradefile)) {
               $msg.="Upgrading from db-version $fromversion to $pure_version ... ";
               $upgrade_queries=array();
@@ -245,7 +245,7 @@
               }
               phorum_db_update_settings(array("internal_version"=>$pure_version));
           } else {
-              $msg="Ooops, the upgradefile is missing. How could this happen?";   
+              $msg="Ooops, the upgradefile is missing. How could this happen?";
           }
 
           return $msg;

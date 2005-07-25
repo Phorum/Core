@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -44,7 +44,7 @@ $PHORUM["DATA"]["POST_VARS"] = "";
 // get the forum id if set with a post
 if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
     $PHORUM["forum_id"] = $_REQUEST["forum_id"];
-} 
+}
 
 // strip the slashes off of POST data if magic_quotes is on
 if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
@@ -53,27 +53,27 @@ if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
             $_POST[$key] = stripslashes( $value );
         else
             $_POST[$key] = phorum_recursive_stripslashes( $value );
-    } 
+    }
     foreach( $_GET as $key => $value ) {
         if ( !is_array( $value ) )
             $_GET[$key] = stripslashes( $value );
         else
             $_GET[$key] = phorum_recursive_stripslashes( $value );
-    } 
-} 
+    }
+}
 
 // look for and parse the QUERY_STRING
 // this only applies to urls that we create.
 // scrips using urls from forms (search) should use $_GET or $_POST
 if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( isset( $_SERVER["QUERY_STRING"] ) || isset( $PHORUM["CUSTOM_QUERY_STRING"] ) ) {
-        $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] ) ? $_SERVER["QUERY_STRING"]: $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"]; 
+        $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] ) ? $_SERVER["QUERY_STRING"]: $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
 
         // ignore stuff past a #
-        if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR ); 
+        if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR );
 
         // explode it on comma
-        $PHORUM["args"] = explode( ",", $Q_STR ); 
+        $PHORUM["args"] = explode( ",", $Q_STR );
 
         // check for any assigned values
         if ( strstr( $Q_STR, "=" ) ) {
@@ -83,19 +83,19 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 // with left part as key and right part as value
                 if ( strstr( $arg, "=" ) ) {
                     list( $var, $value ) = explode( "=", $arg );
-                    $PHORUM["args"][$var] = urldecode( $value ); 
+                    $PHORUM["args"][$var] = urldecode( $value );
                     // get rid of the numbered arg, it is useless.
                     unset( $PHORUM["args"][$key] );
-                } 
-            } 
-        } 
+                }
+            }
+        }
 
         // set forum_id if not set already by
         if ( empty( $PHORUM["forum_id"] ) && isset( $PHORUM["args"][0] ) ) {
             $PHORUM["forum_id"] = ( int )$PHORUM["args"][0];
-        } 
-    } 
-} 
+        }
+    }
+}
 
 // set the forum_id to 0 if not set by now.
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
@@ -105,7 +105,7 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) ) {
     include_once( "./include/db/config.php" );
 } else {
     $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
-} 
+}
 
 include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
@@ -137,7 +137,7 @@ $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head
 // only do this stuff if we are not in the admin
 
 if ( !defined( "PHORUM_ADMIN" ) ) {
-    
+
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]=="disabled"){
         if(!empty($PHORUM["disabled_url"])){
@@ -156,7 +156,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     } elseif ( $PHORUM['internal_version'] < PHORUMINTERNAL ) {
         echo "<html><head><title>Error</title></head><body>Looks like you have installed a new version. Go to the admin to complete the upgrade!</body></html>";
         exit();
-    } 
+    }
 
     // load the forum's settings
     if ( !empty( $PHORUM["forum_id"] ) ) {
@@ -164,12 +164,12 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         if ( empty( $forum_settings[$PHORUM["forum_id"]] ) ) {
             phorum_redirect_by_url( phorum_get_url( PHORUM_INDEX_URL ) );
             exit();
-        } 
+        }
         $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
     } else {
         // some defaults we might need if no forum is set (i.e. on the index-page)
-        $PHORUM['vroot']=0;   
-        $PHORUM['parent_id']=0;   
+        $PHORUM['vroot']=0;
+        $PHORUM['parent_id']=0;
     }
 
     // stick some stuff from the settings into the DATA member
@@ -178,8 +178,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM["DATA"]["ENABLE_PM"] = ( isset( $PHORUM["enable_pm"] ) ) ? $PHORUM["enable_pm"] : "";
     if ( !empty( $PHORUM["DATA"]["HTML_TITLE"] ) && !empty( $PHORUM["DATA"]["NAME"] ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
-    } 
-    $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"]; 
+    }
+    $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
 
     // check the user session
     include_once( "./include/users.php" );
@@ -189,11 +189,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             // setup the private messages array, we store the number of new messages here
             $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];
             $PHORUM['DATA']["PRIVATE_MESSAGES"]["inbox_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM );
-        } 
+        }
 
         $PHORUM["DATA"]["notice_messages"] = false;
         $PHORUM["DATA"]["notice_users"] = false;
-        $PHORUM["DATA"]["notice_groups"] = false; 
+        $PHORUM["DATA"]["notice_groups"] = false;
 
         // if moderator notifications are on and the person is a mod, lets find out if anything is new
         if ( $PHORUM["enable_moderator_notifications"] ) {
@@ -201,21 +201,21 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             if ( count( $forummodlist ) > 0 ) {
                 $PHORUM["DATA"]["notice_messages"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
                 $PHORUM["DATA"]["notice_messages_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
-            } 
+            }
             if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
                 $PHORUM["DATA"]["notice_users"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
                 $PHORUM["DATA"]["notice_users_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
-            } 
+            }
             if ( phorum_user_allow_moderate_group() ) {
                 $groups = phorum_user_get_moderator_groups();
                 if ( count( $groups ) > 0 ) {
                     $PHORUM["DATA"]["notice_groups"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
                     $PHORUM["DATA"]["notice_groups_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
-                } 
-            } 
-        } 
+                }
+            }
+        }
 
-        $PHORUM["DATA"]["notice_all"] = ( ( $PHORUM["enable_pm"] && $PHORUM["DATA"]["PRIVATE_MESSAGES"]["new"] > 0) ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"]; 
+        $PHORUM["DATA"]["notice_all"] = ( ( $PHORUM["enable_pm"] && $PHORUM["DATA"]["PRIVATE_MESSAGES"]["new"] > 0) ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"];
 
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
@@ -223,30 +223,30 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 $PHORUM["threaded_list"] = true;
             } elseif ( $PHORUM["user"]["threaded_list"] == PHORUM_THREADED_OFF ) {
                 $PHORUM["threaded_list"] = false;
-            } 
+            }
             if ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_ON ) {
                 $PHORUM["threaded_read"] = true;
             } elseif ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_OFF ) {
                 $PHORUM["threaded_read"] = false;
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
     // set up the blank user if not logged in
     if ( empty( $PHORUM["user"] ) ) {
         $PHORUM["user"] = array( "user_id" => 0, "username" => "", "admin" => false, "newinfo" => array() );
         $PHORUM["DATA"]["LOGGEDIN"] = false;
-    } 
+    }
 
-    
+
     // a hook for rewriting vars in common.php after loading the user
-    phorum_hook( "common_post_user", "" );    
-        
+    phorum_hook( "common_post_user", "" );
+
     // set up the template
     // user output buffering so we don't get header errors
     ob_start();
     include_once( phorum_get_template( "settings" ) );
-    ob_end_clean(); 
+    ob_end_clean();
 
     // get the language file
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
@@ -257,25 +257,25 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
-    } 
+    }
     // load languages for localized modules
     if ( isset( $PHORUM["hooks"]["lang"] ) ) {
         foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod ) {
             // load mods for this hook
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
                 include_once "./mods/$mod/lang/$PHORUM[language].php";
-            } 
+            }
             elseif ( file_exists( "./mods/$mod/lang/english.php" ) ) {
                 include_once "./mods/$mod/lang/english.php";
-            } 
-        } 
-    }    
+            }
+        }
+    }
 
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
         // set all our URL's
         phorum_build_common_urls();
-        
+
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
         include phorum_get_template("header");
         phorum_hook("after_header");
@@ -285,13 +285,13 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         exit();
 
     }
-    
+
 
     // a hook for rewriting vars at the end of common.php
     phorum_hook( "common", "" );
 
     $PHORUM['DATA']['USERINFO'] = $PHORUM['user'];
-} 
+}
 
 
 //////////////////////////////////////////////////////////
@@ -307,8 +307,8 @@ function phorum_require_login()
         $url = phorum_get_url( PHORUM_LOGIN_URL, "redir=" . urlencode( $PHORUM["http_path"] . "/" . basename( $_SERVER["PHP_SELF"] ) . "?" . $_SERVER["QUERY_STRING"] ) );
         phorum_redirect_by_url( $url );
         exit();
-    } 
-} 
+    }
+}
 
 /**
  * A common function for checking the read-permissions for a forum-page
@@ -331,8 +331,8 @@ function phorum_check_read_common()
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PleaseLoginRead"];
             } else {
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoRead"];
-            } 
-        } 
+            }
+        }
 
         phorum_build_common_urls();
 
@@ -343,10 +343,10 @@ function phorum_check_read_common()
         include phorum_get_template( "footer" );
 
         $retval = false;
-    } 
+    }
 
     return $retval;
-} 
+}
 
 // used for all url creation.
 function phorum_get_url()
@@ -488,21 +488,21 @@ function phorum_get_url()
         default:
             trigger_error( "Unhandled page type.", E_USER_WARNING );
             break;
-    } 
+    }
     // build the query string
     $query_items = array();
 
     if ( $add_forum_id ) {
         $query_items[] = ( int )$PHORUM["forum_id"];
-    } 
+    }
 
     if ( count( $argv ) > 0 ) {
         $query_items = array_merge( $query_items, $argv );
-    } 
+    }
 
     if ( !empty( $PHORUM["DATA"]["GET_VARS"] ) && $add_get_vars ) {
         $query_items = array_merge( $query_items, $PHORUM["DATA"]["GET_VARS"] );
-    } 
+    }
     // build the url
     if ( !function_exists( "phorum_custom_get_url" ) ) {
         $url = "$PHORUM[http_path]/$page." . PHORUM_FILE_EXTENSION;
@@ -512,10 +512,10 @@ function phorum_get_url()
         if ( !empty( $suffix ) ) $url .= $suffix;
     } else {
         $url = phorum_custom_get_url( $page, $query_items, $suffix );
-    } 
+    }
 
     return $url;
-} 
+}
 
 // retrieve the appropriate template file name
 function phorum_get_template( $page )
@@ -524,17 +524,17 @@ function phorum_get_template( $page )
 
     if ( !empty( $PHORUM["args"]["template"] ) ) {
         $PHORUM["template"] = basename( $PHORUM["args"]["template"] );
-    } 
+    }
 
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
         $PHORUM['template'] = $PHORUM['user']['user_template'];
-    } 
+    }
 
     if ( empty( $PHORUM["template"] ) ) {
         $PHORUM["template"] = $PHORUM["default_template"];
-    } 
+    }
 
-    $tpl = "./templates/$PHORUM[template]/$page"; 
+    $tpl = "./templates/$PHORUM[template]/$page";
     // check for straight PHP file
     if ( file_exists( "$tpl.php" ) ) {
         $phpfile = "$tpl.php";
@@ -546,11 +546,11 @@ function phorum_get_template( $page )
         if ( !file_exists( $phpfile ) || filemtime( $tplfile ) > filemtime( $phpfile ) ) {
             include_once "./include/templates.php";
             phorum_import_template( $tplfile, $phpfile );
-        } 
-    } 
+        }
+    }
 
     return $phpfile;
-} 
+}
 
 // creates URLs used on most pages
 function phorum_build_common_urls()
@@ -559,17 +559,17 @@ function phorum_build_common_urls()
     $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POST_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
-    
+
     if(isset($GLOBALS['PHORUM']["use_new_folder_style"]) && $GLOBALS['PHORUM']["use_new_folder_style"] ) { // go to root or vroot
-    
+
             $index_id=$GLOBALS["PHORUM"]["vroot"]; // vroot is either 0 (root) or another id
-            
+
     } else { // go to parent
-        
+
             $index_id=$GLOBALS["PHORUM"]["parent_id"]; // parent_id is always set now
-            
+
     }
-    
+
     // only add the index-link if the forum is not hidden
     if( $GLOBALS["PHORUM"]["active"]) {
             // check if its the full root, avoid adding an id in this case (SE-optimized ;))
@@ -579,7 +579,7 @@ function phorum_build_common_urls()
                 $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
     }
 
-        
+
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
 
     if ( $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ) {
@@ -588,8 +588,8 @@ function phorum_build_common_urls()
     } else {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_REGISTER_URL );
-    } 
-} 
+    }
+}
 
 // calls phorum mod functions
 function phorum_hook( $hook, $arg = "" )
@@ -603,19 +603,19 @@ function phorum_hook( $hook, $arg = "" )
                 include_once "./mods/$mod/$mod.php";
             } elseif ( file_exists( "./mods/$mod.php" ) ) {
                 include_once "./mods/$mod.php";
-            }        
-        } 
+            }
+        }
 
         foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
             // call functions for this hook
             if ( function_exists( $func ) ) {
                 $arg = call_user_func( $func, $arg );
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
     return $arg;
-} 
+}
 
 // HTML encodes a string
 function phorum_html_encode( $string )
@@ -625,9 +625,9 @@ function phorum_html_encode( $string )
     for( $x = 0;$x < $len;$x++ ) {
         $ord = ord( $string[$x] );
         $ret_string .= "&#$ord;";
-    } 
+    }
     return $ret_string;
-} 
+}
 
 // removes slashes from all array-entries
 function phorum_recursive_stripslashes( $array )
@@ -640,10 +640,10 @@ function phorum_recursive_stripslashes( $array )
                 $array[$key] = stripslashes( $value );
             else
                 $array[$key] = phorum_recursive_stripslashes( $value );
-        } 
-    } 
+        }
+    }
     return $array;
-} 
+}
 
 // returns the available templates as an array
 function phorum_get_template_info()
@@ -658,12 +658,12 @@ function phorum_get_template_info()
                 $tpls[$entry] = "$name $version";
             } else {
                 unset( $template_hide );
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
     return $tpls;
-} 
+}
 
 // returns the available languages as an array
 function phorum_get_language_info()
@@ -678,12 +678,12 @@ function phorum_get_language_info()
                 $langs[str_replace( ".php", "", $entry )] = $language;
             } else {
                 unset( $language_hide );
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
     return $langs;
-} 
+}
 
 function phorum_redirect_by_url( $redir_url )
 {
@@ -697,8 +697,8 @@ function phorum_redirect_by_url( $redir_url )
     } else {
         // our standard-way
         header( "Location: $redir_url" );
-    } 
-} 
+    }
+}
 
 // might remove these, might not.  Need it for debugging.
 function print_var( $var )
@@ -706,6 +706,6 @@ function print_var( $var )
     echo "<xmp>";
     print_r( $var );
     echo "</xmp>";
-} 
+}
 
 ?>

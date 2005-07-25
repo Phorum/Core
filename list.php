@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -50,10 +50,10 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread'){
 
     // redirect to a fresh list without markread in url
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
-    phorum_redirect_by_url($dest_url);    
+    phorum_redirect_by_url($dest_url);
     exit();
 
-} 
+}
 
 if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
     $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
@@ -73,7 +73,7 @@ $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODE
 if($PHORUM["DATA"]["MODERATOR"]) {
         // find out how many forums this user can moderate
         $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
-        
+
         $modforums=0;
         foreach($forums as $id=>$forum){
                 if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
@@ -81,9 +81,9 @@ if($PHORUM["DATA"]["MODERATOR"]) {
                 }
         }
         if($modforums > 1) {
-                $build_move_url=true;       
+                $build_move_url=true;
         } else {
-                $build_move_url=false;       
+                $build_move_url=false;
         }
 }
 // Get the threads
@@ -152,8 +152,8 @@ if ($PHORUM["threaded_list"]){
 
     // loop through and read all the data in.
     foreach($rows as $key => $row){
-        
-        if($PHORUM["count_views"]) {  // show viewcount if enabled            
+
+        if($PHORUM["count_views"]) {  // show viewcount if enabled
               if($PHORUM["count_views"] == 2) { // viewcount as column
                   $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
                   $rows[$key]["viewcount"]=$row['viewcount'];
@@ -171,7 +171,7 @@ if ($PHORUM["threaded_list"]){
         }else{
             $rows[$key]["threadstart"] = false;
         }
-              
+
         $rows[$key]["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
         $rows[$key]["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
         if($build_move_url) {
@@ -204,7 +204,7 @@ if ($PHORUM["threaded_list"]){
                 $rows[$key]["linked_author"] = htmlspecialchars($row["author"]);
             }
         }
-        if($min_id == 0 || $min_id > $row['message_id']) 
+        if($min_id == 0 || $min_id > $row['message_id'])
             $min_id = $row['message_id'];
     }
     // don't move this up.  We want it to be conditional.
@@ -223,26 +223,26 @@ if ($PHORUM["threaded_list"]){
         $rows[$key]["newpost_url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
 
         $rows[$key]["new"] = "";
-        
-        if($PHORUM["count_views"]) {  // show viewcount if enabled            
+
+        if($PHORUM["count_views"]) {  // show viewcount if enabled
               if($PHORUM["count_views"] == 2) { // viewcount as column
                   $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
                   $rows[$key]["viewcount"]=$row['viewcount'];
               } else { // viewcount added to the subject
                   $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} {$PHORUM['DATA']['LANG']['Views']})";
               }
-        }        
+        }
 
         // recognizing moved threads
         if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
            $rows[$key]['moved']=1;
         } else {
-           $rows[$key]['moved']=0;   
+           $rows[$key]['moved']=0;
         }
-        
+
         // default thread-count
         $thread_count=$row["thread_count"];
-        
+
         if ($PHORUM["DATA"]["LOGGEDIN"]){
 
                     if($PHORUM["DATA"]["MODERATOR"]){
@@ -275,18 +275,18 @@ if ($PHORUM["threaded_list"]){
             if(!empty($row['email'])) {
                 $email_url = phorum_html_encode("mailto:$row[email]");
                 // we don't normally put HTML in this code, but this makes it easier on template builders
-                $rows[$key]["linked_author"] = "<a href=\"".$email_url."\">".htmlspecialchars($row["author"])."</a>";            
+                $rows[$key]["linked_author"] = "<a href=\"".$email_url."\">".htmlspecialchars($row["author"])."</a>";
             } else {
-                $rows[$key]["linked_author"] = $row["author"];                        
+                $rows[$key]["linked_author"] = $row["author"];
             }
         }
 
         $pages=1;
         // thread_count computed above in moderators-section
         if(!$PHORUM["threaded_read"] && $thread_count>$PHORUM["read_length"]){
-            
+
             $pages=ceil($thread_count/$PHORUM["read_length"]);
-            
+
             if($pages<=5){
                 $page_links="";
                 for($x=1;$x<=$pages;$x++){
@@ -315,7 +315,7 @@ if ($PHORUM["threaded_list"]){
             } else {
                 $rows[$key]["last_post_url"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"]);
             }
-        
+
             $row['meta']['recent_post']['author'] = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $row['meta']['recent_post']['author'] );
             if ($row["meta"]["recent_post"]["user_id"]){
                 $url = phorum_get_url(PHORUM_PROFILE_URL, $row["meta"]["recent_post"]["user_id"]);
@@ -328,8 +328,8 @@ if ($PHORUM["threaded_list"]){
         } else {
             $rows[$key]["last_post_by"] = "";
         }
-        
-        if($min_id == 0 || $min_id > $row['message_id']) 
+
+        if($min_id == 0 || $min_id > $row['message_id'])
             $min_id = $row['message_id'];
     }
 }

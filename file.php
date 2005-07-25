@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -93,23 +93,23 @@ if($send_file){
     $mime_types["wma"]="application/octet-stream";
     $mime_types["wmv"]="application/octet-stream";
     $mime_types["mp3"]="audio/mpeg";
-    
+
     $type=strtolower(substr($file["filename"], strrpos($file["filename"], ".")+1));
-    
+
     if(isset($mime_types[$type])){
         $mime=$mime_types[$type];
     }
     else{
         $mime=$mime_types["default"];
     }
-    
+
     ob_end_clean();
-    
+
     header("Content-Type: $mime");
     header("Content-Disposition: filename=\"{$file['filename']}\"");
-    
+
     echo base64_decode($file["file_data"]);
-    
+
     exit();
 }
 

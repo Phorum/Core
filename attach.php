@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -50,10 +50,10 @@ if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH) || empty($message_id)) 
 
 $message = phorum_db_get_message($message_id);
 
-// make sure we got a message back and that this is the same user, 
+// make sure we got a message back and that this is the same user,
 // not too old, and does not already have attachments.
-if(empty($message) || 
-   $message["user_id"]!=$PHORUM["user"]["user_id"] || 
+if(empty($message) ||
+   $message["user_id"]!=$PHORUM["user"]["user_id"] ||
    $message["datestamp"]<time()-PHORUM_MAX_TIME_TO_ATTACH){
 
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
@@ -70,7 +70,7 @@ if(!empty($_POST)){
     if(isset($_POST["cancel"])){
 
         phorum_db_delete_message($_POST["message_id"]);
-    
+
         $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["AttachCancel"];
         $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
         $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LIST_URL);
@@ -83,13 +83,13 @@ if(!empty($_POST)){
         return;
 
     } elseif(isset($_POST["finalize"])){
-    
+
         if($PHORUM["moderation"] == PHORUM_MODERATE_ON && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
             $save_message["status"]=PHORUM_STATUS_HOLD;
         } else {
             $save_message["status"]=PHORUM_STATUS_APPROVED;
         }
-        
+
         phorum_db_update_message($message_id, $save_message);
 
         if($save_message["status"] > 0){
@@ -97,17 +97,17 @@ if(!empty($_POST)){
             phorum_db_update_forum_stats(false, 1, $message["datestamp"]);
             // mailing subscribed users
             phorum_email_notice($message);
-        }        
+        }
 
         if($PHORUM["redirect_after_post"]=="read"){
-            
+
             if($message["thread"]!=0){
                 $top_parent = phorum_db_get_message($message["thread"]);
                 $pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
             } else {
                 $pages=1;
             }
-            
+
             if($pages>1){
                 $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");
             } else {
@@ -117,11 +117,11 @@ if(!empty($_POST)){
         } else {
 
             $redir_url = phorum_get_url(PHORUM_LIST_URL);
-        
+
         }
 
         phorum_redirect_by_url($redir_url);
-    
+
     } elseif(!empty($_FILES)){
 
         $uploaded_files=array();
@@ -138,13 +138,13 @@ if(!empty($_POST)){
 
             if(!empty($PHORUM["allow_attachment_types"])){
                 $ext=strtolower(substr($file["name"], strrpos($file["name"], ".")+1));
-                $allowed_exts=explode(";", $PHORUM["allow_attachment_types"]);                
+                $allowed_exts=explode(";", $PHORUM["allow_attachment_types"]);
                 if(!in_array($ext, $allowed_exts)){
                     $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachFileTypes"]." ".$PHORUM["allow_attachment_types"];
                     break;
                 }
             }
-    
+
             // read in the file
             $fp=fopen($file["tmp_name"], "r");
             $buffer=base64_encode(fread($fp, $file["size"]));
@@ -152,14 +152,14 @@ if(!empty($_POST)){
 
             $file_id=phorum_db_file_save($PHORUM["user"]["user_id"], $file["name"], $file["size"], $buffer, $message_id);
             $uploaded_files[]=array("file_id"=>$file_id, "name"=>$file["name"], "size"=>$file["size"]);
-            
-        }        
+
+        }
 
     }
-    
+
     if(empty($uploaded_files)){
         // they did not attach any files
-        
+
         if(empty($PHORUM["DATA"]["ERROR"])){
             $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["AttachmentsMissing"];
         }
@@ -169,10 +169,10 @@ if(!empty($_POST)){
         $save_message["meta"]=$message["meta"];
         $save_message["meta"]["attachments"]=$uploaded_files;
         phorum_db_update_message($message_id, $save_message);
-        
+
         $redir_url = phorum_get_url(PHORUM_ATTACH_URL, $_POST["message_id"]);
         phorum_redirect_by_url($redir_url);
-    
+
     }
 
 }
