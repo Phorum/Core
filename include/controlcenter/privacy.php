@@ -4,8 +4,8 @@ if(!defined("PHORUM_CONTROL_CENTER")) return;
 if(count($_POST)) {
 
     // these two are flipped as we store if hidden in the db, but we ask if allowed in the UI
-    $_POST["hide_email"] = ($_POST["hide_email"]) ? 0 : 1;
-    $_POST["hide_activity"] = ($_POST["hide_activity"]) ? 0 : 1;
+    $_POST["hide_email"] = (isset($_POST["hide_email"]) && $_POST["hide_email"]) ? 0 : 1;
+    $_POST["hide_activity"] = (isset($_POST["hide_activity"]) && $_POST["hide_activity"]) ? 0 : 1;
     
     $error = phorum_controlcenter_user_save($panel);
 }
