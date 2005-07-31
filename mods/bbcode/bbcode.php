@@ -33,7 +33,7 @@ function phorum_bb_code($data)
             $extra_link_tags .= "target=\"_blank\" ";
         }
         if ($PHORUM["mod_bb_code"]["rel_no_follow"]){
-            $extra_link_tags .= "rel=\"no_follow\" ";
+            $extra_link_tags .= "rel=\"nofollow\" ";
         }
     }
 
