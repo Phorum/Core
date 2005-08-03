@@ -164,9 +164,13 @@ switch ($mod_step) {
         break;
 
     case PHORUM_PREVIEW_EDIT_POST:
+        phorum_hook("edit_preview_post","");
+
 		phorum_handle_edit_message(true);
 		// ... go on ...
     case PHORUM_MOD_EDIT_POST: // moderator wants to edit a post
+        phorum_hook("edit_view_post","");
+
 		if(isset($PHORUM['DATA']['edit_msg'])) {
 			$message=$PHORUM['DATA']['edit_msg'];
 		} else {
@@ -219,6 +223,8 @@ switch ($mod_step) {
         break;
 
     case PHORUM_SAVE_EDIT_POST: // saving the edited post-data
+        phorum_hook("edit_save_post","");
+
         phorum_handle_edit_message();
         $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_READ_URL, $_POST['thread'], $_POST["message_id"]);
         break;
