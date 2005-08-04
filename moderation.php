@@ -418,7 +418,8 @@ switch ($mod_step) {
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
 }
 
-$PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
+if(!isset($PHORUM['DATA']['BACKMSG']))
+        $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
 
 include phorum_get_template("header");
 phorum_hook("after_header");

@@ -82,6 +82,8 @@ if(count($_POST)){
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }else{
 
+        $PHORUM['banlists'] = phorum_db_get_banlists();
+
         if(phorum_user_check_username($_POST["username"])){
 
             $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
