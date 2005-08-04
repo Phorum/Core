@@ -32,18 +32,18 @@ if(isset($PHORUM["args"]["approve"])){
     $user_id=(int)substr($PHORUM["args"]["approve"], 8);
 
     $user_id=phorum_user_verify($user_id, $tmp_pass);
-    
+
     if($user_id){
 
         $user=phorum_user_get($user_id);
-        
+
         if($user["active"] == PHORUM_USER_INACTIVE) { // user has been denied!
              $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
-             
+
         } elseif($user["active"] == PHORUM_USER_PENDING_MOD) { // waiting for moderator-approval
-        	$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"]; 
+        	$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
         	// TODO: this message should be changed in 5.1 to have a unique message!!!
-        	
+
         } else { // user pending both or email
             if($user["active"]==PHORUM_USER_PENDING_BOTH){
                 $moduser["active"]=PHORUM_USER_PENDING_MOD;
@@ -52,7 +52,7 @@ if(isset($PHORUM["args"]["approve"])){
                 $moduser["active"]=PHORUM_USER_ACTIVE;
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegAcctActive"];
             }
-    
+
             $moduser["user_id"]=$user_id;
             phorum_user_save($moduser);
         }
@@ -72,7 +72,7 @@ if(isset($PHORUM["args"]["approve"])){
 
 if(count($_POST)){
 	$error=""; // init it as empty
-	
+
     if(!isset($_POST["username"]) || empty($_POST['username']) ){
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
     }elseif(!isset($_POST["email"]) || !phorum_valid_email($_POST["email"])){
@@ -81,12 +81,14 @@ if(count($_POST)){
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }else{
 
+        $PHORUM['banlists'] = phorum_db_get_banlists();
+
         if(phorum_user_check_username($_POST["username"])){
-        
+
             $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
 
         } elseif (phorum_user_check_email($_POST["email"])){
-        
+
             $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
 
         } elseif (!phorum_check_ban_lists($_POST["username"], PHORUM_BAD_NAMES)) {
@@ -98,37 +100,37 @@ if(count($_POST)){
             $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
 
         } else {
-        
+
             $userdata = $_POST;
             $userdata["hide_email"]=true;
             $userdata["date_added"]=time();
             $userdata["date_last_active"]=time();
-            
+
             // remove anything that is not actual user data
             unset($userdata["forum_id"]);
             unset($userdata["password2"]);
 
             // email confirmation for registration
             if($PHORUM["registration_control"]==PHORUM_REGISTER_INSTANT_ACCESS){
-            
+
                 $userdata["active"] = PHORUM_USER_ACTIVE;
             } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL){
-            
+
                 $userdata["active"] = PHORUM_USER_PENDING_EMAIL;
                 $userdata["password_temp"]=substr(md5(microtime()), 0, 8);
             } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_MODERATOR){
-            
+
                 $userdata["active"] = PHORUM_USER_PENDING_MOD;
             } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH) {
-            
-                $userdata["password_temp"]=substr(md5(microtime()), 0, 8);            
+
+                $userdata["password_temp"]=substr(md5(microtime()), 0, 8);
                 $userdata["active"] = PHORUM_USER_PENDING_BOTH;
             }
-            
+
             $userdata=phorum_hook("before_register", $userdata);
             if(isset($userdata['error'])) {
             	$error=$userdata['error'];
-            	unset($userdata['error']);	
+            	unset($userdata['error']);
             } elseif ($user_id=phorum_user_add($userdata)){
 
                 if($PHORUM["registration_control"]==PHORUM_REGISTER_INSTANT_ACCESS){
@@ -148,12 +150,12 @@ if(count($_POST)){
                         phorum_email_user(array($userdata["email"]), $maildata);
                 }
 
-                
+
                 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
                 $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
 
                 phorum_hook("after_register",$userdata);
-                
+
                 include phorum_get_template("header");
                 phorum_hook("after_header");
                 include phorum_get_template("message");
