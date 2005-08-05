@@ -87,9 +87,10 @@ function phorum_db_get_thread_list($offset)
         if($PHORUM["reverse_threading"]) $sortorder.=" desc";
 
         $offset_option="$sortfield > 0 and";
-
         // get the announcements and stickies
-        $sql="select thread as keyid from $table where (sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']}) or (parent_id=0 and sort=".PHORUM_SORT_STICKY." and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
+        $sql="select thread as keyid from $table where
+        (parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']}) or
+        (parent_id=0 and sort=".PHORUM_SORT_STICKY." and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
         $res = mysql_query($sql, $conn);
 
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -204,7 +205,7 @@ function phorum_db_get_thread_list($offset)
               from
                 $table
               where
-                (sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']})
+                (parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']})
                 or
                 (parent_id=0 and sort=".PHORUM_SORT_STICKY." and forum_id={$PHORUM['forum_id']})
               order by sort, $sortfield desc";
@@ -935,7 +936,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             /* using this code on larger forums has shown to make the search faster
                however, on smaller forums, it does not appear to help and in fact
                appears to slow down searches.
-               
+
             if($match_date){
                 $min_time=time()-86400*$match_date;
                 $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
