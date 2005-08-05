@@ -121,7 +121,8 @@ if ( count( $_POST ) > 0 ) {
             	phorum_user_create_session();
             }
             // redirecting to the register page is a little weird.  So, we just go to the list page if we came from the register page.
-            if ( isset( $PHORUM['use_cookies'] ) && $PHORUM["use_cookies"] && !strstr( $_POST["redir"], "register." . PHORUM_FILE_EXTENSION ) ) {
+            // redirect to login-page is weird too ;)
+            if ( isset( $PHORUM['use_cookies'] ) && $PHORUM["use_cookies"] && !strstr( $_POST["redir"], "register." . PHORUM_FILE_EXTENSION ) && !strstr( $_POST["redir"], "login." . PHORUM_FILE_EXTENSION ) ) {
                 $redir = $_POST["redir"];
             } else {
                 $redir = phorum_get_url( PHORUM_LIST_URL );
