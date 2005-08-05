@@ -153,7 +153,7 @@ if ( !empty( $PHORUM["args"]["redir"] ) ) {
 } elseif ( !empty( $_SERVER["HTTP_REFERER"] ) ) {
     $PHORUM["DATA"]["LOGIN"]["redir"] = htmlspecialchars($_SERVER["HTTP_REFERER"]);
 } else {
-    $PHORUM["DATA"]["LOGIN"]["redir"] = phorum_get_url( PHORUM_INDEX_URL );
+    $PHORUM["DATA"]["LOGIN"]["redir"] = phorum_get_url( PHORUM_LIST_URL );
 }
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_LOGIN_ACTION_URL );
