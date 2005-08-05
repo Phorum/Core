@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2003  Phorum Development Team                              //
+//   Copyright (C) 2005  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,10 +15,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
-
-
-//July 19 Fixed by Dagon, Date format and Location defult
-
+//   July 19 Fixed by Dagon, Date format and Location default                 //
 ////////////////////////////////////////////////////////////////////////////////
 
 include_once("./common.php");
@@ -82,7 +79,7 @@ $channel = array(
     "description" => $description,
     "pub_date" => date("r",$pub_date),
     "language" => $PHORUM['locale']
-    
+
 );
 
 
@@ -124,7 +121,7 @@ function create_rss_feed($channel, $items)
 
     $data.="  </channel>\n";
     $data.="</rss>\n";
-        
+
     header("Content-Type: text/xml");
 
     echo $data;
