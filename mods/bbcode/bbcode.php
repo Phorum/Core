@@ -17,6 +17,7 @@ function phorum_bb_code($data)
         "/\[b\](.+?)\[\/b\]/is",
         "/\[u\](.+?)\[\/u\]/is",
         "/\[i\](.+?)\[\/i\]/is",
+        "/\[s\](.+?)\[\/s\]/is",
         "/\[center\](.+?)\[\/center\]/is",
         "/\[hr\]/i",
         "/\[code\](.+?)\[\/code\]/is",
@@ -47,6 +48,7 @@ function phorum_bb_code($data)
         "<strong>$1</strong>",
         "<u>$1</u>",
         "<i>$1</i>",
+        "<s>$1</s>",
         "<center class=\"bbcode\">$1</center>",
         "<hr class=\"bbcode\" />",
         "<pre class=\"bbcode\">$1</pre>",
@@ -123,7 +125,7 @@ function phorum_bb_code($data)
                     $body = preg_replace($quote_search, $quote_replace, $body);
                 }
 
-            
+
             }
 
 
@@ -138,7 +140,7 @@ function phorum_bb_code($data)
 function phorum_bb_code_quote ($array)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-        
+
     if($PHORUM["mod_bb_code"]["quote_hook"]){
         return "[quote $array[0]]$array[1][/quote]";
     }
