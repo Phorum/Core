@@ -932,6 +932,10 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         if(count($terms)){
 
+            /* using this code on larger forums has shown to make the search faster
+               however, on smaller forums, it does not appear to help and in fact
+               appears to slow down searches.
+               
             if($match_date){
                 $min_time=time()-86400*$match_date;
                 $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
@@ -944,6 +948,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 $use_key="";
                 $extra_where="";
             }
+            */
 
             $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
 
