@@ -20,7 +20,7 @@ function phorum_return_to_list()
 /*
  * common function for handling the edit of a message
  * optional argument to let it just show the preview instead of committing anything
- */ 
+ */
 function phorum_handle_edit_message($preview=false) {
     GLOBAL $PHORUM;
 
@@ -42,7 +42,7 @@ function phorum_handle_edit_message($preview=false) {
 
     if(isset($_POST["special"]) && phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)){
         if(empty($_POST["parent"]) && $_POST["special"] == "sticky"){
-            $new_message["forum_id"] = $PHORUM["forum_id"];
+            $new_message["forum_id"] = $old_message["forum_id"];
             $new_message["status"] = $old_message['status'];
             $new_message["sort"]   = PHORUM_SORT_STICKY;
         } elseif(empty($_POST["parent"]) && $_POST["special"] == "announcement" && $PHORUM["user"]["admin"]) {
@@ -55,17 +55,17 @@ function phorum_handle_edit_message($preview=false) {
             $new_message["closed"]   = 1;
             $new_message["status"] = $old_message['status'];
         }else{
-            $new_message["forum_id"] = $PHORUM["forum_id"];
+            $new_message["forum_id"] = $old_message["forum_id"];
             $new_message["status"] = $old_message['status'];
             $new_message["sort"]   = PHORUM_SORT_DEFAULT;
         }
     }
     else{
-        $new_message["forum_id"] = $PHORUM["forum_id"];
+        $new_message["forum_id"] = $old_message["forum_id"];
         $new_message["status"] = $old_message['status'];
         $new_message["sort"]   = $old_message['sort'];
     }
-    
+
     if(empty($_POST["subject"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrSubject"];
     }elseif (empty($_POST["body"])){
@@ -77,7 +77,7 @@ function phorum_handle_edit_message($preview=false) {
         $PHORUM['DATA']['FRM'] = 2;
         $PHORUM['DATA']['EDIT'] = $old_message;
         $PHORUM['DATA']['EDIT'] = $_POST;
-        if(isset($PHORUM["DATA"]["EDIT"]["sort"])) { 
+        if(isset($PHORUM["DATA"]["EDIT"]["sort"])) {
             if($PHORUM["DATA"]["EDIT"]["sort"] == "sticky"){
                 $PHORUM["DATA"]["EDIT"]["special"] = PHORUM_SORT_STICKY;
             }elseif($PHORUM["DATA"]["EDIT"]["sort"] == "announcement"){
@@ -101,10 +101,10 @@ function phorum_handle_edit_message($preview=false) {
             $new_message["meta"]["edit_date"] = time();
             $new_message["meta"]["edit_username"] = $PHORUM["user"]["username"];
         }
-                
+
         if($preview) {
             include_once('./include/format_functions.php');
-            
+
             // (virtually) delete attachments
             if(isset($_POST["attachments"])){
                 foreach($_POST["attachments"] as $file_id){
@@ -116,7 +116,7 @@ function phorum_handle_edit_message($preview=false) {
                     }
                 }
             }
-    
+
             $PHORUM['DATA']['edit_msg']=$new_message;
             $PHORUM['DATA']['edit_msg']['message_id']=$old_message['message_id'];
             $PHORUM['DATA']['edit_msg']['thread']=$old_message['thread'];
@@ -152,18 +152,18 @@ function phorum_handle_edit_message($preview=false) {
             } else {
                 $new_message['ip']=$old_message['ip'];
             }
-    
+
             $new_message=phorum_hook("preview", $new_message);
 
             // format message
             $new_message = array_shift(phorum_format_messages(array($new_message)));
 
             $PHORUM["DATA"]["PREVIEW"] = $new_message;
-    
+
         } else {
-    
+
             $new_message = phorum_hook("pre_edit", $new_message);
-    
+
             // delete attachments
             if(isset($_POST["attachments"])){
                 foreach($_POST["attachments"] as $file_id){
@@ -176,11 +176,11 @@ function phorum_handle_edit_message($preview=false) {
                     }
                 }
             }
-    
+
             phorum_db_update_message($_POST['message_id'], $new_message);
-    
+
             phorum_hook("post_edit", $_POST["message_id"]);
-    
+
             // update children to the same sort setting
             if($old_message["parent_id"]==0 && $new_message["sort"]!=$old_message["sort"]){
                 $messages=phorum_db_get_messages($old_message["thread"]);
@@ -192,15 +192,15 @@ function phorum_handle_edit_message($preview=false) {
                     }
                 }
             }
-    
+
             phorum_update_thread_info($old_message['thread']);
-    
+
             if(isset($_POST['email_reply']) && $_POST['email_reply'] && isset($old_message['user_id'])){
                 phorum_user_subscribe($old_message['user_id'], $old_message['forum_id'], $old_message['thread'], 0);
             }elseif(isset($old_message['user_id'])){
                 phorum_user_unsubscribe($old_message['user_id'], $old_message['thread'], $old_message['forum_id']);
             }
-    
+
             $PHORUM['DATA']['MESSAGE'] = $PHORUM["DATA"]["LANG"]["MsgModEdited"];
         }
     }
