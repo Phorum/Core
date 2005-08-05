@@ -22,13 +22,13 @@ function phorum_gen_password($charpart=4, $numpart=3)
     if($numpart){
         $max=(int)str_pad("", $numpart, "9");
         $min=(int)str_pad("1", $numpart, "0");
-        
+
         $num=(string)mt_rand($min, $max);
     }
 
     return strtolower($password.$num);
-}    
-    
+}
+
 function phorum_check_ban_lists($value, $type)
 {
     if(!isset($GLOBALS['PHORUM']['banlists'])) return true;
@@ -41,18 +41,20 @@ function phorum_check_ban_lists($value, $type)
         if (isset($banlists[$type]) && is_array($banlists[$type])) {
             foreach($banlists[$type] as $item) {
                 if (($item["pcre"] && preg_match("/\b$item[string]\b/i", $value)) ||
-                        (!$item["pcre"] && stristr($value , $item["string"]))) {
+                        (!$item["pcre"] && stristr($value , $item["string"]) && $type != PHORUM_BAD_USERID) ||
+                        ($type == PHORUM_BAD_USERID && $value == $item["string"])) {
+                    print "$value - ".$item["string"];
                     return false;
-                } 
-            } 
-        } 
-    } 
+                }
+            }
+        }
+    }
 
     return true;
-} 
+}
 
 
-/*    
+/*
 
     function phorum_dyn_profile_html($field, $value="")
     {
