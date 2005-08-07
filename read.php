@@ -47,7 +47,7 @@ $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODE
 if($PHORUM["DATA"]["MODERATOR"]) {
         // find out how many forums this user can moderate
         $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
-        
+
         $modforums=0;
         foreach($forums as $id=>$forum){
                 if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
@@ -55,9 +55,9 @@ if($PHORUM["DATA"]["MODERATOR"]) {
                 }
         }
         if($modforums > 1) {
-                $build_move_url=true;       
+                $build_move_url=true;
         } else {
-                $build_move_url=false;       
+                $build_move_url=false;
         }
 }
 
@@ -72,7 +72,7 @@ if(empty($PHORUM["args"][1])) {
     if(!is_numeric($PHORUM["args"][2])) {
     	$dest_url="";
     	$newervar=(int)$PHORUM["args"][1];
-    	
+
         switch($PHORUM["args"][2]) {
             case "newer":
                 $thread = phorum_db_get_newer_thread($newervar);
@@ -84,9 +84,9 @@ if(empty($PHORUM["args"][1])) {
                 // thread needs to be in $thread for the redirection
                 $thread = (int)$PHORUM["args"][1];
                 $thread_message=phorum_db_get_message($thread,'message_id');
-    
+
                 $msg_count=count($thread_message['meta']['message_ids']);
-     
+
                 // any messages left to update newinfo with?
                 if($msg_count > 0){
                     phorum_db_newflag_add_read($thread_message['meta']['message_ids']);
@@ -119,7 +119,7 @@ if(empty($PHORUM["args"][1])) {
 
                 break;
 
-            
+
         }
 
         if(empty($dest_url)) {
@@ -150,8 +150,8 @@ if(!$PHORUM["threaded_read"]) {
                 $page=1;
     }
     if(empty($page)) {
-        $page=1;   
-    }    
+        $page=1;
+    }
 }
 
 // Get the thread
@@ -204,9 +204,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         for($x=0;$x<11 && $x<$pages;$x++){
             $pageno=$x+$page_start;
             $PHORUM["DATA"]["PAGES"][] = array(
-                                                "pageno"=>$pageno,
-                                                "url"=>phorum_get_url(PHORUM_READ_URL, $thread, "page=$pageno")
-                                            );
+            "pageno"=>$pageno,
+            "is_current"=> ($pageno == $page),
+            "url"=>phorum_get_url(PHORUM_READ_URL, $thread, "page=$pageno")
+            );
         }
 
         $PHORUM["DATA"]["CURRENTPAGE"]=$page;
@@ -265,10 +266,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
         // is the message unapproved?
         $row["is_unapproved"] = ($row['status'] < 0) ? 1 : 0;
-        
+
         // all stuff that makes only sense for moderators or admin
         if($PHORUM["DATA"]["MODERATOR"]) {
-            
+
             $row["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
             $row["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
             $row["edit_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOD_EDIT_POST, $row["message_id"]);
@@ -297,7 +298,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $row["edituser_url"]=phorum_get_url(PHORUM_EDIT_URL, PHORUM_MOD_EDIT_POST, $row["message_id"]);
             }
         }
-        
+
         // this stuff is used in threaded and non threaded.
         $row["short_datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
         $row["datestamp"] = phorum_date($PHORUM["long_date"], $row["datestamp"]);
@@ -306,7 +307,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["quote_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"], "quote=1");
         $row["report_url"] = phorum_get_url(PHORUM_REPORT_URL, $row["message_id"]);
         $row["follow_url"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
-                    
+
         // can only send private replies if the author is a registered user
         if ($PHORUM["enable_pm"] && $row["user_id"]) {
             $row["private_reply_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "message_id=".$row["message_id"]);
@@ -328,7 +329,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $row["body"].="\n\n$phorum_sig";
             }
         }
-        
+
         // add the edited-message to a post if its edited
         if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
             $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
@@ -347,7 +348,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             // we don't normally put HTML in this code, but this makes it easier on template builders
             $row["linked_author"] = "<a href=\"".$row["email_url"]."\">".htmlspecialchars($row["author"])."</a>";
         } else {
-            $row["linked_author"] = htmlspecialchars($row["author"]);        
+            $row["linked_author"] = htmlspecialchars($row["author"]);
         }
 
         // mask host if not a moderator
@@ -365,7 +366,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $row["ip"]=$PHORUM["DATA"]["LANG"]["IPLogged"];
             }
         }
-        
+
         if($PHORUM["max_attachments"]>0 && isset($row["meta"]["attachments"])){
             $PHORUM["DATA"]["ATTACHMENTS"]=true;
             $row["attachments"]=$row["meta"]["attachments"];
@@ -402,16 +403,16 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
                     $messages[$key]["new"]=" " . $PHORUM["DATA"]["LANG"]["newflag"];
                 }
-            }            
+            }
 
-            if($PHORUM["count_views"]) {  // show viewcount if enabled            
+            if($PHORUM["count_views"]) {  // show viewcount if enabled
                   if($PHORUM["count_views"] == 2) { // viewcount as column
                       $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
                       $messages[$key]["viewcount"]=$row['viewcount'];
                   } else { // viewcount added to the subject
                       $messages[$key]["subject"]=$row["subject"]." ({$row['viewcount']} {$PHORUM['DATA']['LANG']['Views']})";
                   }
-            }                         
+            }
 
 
             $messages[$key]["next_url"] = $PHORUM["DATA"]["URL"]["NEWERTHREAD"];
@@ -440,7 +441,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // run read mods
     $messages = phorum_hook("read", $messages);
-    
+
     // increment viewcount if enabled
     if($PHORUM['count_views']) {
         phorum_db_viewcount_inc($message_id);
@@ -459,20 +460,20 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["MESSAGES"] = $messages;
 
-    
+
     // alter the HTML_TITLE
     if(!empty($PHORUM["DATA"]["HTML_TITLE"])){
-        $PHORUM["DATA"]["HTML_TITLE"].=PHORUM_SEPARATOR;        
+        $PHORUM["DATA"]["HTML_TITLE"].=PHORUM_SEPARATOR;
     }
     if($PHORUM["threaded_read"]) {
         $PHORUM["DATA"]["HTML_TITLE"].=$PHORUM["DATA"]["MESSAGE"]["subject"];
     } else {
         $PHORUM["DATA"]["HTML_TITLE"].=$threadsubject;
     }
-    
+
     $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
-    $PHORUM['DATA']['NAME'] = htmlentities( $PHORUM['DATA']['NAME'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );   
-    
+    $PHORUM['DATA']['NAME'] = htmlentities( $PHORUM['DATA']['NAME'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
+
     // include the correct template
 
     include phorum_get_template("header");
@@ -489,10 +490,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // do not show the reply box if the message is closed or a closed announcement
     if($thread_is_announcement && $thread_is_closed) {
-        
+
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadAnnouncement"];
         include phorum_get_template("message");
-       
+
     } elseif($thread_is_closed && !$thread_is_announcement) {
 
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadClosed"];
@@ -503,7 +504,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         if(substr($PHORUM["DATA"]["POST"]["subject"], 0, 4) != "Re: ") $PHORUM["DATA"]["POST"]["subject"] = "Re: " . $PHORUM["DATA"]["POST"]["subject"];
         $PHORUM["DATA"]["POST"]["subject"]=htmlspecialchars($PHORUM["DATA"]["POST"]["subject"]);
-        
+
         include "./include/post_form.php";
     }
 
@@ -516,15 +517,15 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["MovedMessage"];
     $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessageTo"];
-    
+
     $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
     // have to include the header here for the Redirect
     include phorum_get_template("header");
     phorum_hook("after_header");
     include phorum_get_template("message");
     phorum_hook("before_footer");
-    include phorum_get_template("footer"); 
-       
+    include phorum_get_template("footer");
+
 } else { // message not found
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["MessageNotFound"];
     $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
@@ -543,11 +544,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 function phorum_check_moved_message($thread) {
     $forum_id=$GLOBALS['PHORUM']['forum_id'];
     $message=phorum_db_get_message($thread,true);
-    
+
     if(!empty($message) && $message['forum_id'] != $forum_id) {
-        $ret=$message['forum_id'];   
+        $ret=$message['forum_id'];
     } else {
-        $ret=false;   
+        $ret=false;
     }
     return $ret;
 }
