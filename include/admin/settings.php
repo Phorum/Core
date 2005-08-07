@@ -12,7 +12,7 @@ if ( count( $_POST ) ) {
 
                 if ( empty( $value ) ) {
                     $_POST[$field] = "Phorum 5";
-                } 
+                }
 
                 break;
 
@@ -22,7 +22,7 @@ if ( count( $_POST ) ) {
                     $_POST[$field] = dirname( $_SERVER["HTTP_REFERER"] );
                 } elseif ( !preg_match( "/^(http|https):\/\/(([a-z0-9][a-z0-9_-]*)(\.[a-z0-9][a-z0-9_-]*)+)(:(\d+))?/i", $value ) && !preg_match( "/^(http|https):\/\/[a-z0-9][a-z0-9_-]*(:\d+)?\//i", $value ) ) {
                     $error = "The provided HTTP Path is not a valid URL.";
-                } 
+                }
 
                 break;
 
@@ -32,7 +32,7 @@ if ( count( $_POST ) ) {
                     $_POST[$field] = "/tmp";
                 } elseif ( !file_exists( $value ) ) {
                     $error = "This cache directory does not exist.  Please create it with the proper permissions.";
-                } 
+                }
 
                 break;
 
@@ -48,7 +48,7 @@ if ( count( $_POST ) ) {
                     $_POST[$field] = "/";
                 } elseif ( $value[0] != "/" ) {
                     $error = "Session Path must start with a /";
-                } 
+                }
 
                 break;
 
@@ -56,7 +56,7 @@ if ( count( $_POST ) ) {
 
                 if ( !empty( $value ) && !stristr( $_POST["http_path"], $value ) ) {
                     $error = "Session Domain must be part of the domain in HTTP Path or empty.";
-                } 
+                }
 
                 break;
 
@@ -64,7 +64,7 @@ if ( count( $_POST ) ) {
 
                 if ( empty( $value ) ) {
                     $error = "You must supply an email address for system emails to use as a from address.";
-                } 
+                }
 
                 break;
 
@@ -88,12 +88,12 @@ if ( count( $_POST ) ) {
             case "cache_users":
             	if ( empty( $value ) ) {
                     $_POST[$field] = 0;
-                } 
-            
-        } 
+                }
+
+        }
 
         if ( $error ) break;
-    } 
+    }
 
     if ( empty( $error ) ) {
         unset( $_POST["module"] );
@@ -103,17 +103,17 @@ if ( count( $_POST ) ) {
             exit();
         } else {
             $error = "Database error while updating settings.";
-        } 
-    } 
-} 
+        }
+    }
+}
 
 if ( $error ) {
     phorum_admin_error( $error );
-} 
+}
 // create the time zone drop down array
 for( $x = -23;$x <= 23;$x++ ) {
     $tz_range[$x] = $x;
-} 
+}
 
 include_once "./include/admin/PhorumInputForm.php";
 
@@ -127,7 +127,7 @@ $row=$frm->addrow( "Phorum Title", $frm->text_box( "title", $PHORUM["title"], 50
 
 $row=$frm->addrow( "DNS Lookups", $frm->select_tag( "dns_lookup", array( "No", "Yes" ), $PHORUM["dns_lookup"] ) );
 
-$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "No", "Yes" ), $PHORUM["use_cookies"] ) );
+$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "No", "Yes" ), $PHORUM["SETTINGS"]["use_cookies"] ) );
 
 $row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
 $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
@@ -201,7 +201,7 @@ $row=$frm->addrow( "Allow Time Zone Selection", $frm->select_tag( "user_time_zon
 
 $row=$frm->addrow( "Allow Template Selection", $frm->select_tag( "user_template", array( "No", "Yes" ), $PHORUM["user_template"] ) );
 
-$reg_con_arr = array( 
+$reg_con_arr = array(
 
     PHORUM_REGISTER_INSTANT_ACCESS => "None needed",
 
@@ -209,17 +209,17 @@ $reg_con_arr = array(
 
     PHORUM_REGISTER_VERIFY_MODERATOR => "Verified by a moderator",
 
-    PHORUM_REGISTER_VERIFY_BOTH => "Verified by a moderator and via email" 
+    PHORUM_REGISTER_VERIFY_BOTH => "Verified by a moderator and via email"
 
     );
 
 $row=$frm->addrow( "Registration Verification", $frm->select_tag( "registration_control", $reg_con_arr, $PHORUM["registration_control"] ) );
 
-$upload_arr = array( 
+$upload_arr = array(
 
     PHORUM_UPLOADS_SELECT => "Off",
 
-    PHORUM_UPLOADS_REG => "On", 
+    PHORUM_UPLOADS_REG => "On",
 
     );
 
