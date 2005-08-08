@@ -36,7 +36,7 @@ if ( isset( $PHORUM["forum_id"] ) ) {
     $parent_id = (int)$PHORUM["forum_id"];
 } else {
     $parent_id = 0;
-}
+} 
 
 
 if($PHORUM["use_new_folder_style"]){

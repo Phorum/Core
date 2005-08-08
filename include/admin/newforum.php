@@ -24,15 +24,15 @@
                     if(empty($value)){
                         $_POST[$field]=30;
                     } else {
-                        $_POST[$field]=(int)$value;   
+                        $_POST[$field]=(int)$value;
                     }
                     break;
-                    
+
                 case "list_length_threaded":
                     if(empty($value)){
                         $_POST[$field]=15;
                     } else {
-                        $_POST[$field]=(int)$value;   
+                        $_POST[$field]=(int)$value;
                     }
                     break;
 
@@ -47,7 +47,7 @@
                 case "max_attachment_size":
                     $_POST[$field]=(int)$value;
                     break;
-                    
+
                 case "display_fixed":
                     $_POST[$field]=(int)$value;
                     break;
@@ -59,8 +59,8 @@
                     }
 
                     $_POST["pub_perms"]=$permission;
-                    break;                    
-                    
+                    break;
+
                 case "reg_perms":
                     $permission = 0;
                     foreach($_POST["reg_perms"] as $perm=>$check){
@@ -81,7 +81,7 @@
 
             if($error) break;
 
-            
+
         }
 
         if(empty($error)){
@@ -89,7 +89,7 @@
 
             if(empty($_POST["pub_perms"])) $_POST["pub_perms"]=0;
             if(empty($_POST["reg_perms"])) $_POST["reg_perms"]=0;
-            
+
             // handling vroots
             if($_POST['parent_id'] > 0) {
                 $parent_folder=phorum_db_get_forums($_POST['parent_id']);
@@ -99,9 +99,9 @@
             } else {
                 $_POST['vroot']=0;
             }
-            
+
             if(defined("PHORUM_EDIT_FORUM")){
-            	
+
             	if( $_POST["inherit_id"] ) {
             	    // Load inherit forum settings
             	    $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
@@ -148,7 +148,7 @@
             } else {
                 $res=phorum_db_add_forum($_POST);
             }
-            
+
             if($res){
                 phorum_redirect_by_url($_SERVER['PHP_SELF']."?module=default&parent_id=$_POST[parent_id]");
                 exit();
@@ -167,7 +167,7 @@
         $reg_perms=0;
         if(isset($_POST["reg_perms"])) foreach($_POST["reg_perms"] as $perm=>$check){
                 $reg_perms = $reg_perms | $perm;
-        }        
+        }
 
 
     } elseif(defined("PHORUM_EDIT_FORUM")) {
@@ -212,8 +212,8 @@
     if($vroot > 0) {
         $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
     }
-    
-    
+
+
     $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
 
     // Edit + inherit_id exists
@@ -229,7 +229,7 @@
     } else {
     	unset($disabled_form_input);
     }
-			
+
     $frm->addbreak("Inherit Forum Settings");
 
     $forum_list =phorum_get_forum_info(true);
@@ -237,9 +237,12 @@
     unset($forum_list[$forum_id]);
     $forum_list["0"] ="Disabled";
     // Check for Slaves
-    $forum_inherit_settings =phorum_db_get_forums(false,false,false,intval($forum_id));
-    if( count($forum_inherit_settings)>0 ) {
-    	$disabled_form_input_inherit="disabled=\"disabled\"";
+    if( intval($forum_id) ) {
+
+        $forum_inherit_settings=phorum_db_get_forums(false,false,false,intval($forum_id));
+        if( count($forum_inherit_settings)>0 ) {
+            $disabled_form_input_inherit="disabled=\"disabled\"";
+        }
     }
     $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit));
 
@@ -248,7 +251,7 @@
     	$forum_settings =$forum_settings_inherit;
     	extract($forum_settings[$inherit_id]);
     }
-    
+
     $frm->addbreak("Moderation / Permissions");
 
     $row=$frm->addrow("Moderate Messages", $frm->select_tag("moderation", array(PHORUM_MODERATE_OFF=>"Disabled", PHORUM_MODERATE_ON=>"Enabled"), $moderation, $disabled_form_input));
@@ -273,11 +276,11 @@
     $row=$frm->addrow("Registered Users", $reg_perm_frm);
 
     $frm->addhelp($row, "Registered Users", "These settings do not apply to users that are granted permissions directly via the user admin or via a group permissions.");
-    
+
     $frm->addbreak("Display Settings");
 
     $frm->addrow("Fixed Display-Settings (user can't override them)", $frm->select_tag("display_fixed", array("No", "Yes"), $display_fixed, $disabled_form_input));
-    
+
     $frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template, $disabled_form_input));
 
     $frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language, $disabled_form_input));
@@ -298,8 +301,8 @@
     $frm->addrow("Allow Email Notification", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
 
     $frm->addrow("Check for Duplicates", $frm->select_tag("check_duplicate", array("No", "Yes"), $check_duplicate, $disabled_form_input));
-    
-    $frm->addrow("Count views", $frm->select_tag("count_views", array(0 => "No", 1 => "Yes, show views added to subject", 2 => "Yes, show views as extra column"), $count_views, $disabled_form_input));    
+
+    $frm->addrow("Count views", $frm->select_tag("count_views", array(0 => "No", 1 => "Yes, show views added to subject", 2 => "Yes, show views as extra column"), $count_views, $disabled_form_input));
 
     $frm->addbreak("Attachment Settings");
 

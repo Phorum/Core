@@ -87,6 +87,7 @@ function phorum_db_get_thread_list($offset)
         if($PHORUM["reverse_threading"]) $sortorder.=" desc";
 
         $offset_option="$sortfield > 0 and";
+
         // get the announcements and stickies
         $sql="select thread as keyid from $table where
         (parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']}) or
@@ -178,7 +179,7 @@ function phorum_db_get_thread_list($offset)
             }
 
         }
-
+    //     if($PHORUM["threaded_list"]){
     } else {
         $limit = $PHORUM['list_length_flat'];
         $start = $offset * $PHORUM["list_length_flat"];
@@ -498,8 +499,12 @@ function phorum_db_post_message(&$message,$convert=false){
             $metaval";
 
     // if in conversion we need the message-id too
-    if($convert) {
+    if($convert && isset($message['message_id'])) {
         $sql.=",message_id=".$message['message_id'];
+    }
+
+    if(isset($message['modifystamp'])) {
+        $sql.=",modifystamp=".$message['modifystamp'];
     }
 
     if(isset($message['viewcount'])) {
@@ -714,7 +719,6 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
     if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
         $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
     }
-
 
     if(is_array($value)) {
         $checkvar="$field IN('".implode("','",$value)."')";
@@ -1315,7 +1319,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             $ids_str=implode(",",$message_ids);
 
             // then doing the update to newflags
-            $sql="UPDATE {$PHORUM['user_newflags_table']} SET forum_id = $toforum where message_id IN($ids_str)";
+            $sql="UPDATE IGNORE {$PHORUM['user_newflags_table']} SET forum_id = $toforum where message_id IN($ids_str)";
             $res = mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 

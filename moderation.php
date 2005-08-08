@@ -115,8 +115,13 @@ switch ($mod_step) {
         $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
 
         foreach($forums as $id=>$forum){
-            if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
-                 $forum_data[strtolower($forum["name"])]=array("forum_id"=>$id, "name"=>$forum["name"]);
+            // add  && phorum_user_moderate_allowed($id) if the mod should only be able
+            // to move to forums he also moderates
+            if($forum["folder_flag"]==0){
+                 // it makes no sense to move to the forum we are in already
+                 if($forum['forum_id'] != $PHORUM['forum_id']) {
+                    $forum_data[strtolower($forum["name"])]=array("forum_id"=>$id, "name"=>$forum["name"]);
+                 }
             }
         }
 
@@ -135,13 +140,38 @@ switch ($mod_step) {
         $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMoveOk'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         $message = phorum_db_get_message($msgthd_id);
+
+        // find out if we have a notification-message already in this
+        // target-forum for this thread ... it doesn't make sense to keep this
+        // message any longer as the thread has reappeared on its original location
+        $temp_forum_id=$PHORUM['forum_id'];
+        $PHORUM['forum_id']=$_POST['moveto'];
+        $check_messages=phorum_db_get_messages($msgthd_id);
+
+        print "Debug-info:";
+        print_var($check_messages);
+
+        unset($check_messages['users']);
+
+        // ok, we found exactly one message of this thread in the target forum
+        if(is_array($check_messages) && count($check_messages) == 1) {
+            // ... going to delete it
+            $tmp_message=array_shift($check_messages);
+            $retval=phorum_db_delete_message($tmp_message['message_id']);
+        }
+
+        $PHORUM['forum_id']=$temp_forum_id;
+
+
         phorum_db_move_thread($msgthd_id, $_POST['moveto']);
         if(isset($_POST['create_notification']) && $_POST['create_notification']) {
             $newmessage = $message;
-            $newmessage['body']=" -- moved -- ";
+            $newmessage['body']=" -- moved topic -- ";
             $newmessage['meta']=array();
             $newmessage['meta']['moved']=1;
             $newmessage['sort']=PHORUM_SORT_DEFAULT;
+            unset($newmessage['message_id']);
+
             phorum_db_post_message($newmessage);
         }
         phorum_hook("move_thread", $msgthd_id);

@@ -92,7 +92,7 @@
     $frm->hidden("module", "mods");
 
     print_var($PHORUM["mods"]);
-    
+
     foreach($plugins as $name => $plugin){
 
         if(isset($mods[$name])){
