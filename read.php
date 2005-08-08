@@ -543,7 +543,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 // find out if the given thread has been moved to another forum
 function phorum_check_moved_message($thread) {
     $forum_id=$GLOBALS['PHORUM']['forum_id'];
-    $message=phorum_db_get_message($thread,true);
+    $message=phorum_db_get_message($thread,'message_id',true);
 
     if(!empty($message) && $message['forum_id'] != $forum_id) {
         $ret=$message['forum_id'];
