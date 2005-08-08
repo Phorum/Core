@@ -701,7 +701,7 @@ function phorum_db_update_message($message_id, $message)
  * in the given field and returns the message in an array.
  */
 
-function phorum_db_get_message($value, $field="message_id")
+function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $field=mysql_escape_string($field);
@@ -711,9 +711,10 @@ function phorum_db_get_message($value, $field="message_id")
 
 
     $forum_id_check = "";
-    if (!empty($PHORUM["forum_id"])){
+    if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
         $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
     }
+
 
     if(is_array($value)) {
         $checkvar="$field IN('".implode("','",$value)."')";
