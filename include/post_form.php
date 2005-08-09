@@ -9,7 +9,7 @@ if($PHORUM["status"]=="read-only"){
     exit();
 }
 
-$message=phorum_hook("post_form", $message);
+phorum_hook("post_form");
 
 // check that the user can post.
 if( (empty($PHORUM["DATA"]["POST"]["parentid"]) && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
