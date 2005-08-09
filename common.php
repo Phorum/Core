@@ -170,6 +170,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         // some defaults we might need if no forum is set (i.e. on the index-page)
         $PHORUM['vroot']=0;
         $PHORUM['parent_id']=0;
+        $PHORUM['active']=1;
     }
 
     // stick some stuff from the settings into the DATA member
