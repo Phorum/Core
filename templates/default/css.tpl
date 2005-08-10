@@ -84,6 +84,7 @@ input
     width: 100%;
     border: 1px solid {tablebordercolor};
     border-bottom-width: 0px;
+    text-align: left;
 }
 
 #phorum-index th
@@ -115,14 +116,14 @@ input
 
 #phorum-index th.forum-threads
 {
-    width: 120px;    
+    width: 120px;
     text-align: center;
     vertical-align: middle;
 }
 
 #phorum-index th.forum-posts
 {
-    width: 120px;    
+    width: 120px;
     text-align: center;
     vertical-align: middle;
 }
@@ -151,19 +152,19 @@ input
 
 #phorum-index td.forum-threads
 {
-    width: 120px;    
+    width: 120px;
     text-align: center;
 }
 
 #phorum-index td.forum-posts
 {
-    width: 120px;    
+    width: 120px;
     text-align: center;
 }
 
 #phorum-index td.forum-last-post
 {
-    width: 120px;    
+    width: 120px;
     padding: 0 15px 0 0;
 }
 
@@ -176,17 +177,17 @@ input
     {
         width: {forumwidth};
         text-align: left;
-    }        
+    }
     /* new class for layouting the submit-buttons in IE too */
-    .PhorumSubmit { 
-        border: 1px dotted {tablebordercolor}; 
-        color: {defaulttextcolor}; 
-        background-color: {navbackcolor}; 
-        font-size: {defaultfontsize}; 
-        font-family: {defaultfont}; 
-        vertical-align: middle; 
-    }    
-    
+    .PhorumSubmit {
+        border: 1px dotted {tablebordercolor};
+        color: {defaulttextcolor};
+        background-color: {navbackcolor};
+        font-size: {defaultfontsize};
+        font-family: {defaultfont};
+        vertical-align: middle;
+    }
+
     .PhorumTitleText
     {
         float: right;
@@ -199,7 +200,7 @@ input
         background-color: {backcolor};
         border: 1px solid {tablebordercolor};
 /*        width: {tablewidth}; */
-        padding: 3px;		
+        padding: 3px;
     }
 
     .PhorumStdBlockHeader
@@ -254,7 +255,7 @@ input
         background-color: {navhoverbackcolor};
         font-weight: {navtextweight};
         font-family: {navfont};
-        font-size: {navfontsize};        
+        font-size: {navfontsize};
         border-style: solid;
         border-color: {tablebordercolor};
         border-width: 1px;
@@ -300,35 +301,35 @@ input
 
     /* PSUEDO Table classes                                       */
     /* In addition to these, each file that uses them will have a */
-    /* column with a style property to set its right margin       */    
+    /* column with a style property to set its right margin       */
 
     .PhorumColumnFloatXSmall
     {
-        float: right; 
+        float: right;
         width: 75px;
     }
 
     .PhorumColumnFloatSmall
     {
-        float: right; 
+        float: right;
         width: 100px;
     }
 
     .PhorumColumnFloatMedium
     {
-        float: right; 
+        float: right;
         width: 150px;
     }
 
     .PhorumColumnFloatLarge
     {
-        float: right; 
+        float: right;
         width: 200px;
     }
 
     .PhorumColumnFloatXLarge
     {
-        float: right; 
+        float: right;
         width: 400px;
     }
 
@@ -347,7 +348,7 @@ input
     }
 
     /************/
-    
+
 
     /* All that is left of the tables */
 
@@ -384,7 +385,7 @@ input
         height: 35px;
         padding: 3px;
     }
-    
+
     .PhorumTableRowAlt
     {
         background-color: {altbackcolor};
@@ -396,7 +397,7 @@ input
         font-family: {defaultfont};
         height: 35px;
         padding: 3px;
-    }    
+    }
 
     table.PhorumFormTable td
     {
@@ -407,12 +408,12 @@ input
 
 
     /* Read Page specifics */
-    
+
     .PhorumReadMessageBlock
     {
         margin-bottom: 5px;
     }
-    
+
    .PhorumReadBodySubject
     {
         color: Black;
@@ -447,7 +448,7 @@ input
     }
 
     /********************/
-    
+
     /* List page specifics */
 
     .PhorumListSubText
@@ -467,7 +468,7 @@ input
     .PhorumListSubjPrefix
     {
         font-weight: bold;
-    }    
+    }
 
     .PhorumListModLink, .PhorumListModLink a
     {
@@ -487,7 +488,7 @@ input
     .PhorumSmallFont
     {
         font-size: {smallfontsize};
-    }    
+    }
 
     .PhorumLargeFont
     {
@@ -495,7 +496,7 @@ input
         font-size: {largefontsize};
         font-family: {largefont};
         font-weight: bold;
-    }    
+    }
 
 
     .PhorumFooterPlug
@@ -520,7 +521,7 @@ input
         padding: 5px;
         border: 1px solid {tablebordercolor};
     }
-    
+
     blockquote.bbcode strong
     {
         font-style: italic;
