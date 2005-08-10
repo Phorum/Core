@@ -281,6 +281,7 @@ if (count($_POST) > 0) {
             $PHORUM['DATA']['POST']['email_reply'] = (isset($_POST['email_reply']) && $_POST['email_reply'])?"1":"0";
             $PHORUM['DATA']['POST']['show_signature'] = (isset($_POST['show_signature']) && $_POST['show_signature'])?"1":"0";
             $PHORUM["DATA"]["POST"]["special"] = (isset($_POST["special"])) ? htmlspecialchars($_POST["special"]) : "0";
+            $PHORUM["DATA"]["POST"]["allow_reply"] = (isset($_POST["allow_reply"]) && $_POST['allow_reply']) ? "1" : "0";
             $PHORUM["DATA"]["ERROR"] = htmlspecialchars($error);
         }
     }

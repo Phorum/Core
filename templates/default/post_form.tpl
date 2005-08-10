@@ -40,14 +40,14 @@
 <tr>
     <td>{LANG->Special}:&nbsp;</td>
     <td><select name="special">
-    <option value=""{IF POST->special  } selected{/IF}></option>
-    <option value="sticky"{IF POST->special sticky} selected{/IF}>{LANG->MakeSticky}</option>
-    {IF POST->show_announcement true}<option value="announcement"{IF POST->special announcement} selected{/IF}>{LANG->MakeAnnouncement}</option>{/IF}
+    <option value=""{IF POST->special  } selected="selected"{/IF}></option>
+    <option value="sticky"{IF POST->special sticky} selected="selected"{/IF}>{LANG->MakeSticky}</option>
+    {IF POST->show_announcement true}<option value="announcement"{IF POST->special announcement} selected="selected"{/IF}>{LANG->MakeAnnouncement}</option>{/IF}
     </select></td>
 </tr>
 <tr>
     <td>{LANG->AllowReplies}:&nbsp;</td>
-    <td><input type="checkbox" name="allow_reply" value="1" checked="checked" /></td>
+    <td><input type="checkbox" name="allow_reply" value="1"{IF POST->allow_reply} checked="checked"{/IF} /></td>
 </tr>
 {/IF}
 {/IF}
