@@ -141,7 +141,7 @@ function phorum_bb_code_quote ($array)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if($PHORUM["mod_bb_code"]["quote_hook"]){
+    if(isset($PHORUM["mod_bb_code"]) && $PHORUM["mod_bb_code"]["quote_hook"]){
         return "[quote $array[0]]$array[1][/quote]";
     }
 }
