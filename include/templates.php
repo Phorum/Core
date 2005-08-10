@@ -29,7 +29,7 @@
             }
 
             $parts=explode(" ", $string);
-    
+
             switch(strtolower($parts[0])){
 
                 // Comment
@@ -41,13 +41,18 @@
 
                 case "include":
 
+                    $repl="<?php include phorum_get_template('$parts[1]'); ?>";
+                    break;
+
+                case "include_once":
+
                     $repl="<?php include_once phorum_get_template('$parts[1]'); ?>";
                     break;
 
                 case "include_var": // include a file given by a variable
 
                     $repl="<?php include_once phorum_get_template( \$PHORUM[\"DATA\"]['$parts[1]']); ?>";
-                    break;                    
+                    break;
 
                 // A define is used to create vars for the engine to use.
                 case "define":
@@ -62,7 +67,7 @@
                     break;
 
 
-                // A var is used to create vars for the template.                    
+                // A var is used to create vars for the template.
                 case "var":
 
                     $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']='";
@@ -100,14 +105,14 @@
 
                     // DATA is default array
                     $index="DATA";
-                    
+
                     // check for loopvars and use TMP if it is one.
                     if(strstr($parts[1], "'") && isset($loopvars)  && count($loopvars)){
                         $varname=substr($parts[1], 0, strpos($parts[1], "'"));
-                        if(isset($loopvars[$varname])){                    
+                        if(isset($loopvars[$varname])){
                             $index="TMP";
                         }
-                    }                    
+                    }
 
                     if(isset($parts[2])){
                         if(!is_numeric($parts[2]) && !defined($parts[2])){
@@ -138,8 +143,7 @@
 
                 case "assign":
                     if(defined($parts[2])){
-                        $repl="<?php $parts[1]; ?>";
-                        $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=$parts[2]";
+                        $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=$parts[2]; ?>";
                     } else {
                         // DATA is default array
                         $index="DATA";
