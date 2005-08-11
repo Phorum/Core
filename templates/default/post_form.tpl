@@ -40,9 +40,9 @@
 <tr>
     <td>{LANG->Special}:&nbsp;</td>
     <td><select name="special">
-    <option value=""{IF POST->special  } selected="selected"{/IF}></option>
-    <option value="sticky"{IF POST->special sticky} selected="selected"{/IF}>{LANG->MakeSticky}</option>
-    {IF POST->show_announcement true}<option value="announcement"{IF POST->special announcement} selected="selected"{/IF}>{LANG->MakeAnnouncement}</option>{/IF}
+    <option value=""></option>
+    <option value="sticky"{IF POST->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
+    {IF POST->show_announcement true}<option value="announcement"{IF POST->special "announcement"} selected{/IF}>{LANG->MakeAnnouncement}</option>{/IF}
     </select></td>
 </tr>
 <tr>
