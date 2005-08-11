@@ -50,6 +50,9 @@ if($PHORUM["status"]=="read-only"){
     exit();
 }
 
+// Set defaults for the message form.
+$PHORUM["DATA"]["POST"]["allow_reply"] = 1;
+
 if (count($_POST) > 0) {
     // check that this user can post to the forum
     if ((empty($_POST["parent_id"]) && phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
