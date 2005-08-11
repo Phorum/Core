@@ -40,7 +40,7 @@
         // check for a session
         phorum_user_check_session("phorum_admin_session");
 
-        if(!$GLOBALS["PHORUM"]["user"]["admin"]){
+        if(!isset($GLOBALS["PHORUM"]["user"]) || !$GLOBALS["PHORUM"]["user"]["admin"]){
             // if not an admin
             unset($GLOBALS["PHORUM"]["user"]);
             $module="login";
