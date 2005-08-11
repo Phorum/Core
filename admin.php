@@ -31,7 +31,7 @@
 
 
     // if we are installing or upgrading, we don't need to check for a session
-    if(!isset($PHORUM['internal_version']) || (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL)) {
+    if(!isset($PHORUM['installed']) || !isset($PHORUM['internal_version']) || (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL)) {
         // this is an install
         $module="install";
 
