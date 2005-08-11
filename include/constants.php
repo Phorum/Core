@@ -146,6 +146,7 @@
     define("PHORUM_PREPOST_URL", $i++);
     define("PHORUM_REPORT_URL", $i++);
     define("PHORUM_RSS_URL", $i++);
+    define("PHORUM_CUSTOM_URL", $i++);
 
     define("PHORUM_DELETE_MESSAGE", $i++);
     define("PHORUM_DELETE_TREE", $i++);

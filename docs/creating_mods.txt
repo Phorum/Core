@@ -41,7 +41,7 @@ Hooks that exist at the time of this writing are:
 
     after_register
     --------------
-    after_register is called after a successfull registration was done and 
+    after_register is called after a successfull registration was done and
     all confirmation mails were sent. it gets the userdata of the registered
     user as argument.
 
@@ -49,13 +49,13 @@ Hooks that exist at the time of this writing are:
     --------------
     This is the same as after_header except these modules are called just
     before the footer is displayed.
-    
+
     before_register
     --------------
     before_register is called right before the new user is stored in the database, so its
-    particularly useful if you want to add some data to a newly registered user. 
+    particularly useful if you want to add some data to a newly registered user.
     it gets the userdata of the registered user as argument and returns them after its done.
-    
+
     cc_save_user
     ------------
     cc_user_save is called in the controlcenter if a user is saved, right before storing to the db.
@@ -80,13 +80,13 @@ Hooks that exist at the time of this writing are:
     ----------
     same as previous just that it hooks in right after loading the settings from the
     database, before deciding anything on language or template or user
-    
+
 
     common_post_user
     ----------
     same as previous just that it hooks in right after loading the user from the database but
-    before the template-loading.    
-    
+    before the template-loading.
+
     delete
     -------
     delete hook is called any time a message is deleted.  The function you crate
@@ -131,7 +131,7 @@ Hooks that exist at the time of this writing are:
     list hook functions receive an array of threads (or messages in threaded mode)
     and should return a list of threads when complete.  This hook is called just
     before the messages are formatted.
-    
+
     moderation
     ------
     That hook receives the mod_step as parameter for determining what is done there.
@@ -162,7 +162,7 @@ Hooks that exist at the time of this writing are:
     pm_sent hook functions are called whenever a Private message is successfully
     sent. These functions recieve no parameters, but can see the message that was
     sent by looking in the $_POST superglobal array.
-    
+
     check_post
     ----------
     This hook is run in case the preliminary checks for a message didn't return something bad.
@@ -234,9 +234,9 @@ Hooks that exist at the time of this writing are:
     ------
     search hook functions receive an array of messages and should return
     that same array after doing whatever it needs to do to it.  This hook
-    is called just before the messages are formatted.  
+    is called just before the messages are formatted.
     (it works the same way like the read hook)
-    
+
     user_list
     ---------
     These modules are called whenever a general purpose list of users is created
@@ -402,6 +402,17 @@ Phorum will be unable to load a language for your module and will display empty 
 
 Try to only create custom strings when there is nothing already in Phorum that you can reuse.
 Having more text to translate is more work for everybody, especially translators.
+
+Adding your own custom urls
+---------------------------
+You can generate your own custom urls using phorum_get_url too.
+The way to go is simple ... you need to set the page-type to PHORUM_CUSTOM_URL and add all your params to it.
+The first param needs to be the filename of the file to link to without the extension.
+The second param needs to be the 0 or 1 depending on if the function should add the current forum_id (1) or not (0).
+All other params are added comma separated to the url then.
+So for example if you want to generate a link to myfile.php which should always add the current forum_id with the additional
+parameter dosomething=1 you would do the following:
+phorum_get_url(PHORUM_CUSTOM_URL, "myfile", 1, "dosomething=1");
 
 
 **CAUTIONS**
