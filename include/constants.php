@@ -17,28 +17,28 @@
 
     // can moderators view user's ip
     define("PHORUM_MOD_IP_VIEW", true);
-    
+
     // change the author's name on deleting the user
     define("PHORUM_DELETE_CHANGE_AUTHOR", true);
-    
+
     // time in seconds files can be attached to a message
     define("PHORUM_MAX_TIME_TO_ATTACH", 3600);
 
     // string used to separate things like items in the title tag.
     define("PHORUM_SEPARATOR", " :: ");
-    
+
     // default TTL for cache-data if not specified different
     define('PHORUM_CACHE_DEFAULT_TTL',3600);
 
     // split-variable for file-based cache
-	define('PHORUM_CACHE_SPLIT',4);
-	
+    define('PHORUM_CACHE_SPLIT',4);
+
     /////////////////////////////////////////
     //                                     //
     //     DO NOT EDIT BELOW THIS AREA     //
-    //                                     //    
+    //                                     //
     /////////////////////////////////////////
-    
+
     // put constants here that need to stay the same value here.
 
     define("PHORUM_UPLOADS_SELECT", 0);
@@ -72,13 +72,13 @@
     define("PHORUM_REGISTER_VERIFY_MODERATOR", 2);
     define("PHORUM_REGISTER_VERIFY_BOTH", 3);
 
-    define("PHORUM_USER_PENDING_BOTH", -3);    
+    define("PHORUM_USER_PENDING_BOTH", -3);
     define("PHORUM_USER_PENDING_EMAIL", -2);
-    define("PHORUM_USER_PENDING_MOD", -1);    
+    define("PHORUM_USER_PENDING_MOD", -1);
     define("PHORUM_USER_INACTIVE", 0);
     define("PHORUM_USER_ACTIVE", 1);
 
-    define("PHORUM_USER_ALLOW_READ", 1); 
+    define("PHORUM_USER_ALLOW_READ", 1);
     define("PHORUM_USER_ALLOW_REPLY", 2);
     define("PHORUM_USER_ALLOW_EDIT", 4);
     define("PHORUM_USER_ALLOW_NEW_TOPIC", 8);
@@ -89,14 +89,14 @@
 
     define("PHORUM_USER_GROUP_REMOVE", -128);
     define("PHORUM_USER_GROUP_SUSPENDED", -1);
-    define("PHORUM_USER_GROUP_UNAPPROVED", 0);    
+    define("PHORUM_USER_GROUP_UNAPPROVED", 0);
     define("PHORUM_USER_GROUP_APPROVED", 1);
     define("PHORUM_USER_GROUP_MODERATOR", 2);
 
     define("PHORUM_GROUP_CLOSED", 0);
     define("PHORUM_GROUP_OPEN", 1);
     define("PHORUM_GROUP_REQUIRE_APPROVAL", 2);
-    
+
     define("PHORUM_NEWFLAG_MSG", 0);
     define("PHORUM_NEWFLAG_MIN_ID", 1);
 
@@ -133,35 +133,36 @@
     define("PHORUM_REGISTER_ACTION_URL", $i++);
     define("PHORUM_PROFILE_URL", $i++);
     define("PHORUM_SUBSCRIBE_URL", $i++);
-    define("PHORUM_MODERATION_URL", $i++);    
-    define("PHORUM_MODERATION_ACTION_URL", $i++);  
-    define("PHORUM_CONTROLCENTER_URL", $i++);      
-    define("PHORUM_CONTROLCENTER_ACTION_URL", $i++);      
-    define("PHORUM_FILE_URL", $i++);      
-    define("PHORUM_GROUP_MODERATION_URL", $i++);      
-    define("PHORUM_FOLLOW_URL", $i++); 
-    define("PHORUM_FOLLOW_ACTION_URL", $i++);  
-    define("PHORUM_EDIT_URL", $i++);     
-    define("PHORUM_EDIT_ACTION_URL", $i++);       
-    define("PHORUM_PREPOST_URL", $i++);  
-    define("PHORUM_REPORT_URL", $i++);  
+    define("PHORUM_MODERATION_URL", $i++);
+    define("PHORUM_MODERATION_ACTION_URL", $i++);
+    define("PHORUM_CONTROLCENTER_URL", $i++);
+    define("PHORUM_CONTROLCENTER_ACTION_URL", $i++);
+    define("PHORUM_FILE_URL", $i++);
+    define("PHORUM_GROUP_MODERATION_URL", $i++);
+    define("PHORUM_FOLLOW_URL", $i++);
+    define("PHORUM_FOLLOW_ACTION_URL", $i++);
+    define("PHORUM_EDIT_URL", $i++);
+    define("PHORUM_EDIT_ACTION_URL", $i++);
+    define("PHORUM_PREPOST_URL", $i++);
+    define("PHORUM_REPORT_URL", $i++);
+    define("PHORUM_RSS_URL", $i++);
 
-    define("PHORUM_DELETE_MESSAGE", $i++);    
-    define("PHORUM_DELETE_TREE", $i++);    
-    define("PHORUM_MOVE_THREAD", $i++);    
-    define("PHORUM_DO_THREAD_MOVE", $i++);    
-    define("PHORUM_CLOSE_THREAD", $i++);        
-    define("PHORUM_REOPEN_THREAD", $i++);        
-    define("PHORUM_MOD_EDIT_POST", $i++);   
-    define("PHORUM_SAVE_EDIT_POST", $i++);   
-    define("PHORUM_APPROVE_MESSAGE", $i++);          
-    define("PHORUM_HIDE_POST", $i++); 
-    define("PHORUM_APPROVE_MESSAGE_TREE", $i++); 
+    define("PHORUM_DELETE_MESSAGE", $i++);
+    define("PHORUM_DELETE_TREE", $i++);
+    define("PHORUM_MOVE_THREAD", $i++);
+    define("PHORUM_DO_THREAD_MOVE", $i++);
+    define("PHORUM_CLOSE_THREAD", $i++);
+    define("PHORUM_REOPEN_THREAD", $i++);
+    define("PHORUM_MOD_EDIT_POST", $i++);
+    define("PHORUM_SAVE_EDIT_POST", $i++);
+    define("PHORUM_APPROVE_MESSAGE", $i++);
+    define("PHORUM_HIDE_POST", $i++);
+    define("PHORUM_APPROVE_MESSAGE_TREE", $i++);
     define("PHORUM_PREVIEW_EDIT_POST", $i++);
-    define("PHORUM_MERGE_THREAD", $i++);    
-    define("PHORUM_DO_THREAD_MERGE", $i++);    
-    define("PHORUM_SPLIT_THREAD", $i++);    
-    define("PHORUM_DO_THREAD_SPLIT", $i++);    
+    define("PHORUM_MERGE_THREAD", $i++);
+    define("PHORUM_DO_THREAD_MERGE", $i++);
+    define("PHORUM_SPLIT_THREAD", $i++);
+    define("PHORUM_DO_THREAD_SPLIT", $i++);
 
     define("PHORUM_CC_SUMMARY", "summary");
     define("PHORUM_CC_SUBSCRIPTION_THREADS", "subthreads");
