@@ -205,7 +205,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $pageno=$x+$page_start;
             $PHORUM["DATA"]["PAGES"][] = array(
             "pageno"=>$pageno,
-            "is_current"=> ($pageno == $page),
             "url"=>phorum_get_url(PHORUM_READ_URL, $thread, "page=$pageno")
             );
         }
