@@ -310,9 +310,9 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     // last_post_time is for sort by modifystamp
     // forum_max_message is for sort by message-id
     if($threads_only) {
-    	$use_key='last_post_time';
+        $use_key='last_post_time';
     } else {
-    	$use_key='forum_max_message';
+        $use_key='forum_max_message';
     }
 
     $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} USE KEY($use_key) WHERE status=".PHORUM_STATUS_APPROVED;
@@ -321,16 +321,16 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     // even if $thread is passed, we have to make sure
     // the user can read the forum
     if($forum_id <= 0) {
-	    $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+        $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
 
-	    // if they are not allowed to see any forums, return the emtpy $arr;
-	    if(empty($allowed_forums))
-	    	return $arr;
+        // if they are not allowed to see any forums, return the emtpy $arr;
+        if(empty($allowed_forums))
+            return $arr;
     } else {
-    	// only single forum, *much* fast this way
-    	if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
-    		return $arr;
-    	}
+        // only single forum, *much* fast this way
+        if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
+            return $arr;
+        }
     }
 
     if($forum_id > 0){
@@ -938,8 +938,11 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         if(count($terms)){
 
-            /* using this code on larger forums has shown to make the search faster
-               however, on smaller forums, it does not appear to help and in fact
+            $use_key="";
+            $extra_where="";
+
+            /* using this code on larger forums has shown to make the search faster.
+               However, on smaller forums, it does not appear to help and in fact
                appears to slow down searches.
 
             if($match_date){
@@ -950,9 +953,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 $min_id=mysql_result($res, 0, "min_id");
                 $use_key=" use key (primary)";
                 $extra_where="and message_id>=$min_id";
-            } else {
-                $use_key="";
-                $extra_where="";
             }
             */
 
@@ -1190,13 +1190,13 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
     } elseif ($inherit_id) {
-			$sql .= " where inherit_id = $inherit_id";
-			if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
+            $sql .= " where inherit_id = $inherit_id";
+            if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     } elseif ($parent_id >= 0) {
         $sql .= " where parent_id = $parent_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     }  elseif($vroot !== null) {
-    	$sql .= " where vroot = $vroot";
+        $sql .= " where vroot = $vroot";
     }
 
     $sql .= " order by display_order ASC, name";
@@ -2811,10 +2811,10 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
         $arr=array();
 
     while ($rec = mysql_fetch_row($res)){
-		if(!empty($rec[1])) // user-language is set
-	        $arr[$rec[1]][] = $rec[0];
-		else // no user-language is set
-			$arr[$PHORUM['language']][]= $rec[0];
+        if(!empty($rec[1])) // user-language is set
+            $arr[$rec[1]][] = $rec[0];
+        else // no user-language is set
+            $arr[$PHORUM['language']][]= $rec[0];
     }
 
     return $arr;
@@ -3242,16 +3242,16 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
  */
 function phorum_db_merge_thread($thread_id1, $forum_id1, $thread_id2)
 {
-	settype($thread_id1, "int");
-	settype($forum_id1, "int");
-	settype($thread_id2, "int");
+    settype($thread_id1, "int");
+    settype($forum_id1, "int");
+    settype($thread_id2, "int");
 
-	if($thread_id1 > 0 && $forum_id1 > 0 && $thread_id2 > 0){
-		$queries =array();
-		$queries[0]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$thread_id1', forum_id='$forum_id1' WHERE thread='$thread_id2'";
-		$queries[1]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET parent_id='$thread_id1', forum_id='$forum_id1' WHERE message_id='$thread_id2'";
-		phorum_db_run_queries($queries);
-	}
+    if($thread_id1 > 0 && $forum_id1 > 0 && $thread_id2 > 0){
+        $queries =array();
+        $queries[0]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$thread_id1', forum_id='$forum_id1' WHERE thread='$thread_id2'";
+        $queries[1]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET parent_id='$thread_id1', forum_id='$forum_id1' WHERE message_id='$thread_id2'";
+        phorum_db_run_queries($queries);
+    }
 }
 
 /**
@@ -3259,17 +3259,17 @@ function phorum_db_merge_thread($thread_id1, $forum_id1, $thread_id2)
  */
 function phorum_db_split_thread($message, $forum_id)
 {
-	settype($message, "int");
-	settype($forum_id, "int");
+    settype($message, "int");
+    settype($forum_id, "int");
 
-	if($message > 0 && $forum_id > 0){
-		// get message tree for update thread id
-		$tree =phorum_db_get_messagetree($message, $forum_id);
-		$queries =array();
-		$queries[0]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$message', parent_id='0' WHERE message_id ='$message'";
-		$queries[1]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$message' WHERE message_id IN ($tree)";
-		phorum_db_run_queries($queries);
-	}
+    if($message > 0 && $forum_id > 0){
+        // get message tree for update thread id
+        $tree =phorum_db_get_messagetree($message, $forum_id);
+        $queries =array();
+        $queries[0]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$message', parent_id='0' WHERE message_id ='$message'";
+        $queries[1]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$message' WHERE message_id IN ($tree)";
+        phorum_db_run_queries($queries);
+    }
 }
 
 /**
