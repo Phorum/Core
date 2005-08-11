@@ -243,7 +243,14 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // a hook for rewriting vars in common.php after loading the user
     phorum_hook( "common_post_user", "" );
 
+
     // set up the template
+
+    // check for a template being passed on the url
+    if ( !empty( $PHORUM["args"]["template"] ) ) {
+        $PHORUM["template"] = basename( $PHORUM["args"]["template"] );
+    }
+
     // user output buffering so we don't get header errors
     ob_start();
     include_once( phorum_get_template( "settings" ) );
@@ -486,10 +493,23 @@ function phorum_get_url()
             $page = "report";
             $add_forum_id = true;
             break;
+        case PHORUM_RSS_URL:
+            switch(phorum_page){
+                case "list":
+                    $add_forum_id = true;
+                    break;
+                case "read":
+                    $add_forum_id = true;
+                    array_push($argv, $PHORUM["args"]["1"]);
+                    break;
+            }
+            $page = "rss";
+            break;
         default:
             trigger_error( "Unhandled page type.", E_USER_WARNING );
             break;
     }
+
     // build the query string
     $query_items = array();
 
@@ -522,10 +542,6 @@ function phorum_get_url()
 function phorum_get_template( $page )
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
-    if ( !empty( $PHORUM["args"]["template"] ) ) {
-        $PHORUM["template"] = basename( $PHORUM["args"]["template"] );
-    }
 
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
         $PHORUM['template'] = $PHORUM['user']['user_template'];
@@ -560,6 +576,9 @@ function phorum_build_common_urls()
     $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POST_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
+    if(phorum_page=="index" || phorum_page=="list" || phorum_page=="read"){
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL );
+    }
 
     if(isset($GLOBALS['PHORUM']["use_new_folder_style"]) && $GLOBALS['PHORUM']["use_new_folder_style"] ) { // go to root or vroot
 
