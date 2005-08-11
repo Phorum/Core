@@ -4,17 +4,7 @@
 </div>
 
 {if PAGES}
-<div class="PhorumNavBlock" style="text-align: left;">
-<div style="float: right;">
-<span class="PhorumNavHeading">{LANG->Pages}:</span>&nbsp;
-{if URL->PREVPAGE}<a class="PhorumNavLink" href="{URL->PREVPAGE}">{LANG->PrevPage}</a>{/if}
-{if URL->FIRSTPAGE}<a class="PhorumNavLink" href="{URL->FIRSTPAGE}">{LANG->FirstPage}...</a>{/if}
-{loop PAGES}<a class="PhorumNavLink" href="{PAGES->url}">{PAGES->pageno}</a>{/loop PAGES}
-{if URL->LASTPAGE}<a class="PhorumNavLink" href="{URL->LASTPAGE}">...{LANG->LastPage}</a>{/if}
-{if URL->NEXTPAGE}<a class="PhorumNavLink" href="{URL->NEXTPAGE}">{LANG->NextPage}</a>{/if}
-</div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->CurrentPage}:</span>{CURRENTPAGE} {LANG->of} {TOTALPAGES}
-</div>
+{include paging}
 {/if}
 
 {loop MESSAGES}
@@ -37,7 +27,7 @@
 <div class="PhorumReadBodyText">{MESSAGES->body}</div><br />
 {IF ATTACHMENTS}
 {IF MESSAGES->attachments}
-{LANG->Attachments}: 
+{LANG->Attachments}:
 {ASSIGN MESSAGE_ATTACHMENTS MESSAGES->attachments}
 {LOOP MESSAGE_ATTACHMENTS}
 <a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
@@ -55,7 +45,7 @@
 <a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url2}';">{LANG->DelMessReplies}</a>
 &bull;<a class="PhorumNavLink" href="{MESSAGES->split_url}">{LANG->SplitThread}</a>
 {/if}
-{if MESSAGES->is_unapproved} 
+{if MESSAGES->is_unapproved}
 &bull;<a class="PhorumNavLink" href="{MESSAGES->approve_url}">{LANG->ApproveMessage}</a>
 {else}
 &bull;<a class="PhorumNavLink" href="{MESSAGES->hide_url}">{LANG->HideMessage}</a>
@@ -72,16 +62,7 @@
 {/loop MESSAGES}
 
 {if PAGES}
-<div class="PhorumNavBlock" style="text-align: left;">
-<div style="float: right;">
-<span class="PhorumNavHeading">{LANG->Pages}:</span>&nbsp;
-{if URL->PREVPAGE}<a class="PhorumNavLink" href="{URL->PREVPAGE}">{LANG->PrevPage}</a>{/if}
-{if URL->FIRSTPAGE}<a class="PhorumNavLink" href="{URL->FIRSTPAGE}">{LANG->FirstPage}...</a>{/if}
-{loop PAGES}<a class="PhorumNavLink" href="{PAGES->url}">{PAGES->pageno}</a>{/loop PAGES}
-{if URL->LASTPAGE}<a class="PhorumNavLink" href="{URL->LASTPAGE}">...{LANG->LastPage}</a>{/if}
-{if URL->NEXTPAGE}<a class="PhorumNavLink" href="{URL->NEXTPAGE}">{LANG->NextPage}</a>{/if}
-</div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->CurrentPage}:</span>{CURRENTPAGE} {LANG->of} {TOTALPAGES}
-</div>
+{include paging}
 {/if}
+
 <br /><br />

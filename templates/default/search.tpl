@@ -14,18 +14,7 @@
 
 {IF SEARCH->showresults}
 
-{IF PAGES}
-<div class="PhorumNavBlock" style="text-align: left;">
-<div style="float: right;"><span class="PhorumNavHeading">{LANG->Pages}:</span>&nbsp;
-{IF URL->PREVPAGE}<a class="PhorumNavLink" href="{URL->PREVPAGE}">{LANG->PrevPage}</a>{/IF}
-{IF URL->FIRSTPAGE}<a class="PhorumNavLink" href="{URL->FIRSTPAGE}">{LANG->FirstPage}...</a>{/IF}
-{LOOP PAGES}<a class="PhorumNavLink" href="{PAGES->url}">{PAGES->pageno}</a>{/LOOP PAGES}
-{IF URL->LASTPAGE}<a class="PhorumNavLink" href="{URL->LASTPAGE}">...{LANG->LastPage}</a>{/IF}
-{IF URL->NEXTPAGE}<a class="PhorumNavLink" href="{URL->NEXTPAGE}">{LANG->NextPage}</a>{/IF}
-</div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->CurrentPage}:</span>{CURRENTPAGE} {LANG->of} {TOTALPAGES}
-</div>
-{/IF}
+{include paging}
 
 <div class="PhorumStdBlockHeader" style="text-align: left;"><span class="PhorumHeadingLeft">{LANG->Results} {RANGE_START} - {RANGE_END} {LANG->of} {TOTAL}</span></div>
 
@@ -40,18 +29,7 @@
 {/LOOP MATCHES}
 </div>
 
-{IF PAGES}
-<div class="PhorumNavBlock" style="text-align: left;">
-<div style="float: right;"><span class="PhorumNavHeading">{LANG->Pages}:</span>&nbsp;
-{IF URL->PREVPAGE}<a class="PhorumNavLink" href="{URL->PREVPAGE}">{LANG->PrevPage}</a>{/IF}
-{IF URL->FIRSTPAGE}<a class="PhorumNavLink" href="{URL->FIRSTPAGE}">{LANG->FirstPage}...</a>{/IF}
-{LOOP PAGES}<a class="PhorumNavLink" href="{PAGES->url}">{PAGES->pageno}</a>{/LOOP PAGES}
-{IF URL->LASTPAGE}<a class="PhorumNavLink" href="{URL->LASTPAGE}">...{LANG->LastPage}</a>{/IF}
-{IF URL->NEXTPAGE}<a class="PhorumNavLink" href="{URL->NEXTPAGE}">{LANG->NextPage}</a>{/IF}
-</div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->CurrentPage}:</span>{CURRENTPAGE} {LANG->of} {TOTALPAGES}
-</div>
-{/IF}
+{include paging}
 
 <div class="PhorumNavBlock" style="text-align: left;">
 <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;<a class="PhorumNavLink" href="{URLINDEX}">{LANG->ForumList}</a>&bull;<a class="PhorumNavLink" href="{URLTOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URLPOST}">{LANG->NewTopic}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URLREGISTERPROFILE}">{LANG->MyProfile}</a>&bull;<a class="PhorumNavLink" href="{URLLOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URLLOGINOUT}">{LANG->LogIn}</a>{/IF}</a>
