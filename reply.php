@@ -51,7 +51,9 @@ $PHORUM["DATA"]["POST"]["subject"]=$message["subject"];
 if(substr($PHORUM["DATA"]["POST"]["subject"], 0, 4) != "Re: ") $PHORUM["DATA"]["POST"]["subject"] = "Re: " . $PHORUM["DATA"]["POST"]["subject"];
 
 include phorum_get_template("header");
+phorum_hook("after_header");
 include "./include/post_form.php";
+phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 

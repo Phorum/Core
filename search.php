@@ -58,7 +58,9 @@ if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
     $PHORUM["DATA"]["URL"]["REDIRECT"]=$search_url;
     $PHORUM["DATA"]["REDIRECT_TIME"]=1;
     include phorum_get_template("header");
+    phorum_hook("after_header");
     include phorum_get_template("message");
+    phorum_hook("before_footer");
     include phorum_get_template("footer");
     return;
 }
@@ -108,7 +110,7 @@ if(!empty($phorum_search)){
             $arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
             $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
             $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
-            
+
             $forum_ids[$row["forum_id"]] = $row["forum_id"];
 
             $match_number++;
