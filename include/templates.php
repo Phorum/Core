@@ -5,8 +5,6 @@
     function phorum_import_template($tplfile, $outfile)
     {
 
-        global $PHORUM;
-
         $fp=fopen($tplfile, "r");
         $page=fread($fp, filesize($tplfile));
         fclose($fp);
@@ -22,6 +20,8 @@
             unset($parts);
 
             $string=substr($match, 1, -1);
+
+            $string = trim($string);
 
             // pre-parse pointer variables
             if(strstr($string, "->")){
@@ -103,6 +103,20 @@
                     // determine if or elseif
                     $prefix = (strtolower($parts[0])=="if") ? "if" : "} elseif";
 
+                    // are we wanting == or !=
+                    if(strtolower($parts[1])=="not"){
+                        $operator="!=";
+                        $parts[1]=$parts[2];
+                        if(isset($parts[3])){
+                            $parts[2]=$parts[3];
+                            unset($parts[3]);
+                        } else {
+                            unset($parts[2]);
+                        }
+                    } else {
+                        $operator="==";
+                    }
+
                     // DATA is default array
                     $index="DATA";
 
@@ -114,13 +128,37 @@
                         }
                     }
 
-                    if(isset($parts[2])){
-                        if(!is_numeric($parts[2]) && !defined($parts[2])){
-                            $parts[2]="\"$parts[2]\"";
+                    // if there is no part 2, check that the value is set and not empty
+                    if(!isset($parts[2])){
+                        if($operator=="=="){
+                            $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && !empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
+                        } else {
+                            $repl="<?php $prefix(!isset(\$PHORUM['$index']['$parts[1]']) || empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
                         }
-                        $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && \$PHORUM['$index']['$parts[1]']==$parts[2]){ ?>";
+
+                    // if it is numeric, a constant or a string, simply set it as is
+                    } elseif(is_numeric($parts[2]) || defined($parts[2]) || preg_match('!"[^"]*"!', $parts[2])) {
+                            $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && \$PHORUM['$index']['$parts[1]']$operator$parts[2]){ ?>";
+
+                    // we must have a template var
                     } else {
-                        $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && !empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
+
+                        // DATA is default array
+                        $index_part2="DATA";
+
+                        // check for loopvars and use TMP if it is one.
+                        if(strstr($parts[2], "'") && isset($loopvars)  && count($loopvars)){
+                            $varname=substr($parts[2], 0, strpos($parts[2], "'"));
+                            if(isset($loopvars[$varname])){
+                                $index_part2="TMP";
+                                break;
+                            }
+                        }
+
+                        // this is a really complicated IF we are building.
+
+                        $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && isset(\$PHORUM['$index_part2']['$parts[2]']) && \$PHORUM['$index']['$parts[1]']$operator\$PHORUM['$index_part2']['$parts[2]']) { ?>";
+
                     }
 
                     // reset $prefix
