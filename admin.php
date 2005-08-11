@@ -234,6 +234,9 @@
           $upgradefile=$upgradepath.$file;
 
           if(file_exists($upgradefile)) {
+              if (! is_readable($upgradefile))
+                die("$upgradefile is not readable. Make sure the file has got the neccessary permissions and try again.");
+
               $msg.="Upgrading from db-version $fromversion to $pure_version ... ";
               $upgrade_queries=array();
               include($upgradefile);
