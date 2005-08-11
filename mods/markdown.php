@@ -144,7 +144,7 @@ if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 /* phorum module info
 hook:  format|phorum_Markdown
 title: Markdown
-desc:  Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by John Gruber. See: http://daringfireball.net/projects/markdown/syntax
+desc:  Markdown syntax allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by John Gruber.<br />http://daringfireball.net/projects/markdown/syntax<br />http://www.michelf.com/projects/php-markdown/
 */
 function phorum_Markdown ($data)
 {
