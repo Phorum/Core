@@ -91,8 +91,6 @@
 
     $frm->hidden("module", "mods");
 
-    print_var($PHORUM["mods"]);
-
     foreach($plugins as $name => $plugin){
 
         if(isset($mods[$name])){
@@ -114,7 +112,7 @@
         }
 
         $frm->hidden("hooks_$name", $plugin["hooks"]);
-        $frm->addrow("$plugin[title]<div class=\"small\">".wordwrap($plugin["desc"], 72, "<br />")."</div>", $frm->select_tag("mods_$name", array("Off", "On"), $thisval).$settings_link);
+        $frm->addrow("$plugin[title]<div class=\"small\">".wordwrap($plugin["desc"], 90, "<br />")."</div>", $frm->select_tag("mods_$name", array("Off", "On"), $thisval).$settings_link);
 
     }
 
