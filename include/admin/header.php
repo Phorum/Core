@@ -120,7 +120,7 @@ input, textarea, select, td
     text-align: left;
 }
 
-.PhorumAdminError 
+.PhorumAdminError
 {
     font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
     font-size: 13px;
@@ -218,7 +218,10 @@ Phorum Status:
 </select>
 </form>
 </div>
-<small>Logged In As <?php echo $PHORUM["user"]["username"]; ?></small></td>
+<?php if(isset($PHORUM['user'])) { ?>
+<small>Logged In As <?php echo $PHORUM["user"]["username"]; ?></small>
+<?php } ?>
+</td>
 </tr>
 </table><br />
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -266,7 +269,7 @@ Phorum Status:
         $menu =& new PhorumAdminMenu("Maintenance");
 
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
-        
+
         $menu->show();
 
 ?>
