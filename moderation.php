@@ -390,9 +390,41 @@ switch ($mod_step) {
                    settype($_POST['thread'], "int"); // Thread 2
                    $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeOk'];
                    $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
-                   phorum_db_merge_thread($_POST['thread1'],$_POST['forum_id1'],$_POST['thread']);
+                   //phorum_db_merge_thread($_POST['thread1'],$_POST['forum_id1'],$_POST['thread']);
+                   $PHORUM["reverse_threading"]=0;
+                   $merge_messages=phorum_db_get_messages($_POST['thread']);
+                   unset($merge_messages['users']);
+
+                   $msgid_translation=array();
+                   foreach($merge_messages as $msg) {
+                       $oldid=$msg['message_id'];
+
+                       $msg['thread']=$_POST['thread1']; // the thread we merge with
+                       $msg['forum_id']=$_POST['forum_id1']; // the forum_id of the new thread
+
+                       if($msg['message_id'] == $msg['thread']) {
+                           $msg['parent_id']=$_POST['thread1'];
+                       } elseif(isset($msgid_translation[$msg['parent_id']])) {
+                           $msg['parent_id']=$msgid_translation[$msg['parent_id']];
+                       } else {
+                           $msg['parent_id']=$msg['thread'];
+                       }
+
+                       unset($msg['message_id']);
+                       unset($msg['modifystamp']);
+
+                       phorum_db_post_message($msg,true);
+
+                       // save the new message-id for later use
+                       $msgid_translation[$oldid]=$msg['message_id'];
+                   }
+
+                   // deleting messages which are now doubled
+                   phorum_db_delete_message($_POST['thread'],1);
+
                    // update message count / stats
-                   phorum_update_thread_info($_POST['thread']);
+                   // not needed IMO as the thread is gone
+                   //phorum_update_thread_info($_POST['thread']);
                    phorum_db_update_forum_stats(true);
                    // Temp. change forum_id for db function
                    $PHORUM["forum_id"] =$_POST['forum_id1'];
