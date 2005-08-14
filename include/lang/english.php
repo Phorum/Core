@@ -2,25 +2,25 @@
 
     $language="English (American)";
     // uncomment this to hide this language from the user-select-box
-    //$language_hide=1;    
-    
+    //$language_hide=1;
+
     // check the php-docs for the syntax of these entries (http://www.php.net/manual/en/function.strftime.php)
     // One tip, don't use T for showing the time zone as users can change their time zone.
     $PHORUM['long_date']="%B %e, %Y %I:%M%p";
     $PHORUM['short_date']="%D %I:%M%p";
-    
+
     // locale setting for localized times/dates
     // see that page: http://www.w3.org/WAI/ER/IG/ert/iso639.htm
     // for the needed string
     $PHORUM['locale']="EN";
-    
+
     // charset for use in converting html into safe valid text
     // also used in the header template for the <xml>
     // for a list of supported charsets, see http://www.php.net/manual/en/function.htmlentities.php
     // you may also need to set a meta tag with a charset in it.
     $PHORUM["DATA"]['CHARSET']="iso-8859-1";
-    
-    // encoding set for outgoing mails 
+
+    // encoding set for outgoing mails
     $PHORUM["DATA"]["MAILENCODING"]="8bit";
 
     // some languages need additional meta tags
@@ -58,7 +58,7 @@
         "AttachFiles"           =>      "Attach Files To Message",
         "AttachFileTypes"       =>      "You are allowed to attach files of the following type:",
         "AttachFileSize"        =>      "No file can be larger than",
-        "AttachInstuctions"     =>      "When you are done attaching files, click Post",
+        "AttachInstructions"     =>      "When you are done attaching files, click Post",
         "AttachFull"            =>      "You have already attached the maximum number of files allowed.  To remove one, edit the post.  If you are finished, click Post.",
         "AttachInfo"            =>      "Your post will be saved on the server now.  You will have the option to edit it again before it appears on the forum.",
         "Attachments"           =>      "Attachments",
@@ -72,11 +72,11 @@
         "BackToThread"          =>      "Click here to return to the thread.",
         "BookmarkedThread"      =>      "You are now following this thread in your Control Center.",
         "by"                    =>      "by",
-                 
+
         "Cancel"                =>      "Cancel",
         "CannotBeRunFromBrowser" =>     "This script cannot be run from a web browser.",
         "ChangeEMail"           =>      "Change Email",
-        "ChangePassword"        =>      "Change Password",  
+        "ChangePassword"        =>      "Change Password",
         "ChangesSaved"          =>      "The changes have been saved.",
         "CheckToDelete"         =>      "Check To Delete",
         "CloseThread"           =>      "Close this Thread",
@@ -88,7 +88,7 @@
         "Date"                  =>      "Date",
         "DateActive"            =>      "Last Activity",
         "DateAdded"             =>      "Date Added",
-        "DateReg"               =>      "Date Registered",        
+        "DateReg"               =>      "Date Registered",
         "Day"                   =>      "Day",
         "Days"                  =>      "Days",
         "Default"               =>      "Default",
@@ -101,7 +101,7 @@
         "DeletePost"            =>      "Delete Post",
         "DeleteThread"          =>      "Delete Thread",
         "DenyUser"              =>      "Deny",
-        
+
         "EditBoardsettings"     =>      "Forum Settings",
         "EditPost"              =>      "Edit Post",
         "EditPostForbidden"     =>      "You do not have permission to edit this post. If the administrator has set a time limit on editing, it may have expired.",
@@ -153,7 +153,7 @@
         "Filter"                =>      "Filter",
         "FirstPage"             =>      "First",
         "FollowExplination"     =>      "Followed threads are listed in your Control Center.<br />You can elect to receive an email when the thread is updated.",
-        "FollowThread"          =>      "Follow This Thread",            
+        "FollowThread"          =>      "Follow This Thread",
         "FollowWithEmail"       =>      "Would you like to be emailed when this thread is updated?",
         "Forum"                 =>      "Forum",
         "ForumFolder"           =>      "Forum Folder",
@@ -189,7 +189,7 @@
         "JoinGroupDescription"  =>      "To join a group, select it from this list. Groups marked with an * are moderated, your membership request will require the approval of a Group Moderator to take effect.",
 
         "KeepCopy"              =>      "Keep A Copy In My Sent Items",
-        
+
         "Language"              =>      "Language",
         "Last30Days"            =>      "Last 30 Days",
         "Last90Days"            =>      "Last 90 Days",
@@ -226,7 +226,7 @@
         "MergeThreads"          =>      "Merge Threads",
         "MergeThreadAction"     =>      "The following threads can be merged into one thread",
         "MergeThreadInfo"       =>      "Now go to the thread which should be merged with the selected thread and select 'Merge Thread' again.",
-        "MergeThreadWith"       =>      "Merge Thread with",        
+        "MergeThreadWith"       =>      "Merge Thread with",
         "MessageList"           =>      "Message List",
         "MessageNotFound"       =>      "Sorry, the message you have requested could not be found.",
         "Message"               =>      "Message",
@@ -258,7 +258,7 @@
         "NewMessage"            =>      "New Message",
         "NewModeratedMessage"   =>      "There has been a new message sent to a forum which you are moderating.\nThe message has the subject %subject%\nand it can be reviewed and approved through the following URL\n%approve_url%\n\n",
         "NewModeratedSubject"   =>      "New message in moderated forum",
-        "NewUnModeratedMessage" =>      "There has been a new message sent to a forum which you are moderating.\nThe message has been posted by %author% with the subject %subject%\nand it can be read through the following URL\n%read_url%\n\n",        
+        "NewUnModeratedMessage" =>      "There has been a new message sent to a forum which you are moderating.\nThe message has been posted by %author% with the subject %subject%\nand it can be read through the following URL\n%read_url%\n\n",
         "NewPrivateMessages"    =>      "You have new private messages",
         "NewReplyMessage"       =>      "Hello,\n\nYou are receiving this email because you are following the thread:\n\n  %subject%\n  <%read_url%>\n\nTo stop following this thread click here:\n<%remove_url%>\n\nTo stop receiving emails, but leave this thread on your follow list, click here:\n<%noemail_url%>\n\nTo view your followed threads, click here:\n<%followed_threads_url%>",
         "NewReplySubject"       =>      "[%forumname%] New reply: %subject%",
@@ -279,7 +279,7 @@
         "NoResultsHelp"         =>      "Your search did not match any messages.<br /><br />Suggestions:<ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li><li>Try fewer keywords.</li></ul>",
         "NoUnapprovedMessages"  =>      "There are currently no unapproved mesages",
         "NoUnapprovedUsers"     =>      "There are currently no unapproved users",
-        
+
         "OlderMessages"         =>      "Older Messages",
         "OlderThread"           =>      "Older Thread",
         "on"                    =>      "on",  // as in: Posted by user on 01-01-01 01:01pm
@@ -295,7 +295,7 @@
         "PastYear"              =>      "Past Year",
         "PermAdministrator"     =>      "You are Administrator.",
         "PermAllowPost"         =>      "post-permission",
-        "PermAllowRead"         =>      "read-permission",        
+        "PermAllowRead"         =>      "read-permission",
         "PermAllowReply"        =>      "reply-permission",
         "PermGroupModerator"    =>      "Group Membership Moderator",
         "Permission"            =>      "Permission",
@@ -388,17 +388,17 @@
         "Threads"               =>      "Threads",
         "ThreadReopenedOk"      =>      "The Thread has been reopened.",
         "ThreadViewList"        =>      "Thread Override - List",
-        "ThreadViewRead"        =>      "Thread Override - Read",		
+        "ThreadViewRead"        =>      "Thread Override - Read",
         "Timezone"              =>      "User-Timezone",
         "To"                    =>      "To",
         "Today"                 =>      "Today",
         "Total"                 =>      "Total",
         "TotalFiles"            =>      "Total Files",
         "TotalFileSize"         =>      "Space Used",
-        
+
         "Unapproved"            =>      "Unapproved",
         "UnapprovedGroupMembers" =>     "There are unapproved group memberships",
-        "UnapprovedMessage"     =>      "Unapproved Message",        
+        "UnapprovedMessage"     =>      "Unapproved Message",
         "UnapprovedMessages"    =>      "Unapproved Messages",
         "UnapprovedMessagesLong" =>     "There are unapproved messages",
         "UnapprovedUsers"       =>      "Unapproved Users",
@@ -410,7 +410,7 @@
         "UnsubscribeOk"         =>      "You were unsubscribed from the given thread.",
         "Update"                =>      "Update",
         "UploadFile"            =>      "Upload A New File",
-        "UploadNotAllowed"      =>      "You are not allowed to upload files to this server.",        
+        "UploadNotAllowed"      =>      "You are not allowed to upload files to this server.",
         "UserAddedToGroup"      =>      "The user has been added to the group.",
         "Username"              =>      "Username",
         "UserNotFound"          =>      "The user you want to send a message to could not be found.  Please check the name and try again.",
@@ -468,7 +468,7 @@
         "9.5"  => "(GMT + 9:30 hours) Adelaide, Darwin",
         "10"   => "(GMT + 10:00 hours) Melbourne, Papua New Guinea, Sydney, Vladivostok",
         "11"   => "(GMT + 11:00 hours) Magadan, New Caledonia, Solomon Islands",
-        "12"   => "(GMT + 12:00 hours) Auckland, Wellington, Fiji, Marshall Island",    
+        "12"   => "(GMT + 12:00 hours) Auckland, Wellington, Fiji, Marshall Island",
     );
 
 ?>

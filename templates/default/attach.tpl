@@ -11,7 +11,7 @@
 <ul>
 <li>{LANG->AttachFileTypes} {ATTACH_FILE_TYPES}</li>
 <li>{LANG->AttachFileSize} {ATTACH_FILE_SIZE}</li>
-<li>{LANG->AttachInstuctions}</li>
+<li>{LANG->AttachInstructions}</li>
 </ul>
 <form action="{URL->ACTION}" method="post" style="display: inline;" enctype="multipart/form-data">
 <input type="hidden" name="message_id" value="{MESSAGE->message_id}" />
