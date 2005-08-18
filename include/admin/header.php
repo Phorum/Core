@@ -186,7 +186,7 @@ function hide_help()
 </script>
 </head>
 <body>
-<?php if($module!="login" && $module!="install"){ ?>
+<?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
 <div id="helpdiv" style="position: absolute; visibility: hidden; width: 400px; height: 200px; border-style: solid; border-width: 2px; border-color: Navy;">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
@@ -207,6 +207,7 @@ function hide_help()
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
 <div id="phorum-status">
+<?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
 <form id="status-form" action="<?=$_SERVER["PHP_SELF"]?>" method="post">
 <input type="hidden" name="module" value="status" />
 Phorum Status:
@@ -217,6 +218,7 @@ Phorum Status:
 <option value="disabled"<?php if($PHORUM["status"]=="disabled" || !phorum_db_check_connection()) echo "selected"; ?>>Disabled</option>
 </select>
 </form>
+<?php } ?>
 </div>
 <?php if(isset($PHORUM['user'])) { ?>
 <small>Logged In As <?php echo $PHORUM["user"]["username"]; ?></small>
@@ -227,7 +229,7 @@ Phorum Status:
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <?php
 
-    if($module!="login" && $module!="install"){
+    if($module!="login" && $module!="install" && $module!="upgrade"){
 ?>
 <tr>
     <td valign="top">

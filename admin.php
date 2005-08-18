@@ -31,9 +31,15 @@
 
 
     // if we are installing or upgrading, we don't need to check for a session
-    if(!isset($PHORUM['installed']) || !isset($PHORUM['internal_version']) || (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL)) {
+    if(!isset($PHORUM['installed']) || !isset($PHORUM['internal_version'])){
+
         // this is an install
         $module="install";
+
+    } elseif (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL) {
+
+        // this is an upgrade
+        $module="upgrade";
 
     } else {
 
@@ -199,6 +205,10 @@
 
           $PHORUM=$GLOBALS['PHORUM'];
 
+          if(empty($fromversion) || empty($toversion)){
+              die("Something is wrong with the upgrade script.  Please contact the Phorum Dev Team. ($fromversion,$toversion)");
+          }
+
           $msg="";
           $upgradepath="./include/db/upgrade/{$PHORUM['DBCONFIG']['type']}/";
 
@@ -231,6 +241,11 @@
           // extract the pure version, needed as internal version
           $pure_version = basename($file,".php");
 
+          if(empty($pure_version)){
+              die("Something is wrong with the upgrade script.  Please contact the Phorum Dev Team. ($fromversion,$toversion)");
+          }
+
+
           $upgradefile=$upgradepath.$file;
 
           if(file_exists($upgradefile)) {
@@ -246,6 +261,7 @@
               } else {
                   $msg.= "done.<br />\n";
               }
+              $GLOBALS["PHORUM"]["internal_version"]=$pure_version;
               phorum_db_update_settings(array("internal_version"=>$pure_version));
           } else {
               $msg="Ooops, the upgradefile is missing. How could this happen?";

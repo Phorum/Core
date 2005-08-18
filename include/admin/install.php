@@ -72,6 +72,8 @@
 
     // THIS IS THE OUTPUT STEP
 
+    if($PHORUM["installed"]) $step=5;
+
     switch ($step){
 
         case 0:
@@ -80,25 +82,7 @@
             $frm->addbreak("Welcome to Phorum");
             $frm->addmessage("This wizard will setup Phorum on your server.  The first step is to prepare the database.  Phorum has already confirmed that it can connect to your database.  Press continue when you are ready.");
             $frm->hidden("module", "install");
-            $frm->hidden("step", "1");
-            $frm->show();
-
-            break;
-
-        case 1:
-            if(isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL) {
-                $message="Phorum detected that you are running an old version of itself.<br />It will now try to upgrade the tables to the latest version.";
-                $setstep=3;
-            } else {
-                $message="Phorum detected you don't have any tables or another problem on searching the tables.<br />It will now try to create the tables.";
-                $setstep=2;
-            }
-
-            $frm =& new PhorumInputForm ("", "post", "Continue ->");
-            $frm->addbreak("Checking for upgrade ....");
-            $frm->addmessage($message);
-            $frm->hidden("module", "install");
-            $frm->hidden("step", $setstep);
+            $frm->hidden("step", "2");
             $frm->show();
 
             break;
@@ -119,27 +103,6 @@
             $frm->addbreak("Creating tables....");
             $frm->addmessage($message);
             $frm->hidden("step", "6");
-            $frm->hidden("module", "install");
-            $frm->show();
-
-            break;
-
-        case 3:
-            // ok upgrading tables
-            $message = phorum_upgrade_tables($PHORUM['internal_version'],PHORUMINTERNAL);
-
-            $frm =& new PhorumInputForm ("", "post", "Continue ->");
-
-            // done or not done? ;)
-            $stepsleft = PHORUMINTERNAL - $PHORUM['internal_version'];
-            $frm->addbreak("Upgrading tables (multiple steps possible) ....");
-            $frm->addmessage($message);
-            if($stepsleft > 1) {
-                $newstep = 3;
-            } else {
-                $newstep = 5;
-            }
-            $frm->hidden("step", $newstep);
             $frm->hidden("module", "install");
             $frm->show();
 
