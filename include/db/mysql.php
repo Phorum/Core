@@ -1360,7 +1360,7 @@ function phorum_db_close_thread($thread_id){
 }
 
 /**
- * closes the given thread
+ * (re)opens the given thread
  */
 function phorum_db_reopen_thread($thread_id){
     $PHORUM = $GLOBALS["PHORUM"];
