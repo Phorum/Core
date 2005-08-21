@@ -128,6 +128,7 @@ function phorum_user_get( $user_id, $detailed = true )
     if ( count( $user_ids ) ) {
         $cache_users=array();
         $tmp_users=array();
+	$ext_users=array();
         $cachecnt=0;
         
         // get users from cache if enabled
@@ -186,12 +187,32 @@ function phorum_user_get( $user_id, $detailed = true )
                 }
                 $tmp_users[$uid] = $user;
             }
+
+	    // Remove the users that we have found so far from the 
+	    // users_ids array.
+	    foreach ($user_ids as $msgid => $uid) {
+	        if (isset($tmp_users[$uid])) {
+		    unset($user_ids[$msgid]);
+		}
+	    }
         } 
+
+	// A hook to get users that are unknown by now from an external source.
+	if (count($user_ids)) {
+	    $ext_users = phorum_hook('user_get', $user_ids, $detailed);
+
+	    // store users in cache if enabled
+	    if ($detailed && isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+	        foreach ($ext_users as $uid => $user) {
+                    phorum_cache_put('user', $uid, $user);
+	        }
+	    }
+	}
     } 
     
-    // merging cached and traditionally retrieved users
+    // merging cached, traditionally retrieved and hook retrieved users
     //$ret=array_merge($tmp_users,$cache_users);
-    $ret = $tmp_users + $cache_users;
+    $ret = $tmp_users + $cache_users + $ext_users;
 
     if ( !is_array( $user_id ) ) {
         $ret = $ret[$user_id];
