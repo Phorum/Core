@@ -101,7 +101,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 
 // get the database settings and load the database layer
-if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) ) {
+if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER") ) {
     include_once( "./include/db/config.php" );
 } else {
     $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
