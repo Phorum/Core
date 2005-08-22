@@ -2643,7 +2643,7 @@ function phorum_db_newflag_get_flags($forum_id=0)
 
     while($row=mysql_fetch_row($res)) {
         // set the min-id if given flag is set
-        if($row[1] != 0 && ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id'])) {
+        if($row[1] != $PHORUM['vroot'] && ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id'])) {
             $read_msgs['min_id']=$row[0];
         } else {
             $read_msgs[$row[0]]=$row[0];
