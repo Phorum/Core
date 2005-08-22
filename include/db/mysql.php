@@ -2395,9 +2395,9 @@ function phorum_db_user_delete($user_id) {
 
     // messages-table
     if(PHORUM_DELETE_CHANGE_AUTHOR) {
-      $sql = "update {$PHORUM['message_table']} set user_id=0,author='".mysql_escape_string($PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
+      $sql = "update {$PHORUM['message_table']} set user_id=0,email='',author='".mysql_escape_string($PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
     } else {
-      $sql = "update {$PHORUM['message_table']} set user_id=0 where user_id=$user_id";
+      $sql = "update {$PHORUM['message_table']} set user_id=0,email='' where user_id=$user_id";
     }
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
