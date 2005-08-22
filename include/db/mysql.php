@@ -66,27 +66,27 @@ function phorum_db_get_thread_list($offset)
     } else{
             $sortfield = "thread";
             $index = "list_page_flat";
-    }    
-    
+    }
+
     if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
         $bodystr=",$table.body";
     } else {
         $bodystr="";
     }
-    
+
     if($PHORUM["threaded_list"]){
         $limit = $PHORUM['list_length_threaded'];
         $start = $offset * $PHORUM["list_length_threaded"];
-        
+
         $sortorder = "sort, $sortfield desc, message_id";
-        
-        
+
+
         $offset_option="$sortfield > 0 and";
-        
+
         // get the announcements and stickies
         $sql="select thread as keyid from $table where sort=0 or (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
         $res = mysql_query($sql, $conn);
-            
+
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
         $rows=mysql_num_rows($res);
@@ -101,7 +101,7 @@ function phorum_db_get_thread_list($offset)
             $start-=$rows;
         }
 
-        
+
         if($limit>0){
 
              $sql = "select
@@ -117,7 +117,7 @@ function phorum_db_get_thread_list($offset)
                     order by
                         $sortfield desc
                     limit $start, $limit";
-    
+
             $res = mysql_query($sql, $conn);
 
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -129,7 +129,7 @@ function phorum_db_get_thread_list($offset)
 
             }
         }
-        
+
         if(count($keyids)>0){
 
             $sql = "select
@@ -178,7 +178,7 @@ function phorum_db_get_thread_list($offset)
         $start = $offset * $PHORUM["list_length_flat"];
 
         // get the announcements and stickies
-        $sql="select 
+        $sql="select
                 $table.author,
                 $table.datestamp,
                 $table.email,
@@ -195,11 +195,11 @@ function phorum_db_get_thread_list($offset)
                 $table.user_id,
                 $table.viewcount,
                 $table.closed
-                $bodystr        
-              from 
-                $table 
-              where 
-                sort=0 or (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']}) 
+                $bodystr
+              from
+                $table
+              where
+                sort=0 or (parent_id=0 and sort=1 and forum_id={$PHORUM['forum_id']})
               order by sort, $sortfield desc";
 
         $res = mysql_query($sql, $conn);
@@ -242,7 +242,7 @@ function phorum_db_get_thread_list($offset)
                         $table.user_id,
                         $table.viewcount,
                         $table.closed
-                        $bodystr 
+                        $bodystr
                     from
                         $table use index ($index)
                     where
@@ -256,9 +256,9 @@ function phorum_db_get_thread_list($offset)
                     limit $start, $limit";
 
             $res = mysql_query($sql, $conn);
-    
+
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
             while ($rec = mysql_fetch_assoc($res)){
                 if($rec["status"]==PHORUM_STATUS_APPROVED){
                     $arr[$rec["message_id"]] = $rec;
@@ -294,7 +294,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0)
     settype($count, "int");
     settype($forum_id, "int");
     settype($thread, "int");
-    
+
     $conn = phorum_db_mysql_connect();
 
     // are we really allowed to show this thread/message?
@@ -322,7 +322,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0)
     if($thread){
         $sql.=" and thread=$thread";
     }
-    
+
     $sql.= " ORDER BY message_id DESC LIMIT $count";
 
     $res = mysql_query($sql, $conn);
@@ -456,7 +456,7 @@ function phorum_db_post_message(&$message,$convert=false){
     } else {
         $metaval="";
     }
-    
+
     $sql = "Insert into $table set
             forum_id = {$message['forum_id']},
             datestamp=$NOW,
@@ -475,7 +475,7 @@ function phorum_db_post_message(&$message,$convert=false){
             closed={$message['closed']}
             $metaval";
 
-    // if in conversion we need the message-id too    
+    // if in conversion we need the message-id too
     if($convert) {
         $sql.=",message_id=".$message['message_id'];
     }
@@ -507,7 +507,7 @@ function phorum_db_post_message(&$message,$convert=false){
             $success = true;
             // some data for later use, i.e. email-notification
             $GLOBALS['PHORUM']['post_returns']['message_id']=$message["message_id"];
-            $GLOBALS['PHORUM']['post_returns']['thread_id']=$message["thread"];            
+            $GLOBALS['PHORUM']['post_returns']['thread_id']=$message["thread"];
         }
     }
 
@@ -573,11 +573,11 @@ function phorum_db_delete_message($message_id, $mode = 0)
     // leave this include here, it needs to be conditional
     include_once("./include/thread_info.php");
     phorum_update_thread_info($thread);
-    
+
     // we need to delete the subscriptions for that thread too
     $sql = "DELETE FROM {$PHORUM['subscribers_table']} WHERE forum_id > 0 AND thread=$thread";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");    
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // this function will be slow with a lot of messages.
     phorum_db_update_forum_stats(true);
@@ -679,7 +679,7 @@ function phorum_db_get_message($value, $field="message_id")
     if(mysql_num_rows($res)){
 
         $rec = mysql_fetch_assoc($res);
-    
+
         // convert meta field
         if(empty($rec["meta"])){
             $rec["meta"]=array();
@@ -818,16 +818,16 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     $total_messages = mysql_result($res, 0, "count");
-    
+
     $search = mysql_escape_string($search);
-    
+
 
     if($match_type=="PHRASE"){
         $terms = array($search);
     } else {
         $terms = preg_split("/\s+/", $search);
     }
-        
+
     foreach($terms as $term){
         $fields=array();
         if($body) $fields[]="body like '%$term%'";
@@ -910,12 +910,12 @@ function phorum_db_get_newer_thread($key){
     $conn = phorum_db_mysql_connect();
 
     $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
-	
+
     // are we really allowed to show this thread/message?
     $approvedval = "";
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
-    }	
+    }
 
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and $keyfield>$key $approvedval order by $keyfield limit 1";
 
@@ -941,7 +941,7 @@ function phorum_db_get_older_thread($key){
     $approvedval = "";
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
         $approvedval="AND {$PHORUM['message_table']}.status=".PHORUM_STATUS_APPROVED;
-    }	
+    }
 
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and $keyfield<$key $approvedval order by $keyfield desc limit 1";
 
@@ -958,7 +958,7 @@ function phorum_db_get_older_thread($key){
 
 function phorum_db_load_settings(){
     global $PHORUM;
-    
+
 
     $conn = phorum_db_mysql_connect();
 
@@ -968,12 +968,12 @@ function phorum_db_load_settings(){
     if(!$res && !defined("PHORUM_ADMIN")){
         if (mysql_errno($conn)==1146){
             // settings table does not exist
-            return;   
+            return;
         } elseif(($err = mysql_error())){
             phorum_db_mysql_error("$err: $sql");
         }
     }
-    
+
     if (empty($err) && $res){
         while ($rec = mysql_fetch_assoc($res)){
             if ($rec["type"] == "V"){
@@ -1091,7 +1091,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
     } else {
         $message_count="message_count+$msg_count_change";
     }
-    
+
     if($refresh || empty($timestamp)){
 
         $sql = "select max(modifystamp) as last_post_time from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and forum_id={$PHORUM['forum_id']}";
@@ -1102,7 +1102,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
         $last_post_time = (int)mysql_result($res, 0, "last_post_time");
     } else {
 
-        $last_post_time = $timestamp; 
+        $last_post_time = $timestamp;
     }
 
     if($refresh || empty($thread_count_change)){
@@ -1113,7 +1113,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
         $thread_count = (int)mysql_result($res, 0, "thread_count");
 
     } else {
-        
+
         $thread_count="thread_count+$thread_count_change";
     }
 
@@ -1143,31 +1143,31 @@ function phorum_db_move_thread($thread_id, $toforum)
 
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        
+
         // we need to update the number of posts in the current forum
         phorum_db_update_forum_stats(true);
-        
+
         // and of the new forum
         $old_id=$GLOBALS["PHORUM"]["forum_id"];
         $GLOBALS["PHORUM"]["forum_id"]=$toforum;
         phorum_db_update_forum_stats(true);
         $GLOBALS["PHORUM"]["forum_id"]=$old_id;
-        
+
         // we need to move the new-flags for this thread to the new forum too
         // first retrieving which messages belong to this thread
         unset($thread_messages['users']);
-        
+
         $new_newflags=phorum_db_newflag_get_flags($toforum);
         $message_ids=array();
         $delete_ids =array();
         foreach($thread_messages as $mid => $data) {
             if($mid > $new_newflags['min_id']) { // only using it if its higher than min_id
-                $message_ids[]=$mid;   
+                $message_ids[]=$mid;
             } else { // newflags to delete
-                $delete_ids[]=$mid;   
+                $delete_ids[]=$mid;
             }
         }
-        
+
         if(count($message_ids)) { // we only go in if there are messages ... otherwise an error occured
 
             $ids_str=implode(",",$message_ids);
@@ -1181,15 +1181,15 @@ function phorum_db_move_thread($thread_id, $toforum)
             $sql="UPDATE {$PHORUM['subscribers_table']} SET forum_id = $toforum where thread IN($ids_str)";
             $res = mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            
+
         }
-        
+
         if(count($delete_ids)) {
             $ids_str=implode(",",$delete_ids);
             // then doing the delete
             $sql="DELETE FROM {$PHORUM['user_newflags_table']} where message_id IN($ids_str)";
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");                
+            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         }
 
     }
@@ -1299,12 +1299,12 @@ $sql = "select file_id from {$PHORUM['files_table']} left join {$PHORUM['message
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     while($rec=mysql_fetch_assoc($res)){
         $files[]=$rec["file_id"];
-    }    
+    }
     if(isset($files)){
         $sql = "delete from {$PHORUM['files_table']} where file_id in (".implode(",", $files).")";
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    }    
+    }
 
 }
 
@@ -1350,14 +1350,14 @@ function phorum_db_update_forum($forum){
     $res = 0;
 
     if (!empty($forum["forum_id"])){
-    
+
         // this way we can also update multiple forums at once
         if(is_array($forum["forum_id"])) {
-            $forumwhere="forum_id IN (".implode(",",$forum["forum_id"]).")";        
+            $forumwhere="forum_id IN (".implode(",",$forum["forum_id"]).")";
         } else {
             $forumwhere="forum_id=".$forum["forum_id"];
         }
-    
+
         unset($forum["forum_id"]);
 
         $conn = phorum_db_mysql_connect();
@@ -1398,7 +1398,7 @@ function phorum_db_get_groups($group_id=0)
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
     $res = mysql_query($sql, $conn);
-    
+
     $groups=array();
     while($rec=mysql_fetch_assoc($res)){
 
@@ -1432,7 +1432,7 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysql_connect();
-    
+
     if(is_array($group_id)){
         $group_id=implode(",", $group_id);
     } else {
@@ -1446,7 +1446,7 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
     $sql .=" order by username asc";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");    
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     $users=array();
     while($rec=mysql_fetch_assoc($res)){
         $users[$rec["user_id"]]=$rec["status"];
@@ -1469,22 +1469,22 @@ function phorum_db_save_group($group)
 
     if(isset($group["name"])){
         $sql="update {$PHORUM['groups_table']} set name='{$group['name']}', open={$group['open']} where group_id={$group['group_id']}";
-    
+
         $res=mysql_query($sql, $conn);
 
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     }
-        
+
     if(!$err){
 
         if(isset($group["permissions"])){
             $sql="delete from {$PHORUM['forum_group_xref_table']} where group_id={$group['group_id']}";
-    
+
             $res=mysql_query($sql, $conn);
-    
+
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
             foreach($group["permissions"] as $forum_id=>$permission){
                 $sql="insert into {$PHORUM['forum_group_xref_table']} set group_id={$group['group_id']}, permission=$permission, forum_id=$forum_id";
                 $res=mysql_query($sql, $conn);
@@ -1560,31 +1560,31 @@ function phorum_db_user_get_moderators($forum_id) {
 
    $PHORUM = $GLOBALS["PHORUM"];
    $conn = phorum_db_mysql_connect();
-   
+
     settype($forum_id, "int");
 
    $sql="SELECT DISTINCT user.user_id, user.email FROM {$PHORUM['user_table']} as user LEFT JOIN {$PHORUM['user_permissions_table']} as perm ON perm.user_id=user.user_id WHERE (perm.permission >= ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0) AND perm.forum_id=$forum_id) OR user.admin=1";
-   
-   
+
+
    $res = mysql_query($sql, $conn);
-   
-   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");   
-   
+
+   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
    $userinfo=array();
 
    while ($row = mysql_fetch_row($res)){
-       $userinfo[$row[0]]=$row[1];         
+       $userinfo[$row[0]]=$row[1];
    }
    // get users who belong to groups that have moderator access
    $sql = "SELECT DISTINCT user.user_id, user.email FROM {$PHORUM['user_table']} AS user, {$PHORUM['groups_table']} AS groups, {$PHORUM['user_group_xref_table']} AS usergroup, {$PHORUM['forum_group_xref_table']} AS forumgroup WHERE user.user_id = usergroup.user_id AND usergroup.group_id = groups.group_id AND groups.group_id = forumgroup.group_id AND forum_id = $forum_id AND permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0 AND usergroup.status >= ".PHORUM_USER_GROUP_APPROVED;
 
    $res = mysql_query($sql, $conn);
-   
-   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");   
-   
+
+   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
    while ($row = mysql_fetch_row($res)){
            $userinfo[$row[0]]=$row[1];
-   }   
+   }
    return $userinfo;
 }
 
@@ -1616,24 +1616,24 @@ function phorum_db_user_get($user_id, $detailed)
         while($rec=mysql_fetch_assoc($res)){
             $users[$rec["user_id"]] = $rec;
         }
-        
+
         if ($detailed){
             // get the users' permissions
             $sql = "select * from {$PHORUM['user_permissions_table']} where user_id in ($user_ids)";
-        
+
             $res = mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        
+
             while ($row = mysql_fetch_assoc($res)){
                 $users[$row["user_id"]]["forum_permissions"][$row["forum_id"]] = $row["permission"];
             }
-        
+
             // get the users' groups and forum permissions through those groups
             $sql = "select user_id, {$PHORUM['user_group_xref_table']}.group_id, forum_id, permission from {$PHORUM['user_group_xref_table']} left join {$PHORUM['forum_group_xref_table']} using (group_id) where user_id in ($user_ids) AND {$PHORUM['user_group_xref_table']}.status >= ".PHORUM_USER_GROUP_APPROVED;
 
             $res = mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            
+
             while ($row = mysql_fetch_assoc($res)){
                 $users[$row["user_id"]]["groups"][$row["group_id"]] = $row["group_id"];
                 if(!empty($row["forum_id"])){
@@ -1646,12 +1646,12 @@ function phorum_db_user_get($user_id, $detailed)
         }
 
     }
-            
+
     if(is_array($user_id)){
         return $users;
     } else {
         return $users[$user_id];
-    }    
+    }
 
 }
 
@@ -1663,7 +1663,7 @@ function phorum_db_user_get_list(){
    $PHORUM = $GLOBALS["PHORUM"];
 
    $conn = phorum_db_mysql_connect();
-   
+
    $users = array();
    $sql = "select user_id, username from {$PHORUM['user_table']} order by username asc";
    $res = mysql_query($sql, $conn);
@@ -1704,10 +1704,10 @@ function phorum_db_user_check_pass($username, $password, $temp_password=false){
  * This function executes a query to check for the given field in the
  * user tableusername and return the user_id of the user it matches or 0
  * if no match is found.
- * 
+ *
  * The parameters can be arrays.  If they are, all must be passed and all
  * must have the same number of values.
- * 
+ *
  * If $return_array is true, an array of all matching rows will be returned.
  * Otherwise, only the first user_id from the results will be returned.
  */
@@ -1932,14 +1932,14 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
   * This function increases the post-counter for a user by one
   */
 function phorum_db_user_addpost() {
-        
+
         $conn = phorum_db_mysql_connect();
-        
+
         $sql="UPDATE ".$GLOBALS['PHORUM']['user_table']." SET posts=posts+1 WHERE user_id = ".$GLOBALS['PHORUM']['user']['user_id'];
         $res=mysql_query($sql,$conn);
-        
+
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        
+
         return (bool)$res;
 }
 
@@ -1959,7 +1959,7 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 
     $sql = "DELETE FROM {$PHORUM['subscribers_table']} WHERE user_id=$user_id AND thread=$thread";
     if($forum_id) $sql.=" and forum_id=$forum_id";
-    
+
     $res = mysql_query($sql, $conn);
 
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -1968,7 +1968,7 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 }
 
 /**
- * This function will return a list of groups the user 
+ * This function will return a list of groups the user
  * is a member of, as well as the users permissions.
  */
 function phorum_db_user_get_groups($user_id)
@@ -2039,18 +2039,18 @@ function phorum_db_user_get_unapproved()
 
     $sql="select user_id, username, email from {$PHORUM['user_table']} where active in(".PHORUM_USER_PENDING_BOTH.", ".PHORUM_USER_PENDING_MOD.") order by username";
     $res=mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
-        
+
     $users=array();
     if($res){
         while($rec=mysql_fetch_assoc($res)){
             $users[$rec["user_id"]]=$rec;
         }
     }
-    
+
     return $users;
 
 }
@@ -2063,12 +2063,12 @@ function phorum_db_user_get_unapproved()
  * - entries in the group_xref-table
  * - entries in the private-messages-table
  * - entries in the files-table
- * - sets entries in the messages-table to anonymous 
+ * - sets entries in the messages-table to anonymous
  *
  */
 function phorum_db_user_delete($user_id) {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     // how would we check success???
     $ret = true;
 
@@ -2079,13 +2079,13 @@ function phorum_db_user_delete($user_id) {
     $sql = "delete from {$PHORUM['user_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     // permissions-table
     $sql = "delete from {$PHORUM['user_permissions_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-    // newflags-table    
+    // newflags-table
     $sql = "delete from {$PHORUM['user_newflags_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -2094,22 +2094,22 @@ function phorum_db_user_delete($user_id) {
     $sql = "delete from {$PHORUM['subscribers_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     // group-xref-table
-    $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id=$user_id";    
+    $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     // incoming pm's
-    $sql = "delete from {$PHORUM['private_message_table']} where to_user_id=$user_id";    
+    $sql = "delete from {$PHORUM['private_message_table']} where to_user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     // set outgoing pm's to delete
     $sql = "update {$PHORUM['private_message_table']} set from_del_flag = 1 where from_user_id=$user_id and from_del_flag=0";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     // files-table
     $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0";
     $res = mysql_query($sql, $conn);
@@ -2117,14 +2117,14 @@ function phorum_db_user_delete($user_id) {
 
     // messages-table
     if(PHORUM_DELETE_CHANGE_AUTHOR) {
-      $sql = "update {$PHORUM['message_table']} set user_id=0,author='".mysql_escape_string($PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
+      $sql = "update {$PHORUM['message_table']} set user_id=0,email='',author='".mysql_escape_string($PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
     } else {
-      $sql = "update {$PHORUM['message_table']} set user_id=0 where user_id=$user_id";
+      $sql = "update {$PHORUM['message_table']} set user_id=0,email='' where user_id=$user_id";
     }
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");      
-    
-    return $ret;    
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
+    return $ret;
 }
 
 
@@ -2143,19 +2143,19 @@ function phorum_db_get_user_file_list($user_id)
     $files=array();
 
     $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where user_id=$user_id and message_id=0";
-    
+
     $res = mysql_query($sql, $conn);
 
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
-        
+
     if($res){
         while($rec=mysql_fetch_assoc($res)){
             $files[$rec["file_id"]]=$rec;
         }
     }
-    
+
     return $files;
 }
 
@@ -2173,19 +2173,19 @@ function phorum_db_get_message_file_list($message_id)
     $files=array();
 
     $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where message_id=$message_id";
-    
+
     $res = mysql_query($sql, $conn);
 
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
-        
+
     if($res){
         while($rec=mysql_fetch_assoc($res)){
             $files[$rec["file_id"]]=$rec;
         }
     }
-    
+
     return $files;
 }
 
@@ -2203,11 +2203,11 @@ function phorum_db_file_get($file_id)
     settype($user_id, "int");
 
     $file=array();
-    
+
     $sql="select * from {$PHORUM['files_table']} where file_id=$file_id";
 
     $res = mysql_query($sql, $conn);
-        
+
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
@@ -2241,7 +2241,7 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
 
     $res = mysql_query($sql, $conn);
-        
+
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
@@ -2267,11 +2267,11 @@ function phorum_db_file_delete($file_id)
     settype($file_id, "int");
 
     $file=array();
-    
+
     $sql="delete from {$PHORUM['files_table']} where file_id=$file_id";
 
     $res = mysql_query($sql, $conn);
-        
+
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
@@ -2297,7 +2297,7 @@ function phorum_db_get_user_filesize_total($user_id)
     $sql="select sum(filesize) as total from {$PHORUM['files_table']} where user_id=$user_id and message_id=0";
 
     $res = mysql_query($sql, $conn);
-        
+
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
@@ -2318,14 +2318,14 @@ function phorum_db_newflag_allread($forum_id=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
     $conn = phorum_db_mysql_connect();
-    
+
     settype($forum_id, "int");
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    
+
     // delete all newflags for this user and forum
     phorum_db_newflag_delete(0,$forum_id);
-    
+
     // get the maximum message-id in this forum
     $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id=$forum_id";
     $res = mysql_query($sql, $conn);
@@ -2338,7 +2338,7 @@ function phorum_db_newflag_allread($forum_id=0)
             phorum_db_newflag_add_read(array(0=>array('id'=>$row[0],'forum'=>$forum_id)));
         }
     }
-    
+
 }
 
 
@@ -2346,18 +2346,18 @@ function phorum_db_newflag_allread($forum_id=0)
 * This function returns the read messages for the current user and forum
 * optionally for a given forum (for the index)
 */
-function phorum_db_newflag_get_flags($forum_id=0) 
+function phorum_db_newflag_get_flags($forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     settype($forum_id, "int");
 
     $read_msgs=array('min_id'=>0);
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    
+
     $sql="SELECT message_id,forum_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id IN({$forum_id},0)";
-    
+
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
 
@@ -2371,7 +2371,7 @@ function phorum_db_newflag_get_flags($forum_id=0)
             $read_msgs[$row[0]]=$row[0];
         }
     }
-    
+
     return $read_msgs;
 }
 
@@ -2380,18 +2380,18 @@ function phorum_db_newflag_get_flags($forum_id=0)
 * This function returns the count of unread messages the current user and forum
 * optionally for a given forum (for the index)
 */
-function phorum_db_newflag_get_unread_count($forum_id=0) 
+function phorum_db_newflag_get_unread_count($forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     settype($forum_id, "int");
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    
+
     // get the read message array
     $read_msgs = phorum_db_newflag_get_flags($forum_id);
 
-    if($read_msgs["min_id"]==0) return array(0,0);    
+    if($read_msgs["min_id"]==0) return array(0,0);
 
     $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and status=".PHORUM_STATUS_APPROVED;
 
@@ -2438,7 +2438,7 @@ function phorum_db_newflag_add_read($message_ids) {
 
     foreach($message_ids as $id=>$data) {
         if(is_array($data)) {
-            $values[]="({$PHORUM['user']['user_id']},{$data['forum']},{$data['id']})";            
+            $values[]="({$PHORUM['user']['user_id']},{$data['forum']},{$data['id']})";
         } else {
             $values[]="({$PHORUM['user']['user_id']},{$PHORUM['forum_id']},$data)";
         }
@@ -2446,11 +2446,11 @@ function phorum_db_newflag_add_read($message_ids) {
     }
     if($cnt) {
         $insert_sql="INSERT IGNORE INTO ".$PHORUM['user_newflags_table']." (user_id,forum_id,message_id) VALUES".join(",",$values);
-        
+
         // fire away
         $conn = phorum_db_mysql_connect();
         $res = mysql_query($insert_sql, $conn);
-    
+
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $insert_sql");
     }
 }
@@ -2458,31 +2458,31 @@ function phorum_db_newflag_add_read($message_ids) {
 /**
 * This function returns the number of newflags for this user and forum
 */
-function phorum_db_newflag_get_count($forum_id=0) 
+function phorum_db_newflag_get_count($forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($forum_id, "int");
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    
+
     $sql="SELECT count(*) FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id={$forum_id}";
-    
+
     // fire away
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");    
-    
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
     $row=mysql_fetch_row($res);
-    
+
     return $row[0];
 }
 
 /**
 * This function removes a number of newflags for this user and forum
 */
-function phorum_db_newflag_delete($numdelete=0,$forum_id=0) 
+function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -2490,18 +2490,18 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
     settype($numdelete, "int");
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    
+
     if($numdelete>0) {
-        $lvar=" ORDER BY message_id ASC LIMIT $numdelete";    
+        $lvar=" ORDER BY message_id ASC LIMIT $numdelete";
     } else {
-        $lvar="";   
+        $lvar="";
     }
     // delete the number of newflags given
     $del_sql="DELETE FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id={$forum_id}".$lvar;
     // fire away
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($del_sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $del_sql");            
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $del_sql");
 }
 
 /**
@@ -2611,28 +2611,28 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
 
 
 /**
- * This function retrieves the banlists for the current forum 
+ * This function retrieves the banlists for the current forum
  */
- 
+
 function phorum_db_get_banlists() {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     $retarr = array();
     $forumstr = "";
-    
+
     $conn = phorum_db_mysql_connect();
-    
+
     if(isset($PHORUM['forum_id']) && !empty($PHORUM['forum_id']))
         $forumstr = "WHERE forum_id = {$PHORUM['forum_id']} OR forum_id = 0";
-        
-    
-    
+
+
+
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} $forumstr";
-    
+
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
             $retarr[$row['type']][$row['id']]=array('pcre'=>$row['pcre'],'string'=>$row['string'],'forum_id'=>$row['forum_id']);
@@ -2645,22 +2645,22 @@ function phorum_db_get_banlists() {
 /**
  * This function retrieves one item from the banlists
  */
- 
+
 function phorum_db_get_banitem($banid) {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     $retarr = array();
-    
+
     $conn = phorum_db_mysql_connect();
-    
+
     settype($banid, "int");
 
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} WHERE id = $banid";
-    
+
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
             $retarr=array('pcre'=>$row['pcre'],'string'=>$row['string'],'forumid'=>$row['forum_id'],'type'=>$row['type']);
@@ -2673,20 +2673,20 @@ function phorum_db_get_banitem($banid) {
 /**
  * This function deletes one item from the banlists
  */
- 
+
 function phorum_db_del_banitem($banid) {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     $conn = phorum_db_mysql_connect();
-    
+
     $sql = "DELETE FROM {$PHORUM['banlist_table']} WHERE id = $banid";
-    
+
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if(mysql_affected_rows($conn) > 0) {
-        return true;   
+        return true;
     } else {
         return false;
     }
@@ -2696,14 +2696,14 @@ function phorum_db_del_banitem($banid) {
 /**
  * This function adds or modifies a banlist-entry
  */
- 
+
 function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     $retarr = array();
-    
+
     $conn = phorum_db_mysql_connect();
-    
+
     settype($type, "int");
     settype($pcre, "int");
     settype($forum_id, "int");
@@ -2716,16 +2716,16 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
     }
 
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if(mysql_affected_rows($conn) > 0) {
-        return true;   
+        return true;
     } else {
         return false;
     }
 }
- 
+
 
 
 /**
@@ -2744,17 +2744,17 @@ function phorum_db_get_private_messages($user_id, $type)
         trigger_error("\$type must be either `to` or `from` in function phorum_db_get_private_messages()", E_USER_WARNING);
         return 0;
     }
-    
+
     $field1=$type."_user_id";
     $field2=$type."_del_flag";
-    
+
     $retarr=array();
 
     $sql="select * from {$PHORUM['private_message_table']} where $field1=$user_id and $field2=0 order by $field1 desc, $field2 desc, datestamp desc";
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
             $retarr[]=$row;
@@ -2776,16 +2776,16 @@ function phorum_db_get_private_message($pm_id)
     $conn = phorum_db_mysql_connect();
 
     settype($pm_id, "int");
-    
+
     $retarr=array();
 
     $sql="select * from {$PHORUM['private_message_table']} where private_message_id=$pm_id";
     if(!$PHORUM["user"]["admin"]) $sql.=" and (to_user_id={$PHORUM['user']['user_id']} or from_user_id={$PHORUM['user']['user_id']})";
 
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if (mysql_num_rows($res) > 0){
         $retarr = mysql_fetch_assoc($res);
     }
@@ -2802,16 +2802,16 @@ function phorum_db_get_private_message_count($user_id)
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysql_connect();
-    
+
     settype($user_id, "int");
 
     $retarr=array();
 
     $sql="select count(*) as total, (count(*) - sum(read_flag)) as new from {$PHORUM['private_message_table']} where to_user_id=$user_id and to_del_flag=0";
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if (mysql_num_rows($res) > 0){
         $res = mysql_fetch_assoc($res);
         $retarr["total"] = $res["total"];
@@ -2846,7 +2846,7 @@ function phorum_db_put_private_messages($to_username, $to_user_id, $subject, $me
             from_del_flag  = '$from_delete_flag'";
 
     $res = mysql_query($sql, $conn);
-        
+
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }
@@ -2872,7 +2872,7 @@ function phorum_db_update_private_message($pm_id, $flag, $value)
 
     settype($value, "int");
     settype($pm_id, "int");
-    
+
     $sql="update {$PHORUM['private_message_table']} set $flag=$value where private_message_id=$pm_id";
     if(!$PHORUM["user"]["admin"]) $sql.=" and (to_user_id={$PHORUM['user']['user_id']} or from_user_id={$PHORUM['user']['user_id']})";
 
@@ -2903,56 +2903,56 @@ function phorum_db_update_private_message($pm_id, $flag, $value)
 function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
 
     $PHORUM = $GLOBALS['PHORUM'];
-    
+
     $conn = phorum_db_mysql_connect();
     $numdeleted=0;
-    
+
     $compare_field = "datestamp";
     if($mode == 2) {
       $compare_field = "modifystamp";
     }
-            
+
     $forummode="";
     if($forum > 0) {
       $forummode=" AND forum_id = $forum";
     }
-    
+
     // retrieving which threads to delete
     $sql = "select thread from {$PHORUM['message_table']} where $compare_field < $time AND parent_id=0 $forummode";
-    
+
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");        
-    
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
     $ret=array();
     while($row=mysql_fetch_row($res)) {
         $ret[]=$row[0];
     }
-    
+
     $thread_ids=implode(",",$ret);
-    
+
     if(count($ret)) {
       // deleting the messages/threads
       $sql="delete from {$PHORUM['message_table']} where thread IN ($thread_ids)";
       $res = mysql_query($sql, $conn);
-      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");       
-              
+      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
       $numdeleted = mysql_affected_rows($conn);
       if($numdeleted < 0) {
         $numdeleted=0;
       }
-      
+
       // deleting the associated notification-entries
       $sql="delete from {$PHORUM['subscribers_table']} where thread IN ($thread_ids)";
       $res = mysql_query($sql, $conn);
-      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");       
-                
+      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-      // optimizing the message-table        
+
+      // optimizing the message-table
       $sql="optimize table {$PHORUM['message_table']}";
       $res = mysql_query($sql, $conn);
-      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");               
+      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     }
-    
+
     return $numdeleted;
 }
 
@@ -2964,38 +2964,38 @@ function phorum_db_get_max_messageid() {
 
     $conn = phorum_db_mysql_connect();
     $maxid = 0;
-        
+
     $sql="SELECT max(message_id) from ".$PHORUM["message_table"];
     $res = mysql_query($sql, $conn);
-    
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     if (mysql_num_rows($res) > 0){
         $row = mysql_fetch_row($res);
         $maxid = $row[0];
     }
 
-    return $maxid;    
+    return $maxid;
 }
 
 /**
  * This function increments the viewcount for a post
  */
- 
+
 function phorum_db_viewcount_inc($message_id) {
     if($message_id < 1 || !is_numeric($message_id)) {
         return false;
     }
-    
+
     $conn = phorum_db_mysql_connect();
     $sql="UPDATE ".$GLOBALS['PHORUM']['message_table']." SET viewcount=viewcount+1 WHERE message_id=$message_id";
     $res = mysql_query($sql, $conn);
-    
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
 
-    return true;        
-    
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
+
+    return true;
+
 }
 
 
@@ -3027,7 +3027,7 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['files_table']} ( file_id int(11) NOT NULL auto_increment, user_id int(11) NOT NULL default '0', filename varchar(255) NOT NULL default '', filesize int(11) NOT NULL default '0', file_data mediumtext NOT NULL, add_datetime int(10) unsigned NOT NULL default '0', message_id int(10) unsigned NOT NULL default '0', PRIMARY KEY (file_id), KEY add_datetime (add_datetime), KEY message_id (message_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['banlist_table']} ( id int(11) NOT NULL auto_increment, forum_id int(11) NOT NULL default '0', type tinyint(4) NOT NULL default '0', pcre tinyint(4) NOT NULL default '0', string varchar(255) NOT NULL default '', PRIMARY KEY  (id), KEY forum_id (forum_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['private_message_table']} ( private_message_id int(10) unsigned NOT NULL auto_increment, from_username varchar(50) NOT NULL default '', to_username varchar(50) NOT NULL default '', from_user_id int(10) unsigned NOT NULL default '0', to_user_id int(10) unsigned NOT NULL default '0', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', to_del_flag tinyint(1) NOT NULL default '0', from_del_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (private_message_id), KEY to_user_id (to_user_id,to_del_flag,datestamp), KEY from_user_id (from_user_id,from_del_flag,datestamp), KEY to_del_flag (to_del_flag,from_del_flag), KEY read_flag (to_user_id,read_flag,to_del_flag) ) TYPE=MyISAM"
-        
+
     );
 
     foreach($queries as $sql){
@@ -3043,7 +3043,7 @@ function phorum_db_create_tables()
     if(empty($err)){
 
         $tmp_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp";
-                    
+
         // set initial settings
         $settings=array(
 			"title" => "Phorum 5",
@@ -3084,7 +3084,7 @@ function phorum_db_create_tables()
           );
 
         phorum_db_update_settings($settings);
-    
+
         // insert the default module settings
         // hooks
         mysql_query("INSERT INTO {$PHORUM['settings_table']} (`name`, `type`, `data`) VALUES ('hooks','S','a:1:{s:6:\"format\";a:2:{s:4:\"mods\";a:2:{i:0;s:7:\"smileys\";i:1;s:6:\"bbcode\";}s:5:\"funcs\";a:2:{i:0;s:18:\"phorum_mod_smileys\";i:1;s:14:\"phorum_bb_code\";}}}')");
@@ -3108,7 +3108,7 @@ function phorum_db_create_tables()
                   "read_length"=>20,
                   "moderation"=>0,
                   "threaded_list"=>0,
-                  "threaded_read"=>0,				  
+                  "threaded_read"=>0,
                   "float_to_top"=>1,
                   "display_ip_address"=>0,
                   "allow_email_notify"=>1,
@@ -3121,7 +3121,7 @@ function phorum_db_create_tables()
               );
 
         $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
-        
+
         // create a test post
         $message=array(
                     "forum_id" => $GLOBALS['PHORUM']["forum_id"],
