@@ -252,6 +252,7 @@
         "MsgMoveOk"             =>      "The Thread was moved to the given Forum.",
         "MsgRedirect"           =>      "You are being redirected to continue, click here if you are not automatically redirected",
         "MsgModEdited"          =>      "The changed message has been saved.",
+        "MsgSplitOk"            =>      "The Thread has been successfully split into two threads.",
         "MyProfile"             =>      "My Control Center",
 
         "Navigate"              =>      "Navigate",
