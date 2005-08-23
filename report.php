@@ -32,6 +32,7 @@ if(!phorum_check_read_common()) {
 }
 
 $report = false;
+$template = "report";
 
 // get the message
 if (is_numeric($PHORUM["args"][1])) {
@@ -70,7 +71,11 @@ if(!empty($_POST["report"])) {
             $mail_data = phorum_hook("report", $mail_data);
 
             phorum_email_user($mail_users, $mail_data);
-            $PHORUM["DATA"]["ReportPostMessage"] = $PHORUM["DATA"]["LANG"]['ReportPostSuccess'];
+
+	    $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
+	    $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
+	    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ReportPostSuccess"];
+	    $template="message";
             $report = true;
         }
     }
@@ -94,7 +99,7 @@ else {
 
 include phorum_get_template("header");
 phorum_hook("after_header");
-include phorum_get_template("report");
+include phorum_get_template($template);
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 
