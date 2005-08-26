@@ -31,7 +31,7 @@
     $frm->addbreak("Edit settings for the BBCode module");
     $frm->addmessage("When users post links on your forum, you can choose whether they open in a new window.");
     $frm->addrow("Open links in new window: ", $frm->checkbox("links_in_new_window", "1", "", $PHORUM["mod_bb_code"]["links_in_new_window"]));
-    $frm->addmessage("Enable <a href=\"http://www.google.com/googleblog/2005/01/preventing-comment-spam.html\" target=\"_blank\">
+    $frm->addmessage("Enable <a href=\"http://en.wikipedia.org/wiki/Blog_spam\" target=\"_blank\">
         Google's new anti-spam protocol</a> for links posted on your forums.
         <br/>
         Note, this doesn't stop spam links being posted, but it does mean that
