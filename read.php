@@ -179,7 +179,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["POST"]["subject"] = $data[$message_id]["subject"];
 
     $thread_is_closed = (bool)$data[$thread]["closed"];
-    $thread_is_announcement = ($data[$thread]["status"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
+    $thread_is_announcement = ($data[$thread]["sort"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
 
     // we might have more messages for mods
     if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
