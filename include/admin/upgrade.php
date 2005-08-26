@@ -33,6 +33,9 @@
             break;
 
         case 1:
+            if (! ini_get('safe_mode'))
+                set_time_limit(0);
+
             // ok upgrading tables
             $message = phorum_upgrade_tables($PHORUM['internal_version'],PHORUMINTERNAL);
 
