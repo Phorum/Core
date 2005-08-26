@@ -100,6 +100,8 @@
     define("PHORUM_NEWFLAG_MSG", 0);
     define("PHORUM_NEWFLAG_MIN_ID", 1);
 
+    define("PHORUM_LINK_USER", "user");
+    define("PHORUM_LINK_MESSAGE", "message");
 
     // constants below here do not have to have a constant value,
     // as long as each is unique.  They are used for enumeration.

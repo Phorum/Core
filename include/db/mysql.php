@@ -730,7 +730,6 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
 
     $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $checkvar";
-
     $res = mysql_query($sql, $conn);
 
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -1441,7 +1440,7 @@ function phorum_db_drop_forum($forum_id)
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     }
 
-$sql = "select file_id from {$PHORUM['files_table']} left join {$PHORUM['message_table']} using (message_id) where {$PHORUM['files_table']}.message_id > 0 AND {$PHORUM['message_table']}.message_id is NULL";
+$sql = "select file_id from {$PHORUM['files_table']} left join {$PHORUM['message_table']} using (message_id) where {$PHORUM['files_table']}.message_id > 0 AND link='" . PHORUM_LINK_MESSAGE . "' AND {$PHORUM['message_table']}.message_id is NULL";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     while($rec=mysql_fetch_assoc($res)){
@@ -2384,7 +2383,7 @@ function phorum_db_user_delete($user_id) {
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // files-table
-    $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0";
+    $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
@@ -2420,7 +2419,7 @@ function phorum_db_get_user_file_list($user_id)
 
     $files=array();
 
-    $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where user_id=$user_id and message_id=0";
+    $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
 
     $res = mysql_query($sql, $conn);
 
@@ -2450,7 +2449,7 @@ function phorum_db_get_message_file_list($message_id)
 
     $files=array();
 
-    $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where message_id=$message_id";
+    $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where message_id=$message_id and link='" . PHORUM_LINK_MESSAGE . "'";
 
     $res = mysql_query($sql, $conn);
 
@@ -2502,9 +2501,15 @@ function phorum_db_file_get($file_id)
  * This function saves a file to the db
  */
 
-function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0)
+function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=null)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    if (is_null($link)) {
+        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
+    } else {
+        $link = addslashes($link);
+    }
 
     $conn = phorum_db_mysql_connect();
 
@@ -2516,7 +2521,7 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
 
     $filename=addslashes($filename);
 
-    $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
+    $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
 
     $res = mysql_query($sql, $conn);
 
@@ -2557,6 +2562,37 @@ function phorum_db_file_delete($file_id)
     return $res;
 }
 
+/**
+ * This function links a file to a specific message
+ */
+
+function phorum_db_file_link($file_id, $message_id, $link = null)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    if (is_null($link)) {
+        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
+    } else {
+        $link = addslashes($link);
+    }
+
+    $conn = phorum_db_mysql_connect();
+
+    settype($file_id, "int");
+    settype($message_id, "int");
+
+    $sql="update {$PHORUM['files_table']} " .
+         "set message_id=$message_id, link='$link' " .
+	 "where file_id=$file_id";
+
+    $res = mysql_query($sql, $conn);
+
+    if ($err = mysql_error()){
+        phorum_db_mysql_error("$err: $sql");
+    }
+
+    return $res;
+}
 
 /**
  * This function reads the current total size of all files for a user
@@ -2572,7 +2608,7 @@ function phorum_db_get_user_filesize_total($user_id)
 
     $total=0;
 
-    $sql="select sum(filesize) as total from {$PHORUM['files_table']} where user_id=$user_id and message_id=0";
+    $sql="select sum(filesize) as total from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
 
     $res = mysql_query($sql, $conn);
 
@@ -3340,7 +3376,7 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['groups_table']} ( group_id int(11) NOT NULL auto_increment, name varchar(255) NOT NULL default '0', open tinyint(3) NOT NULL default '0', PRIMARY KEY  (group_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['forum_group_xref_table']} ( forum_id int(11) NOT NULL default '0', group_id int(11) NOT NULL default '0', permission int(10) unsigned NOT NULL default '0', PRIMARY KEY  (forum_id,group_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['user_group_xref_table']} ( user_id int(11) NOT NULL default '0', group_id int(11) NOT NULL default '0', status tinyint(3) NOT NULL default '1', PRIMARY KEY  (user_id,group_id) ) TYPE=MyISAM",
-        "CREATE TABLE {$PHORUM['files_table']} ( file_id int(11) NOT NULL auto_increment, user_id int(11) NOT NULL default '0', filename varchar(255) NOT NULL default '', filesize int(11) NOT NULL default '0', file_data mediumtext NOT NULL, add_datetime int(10) unsigned NOT NULL default '0', message_id int(10) unsigned NOT NULL default '0', PRIMARY KEY (file_id), KEY add_datetime (add_datetime), KEY message_id (message_id)) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM['files_table']} ( file_id int(11) NOT NULL auto_increment, user_id int(11) NOT NULL default '0', filename varchar(255) NOT NULL default '', filesize int(11) NOT NULL default '0', file_data mediumtext NOT NULL, add_datetime int(10) unsigned NOT NULL default '0', message_id int(10) unsigned NOT NULL default '0', link varchar(10) NOT NULL, PRIMARY KEY (file_id), KEY add_datetime (add_datetime), KEY message_id_link (message_id,link)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['banlist_table']} ( id int(11) NOT NULL auto_increment, forum_id int(11) NOT NULL default '0', type tinyint(4) NOT NULL default '0', pcre tinyint(4) NOT NULL default '0', string varchar(255) NOT NULL default '', PRIMARY KEY  (id), KEY forum_id (forum_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['private_message_table']} ( private_message_id int(10) unsigned NOT NULL auto_increment, from_username varchar(50) NOT NULL default '', to_username varchar(50) NOT NULL default '', from_user_id int(10) unsigned NOT NULL default '0', to_user_id int(10) unsigned NOT NULL default '0', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', to_del_flag tinyint(1) NOT NULL default '0', from_del_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (private_message_id), KEY to_user_id (to_user_id,to_del_flag,datestamp), KEY from_user_id (from_user_id,from_del_flag,datestamp), KEY to_del_flag (to_del_flag,from_del_flag), KEY read_flag (to_user_id,read_flag,to_del_flag) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['search_table']} ( message_id int(10) unsigned NOT NULL default '0', search_text mediumtext NOT NULL, PRIMARY KEY  (message_id), FULLTEXT KEY search_text (search_text) ) TYPE=MyISAM",
