@@ -118,27 +118,13 @@ function phorum_cache_clear() {
 
 // recursively deletes all files/dirs in a directory 
 
-
 // recursively creates a directory-tree
 function phorum_cache_mkdir($path) {
-
-	if(is_dir($path)) {
-		return true;
-	}
-
-	$parts=explode(DIRECTORY_SEPARATOR, $path);
-	$dir='/';
-
-	for($x=1;$x<count($parts);$x++){
-		$dir.=$parts[$x];
-		if(!file_exists($dir)){
-			$err=!mkdir($dir);
-			if($err) return false;
-		}
-		$dir.=DIRECTORY_SEPARATOR;
-	}
-	
-	return true;
+    if(empty($path)) return false;
+    if(is_dir($path)) return true;
+    if (!phorum_cache_mkdir(dirname($path))) return false;
+    mkdir($path);
+    return true;
 }
 
 // recursively deletes all files/dirs in a directory 
