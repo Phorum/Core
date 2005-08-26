@@ -92,7 +92,7 @@ function phorum_import_template($tplfile, $outfile)
             // ends a loop
             case "/loop":
 
-                $repl="<?php } unset(\$PHORUM['TMP']['$parts[1]']); ?>";
+                $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); ?>";
                 unset($loopvars[$parts[1]]);
                 break;
 
