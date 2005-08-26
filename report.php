@@ -16,7 +16,7 @@
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
-define('phorum_page','read');
+define('phorum_page','report');
 
 include_once("./common.php");
 include_once("./include/email_functions.php");
