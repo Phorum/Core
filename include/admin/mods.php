@@ -52,7 +52,7 @@
         $lines = array();
         if(file_exists("./mods/$entry/info.txt")){
             $lines=file("./mods/$entry/info.txt");
-        } elseif(is_file("./mods/$entry")){
+        } elseif(is_file("./mods/$entry") && substr($entry, -4)==".php"){
             $entry=str_replace(".php", "", $entry);
             $data = file_get_contents("./mods/$entry.php");
             if($data = stristr($data, "/* phorum module info")){
@@ -62,7 +62,7 @@
         }
         if(count($lines)){
             $plugins[$entry]=array();
-            $lines=file("./mods/$entry/info.txt");
+//            $lines=file("./mods/$entry/info.txt");
             foreach($lines as $line){
                 if(strstr($line, ":")){
                     $parts=explode(":", trim($line), 2);
