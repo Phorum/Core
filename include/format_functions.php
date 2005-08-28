@@ -137,4 +137,15 @@ function phorum_strip_body( $body )
     return $body;
 }
 
+function phorum_filesize( $bytes )
+{
+    if ($bytes >= 1024*1024) {
+        return round($bytes/1024/1024, 2) . "MB";
+    } elseif ($bytes >= 1024) {
+        return round($bytes/1024, 1) . "kB";
+    } else {
+        return $bytes . ($bytes == 1 ? " byte" : " bytes");
+    }
+}
+
 ?>
