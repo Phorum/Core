@@ -371,7 +371,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $row["attachments"]=$row["meta"]["attachments"];
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
-                $row["attachments"][$key]["size"]=(round($file["size"]/1024))."kB";
+                $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
                 $row["attachments"][$key]["name"]=htmlentities($file['name'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]); // clear all special chars from name to avoid XSS
                 $row["attachments"][$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
             }

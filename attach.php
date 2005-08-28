@@ -132,7 +132,7 @@ if(!empty($_POST)){
             if(!is_uploaded_file($file["tmp_name"])) continue;
 
             if($PHORUM["max_attachment_size"]>0 && $file["size"]>$PHORUM["max_attachment_size"]*1024){
-                $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachFileSize"]." ".$PHORUM["max_attachment_size"]."kB";
+                $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachFileSize"]." ".phorum_filesize($PHORUM["max_attachment_size"] * 1024);
                 break;
             }
 
@@ -187,7 +187,7 @@ $PHORUM["DATA"]["MESSAGE"]["forum_id"] = (int)$message["forum_id"];
 
 if($PHORUM["max_attachments"]>0 && isset($message["meta"]["attachments"])){
     foreach($message["meta"]["attachments"] as $key=>$file){
-        $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["size"]=(round($file["size"]/1024))."kB";
+        $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["size"]=phorum_filesize($file["size"]);
         $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["name"]=htmlentities($file['name'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]); // clear all special chars from name to avoid XSS
         $PHORUM["DATA"]["PREVIEW"]["attachments"][$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
     }
@@ -200,7 +200,7 @@ if($PHORUM["max_attachments"]>0 && isset($message["meta"]["attachments"])){
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_ATTACH_ACTION_URL );
 
 $PHORUM["DATA"]["ATTACH_FILE_TYPES"]=$PHORUM["allow_attachment_types"];
-$PHORUM["DATA"]["ATTACH_FILE_SIZE"]=$PHORUM["max_attachment_size"]."kB";
+$PHORUM["DATA"]["ATTACH_FILE_SIZE"]=phorum_filesize($PHORUM["max_attachment_size"] * 1024);
 
 for($x=1;$x<=$phorum_attach_inputs;$x++){
     $PHORUM["DATA"]["INPUTS"][]["number"]=$x;
