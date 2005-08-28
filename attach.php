@@ -65,6 +65,12 @@ if(empty($message) ||
     return;
 }
 
+$attachments = $message["meta"]["attachments"];
+$existing_files = count($attachments);
+$uploaded_files = 0;
+$total_size = 0;
+foreach ($attachments as $data) $total_size += $data['size'];
+
 if(!empty($_POST)){
 
     if(isset($_POST["cancel"])){
@@ -124,12 +130,16 @@ if(!empty($_POST)){
 
     } elseif(!empty($_FILES)){
 
-        $uploaded_files=array();
         foreach($_FILES as $file){
 
-            if(count($uploaded_files)>=$PHORUM["max_attachments"]) break;
-
             if(!is_uploaded_file($file["tmp_name"])) continue;
+
+            if(($existing_files + $uploaded_files)>=$PHORUM["max_attachments"]) break;
+
+	    if(($total_size + $file["size"])>=$PHORUM["max_totalattachment_size"] * 1024){
+                $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]." ".phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+                break;
+	    }
 
             if($PHORUM["max_attachment_size"]>0 && $file["size"]>$PHORUM["max_attachment_size"]*1024){
                 $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachFileSize"]." ".phorum_filesize($PHORUM["max_attachment_size"] * 1024);
@@ -151,7 +161,9 @@ if(!empty($_POST)){
             fclose($fp);
 
             $file_id=phorum_db_file_save($PHORUM["user"]["user_id"], $file["name"], $file["size"], $buffer, $message_id);
-            $uploaded_files[]=array("file_id"=>$file_id, "name"=>$file["name"], "size"=>$file["size"]);
+            $attachments[]=array("file_id"=>$file_id, "name"=>$file["name"], "size"=>$file["size"]);
+	    $uploaded_files++;
+            $total_size += $file["size"];
 
         }
 
@@ -167,7 +179,7 @@ if(!empty($_POST)){
     } else {
 
         $save_message["meta"]=$message["meta"];
-        $save_message["meta"]["attachments"]=$uploaded_files;
+        $save_message["meta"]["attachments"]=$attachments;
         phorum_db_update_message($message_id, $save_message);
 
         $redir_url = phorum_get_url(PHORUM_ATTACH_URL, $_POST["message_id"]);
@@ -201,6 +213,26 @@ $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_ATTACH_ACTION_URL );
 
 $PHORUM["DATA"]["ATTACH_FILE_TYPES"]=$PHORUM["allow_attachment_types"];
 $PHORUM["DATA"]["ATTACH_FILE_SIZE"]=phorum_filesize($PHORUM["max_attachment_size"] * 1024);
+$PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"]=phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+$PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
+
+$max_upload_size = -1;
+if ($PHORUM["max_totalattachment_size"]) {
+    $max_upload_size = $PHORUM["max_totalattachment_size"] * 1024 - $total_size;
+    if ($max_upload_size < 0) $max_upload_size = 0;
+} elseif ($PHORUM["max_attachment_size"]) {
+    $max_upload_size = $PHORUM["max_attachment_size"] * 1024;
+}
+if ($PHORUM["max_attachment_size"]) {
+    if ($max_upload_size > $PHORUM["max_attachment_size"] * 1024)
+        $max_upload_size = $PHORUM["max_attachment_size"] * 1024;
+}
+if ($max_upload_size != -1) {
+    $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = phorum_filesize($max_upload_size);
+}
+if ($max_upload_size == 0) {
+    $phorum_attach_inputs = 0;
+}
 
 for($x=1;$x<=$phorum_attach_inputs;$x++){
     $PHORUM["DATA"]["INPUTS"][]["number"]=$x;

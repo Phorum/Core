@@ -41,13 +41,15 @@
                     if(empty($_POST[$field])){
                         $_POST["allow_attachment_types"]="";
                         $_POST["max_attachment_size"]=0;
+                        $_POST["max_totalattachment_size"]=0;
                     }
                     break;
 
                 case "max_attachment_size":
+                case "max_totalattachment_size":
                     $_POST[$field]=(int)$value;
                     break;
-
+                    
                 case "display_fixed":
                     $_POST[$field]=(int)$value;
                     break;
@@ -308,10 +310,12 @@
 
     $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", $max_attachments, 10, false, false, $disabled_form_input));
 
-    $frm->addrow("Allowed Files (eg: gif;jpg;png)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
+    $frm->addrow("Allowed Files (eg: gif;jpg;png, empty for any)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
-    $frm->addrow("Max File Size In kb", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
+    $frm->addrow("Max File Size In kB (0 for PHP default)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 
+    $frm->addrow("Max cumulative File Size In kB (0 for unlimited)", $frm->text_box("max_totalattachment_size", $max_totalattachment_size, 10, false, false, $disabled_form_input));
+    
     $frm->show();
 
 ?>

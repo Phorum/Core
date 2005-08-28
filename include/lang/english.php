@@ -58,6 +58,7 @@
         "AttachFiles"           =>      "Attach Files To Message",
         "AttachFileTypes"       =>      "You are allowed to attach files of the following type:",
         "AttachFileSize"        =>      "No file can be larger than",
+	"AttachTotalFileSize"   =>	"All files together cannot be larger than",
         "AttachInstructions"     =>      "When you are done attaching files, click Post",
         "AttachFull"            =>      "You have already attached the maximum number of files allowed.  To remove one, edit the post.  If you are finished, click Post.",
         "AttachInfo"            =>      "Your post will be saved on the server now.  You will have the option to edit it again before it appears on the forum.",
