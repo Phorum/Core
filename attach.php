@@ -136,7 +136,7 @@ if(!empty($_POST)){
 
             if(($existing_files + $uploaded_files)>=$PHORUM["max_attachments"]) break;
 
-	    if(($total_size + $file["size"])>=$PHORUM["max_totalattachment_size"] * 1024){
+	    if($PHORUM["max_totalattachment_size"]>0 && ($total_size + $file["size"])>=$PHORUM["max_totalattachment_size"] * 1024){
                 $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]." ".phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
                 break;
 	    }
