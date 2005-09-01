@@ -1,4 +1,4 @@
-<?php 
+<?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // Copyright (C) 2003  Phorum Development Team                                //
@@ -30,7 +30,7 @@ define("PHORUM_CONTROL_CENTER", 1);
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
-} 
+}
 
 $error_msg = false;
 
@@ -40,7 +40,7 @@ $panel = (!isset($PHORUM['args']['panel']) || empty($PHORUM["args"]['panel'])) ?
 // sometimes we set it from a post-form
 if (isset($_POST['panel'])) {
     $panel = $_POST['panel'];
-} 
+}
 
 phorum_build_common_urls();
 
@@ -67,7 +67,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     $PHORUM["DATA"]["MYFILES"] = true;
 } else {
     $PHORUM["DATA"]["MYFILES"] = false;
-} 
+}
 
 // determine if the user is a moderator
 $PHORUM["DATA"]["MESSAGE_MODERATOR"] = (count(phorum_user_access_list(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) > 0);
@@ -84,12 +84,21 @@ $user = $PHORUM['user'];
 unset($user["password"]);
 unset($user["permissions"]);
 
+if($panel=="sig"){
+    $user["signature"] = htmlspecialchars($user["signature"]);
+} else {
+    // fake a message here so we can run the sig through format_message
+    $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
+    $fake_messages = phorum_format_messages( $fake_messages );
+    $user["signature"] = $fake_messages[0]["body"];
+}
+
 // set any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
     foreach($PHORUM["PROFILE_FIELDS"] as $field) {
         if (!isset($user[$field])) $user[$field] = "";
-    } 
-} 
+    }
+}
 $PHORUM["DATA"]["PROFILE"] = $user;
 
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = isset($PHORUM["forum_id"])?$PHORUM['forum_id']:0;
@@ -103,7 +112,7 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag']==0) {
         $PHORUM['DATA']['URL']['BACK'] = phorum_get_url(PHORUM_INDEX_URL);
     }
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BackToForumList'];
-} 
+}
 $PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
 
 // load the file for that panel - main-part
@@ -112,7 +121,7 @@ if (file_exists("./include/controlcenter/$panel.php")) {
     include "./include/controlcenter/$panel.php";
 } else {
     include "./include/controlcenter/summary.php";
-} 
+}
 
 if (isset($template))
     $PHORUM['DATA']['content_template'] = $template;
@@ -126,7 +135,7 @@ if ($error_msg) {
     include phorum_get_template("message");
 } else {
     include phorum_get_template("cc_index");
-} 
+}
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 
@@ -144,43 +153,43 @@ function phorum_controlcenter_user_save($panel)
     $error = "";
 
     if (!isset($userdata['hide_email']) && $panel == PHORUM_CC_MAIL)
-        $userdata['hide_email'] = 0; 
+        $userdata['hide_email'] = 0;
 
     // set the user id to the logged in user.
     $userdata["user_id"] = $PHORUM["user"]["user_id"];
-    
+
     $userdata=phorum_hook("cc_save_user", $userdata);
-    
+
     // remove anything that is not actual user data
     unset($userdata["forum_id"]);
     unset($userdata["panel"]);
-    unset($userdata["password2"]);     
-    
+    unset($userdata["password2"]);
+
     if(isset($userdata['error'])) {
-    	$error=$userdata['error'];
-    	unset($userdata['error']);
+        $error=$userdata['error'];
+        unset($userdata['error']);
     } elseif (!phorum_user_save($userdata)) {
-    	$error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
+        $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
     } else {
-    	$error = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
+        $error = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
 
-    	// if they set a new password, lets create a new session
-    	if (isset($userdata["password"]) && !empty($userdata["password"])) {
-    		phorum_user_set_current_user($userdata["user_id"]);
-    		phorum_user_create_session();
-    	}
+        // if they set a new password, lets create a new session
+        if (isset($userdata["password"]) && !empty($userdata["password"])) {
+            phorum_user_set_current_user($userdata["user_id"]);
+            phorum_user_create_session();
+        }
 
-    	// reset the profile
-    	foreach($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key=>$value){
-    		if(isset($GLOBALS["PHORUM"]["user"][$key])){
-    			$GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]=$GLOBALS["PHORUM"]["user"][$key];
-    		} elseif($key!="PANEL" && $key!="forum_id") { // these two go into the form from this var
-    		$GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]="";
-    		}
-    	}
+        // reset the profile
+        foreach($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key=>$value){
+            if(isset($GLOBALS["PHORUM"]["user"][$key])){
+                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]=$GLOBALS["PHORUM"]["user"][$key];
+            } elseif($key!="PANEL" && $key!="forum_id") { // these two go into the form from this var
+            $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]="";
+            }
+        }
     }
 
     return $error;
-} 
+}
 
 ?>
