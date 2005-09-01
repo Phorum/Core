@@ -84,6 +84,15 @@ $user = $PHORUM['user'];
 unset($user["password"]);
 unset($user["permissions"]);
 
+if($panel=="sig"){
+    $user["signature"] = htmlspecialchars($user["signature"]);
+} else {
+    // fake a message here so we can run the sig through format_message
+    $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
+    $fake_messages = phorum_format_messages( $fake_messages );
+    $user["signature"] = $fake_messages[0]["body"];
+}
+
 // set any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
     foreach($PHORUM["PROFILE_FIELDS"] as $field) {
@@ -158,30 +167,30 @@ function phorum_controlcenter_user_save($panel)
     unset($userdata["password2"]);
 
     if(isset($userdata['error'])) {
-    	$error=$userdata['error'];
-    	unset($userdata['error']);
+        $error=$userdata['error'];
+        unset($userdata['error']);
     } elseif (!phorum_user_save($userdata)) {
-    	$error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
+        $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
     } else {
-    	$error = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
+        $error = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
 
-    	// if they set a new password, lets create a new session
-    	if (isset($userdata["password"]) && !empty($userdata["password"])) {
-    		phorum_user_set_current_user($userdata["user_id"]);
-    		phorum_user_create_session();
-    	} else {
-    		// make sure that the user gets reloaded
-    		phorum_user_set_current_user($userdata["user_id"]);
-    	}
+        // if they set a new password, lets create a new session
+        if (isset($userdata["password"]) && !empty($userdata["password"])) {
+            phorum_user_set_current_user($userdata["user_id"]);
+            phorum_user_create_session();
+        } else {
+            // make sure that the user gets reloaded
+            phorum_user_set_current_user($userdata["user_id"]);
+        }
 
-    	// reset the profile
-    	foreach($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key=>$value){
-    		if(isset($GLOBALS["PHORUM"]["user"][$key])){
-    			$GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]=$GLOBALS["PHORUM"]["user"][$key];
-    		} elseif($key!="PANEL" && $key!="forum_id") { // these two go into the form from this var
-    		$GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]="";
-    		}
-    	}
+        // reset the profile
+        foreach($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key=>$value){
+            if(isset($GLOBALS["PHORUM"]["user"][$key])){
+                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]=$GLOBALS["PHORUM"]["user"][$key];
+            } elseif($key!="PANEL" && $key!="forum_id") { // these two go into the form from this var
+            $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]="";
+            }
+        }
     }
 
     return $error;
