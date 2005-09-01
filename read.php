@@ -108,7 +108,7 @@ if(empty($PHORUM["args"][1])) {
                 asort($message_ids,SORT_NUMERIC); // make sure they are sorted
 
 
-                $new_message=array_pop($message_ids); // get the first element
+                $new_message=array_shift($message_ids); // get the first element
 
                 if(!$PHORUM['threaded_read']) { // get new page
                 	$new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
