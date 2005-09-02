@@ -275,7 +275,9 @@ switch ($PHORUM["args"]["page"]) {
                     $users = array();
                     $userlist = phorum_user_get_list();
                     foreach ($userlist as $userinfo){
-                        $users[] = htmlspecialchars($userinfo);
+                        $userinfo["username"] = htmlspecialchars($userinfo["username"]);
+                        $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
+                        $users[] = $userinfo;
                     }
                     $PHORUM["DATA"]["USERS"] = $users;
                 }
