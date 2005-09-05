@@ -72,10 +72,10 @@ if(!empty($_POST["report"])) {
 
             phorum_email_user($mail_users, $mail_data);
 
-	    $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
-	    $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
-	    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ReportPostSuccess"];
-	    $template="message";
+        $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
+        $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
+        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ReportPostSuccess"];
+        $template="message";
             $report = true;
         }
     }
@@ -83,6 +83,10 @@ if(!empty($_POST["report"])) {
         $PHORUM["DATA"]["ReportPostMessage"] = $PHORUM["DATA"]["LANG"]['ReportPostNotAllowed'];
     }
 }
+
+// format message
+list($message) = phorum_format_messages(array($message));
+
 $PHORUM["DATA"]["PostSubject"] = $message["subject"];
 $PHORUM["DATA"]["PostAuthor"] = $message["author"];
 $PHORUM["DATA"]["PostBody"] = $message["body"];
