@@ -50,12 +50,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     $total_size=0;
 
     foreach($files as $key => $file) {
-        if ($file["filesize"] > 1000000) {
-            $files[$key]["filesize"] = ceil($file["filesize"] / 1024000) . "MB";
-        } else {
-            $files[$key]["filesize"] = ceil($file["filesize"] / 1024) . "KB";
-        } 
-
+        $files[$key]["filesize"] = phorum_filesize($file["filesize"]);
         $files[$key]["dateadded"]=phorum_date($PHORUM["short_date"], $file["add_datetime"]);
 
         $files[$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file=$key");
@@ -80,12 +75,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     $PHORUM["DATA"]["FILES"] = $files;
 
     $PHORUM["DATA"]["TOTAL_FILES"] = count($files);
-    if ($total_size > 1000000) {
-        $PHORUM["DATA"]["TOTAL_FILE_SIZE"] = ceil($total_size / 1024000) . "MB";
-    } else {
-        $PHORUM["DATA"]["TOTAL_FILE_SIZE"] = ceil($total_size / 1024) . "KB";
-    } 
-
+    $PHORUM["DATA"]["TOTAL_FILE_SIZE"] = phorum_filesize($total_size);
 
 } else {
     $template = "message";
