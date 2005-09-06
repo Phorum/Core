@@ -375,11 +375,11 @@ switch ($mod_step) {
                    // Temp. change forum_id for db function
                    $PHORUM["forum_id"] =$moderator_data["merge_f1"];
                    $message =phorum_db_get_message($moderator_data["merge_t1"]);
-                   $PHORUM['DATA']["FORM"]["merge_subject1"] =$message["subject"];
+                   $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"]);
                    // change back forum_id
                    $PHORUM["forum_id"] =$PHORUM['DATA']["FORM"]["forum_id"];
                    $message =phorum_db_get_message($msgthd_id);
-                   $PHORUM['DATA']["FORM"]["thread_subject"] =$message["subject"];
+                   $PHORUM['DATA']["FORM"]["thread_subject"] =htmlentities($message["subject"]);
                    break;
            }
 
@@ -456,7 +456,7 @@ switch ($mod_step) {
            $message =phorum_db_get_message($msgthd_id);
            $PHORUM['DATA']["FORM"]["thread_id"]=$message["thread"];
            $PHORUM['DATA']["FORM"]["message_id"]=$msgthd_id;
-           $PHORUM['DATA']["FORM"]["message_subject"]=$message["subject"];
+           $PHORUM['DATA']["FORM"]["message_subject"]=htmlentities($message["subject"]);
            $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_SPLIT;
            $template="split_form";
            break;
