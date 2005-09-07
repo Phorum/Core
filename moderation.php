@@ -425,7 +425,7 @@ switch ($mod_step) {
                    }
 
                    // deleting messages which are now doubled
-                   phorum_db_delete_message($_POST['thread'],1);
+                   phorum_db_delete_message($_POST['thread'],PHORUM_DELETE_TREE);
 
                    // update message count / stats
                    // not needed IMO as the thread is gone
