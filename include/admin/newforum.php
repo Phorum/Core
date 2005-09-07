@@ -201,6 +201,7 @@
         $reg_perms = PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_EDIT;
         $active=1;
         $float_to_top=1;
+	$template='default';
     }
 
     $frm->addbreak($title);
