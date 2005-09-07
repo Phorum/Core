@@ -103,7 +103,12 @@ switch ($mod_step) {
         break;
 
    case PHORUM_MOVE_THREAD: // this is the first step of a message move
-
+        // check if the thread to move is an announcement thread
+        $message = phorum_db_get_message($msgthd_id);
+        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
+            $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]["LANG"]["MoveAnnouncementForbidden"];
+            break;
+        }
         $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;

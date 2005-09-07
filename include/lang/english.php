@@ -94,6 +94,7 @@
         "Days"                  =>      "Days",
         "Default"               =>      "Default",
         "DeleteAnnouncementForbidden"   =>  "Sorry, only an Administrator may delete an announcement.",
+	"MoveAnnouncementForbidden" => "Announcement threads cannot be moved.",
         "DeleteMessage"         =>      "Delete Message",
         "DeleteMessageShort"    =>      "Del",
         "DelMessReplies"        =>      "Delete Message And Replies",
