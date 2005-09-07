@@ -557,7 +557,7 @@ function phorum_db_post_message(&$message,$convert=false){
  * mode the mode of deletion, PHORUM_DELETE_MESSAGE for reconnecting the children, PHORUM_DELETE_TREE for deleting the children
  */
 
-function phorum_db_delete_message($message_id, $mode = 0)
+function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
