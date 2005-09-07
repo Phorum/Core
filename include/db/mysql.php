@@ -554,7 +554,7 @@ function phorum_db_post_message(&$message,$convert=false){
  * This function deletes messages from the messages table.
  *
  * @param message $ _id the id of the message which should be deleted
- * mode the mode of deletion, 0 for reconnecting the children, 1 for deleting the children
+ * mode the mode of deletion, PHORUM_DELETE_MESSAGE for reconnecting the children, PHORUM_DELETE_TREE for deleting the children
  */
 
 function phorum_db_delete_message($message_id, $mode = 0)
