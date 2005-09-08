@@ -448,7 +448,7 @@ function phorum_user_access_allowed( $permission, $forum_id = 0 )
             // use the forum default perms for public users
         } elseif ( $forum_id ) {
             if ( $forum_id != $PHORUM["forum_id"] ) {
-	        $forums = phorum_db_get_forums( $forum_id ) );
+	        $forums = phorum_db_get_forums( $forum_id );
                 $forum = array_shift( $forums );
             } else {
                 $forum = $PHORUM;
