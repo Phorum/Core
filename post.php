@@ -327,7 +327,8 @@ if (!empty($_POST["preview"]) && empty($error)) {
     $message=phorum_hook("preview", $message);
 
     // format message
-    $message = array_shift(phorum_format_messages(array($message)));
+    $messages = phorum_format_messages(array($message));
+    $message = array_shift($messages);
 
     $PHORUM["DATA"]["PREVIEW"] = $message;
 

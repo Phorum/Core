@@ -35,7 +35,8 @@
 
     } else {
 
-        $forum=array_shift(phorum_db_get_forums((int)$_GET["forum_id"]));
+        $forums=phorum_db_get_forums((int)$_GET["forum_id"]);
+        $forum=array_shift($forums);
 
         if($forum["folder_flag"]){
             $msg="Are you sure you want to delete $forum[name]?  All forums and folders in this folder will be moved to this folder's parent.";

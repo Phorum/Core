@@ -156,7 +156,8 @@ function phorum_handle_edit_message($preview=false) {
             $new_message=phorum_hook("preview", $new_message);
 
             // format message
-            $new_message = array_shift(phorum_format_messages(array($new_message)));
+	    $new_messages = phorum_format_messages(array($new_message));
+            $new_message = array_shift($new_messages);
 
             $PHORUM["DATA"]["PREVIEW"] = $new_message;
 
