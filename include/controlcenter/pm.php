@@ -196,7 +196,7 @@ switch ($PHORUM["args"]["page"]) {
 
         	$msg["message_id"]=$message["private_message_id"];
         	$msg["to"]=htmlspecialchars($message["to_username"]);
-        	$msg["from"]=htmlspecialchars($message["author"]);
+        	$msg["from"]=$message["author"];
         	$msg["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
         	$msg["subject"]=$message["subject"];
         	$msg["message"]=$message["body"];
@@ -225,7 +225,7 @@ switch ($PHORUM["args"]["page"]) {
             // reply
             $message=phorum_db_get_private_message($PHORUM["args"]["pm_id"]);
         
-            $msg["from"]=$PHORUM["user"]["username"];
+            $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
             if($message["to_user_id"] == $PHORUM["user"]["user_id"]) {            
               $msg["message_id"]=$message["private_message_id"];
               $msg["to"]=htmlspecialchars($message["from_username"]);
@@ -254,7 +254,7 @@ switch ($PHORUM["args"]["page"]) {
                 // TODO: would be nicer to get the url to the post within the thread 
                 $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"]);
 
-                $msg["from"]=$PHORUM["user"]["username"];
+                $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
                 $msg["message_id"]=0;
                 $msg["to"]=htmlspecialchars($message["author"]);
                 $msg["to_id"]=$message["user_id"];
@@ -271,7 +271,7 @@ switch ($PHORUM["args"]["page"]) {
             // new message or error
     
             $msg["message_id"]=0;
-            $msg["from"]=$PHORUM["user"]["username"];
+            $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
             $msg["preview"] = (empty($_POST["preview"])) ? 0 : 1;
             $msg["to_id"] = (empty($_POST["to_id"])) ? "" : $_POST["to_id"];
             $msg["subject"] = (empty($_POST["subject"])) ? "" : $_POST["subject"];
@@ -301,6 +301,8 @@ switch ($PHORUM["args"]["page"]) {
                     $users = array();
                     $userlist = phorum_user_get_list();
                     foreach ($userlist as $userinfo){
+                        $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
+                        $userinfo["username"] = htmlspecialchars($userinfo["username"]);
                         $users[] = $userinfo;
                     }
                     $PHORUM["DATA"]["USERS"] = $users;
