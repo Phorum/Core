@@ -1,7 +1,5 @@
 <?php
 if(!defined("PHORUM_CONTROL_CENTER")) return;
-// we need that for signature formatting
-include_once('./include/format_functions.php');
 
 $template = "cc_start";
 $PHORUM['DATA']['UserPerms'] = phorum_readable_permissions();
@@ -17,13 +15,6 @@ if( !empty($PHORUM["user"]["admin"]) ||
 }
 
 $PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
-
-
-$foo_message=array('author'=>'','email'=>'','subject'=>'','linked_author'=>'','body'=>$PHORUM["DATA"]["PROFILE"]['signature']);
-
-list($foo_message)=phorum_format_messages(array($foo_message));
-
-$PHORUM["DATA"]["PROFILE"]['signature']=$foo_message['body'];
 
 $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
 /* --------------------------------------------------------------- */
