@@ -193,7 +193,7 @@ switch ($PHORUM["args"]["page"]) {
 
             $msg["message_id"]=$message["private_message_id"];
             $msg["to"]=htmlspecialchars($message["to_username"]);
-            $msg["from"]=htmlspecialchars($message["author"]);
+            $msg["from"]=$message["author"];
             $msg["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
             $msg["subject"]=$message["subject"];
             $msg["message"]=$message["body"];
@@ -245,7 +245,7 @@ switch ($PHORUM["args"]["page"]) {
             // new message or error
 
             $msg["message_id"]=0;
-            $msg["from"]=$PHORUM["user"]["username"];
+            $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
             $msg["preview"] = (empty($_POST["preview"])) ? 0 : 1;
             $msg["to_id"] = (empty($_POST["to_id"])) ? "" : $_POST["to_id"];
             $msg["subject"] = (empty($_POST["subject"])) ? "" : $_POST["subject"];
