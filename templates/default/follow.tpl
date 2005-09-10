@@ -14,7 +14,7 @@
 <div class="PhorumFloatingText">
 {LANG->YouWantToFollow}
 <div class="PhorumLargeFont">{SUBJECT}</div><br />
-{LANG->FollowExplination}<br /><br />
+{LANG->FollowExplanation}<br /><br />
 <input type="checkbox" name="send_email" checked="checked" />&nbsp;{LANG->FollowWithEmail}<br /><br />
 <input type="submit" value="{LANG->Submit}" />
 </div>

@@ -154,7 +154,7 @@
         "FileWrongType"         =>      "This server does not allow uploading of files of this type.  Files types that are accepted: " . str_replace(";", ", ", $PHORUM['file_types']) . ".",
         "Filter"                =>      "Filter",
         "FirstPage"             =>      "First",
-        "FollowExplination"     =>      "Followed threads are listed in your Control Center.<br />You can elect to receive an email when the thread is updated.",
+        "FollowExplanation"     =>      "Followed threads are listed in your Control Center.<br />You can elect to receive an email when the thread is updated.",
         "FollowThread"          =>      "Follow This Thread",
         "FollowWithEmail"       =>      "Would you like to be emailed when this thread is updated?",
         "Forum"                 =>      "Forum",
