@@ -61,7 +61,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     $template = "cc_files";
 
     if($PHORUM["max_file_size"]){
-        $PHORUM["DATA"]["FILE_SIZE_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileSizeLimits"];
+        $PHORUM["DATA"]["FILE_SIZE_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileSizeLimits"] . ' ' . phorum_filesize($PHORUM["max_file_size"]*1024);
     }
 
     if($PHORUM["file_types"]){
@@ -69,7 +69,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     }
 
     if($PHORUM["file_space_quota"]){
-        $PHORUM["DATA"]["FILE_QUOTA_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileQuotaLimits"];
+        $PHORUM["DATA"]["FILE_QUOTA_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileQuotaLimits"] . ' ' . phorum_filesize($PHORUM["file_space_quota"]*1024);;
     }
 
     $PHORUM["DATA"]["FILES"] = $files;
