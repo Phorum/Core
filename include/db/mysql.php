@@ -90,8 +90,9 @@ function phorum_db_get_thread_list($offset)
 
         // get the announcements and stickies
         $sql="select thread as keyid from $table where
-        (parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']}) or
-        (parent_id=0 and sort=".PHORUM_SORT_STICKY." and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
+        status=".PHORUM_STATUS_APPROVED." and
+        ((parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']}) or
+        (parent_id=0 and sort=".PHORUM_SORT_STICKY." and forum_id={$PHORUM['forum_id']})) order by sort, thread desc";
         $res = mysql_query($sql, $conn);
 
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -768,7 +769,6 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
  * This function executes a query to get the rows with the given thread
  * id and returns an array of the message.
  */
-
 function phorum_db_get_messages($thread,$page=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
