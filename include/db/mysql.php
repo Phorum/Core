@@ -380,12 +380,14 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
  * the threads into a threaded list if needed.
  *
  * NOTE: ALL dates should be returned as Unix timestamps
- * @param forum - the forum id to work with. 0 for all forums.
-                  You can also pass an array of forum_id's.
- * (which is the current forum the user is looking at)
+ * @param forum - the forum id to work with. Omit or NULL for all forums.
+ *                You can also pass an array of forum_id's.
+ * @param waiting_only - only take into account messages which have to
+ *                be approved directly after posting. Do not include
+ *                messages which are hidden by a moderator.
  */
 
-function phorum_db_get_unapproved_list($forum, $waiting_only=false)
+function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -398,26 +400,25 @@ function phorum_db_get_unapproved_list($forum, $waiting_only=false)
     $sql = "select
             $table.*
           from
-            $table
-          where";
+            $table ";
 
-
-     if (is_array($forum)){
-        $sql .= " forum_id in (" . implode(",", $forum) . ")";
-     }
-     elseif ($forum > 0){
+    if (is_array($forum)){
+        $sql .= "where forum_id in (" . implode(",", $forum) . ") and ";
+    } elseif (! is_null($forum)){
         settype($forum, "int");
-         $sql .= " forum_id = $forum";
-     }
-
-    if($waiting_only){
-        $sql.=" and status=".PHORUM_STATUS_HOLD;
+        $sql .= "where forum_id = $forum and ";
     } else {
-        $sql="($sql and status=".PHORUM_STATUS_HOLD.") union ($sql and status=".PHORUM_STATUS_HIDDEN.")";
+        $sql .= "where ";
     }
 
+    if($waiting_only){
+        $sql.=" status=".PHORUM_STATUS_HOLD;
+    } else {
+        $sql="($sql status=".PHORUM_STATUS_HOLD.") " .
+             "union ($sql status=".PHORUM_STATUS_HIDDEN.")";
+    }
 
-     $sql .=" order by thread, message_id";
+    $sql .=" order by thread, message_id";
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");

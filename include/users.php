@@ -595,6 +595,11 @@ function phorum_user_access_list( $permission )
         }
     }
 
+    // Admins also have rights for forum_id 0 (announcements)
+    if ($PHORUM["user"]["admin"]) {
+        $forum_list[0] = 0;
+    }
+
     return $forum_list;
 }
 
