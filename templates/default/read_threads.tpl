@@ -14,7 +14,7 @@
 <div class="PhorumReadBodyText">{MESSAGE->body}</div><br />
 {IF ATTACHMENTS}
 {IF MESSAGE->attachments}
-{LANG->Attachments}: 
+{LANG->Attachments}:
 {ASSIGN MESSAGE_ATTACHMENTS MESSAGE->attachments}
 {LOOP MESSAGE_ATTACHMENTS}
 <a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
@@ -32,7 +32,7 @@
 <a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->delete_url2}';">{LANG->DelMessReplies}</a>
 &bull;<a class="PhorumNavLink" href="{MESSAGE->split_url}">{LANG->SplitThread}</a>
 {/IF}
-{if MESSAGE->is_unapproved} 
+{if MESSAGE->is_unapproved}
 &bull;<a class="PhorumNavLink" href="{MESSAGE->approve_url}">{LANG->ApproveMessage}</a>
 {else}
 &bull;<a class="PhorumNavLink" href="{MESSAGE->hide_url}">{LANG->HideMessage}</a>
@@ -43,7 +43,7 @@
 
 <div class="PhorumNavBlock">
 <div style="float: right;"><span class="PhorumNavHeading">{LANG->Navigate}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->prev_url}">{LANG->PreviousMessage}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->next_url}">{LANG->NextMessage}</a></div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->reply_url}">{LANG->Reply}</a>{IF MESSAGES->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGE->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->quote_url}">{LANG->QuoteMessage}</a>&bull;{IF LOGGEDIN}<a class="PhorumNavLink" href="{MESSAGE->follow_url}">{LANG->FollowThread}</a>&bull;{/IF}<a class="PhorumNavLink" href="{MESSAGE->report_url}">{LANG->Report}</a>{if MESSAGE->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGE->edituser_url}">{LANG->EditPost}</a>{/if}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->reply_url}">{LANG->Reply}</a>{IF MESSAGE->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGE->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->quote_url}">{LANG->QuoteMessage}</a>&bull;{IF LOGGEDIN}<a class="PhorumNavLink" href="{MESSAGE->follow_url}">{LANG->FollowThread}</a>&bull;{/IF}<a class="PhorumNavLink" href="{MESSAGE->report_url}">{LANG->Report}</a>{if MESSAGE->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGE->edituser_url}">{LANG->EditPost}</a>{/if}
 </div>
 
 <br />
@@ -68,7 +68,7 @@ $rclass="Alt";
 ?>
 <tr>
     <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {MESSAGES->indent_cnt}px">{marker}
-    <?php 
+    <?php
     if($PHORUM['TMP']['MESSAGES']['message_id'] == $PHORUM['DATA']['MESSAGE']['message_id']) {
       echo "<b>". $PHORUM['TMP']['MESSAGES']['subject']."</b>";
     } else {
