@@ -147,7 +147,7 @@
         "FileQuotaLimits"       =>      "The maximum amount of diskspace you may use for storing files is",
         "FileTypeLimits"        =>      "Only the following file types may be uploaded: " . str_replace(";", ", ", $PHORUM['file_types']) . ".",
         "Filename"              =>      "File Name",
-        "FileOverQuota"         =>      "You file could not be uploaded.  The size of this file would put you over your quota.  You may not store more than {$PHORUM['file_space_quota']}k on the server.",
+        "FileOverQuota"         =>      "Your file could not be uploaded.  The size of this file would put you over your quota.  You may not store more than {$PHORUM['file_space_quota']}k on the server.",
         "Files"                 =>      "My Files",
         "Filesize"              =>      "File Size",
         "FileTooLarge"          =>      "The file you attempted to upload exceeds the maximum upload size.  Please do not upload files larger than {$PHORUM['max_file_size']}k",
