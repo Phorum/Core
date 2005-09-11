@@ -86,6 +86,14 @@ if (count($_POST) > 0) {
             }
         }
 
+        // make it possible to override this flag in the next hook
+        if($PHORUM["DATA"]["LOGGEDIN"]){
+            $is_admin_user = $PHORUM["user"]["admin"];
+        } else {
+            $is_admin_user = 0;
+        }
+
+
         if(empty($error)) {
         	list($_POST,$error)=phorum_hook("check_post", array($_POST,$error));
         }
@@ -151,7 +159,7 @@ if (count($_POST) > 0) {
                     if (empty($_POST["parent_id"]) && $_POST["special"] == "sticky" && phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
                         $message["sort"] = PHORUM_SORT_STICKY;
 
-                    } elseif (empty($_POST["parent_id"]) && $_POST["special"] == "announcement" && $PHORUM["user"]["admin"]) {
+                    } elseif (empty($_POST["parent_id"]) && $_POST["special"] == "announcement" && $is_admin_user) {
                         $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
 
                         if($PHORUM['vroot']) {

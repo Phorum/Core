@@ -9,6 +9,13 @@ if($PHORUM["status"]=="read-only"){
     exit();
 }
 
+// make it possible to override this flag in the next hook
+if($PHORUM["DATA"]["LOGGEDIN"]){
+    $is_admin_user = $PHORUM["user"]["admin"];
+} else {
+    $is_admin_user = 0;
+}
+
 phorum_hook("post_form");
 
 // check that the user can post.
@@ -60,7 +67,7 @@ if( (empty($PHORUM["DATA"]["POST"]["parentid"]) && !phorum_user_access_allowed(P
     if($PHORUM["DATA"]["LOGGEDIN"]){
         $PHORUM["DATA"]["POST"]["username"] = $PHORUM["user"]["username"];
         $PHORUM["DATA"]["POST"]["show_special"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
-        $PHORUM["DATA"]["POST"]["show_announcement"] = $PHORUM["user"]["admin"];
+        $PHORUM["DATA"]["POST"]["show_announcement"] = $is_admin_user;
         if(empty($_POST["preview"])) {
             if(isset($PHORUM['user']['show_signature']) && $PHORUM['user']['show_signature']) $PHORUM['DATA']['POST']['show_signature']=1;
             if(isset($PHORUM['user']['email_notify']) && $PHORUM['user']['email_notify']) $PHORUM['DATA']['POST']['email_reply']=1;

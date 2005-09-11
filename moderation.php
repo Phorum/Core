@@ -46,6 +46,8 @@ $template="message";
 // set all our URL's
 phorum_build_common_urls();
 
+// make it possible to override this var in a hook
+$is_admin_user=$PHORUM["user"]["admin"];
 
 // a hook for doing stuff in moderation, i.e. logging moderator-actions
 phorum_hook("moderation",$mod_step);
@@ -57,7 +59,7 @@ switch ($mod_step) {
 
         // check that they're an admin if they want to delete an announcement
         $message = phorum_db_get_message($msgthd_id);
-        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT && !$PHORUM["user"]["admin"]){
+        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT && !$is_admin_user){
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
             break;
         }
@@ -81,7 +83,7 @@ switch ($mod_step) {
    case PHORUM_DELETE_TREE: // this is a message delete
         // check that they're an admin if they want to delete an announcement
         $message = phorum_db_get_message($msgthd_id);
-        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT && !$PHORUM["user"]["admin"]){
+        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT && !$is_admin_user){
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
             break;
         }
@@ -236,7 +238,7 @@ switch ($mod_step) {
         $PHORUM['DATA']['EDIT']['special']=$PHORUM['DATA']['EDIT']['sort'];
         // only allow announcement if message has no replies
         if($message['thread_count'] < 2) {
-        	$PHORUM['DATA']['EDIT']['show_announcement'] = $PHORUM["user"]["admin"];
+        	$PHORUM['DATA']['EDIT']['show_announcement'] = $is_admin_user;
         } else {
         	$PHORUM['DATA']['EDIT']['show_announcement'] = 0;
         }
@@ -365,7 +367,7 @@ switch ($mod_step) {
         $PHORUM['DATA']["FORM"]["forum_id"] =$PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"] =$msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"] =PHORUM_DO_THREAD_MERGE;
-           
+
         // the moderator selects the target thread to merge to
         if( !$moderator_data["merge_t1"] || $moderator_data["merge_t1"]==$msgthd_id ) {
             $moderator_data["merge_t1"] =$msgthd_id;
@@ -385,7 +387,7 @@ switch ($mod_step) {
         }
         break;
 
-   case PHORUM_DO_THREAD_MERGE: // this is the last step of a thread merge       
+   case PHORUM_DO_THREAD_MERGE: // this is the last step of a thread merge
         if( isset($_POST['thread1']) && $_POST['thread1']) {
             // Commit Thread Merge
             settype($_POST['thread1'], "int");
@@ -393,26 +395,26 @@ switch ($mod_step) {
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeOk'];
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
             $PHORUM["reverse_threading"]=0;
-    
+
             // Get the target thread.
             $target =phorum_db_get_message($_POST['thread1'], "message_id", true);
             if (!$target) die("Can't retrieve target thread " . $_POST['thread1']);
-    
+
             // Get all messages from the thread that we have to merge.
             $merge_messages=phorum_db_get_messages($_POST['thread']);
             unset($merge_messages['users']);
-    
-            // Create new messages in the target thread for 
+
+            // Create new messages in the target thread for
             // all messages that have to be merged.
             $msgid_translation=array();
-            foreach($merge_messages as $msg) 
+            foreach($merge_messages as $msg)
             {
                 $oldid=$msg['message_id'];
-     
+
                 $msg['thread']   = $target['thread'];   // the thread we merge with
                 $msg['forum_id'] = $target['forum_id']; // the forum_id of the new thread
                 $msg['sort']     = $target['sort'];     // the sort type of the new thread
-     
+
                 if($msg['message_id'] == $msg['thread']) {
                     $msg['parent_id']=$target['thread'];
                 } elseif(isset($msgid_translation[$msg['parent_id']])) {
@@ -420,28 +422,28 @@ switch ($mod_step) {
                 } else {
                     $msg['parent_id']=$msg['thread'];
                 }
-     
+
                 unset($msg['message_id']);
                 unset($msg['modifystamp']);
-     
+
                 phorum_db_post_message($msg,true);
-     
+
                 // save the new message-id for later use
                 $msgid_translation[$oldid]=$msg['message_id'];
             }
-     
+
             // deleting messages which are now doubled
             phorum_db_delete_message($_POST['thread'], PHORUM_DELETE_TREE);
-     
+
             // update message count / stats
             phorum_db_update_forum_stats(true);
             // change forum_id for db function
             $PHORUM["forum_id"] =$target['forum_id'];
             // update message count / stats
             phorum_update_thread_info($target['thread']);
-            phorum_db_update_forum_stats(true);       
-        } else {   
-            // Cancel Thread Merge        
+            phorum_db_update_forum_stats(true);
+        } else {
+            // Cancel Thread Merge
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }

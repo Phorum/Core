@@ -63,13 +63,22 @@ $useredit = (($getmsg["user_id"] == $PHORUM["user"]["user_id"])
                   || $getmsg["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())
               && phorum_check_ban_lists($PHORUM["user"]["user_id"],PHORUM_BAD_USERID));
 
-if(!($useredit || $PHORUM["DATA"]["MODERATOR"])){
+if(!($useredit || $PHORUM["DATA"]["MODERATOR"]) || !$PHORUM["DATA"]["LOGGEDIN"] ){
 
     $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
     $PHORUM["DATA"]["EDIT"]["edit_allowed"] = 0;
     $template = "edit";
 
 } else {
+    // make it possible to override this flag in the next hook
+    if($PHORUM["DATA"]["LOGGEDIN"]){
+        $is_admin_user = $PHORUM["user"]["admin"];
+    } else {
+        $is_admin_user = 0;
+    }
+
+    phorum_hook("edit");
+
 
     $PHORUM["DATA"]["EDIT"]["edit_allowed"] = 1;
     switch ($mod_step){

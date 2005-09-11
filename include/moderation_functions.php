@@ -45,7 +45,7 @@ function phorum_handle_edit_message($preview=false) {
             $new_message["forum_id"] = $old_message["forum_id"];
             $new_message["status"] = $old_message['status'];
             $new_message["sort"]   = PHORUM_SORT_STICKY;
-        } elseif(empty($_POST["parent"]) && $_POST["special"] == "announcement" && $PHORUM["user"]["admin"]) {
+        } elseif(empty($_POST["parent"]) && $_POST["special"] == "announcement" && $GLOBALS['is_admin_user']) {
             if($PHORUM['vroot']) {
                 $new_message["forum_id"] = $PHORUM['vroot'];
             } else {
