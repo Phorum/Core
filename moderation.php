@@ -155,9 +155,6 @@ switch ($mod_step) {
         $PHORUM['forum_id']=$_POST['moveto'];
         $check_messages=phorum_db_get_messages($msgthd_id);
 
-        print "Debug-info:";
-        print_var($check_messages);
-
         unset($check_messages['users']);
 
         // ok, we found exactly one message of this thread in the target forum
