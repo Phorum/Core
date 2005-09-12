@@ -10,6 +10,30 @@ if (!$PHORUM["enable_pm"]){
 
 include_once("./include/format_functions.php");
 
+// Check for bans for the PM posting interface.
+if( (isset($_POST['action']) && $_POST['action'] == 'post') ||
+    (isset($PHORUM["args"]["page"]) && $PHORUM["args"]["page"] == 'post') ){
+        
+    include_once("./include/profile_functions.php");
+    $PHORUM['banlists'] = phorum_db_get_banlists();
+
+    $error = '';
+    if (!phorum_check_ban_lists($PHORUM["user"]["username"], PHORUM_BAD_NAMES)) {
+        $error = $PHORUM["DATA"]["LANG"]["ErrBannedName"];
+    } elseif (!phorum_check_ban_lists($PHORUM["user"]["email"], PHORUM_BAD_EMAILS)) {
+        $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
+    } elseif (!phorum_check_ban_lists($PHORUM["user"]["user_id"], PHORUM_BAD_USERID)) {
+        $error = $PHORUM["DATA"]["LANG"]["ErrBannedUser"];
+    } 
+    
+    // Show an error in case we encountered a ban. 
+    if (! empty($error)) {
+        $PHORUM["DATA"]["BLOCK_CONTENT"] = $error;
+        $template = "stdblock";
+        return;
+    }
+}
+
 if(!empty($_POST)){
 
     switch($_POST["action"]){
