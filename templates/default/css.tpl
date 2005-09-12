@@ -525,5 +525,5 @@ input
     blockquote.bbcode strong
     {
         font-style: italic;
-        margin 0 0 3px 0;
+        margin: 0 0 3px 0;
     }
