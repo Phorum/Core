@@ -43,7 +43,6 @@ function phorum_check_ban_lists($value, $type)
                 if (($item["pcre"] && preg_match("/\b$item[string]\b/i", $value)) ||
                         (!$item["pcre"] && stristr($value , $item["string"]) && $type != PHORUM_BAD_USERID) ||
                         ($type == PHORUM_BAD_USERID && $value == $item["string"])) {
-                    print "$value - ".$item["string"];
                     return false;
                 }
             }
