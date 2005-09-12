@@ -2,8 +2,8 @@
 <div class="PhorumUserError">{ERROR}</div>
 {/IF}
 
-<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{PROFILE->block_title}</div>
 <form action="{URL->ACTION}" method="POST">
+<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{PROFILE->block_title}</div>
 {POST_VARS}
 <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
 <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />

@@ -1,5 +1,5 @@
-<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UploadFile}</div>
 <form action="{URL->ACTION}" method="POST" enctype="multipart/form-data">
+<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UploadFile}</div>
 <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
 <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
 {POST_VARS}
