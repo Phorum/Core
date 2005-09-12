@@ -271,6 +271,7 @@ Phorum Status:
         $menu =& new PhorumAdminMenu("Maintenance");
 
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
+        $menu->add("Manage Language Files", "manage_languages", "Allows administrator to create new or updated versions of language files.");
 
         $menu->show();
 
