@@ -22,7 +22,8 @@
 <input type="hidden" name="panel" value="pm" />
 <input type="hidden" name="action" value="post" />
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
-<div class="PhorumStdBlockHeader" style="text-align: left;">
+
+<div class="PhorumStdBlockHeader" style="text-align: left; width:99%">
 <table class="PhorumFormTable" cellspacing="0" border="0">
 <tr>
     <td>{LANG->From}:&nbsp;</td>
@@ -50,10 +51,14 @@
 </table>
 </div>
 
-<div class="PhorumStdBlock">
-<textarea name="message" rows="20" cols="50" style="width: 100%;">{MESSAGE->message}</textarea><br />
-<div style="margin-top: 3px;" align="right"><input name="preview" type="submit" class="PhorumSubmit" value=" {LANG->Preview} " />&nbsp;<input type="submit" class="PhorumSubmit" value=" {LANG->Post} " /></div>
+<div class="PhorumStdBlock" style="width:99%">
 
+<textarea name="message" rows="20" cols="50" style="width: 99%">{MESSAGE->message}</textarea>
+
+<div style="margin-top: 3px;" align="right">
+    <input name="preview" type="submit" class="PhorumSubmit" value=" {LANG->Preview} " />
+    <input type="submit" class="PhorumSubmit" value=" {LANG->Post} " />
 </div>
 
 </div>
+
