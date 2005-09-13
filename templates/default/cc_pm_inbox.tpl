@@ -6,6 +6,7 @@
 <input type="hidden" name="panel" value="pm" />
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
 <input type="hidden" name="action" value="delete" />
+<input type="hidden" name="box" value="inbox" />
 <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>
         <th class="PhorumTableHeader" align="left">&nbsp;</th>

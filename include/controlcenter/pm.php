@@ -51,7 +51,7 @@ if(!empty($_POST)){
                 }
             }
                         
-            if(isset($_POST["from_delete"])){
+            elseif(isset($_POST["from_delete"])){
 
                 foreach($_POST["from_delete"] as $pm_id){
                     $loc_message=phorum_db_get_private_message($pm_id);
@@ -60,6 +60,16 @@ if(!empty($_POST)){
                     }
                 }
                 $PHORUM["args"]["page"]="sent";
+            }
+            
+            
+            // If no checkboxes are checked, then we can't decide on which
+            // page we are by using these. In that case, we use the box
+            // parameter to jump to the right page afterwards.
+            else {
+                if ($_POST["box"] == "sent") {
+                    $PHORUM["args"]["page"]="sent";
+                }
             }
 
             break;
@@ -183,7 +193,7 @@ switch ($PHORUM["args"]["page"]) {
             $msg["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
             $msg["read"]=$message["read_flag"];
             $msg["profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
-            $msg["read_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "pm_id=".$message["private_message_id"]);
+            $msg["read_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "box=inbox", "pm_id=".$message["private_message_id"]);
                     
             $PHORUM["DATA"]["INBOX"][]=$msg;
         }
@@ -208,7 +218,7 @@ switch ($PHORUM["args"]["page"]) {
             $msg["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
             $msg["subject"]=htmlspecialchars($message["subject"]);
             $msg["profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["to_user_id"]);
-            $msg["read_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "pm_id=".$message["private_message_id"]);
+            $msg["read_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "box=sent", "pm_id=".$message["private_message_id"]);
                     
             $PHORUM["DATA"]["SENT"][]=$msg;
         }
@@ -250,11 +260,14 @@ switch ($PHORUM["args"]["page"]) {
         	$msg["from_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
         	$msg["to_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["to_user_id"]);
 
-        	if($message["from_user_id"]==$PHORUM["user"]["user_id"]){
-        		$msg["delete_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "action=from_delete", "pm_id=".$message["private_message_id"]);
-        	} else {
+        	if ($message["from_user_id"] != $PHORUM["user"]["user_id"]) {
         		$msg["reply_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "pm_id=".$message["private_message_id"]);
+        	}
+        	
+        	if($PHORUM["args"]["box"] == 'inbox') {
         		$msg["delete_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "action=to_delete", "pm_id=".$message["private_message_id"]);
+        	} else {
+        		$msg["delete_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "action=from_delete", "pm_id=".$message["private_message_id"]);
         	}
         }
 
