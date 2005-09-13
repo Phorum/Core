@@ -308,6 +308,10 @@
         "PleaseLoginRead"       =>      "Sorry, only registered users may read this forum.",
         "PMRequiredFields"      =>      "Please provide a subject and a message.",
         "PMNotAvailable"        =>      "The private message you requested is not available.",
+        "PMFromMailboxFull"     =>      "You cannot keep a copy of this message.<br/>Your mail storage space is full.",
+        "PMToMailboxFull"       =>      "The message could not be sent.<br/>The mail storage space for the recipient is full.",
+        "PMSpaceLeft"           =>      "You can store %pm_space_left% more private message(s).",
+        "PMSpaceFull"           =>      "The storage space for your private messages is full.", 
         "Post"                  =>      "Post",
         "Posted"                =>      "Posted",
         "Postedby"              =>      "Posted by",   // as in: Posted by user on 01-01-01 01:01pm

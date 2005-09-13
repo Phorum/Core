@@ -3113,27 +3113,47 @@ function phorum_db_get_private_message($pm_id)
 
 /**
  * This function retrieves the number of private messages a user has recieved, and returns both the total and the number unread.
+ * @param user_id - the user_id for which to retrieve the message count
+ * @param type - the type of messages to count. Options are: "to", "from" and "all"
  */
 
-function phorum_db_get_private_message_count($user_id)
+function phorum_db_get_private_message_count($user_id, $type='to')
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
+    
+    // Check and handle the type parameter.
+    $types = array($type);
+    switch ($type) {
+        case 'all':
+            $types = array('to', 'from');
+            break;
+        case 'to':
+        case 'from':
+           break;
+        default:
+            die("Illegal type parameter '$type'; options are \"to\", \"from\" and \"all\"");
+    }
+    
     $conn = phorum_db_mysql_connect();
 
     settype($user_id, "int");
 
-    $retarr=array();
-
-    $sql="select count(*) as total, (count(*) - sum(read_flag)) as new from {$PHORUM['private_message_table']} where to_user_id=$user_id and to_del_flag=0";
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    if (mysql_num_rows($res) > 0){
-        $res = mysql_fetch_assoc($res);
-        $retarr["total"] = $res["total"];
-        $retarr["new"] = ($res["new"] >= 1) ? $res["new"] : 0;
+    // For each type, count the total number of messages. For 'to' also
+    // count the number of new messages.
+    $retarr=array("total" => 0, "new" => 0);
+    foreach ($types as $type)
+    {
+        $newcount = ($type == 'to' ? '(count(*) - sum(read_flag)) as new ' : '0 as new');
+        $sql="select count(*) as total, $newcount from {$PHORUM['private_message_table']} where ${type}_user_id=$user_id and ${type}_del_flag=0";
+        $res = mysql_query($sql, $conn);
+    
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
+        if (mysql_num_rows($res) > 0){
+            $res = mysql_fetch_assoc($res);
+            $retarr["total"] += $res["total"];
+            $retarr["new"] += ($res["new"] >= 1) ? $res["new"] : 0;
+        }
     }
 
     return $retarr;
@@ -3171,7 +3191,6 @@ function phorum_db_put_private_messages($to_username, $to_user_id, $subject, $me
 
     return $res;
 }
-
 
 /**
  * This function updates the flags in a pm

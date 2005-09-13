@@ -137,14 +137,6 @@ $row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_o
 $row=$frm->addrow( "Folder/Forum display style", $frm->select_tag( "use_new_folder_style", array( "Classic", "New" ), $PHORUM["use_new_folder_style"] ) );
 $frm->addhelp($row, "Folder/Forum display style", "Since version 3, Phorum has included folders.  Until version 5.1, forums inside folders did not show until you clicked on the folder.  In 5.1, the list of forums in a folder can now be shown under that folder in the forum list.  This allows admins to organize a large list of forums all on one page." );
 
-$row=$frm->addrow( "Enable Private Messaging", $frm->select_tag( "enable_pm", array( "No", "Yes" ), $PHORUM["enable_pm"] ) );
-
-$row=$frm->addrow( "Count New Private Messages", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
-$frm->addhelp($row, "Count New Private Messages", "By setting this to Yes, Phorum will check if a user has new private messages, and display an indicator. On a Phorum with a lot of users and private messages, this may hurt performance. This option has no effect if Private Messaging is disabled." );
-
-$row=$frm->addrow( "Enable Drop-down User List", $frm->select_tag( "enable_dropdown_userlist", array( "No", "Yes" ), $PHORUM["enable_dropdown_userlist"] ) );
-$frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phorum will display a drop-down list of users instead of an empty text box on pages where you can select a user. Two examples of such pages are when sending a private message, and when adding users to a group in the group moderation page. This option should be disabled if you have a large number of users, as a list of thousands of users will slow performance dramatically." );
-
 $row=$frm->addrow( "Enable Moderator Notifications", $frm->select_tag( "enable_moderator_notifications", array( "No", "Yes" ), $PHORUM["enable_moderator_notifications"] ) );
 $frm->addhelp($row, "Enable Moderator Notifications", "By setting this to Yes, Phorum will display notice to the various kinds of moderators when they have a new item that requires their attention. For example, message moderators will see a notice whenever there is an unapproved message." );
 
@@ -233,6 +225,17 @@ $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Space Quota (KB)", $frm->text_box( "f
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Allow Off Site Links", $frm->select_tag( "file_offsite", array( "No", "Yes" ), $PHORUM["file_offsite"] ) );
 $frm->addhelp($row, "&nbsp;&nbsp;&nbsp;Allow Off Site Links", "You may not want to allow other web sites to link to files that users upload to your forums.  If not, set this to No.  If you want to use links on other parts of your web site or only specific web sites, you will need to use your web server's security features to accomplish this.  For Apache users, you can reference <i>Prevent \"Image Theft\"</i> at http://httpd.apache.org/docs/env.html#examples." );
+
+$row=$frm->addrow( "Private Messaging:", $frm->select_tag( "enable_pm", array( "Off", "On" ), $PHORUM["enable_pm"] ) );
+
+$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Count New Private Messages", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
+$frm->addhelp($row, "Count New Private Messages", "By setting this to Yes, Phorum will check if a user has new private messages, and display an indicator. On a Phorum with a lot of users and private messages, this may hurt performance. This option has no effect if Private Messaging is disabled." );
+
+$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Enable Drop-down User List", $frm->select_tag( "enable_dropdown_userlist", array( "No", "Yes" ), $PHORUM["enable_dropdown_userlist"] ) );
+$frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phorum will display a drop-down list of users instead of an empty text box on pages where you can select a user. Two examples of such pages are when sending a private message, and when adding users to a group in the group moderation page. This option should be disabled if you have a large number of users, as a list of thousands of users will slow performance dramatically." );
+
+$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max number of stored messages", $frm->text_box( "max_pm_messagecount", $PHORUM["max_pm_messagecount"], 30 ) );
+$frm->addhelp($row, "Max number of stored messages", "This is the maximum number of private messages that a user may store on the server. The number of private messages is the total of all messages in the inbox and outbox together. Setting this value to zero will allow for unlimited messages.");
 
 $frm->addbreak( "General Defaults" );
 

@@ -87,11 +87,34 @@ if(!empty($_POST)){
                     } else {                    
 
                         if(empty($_POST["keep"])) $_POST["keep"]=0;
-    
-                        if(!phorum_db_put_private_messages($_POST["to"], $to_user_id, $_POST["subject"], $_POST["message"], $_POST["keep"])){
-                            $error=$PHORUM["DATA"]["LANG"]["PMNotSent"];
-                        } else {
-                            phorum_hook("pm_sent","");
+
+                        // Check if sender and recipient have not yet reached the 
+                        // maximum number of messages that may be stored on the server.
+                        if (!$PHORUM['user']['admin'] && $PHORUM['max_pm_messagecount']) 
+                        {
+                            $checkusers = array(phorum_db_user_get($to_user_id,false));
+                            if ($_POST['keep']) $checkusers[] = $PHORUM['user'];
+                            foreach ($checkusers as $user)
+                            {   
+                                if ($user['admin']) continue; // No limits for admins
+                                $current_count = phorum_db_get_private_message_count($user['user_id'], 'all');
+                                if ($current_count['total'] >= $PHORUM['max_pm_messagecount']) {
+                                    if ($user['user_id'] == $to_user_id) {
+                                        $error=$PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
+                                    } else {
+                                        $error=$PHORUM["DATA"]["LANG"]["PMFromMailboxFull"];
+                                    }
+                                }  
+                            }
+                        }
+                        
+                        // Send the private message if no errors occurred.
+                        if (empty($error)) {
+                            if(!phorum_db_put_private_messages($_POST["to"], $to_user_id, $_POST["subject"], $_POST["message"], $_POST["keep"])){
+                                $error=$PHORUM["DATA"]["LANG"]["PMNotSent"];
+                            } else {
+                                phorum_hook("pm_sent","");
+                            }
                         }
                     }
                     
@@ -334,7 +357,6 @@ switch ($PHORUM["args"]["page"]) {
             }
 
         }
-    
                 
         $PHORUM["DATA"]["ERROR"] = (empty($error)) ? "" : $error;
     
@@ -345,6 +367,21 @@ switch ($PHORUM["args"]["page"]) {
     
         $template = "cc_pm_post";
         break;
+}
+    
+// Make messagecount information available in the templates.
+$PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = 0;
+if (! $PHORUM['user']['admin']) {
+    $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = $PHORUM['SETTINGS']['max_pm_messagecount'];
+    if ($PHORUM['SETTINGS']['max_pm_messagecount']) 
+    {
+        $current_count = phorum_db_get_private_message_count($PHORUM['user']['user_id'], 'all');
+        $PHORUM['DATA']['CURRENT_PM_MESSAGECOUNT'] = $current_count['total'];
+        $space_left = $PHORUM['SETTINGS']['max_pm_messagecount'] - $current_count['total'];
+        if ($space_left < 0) $space_left = 0;
+        $PHORUM['DATA']['PM_SPACE_LEFT'] = $space_left;
+        $PHORUM['DATA']['LANG']['PMSpaceLeft'] = str_replace('%pm_space_left%', $space_left, $PHORUM['DATA']['LANG']['PMSpaceLeft']);
+    }
 }
 
 ?>
