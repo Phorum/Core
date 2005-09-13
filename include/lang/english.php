@@ -6,8 +6,8 @@
 
     // check the php-docs for the syntax of these entries (http://www.php.net/manual/en/function.strftime.php)
     // One tip, don't use T for showing the time zone as users can change their time zone.
-    $PHORUM['long_date']="%B %e, %Y %I:%M%p";
-    $PHORUM['short_date']="%D %I:%M%p";
+    $PHORUM['long_date']="%B %d, %Y %I:%M%p";
+    $PHORUM['short_date']="%m/%d/%Y %I:%M%p";
 
     // locale setting for localized times/dates
     // see that page: http://www.w3.org/WAI/ER/IG/ert/iso639.htm
