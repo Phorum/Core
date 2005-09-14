@@ -146,12 +146,10 @@ Why do you not use the 'global' keyword in your functions?
 
 
 
-What are Sticky and Announcemnt posts?
+What are Sticky and Announcement posts?
 -----------------------------------------------------------------------------
 
     Sticky posts stay at the top of the forum they are posted in and do not
     get bumped down as new topics are posted.
 
-    Announcement posts appear at the top of all forums in the system.  They
-    are created as closed posts as they are not intended to be replied to.
-    Opening these for replies could have unforseen problems.
+    Announcement posts appear at the top of all forums in the system.
