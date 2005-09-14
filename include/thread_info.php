@@ -17,6 +17,8 @@ function phorum_remove_hidden($val)
 
 function phorum_update_thread_info($thread)
 {
+    $PHORUM = $GLOBALS["PHORUM"];
+    
     $messages=phorum_db_get_messages($thread);
     //these are not needed here
     unset($messages['users']);
@@ -32,7 +34,12 @@ function phorum_update_thread_info($thread)
     
         $parent_message=$filtered_messages[$thread];
     
-        $recent_message=end($filtered_messages);
+        if ($PHORUM["reverse_threading"]) {
+            reset($filtered_messages);
+            $recent_message=current($filtered_messages);
+        } else {
+            $recent_message=end($filtered_messages);
+        }
         
         // prep the message to save
         $message["thread_count"]=$thread_count;
