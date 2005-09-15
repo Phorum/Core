@@ -354,32 +354,25 @@ switch ($mod_step) {
         break;
 
    case PHORUM_MERGE_THREAD: // this is the first step of a thread merge
-        if( $PHORUM['DATA']['USERINFO']['moderator_data'] ) {
-            $moderator_data =unserialize($PHORUM['DATA']['USERINFO']['moderator_data']);
-        } else {
-            $moderator_data =array();
-        }
         $template="merge_form";
-        $PHORUM['DATA']['URL']["ACTION"] =phorum_get_url(PHORUM_MODERATION_ACTION_URL);
-        $PHORUM['DATA']["FORM"]["forum_id"] =$PHORUM["forum_id"];
-        $PHORUM['DATA']["FORM"]["thread_id"] =$msgthd_id;
-        $PHORUM['DATA']["FORM"]["mod_step"] =PHORUM_DO_THREAD_MERGE;
+        $PHORUM['DATA']['URL']["ACTION"]     = phorum_get_url(PHORUM_MODERATION_ACTION_URL);
+        $PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
+        $PHORUM['DATA']["FORM"]["thread_id"] = $msgthd_id;
+        $PHORUM['DATA']["FORM"]["mod_step"]  = PHORUM_DO_THREAD_MERGE;
 
         // the moderator selects the target thread to merge to
-        if( !$moderator_data["merge_t1"] || $moderator_data["merge_t1"]==$msgthd_id ) {
-            $moderator_data["merge_t1"] =$msgthd_id;
-            phorum_user_save_simple(array(
-                "user_id" => $PHORUM['user']['user_id'],
-                "moderator_data" => serialize($moderator_data)
-            ));
+        $merge_t1 = phorum_moderator_data_get('merge_t1');
+        if( !$merge_t1 || $merge_t1==$msgthd_id ) {
+            phorum_moderator_data_put('merge_t1', $msgthd_id);
             $PHORUM['DATA']["FORM"]["merge_none"] =true;
         }
         // the moderator selects the source thread to merge from
         else {
-            $PHORUM['DATA']["FORM"]["merge_t1"] =$moderator_data["merge_t1"];
-            $message =phorum_db_get_message($moderator_data["merge_t1"], "message_id", true);
+            print "MERGE $merge_t1 with $msgthd_id<br>";
+            $PHORUM['DATA']["FORM"]["merge_t1"] =$merge_t1;
+            $message = phorum_db_get_message($merge_t1, "message_id", true);
             $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"]);
-            $message =phorum_db_get_message($msgthd_id);
+            $message = phorum_db_get_message($msgthd_id);
             $PHORUM['DATA']["FORM"]["thread_subject"] =htmlentities($message["subject"]);
         }
         break;
@@ -389,9 +382,9 @@ switch ($mod_step) {
             // Commit Thread Merge
             settype($_POST['thread1'], "int");
             settype($_POST['thread'], "int"); // Thread 2
-            $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeOk'];
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
-            $PHORUM["reverse_threading"]=0;
+            $PHORUM['DATA']['MESSAGE'] = $PHORUM["DATA"]['LANG']['MsgMergeOk'];
+            $PHORUM['DATA']["URL"]["REDIRECT"] = $PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM["reverse_threading"] = 0;
 
             // Get the target thread.
             $target =phorum_db_get_message($_POST['thread1'], "message_id", true);
@@ -434,7 +427,7 @@ switch ($mod_step) {
 
             // update message count / stats
             phorum_db_update_forum_stats(true);
-            // change forum_id for db function
+            // change forum_id for the following calls to update the right forum
             $PHORUM["forum_id"] =$target['forum_id'];
             // update message count / stats
             phorum_update_thread_info($target['thread']);
@@ -444,18 +437,10 @@ switch ($mod_step) {
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
+        
         // unset temporary moderator_data
-        //
-        $user_data =phorum_user_get($PHORUM['DATA']['USERINFO']['user_id'],false);
-        $moderator_data =unserialize($user_data["moderator_data"]);
-        $user_data_simple["user_id"] =$user_data["user_id"];
-        if( $moderator_data["merge_t1"] && count($moderator_data)==1 ) {
-            $user_data_simple["moderator_data"] =""; // unset the whole moderator_data
-        } else {
-            unset($moderator_data["merge_t1"]);
-            $user_data_simple["moderator_data"] =serialize($moderator_data);
-        }
-        phorum_user_save_simple($user_data_simple);
+        phorum_moderator_data_remove('merge_t1');
+       
         break;
 
    case PHORUM_SPLIT_THREAD: // this is the first step of a thread split

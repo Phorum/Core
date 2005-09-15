@@ -207,4 +207,59 @@ function phorum_handle_edit_message($preview=false) {
     }
 }
 
+/* A function to get moderator_data from the user's profile. 
+ * Without an argument, all moderator_data is returned. With a key as
+ * argument, the data for that key is returned or NULL in case the
+ * key does not exist.
+ */
+function phorum_moderator_data_get($key = null)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+    
+    $user_data =phorum_user_get($PHORUM['DATA']['USERINFO']['user_id'], false);
+    if( $user_data['moderator_data'] ) {
+        $moderator_data =unserialize($user_data['moderator_data']);
+    } else {
+        $moderator_data =array();
+    }
+    if (is_null($key)) {
+        return $moderator_data;
+    } else {
+        return isset($moderator_data[$key]) ? $moderator_data[$key] : NULL;
+    }
+}
+
+/* A function to save moderator_data in the user's profile. */
+function phorum_moderator_data_save($moderator_data)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+        
+    // Clear value in case no data is left in $moderator_data.
+    $value = count($moderator_data) ? serialize($moderator_data) : '';
+    
+    phorum_user_save_simple(array(
+        "user_id" => $PHORUM['user']['user_id'],
+        "moderator_data" => $value,
+    ));
+}
+
+/* A function to place a key/value pair in the moderator_data. */
+function phorum_moderator_data_put($key, $val)
+{   
+    $moderator_data = phorum_moderator_data_get();
+    $moderator_data[$key] = $val;
+    phorum_moderator_data_save($moderator_data);
+}
+
+/* A function to remove a key/value pair from the moderator_data. */
+function phorum_moderator_data_remove($key)
+{
+    $moderator_data = phorum_moderator_data_get();
+    unset($moderator_data[$key]);
+    phorum_moderator_data_save($moderator_data);
+}
+
+
+
+
 ?>
