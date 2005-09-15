@@ -2042,6 +2042,8 @@ function phorum_db_user_add($userdata){
                 if(is_array($val)) { /* arrays need to be serialized */
                     $val = 'P_SER:'.serialize($val);
                     /* P_SER: (PHORUM_SERIALIZED is our marker telling this Field is serialized */
+                } else { /* other vars need to be escaped */
+                    $val = mysql_escape_string($val);
                 }
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
                 $res = mysql_query($sql, $conn);
@@ -2134,6 +2136,8 @@ function phorum_db_user_save($userdata){
                 if(is_array($val)) { /* arrays need to be serialized */
                     $val = 'P_SER:'.serialize($val);
                     /* P_SER: (PHORUM_SERIALIZED is our marker telling this Field is serialized */
+                } else { /* other vars need to be escaped */
+                    $val = mysql_escape_string($val);
                 }
 
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
