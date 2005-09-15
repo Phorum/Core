@@ -3294,23 +3294,6 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
 }
 
 /**
- * merge thread
- */
-function phorum_db_merge_thread($thread_id1, $forum_id1, $thread_id2)
-{
-    settype($thread_id1, "int");
-    settype($forum_id1, "int");
-    settype($thread_id2, "int");
-
-    if($thread_id1 > 0 && $forum_id1 > 0 && $thread_id2 > 0){
-        $queries =array();
-        $queries[0]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$thread_id1', forum_id='$forum_id1' WHERE thread='$thread_id2'";
-        $queries[1]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET parent_id='$thread_id1', forum_id='$forum_id1' WHERE message_id='$thread_id2'";
-        phorum_db_run_queries($queries);
-    }
-}
-
-/**
  * split thread
  */
 function phorum_db_split_thread($message, $forum_id)
