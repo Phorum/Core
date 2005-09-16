@@ -34,7 +34,7 @@ if( (isset($_POST['action']) && $_POST['action'] == 'post') ||
     }
 }
 
-if(!empty($_POST)){
+if(isset($_POST["action"])) {
 
     switch($_POST["action"]){
 
@@ -43,10 +43,10 @@ if(!empty($_POST)){
             if(isset($_POST["to_delete"])){
 
                 foreach($_POST["to_delete"] as $pm_id){
-                    $loc_message=phorum_db_get_private_message($pm_id);
+                    $loc_message=phorum_db_pm_get($pm_id);
                     // check that its for the right user
                     if($loc_message['to_user_id'] == $PHORUM["user"]["user_id"]) {                 
-                        phorum_db_update_private_message($pm_id, "to_del_flag", 1);
+                        phorum_db_pm_delete(PHORUM_PM_INBOX, $pm_id);
                     }
                 }
             }
@@ -54,9 +54,9 @@ if(!empty($_POST)){
             elseif(isset($_POST["from_delete"])){
 
                 foreach($_POST["from_delete"] as $pm_id){
-                    $loc_message=phorum_db_get_private_message($pm_id);
+                    $loc_message=phorum_db_pm_get($pm_id);
                     if($loc_message['from_user_id'] == $PHORUM["user"]["user_id"]) {
-                        phorum_db_update_private_message($pm_id, "from_del_flag", 1);
+                         phorum_db_pm_delete(PHORUM_PM_OUTBOX, $pm_id);
                     }
                 }
                 $PHORUM["args"]["page"]="sent";
@@ -107,7 +107,7 @@ if(!empty($_POST)){
                             foreach ($checkusers as $user)
                             {   
                                 if ($user['admin']) continue; // No limits for admins
-                                $current_count = phorum_db_get_private_message_count($user['user_id'], 'all');
+                                $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS);
                                 if ($current_count['total'] >= $PHORUM['max_pm_messagecount']) {
                                     if ($user['user_id'] == $to_user_id) {
                                         $error=$PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
@@ -120,7 +120,7 @@ if(!empty($_POST)){
                         
                         // Send the private message if no errors occurred.
                         if (empty($error)) {
-                            if(!phorum_db_put_private_messages($_POST["to"], $to_user_id, $_POST["subject"], $_POST["message"], $_POST["keep"])){
+                            if(!phorum_db_pm_send($_POST["subject"], $_POST["message"], $to_user_id, NULL, $_POST["keep"])){
                                 $error=$PHORUM["DATA"]["LANG"]["PMNotSent"];
                             } else {
                                 phorum_hook("pm_sent","");
@@ -146,7 +146,7 @@ if(!empty($_POST)){
 if(!empty($PHORUM["args"]["action"]) && isset($PHORUM["args"]["pm_id"]) && !empty($PHORUM["args"]["pm_id"])){
 
     $pm_id = $PHORUM["args"]["pm_id"];
-    $loc_message=phorum_db_get_private_message($pm_id);
+    $loc_message=phorum_db_pm_get($pm_id);
     if(empty($loc_message)){
         $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMNotAvailable"];
         $template = "stdblock";
@@ -157,8 +157,8 @@ if(!empty($PHORUM["args"]["action"]) && isset($PHORUM["args"]["pm_id"]) && !empt
 
         case "to_delete":
             // check that its for the right user
-            if($loc_message['to_user_id'] == $PHORUM["user"]["user_id"]) {         
-              phorum_db_update_private_message($pm_id, "to_del_flag", 1);
+            if($loc_message['to_user_id'] == $PHORUM["user"]["user_id"]) { 
+              phorum_db_pm_delete(PHORUM_PM_INBOX, $pm_id);
             }
             $PHORUM["args"]["page"]="inbox";
             break;
@@ -166,7 +166,7 @@ if(!empty($PHORUM["args"]["action"]) && isset($PHORUM["args"]["pm_id"]) && !empt
         case "from_delete":
             // check that its for the right user                    
             if($loc_message['from_user_id'] == $PHORUM["user"]["user_id"]) {        
-                phorum_db_update_private_message($pm_id, "from_del_flag", 1);
+                phorum_db_pm_delete(PHORUM_PM_OUTBOX, $pm_id);
             }
             $PHORUM["args"]["page"]="sent";
             break;
@@ -182,7 +182,7 @@ switch ($PHORUM["args"]["page"]) {
     case "inbox":
         // show message lists of incoming eamils
     
-        $to_messages=phorum_db_get_private_messages($PHORUM["user"]["user_id"], "to");
+        $to_messages=phorum_db_pm_list(PHORUM_PM_INBOX);
     
         foreach($to_messages as $message){
     
@@ -207,7 +207,7 @@ switch ($PHORUM["args"]["page"]) {
     case "sent":
         // show message lists of outgoing eamils
         
-        $from_messages=phorum_db_get_private_messages($PHORUM["user"]["user_id"], "from");
+        $from_messages=phorum_db_pm_list(PHORUM_PM_OUTBOX);
 
         foreach($from_messages as $message){
     
@@ -233,14 +233,14 @@ switch ($PHORUM["args"]["page"]) {
 
         // show a single message
     
-        $message=phorum_db_get_private_message($PHORUM["args"]["pm_id"]);
+        $message=phorum_db_pm_get($PHORUM["args"]["pm_id"]);
         $msg=array();
         
         // check that its for the right user
         if($message['to_user_id'] == $PHORUM["user"]["user_id"] || $message['from_user_id'] == $PHORUM["user"]["user_id"]) { 
 
           if($message['to_user_id'] == $PHORUM["user"]["user_id"]) { // only read if not in sent
-        	  phorum_db_update_private_message($PHORUM["args"]["pm_id"], "read_flag", 1);
+        	  phorum_db_pm_setflag($PHORUM["args"]["pm_id"], PHORUM_PM_READ_FLAG, true);
           }
 
             // have to make some tricks to use the format function
@@ -277,13 +277,11 @@ switch ($PHORUM["args"]["page"]) {
         break;
         
     case "post":
-
-        // post a private message
     
+        // Reply to a private message.
         if(isset($PHORUM["args"]["pm_id"])){
     
-            // reply
-            $message=phorum_db_get_private_message($PHORUM["args"]["pm_id"]);
+            $message=phorum_db_pm_get($PHORUM["args"]["pm_id"]);
         
             $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
             if($message["to_user_id"] == $PHORUM["user"]["user_id"]) {            
@@ -303,10 +301,9 @@ switch ($PHORUM["args"]["page"]) {
               $msg["message"] = "{$msg['to']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> {$msg['message']}\n\n\n";
             }
     
-
+        // Reply privately to a forum post.
         } elseif (isset($PHORUM["args"]["message_id"])) {
 
-            // reply privately to message board post
             $message = phorum_db_get_message($PHORUM["args"]["message_id"]);
  
             if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"])) {
@@ -314,9 +311,15 @@ switch ($PHORUM["args"]["page"]) {
                 // TODO: would be nicer to get the url to the post within the thread 
                 $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"]);
 
+                // Find the real username, because some mods rewrite the
+                // username in the message table. There will be a better solution
+                // for selecting recipients, but for now this will fix some
+                // of the problems.
+                $user = phorum_db_user_get($message["user_id"]);
+                
                 $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
                 $msg["message_id"]=0;
-                $msg["to"]=htmlspecialchars($message["author"]);
+                $msg["to"]=htmlspecialchars($user["username"]);
                 $msg["to_id"]=$message["user_id"];
                 $msg["keep"] = "0";
                 $msg["subject"]=htmlspecialchars($message["subject"]);
@@ -326,9 +329,8 @@ switch ($PHORUM["args"]["page"]) {
                 $msg["message"] = "{$PHORUM['DATA']['LANG']['InReplyTo']} {$origurl}\n{$msg['to']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> {$msg['message']}\n\n\n";
             }
 
+        // Write a new private message.
         } else {
-    
-            // new message or error
     
             $msg["message_id"]=0;
             $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
@@ -345,12 +347,24 @@ switch ($PHORUM["args"]["page"]) {
             list($msg_preview) = phorum_format_messages(array($msg));
             $msg['pr_subject']=$msg_preview['subject'];
             $msg["pr_message"]=$msg_preview['body'];
+            // PMTODO Quick hack to prevent undefined value warning.
+            $msg["from_profile_url"]='#';
+            $msg["to_profile_url"]='#';
             
             // reset them htmlencoded
             $msg["subject"] = htmlspecialchars($msg["subject"]);
             $msg["message"] = htmlspecialchars($msg["message"]);
             
-    
+            // PMTODO: This is a quick hack to send PM by user_id.
+            // Simply translate the user_id to the username.     
+            // This will probably all be changed in the new PM system.
+            if(!empty($PHORUM['args']['to_id'])) {
+                $user = phorum_db_user_get($PHORUM['args']["to_id"], false);
+                if ($user) {
+                    $_POST['to'] = $user['username'];
+                }
+            }
+                
             if(!empty($_POST["to"])){
                 $msg["to"] = htmlspecialchars($_POST["to"]);
             } elseif(!empty($PHORUM["args"]["to"])){
@@ -388,7 +402,7 @@ if (! $PHORUM['user']['admin']) {
     $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = $PHORUM['SETTINGS']['max_pm_messagecount'];
     if ($PHORUM['SETTINGS']['max_pm_messagecount']) 
     {
-        $current_count = phorum_db_get_private_message_count($PHORUM['user']['user_id'], 'all');
+        $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS);
         $PHORUM['DATA']['CURRENT_PM_MESSAGECOUNT'] = $current_count['total'];
         $space_left = $PHORUM['SETTINGS']['max_pm_messagecount'] - $current_count['total'];
         if ($space_left < 0) $space_left = 0;

@@ -175,10 +175,10 @@ function phorum_user_get( $user_id, $detailed = true )
                         }
                     }
                 }
-                // get the users private message counts
+                // get the users private message counts for the inbox
                 $user["private_messages"] = array("new" => 0, "total" => 0);
                 if ( $detailed && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
-                    $user["private_messages"] = phorum_db_get_private_message_count( $uid );
+                    $user["private_messages"] = phorum_db_pm_messagecount( PHORUM_PM_INBOX, $uid );
                 }
 
                 // store users in cache if enabled

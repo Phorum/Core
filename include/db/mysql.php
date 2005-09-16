@@ -34,8 +34,12 @@ $PHORUM["groups_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_groups";
 $PHORUM["forum_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_forum_group_xref";
 $PHORUM["user_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_group_xref";
 $PHORUM['user_custom_fields_table'] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_custom_fields";
-$PHORUM["private_message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
 $PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
+// PMTODO phase out private_message_table
+$PHORUM["private_message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
+$PHORUM["pm_messages_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_messages";
+$PHORUM["pm_folders_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_folders";
+$PHORUM["pm_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_xref";
 /*
 * fields which are always strings, even if they contain only numbers
 * used in post-message and update-message, otherwise strange things happen
@@ -2042,8 +2046,6 @@ function phorum_db_user_add($userdata){
                 if(is_array($val)) { /* arrays need to be serialized */
                     $val = 'P_SER:'.serialize($val);
                     /* P_SER: (PHORUM_SERIALIZED is our marker telling this Field is serialized */
-                } else { /* other vars need to be escaped */
-                    $val = mysql_escape_string($val);
                 }
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
                 $res = mysql_query($sql, $conn);
@@ -2136,8 +2138,6 @@ function phorum_db_user_save($userdata){
                 if(is_array($val)) { /* arrays need to be serialized */
                     $val = 'P_SER:'.serialize($val);
                     /* P_SER: (PHORUM_SERIALIZED is our marker telling this Field is serialized */
-                } else { /* other vars need to be escaped */
-                    $val = mysql_escape_string($val);
                 }
 
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
@@ -2378,11 +2378,13 @@ function phorum_db_user_delete($user_id) {
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // incoming pm's
+    // PMTODO call correct cleanup function
     $sql = "delete from {$PHORUM['private_message_table']} where to_user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // set outgoing pm's to delete
+    // PMTODO call correct cleanup function
     $sql = "update {$PHORUM['private_message_table']} set from_del_flag = 1 where from_user_id=$user_id and from_del_flag=0";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -3051,185 +3053,420 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
 
 
 /**
- * This function retrives private messages
+ * This function lists all private messages in a folder.
+ * @param folder - The folder to use. Either a special folder 
+ *                 (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX) or the 
+ *                 id of a user's custom folder.
+ * @param user_id - The user to retrieve messages for or NULL
+ *                 to use the current user (default).
  */
 
-function phorum_db_get_private_messages($user_id, $type)
+function phorum_db_pm_list($folder, $user_id = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
+    
     $conn = phorum_db_mysql_connect();
 
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, "int");
-
-    if($type!="from" && $type!="to"){
-        trigger_error("\$type must be either `to` or `from` in function phorum_db_get_private_messages()", E_USER_WARNING);
-        return 0;
+    
+    $folder_sql = "user_id = $user_id AND ";
+    if (is_integer($folder)) {
+        $folder_sql .= "pm_folder_id=$folder";
+    } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
+        $folder_sql .= "pm_folder_id=0 AND special_folder='$folder'";
+    } else {
+        die ("Illegal folder '$folder' requested for user id '$user_id'");
     }
-
-    $field1=$type."_user_id";
-    $field2=$type."_del_flag";
-
-    $retarr=array();
-
-    $sql="select * from {$PHORUM['private_message_table']} where $field1=$user_id and $field2=0 order by $field1 desc, $field2 desc, datestamp desc";
+    
+    $sql = "SELECT * " .
+           "FROM {$PHORUM['pm_messages_table']} as m, {$PHORUM['pm_xref_table']} as x " .
+           "WHERE $folder_sql " .
+           "AND x.pm_message_id = m.pm_message_id";
     $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");    
+    
+    $retarray = array();
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
+          
+            // Add the recipient information unserialized to the message..
+            $meta = unserialize($row['meta']);
+            $row['recipients'] = $meta['recipients'];
+            
+            // PMTODO backward compatibility with old interface for
+            // transitional phase. Clean this up when new PM interface
+            // is completed.
+            list ($rcpt_id, $rcpt_data) = each($row['recipients']);
+            reset ($row['rcpts']);
+            $row['private_message_id'] = $row['pm_message_id'];
+            $row['to_user_id'] = $rcpt_data['user_id'];
+            $row['to_username'] = $rcpt_data['username'];
+            if ($folder == PHORUM_PM_INBOX) {
+                $row['read_flag'] = $row['read_flag'];
+            } else {
+                $row['read_flag'] = $rcpt_data['read_flag'];
+            }
+            
             $retarr[]=$row;
         }
     }
 
-    return $retarr;
+    return $retarr;    
 }
 
-
 /**
- * This function retrives private messages
+ * This function retrieves a private message from the database.
+ * @param pm_id - The id for the private message to retrieve.
+ * @param user_id - The user to retrieve messages for or NULL
+ *                 to use the current user (default).
  */
 
-function phorum_db_get_private_message($pm_id)
+function phorum_db_pm_get($pm_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysql_connect();
 
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
     settype($pm_id, "int");
 
-    $retarr=array();
-
-    $sql="select * from {$PHORUM['private_message_table']} where private_message_id=$pm_id";
-    if(!$PHORUM["user"]["admin"]) $sql.=" and (to_user_id={$PHORUM['user']['user_id']} or from_user_id={$PHORUM['user']['user_id']})";
+    $sql = "SELECT * " .
+           "FROM {$PHORUM['pm_messages_table']} as m, {$PHORUM['pm_xref_table']} as x " .
+           "WHERE x.pm_message_id = $pm_id AND x.user_id = $user_id " .
+           "AND x.pm_message_id = m.pm_message_id";
 
     $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");    
 
     if (mysql_num_rows($res) > 0){
-        $retarr = mysql_fetch_assoc($res);
+        $row = mysql_fetch_assoc($res);
+        
+        // Add the recipient information unserialized to the message..
+        $meta = unserialize($row['meta']);
+        $row['rcpts'] = $meta['recipients'];
+                  
+        // PMTODO backward compatibility with old interface for
+        // transitional phase. Clean this up when new PM interface
+        // is completed.
+        list ($rcpt_id, $rcpt_data) = each($row['rcpts']);
+        reset ($row['rcpts']);
+        $row['private_message_id'] = $row['pm_message_id'];
+        $row['to_user_id'] = $rcpt_data['user_id'];
+        $row['to_username'] = $rcpt_data['username'];
+        $row['read_flag'] = $rcpt_data['read_flag'];
+        
+        return $row;
+    } else {
+        return NULL;
     }
-
-    return $retarr;
 }
 
 /**
- * This function retrieves the number of private messages a user has recieved, and returns both the total and the number unread.
- * @param user_id - the user_id for which to retrieve the message count
- * @param type - the type of messages to count. Options are: "to", "from" and "all"
+ * This function computes the number of private messages a user has 
+ * and returns both the total and the number unread.
+ * @param folder - The folder to use. Either a special folder 
+ *                 (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX), the 
+ *                 id of a user's custom folder or 
+ *                 PHORUM_PM_ALLFOLDERS for all folders.
+ * @param user_id - The user to retrieve messages for or NULL
+ *                 to use the current user (default).
  */
 
-function phorum_db_get_private_message_count($user_id, $type='to')
+function phorum_db_pm_messagecount($folder, $user_id = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     
-    // Check and handle the type parameter.
-    $types = array($type);
-    switch ($type) {
-        case 'all':
-            $types = array('to', 'from');
-            break;
-        case 'to':
-        case 'from':
-           break;
-        default:
-            die("Illegal type parameter '$type'; options are \"to\", \"from\" and \"all\"");
-    }
-    
     $conn = phorum_db_mysql_connect();
 
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, "int");
 
-    // For each type, count the total number of messages. For 'to' also
-    // count the number of new messages.
+    if (is_integer($folder)) {
+        $folder_sql .= "pm_folder_id=$folder AND";
+    } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
+        $folder_sql .= "pm_folder_id=0 AND special_folder='$folder' AND";
+    } elseif ($folder == PHORUM_PM_ALLFOLDERS) {
+        $folder_sql = '';
+    } else {
+        die ("Illegal folder '$folder' requested for user id '$user_id'");
+    }
+    
+    $sql = "SELECT count(*) as total, (count(*) - sum(read_flag)) as new " .
+           "FROM {$PHORUM['pm_xref_table']}  " .
+           "WHERE $folder_sql user_id = $user_id";
+    
     $retarr=array("total" => 0, "new" => 0);
-    foreach ($types as $type)
-    {
-        $newcount = ($type == 'to' ? '(count(*) - sum(read_flag)) as new ' : '0 as new');
-        $sql="select count(*) as total, $newcount from {$PHORUM['private_message_table']} where ${type}_user_id=$user_id and ${type}_del_flag=0";
-        $res = mysql_query($sql, $conn);
+
+    $res = mysql_query($sql, $conn); 
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
-        if (mysql_num_rows($res) > 0){
-            $res = mysql_fetch_assoc($res);
-            $retarr["total"] += $res["total"];
-            $retarr["new"] += ($res["new"] >= 1) ? $res["new"] : 0;
-        }
+    if (mysql_num_rows($res) > 0){
+        $row = mysql_fetch_assoc($res);
+        $retarr["total"] = $row["total"];
+        $retarr["new"] = ($row["new"] >= 1) ? $row["new"] : 0;
     }
 
     return $retarr;
 }
 
 /**
- * This function inserts a private message
+ * This function inserts a private message in the database.
+ * @param subject - The subject for the private message.
+ * @param message - The message text for the private message.
+ * @param to - A single user_id or an array of user_ids for the recipients.
+ * @param from - The user_id of the sender. The current user is used in case
+ *               the parameter is set to NULL (default).
+ * @param keepcopy - If set to a true value, a copy of the mail will be put in
+ *                   the outbox of the user. Default value is false.
  */
-
-function phorum_db_put_private_messages($to_username, $to_user_id, $subject, $message, $keep)
+function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
+    
     $conn = phorum_db_mysql_connect();
+    
+    $queries = array();
+    
+    // Prepare the sender.
+    if ($from == NULL) $from = $PHORUM['user']['user_id'];
+    settype($from, "int");
+    $fromuser = phorum_db_user_get($from);
+    if (! $fromuser) die("Unknown sender user_id '$from'");
 
-    settype($to_user_id, "int");
-
-    $from_delete_flag = (empty($keep)) ? 1 : 0;
-
-    $sql="insert into {$PHORUM['private_message_table']} set
-            from_username  = '".mysql_escape_string($PHORUM['user']['username'])."',
-            to_username    = '".mysql_escape_string($to_username)."',
-            from_user_id   = '{$PHORUM['user']['user_id']}',
-            to_user_id     = '$to_user_id',
-            subject        = '".mysql_escape_string($subject)."',
-            message        = '".mysql_escape_string($message)."',
-            datestamp      = '".time()."',
-            from_del_flag  = '$from_delete_flag'";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
+    // This array will be filled with xref database entries.
+    $xref_entries = array();
+    
+    // Prepare the list of recipients.
+    $rcpts = array();
+    if (! is_array($to)) $to = array($to);
+    foreach ($to as $user_id) {
+        settype($user_id, "int");
+        $user = phorum_db_user_get($user_id);
+        if (! $user) die("Unknown recipient user_id '$user_id'");
+        $rcpts[$user_id] = array(
+            'user_id' => $user_id,
+            'username' => $user["username"],
+            'read_flag' => 0,
+        );
+        $xref_entries[] = array(
+            'user_id' => $user_id,
+            'pm_folder_id' => 0,
+            'special_folder' => PHORUM_PM_INBOX,
+            'read_flag' => 0,
+        );
+    }
+    
+    // Keep copy of this message in outbox?
+    if ($keepcopy) {
+        $xref_entries[] = array(
+            'user_id' => $from,
+            'pm_folder_id' => 0,
+            'special_folder' => PHORUM_PM_OUTBOX,
+            'read_flag' => 1,
+        );
     }
 
+    // Prepare message meta data.
+    $meta = mysql_escape_string(serialize(array(
+        'recipients' => $rcpts
+    )));
+    
+    // Create the message.
+    $sql = "INSERT INTO {$PHORUM["pm_messages_table"]} SET " .
+           "from_user_id = $from, " .
+           "from_username = '".mysql_escape_string($fromuser["username"])."', " .
+           "subject = '".mysql_escape_string($subject)."', " .
+           "message = '".mysql_escape_string($message)."', " .
+           "datestamp = '".time()."', " . 
+           "meta = '$meta'";
+    mysql_query($sql, $conn);
+    if ($err = mysql_error()) {
+        phorum_db_mysql_error("$err: $sql");
+        return;
+    }
+    
+    // Get the message id.
+    $pm_message_id = mysql_insert_id($conn);
+    
+    // Put the message in the recipient inboxes.
+    foreach ($xref_entries as $xref) {
+        $sql = "INSERT INTO {$PHORUM["pm_xref_table"]} SET " .
+               "user_id = {$xref["user_id"]}, " .
+               "pm_folder_id={$xref["pm_folder_id"]}, " .
+               "special_folder='{$xref["special_folder"]}', " .
+               "pm_message_id=$pm_message_id, " .
+               "read_flag = {$xref["read_flag"]}, " .
+               "reply_flag = 0";
+        mysql_query($sql, $conn);
+        if ($err = mysql_error()) {
+            phorum_db_mysql_error("$err: $sql");
+            return;
+        }
+                
+    }
+    
+    return true;
+}
+
+/**
+ * This function updates a flag for a private message.
+ * @param pm_id - The id of the message to update.
+ * @param flag - The flag to update. Options are PHORUM_PM_READ_FLAG 
+ *               and PHORUM_PM_REPLY_FLAG.
+ * @param value - The value for the flag (true or false).
+ * @param user_id - The user to set a flag for or NULL
+ *                 to use the current user (default).
+ */
+function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+    
+    $conn = phorum_db_mysql_connect();
+    
+    settype($pm_id, "int");
+    
+    if ($flag != PHORUM_PM_READ_FLAG && $flag != PHORUM_PM_REPLY_FLAG) {
+        trigger_error("Invalid value for \$flag in function phorum_db_pm_setflag(): $flag", E_USER_WARNING);
+        return 0;
+    }
+    
+    $value = $value ? 1 : 0;    
+    
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
+
+    // Update the flag in the database.
+    $sql = "UPDATE {$PHORUM["pm_xref_table"]} " .
+           "SET $flag = $value " .
+           "WHERE pm_message_id = $pm_id AND user_id = $user_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
+    // Update message counters.
+    if ($flag == PHORUM_PM_READ_FLAG) {
+        phorum_db_pm_update_message_info($pm_id);
+    }
+    
     return $res;
 }
 
 /**
- * This function updates the flags in a pm
+ * This function deletes a message from a folder.
+ * @param folder - The folder from which to delete the message
+ * @param pm_id - The id of the private message to delete
+ * @param user_id - The user to delete the message for or NULL
+ *                 to use the current user (default).
  */
-
-function phorum_db_update_private_message($pm_id, $flag, $value)
+function phorum_db_pm_delete($folder, $pm_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
+    
     $conn = phorum_db_mysql_connect();
 
-    if($flag!="read_flag" && $flag!="return_flag" && $flag!="reply_flag" && $flag!="to_del_flag" && $flag!="from_del_flag"){
-        trigger_error("Invalid value for \$flag in function phorum_db_update_private_message()", E_USER_WARNING);
-        return 0;
-    }
+    settype($pm_id, "int");
+    
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
 
-    settype($value, "int");
+    if (is_integer($folder)) {
+        $folder_sql .= "pm_folder_id=$folder AND";
+    } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
+        $folder_sql .= "pm_folder_id=0 AND special_folder='$folder' AND";
+    } else {
+        die ("Illegal folder '$folder' requested for user id '$user_id'");
+    }
+    
+    $sql = "DELETE FROM {$PHORUM["pm_xref_table"]} " .
+           "WHERE $folder_sql " .
+           "user_id = $user_id AND pm_message_id = $pm_id";
+           
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
+    // Update message counters.
+    phorum_db_pm_update_message_info($pm_id);
+    
+    return $res;    
+}
+
+/**
+ * This function updates the meta information for a message. If it
+ * detects that no xrefs are available for the message anymore,
+ * the message will be deleted from the database. So this function
+ * has to be called after setting the read_flag and after deleting
+ * a message.
+ */
+function phorum_db_pm_update_message_info($pm_id)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    $conn = phorum_db_mysql_connect();
+    
     settype($pm_id, "int");
 
-    $sql="update {$PHORUM['private_message_table']} set $flag=$value where private_message_id=$pm_id";
-    if(!$PHORUM["user"]["admin"]) $sql.=" and (to_user_id={$PHORUM['user']['user_id']} or from_user_id={$PHORUM['user']['user_id']})";
-
+    // Find the message record. Return immediately if no message is found.
+    $sql = "SELECT * " .
+           "FROM {$PHORUM['pm_messages_table']} " .
+           "WHERE pm_message_id = $pm_id";
     $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if (mysql_num_rows($res) == 0) return;
+    $pm = mysql_fetch_assoc($res);
+    
+    // Find the xrefs for this message.
+    $sql = "SELECT * " .
+           "FROM {$PHORUM["pm_xref_table"]} " .
+           "WHERE pm_message_id = $pm_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
+    // No xrefs left? Then the message can be fully deleted.
+    if (mysql_num_rows($res) == 0) {
+        $sql = "DELETE FROM {$PHORUM['pm_messages_table']} " .
+               "WHERE pm_message_id = $pm_id";
+        $res = mysql_query($sql, $conn);
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        return $res;       
     }
-
-    if($res>0 && ($flag=="to_del_flag" || $flag=="from_del_flag")){
-        // clear any messages where both delete flags are set
-        $sql="delete from {$PHORUM['private_message_table']} where to_del_flag=1 and from_del_flag=1";
-        mysql_query($sql, $conn);
+    
+    // Update the read flags for the recipients in the meta data.
+    $meta = unserialize($pm["meta"]);
+    $rcpts = $meta["recipients"];
+    // PMTODO decide whether deleting a message should flag the
+    // PMTODO message as read, so it shows up as being received/read
+    // PMTODO by the recipient. Next line enables this behaviour.
+    // foreach ($rcpts as $rcpt_id) { $rcpts[$rcpt_id]["read_flag"] = 1; }
+    while ($row = mysql_fetch_assoc($res)) {
+        $rcpts[$row["user_id"]]["read_flag"] = $row["read_flag"];
     }
+    $meta["recipients"] = $rcpts;
+    
+    // Store the new meta data.
+    $meta = mysql_escape_string(serialize($meta));
+    $sql = "UPDATE {$PHORUM['pm_messages_table']} " .
+           "SET meta = '$meta' " .
+           "WHERE pm_message_id = $pm_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    return $res;      
+    
+}
 
-    return $res;
+/* Take care of warning about deprecation of the old PM API functions. */ 
+function phorum_db_get_private_messages($arg1, $arg2) {
+    phorum_db_pm_deprecated('phorum_db_get_private_messages'); }
+function phorum_db_get_private_message($arg1) {
+    phorum_db_pm_deprecated('phorum_db_get_private_message'); }
+function phorum_db_get_private_message_count($arg1) {
+    phorum_db_pm_deprecated('phorum_db_get_private_message_count'); }
+function phorum_db_put_private_messages($arg1, $arg2, $arg3, $arg4, $arg5) {
+    phorum_db_pm_deprecated('phorum_db_put_private_messages'); }
+function phorum_db_update_private_message($arg1, $arg2, $arg3){
+    phorum_db_pm_deprecated('phorum_db_update_private_message'); }
+function phorum_db_pm_deprecated($func) {
+    die("${func}() has been deprecated. Please use the new private message API.");
 }
 
 /**
@@ -3295,6 +3532,23 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
     }
 
     return $numdeleted;
+}
+
+/**
+ * merge thread
+ */
+function phorum_db_merge_thread($thread_id1, $forum_id1, $thread_id2)
+{
+    settype($thread_id1, "int");
+    settype($forum_id1, "int");
+    settype($thread_id2, "int");
+
+    if($thread_id1 > 0 && $forum_id1 > 0 && $thread_id2 > 0){
+        $queries =array();
+        $queries[0]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET thread='$thread_id1', forum_id='$forum_id1' WHERE thread='$thread_id2'";
+        $queries[1]="UPDATE {$GLOBALS['PHORUM']['message_table']} SET parent_id='$thread_id1', forum_id='$forum_id1' WHERE message_id='$thread_id2'";
+        phorum_db_run_queries($queries);
+    }
 }
 
 /**
@@ -3385,12 +3639,14 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['user_group_xref_table']} ( user_id int(11) NOT NULL default '0', group_id int(11) NOT NULL default '0', status tinyint(3) NOT NULL default '1', PRIMARY KEY  (user_id,group_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['files_table']} ( file_id int(11) NOT NULL auto_increment, user_id int(11) NOT NULL default '0', filename varchar(255) NOT NULL default '', filesize int(11) NOT NULL default '0', file_data mediumtext NOT NULL, add_datetime int(10) unsigned NOT NULL default '0', message_id int(10) unsigned NOT NULL default '0', link varchar(10) NOT NULL, PRIMARY KEY (file_id), KEY add_datetime (add_datetime), KEY message_id_link (message_id,link)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['banlist_table']} ( id int(11) NOT NULL auto_increment, forum_id int(11) NOT NULL default '0', type tinyint(4) NOT NULL default '0', pcre tinyint(4) NOT NULL default '0', string varchar(255) NOT NULL default '', PRIMARY KEY  (id), KEY forum_id (forum_id)) TYPE=MyISAM",
+        // PMTODO phase out private_message_table using upgrade script
         "CREATE TABLE {$PHORUM['private_message_table']} ( private_message_id int(10) unsigned NOT NULL auto_increment, from_username varchar(50) NOT NULL default '', to_username varchar(50) NOT NULL default '', from_user_id int(10) unsigned NOT NULL default '0', to_user_id int(10) unsigned NOT NULL default '0', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', to_del_flag tinyint(1) NOT NULL default '0', from_del_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (private_message_id), KEY to_user_id (to_user_id,to_del_flag,datestamp), KEY from_user_id (from_user_id,from_del_flag,datestamp), KEY to_del_flag (to_del_flag,from_del_flag), KEY read_flag (to_user_id,read_flag,to_del_flag) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['search_table']} ( message_id int(10) unsigned NOT NULL default '0', search_text mediumtext NOT NULL, PRIMARY KEY  (message_id), FULLTEXT KEY search_text (search_text) ) TYPE=MyISAM",
-        "CREATE TABLE {$PHORUM['user_custom_fields_table']} ( user_id INT DEFAULT '0' NOT NULL , type INT DEFAULT '0' NOT NULL , data TEXT NOT NULL , PRIMARY KEY ( user_id , type )) TYPE=MyISAM"
-
+        "CREATE TABLE {$PHORUM['user_custom_fields_table']} ( user_id INT DEFAULT '0' NOT NULL , type INT DEFAULT '0' NOT NULL , data TEXT NOT NULL , PRIMARY KEY ( user_id , type )) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM["pm_messages_table"]} ( pm_message_id int(10) unsigned NOT NULL auto_increment, from_user_id int(10) unsigned NOT NULL, from_username varchar(50) NOT NULL default '', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', meta mediumtext NOT NULL, PRIMARY KEY(pm_message_id)) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM["pm_folders_table"]} ( pm_folder_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, foldername varchar(20) NOT NULL default '', PRIMARY KEY (pm_folder_id)) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM["pm_xref_table"]} ( pm_xref_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, pm_folder_id int(10) unsigned NOT NULL, special_folder varchar(10), pm_message_id int(10) unsigned NOT NULL, read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (pm_xref_id), KEY xref (user_id,pm_folder_id,pm_message_id), KEY read_flag (read_flag)) TYPE=MyISAM",
     );
-
     foreach($queries as $sql){
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()){

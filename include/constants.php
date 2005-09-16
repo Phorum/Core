@@ -103,6 +103,15 @@
     define("PHORUM_LINK_USER", "user");
     define("PHORUM_LINK_MESSAGE", "message");
 
+    // Definitions for the PM system.
+    // Special folders
+    define("PHORUM_PM_INBOX", "inbox");
+    define("PHORUM_PM_OUTBOX", "outbox");
+    define("PHORUM_PM_ALLFOLDERS", "allfolder");
+    // Flag types
+    define("PHORUM_PM_READ_FLAG", "read_flag");
+    define("PHORUM_PM_REPLY_FLAG", "reply_flag");
+
     // constants below here do not have to have a constant value,
     // as long as each is unique.  They are used for enumeration.
     // Add to them as you wish knowing that.

@@ -93,7 +93,7 @@ if( !empty($PHORUM["user"]["admin"]) ||
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }
 
-$PHORUM["DATA"]["PROFILE"]["pm_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "to=".urlencode($user["username"]));
+$PHORUM["DATA"]["PROFILE"]["pm_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "to_id=".urlencode($user["user_id"]));
 
 // unset($PHORUM["DATA"]["PROFILE"]["signature"]);
 
