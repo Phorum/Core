@@ -545,7 +545,7 @@ function phorum_get_url()
 }
 
 // retrieve the appropriate template file name
-function phorum_get_template( $page )
+function phorum_get_template( $page, $is_include = false )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -564,9 +564,11 @@ function phorum_get_template( $page )
     } else {
         // not there, look for a template
         $tplfile = "$tpl.tpl";
-        $phpfile = "$PHORUM[cache]/tpl-$PHORUM[template]-$page-" . md5( dirname( __FILE__ ) ) . ".php";
+        $phpfile = "$PHORUM[cache]/tpl-$PHORUM[template]-$page-" . 
+	           ($is_include ? "include" : "toplevel") . "-" .
+	           md5( dirname( __FILE__ ) ) . ".php";
 
-        if ( !file_exists( $phpfile ) || filemtime( $tplfile ) > filemtime( $phpfile ) ) {
+        if ( $is_include || !file_exists( $phpfile ) ) {
             include_once "./include/templates.php";
             phorum_import_template( $tplfile, $phpfile );
         }

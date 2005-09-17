@@ -2,8 +2,19 @@
 
 if(!defined("PHORUM")) return;
 
+// For keeping track of include dependancies, which
+// are used to let templates automatically rebuild
+// in case an included subtemplate has been changed.
+$include_level = 0;
+$include_deps  = array();
+
 function phorum_import_template($tplfile, $outfile)
 {
+    global $include_level, $include_deps;
+    $include_level++;
+
+    // Remember that we used this template.
+    $include_deps[$tplfile] = $outfile;
 
     $fp=fopen($tplfile, "r");
     $page=fread($fp, filesize($tplfile));
@@ -36,166 +47,249 @@ function phorum_import_template($tplfile, $outfile)
             // Comment
             case "!":
 
-                $repl="<?php // ".implode(" ", $parts)." ?>";
-                break;
+            $repl="<?php // ".implode(" ", $parts)." ?>";
+            break;
 
 
             case "include":
 
-                $repl="<?php include phorum_get_template('$parts[1]'); ?>";
-                break;
+            $repl = file_get_contents(phorum_get_template($parts[1],1));
+            break;
 
             case "include_once":
 
-                $repl="<?php include_once phorum_get_template('$parts[1]'); ?>";
-                break;
+            $repl="<?php include_once phorum_get_template('$parts[1]'); ?>";
+            break;
 
             case "include_var": // include a file given by a variable
 
-                $repl="<?php include_once phorum_get_template( \$PHORUM[\"DATA\"]['$parts[1]']); ?>";
-                break;
+            $repl="<?php include_once phorum_get_template( \$PHORUM[\"DATA\"]['$parts[1]']); ?>";
+            break;
 
             // A define is used to create vars for the engine to use.
             case "define":
 
-                $repl="<?php \$PHORUM[\"TMP\"]['$parts[1]']='";
-                array_shift($parts);
-                array_shift($parts);
-                foreach($parts as $part){
-                    $repl.=str_replace("'", "\\'", $part)." ";
-                }
-                $repl=trim($repl)."'; ?>";
-                break;
+            $repl="<?php \$PHORUM[\"TMP\"]['$parts[1]']='";
+            array_shift($parts);
+            array_shift($parts);
+            foreach($parts as $part){
+                $repl.=str_replace("'", "\\'", $part)." ";
+            }
+            $repl=trim($repl)."'; ?>";
+            break;
 
 
             // A var is used to create vars for the template.
             case "var":
 
-                $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']='";
-                array_shift($parts);
-                array_shift($parts);
-                foreach($parts as $part){
-                    $repl.=str_replace("'", "\\'", $part)." ";
-                }
-                $repl=trim($repl)."'; ?>";
-                break;
+            $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']='";
+            array_shift($parts);
+            array_shift($parts);
+            foreach($parts as $part){
+                $repl.=str_replace("'", "\\'", $part)." ";
+            }
+            $repl=trim($repl)."'; ?>";
+            break;
 
 
             // starts a loop
             case "loop":
 
-                $loopvars[$parts[1]]=true;
-                $repl="<?php if(isset(\$PHORUM['DATA']['$parts[1]']) && is_array(\$PHORUM['DATA']['$parts[1]'])) foreach(\$PHORUM['DATA']['$parts[1]'] as \$PHORUM['TMP']['$parts[1]']){ ?>";
-                break;
+            $loopvars[$parts[1]]=true;
+            $repl="<?php if(isset(\$PHORUM['DATA']['$parts[1]']) && is_array(\$PHORUM['DATA']['$parts[1]'])) foreach(\$PHORUM['DATA']['$parts[1]'] as \$PHORUM['TMP']['$parts[1]']){ ?>";
+            break;
 
 
             // ends a loop
             case "/loop":
 
-                $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); ?>";
-                unset($loopvars[$parts[1]]);
-                break;
+            $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); ?>";
+            unset($loopvars[$parts[1]]);
+            break;
 
 
             // if and elseif are the same accept how the line starts
             case "if":
             case "elseif":
 
-                // determine if or elseif
-                $prefix = (strtolower($parts[0])=="if") ? "if" : "} elseif";
+            // determine if or elseif
+            $prefix = (strtolower($parts[0])=="if") ? "if" : "} elseif";
 
-                // are we wanting == or !=
-                if(strtolower($parts[1])=="not"){
-                    $operator="!=";
-                    $parts[1]=$parts[2];
-                    if(isset($parts[3])){
-                        $parts[2]=$parts[3];
-                        unset($parts[3]);
-                    } else {
-                        unset($parts[2]);
-                    }
+            // are we wanting == or !=
+            if(strtolower($parts[1])=="not"){
+                $operator="!=";
+                $parts[1]=$parts[2];
+                if(isset($parts[3])){
+                    $parts[2]=$parts[3];
+                    unset($parts[3]);
                 } else {
-                    $operator="==";
+                    unset($parts[2]);
                 }
+            } else {
+                $operator="==";
+            }
 
-                $index=phorum_determine_index($loopvars, $parts[1]);
+            $index=phorum_determine_index($loopvars, $parts[1]);
 
-                // if there is no part 2, check that the value is set and not empty
-                if(!isset($parts[2])){
-                    if($operator=="=="){
-                        $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && !empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
-                    } else {
-                        $repl="<?php $prefix(!isset(\$PHORUM['$index']['$parts[1]']) || empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
-                    }
+            // if there is no part 2, check that the value is set and not empty
+            if(!isset($parts[2])){
+                if($operator=="=="){
+                    $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && !empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
+                } else {
+                    $repl="<?php $prefix(!isset(\$PHORUM['$index']['$parts[1]']) || empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
+                }
 
                 // if it is numeric, a constant or a string, simply set it as is
-                } elseif(is_numeric($parts[2]) || defined($parts[2]) || preg_match('!"[^"]*"!', $parts[2])) {
-                        $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && \$PHORUM['$index']['$parts[1]']$operator$parts[2]){ ?>";
+            } elseif(is_numeric($parts[2]) || defined($parts[2]) || preg_match('!"[^"]*"!', $parts[2])) {
+                $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && \$PHORUM['$index']['$parts[1]']$operator$parts[2]){ ?>";
 
                 // we must have a template var
-                } else {
+            } else {
 
-                    $index_part2=phorum_determine_index($loopvars, $parts[2]);
+                $index_part2=phorum_determine_index($loopvars, $parts[2]);
 
-                    // this is a really complicated IF we are building.
+                // this is a really complicated IF we are building.
 
-                    $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && isset(\$PHORUM['$index_part2']['$parts[2]']) && \$PHORUM['$index']['$parts[1]']$operator\$PHORUM['$index_part2']['$parts[2]']) { ?>";
+                $repl="<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && isset(\$PHORUM['$index_part2']['$parts[2]']) && \$PHORUM['$index']['$parts[1]']$operator\$PHORUM['$index_part2']['$parts[2]']) { ?>";
 
-                }
+            }
 
-                // reset $prefix
-                $prefix="";
-                break;
+            // reset $prefix
+            $prefix="";
+            break;
 
 
             // create an else
             case "else":
 
-                $repl="<?php } else { ?>";
-                break;
+            $repl="<?php } else { ?>";
+            break;
 
 
             // close an if
             case "/if":
 
-                $repl="<?php } ?>";
-                break;
+            $repl="<?php } ?>";
+            break;
 
             case "assign":
-                if(defined($parts[2])){
-                    $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=$parts[2]; ?>";
-                } else {
-                    $index=phorum_determine_index($loopvars, $parts[2]);
+            if(defined($parts[2])){
+                $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=$parts[2]; ?>";
+            } else {
+                $index=phorum_determine_index($loopvars, $parts[2]);
 
-                    $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=\$PHORUM['$index']['$parts[2]']; ?>";
-                }
-                break;
+                $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=\$PHORUM['$index']['$parts[2]']; ?>";
+            }
+            break;
 
 
             // this is just for echoing vars from DATA or TMP if it is a loopvar
             default:
 
-                if(defined($parts[0])){
-                    $repl="<?php echo $parts[0]; ?>";
-                } else {
+            if(defined($parts[0])){
+                $repl="<?php echo $parts[0]; ?>";
+            } else {
 
-                    $index=phorum_determine_index($loopvars, $parts[0]);
+                $index=phorum_determine_index($loopvars, $parts[0]);
 
-                    $repl="<?php echo \$PHORUM['$index']['$parts[0]']; ?>";
-                }
+                $repl="<?php echo \$PHORUM['$index']['$parts[0]']; ?>";
+            }
         }
 
         $page=str_replace($match, $repl, $page);
     }
 
-    if($fp=fopen($outfile, "w")){
-        fputs($fp, "<?php if(!defined(\"PHORUM\")) return; ?>\n");
-        fputs($fp, $page);
-        fclose($fp);
+    $include_level--;
+
+    // Did we finish processing our top level template? Then write out
+    // the compiled template to the cache.
+    //
+    // For storing the compiled template, we use two files. The first one
+    // has some code for checking if one of the dependant files has been
+    // updated and for rebuilding the template if this is the case.
+    // This one loads the second file, which is the template itself.
+    //
+    // This two-stage loading is needed to make sure that syntax
+    // errors in a template file won't break the depancy checking process.
+    // If both were in the same file, the complete file would not be run
+    // at all and the user would have to clean out the template cache to
+    // reload the template once it was fixed. This way user intervention
+    // is never needed.
+    if ($include_level == 0)
+    {
+        // Find the template name for the top level template.
+        $pathparts = preg_split('[\\/]', $outfile);
+        $fileparts = explode('-', preg_replace('/^.*\//', '', $pathparts[count($pathparts)-1]));
+        $this_template = addslashes($fileparts[2]);
+
+        // Determine first and second stage cache filenames.
+        $stage1_file = $outfile;
+        $fileparts[3] = "toplevel_stage2";
+        unset($pathparts[count($pathparts)-1]);
+        $stage2_file = implode('/', $pathparts) . '/' . implode('-', $fileparts);
+        
+        // Create code for automatic rebuilding of rendered templates
+        // in case of changes. This is done by checking if one of the
+        // templates in the dependancy list has been updated. If this
+        // is the case, all dependant rendered subtemplates are deleted.
+        // After that phorum_get_template() is called on the top level
+        // template to rebuild all needed templates.
+
+        $check_deps =
+        "<?php\n" .
+        "\$update_count = 0;\n" .
+        "\$need_update = (\n";
+        $now = time();
+        foreach ($include_deps as $tpl => $out) {
+            $qtpl = addslashes($tpl);
+            $check_deps .= "    @filemtime(\"$qtpl\") > $now ||\n";
+        }
+        $check_deps = substr($check_deps, 0, -4); // strip trailing " ||\n"
+        $check_deps .=
+        "\n" .
+        ");\n" .
+        "if (\$need_update) {\n";
+        foreach ($include_deps as $tpl => $out) {
+            $qout = addslashes($out);
+            $check_deps .= "    @unlink(\"$qout\");\n";
+        }
+        $check_deps .=
+        "    \$tplfile = phorum_get_template(\"$this_template\");\n" .
+        "    include(\$tplfile);\n" .
+        "    return;\n" .
+        "} else {\n" .
+        "    include(\"" . addslashes($stage2_file) . "\");\n" .
+        "}\n" .
+        "?>\n";
+
+        // Reset dependancy list for the next phorum_import_template() call.
+        $include_deps = array();
+        
+        // Write out data to the cache.
+        phorum_write_templatefile($stage1_file, $check_deps);
+        phorum_write_templatefile($stage2_file, $page);
     }
+    else 
+    {
+        // Write out subtemplate to the cache.
+        phorum_write_templatefile($outfile, $page);
+    }
+
 
 }
 
+function phorum_write_templatefile($filename, $content)
+{
+    if($fp=fopen($filename, "w")) {
+        fputs($fp, "<?php if(!defined(\"PHORUM\")) return; ?>\n");
+        fputs($fp, $content);
+        if (! fclose($fp)) {
+            die("Error on closing $outfile; disk full?");
+        }
+    } else {
+        die("Unable to write compiled template to $filename");
+    }
+}
 
 function phorum_determine_index($loopvars, $varname)
 {
