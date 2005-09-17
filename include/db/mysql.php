@@ -3086,7 +3086,7 @@ function phorum_db_pm_list($folder, $user_id = NULL)
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");    
     
-    $retarray = array();
+    $list = array();
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
           
@@ -3108,11 +3108,11 @@ function phorum_db_pm_list($folder, $user_id = NULL)
                 $row['read_flag'] = $rcpt_data['read_flag'];
             }
             
-            $retarr[]=$row;
+            $list[]=$row;
         }
     }
 
-    return $retarr;    
+    return $list;    
 }
 
 /**
@@ -3184,9 +3184,9 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
     settype($user_id, "int");
 
     if (is_integer($folder)) {
-        $folder_sql .= "pm_folder_id=$folder AND";
+        $folder_sql = "pm_folder_id=$folder AND";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
-        $folder_sql .= "pm_folder_id=0 AND special_folder='$folder' AND";
+        $folder_sql = "pm_folder_id=0 AND special_folder='$folder' AND";
     } elseif ($folder == PHORUM_PM_ALLFOLDERS) {
         $folder_sql = '';
     } else {
@@ -3197,18 +3197,18 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
            "FROM {$PHORUM['pm_xref_table']}  " .
            "WHERE $folder_sql user_id = $user_id";
     
-    $retarr=array("total" => 0, "new" => 0);
+    $messagecount=array("total" => 0, "new" => 0);
 
     $res = mysql_query($sql, $conn); 
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     
     if (mysql_num_rows($res) > 0){
         $row = mysql_fetch_assoc($res);
-        $retarr["total"] = $row["total"];
-        $retarr["new"] = ($row["new"] >= 1) ? $row["new"] : 0;
+        $messagecount["total"] = $row["total"];
+        $messagecount["new"] = ($row["new"] >= 1) ? $row["new"] : 0;
     }
 
-    return $retarr;
+    return $messagecount;
 }
 
 /**
@@ -3371,9 +3371,9 @@ function phorum_db_pm_delete($folder, $pm_id, $user_id = NULL)
     settype($user_id, "int");
 
     if (is_integer($folder)) {
-        $folder_sql .= "pm_folder_id=$folder AND";
+        $folder_sql = "pm_folder_id=$folder AND";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
-        $folder_sql .= "pm_folder_id=0 AND special_folder='$folder' AND";
+        $folder_sql = "pm_folder_id=0 AND special_folder='$folder' AND";
     } else {
         die ("Illegal folder '$folder' requested for user id '$user_id'");
     }
