@@ -19,6 +19,7 @@
 {/LOOP USERS}
 </table>
 <div class="PhorumNavBlock" style="text-align: left;">
-<input type="submit" class="PhorumSubmit" name="approve" value="{LANG->ApproveUser}" />&nbsp;<input type="submit" name="disapprove" value="{LANG->DenyUser}" />
+<input type="submit" class="PhorumSubmit" name="approve" value="{LANG->ApproveUser}" />&nbsp;
+<input type="submit" class="PhorumSubmit" name="disapprove" value="{LANG->DenyUser}" />
 </div>
 </form>
