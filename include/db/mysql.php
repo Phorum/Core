@@ -90,8 +90,6 @@ function phorum_db_get_thread_list($offset)
 
         if($PHORUM["reverse_threading"]) $sortorder.=" desc";
 
-        $offset_option="$sortfield > 0 and";
-
         // get the announcements and stickies
         $sql="select thread as keyid from $table where
         status=".PHORUM_STATUS_APPROVED." and
@@ -475,7 +473,7 @@ function phorum_db_post_message(&$message,$convert=false){
         // check_query
         $chk_query="SELECT message_id FROM $table WHERE forum_id = {$message['forum_id']} AND author='{$message['author']}' AND subject='{$message['subject']}' AND body='{$message['body']}' AND datestamp > $check_timestamp";
         $res = mysql_query($chk_query, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $chk_query");
         if(mysql_num_rows($res))
             return 0;
     }
@@ -1183,7 +1181,7 @@ function phorum_db_update_settings($settings){
 function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $inherit_id = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
-    settype($forums_id, "int");
+    settype($forum_ids, "int");
     settype($parent_id, "int");
 
     $conn = phorum_db_mysql_connect();
@@ -1338,7 +1336,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             $ids_str=implode(",",$delete_ids);
             // then doing the delete
             $sql="DELETE FROM {$PHORUM['user_newflags_table']} where message_id IN($ids_str)";
-            $res = mysql_query($sql, $conn);
+            mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         }
 
@@ -2484,7 +2482,7 @@ function phorum_db_file_get($file_id)
 
     $conn = phorum_db_mysql_connect();
 
-    settype($user_id, "int");
+    settype($file_id, "int");
 
     $file=array();
 
@@ -2555,8 +2553,6 @@ function phorum_db_file_delete($file_id)
     $conn = phorum_db_mysql_connect();
 
     settype($file_id, "int");
-
-    $file=array();
 
     $sql="delete from {$PHORUM['files_table']} where file_id=$file_id";
 
@@ -2838,8 +2834,6 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
     settype($type, "int");
 
     $conn = phorum_db_mysql_connect();
-
-    settype($user_id, "int");
 
     $userignore="";
     if ($PHORUM["DATA"]["LOGGEDIN"])
@@ -3227,8 +3221,6 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     
     $conn = phorum_db_mysql_connect();
     
-    $queries = array();
-    
     // Prepare the sender.
     if ($from == NULL) $from = $PHORUM['user']['user_id'];
     settype($from, "int");
@@ -3412,7 +3404,7 @@ function phorum_db_pm_update_message_info($pm_id)
            "WHERE pm_message_id = $pm_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    if (mysql_num_rows($res) == 0) return;
+    if (mysql_num_rows($res) == 0) return $res;
     $pm = mysql_fetch_assoc($res);
     
     // Find the xrefs for this message.
