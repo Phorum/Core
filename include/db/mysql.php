@@ -3098,7 +3098,7 @@ function phorum_db_pm_list($folder, $user_id = NULL)
             // transitional phase. Clean this up when new PM interface
             // is completed.
             list ($rcpt_id, $rcpt_data) = each($row['recipients']);
-            reset ($row['rcpts']);
+            reset ($row['recipients']);
             $row['private_message_id'] = $row['pm_message_id'];
             $row['to_user_id'] = $rcpt_data['user_id'];
             $row['to_username'] = $rcpt_data['username'];
@@ -3145,13 +3145,13 @@ function phorum_db_pm_get($pm_id, $user_id = NULL)
         
         // Add the recipient information unserialized to the message..
         $meta = unserialize($row['meta']);
-        $row['rcpts'] = $meta['recipients'];
+        $row['recipients'] = $meta['recipients'];
                   
         // PMTODO backward compatibility with old interface for
         // transitional phase. Clean this up when new PM interface
         // is completed.
-        list ($rcpt_id, $rcpt_data) = each($row['rcpts']);
-        reset ($row['rcpts']);
+        list ($rcpt_id, $rcpt_data) = each($row['recipients']);
+        reset ($row['recipients']);
         $row['private_message_id'] = $row['pm_message_id'];
         $row['to_user_id'] = $rcpt_data['user_id'];
         $row['to_username'] = $rcpt_data['username'];
@@ -3232,7 +3232,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     // Prepare the sender.
     if ($from == NULL) $from = $PHORUM['user']['user_id'];
     settype($from, "int");
-    $fromuser = phorum_db_user_get($from);
+    $fromuser = phorum_db_user_get($from, false);
     if (! $fromuser) die("Unknown sender user_id '$from'");
 
     // This array will be filled with xref database entries.
@@ -3243,7 +3243,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     if (! is_array($to)) $to = array($to);
     foreach ($to as $user_id) {
         settype($user_id, "int");
-        $user = phorum_db_user_get($user_id);
+        $user = phorum_db_user_get($user_id, false);
         if (! $user) die("Unknown recipient user_id '$user_id'");
         $rcpts[$user_id] = array(
             'user_id' => $user_id,

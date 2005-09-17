@@ -315,7 +315,7 @@ switch ($PHORUM["args"]["page"]) {
                 // username in the message table. There will be a better solution
                 // for selecting recipients, but for now this will fix some
                 // of the problems.
-                $user = phorum_db_user_get($message["user_id"]);
+                $user = phorum_db_user_get($message["user_id"],false);
                 
                 $msg["from"]=htmlspecialchars($PHORUM["user"]["username"]);
                 $msg["message_id"]=0;
@@ -403,7 +403,7 @@ if (! $PHORUM['user']['admin']) {
     if ($PHORUM['SETTINGS']['max_pm_messagecount']) 
     {
         $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS);
-        $PHORUM['DATA']['CURRENT_PM_MESSAGECOUNT'] = $current_count['total'];
+        $PHORUM['DATA']['PM_MESSAGECOUNT'] = $current_count['total'];
         $space_left = $PHORUM['SETTINGS']['max_pm_messagecount'] - $current_count['total'];
         if ($space_left < 0) $space_left = 0;
         $PHORUM['DATA']['PM_SPACE_LEFT'] = $space_left;
