@@ -45,6 +45,21 @@ Hooks that exist at the time of this writing are:
     all confirmation mails were sent. it gets the userdata of the registered
     user as argument.
 
+    after_login
+    -----------
+    This hook is called after processing the login and before doing the redirect.
+    It gets the redirection-url as argument and has to return the redirect url.
+    This way the redirect target after logging in can be changed and you can access
+    $PHORUM too to work with the user-data.
+
+    after_logout
+    -----------
+    This hook is called after processing the logout and before doing the redirect.
+    It gets the redirection-url as argument and has to return the redirect url.
+    This way the redirect target after logging out can be changed and you can access
+    $PHORUM too to work with the user-data.
+
+
     before_footer
     --------------
     This is the same as after_header except these modules are called just

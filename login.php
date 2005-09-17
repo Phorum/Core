@@ -34,6 +34,9 @@ if ( !empty( $PHORUM["args"]["logout"] ) ) {
     if(stristr($_SERVER["HTTP_REFERER"], PHORUM_SESSION)){
         $url=str_replace(PHORUM_SESSION."=".urlencode($PHORUM["args"]["phorum_session_v5"]), "", $url);
     }
+
+    $url =phorum_hook( "after_logout", $url );
+
     phorum_redirect_by_url($url);
     exit();
 }
@@ -48,6 +51,7 @@ $error = "";
 $username = "";
 
 if ( count( $_POST ) > 0 ) {
+    // user wants to get a new passwort
     if ( isset( $_POST["lostpass"] ) ) {
         if ( empty( $_POST["lostpass"] ) ) {
             $error = $PHORUM["DATA"]["LANG"]["LostPassError"];
@@ -100,6 +104,7 @@ if ( count( $_POST ) > 0 ) {
             $error = $PHORUM["DATA"]["LANG"]["LostPassError"];
 
         }
+    // user is logging in
     } else {
 
         if($PHORUM["use_cookies"] && !isset($_COOKIE["phorum_tmp_cookie"])){
@@ -128,6 +133,8 @@ if ( count( $_POST ) > 0 ) {
             } else {
                 $redir = phorum_get_url( PHORUM_LIST_URL );
             }
+
+            $redir =phorum_hook( "after_login", $redir );
 
             phorum_redirect_by_url($redir);
 
