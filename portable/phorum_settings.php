@@ -1,4 +1,6 @@
-<?php 
+<?php
+// needed to really load the alternate db-config in common.php
+define("PHORUM_WRAPPER",1);
 
 // set the Phorum install dir
 $PHORUM_DIR="/www/dev.phorum/phorum5";
@@ -19,12 +21,12 @@ $PHORUM_ALT_DBCONFIG=array(
 function phorum_custom_get_url ($page, $query_items, $suffix)
 {
     $PHORUM=$GLOBALS["PHORUM"];
-    
-    $url = "$PHORUM[http_path]/phorum.php?$page";
-    
-    if(count($query_items)) $url.=",".implode(",", $query_items); 
 
-    if(!empty($suffix)) $url.=$suffix;        
+    $url = "$PHORUM[http_path]/phorum.php?$page";
+
+    if(count($query_items)) $url.=",".implode(",", $query_items);
+
+    if(!empty($suffix)) $url.=$suffix;
 
     return $url;
 }
