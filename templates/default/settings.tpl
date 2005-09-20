@@ -74,9 +74,9 @@
 
 
 {! --- Some font stuff --- }
-{var defaultfont Lucida Sans Unicode, Lucida Grande, Arial}
-{var largefont Trebuchet MS,Verdana, Arial, Helvetica, sans-serif}
-{var tinyfont Arial, Helvetica, sans-serif}
+{var defaultfont "Bitstream Vera Sans", "Lucida Sans Unicode", "Lucida Grande", Arial}
+{var largefont "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif}
+{var tinyfont "Bitstream Vera Sans", Arial, sans-serif}
 {var fixedfont Lucida Console, Andale Mono, Courier New, Courier}
 {var defaultfontsize 12px}
 {var defaultboldfontsize 13px}
