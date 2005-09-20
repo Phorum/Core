@@ -63,28 +63,28 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 if (empty($PHORUM["args"]["page"]) || !is_numeric($PHORUM["args"]["page"]) || $PHORUM["args"]["page"] < 0){
     $page=1;
 } else {
-	$page=intval($PHORUM["args"]["page"]);
+    $page=intval($PHORUM["args"]["page"]);
 }
 $offset=$page-1;
 
 // check the moderation-settings
 $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
+$build_move_url=false;
 if($PHORUM["DATA"]["MODERATOR"]) {
-        // find out how many forums this user can moderate
-        $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+    // find out how many forums this user can moderate
+    $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
 
-        $modforums=0;
-        foreach($forums as $id=>$forum){
-                if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
-                   $modforums++;
-                }
+    $modforums=0;
+    foreach($forums as $id=>$forum){
+        if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
+            $modforums++;
         }
         if($modforums > 1) {
-                $build_move_url=true;
-        } else {
-                $build_move_url=false;
+            $build_move_url=true;
+            break;
         }
+    }
 }
 // Get the threads
 $rows = array();
