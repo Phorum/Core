@@ -41,7 +41,7 @@
         "AdminOnlyMessage"      =>      "This forum is currently disabled.  This is a temporary situation.  Please check back later.",
         "again"                 =>      "again",
         "AllDates"              =>      "All Dates",
-        "AllowReplies"			=> 		"Replies are allowed",
+        "AllowReplies"          =>      "Replies are allowed",
         "AllWords"              =>      "All Words",
         "AllowSeeActivity"      =>      "Allow other users to see when I am logged in",
         "AllowSeeEmail"         =>      "Allow other users to see my email address",
@@ -58,7 +58,7 @@
         "AttachFiles"           =>      "Attach Files To Message",
         "AttachFileTypes"       =>      "You are allowed to attach files of the following type:",
         "AttachFileSize"        =>      "No file can be larger than",
-	"AttachTotalFileSize"   =>	"All files together cannot be larger than",
+    "AttachTotalFileSize"   =>  "All files together cannot be larger than",
         "AttachInstructions"     =>      "When you are done attaching files, click Post",
         "AttachFull"            =>      "You have already attached the maximum number of files allowed.  To remove one, edit the post.  If you are finished, click Post.",
         "AttachInfo"            =>      "Your post will be saved on the server now.  You will have the option to edit it again before it appears on the forum.",
@@ -94,7 +94,7 @@
         "Days"                  =>      "Days",
         "Default"               =>      "Default",
         "DeleteAnnouncementForbidden"   =>  "Sorry, only an Administrator may delete an announcement.",
-	"MoveAnnouncementForbidden" => "Announcement threads cannot be moved.",
+    "MoveAnnouncementForbidden" => "Announcement threads cannot be moved.",
         "DeleteMessage"         =>      "Delete Message",
         "DeleteMessageShort"    =>      "Del",
         "DelMessReplies"        =>      "Delete Message And Replies",
@@ -215,6 +215,7 @@
 
         "MakeSticky"            =>      "Make Sticky",
         "MakeAnnouncement"      =>      "Make Announcement",
+        "MarkForumRead"         =>      "Mark Forum Read",
         "MarkRead"              =>      "Mark All Messages Read",
         "MarkThreadRead"        =>      "Mark Thread Read",
         "MatchAllForums"        =>      "Search All Forums",
@@ -311,7 +312,7 @@
         "PMFromMailboxFull"     =>      "You cannot keep a copy of this message.<br/>Your mail storage space is full.",
         "PMToMailboxFull"       =>      "The message could not be sent.<br/>The mail storage space for the recipient is full.",
         "PMSpaceLeft"           =>      "You can store %pm_space_left% more private message(s).",
-        "PMSpaceFull"           =>      "The storage space for your private messages is full.", 
+        "PMSpaceFull"           =>      "The storage space for your private messages is full.",
         "Post"                  =>      "Post",
         "Posted"                =>      "Posted",
         "Postedby"              =>      "Posted by",   // as in: Posted by user on 01-01-01 01:01pm
@@ -355,6 +356,7 @@
         "Required"              =>      "Required Items",
         "Results"               =>      "Results",
         "Report"                =>      "Report This Message",
+        "RSS"                   =>      "RSS",
 
         "SaveChanges"           =>      "Save Changes",
         "ScriptUsage"           =>      "Usage: php script.php [--module=<module_name> | --scheduled] [options]
@@ -388,7 +390,7 @@
 
         "Template"              =>      "Template",
         "ThankYou"              =>      "Thank You",
-        "ThreadAnnouncement"    =>		"You can't reply to announcements.",
+        "ThreadAnnouncement"    =>      "You can't reply to announcements.",
         "ThreadClosed"          =>      "This Thread has been closed",
         "ThreadClosedOk"        =>      "The Thread has been closed.",
         "Thread"                =>      "Thread",

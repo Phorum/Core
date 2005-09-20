@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if(!defined("PHORUM")) return;
 
@@ -10,7 +10,7 @@ if($PHORUM["forum_id"]==0){
                     "vroot" => 0
                  );
 } else {
-    
+
     $forums = phorum_db_get_forums( $PHORUM["forum_id"] );
 }
 
@@ -29,13 +29,13 @@ foreach( $forums as $key=>$forum ) {
     if($forum["folder_flag"] && $forum["vroot"]==$PHORUM["vroot"]){
         $folders[$key]=$forum["forum_id"];
         $forums[$key]["url"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
-        
+
         $sub_forums = phorum_db_get_forums( 0, $forum["forum_id"] );
         foreach($sub_forums as $sub_forum){
             if(!$sub_forum["folder_flag"]){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
             }
-        }        
+        }
     }
 }
 
@@ -44,21 +44,24 @@ foreach( $folders as $folder_key=>$folder_id ) {
     if(!isset($folder_forums[$folder_id])) continue;
 
     $shown_sub_forums=array();
-    
+
     foreach($folder_forums[$folder_id] as $key=>$forum){
-    
+
         if($PHORUM["hide_forums"] && !phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
             unset($folder_forums[$folder_id][$key]);
             continue;
         }
 
         $forum["url"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
+        $forum["url_markread"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
+        $forum["url_rss"] = phorum_get_url( PHORUM_RSS_URL, $forum["forum_id"] );
+
 
         if ( $forum["message_count"] > 0 ) {
             $forum["last_post"] = phorum_date( $PHORUM["long_date"], $forum["last_post_time"] );
         } else {
             $forum["last_post"] = "&nbsp;";
-        } 
+        }
 
         if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
             list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
@@ -66,14 +69,14 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
         $shown_sub_forums[] = $forum;
 
-    } 
+    }
 
     if(count($shown_sub_forums)){
         $PHORUM["DATA"]["FORUMS"][]=$forums[$folder_key];
         $PHORUM["DATA"]["FORUMS"]=array_merge($PHORUM["DATA"]["FORUMS"], $shown_sub_forums);
     }
-    
-} 
+
+}
 
 // set all our URL's
 phorum_build_common_urls();

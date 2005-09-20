@@ -25,6 +25,21 @@ if(!phorum_check_read_common()) {
   return;
 }
 
+// check for markread
+if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread'){
+    // setting all posts read
+    if(isset($PHORUM["forum_id"])){
+        unset($PHORUM['user']['newinfo']);
+        phorum_db_newflag_allread($PHORUM["forum_id"]);
+    }
+
+    // redirect to a fresh list without markread in url
+    $dest_url = phorum_get_url(PHORUM_INDEX_URL);
+    phorum_redirect_by_url($dest_url);
+    exit();
+
+}
+
 // somehow we got to a forum in index.php
 if(!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"]==0){
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
@@ -36,7 +51,7 @@ if ( isset( $PHORUM["forum_id"] ) ) {
     $parent_id = (int)$PHORUM["forum_id"];
 } else {
     $parent_id = 0;
-} 
+}
 
 
 if($PHORUM["use_new_folder_style"]){

@@ -150,6 +150,12 @@ input
     margin: 0 15px 0 0;
 }
 
+#phorum-index td.forum-name small
+{
+    font-weight: normal;
+    font-family: {defaultfont};
+}
+
 #phorum-index td.forum-threads
 {
     width: 120px;
