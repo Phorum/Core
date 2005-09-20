@@ -28,10 +28,9 @@
 {IF ATTACHMENTS}
 {IF MESSAGES->attachments}
 {LANG->Attachments}:
-{ASSIGN MESSAGE_ATTACHMENTS MESSAGES->attachments}
-{LOOP MESSAGE_ATTACHMENTS}
-<a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
-{/LOOP MESSAGE_ATTACHMENTS}
+{LOOP MESSAGES->attachments}
+<a href="{MESSAGES->attachments->url}">{MESSAGES->attachments->name} ({MESSAGES->attachments->size})</a>&nbsp;&nbsp;
+{/LOOP MESSAGES->attachments}
 {/IF}
 {/IF}
 </div>
