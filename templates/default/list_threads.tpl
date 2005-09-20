@@ -46,7 +46,21 @@
   }
 ?>
 <tr>
+
+    {IF ROWS->sort PHORUM_SORT_STICKY}
+
+    <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {ROWS->indent_cnt}px">{marker}<span class="PhorumListSubjPrefix">{LANG->Sticky}:&nbsp;</span>{IF ROWS->moved}<span class="PhorumListSubjPrefix">{LANG->MovedSubject}:&nbsp;</span>{/IF}<a href="{ROWS->url}">{ROWS->subject}</a>&nbsp;({ROWS->thread_count} {LANG->Posts})&nbsp;<span class="PhorumNewFlag">{ROWS->new}</span></td>
+
+    {ELSEIF ROWS->sort PHORUM_SORT_ANNOUNCEMENT}
+
+    <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {ROWS->indent_cnt}px">{marker}<span class="PhorumListSubjPrefix">{LANG->Announcement}:&nbsp;</span>{IF ROWS->moved}<span class="PhorumListSubjPrefix">{LANG->MovedSubject}:&nbsp;</span>{/IF}<a href="{ROWS->url}">{ROWS->subject}</a>&nbsp;({ROWS->thread_count} {LANG->Posts})&nbsp;<span class="PhorumNewFlag">{ROWS->new}</span></td>
+
+    {ELSE}
+
     <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {ROWS->indent_cnt}px">{marker}{IF ROWS->sort PHORUM_SORT_STICKY}<span class="PhorumListSubjPrefix">{LANG->Sticky}:&nbsp;</span>{/IF}{IF ROWS->sort PHORUM_SORT_ANNOUNCEMENT}<span class="PhorumListSubjPrefix">{LANG->Announcement}:&nbsp;</span>{/IF}{IF ROWS->moved}<span class="PhorumListSubjPrefix">{LANG->MovedSubject}:&nbsp;</span>{/IF}<a href="{ROWS->url}">{ROWS->subject}</a>&nbsp;<span class="PhorumNewFlag">{ROWS->new}</span></td>
+
+    {/IF}
+
 {IF VIEWCOUNT_COLUMN}        <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" align="center" width="80">{ROWS->viewcount}</td>{/IF}
     <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" width="150">{ROWS->linked_author}</td>
     <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap" width="150">{ROWS->datestamp}{IF MODERATOR true}<br /><span class="PhorumListModLink">{IF ROWS->threadstart false}<a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{ROWS->delete_url1}';">{LANG->DeleteMessage}</a>{/IF}{IF ROWS->threadstart true}<a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{ROWS->delete_url2}';">{LANG->DeleteThread}</a>{IF ROWS->move_url}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{ROWS->move_url}">{LANG->MoveThread}</a>{/IF}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{ROWS->merge_url}">{LANG->MergeThread}</a>{/IF}</span>{/IF}</td>
