@@ -236,13 +236,13 @@ function phorum_import_template($tplfile, $outfile)
         // template to rebuild all needed templates.
 
         $check_deps =
-        "<?php\n" .
-        "\$update_count = 0;\n" .
-        "\$need_update = (\n";
-        $now = time();
+            "<?php\n" .      
+            '$mymtime = @filemtime("' . addslashes($stage1_file) . '");' . "\n" .
+            "\$update_count = 0;\n" .
+            "\$need_update = (\n";
         foreach ($include_deps as $tpl => $out) {
             $qtpl = addslashes($tpl);
-            $check_deps .= "    @filemtime(\"$qtpl\") > $now ||\n";
+            $check_deps .= "    @filemtime(\"$qtpl\") > \$mymtime ||\n";
         }
         $check_deps = substr($check_deps, 0, -4); // strip trailing " ||\n"
         $check_deps .=
