@@ -3171,6 +3171,65 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 }
 
 /**
+ * This function renames a folder for a user.
+ * @param folder_id - The id of the folder to rename.
+ * @param newname - The new name for the folder.
+ * @param user_id - The user to rename the folder for or
+ *                  NULL to use the current user (default).
+ */
+function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $conn = phorum_db_mysql_connect();
+
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
+    settype($folder_id, "int");
+
+    $sql = "UPDATE {$PHORUM['pm_folders_table']} " .
+           "SET foldername = '".mysql_escape_string($newname)."' " .
+           "WHERE pm_folder_id = $folder_id AND user_id = $user_id";
+
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    return $res;           
+}
+
+
+
+/**
+ * This function deletes a folder for a user. Along with the
+ * folder, all contained messages are deleted as well.
+ * @param folder_id - The id of the folder to delete.
+ * @param user_id - The user to delete the folder for or
+ *                  NULL to use the current user (default).
+ */
+function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $conn = phorum_db_mysql_connect();
+
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
+    settype($folder_id, "int"); 
+
+    // Get messages in this folder and delete them.
+    $list = phorum_db_pm_list($folder_id, $user_id);
+    foreach ($list as $id => $data) {
+        phorum_db_pm_delete($id, $folder_id, $user_id);
+    }
+    
+    // Delete the folder itself.
+    $sql = "DELETE FROM {$PHORUM['pm_folders_table']} " .
+           "WHERE pm_folder_id = $folder_id AND user_id = $user_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    return $res;
+}
+
+/**
  * This function retrieves the list of folders for a user.
  * @param user_id - The user to retrieve folders for or NULL
  *                 to use the current user (default).
@@ -3193,10 +3252,6 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
             'id'   => PHORUM_PM_INBOX,
             'name' => $PHORUM["DATA"]["LANG"]["INBOX"],
         ),
-        PHORUM_PM_OUTBOX => array(
-            'id'   => PHORUM_PM_OUTBOX,
-            'name' => $PHORUM["DATA"]["LANG"]["SentItems"],
-        ),
     );
 
     // Select all custom folders for the user.
@@ -3215,6 +3270,12 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
         }
     }
 
+    // Add the outgoing box.
+    $folders[PHORUM_PM_OUTBOX] = array(
+        'id'   => PHORUM_PM_OUTBOX,
+        'name' => $PHORUM["DATA"]["LANG"]["SentItems"],
+    );
+    
     // Count messages if requested.
     if ($count_messages)
     {
@@ -3433,7 +3494,7 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 }
 
 /**
- * This function deletes a message from a folder.
+ * This function deletes a private message from a folder.
  * @param folder - The folder from which to delete the message
  * @param pm_id - The id of the private message to delete
  * @param user_id - The user to delete the message for or NULL
@@ -3468,6 +3529,53 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
     // Update message counters.
     phorum_db_pm_update_message_info($pm_id);
 
+    return $res;
+}
+
+/**
+ * This function moves a private message to a different folder.
+ * @param pm_id - The id of the private message to move.
+ * @param from - The folder to move the message from.
+ * @param to - The folder to move the message to.
+ * @param user_id - The user to move the message for or NULL
+ *                 to use the current user (default).
+ */ 
+function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $conn = phorum_db_mysql_connect();
+
+    settype($pm_id, "int");
+
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
+    
+    if (is_numeric($from)) {
+        $folder_sql = "pm_folder_id=$from AND";
+    } elseif ($from == PHORUM_PM_INBOX || $from == PHORUM_PM_OUTBOX) {
+        $folder_sql = "pm_folder_id=0 AND special_folder='$from' AND";
+    } else {
+        die ("Illegal source folder '$from' specified");
+    }
+    
+    if (is_numeric($to)) {
+        $pm_folder_id = $to;
+        $special_folder = 'NULL';
+    } elseif ($to == PHORUM_PM_INBOX || $to == PHORUM_PM_OUTBOX) {
+        $pm_folder_id = 0;
+        $special_folder = "'$to'";
+    } else {
+        die ("Illegal target folder '$to' specified");
+    }
+    
+    $sql = "UPDATE {$PHORUM["pm_xref_table"]} SET " .
+           "pm_folder_id = $pm_folder_id, " .
+           "special_folder = $special_folder " .
+           "WHERE $folder_sql user_id = $user_id AND pm_message_id = $pm_id";
+
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     return $res;
 }
 
