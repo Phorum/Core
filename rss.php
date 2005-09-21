@@ -18,6 +18,8 @@
 //   July 19 Fixed by Dagon, Date format and Location default                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+define('phorum_page', 'rss');
+
 include_once("./common.php");
 include_once("./include/format_functions.php");
 
