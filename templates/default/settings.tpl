@@ -26,7 +26,7 @@
 {var forumalign center}
 {var newflagcolor #CC0000}
 {var errorfontcolor Red}
-
+{var okmsgfontcolor DarkGreen}
 
 {! --- for the forum-list ... alternating colors --- }
 {var altbackcolor #EEEEEE}

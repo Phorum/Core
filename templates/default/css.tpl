@@ -288,6 +288,16 @@ input
         font-family: {largefont};
         font-weight: bold;
     }
+    
+    .PhorumOkMsg
+    {
+        padding: 10px;
+        text-align: center;
+        color: {okmsgfontcolor};
+        font-size: {largefontsize};
+        font-family: {largefont};
+        font-weight: bold;        
+    }
 
    .PhorumNewFlag
     {
@@ -452,7 +462,7 @@ input
         background-color: {navbackcolor};
         padding: 2px 3px 2px 3px;
     }
-
+    
     /********************/
 
     /* List page specifics */
