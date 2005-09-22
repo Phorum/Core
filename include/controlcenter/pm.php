@@ -486,9 +486,10 @@ switch ($page) {
         // Reply privately to a forum post.
         } elseif (isset($PHORUM["args"]["message_id"])) {
 
-            $message = phorum_db_get_message($PHORUM["args"]["message_id"]);
+            $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
 
-            if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"])) {
+            if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
+  
                 // get url to the message board thread
                 // TODO: would be nicer to get the url to the post within the thread
                 $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"]);
