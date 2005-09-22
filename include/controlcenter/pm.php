@@ -1,4 +1,12 @@
 <?php
+
+// These language strings are set dynamically, so the language
+// tool won't recognize them automatically. Therefore they are
+// mentioned here.
+// $PHORUM["DATA"]["LANG"]["PMFolderCreateSuccess"]
+// $PHORUM["DATA"]["LANG"]["PMFolderRenameSuccess"]
+// $PHORUM["DATA"]["LANG"]["PMFolderDeleteSuccess"]
+
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 // If private messages are disabled, just show a simple error message.
