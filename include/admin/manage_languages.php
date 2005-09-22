@@ -150,7 +150,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
           "to get to the new version of the language file. At the " .
           "bottom of the page you will find a download button to download " .
           "the updated language file. This language file has to be placed " .
-          "in <b>include/lang/" . htmlspecialchars($fullfile) . "</b> to make it " .
+          "in <b>include/lang/" . htmlspecialchars($lang) . ".php</b> to make it " .
           "available to Phorum (backup your old file first of course!). " .
           "If new language strings have been added, " .
           "they will be marked with '***' in the language file, so it's " .
@@ -179,7 +179,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
         if ($string == 'TIME') continue; // This one is special.
         if (! isset($CURRENT["DATA"]["LANG"][$string])) {
             array_push($missing, $string);
-            $translation = $string;
+            $translation = urlencode("'" . addslashes($string) . "'");
             if (isset($DEFAULT["DATA"]["LANG"][$string])) {
                 $translation = $DEFAULT["DATA"]["LANG"][$string];
             }
@@ -426,6 +426,7 @@ function token_get_string(&$tokens, $string = NULL)
                 case T_WHITESPACE:
                 case T_ENCAPSED_AND_WHITESPACE:
                 case T_CONSTANT_ENCAPSED_STRING: 
+                case T_NUM_STRING:
                 case T_STRING:
                 case T_ARRAY:
                 case T_LNUMBER:
