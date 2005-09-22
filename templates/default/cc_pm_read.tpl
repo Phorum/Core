@@ -20,16 +20,15 @@
 <div class="PhorumReadBodyText">{MESSAGE->message}</div><br />
 </div>
 
-<div class="PhorumNavBlock" style="text-align: left">
+<div class="PhorumStdBlock" style="border-top:none">
+{var MOVE_SUBMIT_NAME move_message}
+{include cc_pm_moveselect}
 <input type="submit" name="close_message" class="PhorumSubmit" value="{LANG->PMCloseMessage}" />
 &nbsp;
 <input type="submit" name="reply_message" class="PhorumSubmit" value="{LANG->PMReplyMessage}" />
 &nbsp;
 <input type="submit" name="delete_message" class="PhorumSubmit" value="{LANG->Delete}" 
  onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
-
-{var MOVE_SUBMIT_NAME move_message}
-{include cc_pm_moveselect}
 </div>
 
 </form>

@@ -25,9 +25,9 @@
 {/IF}
 </table>
 
-<div class="PhorumNavBlock" style="text-align: left;">
-<input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" 
- onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
+<div class="PhorumStdBlock" style="border-top:none">
 {var MOVE_SUBMIT_NAME move}
 {include cc_pm_moveselect}
+<input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" 
+ onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
 </div>

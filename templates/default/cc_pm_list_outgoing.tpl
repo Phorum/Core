@@ -28,7 +28,8 @@
 
 </table>
 
-<div class="PhorumNavBlock" style="text-align: left;">
+
+<div class="PhorumStdBlock" style="border-top:none">
 <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" 
  onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
 </div>
