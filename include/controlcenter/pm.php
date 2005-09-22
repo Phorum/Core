@@ -427,11 +427,6 @@ switch ($page) {
             $message = phorum_pm_format($message);
 
             // Setup URL's and format date.
-            if ($message["from_user_id"] != $PHORUM["user"]["user_id"]) {
-                $message["reply_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "folder_id=$folder_id", "pm_id=".$message["pm_message_id"]);
-            }
-            $message["delete_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "action=delete", "folder_id=$folder_id", "pm_id=".$message["pm_message_id"]);
-            $message["list_url"]=$PHORUM["DATA"]["PM_FOLDERS"][$folder_id]['url'];
             $message["from_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
             $message["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
             
