@@ -189,7 +189,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         if ( $PHORUM["enable_pm"] ) {
             // setup the private messages array, we store the number of new messages here
             $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];
-            $PHORUM['DATA']["PRIVATE_MESSAGES"]["inbox_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM );
+            $PHORUM['DATA']["PRIVATE_MESSAGES"]["inbox_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=list", "folder_id=" . PHORUM_PM_INBOX);
         }
 
         $PHORUM["DATA"]["notice_messages"] = false;
