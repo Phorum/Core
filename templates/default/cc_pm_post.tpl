@@ -1,14 +1,14 @@
 
-{IF MESSAGE->preview}
+{IF PREVIEW}
 <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->Preview}</div>
 <div class="PhorumStdBlock" style="text-align: left;">
-<div class="PhorumReadBodySubject">{MESSAGE->pr_subject}</div>
-<div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="{MESSAGE->from_profile_url}">{MESSAGE->from}</a></strong></div>
-<div class="PhorumReadBodyHead">{LANG->To}: <strong><a href="{MESSAGE->to_profile_url}">{MESSAGE->to}</a></strong></div>
+<div class="PhorumReadBodySubject">{PREVIEW->subject}</div>
+<div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="{PREVIEW->from_profile_url}">{PREVIEW->from_username}</a></strong></div>
+<div class="PhorumReadBodyHead">{LANG->To}: <strong><a href="{PREVIEW->to_profile_url}">{PREVIEW->to}</a></strong></div>
 <br />
-<div class="PhorumReadBodyText">{MESSAGE->pr_message}</div><br />
+<div class="PhorumReadBodyText">{PREVIEW->message}</div><br />
 </div>
-<br />
+<br/>
 {/IF}
 
 {IF ERROR}
@@ -27,7 +27,7 @@
 <table class="PhorumFormTable" cellspacing="0" border="0">
 <tr>
     <td>{LANG->From}:&nbsp;</td>
-    <td>{MESSAGE->from}</td>
+    <td>{MESSAGE->from_username}</td>
 </tr>
 <tr>
     <td>{LANG->To}:&nbsp;</td>

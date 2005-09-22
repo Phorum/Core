@@ -1,5 +1,5 @@
-<div class="PhorumLargeFont">{LANG->PrivateMessages} : {LANG->SentItems}</div>
 {include cc_pm_max_messagecount}
+<div class="PhorumLargeFont">{LANG->PrivateMessages} : {LANG->SentItems}</div>
 <br />
 <form action="{ACTION}" method="post">
 {POST_VARS}

@@ -62,6 +62,8 @@ $PHORUM['DATA']['URL']['CC13'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel
 $PHORUM['DATA']['URL']['CC14'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PRIVACY);
 $PHORUM['DATA']['URL']['CC15'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
 $PHORUM['DATA']['URL']['CC16'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
+$PHORUM['DATA']['URL']['CC17'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=folders");
+$PHORUM['DATA']['URL']['CC18'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=buddies");
 
 if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     $PHORUM["DATA"]["MYFILES"] = true;
@@ -114,6 +116,26 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag']==0) {
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BackToForumList'];
 }
 $PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
+
+// Make a list of folders for use in the menu and a list of folders that
+// the user created. The latter will be set to zero if no user folders
+// are available.
+$pm_folders = phorum_db_pm_getfolders(NULL, true);
+$pm_userfolders = array();
+foreach($pm_folders as $id => $data) 
+{
+    $pm_folders[$id]["is_special"] = is_numeric($id) ? 0 : 1;
+    $pm_folders[$id]["is_outgoing"] = $id == PHORUM_PM_OUTBOX;
+    $pm_folders[$id]["id"] = $id;
+    $pm_folders[$id]["name"] = htmlspecialchars($data["name"]);
+    $pm_folders[$id]["url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=list", "folder_id=$id");
+    
+    if (!$pm_folders[$id]["is_special"]) {
+        $pm_userfolders[$id] = $pm_folders[$id];
+    }
+}
+$PHORUM["DATA"]["PM_FOLDERS"] = $pm_folders;
+$PHORUM["DATA"]["PM_USERFOLDERS"] = count($pm_userfolders) ? $pm_userfolders : 0;
 
 // load the file for that panel - main-part
 $panel = basename($panel);
