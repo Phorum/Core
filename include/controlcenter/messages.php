@@ -29,7 +29,7 @@ foreach($mod_forums as $forum => $rest) {
     // loop through and read all the data in.
     foreach($rows as $key => $row) {
         $numunapproved++;
-        $rows[$key]['forumname'] = $foruminfo[$forum]['name'];
+        $rows[$key]['forumname'] = $forum == 0 ? 'announcement' : $foruminfo[$forum]['name'];
         $rows[$key]['checkvar'] = $checkvar;
         if ($checkvar)
             $checkvar = 0;
