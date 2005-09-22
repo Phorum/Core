@@ -34,6 +34,9 @@ $folder_id = phorum_getparam('folder_id');
 $pm_id     = phorum_getparam('pm_id');
 $forum_id  = $PHORUM["forum_id"];
 
+// Use the inbox as the default folder_id.
+if (!$folder_id) $folder_id = PHORUM_PM_INBOX;
+
 // Set some default template data.
 $PHORUM["DATA"]["ACTION"]=phorum_get_url( PHORUM_CONTROLCENTER_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
@@ -220,11 +223,15 @@ if (!empty($action)) {
 
                 // Get the user id for the recipient username.
                 // PMTODO wen supporting multiple recipients, this will be different.
-                // Also mind the upcoming check on the maximum number of messages.
+                // Also mind $recipients and the upcoming check on the maximum 
+                // number of messages.
                 $to_user_id = phorum_db_user_check_field("username", $_POST["to"]);
-
+                
+                
                 if($to_user_id){
-
+                   
+                    $recipients = array(phorum_db_user_get($to_user_id, false));
+                    
                     // Check if all required message data is filled in.
                     if(empty($_POST["subject"]) || empty($_POST["message"])){
 
@@ -240,7 +247,7 @@ if (!empty($action)) {
                         if (!$PHORUM['user']['admin'] && $PHORUM['max_pm_messagecount'])
                         {
                             // Build a list of users to check.
-                            $checkusers = array(phorum_db_user_get($to_user_id, false));
+                            $checkusers = $recipients;
                             if ($_POST['keep']) $checkusers[] = $PHORUM['user'];
                             
                             // Check all users.
@@ -259,12 +266,44 @@ if (!empty($action)) {
                         }
 
                         // Send the private message if no errors occurred.
-                        // PMTODO create notification mail.
                         if (empty($error)) {
-                            if(!phorum_db_pm_send($_POST["subject"], $_POST["message"], $to_user_id, NULL, $_POST["keep"])){
+                            
+                            $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], $to_user_id, NULL, $_POST["keep"]);
+                            
+                            // Show an error in case of problems.
+                            if(! $pm_message_id){
+
                                 $error = $PHORUM["DATA"]["LANG"]["PMNotSent"];
+
+                            // Do e-mail notifications on successfull sending.
                             } else {
-                                phorum_hook("pm_sent","");
+
+                                include_once("./include/email_functions.php");
+
+                                $pm_message = array(
+                                    'pm_message_id' => $pm_message_id,
+                                    'subject'       => $_POST['subject'],
+                                    'message'       => $_POST['message'],
+                                    'from_username' => $PHORUM['user']['username'],
+                                    'from_user_id'  => $PHORUM['user']['user_id'],
+                                );
+                                
+                                $langrcpts = array();
+                                
+                                // Sort all recipients that want a notify by language.
+                                foreach ($recipients as $rcpt) {
+                                    if ($rcpt["pm_email_notify"]) {
+                                        if (!isset($langrcpts[$rcpt["user_language"]])) {
+                                            $langrcpts[$rcpt["user_language"]] = array($rcpt);
+                                        } else {
+                                            $langrcpts[$rcpt["user_language"]][] = $rcpt;
+                                        }
+                                    }
+                                }
+                                
+                                phorum_email_pm_notice($pm_message, $langrcpts);
+   
+                                phorum_hook("pm_sent", $pm_message);
                             }
                         }
                     }
@@ -334,9 +373,6 @@ function phorum_pm_format($message)
 
 // Use the message list as the default page.
 if (!$page) $page = "list";
-
-// Use the inbox as the default folder_id.
-if (!$folder_id) $folder_id = PHORUM_PM_INBOX;
 
 // Show an OK message for a redirected page?
 $okmsg_id = phorum_getparam('okmsg');

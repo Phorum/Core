@@ -3355,7 +3355,8 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
 }
 
 /**
- * This function inserts a private message in the database.
+ * This function inserts a private message in the database. The return value
+ * is the pm_message_id of the created message.
  * @param subject - The subject for the private message.
  * @param message - The message text for the private message.
  * @param to - A single user_id or an array of user_ids for the recipients.
@@ -3448,7 +3449,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
 
     }
 
-    return true;
+    return $pm_message_id;
 }
 
 /**
@@ -3805,7 +3806,7 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['settings_table']} ( name varchar(255) NOT NULL default '', type enum('V','S') NOT NULL default 'V', data text NOT NULL, PRIMARY KEY (name)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['subscribers_table']} ( user_id int(10) unsigned NOT NULL default '0', forum_id int(10) unsigned NOT NULL default '0', sub_type int(10) unsigned NOT NULL default '0', thread int(10) unsigned NOT NULL default '0', PRIMARY KEY (user_id,forum_id,thread), KEY forum_id (forum_id,thread,sub_type)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['user_permissions_table']} ( user_id int(10) unsigned NOT NULL default '0', forum_id int(10) unsigned NOT NULL default '0', permission int(10) unsigned NOT NULL default '0', PRIMARY KEY  (user_id,forum_id), KEY forum_id (forum_id,permission) ) TYPE=MyISAM",
-        "CREATE TABLE {$PHORUM['user_table']} ( user_id int(10) unsigned NOT NULL auto_increment, username varchar(50) NOT NULL default '', password varchar(50) NOT NULL default '',sessid varchar(50) NOT NULL default '', password_temp varchar(50) NOT NULL default '', email varchar(100) NOT NULL default '',  email_temp varchar(110) NOT NULL default '', hide_email tinyint(1) NOT NULL default '0', active tinyint(1) NOT NULL default '0', user_data text NOT NULL, signature text NOT NULL, threaded_list tinyint(4) NOT NULL default '0', posts int(10) NOT NULL default '0', admin tinyint(1) NOT NULL default '0', threaded_read tinyint(4) NOT NULL default '0', date_added int(10) unsigned NOT NULL default '0', date_last_active int(10) unsigned NOT NULL default '0', last_active_forum int(10) unsigned NOT NULL default '0', hide_activity tinyint(1) NOT NULL default '0',show_signature TINYINT( 1 ) DEFAULT '0' NOT NULL, email_notify TINYINT( 1 ) DEFAULT '0' NOT NULL ,tz_offset TINYINT( 2 ) DEFAULT '-99' NOT NULL,is_dst TINYINT( 1 ) DEFAULT '0' NOT NULL ,user_language VARCHAR( 100 ) NOT NULL ,user_template VARCHAR( 100 ) NOT NULL, moderator_data text NOT NULL, PRIMARY KEY (user_id), UNIQUE KEY username (username), KEY active (active), KEY userpass (username,password), KEY sessid (sessid), KEY activity (date_last_active,hide_activity,last_active_forum), KEY date_added (date_added), KEY email_temp (email_temp) ) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM['user_table']} ( user_id int(10) unsigned NOT NULL auto_increment, username varchar(50) NOT NULL default '', password varchar(50) NOT NULL default '',sessid varchar(50) NOT NULL default '', password_temp varchar(50) NOT NULL default '', email varchar(100) NOT NULL default '',  email_temp varchar(110) NOT NULL default '', hide_email tinyint(1) NOT NULL default '0', active tinyint(1) NOT NULL default '0', user_data text NOT NULL, signature text NOT NULL, threaded_list tinyint(4) NOT NULL default '0', posts int(10) NOT NULL default '0', admin tinyint(1) NOT NULL default '0', threaded_read tinyint(4) NOT NULL default '0', date_added int(10) unsigned NOT NULL default '0', date_last_active int(10) unsigned NOT NULL default '0', last_active_forum int(10) unsigned NOT NULL default '0', hide_activity tinyint(1) NOT NULL default '0',show_signature TINYINT( 1 ) DEFAULT '0' NOT NULL, email_notify TINYINT( 1 ) DEFAULT '0' NOT NULL, pm_email_notify TINYINT ( 1 ) DEFAULT '1' NOT NULL, tz_offset TINYINT( 2 ) DEFAULT '-99' NOT NULL,is_dst TINYINT( 1 ) DEFAULT '0' NOT NULL ,user_language VARCHAR( 100 ) NOT NULL ,user_template VARCHAR( 100 ) NOT NULL, moderator_data text NOT NULL, PRIMARY KEY (user_id), UNIQUE KEY username (username), KEY active (active), KEY userpass (username,password), KEY sessid (sessid), KEY activity (date_last_active,hide_activity,last_active_forum), KEY date_added (date_added), KEY email_temp (email_temp) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['user_newflags_table']} ( user_id int(11) NOT NULL default '0', forum_id int(11) NOT NULL default '0', message_id int(11) NOT NULL default '0', PRIMARY KEY  (user_id,forum_id,message_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['groups_table']} ( group_id int(11) NOT NULL auto_increment, name varchar(255) NOT NULL default '0', open tinyint(3) NOT NULL default '0', PRIMARY KEY  (group_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['forum_group_xref_table']} ( forum_id int(11) NOT NULL default '0', group_id int(11) NOT NULL default '0', permission int(10) unsigned NOT NULL default '0', PRIMARY KEY  (forum_id,group_id) ) TYPE=MyISAM",

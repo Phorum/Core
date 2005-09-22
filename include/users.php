@@ -395,6 +395,7 @@ function phorum_user_prepare_data( $new_user, $old_user, $pwd_unchanged = false 
             case "groups":
             case "show_signature":
             case "email_notify":
+            case "pm_email_notify":
             case "tz_offset":
             case "is_dst":
             case "user_language":

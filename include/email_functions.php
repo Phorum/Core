@@ -93,6 +93,39 @@ function phorum_email_user($addresses, $data)
     return $num_addresses;
 }
 
+function phorum_email_pm_notice($message, $langusers)
+{
+    $mail_data = array(
+        "pm_message_id" => $message["pm_message_id"],
+        "author"        => $message["from_username"],
+        "subject"       => $message["subject"],
+        "full_body"     => $message["message"],
+        "plain_body"    => phorum_strip_body($message["message"]),
+        "read_url"      => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "pm_id=" . $message["pm_message_id"]),
+    );
+    
+    foreach ($langusers as $language => $users) 
+    {   
+        $PHORUM = $GLOBALS["PHORUM"];
+        
+        if ( file_exists( "./include/lang/$language.php" ) ) {
+            include( "./include/lang/$language.php" );
+        } else {
+            include("./include/lang/{$PHORUM['language']}.php");
+        }
+        
+        $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['PMNotifyMessage'];
+        $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"]['PMNotifySubject'];
+
+        $addresses = array();
+        foreach ($users as $user) {
+            $addresses[] = $user["email"];
+        } 
+
+        phorum_email_user($addresses, $mail_data);
+    }
+}
+
 function phorum_email_notice($message)
 {
     $PHORUM=$GLOBALS["PHORUM"];

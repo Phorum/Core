@@ -106,6 +106,14 @@
             </select>
     </td>
 </tr>
+<tr>
+    <td nowrap="nowrap">{LANG->PMNotifyEnableSetting}:&nbsp;</td>
+    <td><select name="pm_email_notify">
+            <option value="0"{IF PROFILE->pm_email_notify 0} selected="selected" {/IF}>{LANG->No}</option>
+            <option value="1"{IF PROFILE->pm_email_notify 1} selected="selected" {/IF}>{LANG->Yes}</option>
+            </select>
+    </td>
+</tr>
 {/IF}
 {IF PROFILE->CHANGEPASSWORD}
 <tr>
