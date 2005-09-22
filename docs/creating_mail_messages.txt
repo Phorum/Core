@@ -1,31 +1,88 @@
 
-This is a small HowTo for creating mail-messages the way you want them 
+This is a small HowTo for customizing the mail messages that are
+sent by Phorum.
 
-1. The bodies and subjects for the mail-messages are defined in the language-files
-2. you can use some tags in the mail-body and mail-subject which are replaced by 
-   related data from the post its about
+All messages and subjects for the mail messages are defined as language
+strings in the language-files. So to customize mail messages, you can 
+change the definition of these strings. You can use some special tags 
+in the message and mailsubject, which are replaced by related data from 
+the post it's about. 
 
-
-These are the tags you can use, with their explanations.
-
-User-Notices about a new message:
-- %forumname%, The name of the current forum
-- %author%   , The name of the author of the message
-- %subject%  , The subject of the message
-- %full_body%, The full body of the message including all HTML/BBCode tags, use with care!
-- %plain_body%, The body of the message which is stripped from all HTML/BBCode tags
-- %read_url% , The url where this message can be read
-- %remove_url%, The url to unsubscribe from that thread
-- %noemail_url%, The url to set the subscription to "no email", like a bookmark only
-- %followed_threads_url%, The url to the controlcenter-page where you can look at all your subscribed threads
+Below you'll find a list of the language strings that you can update for
+each type of mail message and the special tags that you can use in them.
 
 
-Moderator-Notification about a new message:
-- %forumname%, The name of the current forum
-- %author%   , The name of the author of the message
-- %subject%  , The subject of the message
-- %full_body%, The full body of the message including all HTML/BBCode tags, use with care!
-- %plain_body%, The body of the message which is stripped from all HTML/BBCode tags
-- %read_url% , The url where this message can be read
-- %approve_url%, The url to approve this message (if its a moderated forum and messages need approval)
+
+User-notifications about new messages in followed threads:
+----------------------------------------------------------
+
+Language strings:
+
+- NewReplySubject
+- NewReplyMessage 
+
+Replacement tags: 
+
+- %forumname%     The name of the current forum.
+- %author%        The name of the author of the message.
+- %subject%       The subject of the message.
+- %full_body%     The full body of the message including all HTML/BBCode 
+                  tags, use with care!
+- %plain_body%    The body of the message which is stripped from all 
+                  HTML/BBCode tags.
+- %read_url%      The url where this message can be read.
+- %remove_url%    The url to unsubscribe from the followed thread.
+- %noemail_url%   The url to set the subscription to "no email", so 
+                  the thread is only followed from the user's profile.
+- %followed_threads_url% The url to the controlcenter-page where the
+                  user can look at all the followed threads.
+
+
+
+Moderator-notifications about new messages:
+-------------------------------------------
+
+Language strings for messages that need to be moderated:
+
+- NewModeratedSubject
+- NewModeratedMessage
+
+Language strings for messages that do not need to be moderated:
+
+- NewUnModeratedSubject
+- NewUnModeratedMessage
+
+Replacement tags:
+
+- %forumname%     The name of the current forum.
+- %author%        The name of the author of the message.
+- %subject%       The subject of the message.
+- %full_body%     The full body of the message including all HTML/BBCode 
+                  tags, use with care!
+- %plain_body%    The body of the message which is stripped from all 
+                  HTML/BBCode tags.
+- %read_url%      The url where this message can be read.
+- %approve_url%   The url where this message can be approve (if it's a 
+                  moderated forum and messages need approval)
+
+
+
+User-notifications about new private messages:
+----------------------------------------------
+
+Language strings:
+
+- PMNotifySubject
+- PMNotifyMessage
+
+Replacement tags:
+
+- %author%        The name of the author of the message.
+- %subject%       The subject of the message.
+- %full_body%     The full body of the message including all HTML/BBCode 
+                  tags, use with care!
+- %plain_body%    The body of the message which is stripped from all 
+                  HTML/BBCode tags.
+- %read_url%      The url where this message can be read.
+
 
