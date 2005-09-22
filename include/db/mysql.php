@@ -35,8 +35,6 @@ $PHORUM["forum_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_forum
 $PHORUM["user_group_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_group_xref";
 $PHORUM['user_custom_fields_table'] = "{$PHORUM['DBCONFIG']['table_prefix']}_user_custom_fields";
 $PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
-// PMTODO phase out private_message_table
-$PHORUM["private_message_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
 $PHORUM["pm_messages_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_messages";
 $PHORUM["pm_folders_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_folders";
 $PHORUM["pm_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_xref";
@@ -2375,17 +2373,7 @@ function phorum_db_user_delete($user_id) {
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-    // incoming pm's
-    // PMTODO call correct cleanup function
-    $sql = "delete from {$PHORUM['private_message_table']} where to_user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // set outgoing pm's to delete
-    // PMTODO call correct cleanup function
-    $sql = "update {$PHORUM['private_message_table']} set from_del_flag = 1 where from_user_id=$user_id and from_del_flag=0";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    // PMTODO call correct cleanup functions for the new PM system.
 
     // files-table
     $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
@@ -3812,8 +3800,6 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['user_group_xref_table']} ( user_id int(11) NOT NULL default '0', group_id int(11) NOT NULL default '0', status tinyint(3) NOT NULL default '1', PRIMARY KEY  (user_id,group_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['files_table']} ( file_id int(11) NOT NULL auto_increment, user_id int(11) NOT NULL default '0', filename varchar(255) NOT NULL default '', filesize int(11) NOT NULL default '0', file_data mediumtext NOT NULL, add_datetime int(10) unsigned NOT NULL default '0', message_id int(10) unsigned NOT NULL default '0', link varchar(10) NOT NULL, PRIMARY KEY (file_id), KEY add_datetime (add_datetime), KEY message_id_link (message_id,link)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['banlist_table']} ( id int(11) NOT NULL auto_increment, forum_id int(11) NOT NULL default '0', type tinyint(4) NOT NULL default '0', pcre tinyint(4) NOT NULL default '0', string varchar(255) NOT NULL default '', PRIMARY KEY  (id), KEY forum_id (forum_id)) TYPE=MyISAM",
-        // PMTODO phase out private_message_table using upgrade script
-        "CREATE TABLE {$PHORUM['private_message_table']} ( private_message_id int(10) unsigned NOT NULL auto_increment, from_username varchar(50) NOT NULL default '', to_username varchar(50) NOT NULL default '', from_user_id int(10) unsigned NOT NULL default '0', to_user_id int(10) unsigned NOT NULL default '0', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', to_del_flag tinyint(1) NOT NULL default '0', from_del_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (private_message_id), KEY to_user_id (to_user_id,to_del_flag,datestamp), KEY from_user_id (from_user_id,from_del_flag,datestamp), KEY to_del_flag (to_del_flag,from_del_flag), KEY read_flag (to_user_id,read_flag,to_del_flag) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['search_table']} ( message_id int(10) unsigned NOT NULL default '0', search_text mediumtext NOT NULL, PRIMARY KEY  (message_id), FULLTEXT KEY search_text (search_text) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['user_custom_fields_table']} ( user_id INT DEFAULT '0' NOT NULL , type INT DEFAULT '0' NOT NULL , data TEXT NOT NULL , PRIMARY KEY ( user_id , type )) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM["pm_messages_table"]} ( pm_message_id int(10) unsigned NOT NULL auto_increment, from_user_id int(10) unsigned NOT NULL, from_username varchar(50) NOT NULL default '', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', meta mediumtext NOT NULL, PRIMARY KEY(pm_message_id)) TYPE=MyISAM",
