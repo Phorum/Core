@@ -103,6 +103,11 @@ function phorum_email_pm_notice($message, $langusers)
         "plain_body"    => phorum_strip_body($message["message"]),
         "read_url"      => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "pm_id=" . $message["pm_message_id"]),
     );
+
+    if (isset($_POST[PHORUM_SESSION])) {
+        // strip any auth info from the read url
+        $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["read_url"]);
+    }
     
     foreach ($langusers as $language => $users) 
     {   
