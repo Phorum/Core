@@ -2373,7 +2373,19 @@ function phorum_db_user_delete($user_id) {
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-    // PMTODO call correct cleanup functions for the new PM system.
+    // private messages
+    $sql = "select * from {$PHORUM["pm_xref_table"]} where user_id=$user_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    while ($row = mysql_fetch_assoc($res)) {
+        $folder = $row["pm_folder_id"] == 0 ? $row["special_folder"] : $row["pm_folder_id"];
+        phorum_db_pm_delete($row["pm_message_id"], $folder, $user_id);
+    }
+
+    // private message folders
+    $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id"; 
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // files-table
     $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
