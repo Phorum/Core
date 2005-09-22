@@ -37,6 +37,7 @@ $forum_id  = $PHORUM["forum_id"];
 // Set some default template data.
 $PHORUM["DATA"]["ACTION"]=phorum_get_url( PHORUM_CONTROLCENTER_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
+$PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
 // ------------------------------------------------------------------------
@@ -407,7 +408,6 @@ switch ($page) {
         $PHORUM["DATA"]["MESSAGECOUNT"] = count($list);
         $PHORUM["DATA"]["MESSAGES"] = $list;
         $PHORUM["DATA"]["FOLDERNAME"] = $PHORUM["DATA"]["PM_FOLDERS"][$folder_id]["name"];
-        $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 
         $template = "cc_pm_list";
         break;

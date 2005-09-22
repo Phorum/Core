@@ -21,8 +21,10 @@
 </div>
 
 <div class="PhorumStdBlock" style="border-top:none">
-{var MOVE_SUBMIT_NAME move_message}
-{include cc_pm_moveselect}
+{IF FOLDER_IS_INCOMING}
+  {var MOVE_SUBMIT_NAME move_message}
+  {include cc_pm_moveselect}
+{/IF}
 <input type="submit" name="close_message" class="PhorumSubmit" value="{LANG->PMCloseMessage}" />
 {IF NOT MESSAGE->from_user_id USERINFO->user_id}
   <input type="submit" name="reply_message" class="PhorumSubmit" value="{LANG->PMReplyMessage}" />
