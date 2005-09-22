@@ -1,7 +1,7 @@
 {IF PM_USERFOLDERS}
  &nbsp;&nbsp;&nbsp;
  <span style="white-space: nowrap">
- <select name="target_folder">
+ <select name="target_folder" style="vertical-align: middle;">
  <option value=""> {LANG->PMSelectAFolder}
  {LOOP PM_FOLDERS}
    {IF NOT PM_FOLDERS->id FOLDER_ID}
