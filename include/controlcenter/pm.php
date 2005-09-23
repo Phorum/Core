@@ -323,7 +323,9 @@ if (!empty($action)) {
                         }
                         
                         // Invalidate user cache, to update message counts.
+                        // PMTODO invalidate cache for all users if multiple rcpts are supported.
                         phorum_cache_remove('user',$user_id);
+                        phorum_cache_remove('user',$to_user_id);
                     }
                     
                 } else {
