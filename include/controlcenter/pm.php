@@ -269,7 +269,7 @@ if (!empty($action)) {
                             foreach ($checkusers as $user)
                             {
                                 if ($user['admin']) continue; // No limits for admins
-                                $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS);
+                                $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS, $user["user_id"]);
                                 if ($current_count['total'] >= $PHORUM['max_pm_messagecount']) {
                                     if ($user['user_id'] == $to_user_id) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
