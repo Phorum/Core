@@ -46,7 +46,7 @@ while($row=mysql_fetch_assoc($res))
             $row["to_user_id"] => array (
                 'user_id' => $row["to_user_id"],
                 'username' => $row["to_username"],
-                'read_flag' => 0,
+                'read_flag' => $row["read_flag"],
             )
         )
     ));
