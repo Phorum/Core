@@ -38,6 +38,7 @@ $PHORUM["banlist_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_banlists";
 $PHORUM["pm_messages_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_messages";
 $PHORUM["pm_folders_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_folders";
 $PHORUM["pm_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_xref";
+$PHORUM["pm_buddies_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_buddies";
 /*
 * fields which are always strings, even if they contain only numbers
 * used in post-message and update-message, otherwise strange things happen
@@ -2382,6 +2383,8 @@ function phorum_db_user_delete($user_id) {
         phorum_db_pm_delete($row["pm_message_id"], $folder, $user_id);
     }
 
+    // BUDDYTODO: remove the user from buddylists.
+    
     // private message folders
     $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id"; 
     $res = mysql_query($sql, $conn);
@@ -3820,6 +3823,8 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM["pm_messages_table"]} ( pm_message_id int(10) unsigned NOT NULL auto_increment, from_user_id int(10) unsigned NOT NULL, from_username varchar(50) NOT NULL default '', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', meta mediumtext NOT NULL, PRIMARY KEY(pm_message_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM["pm_folders_table"]} ( pm_folder_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, foldername varchar(20) NOT NULL default '', PRIMARY KEY (pm_folder_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM["pm_xref_table"]} ( pm_xref_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, pm_folder_id int(10) unsigned NOT NULL, special_folder varchar(10), pm_message_id int(10) unsigned NOT NULL, read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (pm_xref_id), KEY xref (user_id,pm_folder_id,pm_message_id), KEY read_flag (read_flag)) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM["pm_buddies_table"]} ( pm_buddy_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, buddy_user_id int(10) unsigned NOT NULL, PRIMARY KEY pm_buddy_id (pm_buddy_id), UNIQUE KEY userids (user_id, buddy_user_id)) TYPE=MyISAM",
+
     );
     foreach($queries as $sql){
         $res = mysql_query($sql, $conn);
