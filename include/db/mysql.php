@@ -3053,9 +3053,11 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
  *                 id of a user's custom folder.
  * @param user_id - The user to retrieve messages for or NULL
  *                 to use the current user (default).
+ * @param reverse - If set to a true value (default), sorting
+ *                 of messages is done in reverse (newest first).
  */
 
-function phorum_db_pm_list($folder, $user_id = NULL)
+function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -3077,7 +3079,7 @@ function phorum_db_pm_list($folder, $user_id = NULL)
            "FROM {$PHORUM['pm_messages_table']} as m, {$PHORUM['pm_xref_table']} as x " .
            "WHERE $folder_sql " .
            "AND x.pm_message_id = m.pm_message_id " .
-           "ORDER BY x.pm_message_id";
+           "ORDER BY x.pm_message_id " . ($reverse ? "DESC" : "ASC");
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
