@@ -41,6 +41,7 @@ $page      = phorum_getparam('page');
 $folder_id = phorum_getparam('folder_id');
 $pm_id     = phorum_getparam('pm_id');
 $forum_id  = $PHORUM["forum_id"];
+$user_id   = $PHORUM["user"]["user_id"];
 
 // Use the inbox as the default folder_id.
 if (!$folder_id) $folder_id = PHORUM_PM_INBOX;
@@ -65,7 +66,7 @@ if ($page == 'post' || $action == 'post')
         $error = $PHORUM["DATA"]["LANG"]["ErrBannedName"];
     } elseif (!phorum_check_ban_lists($PHORUM["user"]["email"], PHORUM_BAD_EMAILS)) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
-    } elseif (!phorum_check_ban_lists($PHORUM["user"]["user_id"], PHORUM_BAD_USERID)) {
+    } elseif (!phorum_check_ban_lists($user_id, PHORUM_BAD_USERID)) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBannedUser"];
     }
 
@@ -182,6 +183,9 @@ if (!empty($action)) {
                     phorum_db_pm_delete_folder($folder_id);    
                     $redirect_message = "PMFolderDeleteSuccess";
                     $redirect = true;
+                    
+                    // Invalidate user cache, to update message counts.
+                    phorum_cache_remove('user',$user_id);
                 }
             }
            
@@ -198,6 +202,9 @@ if (!empty($action)) {
                         phorum_db_pm_delete($pm_id, $folder_id);
                     }
                 }
+                                    
+                // Invalidate user cache, to update message counts.
+                phorum_cache_remove('user',$user_id);
             }
             
             // Move checked messages to another folder.
@@ -293,7 +300,7 @@ if (!empty($action)) {
                                     'subject'       => $_POST['subject'],
                                     'message'       => $_POST['message'],
                                     'from_username' => $PHORUM['user']['username'],
-                                    'from_user_id'  => $PHORUM['user']['user_id'],
+                                    'from_user_id'  => $user_id,
                                 );
                                 
                                 $langrcpts = array();
@@ -314,6 +321,9 @@ if (!empty($action)) {
                                 phorum_hook("pm_sent", $pm_message);
                             }
                         }
+                        
+                        // Invalidate user cache, to update message counts.
+                        phorum_cache_remove('user',$user_id);
                     }
                     
                 } else {
@@ -463,6 +473,9 @@ switch ($page) {
             // Mark the message read.
             if (! $message['read_flag']) {
                 phorum_db_pm_setflag($message["pm_message_id"], PHORUM_PM_READ_FLAG, true);
+                
+                // Invalidate user cache, to update message counts.
+                phorum_cache_remove('user',$user_id);
             }
             
             // Run the message through the default message formatting.
