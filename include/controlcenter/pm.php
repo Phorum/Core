@@ -424,7 +424,6 @@ switch ($page) {
         }
 
         $list = phorum_db_pm_list($folder_id);
-
         // Prepare data for the templates (formatting and XSS prevention).
         foreach ($list as $message_id => $message)
         {
@@ -445,7 +444,6 @@ switch ($page) {
             list($rcpt_id, $rcpt) = each($message['recipients']);
             $list[$message_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
             $list[$message_id]["to_username"] = htmlspecialchars($rcpt["username"]);
-            $list[$message_id]["read_flag"] = $rcpt["read_flag"];
         }
 
         // Setup template variables.
@@ -481,7 +479,7 @@ switch ($page) {
             list($rcpt_id, $rcpt) = each($message['recipients']);
             $message["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
             $message["to_username"] = htmlspecialchars($rcpt["username"]);
-            $message["read_flag"] = $rcpt["read_flag"];
+            //$message["read_flag"] = $rcpt["read_flag"];
             
             $PHORUM["DATA"]["MESSAGE"] = $message;
             $template = "cc_pm_read";
