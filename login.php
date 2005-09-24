@@ -23,7 +23,10 @@ include_once( "./include/users.php" );
 include_once( "./include/email_functions.php" );
 
 if ( !empty( $PHORUM["args"]["logout"] ) ) {
-    phorum_user_clear_session();
+    // killing long-term cookie
+    phorum_user_clear_session(PHORUM_SESSION_LONG_TERM);
+    // killing short-term (write) cookie
+    phorum_user_clear_session(PHORUM_SESSION_SHORT_TERM);
 
     if(isset($_SERVER["HTTP_REFERER"]) && !empty($_SERVER['HTTP_REFERER'])) {
         $url=$_SERVER["HTTP_REFERER"];
@@ -125,6 +128,7 @@ if ( count( $_POST ) > 0 ) {
             	phorum_user_create_session(PHORUM_SESSION_LONG_TERM,false,$uri_session_id);
             } else {
             	phorum_user_create_session();
+            	phorum_user_create_session(PHORUM_SESSION_SHORT_TERM,true);
             }
             // redirecting to the register page is a little weird.  So, we just go to the list page if we came from the register page.
             // redirect to login-page is weird too ;)
