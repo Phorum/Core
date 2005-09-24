@@ -31,8 +31,8 @@ if ( !empty( $PHORUM["args"]["logout"] ) ) {
         $url=phorum_get_url( PHORUM_LIST_URL );
     }
 
-    if(stristr($_SERVER["HTTP_REFERER"], PHORUM_SESSION)){
-        $url=str_replace(PHORUM_SESSION."=".urlencode($PHORUM["args"]["phorum_session_v5"]), "", $url);
+    if(stristr($_SERVER["HTTP_REFERER"], PHORUM_SESSION_LONG_TERM)){
+        $url=str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"]["phorum_session_v5"]), "", $url);
     }
 
     $url =phorum_hook( "after_logout", $url );
@@ -122,7 +122,7 @@ if ( count( $_POST ) > 0 ) {
             	$uri_session_id=md5($_POST['username'].microtime().$_POST['password']);
             	$user=array('user_id'=>$PHORUM['user']['user_id'],'sessid_st'=>$uri_session_id);
             	phorum_user_save_simple($user);
-            	phorum_user_create_session(PHORUM_SESSION,false,$uri_session_id);
+            	phorum_user_create_session(PHORUM_SESSION_LONG_TERM,false,$uri_session_id);
             } else {
             	phorum_user_create_session();
             }

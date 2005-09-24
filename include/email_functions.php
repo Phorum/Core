@@ -104,28 +104,28 @@ function phorum_email_pm_notice($message, $langusers)
         "read_url"      => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "pm_id=" . $message["pm_message_id"]),
     );
 
-    if (isset($_POST[PHORUM_SESSION])) {
+    if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
         // strip any auth info from the read url
-        $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["read_url"]);
+        $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
     }
-    
-    foreach ($langusers as $language => $users) 
-    {   
+
+    foreach ($langusers as $language => $users)
+    {
         $PHORUM = $GLOBALS["PHORUM"];
-        
+
         if ( file_exists( "./include/lang/$language.php" ) ) {
             include( "./include/lang/$language.php" );
         } else {
             include("./include/lang/{$PHORUM['language']}.php");
         }
-        
+
         $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['PMNotifyMessage'];
         $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"]['PMNotifySubject'];
 
         $addresses = array();
         foreach ($users as $user) {
             $addresses[] = $user["email"];
-        } 
+        }
 
         phorum_email_user($addresses, $mail_data);
     }
@@ -153,12 +153,12 @@ function phorum_email_notice($message)
             "followed_threads_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
             "msgid"       => $message["msgid"]
         );
-        if (isset($_POST[PHORUM_SESSION])) {
+        if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
             // strip any auth info from the read url
-            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["read_url"]);
-            $mail_data["remove_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["remove_url"]);
-            $mail_data["noemail_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["noemail_url"]);
-            $mail_data["followed_threads_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["followed_threads_url"]);
+            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
+            $mail_data["remove_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["remove_url"]);
+            $mail_data["noemail_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["noemail_url"]);
+            $mail_data["followed_threads_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["followed_threads_url"]);
         }
         // go through the user-languages and send mail with their set lang
         foreach($mail_users_full as $language => $mail_users) {
@@ -201,10 +201,10 @@ function phorum_email_moderators($message)
             "approve_url" => phorum_get_url(PHORUM_PREPOST_URL),
             "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id'])
         );
-        if (isset($_POST[PHORUM_SESSION])) {
+        if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
             // strip any auth info from the read url
-            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["read_url"]);
-            $mail_data["approve_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION . "=" . urlencode($_POST[PHORUM_SESSION]) . "!", "", $mail_data["approve_url"]);
+            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
+            $mail_data["approve_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["approve_url"]);
         }
         phorum_email_user($mail_users, $mail_data);
     }
