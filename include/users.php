@@ -39,7 +39,8 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
     	// this part is for cookie-authentication where we have username and password
         list( $userid, $md5session ) = explode( ":", $sessid, 2 );
 
-        if(!is_int($userid)) {
+        if(!is_numeric($userid)) {
+            phorum_user_clear_session( $cookie );
             return false;
         }
         $user=phorum_user_get($userid);
