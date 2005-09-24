@@ -38,6 +38,10 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
     if ( !empty( $sessid ) && $GLOBALS["PHORUM"]["use_cookies"]) {
     	// this part is for cookie-authentication where we have username and password
         list( $userid, $md5session ) = explode( ":", $sessid, 2 );
+
+        if(!is_int($userid)) {
+            return false;
+        }
         $user=phorum_user_get($userid);
 
         if ( !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session ) {
