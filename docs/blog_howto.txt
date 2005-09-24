@@ -1,5 +1,5 @@
 Phorum Blog How-To
-===================
+==================
 
 Creating the Blog Forum
 -----------------------
@@ -46,7 +46,8 @@ include_once "./list.php";
 
 ?>
 
-If you wanted your front page to be the blog, just create index.php and put this in it.
+If you wanted your front page to be the blog, just create index.php and 
+put this in it.
 
 
 TODO

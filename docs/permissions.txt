@@ -1,42 +1,62 @@
 Permissions in Phorum 5
---------------------------
+=======================
+
+This document describes the way the permission system of Phorum works.
+It is targeted at developers that need inside information on the
+API calls that are related to permission handling.
+
+Table of contents:
+
+1. Checking user permissions
+2. Modifying user permissions
+3. Some final notes
+
+
+1. Checking user permissions
+----------------------------
 
 First and foremost, your code should use the function called
-phorum_user_access_allowed() to check for a give users permissions
-in the current forum.  However, if you find yourself needing to check
+phorum_user_access_allowed() to check for a given user permission
+in the current forum. However, if you find yourself needing to check
 the permisssion directly, here is some information.
 
-Permissions are stored as a bit field.  To check for a permission,
-simply use the bitwise & operator.
+Permissions are stored using a bitmask. To check for a certain permission, 
+simply use the bitwise AND (&) operator to match the permission against the
+user's permissions.
 
-For example, if we want to check if a user has permissions to read
-a particular forum, we would use the following if statement.
+For example, if we want to check if a user has permission to read
+a particular forum, we would use the following if statement:
 
     if($PHORUM["user"]["permissions"] & PHORUM_USER_ALLOW_READ){
-		// the user can read this forum
-	} else {
-		// the user can NOT read this forum
-	}
+        // the user can read this forum
+    } else {
+        // the user can NOT read this forum
+    }
+
+
+2. Modifying user permissions
+-----------------------------
 
 If you need to modify the permissions, use the bitwise OR (|) to add
-a permission or the bitwise XOR (^) to remove a permission.  After you
-make the change, save the user.
+a permission or the bitwise XOR (^) to remove a permission. After you
+make the change, save the user. Here is some example code:
 
-	// add new topic permissions
-	$PHORUM["user"]["permissions"] = 
-			$PHORUM["user"]["permissions"] | PHORUM_USER_ALLOW_NEW_TOPIC;
-	phorum_user_save($PHORUM["user"]);
+    // add new topic permissions
+    $PHORUM["user"]["permissions"] = 
+        $PHORUM["user"]["permissions"] | PHORUM_USER_ALLOW_NEW_TOPIC;
+    phorum_user_save($PHORUM["user"]);
 
-	// remove new topic permissions
-	$PHORUM["user"]["permissions"] = 
-			$PHORUM["user"]["permissions"] ^ PHORUM_USER_ALLOW_NEW_TOPIC;
-	phorum_user_save($PHORUM["user"]);
+    // remove new topic permissions
+    $PHORUM["user"]["permissions"] = 
+        $PHORUM["user"]["permissions"] ^ PHORUM_USER_ALLOW_NEW_TOPIC;
+    phorum_user_save($PHORUM["user"]);
 
 
+3. Some final notes
+-------------------
 
-	
-That should be all you need to know for Phorum.  Here is some stuff that 
-helped explain this to the other developers:
+That should be all you need to know about the Phorum permission system.
+Here is some stuff that helped explain this to the other developers:
 
 > select (256 | 16);  
 > That OR's the two numbers together.

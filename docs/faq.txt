@@ -1,8 +1,21 @@
 Phorum 5 FAQ
--------------
+============
+
+Table of contents:
+
+1. Why did you switch from number of replies to number of posts in the list?
+2. Does Phorum have avatars or user rankings like (insert UBB clone)?
+3. How do I install a module?
+4. Why don't non-registered users have new indicators or any options?
+5. Why doesn't the default template use {insert latest greatest W3C concept}?
+6. You should do (insert your idea here) in the default template.
+7. Can I install Phorum once and deploy it on multiple domains?
+8. I need to embed Phorum in my page/application.
+9. Why do you not use the 'global' keyword in your functions?
+10. What are Sticky and Announcement posts?
 
 
-Why did you switch from Replies to Posts in the list?
+1. Why did you switch from number of replies to number of posts in the list?
 -----------------------------------------------------------------------------
 	In short, the people writing the code liked it better.  You can modify
 	your template by this line inside your list.php file.
@@ -13,16 +26,14 @@ Why did you switch from Replies to Posts in the list?
 		
 		{LOOP ROWS}
 
-
 		
-Does Phorum have avatars or user rankings like (insert UBB clone)?
+2. Does Phorum have avatars or user rankings like (insert UBB clone)?
 -----------------------------------------------------------------------------
 
     Not by default. There are modules available to add this functionality.
 
 
-
-How do I install a module?
+3. How do I install a module?
 -----------------------------------------------------------------------------
 
     That depends on your environment and how the module is packaged.
@@ -45,8 +56,7 @@ How do I install a module?
     directory into /phorum5/mods
 
 
-
-Why don't non-registered users have new indicators or any options?
+4. Why don't non-registered users have new indicators or any options?
 -----------------------------------------------------------------------------
 
     Because of many cookie problems that plagued Phorum 3, we have decided
@@ -55,8 +65,7 @@ Why don't non-registered users have new indicators or any options?
     side is that the new indicator really works like it should in Phorum 5.
 
 
-
-Why doesn't the default template use {insert latest greatest W3C concept}?
+5. Why doesn't the default template use {insert latest greatest W3C concept}?
 -----------------------------------------------------------------------------
 
     While we do try and use standards, things like XHTML and CSS are not
@@ -71,8 +80,7 @@ Why doesn't the default template use {insert latest greatest W3C concept}?
     contribute one for everyone.
 
 
-
-You should do (insert your idea here) in the default template.
+6. You should do (insert your idea here) in the default template.
 -----------------------------------------------------------------------------
 
     The only answer we will give you on this is that you can make your own
@@ -103,8 +111,7 @@ You should do (insert your idea here) in the default template.
     our class names, we won't step on another applications classes.
 
 
-
-Can I install Phorum once and deploy it on multiple domains?
+7. Can I install Phorum once and deploy it on multiple domains?
 -----------------------------------------------------------------------------
 
     Yes!  Once you install the Phorum code somewhere, you can copy the
@@ -116,8 +123,7 @@ Can I install Phorum once and deploy it on multiple domains?
     forum is a little slower because of the function overhead.
 
 
-
-I need to embed Phorum in my page/application.
+8. I need to embed Phorum in my page/application.
 -----------------------------------------------------------------------------
 
     Well, using the portable code mentioned above, one can safely run Phorum
@@ -131,8 +137,7 @@ I need to embed Phorum in my page/application.
     formatted in the same way that the standard phorum_get_url would do it.
 
 
-
-Why do you not use the 'global' keyword in your functions?
+9. Why do you not use the 'global' keyword in your functions?
 -----------------------------------------------------------------------------
 
     Declaring something as global in PHP is the same as making a reference
@@ -145,11 +150,11 @@ Why do you not use the 'global' keyword in your functions?
     This applys to PHP4 only.  We may reconsider once PHP5 is widespread.
 
 
-
-What are Sticky and Announcement posts?
+10. What are Sticky and Announcement posts?
 -----------------------------------------------------------------------------
 
     Sticky posts stay at the top of the forum they are posted in and do not
     get bumped down as new topics are posted.
 
     Announcement posts appear at the top of all forums in the system.
+
