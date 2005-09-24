@@ -93,6 +93,8 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $sessio
 
                 $simple_user=array('user_id'=>$user['user_id'],'cookie_sessid_lt'=>$sessid);
                 phorum_user_save_simple($simple_user);
+            } else {
+                $sessid=$user['cookie_sessid_lt'];
             }
 
             if($session_cookie || $PHORUM["session_timeout"]==0){
