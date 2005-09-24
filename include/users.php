@@ -66,7 +66,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
 
                 $GLOBALS["PHORUM"]["user"] = $user;
                 $success = true;
-                phorum_user_create_session( $cookie, false, $user['sessid'] );
+                phorum_user_create_session( $cookie, false, $user['sessid_st'] );
             } else {
                 phorum_user_clear_session( $cookie );
             }
