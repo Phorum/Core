@@ -120,7 +120,7 @@ if ( count( $_POST ) > 0 ) {
             }
             if(!$PHORUM["use_cookies"]) { // create and store the uri-session-id
             	$uri_session_id=md5($_POST['username'].microtime().$_POST['password']);
-            	$user=array('user_id'=>$PHORUM['user']['user_id'],'sessid'=>$uri_session_id);
+            	$user=array('user_id'=>$PHORUM['user']['user_id'],'sessid_st'=>$uri_session_id);
             	phorum_user_save_simple($user);
             	phorum_user_create_session(PHORUM_SESSION,false,$uri_session_id);
             } else {

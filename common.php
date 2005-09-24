@@ -24,7 +24,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.1.0-alpha" );
 
 // our internal version in format of year-month-day-serial
-define( "PHORUMINTERNAL", "2005092300" );
+define( "PHORUMINTERNAL", "2005092400" );
 
 define( "DEBUG", 0 );
 
@@ -564,7 +564,7 @@ function phorum_get_template( $page, $is_include = false )
     } else {
         // not there, look for a template
         $tplfile = "$tpl.tpl";
-        $phpfile = "$PHORUM[cache]/tpl-$PHORUM[template]-$page-" . 
+        $phpfile = "$PHORUM[cache]/tpl-$PHORUM[template]-$page-" .
 	           ($is_include ? "include" : "toplevel") . "-" .
 	           md5( dirname( __FILE__ ) ) . ".php";
 
