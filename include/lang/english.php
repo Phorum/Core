@@ -72,6 +72,7 @@
         "BackToForumList"       =>      "Back to Forum List",
         "BackToList"            =>      "Click here to return to the message list.",
         "BackToThread"          =>      "Click here to return to the thread.",
+        "BackToSearch"          =>      "Click here to return to the search screen.",
         "BookmarkedThread"      =>      "You are now following this thread in your Control Center.",
         "Buddies"               =>      "Buddies",
         "by"                    =>      "by",

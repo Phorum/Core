@@ -55,6 +55,7 @@ function phorum_search_check_valid_vars() {
 if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
     $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($_GET["search"]), "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($_GET['match_forum']));
     $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["SearchRunning"];
+    $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToSearch"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=$search_url;
     $PHORUM["DATA"]["REDIRECT_TIME"]=1;
     include phorum_get_template("header");
