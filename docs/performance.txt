@@ -27,10 +27,11 @@ Table of contents:
 
 
 1. Global Settings
-------------------
+-------------------------------------------------------------------------------
 
-1.1 DNS Lookups
------------------------------------------------------------------------------
+
+ 1.1 DNS Lookups
+ ---------------
 
     DNS lookups cause Phorum to display DNS entries (hostnames) instead
     of IP addresses on posts. It also will enable checking if mail
@@ -46,8 +47,9 @@ Table of contents:
     turn DNS lookups off. If you have access to a fast DNS server or only
     have a few regular posters, you should be able to leave it on.
 
-1.2 Count New Private Messages
------------------------------------------------------------------------------
+
+ 1.2 Count New Private Messages
+ ------------------------------
 
     If enabled, this option will alert users when they have new private
     messages. On every page a logged in user visits, Phorum will check
@@ -60,8 +62,9 @@ Table of contents:
     You can also enable userdata caching under "Cache Settings" to
     improve performance.
 
-1.3 Enable Moderator Notifications
------------------------------------------------------------------------------
+
+ 1.3 Enable Moderator Notifications
+ ----------------------------------
 
     Similar to the Count New Private Messages option, this option will
     alert users who are also moderators when they have a new item that
@@ -76,8 +79,9 @@ Table of contents:
     effectively moderators of every type, so all of the checks will be
     performed.
 
-1.4 Track User Usage
------------------------------------------------------------------------------
+
+ 1.4 Track User Usage
+ --------------------
 
     This option controls how often Phorum will record when a user was last
     active. Setting this to be more frequent results in more accurate last
@@ -106,10 +110,11 @@ Table of contents:
 
 
 2. Forum Settings
------------------
+-------------------------------------------------------------------------------
 
-2.1 Email Messages to Moderators
------------------------------------------------------------------------------
+
+ 2.1 Email Messages to Moderators
+ --------------------------------
 
     If enabled, every post in the forum will be emailed to the forum's
     moderators. Administrators are automatically moderators in every forum,
@@ -124,8 +129,9 @@ Table of contents:
     a slow mail server. In other cases, it should not cause significant
     performance issues.
 
-2.2 Allow Email Notification
------------------------------------------------------------------------------
+
+ 2.2 Allow Email Notification
+ ----------------------------
 
     This option has similar issues to the Email Messages to Moderators 
     setting, except the recipients of the emails are users who have
@@ -136,8 +142,9 @@ Table of contents:
     can affect performance. If only few users are using this feature, it 
     will not cause significant performance issues.
 
-2.3 Count Views
------------------------------------------------------------------------------
+
+ 2.3 Count Views
+ ---------------
     
     If enabled, this feature records the number of views each post gets.
     For every post read, the counter will be incremented in the database.
@@ -147,42 +154,47 @@ Table of contents:
     Enabling this feature is not recommended for high traffic forums,
     unless you have very powerful hardware.
 
-2.4 Show New Count in Forum List
------------------------------------------------------------------------------
+
+ 2.4 Show New Count in Forum List
+ --------------------------------
 
     If enabled, the count of new messages for each forum will appear in
     index.php. While quite handy, this has to run several queries per
     listed forum. If there are many forums on the index.php page, there
     could be a significant performance hit.  
+
 	
-2.5 Ban List
------------------------------------------------------------------------------
+ 2.5 Ban List
+ ------------
 
     The ban list is a list of words that are banned when posting a message.
     There is a small performance penalty for searching for the banned words,
     but only when posting.
 
-2.6 Censor List
-----------------------------------------------------------------------------
 
-   The censor list is a list of filtered words, that is checked on every
-   post read. Because it is checked far more often than the ban list, a
-   large censor list will affect performance much more.
+ 2.6 Censor List
+ ---------------
 
-2.7 Move Threads on Reply
------------------------------------------------------------------------------
+    The censor list is a list of filtered words, that is checked on every
+    post read. Because it is checked far more often than the ban list, a
+    large censor list will affect performance much more.
 
-   "Move Threads on Reply" means that a thread which gets a new reply causes
-   the topic to be moved to the top of the forum, hence the topics are
-   sorted by their last reply and not by their first post in the message
-   list.
 
-   In Flat-mode there is no performance hit. In Threaded-mode it causes
-   a large overhead because of the complexity of the sorting and the
-   counting of posts on a page.
+ 2.7 Move Threads on Reply
+ -------------------------
 
-2.8 Check for duplicates
------------------------------------------------------------------------------
+    "Move Threads on Reply" means that a thread which gets a new reply causes
+    the topic to be moved to the top of the forum, hence the topics are
+    sorted by their last reply and not by their first post in the message
+    list.
+
+    In Flat-mode there is no performance hit. In Threaded-mode it causes
+    a large overhead because of the complexity of the sorting and the
+    counting of posts on a page.
+
+
+ 2.8 Check for duplicates
+ ------------------------
    
     "Check for duplicates" runs one additional query while posting to check
     if that post has been made before. That query should be fast and just

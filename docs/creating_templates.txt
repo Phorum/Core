@@ -5,6 +5,7 @@ This documents describes how to create your own template for
 Phorum. The document is not conclusive, but there should be
 enough information in here to get you started.
 
+
 Here are the steps that you have to take to create your own template:
 
 1) Take the default template directory from {phorum dir}/templates/default 
