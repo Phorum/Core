@@ -1034,6 +1034,10 @@ Table of contents:
    line input and is meant to be run on a regular basis, you should
    consider using the scheduled hook.
 
+   Mind that for using an external hook, the module in which it is
+   handled must be enabled in your admin interface. So if an external
+   hook is not running, the containing module might be disabled.
+
    ----------------------------------------------------------------------------
    format
 
@@ -1282,6 +1286,10 @@ Table of contents:
    containing all posted messages for that day) or forum statistics
    generation. 
   
+   Mind that for using a scheduled hook, the module in which it is
+   handled must be enabled in your admin interface. So if a scheduled
+   hook is not running, the containing module might be disabled.
+
    ----------------------------------------------------------------------------
    search
 
