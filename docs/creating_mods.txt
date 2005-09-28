@@ -1185,7 +1185,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    quote
 
-   Where  : reply.php
+   Where  : reply.php, read.php (for inline reply form support)
    When   : Right after the message to reply to has been loaded.
    Input  : Array containing:
             0 => The message author
