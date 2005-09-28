@@ -44,7 +44,7 @@
   {include paging}
 
   <div class="PhorumNavBlock" style="text-align: left;">
-    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;<a class="PhorumNavLink" href="{URLINDEX}">{LANG->ForumList}</a>&bull;<a class="PhorumNavLink" href="{URLTOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URLPOST}">{LANG->NewTopic}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URLREGISTERPROFILE}">{LANG->MyProfile}</a>&bull;<a class="PhorumNavLink" href="{URLLOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URLLOGINOUT}">{LANG->LogIn}</a>{/IF}</a>
+    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}</a>
   </div>
   <br />
 {/IF}
