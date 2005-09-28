@@ -384,12 +384,17 @@
         "RSS"                   =>      "RSS",
 
         "SaveChanges"           =>      "Save Changes",
-        "ScriptUsage"           =>      "Usage: php script.php [--module=<module_name> | --scheduled] [options]
-        --module=<module_name>   Run the specified module.
-        --scheduled              Run all modules that do not require input (scheduled modules).
-        [options]                When running a specific module, these options are passed to the module.
-                                 Consult the module documentation for information on what options it has.
-                                 When using --scheduled, these are ignored.\n",
+        "ScriptUsage"           =>      "\nUsage: php script.php [--module=<module_name> | --scheduled] [options]
+
+   --module=<module_name>  Run the 'external' hook in the specified module.
+   --scheduled             Run the 'scheduled' hooks in all available modules. 
+   [options]               When running a specific module, these options
+                           are passed to the module. Consult the module
+                           documentation for information on what options
+                           it has. When using --scheduled, these are ignored.
+  
+Read docs/creating_mods.txt in your distribution for information on how
+to write Phorum modules and on how to use the external and scheduled hooks.\n\n",
         "SearchAuthors"         =>      "Search Authors",
         "SearchResults"         =>      "Search Results",
         "Search"                =>      "Search",
