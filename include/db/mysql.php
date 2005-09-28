@@ -1185,7 +1185,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
             settype($id, "int");
             $int_ids[] = $id;
         }
-        $forum_ids = implode(",", $forum_ids);
+        $forum_ids = implode(",", $int_ids);
     } else {
         settype($forum_ids, "int");
     }
