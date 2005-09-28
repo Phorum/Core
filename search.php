@@ -118,8 +118,10 @@ if(!empty($phorum_search)){
         }
 
         $forums = phorum_db_get_forums($forum_ids);
-
         foreach($arr["rows"] as $key => $row){
+            // Skip announcements "forum".
+            if ($row["forum_id"] == 0) continue;
+            
             $arr["rows"][$key]["forum_url"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
 
             $arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];

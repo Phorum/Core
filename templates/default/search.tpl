@@ -29,7 +29,14 @@
         <div class="PhorumColumnFloatLarge">{MATCHES->datestamp}</div>
         <div class="PhorumColumnFloatMedium">{MATCHES->author}</div>
         <div style="margin-right: 370px" class="PhorumLargeFont">{MATCHES->number}.&nbsp;<a href="{MATCHES->url}">{MATCHES->subject}</a></div>
-        <div class="PhorumFloatingText">{MATCHES->short_body}<br />{LANG->Forum}: <a href="{MATCHES->forum_url}">{MATCHES->forum_name}</a></div>
+        <div class="PhorumFloatingText">
+          {MATCHES->short_body}<br />
+          {IF MATCHES->forum_id}
+            {LANG->Forum}: <a href="{MATCHES->forum_url}">{MATCHES->forum_name}</a>
+          {ELSE}
+            ({LANG->Announcement})
+          {/IF}
+        </div>
       </div>
    {/LOOP MATCHES}
   </div>
