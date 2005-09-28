@@ -733,11 +733,10 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-    $rec=array();
+    $ret = $multiple ? array() : NULL;
 
     if(mysql_num_rows($res)){
         if($multiple) {
-            $ret=array();
             while($rec=mysql_fetch_assoc($res)) {
                 // convert meta field
                 if(empty($rec["meta"])){
