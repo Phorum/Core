@@ -87,14 +87,35 @@ switch ($mod_step) {
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
             break;
         }
+        
+        // Delete the message and all its replies.
         $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
+        
+        // Cleanup the attachments for all deleted messages.
         foreach($msg_ids as $id){
             $files=phorum_db_get_message_file_list($id);
             foreach($files as $file_id=>$data){
                 phorum_db_file_delete($file_id);
             }
         }
+
+        // Check if we have moved threads to delete.
+        // We unset the forum id, so phorum_db_get_messages()
+        // will return messages with the same thread id in
+        // other forums as well (those are the move notifications).
+        $forum_id = $PHORUM["forum_id"];
+        $PHORUM["forum_id"] = 0;
+        $moved = phorum_db_get_messages($msgthd_id);
+        $PHORUM["forum_id"] = $forum_id;
+        foreach ($moved as $id => $data) {
+            if (isset($data["meta"]["moved"])) {
+                phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
+            }
+        }
+        
+        // Run a hook for performing custom cleanup actions. 
         phorum_hook("delete", $msg_ids);
+       
         $nummsgs=count($msg_ids);
         $PHORUM['DATA']['MESSAGE']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
         if(isset($PHORUM['args']["prepost"])) {
@@ -166,13 +187,15 @@ switch ($mod_step) {
 
         $PHORUM['forum_id']=$temp_forum_id;
 
-
+        // Move the thread to another forum.
         phorum_db_move_thread($msgthd_id, $_POST['moveto']);
+        
+        // Create a new message in place of the old one to notify 
+        // visitors that the thread was moved.
         if(isset($_POST['create_notification']) && $_POST['create_notification']) {
             $newmessage = $message;
             $newmessage['body']=" -- moved topic -- ";
-            $newmessage['meta']=array();
-            $newmessage['meta']['moved']=1;
+            $newmessage['meta']=array('moved' => 1);
             $newmessage['sort']=PHORUM_SORT_DEFAULT;
             unset($newmessage['message_id']);
 
