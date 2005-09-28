@@ -26,6 +26,9 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
     return;
 }
 
+if (! isset($_SERVER["argv"][1])) {
+    phorum_script_usage();
+}
 
 // figure out what module we are trying to run
 if (strpos($_SERVER["argv"][1], "--module=") === 0) {
@@ -50,5 +53,6 @@ else {
 function phorum_script_usage() {
     $PHORUM=$GLOBALS["PHORUM"];
     echo $PHORUM["DATA"]["LANG"]["ScriptUsage"];
+    exit(1);
 }
 ?>
