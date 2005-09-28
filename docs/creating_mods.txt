@@ -723,12 +723,11 @@ Table of contents:
 
        print htmlspecialchars($user["username"]);
 
-   For the username, the security risks aren't really high, because 
-   the length of that field isn't enough to store malicious code. But
-   still you must use htmlspecialchars() to prevent some other possible
-   problems as well. For example a user that is named "<b>ob". Without 
-   htmlspecialchars() the username would be interpreted as HTML code,
-   possibly making the full page bold from the username on.
+   It's not only for security that you have to sanitize data before
+   displaying it. You must use htmlspecialchars() to prevent some other
+   possible problems as well. Imagine you have a user with the username
+   "<b>ob". Without htmlspecialchars() the username would be interpreted
+   as HTML code, possibly making the full page bold from the username on.
 
 
  3.7 Prevent namespace collisions
