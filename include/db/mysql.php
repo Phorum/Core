@@ -1176,13 +1176,21 @@ function phorum_db_update_settings($settings){
 function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $inherit_id = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
-    settype($forum_ids, "int");
     settype($parent_id, "int");
 
     $conn = phorum_db_mysql_connect();
 
-    if (is_array($forum_ids)) $forum_ids = implode(",", $forum_ids);
-
+    if (is_array($forum_ids)) {
+        $int_ids = array();
+        foreach ($forum_ids as $id) {
+            settype($id, "int");
+            $int_ids[] = $id;
+        }
+        $forum_ids = implode(",", $forum_ids);
+    } else {
+        settype($forum_ids, "int");
+    }
+    
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
@@ -1764,7 +1772,6 @@ function phorum_db_user_get($user_id, $detailed)
     $users = array();
 
     $sql = "select * from {$PHORUM['user_table']} where user_id in ($user_ids)";
-
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
@@ -3664,6 +3671,87 @@ function phorum_db_update_private_message($arg1, $arg2, $arg3){
 function phorum_db_pm_deprecated($func) {
     die("${func}() has been deprecated. Please use the new private message API.");
 }
+
+/** 
+ * This function checks if a certain user is buddy of another user.
+ * The function return the pm_buddy_id in case the user is a buddy
+ * or NULL in case the user isn't.
+ * @param buddy_user_id - The user_id to check for if it's a buddy.
+ * @param user_id - The user_id for which the buddy list must be
+ *                  checked or NULL to use the current user (default).
+ */ 
+function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+    $conn = phorum_db_mysql_connect();
+    settype($buddyuser_id, "int");
+    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
+    settype($user_id, "int"); 
+
+    $sql = "SELECT pm_buddy_id FROM {$PHORUM["pm_buddies_table"]} " .
+           "WHERE user_id = $user_id AND buddy_user_id = $buddy_user_id";
+           
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if (mysql_num_rows($res)) {
+        $row = mysql_fetch_array($res);
+        return $row[0];
+    } else {
+        return NULL;
+    }
+}
+
+/**
+ * This function adds a buddy for a user. It will return the 
+ * pm_buddy_id for the new buddy. If the buddy already exists,
+ * it will return the existing pm_buddy_id.
+ * @param buddy_user_id - The user_id that has to be added as a buddy.
+ * @param user_id - The user_id the buddy has to be added for or 
+ *                  NULL to use the current user (default).
+ */
+function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+    $conn = phorum_db_mysql_connect();
+    settype($buddyuser_id, "int");
+    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
+    settype($user_id, "int");
+
+    $pm_buddy_id = phorum_db_pm_is_buddy($buddy_user_id);
+    if (is_null($pm_buddy_id)) {
+        $sql = "INSERT INTO {$PHORUM["pm_buddies_table"]} SET " .
+               "user_id = $user_id, " .
+               "buddy_user_id = $buddy_user_id";
+        $res = mysql_query($sql, $conn);
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        $pm_buddy_id = mysql_insert_id($conn);              
+    }
+    
+    return $pm_buddy_id;
+}
+
+/**
+ * This function deletes a buddy for a user.
+ * @param buddy_user_id - The user_id that has to be deleted as a buddy.
+ * @param user_id - The user_id the buddy has to be delete for or 
+ *                  NULL to use the current user (default).
+ */
+function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+    $conn = phorum_db_mysql_connect();
+    settype($buddyuser_id, "int");
+    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
+    settype($user_id, "int");
+    
+    $sql = "DELETE FROM {$PHORUM["pm_buddies_table"]} WHERE " .
+           "buddy_user_id = $buddy_user_id AND user_id = $user_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    return $res;
+}
+
+// BUDDYTODO phorum_db_pm_buddy_list() function
 
 /**
 * This function returns messages or threads which are newer or older
