@@ -2390,8 +2390,6 @@ function phorum_db_user_delete($user_id) {
         phorum_db_pm_delete($row["pm_message_id"], $folder, $user_id);
     }
 
-    // BUDDYTODO: remove the user from buddylists.
-    
     // private message folders
     $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id"; 
     $res = mysql_query($sql, $conn);
@@ -3672,87 +3670,6 @@ function phorum_db_pm_deprecated($func) {
     die("${func}() has been deprecated. Please use the new private message API.");
 }
 
-/** 
- * This function checks if a certain user is buddy of another user.
- * The function return the pm_buddy_id in case the user is a buddy
- * or NULL in case the user isn't.
- * @param buddy_user_id - The user_id to check for if it's a buddy.
- * @param user_id - The user_id for which the buddy list must be
- *                  checked or NULL to use the current user (default).
- */ 
-function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-    $conn = phorum_db_mysql_connect();
-    settype($buddyuser_id, "int");
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int"); 
-
-    $sql = "SELECT pm_buddy_id FROM {$PHORUM["pm_buddies_table"]} " .
-           "WHERE user_id = $user_id AND buddy_user_id = $buddy_user_id";
-           
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    if (mysql_num_rows($res)) {
-        $row = mysql_fetch_array($res);
-        return $row[0];
-    } else {
-        return NULL;
-    }
-}
-
-/**
- * This function adds a buddy for a user. It will return the 
- * pm_buddy_id for the new buddy. If the buddy already exists,
- * it will return the existing pm_buddy_id.
- * @param buddy_user_id - The user_id that has to be added as a buddy.
- * @param user_id - The user_id the buddy has to be added for or 
- *                  NULL to use the current user (default).
- */
-function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-    $conn = phorum_db_mysql_connect();
-    settype($buddyuser_id, "int");
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int");
-
-    $pm_buddy_id = phorum_db_pm_is_buddy($buddy_user_id);
-    if (is_null($pm_buddy_id)) {
-        $sql = "INSERT INTO {$PHORUM["pm_buddies_table"]} SET " .
-               "user_id = $user_id, " .
-               "buddy_user_id = $buddy_user_id";
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        $pm_buddy_id = mysql_insert_id($conn);              
-    }
-    
-    return $pm_buddy_id;
-}
-
-/**
- * This function deletes a buddy for a user.
- * @param buddy_user_id - The user_id that has to be deleted as a buddy.
- * @param user_id - The user_id the buddy has to be delete for or 
- *                  NULL to use the current user (default).
- */
-function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-    $conn = phorum_db_mysql_connect();
-    settype($buddyuser_id, "int");
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int");
-    
-    $sql = "DELETE FROM {$PHORUM["pm_buddies_table"]} WHERE " .
-           "buddy_user_id = $buddy_user_id AND user_id = $user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    return $res;
-}
-
-// BUDDYTODO phorum_db_pm_buddy_list() function
-
 /**
 * This function returns messages or threads which are newer or older
 * than the given timestamp
@@ -3911,7 +3828,6 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM["pm_messages_table"]} ( pm_message_id int(10) unsigned NOT NULL auto_increment, from_user_id int(10) unsigned NOT NULL, from_username varchar(50) NOT NULL default '', subject varchar(100) NOT NULL default '', message text NOT NULL, datestamp int(10) unsigned NOT NULL default '0', meta mediumtext NOT NULL, PRIMARY KEY(pm_message_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM["pm_folders_table"]} ( pm_folder_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, foldername varchar(20) NOT NULL default '', PRIMARY KEY (pm_folder_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM["pm_xref_table"]} ( pm_xref_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, pm_folder_id int(10) unsigned NOT NULL, special_folder varchar(10), pm_message_id int(10) unsigned NOT NULL, read_flag tinyint(1) NOT NULL default '0', reply_flag tinyint(1) NOT NULL default '0', PRIMARY KEY (pm_xref_id), KEY xref (user_id,pm_folder_id,pm_message_id), KEY read_flag (read_flag)) TYPE=MyISAM",
-        "CREATE TABLE {$PHORUM["pm_buddies_table"]} ( pm_buddy_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, buddy_user_id int(10) unsigned NOT NULL, PRIMARY KEY pm_buddy_id (pm_buddy_id), UNIQUE KEY userids (user_id, buddy_user_id)) TYPE=MyISAM",
 
     );
     foreach($queries as $sql){
