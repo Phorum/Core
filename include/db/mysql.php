@@ -45,6 +45,9 @@ $PHORUM["pm_buddies_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_buddies"
 */
 $PHORUM['string_fields']= array('author', 'subject', 'body', 'email');
 
+/* A piece of SQL code that can be used for identifying moved messages. */
+define('PHORUM_SQL_MOVEDMESSAGES', '(parent_id = 0 and thread != message_id)');
+
 /**
  * This function executes a query to select messages from the database
  * and returns an array.  The main Phorum code handles actually sorting
@@ -2717,7 +2720,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
 
     if($read_msgs["min_id"]==0) return array(0,0);
 
-    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and status=".PHORUM_STATUS_APPROVED;
+    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
 
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
@@ -2726,7 +2729,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
 
     $counts[] = mysql_result($res, 0, "count");
 
-    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and parent_id=0 and status=".PHORUM_STATUS_APPROVED;
+    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and parent_id=0 and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
 
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
