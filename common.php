@@ -144,7 +144,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             header("Location: ".$PHORUM["disabled_url"]);
             exit();
         } else {
-            echo "This Phorum is currently disabled.  Please contact the web site owner at ".$PHORUM[system_email_from_address]." for more information.";
+            echo "This Phorum is currently disabled.  Please contact the web site owner at ".$PHORUM['system_email_from_address']." for more information.\n";
             exit();
         }
     }
@@ -252,9 +252,12 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     }
 
     // user output buffering so we don't get header errors
-    ob_start();
-    include_once( phorum_get_template( "settings" ) );
-    ob_end_clean();
+    // not loaded if we are running an external or scheduled script
+    if (! defined('PHORUM_SCRIPT')) {
+        ob_start();
+        include_once( phorum_get_template( "settings" ) );
+        ob_end_clean();
+    }
 
     // get the language file
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )

@@ -17,6 +17,7 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','script');
+define('PHORUM_SCRIPT', 1);
 
 include_once("./common.php");
 
