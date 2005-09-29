@@ -247,8 +247,12 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // set up the template
 
     // check for a template being passed on the url
+    // only use valid template names
     if ( !empty( $PHORUM["args"]["template"] ) ) {
-        $PHORUM["template"] = basename( $PHORUM["args"]["template"] );
+        $template = basename( $PHORUM["args"]["template"] );
+        if ($template != '..' && file_exists("./templates/$template")) {
+            $PHORUM["template"] = $template;
+        }
     }
 
     // user output buffering so we don't get header errors
