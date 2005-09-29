@@ -96,14 +96,15 @@ function phorum_import_template($tplfile, $outfile)
             case "loop":
 
             $loopvars[$parts[1]]=true;
-            $repl="<?php if(isset(\$PHORUM['DATA']['$parts[1]']) && is_array(\$PHORUM['DATA']['$parts[1]'])) foreach(\$PHORUM['DATA']['$parts[1]'] as \$PHORUM['TMP']['$parts[1]']){ ?>";
+            $index=phorum_determine_index($loopvars, $parts[1]);
+            $repl="<?php \$phorum_loopstack[] = isset(\$PHORUM['TMP']['$parts[1]']) ? \$PHORUM['TMP']['$parts[1]']:NULL; if(isset(\$PHORUM['$index']['$parts[1]']) && is_array(\$PHORUM['$index']['$parts[1]'])) foreach(\$PHORUM['$index']['$parts[1]'] as \$PHORUM['TMP']['$parts[1]']){ ?>";
             break;
 
 
             // ends a loop
             case "/loop":
 
-            $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); ?>";
+            $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); \$phorum_loopstackitem=array_pop(\$phorum_loopstack); if (isset(\$phorum_loopstackitem)) \$PHORUM['TMP']['$parts[1]'] = \$phorum_loopstackitem;?>";
             unset($loopvars[$parts[1]]);
             break;
 
@@ -267,7 +268,7 @@ function phorum_import_template($tplfile, $outfile)
         
         // Write out data to the cache.
         phorum_write_templatefile($stage1_file, $check_deps);
-        phorum_write_templatefile($stage2_file, $page);
+        phorum_write_templatefile($stage2_file, $page, true);
     }
     else 
     {
@@ -278,10 +279,13 @@ function phorum_import_template($tplfile, $outfile)
 
 }
 
-function phorum_write_templatefile($filename, $content)
+function phorum_write_templatefile($filename, $content, $is_toplevel = false)
 {
     if($fp=fopen($filename, "w")) {
         fputs($fp, "<?php if(!defined(\"PHORUM\")) return; ?>\n");
+        if ($is_toplevel) {
+            fputs($fp, "<?php \$phorum_loopstack = array() ?>\n");
+        }
         fputs($fp, $content);
         if (! fclose($fp)) {
             die("Error on closing $outfile; disk full?");
