@@ -4025,4 +4025,24 @@ function phorum_db_mysql_error($err){
     }
 }
 
+/**
+ * This function is used by the sanity checking system in the
+ * admin interface to determine how much data can be transferred
+ * in one query. This is used to detect problems with uploads that
+ * are larger than the database server can handle. 
+ * The function returns the size in bytes. For database implementations 
+ * which do not have this kind of limit, NULL can be returned.
+ */
+function phorum_db_maxpacketsize ()
+{
+    $conn = phorum_db_mysql_connect();
+    $res = mysql_query("SELECT @@global.max_allowed_packet");
+    if (! $res) return NULL;
+    if (mysql_num_rows($res)) {
+        $row = mysql_fetch_array($res);
+        return $row[0];
+    }
+    return NULL;
+}
+
 ?>
