@@ -54,9 +54,18 @@ if($PHORUM["status"]=="read-only"){
 $PHORUM["DATA"]["POST"]["allow_reply"] = 1;
 
 if (count($_POST) > 0) {
-    foreach (array("author","email") as $field) {
-        if (isset($_POST[$field])) $_POST[$field] = trim($_POST[$field]);
+    // Trim the e-mail address.
+    if (isset($_POST["email"])) {
+        $_POST["email"] = trim($_POST["email"]);
     }
+
+    // Trim and space-collapse the author name, so people can't
+    // impersonate as other users using the same author name,
+    // but with extra spaces in it.
+    if (isset($_POST["author"])) {
+        $_POST["author"] = preg_replace('/\s+/', ' ', trim($_POST["author"]));
+    }
+
     // check that this user can post to the forum
     if ((empty($_POST["parent_id"]) && phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
             (!empty($_POST["parent_id"]) && phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY))) {

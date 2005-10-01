@@ -74,7 +74,17 @@ if(isset($PHORUM["args"]["approve"])){
 }
 
 if(count($_POST)){
-    foreach ($_POST as $key => $val) $_POST[$key] = trim($val);
+    // Sanitize input data.
+    foreach ($_POST as $key => $val) {
+        if ($key == 'username') {
+            // Trim and space-collapse usernames, so people can't
+            // impersonate as other users using the same username,
+            // but with extra spaces in it.
+            $_POST[$key] = preg_replace('/\s+/', ' ', trim($val));
+        } else {
+            $_POST[$key] = trim($val);
+        }
+    }
     if(!isset($_POST["username"]) || empty($_POST['username']) ){
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
     }elseif(!isset($_POST["email"]) || !phorum_valid_email($_POST["email"])){
