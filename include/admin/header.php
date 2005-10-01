@@ -236,7 +236,7 @@ Phorum Status:
 <?php
         include_once "./include/admin/PhorumAdminMenu.php";
 
-        $menu =& new PhorumAdminMenu("Main Menu");
+        $menu = new PhorumAdminMenu("Main Menu");
 
         $menu->add("Admin Home", "", "Takes you to the default Admin page.");
         $menu->add("Phorum Index", "index", "Takes you to the front page of the Phorum.");
@@ -244,7 +244,7 @@ Phorum Status:
 
         $menu->show();
 
-        $menu =& new PhorumAdminMenu("Global Settings");
+        $menu = new PhorumAdminMenu("Global Settings");
 
         $menu->add("General Settings", "settings", "Edit the global settings which affect all forums.");
         $menu->add("Ban Lists", "banlist", "Edits the list of banned names, email addresses and IP addresses.");
@@ -253,7 +253,7 @@ Phorum Status:
 
         $menu->show();
 
-        $menu =& new PhorumAdminMenu("Forums");
+        $menu = new PhorumAdminMenu("Forums");
 
         $menu->add("Manage Forums", "", "Takes you to the default Admin page.");
         $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.");
@@ -261,16 +261,17 @@ Phorum Status:
 
         $menu->show();
 
-        $menu =& new PhorumAdminMenu("Users/Groups");
+        $menu = new PhorumAdminMenu("Users/Groups");
 
         $menu->add("Edit Users", "users", "Allows administrator to edit users including deactivating them.");
         $menu->add("Edit Groups", "groups", "Allows administrator to edit groups and their forum permissions.");
         $menu->add("Custom Profiles", "customprofile", "Allows administrator to add fields to Phorum profile.");
 
         $menu->show();
-        $menu =& new PhorumAdminMenu("Maintenance");
+        $menu = new PhorumAdminMenu("Maintenance");
 
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
+        $menu->add("System Sanity Checks", "sanity_checks", "Perform a number of sanity checks on the system to identify possible problems.");
         $menu->add("Manage Language Files", "manage_languages", "Allows administrator to create new or updated versions of language files.");
 
         $menu->show();
