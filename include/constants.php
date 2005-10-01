@@ -176,6 +176,10 @@
     define("PHORUM_SPLIT_THREAD", $i++);
     define("PHORUM_DO_THREAD_SPLIT", $i++);
 
+    define("PHORUM_SANITY_OK", $i++);
+    define("PHORUM_SANITY_WARN", $i++);
+    define("PHORUM_SANITY_CRIT", $i++);
+
     define("PHORUM_CC_SUMMARY", "summary");
     define("PHORUM_CC_SUBSCRIPTION_THREADS", "subthreads");
     define("PHORUM_CC_SUBSCRIPTION_FORUMS", "subforums");
