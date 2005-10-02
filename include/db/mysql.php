@@ -3798,6 +3798,39 @@ function phorum_db_viewcount_inc($message_id) {
 }
 
 
+function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
+
+
+    $field_id=(int)$field_id;
+    $field_content=mysql_real_escape_string($field_content);
+
+    $conn = phorum_db_mysql_connect();
+
+    if($match) {
+        $compval="LIKE";
+    } else {
+        $compval="=";
+    }
+
+    $sql = "select user_id from {$GLOBALS['PHORUM']['user_custom_fields_table']} where type=$field_id and data $compval '$field_content'";
+    $res = mysql_query($sql, $conn);
+
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
+    if(mysql_num_rows($res)) {
+        $retval=array();
+        while ($row = mysql_fetch_row($res)){
+            $retval[$row[0]]=$row[0];
+        }
+    } else {
+        $retval=NULL;
+    }
+
+    return $retval;
+
+}
+
+
 /**
  * This function creates the tables needed in the database.
  */
