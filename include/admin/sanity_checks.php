@@ -4,9 +4,9 @@
     // The place where our sanity checking modules are.
     $sanity_checks_dir = "./include/admin/sanity_checks";
 
-    // ==============================================================================
+    // ========================================================================
     // Load in the available sanity checks.
-    // ==============================================================================
+    // ========================================================================
 
     $sanity_checks = array();
     $dh = opendir ($sanity_checks_dir);
@@ -30,9 +30,9 @@
         }
     }
 
-    // ==============================================================================
+    // ========================================================================
     // Build the sanity checking page and run all checks.
-    // ==============================================================================
+    // ========================================================================
 
     // Mapping of status to display representation.
     $status2display = array(
@@ -45,6 +45,12 @@
     $frm = new PhorumInputForm ("", "post", "Restart sanity checks");
     $frm->hidden("module", "sanity_checks");
     $frm->addbreak("Phorum System Sanity Checks");
+    $frm->addmessage(
+        "Below you will find the results for a number of sanity checks
+         that have been performed on your system. If you see any
+         warnings or errors, then read the comments for them and 
+         try to resolve the issues."
+    );
 
     // Make using $php_errormsg possible for the checks.
     ini_set('track_errors', 1);
@@ -69,8 +75,7 @@
         list($status, $error) = call_user_func($check["function"]);
 
         $display = $status2display[$status];
-        $block = "<div style=\"color:{$display[1]};background-color:{$display[0]};" .
-                 "text-align:center;border:1px solid black;\">{$display[2]}</div>";
+        $block = "<div style=\"color:{$display[1]};background-color:{$display[0]};text-align:center;border:1px solid black;\">{$display[2]}</div>";
         $row = $frm->addrow($check['description'], $block);
         if (! empty($error)) {
             $frm->addhelp($row,"Sanity check failed",$error);
