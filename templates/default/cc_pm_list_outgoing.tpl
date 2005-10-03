@@ -10,7 +10,7 @@
   {LOOP MESSAGES}
     <tr>
       <td class="PhorumListTableRow"><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
-      <td class="PhorumListTableRow"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a></td>
+      <td class="PhorumListTableRow"><a href="{MESSAGES->read_url}"><strong>{MESSAGES->subject}</strong></a></td>
       <td class="PhorumListTableRow" nowrap="nowrap"><a href="{MESSAGES->to_profile_url}">{MESSAGES->to_username}</a>&nbsp;</td>
       <td class="PhorumListTableRowSmall" nowrap="nowrap">{MESSAGES->date}&nbsp;</td>
       <td class="PhorumListTableRowSmall" nowrap="nowrap">{IF MESSAGES->read_flag}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
