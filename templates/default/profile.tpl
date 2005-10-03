@@ -4,7 +4,7 @@
 <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{if LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>{IF ENABLE_PM}&bull;<a class="PhorumNavLink" href="{PRIVATE_MESSAGES->inbox_url}">{LANG->PrivateMessages}</a>{/IF}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/if}{if LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/if}</a>
 </div>
 
-<div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->UserProfile}&nbsp;:&nbsp;{PROFILE->username}</div>
+<div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->UserProfile}&nbsp;:&nbsp;{PROFILE->username}{IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}</div>
 
 <div class="PhorumStdBlock PhorumNarrowBlock" style="text-align: left;">
 <table cellspacing="0" border="0">
@@ -36,7 +36,7 @@
 
 {IF ENABLE_PM}
 <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
-<span class="PhorumNavHeading">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{PROFILE->pm_url}">{LANG->SendPM}</a>
+<span class="PhorumNavHeading">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{PROFILE->pm_url}">{LANG->SendPM}</a>{IF NOT PROFILE->is_buddy}&bull;<a class="PhorumNavLink" href="{PROFILE->pm_addbuddy_url}">{LANG->BuddyAdd}</a>{/IF}
 </div>
 {/IF}
 </div>
