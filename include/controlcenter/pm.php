@@ -237,7 +237,7 @@ if (!empty($action)) {
             } else {
 
                 // Get the user id for the recipient username.
-                // PMTODO wen supporting multiple recipients, this will be different.
+                // PMTODO when supporting multiple recipients, this will be different.
                 // Also mind $recipients and the upcoming check on the maximum 
                 // number of messages.
                 $to_user_id = phorum_db_user_check_field("username", $_POST["to"]);
@@ -391,15 +391,17 @@ if (!empty($action)) {
     // Redirect the user to the result page.
     if ($redirect)
     {
-        $redir_url = phorum_get_url(
+        $args = array(
             PHORUM_CONTROLCENTER_URL,
             "panel=" . PHORUM_CC_PM,
             "page=" . $page,
             "folder_id=" . $folder_id,
-            (isset($pm_rcpts) ? "pm_rcpts=" . implode(':', $pm_rcpts) : ''),
-            (!empty($pm_id) ? "pm_id=" . $pm_id : ''),
-            (!empty($redirect_message) ? "okmsg=" . $redirect_message : '')
         );
+        if (isset($pm_rcpts)) $args[]  = "to_id=" . implode(':', $pm_rcpts);
+        if (!empty($pm_id)) $args[]  = "pm_id=" . $pm_id;
+        if (!empty($redirect_message)) $args[] = "okmsg=" . $redirect_message;
+
+        $redir_url = call_user_func_array('phorum_get_url', $args);
 
         ob_end_clean();
         phorum_redirect_by_url($redir_url);
@@ -416,21 +418,21 @@ if (!empty($action)) {
 function phorum_pm_format($message)
 {
     include_once("./include/format_functions.php");
-    
+
     // Reformat message so it looks like a forum message.
     $message["author"] = $message["from_username"];
     $message["body"] = $message["message"];
     $message["email"] = "";
-    
+
     // Run the message through the formatting code.
     list($message) = phorum_format_messages(array($message));
-    
+
     // Reformat message back to a private message.
     $message["message"] = $message["body"];
     $message["from_username"] = $message["author"];
     unset($message["body"]);
     unset($message["author"]);
-    
+
     return $message;
 }
 
@@ -510,9 +512,9 @@ switch ($page) {
         // Prepare data for the templates (formatting and XSS prevention).
         foreach ($list as $message_id => $message)
         {
-            $list[$message_id]["subject"] = htmlspecialchars($message["subject"]);
-            $list[$message_id]["message"] = htmlspecialchars($message["message"]);
+            $message = phorum_pm_format($message);
             $list[$message_id]["from_username"] = htmlspecialchars($message["from_username"]);
+            $list[$message_id]["subject"] = $message["subject"];
             $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
             $list[$message_id]["read_url"]=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
             $list[$message_id]["date"] = phorum_date($PHORUM["short_date"], $message["datestamp"]);
@@ -642,7 +644,7 @@ switch ($page) {
             }
 
         // Write a new private message. This part of the code will
-        // also be run in case of errors.
+        // also be run in case of errors after posting the form.
         } else {
 
             $msg["preview"] = (empty($_POST["preview"])) ? 0 : 1;
@@ -659,8 +661,7 @@ switch ($page) {
                 $preview = phorum_pm_format($msg);
                 $preview["from_profile_url"] = '#';
                 $preview["to_profile_url"] = '#';
-                
-                $PHORUM["DATA"]["PREVIEW"]   = $preview;
+                $PHORUM["DATA"]["PREVIEW"] = $preview;
             }
 
             // Escape subject and message only now, because phorum_pm_format()
