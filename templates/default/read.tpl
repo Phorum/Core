@@ -68,7 +68,7 @@
 {/if}
 
 <div class="PhorumReadNavBlock" style="text-align: left;">
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>&bull;{IF LOGGEDIN}<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>&bull;{/IF}<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmReportMessage}')) window.location='{MESSAGES->report_url}';">{LANG->Report}</a>{if MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/if}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmReportMessage}')) window.location='{MESSAGES->report_url}';">{LANG->Report}</a>{/IF}{if MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/if}
 </div>
 
 </div>
