@@ -50,7 +50,7 @@
   </div>
 {ELSE}
   <tr>
-    <td colspan="4" style="text-align: center" class="PhorumListTableRow">
+    <td colspan="{IF USERTRACK}5{/ELSE}4{/IF}" style="text-align: center" class="PhorumListTableRow">
       <br/>
       <i>{LANG->BuddyListIsEmpty}</i><br/>
       <br/>
