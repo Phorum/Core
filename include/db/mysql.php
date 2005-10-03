@@ -3806,7 +3806,9 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
 
     if (mysql_num_rows($res)) {
         while ($row = mysql_fetch_array($res)) {
-            $buddies[$row[0]]["mutual"] = true;
+            if (isset($buddies[$row[0]])) {
+                $buddies[$row[0]]["mutual"] = true;
+            }
         }
     }
 
