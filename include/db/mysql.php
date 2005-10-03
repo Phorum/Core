@@ -2392,7 +2392,10 @@ function phorum_db_user_delete($user_id) {
         phorum_db_pm_delete($row["pm_message_id"], $folder, $user_id);
     }
 
-    // BUDDYTODO: remove the user from buddylists.
+    // pm_buddies
+    $sql = "delete from {$PHORUM["pm_buddies_table"]} where user_id=$user_id or buddy_user_id=$user_id";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // private message folders
     $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id";
