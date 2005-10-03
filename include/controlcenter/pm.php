@@ -154,7 +154,7 @@ if (!empty($action)) {
                         $redirect_message = "PMFolderCreateSuccess";
                         $redirect = true;   
                     }
-                    
+
                 }    
             }
             
@@ -202,7 +202,7 @@ if (!empty($action)) {
                         phorum_db_pm_delete($pm_id, $folder_id);
                     }
                 }
-                                    
+
                 // Invalidate user cache, to update message counts.
                 phorum_cache_remove('user',$user_id);
             }
@@ -343,21 +343,64 @@ if (!empty($action)) {
 
             break;
         }
+
+        // Actions that are triggered from the buddy list.
+        case "buddies": {
+
+            // Delete all checked buddies.
+            if (isset($_POST["delete"]) && isset($_POST["checked"])) {
+                foreach($_POST["checked"] as $buddy_user_id) {
+                    phorum_db_pm_buddy_delete($buddy_user_id);
+                }
+            }
+
+            // Send a PM to the checked buddies.
+            if (isset($_POST["send_pm"]) && isset($_POST["checked"])) {
+                $pm_rcpts = $_POST["checked"];
+                if (count($pm_rcpts)) {
+                    $redirect = true;
+                    $page = "post";
+                } else {
+                    unset($pm_rcpts);
+                }
+            }
+
+            break;
+        }
+
+        // Add a user to this user's buddy list.
+        case "addbuddy": {
+
+            $buddy_user_id = $PHORUM["args"]["addbuddy_id"];
+            if (!empty($buddy_user_id)) {
+                if (phorum_db_pm_buddy_add($buddy_user_id)) {
+                    $okmsg = $PHORUM["DATA"]["LANG"]["BuddyAddSuccess"];
+                } else {
+                    $error = $PHORUM["DATA"]["LANG"]["BuddyAddFail"];
+                }
+            }
+            break;
+        }
+
+        default: {
+            die("Unhandled action for pm.php: " . htmlentities($action));
+        }
     }
-    
-    // The action has been completed successfully. 
+
+    // The action has been completed successfully.
     // Redirect the user to the result page.
-    if ($redirect) 
+    if ($redirect)
     {
         $redir_url = phorum_get_url(
-            PHORUM_CONTROLCENTER_URL, 
+            PHORUM_CONTROLCENTER_URL,
             "panel=" . PHORUM_CC_PM,
             "page=" . $page,
-            "folder_id=" . $folder_id, 
-            "pm_id=" . $pm_id,
-            "okmsg=" . $redirect_message
+            "folder_id=" . $folder_id,
+            (isset($pm_rcpts) ? "pm_rcpts=" . implode(':', $pm_rcpts) : ''),
+            (!empty($pm_id) ? "pm_id=" . $pm_id : ''),
+            (!empty($redirect_message) ? "okmsg=" . $redirect_message : '')
         );
-        
+
         ob_end_clean();
         phorum_redirect_by_url($redir_url);
         exit;
@@ -411,8 +454,6 @@ switch ($page) {
         
         $PHORUM["DATA"]["CREATE_FOLDER_NAME"] = isset($_POST["create_folder_name"]) ? htmlspecialchars($_POST["create_folder_name"]) : '';
         $PHORUM["DATA"]["RENAME_FOLDER_NAME"] = isset($_POST["rename_folder_name"]) ? htmlspecialchars($_POST["rename_folder_name"]) : '';
-
-        // PMTODO implement folder management
         $template = "cc_pm_folders";
         break;
     }
@@ -420,11 +461,41 @@ switch ($page) {
     // Manage the buddies.
     case "buddies": {
 
-        // PMTODO implement buddy management
+        // Retrieve a list of users that are buddies for the current user.
+        $buddy_list = phorum_db_pm_buddy_list(NULL, true);
+        if (count($buddy_list)) {
+            $buddy_users = phorum_user_get(array_keys($buddy_list), false);
+            $buddy_users = phorum_hook("read_user_info", $buddy_users);
+        } else {
+            $buddy_users = array();
+        }
+
+        $buddies = array();
+        foreach ($buddy_users as $id => $buddy_user) {
+            $buddy = array(
+                'user_id'     => $id,
+                'profile_url' => phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]),
+                'username'    => htmlspecialchars($buddy_user["username"]),
+                'real_name'   => isset($buddy_user["real_name"]) ? htmlspecialchars($buddy_user["real_name"]) : '',
+                'mutual'      => $buddy_list[$id]["mutual"],
+            );
+
+            if (!$buddy_user['hide_activity']) {
+              $buddy["date_last_active"] = phorum_date($PHORUM["short_date"], $buddy_user["date_last_active"]);
+            } else {
+              $buddy["date_last_active"] = "-";
+            }
+            $buddies[$id] = $buddy;
+        }
+
+        $PHORUM["DATA"]["USERTRACK"] = $PHORUM["track_user_activity"];
+        $PHORUM["DATA"]["BUDDIES"] = $buddies;
+        $PHORUM["DATA"]["BUDDYCOUNT"] = count($buddies);
+
         $template = "cc_pm_buddies";
         break;
     }
-    
+
     // Show a listing of messages in a folder.
     case "list": {
 

@@ -14,7 +14,7 @@
   &nbsp;&nbsp;&nbsp;{IF PM_FOLDERS->id FOLDER_ID}&gt;{ELSE}&bull;{/IF}<a class="PhorumNavLink" href="{PM_FOLDERS->url}">{PM_FOLDERS->name}</a><span class="PhorumSmallFont">{IF PM_FOLDERS->total}&nbsp;({PM_FOLDERS->total}){/IF}{IF PM_FOLDERS->new}&nbsp;(<span class="PhorumNewFlag">{PM_FOLDERS->new} {LANG->newflag}</span>){/IF}</span><br />
 {/LOOP PM_FOLDERS}
 &bull;<a class="PhorumNavLink" href="{URL->CC13}">{LANG->SendPM}</a><br />
-<!-- &bull;<a class="PhorumNavLink" href="{URL->CC18}">{LANG->Buddies}</a><br /> -->
+&bull;<a class="PhorumNavLink" href="{URL->CC18}">{LANG->Buddies}</a><br />
 <br />
 {/IF}
 <span class="PhorumNavHeading">{LANG->Subscriptions}</span><br />
