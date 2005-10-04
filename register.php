@@ -41,8 +41,8 @@ if(isset($PHORUM["args"]["approve"])){
              $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
 
         } elseif($user["active"] == PHORUM_USER_PENDING_MOD) { // waiting for moderator-approval
-        	$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
-        	// TODO: this message should be changed in 5.1 to have a unique message!!!
+            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+            // TODO: this message should be changed in 5.1 to have a unique message!!!
 
         } else { // user pending both or email
             if($user["active"]==PHORUM_USER_PENDING_BOTH){
@@ -71,7 +71,19 @@ if(isset($PHORUM["args"]["approve"])){
 }
 
 if(count($_POST)){
-	$error=""; // init it as empty
+    // Sanitize input data.
+    foreach ($_POST as $key => $val) {
+        if ($key == 'username') {
+            // Trim and space-collapse usernames, so people can't
+            // impersonate as other users using the same username,
+            // but with extra spaces in it.
+            $_POST[$key] = preg_replace('/\s+/', ' ', trim($val));
+        } else {
+            $_POST[$key] = trim($val);
+        }
+    }
+
+    $error=""; // init it as empty
 
     if(!isset($_POST["username"]) || empty($_POST['username']) ){
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
@@ -129,8 +141,8 @@ if(count($_POST)){
 
             $userdata=phorum_hook("before_register", $userdata);
             if(isset($userdata['error'])) {
-            	$error=$userdata['error'];
-            	unset($userdata['error']);
+                $error=$userdata['error'];
+                unset($userdata['error']);
             } elseif ($user_id=phorum_user_add($userdata)){
 
                 if($PHORUM["registration_control"]==PHORUM_REGISTER_INSTANT_ACCESS){
