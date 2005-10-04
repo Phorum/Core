@@ -12,8 +12,8 @@
 <input type="hidden" name="action" value="folders" />
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
 
-<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->PMFolderCreate}</div>
-<div class="PhorumStdBlock" style="width:99%; padding-top: 15px; padding-bottom: 15px">
+<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderCreate}</div>
+<div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
 <input type="text" name="create_folder_name" value="{CREATE_FOLDER_NAME}" size="20" maxlength="20"/>
 <input type="submit" name="create_folder" value="{LANG->Submit}"/>
 </div>
@@ -22,10 +22,10 @@
 
     <br/>
 
-    <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->PMFolderRename}</div>
-    <div class="PhorumStdBlock" style="width:99%; padding-top: 15px; padding-bottom: 15px">
+    <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderRename}</div>
+    <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
     {LANG->PMFolderRename}
-    <select name="rename_folder_from">
+    <select name="rename_folder_from" style="vertical-align: middle">
     <option value=""> {LANG->PMSelectAFolder}
     {LOOP PM_USERFOLDERS}
         <option value="{PM_USERFOLDERS->id}"> {PM_USERFOLDERS->name}
@@ -38,11 +38,11 @@
 
     <br/>
 
-    <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->PMFolderDelete}</div>
-    <div class="PhorumStdBlock" style="width:99%; padding-top: 15px; padding-bottom: 15px">
+    <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderDelete}</div>
+    <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
     {LANG->PMFolderDeleteExplain}<br/><br/>
     {LANG->PMFolderDelete}
-    <select name="delete_folder_target">
+    <select name="delete_folder_target" style="vertical-align: middle">
     <option value=""> {LANG->PMSelectAFolder}
     {LOOP PM_USERFOLDERS}
         <option value="{PM_USERFOLDERS->id}"> {PM_USERFOLDERS->name}{IF PM_USERFOLDERS->total} ({PM_USERFOLDERS->total}){/IF}
