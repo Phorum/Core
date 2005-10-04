@@ -15,11 +15,22 @@
 // You should have received a copy of the Phorum License                      //
 // along with this program.                                                   //
 ////////////////////////////////////////////////////////////////////////////////
+
+// These language strings are set dynamically, so the language
+// tool won't recognize them automatically. Therefore they are
+// mentioned here.
+// $PHORUM["DATA"]["LANG"]["PMFolderCreateSuccess"]
+// $PHORUM["DATA"]["LANG"]["PMFolderRenameSuccess"]
+// $PHORUM["DATA"]["LANG"]["PMFolderDeleteSuccess"]
+
 define('phorum_page','pm');
 
 include_once("./common.php");
 
 phorum_require_login();
+
+// set all our common URL's
+phorum_build_common_urls();
 
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
@@ -37,10 +48,14 @@ if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
 }
 
 // If private messages are disabled, just show a simple error message.
-if (!$PHORUM["enable_pm"]) {
+if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];
-    $template = "stdblock";
-    return;
+    include phorum_get_template("header");
+    phorum_hook("after_header");
+    include phorum_get_template("stdblock");
+    phorum_hook("before_footer");
+    include phorum_get_template("footer");
+    exit;
 }
 
 // ------------------------------------------------------------------------
@@ -77,7 +92,7 @@ $error_msg = "";
 // Banlist checking
 // ------------------------------------------------------------------------
 
-if ($page == 'post' || $action == 'post')
+if ($page == 'send' || $action == 'post')
 {
     include_once("./include/profile_functions.php");
     $PHORUM['banlists'] = phorum_db_get_banlists();
@@ -93,9 +108,13 @@ if ($page == 'post' || $action == 'post')
 
     // Show an error in case we encountered a ban.
     if (! empty($error)) {
-        $PHORUM["DATA"]["BLOCK_CONTENT"] = $error;
-        $template = "stdblock";
-        return;
+        $PHORUM["DATA"]["ERROR"] = $error;
+        include phorum_get_template("header");
+        phorum_hook("after_header");
+        include phorum_get_template("message");
+        phorum_hook("before_footer");
+        include phorum_get_template("footer");
+        exit;
     }
 }
 
@@ -124,7 +143,7 @@ if (isset($_POST['close_message'])) {
     $_POST['checked'] = array($pm_id);
     $action = 'list';
 } elseif (isset($_POST['reply_message'])) {
-    $page = 'post';
+    $page = 'send';
     $action = '';
 }
 
@@ -249,15 +268,15 @@ if (!empty($action)) {
             break;
 
 
-        // Finish posting a message.
+        // Actions which are triggered from the post form.
         case "post":
 
-            // Previewing the message.
+            // Show a preview for the message.
             if(isset($_POST["preview"])){
 
-                $page = "post";
+                $page = "send";
 
-                // Posting the message.
+            // Posting the message.
             } else {
 
                 // Get the user id for the recipient username.
@@ -265,7 +284,6 @@ if (!empty($action)) {
                 // Also mind $recipients and the upcoming check on the maximum
                 // number of messages.
                 $to_user_id = phorum_db_user_check_field("username", $_POST["to"]);
-
 
                 if($to_user_id){
 
@@ -358,7 +376,7 @@ if (!empty($action)) {
 
                 // Stay on the post page in case of errors. Redirect on success.
                 if($error){
-                    $page = "post";
+                    $page = "send";
                 } else {
                     $redirect = true;
                 }
@@ -383,7 +401,7 @@ if (!empty($action)) {
                 $pm_rcpts = $_POST["checked"];
                 if (count($pm_rcpts)) {
                     $redirect = true;
-                    $page = "post";
+                    $page = "send";
                 } else {
                     unset($pm_rcpts);
                 }
@@ -415,46 +433,28 @@ if (!empty($action)) {
     // Redirect the user to the result page.
     if ($redirect)
     {
-        $redir_url = phorum_get_url(
+        $args = array(
             PHORUM_PM_URL,
+            "panel=" . PHORUM_CC_PM,
             "page=" . $page,
             "folder_id=" . $folder_id,
-            (isset($pm_rcpts) ? "pm_rcpts=" . implode(':', $pm_rcpts) : ''),
-            (!empty($pm_id) ? "pm_id=" . $pm_id : ''),
-            (!empty($redirect_message) ? "okmsg=" . $redirect_message : '')
         );
+        if (isset($pm_rcpts)) $args[]  = "to_id=" . implode(':', $pm_rcpts);
+        if (!empty($pm_id)) $args[]  = "pm_id=" . $pm_id;
+        if (!empty($redirect_message)) $args[] = "okmsg=" . $redirect_message;
 
+        $redir_url = call_user_func_array('phorum_get_url', $args);
+
+        ob_end_clean();
         phorum_redirect_by_url($redir_url);
         exit;
     }
+
 }
 
 // ------------------------------------------------------------------------
 // Display a PM page
 // ------------------------------------------------------------------------
-
-// A utility function to apply the default forum message formatting
-// to a private message.
-function phorum_pm_format($message)
-{
-    include_once("./include/format_functions.php");
-
-    // Reformat message so it looks like a forum message.
-    $message["author"] = $message["from_username"];
-    $message["body"] = $message["message"];
-    $message["email"] = "";
-
-    // Run the message through the formatting code.
-    list($message) = phorum_format_messages(array($message));
-
-    // Reformat message back to a private message.
-    $message["message"] = $message["body"];
-    $message["from_username"] = $message["author"];
-    unset($message["body"]);
-    unset($message["author"]);
-
-    return $message;
-}
 
 // Use the message list as the default page.
 if (!$page){
@@ -536,9 +536,10 @@ switch ($page) {
             // Prepare data for the templates (formatting and XSS prevention).
             foreach ($list as $message_id => $message)
             {
-                $list[$message_id]["subject"] = htmlspecialchars($message["subject"]);
-                $list[$message_id]["message"] = htmlspecialchars($message["message"]);
+                $message = phorum_pm_format($message);
                 $list[$message_id]["from_username"] = htmlspecialchars($message["from_username"]);
+                $list[$message_id]["subject"] = $message["subject"];
+                $list[$message_id]["message"] = $message["message"];
                 $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
                 $list[$message_id]["read_url"]=phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
                 $list[$message_id]["date"] = phorum_date($PHORUM["short_date"], $message["datestamp"]);
@@ -610,7 +611,6 @@ switch ($page) {
             // The message was not found. Show an error.
             $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMNotAvailable"];
             $template = "stdblock";
-            return;
         }
 
         break;
@@ -619,126 +619,117 @@ switch ($page) {
     // Post a new private message.
     case "send":
 
-        // Reply to a private message.
-        if(isset($pm_id)) {
+        // Setup the default array with the message data.
+        $msg = array(
+            "from_username" => $PHORUM["user"]["username"],
+            "keep"          => isset($_POST["keep"]) ? 1 : 0,
+            "subject"       => isset($_POST["subject"]) ? $_POST["subject"] : '',
+            "message"       => isset($_POST["message"]) ? $_POST["message"] : '',
+            "preview"       => isset($_POST["preview"]) ? 1 : 0,
+            "recipients"    => array(),
+        );
 
-            $message=phorum_db_pm_get($pm_id);
+        // Data initialization for posting messages on first request.
+        if ($action == NULL || $action != 'post')
+        {
+            // Setup data for sending a private message to specified recipients.
+            // Recipients are passed on as a standard phorum argument "to_id"
+            // containing a colon separated list of users.
+            if (isset($PHORUM["args"]["to_id"])) {
 
-            // Setup variables for the template.
-            $msg["from_username"] = htmlspecialchars($PHORUM["user"]["username"]);
-            $msg["keep"] = 0;
-            if(substr($message["subject"], 0, 3) != "Re:"){
-                $message["subject"] = "Re: ".$message["subject"];
-            }
-            $msg["subject"]=htmlspecialchars($message["subject"]);
-
-            // PMTODO backward compatibility. This can be changed once we have
-            // a new recipient selection system. But mind the $msg['to'] in
-            // the quoted body code.
-            $msg["to"]=htmlspecialchars($message["from_username"]);
-            $msg["to_id"]=$message["from_user_id"];
-
-            // Build a quoted version of the message body.
-            $msg["message"] = phorum_strip_body($message["message"]);
-            $msg["message"] = str_replace("\n", "\n> ", $msg["message"]);
-            $msg["message"] = wordwrap(trim($msg["message"]), 50, "\n> ", true);
-            $msg["message"] = "{$msg['to']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> {$msg['message']}\n\n\n";
-
-            $PHORUM["DATA"]["MESSAGE"] = $msg;
-
-        // Reply privately to a forum post.
-        } elseif (isset($PHORUM["args"]["message_id"])) {
-
-            $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
-
-            if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
-
-                // get url to the message board thread
-                // TODO: would be nicer to get the url to the post within the thread
-                $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"]);
-
-                // Find the real username, because some mods rewrite the
-                // username in the message table. There will be a better solution
-                // for selecting recipients, but for now this will fix some
-                // of the problems.
-                $user = phorum_db_user_get($message["user_id"], false);
-
-                $msg["from_username"] = htmlspecialchars($PHORUM["user"]["username"]);
-                $msg["to"] = htmlspecialchars($user["username"]);
-                $msg["to_id"] = $message["user_id"];
-                $msg["keep"] = "0";
-                $msg["subject"] = htmlspecialchars($message["subject"]);
-                $msg["message"] = phorum_strip_body($message["body"]);
-                $msg["message"] = str_replace("\n", "\n> ", $msg["message"]);
-                $msg["message"] = wordwrap(trim($msg["message"]), 50, "\n> ", true);
-                $msg["message"] = "{$PHORUM['DATA']['LANG']['InReplyTo']} {$origurl}\n{$msg['to']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> {$msg['message']}\n\n\n";
-
-                $PHORUM["DATA"]["MESSAGE"] = $msg;
-            }
-
-        // Write a new private message. This part of the code will
-        // also be run in case of errors.
-        } else {
-
-            $msg["preview"] = (empty($_POST["preview"])) ? 0 : 1;
-            $msg["from_username"] = htmlspecialchars($PHORUM["user"]["username"]);
-            $msg["to_id"] = (empty($_POST["to_id"])) ? "" : $_POST["to_id"];
-            $msg["to"] = (empty($_POST["to"])) ? "" : htmlspecialchars($_POST["to"]);
-            $msg["subject"] = (empty($_POST["subject"])) ? "" : $_POST["subject"];
-            $msg["message"] = (empty($_POST["message"])) ? "" : $_POST["message"];
-            $msg["keep"] = (empty($_POST["keep"])) ? 0 : 1;
-
-            // formatting for preview
-            if ($msg["preview"])
-            {
-                $preview = phorum_pm_format($msg);
-                $preview["from_profile_url"] = '#';
-                $preview["to_profile_url"] = '#';
-
-                $PHORUM["DATA"]["PREVIEW"]   = $preview;
-            }
-
-            // Escape subject and message only now, because phorum_pm_format()
-            // needs them unmodified.
-            $msg["subject"] = htmlspecialchars($msg["subject"]);
-            $msg["message"] = htmlspecialchars($msg["message"]);
-
-            // PMTODO: This is a quick hack to send PM by user_id.
-            // Simply translate the user_id to the username.
-            // This will probably all be changed in the new PM system.
-            if(!empty($PHORUM['args']['to_id'])) {
-                $user = phorum_db_user_get($PHORUM['args']["to_id"], false);
-                if ($user) {
-                    $_POST['to'] = $user['username'];
-                }
-            }
-
-            if(!empty($_POST["to"])){
-                $msg["to"] = htmlspecialchars($_POST["to"]);
-            } elseif(!empty($PHORUM["args"]["to"])){
-                $msg["to"] = htmlspecialchars($PHORUM["args"]["to"]);
-            } else {
-                $msg["to"] = "";
-                if ($PHORUM["enable_dropdown_userlist"]){
-                    $users = array();
-                    $userlist = phorum_user_get_list();
-                    foreach ($userlist as $userinfo){
-                        $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
-                        $userinfo["username"] = htmlspecialchars($userinfo["username"]);
-                        $users[] = $userinfo;
+                foreach (explode(":", $PHORUM["args"]["to_id"]) as $rcpt_id) {
+                    settype($rcpt_id, "int");
+                    $user = phorum_db_user_get($rcpt_id, false);
+                    $user = phorum_hook('user_get', $user);
+                    if ($user) {
+                        $msg["recipients"][$rcpt_id] = array(
+                            "username" => $user["username"],
+                            "user_id"  => $user["user_id"]
+                        );
                     }
-                    $PHORUM["DATA"]["USERS"] = $users;
+                }
+
+            // Setup data for replying to a private message.
+            } elseif (isset($pm_id)) {
+
+                $message = phorum_db_pm_get($pm_id);
+                $msg["subject"] = $message["subject"];
+                $msg["message"] = $message["message"];
+                $msg["recipients"][$message["from_user_id"]] = array(
+                    'username' => $message["from_username"],
+                    'user_id'  => $message["from_user_id"]
+                );
+                $msg = phorum_pm_quoteformat($message["from_username"], $msg);
+
+            // Setup data for replying privately to a forum post.
+            } elseif (isset($PHORUM["args"]["message_id"])) {
+
+                $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
+
+                if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
+
+                    // get url to the message board thread
+                    $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+
+                    // Find the real username, because some mods rewrite the
+                    // username in the message table. There will be a better solution
+                    // for selecting recipients, but for now this will fix some
+                    // of the problems.
+                    $user = phorum_db_user_get($message["user_id"], false);
+
+                    $msg["subject"] = $message["subject"];
+                    $msg["message"] = $message["body"];
+                    $msg["recipients"][$message["user_id"]] = array(
+                        'username' => $user["username"],
+                        'user_id'  => $user["user_id"]
+                    );
+                    $msg = phorum_pm_quoteformat($user["username"], $msg, $origurl);
                 }
             }
+        }
 
-            $PHORUM["DATA"]["MESSAGE"] = $msg;
+        // Setup data for previewing a message.
+        if ($msg["preview"]) {
+            $preview = phorum_pm_format($msg);
+            $preview["from_profile_url"] = '#';
+            $preview["to_profile_url"] = '#';
+            $PHORUM["DATA"]["PREVIEW"] = $preview;
+        }
+
+        // XSS prevention.
+        foreach ($msg as $key => $val) {
+            switch ($key) {
+                case "recipients": {
+                    foreach ($val as $id => $data) {
+                        $msg[$key][$id]["username"] = htmlspecialchars($data["username"]);
+                    }
+                    break;
+                }
+                default: {
+                    $msg[$key] = htmlspecialchars($val);
+                    break;
+                }
+            }
+        }
+
+        $PHORUM["DATA"]["MESSAGE"] = $msg;
+
+        // Create data for a user dropdown list, if configured.
+        if ($PHORUM["enable_dropdown_userlist"])
+        {
+            $allusers = array();
+            $userlist = phorum_user_get_list();
+            foreach ($userlist as $userinfo){
+                $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
+                $userinfo["username"] = htmlspecialchars($userinfo["username"]);
+                $allusers[] = $userinfo;
+            }
+            $PHORUM["DATA"]["USERS"] = $allusers;
         }
 
         $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["SendPM"];
         $template = "pm_post";
         break;
-
-
 }
 
 
@@ -757,9 +748,6 @@ if (! $PHORUM['user']['admin']) {
         $PHORUM['DATA']['LANG']['PMSpaceLeft'] = str_replace('%pm_space_left%', $space_left, $PHORUM['DATA']['LANG']['PMSpaceLeft']);
     }
 }
-
-// set all our common URL's
-phorum_build_common_urls();
 
 // Make a list of folders for use in the menu and a list of folders that
 // the user created. The latter will be set to zero if no user folders
@@ -796,6 +784,8 @@ $PHORUM["DATA"]["PM_PAGE"] = $page;
 include phorum_get_template("header");
 phorum_hook("after_header");
 if ($error_msg) {
+    $PHORUM["DATA"]["ERROR"] = $error_msg;
+    unset($PHORUM["DATA"]["MESSAGE"]);
     include phorum_get_template("message");
 } else {
     include phorum_get_template("pm");
@@ -803,5 +793,52 @@ if ($error_msg) {
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 
+// ------------------------------------------------------------------------
+// Utility functions
+// ------------------------------------------------------------------------
+
+// Apply the default forum message formatting to a private message.
+function phorum_pm_format($message)
+{
+    include_once("./include/format_functions.php");
+
+    // Reformat message so it looks like a forum message.
+    $message["author"] = $message["from_username"];
+    $message["body"] = $message["message"];
+    $message["email"] = "";
+
+    // Run the message through the formatting code.
+    list($message) = phorum_format_messages(array($message));
+
+    // Reformat message back to a private message.
+    $message["message"] = $message["body"];
+    $message["from_username"] = $message["author"];
+    unset($message["body"]);
+    unset($message["author"]);
+
+    return $message;
+}
+
+// Apply message reply quoting to a private message.
+function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Build the reply subject.
+    if(substr($message["subject"], 0, 3) != "Re:"){
+        $message["subject"] = "Re: ".$message["subject"];
+    }
+
+    // Build a quoted version of the message body.
+    $quote = phorum_strip_body($message["message"]);
+    $quote = str_replace("\n", "\n> ", $quote);
+    $quote = wordwrap(trim($quote), 50, "\n> ", true);
+    $quote = ($inreplyto != NULL ? "{$PHORUM['DATA']['LANG']['InReplyTo']} {$inreplyto}\n" : '') .
+             "$orig_author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
+             str_repeat("-", 55)."\n> {$quote}\n\n\n";
+    $message["message"] = $quote;
+
+    return $message;
+}
 
 ?>

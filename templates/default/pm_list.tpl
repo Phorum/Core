@@ -1,5 +1,3 @@
-{include pm_max_messagecount}
-
 {IF ERROR}
   <div class="PhorumUserError">{ERROR}</div>
 {/IF}
@@ -12,9 +10,9 @@
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
 
 {IF FOLDER_IS_INCOMING}
-  {INCLUDE cc_pm_list_incoming}
+  {INCLUDE pm_list_incoming}
 {ELSE}
-  {INCLUDE cc_pm_list_outgoing}
+  {INCLUDE pm_list_outgoing}
 {/IF}
 
 </form>

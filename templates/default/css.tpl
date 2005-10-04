@@ -567,6 +567,24 @@ div.phorum-menu a.phorum-current-page
         font-size: {tinyfontsize};
         font-family: {tinyfont};
     }
+
+    /********************/
+
+    /* PM specifics */
+
+    .PhorumPMRecipientBlock
+    {
+        border: 1px solid black;
+        position:relative;
+        float:left;
+        padding: 1px 1px 1px 5px;
+        margin: 0px 5px 5px 0px;
+        font-size: {smallfontsize};
+        background-color: {backcolor};
+        border: 1px solid {tablebordercolor};
+
+    }
+
     /********************/
 
     /* Override classes - Must stay at the end */

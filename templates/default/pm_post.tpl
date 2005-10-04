@@ -28,16 +28,24 @@
     <td>{MESSAGE->from_username}</td>
 </tr>
 <tr>
-    <td>{LANG->To}:&nbsp;</td>
+    <td valign="top">{LANG->To}:&nbsp;</td>
+    <td valign="top">
+    {LOOP MESSAGE->recipients}
+      <div class="PhorumPMRecipientBlock">
+        {MESSAGE->recipients->username}
+        <input type="image" src="./images/delete.gif" style="vertical-align:top">
+      </div>
+    {/LOOP MESSAGE->recipients}
     {IF USERS}
-    <td><select name="to" size="1">
-    {LOOP USERS}
-    <option value="{USERS->username}">{USERS->displayname}</option>
-    {/LOOP USERS}
-    </select></td>
+      <select name="to" size="1">
+      {LOOP USERS}
+        <option value="{USERS->username}">{USERS->displayname}</option>
+      {/LOOP USERS}
+      </select>
     {ELSE}
-    <td><input type="text" name="to" size="30" value="{MESSAGE->to}" /></td>
+        <input type="text" name="to" value="{MESSAGE->to}"/>
     {/IF}
+    </td>
 </tr>
 <tr>
     <td>{LANG->Subject}:&nbsp;</td>

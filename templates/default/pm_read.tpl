@@ -1,4 +1,3 @@
-{include pm_max_messagecount}
 <form action="{ACTION}" method="post">
 {POST_VARS}
 <input type="hidden" name="panel" value="pm" />
@@ -20,7 +19,7 @@
 <div class="PhorumStdBlock" style="border-top:none">
 {IF FOLDER_IS_INCOMING}
   {var MOVE_SUBMIT_NAME move_message}
-  {include cc_pm_moveselect}
+  {include pm_moveselect}
 {/IF}
 <input type="submit" name="close_message" class="PhorumSubmit" value="{LANG->PMCloseMessage}" />
 {IF NOT MESSAGE->from_user_id USERINFO->user_id}

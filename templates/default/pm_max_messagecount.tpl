@@ -1,18 +1,14 @@
 {IF MAX_PM_MESSAGECOUNT}
 
-  <span style="float:right">
-
     <?php
         $avail = $PHORUM['DATA']['PM_SPACE_LEFT'];
         $used = $PHORUM['DATA']['PM_MESSAGECOUNT'];
         $total = $avail + $used;
         
-        $size = 200;
+        $size = 130;
         $usedsize = ceil($used/$total * $size);
         $usedperc = floor($used/$total * 100 + 0.5);
     ?>
-    
-
 
     <style type="text/css">
     .PhorumGaugeTable {
@@ -31,9 +27,10 @@
     }
     </style>
     
-    <div align="right">
+    <div class="phorum-menu" style="margin-top: 6px">
+    <div style="text-align: center; padding: 10px 0px 10px 0px">
     
-    <div class="PhorumTinyFont" style="padding-bottom: 3px">
+    <div class="PhorumTinyFont" style="padding-bottom: 10px">
       {IF PM_SPACE_LEFT}
         {LANG->PMSpaceLeft}
       {ELSE}
@@ -41,20 +38,18 @@
       {/IF}
     </div> 
         
-    <table class="PhorumGaugeTable">
+    <table class="PhorumGaugeTable" align="center">
     
     <tr>
       <td class="PhorumGaugePrefix PhorumTinyFont">
         <?php print "{$usedperc}%" ?>
       </td>
-      <td class="PhorumGauge" width="<?php print $size?>"><img src="images/gauge.gif" width="<?php print $usedsize?>" height="15px"/></td>
+      <td class="PhorumGauge" width="<?php print $size?>"><img align="left" src="images/gauge.gif" width="<?php print $usedsize?>" height="15px"/></td>
     </tr>
 
     </table>
 
     </div>
+    </div>
     
-  </span>
-  <br/>
-  
 {/IF}

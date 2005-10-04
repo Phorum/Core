@@ -1,5 +1,3 @@
-{include pm_max_messagecount}
-
 {IF ERROR}
   <div class="PhorumUserError">{ERROR}</div>
 {/IF}
