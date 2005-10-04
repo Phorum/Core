@@ -46,7 +46,8 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
         $user=phorum_user_get($userid);
 
         if ( ($cookie==PHORUM_SESSION_LONG_TERM && !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session) ||
-             ($cookie==PHORUM_SESSION_SHORT_TERM && !empty($user['sessid_st']) && $user['sessid_st'] == $md5session) ) {
+             ($cookie==PHORUM_SESSION_SHORT_TERM && !empty($user['sessid_st']) && $user['sessid_st'] == $md5session) ||
+             ($cookie=="phorum_admin_session" && !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session) ) {
 
             if ( $user["active"] ) {
                 // write access is false by default, need to check the st-cookie too
