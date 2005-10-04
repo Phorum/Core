@@ -255,7 +255,7 @@ class PhorumInputForm {
         $is_checked = ( !empty( $checked ) ) ? "checked" : "" ;
 
         $value = htmlspecialchars( $value );
-        $caption = htmlspecialchars( $caption );
+
         $data = "<nobr><input type=\"checkbox\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;$caption</nobr>";
 
         return $data;
