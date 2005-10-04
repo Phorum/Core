@@ -45,11 +45,11 @@
                 "title_align"=>$talign,
                 "content_align"=>$calign
              );
-    
+
             end($this->_rows);
 
             return key($this->_rows);
-             
+
         }
 
         function addhelp($row, $title, $text)
@@ -57,8 +57,8 @@
             $this->_help[$row]=array($title,$text);
         }
 
-        
-        
+
+
         function addbreak( $break="&nbsp;" )
         {
             $this->_rows[]=array("break"=>$break);
@@ -71,7 +71,7 @@
             $this->_rows[]=array("message"=>$message);
         }
 
-        
+
         function show()
         {
             echo "<form style=\"display: inline;\" action=\"$this->_action\" method=\"$this->_method\"";
@@ -99,11 +99,11 @@
                     echo "<tr class=\"input-form-tr\">\n";
                     echo "  <td colspan=\"2\" class=\"input-form-td-message\">$row[message]</td>\n";
                     echo "</tr>\n";
-                } else { 
+                } else {
                     $colspan = ($row["contents"]=="") ? " colspan=2" : "";
 
                     $title=$row["title"];
-                    
+
                     if(isset($this->_help[$key])){
                         $title=$title.help_link($this->_help[$key][0], $this->_help[$key][1]);
                     }
@@ -204,6 +204,7 @@
             $data ="<input type=\"$type\" name=\"$name\"";
             if($size>0) $data.=" size=\"$size\"";
             if($maxlength>0) $data.=" maxlength=\"$maxlength\"";
+            $value=htmlspecialchars($value);
             $data.=" value=\"$value\" $extra>";
 
             return $data;
@@ -211,6 +212,7 @@
 
         function textarea($name, $value, $cols=30, $rows=5, $extra="")
         {
+            $value=htmlspecialchars($value);
             $data ="<textarea name=\"$name\" cols=\"$cols\" rows=\"$rows\" $extra>$value</textarea>";
 
             return $data;
@@ -220,6 +222,8 @@
         {
             $data ="<select name=\"$name\" $extra>\n";
             foreach($values as $value => $text){
+                $value=htmlspecialchars($value);
+                $text=htmlspecialchars($text);
                 $data.="<option value=\"$value\"";
                 if($value==$selected) $data.=" selected=\"selected\"";
                 $data.=">$text</option>\n";
@@ -233,6 +237,7 @@
             $data ="<select name=\"$name\" $extra>\n";
             foreach($values as $value => $text){
                 $data.="<option value=\"$text\"";
+                $text=htmlspecialchars($text);
                 if($text==$selected) $data.=" selected";
                 $data.=">$text</option>\n";
             }
@@ -244,6 +249,8 @@
         function radio_button($name, $values, $selected="", $separator="&nbsp;&nbsp;", $extra="")
         {
             foreach($values as $value => $text){
+                $value=htmlspecialchars($value);
+                $text=htmlspecialchars($text);
                 $data.="<input type=\"radio\" name=\"$name\" value=\"$value\"";
                 if($selected==$value) $data.=" checked";
                 $data.=" $extra>&nbsp;$text$separator";
@@ -255,6 +262,8 @@
         {
           $is_checked = ( !empty($checked) ) ? "checked" : "" ;
 
+          $value=htmlspecialchars($value);
+          $caption=htmlspecialchars($caption);
           $data = "<nobr><input type=\"checkbox\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;$caption</nobr>";
 
           return $data;
