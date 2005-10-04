@@ -174,7 +174,7 @@ function phorum_import_template($tplfile, $outfile)
             break;
 
             case "assign":
-            if(defined($parts[2])){
+            if(defined($parts[2]) || is_numeric($parts[2])){
                 $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']=$parts[2]; ?>";
             } else {
                 $index=phorum_determine_index($loopvars, $parts[2]);
@@ -228,7 +228,7 @@ function phorum_import_template($tplfile, $outfile)
         $fileparts[3] = "toplevel_stage2";
         unset($pathparts[count($pathparts)-1]);
         $stage2_file = implode('/', $pathparts) . '/' . implode('-', $fileparts);
-        
+
         // Create code for automatic rebuilding of rendered templates
         // in case of changes. This is done by checking if one of the
         // templates in the dependancy list has been updated. If this
@@ -237,7 +237,7 @@ function phorum_import_template($tplfile, $outfile)
         // template to rebuild all needed templates.
 
         $check_deps =
-            "<?php\n" .      
+            "<?php\n" .
             '$mymtime = @filemtime("' . addslashes($stage1_file) . '");' . "\n" .
             "\$update_count = 0;\n" .
             "\$need_update = (\n";
@@ -265,12 +265,12 @@ function phorum_import_template($tplfile, $outfile)
 
         // Reset dependancy list for the next phorum_import_template() call.
         $include_deps = array();
-        
+
         // Write out data to the cache.
         phorum_write_templatefile($stage1_file, $check_deps);
         phorum_write_templatefile($stage2_file, $page, true);
     }
-    else 
+    else
     {
         // Write out subtemplate to the cache.
         phorum_write_templatefile($outfile, $page);
