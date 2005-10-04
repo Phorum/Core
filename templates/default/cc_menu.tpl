@@ -1,47 +1,40 @@
-<div class="PhorumNavBlock" style="text-align: left;">
-<span class="PhorumNavHeading">{LANG->PersProfile}</span><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC0}">{LANG->ViewProfile}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC3}">{LANG->EditUserinfo}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC4}">{LANG->EditSignature}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC5}">{LANG->EditMailsettings}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC14}">{LANG->EditPrivacy}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC16}">{LANG->ViewJoinGroups}</a><br />
-<br />
-{IF ENABLE_PM}
-<span class="PhorumNavHeading">{LANG->PrivateMessages}</span><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC17}">{LANG->Folders}</a><br />
-{LOOP PM_FOLDERS}
-  &nbsp;&nbsp;&nbsp;{IF PM_FOLDERS->id FOLDER_ID}&gt;{ELSE}&bull;{/IF}<a class="PhorumNavLink" href="{PM_FOLDERS->url}">{PM_FOLDERS->name}</a><span class="PhorumSmallFont">{IF PM_FOLDERS->total}&nbsp;({PM_FOLDERS->total}){/IF}{IF PM_FOLDERS->new}&nbsp;(<span class="PhorumNewFlag">{PM_FOLDERS->new} {LANG->newflag}</span>){/IF}</span><br />
-{/LOOP PM_FOLDERS}
-&bull;<a class="PhorumNavLink" href="{URL->CC13}">{LANG->SendPM}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC18}">{LANG->Buddies}</a><br />
-<br />
-{/IF}
-<span class="PhorumNavHeading">{LANG->Subscriptions}</span><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC1}">{LANG->ListThreads}</a><br />
-<!--&bull;<a class="PhorumNavLink" href="{URL->CC2}">{LANG->ListForums}</a><br />-->
-<br />
-<span class="PhorumNavHeading">{LANG->Options}</span><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC6}">{LANG->EditBoardsettings}</a><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC7}">{LANG->ChangePassword}</a><br />
-<br />
+<div class="phorum-menu" style="text-align: left;">
+<ul>
+{LANG->PersProfile}
+<li><a {IF PROFILE->PANEL "summary"}class="phorum-current-page" {/IF}href="{URL->CC0}">{LANG->ViewProfile}</a></li>
+<li><a {IF PROFILE->PANEL "user"}class="phorum-current-page" {/IF}href="{URL->CC3}">{LANG->EditUserinfo}</a></li>
+<li><a {IF PROFILE->PANEL "sig"}class="phorum-current-page" {/IF}href="{URL->CC4}">{LANG->EditSignature}</a></li>
+<li><a {IF PROFILE->PANEL "email"}class="phorum-current-page" {/IF}href="{URL->CC5}">{LANG->EditMailsettings}</a></li>
+<li><a {IF PROFILE->PANEL "privacy"}class="phorum-current-page" {/IF}href="{URL->CC14}">{LANG->EditPrivacy}</a></li>
+<li><a {IF PROFILE->PANEL "groups"}class="phorum-current-page" {/IF}href="{URL->CC16}">{LANG->ViewJoinGroups}</a></li>
+</ul>
+<ul>
+{LANG->Subscriptions}
+<li><a {IF PROFILE->PANEL "subthreads"}class="phorum-current-page" {/IF}href="{URL->CC1}">{LANG->ListThreads}</a></li>
+</ul>
+<ul>
+{LANG->Options}
+<li><a {IF PROFILE->PANEL "forum"}class="phorum-current-page" {/IF}href="{URL->CC6}">{LANG->EditBoardsettings}</a></li>
+<li><a {IF PROFILE->PANEL "password"}class="phorum-current-page" {/IF}href="{URL->CC7}">{LANG->ChangePassword}</a></li>
+</ul>
 {IF MYFILES}
-<span class="PhorumNavHeading">{LANG->Files}</span><br />
-&bull;<a class="PhorumNavLink" href="{URL->CC9}">{LANG->EditMyFiles}</a><br />
-<br />
+<ul>
+{LANG->Files}
+<li><a {IF PROFILE->PANEL "files"}class="phorum-current-page" {/IF}href="{URL->CC9}">{LANG->EditMyFiles}</a></li>
+</ul>
 {/IF}
 {IF MODERATOR}
-<span class="PhorumNavHeading">{LANG->Moderate}</span><br />
+<ul>
+{LANG->Moderate}
 {IF MESSAGE_MODERATOR}
-&bull;<a class="PhorumNavLink" href="{URL->CC8}">{LANG->UnapprovedMessages}</a><br />
+<li><a {IF PROFILE->PANEL "messages"}class="phorum-current-page" {/IF}href="{URL->CC8}">{LANG->UnapprovedMessages}</a></li>
 {/IF}
 {IF USER_MODERATOR}
-&bull;<a class="PhorumNavLink" href="{URL->CC10}">{LANG->UnapprovedUsers}</a><br />
+<li><a {IF PROFILE->PANEL "users"}class="phorum-current-page" {/IF}href="{URL->CC10}">{LANG->UnapprovedUsers}</a></li>
 {/IF}
 {IF GROUP_MODERATOR}
-&bull;<a class="PhorumNavLink" href="{URL->CC15}">{LANG->GroupMembership}</a><br />
+<li><a {IF PROFILE->PANEL "membership"}class="phorum-current-page" {/IF}href="{URL->CC15}">{LANG->GroupMembership}</a></li>
 {/IF}
-<br />
+</ul>
 {/IF}
-<div align="center"><a class="PhorumNavLink" href="{URL->BACK}">{URL->BACKTITLE}</a></div>
 </div>

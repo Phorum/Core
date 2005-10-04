@@ -101,7 +101,7 @@ function phorum_email_pm_notice($message, $langusers)
         "subject"       => $message["subject"],
         "full_body"     => $message["message"],
         "plain_body"    => phorum_strip_body($message["message"]),
-        "read_url"      => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=read", "pm_id=" . $message["pm_message_id"]),
+        "read_url"      => phorum_get_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
     );
 
     if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {

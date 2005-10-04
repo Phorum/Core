@@ -113,6 +113,7 @@
         "DenyUser"              =>      "Deny",
 
         "EditBoardsettings"     =>      "Forum Settings",
+        "EditFolders"           =>      "Edit Folders",
         "EditPost"              =>      "Edit Post",
         "EditPostForbidden"     =>      "You do not have permission to edit this post. If the administrator has set a time limit on editing, it may have expired.",
         "EditedMessage"         =>      "Edited %count% times. Last edit at %lastedit% by %lastuser%.",
@@ -162,7 +163,7 @@
         "FileWrongType"         =>      "This server does not allow uploading of files of this type.  Files types that are accepted: " . str_replace(";", ", ", $PHORUM['file_types']) . ".",
         "Filter"                =>      "Filter",
         "FirstPage"             =>      "First",
-        "Folders"               =>      "Folders",
+        "Folders"               =>      "Folder List",
         "FollowExplanation"     =>      "Followed threads are listed in your Control Center.<br />You can elect to receive an email when the thread is updated.",
         "FollowThread"          =>      "Follow This Thread",
         "FollowWithEmail"       =>      "Would you like to be emailed when this thread is updated?",
@@ -287,6 +288,7 @@
         "NoMoreEmails"          =>      "You will no longer receive emails when this thread is updated.",
         "None"                  =>      "None",
         "NoPost"                =>      "Sorry, you do not have permission to post/reply in this forum.",
+        "NoPrivateMessages"     =>      "You have no new private messages",
         "NoRead"                =>      "Sorry, you do not have permission to read this forum.",
         "NotRegistered"         =>      "Not Registered?  Click here to register now.",
         "NoResults"             =>      "No results were found.",
@@ -307,7 +309,7 @@
         "Past60Days"            =>      "Past 60 Days",
         "Past90Days"            =>      "Past 90 Days",
         "PastYear"              =>      "Past Year",
-        "PermAdministrator"     =>      "You are Administrator.",
+        "PermAdministrator"     =>      "You are an Administrator.",
         "PermAllowPost"         =>      "post-permission",
         "PermAllowRead"         =>      "read-permission",
         "PermAllowReply"        =>      "reply-permission",
@@ -364,6 +366,7 @@
 
         "read"                  =>      "read",
         "ReadOnlyMessage"       =>      "This forum is currently read only.  This is a temporary situation.  Please check back later.",
+        "ReadPrivateMessages"   =>      "Read Private Messages",
         "RealName"              =>      "Real Name",
         "Received"              =>      "Received",
         "RegApprovedSubject"    =>      "Your account has been approved.",
@@ -393,12 +396,12 @@
         "ScriptUsage"           =>      "\nUsage: php script.php [--module=<module_name> | --scheduled] [options]
 
    --module=<module_name>  Run the 'external' hook in the specified module.
-   --scheduled             Run the 'scheduled' hooks in all available modules. 
+   --scheduled             Run the 'scheduled' hooks in all available modules.
    [options]               When running a specific module, these options
                            are passed to the module. Consult the module
                            documentation for information on what options
                            it has. When using --scheduled, these are ignored.
-  
+
 Read docs/creating_mods.txt in your distribution for information on how
 to write Phorum modules and on how to use the external and scheduled hooks.\n\n",
         "SearchAuthors"         =>      "Search Authors",

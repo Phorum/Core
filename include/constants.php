@@ -148,6 +148,8 @@
     define("PHORUM_MODERATION_ACTION_URL", $i++);
     define("PHORUM_CONTROLCENTER_URL", $i++);
     define("PHORUM_CONTROLCENTER_ACTION_URL", $i++);
+    define("PHORUM_PM_URL", $i++);
+    define("PHORUM_PM_ACTION_URL", $i++);
     define("PHORUM_FILE_URL", $i++);
     define("PHORUM_GROUP_MODERATION_URL", $i++);
     define("PHORUM_FOLLOW_URL", $i++);

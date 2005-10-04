@@ -15,18 +15,25 @@
 <tr><td>{LANG->Signature}:</td><td>{PROFILE->signature}</td></tr>
 </table>
 </div>
+
+{IF PROFILE->admin}{ASSIGN SHOWPERMS 1}{/IF}
+{IF UserPerms}{ASSIGN SHOWPERMS 1}{/IF}
+{IF SHOWPERMS}
 <br />
 <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UserPermissions}</div>
 <div class="PhorumStdBlock" style="text-align: left;">
 <table class="PhorumFormTable" cellspacing="0" border="0">
-{if PROFILE->admin}
+{IF PROFILE->admin}
 <tr><td colspan="2">
 {LANG->PermAdministrator}
 </td></tr>
-{/if}
+{ELSEIF UserPerms}
 <tr><th>{LANG->Forum}</th><th>{LANG->Permission}</th></tr>
 {LOOP UserPerms}
 <tr><td>{UserPerms->forum}&nbsp;&nbsp;</td><td>{UserPerms->perm}</td></tr>
 {/LOOP UserPerms}
+{/IF}
 </table>
+{/IF}
+
 </div>

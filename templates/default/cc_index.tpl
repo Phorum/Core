@@ -1,10 +1,13 @@
-<table style="width: 100%">
+<div class="PhorumNavBlock" style="text-align: left;">
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF FORUM_ID}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{IF LOGGEDIN}{IF ENABLE_PM}&bull;<a class="PhorumNavLink" href="{URL->PM}">{LANG->PrivateMessages}</a>{/IF}{/IF}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>
+</div>
+
+<table id="phorum-menu-table" cellspacing="0" border="0">
 <tr>
-<td style="vertical-align: top; width: 200px" nowrap="nowrap">
+<td id="phorum-menu" nowrap="nowrap">
 {include cc_menu}
 </td>
-<td style="vertical-align: top;">
-<!---<div style="padding-top: 1px;margin-left: 21%;width: 75%;">-->
+<td id="phorum-content">
 {IF content_template}
 {include_var content_template}
 {else}

@@ -132,6 +132,7 @@ include_once( "./include/cache.php" );
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
 $PHORUM["DATA"]["HTML_TITLE"] = ( !empty( $PHORUM["html_title"] ) ) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
 $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head_tags"] : "";
+$PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
 ////////////////////////////////////////////////////////////
 // only do this stuff if we are not in the admin
@@ -186,10 +187,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     include_once( "./include/users.php" );
     if ( phorum_user_check_session() ) {
         $PHORUM["DATA"]["LOGGEDIN"] = true;
-        if ( $PHORUM["enable_pm"] ) {
+        if ( $PHORUM["enable_pm"] && phorum_page!="pm" ) {
             // setup the private messages array, we store the number of new messages here
-            $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];
-            $PHORUM['DATA']["PRIVATE_MESSAGES"]["inbox_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=list", "folder_id=" . PHORUM_PM_INBOX);
+             $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];
         }
 
         $PHORUM["DATA"]["notice_messages"] = false;
@@ -216,7 +216,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             }
         }
 
-        $PHORUM["DATA"]["notice_all"] = ( ( $PHORUM["enable_pm"] && $PHORUM["DATA"]["PRIVATE_MESSAGES"]["new"] > 0) ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"];
+        $PHORUM["DATA"]["notice_all"] = ( ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["DATA"]["PRIVATE_MESSAGES"]["new"] > 0) ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"];
 
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
@@ -484,6 +484,13 @@ function phorum_get_url()
         case PHORUM_CONTROLCENTER_ACTION_URL:
             $page = "control";
             break;
+        case PHORUM_PM_URL:
+            $page = "pm";
+            $add_forum_id = true;
+            break;
+        case PHORUM_PM_ACTION_URL:
+            $page = "pm";
+            break;
         case PHORUM_FILE_URL:
             $page = "file";
             $add_forum_id = true;
@@ -572,8 +579,8 @@ function phorum_get_template( $page, $is_include = false )
         // not there, look for a template
         $tplfile = "$tpl.tpl";
         $phpfile = "$PHORUM[cache]/tpl-$PHORUM[template]-$page-" .
-	           ($is_include ? "include" : "toplevel") . "-" .
-	           md5( dirname( __FILE__ ) ) . ".php";
+               ($is_include ? "include" : "toplevel") . "-" .
+               md5( dirname( __FILE__ ) ) . ".php";
 
         if ( $is_include || !file_exists( $phpfile ) ) {
             include_once "./include/templates.php";
@@ -591,6 +598,7 @@ function phorum_build_common_urls()
     $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POST_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
     if(phorum_page=="index" || phorum_page=="list" || phorum_page=="read"){
         $GLOBALS["PHORUM"]["DATA"]["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL );
     }

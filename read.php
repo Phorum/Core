@@ -70,8 +70,8 @@ if(empty($PHORUM["args"][1])) {
     $message_id = (int)$PHORUM["args"][1];
 } else{
     if(!is_numeric($PHORUM["args"][2])) {
-    	$dest_url="";
-    	$newervar=(int)$PHORUM["args"][1];
+        $dest_url="";
+        $newervar=(int)$PHORUM["args"][1];
 
         switch($PHORUM["args"][2]) {
             case "newer":
@@ -99,10 +99,10 @@ if(empty($PHORUM["args"][1])) {
                 $message_ids=$thread_message['meta']['message_ids'];
 
                 foreach($message_ids as $mkey => $mid) {
-                	// if already read, remove it from message-array
-                	if(isset($PHORUM['user']['newinfo'][$mid])) {
-                		unset($message_ids[$mkey]);
-                	}
+                    // if already read, remove it from message-array
+                    if(isset($PHORUM['user']['newinfo'][$mid])) {
+                        unset($message_ids[$mkey]);
+                    }
 
                 }
                 asort($message_ids,SORT_NUMERIC); // make sure they are sorted
@@ -111,10 +111,10 @@ if(empty($PHORUM["args"][1])) {
                 $new_message=array_shift($message_ids); // get the first element
 
                 if(!$PHORUM['threaded_read']) { // get new page
-                	$new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
-                	$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                    $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
                 } else { // for threaded
-                	$dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
+                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
                 }
 
                 break;
@@ -123,12 +123,12 @@ if(empty($PHORUM["args"][1])) {
         }
 
         if(empty($dest_url)) {
-	        if($thread > 0) {
-	            $dest_url = phorum_get_url(PHORUM_READ_URL, $thread);
-	        } else{
-	            // we are either at the top or the bottom, go back to the list.
-	            $dest_url = phorum_get_url(PHORUM_LIST_URL);
-	        }
+            if($thread > 0) {
+                $dest_url = phorum_get_url(PHORUM_READ_URL, $thread);
+            } else{
+                // we are either at the top or the bottom, go back to the list.
+                $dest_url = phorum_get_url(PHORUM_LIST_URL);
+            }
         }
 
         phorum_redirect_by_url($dest_url);
@@ -309,7 +309,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // can only send private replies if the author is a registered user
         if ($PHORUM["enable_pm"] && $row["user_id"]) {
-            $row["private_reply_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "message_id=".$row["message_id"]);
+            $row["private_reply_url"] = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=".$row["message_id"]);
         } else {
             $row["private_reply_url"] = false;
         }

@@ -174,7 +174,69 @@ input
     padding: 0 15px 0 0;
 }
 
+#phorum-menu-table
+{
+    width: 100%;
+    border-width: 0px;
+}
 
+#phorum-menu
+{
+    padding: 5px 3px 0 0;
+    vertical-align: top;
+    width: 200px;
+}
+
+#phorum-content
+{
+    padding: 5px 0 0 2px;
+    vertical-align: top;
+}
+
+div.phorum-menu
+{
+    font-size: {defaultfontsize};
+    font-family: {defaultfont};
+    background-color: {backcolor};
+    border: 1px solid {tablebordercolor};
+    padding: 3px;
+}
+
+div.phorum-menu ul
+{
+    font-weight: bold;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+
+div.phorum-menu li
+{
+    font-weight: bold;
+    font-family: {navfont};
+    font-size: {navfontsize};
+    padding: 0 0 0 15px;
+    margin-top:3px;
+    background-image: url('templates/default/images/square_bullet.png');
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+}
+
+div.phorum-menu a
+{
+    font-weight: normal;
+    color: {navtextcolor};
+}
+
+div.phorum-menu a:hover
+{
+    color: {hoverlinkcolor};
+}
+
+div.phorum-menu a.phorum-current-page
+{
+    font-weight: bold;
+}
 
 
     /* Standard classes for use in any page */
@@ -256,6 +318,19 @@ input
         padding: 0px 4px 0px 4px;
     }
 
+    .PhorumSelectedFolder
+    {
+        color: {navtextcolor};
+        text-decoration: none;
+        font-weight: {navtextweight};
+        font-family: {navfont};
+        font-size: {navfontsize};
+        border-style: solid;
+        border-color: {navbackcolor};
+        border-width: 1px;
+        padding: 0px 4px 0px 4px;
+    }
+
     A.PhorumNavLink:hover
     {
         background-color: {navhoverbackcolor};
@@ -288,7 +363,7 @@ input
         font-family: {largefont};
         font-weight: bold;
     }
-    
+
     .PhorumOkMsg
     {
         padding: 10px;
@@ -296,7 +371,7 @@ input
         color: {okmsgfontcolor};
         font-size: {largefontsize};
         font-family: {largefont};
-        font-weight: bold;        
+        font-weight: bold;
     }
 
    .PhorumNewFlag
@@ -462,7 +537,7 @@ input
         background-color: {navbackcolor};
         padding: 2px 3px 2px 3px;
     }
-    
+
     /********************/
 
     /* List page specifics */
@@ -521,6 +596,7 @@ input
         font-size: {tinyfontsize};
         font-family: {tinyfont};
     }
+
 
 
     /*   BBCode styles  */

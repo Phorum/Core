@@ -93,8 +93,8 @@ if( !empty($PHORUM["user"]["admin"]) ||
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }
 
-$PHORUM["DATA"]["PROFILE"]["pm_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=post", "to_id=".urlencode($user["user_id"]));
-$PHORUM["DATA"]["PROFILE"]["pm_addbuddy_url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
+$PHORUM["DATA"]["PROFILE"]["pm_url"] = phorum_get_url(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
+$PHORUM["DATA"]["PROFILE"]["pm_addbuddy_url"] = phorum_get_url(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
 $PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"]);
 // unset($PHORUM["DATA"]["PROFILE"]["signature"]);
 
