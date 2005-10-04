@@ -30,14 +30,14 @@
         {
             if($this->_title){
                 echo "<div class=\"PhorumAdminMenuTitle\">$this->_title</div>\n";
-            }            
+            }
             echo "<div class=\"PhorumAdminMenu\"";
             if($this->_id) echo " id=\"$this->_id\"";
             echo ">";
 
             foreach($this->_links as $link){
                 $desc=$link["description"];
-                $html ="<a onMouseOver=\"window.status='$desc'; return true;\" onMouseOut=\"window.status=''; return true;\" href=\"$_SERVER[PHP_SELF]";
+                $html ="<a title='$desc' href=\"$_SERVER[PHP_SELF]";
                 if(!empty($link["module"])) $html.="?module=$link[module]";
                 $html.="\">$link[title]</a><br />";
                 echo $html;

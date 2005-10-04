@@ -1115,6 +1115,10 @@ function phorum_db_load_settings(){
 
     if (empty($err) && $res){
         while ($rec = mysql_fetch_assoc($res)){
+
+            // only load the default forum options in the admin
+            if($rec["name"]=="default_forum_options" && !defined("PHORUM_ADMIN")) continue;
+
             if ($rec["type"] == "V"){
                 if ($rec["data"] == 'true'){
                     $val = true;
@@ -1197,13 +1201,15 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
     } elseif ($inherit_id) {
-            $sql .= " where inherit_id = $inherit_id";
-            if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
+        $sql .= " where inherit_id = $inherit_id";
+        if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     } elseif ($parent_id >= 0) {
         $sql .= " where parent_id = $parent_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     }  elseif($vroot !== null) {
         $sql .= " where vroot = $vroot";
+    } else {
+        $sql .= " where forum_id <> 0";
     }
 
     $sql .= " order by display_order ASC, name";
@@ -1521,7 +1527,9 @@ function phorum_db_update_forum($forum){
             if (is_numeric($value)){
                 $value = (int)$value;
                 $fields[] = "$key=$value";
-            }else{
+            } elseif($value=="NULL") {
+                $fields[] = "$key=$value";
+            } else {
                 $value = mysql_escape_string($value);
                 $fields[] = "$key='$value'";
             }
@@ -4206,8 +4214,8 @@ function phorum_db_mysql_error($err){
  * This function is used by the sanity checking system in the
  * admin interface to determine how much data can be transferred
  * in one query. This is used to detect problems with uploads that
- * are larger than the database server can handle. 
- * The function returns the size in bytes. For database implementations 
+ * are larger than the database server can handle.
+ * The function returns the size in bytes. For database implementations
  * which do not have this kind of limit, NULL can be returned.
  */
 function phorum_db_maxpacketsize ()

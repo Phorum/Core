@@ -246,7 +246,7 @@ Phorum Status:
 
         $menu = new PhorumAdminMenu("Global Settings");
 
-        $menu->add("General Settings", "settings", "Edit the global settings which affect all forums.");
+        $menu->add("General Settings", "settings", "Edit the global settings which affect the enter installation.");
         $menu->add("Ban Lists", "banlist", "Edits the list of banned names, email addresses and IP addresses.");
         $menu->add("Censor List", "badwords", "Edit the list of words that are censored in posts.");
         $menu->add("Modules", "mods", "Administer the Phorum Modules that are installed.");
@@ -256,6 +256,7 @@ Phorum Status:
         $menu = new PhorumAdminMenu("Forums");
 
         $menu->add("Manage Forums", "", "Takes you to the default Admin page.");
+        $menu->add("Default Settings", "forum_defaults", "Allows you to set defaults settings that can be inherited by forums.");
         $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.");
         $menu->add("Create Folder", "newfolder", "Creates a folder which can contain other folders of forums.");
 

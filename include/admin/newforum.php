@@ -15,7 +15,7 @@
             switch($field){
 
                 case "name":
-                    if(empty($value)){
+                    if(empty($value) && $_POST["module"]!="forum_defaults"){
                         $error="Please fill in Title";
                     }
                     break;
@@ -49,7 +49,7 @@
                 case "max_totalattachment_size":
                     $_POST[$field]=(int)$value;
                     break;
-                    
+
                 case "display_fixed":
                     $_POST[$field]=(int)$value;
                     break;
@@ -71,12 +71,13 @@
 
                     $_POST["reg_perms"]=$permission;
                     break;
+
                 case "inherit_id":
                     if( $_POST["inherit_id"] ) {
-                    	$forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
-                    	if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
-                    		$error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
-                    	}
+                        $forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
+                        if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
+                            $error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
+                        }
                     }
                     break;
             }
@@ -102,50 +103,62 @@
                 $_POST['vroot']=0;
             }
 
-            if(defined("PHORUM_EDIT_FORUM")){
+            if(defined("PHORUM_EDIT_FORUM") || defined("PHORUM_DEFAULT_OPTIONS")){
 
-            	if( $_POST["inherit_id"] ) {
-            	    // Load inherit forum settings
-            	    $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
-            	    if( $forum_settings_inherit[$_POST["inherit_id"]]["forum_id"] ) {
-            	        // slave settings
+                if(!defined("PHORUM_DEFAULT_OPTIONS")){
+                    if( $_POST["inherit_id"]!="NULL" ) {
+                        // Load inherit forum settings
+                        if(defined("PHORUM_DEFAULT_OPTIONS")){
+                            $forum_settings_inherit[0] = $PHORUM["default_forum_options"];
+                        } else {
+                            $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
+                        }
 
-            	        $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
-            	        $forum_settings_inherit["forum_id"] =$_POST["forum_id"];
-            	        $forum_settings_inherit["name"] =$_POST["name"];
-            	        $forum_settings_inherit["description"] =$_POST["description"];
-            	        $forum_settings_inherit["active"] =$_POST["active"];
-            	        $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
-            	        $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
-            	        // don't inherit this settings
-            	        unset($forum_settings_inherit["message_count"]);
-            	        unset($forum_settings_inherit["thread_count"]);
-            	        unset($forum_settings_inherit["last_post_time"]);
-            	        // we don't need to save the master forum
-            	        unset($forum_settings_inherit[$inherit_id]);
-            	        $_POST =$forum_settings_inherit;
-            	    } else {
-            	        $_POST["inherit_id"] =0;
-            	        unset($_POST["pub_perms"]);
-            	        unset($_POST["reg_perms"]);
-            	    }
-            	}
+                        if( $forum_settings_inherit[$_POST["inherit_id"]]["forum_id"] ) {
+                            // slave settings
 
-                $res=phorum_db_update_forum($_POST);
-                $forum_settings =$_POST;
+                            $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
+                            $forum_settings_inherit["forum_id"] =$_POST["forum_id"];
+                            $forum_settings_inherit["name"] =$_POST["name"];
+                            $forum_settings_inherit["description"] =$_POST["description"];
+                            $forum_settings_inherit["active"] =$_POST["active"];
+                            $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
+                            $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
+                            // don't inherit this settings
+                            unset($forum_settings_inherit["message_count"]);
+                            unset($forum_settings_inherit["thread_count"]);
+                            unset($forum_settings_inherit["last_post_time"]);
+                            // we don't need to save the master forum
+                            unset($forum_settings_inherit[$inherit_id]);
+                            $_POST =$forum_settings_inherit;
+                        } else {
+                            $_POST["inherit_id"]="NULL";
+                            unset($_POST["pub_perms"]);
+                            unset($_POST["reg_perms"]);
+                        }
+                    }
+                }
+
+                $forum_settings=$_POST;
+
+                if(defined("PHORUM_DEFAULT_OPTIONS")){
+                    $res=phorum_db_update_settings(array("default_forum_options" => $forum_settings));
+                } else {
+                    $res=phorum_db_update_forum($forum_settings);
+                }
                 $forum_inherit_settings =phorum_db_get_forums(false,false,false,intval($_POST["forum_id"]));
                 foreach($forum_inherit_settings as $inherit_setting) {
-                	$forum_settings["forum_id"] =$inherit_setting["forum_id"];
-                	// We don't need to inherit this settings
-                	unset($forum_settings["name"]);
-                	unset($forum_settings["description"]);
-                	unset($forum_settings["active"]);
-                	unset($forum_settings["parent_id"]);
-                	unset($forum_settings["inherit_id"]);
-                	unset($forum_settings["message_count"]);
-                	unset($forum_settings["thread_count"]);
-                	unset($forum_settings["last_post_time"]);
-                	$res_inherit =phorum_db_update_forum($forum_settings);
+                    $forum_settings["forum_id"] =$inherit_setting["forum_id"];
+                    // We don't need to inherit this settings
+                    unset($forum_settings["name"]);
+                    unset($forum_settings["description"]);
+                    unset($forum_settings["active"]);
+                    unset($forum_settings["parent_id"]);
+                    unset($forum_settings["inherit_id"]);
+                    unset($forum_settings["message_count"]);
+                    unset($forum_settings["thread_count"]);
+                    unset($forum_settings["last_post_time"]);
+                    $res_inherit =phorum_db_update_forum($forum_settings);
                 }
             } else {
                 $res=phorum_db_add_forum($_POST);
@@ -177,6 +190,10 @@
         $forum_settings = phorum_db_get_forums($_REQUEST["forum_id"]);
         extract($forum_settings[$_REQUEST["forum_id"]]);
 
+    } elseif(defined("PHORUM_DEFAULT_OPTIONS")) {
+
+        extract($PHORUM["default_forum_options"]);
+
     }
 
     if($error){
@@ -187,7 +204,11 @@
 
     $frm =& new PhorumInputForm ("", "post");
 
-    if(defined("PHORUM_EDIT_FORUM")){
+    if(defined("PHORUM_DEFAULT_OPTIONS")){
+        $frm->hidden("module", "forum_defaults");
+        $frm->hidden("forum_id", 0);
+        $title="Default Forum Settings";
+    } elseif(defined("PHORUM_EDIT_FORUM")){
         $frm->hidden("module", "editforum");
         $frm->hidden("forum_id", $forum_id);
         $title="Edit Forum";
@@ -201,58 +222,69 @@
         $reg_perms = PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_EDIT;
         $active=1;
         $float_to_top=1;
-	$template='default';
+        $template='default';
     }
 
     $frm->addbreak($title);
 
-    $frm->addrow("Forum Title", $frm->text_box("name", htmlspecialchars($name), 30));
+    if(!defined("PHORUM_DEFAULT_OPTIONS")){
 
-    $frm->addrow("Forum Description", $frm->textarea("description", htmlspecialchars($description), $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
+        $frm->addrow("Forum Title", $frm->text_box("name", htmlspecialchars($name), 30));
 
-    $folder_list=phorum_get_folder_info();
-    $frm->addrow("Folder", $frm->select_tag("parent_id", $folder_list, $parent_id));
-    if($vroot > 0) {
-        $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
-    }
+        $frm->addrow("Forum Description", $frm->textarea("description", htmlspecialchars($description), $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
-
-    $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
-
-    // Edit + inherit_id exists
-    if(defined("PHORUM_EDIT_FORUM") && $inherit_id ) {
-    	$forum_settings_inherit = phorum_db_get_forums($inherit_id);
-    	// inherit_forum not exists
-    	if( !$forum_settings_inherit[$inherit_id] ) {
-    		$inherit_id ="0";
-    		unset($forum_settings_inherit);
-    	} else {
-    		$disabled_form_input="disabled=\"disabled\"";
-    	}
-    } else {
-    	unset($disabled_form_input);
-    }
-
-    $frm->addbreak("Inherit Forum Settings");
-
-    $forum_list =phorum_get_forum_info(true);
-    // Remove this Forum
-    unset($forum_list[$forum_id]);
-    $forum_list["0"] ="Disabled";
-    // Check for Slaves
-    if( intval($forum_id) ) {
-
-        $forum_inherit_settings=phorum_db_get_forums(false,false,false,intval($forum_id));
-        if( count($forum_inherit_settings)>0 ) {
-            $disabled_form_input_inherit="disabled=\"disabled\"";
+        $folder_list=phorum_get_folder_info();
+        $frm->addrow("Folder", $frm->select_tag("parent_id", $folder_list, $parent_id));
+        if($vroot > 0) {
+            $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
         }
-    }
-    $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit));
 
-    // Set Settings from inherit forum
-    if( $forum_settings_inherit ) {
-    	$forum_settings =$forum_settings_inherit;
-    	extract($forum_settings[$inherit_id]);
+
+        $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
+
+        // Edit + inherit_id exists
+        if(defined("PHORUM_EDIT_FORUM") && $inherit_id ) {
+            $forum_settings_inherit = phorum_db_get_forums($inherit_id);
+            // inherit_forum not exists
+            if( !$forum_settings_inherit[$inherit_id] ) {
+                $inherit_id ="0";
+                unset($forum_settings_inherit);
+            } else {
+                $disabled_form_input="disabled=\"disabled\"";
+            }
+        } else {
+            unset($disabled_form_input);
+        }
+
+        $frm->addbreak("Inherit Forum Settings");
+
+        $forum_list=phorum_get_forum_info(true);
+
+        $forum_list["0"] ="Use Default Forum Settings";
+        $forum_list["NULL"] ="Do not inherit - I wan't to customize this forums settings.";
+
+        // Remove this Forum
+        unset($forum_list[$forum_id]);
+
+        // Check for Slaves
+        if( intval($forum_id) ) {
+
+            $forum_inherit_settings=phorum_db_get_forums(false,false,false,intval($forum_id));
+            if( count($forum_inherit_settings)>0 ) {
+                $disabled_form_input_inherit="disabled=\"disabled\"";
+            }
+        }
+
+        // set to NULL if inherit is disabled
+        if($inherit_id=="" && $inherit_id!==0) $inherit_id="NULL";
+
+        $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit));
+
+        // Set Settings from inherit forum
+        if( $forum_settings_inherit ) {
+            $forum_settings =$forum_settings_inherit;
+            extract($forum_settings[$inherit_id]);
+        }
     }
 
     $frm->addbreak("Moderation / Permissions");
@@ -316,7 +348,7 @@
     $frm->addrow("Max File Size In kB (0 for PHP default)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 
     $frm->addrow("Max cumulative File Size In kB (0 for unlimited)", $frm->text_box("max_totalattachment_size", $max_totalattachment_size, 10, false, false, $disabled_form_input));
-    
+
     $frm->show();
 
 ?>
