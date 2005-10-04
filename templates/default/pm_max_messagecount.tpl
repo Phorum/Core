@@ -44,7 +44,7 @@
       <td class="PhorumGaugePrefix PhorumTinyFont">
         <?php print "{$usedperc}%" ?>
       </td>
-      <td class="PhorumGauge" width="<?php print $size?>"><img align="left" src="images/gauge.gif" width="<?php print $usedsize?>" height="15px"/></td>
+      <td class="PhorumGauge" width="<?php print $size?>"><img align="left" src="templates/default/images/gauge.gif" width="<?php print $usedsize?>" height="15px"/></td>
     </tr>
 
     </table>

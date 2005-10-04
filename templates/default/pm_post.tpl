@@ -33,7 +33,7 @@
     {LOOP MESSAGE->recipients}
       <div class="PhorumPMRecipientBlock">
         {MESSAGE->recipients->username}
-        <input type="image" src="./images/delete.gif" style="vertical-align:top">
+        <input type="image" src="templates/default/images/delete.gif" style="margin-left: 3px;vertical-align:top">
       </div>
     {/LOOP MESSAGE->recipients}
     {IF USERS}
