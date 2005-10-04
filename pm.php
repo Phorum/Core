@@ -30,6 +30,12 @@ if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     exit();
 }
 
+// if the user is not fully logged in, send him to the login page
+if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_PM_URL));
+    exit();
+}
+
 // If private messages are disabled, just show a simple error message.
 if (!$PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];

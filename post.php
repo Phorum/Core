@@ -50,6 +50,12 @@ if($PHORUM["status"]=="read-only"){
     exit();
 }
 
+if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_POST_URL));
+    exit();
+}
+
 // Set defaults for the message form.
 $PHORUM["DATA"]["POST"]["allow_reply"] = 1;
 
@@ -107,7 +113,7 @@ if (count($_POST) > 0) {
 
 
         if(empty($error)) {
-        	list($_POST,$error)=phorum_hook("check_post", array($_POST,$error));
+            list($_POST,$error)=phorum_hook("check_post", array($_POST,$error));
         }
 
         if (empty($error)) {
@@ -175,16 +181,16 @@ if (count($_POST) > 0) {
                         $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
 
                         if($PHORUM['vroot']) {
-                        	$message["forum_id"] = $PHORUM['vroot'];
+                            $message["forum_id"] = $PHORUM['vroot'];
                         } else {
-                        	$message["forum_id"] = 0;
+                            $message["forum_id"] = 0;
                         }
                     }
                 }
 
                 // for moderators we allow to set a thread closed while posting already
                 if($message["moderator_post"] && $message["thread"]==0) {
-                	$message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply']) ? 0 : 1;
+                    $message["closed"] = (isset($_POST['allow_reply']) && $_POST['allow_reply']) ? 0 : 1;
                 }
 
                 $message["msgid"] = md5(uniqid(rand())) . "." . preg_replace("/[^a-z0-9]/i", "", $PHORUM["name"]);
@@ -223,10 +229,10 @@ if (count($_POST) > 0) {
                     $success = phorum_db_post_message($message);
 
                     if ($success) {
-                    	// retrieving the message again to have it in the correct format
-                    	// (otherwise its a bit messed up in the post-function)
-                    	$email_reply=$message['email_reply'];
-                    	$message=phorum_db_get_message($message["message_id"]);
+                        // retrieving the message again to have it in the correct format
+                        // (otherwise its a bit messed up in the post-function)
+                        $email_reply=$message['email_reply'];
+                        $message=phorum_db_get_message($message["message_id"]);
 
                         phorum_update_thread_info($message["thread"]);
 
@@ -266,11 +272,11 @@ if (count($_POST) > 0) {
 
                 if($PHORUM["redirect_after_post"]=="read"){
 
-                	if(isset($top_parent)) { // not set for top-posts
-                    	$pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
-                	} else {
-                		$pages=1;
-                	}
+                    if(isset($top_parent)) { // not set for top-posts
+                        $pages=ceil(($top_parent["thread_count"]+1)/$PHORUM["read_length"]);
+                    } else {
+                        $pages=1;
+                    }
 
                     if($pages>1){
                         $redir_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"], "page=$pages");

@@ -500,7 +500,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     } elseif($PHORUM["reply_on_read_page"]) {
 
-
         if(substr($PHORUM["DATA"]["POST"]["subject"], 0, 4) != "Re: ") $PHORUM["DATA"]["POST"]["subject"] = "Re: " . $PHORUM["DATA"]["POST"]["subject"];
         $PHORUM["DATA"]["POST"]["subject"]=htmlspecialchars($PHORUM["DATA"]["POST"]["subject"]);
 

@@ -32,6 +32,12 @@ if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     exit();
 }
 
+// if the user is not fully logged in, send him to the login page
+if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_CONTROLCENTER_URL));
+    exit();
+}
+
 $error_msg = false;
 
 // generating the id of the page to use
@@ -122,14 +128,14 @@ $PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
 // are available.
 $pm_folders = phorum_db_pm_getfolders(NULL, true);
 $pm_userfolders = array();
-foreach($pm_folders as $id => $data) 
+foreach($pm_folders as $id => $data)
 {
     $pm_folders[$id]["is_special"] = is_numeric($id) ? 0 : 1;
     $pm_folders[$id]["is_outgoing"] = $id == PHORUM_PM_OUTBOX;
     $pm_folders[$id]["id"] = $id;
     $pm_folders[$id]["name"] = htmlspecialchars($data["name"]);
     $pm_folders[$id]["url"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PM, "page=list", "folder_id=$id");
-    
+
     if (!$pm_folders[$id]["is_special"]) {
         $pm_userfolders[$id] = $pm_folders[$id];
     }

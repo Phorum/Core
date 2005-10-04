@@ -187,6 +187,13 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     include_once( "./include/users.php" );
     if ( phorum_user_check_session() ) {
         $PHORUM["DATA"]["LOGGEDIN"] = true;
+
+        if(phorum_user_check_session( PHORUM_SESSION_SHORT_TERM )){
+            $PHORUM["DATA"]["FULLY_LOGGEDIN"] = true;
+        } else {
+            $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
+        }
+
         if ( $PHORUM["enable_pm"] && phorum_page!="pm" ) {
             // setup the private messages array, we store the number of new messages here
              $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];

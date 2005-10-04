@@ -122,18 +122,26 @@ if ( count( $_POST ) > 0 ) {
                 setcookie( "phorum_tmp_cookie", "", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
             }
             if(!$PHORUM["use_cookies"]) { // create and store the uri-session-id
-            	$uri_session_id=md5($_POST['username'].microtime().$_POST['password']);
-            	$user=array('user_id'=>$PHORUM['user']['user_id'],'sessid_st'=>$uri_session_id);
-            	phorum_user_save_simple($user);
-            	phorum_user_create_session(PHORUM_SESSION_LONG_TERM,false,$uri_session_id);
+                $uri_session_id=md5($_POST['username'].microtime().$_POST['password']);
+                $user=array('user_id'=>$PHORUM['user']['user_id'],'sessid_st'=>$uri_session_id);
+                phorum_user_save_simple($user);
+                phorum_user_create_session(PHORUM_SESSION_LONG_TERM,false,$uri_session_id);
             } else {
-            	phorum_user_create_session();
-            	phorum_user_create_session(PHORUM_SESSION_SHORT_TERM,true);
+                phorum_user_create_session();
+                phorum_user_create_session(PHORUM_SESSION_SHORT_TERM,true);
             }
+
+            // if redir is a number, it is a URL constant
+            if(is_numeric($_POST["redir"])){
+
+                $redir = phorum_get_url( $_POST["redir"] );
+
             // redirecting to the register page is a little weird.  So, we just go to the list page if we came from the register page.
             // redirect to login-page is weird too ;)
-            if ( isset( $PHORUM['use_cookies'] ) && $PHORUM["use_cookies"] && !strstr( $_POST["redir"], "register." . PHORUM_FILE_EXTENSION ) && !strstr( $_POST["redir"], "login." . PHORUM_FILE_EXTENSION ) ) {
+            } elseif ( isset( $PHORUM['use_cookies'] ) && $PHORUM["use_cookies"] && !strstr( $_POST["redir"], "register." . PHORUM_FILE_EXTENSION ) && !strstr( $_POST["redir"], "login." . PHORUM_FILE_EXTENSION ) ) {
                 $redir = $_POST["redir"];
+
+            // default to the list page
             } else {
                 $redir = phorum_get_url( PHORUM_LIST_URL );
             }

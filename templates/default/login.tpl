@@ -1,9 +1,10 @@
+<div align="center">
+
 {IF ERROR}
 <div class="PhorumUserError">{ERROR}</div>
 {/IF}
 
-<div align="center">
-<div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
+<div align="center" class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
 <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>
 </div>
 
@@ -13,6 +14,11 @@
 <input type="hidden" name="redir" value="{LOGIN->redir}" />
 <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->LoginTitle}</div>
 <div align="center" class="PhorumStdBlock PhorumNarrowBlock">
+{IF LOGGEDIN}
+{IF NOT FULLY_LOGGEDIN}
+<div class="PhorumFloatingText" style="text-align:left;">{LANG->PeriodicLogin}<br />&nbsp;</div>
+{/IF}
+{/IF}
 <table cellspacing="0" align="center">
 <tr>
     <td>{LANG->Username}:&nbsp;</td>
@@ -26,11 +32,14 @@
     <td colspan="2" align="right"><input type="submit" class="PhorumSubmit" value="{LANG->Submit}" /></td>
 </tr>
 </table>
+{IF NOT LOGGEDIN}
 <div class="PhorumFloatingText"><a href="{URL->REGISTER}">{LANG->NotRegistered}</a></div>
+{ELSE}
+<br />
+{/IF}
 </div>
 </form>
 
-</div>
 
 <div align="center" style="margin-top: 30px;">
 
@@ -44,5 +53,7 @@
 <div class="PhorumFloatingText">{LANG->LostPassInfo}</div><div class="PhorumFloatingText"><input type="text" name="lostpass" size="30" value="" /> <input type="submit" class="PhorumSubmit" value="{LANG->Submit}" /></div>
 </div>
 </form>
+
+</div>
 
 </div>

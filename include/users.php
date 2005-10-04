@@ -36,7 +36,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
     $success = false;
 
     if ( !empty( $sessid ) && $GLOBALS["PHORUM"]["use_cookies"]) {
-    	// this part is for cookie-authentication where we have username and password
+        // this part is for cookie-authentication where we have username and password
         list( $userid, $md5session ) = explode( ":", $sessid, 2 );
 
         if(!is_numeric($userid)) {
@@ -45,7 +45,8 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
         }
         $user=phorum_user_get($userid);
 
-        if ( !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session ) {
+        if ( ($cookie==PHORUM_SESSION_LONG_TERM && !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session) ||
+             ($cookie==PHORUM_SESSION_SHORT_TERM && !empty($user['sessid_st']) && $user['sessid_st'] == $md5session) ) {
 
             if ( $user["active"] ) {
                 // write access is false by default, need to check the st-cookie too
@@ -54,16 +55,16 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
                 $GLOBALS["PHORUM"]["user"] = $user;
                 $success = true;
 
-                phorum_user_create_session( $cookie );
+                phorum_user_create_session( $cookie, $cookie==PHORUM_SESSION_SHORT_TERM );
             } else {
                 phorum_user_clear_session( $cookie );
             }
         }
     } elseif( !empty( $sessid ) && !$GLOBALS["PHORUM"]["use_cookies"]) {
-    	// this part is for uri-authentication where we only have a session-id
-    	$uri_session_id = urldecode( $sessid );
-    	if ( $user_id = phorum_db_user_check_field('sessid_st',$uri_session_id,'=')) {
- 			$user = phorum_user_get( $user_id );
+        // this part is for uri-authentication where we only have a session-id
+        $uri_session_id = urldecode( $sessid );
+        if ( $user_id = phorum_db_user_check_field('sessid_st',$uri_session_id,'=')) {
+            $user = phorum_user_get( $user_id );
             if ( $user["active"] ) {
 
                 // write access is enabled for uri-authentication as thats requiring login at every visit
@@ -75,7 +76,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
             } else {
                 phorum_user_clear_session( $cookie );
             }
-    	}
+        }
     }
 
     return $success;
@@ -122,7 +123,7 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $sessio
 
             setcookie( $cookie, $user['user_id'].':'.$sessid, $timeout, $PHORUM["session_path"], $PHORUM["session_domain"] );
         } else {
-        	$sessid = $uri_session_id;
+            $sessid = $uri_session_id;
             $GLOBALS["PHORUM"]["DATA"]["GET_VARS"][] = "$cookie=" . urlencode( $sessid );
             $GLOBALS["PHORUM"]["DATA"]["POST_VARS"] .= "<input type=\"hidden\" name=\"$cookie\" value=\"$sessid\" />";
         }
@@ -167,30 +168,30 @@ function phorum_user_get( $user_id, $detailed = true )
     if ( count( $user_ids ) ) {
         $cache_users=array();
         $tmp_users=array();
-	    $ext_users=array();
+        $ext_users=array();
         $cachecnt=0;
 
         // get users from cache if enabled
         if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
-	        foreach($user_ids as $id => $cur_user_id) {
-	            $data=phorum_cache_get('user',$cur_user_id);
-	            if($data != null) { // null if no key found
-	                $cache_users[$cur_user_id]=$data;
+            foreach($user_ids as $id => $cur_user_id) {
+                $data=phorum_cache_get('user',$cur_user_id);
+                if($data != null) { // null if no key found
+                    $cache_users[$cur_user_id]=$data;
 
-	                unset($user_ids[$id]);
-	                $cachecnt++;
-	            }
-	        }
-	        unset($data);
-	        // we need to get the dynamic data too!
-	        // only selecting date_last_active, forum_last_active, posts ... any more?
-	        if($cachecnt > 0) {
-	        	$dynamic_data=phorum_db_user_get_fields(array_keys($cache_users),array('date_last_active','last_active_forum','posts'));
-	        	foreach($dynamic_data as $d_uid => $d_data) {
-	        			$cache_users[$d_uid]=array_merge($cache_users[$d_uid],$d_data);
-	        	}
+                    unset($user_ids[$id]);
+                    $cachecnt++;
+                }
+            }
+            unset($data);
+            // we need to get the dynamic data too!
+            // only selecting date_last_active, forum_last_active, posts ... any more?
+            if($cachecnt > 0) {
+                $dynamic_data=phorum_db_user_get_fields(array_keys($cache_users),array('date_last_active','last_active_forum','posts'));
+                foreach($dynamic_data as $d_uid => $d_data) {
+                        $cache_users[$d_uid]=array_merge($cache_users[$d_uid],$d_data);
+                }
 
-	        }
+            }
         }
 
         if(count($user_ids)) {
@@ -201,10 +202,10 @@ function phorum_user_get( $user_id, $detailed = true )
                 if ( !$user["admin"] ) {
                     if ( isset( $user["group_permissions"] ) ) {
                         foreach( $user["group_permissions"] as $forum_id => $perm ) {
-    		        		if(!isset($user["permissions"][$forum_id]))
-    							$user["permissions"][$forum_id]=0;
+                            if(!isset($user["permissions"][$forum_id]))
+                                $user["permissions"][$forum_id]=0;
 
-    				        $user["permissions"][$forum_id] = $user["permissions"][$forum_id] | $perm;
+                            $user["permissions"][$forum_id] = $user["permissions"][$forum_id] | $perm;
                         }
                     }
 
@@ -222,7 +223,7 @@ function phorum_user_get( $user_id, $detailed = true )
 
                 // store users in cache if enabled
                 if( $detailed && isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
-                	phorum_cache_put('user',$uid,$user);
+                    phorum_cache_put('user',$uid,$user);
                 }
                 $tmp_users[$uid] = $user;
             }
@@ -288,7 +289,7 @@ function phorum_user_save( $user )
 
     // remove that user from the cache
     if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-    	phorum_cache_remove('user',$user['user_id']);
+        phorum_cache_remove('user',$user['user_id']);
     }
 
     return $ret;
@@ -304,8 +305,8 @@ function phorum_user_save_simple($user)
 
     // clear the cache only if we are not just updating the activity
     if(isset($GLOBALS['PHORUM']['cache_users']) && $GLOBALS['PHORUM']['cache_users']) {
-    	if(!(count($user) == 3 && isset($user['date_last_active'])))
-        	phorum_cache_remove('user',$user['user_id']);
+        if(!(count($user) == 3 && isset($user['date_last_active'])))
+            phorum_cache_remove('user',$user['user_id']);
     }
 
     $ret = phorum_db_user_save( $user );
@@ -528,16 +529,16 @@ function phorum_user_moderate_allowed( $forum_id = 0, $user_data = 0 )
  */
 function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false)
 {
-	$gotmods=false;
-	if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-		$mods=phorum_cache_get('user','moderators-'.$forum_id.'-'.$ignore_user_perms);
-		if($mods != null) {
-			$gotmods=true;
-		}
-	}
-	if(!$gotmods) {
-		$mods=phorum_db_user_get_moderators( $forum_id , $ignore_user_perms);
-	}
+    $gotmods=false;
+    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
+        $mods=phorum_cache_get('user','moderators-'.$forum_id.'-'.$ignore_user_perms);
+        if($mods != null) {
+            $gotmods=true;
+        }
+    }
+    if(!$gotmods) {
+        $mods=phorum_db_user_get_moderators( $forum_id , $ignore_user_perms);
+    }
     return $mods;
 }
 
@@ -567,7 +568,7 @@ function phorum_user_access_allowed( $permission, $forum_id = 0 )
                 // for registered users
             } elseif ( $forum_id ) {
                 if ( $forum_id != $PHORUM["forum_id"] ) {
-		    $forums = phorum_db_get_forums( $forum_id );
+            $forums = phorum_db_get_forums( $forum_id );
                     $forum = array_shift( $forums );
                 } else {
                     $forum = $PHORUM;
@@ -578,7 +579,7 @@ function phorum_user_access_allowed( $permission, $forum_id = 0 )
             // use the forum default perms for public users
         } elseif ( $forum_id ) {
             if ( $forum_id != $PHORUM["forum_id"] ) {
-	        $forums = phorum_db_get_forums( $forum_id );
+            $forums = phorum_db_get_forums( $forum_id );
                 $forum = array_shift( $forums );
             } else {
                 $forum = $PHORUM;
@@ -727,9 +728,9 @@ function phorum_user_get_groups($user_id)
  */
 function phorum_user_save_groups($user_id, $groups)
 {
-	if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-		phorum_cache_remove('user',$user_id);
-	}
+    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
+        phorum_cache_remove('user',$user_id);
+    }
     return phorum_db_user_save_groups($user_id, $groups);
 }
 
@@ -740,9 +741,9 @@ function phorum_user_addpost()
 
 function phorum_user_delete($user_id)
 {
-	if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-		phorum_cache_remove('user',$user_id);
-	}
+    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
+        phorum_cache_remove('user',$user_id);
+    }
     return phorum_db_user_delete($user_id);
 }
 

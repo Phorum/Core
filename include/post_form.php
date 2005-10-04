@@ -45,6 +45,15 @@ if( (empty($PHORUM["DATA"]["POST"]["parentid"]) && !phorum_user_access_allowed(P
 
     include phorum_get_template("message");
 
+} elseif(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+
+    // if they are logged in but don't have a short term cookie
+    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
+    $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
+    $PHORUM["DATA"]["URL"]["CLICKHERE"] = phorum_get_url(PHORUM_LOGIN_URL);
+
+    include phorum_get_template("message");
+
 } else {
 
     if(empty($PHORUM["DATA"]["POST"]["author"])) $PHORUM["DATA"]["POST"]["author"] = "";
