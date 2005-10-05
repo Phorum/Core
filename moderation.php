@@ -87,10 +87,10 @@ switch ($mod_step) {
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
             break;
         }
-        
+
         // Delete the message and all its replies.
         $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
-        
+
         // Cleanup the attachments for all deleted messages.
         foreach($msg_ids as $id){
             $files=phorum_db_get_message_file_list($id);
@@ -112,10 +112,10 @@ switch ($mod_step) {
                 phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
             }
         }
-        
-        // Run a hook for performing custom cleanup actions. 
+
+        // Run a hook for performing custom cleanup actions.
         phorum_hook("delete", $msg_ids);
-       
+
         $nummsgs=count($msg_ids);
         $PHORUM['DATA']['MESSAGE']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
         if(isset($PHORUM['args']["prepost"])) {
@@ -189,8 +189,8 @@ switch ($mod_step) {
 
         // Move the thread to another forum.
         phorum_db_move_thread($msgthd_id, $_POST['moveto']);
-        
-        // Create a new message in place of the old one to notify 
+
+        // Create a new message in place of the old one to notify
         // visitors that the thread was moved.
         if(isset($_POST['create_notification']) && $_POST['create_notification']) {
             $newmessage = $message;
@@ -284,6 +284,8 @@ switch ($mod_step) {
 
         phorum_handle_edit_message();
         $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_READ_URL, $_POST['thread'], $_POST["message_id"]);
+        $PHORUM['DATA']['BACKMSG']=$PHORUM["DATA"]['LANG']['BackToThread'];
+
         break;
 
     case PHORUM_APPROVE_MESSAGE: // approving a message
@@ -460,10 +462,10 @@ switch ($mod_step) {
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
-        
+
         // unset temporary moderator_data
         phorum_moderator_data_remove('merge_t1');
-       
+
         break;
 
    case PHORUM_SPLIT_THREAD: // this is the first step of a thread split
