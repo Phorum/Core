@@ -13,7 +13,7 @@
 {LANG_META}
 {HEAD_TAGS}
 </head>
-<body>
+<body onload="{IF FOCUS_TO_ID}focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
 <div align="{forumalign}">
 <div class="PDDiv">
 {IF notice_all}
