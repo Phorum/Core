@@ -49,7 +49,6 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
         if ( ($cookie==PHORUM_SESSION_LONG_TERM && !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session) ||
              ($cookie==PHORUM_SESSION_SHORT_TERM && !empty($user['sessid_st']) && $user['sessid_st'] == $md5session) ||
              ($cookie==PHORUM_SESSION_ADMIN && !empty($user['cookie_sessid_lt']) && md5($user['cookie_sessid_lt'].$PHORUM["admin_session_salt"]) == $md5session) ) {
-
             if ( $user["active"] ) {
                 // write access is false by default, need to check the st-cookie too
                 $user['write_access']=false;
@@ -82,8 +81,8 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
     }
 
     // track user activity
-    if($success && $PHORUM["track_user_activity"] && $PHORUM["user"]["date_last_active"] < time() - $PHORUM["track_user_activity"] ) {
-        $tmp_user["user_id"] = $PHORUM["user"]["user_id"];
+    if($success && $PHORUM["track_user_activity"] && $GLOBALS["PHORUM"]["user"]["date_last_active"] < time() - $PHORUM["track_user_activity"] ) {
+        $tmp_user["user_id"] = $GLOBALS["PHORUM"]["user"]["user_id"];
         $tmp_user["date_last_active"] = time();
         if(isset($PHORUM['forum_id'])) {
             $tmp_user["last_active_forum"]= $PHORUM['forum_id'];
