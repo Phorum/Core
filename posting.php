@@ -1,0 +1,556 @@
+<?php
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//   Copyright (C) 2005  Phorum Development Team                              //
+//   http://www.phorum.org                                                    //
+//                                                                            //
+//   This program is free software. You can redistribute it and/or modify     //
+//   it under the terms of either the current Phorum License (viewable at     //
+//   phorum.org) or the Phorum License that was distributed with this file    //
+//                                                                            //
+//   This program is distributed in the hope that it will be useful,          //
+//   but WITHOUT ANY WARRANTY, without even the implied warranty of           //
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     //
+//                                                                            //
+//   You should have received a copy of the Phorum License                    //
+//   along with this program.                                                 //
+////////////////////////////////////////////////////////////////////////////////
+
+// This script can initially be called in multiple ways to indicate what
+// type of posting mode will be used. The parameters are:
+//
+// 1) The forum id.
+//
+// 2) The mode to use. Possibilities are:
+//
+//    - post        Post a new message (default if no mode is issued)
+//    - edit        User edit of an already posted message
+//    - moderation  Moderator edit of an already posted message
+//    - reply       Reply to a message
+//    - quote       Reply to a message, with quoting of the original message
+//
+// 3) If edit, moderation or reply is used: the message id.
+//
+// Examples:
+// http://yoursite/phorum/posting.php?10,quote,15
+// http://yoursite/phorum/posting.php?10,edit,20
+// http://yoursite/phorum/posting.php?10,post
+//
+// This script can also be included in another page (for putting the editor
+// screen inline in a page), by setting up the $PHORUM["args"] before
+// including:
+//
+// $PHORUM["args"]["as_include"] any true value, to flag for included state
+// $PHORUM["args"][0] the forum id
+// $PHORUM["args"][1] the mode to use (post, reply, quote, edit, moderation)
+// $PHORUM["args"][2] the message id to work with (not needed for "post")
+//
+
+// TODO Update hook information in docs/creating_mods.txt
+// TODO The pre_edit hook is deprecated (pre_post is now
+// TODO also used for storing changed messages).
+
+// ----------------------------------------------------------------------
+// Basic setup and checks
+// ----------------------------------------------------------------------
+
+if (! defined('phorum_page')) {
+    define('phorum_page', 'post');
+}
+
+include_once("./common.php");
+include_once("include/format_functions.php");
+
+// Check if the Phorum is in read-only mode.
+if($PHORUM["status"]=="read-only"){
+    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
+    include phorum_get_template("header");
+    phorum_hook("after_header");
+    include phorum_get_template("message");
+    phorum_hook("before_footer");
+    include phorum_get_template("footer");
+    return;
+}
+
+// No forum id was set. Take the user back to the index.
+if(empty($PHORUM["forum_id"])){
+    $dest_url = phorum_get_url(PHORUM_INDEX_URL);
+    phorum_redirect_by_url($dest_url);
+    exit();
+}
+
+// Somehow we got to a folder in posting.php. Take the
+// user back to the folder.
+if($PHORUM["folder_flag"]){
+    $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    phorum_redirect_by_url($dest_url);
+    exit();
+}
+
+// ----------------------------------------------------------------------
+// Definitions
+// ----------------------------------------------------------------------
+
+// The link type for the database files created by the posting editor.
+// TODO This can go in constants.php if this editor is put in the core.
+define("PHORUM_LINK_EDITOR", "editor");
+
+// A list of valid posting modes.
+$valid_modes = array(
+    "post",       // Post a new message
+    "reply",      // Post a reply to a message
+    "quote",      // Post a reply with quoting of the message replied to
+    "edit",       // Edit a message
+    "moderation", // Edit a message in moderator modus
+);
+
+// Configuration that we use for fields that we use in the editor form.
+// Format for the array elements:
+// [0] The type of field (string, integer, boolean, array).
+// [1] Whether the value must be included as a hidden form field
+//     if the field is read-write flagged. So this is used for
+//     identifying values which are always implemented  as a
+//     hidden form fields.
+// [2] Whether the field is read-only or not. Within the editing process,
+//     this parameter can be changed to make the field writable.
+//     (for example if a moderator is editing a message).
+// [3] A default value to initialize the form field with.
+//
+$post_fields = array(
+    "message_id"     => array("integer",  true,   true,  0),
+    "user_id"        => array("integer",  true,   true,  0),
+    "datestamp"      => array("string",   true,   true,  ''),
+    "status"         => array("integer",  false,  true,  0),
+    "author"         => array("string",   false,  true,  ''),
+    "email"          => array("string",   false,  true,  ''),
+    "subject"        => array("string",   false,  false, ''),
+    "body"           => array("string",   false,  false, ''),
+    "forum_id"       => array("integer",  true,   true,  $PHORUM["forum_id"]),
+    "thread"         => array("integer",  true,   true,  0),
+    "parent_id"      => array("integer",  true,   true,  0),
+    "allow_reply"    => array("boolean",  false,  true,  1),
+    "special"        => array("string",   false,  true,  ''),
+    "email_notify"   => array("boolean",  false,  false, 0),
+    "show_signature" => array("boolean",  false,  false, 0),
+    "attachments"    => array("array",    true,   true,  array()),
+    "meta"           => array("array",    true,   true,  array()),
+    "thread_count"   => array("integer",  true,   true,  0),
+    "mode"           => array("string",   true,   true,  ''),
+);
+
+// Indices for referencing the fields in $post_fields.
+define("pf_TYPE",     0);
+define("pf_HIDDEN",   1);
+define("pf_READONLY", 2);
+define("pf_INIT",     3);
+
+// Definitions for a clear $apply_readonly parameter in
+// the function phorum_posting_merge_db2form().
+define("ALLFIELDS", false);
+define("READONLYFIELDS", true);
+
+// ----------------------------------------------------------------------
+// Gather information about the editor state and start processing
+// ----------------------------------------------------------------------
+
+// Is this an initial request?
+$initial = ! isset($_POST["message_id"]);
+
+// Is finish, cancel of preview clicked?
+$finish  = (! $initial && isset($_POST["finish"]));
+$cancel  = (! $initial && isset($_POST["cancel"]));
+$preview = (! $initial && isset($_POST["preview"]));
+
+// Find out what editing mode we're running in.
+if ($initial) {
+    $mode = isset($PHORUM["args"][1]) ? $PHORUM["args"][1] : "post";
+} else {
+    if (! isset($_POST["mode"])) {
+        die("Missing parameter \"mode\" in request");
+    }
+    $mode = $_POST["mode"];
+}
+if (! in_array($mode, $valid_modes)) {
+    die("Illegal mode issued: $mode");
+}
+
+// Find out if we are attaching or detaching something.
+// For detaching $do_detach will be set to the attachment's file_id.
+$do_detach = false;
+$do_attach = false;
+foreach ($_POST as $var => $val) {
+    if (substr($var, 0, 7) == "detach:") {
+        $do_detach = substr($var, 7);
+    }
+    elseif ($var == "attach") {
+        $do_attach = true;
+    }
+}
+
+// Set all our URL's
+phorum_build_common_urls();
+$PHORUM["DATA"]["URL"]["ACTION"] = 'posting.php';
+
+// Keep track of errors.
+$error_flag = false;
+$PHORUM["DATA"]["MESSAGE"] = null;
+$PHORUM["DATA"]["ERROR"] = null;
+
+// Do things that are specific for first time or followup requests.
+if ($initial) {
+    include("./include/posting/request_first.php");
+} else {
+    include("./include/posting/request_followup.php");
+}
+
+// Store the posting mode in the form parameters, so we can remember
+// the mode throughout the editing cycle (for example to be able to
+// create page titles which match the editing mode).
+$PHORUM["DATA"]["MODE"] = $mode;
+
+// ----------------------------------------------------------------------
+// Permission and ability handling
+// ----------------------------------------------------------------------
+
+// Make a descision on what posting mode we're really handling, based on
+// the data that we have. The posting modes "reply" and "quote" will
+// both be called "reply" from here. Modes "edit" and "moderation" will
+// be called "edit" from here. The exact editor behaviour for editing is
+// based on the user's permissions, not on posting mode.
+$mode = "post";
+if ($message["message_id"]) {
+    $mode = "edit";
+} elseif ($message["parent_id"]) {
+    $mode = "reply";
+}
+
+// Do ban list checks. Only check the bans on entering and
+// on finishing up. No checking is needed on intermediate requests.
+if (! $error_flag && ($initial or $finish)) {
+    include("./include/posting/check_banlist.php");
+}
+
+// Determine the abilities that the current user has.
+if (! $error_flag)
+{
+    // Is the forum running in a moderated state?
+    $PHORUM["DATA"]["MODERATED"] =
+        $PHORUM["moderation"] == PHORUM_MODERATE_ON &&
+        !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+
+    // Does the user have administrator permissions?
+    $PHORUM["DATA"]["ADMINISTRATOR"] = $PHORUM["user"]["admin"];
+
+    // Does the user have moderator permissions?
+    $PHORUM["DATA"]["MODERATOR"] =
+        phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+
+    // Can the announcement flag be set for the current message?
+    $PHORUM["DATA"]["SHOW_ANNOUNCEMENT"] =
+        $PHORUM["DATA"]["ADMINISTRATOR"] &&
+        $message["parent_id"] == 0;
+
+    // Can allow_reply be set for the current message?
+    // This option can only be edited at the thread's root message.
+    $PHORUM["DATA"]["SHOW_ALLOW_REPLY"] = $message["parent_id"] == 0;
+
+    // Show announcement or allow_reply in the editor?
+    // TODO an OR option would be nice in the templating engine.
+    $PHORUM["DATA"]["SHOW_THREADOPTIONS"] =
+        $message["parent_id"] == 0 && $PHORUM["DATA"]["MODERATOR"];
+
+    // Ability: Do we allow attachments?
+    $PHORUM["DATA"]["ATTACHMENTS"] =
+        $PHORUM["max_attachments"] > 0 &&
+        phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
+}
+
+// Set extra writeable fields, based on the user's abilities.
+if ($PHORUM["DATA"]["ATTACHMENTS"]) {
+    // Keep it a hidden field.
+    $post_fields["attachments"][pf_READONLY] = false;
+}
+if ($PHORUM["DATA"]["MODERATOR"]) {
+    if (! $message["user_id"]) {
+        $post_fields["author"][pf_READONLY]  = false;
+        $post_fields["email"][pf_READONLY]   = false;
+    }
+    $post_fields["special"][pf_READONLY]     = false;
+    $post_fields["allow_reply"][pf_READONLY] = false;
+}
+
+// Check permissions and apply read-only data.
+// Only do this on entering and on finishing up.
+// No checking is needed on intermediate requests.
+if (! $error_flag && ($initial || $finish)) {
+    include("./include/posting/check_permissions.php");
+}
+
+// Do permission checks for attachment management.
+if (! $error_flag && ($do_attach || $do_detach)) {
+    if (! $PHORUM["DATA"]["ATTACHMENTS"]) {
+        $PHORUM["DATA"]["MESSAGE"] =
+        $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
+        $error_flag = true;
+    }
+}
+
+// ----------------------------------------------------------------------
+// Perform actions
+// ----------------------------------------------------------------------
+
+// Only check the integrity of the data on finishing up. During the
+// editing process, the user may produce garbage as much as he likes.
+if (! $error_flag && $finish) {
+    include("./include/posting/check_integrity.php");
+}
+
+// Handle cancel request.
+if (! $error_flag && $cancel) {
+    include("./include/posting/action_cancel.php");
+}
+
+// Count the number and total size of active attachments
+// that we currently have.
+$attach_count = 0;
+$attach_totalsize = 0;
+foreach ($message["attachments"] as $attachment) {
+    if ($attachment["keep"]) {
+        $attach_count ++;
+        $attach_totalsize += $attachment["size"];
+    }
+}
+
+// Attachment management. This will update the
+// $attach_count and $attach_totalsize variables.
+if (! $error_flag && ($do_attach || $do_detach)) {
+    include("./include/posting/action_attachments.php");
+}
+
+// Handle finishing actions.
+if (! $error_flag && $finish)
+{
+    // Posting mode
+    if ($mode == "post" || $mode == "reply") {
+        include("./include/posting/action_post.php");
+    }
+    // Editing mode.
+    elseif ($mode == "edit") {
+        include("./include/posting/action_edit.php");
+    }
+    // A little safety net.
+    else {
+        die("Internal error: finish action for \"$mode\" not available");
+    }
+}
+
+// ----------------------------------------------------------------------
+// Display the page
+// ----------------------------------------------------------------------
+
+// Make up the text which must be used on the posting form's submit button.
+$button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
+$message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
+
+// Data for attachment explanation.
+$PHORUM["DATA"]["ATTACH_FILE_TYPES"] = $PHORUM["allow_attachment_types"];
+$PHORUM["DATA"]["ATTACH_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
+$PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+$PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
+
+// A flag for the template building to be able to see if the
+// attachment storage space is full.
+$PHORUM["DATA"]["ATTACHMENTS_FULL"] =
+    $attach_count >= $PHORUM["max_attachments"] ||
+    ($PHORUM["max_totalattachment_size"] &&
+     $attach_totalsize >= $PHORUM["max_totalattachment_size"]*1024);
+
+// Let the templates know if we're running as an include.
+$PHORUM["DATA"]["EDITOR_AS_INCLUDE"] =
+    isset($PHORUM["args"]["as_include"]) && $PHORUM["args"]["as_include"];
+
+// Process data for previewing.
+if ($preview) {
+    include("./include/posting/action_preview.php");
+}
+
+// Create hidden form field code. Fields which are read-only are
+// all added as a hidden form fields in the form. Also the fields
+// for which the pf_HIDDEN flag is set will be added to the
+// hidden fields.
+$hidden = "";
+foreach ($post_fields as $var => $spec)
+{
+    if ($var == "mode") {
+        $val = htmlentities($mode);
+    } elseif ($spec[pf_TYPE] == "array") {
+        $val = htmlentities(serialize($message[$var]));
+    } else {
+        $val = htmlentities($message[$var]);
+    }
+    if ($spec[pf_READONLY] || $spec[pf_HIDDEN]) {
+        $hidden .= '<input type="hidden" name="' . $var .  '" ' .
+                   'value="' . $val . "\" />\n";
+    }
+}
+$PHORUM["DATA"]["POST_VARS"] = $hidden;
+
+// Process data for XSS prevention.
+foreach ($message as $var => $val)
+{
+    // The meta information should not be used in templates, because
+    // nothing is escaped here. But we might want to use the data in 
+    // mods which are run after this code. We continue here, so the
+    // data won't be stripped from the message data later on.
+    if ($var == "meta") continue;
+
+    if ($var == "attachments") {
+        if (is_array($val)) {
+            foreach ($val as $nr => $data)
+            {
+                // Do not show attachments which are not kept.
+                if (! $data["keep"]) {
+                    unset($message["attachments"][$nr]);
+                    continue;
+                }
+
+                $message[$var][$nr]["name"] = htmlspecialchars($data["name"]);
+                $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
+            }
+        }
+    } else {
+        if (is_scalar($val)) {
+            $message[$var] = htmlspecialchars($val);
+        } else {
+            // Not used in the template, unless proven otherwise.
+            $message[$var] = '[removed from template data]';
+        }
+    }
+}
+
+// A cancel button is not needed if the editor is included in a page.
+// This can also be used by the before_edit hook to disable the
+// cancel button in all pages.
+$PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["args"]["as_include"]) ? false : true);
+
+// A hook to give modules a last chance to update the message data.
+$message = phorum_hook("before_edit", $message);
+
+// Make the message data available to the template engine.
+$PHORUM["DATA"]["POST"] = $message;
+
+// Load page header.
+if (! isset($PHORUM["args"]["as_include"])) {
+    include phorum_get_template("header");
+    phorum_hook("after_header");
+}
+
+// Load page content.
+if (isset($PHORUM["DATA"]["MESSAGE"])) {
+    include phorum_get_template("message");
+} else {
+    include phorum_get_template("posting");
+}
+
+// Load page footer.
+if (! isset($PHORUM["args"]["as_include"])) {
+    phorum_hook("before_footer");
+    include phorum_get_template("footer");
+}
+
+// ----------------------------------------------------------------------
+// Functions
+// ----------------------------------------------------------------------
+
+// Merge data from a database message record into the form fields
+// that we use. If $apply_readonly is set to a true value, then
+// only the fields which are flagged as read-only will be copied.
+function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
+{
+    $post_fields = $GLOBALS['post_fields'];
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // If we have a user linked to the current message, then get the
+    // user data from the database, if it has to be applied as
+    // read-only data.
+    if ($post_fields['email'][pf_READONLY] || $post_fields['author'][pf_READONLY]) {
+        if ($db["user_id"]) {
+            $user_info = phorum_user_get($db["user_id"], false);
+            $user_info["author"] = $user_info["username"];
+        }
+    }
+
+    foreach ($post_fields as $key => $info)
+    {
+        // Skip writeable fields if we only have to apply read-only ones.
+        if ($apply_readonly && ! $info[pf_READONLY]) continue;
+
+        switch ($key) {
+            case "show_signature": {
+                $form[$key] = !empty($db["meta"]["show_signature"]);
+                break;
+            }
+
+            case "allow_reply": {
+                $form[$key] = ! $db["closed"];
+                break;
+            }
+
+            case "email_notify": {
+                $form[$key] = phorum_db_get_if_subscribed(
+                    $db["forum_id"], $db["thread"], $db["user_id"]);
+                break;
+            }
+
+            case "forum_id": {
+                $form["forum_id"] = $db["forum_id"] ? $db["forum_id"] : $PHORUM["forum_id"];
+                break;
+            }
+
+            case "attachments": {
+                $form[$key] = array();
+                if (isset($db["meta"]["attachments"])) {
+                    foreach ($db["meta"]["attachments"] as $data) {
+                        $data["keep"] = true;
+                        $data["linked"] = true;
+                        $form["attachments"][] = $data;
+                    }
+                }
+                break;
+            }
+
+            case "author":
+            case "email": {
+                if ($db["user_id"]) {
+                    $form[$key] = $user_info[$key];
+                } else {
+                    $form[$key] = $db[$key];
+                }
+                break;
+            }
+
+            case "special": {
+                if ($db["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
+                    $form["special"] = "announcement";
+                } elseif ($db["sort"] == PHORUM_SORT_STICKY) {
+                    $form["special"] = "sticky";
+                } else {
+                    $form["special"] = "";
+                }
+                break;
+            }
+
+            case "mode": {
+                // NOOP 
+                break;
+            }
+
+            default:
+                $form[$key] = $db[$key];
+        }
+    }
+    return $form;
+}
+
+?>
