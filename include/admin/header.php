@@ -152,55 +152,105 @@ input, textarea, select, td
     display: inline;
 }
 
+img.question
+{
+    padding: 0 5px 1px 5px;
+    vertical-align: middle;
+}
+
+#helpdiv
+{
+    position: absolute;
+    visibility: hidden;
+    width: 400px;
+    border: 2px solid Navy;
+}
+
+#helpdiv-hide
+{
+    float: right;
+}
+
+#helpdiv-title
+{
+    color: White;
+    background-color: Navy;
+    padding: 1px 1px 3px 1px;
+}
+
+#helpdiv-content
+{
+    background-color: White;
+    height: 200px;
+    padding: 8px;
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 13px;
+    overflow: scroll;
+}
+
+#help-title
+{
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
 </style>
 <script>
 
-function show_help(help_text)
+function show_help(key)
 {
     if (document.all) {
         topoffset=document.body.scrollTop;
         leftoffset=document.body.scrollLeft;
+        WIDTH=document.body.clientWidth;
+        HEIGHT=document.body.clientHeight;
     } else {
         topoffset=pageYOffset;
         leftoffset=pageXOffset;
+        WIDTH=window.innerWidth;
+        HEIGHT=window.innerHeight;
     }
 
-    newtop=((getClientHeight()-200)/2)+topoffset;
-    newleft=((getClientWidth()-400)/2)+leftoffset;
+    if(WIDTH%2!=0) WIDTH--;
+    if(HEIGHT%2!=0) HEIGHT--;
 
-    move_div('helpdiv', newtop, newleft)
+    newtop=((HEIGHT-200)/2)+topoffset;
 
-    show_dhtml_popup('help', '<?php echo $_SERVER['PHP_SELF']; ?>?module=help&text=' + help_text);
+    // IE still puts selects on top of stuff so it has to be fixed to the left some
+    if (document.all) {
+        newleft=150;
+    } else {
+        newleft=((WIDTH-400)/2)+leftoffset;
+    }
+
+    document.getElementById('helpdiv').style.left=newleft;
+    document.getElementById('helpdiv').style.top=newtop;
+
+    document.getElementById('help-title').innerHTML = help[key][0];
+    document.getElementById('help-text').innerHTML = help[key][1];
+
+    document.getElementById('helpdiv').style.visibility = 'visible';
+
 }
 
 function hide_help()
 {
-    if (!document.layers) {
-      set_dhtml_frame_url('help', '<?php echo $_SERVER['PHP_SELF']; ?>?module=help');
-    }
-    hide_dhtml_popup('help');
+    document.getElementById('helpdiv').style.visibility = 'hidden';
+    document.getElementById('help-title').innerHTML = "";
+    document.getElementById('help-text').innerHTML = "";
 }
-
-<?php include "./include/dhtml_popup.js"; ?>
 
 </script>
 </head>
 <body>
-<?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<div id="helpdiv" style="position: absolute; visibility: hidden; width: 400px; height: 200px; border-style: solid; border-width: 2px; border-color: Navy;">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-    <td bgcolor="Navy" class="help-td">&nbsp;Phorum Admin Help</td>
-    <td bgcolor="Navy" align="right" class="help-td"><a href="javascript:hide_help();"><img border="0" src="images/close.gif" height="16" width="16" /></a></td>
-</tr>
-<tr>
-    <td colspan="2">
-        <iframe src="<?php echo $_SERVER['PHP_SELF']; ?>?module=help" style="position: relative; background-color: White;" frameborder="0" id="helpframe" width="100%" height="177"></iframe>
-    </td>
-</tr>
-</table>
+<div id="helpdiv">
+<div id="helpdiv-hide"><a href="javascript:hide_help();"><img border="0" src="images/close.gif" height="16" width="16" /></a></div>
+<div id="helpdiv-title">&nbsp;Phorum Admin Help</div>
+<div id="helpdiv-content">
+<div id="help-title"></div>
+<div id="help-text"></div>
 </div>
-<?php } ?>
+</div>
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>

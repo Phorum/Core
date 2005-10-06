@@ -68,6 +68,16 @@ class PhorumInputForm {
 
     function show()
     {
+        if(count($this->_help)){
+            echo "<script>\nvar help = Array;\n";
+            foreach($this->_help as $key=>$data){
+                $title = str_replace('"', "&quot;", $data[0]);
+                $text = str_replace('"', '&quot;', $data[1]);
+                $text = str_replace("\n", "\\n", $text);
+                echo "help[$key] = [\"$title\", \"$text\"];\n";
+            }
+            echo "</script>\n";
+        }
         echo "<form style=\"display: inline;\" action=\"$this->_action\" method=\"$this->_method\"";
         if ( !empty( $this->_target ) ) echo " target=\"$this->_target\"";
         if ( !empty( $this->_enctype ) ) echo " enctype=\"$this->_enctype\"";
@@ -81,10 +91,12 @@ class PhorumInputForm {
         echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" class=\"input-form-table\" width=\"100%\">\n";
 
         if ( is_array( $this->_rows ) ) foreach( $this->_rows as $key => $row ) {
+
+
             if ( $row["break"] ) {
                 $title = $row["break"];
                 if ( isset( $this->_help[$key] ) ) {
-                    $title = $title . help_link( $this->_help[$key][0], $this->_help[$key][1] );
+                    $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
                 }
                 echo "<tr class=\"input-form-tr\">\n";
                 echo "  <td colspan=\"2\" class=\"input-form-td-break\">$title</td>\n";
@@ -99,7 +111,7 @@ class PhorumInputForm {
                 $title = $row["title"];
 
                 if ( isset( $this->_help[$key] ) ) {
-                    $title = $title . help_link( $this->_help[$key][0], $this->_help[$key][1] );
+                    $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
                 }
 
                 echo "<tr class=\"input-form-tr\">\n";
@@ -286,6 +298,7 @@ class PhorumInputForm {
 
         return $data;
     }
+
 }
 
 ?>

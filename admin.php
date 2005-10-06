@@ -136,13 +136,6 @@
     }
 
 
-    function help_link($title, $text)
-    {
-        $text=urlencode("<p style=\"font-weight: bold\">$title</p>$text");
-        return "<a href=\"javascript:show_help('".urlencode($text)."');\"><img style=\"padding-left: 5px; padding-right: 5px; padding-bottom: 1px;\" align=\"absmiddle\" alt=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
-    }
-
-
     /*
      * Sets the given vroot for the descending forums / folders
      * which are not yet in another descending vroot
