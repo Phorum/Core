@@ -88,6 +88,7 @@ $folder_id = phorum_getparam('folder_id');
 $pm_id     = phorum_getparam('pm_id');
 $forum_id  = $PHORUM["forum_id"];
 $user_id   = $PHORUM["user"]["user_id"];
+$isreply   = phorum_getparam('isreply');
 
 // Get recipients from the form and create a valid list of recipients.
 $recipients = array();
@@ -723,6 +724,8 @@ switch ($page) {
                     }
                 }
 
+                $isreply = 1;
+
             // Setup data for replying privately to a forum post.
             } elseif (isset($PHORUM["args"]["message_id"])) {
 
@@ -747,6 +750,8 @@ switch ($page) {
                     );
                     $msg = phorum_pm_quoteformat($user["username"], $msg, $origurl);
                 }
+
+                $isreply = 1;
             }
         }
 
@@ -852,6 +857,7 @@ $PHORUM["DATA"]["ACTION"]=phorum_get_url( PHORUM_PM_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
 $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
+$PHORUM["DATA"]["ISREPLY"] = empty($isreply) ? 0 : 1;
 
 include phorum_get_template("header");
 phorum_hook("after_header");

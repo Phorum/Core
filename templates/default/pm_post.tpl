@@ -25,6 +25,7 @@
 <input type="hidden" name="panel" value="pm" />
 <input type="hidden" name="action" value="post" />
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
+<input type="hidden" name="isreply" value="{ISREPLY}" />
 
 <div class="PhorumStdBlockHeader" style="text-align: left; width:99%">
 <table class="PhorumFormTable" cellspacing="0" border="0" style="width:99%">
@@ -38,6 +39,8 @@
 
     {! Show user selection }
     {IF SHOW_USERSELECTION}
+     {IF NOT ISREPLY}
+      <div class="phorum-pmuserselection">
       {IF USERS}
         <select id="userselection" name="to_id" size="1" align="middle">
         <option value=""> {LANG->PMSelectARecipient}
@@ -55,11 +58,13 @@
       {IF RECIPIENT_COUNT}
         <br style="clear:both"/>
       {/IF}
+      </div>
+     {/IF}
     {/IF}
 
     {! Display the current list of recipients}
     {LOOP MESSAGE->recipients}
-      <div class="PhorumPMRecipientBlock">
+      <div class="phorum-recipientblock">
         {MESSAGE->recipients->username}
         <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->username}"/>
         <input type="image" src="templates/default/images/delete.gif"

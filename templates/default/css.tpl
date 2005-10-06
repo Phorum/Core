@@ -572,17 +572,22 @@ div.phorum-menu a.phorum-current-page
 
     /* PM specifics */
 
-    .PhorumPMRecipientBlock
+    .phorum-recipientblock
     {
         border: 1px solid black;
         position:relative;
         float:left;
         padding: 1px 1px 1px 5px;
-        margin: 5px 5px 0px 0px;
+        margin: 0px 5px 5px 0px;
         font-size: {smallfontsize};
         background-color: {backcolor};
         border: 1px solid {tablebordercolor};
         white-space: nowrap;
+    }
+
+    .phorum-pmuserselection
+    {
+        padding-bottom: 5px;
     }
 
     /********************/
