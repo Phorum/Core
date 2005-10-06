@@ -407,12 +407,17 @@ function phorum_get_url()
             }
             $add_forum_id = true;
             break;
+        case PHORUM_POSTING_URL:
+            $page = "posting";
+            $add_forum_id = true;
+            break;
+        // TODO maybe not used anymore using the new editor code.
         case PHORUM_POST_URL:
             $page = "post";
             $add_forum_id = true;
             break;
         case PHORUM_POST_ACTION_URL:
-            $page = "post";
+            $page = "posting";
             $add_get_vars = false;
             break;
         case PHORUM_ATTACH_URL:
@@ -471,10 +476,12 @@ function phorum_get_url()
             $page = "moderation";
             $add_get_vars = false;
             break;
+        // TODO maybe not needed anymore for the new editor.
         case PHORUM_EDIT_URL:
             $page = "edit";
             $add_forum_id = true;
             break;
+        // TODO maybe not needed anymore for the new editor.
         case PHORUM_EDIT_ACTION_URL:
             $page = "edit";
             $add_get_vars = false;
@@ -603,7 +610,7 @@ function phorum_build_common_urls()
 {
     $GLOBALS["PHORUM"]["DATA"]["URL"]["TOP"] = phorum_get_url( PHORUM_LIST_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POST_URL );
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
     if(phorum_page=="index" || phorum_page=="list" || phorum_page=="read"){

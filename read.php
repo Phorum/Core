@@ -271,7 +271,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
             $row["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
             $row["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-            $row["edit_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOD_EDIT_POST, $row["message_id"]);
+            $row["edit_url"]=phorum_get_url(PHORUM_POSTING_URL, "moderation", $row["message_id"]);
             $row["split_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_SPLIT_THREAD, $row["message_id"]);
             if($row['is_unapproved']) {
               $row["approve_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"]);
@@ -294,7 +294,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             if($PHORUM["DATA"]["MODERATOR"]) {
                 $row["edituser_url"]=$row["edit_url"];
             } else {
-                $row["edituser_url"]=phorum_get_url(PHORUM_EDIT_URL, PHORUM_MOD_EDIT_POST, $row["message_id"]);
+                $row["edituser_url"]=phorum_get_url(PHORUM_POSTING_URL, "edit", $row["message_id"]);
             }
         }
 
@@ -496,6 +496,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     } elseif($thread_is_closed && !$thread_is_announcement) {
 
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadClosed"];
+        print '<a name="REPLY"></a>';
         include phorum_get_template("message");
 
     } elseif($PHORUM["reply_on_read_page"]) {

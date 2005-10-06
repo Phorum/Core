@@ -128,6 +128,7 @@
     define("PHORUM_READ_URL", $i++);
     define("PHORUM_FOREIGN_READ_URL", $i++);
     define("PHORUM_REPLY_URL", $i++);
+    define("PHORUM_POSTING_URL", $i++);
     define("PHORUM_POST_URL", $i++);
     define("PHORUM_POST_ACTION_URL", $i++);
     define("PHORUM_ATTACH_URL", $i++);
@@ -167,7 +168,6 @@
     define("PHORUM_DO_THREAD_MOVE", $i++);
     define("PHORUM_CLOSE_THREAD", $i++);
     define("PHORUM_REOPEN_THREAD", $i++);
-    define("PHORUM_MOD_EDIT_POST", $i++);
     define("PHORUM_SAVE_EDIT_POST", $i++);
     define("PHORUM_APPROVE_MESSAGE", $i++);
     define("PHORUM_HIDE_POST", $i++);
