@@ -10,6 +10,4 @@ $upgrade_queries[]= "insert into {$PHORUM["settings_table"]} set name='tight_sec
 
 $upgrade_queries[]= "insert into {$PHORUM["settings_table"]} set name='admin_session_salt', type='V', data='".microtime()."'";
 
-print_var($upgrade_queries);
-
 ?>
