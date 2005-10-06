@@ -31,7 +31,8 @@
 
 
     // if we are installing or upgrading, we don't need to check for a session
-    if(!isset($PHORUM['installed']) || !isset($PHORUM['internal_version'])){
+    // 2005081000 was the internal version that introduced the installed flag
+    if(!isset($PHORUM['internal_version']) || !isset($PHORUM['installed'] && $PHORUM['internal_version']<'2005081000')){
 
         // this is an install
         $module="install";
