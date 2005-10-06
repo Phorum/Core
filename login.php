@@ -125,10 +125,14 @@ if ( count( $_POST ) > 0 ) {
                 $uri_session_id=md5($_POST['username'].microtime().$_POST['password']);
                 $user=array('user_id'=>$PHORUM['user']['user_id'],'sessid_st'=>$uri_session_id);
                 phorum_user_save_simple($user);
-                phorum_user_create_session(PHORUM_SESSION_LONG_TERM,false,$uri_session_id);
+                phorum_user_create_session(PHORUM_SESSION_LONG_TERM,true,$uri_session_id);
             } else {
-                phorum_user_create_session();
-                phorum_user_create_session(PHORUM_SESSION_SHORT_TERM,true);
+                if(!$PHORUM["DATA"]["LOGGEDIN"]){
+                    phorum_user_create_session(PHORUM_SESSION_LONG_TERM, true);
+                }
+                if($PHORUM["tight_security"]){
+                    phorum_user_create_session(PHORUM_SESSION_SHORT_TERM, true);
+                }
             }
 
             // if redir is a number, it is a URL constant

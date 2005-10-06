@@ -42,6 +42,15 @@ if ( count( $_POST ) ) {
 
                 break;
 
+            case "short_session_timeout":
+
+                $_POST[$field] = (int)$_POST[$field];
+
+                // impose a 5 minute minimum on this field for sanity reasons
+                if($_POST[$field]<5) $_POST[$field];
+
+                break;
+
             case "session_path":
 
                 if ( empty( $value ) ) {
@@ -86,7 +95,7 @@ if ( count( $_POST ) ) {
 
                 break;
             case "cache_users":
-            	if ( empty( $value ) ) {
+                if ( empty( $value ) ) {
                     $_POST[$field] = 0;
                 }
 
@@ -175,7 +184,7 @@ $frm->addhelp($row, "Time Zone Offset", "If you and/or your users are in a diffe
 
 $frm->addbreak( "Cookie/Session Settings" );
 
-$row=$frm->addrow( "Session Timeout (days)", $frm->text_box( "session_timeout", $PHORUM["session_timeout"], 10 ) );
+$row=$frm->addrow( "Main Session Timeout (days)", $frm->text_box( "session_timeout", $PHORUM["session_timeout"], 10 ) );
 $frm->addhelp($row, "Session Timeout", "When users log in to your Phorum, they are issued a cookie.  You can set this timeout to the number of days that you want the cookie to stay on the users computer.  If you set it to 0, the cookie will only last as long as the user has the browser open." );
 
 $row=$frm->addrow( "Session Path (start with /)", $frm->text_box( "session_path", $PHORUM["session_path"], 30 ) );
@@ -186,6 +195,14 @@ $frm->addhelp($row, "Session Domain", "Most likely, you can leave this blank.  I
 
 $row=$frm->addrow( "Track User Usage", $frm->select_tag( "track_user_activity", array( 0=>"Never", 86400=>"Once per day", 3600=>"Once per hour", 600=>"Once per 5 minutes", 1=>"Constantly" ), $PHORUM["track_user_activity"] ) );
 $frm->addhelp($row, "Track User Usage", "When set the last time a user accessed the Phorum will be recorded as often as you have decided upon.  This will require constant updates to your database.  If you have a busy forum on weak equipment, this may be bad thing to set to low." );
+
+$frm->addbreak( "Tighter Security" );
+
+$row=$frm->addrow( "Enable Tighter Security", $frm->select_tag( "tight_security", array( "No", "Yes" ), $PHORUM["tight_security"] ) );
+$frm->addhelp($row, "Enable Tighter Security", "Tight security in Phorum will require that users confirm their login information from time to time before posting messages, accessing private messages or using their Control Center.  The length of time is determined by Short Session Timeout." );
+
+$row=$frm->addrow( "Short Session Timeout (minutes)", $frm->text_box( "short_session_timeout", $PHORUM["short_session_timeout"], 10 ) );
+$frm->addhelp($row, "Short Session Timeout", "When tight security is enabled, the users will be issued a second cookie when the type in their login information.  If the user does not use the site for the period of time you set here, they will have to re-enter their login information before posting messages, accessing private messages or using their Control Center.  They will still be allowed to read the Phorum as long as their Main Session is still good.  The time is minutes.  The minimum is 5 minutes.  Otherwise, your users will be very angry at you.<br /><br />P.S. 1 day = 3600 minutes" );
 
 $frm->addbreak( "User Settings" );
 

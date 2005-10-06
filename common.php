@@ -24,7 +24,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.1.1-alpha" );
 
 // our internal version in format of year-month-day-serial
-define( "PHORUMINTERNAL", "2005100400" );
+define( "PHORUMINTERNAL", "2005100600" );
 
 define( "DEBUG", 0 );
 
@@ -188,7 +188,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( phorum_user_check_session() ) {
         $PHORUM["DATA"]["LOGGEDIN"] = true;
 
-        if(phorum_user_check_session( PHORUM_SESSION_SHORT_TERM )){
+        if(!$PHORUM["tight_security"] || phorum_user_check_session( PHORUM_SESSION_SHORT_TERM )){
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = true;
         } else {
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;

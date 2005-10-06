@@ -6,7 +6,7 @@
     if(isset($_POST["username"]) && isset($_POST["password"])){
         if(phorum_user_check_login($_POST["username"], $_POST["password"])!=0){
             if($PHORUM["user"]["admin"]){
-                phorum_user_create_session("phorum_admin_session", true);
+                phorum_user_create_session(PHORUM_SESSION_ADMIN);
                 if(!empty($_POST["target"])){
                     phorum_redirect_by_url($_POST['target']);
                 } else {
