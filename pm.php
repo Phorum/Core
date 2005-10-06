@@ -82,13 +82,13 @@ function phorum_getparam($name)
 }
 
 // Get basic parameters.
-$action    = phorum_getparam('action');
-$page      = phorum_getparam('page');
-$folder_id = phorum_getparam('folder_id');
-$pm_id     = phorum_getparam('pm_id');
-$forum_id  = $PHORUM["forum_id"];
-$user_id   = $PHORUM["user"]["user_id"];
-$isreply   = phorum_getparam('isreply');
+$action          = phorum_getparam('action');
+$page            = phorum_getparam('page');
+$folder_id       = phorum_getparam('folder_id');
+$pm_id           = phorum_getparam('pm_id');
+$forum_id        = $PHORUM["forum_id"];
+$user_id         = $PHORUM["user"]["user_id"];
+$hide_userselect = phorum_getparam('hide_userselect');
 
 // Get recipients from the form and create a valid list of recipients.
 $recipients = array();
@@ -338,6 +338,12 @@ if (!empty($action)) {
 
                 unset($recipients[$del_rcpt]);
                 $page = "send";
+
+                // When deleting a recipient, we always have to
+                // show the user selection. Put it back in, for
+                // situations where we had the user selection 
+                // hidden intentionally.
+                $hide_userselect = 0;
 
             // Posting the message.
             } else {
@@ -703,6 +709,8 @@ switch ($page) {
                     }
                 }
 
+                $hide_userselect = 1;
+
             // Setup data for replying to a private message.
             } elseif (isset($pm_id)) {
 
@@ -724,7 +732,7 @@ switch ($page) {
                     }
                 }
 
-                $isreply = 1;
+                $hide_userselect = 1;
 
             // Setup data for replying privately to a forum post.
             } elseif (isset($PHORUM["args"]["message_id"])) {
@@ -751,7 +759,7 @@ switch ($page) {
                     $msg = phorum_pm_quoteformat($user["username"], $msg, $origurl);
                 }
 
-                $isreply = 1;
+                $hide_userselect = 1;
             }
         }
 
@@ -809,7 +817,9 @@ switch ($page) {
         break;
 }
 
-
+if ($hide_userselect) {
+    $PHORUM["DATA"]["SHOW_USERSELECTION"] = 0;
+}
 
 // Make message count and quota information available in the templates.
 $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = 0;
@@ -857,7 +867,7 @@ $PHORUM["DATA"]["ACTION"]=phorum_get_url( PHORUM_PM_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
 $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
-$PHORUM["DATA"]["ISREPLY"] = empty($isreply) ? 0 : 1;
+$PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
 
 include phorum_get_template("header");
 phorum_hook("after_header");
