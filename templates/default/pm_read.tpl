@@ -36,7 +36,10 @@
 {/IF}
 <input type="submit" name="close_message" class="PhorumSubmit" value="{LANG->PMCloseMessage}" />
 {IF NOT MESSAGE->from_user_id USERINFO->user_id}
-  <input type="submit" name="reply_message" class="PhorumSubmit" value="{LANG->PMReplyMessage}" />
+  <input type="submit" name="reply" class="PhorumSubmit" value="{LANG->PMReply}" />
+  {IF NOT MESSAGE->recipient_count 1}
+    <input type="submit" name="reply_to_all" class="PhorumSubmit" value="{LANG->PMReplyToAll}" />
+  {/IF}
 {/IF}
 <input type="submit" name="delete_message" class="PhorumSubmit" value="{LANG->Delete}"
  onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>

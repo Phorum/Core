@@ -157,7 +157,7 @@ if (isset($_POST['close_message'])) {
     $_POST['move'] = 1;
     $_POST['checked'] = array($pm_id);
     $action = 'list';
-} elseif (isset($_POST['reply_message'])) {
+} elseif (isset($_POST['reply']) || isset($_POST['reply_to_all'])) {
     $page = 'send';
     $action = '';
 }
@@ -645,6 +645,7 @@ switch ($page) {
                 $message["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
                 $message["recipients"][$rcpt_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
             }
+            $message["recipient_count"] = count($message["recipients"]);
 
             // Setup URL's and format date.
             $message["from_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
@@ -708,10 +709,19 @@ switch ($page) {
                 $msg["subject"] = $message["subject"];
                 $msg["message"] = $message["message"];
                 $msg["recipients"][$message["from_user_id"]] = array(
-                    'username' => $message["from_username"],
-                    'user_id'  => $message["from_user_id"]
+                    "username" => $message["from_username"],
+                    "user_id"  => $message["from_user_id"]
                 );
                 $msg = phorum_pm_quoteformat($message["from_username"], $msg);
+
+                if (isset($_POST["reply_to_all"])) {
+                    foreach($message["recipients"] as $rcpt) {
+                        $msg["recipients"][$rcpt["user_id"]] = array(
+                            "username" => $rcpt["username"],
+                            "user_id"  => $rcpt["user_id"],
+                        );
+                    }
+                }
 
             // Setup data for replying privately to a forum post.
             } elseif (isset($PHORUM["args"]["message_id"])) {
