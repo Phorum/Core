@@ -202,7 +202,7 @@ $row=$frm->addrow( "Enable Tighter Security", $frm->select_tag( "tight_security"
 $frm->addhelp($row, "Enable Tighter Security", "Tight security in Phorum will require that users confirm their login information from time to time before posting messages, accessing private messages or using their Control Center.  The length of time is determined by Short Session Timeout." );
 
 $row=$frm->addrow( "Short Session Timeout (minutes)", $frm->text_box( "short_session_timeout", $PHORUM["short_session_timeout"], 10 ) );
-$frm->addhelp($row, "Short Session Timeout", "When tight security is enabled, the users will be issued a second cookie when the type in their login information.  If the user does not use the site for the period of time you set here, they will have to re-enter their login information before posting messages, accessing private messages or using their Control Center.  They will still be allowed to read the Phorum as long as their Main Session is still good.  The time is minutes.  The minimum is 5 minutes.  Otherwise, your users will be very angry at you.<br /><br />P.S. 1 day = 3600 minutes" );
+$frm->addhelp($row, "Short Session Timeout", "When tight security is enabled, the users will be issued a second cookie when the type in their login information.  If the user does not use the site for the period of time you set here, they will have to re-enter their login information before posting messages, accessing private messages or using their Control Center.  They will still be allowed to read the Phorum as long as their Main Session is still good.  The time is minutes.  The minimum is 5 minutes.  Otherwise, your users will be very angry at you.<br /><br />P.S. 1 day = 1440 minutes" );
 
 $frm->addbreak( "User Settings" );
 
