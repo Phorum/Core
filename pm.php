@@ -23,6 +23,10 @@
 // $PHORUM["DATA"]["LANG"]["PMFolderRenameSuccess"]
 // $PHORUM["DATA"]["LANG"]["PMFolderDeleteSuccess"]
 
+// PMTODO After posting a reply, stay in the same folder.
+// PMTODO If reading from a mail notify, lookup the folder_id,
+//        so the close button will work. Now the folder_id is empty.
+
 define('phorum_page','pm');
 
 include_once("./common.php");
@@ -84,6 +88,17 @@ $folder_id = phorum_getparam('folder_id');
 $pm_id     = phorum_getparam('pm_id');
 $forum_id  = $PHORUM["forum_id"];
 $user_id   = $PHORUM["user"]["user_id"];
+
+// Get recipients from the form and create a valid list of recipients.
+$recipients = array();
+if (isset($_POST["recipients"]) && is_array($_POST["recipients"])) {
+    foreach ($_POST["recipients"] as $id => $username) {
+        $user = phorum_user_get($id, false);
+        if ($user) {
+            $recipients[$id] = $user;
+        }
+    }
+}
 
 // init error var
 $error_msg = "";
@@ -271,25 +286,65 @@ if (!empty($action)) {
         // Actions which are triggered from the post form.
         case "post":
 
-            // Show a preview for the message.
-            if(isset($_POST["preview"])){
+            // Parse clicks on the image buttons that we use for
+            // deleting recipients from the list of recipients.
+            // These are not sent as name=value, but instead
+            // name_x=xclickoffset and name_y=yclickoffset are sent.
+            // Also accept normal button clicks with name="del_rcpt::<id>",
+            // so template builders can use that.
+            $del_rcpt = NULL;
+            foreach ($_POST as $key => $val) {
+                if (preg_match('/^del_rcpt::(\d+)(_x)?$/', $key, $m)) {
+                    $del_rcpt = $m[1];
+                    break;
+                }
+            }
 
+            // For previewing the message, no action has to be taken.
+            if (isset($_POST["preview"])) {
+
+                $page = "send";
+
+            // Adding a recipient.
+            } elseif (isset($_POST["rcpt_add"])) {
+
+                // Convert adding a recipient by name to adding by user id.
+                if (isset($_POST["to_name"])) {
+                    $to_name = trim($_POST["to_name"]);
+                    if ($to_name != '') {
+                        $to_user_id = phorum_db_user_check_field('username', $to_name);
+                        if ($to_user_id) {
+                            $_POST["to_id"] = $to_user_id;
+                            unset($_POST["to_name"]);
+                        } else {
+                            $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                        }
+                    }
+                }
+
+                // Add a recipient by id.
+                if (isset($_POST["to_id"]) && is_numeric($_POST["to_id"])) {
+                    $user = phorum_user_get($_POST["to_id"], false);
+                    if ($user) {
+                        $recipients[$user["user_id"]] = $user;
+                    }
+                }
+
+                $page = "send";
+
+            // Deleting a recipient.
+            } elseif ($del_rcpt != NULL) {
+
+                unset($recipients[$del_rcpt]);
                 $page = "send";
 
             // Posting the message.
             } else {
 
-                // Get the user id for the recipient username.
-                // PMTODO wen supporting multiple recipients, this will be different.
-                // Also mind $recipients and the upcoming check on the maximum
-                // number of messages.
-                $to_user_id = phorum_db_user_check_field("username", $_POST["to"]);
+                // Only send the message if we have at least one recipient.
+                if(count($recipients)){
 
-                if($to_user_id){
-
-                    $recipients = array(phorum_db_user_get($to_user_id, false));
-
-                    // Check if all required message data is filled in.
+                    // Only send the message if all required message data is filled in.
                     if(empty($_POST["subject"]) || empty($_POST["message"])){
 
                         $error = $PHORUM["DATA"]["LANG"]["PMRequiredFields"];
@@ -299,8 +354,9 @@ if (!empty($action)) {
 
                         if(empty($_POST["keep"])) $_POST["keep"] = 0;
 
-                        // Check if sender and recipient have not yet reached the
+                        // Check if sender and recipients have not yet reached the
                         // maximum number of messages that may be stored on the server.
+                        // Administrators may always send PM.
                         if (!$PHORUM['user']['admin'] && $PHORUM['max_pm_messagecount'])
                         {
                             // Build a list of users to check.
@@ -313,10 +369,11 @@ if (!empty($action)) {
                                 if ($user['admin']) continue; // No limits for admins
                                 $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS, $user["user_id"]);
                                 if ($current_count['total'] >= $PHORUM['max_pm_messagecount']) {
-                                    if ($user['user_id'] == $to_user_id) {
-                                        $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
-                                    } else {
+                                    if ($user['user_id'] == $PHORUM["user"]["user_id"]) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMFromMailboxFull"];
+                                    } else {
+                                        $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
+                                        $error = str_replace('%recipient%', htmlspecialchars($user["username"]), $error);
                                     }
                                 }
                             }
@@ -325,7 +382,7 @@ if (!empty($action)) {
                         // Send the private message if no errors occurred.
                         if (empty($error)) {
 
-                            $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], $to_user_id, NULL, $_POST["keep"]);
+                            $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], array_keys($recipients), NULL, $_POST["keep"]);
 
                             // Show an error in case of problems.
                             if(! $pm_message_id){
@@ -345,9 +402,8 @@ if (!empty($action)) {
                                     'from_user_id'  => $user_id,
                                 );
 
-                                $langrcpts = array();
-
                                 // Sort all recipients that want a notify by language.
+                                $langrcpts = array();
                                 foreach ($recipients as $rcpt) {
                                     if ($rcpt["pm_email_notify"]) {
                                         if (!isset($langrcpts[$rcpt["user_language"]])) {
@@ -365,13 +421,16 @@ if (!empty($action)) {
                         }
 
                         // Invalidate user cache, to update message counts.
-                        // PMTODO invalidate cache for all users if multiple rcpts are supported.
-                        phorum_cache_remove('user',$user_id);
-                        phorum_cache_remove('user',$to_user_id);
+                        phorum_cache_remove('user', $user_id);
+                        foreach ($recipients as $rcpt) {
+                            phorum_cache_remove('user', $rcpt["user_id"]);
+                        }
+
+                        $redirect_message = "PMSent";
                     }
 
                 } else {
-                    $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                    $error = $PHORUM["DATA"]["LANG"]["PMNoRecipients"];
                 }
 
                 // Stay on the post page in case of errors. Redirect on success.
@@ -543,17 +602,14 @@ switch ($page) {
                 $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
                 $list[$message_id]["read_url"]=phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
                 $list[$message_id]["date"] = phorum_date($PHORUM["short_date"], $message["datestamp"]);
+                $list[$message_id]["recipient_count"] = count($message["recipients"]);
+                $receive_count = 0;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
+                    if ($rcpt["read_flag"]) $receive_count++;
                     $list[$message_id]["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
+                    $list[$message_id]["recipients"][$rcpt_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
                 }
-
-                // PMTODO backward compatibility with 1 recipient in all messages.
-                // Once the interface is up to multiple recipients, this part can be
-                // removed.
-                reset($message['recipients']);
-                list($rcpt_id, $rcpt) = each($message['recipients']);
-                $list[$message_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
-                $list[$message_id]["to_username"] = htmlspecialchars($rcpt["username"]);
+                $list[$message_id]["receive_count"] = $receive_count;
             }
 
             // Setup template variables.
@@ -584,18 +640,15 @@ switch ($page) {
             // Run the message through the default message formatting.
             $message = phorum_pm_format($message);
 
+            // Setup data for recipients.
+            foreach ($message["recipients"] as $rcpt_id => $rcpt) {
+                $message["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
+                $message["recipients"][$rcpt_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+            }
+
             // Setup URL's and format date.
             $message["from_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
             $message["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
-
-            // PMTODO backward compatibility with 1 recipient in all messages.
-            // Once the interface is up to multiple recipients, this part can be
-            // removed.
-            reset($message['recipients']);
-            list($rcpt_id, $rcpt) = each($message['recipients']);
-            $message["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
-            $message["to_username"] = htmlspecialchars($rcpt["username"]);
-            //$message["read_flag"] = $rcpt["read_flag"];
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
             $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["PMRead"];
@@ -622,11 +675,11 @@ switch ($page) {
         // Setup the default array with the message data.
         $msg = array(
             "from_username" => $PHORUM["user"]["username"],
-            "keep"          => isset($_POST["keep"]) ? 1 : 0,
+            "keep"          => isset($_POST["keep"]) && $_POST["keep"] ? 1 : 0,
             "subject"       => isset($_POST["subject"]) ? $_POST["subject"] : '',
             "message"       => isset($_POST["message"]) ? $_POST["message"] : '',
             "preview"       => isset($_POST["preview"]) ? 1 : 0,
-            "recipients"    => array(),
+            "recipients"    => $recipients,
         );
 
         // Data initialization for posting messages on first request.
@@ -636,10 +689,9 @@ switch ($page) {
             // Recipients are passed on as a standard phorum argument "to_id"
             // containing a colon separated list of users.
             if (isset($PHORUM["args"]["to_id"])) {
-
                 foreach (explode(":", $PHORUM["args"]["to_id"]) as $rcpt_id) {
                     settype($rcpt_id, "int");
-                    $user = phorum_db_user_get($rcpt_id, false);
+                    $user = phorum_user_get($rcpt_id, false);
                     $user = phorum_hook('user_get', $user);
                     if ($user) {
                         $msg["recipients"][$rcpt_id] = array(
@@ -675,7 +727,7 @@ switch ($page) {
                     // username in the message table. There will be a better solution
                     // for selecting recipients, but for now this will fix some
                     // of the problems.
-                    $user = phorum_db_user_get($message["user_id"], false);
+                    $user = phorum_user_get($message["user_id"], false);
 
                     $msg["subject"] = $message["subject"];
                     $msg["message"] = $message["body"];
@@ -691,8 +743,6 @@ switch ($page) {
         // Setup data for previewing a message.
         if ($msg["preview"]) {
             $preview = phorum_pm_format($msg);
-            $preview["from_profile_url"] = '#';
-            $preview["to_profile_url"] = '#';
             $PHORUM["DATA"]["PREVIEW"] = $preview;
         }
 
@@ -712,19 +762,31 @@ switch ($page) {
             }
         }
 
+
         $PHORUM["DATA"]["MESSAGE"] = $msg;
+        $PHORUM["DATA"]["RECIPIENT_COUNT"] = count($msg["recipients"]);
+        $PHORUM["DATA"]["SHOW_USERSELECTION"] = true;
+
+        // Determine what input element gets the focus.
+        $focus_id = 'userselection';
+        if ($PHORUM["DATA"]["RECIPIENT_COUNT"]) $focus_id = 'subject';
+        if (!empty($msg["subject"])) $focus_id = 'message';
+        $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus_id;
 
         // Create data for a user dropdown list, if configured.
-        if ($PHORUM["enable_dropdown_userlist"])
+        if ($PHORUM["DATA"]["SHOW_USERSELECTION"] && $PHORUM["enable_dropdown_userlist"])
         {
             $allusers = array();
             $userlist = phorum_user_get_list();
-            foreach ($userlist as $userinfo){
+            foreach ($userlist as $user_id => $userinfo){
+                if (isset($msg["recipients"][$user_id])) continue;
                 $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
                 $userinfo["username"] = htmlspecialchars($userinfo["username"]);
+                $userinfo["user_id"] = $user_id;
                 $allusers[] = $userinfo;
             }
             $PHORUM["DATA"]["USERS"] = $allusers;
+            if (count($allusers) == 0) $PHORUM["DATA"]["SHOW_USERSELECTION"] = false;
         }
 
         $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["SendPM"];

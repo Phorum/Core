@@ -10,7 +10,20 @@
 
 <div class="PhorumReadBodySubject">{MESSAGE->subject}</div>
 <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="{MESSAGE->from_profile_url}">{MESSAGE->from_username}</a></strong></div>
-<div class="PhorumReadBodyHead">{LANG->To}: <strong><a href="{MESSAGE->to_profile_url}">{MESSAGE->to_username}</a></strong></div>
+<div class="PhorumReadBodyHead">
+  {LANG->To}:
+  {ASSIGN ISFIRST true}
+  {LOOP MESSAGE->recipients}
+   <div style="display:inline; white-space: nowrap">
+    {IF NOT ISFIRST} / {/IF}
+    <strong><a href="{MESSAGE->recipients->to_profile_url}">{MESSAGE->recipients->username}</a></strong>
+    {IF USERINFO->user_id MESSAGE->from_user_id}
+      {IF NOT MESSAGE->recipients->read_flag}({LANG->PMUnread}){/IF}
+    {/IF}
+    {ASSIGN ISFIRST false}
+   </div>
+  {/LOOP MESSAGE->recipients}
+</div>
 <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGE->date}</div>
 <br />
 <div class="PhorumReadBodyText">{MESSAGE->message}</div><br />

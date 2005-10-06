@@ -1,7 +1,3 @@
-{IF ERROR}
-  <div class="PhorumUserError">{ERROR}</div>
-{/IF}
-
 <form action="{ACTION}" method="post">
 {POST_VARS}
 <input type="hidden" name="panel" value="pm" />
