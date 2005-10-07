@@ -487,24 +487,34 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         phorum_db_newflag_add_read($read_messages);
     }
 
-    // do not show the reply box if the message is closed or a closed announcement
-    if($thread_is_announcement && $thread_is_closed) {
-
-        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadAnnouncement"];
-        include phorum_get_template("message");
-
-    } elseif($thread_is_closed && !$thread_is_announcement) {
-
-        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["ThreadClosed"];
+    // An anchor so clicking on a reply button can let the browser
+    // jump to the editor or the closed thread message.
+    if($PHORUM["reply_on_read_page"]) {
         print '<a name="REPLY"></a>';
+    }
+
+    // Never show the reply box if the message is closed.
+    if($thread_is_closed) {
+
+        // Closed announcements have their own specific message.
+        $key = $thread_is_announcement ? "ThreadAnnouncement" : "ThreadClosed";
+        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"][$key];
         include phorum_get_template("message");
 
     } elseif($PHORUM["reply_on_read_page"]) {
 
-        if(substr($PHORUM["DATA"]["POST"]["subject"], 0, 4) != "Re: ") $PHORUM["DATA"]["POST"]["subject"] = "Re: " . $PHORUM["DATA"]["POST"]["subject"];
-        $PHORUM["DATA"]["POST"]["subject"]=htmlspecialchars($PHORUM["DATA"]["POST"]["subject"]);
+        // Prepare the arguments for the posting.php script.
+        $goto_mode = "reply";
+        if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
+            $goto_mode = "quote";
+        }
+        if (! isset($PHORUM["args"][2])) {
+            $PHORUM["args"][2] = $PHORUM["args"][1];
+        }
+        $PHORUM["args"][1] = $goto_mode;
+        $PHORUM["args"]["as_include"] = 1;
 
-        include "./include/post_form.php";
+        include("./posting.php");
     }
 
     phorum_hook("before_footer");
