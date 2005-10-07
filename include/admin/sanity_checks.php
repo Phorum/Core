@@ -30,6 +30,9 @@
         }
     }
 
+    // Give module writers a possiblity to write custom sanity checks.
+    $sanity_checks = phorum_hook("sanity_checks", $sanity_checks);
+
     // ========================================================================
     // Build the sanity checking page and run all checks.
     // ========================================================================
@@ -63,14 +66,14 @@
     foreach ($sanity_checks as $check)
     {
         // Call the sanity check function. This function is expected
-        // to return an array containing an array with two elements:
+        // to return an array containing two elements:
         //
         // [1] A status, which can be one of
         //     PHORUM_SANITY_OK     No problem found
         //     PHORUM_SANITY_WARN   Problem found, but no fatal one
         //     PHORUM_SANITY_CRIT   Critical problem found
         //
-        // [2] A description of the problem that was found.
+        // [2] A description of the problem that was found or NULL.
         //
         list($status, $error) = call_user_func($check["function"]);
 
