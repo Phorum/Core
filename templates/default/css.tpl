@@ -579,11 +579,27 @@ div.phorum-menu a.phorum-current-page
         font-weight: bold;
     }
 
+    /********************/
+
+    /* Posting editor specifics */
+
     .PhorumListModLink, .PhorumListModLink a
     {
         color: {listmodlinkcolor};
         font-size: {tinyfontsize};
         font-family: {tinyfont};
+    }
+
+    .PhorumAttachmentRow {
+        border-bottom: 1px solid {altbackcolor};
+        padding: 3px 0px 3px 0px;
+    }
+
+    input.PhorumAttachmentButton {
+        border: none;
+        cursor: hand;
+        cursor: pointer;
+        background-color: transparent;
     }
 
     /********************/
