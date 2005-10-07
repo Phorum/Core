@@ -32,9 +32,7 @@ document.write("<div id=\"phorum-attach-form\" style=\"display: none;\">");
     {/IF}
     {IF NOT ATTACH_MAX_ATTACHMENTS 1}
       {IF NOT ATTACH_TOTALFILE_SIZE 0}
-        {IF NOT ATTACH_TOTALFILE_SIZE ATTACH_FILE_SIZE}
           <li>{LANG->AttachTotalFileSize} {ATTACH_FORMATTED_TOTALFILE_SIZE}</li>
-         {/IF}
       {/IF}
       <li>{ATTACH_REMAINING_ATTACHMENTS} {LANG->AttachMaxAttachments}</li>
     {/IF}
