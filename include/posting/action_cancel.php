@@ -24,8 +24,6 @@ foreach ($message["attachments"] as $info) {
     }
 }
 
-// TODO AttachCancel should probably be named PostCancel, but
-// TODO the default text currently in AttachCancel does the job.
 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["AttachCancel"];
 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["BackToList"];
 $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LIST_URL);

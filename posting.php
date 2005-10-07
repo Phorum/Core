@@ -47,10 +47,6 @@
 // $PHORUM["args"][2] the message id to work with (not needed for "post")
 //
 
-// TODO Update hook information in docs/creating_mods.txt
-// TODO The pre_edit hook is deprecated (pre_post is now
-// TODO also used for storing changed messages).
-
 // ----------------------------------------------------------------------
 // Basic setup and checks
 // ----------------------------------------------------------------------
