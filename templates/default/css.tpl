@@ -595,13 +595,6 @@ div.phorum-menu a.phorum-current-page
         padding: 3px 0px 3px 0px;
     }
 
-    input.PhorumAttachmentButton {
-        border: none;
-        cursor: hand;
-        cursor: pointer;
-        background-color: transparent;
-    }
-
     /********************/
 
     /* PM specifics */
