@@ -199,12 +199,9 @@ if ($success)
         // script, because our POST reqeust is coming from 
         // an enctype="multipart/mixed" form, which  is buggy
         // with anchored URL redirects in MSIE. 
-        // TODO make redirect script using phorum_get_url() when
-        // TODO editor gets accepted for the core.
         $redir_to = phorum_get_url(PHORUM_LIST_URL);
         $redir_to .= "#msg-" . $message["thread"];
-        $redir_url = $PHORUM["http_path"] . 
-                    "/redirect.php?phorum_redirect_to=" . urlencode($redir_to);
+        $redir_url = phorum_get_url(PHORUM_REDIRECT_URL, 'phorum_redirect_to=' . urlencode($redir_to));
     }
 
     phorum_redirect_by_url($redir_url);
