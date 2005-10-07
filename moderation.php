@@ -33,11 +33,6 @@ $msgthd_id = (isset($_POST["thread"])) ? (int)$_POST["thread"] : (int)$PHORUM['a
 
 $mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM['args'][1];
 
-
-if (isset($_POST['preview']) && !empty($_POST["preview"])) {
-	$mod_step=PHORUM_PREVIEW_EDIT_POST;
-}
-
 if(empty($msgthd_id) || !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
    phorum_return_to_list();
 }
@@ -220,74 +215,6 @@ switch ($mod_step) {
         phorum_hook("reopen_thread", $msgthd_id);
         break;
 
-    case PHORUM_PREVIEW_EDIT_POST:
-        phorum_hook("edit_preview_post","");
-
-		phorum_handle_edit_message(true);
-		// ... go on ...
-    case PHORUM_MOD_EDIT_POST: // moderator wants to edit a post
-        phorum_hook("edit_view_post","");
-
-		if(isset($PHORUM['DATA']['edit_msg'])) {
-			$message=$PHORUM['DATA']['edit_msg'];
-		} else {
-        	$message=phorum_db_get_message($msgthd_id);
-		}
-        $message['forum_id']=$PHORUM['forum_id'];
-
-        // expose the actual message fields
-        foreach($message as $key=>$value){
-            if(!is_array($value)){
-                $PHORUM["DATA"]["EDIT"][$key]=htmlspecialchars($value);
-            }
-        }
-
-        // expose the meta data that are scalar values
-        foreach($message["meta"] as $key=>$value){
-            if(!is_array($value)){
-                $PHORUM["DATA"]["EDIT"]["meta"][$key]=htmlspecialchars($value);
-            }
-        }
-
-        if(isset($message["meta"]["attachments"]) && is_array($message["meta"]["attachments"])){
-            foreach($message["meta"]["attachments"] as $file_data){
-                $PHORUM["DATA"]["EDIT"]["attachments"][]=array("file_id"=>$file_data["file_id"], "file_name"=>htmlspecialchars($file_data["name"]));
-            }
-        }
-
-        $PHORUM['DATA']['EDIT']['special']=$PHORUM['DATA']['EDIT']['sort'];
-        // only allow announcement if message has no replies
-        if($message['thread_count'] < 2) {
-        	$PHORUM['DATA']['EDIT']['show_announcement'] = $is_admin_user;
-        } else {
-        	$PHORUM['DATA']['EDIT']['show_announcement'] = 0;
-        }
-
-        if(isset($PHORUM['DATA']['EDIT']['user_id'])) {
-            $PHORUM['DATA']['EDIT']['emailreply']= phorum_db_get_if_subscribed($PHORUM['DATA']['EDIT']['forum_id'],$PHORUM['DATA']['EDIT']['thread'],$PHORUM['DATA']['EDIT']['user_id']);
-        }
-
-        $PHORUM['DATA']["EDIT"]["mod_step"]=PHORUM_SAVE_EDIT_POST;
-        $PHORUM['DATA']["URL"]["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
-
-        $PHORUM['DATA']["EDIT"]["useredit"]=false;
-        if ($PHORUM["DATA"]["EDIT"]["user_id"] > 0){
-            $PHORUM["DATA"]["EDIT"]["moderator_useredit"] = 1;
-        }
-        $PHORUM["DATA"]["EDIT"]["edit_allowed"] = 1;
-        $template="edit";
-
-        break;
-
-    case PHORUM_SAVE_EDIT_POST: // saving the edited post-data
-        phorum_hook("edit_save_post","");
-
-        phorum_handle_edit_message();
-        $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_READ_URL, $_POST['thread'], $_POST["message_id"]);
-        $PHORUM['DATA']['BACKMSG']=$PHORUM["DATA"]['LANG']['BackToThread'];
-
-        break;
-
     case PHORUM_APPROVE_MESSAGE: // approving a message
 
         $PHORUM['DATA']['MESSAGE']="1 ".$PHORUM["DATA"]['LANG']['MsgApprovedOk'];
@@ -314,6 +241,7 @@ switch ($mod_step) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
         break;
+
     case PHORUM_APPROVE_MESSAGE_TREE: // approve a message and all answers to it
 
         $old_message = phorum_db_get_message($msgthd_id);
@@ -379,6 +307,7 @@ switch ($mod_step) {
         break;
 
    case PHORUM_MERGE_THREAD: // this is the first step of a thread merge
+
         $template="merge_form";
         $PHORUM['DATA']['URL']["ACTION"]     = phorum_get_url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
@@ -403,6 +332,7 @@ switch ($mod_step) {
         break;
 
    case PHORUM_DO_THREAD_MERGE: // this is the last step of a thread merge
+
         if( isset($_POST['thread1']) && $_POST['thread1']) {
             // Commit Thread Merge
             settype($_POST['thread1'], "int");
@@ -469,6 +399,7 @@ switch ($mod_step) {
         break;
 
    case PHORUM_SPLIT_THREAD: // this is the first step of a thread split
+
            $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
            $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
            $message =phorum_db_get_message($msgthd_id);
@@ -480,6 +411,7 @@ switch ($mod_step) {
            break;
 
    case PHORUM_DO_THREAD_SPLIT: // this is the last step of a thread split
+
            $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgSplitOk'];
            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
            settype($_POST['forum_id'], "int");
@@ -492,22 +424,19 @@ switch ($mod_step) {
            phorum_db_update_forum_stats(true);
            break;
 
-
     default:
+
         if(!isset($PHORUM['DATA']['MESSAGE'])) $PHORUM['DATA']['MESSAGE']="";
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
 }
 
-if(!isset($PHORUM['DATA']['BACKMSG']))
-        $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
+if(!isset($PHORUM['DATA']['BACKMSG'])) {
+    $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
+}
 
 include phorum_get_template("header");
 phorum_hook("after_header");
-if($mod_step == PHORUM_PREVIEW_EDIT_POST) {
-	include phorum_get_template("preview");
-}
 include phorum_get_template($template);
-
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 
