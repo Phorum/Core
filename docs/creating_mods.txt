@@ -494,7 +494,7 @@ Table of contents:
    should make sure that the custom profile field is large enough to
    store all the data. When your module needs to store multiple fields,
    this is the preferred way.
-   
+
    For storing data in the custom profile field, you can make use of the
    phorum_user_save() function. Below are two pieces of code which show
    how our example module might store data for a user (asuming $user_id
@@ -515,14 +515,14 @@ Table of contents:
         "bardata" => "Some more user data"
       );
       phorum_user_save($user);
-   
+
 
  2.6 Creating custom URLs
  -------------------------
 
    Phorum uses the function phorum_get_url() to consistenly build URLs
    that point to parts of Phorum. It is recommended that you use this
-   function as well when creating links yourself, so special features 
+   function as well when creating links yourself, so special features
    and future changes will automatically be incorporated in the links
    you use.
 
@@ -535,21 +535,21 @@ Table of contents:
    argument which tells Phorum what kind of URL has to be built.
    So when building other URLs, other arguments will probably
    be used.
-   
-   If you need to build a custom URL to link to your own module, you 
+
+   If you need to build a custom URL to link to your own module, you
    can use phorum_get_url() as well. The way to go is simple. You
    need to use PHORUM_CUSTOM_URL as the first argument and add all
    URL building parameters to it.
 
-   The first parameter needs to be the filename of the file to link 
-   to, without the (.php) extension. The second parameter needs to 
+   The first parameter needs to be the filename of the file to link
+   to, without the (.php) extension. The second parameter needs to
    be 0 or 1. If it is 1, the current forum_id is added to the URL.
    All other parameters are added comma separated to the URL.
 
    Here's an example of building a custom URL which links to the
    file "myfile.php". The URL has to have the forum_id in it and
    needs to contain the additional parameter "foo=bar":
-   
+
       $url = phorum_get_url(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar");
 
 
@@ -560,24 +560,24 @@ Table of contents:
 
    Some modules that you write might need to store settings for later
    use. For those, you can create a settings page which will be used
-   from within the admin interface. 
+   from within the admin interface.
 
    The settings page must be put in your modules's directory by the
    name of "settings.php". So for our example module "foo" the file
-   would go in {phorum dir}/mods/foo/settings.php. In the admin 
+   would go in {phorum dir}/mods/foo/settings.php. In the admin
    interface under the option "Modules", a link to the settings.php
-   page will automatically be added if the settings.php file is 
+   page will automatically be added if the settings.php file is
    available for your module.
-   
+
    Although you can do anything you want from your settings.php script,
    it is recommended that you use the tools that are handed to you
    by Phorum for building pages and storing settings.
-   
-   One of those tools is a PHP object "PhorumInputForm" which 
+
+   One of those tools is a PHP object "PhorumInputForm" which
    can be used to create standard input forms and table displays in
    the admin interface. The best example here is to look at one of the
    modules that come with Phorum like "bbcode" or "replace".
-   
+
    Another tool is the function phorum_db_update_settings() which can
    be used for storing settings in the database. To store settings using
    this function you do something like the following:
@@ -660,7 +660,7 @@ Table of contents:
    the same directory. So if you want to access files in your module
    directory, you will have to specify the relative path to those
    files. This path looks like:
-   
+
       ./mods/<module>/<filename>
 
    So let's say that our module "foo" has a subdirectory "images"
@@ -672,7 +672,7 @@ Table of contents:
    Another example: let's say that there is a function library
    named "my_module_functions.php" in the module, which must be
    included from then module code, then this is done using:
-   
+
       include("./mods/foo/my_module_functions.php");
 
 
@@ -698,12 +698,12 @@ Table of contents:
  3.6 Secure your pages from XSS
  ------------------------------
 
-   XSS stands for cross site scripting. This means that hackers 
+   XSS stands for cross site scripting. This means that hackers
    can feed HTML data to your application, which is displayed on
    screen without stripping or escaping the HTML data. This way
    it can be possible for hackers to feed malicous javascript
    code into the browser of users on the forum, causing a security
-   risk. If you want to learn more about XSS, please visit 
+   risk. If you want to learn more about XSS, please visit
    http://en.wikipedia.org/wiki/XSS
 
    To prevent XSS security holes, you must take care that all
@@ -712,13 +712,13 @@ Table of contents:
    the data (e.g. using http://www.php.net/strip_tags) or by escaping
    all html characters (using http://www.php.net/htmlspecialchars).
 
-   Example: 
+   Example:
 
-   If your module needs to display the username for a user on 
+   If your module needs to display the username for a user on
    screen, it must not simply do:
-   
+
        print $user["username"];
-       
+
    Instead you must use:
 
        print htmlspecialchars($user["username"]);
@@ -732,13 +732,13 @@ Table of contents:
 
  3.7 Prevent namespace collisions
  --------------------------------
-   
+
    When creating modules, you must always be aware that you are
-   working in the same namespace as other modules and Phorum itself. 
-   This means that there is a risk of duplicate use of function 
+   working in the same namespace as other modules and Phorum itself.
+   This means that there is a risk of duplicate use of function
    and variable names. By following a couple of simple rules, you
    can greatly reduce this risk.
-   
+
 
   3.7.1 (Hook) functions
   ----------------------
@@ -783,7 +783,7 @@ Table of contents:
   ----------------------------------------
 
    When storing your custom language strings, do not put them directly
-   in $PHORUM["DATA"]["LANG"] like Phorum does, because that might 
+   in $PHORUM["DATA"]["LANG"] like Phorum does, because that might
    result in conflicting language strings. Instead add an extra data level,
    which makes sure that your module keeps all language strings to itself.
 
@@ -811,7 +811,7 @@ Table of contents:
       $new_message["meta"]["mod_foo_foodata"] = "Some data";
       $user["mod_foo_foodata"] = "Some data";
       phorum_db_update_settings(array("mod_foo" => $foo_settings));
-      
+
    See also sections 2.4 (message data), 2.5 (user data) and 2.7 (settings).
 
 
@@ -824,18 +824,19 @@ Table of contents:
 
    Remarks:
 
-   * In the overview, you will see what the hook functions will get
-     as their input. In case the function has to return the same type
-     of data structure as output, no specific output section will be
-     used in the hook description. 
-   
+   * Input is what your module function should expect as parameters.
+
+   * Return is what your module function should return.  Most hooks
+     expect the same data structure as was sent.  For those items,
+     the Return is listed simply as "Same as Input".
+
    * Normally, hook functions are allowed to modify the data that was
      sent as input. If this is not allowed, the input data will be
      flagged as read-only.
 
    * In most cases the hook description will provide only one or more
      of the possible uses for the hook. The full leverage of each hook
-     is only limited by the imagination of the module writer (it's 
+     is only limited by the imagination of the module writer (it's
      as much a cliche as it is true).
 
    * It may be that you need to hook into a spot where there is
@@ -847,14 +848,30 @@ Table of contents:
 
 
    ----------------------------------------------------------------------------
-   admin_general    
+   admin_general
 
    Where  : admin interface
    When   : Right before the PhorumInputForm object is shown.
    Input  : The PhorumInputForm object.
-   
-   This hook can be used for adding items to the form on the 
-   "General Settings" page of the admin interface. 
+   Return : Same as Input
+
+   This hook can be used for adding items to the form on the
+   "General Settings" page of the admin interface.
+
+   ----------------------------------------------------------------------------
+   after_attach
+
+   Where  : include/action_attachments.php
+   When   : Just after a file attachment is saved in the database
+   Input  : Two part array where the first element is the message array and
+            the second element is a file array that contains the name, size,
+            and file_id of the newly saved file.
+   Return : Same as Input
+
+   The primary use of this hook would be for creating an alternate storage
+   system for attachments.  You would need to use the before_attach hook to
+   remove the file data and in this hook it could be saved properly.  You will
+   need to use the file hook to retreive the file data later.
 
    ----------------------------------------------------------------------------
    after_header
@@ -862,6 +879,7 @@ Table of contents:
    Where  : Every page, except for the admin interface pages
    When   : Right after the header is displayed.
    Input  : none
+   Return : none
 
    This hook can be used for creating content at the end of the header,
    just before the main content is displayed.
@@ -870,9 +888,10 @@ Table of contents:
    after_login
 
    Where  : login.php
-   When   : After a successfull login, just before redirecting the 
+   When   : After a successfull login, just before redirecting the
             user to a Phorum page.
    Input  : The redirection URL.
+   Return : Same as Input
 
    This hook can be used for performing tasks after a successfull user
    login and for changing the page to which the user will be redirected
@@ -887,22 +906,39 @@ Table of contents:
    When   : After a logout, just before redirecting the user to
             a Phorum page.
    Input  : The redirection URL.
+   Return : Same as Input
 
    This hook can be used for performing tasks after a successfull user
    logout and for changing the page to which the user will be redirected
-   (by returning a different redirection URL). The userdata will still 
+   (by returning a different redirection URL). The userdata will still
    be availbale in $PHORUM["user"] at this point.
 
    ----------------------------------------------------------------------------
    after_register
 
-   Where  : register.php 
+   Where  : register.php
    When   : Right after a successfull registration of a new user is done
             and all confirmation mails are sent.
    Input  : Array containing the userdata of the user (read-only).
-   
-   This hook can be used for performing tasks (like logging and 
+   Return : Same as Input
+
+   This hook can be used for performing tasks (like logging and
    notification) after a successfull user registration.
+
+   ----------------------------------------------------------------------------
+   before_attach
+
+   Where  : include/action_attachments.php
+   When   : Just before a file attachment is saved in the database
+   Input  : Two part array where the first element is the message array and
+            the second element is a file array that contains the name, size
+            and data.
+   Return : Same as Input
+
+   The primary use of this hook would be for creating an alternate storage
+   system for attachments.  You would need to use the after_attach hook to
+   complete the process as you do not yet have the file_id for the file.  You
+   will need to use the file hook to retreive the file data later.
 
    ----------------------------------------------------------------------------
    before_footer
@@ -910,17 +946,19 @@ Table of contents:
    Where  : Every page, except for the admin interface pages
    When   : Right before the footer is displayed.
    Input  : none
-   
+   Return : none
+
    This hook can be used for creating content at the end of the main
-   content, just before the footer. It can also be used for 
+   content, just before the footer. It can also be used for
    performing tasks that have to be executed at the end of each page.
 
    ----------------------------------------------------------------------------
    before_register
 
-   Where  : register.php 
+   Where  : register.php
    When   : Right before a new user is stored in the database.
    Input  : Array containing the userdata of the user.
+   Return : Same as Input
 
    This hook can be used for performing tasks before user registration.
    This hook is particularly useful if you want to add some data to
@@ -932,7 +970,8 @@ Table of contents:
    Where  : control.php
    When   : Right before data for a user is saved in the control panel.
    Input  : Array containing the userdata to save.
-   
+   Return : Same as Input
+
    This hook can be used for changing the userdata that will be saved.
 
    ----------------------------------------------------------------------------
@@ -941,22 +980,23 @@ Table of contents:
    Where  : post.php
    When   : Right after performing preliminary posting checks, unless
             these checks have returned something bad.
-   Input  : Array containing: 
+   Input  : Array containing:
             0 => the $_POST array with form data
             1 => $error, to return errors in
-   
+   Return : Same as Input
+
    This hook can be used for modifying data in the $_POST array and for
-   running additional checks on the data. If an error is put in $error, 
+   running additional checks on the data. If an error is put in $error,
    Phorum will stop posting the message and show the error to the user
-   in the post-form. 
-             
+   in the post-form.
+
    Beware that $error can already contain an error on input, in case
    multiple modules are run for this hook. Therefore you might want to
    return immediately in your hook function in case $error is already
    set.
 
-   Below is an example of how a function for this hook could look. 
-   This example will disallow the use of the word "bar" in the 
+   Below is an example of how a function for this hook could look.
+   This example will disallow the use of the word "bar" in the
    message body.
 
       function phorum_mod_foo_check_post ($args) {
@@ -976,6 +1016,7 @@ Table of contents:
    Where  : moderation.php
    When   : Right after a thread has been closed by a moderator.
    Input  : The id of the thread that has been closed (read-only).
+   Return : Same as Input
 
    This hook can be used for performing actions like sending notifications
    or making log entries after closing threads.
@@ -986,9 +1027,10 @@ Table of contents:
    Where  : common.php, so in practice every page
    When   : Right before the end of the common.php include script.
    Input  : none
-   
+   Return : none
+
    This hook can be used for applying custom settings or altering
-   Phorum settings based on external parameters. 
+   Phorum settings based on external parameters.
 
    ----------------------------------------------------------------------------
    common_post_user
@@ -997,9 +1039,10 @@ Table of contents:
    When   : Right after loading the user from the database, but just
             before making descisions on language and template.
    Input  : none
+   Return : none
 
    This hook can be used for applying custom settings or altering
-   Phorum settings based on external parameters. 
+   Phorum settings based on external parameters.
 
    ----------------------------------------------------------------------------
    common_pre
@@ -1008,9 +1051,10 @@ Table of contents:
    When   : Right after loading the settings from the database, but just
             before making descisions on language, template and user.
    Input  : none
+   Return : none
 
    This hook can be used for applying custom settings or altering
-   Phorum settings based on external parameters. 
+   Phorum settings based on external parameters.
 
    ----------------------------------------------------------------------------
    delete
@@ -1018,6 +1062,7 @@ Table of contents:
    Where  : moderation.php
    When   : Right after deleting a message from the database.
    Input  : Array of ids for messages that have been deleted (read-only).
+   Return : none
 
    This hook can be used for cleaning up anything you may have created
    with the post_post hook or any other hook that stored data tied to
@@ -1049,19 +1094,33 @@ Table of contents:
    For easy use, you can of course put these commands in a script file.
 
    ----------------------------------------------------------------------------
+   file
+
+   Where  : file.php
+   When   : When attachments are requested.
+   Input  : Two part array where the first element is the mime type already
+            detected by file.php and the second part is the file array that
+            contains the filename, file_data, filesize, etc.
+   Return : Same as Input
+
+   This hook could be used to count file downloads, or along with after_attach
+   an alternate file data storage mechanism could be created.
+
+   ----------------------------------------------------------------------------
    format
 
    Where  : phorum_format_messages() in include/format_functions.php
    When   : Everytime phorum_format_messages() is called for formatting
             a message, just before it is sent to the templates.
-   Input  : Array of messages. 
-   
+   Input  : Array of messages.
+   Return : Same as Input
+
    This hook can be used for applying custom formatting to messages. The
    message fields that are most applicable for this are "body" and "author".
    When writing a module using this hook, you probably want to format
    those fields. In practice you can apply formatting to all the fields
    you want.
-             
+
    The changes you make to the messages are for displaying purposes
    only, so the changes are not stored in the database.
 
@@ -1071,6 +1130,7 @@ Table of contents:
    Where  : moderation.php
    When   : Right after a message has been hidden by a moderator.
    Input  : The id of the message that has been hidden (read-only).
+   Return : Same as Input
 
    This hook can be used for performing actions like sending notifications
    or making log entries after hiding a message.
@@ -1081,6 +1141,7 @@ Table of contents:
    Where  : include/index_new.php and include/index_classic.php
    When   : Right before the list of forums is displayed.
    Input  : Array of forums.
+   Return : Same as Input
 
    This hook can be used for changing or adding data to the forums
    in the list.
@@ -1091,8 +1152,8 @@ Table of contents:
    The lang hook is a only a 'marker'. It flags Phorum that your module
    supports multiple languages. It does not take a hook function in
    your module information. If you do define a hook function, it will
-   never be called. 
-   
+   never be called.
+
    Read section 2.3 for information on the use of multiple languages.
 
    ----------------------------------------------------------------------------
@@ -1101,9 +1162,10 @@ Table of contents:
    Where  : list.php
    When   : Right before the messages are formatted and displayed.
    Input  : Array of threads (or messages in threaded mode).
-   
+   Return : Same as Input
+
    This hook can be used for changing or adding data to the messages
-   in the list. 
+   in the list.
 
    ----------------------------------------------------------------------------
    moderation
@@ -1111,6 +1173,7 @@ Table of contents:
    Where  : moderation.php
    When   : At the start of moderation.php
    Input  : The id of the moderation step which is run (read-only).
+   Return : none
 
    This hook can be used for logging moderator actions. You can
    use the $PHORUM-array to retrieve additional info like the
@@ -1130,6 +1193,7 @@ Table of contents:
    Where  : moderation.php
    When   : Right after a thread has been moved by a moderator.
    Input  : The id of the thread that has been moved (read-only).
+   Return : none
 
    This hook can be used for performing actions like sending notifications
    or for making log entries after moving a thread.
@@ -1140,9 +1204,10 @@ Table of contents:
    Where  : include/controlcenter/pm.php
    When   : Right after a PM and its email notifications have been sent.
    Input  : Array containing the private message data (read-only).
-   
+   Return : none
+
    This hook can be used for performing actions after sending a PM. Before
-   PM notification by email was put in the Phorum core, this hook was 
+   PM notification by email was put in the Phorum core, this hook was
    used to send those notifications.
 
    ----------------------------------------------------------------------------
@@ -1151,6 +1216,7 @@ Table of contents:
    Where  : include/moderation_functions.php
    When   : Right after storing an edited message in the database.
    Input  : Array containing messagedata (read-only).
+   Return : none
 
    This hook can be used for sending notifications or for making log entries
    in the database when editing takes place.
@@ -1162,9 +1228,10 @@ Table of contents:
    When   : Right after storing a new message in the database and just
             before the user is redirected back to the list.
    Input  : Array containing messagedata (read-only).
-   
+   Return : none
+
    This hook can be used for performing actions based on what the message
-   contained or for storing extra information for the message using the 
+   contained or for storing extra information for the message using the
    meta data field.
 
    ----------------------------------------------------------------------------
@@ -1173,7 +1240,8 @@ Table of contents:
    Where  : include/moderation_functions.php
    When   : Right before storing an edited message in the database.
    Input  : Array containing messagedata.
-  
+   Return : Same as Input
+
    This hook can be used for changing the messagedata before storing it.
 
    ----------------------------------------------------------------------------
@@ -1182,6 +1250,7 @@ Table of contents:
    Where  : post.php
    When   : Right before storing a new message in the database.
    Input  : Array containing messagedata.
+   Return : Same as Input
 
    This hook can be used for changing the messagedata before storing it.
 
@@ -1191,7 +1260,8 @@ Table of contents:
    Where  : profile.php and include/controlcenter/summary.php
    When   : Right before a user profile is displayed.
    Input  : Array containing user profile data.
-   
+   Return : Same as Input
+
    This hook can be used for making changes to the profile data. This
    is for displaying purposes only, so the changes are not stored in the
    database.
@@ -1204,39 +1274,42 @@ Table of contents:
    Input  : Array containing:
             0 => The message author
             1 => The message body
-   Output : The quoted body to use in the post form.
+   Return : The quoted body to use in the post form.
 
    When quoting a message for reply, by default Phorum formats quoted
    messages using an old school email style of quoting. By using the quote
    hook, you can implement a different quoting mechanism.
 
    Your hook function will retrieve an array containing two elements:
-   the author and the body of the message to be quoted. The return 
+   the author and the body of the message to be quoted. The return
    value for your hook function must be the quoted body that will
-   be pre-filled into the reply form (so you won't return the initi.
+   be pre-filled into the reply form.
 
    The BBCode module that is distributed with Phorum has a quote hook
    function. Because it does not make sense to have more than one quote
-   hook active, you need to make sure that that quote hook is disabled
+   hook active, the BBCode module has an option to disable its quote hook
+   function.  You need to make sure that its quote hook function is disabled
    when using your own quote hook.
-   
+
    ----------------------------------------------------------------------------
    read
 
    Where  : read.php
    When   : Right before messages are formatted for displaying.
    Input  : Array of messages.
-   
+   Return : Same as Input
+
    This hook can be used for making changes to the message data when
-   reading messages. This is for displaying purposes only, so the 
+   reading messages. This is for displaying purposes only, so the
    changes are not stored in the database.
 
    ----------------------------------------------------------------------------
    read_user_info
 
    Where  : read.php post.php include/moderation_functions.php
-   When   : Right after retrieving userdata. 
-   Input  : Array of users. 
+   When   : Right after retrieving userdata.
+   Input  : Array of users.
+   Return : Same as Input
 
    This hook can be used for changing information for the users before
    being displayed. For example: add a border around user signatures.
@@ -1249,9 +1322,10 @@ Table of contents:
    Where  : read.php
    When   : At the start of the threaded read handling, just before
             sorting and displaying the threads.
-   Input  : Array of messages. 
+   Input  : Array of messages.
+   Return : Same as Input
 
-   This hook does exactly the same as the read hook, except that this 
+   This hook does exactly the same as the read hook, except that this
    one is only applied to messages when viewing the message list in
    threaded mode.
 
@@ -1261,6 +1335,7 @@ Table of contents:
    Where  : moderation.php
    When   : Right after a thread has been reopened by a moderator.
    Input  : The id of the thread that has been reopened (read-only).
+   Return : Same as Input
 
    This hook can be used for performing actions like sending notifications
    or making log entries after reopening threads.
@@ -1271,8 +1346,9 @@ Table of contents:
    Where  : report.php
    When   : Just before a reported message is sent to the moderators.
    Input  : Array with maildata (see report.php for the exact contents).
+   Return : Same as Input
 
-   This hook can be used for changing the report data that will be 
+   This hook can be used for changing the report data that will be
    sent to the moderators or for performing actions like making log
    entries.
 
@@ -1284,7 +1360,7 @@ Table of contents:
    containing a scheduled hook are invoked by running script.php with
    the --scheduled argument (no module name is taken; this argument
    will run all scheduled hooks for all available modules).
-   
+
    Like the name of the hook already suggests, this hook can be used for
    creating tasks which have to be executed on a regular basis. To
    archieve this, you can let script.php run from a scheduling
@@ -1295,8 +1371,8 @@ Table of contents:
    uses for a scheduled hook could be housekeeping (cleanup of
    stale/old data), daily content generation (like sending daily digests
    containing all posted messages for that day) or forum statistics
-   generation. 
-  
+   generation.
+
    Mind that for using a scheduled hook, the module in which it is
    handled must be enabled in your admin interface. So if a scheduled
    hook is not running, the containing module might be disabled.
@@ -1311,7 +1387,7 @@ Table of contents:
 
    When creating a scheduling service entry for running this
    automatically, then remind to change the directory as well.
-   You might also have to use the full path to your PHP binary 
+   You might also have to use the full path to your PHP binary
    (/usr/bin/php or whatever it is on your system), because
    the scheduling service might not know the path to it. An entry
    for the cron system on UNIX could look like this:
@@ -1327,9 +1403,10 @@ Table of contents:
    Where  : search.php
    When   : Right before messages are formatted for displaying.
    Input  : Array of messages.
-   
+   Return : Same as Input
+
    This hook can be used for making changes to the message data when
-   searching for messages. This is for displaying purposes only, so the 
+   searching for messages. This is for displaying purposes only, so the
    changes are not stored in the database.
 
    ----------------------------------------------------------------------------
@@ -1343,27 +1420,27 @@ Table of contents:
             subject   => The mail subject,
             body      => The mail body,
             bcc       => Whether to use Bcc for mailing multiple recipients
-   Output : 0 (zero) in case the hook function has sent out the emails
+   Return : true/false - see description
 
    This hook can be used for implementing an alternative mail sending
-   system (e.g. like the SMTP module does). In case the hook function
-   returns 0 (zero), phorum_email_user() will asume that the hook
-   handled all the mail sending and won't do any mail delivery
-   by itself anymore.
+   system (e.g. like the SMTP module does).  The hook should return true if
+   Phorum should still send the mails himself.  If you do not want to have
+   Phorum send the mails also, return false.
 
    ----------------------------------------------------------------------------
    user_list
 
-   Where  : include/users.php include/controlcenter/groupmod.php 
-   When   : Whenever phorum_user_get_list() is called. 
+   Where  : include/users.php include/controlcenter/groupmod.php
+   When   : Whenever phorum_user_get_list() is called.
    Input  : Array containing:
             <user_id> => <data>
             Where <data> is an array containing:
             username    => the username for the user
             displayname => the way to display the username
+   Return : Same as Input
 
-    This hook can be used for reformatting the list of users in some 
-    way, sutch as changing the sort order or changing the format of
+    This hook can be used for reformatting the list of users in some
+    way, such as changing the sort order or changing the format of
     the displayed names.
 
 
@@ -1371,6 +1448,6 @@ Table of contents:
 -------------------------------------------------------------------------------
 
    If you have questions about creating modules for Phorum, please visit
-   the website http://www.phorum.org/ and ask the dev team for help in the
+   the website http://phorum.org/ and ask the dev team for help in the
    Development forum.
 
