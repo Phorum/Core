@@ -112,7 +112,12 @@ if ($mode == "edit")
         ! $top_parent["closed"] &&
         (! $timelim || $message["datestamp"] + ($timelim * 60) >= time());
 
-    if (! ($useredit || $PHORUM["DATA"]["MODERATOR"])) {
+    $moderatoredit =
+        $PHORUM["DATA"]["MODERATOR"] &&
+        $message["forum_id"] == $PHORUM["forum_id"] &&
+        ($message["special"] != "announcement" || $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"]);
+
+    if (!$useredit && !$moderatoredit) {
         $PHORUM["DATA"]["MESSAGE"] =
             $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
         $error_flag = true;

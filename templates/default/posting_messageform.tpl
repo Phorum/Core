@@ -76,15 +76,19 @@
   </td>
   <td>
 
+    {IF SHOW_SPECIALOPTIONS}
     <select name="special">
       <option value=""></option>
-      <option value="sticky"{IF POST->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
-      {IF SHOW_ANNOUNCEMENT}
+      {IF OPTION_ALLOWED->sticky}
+        <option value="sticky"{IF POST->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
+      {/IF}
+      {IF OPTION_ALLOWED->announcement}
         <option value="announcement" {IF POST->special "announcement"} selected{/IF}>{LANG->MakeAnnouncement}</option>
       {/IF}
     </select>
-
-    {IF SHOW_ALLOW_REPLY}
+    {/IF}
+    
+    {IF OPTION_ALLOWED->allow_reply}
       <input type="checkbox" name="allow_reply" value="1" 
        {IF POST->allow_reply} checked="checked"{/IF}>
       {LANG->AllowReplies}

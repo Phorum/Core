@@ -242,37 +242,59 @@ if (! $error_flag)
     $PHORUM["DATA"]["MODERATOR"] =
         phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-    // Can the announcement flag be set for the current message?
-    $PHORUM["DATA"]["SHOW_ANNOUNCEMENT"] =
-        $PHORUM["DATA"]["ADMINISTRATOR"] &&
-        $message["parent_id"] == 0;
-
-    // Can allow_reply be set for the current message?
-    // This option can only be edited at the thread's root message.
-    $PHORUM["DATA"]["SHOW_ALLOW_REPLY"] = $message["parent_id"] == 0;
-
-    // Show announcement or allow_reply in the editor?
-    // TODO an OR option would be nice in the templating engine.
-    $PHORUM["DATA"]["SHOW_THREADOPTIONS"] =
-        $message["parent_id"] == 0 && $PHORUM["DATA"]["MODERATOR"];
-
     // Ability: Do we allow attachments?
     $PHORUM["DATA"]["ATTACHMENTS"] =
         $PHORUM["max_attachments"] > 0 &&
         phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
+
+    // What special options can this user set for a message?
+    $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
+        "sticky"        => false,   // Sticky flag for message sorting
+        "announcement"  => false,   // Announcement flag for message sorting
+        "allow_reply"   => false,   // Wheter replies are allowed in the thread
+    );
+    // For moderators and administrators.
+    if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"])&& $message["parent_id"] == 0) {
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = true;
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"] = true;
+    }
+    // For administrators only.
+    if ($PHORUM["DATA"]["ADMINISTRATOR"] && $message["parent_id"] == 0) {
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] = true;
+    }
+}
+
+if (! $error_flag)
+{
+    // A hook to allow modules to change the abilities from above.
+    phorum_hook("posting_permission");
+
+    // Show special sort options in the editor?
+    $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] =
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] ||
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"];
+
+    // Show special sort options or allow_reply in the editor?
+    $PHORUM["DATA"]["SHOW_THREADOPTIONS"] =
+        $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] ||
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"];
 }
 
 // Set extra writeable fields, based on the user's abilities.
 if ($PHORUM["DATA"]["ATTACHMENTS"]) {
-    // Keep it a hidden field.
+    // Keep it as a hidden field.
     $post_fields["attachments"][pf_READONLY] = false;
 }
 if ($PHORUM["DATA"]["MODERATOR"]) {
     if (! $message["user_id"]) {
-        $post_fields["author"][pf_READONLY]  = false;
-        $post_fields["email"][pf_READONLY]   = false;
+        $post_fields["author"][pf_READONLY] = false;
+        $post_fields["email"][pf_READONLY] = false;
     }
-    $post_fields["special"][pf_READONLY]     = false;
+}
+if ($PHORUM["DATA"]["SHOW_SPECIALOPTIONS"]) {
+    $post_fields["special"][pf_READONLY] = false;
+}
+if ($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) {
     $post_fields["allow_reply"][pf_READONLY] = false;
 }
 

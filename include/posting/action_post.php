@@ -37,8 +37,8 @@ if ($mode == "reply") {
     $message["allow_reply"] = ! $top_parent["closed"];
 }
 
-// Moderators can set a new thread closed while posting. Others can't.
-if ($mode == "post" && ! $PHORUM["DATA"]["MODERATOR"]) {
+// Check if allow_reply can be set.
+if ($mode == "post" && ! $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) {
     $message["closed"] = 0;
     $message["allow_reply"] = 1;
 }
@@ -58,9 +58,9 @@ if ($mode == "reply")
 // Do specific actions for new threads with a "special" flag.
 if ($mode == "post" && isset($message["special"]))
 {
-    if ($message["special"]=="sticky" && $PHORUM["DATA"]["MODERATOR"]) {
+    if ($message["special"]=="sticky" && $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]) {
         $message["sort"] = PHORUM_SORT_STICKY;
-    } elseif ($message["special"] == "announcement" && $PHORUM["DATA"]["ADMINISTRATOR"]) {
+    } elseif ($message["special"] == "announcement" && $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"]) {
         $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
         $message["forum_id"]= $PHORUM["vroot"] ? $PHORUM["vroot"] : 0;
     }

@@ -30,23 +30,27 @@ $dbmessage = array(
     "subject"       => $message["subject"],
     "email"         => $message["email"],
     "status"        => $message["status"],
-    "body"          => $message["body"],
     "closed"        => ! $message["allow_reply"],
+    "body"          => $message["body"],
     "meta"          => $message["meta"],
 );
 
-// Moderators can set threads to sticky.
-// Admins can set them to announcement.
+// Update sort setting, if allowed.
 if (! $message["parent_id"])
 {
-    if ($PHORUM["DATA"]["MODERATOR"] && $message["special"]=="sticky") {
+    if ($PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] && $message["special"]=="sticky") {
         $dbmessage["sort"] = PHORUM_SORT_STICKY;
-    } elseif ($PHORUM["DATA"]["ADMINISTRATOR"] &&
-              $message["special"] == "announcement") {
+    } elseif ($PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] && $message["special"] == "announcement") {
         $dbmessage["forum_id"] = $PHORUM["vroot"] ? $PHORUM["vroot"] : 0;
         $dbmessage["sort"] = PHORUM_SORT_ANNOUNCEMENT;
     } else {
-        $dbmessage["sort"] = PHORUM_SORT_DEFAULT;
+        // Not allowed to edit. Keep existing sort value.
+        switch ($message["special"]) {
+            case "sticky": $sort = PHORUM_SORT_STICKY; break;
+            case "announcement": $sort = PHORUM_SORT_ANNOUNCEMENT; break;
+            default: $sort = PHORUM_SORT_DEFAULT; break;
+        }
+        $dbmessage["sort"] = $sort;
     }
 }
 
