@@ -1360,6 +1360,7 @@ Table of contents:
    Input  : Array with sanity checks. Each sanity check is an array with:
             function    => The function that runs the sanity check
             description => A description to show in the admin interface
+   Return : Same as Input
 
    This hook can be used to add custom sanity checks to the admin
    interface option "System Sanity Checks". 
