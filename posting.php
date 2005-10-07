@@ -92,10 +92,6 @@ if($PHORUM["folder_flag"]){
 // Definitions
 // ----------------------------------------------------------------------
 
-// The link type for the database files created by the posting editor.
-// TODO This can go in constants.php if this editor is put in the core.
-define("PHORUM_LINK_EDITOR", "editor");
-
 // A list of valid posting modes.
 $valid_modes = array(
     "post",       // Post a new message

@@ -20,13 +20,6 @@
 // For phorum_check_ban_lists().
 include_once("./include/profile_functions.php");
 
-// TODO I use a more complete list of bans for all editing modes.
-// TODO The original phorum message editing scripts sometimes use
-// TODO only a subset (for example: edit.php only uses PHORUM_BAD_IPS).
-// TODO And a bugfix: PHORUM_BAD_IPS only checks either
-// TODO the hostname or the IP-address in the original code. Not both.
-// TODO I think it's better to check both against the banlist.
-
 // A mapping from bantype -> errormessage.
 $bantype2error = array(
     PHORUM_BAD_NAMES  => "ErrBannedName",

@@ -411,22 +411,6 @@ function phorum_get_url()
             $page = "posting";
             $add_forum_id = true;
             break;
-        // TODO maybe not used anymore using the new editor code.
-        case PHORUM_POST_URL:
-            $page = "post";
-            $add_forum_id = true;
-            break;
-        case PHORUM_POST_ACTION_URL:
-            $page = "posting";
-            $add_get_vars = false;
-            break;
-        case PHORUM_ATTACH_URL:
-            $page = "attach";
-            $add_forum_id = true;
-            break;
-        case PHORUM_ATTACH_ACTION_URL:
-            $page = "attach";
-            break;
         case PHORUM_SEARCH_URL:
             $page = "search";
             $add_forum_id = true;
@@ -474,16 +458,6 @@ function phorum_get_url()
             break;
         case PHORUM_MODERATION_ACTION_URL:
             $page = "moderation";
-            $add_get_vars = false;
-            break;
-        // TODO maybe not needed anymore for the new editor.
-        case PHORUM_EDIT_URL:
-            $page = "edit";
-            $add_forum_id = true;
-            break;
-        // TODO maybe not needed anymore for the new editor.
-        case PHORUM_EDIT_ACTION_URL:
-            $page = "edit";
             $add_get_vars = false;
             break;
         case PHORUM_PREPOST_URL:

@@ -53,7 +53,6 @@
     define("PHORUM_STATUS_APPROVED", 2);
     define("PHORUM_STATUS_HOLD", -1);
     define("PHORUM_STATUS_HIDDEN", -2);
-    define("PHORUM_STATUS_ATTACHING", -3);
 
     define("PHORUM_SORT_ANNOUNCEMENT", 0);
     define("PHORUM_SORT_STICKY", 1);
@@ -102,6 +101,7 @@
 
     define("PHORUM_LINK_USER", "user");
     define("PHORUM_LINK_MESSAGE", "message");
+    define("PHORUM_LINK_EDITOR", "editor");
 
     // Definitions for the PM system.
     // Special folders
@@ -129,10 +129,6 @@
     define("PHORUM_FOREIGN_READ_URL", $i++);
     define("PHORUM_REPLY_URL", $i++);
     define("PHORUM_POSTING_URL", $i++);
-    define("PHORUM_POST_URL", $i++);
-    define("PHORUM_POST_ACTION_URL", $i++);
-    define("PHORUM_ATTACH_URL", $i++);
-    define("PHORUM_ATTACH_ACTION_URL", $i++);
     define("PHORUM_SEARCH_URL", $i++);
     define("PHORUM_SEARCH_ACTION_URL", $i++);
     define("PHORUM_DOWN_URL", $i++);
@@ -155,8 +151,6 @@
     define("PHORUM_GROUP_MODERATION_URL", $i++);
     define("PHORUM_FOLLOW_URL", $i++);
     define("PHORUM_FOLLOW_ACTION_URL", $i++);
-    define("PHORUM_EDIT_URL", $i++);
-    define("PHORUM_EDIT_ACTION_URL", $i++);
     define("PHORUM_PREPOST_URL", $i++);
     define("PHORUM_REPORT_URL", $i++);
     define("PHORUM_RSS_URL", $i++);
@@ -168,11 +162,9 @@
     define("PHORUM_DO_THREAD_MOVE", $i++);
     define("PHORUM_CLOSE_THREAD", $i++);
     define("PHORUM_REOPEN_THREAD", $i++);
-    define("PHORUM_SAVE_EDIT_POST", $i++);
     define("PHORUM_APPROVE_MESSAGE", $i++);
     define("PHORUM_HIDE_POST", $i++);
     define("PHORUM_APPROVE_MESSAGE_TREE", $i++);
-    define("PHORUM_PREVIEW_EDIT_POST", $i++);
     define("PHORUM_MERGE_THREAD", $i++);
     define("PHORUM_DO_THREAD_MERGE", $i++);
     define("PHORUM_SPLIT_THREAD", $i++);
