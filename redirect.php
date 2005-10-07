@@ -1,5 +1,4 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 //   Copyright (C) 2005  Phorum Development Team                              //
@@ -19,8 +18,8 @@
 
 // Redirect to another page. This is used for working around an MSIE bug 
 // where redirecting to an anchored URL looses the anchor if redirected 
-// from a script that acts on POST input coming from an 
-// enctype="multipart/mixed" form... *sign*).
+// directly from a script that acts on POST input coming from an 
+// enctype="multipart/mixed" form... *sigh*.
 
 if (isset($_REQUEST['phorum_redirect_to'])) {
     $redir = urldecode($_REQUEST['phorum_redirect_to']);

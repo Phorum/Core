@@ -129,6 +129,7 @@
     define("PHORUM_FOREIGN_READ_URL", $i++);
     define("PHORUM_REPLY_URL", $i++);
     define("PHORUM_POSTING_URL", $i++);
+    define("PHORUM_REDIRECT_URL", $i++);
     define("PHORUM_SEARCH_URL", $i++);
     define("PHORUM_SEARCH_ACTION_URL", $i++);
     define("PHORUM_DOWN_URL", $i++);

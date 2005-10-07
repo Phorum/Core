@@ -411,6 +411,10 @@ function phorum_get_url()
             $page = "posting";
             $add_forum_id = true;
             break;
+        case PHORUM_REDIRECT_URL:
+            $page = "redirect";
+            $add_forum_id = false;
+            break;
         case PHORUM_SEARCH_URL:
             $page = "search";
             $add_forum_id = true;
