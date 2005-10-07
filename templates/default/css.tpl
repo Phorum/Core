@@ -238,6 +238,22 @@ div.phorum-menu a.phorum-current-page
     font-weight: bold;
 }
 
+#phorum-post-form ul
+{
+    padding: 0 0 0 20px;
+    margin: 3px 0px 8px 0px;
+    font-size: {smallfontsize};
+}
+
+#phorum-post-form li
+{
+    margin-bottom: 3px;
+}
+
+#phorum-attachment-list td
+{
+    font-size: {smallfontsize};
+}
 
     /* Standard classes for use in any page */
     /* PhorumDesignDiv - a div for keeping the forum-size size */
@@ -269,6 +285,7 @@ div.phorum-menu a.phorum-current-page
         border: 1px solid {tablebordercolor};
 /*        width: {tablewidth}; */
         padding: 3px;
+        text-align: left;
     }
 
     .PhorumStdBlockHeader
@@ -281,6 +298,7 @@ div.phorum-menu a.phorum-current-page
         border-right: 1px solid {tablebordercolor};
         border-top: 1px solid {tablebordercolor};
         padding: 3px;
+        text-align: left;
     }
 
     .PhorumHeaderText

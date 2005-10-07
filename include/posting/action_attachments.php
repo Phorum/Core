@@ -64,6 +64,15 @@ elseif ($do_attach && ! empty($_FILES))
         // files will almost always have problems uploading.
         if ($file["size"] == 0) continue;
 
+        // check with PHP and MySQL on attachment size
+        $php_limit = ini_get('upload_max_filesize')*1024;
+        $db_limit = phorum_db_maxpacketsize()/1024*.6;
+        if($PHORUM["max_attachment_size"]==0){
+            $PHORUM["max_attachment_size"] = min($php_limit, $db_limit);
+        } else {
+            $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"], $php_limit, $db_limit);
+        }
+
         // Isn't the attachment too large?
         if ($PHORUM["max_attachment_size"] > 0 &&
             $file["size"] > $PHORUM["max_attachment_size"]*1024) {
@@ -91,8 +100,8 @@ elseif ($do_attach && ! empty($_FILES))
             $allowed_exts=explode(";", $PHORUM["allow_attachment_types"]);
             if (! in_array(strtolower($ext), $allowed_exts)) {
                 $PHORUM["DATA"]["ERROR"] =
-                    $PHORUM["DATA"]["LANG"]["AttachFileTypes"] . " " .
-                    $PHORUM["allow_attachment_types"];
+                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ". $PHORUM["DATA"]["LANG"]["AttachFileTypes"] . " " .
+                    str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
                 $error_flag = true;
                 break;
             }

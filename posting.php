@@ -371,18 +371,30 @@ if (! $error_flag && $finish)
 $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
 $message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
 
-// Data for attachment explanation.
-$PHORUM["DATA"]["ATTACH_FILE_TYPES"] = $PHORUM["allow_attachment_types"];
-$PHORUM["DATA"]["ATTACH_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
-$PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
-$PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
+// Attachment config
+if($PHORUM["max_attachments"]){
 
-// A flag for the template building to be able to see if the
-// attachment storage space is full.
-$PHORUM["DATA"]["ATTACHMENTS_FULL"] =
-    $attach_count >= $PHORUM["max_attachments"] ||
-    ($PHORUM["max_totalattachment_size"] &&
-     $attach_totalsize >= $PHORUM["max_totalattachment_size"]*1024);
+    $php_limit = ini_get('upload_max_filesize')*1024;
+    $db_limit = phorum_db_maxpacketsize()/1024*.6;
+    if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$php_limit;
+    $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"], $php_limit, $db_limit);
+
+    // Data for attachment explanation.
+    $PHORUM["DATA"]["ATTACH_FILE_TYPES"] = str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
+    $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
+    $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
+    $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
+    $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+    $PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
+    $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"] = $PHORUM["max_attachments"] - $attach_count;
+
+    // A flag for the template building to be able to see if the
+    // attachment storage space is full.
+    $PHORUM["DATA"]["ATTACHMENTS_FULL"] =
+        $attach_count >= $PHORUM["max_attachments"] ||
+        ($PHORUM["max_totalattachment_size"] &&
+        $attach_totalsize >= $PHORUM["max_totalattachment_size"]*1024);
+}
 
 // Let the templates know if we're running as an include.
 $PHORUM["DATA"]["EDITOR_AS_INCLUDE"] =
@@ -418,7 +430,7 @@ $PHORUM["DATA"]["POST_VARS"] = $hidden;
 foreach ($message as $var => $val)
 {
     // The meta information should not be used in templates, because
-    // nothing is escaped here. But we might want to use the data in 
+    // nothing is escaped here. But we might want to use the data in
     // mods which are run after this code. We continue here, so the
     // data won't be stripped from the message data later on.
     if ($var == "meta") continue;
@@ -560,7 +572,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
             }
 
             case "mode": {
-                // NOOP 
+                // NOOP
                 break;
             }
 

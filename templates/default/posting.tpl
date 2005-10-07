@@ -8,7 +8,7 @@
 
 input.PhorumAttachmentButton {
     border: none;
-    cursor: hand; 
+    cursor: hand;
     cursor: pointer;
     background-color: transparent;
 }
@@ -20,7 +20,10 @@ input.PhorumSubmitDisabled {
 
 </style>
 
-<div align="center">
+<div id="phorum-post-form" align="center">
+
+{IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
+{IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
 
   {IF PREVIEW}
     {include posting_preview}
@@ -33,10 +36,6 @@ input.PhorumSubmitDisabled {
   {include posting_menu}
 
   {include posting_messageform}
-
-  {IF ATTACHMENTS}
-    {include posting_attachments}
-  {/IF}
 
   {include posting_buttons}
 

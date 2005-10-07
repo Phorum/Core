@@ -1,8 +1,5 @@
 <div class="PhorumStdBlockHeader PhorumNarrowBlock">
 
-{IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
-{IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
-
 <table class="PhorumFormTable" cellspacing="0" border="0">
 
 {! Author =================================================================== }
@@ -88,9 +85,9 @@
       {/IF}
     </select>
     {/IF}
-    
+
     {IF OPTION_ALLOWED->allow_reply}
-      <input type="checkbox" name="allow_reply" value="1" 
+      <input type="checkbox" name="allow_reply" value="1"
        {IF POST->allow_reply} checked="checked"{/IF}>
       {LANG->AllowReplies}
     {/IF}
@@ -127,7 +124,15 @@
 
 </div>
 
+{! Attachments ============================================================== }
+
+{IF ATTACHMENTS}
+    {include posting_attachments}
+{/IF}
+
+
 {! Body ===================================================================== }
+
 
 <div class="PhorumStdBlock PhorumNarrowBlock">
   <textarea name="body" id="phorum_textarea" rows="15" cols="50"
