@@ -2500,7 +2500,7 @@ function phorum_db_get_message_file_list($message_id)
 
 
 /**
- * This function saves a file to the db
+ * This function retrieves a file from the db
  */
 
 function phorum_db_file_get($file_id)
@@ -2652,6 +2652,62 @@ function phorum_db_get_user_filesize_total($user_id)
 
     return $total;
 
+}
+
+/**
+ * This function is used for cleaning up stale files from the
+ * database. Stale files are files that are not linked to 
+ * anything. These can for example be caused by users that
+ * are writing a message with attachments, but never post
+ * it.
+ * @param live_run - If set to false (default), the function
+ *                  will return a list of files that will
+ *                  be purged. If set to true, files will
+ *                  be purged.
+ */
+function phorum_db_file_purge_stale_files($live_run = false)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $conn = phorum_db_mysql_connect();
+
+    $where = "link='" . PHORUM_LINK_EDITOR. "' " .
+             "and add_datetime<". (time()-PHORUM_MAX_EDIT_TIME);
+   
+    // Purge files.
+    if ($live_run) {
+
+        // Delete files that are linked to the editor and are 
+        // added a while ago. These are from abandoned posts.
+        $sql = "delete from {$PHORUM['files_table']} " .
+               "where $where";
+        $res = mysql_query($sql, $conn);
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
+        return true;
+
+    // Only select a list of files that can be purged.
+    } else {
+
+        // Select files that are linked to the editor and are 
+        // added a while ago. These are from abandoned posts.
+        $sql = "select file_id, filename, filesize, add_datetime " .
+               "from {$PHORUM['files_table']} " .
+               "where $where";
+
+        $res = mysql_query($sql, $conn);
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
+        $purge_files = array();
+        if (mysql_num_rows($res) > 0) {
+            while ($row = mysql_fetch_assoc($res)) {
+                $row["reason"] = "Stale editor file";
+                $purge_files[$row["file_id"]] = $row;
+            }
+        }
+
+        return $purge_files;
+    }
 }
 
 /**

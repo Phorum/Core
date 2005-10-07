@@ -21,8 +21,9 @@
     // change the author's name on deleting the user
     define("PHORUM_DELETE_CHANGE_AUTHOR", true);
 
-    // time in seconds files can be attached to a message
-    define("PHORUM_MAX_TIME_TO_ATTACH", 3600);
+    // maximum time in seconds for having the message editor open
+    // this is used in determining stale attachment files
+    define("PHORUM_MAX_EDIT_TIME", 86400);
 
     // string used to separate things like items in the title tag.
     define("PHORUM_SEPARATOR", " :: ");
