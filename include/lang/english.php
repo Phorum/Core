@@ -64,6 +64,7 @@
         "AttachInstructions"    =>      "When you are done attaching files, click Post",
         "AttachFull"            =>      "You have reached the maximum allowed number of attachments.",
         "AttachInfo"            =>      "Your post will be saved on the server now.  You will have the option to edit it again before it appears on the forum.",
+        "AttachmentAdded"       =>      "Your file was successfully attached to your message",
         "Attachments"           =>      "Attachments",
         "AttachmentsMissing"    =>      "You failed to attach any files, please try again.",
         "AttachNotAllowed"      =>      "Sorry, you can not attach files to this message.",

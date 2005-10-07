@@ -1,6 +1,7 @@
 <div class="PhorumStdBlockHeader PhorumNarrowBlock">
 
 {IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
+{IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
 
 <table class="PhorumFormTable" cellspacing="0" border="0">
 

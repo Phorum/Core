@@ -46,11 +46,6 @@ if ($do_detach)
 }
 
 // Attachment(s) uploaded.
-// TODO Add some support for giving attachments altered names
-// TODO in case an attachment with the same name is uploaded?
-// TODO Or maybe simply deny with an error message?
-// TODO Technically, there is no problem in having the same
-// TODO filename twice in one message, so for now that will do.
 elseif ($do_attach && ! empty($_FILES))
 {
     // The editor template that I use only supports one upload
@@ -147,6 +142,12 @@ elseif ($do_attach && ! empty($_FILES))
         $PHORUM["DATA"]["ERROR"] =
             $PHORUM["DATA"]["LANG"]["AttachmentsMissing"];
         $error_flag = true;
+    }
+
+    // Show a success message in case an attachment is added.
+    if (! $error_flag && $attached) {
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AttachmentAdded"];
+
     }
 }
 ?>
