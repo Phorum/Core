@@ -161,7 +161,7 @@ img.question
 #helpdiv
 {
     position: absolute;
-    visibility: hidden;
+    display: none;
     width: 400px;
     border: 2px solid Navy;
 }
@@ -229,13 +229,13 @@ function show_help(key)
     document.getElementById('help-title').innerHTML = help[key][0];
     document.getElementById('help-text').innerHTML = help[key][1];
 
-    document.getElementById('helpdiv').style.visibility = 'visible';
+    document.getElementById('helpdiv').style.display = 'block';
 
 }
 
 function hide_help()
 {
-    document.getElementById('helpdiv').style.visibility = 'hidden';
+    document.getElementById('helpdiv').style.display = 'none';
     document.getElementById('help-title').innerHTML = "";
     document.getElementById('help-text').innerHTML = "";
 }
