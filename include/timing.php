@@ -1,4 +1,8 @@
 <?php
+    // This library contains some functions that can be used for
+    // code benchmarking. It is not actively in use in the Phorum
+    // core, but its functions are used by the developers once
+    // in a while.
 
     if(!defined("PHORUM")) return;
 
