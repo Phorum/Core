@@ -40,6 +40,11 @@ if ($gotforums)
 else
     $foruminfo = array();
 
+// Make sure we have a forum name for unapproved announcements.
+$foruminfo[0] = array (
+    'name' => $PHORUM["DATA"]["LANG"]["Announcement"]
+);
+
 foreach($mod_forums as $forum => $rest) {
     $checkvar = 1;
     // Get the threads
