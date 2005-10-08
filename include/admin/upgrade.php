@@ -45,7 +45,7 @@
             $stepsleft = PHORUMINTERNAL - $PHORUM['internal_version'];
             $frm->addbreak("Upgrading tables (multiple steps possible) ....");
             $frm->addmessage($message);
-            if($stepsleft > 1) {
+            if($stepsleft > 0) {
                 $newstep = 1;
             } else {
                 $newstep = 2;
