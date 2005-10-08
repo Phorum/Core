@@ -176,7 +176,7 @@
         "Folders"               =>      "Folder List",
         "FollowExplanation"     =>      "Followed threads are listed in your Control Center.<br />You can elect to receive an email when the thread is updated.",
         "FollowThread"          =>      "Follow This Thread",
-        "FollowWithEmail"       =>      "Would you like to be emailed when this thread is updated?",
+        "FollowWithEmail"       =>      "Email me when this thread is updated",
         "Forum"                 =>      "Forum",
         "ForumFolder"           =>      "Forum Folder",
         "Forums"                =>      "Forums",
