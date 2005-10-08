@@ -91,6 +91,8 @@
 
     $frm->hidden("module", "mods");
 
+    ksort($plugins);
+
     foreach($plugins as $name => $plugin){
 
         if(isset($mods[$name])){
