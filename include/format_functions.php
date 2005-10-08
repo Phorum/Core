@@ -23,7 +23,7 @@ function phorum_format_messages( $data )
 
         if ( is_array( $bad_words ) ) {
             foreach( $bad_words as $item ) {
-                $replace_words[]="/\b".$item['string']."(ing|ed|s|er|es)*\b/";
+                $replace_words[]="/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/";
                 $replace_vals[]="@#$%&";
                 //$body = preg_replace( "/\b$word(ing|ed|s|er|es)*\b/", "@#$%&", $body );
                 $bad_word_check=true;
