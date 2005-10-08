@@ -194,6 +194,9 @@ if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
     unset($PHORUM["DATA"]["URL"]["INDEX"]);
 }
 
+// Set the field to focus after loading.
+$PHORUM["DATA"]["FOCUS_TO_ID"] = empty($username) ? "username" : "password";
+
 include phorum_get_template( "header" );
 phorum_hook( "after_header" );
 

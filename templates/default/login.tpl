@@ -22,11 +22,11 @@
 <table cellspacing="0" align="center">
 <tr>
     <td>{LANG->Username}:&nbsp;</td>
-    <td><input type="text" name="username" size="30" value="{LOGIN->username}" /></td>
+    <td><input type="text" id="username" name="username" size="30" value="{LOGIN->username}" /></td>
 </tr>
 <tr>
     <td>{LANG->Password}:&nbsp;</td>
-    <td><input type="password" name="password" size="30" value="" /></td>
+    <td><input type="password" id="password" name="password" size="30" value="" /></td>
 </tr>
 <tr>
     <td colspan="2" align="right"><input type="submit" class="PhorumSubmit" value="{LANG->Submit}" /></td>
