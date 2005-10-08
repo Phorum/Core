@@ -40,9 +40,9 @@ function phorum_check_ban_lists($value, $type)
     if (!empty($value)) {
         if (isset($banlists[$type]) && is_array($banlists[$type])) {
             foreach($banlists[$type] as $item) {
-                if (($item["pcre"] && preg_match("/\b$item[string]\b/i", $value)) ||
+                if (!empty($item) && (($item["pcre"] && preg_match("/\b$item[string]\b/i", $value)) ||
                         (!$item["pcre"] && stristr($value , $item["string"]) && $type != PHORUM_BAD_USERID) ||
-                        ($type == PHORUM_BAD_USERID && $value == $item["string"])) {
+                        ($type == PHORUM_BAD_USERID && $value == $item["string"]))) {
                     return false;
                 }
             }
