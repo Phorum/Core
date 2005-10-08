@@ -230,9 +230,9 @@
 
     if(!defined("PHORUM_DEFAULT_OPTIONS")){
 
-        $frm->addrow("Forum Title", $frm->text_box("name", htmlspecialchars($name), 30));
+        $frm->addrow("Forum Title", $frm->text_box("name", $name, 30));
 
-        $frm->addrow("Forum Description", $frm->textarea("description", htmlspecialchars($description), $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
+        $frm->addrow("Forum Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
         $folder_list=phorum_get_folder_info();
         $frm->addrow("Folder", $frm->select_tag("parent_id", $folder_list, $parent_id));
