@@ -466,6 +466,11 @@ $message = phorum_hook("before_edit", $message);
 // Make the message data available to the template engine.
 $PHORUM["DATA"]["POST"] = $message;
 
+// Set the field to focus.
+$focus = "phorum_subject";
+if (!empty($message["subject"])) $focus = "phorum_textarea";
+$PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
+
 // Load page header.
 if (! isset($PHORUM["args"]["as_include"])) {
     include phorum_get_template("header");
