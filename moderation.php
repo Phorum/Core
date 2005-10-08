@@ -322,7 +322,6 @@ switch ($mod_step) {
         }
         // the moderator selects the source thread to merge from
         else {
-            print "MERGE $merge_t1 with $msgthd_id<br>";
             $PHORUM['DATA']["FORM"]["merge_t1"] =$merge_t1;
             $message = phorum_db_get_message($merge_t1, "message_id", true);
             $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"]);
