@@ -54,7 +54,7 @@
 {/if}
 
 <div class="PhorumReadNavBlock" style="text-align: left;">
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>{IF MESSAGES->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGES->report_url}">{LANG->Report}</a>{/IF}{if MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/if}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGES->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGES->report_url}">{LANG->Report}</a>{/IF}{if MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/if}
 </div>
 
 </div>
