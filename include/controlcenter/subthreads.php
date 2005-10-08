@@ -22,7 +22,7 @@ if(isset($_POST["sub_type"])){
 if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
     $subdays = $_POST['subdays'];
 } elseif(isset($PHORUM['args']['subdays']) && !empty($PHORUM["args"]['subdays']) && is_numeric($PHORUM["args"]['subdays'])) {
-    $subdays = $PHORUM['args']['panel'];
+    $subdays = $PHORUM['args']['subdays'];
 } else {
     $subdays = 2;
 } 
@@ -35,7 +35,7 @@ $subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], 
 // reading all forums
 $forum_ids = $subscr_array['forum_ids'];
 unset($subscr_array['forum_ids']);
-$forums_arr = phorum_db_get_forums($forum_ids);
+$forums_arr = phorum_db_get_forums($forum_ids,-1,$PHORUM['vroot']);
 $subscr_array_final = array();
 foreach($subscr_array as $dummy => $data) {
     if ($data['forum_id'] == 0) {
@@ -56,15 +56,15 @@ foreach($subscr_array as $dummy => $data) {
         // we don't normally put HTML in this code, but this makes it easier on template builders
         $data["linked_author"] = "<a href=\"".$data["email_url"]."\">".htmlspecialchars($data["author"])."</a>";
     } else {
-        $data["linked_author"] = htmlspecialchars($data["author"]);        
+        $data["linked_author"] = htmlspecialchars($data["author"]);
     }
 
     $data["subject"]=htmlspecialchars($data["subject"]);
 
     $subscr_array_final[] = $data;
-} 
+}
 
 $PHORUM['DATA']['subscriptions'] = $subscr_array_final;
 $template = "cc_subscriptions";
-        
-?>        
+
+?>

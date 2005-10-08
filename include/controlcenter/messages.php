@@ -4,7 +4,27 @@ if(!defined("PHORUM_CONTROL_CENTER")) return;
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
     exit();
-} 
+}
+
+// the number of days to show
+if (isset($_POST['moddays']) && is_numeric($_POST['moddays'])) {
+    $moddays = (int)$_POST['moddays'];
+} elseif(isset($PHORUM['args']['moddays']) && !empty($PHORUM["args"]['moddays']) && is_numeric($PHORUM["args"]['moddays'])) {
+    $moddays = (int)$PHORUM['args']['moddays'];
+} else {
+    $moddays = 2;
+}
+
+
+if (isset($_POST['onlyunapproved']) && is_numeric($_POST['onlyunapproved'])) {
+    $showwaiting = (int)$_POST['onlyunapproved'];
+} elseif(isset($PHORUM['args']['onlyunapproved']) && !empty($PHORUM["args"]['onlyunapproved']) && is_numeric($PHORUM["args"]['onlyunapproved'])) {
+    $showwaiting = (int)$PHORUM['args']['onlyunapproved'];
+} else {
+    $showwaiting = 0;
+}
+$PHORUM['DATA']['SELECTED'] = $moddays;
+$PHORUM['DATA']['SELECTED_2'] = $showwaiting?true:false;
 
 // some needed vars
 $numunapproved = 0;
@@ -16,20 +36,20 @@ $gotforums = (count($mod_forums) > 0);
 $PHORUM['DATA']['PREPOST'] = array();
 
 if ($gotforums)
-    $foruminfo = phorum_db_get_forums($mod_forums);
+    $foruminfo = phorum_db_get_forums($mod_forums,-1,$PHORUM['vroot']);
 else
-    $foruminfo = phorum_db_get_forums();
+    $foruminfo = array();
 
 foreach($mod_forums as $forum => $rest) {
-    $checkvar = 1; 
+    $checkvar = 1;
     // Get the threads
-    $rows = array(); 
+    $rows = array();
     // get the thread set started
-    $rows = phorum_db_get_unapproved_list($forum); 
+    $rows = phorum_db_get_unapproved_list($forum,$showwaiting,$moddays);
     // loop through and read all the data in.
     foreach($rows as $key => $row) {
         $numunapproved++;
-        $rows[$key]['forumname'] = $forum == 0 ? 'announcement' : $foruminfo[$forum]['name'];
+        $rows[$key]['forumname'] = $foruminfo[$forum]['name'];
         $rows[$key]['checkvar'] = $checkvar;
         if ($checkvar)
             $checkvar = 0;
@@ -50,16 +70,16 @@ foreach($mod_forums as $forum => $rest) {
         } else {
             $rows[$key]["profile_url"] = "";
             $rows[$key]["linked_author"] = $row["author"];
-        } 
-    } 
+        }
+    }
     // $PHORUM['DATA']['FORUMS'][$forum]['forum_id']=$forum;
     $PHORUM['DATA']['PREPOST'] = array_merge($PHORUM['DATA']['PREPOST'], $rows);
-} 
+}
 
-if ($numunapproved) {
-    $template = "cc_prepost";
-} else {
-    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoUnapprovedMessages"];
-} 
 
+if (!$numunapproved) {
+    $PHORUM["DATA"]["UNAPPROVEDMESSAGE"] = $PHORUM["DATA"]["LANG"]["NoUnapprovedMessages"];
+}
+
+$template = "cc_prepost";
 ?>
