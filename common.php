@@ -516,6 +516,7 @@ function phorum_get_url()
             $page = array_shift($argv); // first arg is our page
             $add_forum_id_tmp=array_shift($argv); // second determining if we should add the forum_id
             $add_forum_id = $add_forum_id_tmp?true:false;
+            break;
 
         default:
             trigger_error( "Unhandled page type.", E_USER_WARNING );
