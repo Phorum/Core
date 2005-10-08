@@ -110,8 +110,15 @@ elseif ($do_attach && ! empty($_FILES))
         // Read in the file.
         $fp = fopen($file["tmp_name"], "r");
         if (! $fp) continue;
-        $buffer = base64_encode(fread($fp, $file["size"]));
+        $file["data"] = base64_encode(fread($fp, $file["size"]));
         fclose($fp);
+
+        // copy the current user_id to the $file array for the hook
+        $file["user_id"]=$PHORUM["user"]["user_id"];
+
+        // Run the before_attach hook.
+        list($message, $file) =
+            phorum_hook("before_attach", array($message, $file));
 
         // Add the file to the database. We add it using message_id
         // 0 (zero). Only when the message gets saved definitely,
@@ -122,7 +129,7 @@ elseif ($do_attach && ! empty($_FILES))
         $file_id = phorum_db_file_save(
             $PHORUM["user"]["user_id"],
             $file["name"], $file["size"],
-            $buffer, 0, PHORUM_LINK_EDITOR
+            $file["data"], 0, PHORUM_LINK_EDITOR
         );
 
         // Create new attachment information.

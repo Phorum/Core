@@ -103,6 +103,8 @@ if($send_file){
         $mime=$mime_types["default"];
     }
 
+    list($mime, $file) = phorum_hook("file", array($mime, $file));
+
     ob_end_clean();
 
     header("Content-Type: $mime");
