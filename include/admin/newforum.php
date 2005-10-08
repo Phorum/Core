@@ -262,7 +262,7 @@
         $forum_list=phorum_get_forum_info(true);
 
         $forum_list["0"] ="Use Default Forum Settings";
-        $forum_list["NULL"] ="Do not inherit - I wan't to customize this forums settings.";
+        $forum_list["NULL"] ="None - I want to customize this forum's settings";
 
         // Remove this Forum
         unset($forum_list[$forum_id]);
