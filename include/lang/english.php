@@ -264,7 +264,7 @@
         "MovedSubject"          =>      "Moved",
         "MovedMessage"          =>      "This thread has been moved. You will be redirected to its current location.",
         "MovedMessageTo"        =>      "To the current location of this thread.",
-        "MoveNotification"      =>      "Create Move-Notification",
+        "MoveNotification"      =>      "Leave behind a move notification",
         "MoveThread"            =>      "Move Thread",
         "MoveThreadTo"          =>      "Move Thread to Forum",
         "MsgApprovedOk"         =>      "Message(s) approved",
