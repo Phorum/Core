@@ -41,6 +41,7 @@
         "AdminOnlyMessage"      =>      "This forum is currently disabled.  This is a temporary situation.  Please check back later.",
         "again"                 =>      "again",
         "AllDates"              =>      "All Dates",
+        "AllNotShown"           =>      "all messages which are not visible",
         "AllowReplies"          =>      "Replies are allowed",
         "AllWords"              =>      "All Words",
         "AllowSeeActivity"      =>      "Allow other users to see when I am logged in",
@@ -104,6 +105,7 @@
         "Date"                  =>      "Date",
         "DateActive"            =>      "Last Activity",
         "DateAdded"             =>      "Date Added",
+        "DatePosted"            =>      ", which were posted in the last ",
         "DateReg"               =>      "Date Registered",
         "Day"                   =>      "Day",
         "Days"                  =>      "Days",
@@ -378,7 +380,7 @@
         "PrivateMessages"       =>      "Private Messages",
         "PrivateReply"          =>      "Reply via PM",
         "ProfileUpdatedOk"      =>      "Profile successfully updated.",
-
+        "OnlyUnapproved"        =>      "all unapproved messages",
         "Quote"                 =>      "Quote",
         "QuoteMessage"          =>      "Quote This Message",
 
@@ -433,6 +435,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "SendPM"                =>      "Send A Private Message",
         "SentItems"             =>      "Sent Items",
         "Showing"               =>      "Showing",
+        "ShowOnlyMessages"      =>      "Show only",
         "Signature"             =>      "Signature",
         "Special"               =>      "Special",
         "SplitThread"           =>      "Split Thread",
