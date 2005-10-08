@@ -21,7 +21,7 @@
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
 // all other constants in ./include/constants.php
-define( "PHORUM", "5.1.1-alpha" );
+define( "PHORUM", "5.1.3-alpha" );
 
 // our internal version in format of year-month-day-serial
 define( "PHORUMINTERNAL", "2005100701" );
