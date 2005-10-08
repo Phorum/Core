@@ -489,7 +489,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // An anchor so clicking on a reply button can let the browser
     // jump to the editor or the closed thread message.
-    if($PHORUM["reply_on_read_page"]) {
+    if(isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
         print '<a name="REPLY"></a>';
     }
 
@@ -501,7 +501,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"][$key];
         include phorum_get_template("message");
 
-    } elseif($PHORUM["reply_on_read_page"]) {
+    } elseif (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
 
         // Prepare the arguments for the posting.php script.
         $goto_mode = "reply";
