@@ -90,7 +90,7 @@ function phorum_db_get_thread_list($offset)
 
         $sortorder = "sort, $sortfield desc, message_id";
 
-        if($PHORUM["reverse_threading"]) $sortorder.=" desc";
+        if(isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) $sortorder.=" desc";
 
         $offset_option="$sortfield > 0 and";
 
@@ -793,7 +793,7 @@ function phorum_db_get_messages($thread,$page=0)
            $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval order by message_id LIMIT $start,".$PHORUM["read_length"];
     } else {
            $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval order by message_id";
-           if($PHORUM["reverse_threading"]) $sql.=" desc";
+           if(isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) $sql.=" desc";
     }
 
     $res = mysql_query($sql, $conn);
@@ -1242,7 +1242,9 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
     $conn = phorum_db_mysql_connect();
 
     // always refresh on small forums
-    if($PHORUM["message_count"]<1000) $refresh=true;
+    if (isset($PHORUM["message_count"]) && $PHORUM["message_count"]<1000) {
+        $refresh=true;
+    }
 
     if($refresh || empty($msg_count_change)){
         $sql = "select count(*) as message_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and status=".PHORUM_STATUS_APPROVED;

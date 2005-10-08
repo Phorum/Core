@@ -34,7 +34,7 @@ function phorum_update_thread_info($thread)
     
         $parent_message=$filtered_messages[$thread];
     
-        if ($PHORUM["reverse_threading"]) {
+        if (isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
             reset($filtered_messages);
             $recent_message=current($filtered_messages);
         } else {
