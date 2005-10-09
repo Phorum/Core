@@ -9,7 +9,7 @@
 <option value="0"{IF SELECTED_2 0} selected="selected"{/IF}>{LANG->AllNotShown}</option>
 <option value="1"{IF SELECTED_2 1} selected="selected"{/IF}>{LANG->OnlyUnapproved}</option>
 </select>
-{LANG->DatePosted}:&nbsp;
+{LANG->DatePosted}&nbsp;
 <select name="moddays">
 <option value="1"{IF SELECTED 1} selected="selected"{/IF}>1 {LANG->Day}</option>
 <option value="2"{IF SELECTED 2} selected="selected"{/IF}>2 {LANG->Days}</option>
