@@ -174,8 +174,7 @@ $do_attach = false;
 foreach ($_POST as $var => $val) {
     if (substr($var, 0, 7) == "detach:") {
         $do_detach = substr($var, 7);
-    }
-    elseif ($var == "attach") {
+    } elseif ($var == "attach" || count($_FILES)) {
         $do_attach = true;
     }
 }
