@@ -60,7 +60,7 @@
       <form action="{URL->ACTION}" method="get" style="display: inline;">
       <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
       {POST_VARS}
-      <input type="text" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
+      <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
       <div style="margin-top: 3px;"><select name="match_forum"><option value="ALL" {if SEARCH->match_forum ALL}selected{/if}>{LANG->MatchAllForums}</option>{if SEARCH->allow_match_one_forum}<option value="THISONE" {if SEARCH->match_forum THISONE}selected{/if}>{LANG->MatchThisForum}</option>{/if}</select></div>
       <div style="margin-top: 3px;"><select name="match_dates"><option value="30" {if SEARCH->match_dates 30}selected{/if}>{LANG->Last30Days}</option><option value="90" {if SEARCH->match_dates 90}selected{/if}>{LANG->Last90Days}</option><option value="365" {if SEARCH->match_dates 365}selected{/if}>{LANG->Last365Days}</option><option value="0" {if SEARCH->match_dates 0}selected{/if}>{LANG->AllDates}</option></select>&nbsp;<select name="match_type"><option value="ALL" {if SEARCH->match_type ALL}selected{/if}>{LANG->MatchAll}</option><option value="ANY" {if SEARCH->match_type ANY}selected{/if}>{LANG->MatchAny}</option><option value="PHRASE" {if SEARCH->match_type PHRASE}selected{/if}>{LANG->MatchPhrase}</option></select></div>
       </form>
@@ -71,7 +71,7 @@
       <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
       <input type="hidden" name="match_type" value="AUTHOR" />
       {POST_VARS}
-      <input type="text" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
+      <input type="text" id="phorum_search_author" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
       <div style="margin-top: 3px;"><select name="match_forum"><option value="ALL" {if SEARCH->match_forum ALL}selected{/if}>{LANG->MatchAllForums}</option>{if SEARCH->allow_match_one_forum}<option value="THISONE" {if SEARCH->match_forum THISONE}selected{/if}>{LANG->MatchThisForum}</option>{/if}</select></div>
       <div style="margin-top: 3px;"><select name="match_dates"><option value="30" {if SEARCH->match_dates 30}selected{/if}>{LANG->Last30Days}</option><option value="90" {if SEARCH->match_dates 90}selected{/if}>{LANG->Last90Days}</option><option value="365" {if SEARCH->match_dates 365}selected{/if}>{LANG->Last365Days}</option><option value="0" {if SEARCH->match_dates 0}selected{/if}>{LANG->AllDates}</option></select></div>
       </form>

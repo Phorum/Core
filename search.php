@@ -201,6 +201,9 @@ $PHORUM["DATA"]["SEARCH"]["match_dates"] = $PHORUM["args"]["match_dates"];
 $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
 $PHORUM["DATA"]["SEARCH"]["allow_match_one_forum"] = $PHORUM["forum_id"];
 
+// Set cursor focus to message search entry.
+$PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
+
 include phorum_get_template("header");
 phorum_hook("after_header");
 include phorum_get_template("search");
