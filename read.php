@@ -426,18 +426,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
     }
 
-    if(isset($PHORUM["args"]["quote"])){
-        if($PHORUM["hooks"]["quote"]){
-            $PHORUM["DATA"]["POST"]["body"] = phorum_hook( "quote", array($messages[$message_id]['author'], $messages[$message_id]['body']));
-        }
-        if(empty($PHORUM["DATA"]["POST"]["body"])){
-            $phorum_quote_body = phorum_strip_body($messages[$message_id]['body']);
-            $phorum_quote_body=str_replace("\n", "\n> ", $phorum_quote_body);
-            $phorum_quote_body=wordwrap(trim($phorum_quote_body), 50, "\n> ", true);
-            $PHORUM["DATA"]["POST"]["body"]="{$messages[$message_id]['author']} {$PHORUM['DATA']['LANG']['Wrote']}:\n".str_repeat("-", 55)."\n> $phorum_quote_body\n\n\n";
-        }
-    }
-
     // run read mods
     $messages = phorum_hook("read", $messages);
 
