@@ -174,9 +174,17 @@ $do_attach = false;
 foreach ($_POST as $var => $val) {
     if (substr($var, 0, 7) == "detach:") {
         $do_detach = substr($var, 7);
-    } elseif ($var == "attach" || count($_FILES)) {
+    } elseif ($var == "attach") {
         $do_attach = true;
     }
+}
+
+// In case users click on post or preview, without uploading 
+// their attachment first, we fake an upload action.
+if (count($_FILES)) {
+    list($name, $data) = each($_FILES);
+    if ($data["size"]) $do_attach = true;
+    reset($_FILES);
 }
 
 // Set all our URL's
