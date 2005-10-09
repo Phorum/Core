@@ -28,7 +28,7 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
 {
     if (empty($message["author"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrAuthor"];
-    } elseif (phorum_user_check_username($message["author"])) {
+    } elseif ((!defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') || (defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') && PHORUM_ENFORCE_UNREGISTERED_NAMES == true)) && phorum_user_check_username($message["author"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
     } elseif (!empty($message["email"]) &&
               phorum_user_check_email($message["email"])) {

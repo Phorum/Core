@@ -21,6 +21,9 @@
     // change the author's name on deleting the user
     define("PHORUM_DELETE_CHANGE_AUTHOR", true);
 
+    // enforce the use of only unregistered names for unregistered users
+    define("PHORUM_ENFORCE_UNREGISTERED_NAMES",true);
+
     // maximum time in seconds for having the message editor open
     // this is used in determining stale attachment files
     define("PHORUM_MAX_EDIT_TIME", 86400);
