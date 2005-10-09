@@ -21,7 +21,7 @@ if(isset($PHORUM["default_language"])){
 }
 
 ?>
-<style>
+<style type="text/css">
 
 body
 {

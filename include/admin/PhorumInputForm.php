@@ -69,7 +69,7 @@ class PhorumInputForm {
     function show()
     {
         if(count($this->_help)){
-            echo "<script>\nvar help = Array;\n";
+            echo "<script type=\"text/javascript\">\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
                 $title = str_replace('"', "&quot;", $data[0]);
                 $text = str_replace('"', '&quot;', $data[1]);
