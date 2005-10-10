@@ -91,6 +91,37 @@ function phorum_import_template($tplfile, $outfile)
             $repl=trim($repl)."'; ?>";
             break;
 
+            // Run a Phorum hook. The first parameter is the name of the
+            // hook. Other parameters will be passed on as arguments for
+            // the hook function. The hook arguments will all be put in
+            // an array.
+            case "hook":
+
+            // Setup hook arguments.
+            $hookargs = array();
+            for($i = 2; !empty($parts[$i]); $i++) {
+                // For supporting the following construct, where the
+                // loopvar is passed to the hook in full:
+                // {LOOP SOMELIST}
+                //   {HOOK some_hook SOMELIST}
+                // {/LOOP SOMELIST}
+                if (isset($loopvars[$parts[$i]])) {
+                    $hookargs[] = "\$PHORUM['TMP']['".addslashes($parts[$i])."']";
+                } else {
+                    $index = phorum_determine_index($loopvars, $parts[$i]);
+                    $hookargs[] = "\$PHORUM['$index']['".addslashes($parts[$i])."']";
+                }
+            }
+
+            // Build the replacement string.
+            $repl = "<?php if(isset(\$PHORUM['hooks']['".addslashes($parts[1])."'])) phorum_hook('".addslashes($parts[1])."'";
+            if (count($hookargs) == 1) {
+                $repl .= "," . $hookargs[0];
+            } elseif (count($hookargs) > 1) {
+                $repl .= ",array(" . implode(",", $hookargs) . ")";
+            }
+            $repl .= ");?>";
+            break;
 
             // starts a loop
             case "loop":
