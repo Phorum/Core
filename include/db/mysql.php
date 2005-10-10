@@ -3868,17 +3868,16 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
         $buddies[$id]["mutual"] = false;
     }
 
-    // Get all users for which this user is a buddy.
-    $sql = "SELECT user_id FROM {$PHORUM["pm_buddies_table"]} " .
-           "WHERE buddy_user_id = $user_id";
+    // Get all mutual buddies.
+    $sql = "SELECT DISTINCT a.buddy_user_id " .
+           "FROM phorum_pm_buddies as a, phorum_pm_buddies as b " .
+           "WHERE a.user_id=$user_id and b.user_id=a.buddy_user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res)) {
         while ($row = mysql_fetch_array($res)) {
-            if (isset($buddies[$row[0]])) {
-                $buddies[$row[0]]["mutual"] = true;
-            }
+            $buddies[$row[0]]["mutual"] = true;
         }
     }
 
