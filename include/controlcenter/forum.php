@@ -46,7 +46,7 @@ function phorum_cc_get_template_info()
 
 if ( count( $_POST ) ) {
     // dst is time + 1 hour
-    if($_POST['tz_offset'] != -99) {
+    if(isset($_POST['tz_offset']) && $_POST['tz_offset'] != -99) {
         if($_POST['tz_offset'] && isset($_POST['is_dst']) && $_POST['is_dst']) {
             $_POST['tz_offset']=++$_POST['tz_offset']."";
         }
