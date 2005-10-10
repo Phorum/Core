@@ -45,6 +45,7 @@
       <br/>
     </td>
   </tr>
+  </table>
 {/IF}
 
 </form>
