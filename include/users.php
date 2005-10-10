@@ -44,7 +44,12 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
             phorum_user_clear_session( $cookie );
             return false;
         }
+
         $user=phorum_user_get($userid);
+        if (empty($user)) {
+            phorum_user_clear_session( $cookie );
+            return false;
+        }
 
         if ( ($cookie==PHORUM_SESSION_LONG_TERM && !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session) ||
              ($cookie==PHORUM_SESSION_SHORT_TERM && !empty($user['sessid_st']) && $user['sessid_st'] == $md5session) ||
@@ -296,7 +301,10 @@ function phorum_user_get( $user_id, $detailed = true )
     $ret = $tmp_users + $cache_users + $ext_users;
 
     if ( !is_array( $user_id ) ) {
-        $ret = $ret[$user_id];
+        if (isset($ret[$user_id]))
+            $ret = $ret[$user_id];
+        else 
+            $ret = NULL;
     }
 
     return $ret;
