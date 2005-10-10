@@ -70,6 +70,8 @@ document.write('<input type="submit" name="ignore" style="display:none">');
   </td>
 </tr>
 
+{HOOK tpl_editor_after_subject}
+
 {! Moderator only fields ==================================================== }
 
 {IF SHOW_THREADOPTIONS}
@@ -140,6 +142,7 @@ document.write('<input type="submit" name="ignore" style="display:none">');
 
 
 <div class="PhorumStdBlock PhorumNarrowBlock">
+  {HOOK tpl_editor_before_textarea}
   <textarea name="body" id="phorum_textarea" rows="15" cols="50"
    style="width: 99%">{POST->body}</textarea>
 
