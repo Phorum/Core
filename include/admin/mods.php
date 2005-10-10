@@ -91,7 +91,8 @@
 
     $frm->hidden("module", "mods");
 
-    ksort($plugins);
+    function plugin_sort($a, $b) { return strcmp($a["title"], $b["title"]); }
+    uasort($plugins, "plugin_sort");
 
     foreach($plugins as $name => $plugin){
 
