@@ -93,8 +93,8 @@ function phorum_import_template($tplfile, $outfile)
 
             // Run a Phorum hook. The first parameter is the name of the
             // hook. Other parameters will be passed on as arguments for
-            // the hook function. The hook arguments will all be put in
-            // an array.
+            // the hook function. On argument will be passed directly to
+            // the hook. Multiple arguments will be passed in an array.
             case "hook":
 
             // Setup hook arguments.
