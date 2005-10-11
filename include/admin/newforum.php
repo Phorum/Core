@@ -12,6 +12,7 @@
         // set the defaults and check values
 
         foreach($_POST as $field=>$value){
+            print "$field<br>";
 
             switch($field){
 
@@ -22,18 +23,23 @@
                     break;
 
                 case "list_length_flat":
-                    if(empty($value)){
+                    $_POST[$field]=(int)$value;
+                    if(empty($_POST[$field])){
                         $_POST[$field]=30;
-                    } else {
-                        $_POST[$field]=(int)$value;
                     }
                     break;
 
                 case "list_length_threaded":
-                    if(empty($value)){
+                    $_POST[$field]=(int)$value;
+                    if(empty($_POST[$field])){
                         $_POST[$field]=15;
-                    } else {
-                        $_POST[$field]=(int)$value;
+                    }
+                    break;
+
+                case "read_length":
+                    $_POST[$field]=(int)$value;
+                    if(empty($_POST[$field])){
+                        $_POST[$field]=10;
                     }
                     break;
 
