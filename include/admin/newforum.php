@@ -12,7 +12,6 @@
         // set the defaults and check values
 
         foreach($_POST as $field=>$value){
-            print "$field<br>";
 
             switch($field){
 
