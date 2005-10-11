@@ -100,13 +100,49 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 // set the forum_id to 0 if not set by now.
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 
-// get the database settings and load the database layer
+// Get the database settings.
 if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER") ) {
-    include_once( "./include/db/config.php" );
+    // Backup display_errors setting.
+    $orig = ini_get("display_errors");
+    ini_set("display_errors", 0);
+
+    // Load configuration.
+    if (! include_once( "./include/db/config.php" )) { 
+        print '<html><head><title>Phorum error</title></head><body>';
+        print '<h2>Phorum database configuration error</h2>';
+
+        // No database configuration found.
+        if (!file_exists("./include/db/config.php")) { ?>
+            Phorum has been installed on this server, but the configuration<br/>
+            for the database connection has not yet been made. Please read<br/>
+            <a href="docs/install.txt">docs/install.txt</a> for installation instructions. <?php
+        } else { 
+            $fp = fopen("./include/db/config.php", "r");
+            // Unable to read the configuration file.
+            if (!$fp) { ?>
+                A database configuration file was found in ./include/db/config.php,<br/>
+                but Phorum was unable to read it. Please check the file permissions<br/>
+                for this file. <?php
+            // Unknown error.
+            } else { 
+                fclose($fp); ?>
+                A database configuration file was found in ./include/dbconfig.php,<br/>
+                but it could not be loaded. It possibly contains one or more errors.<br/>
+                Please check your configuration file. <?php
+            }
+        } 
+
+        print '</body></html>';
+        exit(1);
+    }
+
+    // Restore original display_errors setting.
+    ini_set("display_errors", $orig);
 } else {
     $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
 }
 
+// Load the database layer.
 include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
 if(!phorum_db_check_connection()){
@@ -152,7 +188,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // checking for upgrade or new install
     if ( !isset( $PHORUM['internal_version'] ) ) {
-        echo "<html><head><title>Error</title></head><body>No Phorum settings were found.  Either this is a brand new installation of Phorum or there is an error with your database server.  If this is a new install, please go to the admin to complete the installation. If not, check your database server.</body></html>";
+        echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is an error with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
         exit();
     } elseif ( $PHORUM['internal_version'] < PHORUMINTERNAL ) {
         echo "<html><head><title>Error</title></head><body>Looks like you have installed a new version. Go to the admin to complete the upgrade!</body></html>";
