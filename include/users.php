@@ -109,8 +109,6 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refres
     if ( !empty( $PHORUM["user"] ) ) {
         $user = $PHORUM["user"];
 
-
-
         if ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] ) {
 
             switch($cookie){
@@ -192,13 +190,15 @@ function phorum_user_clear_session( $cookie = PHORUM_SESSION_LONG_TERM )
 
 /**
  * This function retrieves a user from the database, given the user id.
- * If $user_id is an array of user ids, it will retrieve all of the users in the array.
- * If $detailed is set to true, the function gets the users full information. Setting this to false omits
- * permission data, pm counts, and group membership. $detailed is true by default and may be omitted.
+ * If $user_id is an array of user ids, it will retrieve all of the users
+ * in the array. If $detailed is set to true, the function gets the users
+ * full information. Setting this to false omits permission data, pm counts,
+ * and group membership. $detailed is true by default and may be omitted.
  * @param user_id - can be a single user id, or an array of user ids.
  * @param detailed - get detailed user information. defaults to true
- * @return array - either an array representing a single user's information, or an array of users
-*/
+ * @return array - either an array representing a single user's information,
+ *                 or an array of users
+ */
 function phorum_user_get( $user_id, $detailed = true )
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -228,7 +228,8 @@ function phorum_user_get( $user_id, $detailed = true )
             }
             unset($data);
             // we need to get the dynamic data too!
-            // only selecting date_last_active, forum_last_active, posts ... any more?
+            // only selecting date_last_active, forum_last_active,
+            // posts ... any more?
             if($cachecnt > 0) {
                 $dynamic_data=phorum_db_user_get_fields(array_keys($cache_users),array('date_last_active','last_active_forum','posts'));
                 foreach($dynamic_data as $d_uid => $d_data) {
@@ -303,7 +304,7 @@ function phorum_user_get( $user_id, $detailed = true )
     if ( !is_array( $user_id ) ) {
         if (isset($ret[$user_id]))
             $ret = $ret[$user_id];
-        else 
+        else
             $ret = NULL;
     }
 
@@ -611,22 +612,22 @@ function phorum_user_access_allowed( $permission, $forum_id = 0 )
             // if the user has perms for this forum, use them.
             if ( isset( $PHORUM["user"]["permissions"][$forum_id] ) ) {
                 $perms = $PHORUM["user"]["permissions"][$forum_id];
-                // else we use the forum's default perms
-                // for registered users
+            // else we use the forum's default perms
+            // for registered users
             } elseif ( $forum_id ) {
                 if ( $forum_id != $PHORUM["forum_id"] ) {
-            $forums = phorum_db_get_forums( $forum_id );
+                    $forums = phorum_db_get_forums( $forum_id );
                     $forum = array_shift( $forums );
                 } else {
                     $forum = $PHORUM;
                 }
                 $perms = $forum["reg_perms"];
             }
-            // user is not logged in
-            // use the forum default perms for public users
+        // user is not logged in
+        // use the forum default perms for public users
         } elseif ( $forum_id ) {
             if ( $forum_id != $PHORUM["forum_id"] ) {
-            $forums = phorum_db_get_forums( $forum_id );
+                $forums = phorum_db_get_forums( $forum_id );
                 $forum = array_shift( $forums );
             } else {
                 $forum = $PHORUM;
