@@ -344,7 +344,7 @@
                 $frm->addrow("Add A Group", $frm->select_tag("new_group", $arr));
 
             if(is_array($usergroups)){
-                $group_options = array(PHORUM_USER_GROUP_REMOVE => "&lt; Remove User From Group &gt;",
+                $group_options = array(PHORUM_USER_GROUP_REMOVE => "< Remove User From Group >",
                         PHORUM_USER_GROUP_SUSPENDED => "Suspended",
                         PHORUM_USER_GROUP_UNAPPROVED => "Unapproved",
                         PHORUM_USER_GROUP_APPROVED => "Approved",
