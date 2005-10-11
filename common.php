@@ -403,7 +403,8 @@ function phorum_get_url()
                 $page = "read";
                 $suffix = "#REPLY";
             } else {
-                $page = "reply";
+                $page = "posting";
+                array_unshift($argv, "reply");
             }
             $add_forum_id = true;
             break;

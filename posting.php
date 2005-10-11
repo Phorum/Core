@@ -157,6 +157,12 @@ $preview = (! $initial && isset($_POST["preview"]));
 // Find out what editing mode we're running in.
 if ($initial) {
     $mode = isset($PHORUM["args"][1]) ? $PHORUM["args"][1] : "post";
+
+    // Quote may also be passed as a phorum parameter (quote=1).
+    if ($mode == "reply" && isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
+        $mode = "quote";
+    }
+
 } else {
     if (! isset($_POST["mode"])) {
         die("Missing parameter \"mode\" in request");
