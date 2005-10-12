@@ -2135,12 +2135,7 @@ function phorum_db_user_save($userdata){
         $values = array();
 
         foreach($userdata as $key => $value){
-            if (!is_numeric($value)){
-                $value = mysql_escape_string($value);
-                $values[] = "$key='$value'";
-            } else {
-                $values[] = "$key=$value";
-            }
+            $values[] = "$key='".mysql_escape_string($value)."'";
         }
 
         $sql .= implode(", ", $values);
