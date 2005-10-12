@@ -124,10 +124,11 @@
                 $parent_id=$forum["parent_id"];
                 while($parent_id!=0){
                     $path=$forums[$forum["parent_id"]]["name"]."::$path";
-                    if($forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
-                        $path.="(Virtual Root)";
-                    }
+
                     $parent_id=$forums[$parent_id]["parent_id"];
+                }
+                if($forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
+                        $path.=" (Virtual Root)";
                 }
                 $folders[$forum["forum_id"]]=$path;
             }

@@ -25,10 +25,10 @@
     $ban_types = array(PHORUM_BAD_IPS=>"IP Address/Hostname", PHORUM_BAD_NAMES=>"Name/User Name", PHORUM_BAD_EMAILS=>"Email Address", PHORUM_BAD_USERID=>"User-Id (registered User)");
 
     $match_types = array("string", "PCRE");
-    
-    $forum_list=phorum_get_forum_info(true);
+
+    $forum_list=phorum_get_forum_info(2);
     $forum_list[0]="GLOBAL";
-    
+
     if(count($_POST) && $_POST["string"]!=""){
 
         if($_POST["curr"]!="NEW"){
@@ -52,7 +52,7 @@
             $curr = $_GET["curr"];
         }
     }
-    
+
     if($curr!="NEW"){
         extract(phorum_db_get_banitem($curr));
         $title="Edit Ban Item";
@@ -71,7 +71,7 @@
     }
 
     include_once "./include/admin/PhorumInputForm.php";
-        
+
 
     $frm =& new PhorumInputForm ("", "post", $submit);
 
@@ -86,7 +86,7 @@
     $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
 
     $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
-    
+
     $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
 
     $frm->show();
@@ -94,7 +94,7 @@
     echo "If using PCRE for comparison, \"Sting To Match\" should be a valid PCRE expression. See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information.";
 
     if($curr=="NEW"){
-        
+
         $PHORUM['banlists']=phorum_db_get_banlists();
         unset($PHORUM['banlists'][PHORUM_BAD_WORDS]);
 
@@ -110,8 +110,8 @@
             echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";
             echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
             echo "</tr>\n";
-            
-            
+
+
 
             foreach($PHORUM["banlists"] as $type => $content){
                 foreach($content as $key => $item){
