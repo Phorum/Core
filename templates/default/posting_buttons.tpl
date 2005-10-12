@@ -9,5 +9,4 @@
   <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')"
    class="PhorumSubmit" value=" {LANG->Cancel} " />
   {/IF}
-  <br style="clear:both" />
 </div>
