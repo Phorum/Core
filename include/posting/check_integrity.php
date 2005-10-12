@@ -17,6 +17,8 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+if(!defined("PHORUM")) return;
+
 // For phorum_valid_email()
 include_once("./include/email_functions.php");
 

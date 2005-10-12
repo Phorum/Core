@@ -17,6 +17,8 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+if(!defined("PHORUM")) return;
+
 if ($do_detach)
 {
     // Find the message to detach.

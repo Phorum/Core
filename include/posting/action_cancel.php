@@ -17,6 +17,8 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+if(!defined("PHORUM")) return;
+
 // Clean up unlinked attachments from the database.
 foreach ($message["attachments"] as $info) {
     if (! $info["linked"]) {

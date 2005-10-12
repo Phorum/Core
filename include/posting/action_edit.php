@@ -17,6 +17,8 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+if(!defined("PHORUM")) return;
+
 // For phorum_update_thread_info().
 include_once("./include/thread_info.php");
 

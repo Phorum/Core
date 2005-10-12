@@ -17,6 +17,8 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+if(!defined("PHORUM")) return;
+
 // Check if the user is allowed to post a new message or a reply.
 if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
     ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) {

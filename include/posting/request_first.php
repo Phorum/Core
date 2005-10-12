@@ -17,6 +17,8 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+if(!defined("PHORUM")) return;
+
 // Retrieve the message id to work with.
 $message_id = 0;
 if ($mode != "post") {
