@@ -69,7 +69,7 @@ if ($mode == "reply" || $mode == "quote")
     {
         $quoted = phorum_hook("quote", array($dbmessage["author"], $dbmessage["body"]));
 
-        if (empty($quoted))
+        if (empty($quoted) || is_array($quoted))
         {
             $quoted = phorum_strip_body($dbmessage["body"]);
             $quoted = str_replace("\n", "\n> ", $quoted);
