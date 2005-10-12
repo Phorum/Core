@@ -1,8 +1,26 @@
 <?php
-    // This library contains some functions that can be used for
-    // code benchmarking. It is not actively in use in the Phorum
-    // core, but its functions are used by the developers once
-    // in a while.
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//   Copyright (C) 2005  Phorum Development Team                              //
+//   http://www.phorum.org                                                    //
+//                                                                            //
+//   This program is free software. You can redistribute it and/or modify     //
+//   it under the terms of either the current Phorum License (viewable at     //
+//   phorum.org) or the Phorum License that was distributed with this file    //
+//                                                                            //
+//   This program is distributed in the hope that it will be useful,          //
+//   but WITHOUT ANY WARRANTY, without even the implied warranty of           //
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     //
+//                                                                            //
+//   You should have received a copy of the Phorum License                    //
+//   along with this program.                                                 //
+////////////////////////////////////////////////////////////////////////////////
+
+// This library contains some functions that can be used for
+// code benchmarking. It is not actively in use in the Phorum
+// core, but its functions are used by the developers once
+// in a while.
 
     if(!defined("PHORUM")) return;
 
