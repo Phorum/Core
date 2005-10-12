@@ -99,22 +99,29 @@ if(empty($PHORUM["args"][1])) {
                 $message_ids=$thread_message['meta']['message_ids'];
 
                 foreach($message_ids as $mkey => $mid) {
-                    // if already read, remove it from message-array
-                    if(isset($PHORUM['user']['newinfo'][$mid])) {
-                        unset($message_ids[$mkey]);
-                    }
+                	// if already read, remove it from message-array
+                	if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id']) {
+                		unset($message_ids[$mkey]);
+                	}
 
                 }
-                asort($message_ids,SORT_NUMERIC); // make sure they are sorted
+
+                // it could happen that they are all read
+                if(count($message_ids)) {
+                    asort($message_ids,SORT_NUMERIC); // make sure they are sorted
 
 
-                $new_message=array_shift($message_ids); // get the first element
+                    $new_message=array_shift($message_ids); // get the first element
 
-                if(!$PHORUM['threaded_read']) { // get new page
+                    if(!$PHORUM['threaded_read']) { // get new page
                     $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
                     $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
-                } else { // for threaded
+                    } else { // for threaded
                     $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
+                    }
+                } else {
+                    // lets go back to the index if they are all read
+                    $dest_url=phorum_get_url(PHORUM_LIST_URL);
                 }
 
                 break;
