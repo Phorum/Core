@@ -21,17 +21,18 @@
 
     $error="";
     $curr="NEW";
-    
+
     // retrieving the forum-info
-    $forum_list=phorum_get_forum_info(true);
+    $forum_list=phorum_get_forum_info(2);
+
     $forum_list[0]="GLOBAL";
-    
+
     // conversion of old data if existing
     if(isset($PHORUM["bad_words"]) && count($PHORUM['bad_words'])) {
     print "upgrading badwords<br>";
         foreach($PHORUM['bad_words'] as $key => $data) {
             phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$data ,0 ,0);
-            unset($PHORUM["bad_words"][$key]);    
+            unset($PHORUM["bad_words"][$key]);
         }
         phorum_db_update_settings(array("bad_words"=>$PHORUM["bad_words"]));
     }
@@ -69,7 +70,7 @@
         settype($forumid,"int");
         $title="Add A Bad Word";
         $submit="Add";
-    }    
+    }
 
 
     settype($string, "string");
@@ -79,7 +80,7 @@
     if($error){
         phorum_admin_error($error);
     }
-    
+
     // load bad-words-list
     $banlists=phorum_db_get_banlists();
     $bad_words=$banlists[PHORUM_BAD_WORDS];
@@ -95,19 +96,19 @@
     $frm->addbreak($title);
 
     $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
-    
+
     $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
 
     $frm->show();
 
     echo "<hr class=\"PhorumAdminHR\" />";
-    
+
     if(count($bad_words)){
 
         echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
         echo "<tr>\n";
         echo "    <td class=\"PhorumAdminTableHead\">Word</td>\n";
-        echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";        
+        echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";
         echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
         echo "</tr>\n";
 

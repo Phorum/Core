@@ -119,11 +119,14 @@
         $forums = phorum_db_get_forums();
 
         foreach($forums as $forum){
-            if($forums_only == 0 || $forum['folder_flag']==0)  {
+            if($forums_only == 0 || $forum['folder_flag']==0 || ($forums_only=2 && $forum['vroot'] && $forum['vroot'] == $forum['forum_id']))  {
                 $path = $forum["name"];
                 $parent_id=$forum["parent_id"];
                 while($parent_id!=0){
                     $path=$forums[$forum["parent_id"]]["name"]."::$path";
+                    if($forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
+                        $path.="(Virtual Root)";
+                    }
                     $parent_id=$forums[$parent_id]["parent_id"];
                 }
                 $folders[$forum["forum_id"]]=$path;
@@ -135,7 +138,6 @@
         return $folders;
 
     }
-
 
     /*
      * Sets the given vroot for the descending forums / folders

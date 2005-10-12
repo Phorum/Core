@@ -2676,7 +2676,7 @@ function phorum_db_get_user_filesize_total($user_id)
 
 /**
  * This function is used for cleaning up stale files from the
- * database. Stale files are files that are not linked to 
+ * database. Stale files are files that are not linked to
  * anything. These can for example be caused by users that
  * are writing a message with attachments, but never post
  * it.
@@ -2693,11 +2693,11 @@ function phorum_db_file_purge_stale_files($live_run = false)
 
     $where = "link='" . PHORUM_LINK_EDITOR. "' " .
              "and add_datetime<". (time()-PHORUM_MAX_EDIT_TIME);
-   
+
     // Purge files.
     if ($live_run) {
 
-        // Delete files that are linked to the editor and are 
+        // Delete files that are linked to the editor and are
         // added a while ago. These are from abandoned posts.
         $sql = "delete from {$PHORUM['files_table']} " .
                "where $where";
@@ -2709,7 +2709,7 @@ function phorum_db_file_purge_stale_files($live_run = false)
     // Only select a list of files that can be purged.
     } else {
 
-        // Select files that are linked to the editor and are 
+        // Select files that are linked to the editor and are
         // added a while ago. These are from abandoned posts.
         $sql = "select file_id, filename, filesize, add_datetime " .
                "from {$PHORUM['files_table']} " .
@@ -3045,6 +3045,9 @@ function phorum_db_get_banlists() {
 
     if(isset($PHORUM['forum_id']) && !empty($PHORUM['forum_id']))
         $forumstr = "WHERE forum_id = {$PHORUM['forum_id']} OR forum_id = 0";
+
+    if(isset($PHORUM['vroot']) && !empty($PHORUM['vroot']))
+        $forumstr .= " OR forum_id = {$PHORUM['vroot']}";
 
 
 
