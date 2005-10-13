@@ -665,6 +665,11 @@ switch ($page) {
             // re-init folder list to account for change in read flags
             $pm_folders = phorum_db_pm_getfolders(NULL, true);
 
+            // Set folder id to the right folder for this message.
+            $folder_id = $message["pm_folder_id"];
+            if ($folder_id == 0) {
+                $folder_id = $message["special_folder"];
+            }
 
             $template = "pm_read";
 
