@@ -1,6 +1,8 @@
 <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>
-      <th class="PhorumTableHeader" align="left" width="20">&nbsp;</th>
+      <th class="PhorumTableHeader" align="left" width="20">
+        {include pm_list_selectall}
+      </th>
       <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
       <th class="PhorumTableHeader" align="left" nowrap="nowrap">{LANG->To}&nbsp;</th>
       <th class="PhorumTableHeader" align="left" nowrap="nowrap">{LANG->PMRead}&nbsp;</th>

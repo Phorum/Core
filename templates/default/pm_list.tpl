@@ -1,4 +1,4 @@
-<form action="{ACTION}" method="post">
+<form action="{ACTION}" method="post" id="phorum_listform">
 {POST_VARS}
 <input type="hidden" name="panel" value="pm" />
 <input type="hidden" name="action" value="list" />
