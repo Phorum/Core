@@ -961,8 +961,26 @@ Table of contents:
    Return : Same as Input
 
    This hook can be used for performing tasks before user registration.
-   This hook is particularly useful if you want to add some data to
-   or change some data in the userdata.
+   This hook is useful if you want to add some data to or change some 
+   data in the userdata and to check if the userdata is correct.
+
+   When checking the registration data, the hook can set the "error" field
+   in the returned userdata array. When this field is set after running
+   the hook, the registration processed will be halted and the error
+   will be displayed. If you created a custom form field "foo" and you
+   require that field to be filled in, you could create a hook function
+   which looks like this:
+
+      function phorum_mod_foo_before_register ($data)
+      {
+         $myfield = trim($data['your_custom_field']);
+         if (empty($myfield)) {
+             $data['error'] = 'You need to fill in my custom field';
+         }
+
+         return $data;
+      }
+   
 
    ----------------------------------------------------------------------------
    cc_save_user
@@ -972,7 +990,30 @@ Table of contents:
    Input  : Array containing the userdata to save.
    Return : Same as Input
 
-   This hook can be used for changing the userdata that will be saved.
+   This hook works the same way as the before_register hook, so you can
+   also use it for changing and checking the userdata that will be
+   saved in the database. There's one difference. If you want to
+   check a custom field, you'll also need to check the panel which
+   you are on, because this hook is called from multiple panels.
+   The panel that you are on, will be stored in the 'panel' field
+   of the userdata.
+   
+   If you have added a custom field to the template for the option 
+   "Edit My Profile" in the control panel, your hook function will
+   look like this:
+   
+      function phorum_mod_foo_cc_save_user ($data)
+      {
+         // Only check data for the panel "user".
+         if ($data['panel'] != "user") return $data;
+
+         $myfield = trim($data['your_custom_field']);
+         if (empty($myfield)) {
+             $data['error'] = 'You need to fill in my custom field';
+         }
+
+         return $data;
+      }
 
    ----------------------------------------------------------------------------
    check_post
