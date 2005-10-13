@@ -180,6 +180,7 @@
         $folders=$folder_data;
         $vroot=0;
         $active=1;
+        $template="default";
     }
 
 
