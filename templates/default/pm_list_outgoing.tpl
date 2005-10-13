@@ -11,9 +11,9 @@
 {IF MESSAGECOUNT}
   {LOOP MESSAGES}
     <tr>
-      <td class="PhorumListTableRow"><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
-      <td class="PhorumListTableRow"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a></td>
-      <td class="PhorumListTableRow" nowrap="nowrap">
+      <td class="PhorumTableRow"><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
+      <td class="PhorumTableRow"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a></td>
+      <td class="PhorumTableRow" nowrap="nowrap">
         {IF MESSAGES->recipient_count 1}
           {LOOP MESSAGES->recipients}
             <a href="{MESSAGES->recipients->to_profile_url}">{MESSAGES->recipients->username}</a>&nbsp;
@@ -22,7 +22,7 @@
           {MESSAGES->recipient_count}&nbsp;{LANG->Recipients}&nbsp;
         {/IF}
       </td>
-      <td class="PhorumListTableRowSmall" nowrap="nowrap" align="left">
+      <td class="PhorumTableRow" nowrap="nowrap" align="left">
         {IF MESSAGES->recipient_count 1}
          {LOOP MESSAGES->recipients}
           {IF MESSAGES->recipients->read_flag}{LANG->Yes}{ELSE}{LANG->No}{/IF}
@@ -35,12 +35,12 @@
           {/IF}
         {/IF}
       </td>
-      <td class="PhorumListTableRowSmall" nowrap="nowrap" style="white-space:nowrap" width="1"><div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div></td>
+      <td class="PhorumTableRow" nowrap="nowrap" style="white-space:nowrap" width="1"><div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div></td>
     </tr>
   {/LOOP MESSAGES}
 {ELSE}
   <tr>
-      <td colspan="5" style="text-align: center" class="PhorumListTableRow">
+      <td colspan="5" style="text-align: center" class="PhorumTableRow">
         <br/>
         <i>{LANG->PMFolderIsEmpty}</i><br/>
         <br/>

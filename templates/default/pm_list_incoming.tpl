@@ -10,15 +10,15 @@
 {IF MESSAGECOUNT}
   {LOOP MESSAGES}
     <tr>
-      <td class="PhorumListTableRow"><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
-      <td class="PhorumListTableRow"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a>{IF NOT MESSAGES->read_flag}<span class="PhorumNewFlag">&nbsp;{LANG->newflag}</span>{/IF}</td>
-      <td class="PhorumListTableRow" nowrap="nowrap"><a href="{MESSAGES->from_profile_url}">{MESSAGES->from_username}</a>&nbsp;</td>
-      <td class="PhorumListTableRowSmall" nowrap="nowrap" width="1"><div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div></td>
+      <td class="PhorumTableRow"><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
+      <td class="PhorumTableRow"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a>{IF NOT MESSAGES->read_flag}<span class="PhorumNewFlag">&nbsp;{LANG->newflag}</span>{/IF}</td>
+      <td class="PhorumTableRow" nowrap="nowrap"><a href="{MESSAGES->from_profile_url}">{MESSAGES->from_username}</a>&nbsp;</td>
+      <td class="PhorumTableRow" nowrap="nowrap" width="1"><div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div></td>
     </tr>
   {/LOOP MESSAGES}
 {ELSE}
   <tr>
-      <td colspan="4" style="text-align: center" class="PhorumListTableRow">
+      <td colspan="4" style="text-align: center" class="PhorumTableRow">
         <br/>
         <i>{LANG->PMFolderIsEmpty}</i><br/>
         <br/>

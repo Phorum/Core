@@ -39,7 +39,7 @@
   </div>
 {ELSE}
   <tr>
-    <td colspan="4" style="text-align: center" class="PhorumListTableRow">
+    <td colspan="4" style="text-align: center" class="PhorumTableRow">
       <br/>
       <i>{LANG->BuddyListIsEmpty}</i><br/>
       <br/>

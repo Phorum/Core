@@ -26,7 +26,7 @@
 <table border="0" cellspacing="0" class="PhorumStdTable">
 {IF UNAPPROVEDMESSAGE}
     <tr>
-        <td class="PhorumListTableRow">
+        <td class="PhorumTableRow">
         {UNAPPROVEDMESSAGE}
         </td>
     </tr>
@@ -43,9 +43,9 @@
     </tr>
 {/IF}
     <tr>
-        <td class="PhorumListTableRow"><?php echo $PHORUM['TMP']['marker'] ?><a href="{PREPOST->url}" target="_blank">{PREPOST->subject}</a><br /><span class="PhorumListModLink">&nbsp;&nbsp;&nbsp;&nbsp;<a class="PhorumListModLink" href="{PREPOST->delete_url}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->approve_url}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->approve_tree_url}">{LANG->ApproveMessageReplies}</a></span></td>
-        <td class="PhorumListTableRow" nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
-        <td class="PhorumListTableRowSmall" nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
+        <td class="PhorumTableRow"><?php echo $PHORUM['TMP']['marker'] ?><a href="{PREPOST->url}" target="_blank">{PREPOST->subject}</a><br /><span class="PhorumListModLink">&nbsp;&nbsp;&nbsp;&nbsp;<a class="PhorumListModLink" href="{PREPOST->delete_url}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->approve_url}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->approve_tree_url}">{LANG->ApproveMessageReplies}</a></span></td>
+        <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
+        <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
     </tr>
 {/LOOP PREPOST}
 {/IF}

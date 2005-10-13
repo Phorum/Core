@@ -12,9 +12,9 @@
     </tr>
 {LOOP USERS}
     <tr>
-        <td class="PhorumListTableRow"><input type="checkbox" name="user_ids[]" value="{USERS->user_id}" /></td>
-        <td class="PhorumListTableRow" width="50%">{USERS->username}</td>
-        <td class="PhorumListTableRow" width="50%" nowrap="nowrap" width="150">{USERS->email}</td>
+        <td class="PhorumTableRow"><input type="checkbox" name="user_ids[]" value="{USERS->user_id}" /></td>
+        <td class="PhorumTableRow" width="50%">{USERS->username}</td>
+        <td class="PhorumTableRow" width="50%" nowrap="nowrap" width="150">{USERS->email}</td>
     </tr>
 {/LOOP USERS}
 </table>
