@@ -729,8 +729,11 @@ switch ($page) {
                 );
                 $msg = phorum_pm_quoteformat($message["from_username"], $msg);
 
+                // Include the other recipient, excecpt the active
+                // user himself, when replying to all.
                 if (isset($_POST["reply_to_all"])) {
                     foreach($message["recipients"] as $rcpt) {
+                        if ($user_id == $rcpt["user_id"]) continue;
                         $msg["recipients"][$rcpt["user_id"]] = array(
                             "username" => $rcpt["username"],
                             "user_id"  => $rcpt["user_id"],
