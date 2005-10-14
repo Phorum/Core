@@ -12,6 +12,10 @@
 
 {define marker <img src="templates/default/images/carat.gif" border="0" width="8" height="8" alt="" style="vertical-align: middle;" />&nbsp;}
 
+{! -- This is the image to use as a delete button for recipients in PM --- }
+
+{var delete_image templates/default/images/delete.gif}
+
 {! --- these are the colors used in the style sheet --- }
 
 {! --- you can use them or replace them in the style sheet --- }

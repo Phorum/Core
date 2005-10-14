@@ -65,8 +65,9 @@
       <div class="phorum-recipientblock">
         {MESSAGE->recipients->username}
         <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->username}"/>
-        <input type="image" src="templates/default/images/delete.gif"
-         name="del_rcpt::{MESSAGE->recipients->user_id}" style="margin-left: 3px;vertical-align:top">
+        <input type="image" src="{delete_image}"
+         name="del_rcpt::{MESSAGE->recipients->user_id}" 
+         style="margin-left: 3px;vertical-align:top">
       </div>
     {/LOOP MESSAGE->recipients}
 
