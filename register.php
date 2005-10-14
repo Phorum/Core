@@ -26,37 +26,44 @@ include_once("./include/email_functions.php");
 // set all our URL's
 phorum_build_common_urls();
 
+// The URL contains an approve argument, which means that a new user
+// is confirming a new user account.
 if(isset($PHORUM["args"]["approve"])){
 
+    // Extract registration validation code and user_id.
     $tmp_pass=substr($PHORUM["args"]["approve"], 0, 8);
-    $user_id=(int)substr($PHORUM["args"]["approve"], 8);
+    $user_id = (int)substr($PHORUM["args"]["approve"], 8);
+    $user_id = phorum_user_verify($user_id, $tmp_pass);
 
-    $user_id=phorum_user_verify($user_id, $tmp_pass);
+    // Validation code correct.
+    if ($user_id) {
 
-    if($user_id){
+        $user = phorum_user_get($user_id);
 
-        $user=phorum_user_get($user_id);
-
-        if($user["active"] == PHORUM_USER_INACTIVE) { // user has been denied!
+        // The user has been denied by a moderator.
+        if ($user["active"] == PHORUM_USER_INACTIVE) {
              $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
-
-        } elseif($user["active"] == PHORUM_USER_PENDING_MOD) { // waiting for moderator-approval
-            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+        // The user should still be approved by a moderator.
+        } elseif ($user["active"] == PHORUM_USER_PENDING_MOD) {
             // TODO: this message should be changed in 5.1 to have a unique message!!!
-
-        } else { // user pending both or email
-            if($user["active"]==PHORUM_USER_PENDING_BOTH){
-                $moduser["active"]=PHORUM_USER_PENDING_MOD;
+            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+        // The user is waiting for email and/or email+mod confirmation.
+        } else {
+            // Waiting for both? Then switch to wait for moderator.
+            if ($user["active"] == PHORUM_USER_PENDING_BOTH) {
+                $moduser["active"] = PHORUM_USER_PENDING_MOD;
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+            // Only email confirmation was required. Active the user.
             } else {
-                $moduser["active"]=PHORUM_USER_ACTIVE;
+                $moduser["active"] = PHORUM_USER_ACTIVE;
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegAcctActive"];
             }
 
-            $moduser["user_id"]=$user_id;
+            $moduser["user_id"] = $user_id;
             phorum_user_save($moduser);
         }
 
+    // Validation code incorrect.
     } else {
         $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
     }
@@ -67,10 +74,13 @@ if(isset($PHORUM["args"]["approve"])){
     phorum_hook("before_footer");
     include phorum_get_template("footer");
     exit();
-
 }
 
-if(count($_POST)){
+$error = ''; // Init error as empty.
+
+// Process posted form data.
+if (count($_POST)) {
+
     // Sanitize input data.
     foreach ($_POST as $key => $val) {
         if ($key == 'username') {
@@ -83,89 +93,111 @@ if(count($_POST)){
         }
     }
 
-    $error=""; // init it as empty
-
-    if(!isset($_POST["username"]) || empty($_POST['username']) ){
+    // Check if all required fields are filled and valid.
+    if (!isset ($_POST["username"]) || empty($_POST['username'])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
-    }elseif(!isset($_POST["email"]) || !phorum_valid_email($_POST["email"])){
+    } elseif (!isset($_POST["email"]) || !phorum_valid_email($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
-    }elseif(empty($_POST["password"]) || $_POST["password"] != $_POST["password2"]){
+    } elseif (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"]) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
-    }else{
+    } else {
 
         $PHORUM['banlists'] = phorum_db_get_banlists();
 
-        if(phorum_user_check_username($_POST["username"])){
-
+        // Check if the username doesn't already exist.
+        if (phorum_user_check_username($_POST["username"])) {
             $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
 
-        } elseif (phorum_user_check_email($_POST["email"])){
-
+        // Check if the email address doesn't already exist.
+        } elseif (phorum_user_check_email($_POST["email"])) {
             $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
 
+        // Check if the username isn't on the banlist.
         } elseif (!phorum_check_ban_lists($_POST["username"], PHORUM_BAD_NAMES)) {
-
             $error = $PHORUM["DATA"]["LANG"]["ErrBannedName"];
 
+        // Check if the email address isn't on the banlist.
         } elseif (!phorum_check_ban_lists($_POST["email"], PHORUM_BAD_EMAILS)) {
-
             $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
 
+        // All checks are passed.
         } else {
 
-            $userdata = $_POST;
-            $userdata["hide_email"]=true;
+            // Setup the default userdata to store.
+            $userdata = array(
+                'username'   => NULL,
+                'password'   => NULL,
+                'email'      => NULL,
+            );
+            // Add custom profile fields as acceptable fields.
+            foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
+                $userdata[$field] = NULL;
+            }
+            // Update userdata with $_POST information.
+            foreach ($_POST as $key => $val) {
+               if (array_key_exists($key, $userdata)) {
+                   $userdata[$key] = $val;
+               }
+            }
+            // Remove unused custom profile fields.
+            foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
+                if (is_null($userdata[$field])) {
+                    unset($userdata[$field]);
+                }
+            }
+            // Add static info.
             $userdata["date_added"]=time();
             $userdata["date_last_active"]=time();
+            $userdata["hide_email"]=true;
 
-            // remove anything that is not actual user data
-            unset($userdata["forum_id"]);
-            unset($userdata["password2"]);
-
-            // email confirmation for registration
-            if($PHORUM["registration_control"]==PHORUM_REGISTER_INSTANT_ACCESS){
-
+            // Set user active status depending on the registration verification
+            // setting. Generate a confirmation code for email verification.
+            if ($PHORUM["registration_control"]==PHORUM_REGISTER_INSTANT_ACCESS) {
                 $userdata["active"] = PHORUM_USER_ACTIVE;
-            } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL){
-
+            } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL) {
                 $userdata["active"] = PHORUM_USER_PENDING_EMAIL;
                 $userdata["password_temp"]=substr(md5(microtime()), 0, 8);
-            } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_MODERATOR){
-
+            } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_MODERATOR) {
                 $userdata["active"] = PHORUM_USER_PENDING_MOD;
-            } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH) {
-
+            } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH) {
                 $userdata["password_temp"]=substr(md5(microtime()), 0, 8);
                 $userdata["active"] = PHORUM_USER_PENDING_BOTH;
             }
 
-            $userdata=phorum_hook("before_register", $userdata);
-            if(isset($userdata['error'])) {
-                $error=$userdata['error'];
+            // Run a hook, so module writers can update and check the userdata.
+            $userdata = phorum_hook("before_register", $userdata);
+
+            // Set $error, in case the before_register hook did set an error.
+            if (isset($userdata['error'])) {
+                $error = $userdata['error'];
                 unset($userdata['error']);
-            } elseif ($user_id=phorum_user_add($userdata)){
+            } 
+            // Try to add the user to the database.
+            elseif ($user_id = phorum_user_add($userdata)) {
 
-                if($PHORUM["registration_control"]==PHORUM_REGISTER_INSTANT_ACCESS){
-
+                // The user was added. Determine what message to show.
+                if ($PHORUM["registration_control"] == PHORUM_REGISTER_INSTANT_ACCESS) {
                     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegThanks"];
-
-                } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL || $PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH){
+                } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL || 
+                          $PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH) {
                     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
-                } elseif($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_MODERATOR){
+                } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_MODERATOR) {
                     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
                 }
 
-                if($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH || $PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL) {
-                        $verify_url=phorum_get_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
-                        $maildata["mailsubject"]=$PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
-                        $maildata["mailmessage"]=wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
-                        phorum_email_user(array($userdata["email"]), $maildata);
+                // Send a message to the new user in case email verification is required.
+                if ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH || 
+                    $PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_EMAIL) {
+                    $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
+                    $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
+                    $maildata["mailmessage"] = wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
+                    phorum_email_user(array($userdata["email"]), $maildata);
                 }
-
 
                 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
                 $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
 
+                // Run a hook, so module writers can run tasks after registering.
                 phorum_hook("after_register",$userdata);
 
                 include phorum_get_template("header");
@@ -175,41 +207,42 @@ if(count($_POST)){
                 include phorum_get_template("footer");
 
                 exit();
+
+            // Adding the user to the database failed.
             } else {
                 $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
             }
         }
     }
 
-    if(!empty($error)){
-        foreach($_POST as $key=>$value){
+    // Some error encountered during processing? Then setup the 
+    // data to redisplay the registration form, including an error.
+    if (!empty($error)) {
+        foreach($_POST as $key=>$value) {
             $PHORUM["DATA"]["REGISTER"][$key] = htmlspecialchars($value);
         }
-        $PHORUM["DATA"]["REGISTER"]["noshowemail"] = (empty($_POST["noshowemail"])) ? "" : "checked";
         $PHORUM["DATA"]["ERROR"] = htmlspecialchars($error);
     }
-}else{
+
+// No data posted, so this is the first request. Initialize form data.
+} else {
+    // Initialize fixed fields.
     $PHORUM["DATA"]["REGISTER"]["username"] = "";
     $PHORUM["DATA"]["REGISTER"]["email"] = "";
     $PHORUM["DATA"]["ERROR"] = "";
-}
 
-if(is_array($PHORUM["PROFILE_FIELDS"])) {
-    foreach($PHORUM["PROFILE_FIELDS"] as $field){
-
-        if(isset($_POST[$field])){
-            $PHORUM["DATA"]["REGISTER"][$field] = $_POST[$field];
-        } else {
-            $PHORUM["DATA"]["REGISTER"][$field] = "";
-        }
+    // Initialize custom profile fields.
+    foreach($PHORUM["PROFILE_FIELDS"] as $field) {
+        $PHORUM["DATA"]["REGISTER"][$field["name"]] = "";
     }
 }
 
+// Setup static template data.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_REGISTER_ACTION_URL );
 $PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
-
 $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
 
+// Display the registration page.
 include phorum_get_template("header");
 phorum_hook("after_header");
 include phorum_get_template("register");
