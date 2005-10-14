@@ -25,7 +25,7 @@ if(count($_POST)) {
     $_POST["hide_email"] = (isset($_POST["hide_email"]) && $_POST["hide_email"]) ? 0 : 1;
     $_POST["hide_activity"] = (isset($_POST["hide_activity"]) && $_POST["hide_activity"]) ? 0 : 1;
     
-    $error = phorum_controlcenter_user_save($panel);
+    list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 }
 
 

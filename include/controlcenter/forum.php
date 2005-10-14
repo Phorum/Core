@@ -74,7 +74,7 @@ if ( count( $_POST ) ) {
         $_POST['is_dst']=0;   
     }
     
-    $error = phorum_controlcenter_user_save( $panel );
+    list($error,$okmsg) = phorum_controlcenter_user_save( $panel );
 } 
 
 if ( isset( $PHORUM["user_time_zone"] ) ) {
