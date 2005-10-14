@@ -170,7 +170,7 @@ if (count($_POST)) {
         // Run a hook, so module writers can update and check the userdata.
         $userdata = phorum_hook("before_register", $userdata);
 
-        // Try to add the user to the database.
+        // Set $error, in case the before_register hook did set an error.
         if (isset($userdata['error'])) {
             $error = $userdata['error'];
             unset($userdata['error']);
