@@ -2,7 +2,7 @@
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 if(count($_POST)) {
-     $error = phorum_controlcenter_user_save($panel);
+     list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 }
 
 foreach($PHORUM["DATA"]["PROFILE"] as $key => $data) {

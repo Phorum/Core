@@ -58,7 +58,7 @@ if ( count( $_POST ) ) {
             $PHORUM['DATA']['PROFILE']['email_temp_part']=$_POST['email'];
             unset($_POST['email']);
         }
-        $error = phorum_controlcenter_user_save( $panel );
+        list($error,$okmsg) = phorum_controlcenter_user_save( $panel );
     }
 }
 

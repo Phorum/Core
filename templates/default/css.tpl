@@ -191,6 +191,16 @@
         font-weight: bold;
     }
 
+    .PhorumOkMsg
+    {
+        padding: 10px;
+        text-align: center;
+        color: {okmsgfontcolor};
+        font-size: {largefontsize};
+        font-family: {largefont};
+        font-weight: bold;
+    }
+
    .PhorumNewFlag
     {
         font-family: {defaultfont};

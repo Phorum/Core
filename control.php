@@ -1,4 +1,5 @@
 <?php
+
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // Copyright (C) 2003  Phorum Development Team                                //
@@ -26,7 +27,7 @@ include_once("./include/format_functions.php");
 
 define("PHORUM_CONTROL_CENTER", 1);
 
-// a user has to be logged in to use his control-center
+// A user has to be logged in to use his control-center.
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
@@ -34,17 +35,19 @@ if (!$PHORUM["DATA"]["LOGGEDIN"]) {
 
 $error_msg = false;
 
-// generating the id of the page to use
-$panel = (!isset($PHORUM['args']['panel']) || empty($PHORUM["args"]['panel'])) ? PHORUM_CC_SUMMARY : $PHORUM["args"]['panel'];
+// Generating the panel id of the page to use.
+$panel = (!isset($PHORUM['args']['panel']) || empty($PHORUM["args"]['panel'])) 
+       ? PHORUM_CC_SUMMARY : $PHORUM["args"]['panel'];
 
-// sometimes we set it from a post-form
+// Sometimes we set the panel id from a post-form.
 if (isset($_POST['panel'])) {
     $panel = $_POST['panel'];
 }
 
+// Set all our URLs.
 phorum_build_common_urls();
 
-// generating the cc-urls
+// Generate the control panel URLs.
 $PHORUM['DATA']['URL']['CC0'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUMMARY);
 $PHORUM['DATA']['URL']['CC1'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS);
 $PHORUM['DATA']['URL']['CC2'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_FORUMS);
@@ -63,45 +66,49 @@ $PHORUM['DATA']['URL']['CC14'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel
 $PHORUM['DATA']['URL']['CC15'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
 $PHORUM['DATA']['URL']['CC16'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
 
-if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
-    $PHORUM["DATA"]["MYFILES"] = true;
-} else {
-    $PHORUM["DATA"]["MYFILES"] = false;
-}
+// Determine if the user files functionality is available.
+$PHORUM["DATA"]["MYFILES"] = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]);
 
-// determine if the user is a moderator
+// Determine if the user is a moderator.
 $PHORUM["DATA"]["MESSAGE_MODERATOR"] = (count(phorum_user_access_list(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) > 0);
 $PHORUM["DATA"]["USER_MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS);
 $PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_user_allow_moderate_group();
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 
-// settings for the common form, doesn't need to be unique for each case
+// The form action for the common form.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_CONTROLCENTER_ACTION_URL );
 
 $user = $PHORUM['user'];
 
-// security messures
+// Security messures.
 unset($user["password"]);
+unset($user["password_temp"]);
 unset($user["permissions"]);
 
-if($panel=="sig"){
+// Format the user signature using standard message body formatting
+// or  HTML escape it when we are on the signature setting page.
+if ($panel == "sig") {
     $user["signature"] = htmlspecialchars($user["signature"]);
 } else {
-    // fake a message here so we can run the sig through format_message
+    // Fake a message here so we can run the sig through format_message.
     $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
     $fake_messages = phorum_format_messages( $fake_messages );
     $user["signature"] = $fake_messages[0]["body"];
 }
 
-// set any custom profile fields that are not present.
+// Initialize any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
     foreach($PHORUM["PROFILE_FIELDS"] as $field) {
         if (!isset($user[$field])) $user[$field] = "";
     }
 }
-$PHORUM["DATA"]["PROFILE"] = $user;
 
-$PHORUM["DATA"]["PROFILE"]["forum_id"] = isset($PHORUM["forum_id"])?$PHORUM['forum_id']:0;
+// Setup template data.
+$PHORUM["DATA"]["PROFILE"] = $user;
+$PHORUM["DATA"]["PROFILE"]["forum_id"] = isset($PHORUM["forum_id"]) ? $PHORUM['forum_id'] : 0;
+$PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
+
+// Set the back-URL and -message.
 if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag']==0) {
     $PHORUM['DATA']['URL']['BACK'] = phorum_get_url(PHORUM_LIST_URL);
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BacktoForum'];
@@ -113,9 +120,8 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag']==0) {
     }
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BackToForumList'];
 }
-$PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
 
-// load the file for that panel - main-part
+// Load the include file for the current panel.
 $panel = basename($panel);
 if (file_exists("./include/controlcenter/$panel.php")) {
     include "./include/controlcenter/$panel.php";
@@ -123,15 +129,21 @@ if (file_exists("./include/controlcenter/$panel.php")) {
     include "./include/controlcenter/summary.php";
 }
 
-if (isset($template))
+// The include file can set the template we have to use for
+// displaying the main part of the control panel screen.
+if (isset($template)) {
     $PHORUM['DATA']['content_template'] = $template;
+}
 
-if (isset($error) && !empty($error)) // transferring messages
-    $PHORUM['DATA']['ERROR'] = $error;
+// The include file can also set an error message to show
+// in the $error variable and a success message in $okmsg.
+if (isset($error) && !empty($error)) $PHORUM['DATA']['ERROR'] = $error;
+if (isset($okmsg) && !empty($okmsg)) $PHORUM['DATA']['OKMSG'] = $okmsg;
 
+// Display the control panel page.
 include phorum_get_template("header");
 phorum_hook("after_header");
-if ($error_msg) {
+if ($error_msg) { // Possibly set from the panel include file.
     include phorum_get_template("message");
 } else {
     include phorum_get_template("cc_index");
@@ -139,57 +151,94 @@ if ($error_msg) {
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 
-
-////////////////////////////////////////////////////////////////////////
-
+// ============================================================================
 
 /**
- * common function which is used to save the userdata from the post-data
+ * A common function which is used to save the userdata from the post-data.
+ * @param panel - The panel for which to save data.
+ * @return array - An array containing $error and $okmsg.
  */
 function phorum_controlcenter_user_save($panel)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    $userdata = $_POST;
     $error = "";
+    $okmsg = "";
 
-    if (!isset($userdata['hide_email']) && $panel == PHORUM_CC_MAIL)
-        $userdata['hide_email'] = 0;
+    // Setup the default userdata fields that may be changed
+    // from the control panel interface.
+    $userdata = array(
+        'signature'       => NULL,
+        'hide_email'      => NULL,
+        'hide_activity'   => NULL,
+        'password'        => NULL,
+        'tz_offset'       => NULL,
+        'is_dst'          => NULL,
+        'user_language'   => NULL,
+        'threaded_list'   => NULL,
+        'threaded_read'   => NULL,
+        'email_notify'    => NULL,
+        'show_signature'  => NULL,
+        'pm_email_notify' => NULL,
+        'email'           => NULL,
+        'email_temp'      => NULL,
+    );
+    // Add custom profile fields as acceptable fields.
+    foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
+        $userdata[$field] = NULL;
+    }
+    // Update userdata with $_POST information.
+    foreach ($_POST as $key => $val) {
+       if (array_key_exists($key, $userdata)) {
+           $userdata[$key] = $val;
+       }
+    }
+    // Remove unused profile fields.
+    foreach ($userdata as $key => $val) {
+        if (is_null($val)) {
+            unset($userdata[$key]);
+        }
+    }
 
-    // set the user id to the logged in user.
+    // Set static userdata.
     $userdata["user_id"] = $PHORUM["user"]["user_id"];
 
-    $userdata=phorum_hook("cc_save_user", $userdata);
+    // Run a hook, so module writers can update and check the userdata.
+    $userdata = phorum_hook("cc_save_user", $userdata);
 
-    // remove anything that is not actual user data
-    unset($userdata["forum_id"]);
-    unset($userdata["panel"]);
-    unset($userdata["password2"]);
-
-    if(isset($userdata['error'])) {
+    // Set $error, in case the before_register hook did set an error.
+    if (isset($userdata['error'])) {
         $error=$userdata['error'];
         unset($userdata['error']);
+    // Try to update the userdata in the database.
     } elseif (!phorum_user_save($userdata)) {
+        // Updating the user failed.
         $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
     } else {
-        $error = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
+        // Updating the user was successful.
+        $okmsg = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
 
-        // if they set a new password, lets create a new session
+        // Let the userdata be reloaded.
+        phorum_user_set_current_user($userdata["user_id"]);
+
+        // If a new password was set, let's create a new session.
         if (isset($userdata["password"]) && !empty($userdata["password"])) {
-            phorum_user_set_current_user($userdata["user_id"]);
             phorum_user_create_session();
         }
 
-        // reset the profile
-        foreach($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key=>$value){
-            if(isset($GLOBALS["PHORUM"]["user"][$key])){
-                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]=$GLOBALS["PHORUM"]["user"][$key];
-            } elseif($key!="PANEL" && $key!="forum_id") { // these two go into the form from this var
-            $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key]="";
+        // Copy data from the updated user back into the template data.
+        // Leave PANEL and forum_id alone (these are injected into the
+        // userdata in the template from this script).
+        foreach ($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key => $val) {
+            if ($key == "PANEL" || $key == "forum_id") continue;
+            if (isset($GLOBALS["PHORUM"]["user"][$key])) {
+                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key] = $GLOBALS["PHORUM"]["user"][$key];
+            } else {
+                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key] = "";
             }
         }
     }
 
-    return $error;
+    return array($error, $okmsg);
 }
 
 ?>

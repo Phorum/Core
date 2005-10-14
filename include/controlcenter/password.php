@@ -6,7 +6,7 @@ if(count($_POST)) {
             $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     } else {
             $_POST['password_temp']=$_POST['password'];
-            $error = phorum_controlcenter_user_save($panel);
+            list($error,$okmsg) = phorum_controlcenter_user_save($panel);
     }
 }
 
