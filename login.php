@@ -128,7 +128,7 @@ if ( count( $_POST ) > 0 ) {
                 phorum_user_create_session(PHORUM_SESSION_LONG_TERM,true,$uri_session_id);
             } else {
                 if(!$PHORUM["DATA"]["LOGGEDIN"]){
-                    phorum_user_create_session(PHORUM_SESSION_LONG_TERM, true);
+                    phorum_user_create_session(PHORUM_SESSION_LONG_TERM, false);
                 }
                 if($PHORUM["tight_security"]){
                     phorum_user_create_session(PHORUM_SESSION_SHORT_TERM, true);
