@@ -48,7 +48,7 @@ if ( count( $_POST ) ) {
         $error = $PHORUM['DATA']['LANG']['ErrWrongMailcode'];
     } else {
         // flip this due to db vs. UI wording.
-        $_POST["hide_email"] = ( $_POST["hide_email"] ) ? 0 : 1;
+        $_POST["hide_email"] = ( isset($_POST["hide_email"]) ) ? 0 : 1;
 
         // do we need to send a confirmation-mail?
         if(isset($PHORUM['DATA']['PROFILE']['email_temp_part']) && !empty($_POST['email_verify_code']) && $PHORUM['DATA']['PROFILE']['email_temp_part']."|".$_POST['email_verify_code'] == $PHORUM['DATA']['PROFILE']['email_temp']) {
