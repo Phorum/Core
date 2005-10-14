@@ -47,7 +47,7 @@ if (!$PHORUM["DATA"]["LOGGEDIN"]) {
 }
 
 // if the user is not fully logged in, send him to the login page
-if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_PM_URL));
     exit();
 }
@@ -302,13 +302,14 @@ if (!empty($action)) {
                 }
             }
 
-            // For previewing the message, no action has to be taken.
-            if (isset($_POST["preview"])) {
-
-                $page = "send";
+            // Determine what action to perform.
+            $action = "post";
+            if (isset($_POST["preview"])) $action = "preview";
+            if (isset($_POST["rcpt_add"])) $action = "rcpt_add";
+            if (!is_null($del_rcpt)) $action = "del_rcpt";
 
             // Adding a recipient.
-            } elseif (isset($_POST["rcpt_add"])) {
+            if ($action == "rcpt_add" || $action == "preview" || $action == "post") {
 
                 // Convert adding a recipient by name to adding by user id.
                 if (isset($_POST["to_name"])) {
@@ -335,7 +336,7 @@ if (!empty($action)) {
                 $page = "send";
 
             // Deleting a recipient.
-            } elseif ($del_rcpt != NULL) {
+            } elseif ($action == "del_rcpt") {
 
                 unset($recipients[$del_rcpt]);
                 $page = "send";
@@ -345,22 +346,28 @@ if (!empty($action)) {
                 // situations where we had the user selection 
                 // hidden intentionally.
                 $hide_userselect = 0;
+            }
+
+            // For previewing the message, no action has to be taken.
+            if ($action == "preview") {
+                $page = "send";
+            }
 
             // Posting the message.
-            } else {
+            elseif ($action == "post") {
 
                 // Only send the message if we have at least one recipient.
-                if(count($recipients)){
+                if (count($recipients)) {
 
                     // Only send the message if all required message data is filled in.
-                    if(empty($_POST["subject"]) || empty($_POST["message"])){
+                    if (empty($_POST["subject"]) || empty($_POST["message"])) {
 
                         $error = $PHORUM["DATA"]["LANG"]["PMRequiredFields"];
 
                     // Message data is okay. Post the message.
                     } else {
 
-                        if(empty($_POST["keep"])) $_POST["keep"] = 0;
+                        if (empty($_POST["keep"])) $_POST["keep"] = 0;
 
                         // Check if sender and recipients have not yet reached the
                         // maximum number of messages that may be stored on the server.
@@ -393,7 +400,7 @@ if (!empty($action)) {
                             $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], array_keys($recipients), NULL, $_POST["keep"]);
 
                             // Show an error in case of problems.
-                            if(! $pm_message_id){
+                            if (! $pm_message_id) {
 
                                 $error = $PHORUM["DATA"]["LANG"]["PMNotSent"];
 
@@ -442,7 +449,7 @@ if (!empty($action)) {
                 }
 
                 // Stay on the post page in case of errors. Redirect on success.
-                if($error){
+                if ($error) {
                     $page = "send";
                 } else {
                     $redirect = true;
@@ -635,7 +642,7 @@ switch ($page) {
     // Read a single private message.
     case "read":
 
-        if(($message=phorum_db_pm_get($pm_id, $folder_id))) {
+        if (($message=phorum_db_pm_get($pm_id, $folder_id))) {
 
             // Mark the message read.
             if (! $message['read_flag']) {
@@ -922,7 +929,7 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Build the reply subject.
-    if(substr($message["subject"], 0, 3) != "Re:"){
+    if (substr($message["subject"], 0, 3) != "Re:") {
         $message["subject"] = "Re: ".$message["subject"];
     }
 
