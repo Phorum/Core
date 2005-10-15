@@ -152,6 +152,7 @@ function phorum_import_template($tplfile, $outfile)
             // ends a loop
             case "/loop":
 
+            if (!isset($parts[1])) print "<h3>Template warning: Missing argument for /loop statement in file '" . htmlspecialchars($tplfile) . "'</h3>";
             $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); \$phorum_loopstackitem=array_pop(\$phorum_loopstack); if (isset(\$phorum_loopstackitem)) \$PHORUM['TMP']['$parts[1]'] = \$phorum_loopstackitem;?>";
             unset($loopvars[$parts[1]]);
             break;
