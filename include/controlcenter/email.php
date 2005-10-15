@@ -45,10 +45,16 @@ if ( count( $_POST ) ) {
         // flip this due to db vs. UI wording.
         $_POST["hide_email"] = ( isset($_POST["hide_email"]) ) ? 0 : 1;
 
+        // Remember this for the template.
+        if (isset($PHORUM['DATA']['PROFILE']['email_temp_part'])) {
+            $email_temp_part = $PHORUM['DATA']['PROFILE']['email_temp_part'];
+        }
+
         // do we need to send a confirmation-mail?
         if(isset($PHORUM['DATA']['PROFILE']['email_temp_part']) && !empty($_POST['email_verify_code']) && $PHORUM['DATA']['PROFILE']['email_temp_part']."|".$_POST['email_verify_code'] == $PHORUM['DATA']['PROFILE']['email_temp']) {
                $_POST['email']=$PHORUM['DATA']['PROFILE']['email_temp_part'];
                $_POST['email_temp']="";
+               unset($email_temp_part);
         } elseif($PHORUM['registration_control'] && !empty($_POST['email']) && strtolower($_POST['email']) != strtolower($PHORUM["DATA"]["PROFILE"]['email'])) {
             // ... generate the confirmation-code ... //
             $conf_code= mt_rand ( 1000000, 9999999);
@@ -69,11 +75,11 @@ if ( count( $_POST ) ) {
             unset($_POST['email']);
         }
         list($error,$okmsg) = phorum_controlcenter_user_save( $panel );
-
-        if (isset($email_temp_part)) {
-            $PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
-        }
     }
+}
+
+if (isset($email_temp_part)) {
+$PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
 }
 
 // flip this due to db vs. UI wording.
