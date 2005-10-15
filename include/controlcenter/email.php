@@ -31,8 +31,6 @@ if($PHORUM['registration_control']) {
 
 if ( count( $_POST ) ) {
 
-    $PHORUM['banlists'] = phorum_db_get_banlists();
-
     if ( empty( $_POST["email"] ) ) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRequired"];
     } elseif ( !phorum_valid_email( $_POST["email"] )
