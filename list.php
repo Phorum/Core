@@ -116,6 +116,10 @@ foreach ($rows as $row) {
 // figure out paging for threaded and flat mode
 $pages=ceil(($PHORUM["thread_count"] - $sticky_count) / $PHORUM["list_length"]);
 
+// If we only have stickies and/of announcements, the number of pages
+// will be zero. In that case, simply use one page.
+if ($pages == 0) $pages = 1;
+
 if($pages<=11){
     $page_start=1;
 } elseif($pages-$page<5) {
