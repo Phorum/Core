@@ -103,6 +103,11 @@ if(!empty($phorum_search)){
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
 
+            // For announcements, put the current forum_id in the record.
+            // Else the message cannot be read (Phorum will redirect the
+            // user back to the index page if the forum id is not set).
+            if ($row["forum_id"] == 0) $row["forum_id"] = $PHORUM["forum_id"];
+
             $arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
             // strip HTML & BB Code
