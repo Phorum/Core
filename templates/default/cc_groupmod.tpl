@@ -28,7 +28,7 @@
 {LANG->Filter}:
 {LOOP FILTER}
 [{IF FILTER->enable}<a href="{FILTER->url}">{/IF}{FILTER->name}{IF FILTER->enable}</a>{/IF}]
-{/LOOP}
+{/LOOP FILTER}
 <br /><br />
 <table class="PhorumFormTable" cellspacing="0" border="0">
 <form method="post" action="{GROUP->url}">
@@ -47,7 +47,7 @@
 $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']['value'] == $PHORUM['TMP']['USERS']['status']);
 ?>
 <option value="{STATUS_OPTIONS->value}"{IF STATUS_OPTIONS->selected} selected="selected"{/IF}>{STATUS_OPTIONS->name}</option>
-{/LOOP}
+{/LOOP STATUS_OPTIONS}
 </select>
 {/IF}</td></tr>
 {/LOOP USERS}
