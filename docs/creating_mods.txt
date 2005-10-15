@@ -480,7 +480,8 @@ Table of contents:
 
    If your module needs to store data along with a Phorum user,
    you can make use of custom profile fields. In the admin interface,
-   under "Custom Profiles", you can add your own profile fields.
+   under "Custom Profiles", you can add your own profile fields
+   (see also docs/creating_custom_userfields.txt).
 
    The custom profile fields will be accessible from within the user
    data. E.g. if you have created a custom profile field named "foobar",
