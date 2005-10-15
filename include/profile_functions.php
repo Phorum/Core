@@ -102,6 +102,8 @@ function phorum_check_bans($bans)
             // Do a single banlist check. Return an error if we find a match.
             if (! phorum_check_ban_lists($ban[0], $ban[1])) {
                 $msg = $PHORUM["DATA"]["LANG"][$phorum_bantype2error[$ban[1]]];
+                // Replace %name% with the blocked string.
+                $msg = str_replace('%name%', htmlspecialchars($ban[0]), $msg);
                 return $msg;
             }
         }
