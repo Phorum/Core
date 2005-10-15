@@ -140,7 +140,7 @@ function phorum_check_ban_lists($value, $type)
         if (isset($banlists[$type]) && is_array($banlists[$type])) {
             foreach($banlists[$type] as $item) {
                 if ( !empty($item['string']) && (
-                     ($item["pcre"] && preg_match("/\b".$item['string']."\b/i", $value)) ||
+                     ($item["pcre"] && @preg_match("/\b".$item['string']."\b/i", $value)) ||
                      (!$item["pcre"] && stristr($value , $item["string"]) && $type != PHORUM_BAD_USERID) ||
                      ($type == PHORUM_BAD_USERID && $value == $item["string"])) ) {
                     return false;
