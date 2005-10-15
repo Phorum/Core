@@ -290,20 +290,20 @@ if (! $error_flag)
 }
 
 // Set extra writeable fields, based on the user's abilities.
-if ($PHORUM["DATA"]["ATTACHMENTS"]) {
+if (isset($PHORUM["DATA"]["ATTACHMENTS"]) && $PHORUM["DATA"]["ATTACHMENTS"]) {
     // Keep it as a hidden field.
     $post_fields["attachments"][pf_READONLY] = false;
 }
-if ($PHORUM["DATA"]["MODERATOR"]) {
+if (isset($PHORUM["DATA"]["MODERATOR"]) && $PHORUM["DATA"]["MODERATOR"]) {
     if (! $message["user_id"]) {
         $post_fields["author"][pf_READONLY] = false;
         $post_fields["email"][pf_READONLY] = false;
     }
 }
-if ($PHORUM["DATA"]["SHOW_SPECIALOPTIONS"]) {
+if (isset($PHORUM["DATA"]["SHOW_SPECIALOPTIONS"]) && $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"]) {
     $post_fields["special"][pf_READONLY] = false;
 }
-if ($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) {
+if (isset($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) && $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) {
     $post_fields["allow_reply"][pf_READONLY] = false;
 }
 
