@@ -114,7 +114,7 @@
 
         foreach($bad_words as $key => $item){
             echo "<tr>\n";
-            echo "    <td class=\"PhorumAdminTableRow\">$item[string]</td>\n";
+            echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($item["string"])."</td>\n";
             echo "    <td class=\"PhorumAdminTableRow\">".$forum_list[$item["forum_id"]]."</td>\n";
             echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&delete=1\">Delete</a></td>\n";
             echo "</tr>\n";
