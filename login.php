@@ -66,11 +66,11 @@ $username = "";
 // Handle posted form data.
 if (count($_POST) > 0) {
 
-    // Trim the email address.
-    $_POST["lostpass"] = trim($_POST["lostpass"]);
-
     // The user wants to retrieve a new password.
     if (isset($_POST["lostpass"])) {
+
+        // Trim the email address.
+        $_POST["lostpass"] = trim($_POST["lostpass"]);
 
         // Did the user enter an email address?
         if (empty($_POST["lostpass"])) {
