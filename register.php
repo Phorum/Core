@@ -100,8 +100,6 @@ if (count($_POST)) {
         }
     }
 
-    $PHORUM['banlists'] = phorum_db_get_banlists();
-
     // Check if all required fields are filled and valid.
     if (!isset($_POST["username"]) || empty($_POST['username'])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
@@ -116,15 +114,18 @@ if (count($_POST)) {
     } elseif (phorum_user_check_email($_POST["email"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
-    // Check if the username and email address aren't on the banlist.
-    elseif (!phorum_check_ban_lists($_POST["username"], PHORUM_BAD_NAMES)) {
-        $error = $PHORUM["DATA"]["LANG"]["ErrBannedName"];
-    } elseif (!phorum_check_ban_lists($_POST["email"], PHORUM_BAD_EMAILS)) {
-        $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
-    } 
-    
-    // All checks are passed.
-    else {
+
+    // Check banlists.
+    if (empty($error)) {
+        $error = phorum_check_bans(array(
+            array($_POST["username"], PHORUM_BAD_NAMES),
+            array($_POST["email"],    PHORUM_BAD_EMAILS),
+            array(NULL,               PHORUM_BAD_IPS),
+        ));
+    }
+
+    // Create user if no errors have been encountered.
+    if (empty($error)) {
 
         // Setup the default userdata to store.
         $userdata = array(
@@ -223,7 +224,7 @@ if (count($_POST)) {
 
     // Some error encountered during processing? Then setup the 
     // data to redisplay the registration form, including an error.
-    if (!empty($error)) {
+    else {
         foreach($_POST as $key => $val){
             $PHORUM["DATA"]["REGISTER"][$key] = htmlspecialchars($val);
         }
