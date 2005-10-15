@@ -40,7 +40,7 @@ function phorum_check_ban_lists($value, $type)
     if (!empty($value)) {
         if (isset($banlists[$type]) && is_array($banlists[$type])) {
             foreach($banlists[$type] as $item) {
-                if (($item["pcre"] && preg_match("/\b$item[string]\b/i", $value)) ||
+                if (($item["pcre"] && @preg_match("/\b$item[string]\b/i", $value)) ||
                         (!$item["pcre"] && stristr($value , $item["string"]))) {
                     return false;
                 } 
