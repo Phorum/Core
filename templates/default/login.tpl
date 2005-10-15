@@ -1,6 +1,5 @@
-{IF ERROR}
-<div class="PhorumUserError">{ERROR}</div>
-{/IF}
+{IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
+{IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
 
 <div align="center">
 <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
