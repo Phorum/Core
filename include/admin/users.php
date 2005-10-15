@@ -187,7 +187,7 @@
             foreach($users as $user){
                 echo "<tr>\n";
                 echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
-                echo "    <td class=\"PhorumAdminTableRow\">{$user['email']}</td>\n";
+                echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($user['email'])."</td>\n";
                 echo "    <td class=\"PhorumAdminTableRow\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";                
                 echo "</tr>\n";
             }
