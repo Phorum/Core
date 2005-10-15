@@ -109,19 +109,16 @@ $error_msg = "";
 // Banlist checking
 // ------------------------------------------------------------------------
 
-if ($page == 'send' || $action == 'post')
+//  Start editor       Post message         Post reply
+if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id)))
 {
     include_once("./include/profile_functions.php");
-    $PHORUM['banlists'] = phorum_db_get_banlists();
-
-    $error = '';
-    if (!phorum_check_ban_lists($PHORUM["user"]["username"], PHORUM_BAD_NAMES)) {
-        $error = $PHORUM["DATA"]["LANG"]["ErrBannedName"];
-    } elseif (!phorum_check_ban_lists($PHORUM["user"]["email"], PHORUM_BAD_EMAILS)) {
-        $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
-    } elseif (!phorum_check_ban_lists($user_id, PHORUM_BAD_USERID)) {
-        $error = $PHORUM["DATA"]["LANG"]["ErrBannedUser"];
-    }
+    $error = phorum_check_bans(array(
+        array($PHORUM["user"]["username"], PHORUM_BAD_NAMES),
+        array($PHORUM["user"]["email"],    PHORUM_BAD_EMAILS),
+        array($user_id,                    PHORUM_BAD_USERID),
+        array(NULL,                        PHORUM_BAD_IPS),
+    ));
 
     // Show an error in case we encountered a ban.
     if (! empty($error)) {
