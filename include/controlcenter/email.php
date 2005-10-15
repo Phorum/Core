@@ -18,12 +18,10 @@ if ( count( $_POST ) ) {
 
     if ( empty( $_POST["email"] ) ) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRequired"];
-    } elseif ( !phorum_valid_email( $_POST["email"] )
-            || ($PHORUM['user']['email'] != $_POST["email"] && phorum_user_check_email( $_POST["email"]) ) ) {
-                // second part could get another section and its own error-message
-
+    } elseif (!phorum_valid_email($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
-
+    } elseif ($PHORUM['user']['email'] != $_POST["email"] && phorum_user_check_email($_POST["email"])) {
+        $error = $PHORUM["DATA"]["LANG"]["ErrEmailExists"];
     } elseif( !phorum_check_ban_lists($_POST["email"], PHORUM_BAD_EMAILS)) {
 
         $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
@@ -46,7 +44,7 @@ if ( count( $_POST ) ) {
             $_POST['email_temp']=$_POST['email']."|".$conf_code;
             // ... send email ... //
             $maildata=array(
-            'mailmessage'   => $PHORUM['DATA']['LANG']['EmailVerifyBody'],
+            'mailmessage'   => wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
             'mailsubject'   => $PHORUM['DATA']['LANG']['EmailVerifySubject'],
             'uname'         => $PHORUM['DATA']['PROFILE']['username'],
             'newmail'       => $_POST['email'],
@@ -54,11 +52,16 @@ if ( count( $_POST ) ) {
             'cc_url'        => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
             );
             phorum_email_user(array($_POST['email']),$maildata);
-            // set this up for the template
-            $PHORUM['DATA']['PROFILE']['email_temp_part']=$_POST['email'];
+            
+            // Remember this for the template.
+            $email_temp_part = $_POST['email'];
             unset($_POST['email']);
         }
         list($error,$okmsg) = phorum_controlcenter_user_save( $panel );
+
+        if (isset($email_temp_part)) {
+            $PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
+        }
     }
 }
 
