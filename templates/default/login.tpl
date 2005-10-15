@@ -1,8 +1,7 @@
 <div align="center">
 
-{IF ERROR}
-<div class="PhorumUserError">{ERROR}</div>
-{/IF}
+{IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
+{IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
 
 <div align="center" class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
 <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>
