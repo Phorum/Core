@@ -851,12 +851,15 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     // have to check what forums they can read first.
     $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    // if they are not allowed to search any forums, return the emtpy $arr;
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
+
+    // Add forum 0 (for announcements) to the allowed forums. 
+    $allowed_forums[] = 0;
 
     if($PHORUM['forum_id']!=0 && $match_forum!="ALL"){
         $sql.=" and forum_id={$PHORUM['forum_id']}";
     } else {
-        // if they are not allowed to search any forums, return the emtpy $arr;
         $sql.=" and forum_id in (".implode(",", $allowed_forums).")";
     }
 
