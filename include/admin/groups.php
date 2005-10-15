@@ -213,7 +213,7 @@
     
         foreach($groups as $group){
             echo "<tr>\n";
-            echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=groups&edit=1&group_id={$group['group_id']}\">{$group['name']}</a></td>\n";
+            echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=groups&edit=1&group_id={$group['group_id']}\">".htmlspecialchars($group['name'])."</a></td>\n";
             echo "    <td class=\"PhorumAdminTableRow\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$group['group_id']}\"></td>\n";  
             echo "</tr>\n";
         }
