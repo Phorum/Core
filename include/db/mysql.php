@@ -908,22 +908,23 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     // have to check what forums they can read first.
     $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    // if they are not allowed to search any forums, return the emtpy $arr;
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
+
+    // Add forum 0 (for announcements) to the allowed forums. 
+    $allowed_forums[] = 0;
 
     if($PHORUM['forum_id']!=0 && $match_forum!="ALL"){
         $forum_where=" and forum_id={$PHORUM['forum_id']}";
     } else {
-        // if they are not allowed to search any forums, return the emtpy $arr;
         $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
     }
-
 
     if($match_type=="AUTHOR"){
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
         $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$search' $forum_where";
-
         if($match_date>0){
             $ts=time()-86400*$match_date;
             $sql.=" and datestamp>=$ts";
