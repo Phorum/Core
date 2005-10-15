@@ -99,7 +99,7 @@
             foreach($PHORUM["banlists"] as $type => $content){
                 foreach($content as $key => $item){
                     echo "<tr>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">$item[string]</td>\n";
+                    echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($item[string])."</td>\n";
                     echo "    <td class=\"PhorumAdminTableRow\">".$ban_types[$type]."</td>\n";
                     echo "    <td class=\"PhorumAdminTableRow\">".$match_types[$item["pcre"]]."</td>\n";
                     echo "    <td class=\"PhorumAdminTableRow\">".$forum_list[$item["forum_id"]]."</td>\n";
