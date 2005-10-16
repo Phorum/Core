@@ -389,13 +389,25 @@ if($PHORUM["max_attachments"]){
     $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"], $php_limit, $db_limit, $PHORUM["max_totalattachment_size"]);
 
     // Data for attachment explanation.
-    $PHORUM["DATA"]["ATTACH_FILE_TYPES"] = str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
-    $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
-    $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
-    $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
-    $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
-    $PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
-    $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"] = $PHORUM["max_attachments"] - $attach_count;
+    if ($PHORUM["allow_attachment_types"]) {
+        $PHORUM["DATA"]["ATTACH_FILE_TYPES"] = str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
+        $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_TYPES"] = str_replace("%types%", $PHORUM["DATA"]["ATTACH_FILE_TYPES"], $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
+    }
+    if ($PHORUM["max_attachment_size"]) {
+        $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
+        $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
+        $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]); 
+    }
+    if ($PHORUM["max_totalattachment_size"] && $PHORUM["max_attachments"]>1) {
+        $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
+        $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+        $PHORUM["DATA"]["EXPLAIN_ATTACH_TOTALFILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]);
+    }
+    if ($PHORUM["max_attachments"] && $PHORUM["max_attachments"]>1) {
+        $PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
+        $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"] = $PHORUM["max_attachments"] - $attach_count;
+        $PHORUM["DATA"]["EXPLAIN_ATTACH_MAX_ATTACHMENTS"] = str_replace("%count%", $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"], $PHORUM["DATA"]["LANG"]["AttachMaxAttachments"]);
+    }
 
     // A flag for the template building to be able to see if the
     // attachment storage space is full.
