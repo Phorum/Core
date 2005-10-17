@@ -25,7 +25,6 @@
     $error="";
 
     if(count($_POST)){
-print_var($_POST);
 
         // set the defaults and check values
 
@@ -97,11 +96,15 @@ print_var($_POST);
                     break;
 
                 case "inherit_id":
-                    if( $_POST["inherit_id"] > 0) {
+                    if( $_POST["inherit_id"] !== NULL && $_POST['inherit_id'] != 0) {
                         $forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
                         if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
                             $error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
                         }
+                        if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] === 0) {
+                            $error="Settings can't be inherited by this forum, because this forum already inherits the default settings";
+                        }
+
                     }
                     break;
             }
