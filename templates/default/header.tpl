@@ -1,9 +1,9 @@
+{IF CHARSET}<?php header("Content-Type: text/html; " . "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET'])) ?>{/IF}
 <?php echo '<?' ?>xml version="1.0" encoding="{CHARSET}"<?php echo '?>' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "DTD/xhtml1-transitional.dtd">
 <html lang="<?php echo $PHORUM['locale']; ?>">
 <head>
-<title>{HTML_TITLE}</title>
 <style type="text/css">
 {include css}
 </style>
@@ -11,6 +11,7 @@
 <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
 {/if}
 {LANG_META}
+<title>{HTML_TITLE}</title>
 {HEAD_TAGS}
 </head>
 <body onload="{IF FOCUS_TO_ID}focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
