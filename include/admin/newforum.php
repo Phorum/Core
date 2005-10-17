@@ -96,7 +96,7 @@
                     break;
 
                 case "inherit_id":
-                    if( $_POST["inherit_id"] !== NULL && $_POST['inherit_id'] != 0) {
+                    if( $_POST['inherit_id'] !== NULL && $_POST["inherit_id"] != "NULL" && $_POST['inherit_id'] != 0) {
                         $forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
                         if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
                             $error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
@@ -130,45 +130,52 @@
                 $_POST['vroot']=0;
             }
 
-            if(defined("PHORUM_EDIT_FORUM") || defined("PHORUM_DEFAULT_OPTIONS")){
 
-                if(!defined("PHORUM_DEFAULT_OPTIONS")){
-                    if( $_POST["inherit_id"]!="NULL" ) {
+            // inherit settings if we've set this and are not in the default forum options
+            if(!defined("PHORUM_DEFAULT_OPTIONS")){
+                if( $_POST["inherit_id"]!="NULL"  && $_POST['inherit_id'] !== NULL) {
 
-                        // Load inherit forum settings
-                        if($_POST["inherit_id"]==0){
-                            $forum_settings_inherit[0]=$PHORUM["default_forum_options"];
-                        } else {
-                            $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
-                        }
+                    // Load inherit forum settings
+                    if($_POST["inherit_id"]==0){
+                        $forum_settings_inherit[0]=$PHORUM["default_forum_options"];
+                    } else {
+                        $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
+                    }
 
-                        if( isset($forum_settings_inherit[$_POST["inherit_id"]]) ) {
+                    if( isset($forum_settings_inherit[$_POST["inherit_id"]]) ) {
 
-                            // slave settings
-                            $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
-                            $forum_settings_inherit["forum_id"] =$_POST["forum_id"];
-                            $forum_settings_inherit["name"] =$_POST["name"];
-                            $forum_settings_inherit["description"] =$_POST["description"];
-                            $forum_settings_inherit["active"] =$_POST["active"];
-                            $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
-                            $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
+                        // slave settings
+                        $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
+                        $forum_settings_inherit["forum_id"] =$_POST["forum_id"];
+                        $forum_settings_inherit["name"] =$_POST["name"];
+                        $forum_settings_inherit["description"] =$_POST["description"];
+                        $forum_settings_inherit["active"] =$_POST["active"];
+                        $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
+                        $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
 
-                            // don't inherit this settings
-                            unset($forum_settings_inherit["message_count"]);
-                            unset($forum_settings_inherit["thread_count"]);
-                            unset($forum_settings_inherit["last_post_time"]);
+                        // don't inherit this settings
+                        unset($forum_settings_inherit["message_count"]);
+                        unset($forum_settings_inherit["thread_count"]);
+                        unset($forum_settings_inherit["last_post_time"]);
 
-                            // we don't need to save the master forum
-                            unset($forum_settings_inherit[$inherit_id]);
-                            $_POST =$forum_settings_inherit;
+                        // we don't need to save the master forum
+                        unset($forum_settings_inherit[$inherit_id]);
+                        $_POST =$forum_settings_inherit;
 
-                        } else {
-                            $_POST["inherit_id"]="NULL";
-                            unset($_POST["pub_perms"]);
-                            unset($_POST["reg_perms"]);
-                        }
+                    } else {
+                        $_POST["inherit_id"]="NULL";
+                        // why should we do this?
+                        /*
+                        unset($_POST["pub_perms"]);
+                        unset($_POST["reg_perms"]);
+                        */
                     }
                 }
+            }
+
+            // setting the current settings to all forums/folders inheriting from this forum/default settings
+            if(defined("PHORUM_EDIT_FORUM") || defined("PHORUM_DEFAULT_OPTIONS")){
+
 
                 $forum_settings=$_POST;
 
