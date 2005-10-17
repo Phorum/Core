@@ -28,8 +28,17 @@ include_once("./include/email_functions.php");
 // Set some values.
 $message["moderator_post"] = $PHORUM["DATA"]["MODERATOR"] ? 1 : 0;
 $message["sort"] = PHORUM_SORT_DEFAULT;
-$message["ip"] = $REMOTE_ADDR;
 $message["closed"] = $message["allow_reply"] ? 0 : 1;
+
+// Determine and set the user's IP address.
+$user_ip = $_SERVER["REMOTE_ADDR"];
+if ($PHORUM["dns_lookup"]) {
+    $resolved = @gethostbyaddr($_SERVER["REMOTE_ADDR"]); 
+    if (!empty($resolved)) {
+        $user_ip = $resolved;
+    }
+}
+$message["ip"] = $user_ip;
 
 // For replies, inherit the closed parameter of our top parent.
 // Only for rare race conditions, since you cannot reply to
