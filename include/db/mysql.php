@@ -72,7 +72,6 @@ define('PHORUM_SQL_MOVEDMESSAGES', '(parent_id = 0 and thread != message_id)');
  * the threads into a threaded list if needed.
  *
  * NOTE: ALL dates should be returned as Unix timestamps
- * NOTE: $show_special should always be true for non-threaded forums
  */
 
 function phorum_db_get_thread_list($offset)
@@ -84,9 +83,6 @@ function phorum_db_get_thread_list($offset)
     $conn = phorum_db_mysql_connect();
 
     $table = $PHORUM["message_table"];
-
-    $arr = array();
-    $keyids = array();
 
     if($PHORUM["float_to_top"]){
             $sortfield = "modifystamp";
@@ -102,36 +98,49 @@ function phorum_db_get_thread_list($offset)
         $bodystr="";
     }
 
+    $arr = array();    // For storing return data
+    $keyids = array(); // For storing message ids which must be fetched
+
     if($PHORUM["threaded_list"]){
-        $limit = $PHORUM['list_length_threaded'];
-        $start = $offset * $PHORUM["list_length_threaded"];
 
-        $sortorder = "sort, $sortfield desc, message_id";
+        // Get the ids for announcements and stickies when we are
+        // on the first page. 
+        if (!$offset) {
 
-        if(isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) $sortorder.=" desc";
+            $sql = "select
+                       thread as keyid 
+                    from 
+                       $table 
+                    where 
+                       status=".PHORUM_STATUS_APPROVED." and 
+                       ((parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT."
+                        and forum_id={$PHORUM['vroot']}) or
+                       (parent_id=0 and sort=".PHORUM_SORT_STICKY." and 
+                        forum_id={$PHORUM['forum_id']})) 
+                    order by
+                       sort, thread desc";
 
-        $offset_option="$sortfield > 0 and";
-
-        if(!$offset){
-            // get the announcements and stickies
-            $sql="select thread as keyid from $table where
-            status=".PHORUM_STATUS_APPROVED." and
-            (parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT." and forum_id={$PHORUM['vroot']}) or
-            (parent_id=0 and sort=".PHORUM_SORT_STICKY." and forum_id={$PHORUM['forum_id']}) order by sort, thread desc";
             $res = mysql_query($sql, $conn);
-
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-            $rows=mysql_num_rows($res);
-
-            if(empty($offset) && $rows > 0){
-                while($rec = mysql_fetch_assoc($res)){
-                    if(!empty($rec["keyid"])) $keyids[$rec["keyid"]] = $rec["keyid"];
+            $rows = mysql_num_rows($res);
+            if ($rows > 0) {
+                while ($rec = mysql_fetch_row($res)) {
+                    if (!empty($rec[0])) $keyids[$rec[0]] = $rec[0];
                 }
             }
         }
 
-        if($limit>0){
+        // Get the ids of the messages that will be visible for the user.
+        $limit = $PHORUM['list_length_threaded'];
+        $start = $offset * $PHORUM["list_length_threaded"];
+        $sortorder = "sort, $sortfield desc, message_id";
+        if(isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"])
+            $sortorder.=" desc";
+        $offset_option="$sortfield > 0 and";
+
+        // TODO will this really ever be false? (Maurice)
+        if ($limit>0) { 
 
              $sql = "select
                         thread as keyid
@@ -148,18 +157,18 @@ function phorum_db_get_thread_list($offset)
                     limit $start, $limit";
 
             $res = mysql_query($sql, $conn);
-
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
             if (mysql_num_rows($res) > 0){
-                while($rec = mysql_fetch_assoc($res)){
-                    $keyids[$rec["keyid"]] = $rec["keyid"];
+                while($rec = mysql_fetch_row($res)){
+                    $keyids[$rec[0]] = $rec[0];
                 }
 
             }
         }
 
-        if(count($keyids)>0){
+        // Get the message data for all found ids.
+        if (count($keyids)>0) {
 
             $sql = "select
                 $table.author,
@@ -187,11 +196,15 @@ function phorum_db_get_thread_list($offset)
                 $sortorder";
 
             $res = mysql_query($sql, $conn);
-
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
+            // Create an array containing the message data of all default
+            // messages and all starting messages for the special threads.
+            // TODO The checks for status, sort and parent_id shouldn't
+            // TODO be needed, because of the used SQL queries (Maurice).
             while ($rec = mysql_fetch_assoc($res)){
-                if($rec["status"]==PHORUM_STATUS_APPROVED && ($rec["sort"]==PHORUM_SORT_DEFAULT || $rec["parent_id"]==0)){
+                if($rec["status"]==PHORUM_STATUS_APPROVED && 
+                   ($rec["sort"]==PHORUM_SORT_DEFAULT || $rec["parent_id"]==0)){
                     $arr[$rec["message_id"]] = $rec;
                     $arr[$rec["message_id"]]["meta"] = array();
                     if(!empty($rec["meta"])){
@@ -201,10 +214,9 @@ function phorum_db_get_thread_list($offset)
             }
 
         }
-    //     if($PHORUM["threaded_list"]){
+
+    // not $PHORUM["threaded_list"]
     } else {
-        $limit = $PHORUM['list_length_flat'];
-        $start = $offset * $PHORUM["list_length_flat"];
 
         // get the announcements and stickies
         $sql="select
@@ -235,13 +247,13 @@ function phorum_db_get_thread_list($offset)
               order by sort, $sortfield desc";
 
         $res = mysql_query($sql, $conn);
-
-        $rows = mysql_num_rows($res);
-
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
+        $rows = mysql_num_rows($res);
         if(empty($offset) && $rows > 0){
             while ($rec = mysql_fetch_assoc($res)){
+                // TODO The check for status, should't
+                // TODO be needed, because of the used SQL query (Maurice).
                 if($rec["status"]==PHORUM_STATUS_APPROVED){
                     $arr[$rec["message_id"]] = $rec;
                     $arr[$rec["message_id"]]["meta"] = array();
@@ -252,6 +264,10 @@ function phorum_db_get_thread_list($offset)
             }
         }
 
+        $limit = $PHORUM['list_length_flat'];
+        $start = $offset * $PHORUM["list_length_flat"];
+
+        // TODO will this really ever be false? (Maurice)
         if($limit>0){
             $sql = "select
                         $table.author,
@@ -288,6 +304,8 @@ function phorum_db_get_thread_list($offset)
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
             while ($rec = mysql_fetch_assoc($res)){
+                // TODO The check for status, should't
+                // TODO be needed, because of the used SQL query (Maurice).
                 if($rec["status"]==PHORUM_STATUS_APPROVED){
                     $arr[$rec["message_id"]] = $rec;
                     $arr[$rec["message_id"]]["meta"] = array();
