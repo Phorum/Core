@@ -3,7 +3,6 @@
     "DTD/xhtml1-transitional.dtd">
 <html lang="<?php echo $PHORUM['locale']; ?>">
 <head>
-<title>{HTML_TITLE}</title>
 <style type="text/css">
 {include css}
 </style>
@@ -11,6 +10,7 @@
 <meta http-equiv="refresh" content="5; url={URL->REDIRECT}" />
 {/if}
 {LANG_META}
+<title>{HTML_TITLE}</title>
 {HEAD_TAGS}
 </head>
 <body>
