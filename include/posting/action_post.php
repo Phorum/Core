@@ -221,7 +221,8 @@ if ($success)
 }
 
 // If we get here, the posting was not successfull.
-// Setup the data for displaying an error to the user.
+// Restore message and setup the data for displaying an error to the user.
+$message = $message_copy;
 $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["PostErrorOccured"];
 $error_flag = true;
 
