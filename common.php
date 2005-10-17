@@ -24,7 +24,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.1.3-alpha" );
 
 // our internal version in format of year-month-day-serial
-define( "PHORUMINTERNAL", "2005100701" );
+define( "PHORUMINTERNAL", "2005101700" );
 
 define( "DEBUG", 0 );
 
@@ -107,7 +107,7 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
     ini_set("display_errors", 0);
 
     // Load configuration.
-    if (! include_once( "./include/db/config.php" )) { 
+    if (! include_once( "./include/db/config.php" )) {
         print '<html><head><title>Phorum error</title></head><body>';
         print '<h2>Phorum database configuration error</h2>';
 
@@ -116,7 +116,7 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
             Phorum has been installed on this server, but the configuration<br/>
             for the database connection has not yet been made. Please read<br/>
             <a href="docs/install.txt">docs/install.txt</a> for installation instructions. <?php
-        } else { 
+        } else {
             $fp = fopen("./include/db/config.php", "r");
             // Unable to read the configuration file.
             if (!$fp) { ?>
@@ -124,13 +124,13 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
                 but Phorum was unable to read it. Please check the file permissions<br/>
                 for this file. <?php
             // Unknown error.
-            } else { 
+            } else {
                 fclose($fp); ?>
                 A database configuration file was found in ./include/dbconfig.php,<br/>
                 but it could not be loaded. It possibly contains one or more errors.<br/>
                 Please check your configuration file. <?php
             }
-        } 
+        }
 
         print '</body></html>';
         exit(1);
