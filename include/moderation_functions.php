@@ -123,6 +123,11 @@ function phorum_handle_edit_message()
                     phorum_db_update_message($message_id, $message);
                 }
             }
+
+            // The forum stats have to be updated. Announcements aren't
+            // counted in the thread_count, so if switching to or
+            // from announcement, the thread_count will change.
+            phorum_db_update_forum_stats(true);
         }
 
         phorum_update_thread_info($old_message['thread']);
