@@ -1,6 +1,8 @@
 Creating custom fields for user profiles
 ========================================
 
+*** THIS DOCUMENT IS UNDER DEVELOPMENT, SO IT'S NOT YET COMPLETE ***
+
 This documents describes how you can create your own custom fields
 within the profiles of Phorum users. 
 
@@ -8,8 +10,11 @@ within the profiles of Phorum users.
 Table of contents:
 
 1. Introduction
-2. Steps for creating custom fields 
-   2.1 Create the custom field
+2. Creating the custom field
+3. Using the custom field
+   3.1 From the registration process
+   3.2 From the user's control center
+   3.3 From a module
 
 
 1. Introduction
@@ -30,19 +35,16 @@ Table of contents:
    no need to actually add columns to the table in which Phorum users are
    stored in the database.
 
-   This document will explain how you can use the custom profile field system.
+   This document will explain how to use the custom profile field system.
 
 
-2. Steps for creating custom fields 
+2. Creating the custom field
 -------------------------------------------------------------------------------
 
- 2.1 Create the custom field
- ---------------------------
 
-   The first thing to do is to open the admin interface for your Phorum 
-   installation ({phorum url}/admin.php). There you go to "Custom Profiles"
-   under "Users/Groups". In this screen you can create, update and delete
-   custom user profile fields.
+   Go to the admin for your Phorum installation ({phorum url}/admin.php).
+   There you go to "Custom Profiles" under "Users/Groups". In this screen
+   you can create, update and delete custom user profile fields.
 
    To add a field, you will have to enter the following data:
 
@@ -84,4 +86,53 @@ Table of contents:
      data, you should take care of properly escaping HTML code
      yourself.
 
+
+3. Using the custom field
+-------------------------------------------------------------------------------
+
+
+ 3.1 From the registration process
+ ---------------------------------
+
+   If you want to let the user fill in the data for your custom
+   field during registration, you will have to add an input field to
+   the registration template file, which can be found in
+   templates/default/register.tpl (or of course in your own template
+   directory if you are using a custom template).
+   
+   All you have to do is create a standard HTML input field and give it
+   the name of your custom field. Phorum will automatically take care
+   of storing the field's data in the database.
+   
+   In the template you can make use of {REGISTER->fieldname} to get
+   the value of the field "fieldname". This can be used to let your
+   field remember its value during requests.
+
+   Example:
+   To add the shoe_size field to the registration page, you could
+   add the following code to the register.tpl at an appropriate place:
+
+      <input type="text" name="shoe_size" value="{REGISTER->shoe_size}"/>
+
+
+ 3.2 From the user's control center
+ ----------------------------------
+
+   If you want to give the user an option to change the value of your
+   custom field from the control center, you will have to put an input
+   field to the user settings template file, which can be found in
+   templates/default/cc_usersettings.tpl.
+
+
+ 3.3 From a module
+ -----------------
+
+
+======================================================================
+Bits and pieces:
+
+   You can use all HTML field types, but we 
+   recommend not to use checkboxes, because you will have to write
+   special code to handle them. Instead you could use a <select>
+   list with two options ("on" and "off").
 
