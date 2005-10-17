@@ -1,4 +1,4 @@
-{IF NOT MESSAGECOUNT 0}{IF NOT MESSAGECOUNT 1}
+{IF NOT ITEMCOUNT 0}{IF NOT ITEMCOUNT 1}
 {ASSIGN DID_TOGGLEBLOCK 1}
 <script type="text/javascript">
 document.write(

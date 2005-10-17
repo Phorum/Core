@@ -1,4 +1,4 @@
-<form action="{ACTION}" method="post">
+<form id="phorum_listform" action="{ACTION}" method="post">
 {POST_VARS}
 <input type="hidden" name="panel" value="pm" />
 <input type="hidden" name="page" value="buddies" />
@@ -8,7 +8,10 @@
 <table border="0" cellspacing="0" class="PhorumStdTable">
 
   <tr>
-    <th class="PhorumTableHeader" align="left" width="20">&nbsp;</th>
+    <th class="PhorumTableHeader" align="left" width="20">
+      {ASSIGN ITEMCOUNT BUDDYCOUNT}
+      {INCLUDE pm_list_selectall}
+    </th>
     <th class="PhorumTableHeader" align="left">{LANG->Buddy}</th>
     <th class="PhorumTableHeader" align="left">{LANG->RealName}</th>
     <th class="PhorumTableHeader" align="center">{LANG->Mutual}</th>
@@ -20,12 +23,12 @@
 {IF BUDDYCOUNT}
   {LOOP BUDDIES}
     <tr>
-      <td><input type="checkbox" name="checked[]" value="{BUDDIES->user_id}"></td>
-      <td><a href="{BUDDIES->profile_url}"><strong>{BUDDIES->username}</strong></a></td>
-      <td>{BUDDIES->real_name}</td>
-      <td align="center">{IF BUDDIES->mutual}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
+      <td class="PhorumTableRow"><input type="checkbox" name="checked[]" value="{BUDDIES->user_id}"></td>
+      <td class="PhorumTableRow"><a href="{BUDDIES->profile_url}"><strong>{BUDDIES->username}</strong></a></td>
+      <td class="PhorumTableRow">{BUDDIES->real_name}</td>
+      <td class="PhorumTableRow"align="center">{IF BUDDIES->mutual}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
       {IF USERTRACK}
-      <td align="right">{BUDDIES->date_last_active}&nbsp;</td>
+      <td class="PhorumTableRow"align="right">{BUDDIES->date_last_active}&nbsp;</td>
       {/IF USERTRACK}
     </tr>
   {/LOOP BUDDIES}
