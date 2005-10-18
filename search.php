@@ -100,13 +100,28 @@ if(!empty($phorum_search)){
 
         $match_number = $start + 1;
 
+        $forums = phorum_db_get_forums();
+
+        // For announcements, we will put the current forum_id in the record.
+        // Else the message cannot be read (Phorum will redirect the user
+        // back to the index page if the forum id is zero). If the user came
+        // from the index page, no forum id will be set. In that case we
+        // use the first available forum id.
+        $announcement_forum_id = 0;
+        if ($PHORUM["forum_id"]) {
+            $announcement_forum_id = $PHORUM["forum_id"];
+        } elseif (count($forums)) {
+            list ($f_id, $_data) = each($forums);
+            $announcement_forum_id = $f_id;
+        }
+
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
 
-            // For announcements, put the current forum_id in the record.
-            // Else the message cannot be read (Phorum will redirect the
-            // user back to the index page if the forum id is not set).
-            if ($row["forum_id"] == 0) $row["forum_id"] = $PHORUM["forum_id"];
+            // Fake a forum_id for folders.
+            if ($row["forum_id"] == 0) {
+                $row["forum_id"] = $announcement_forum_id;
+            }
 
             $arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
@@ -122,11 +137,10 @@ if(!empty($phorum_search)){
             $match_number++;
         }
 
-        $forums = phorum_db_get_forums($forum_ids);
         foreach($arr["rows"] as $key => $row){
             // Skip announcements "forum".
             if ($row["forum_id"] == 0) continue;
-            
+
             $arr["rows"][$key]["forum_url"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
 
             $arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];
