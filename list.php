@@ -105,16 +105,11 @@ if($PHORUM['threaded_list']) { // make it simpler :)
     $PHORUM["list_length"] = $PHORUM['list_length_flat'];
 }
 
-// See how many sticky messages we have. These should be
-// kept out of the thread count for determining the 
-// number of pages to show.
-$sticky_count = 0;
-foreach ($rows as $row) {
-    if ($row["sort"] == PHORUM_SORT_STICKY) $sticky_count ++;
-}
-
-// figure out paging for threaded and flat mode
-$pages=ceil(($PHORUM["thread_count"] - $sticky_count) / $PHORUM["list_length"]);
+// Figure out paging for threaded and flat mode. Sticky messages
+// are in the thread_count, but because these are handled as a separate
+// list (together with the announcements), they should not be included
+// in the pages computation.
+$pages=ceil(($PHORUM["thread_count"] - $PHORUM['sticky_count']) / $PHORUM["list_length"]);
 
 // If we only have stickies and/of announcements, the number of pages
 // will be zero. In that case, simply use one page.
