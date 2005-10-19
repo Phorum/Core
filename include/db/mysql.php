@@ -4144,6 +4144,7 @@ function phorum_db_create_tables()
                     "ip" => '127.0.0.1',
                     "user_id" => 0,
                     "moderator_post" => 0,
+                    "closed" => 0,
                     "status" => PHORUM_STATUS_APPROVED,
                     "sort" => PHORUM_SORT_DEFAULT,
                     "msgid" => '',
