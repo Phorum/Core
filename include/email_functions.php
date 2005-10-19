@@ -157,7 +157,7 @@ function phorum_email_notice($message)
 
     if (count($mail_users_full)) {
         $mail_data = array(
-            "forumname"   => $PHORUM["DATA"]["NAME"],
+            "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
             "author"      => $message['author'],
@@ -208,7 +208,7 @@ function phorum_email_moderators($message)
         $mail_data = array(
             "mailmessage" => $mailtext,
             "mailsubject" => $PHORUM["DATA"]["LANG"]['NewModeratedSubject'],
-            "forumname"   => $PHORUM["DATA"]["NAME"],
+            "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
             "author"      => $message['author'],
