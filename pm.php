@@ -608,7 +608,7 @@ switch ($page) {
             foreach ($list as $message_id => $message)
             {
                 $message = phorum_pm_format($message);
-                $list[$message_id]["from_username"] = htmlspecialchars($message["from_username"]);
+                $list[$message_id]["from_username"] = $message["from_username"];
                 $list[$message_id]["subject"] = $message["subject"];
                 $list[$message_id]["message"] = $message["message"];
                 $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
