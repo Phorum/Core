@@ -329,6 +329,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
+    // HTML titles can't contain HTML code, so we strip HTML tags
+    // and HTML escape the title.
+$PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
         // set all our URL's

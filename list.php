@@ -362,8 +362,6 @@ if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && 
     phorum_db_newflag_add_read($min_id);
 }
 
-$PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
-
 include phorum_get_template("header");
 phorum_hook("after_header");
 

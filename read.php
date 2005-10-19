@@ -457,16 +457,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // alter the HTML_TITLE
     if(!empty($PHORUM["DATA"]["HTML_TITLE"])){
-        $PHORUM["DATA"]["HTML_TITLE"].=PHORUM_SEPARATOR;
+        $PHORUM["DATA"]["HTML_TITLE"].=htmlentities(PHORUM_SEPARATOR, ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );;
     }
+    // No htmlentities() needed. The subject is already escaped.
     if($PHORUM["threaded_read"]) {
         $PHORUM["DATA"]["HTML_TITLE"].=$PHORUM["DATA"]["MESSAGE"]["subject"];
     } else {
         $PHORUM["DATA"]["HTML_TITLE"].=$threadsubject;
     }
-
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
-    $PHORUM['DATA']['NAME'] = htmlentities( $PHORUM['DATA']['NAME'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
 
     // include the correct template
 
