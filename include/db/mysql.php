@@ -4106,62 +4106,17 @@ function phorum_db_create_tables()
         // default settings for smiley module
         mysql_query("INSERT INTO {$PHORUM['settings_table']} (`name`, `type`, `data`) VALUES ('mod_smileys','S','a:21:{i:0;a:4:{s:6:\"search\";s:2:\"B)\";s:6:\"smiley\";s:8:\"cool.gif\";s:3:\"alt\";s:11:\"cool smiley\";s:4:\"uses\";s:1:\"2\";}i:1;a:4:{s:6:\"search\";s:2:\":)\";s:6:\"smiley\";s:11:\"smilie1.gif\";s:3:\"alt\";s:14:\"smiling smiley\";s:4:\"uses\";s:1:\"2\";}i:2;a:4:{s:6:\"search\";s:2:\":(\";s:6:\"smiley\";s:11:\"smilie2.gif\";s:3:\"alt\";s:10:\"sad smiley\";s:4:\"uses\";s:1:\"2\";}i:3;a:4:{s:6:\"search\";s:2:\";)\";s:6:\"smiley\";s:11:\"smilie3.gif\";s:3:\"alt\";s:14:\"winking smiley\";s:4:\"uses\";s:1:\"2\";}i:4;a:4:{s:6:\"search\";s:2:\":o\";s:6:\"smiley\";s:11:\"smilie4.gif\";s:3:\"alt\";s:14:\"yawning smiley\";s:4:\"uses\";s:1:\"2\";}i:5;a:4:{s:6:\"search\";s:2:\":D\";s:6:\"smiley\";s:11:\"smilie5.gif\";s:3:\"alt\";s:15:\"grinning smiley\";s:4:\"uses\";s:1:\"2\";}i:6;a:4:{s:6:\"search\";s:2:\":P\";s:6:\"smiley\";s:11:\"smilie6.gif\";s:3:\"alt\";s:26:\"tongue sticking out smiley\";s:4:\"uses\";s:1:\"2\";}i:7;a:4:{s:6:\"search\";s:3:\"B)-\";s:6:\"smiley\";s:11:\"smilie7.gif\";s:3:\"alt\";s:14:\"smoking smiley\";s:4:\"uses\";s:1:\"2\";}i:8;a:4:{s:6:\"search\";s:3:\"8-)\";s:6:\"smiley\";s:11:\"smilie8.gif\";s:3:\"alt\";s:18:\"eye rolling smiley\";s:4:\"uses\";s:1:\"2\";}i:9;a:4:{s:6:\"search\";s:2:\":X\";s:6:\"smiley\";s:11:\"smilie9.gif\";s:3:\"alt\";s:12:\"angry smiley\";s:4:\"uses\";s:1:\"2\";}i:10;a:4:{s:6:\"search\";s:3:\"(:D\";s:6:\"smiley\";s:12:\"smiley12.gif\";s:3:\"alt\";s:23:\"smiling bouncing smiley\";s:4:\"uses\";s:1:\"2\";}i:11;a:4:{s:6:\"search\";s:4:\">:D<\";s:6:\"smiley\";s:12:\"smiley14.gif\";s:3:\"alt\";s:16:\"thumbs up smiley\";s:4:\"uses\";s:1:\"2\";}i:12;a:4:{s:6:\"search\";s:4:\":)-D\";s:6:\"smiley\";s:12:\"smiley15.gif\";s:3:\"alt\";s:17:\"smileys with beer\";s:4:\"uses\";s:1:\"2\";}i:13;a:4:{s:6:\"search\";s:3:\":)o\";s:6:\"smiley\";s:12:\"smiley16.gif\";s:3:\"alt\";s:15:\"drinking smiley\";s:4:\"uses\";s:1:\"2\";}i:14;a:4:{s:6:\"search\";s:2:\":?\";s:6:\"smiley\";s:12:\"smiley17.gif\";s:3:\"alt\";s:12:\"moody smiley\";s:4:\"uses\";s:1:\"2\";}i:15;a:4:{s:6:\"search\";s:4:\"(td)\";s:6:\"smiley\";s:12:\"smiley23.gif\";s:3:\"alt\";s:11:\"thumbs down\";s:4:\"uses\";s:1:\"2\";}i:16;a:4:{s:6:\"search\";s:4:\"(tu)\";s:6:\"smiley\";s:12:\"smiley24.gif\";s:3:\"alt\";s:9:\"thumbs up\";s:4:\"uses\";s:1:\"2\";}i:17;a:4:{s:6:\"search\";s:4:\"(:P)\";s:6:\"smiley\";s:12:\"smiley25.gif\";s:3:\"alt\";s:39:\"spinning smiley sticking its tongue out\";s:4:\"uses\";s:1:\"2\";}i:18;a:4:{s:6:\"search\";s:2:\"X(\";s:6:\"smiley\";s:7:\"hot.gif\";s:3:\"alt\";s:10:\"hot smiley\";s:4:\"uses\";s:1:\"2\";}i:19;a:4:{s:6:\"search\";s:2:\":S\";s:6:\"smiley\";s:12:\"smilie11.gif\";s:3:\"alt\";s:15:\"confused smiley\";s:4:\"uses\";s:1:\"2\";}i:20;a:4:{s:6:\"search\";s:3:\"::o\";s:6:\"smiley\";s:12:\"smilie10.gif\";s:3:\"alt\";s:18:\"eye popping smiley\";s:4:\"uses\";s:1:\"2\";}}')");
 
-        // create a test forum
-        $forum=array(
-                  "name"=>'Test Forum',
-                  "active"=>1,
-                  "description"=>'This is a test forum.  Feel free to delete it or edit after installation.',
-                  "template"=>'default',
-                  "folder_flag"=>0,
-                  "parent_id"=>0,
-                  "list_length_flat"=>30,
-                  "list_length_threaded"=>15,
-                  "read_length"=>20,
-                  "moderation"=>0,
-                  "threaded_list"=>0,
-                  "threaded_read"=>0,
-                  "float_to_top"=>1,
-                  "display_ip_address"=>0,
-                  "allow_email_notify"=>1,
-                  "language"=>'english',
-                  "email_moderators"=>0,
-                  "display_order"=>0,
-                  "edit_post"=>1,
-                  "pub_perms" =>  1,
-                  "reg_perms" =>  15
-              );
-
-        $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
-
-        // create a test post
-        $message=array(
-                    "forum_id" => $GLOBALS['PHORUM']["forum_id"],
-                    "thread" => 0,
-                    "parent_id" => 0,
-                    "author" => 'Phorum Installer',
-                    "subject" => 'Test Message',
-                    "email" => '',
-                    "ip" => '127.0.0.1',
-                    "user_id" => 0,
-                    "moderator_post" => 0,
-                    "closed" => 0,
-                    "status" => PHORUM_STATUS_APPROVED,
-                    "sort" => PHORUM_SORT_DEFAULT,
-                    "msgid" => '',
-                    "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team"
-                 );
-
-        phorum_db_post_message($message);
-
-        include_once ("./include/thread_info.php");
-
-        phorum_update_thread_info($message["thread"]);
-
-        phorum_db_update_forum_stats(true);
 
     }
 
     return $retmsg;
+}
+
+// uses the database-dependant functions to escape a string
+function phorum_db_escape_string($str) {
+    $str_tmp=mysql_real_escape_string($str);
+
+    return $str_tmp;
 }
 
 /**

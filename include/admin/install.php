@@ -114,6 +114,62 @@
                 $message.="Your database user will need to have create table permissions.  If you know what the error is (tables already exist, etc.) and want to continue, click the button below.";
             } else {
                 $message="Tables created.  Next we will check your cache settings. Press continue when ready.";
+
+                // posting forum and test-message
+
+                // create a test forum
+                $forum=array(
+                "name"=>'Test Forum',
+                "active"=>1,
+                "description"=>'This is a test forum.  Feel free to delete it or edit after installation.',
+                "template"=>'default',
+                "folder_flag"=>0,
+                "parent_id"=>0,
+                "list_length_flat"=>30,
+                "list_length_threaded"=>15,
+                "read_length"=>20,
+                "moderation"=>0,
+                "threaded_list"=>0,
+                "threaded_read"=>0,
+                "float_to_top"=>1,
+                "display_ip_address"=>0,
+                "allow_email_notify"=>1,
+                "language"=>'english',
+                "email_moderators"=>0,
+                "display_order"=>0,
+                "edit_post"=>1,
+                "pub_perms" =>  1,
+                "reg_perms" =>  15
+                );
+
+                $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
+
+                // create a test post
+                $message=array(
+                "forum_id" => $GLOBALS['PHORUM']["forum_id"],
+                "thread" => 0,
+                "parent_id" => 0,
+                "author" => 'Phorum Installer',
+                "subject" => 'Test Message',
+                "email" => '',
+                "ip" => '127.0.0.1',
+                "user_id" => 0,
+                "moderator_post" => 0,
+                "closed" => 0,
+                "status" => PHORUM_STATUS_APPROVED,
+                "sort" => PHORUM_SORT_DEFAULT,
+                "msgid" => '',
+                "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team"
+                );
+
+                phorum_db_post_message($message);
+
+                include_once ("./include/thread_info.php");
+
+                phorum_update_thread_info($message["thread"]);
+
+                phorum_db_update_forum_stats(true);
+
             }
 
             $frm =& new PhorumInputForm ("", "post", "Continue ->");
