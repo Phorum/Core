@@ -20,7 +20,9 @@ function phorum_mod_smileys ( $data )
     // Sort the smileys by length, so that long smileys will be processed
     // before short smileys. Currently ":)" might be processed before
     // ":)-D", resulting in a smiley image with "-D" appended to it.
-    function smiley_sort($a, $b) { return strlen($a) < strlen($b); }
+    if (! function_exists('smiley_sort')) {
+        function smiley_sort($a, $b) { return strlen($a) < strlen($b); }
+    }
     uksort($GLOBALS["PHORUM"]["mod_smileys"], 'smiley_sort');
 
 	foreach ( $GLOBALS['PHORUM']['mod_smileys'] as $key=>$smiley ) {
