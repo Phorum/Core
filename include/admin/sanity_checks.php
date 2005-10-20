@@ -94,7 +94,7 @@
         // [2] A description of the problem that was found or NULL.
         //
         list($status, $error) = call_user_func($check["function"]);
-
+        $error = str_replace("\n", " ", $error);
         $display = $status2display[$status];
         $block = "<div style=\"color:{$display[1]};background-color:{$display[0]};text-align:center;border:1px solid black;\">{$display[2]}</div>";
         $row = $frm->addrow($check['description'], $block);

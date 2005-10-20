@@ -44,6 +44,18 @@
              The system error was:<br/><br/>".htmlspecialchars($php_errormsg)."."
         );
         fclose($fp);
+
+        // Some very unusual thing might happen. On Windows2000 we have seen
+        // fopen() not returning an error, but the OS not writing the file
+        // after all. So here we have to make sure the file really got written.
+        if (! file_exists("$dir/sanity_check_dummy_file")) return array(
+            PHORUM_SANITY_CRIT,
+            "The system is unable to write files
+             to your cache directory \"".htmlspecialchars($dir)."\".
+             There was no error reported by the system, but after writing to
+             a file, that file could not be found on the system."
+        );
+
         unlink("$dir/sanity_check_dummy_file");
 
         // Check if we can create directories in the cache directory.
