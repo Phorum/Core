@@ -777,6 +777,7 @@ function phorum_redirect_by_url( $redir_url )
         // our standard-way
         header( "Location: $redir_url" );
     }
+    exit(0);
 }
 
 // might remove these, might not.  Need it for debugging.
