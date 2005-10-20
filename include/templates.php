@@ -337,10 +337,19 @@ function phorum_write_templatefile($filename, $content, $is_toplevel = false)
         }
         fputs($fp, $content);
         if (! fclose($fp)) {
-            die("Error on closing $outfile; disk full?");
+            die("Error on closing $filename; disk full?");
+        }
+        // Some very unusual thing might happen. On Windows2000 we have seen
+        // fopen() not returning an error, but the OS not writing the message
+        // after all. So here we have to make sure the file really got written.
+        // If we do not do this, things might start looping
+        if (! file_exists($filename)) {
+            die("Failed to write compiled template to $filename; ".
+                "no error was reported by your system, but after closing the file, " .
+                "it could not be found");
         }
     } else {
-        die("Unable to write compiled template to $filename");
+        die("Failed to write compiled template to $filename");
     }
 }
 
