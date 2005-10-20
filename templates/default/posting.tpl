@@ -7,7 +7,7 @@
     {include posting_preview}
   {/IF}
 
-  <form id="post_form" action="{URL->ACTION}" method="post"
+  <form id="post_form" name="post" action="{URL->ACTION}" method="post"
    enctype="multipart/form-data">
   {POST_VARS}
 
