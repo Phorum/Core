@@ -36,20 +36,18 @@
         // Check if we have a database configuration available.
         if (! isset($PHORUM["DBCONFIG"])) return array(
             PHORUM_SANITY_CRIT,
-            "No database configuration was found in your
-             environment. Most probably you have not
-             copied include/db/config.php.sample to
-             include/db/config.php. Read Phorum's
-             install.txt for more information."
+            "No database configuration was found in your environment.",
+            "You probably have not copied include/db/config.php.sample
+             to include/db/config.php. Read Phorum's install.txt for
+             installation instructions."
         );
 
         // Check if a connection can be made.
         $connected = @phorum_db_check_connection();
         if (! $connected) return array(
             PHORUM_SANITY_CRIT,
-            "Connecting to the database failed.
-             Please check your database settings in the
-             file include/db/conf.php"
+            "Connecting to the database failed.",
+            "Check your database settings in the file include/db/conf.php"
         );
 
         // All checks are OK.

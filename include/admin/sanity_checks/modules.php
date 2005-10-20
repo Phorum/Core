@@ -32,21 +32,23 @@
             'send_mail',
         );
 
-        // Check all single mod hooks.
+        // Check all hooks that only may appear once.
         foreach ($only_single_mod_allowed as $hook) {
             if (isset($PHORUM["hooks"][$hook]["mods"])) {
                 $mods = $PHORUM["hooks"][$hook]["mods"];
                 if (count($mods) > 1) return array(
                     PHORUM_SANITY_WARN,
                     "You have activated multiple modules that handle
-                    Phorum's \"".htmlspecialchars($hook)."\" hook.
-                    However, this hook is normally only handled by
-                    one module at a time. Keeping all modules
-                    activated might lead to some unexpected results.
-                    The colliding modules are: ".
-                    implode(" + ", $mods) .
-                    "<br/><br/>You can ignore this message in case you
-                    are sure that the modules can work together"
+                     Phorum's \"".htmlspecialchars($hook)."\" hook.
+                     However, this hook is normally only handled by
+                     one module at a time. Keeping all modules
+                     activated might lead to some unexpected results.
+                     The colliding modules are: ".
+                     implode(" + ", $mods), 
+                    "You can ignore this message in case you
+                     are sure that the modules can work together. Else,
+                     make sure you have only one of these modules
+                     enabled."
                 );
             }
         }

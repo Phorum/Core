@@ -27,12 +27,20 @@
         $PHORUM = $GLOBALS["PHORUM"];
         $dir = $PHORUM["cache"];
 
+        // Some general solution descriptions.
+        $solution_1 = "Change the Cache Directory setting under
+                       General Settings.";
+        $solution_2 = "Change the Cache Directory setting under General 
+                       Settings or give your webserver more permissions
+                       for the current cache directory.";
+
         // Check if the cache directory exists.
         if (! file_exists($dir) || ! is_dir($dir)) return array(
             PHORUM_SANITY_CRIT,
             "The system is unable to find the cache
              directory \"".htmlspecialchars($dir)."\" on
-             your system."
+             your system.", 
+            $solution_1
         );
 
         // Check if we can create files in the cache directory.
@@ -41,7 +49,9 @@
             PHORUM_SANITY_CRIT,
             "The system is unable to write files
              to your cache directory \"".htmlspecialchars($dir)."\".
-             The system error was:<br/><br/>".htmlspecialchars($php_errormsg)."."
+             The system error was:<br/><br/>".
+             htmlspecialchars($php_errormsg).".",
+            $solution_2
         );
         fclose($fp);
 
@@ -51,16 +61,13 @@
         // specific NTFS file permission settings. So here we have to make 
         // sure that we can open the file that we just wrote.
         $checkfp = fopen("$dir/sanity_check_dummy_file", "r");
-$checkfp = 0;
         if (! $checkfp) return array(
             PHORUM_SANITY_CRIT,
             "The system was able to write a file to your cache directory 
              \"".htmlspecialchars($dir)."\", but afterwards the created
              file could not be read by the webserver. This is probably 
-             caused by the file permissions on your cache directory.
-             Change the Cache Directory setting under General Settings
-             or give your webserver more permissions for the current
-             cache directory."
+             caused by the file permissions on your cache directory.",
+            $solution_2
         );
 
         unlink("$dir/sanity_check_dummy_file");
@@ -70,7 +77,8 @@ $checkfp = 0;
             PHORUM_SANITY_CRIT,
             "The system is unable to create directories
              in your cache directory \"".htmlspecialchars($dir)."\".
-             The system error was:<br/><br/>".htmlspecialchars($php_errormsg)."."
+             The system error was:<br/><br/>".htmlspecialchars($php_errormsg).".",
+            $solution_2
         );
         rmdir("$dir/sanity_check_dummy_dir");
 
@@ -84,10 +92,10 @@ $checkfp = 0;
             "There might be a problem in Phorum's caching system.
              Storing and retrieving a dummy key failed. If you
              experience problems with your Phorum installation,
-             it might me because of this. To work around it,
-             you can disable the caching facilities in the
-             admin interface. Please contact the Phorum
-             developers to find out what the problem is."
+             it might me because of this.",
+            "As a work around, you can disable the caching facilities
+             in the admin interface. Please contact the Phorum
+             developers to find out what the problem is.",
         );
 
         return array (PHORUM_SANITY_OK, NULL);

@@ -38,14 +38,17 @@
         $php_max_upload = phorum_php_max_upload();
 
         // Get the maximum packet size for the database.
-        $db_max_upload = phorum_db_maxpacketsize();
+        // For determining the maximum allowed upload size,
+        // we have to take packet overhead into account.
+        $db_max_upload = phorum_db_maxpacketsize() * 0.6;
 
         // Check limits for file uploading in personal profile.
         if ($PHORUM["file_uploads"] && $PHORUM["max_file_size"]) {
             $upload_used = true;
             $res = phorum_single_check_upload_limits(
                 $PHORUM["max_file_size"]*1024,
-                "the Max File Size option for user file uploads (in their profile)",
+                "the Max File Size option for user file uploads " .
+                "(in their profile)",
                 $php_max_upload, $db_max_upload
             );
             if ($res != NULL) return $res;
@@ -76,7 +79,11 @@
                 PHORUM_SANITY_CRIT,
                 "The system is unable to write files
                  to PHP's upload tmpdir \"".htmlspecialchars($tmpdir)."\".
-                 The system error was:<br/><br/>".htmlspecialchars($php_errormsg)."."
+                 The system error was:<br/><br/>".
+                 htmlspecialchars($php_errormsg).".",
+                "Change the upload_tmp_dir setting in your php.ini file
+                 or give your webserver more permissions for the current
+                 upload directory."
             );
         }
         fclose($fp);
@@ -85,11 +92,11 @@
         return array(PHORUM_SANITY_OK, NULL);
     }
 
-    // ==============================================================================
+    // ========================================================================
     // Helper functions
-    // ==============================================================================
+    // ========================================================================
 
-    // We have to check multiple upload limits. Using this function
+    // We have to check multiple upload limits. Using this function,
     // we do not have to rebuild all error messages over and over
     // again.
     function phorum_single_check_upload_limits ($howmuch, $what, $maxphp, $maxdb)
@@ -97,28 +104,24 @@
         // Check PHP limits.
         if (!empty($maxphp) && $howmuch > $maxphp) return array(
             PHORUM_SANITY_WARN,
-            "You haved configured ".htmlspecialchars($what)." to ".
-            phorum_filesize($howmuch).".
-            Your PHP installation only supports ".
-            phorum_filesize($maxphp).".
-            You users might have problems with uploading
-            their files because of this. Configure the options
-            post_max_size and upload_max_filesize in your
-            php.ini file to match the Max File Size option
-            or lower your configuration option."
+            "You have configured ".htmlspecialchars($what)." to ".
+             phorum_filesize($howmuch).". Your PHP installation only 
+             supports ".phorum_filesize($maxphp).". Your users might
+             have problems with uploading their files because of this.",
+            "Raise the options post_max_size and upload_max_filesize in your
+             php.ini file to match the Max File Size option or lower this
+             configuration option for your forums."
         );
 
         // Check database limits.
         if (!empty($maxdb) && $howmuch > $maxdb) return array(
             PHORUM_SANITY_WARN,
-            "You have configured ".htmlspecialchars($what)." to " .
-            phorum_filesize($howmuch).".
-            Your database only supports ".
-            phorum_filesize($maxdb).".
-            You users might have problems with uploading
-            their files because of this. Configure your
-            database to allow larger packets or lower your
-            configuration option."
+            "You have configured ".htmlspecialchars($what)." to ".
+             phorum_filesize($howmuch).". Your database only supports ".
+             phorum_filesize($maxdb).". Your users might have problems with
+             uploading their files because of this.",
+            "Configure your database to allow larger packets or lower the
+             Max File Size configuration option for your forums."
         );
 
         return NULL;
