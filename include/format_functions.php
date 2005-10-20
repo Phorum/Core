@@ -19,141 +19,168 @@
 
 if ( !defined( "PHORUM" ) ) return;
 
-function phorum_format_messages( $data )
+/**
+ * Formats forum messages.
+ *
+ * @param data - An array containing a messages to be formatted.
+ * @return data - The formatted messages.
+ */
+function phorum_format_messages ($data)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    // retrieving bad-words list
-    $banlists=phorum_db_get_banlists();
-    if(isset($banlists[PHORUM_BAD_WORDS])) {
-        $bad_words=$banlists[PHORUM_BAD_WORDS];
-    } else {
-        $bad_words=array();
-    }
-
-    foreach( $data as $key => $message ) {
-        // ////////////////////////////////
-        // prepare bad-words list
+    // Prepare the bad-words replacement code.
+    $bad_word_check= false;
+    $banlists = phorum_db_get_banlists();
+    if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
         $replace_vals  = array();
         $replace_words = array();
-        $bad_word_check= false;
-
-        if ( is_array( $bad_words ) ) {
-            foreach( $bad_words as $item ) {
-                $replace_words[]="/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/";
-                $replace_vals[]="@#$%&";
-                //$body = preg_replace( "/\b$word(ing|ed|s|er|es)*\b/", "@#$%&", $body );
-                $bad_word_check=true;
-            }
+        foreach ($banlists[PHORUM_BAD_WORDS] as $item) {
+            $replace_words[] = "/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/";
+            $replace_vals[]  = PHORUM_BADWORD_REPLACE;
+            $bad_word_check  = true;
         }
+    }
 
-        // Work on the body
+    // A special <br> tag to keep track of breaks that are added by phorum.
+    $phorum_br = '<phorum break>';
 
-        if ( isset( $message["body"] ) ) {
+    // Apply Phorum's formatting rules to all messages.
+    foreach( $data as $key => $message )
+    {
+        // Work on the message body ========================
+
+        if (isset($message["body"]))
+        {
             $body = $message["body"];
 
-            // convert legacy <> urls into bare urls
+            // Convert legacy <> urls into bare urls.
             $body = preg_replace("/<((http|https|ftp):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%]+?)>/i", "$1", $body);
 
-            // htmlspecialchars does too much
-            $body = str_replace( array( "&", "<", ">" ), array( "&amp;", "&lt;", "&gt;" ), $body );
+            // Escape special HTML characters. The function htmlspecialchars()
+            // does too much, prior to PHP version 4.0.3.
+            $body = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $body);
 
-            // replace newlines with <br phorum="true" /> temporarily
-            // this way the mods know what Phorum did vs the user
-            $body = str_replace( "\n", "<br phorum=\"true\" />\n", $body );
+            // Replace newlines with $phorum_br temporarily.
+            // This way the mods know what Phorum did vs the user.
+            $body = str_replace("\n", "$phorum_br\n", $body);
 
+            // Run bad word replacement code.
             if($bad_word_check) {
-                   $body = preg_replace( $replace_words, $replace_vals, $body );
+               $body = preg_replace($replace_words, $replace_vals, $body);
             }
 
             $data[$key]["body"] = $body;
         }
-        // ////////////////////////////////
 
-        // Work on the other fields
+        // Work on the other fields ========================
 
-
-        // bad words on subject and author
+        // Run bad word replacement code on subject and author.
         if($bad_word_check) {
-             list($message["subject"],$message["author"]) = preg_replace( $replace_words, $replace_vals, array($message["subject"],$message["author"]));
+            if (isset($message["subject"]))
+                $message["subject"] = preg_replace($replace_words, $replace_vals, $message["subject"]);
+            if (isset($message["author"]))
+                $message["author"] = preg_replace($replace_words, $replace_vals, $message["author"]);
         }
 
-        // htmlspecialchars does too much
-        $safe_author = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $message["author"] );
-        if($safe_author!=$data[$key]["author"]){
-            // never should have put HTML in the core
-            if(isset($data[$key]["linked_author"])){
+        // Escape special HTML characters in fields.
+        if (isset($message["email"]))
+            $data[$key]["email"] = str_replace(array("<",">"), array("&lt;","&gt;"), $message["email"]);
+        if (isset($message["subject"]))
+            $data[$key]["subject"] = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $message["subject"]);
+
+        // Some special things we have to do for the escaped author name.
+        // We never should have put HTML in the core. Now we have to
+        // do this hack to get the escaped author name in the linked_author.
+        if (isset($message["author"])) {
+            $data[$key]["author"]  = str_replace(array("<",">"), array("&lt;","&gt;"), $message["author"]);
+            $safe_author = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $message["author"]);
+            if ($safe_author != $data[$key]["author"] && isset($data[$key]["linked_author"])) {
                 $data[$key]["linked_author"] = str_replace($data[$key]["author"], $safe_author, $data[$key]["linked_author"]);
+                $data[$key]["author"] = $safe_author;
             }
-            $data[$key]["author"] = $safe_author;
         }
-
-        $data[$key]["author"] = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $message["author"] );
-
-        $data[$key]["email"] = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $message["email"] );
-
-        $data[$key]["subject"] = str_replace( array( "&", "<", ">" ), array( "&amp;", "&lt;", "&gt;" ), $message["subject"] );
     }
-    // run message formatting mods
-    $data = phorum_hook( "format", $data );
 
-    $nobr_tags = array( "pre", "xmp" );
-    // clean up after the mods are done.
+    // A hook for module writers to apply custom message formatting.
+    $data = phorum_hook("format", $data);
+
+    // Clean up after the mods are done.
     foreach( $data as $key => $message ) {
-        if ( isset( $message["body"] ) ) {
-            // clean up around blockquote, pre and xmp tags so they format better in the message.
-            foreach( $nobr_tags as $tagname ) {
-                if ( preg_match_all( "/(<$tagname.*?>).+?(<\/$tagname>)/si", $message["body"], $matches ) ) {
-                    foreach( $matches[0] as $match ) {
-                        $stripped = str_replace( "<br phorum=\"true\" />", "", $match );
 
-                        $message["body"] = str_replace( $match, $stripped, $message["body"] );
+        // Clean up line breaks inside pre and xmp tags. These tags
+        // take care of showing newlines as breaks themselves.
+        if (isset($message["body"])) {
+            foreach (array("pre","goep","xmp") as $tagname) {
+                if (preg_match_all( "/(<$tagname.*?>).+?(<\/$tagname>)/si", $message["body"], $matches)) {
+                    foreach ($matches[0] as $match) {
+                        $stripped = str_replace ($phorum_br, "", $match);
+                        $message["body"] = str_replace ($match, $stripped, $message["body"]);
                     }
                 }
-                // fiddle with white space around quote and code tags.
-                $message["body"] = preg_replace( "/\s*(<\/*(xmp|blockquote|pre).*?>)(\s*\\n)/", "$1", $message["body"] );
             }
-            // normalize the <br /> tags
-            $data[$key]["body"] = str_replace( "<br phorum=\"true\" />", "<br />", $message["body"] );
+            // Remove line break after quote and code tags. These tags have
+            // their own line break. Without this, there would be to much
+            // white lines.
+            $message["body"] = preg_replace("/\s*(<\/*(xmp|blockquote|pre).*?>)\s*\Q$phorum_br\E/", "$1", $message["body"]);
+
+            // Normalize the Phorum line breaks that are left.
+            $data[$key]["body"] = str_replace($phorum_br, "<br />", $message["body"]);
         }
     }
 
     return $data;
 }
 
+/**
+ * Formats an epoch timestamp to a date/time for displaying on screen.
+ *
+ * @param picture - The time formatting to use, in strftime() format
+ * @param ts - The epoch timestamp to format
+ * @return datetime - The formatted date/time string
+ */
 function phorum_date( $picture, $ts )
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    // setting locale
-    if(!isset($PHORUM['locale']))
-        $PHORUM['locale']="EN";
 
+    // Setting locale.
+    if (!isset($PHORUM['locale']))
+        $PHORUM['locale']="EN";
     setlocale(LC_TIME, $PHORUM['locale']);
 
-    if($PHORUM["user_time_zone"] && isset( $PHORUM["user"]["tz_offset"] ) && $PHORUM["user"]["tz_offset"]!=-99 ){
-
+    // Format the date.
+    if ($PHORUM["user_time_zone"] && isset($PHORUM["user"]["tz_offset"]) && $PHORUM["user"]["tz_offset"]!=-99) {
         $ts += $PHORUM["user"]["tz_offset"] * 3600;
         return gmstrftime( $picture, $ts );
-
     } else {
-
         $ts += $PHORUM["tz_offset"] * 3600;
         return strftime( $picture, $ts );
-
     }
-
 }
 
+/**
+ * Strips HTML <tags> and BBcode [tags] from the body.
+ *
+ * @param body - The block of body text to strip
+ * @return stripped - The stripped body
+ */
 function phorum_strip_body( $body )
 {
-    // strip HTML
-    $body = preg_replace( "|</*[a-z][^>]*>|i", "", $body );
-    // strip BB Code
-    $body = preg_replace( "|\[/*[a-z][^\]]*\]|i", "", $body );
+    // Strip HTML <tags>
+    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
+    // Strip BB Code [tags]
+    $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
 
-    return $body;
+    return $stripped;
 }
 
+/**
+ * Formats a file size in bytes to a human readable format. Human
+ * readable formats are MB (MegaByte), kB (KiloByte) and byte.
+ *
+ * @param bytes - The number of bytes
+ * @param formatted - The formatted size
+ */
 function phorum_filesize( $bytes )
 {
     if ($bytes >= 1024*1024) {
