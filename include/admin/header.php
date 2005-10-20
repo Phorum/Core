@@ -1,4 +1,4 @@
-<?php
+\<?php
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -137,12 +137,23 @@ input, textarea, select, td
 
 .PhorumAdminError
 {
+    background-image: url("./images/alert.gif");
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
     font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 3px;
+    font-size: 15px;
+    padding: 12px 12px 12px 50px;
     color: #000000;
-    border: 1px solid red;
+    border: 2px solid red;
+}
+
+.PhorumAdminOkMsg
+{
+    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-size: 15px;
+    padding: 12px;
+    color: #000000;
+    border: 2px solid darkgreen;
 }
 
 .small
