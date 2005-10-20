@@ -293,7 +293,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // only use valid template names
     if ( !empty( $PHORUM["args"]["template"] ) ) {
         $template = basename( $PHORUM["args"]["template"] );
-        if ($template != '..' && file_exists("./templates/$template")) {
+        if ($template != '..') {
             $PHORUM["template"] = $template;
         }
     }
@@ -601,7 +601,9 @@ function phorum_get_template( $page, $is_include = false )
         $PHORUM['template'] = $PHORUM['user']['user_template'];
     }
 
-    if ( empty( $PHORUM["template"] ) ) {
+    // If no user template is set or if the template folder cannot be found,
+    // fallback to the default template.
+    if (empty($PHORUM["template"]) || !file_exists("./templates/{$PHORUM['template']}")) {
         $PHORUM["template"] = $PHORUM["default_template"];
     }
 
