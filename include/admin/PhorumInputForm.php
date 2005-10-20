@@ -68,7 +68,7 @@ class PhorumInputForm {
 
     function addhelp( $row, $title, $text )
     {
-        $this->_help[$row] = array( $title, $text );
+        $this->_help[$row] = array( addslashes($title), addslashes($text) );
     }
 
     function addbreak( $break = "&nbsp;" )
