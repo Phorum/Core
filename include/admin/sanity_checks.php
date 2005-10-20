@@ -84,7 +84,7 @@
     foreach ($sanity_checks as $check)
     {
         // Call the sanity check function. This function is expected
-        // to return an array containing two elements:
+        // to return an array containing the following elements:
         //
         // [1] A status, which can be one of
         //     PHORUM_SANITY_OK     No problem found
@@ -93,12 +93,20 @@
         //
         // [2] A description of the problem that was found or NULL.
         //
-        list($status, $error) = call_user_func($check["function"]);
-        $error = str_replace("\n", " ", $error);
+        // [3] A solution for the problem or NULL.
+        //
+        list($status, $error, $solution) = call_user_func($check["function"]);
+        if (isset($error)) $error = str_replace("\n", " ", $error);
+        if (isset($solution)) $solution = str_replace("\n", " ", $solution);
         $display = $status2display[$status];
         $block = "<div style=\"color:{$display[1]};background-color:{$display[0]};text-align:center;border:1px solid black;\">{$display[2]}</div>";
         $row = $frm->addrow($check['description'], $block);
         if (! empty($error)) {
+            if (! empty($solution))
+                $error .= "<br/><br/>" .
+                          "<strong>Possible solution:</strong>" .
+                          "<br/><br/>" .
+                          $solution;
             $frm->addhelp($row,"Sanity check failed",$error);
         }
     }
