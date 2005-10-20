@@ -54,6 +54,9 @@
     // split-variable for file-based cache
     define('PHORUM_CACHE_SPLIT',4);
 
+    // the replace string for masking bad words.
+    define('PHORUM_BADWORD_REPLACE', '@#$%&');
+
     /////////////////////////////////////////
     //                                     //
     //     DO NOT EDIT BELOW THIS AREA     //
