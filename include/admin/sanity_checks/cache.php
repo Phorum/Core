@@ -46,14 +46,21 @@
         fclose($fp);
 
         // Some very unusual thing might happen. On Windows2000 we have seen
-        // fopen() not returning an error, but the OS not writing the file
-        // after all. So here we have to make sure the file really got written.
-        if (! file_exists("$dir/sanity_check_dummy_file")) return array(
+        // that the webserver can write a message to the cache directory,
+        // but that it cannot read it afterwards. Probably due to 
+        // specific NTFS file permission settings. So here we have to make 
+        // sure that we can open the file that we just wrote.
+        $checkfp = fopen("$dir/sanity_check_dummy_file", "r");
+$checkfp = 0;
+        if (! $checkfp) return array(
             PHORUM_SANITY_CRIT,
-            "The system is unable to write files
-             to your cache directory \"".htmlspecialchars($dir)."\".
-             There was no error reported by the system, but after writing to
-             a file, that file could not be found on the system."
+            "The system was able to write a file to your cache directory 
+             \"".htmlspecialchars($dir)."\", but afterwards the created
+             file could not be read by the webserver. This is probably 
+             caused by the file permissions on your cache directory.
+             Change the Cache Directory setting under General Settings
+             or give your webserver more permissions for the current
+             cache directory."
         );
 
         unlink("$dir/sanity_check_dummy_file");

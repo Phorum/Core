@@ -337,19 +337,25 @@ function phorum_write_templatefile($filename, $content, $is_toplevel = false)
         }
         fputs($fp, $content);
         if (! fclose($fp)) {
-            die("Error on closing $filename; disk full?");
+            die("Error on closing $filename. Is your disk full?");
         }
         // Some very unusual thing might happen. On Windows2000 we have seen
-        // fopen() not returning an error, but the OS not writing the message
-        // after all. So here we have to make sure the file really got written.
-        // If we do not do this, things might start looping
-        if (! file_exists($filename)) {
-            die("Failed to write compiled template to $filename; ".
-                "no error was reported by your system, but after closing the file, " .
-                "it could not be found");
+        // that the webserver can write a message to the cache directory,
+        // but that it cannot read it afterwards. Probably due to 
+        // specific NTFS file permission settings. So here we have to make
+        // sure that we can open the file that we just wrote.
+        $checkfp = fopen($filename, "r");
+        if (! $checkfp) {
+            die("Failed to write a usable compiled template to $filename. " .
+                "The file was was created successfully, but it could not " .
+                "be read by the webserver afterwards. This is probably " .
+                "caused by the file permissions on your cache directory.");
         }
+        fclose($checkfp);
     } else {
-        die("Failed to write compiled template to $filename");
+        die("Failed to write a compiled template to $filename. This is " .
+            "probably caused by the file permissions on your cache " .
+            "directory.");
     }
 }
 
