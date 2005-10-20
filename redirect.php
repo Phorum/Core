@@ -22,9 +22,13 @@
 // directly from a script that acts on POST input coming from an 
 // enctype="multipart/mixed" form... *sigh*.
 
+define('phorum_page', 'redirect');
+
+require_once("./common.php");
+
 if (isset($_REQUEST['phorum_redirect_to'])) {
     $redir = urldecode($_REQUEST['phorum_redirect_to']);
-    header("Location: $redir"); 
+    phorum_redirect_by_url($redir);
 } else {
     header("Location: index.php");
 }
