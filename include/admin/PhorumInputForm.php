@@ -68,7 +68,12 @@ class PhorumInputForm {
 
     function addhelp( $row, $title, $text )
     {
-        $this->_help[$row] = array( addslashes($title), addslashes($text) );
+        // Allow title and text to span multiple lines and
+        // do escaping for encapsulation within the help
+        // javascript code.
+        $title = addslashes(str_replace("\n", " ", $title));
+        $text = addslashes(str_replace("\n", " ", $text));
+        $this->_help[$row] = array( $title, $text );
     }
 
     function addbreak( $break = "&nbsp;" )
