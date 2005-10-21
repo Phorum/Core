@@ -108,15 +108,15 @@ switch ($mod_step) {
         $PHORUM['DATA']["MoveForumsOption"]="";
 
         $forums=phorum_db_get_forums();
+        asort($forums);
 
         foreach($forums as $id=>$forum){
+            if ($id == $PHORUM["forum_id"]) continue;
             if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
-                 $forum_data[strtolower($forum["name"])]=array("forum_id"=>$id, "name"=>$forum["name"]);
+                 $forum_data[$id]=array("forum_id"=>$id, "name"=>$forum["name"]);
             }
         }
                      
-        ksort($forum_data);
-
         $PHORUM['DATA']['FRM']=1;
         $PHORUM['DATA']['FORUMS']=$forum_data;
         $output=true;
