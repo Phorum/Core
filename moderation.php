@@ -135,9 +135,12 @@ switch ($mod_step) {
         // get all the forums the moderator may move to
         $PHORUM['DATA']["MoveForumsOption"]="";
 
+
         $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+        asort($forums);
 
         foreach($forums as $id=>$forum){
+            if ($id == $PHORUM["forum_id"]) continue;
             // add  && phorum_user_moderate_allowed($id) if the mod should only be able
             // to move to forums he also moderates
             if($forum["folder_flag"]==0){
@@ -147,8 +150,6 @@ switch ($mod_step) {
                  }
             }
         }
-
-        ksort($forum_data);
 
         $PHORUM['DATA']['FRM']=1;
         $PHORUM['DATA']['FORUMS']=$forum_data;
