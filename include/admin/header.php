@@ -145,6 +145,7 @@ input, textarea, select, td
     padding: 12px 12px 12px 50px;
     color: #000000;
     border: 2px solid red;
+    margin-bottom: 3px;
 }
 
 .PhorumAdminOkMsg
@@ -154,6 +155,7 @@ input, textarea, select, td
     padding: 12px;
     color: #000000;
     border: 2px solid darkgreen;
+    margin-bottom: 3px;
 }
 
 .small
