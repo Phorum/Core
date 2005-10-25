@@ -159,7 +159,8 @@
                 "status" => PHORUM_STATUS_APPROVED,
                 "sort" => PHORUM_SORT_DEFAULT,
                 "msgid" => '',
-                "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team"
+                "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team",
+                "modifystamp" => time()
                 );
 
                 phorum_db_post_message($test_message);
