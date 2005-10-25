@@ -143,6 +143,7 @@
                 );
 
                 $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
+                $GLOBALS["PHORUM"]['vroot']=0;
 
                 // create a test post
                 $test_message=array(
@@ -159,15 +160,14 @@
                 "status" => PHORUM_STATUS_APPROVED,
                 "sort" => PHORUM_SORT_DEFAULT,
                 "msgid" => '',
-                "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team",
-                "modifystamp" => time()
+                "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team"
                 );
 
                 phorum_db_post_message($test_message);
 
                 include_once ("./include/thread_info.php");
 
-                phorum_update_thread_info($message["thread"]);
+                phorum_update_thread_info($test_message["thread"]);
 
                 phorum_db_update_forum_stats(true);
 
