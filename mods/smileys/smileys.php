@@ -2,81 +2,32 @@
 
 if(!defined("PHORUM")) return;
 
-function phorum_mod_smileys ( $data )
+require_once("./mods/smileys/defaults.php");
+
+function phorum_mod_smileys ($data)
 {
-	// early out if we're not enabled
-	if ( ! isset ( $GLOBALS['PHORUM']['mod_smileys'] ) ) {
-		return $data;
-	}
-  if(isset($GLOBALS['PHORUM']['mod_smileys']['prefix'])) {
-	  $prefix = $GLOBALS['PHORUM']['mod_smileys']['prefix']; // quicker than array lookups
-  } else {
-    $prefix = "smileys/";
-  }
+    $PHORUM = $GLOBALS["PHORUM"];
 
-	$do_work = $do_subject = $do_body = false;
-	$smiley_body_key = $smiley_subject_key = $smiley_body_value = $smiley_subject_value = array();
-
-    // Sort the smileys by length, so that long smileys will be processed
-    // before short smileys. Currently ":)" might be processed before
-    // ":)-D", resulting in a smiley image with "-D" appended to it.
-    if (! function_exists('smiley_sort')) {
-        function smiley_sort($a, $b) { return strlen($a) < strlen($b); }
+    // Return immediately if we have no active smiley replacements.
+    if (!isset($PHORUM["mod_smileys"]) || !$PHORUM["mod_smileys"]["do_smileys"]) {
+        return $data;
     }
-    uksort($GLOBALS["PHORUM"]["mod_smileys"], 'smiley_sort');
 
-	foreach ( $GLOBALS['PHORUM']['mod_smileys'] as $key=>$smiley ) {
-
-		if ( ! is_long ( $key ) ) {
-			continue;
-		}
-
-		$do_work = true;
-
-		$smiley['alt'] = htmlspecialchars ( $smiley['alt'] );
-		switch ( $smiley['uses'] ) {
-			case 1: // subject only replace
-				$do_subject = true;
-				$smiley_subject_key[] = $smiley['search'];
-				$smiley_subject_value[] = '<img title="'.$smiley['alt'].'" alt="'.$smiley['alt'].'" src="'.$prefix.$smiley['smiley'].'" />';
-				break;
-			case 2: // both replace
-				$do_subject = true;
-				$smiley_subject_key[] = $smiley['search'];
-				$smiley_subject_value[] = '<img title="'.$smiley['alt'].'" alt="'.$smiley['alt'].'" src="'.$prefix.$smiley['smiley'].'" />';
-				// ... goes on to body-replace
-			case 0: // body only replace
-			default: // in old versions it wasnt set, so body only replace
-				$do_body = true;
-				$smiley_body_key[] = $smiley['search'];
-				$smiley_body_value[] = '<img title="'.$smiley['alt'].'" alt="'.$smiley['alt'].'" src="'.$prefix.$smiley['smiley'].'" />';
-		}
-		unset ( $smiley );
-
+    // Run smiley replacements.
+    $replace = $PHORUM["mod_smileys"]["replacements"];
+	foreach ($data as $key => $message)
+    {
+        // Do subject replacements.
+        if (isset($replace["subject"]) && isset($message["subject"])) {
+            $data[$key]['subject'] = str_replace ($replace["subject"][0] , $replace["subject"][1], $message['subject'] );
+        }
+        // Do body replacements.
+        if (isset($replace["body"]) && isset($message["body"])) {
+            $data[$key]['body'] = str_replace ($replace["body"][0] , $replace["body"][1], $message['body'] );
+        }
 	}
-	unset ( $smiley, $prefix );
-
-	// early out if no smileys actually exist
-	if ( $do_work !== true ) {
-		return $data;
-	}
-
-	foreach ( $data as $key=>$message ) {
-
-		if ( $do_subject && isset ( $message['subject'] ) ) {
-			$data[$key]['subject'] = str_replace ( $smiley_subject_key, $smiley_subject_value, $message['subject'] );
-		}
-
-		if ( $do_body && isset ( $message['body'] ) ) {
-			$data[$key]['body'] = str_replace ( $smiley_body_key, $smiley_body_value, $message['body'] );
-		}
-
-		unset ( $message, $key );
-	}
-	unset ( $message, $key );
 
 	return $data;
-
 }
 
 ?>
