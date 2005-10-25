@@ -169,8 +169,8 @@ if (!empty($action)) {
     // confusing for the user.
     function phorum_pm_folder_exists($foldername)
     {
-        $PHORUM = $GLOBALS["PHORUM"];
-        foreach ($PHORUM["DATA"]["PM_FOLDERS"] as $id => $data) {
+        global $pm_folders;
+        foreach ($pm_folders as $id => $data) {
             if (strcasecmp($foldername, $data["name"]) == 0) {
                 return true;
             }
@@ -516,7 +516,6 @@ if (!empty($action)) {
 
         $redir_url = call_user_func_array('phorum_get_url', $args);
 
-        ob_end_clean();
         phorum_redirect_by_url($redir_url);
         exit;
     }
