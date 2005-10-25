@@ -145,7 +145,7 @@
                 $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
 
                 // create a test post
-                $message=array(
+                $test_message=array(
                 "forum_id" => $GLOBALS['PHORUM']["forum_id"],
                 "thread" => 0,
                 "parent_id" => 0,
@@ -162,7 +162,7 @@
                 "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team"
                 );
 
-                phorum_db_post_message($message);
+                phorum_db_post_message($test_message);
 
                 include_once ("./include/thread_info.php");
 
