@@ -74,6 +74,14 @@ function phorum_check_bans($bans)
         PHORUM_BAD_IPS    => "ErrBannedIP",
     );
 
+    // These language strings are set dynamically, so the language
+    // tool won't recognize them automatically. Therefore they are
+    // mentioned here.
+    // $PHORUM["DATA"]["LANG"]["ErrBannedName"]
+    // $PHORUM["DATA"]["LANG"]["ErrBannedEmail"]
+    // $PHORUM["DATA"]["LANG"]["ErrBannedUser"]
+    // $PHORUM["DATA"]["LANG"]["ErrBannedIP"]
+
     // Load the ban lists.
     if (! isset($GLOBALS["PHORUM"]["banlists"]))
         $GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
