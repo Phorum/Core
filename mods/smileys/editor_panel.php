@@ -115,7 +115,7 @@ function phorum_mod_smileys_load_smiley (imgobj)
             // Visual feedback for the user while loading the images.
             loadingobj.style.display = 'inline';
             loadingobj.innerHTML = "("
-              + "<?php print $PHORUM["DATA"]["LANG"]["LoadingSmileys"]; ?>"
+              + "<?php print $PHORUM["DATA"]["LANG"]["LoadingSmileys"]; ?> "
               + Math.floor(loaded_count/smileys_count*100) + "%)";
         }
     }
