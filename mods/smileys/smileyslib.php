@@ -176,17 +176,21 @@ function phorum_mod_smileys_store($modinfo)
         $src = htmlspecialchars("$prefix{$smiley['smiley']}");
         $alttxt = empty($smiley['alt']) ? $smiley["search"] : $smiley["alt"];
         $alt = htmlspecialchars($alttxt);
-        $img = "<img class=\"phorum-smiley\" src=\"$src\" alt=\"$alt\" title=\"$alt\"/>";
+        $img = "<img class=\"mod_smileys_img\" src=\"$src\" alt=\"$alt\" title=\"$alt\"/>";
+
+        // Below we use htmlspecialchars() on the search string.
+        // This is done, because the smiley mod is run after formatting
+        // by Phorum, so characters like < and > are HTML escaped.
 
         // Body only replace (0) or subject and body replace (2).
         if ($smiley['uses'] == 0 || $smiley['uses'] == 2) {
-            $smiley_body_key[] = $smiley['search'];
+            $smiley_body_key[] = htmlspecialchars($smiley['search']);
             $smiley_body_val[] = $img;
         }
 
         // Subject only replace (1) or subject and body replace (2).
         if ($smiley['uses'] == 1 || $smiley['uses'] == 2) {
-            $smiley_subject_key[] = $smiley['search'];
+            $smiley_subject_key[] = htmlspecialchars($smiley['search']);
             $smiley_subject_val[] = $img;
         }
     }

@@ -45,15 +45,21 @@ if (empty($error) && $action == "edit_settings") {
         $error = "The smiley prefix path " . 
                  '"' . htmlspecialchars($_POST["prefix"]) . '" ' .
                  " does not exist";
+    }
+
     // All is okay. Set the prefix path in the config.
-    } else {
-        // Make sure the path ends with a "/".
+    if (empty($error))
+    { 
+        // Make sure the prefix path ends with a "/".
         if (substr($_POST["prefix"], -1, 1) != '/') {
             $_POST["prefix"] .= "/";
         }
+
         $PHORUM["mod_smileys"]["prefix"] = $_POST["prefix"];
-        $do_db_update = true;
+        $PHORUM["mod_smileys"]["editor_help"] = $_POST["editor_help"];
+
         $okmsg = "The smiley settings have been saved successfully";
+        $do_db_update = true;
     }
 }
 
@@ -209,7 +215,10 @@ if (! count($available_smileys)) {
 }
 
 // Create the smiley settings form.
-if ($smiley_id == "NEW") {
+if ($smiley_id == "NEW")
+{
+    $editor_help = $PHORUM["mod_smileys"]["editor_help"]; 
+
     $frm = new PhorumInputForm ("", "post", 'Save settings');
     $frm->hidden("module", "modsettings");
     $frm->hidden("mod", "smileys");
@@ -222,6 +231,7 @@ if ($smiley_id == "NEW") {
          you have stored your smileys. This path must be relative to the
          directory in which you installed the Phorum software. Absolute
          paths cannot be used here.");
+    $frm->addrow("Enable smiley help for editor", $frm->checkbox("editor_help", 1, '', $editor_help));
     $frm->show();
 }
 

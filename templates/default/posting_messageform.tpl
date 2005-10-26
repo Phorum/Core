@@ -141,8 +141,9 @@ document.write('<input type="submit" name="ignore" style="display:none">');
 {! Body ===================================================================== }
 
 
+{HOOK tpl_editor_before_textarea}
+
 <div class="PhorumStdBlock PhorumNarrowBlock">
-  {HOOK tpl_editor_before_textarea}
   <textarea name="body" id="phorum_textarea" rows="15" cols="50"
    style="width: 99%">{POST->body}</textarea>
 

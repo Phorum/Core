@@ -4,12 +4,29 @@ if(!defined("PHORUM")) return;
 
 require_once("./mods/smileys/defaults.php");
 
-function phorum_mod_smileys ($data)
+function phorum_mod_smileys_after_header()
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Return immediately if we have no active smiley replacements.
-    if (!isset($PHORUM["mod_smileys"]) || !$PHORUM["mod_smileys"]["do_smileys"]) {
+    if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
+        return $data;
+    } ?>
+
+    <style type="text/css">
+    .mod_smileys_img {
+        vertical-align: bottom;
+        margin: 0px 3px 0px 3px;
+    }
+    </style> <?
+}
+
+function phorum_mod_smileys_format($data)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Return immediately if we have no active smiley replacements.
+    if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
         return $data;
     }
 
@@ -28,6 +45,11 @@ function phorum_mod_smileys ($data)
 	}
 
 	return $data;
+}
+
+function phorum_mod_smileys_editor_help() { 
+    if (! $GLOBALS["PHORUM"]['mod_smileys']['editor_help']) return;
+    include("./mods/smileys/editor_help.php");
 }
 
 ?>
