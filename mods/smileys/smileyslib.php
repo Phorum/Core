@@ -136,6 +136,7 @@ function phorum_mod_smileys_available()
             }
         }
     }
+    asort($available_smileys);
     return $available_smileys;
 }
 
