@@ -164,6 +164,7 @@ function phorum_mod_smileys_store($modinfo)
     $smiley_subject_val = array();
     $smiley_body_key = array();
     $smiley_body_val = array();
+    $seen_images = array();
     foreach ($modinfo["smileys"] as $id => $smiley)
     {
         // Check if the smiley image is available. Skip and keep track
@@ -171,6 +172,13 @@ function phorum_mod_smileys_store($modinfo)
         $active = isset($available_smileys[$smiley["smiley"]]) ? true : false;
         $modinfo["smileys"][$id]['active'] = $active;
         if (! $active) continue;
+
+        // Check if the smiley image has been seen before. If is has, mark
+        // the current smiley as being an alias. This is used in the editor
+        // smiley help, to show only one version of a smiley image.
+        $is_alias = isset($seen_images[$smiley["smiley"]]) ? true : false;
+        $seen_images[$smiley["smiley"]] = 1;
+        $modinfo["smileys"][$id]["is_alias"] = $is_alias;
 
         // Create HTML image code for the smiley.
         $prefix = $modinfo["prefix"];

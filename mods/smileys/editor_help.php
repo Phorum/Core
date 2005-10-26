@@ -9,10 +9,10 @@ $PHORUM = $GLOBALS["PHORUM"];
 }
 #phorum_mod_smileys {
     display: none;
-    padding: 0px 5px 0px 5px;
+    padding: 0px 5px 5px 5px;
 }
 #phorum_mod_smileys img {
-    margin: 0px 7px 7px 0px;
+    margin: 0px 7px 0px 0px;
     vertical-align: bottom;
     cursor: pointer;
     cursor: hand;
@@ -90,6 +90,7 @@ function phorum_mod_smileys_insert_smiley(string)
     <?php
     $prefix = $PHORUM["mod_smileys"]["prefix"];
     foreach($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
+      if (! $smiley["active"] || $smiley["is_alias"]) continue;
       print "<img onclick=\"phorum_mod_smileys_insert_smiley('" . urlencode($smiley["search"]) . "')\" src=\"{$prefix}{$smiley["smiley"]}\">";
     }
     ?>
