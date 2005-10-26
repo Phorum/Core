@@ -11,8 +11,8 @@ if (! isset($PHORUM['mod_smileys'])           ||
     $PHORUM['mod_smileys'] = phorum_mod_smileys_initsettings();
 }
 
-if (! isset($GLOBALS["PHORUM"]['mod_smileys']['editor_help'])) {
-    $GLOBALS["PHORUM"]['mod_smileys']['editor_help'] = 0;
+if (! isset($GLOBALS["PHORUM"]['mod_smileys']['editor_panel'])) {
+    $GLOBALS["PHORUM"]['mod_smileys']['editor_panel'] = 0;
 }
 
 ?>

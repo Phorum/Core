@@ -47,9 +47,9 @@ function phorum_mod_smileys_format($data)
 	return $data;
 }
 
-function phorum_mod_smileys_editor_help() { 
-    if (! $GLOBALS["PHORUM"]['mod_smileys']['editor_help']) return;
-    include("./mods/smileys/editor_help.php");
+function phorum_mod_smileys_editor_panel() { 
+    if (! $GLOBALS["PHORUM"]['mod_smileys']['editor_panel']) return;
+    include("./mods/smileys/editor_panel.php");
 }
 
 ?>

@@ -1,5 +1,6 @@
+hook:  lang|
 hook:  after_header|phorum_mod_smileys_after_header
 hook:  format|phorum_mod_smileys_format
-hook:  tpl_editor_before_textarea|phorum_mod_smileys_editor_help
+hook:  tpl_editor_before_textarea|phorum_mod_smileys_editor_panel
 title: Simple Smiley Replacement Mod
 desc:  This module allows admins to define smiley replacements in messages.

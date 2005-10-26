@@ -56,7 +56,7 @@ if (empty($error) && $action == "edit_settings") {
         }
 
         $PHORUM["mod_smileys"]["prefix"] = $_POST["prefix"];
-        $PHORUM["mod_smileys"]["editor_help"] = $_POST["editor_help"];
+        $PHORUM["mod_smileys"]["editor_panel"] = $_POST["editor_panel"];
 
         $okmsg = "The smiley settings have been saved successfully";
         $do_db_update = true;
@@ -217,7 +217,7 @@ if (! count($available_smileys)) {
 // Create the smiley settings form.
 if ($smiley_id == "NEW")
 {
-    $editor_help = $PHORUM["mod_smileys"]["editor_help"]; 
+    $editor_panel = $PHORUM["mod_smileys"]["editor_panel"]; 
 
     $frm = new PhorumInputForm ("", "post", 'Save settings');
     $frm->hidden("module", "modsettings");
@@ -231,7 +231,13 @@ if ($smiley_id == "NEW")
          you have stored your smileys. This path must be relative to the
          directory in which you installed the Phorum software. Absolute
          paths cannot be used here.");
-    $frm->addrow("Enable smiley help for editor", $frm->checkbox("editor_help", 1, '', $editor_help));
+    $row1 = $frm->addrow("Enable smiley panel for editor", $frm->checkbox("editor_panel", 1, '', $editor_panel));
+    $frm->addhelp($row1,
+        "Enable smiley panel for the editor",
+        "If you enable this feature, the editor will be extended with
+         a smiley selection panel. This way users do not have to remember
+         the smiley strings. This feature requires Javascript support in
+         the user's browser.");
     $frm->show();
 }
 
