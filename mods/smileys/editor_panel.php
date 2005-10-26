@@ -45,7 +45,6 @@ function toggle_smileys()
     // Toggle smiley panel.
     smileys_state = ! smileys_state;
     if (smileys_state) show_smileys(); else hide_smileys();
-    return false;
 }
 
 function show_smileys()
@@ -127,7 +126,7 @@ function phorum_mod_smileys_load_smiley (imgobj)
 <div id="phorum_mod_smileys_panel"
      class="PhorumStdBlockHeader PhorumNarrowBlock">
 
-  <a href="#" onclick="return toggle_smileys()">
+  <a href="javascript:toggle_smileys()">
     <b><?php print $PHORUM["DATA"]["LANG"]["AddSmiley"]?></b>
   </a>
   <div id="phorum_mod_smileys_dots"><b>...</b></div>
