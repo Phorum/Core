@@ -181,7 +181,6 @@
                     $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files")."<br />".
                     $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages")."&nbsp;&nbsp;".
                     $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_FORUM_PROPERTIES."]", 1, "Edit Forum Properties");
 
     
         $arr[]="Add A Forum...";
@@ -204,7 +203,6 @@
                             $frm->checkbox("permissions[$forum_id][".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $perms & PHORUM_USER_ALLOW_ATTACH)."<br />".
                             $frm->checkbox("permissions[$forum_id][".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages", $perms & PHORUM_USER_ALLOW_MODERATE_MESSAGES)."&nbsp;&nbsp;".
                             $frm->checkbox("permissions[$forum_id][".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users", $perms & PHORUM_USER_ALLOW_MODERATE_USERS)."&nbsp;&nbsp;".
-                            $frm->checkbox("permissions[$forum_id][".PHORUM_USER_ALLOW_FORUM_PROPERTIES."]", 1, "Edit Forum Properties", $perms & PHORUM_USER_ALLOW_FORUM_PROPERTIES);
 
                 $frm->hidden("forums[$forum_id]", $forum_id);
 
