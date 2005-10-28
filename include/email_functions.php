@@ -117,7 +117,7 @@ function phorum_email_pm_notice($message, $langusers)
         "author"        => $message["from_username"],
         "subject"       => $message["subject"],
         "full_body"     => $message["message"],
-        "plain_body"    => phorum_strip_body($message["message"]),
+        "plain_body"    => wordwrap(phorum_strip_body($message["message"]),72),
         "read_url"      => phorum_get_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
     );
 
