@@ -185,6 +185,7 @@ function phorum_controlcenter_user_save($panel)
         'pm_email_notify' => NULL,
         'email'           => NULL,
         'email_temp'      => NULL,
+        'user_template'   => NULL,
     );
     // Add custom profile fields as acceptable fields.
     foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
