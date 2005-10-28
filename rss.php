@@ -94,17 +94,22 @@ function create_rss_feed($channel, $items)
         return;
     }
 
-    $data ="<?xml version=\"1.0\" ?>\n";
+    $encoding = '';
+    if (! empty($GLOBALS["PHORUM"]["DATA"]["CHARSET"])) {
+        $encoding = 'encoding="' . htmlspecialchars($GLOBALS["PHORUM"]["DATA"]['CHARSET']) . '"';
+    }
+
+    $data ="<?xml version=\"1.0\" $encoding ?>\n";
     $data.="<rss version=\"2.0\">\n";
     $data.="  <channel>\n";
-    $data.="    <title>$channel[name]</title>\n";
+    $data.="    <title>".htmlspecialchars(strip_tags($channel["name"]))."</title>\n";
     $data.="    <link>$channel[url]</link>\n";
     $data.="    <description><![CDATA[$channel[description]]]></description>\n";
     $data.="    <language>$channel[language]</language>\n";
 
     $data.="    <pubDate>$channel[pub_date]</pubDate>\n";
     $data.="    <lastBuildDate>$channel[pub_date]</lastBuildDate>\n";
-    $data.="    <category>$channel[name]</category>\n";
+    $data.="    <category>".htmlspecialchars(strip_tags($channel["name"]))."</category>\n";
     $data.="    <generator>Phorum ".PHORUM."</generator>\n";
 
     $data.="    <ttl>600</ttl>\n";
@@ -115,7 +120,7 @@ function create_rss_feed($channel, $items)
         $data.="      <link>$item[url]</link>\n";
         $data.="      <author>".htmlspecialchars($item['author'])."</author>\n";
         $data.="      <description><![CDATA[".htmlspecialchars($item['description'])."]]></description>\n";
-        $data.="      <category>".htmlspecialchars($item['category'])."</category>\n";
+        $data.="      <category>".htmlspecialchars(strip_tags($item['category']))."</category>\n";
         $data.="      <guid isPermaLink=\"true\">$item[url]</guid>\n";
         $data.="      <pubDate>$item[pub_date]</pubDate>\n";
         $data.="    </item>\n";
@@ -124,7 +129,11 @@ function create_rss_feed($channel, $items)
     $data.="  </channel>\n";
     $data.="</rss>\n";
 
-    header("Content-Type: text/xml");
+    $charset = '';
+    if (! empty($GLOBALS["PHORUM"]["DATA"]["CHARSET"])) {
+        $charset = '; charset=' . htmlspecialchars($GLOBALS["PHORUM"]["DATA"]['CHARSET']);
+    }
+    header("Content-Type: text/xml$charset");
 
     echo $data;
 }
