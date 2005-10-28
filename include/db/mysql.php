@@ -479,7 +479,7 @@ function phorum_db_post_message(&$message,$convert=false){
             // start ft-search stuff
 
             $search_text=mysql_escape_string("{$message['author']} | {$message['subject']} | {$message['body']}");
-            $sql="insert delayed into {$PHORUM['search_table']} set message_id={$message['message_id']}, search_text='$search_text'";
+            $sql="insert delayed into {$PHORUM['search_table']} set message_id={$message['message_id']}, forum_id={$message['forum_id']}, search_text='$search_text'";
             $res = mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
@@ -631,7 +631,7 @@ function phorum_db_update_message($message_id, $message)
             // start ft-search stuff
             if(isset($message["author"]) && isset($message["subject"]) && isset($message["body"])){
                 $search_text=mysql_escape_string("$message[author] | $message[subject] | $message[body]");
-                $sql="replace delayed into {$PHORUM['search_table']} set message_id={$message_id}, search_text='$search_text'";
+                $sql="replace delayed into {$PHORUM['search_table']} set message_id={$message_id}, forum_id={$message['forum_id']}, search_text='$search_text'";
                 $res = mysql_query($sql, $conn);
                 if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
             }
@@ -1256,7 +1256,7 @@ function phorum_db_move_thread($thread_id, $toforum)
 
     if($toforum > 0 && $thread_id > 0){
         $conn = phorum_db_mysql_connect();
-        // retrieving the messages for the newflags-update below
+        // retrieving the messages for the newflags and search updates below
         $thread_messages=phorum_db_get_messages($thread_id);
 
         // just changing the forum-id, simple isn't it?
@@ -1274,19 +1274,24 @@ function phorum_db_move_thread($thread_id, $toforum)
         phorum_db_update_forum_stats(true);
         $GLOBALS["PHORUM"]["forum_id"]=$old_id;
 
-        // we need to move the new-flags for this thread to the new forum too
-        // first retrieving which messages belong to this thread
+        // move the new-flags and the search records for this thread
+        // to the new forum too
         unset($thread_messages['users']);
 
         $new_newflags=phorum_db_newflag_get_flags($toforum);
-        $message_ids=array();
-        $delete_ids =array();
+        $message_ids = array();
+        $delete_ids = array();
+        $search_ids = array();
         foreach($thread_messages as $mid => $data) {
+            // gather information for updating the newflags
             if($mid > $new_newflags['min_id']) { // only using it if its higher than min_id
                 $message_ids[]=$mid;
             } else { // newflags to delete
                 $delete_ids[]=$mid;
             }
+
+            // gather the information for updating the search table
+            $search_ids[] = $mid;
         }
 
         if(count($message_ids)) { // we only go in if there are messages ... otherwise an error occured
@@ -1309,6 +1314,14 @@ function phorum_db_move_thread($thread_id, $toforum)
             $ids_str=implode(",",$delete_ids);
             // then doing the delete
             $sql="DELETE FROM {$PHORUM['user_newflags_table']} where message_id IN($ids_str)";
+            mysql_query($sql, $conn);
+            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        }
+
+        if (count($search_ids)) {
+            $ids_str = implode(",",$search_ids);
+            // then doing the search table update
+            $sql = "UPDATE {$PHORUM['search_table']} set forum_id = $toforum where message_id in ($ids_str)";
             mysql_query($sql, $conn);
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         }
@@ -1407,7 +1420,8 @@ function phorum_db_drop_forum($forum_id)
         $PHORUM['subscribers_table'],
         $PHORUM['forum_group_xref_table'],
         $PHORUM['forums_table'],
-        $PHORUM['banlist_table']
+        $PHORUM['banlist_table'],
+        $PHORUM['search_table']
     );
 
     foreach($tables as $table){
@@ -4024,7 +4038,7 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['user_group_xref_table']} ( user_id int(11) NOT NULL default '0', group_id int(11) NOT NULL default '0', status tinyint(3) NOT NULL default '1', PRIMARY KEY  (user_id,group_id) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['files_table']} ( file_id int(11) NOT NULL auto_increment, user_id int(11) NOT NULL default '0', filename varchar(255) NOT NULL default '', filesize int(11) NOT NULL default '0', file_data mediumtext NOT NULL default '', add_datetime int(10) unsigned NOT NULL default '0', message_id int(10) unsigned NOT NULL default '0', link varchar(10) NOT NULL default '', PRIMARY KEY (file_id), KEY add_datetime (add_datetime), KEY message_id_link (message_id,link)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['banlist_table']} ( id int(11) NOT NULL auto_increment, forum_id int(11) NOT NULL default '0', type tinyint(4) NOT NULL default '0', pcre tinyint(4) NOT NULL default '0', string varchar(255) NOT NULL default '', PRIMARY KEY  (id), KEY forum_id (forum_id)) TYPE=MyISAM",
-        "CREATE TABLE {$PHORUM['search_table']} ( message_id int(10) unsigned NOT NULL default '0', search_text mediumtext NOT NULL default '', PRIMARY KEY  (message_id), FULLTEXT KEY search_text (search_text) ) TYPE=MyISAM",
+        "CREATE TABLE {$PHORUM['search_table']} ( message_id int(10) unsigned NOT NULL default '0', forum_id int(10) unsigned NOT NULL default '0',search_text mediumtext NOT NULL default '', PRIMARY KEY  (message_id), KEY forum_id (forum_id), FULLTEXT KEY search_text (search_text) ) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['user_custom_fields_table']} ( user_id INT DEFAULT '0' NOT NULL , type INT DEFAULT '0' NOT NULL , data TEXT NOT NULL default '', PRIMARY KEY ( user_id , type )) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['pm_messages_table']} ( pm_message_id int(10) unsigned NOT NULL auto_increment, from_user_id int(10) unsigned NOT NULL, from_username varchar(50) NOT NULL default '', subject varchar(100) NOT NULL default '', message text NOT NULL default '', datestamp int(10) unsigned NOT NULL default '0', meta mediumtext NOT NULL default '', PRIMARY KEY(pm_message_id)) TYPE=MyISAM",
         "CREATE TABLE {$PHORUM['pm_folders_table']} ( pm_folder_id int(10) unsigned NOT NULL auto_increment, user_id int(10) unsigned NOT NULL, foldername varchar(20) NOT NULL default '', PRIMARY KEY (pm_folder_id)) TYPE=MyISAM",

@@ -24,7 +24,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.1.4-alpha" );
 
 // our internal version in format of year-month-day-serial
-define( "PHORUMINTERNAL", "2005101801" );
+define( "PHORUMINTERNAL", "2005102700" );
 
 define( "DEBUG", 0 );
 
