@@ -32,7 +32,7 @@ function toggle_smileys()
         $smileys_count = 0;
         $c = '';
         foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
-            if (! $smiley["active"] || $smiley["is_alias"]) continue;
+            if (! $smiley["active"] || $smiley["is_alias"] || $smiley["uses"] == 1) continue;
             $smileys_count ++;
             $src = htmlspecialchars($prefix . $smiley['smiley']);
             $c.="document.getElementById('smiley-button-{$id}').src='$src';\n";
@@ -138,7 +138,7 @@ function phorum_mod_smileys_load_smiley (imgobj)
     // Create a list of stub smiley images. The real images are only
     // loaded when the user opens the smiley panel.
     foreach($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
-      if (! $smiley["active"] || $smiley["is_alias"]) continue;
+      if (! $smiley["active"] || $smiley["is_alias"] || $smiley["uses"] == 1) continue;
       print "<img id=\"smiley-button-$id\" onclick=\"phorum_mod_smileys_insert_smiley('" . urlencode($smiley["search"]) . "')\" onload=\"phorum_mod_smileys_load_smiley(this)\" src=\"\"/>";
     } ?>
   </div>
