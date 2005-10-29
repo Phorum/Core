@@ -34,7 +34,7 @@
 
     $frm->hidden("module", "file_purge");
 
-    $frm->addbreak("Purgin stale files...");
+    $frm->addbreak("Purging stale files...");
     $frm->addmessage("If users write messages with attachments, but do not post them in the end, the attachment files will be left behind in the database. Using this maintenance tool, you can purge those stale files from your database.");
 
     if (count($purge_files)) {
