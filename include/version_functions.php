@@ -21,29 +21,30 @@ if(!defined("PHORUM")) return;
 
 /**
  * Parses the Phorum version number.
- * @param parse_version - The version number to parse
+ * @param version - version number to parse
  * @return An array containing two elements. The first one holds the release
  *         type, which can be "unknown" (parse failed), "snapshot", "stable"
  *         or "development". The version can either be NULL or an array
  *         containing a splitted up version number (only for "stable"
  *         and "development").
  */
-function phorum_parse_version($parse_version)
+function phorum_parse_version($version)
 {
-    $release = 'unknown';
-    $version = NULL;
-
-    if (preg_match('/^\w+-cvs-\d+$/', $parse_version)) {
+    if (preg_match('/^\w+-(svn|cvs)-\d+$/', $version)) {
         $release = 'snapshot';
-    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)([a-z])?$/', $parse_version, $m)) {
-        $version = array_slice($m, 1);
+        $parsed_version = array(0,0,0,0);
+    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)([a-z])?$/', $version, $m)) {
         $release = 'stable';
-    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)(-alpha|-beta)?$/', $parse_version, $m)) {
-        $version = array_slice($m, 1);
+        $parsed_version = array_slice($m, 1);
+    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)(-alpha|-beta)?$/', $version, $m)) {
         $release = 'development';
+        $parsed_version = array_slice($m, 1);
+    } else {
+        $release = 'unknown';
+        $parsed_version = NULL;
     }
 
-    return array($release, $version);
+    return array($release, $parsed_version);
 }
 
 /**
@@ -133,8 +134,8 @@ function phorum_available_releases()
 }
 
 /**
- * Finds out if there are any upgrades available for the running
- * version of Phorum.
+ * Finds out if there are any upgrades available for a version of Phorum.
+ * @param version - the version to check for (default is the running version)
  * @return releases - An array of available releases with the
  *         "upgrade" field set in case the release would be an
  *         upgrade for the currently running Phorum software.
@@ -159,7 +160,7 @@ function phorum_find_upgrades($version = PHORUM)
             $releases["stable"]["upgrade"] = false;
         }
     }
-    if ($running_release == 'development' && isset($releases["development"])) {
+    if (($running_release == 'development' || $running_release == 'snapshot') && isset($releases["development"])) {
         $avail_version = $releases["development"]["pversion"];
         if (phorum_compare_version($running_version, $avail_version) == -1) {
             $releases["development"]["upgrade"] = true;
