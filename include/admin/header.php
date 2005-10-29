@@ -284,7 +284,8 @@ function hide_help()
 <tr>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
-<div id="phorum-status">
+
+    <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
 <form id="status-form" action="<?=$_SERVER["PHP_SELF"]?>" method="post">
 <input type="hidden" name="module" value="status" />
@@ -349,8 +350,9 @@ Phorum Status:
         $menu->show();
         $menu = new PhorumAdminMenu("Maintenance");
 
+        $menu->add("Check For New Version", "version", "Check for new releases.");
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
-        $menu->add("Purge stale files", "file_purge", "Purging stale files from the database.");
+        $menu->add("Purge Stale Files", "file_purge", "Purging stale files from the database.");
         $menu->add("System Sanity Checks", "sanity_checks", "Perform a number of sanity checks on the system to identify possible problems.");
         $menu->add("Manage Language Files", "manage_languages", "Allows administrator to create new or updated versions of language files.");
 
