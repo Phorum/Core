@@ -35,7 +35,7 @@ print "You are currently running the $release_type version " . PHORUM .
 // Find and display available upgrades. If no releases can be found
 // for some reason, we ignore this and simply pretend the installation
 // is up-to-date.
-$releases = phorum_find_upgrades("5.0.19b");
+$releases = phorum_find_upgrades();
 $found_upgrade = false;
 foreach (array("stable","development") as $type) {
     if (isset($releases[$type]) && $releases[$type]["upgrade"])
