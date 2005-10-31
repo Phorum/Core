@@ -2,37 +2,58 @@
 
 /*
 
-***** IT IS HIGHLY RECCOMENDED THAT YOU RUN THIS SCRIPT ON A CONSOLE ****
+***** IT IS HIGHLY RECCOMENDED THAT YOU RUN THIS SCRIPT ON A CONSOLE
+***** PHP VERSION 4.2.0 OR HIGHER IS REQUIRED FOR RUNNING THIS SCRIPT
+***** THE SCRIPT IS WRITTEN FOR UPGRADING PHORUM 3.4.x
 
-*/
+This script will convert the data from a Phorum 3 database to a Phorum 5
+database. It does not change any of the old phorum3-tables. The data is
+only copied over to the new Phorum 5 tables.
 
-// this script will convert the data from a phorum3-database to a phorum5-database
-// it doesn't change the old phorum3-tables, the data is only copied to the p5-tables
-// works only from php-4.2.0 upwards!!!
+Instructions:
 
-/* Instructions:
+1. Be sure your Phorum 3 is running a 3.4.x version. If you are running
+   an older version of Phorum 3, first upgrade to 3.4.x.
 
-1. copy/move this script up one directory to the main phorum5-dir
+2. Copy or move this script one directory up, to the main Phorum 5 directory.
 
-2. edit the $CONVERT variables below to match the settings of your phorum3 install.
+3. Edit the $CONVERT variables below to match the settings of your
+   phorum3 installation.
 
-3. install p5 as usual, preferably to the same database where phorum3 lives, it uses different tables names with the phorum_-prefix
+4. Install Phorum 5 as usual. For speed and reliability, preferably use the
+   same database as the database where Phorum 3 lives. Because Phorum 5 uses
+   a table prefix (typically "phorum_"), the tables for Phorum 3 and Phorum 5
+   can safely live next to each other in the same database.
 
-4. empty (from the p5-version) the phorum_messages and phorum_forums tables (i.e. using phpmyadmin, I could do this with the script too
-   but I would find it a little bit rude ;-))
-   i.e. delete from phorum_messages;
-        delete from phorum_forums;
+5. Empty the phorum_messages and phorum_forums tables of the Phorum 5
+   installation. You can do this either by dropping all forums from the
+   Phorum 5 admin interface or by issuing the appropriate SQL queries from
+   the MySQL prompt or from a database tool like "phpmyadmin". The queries
+   to execute are (replace "phorum" with your own table_prefix if you changed
+   this during install):
 
-5. if you have shell access, run this script via the shell:
+   DELETE FROM phorum_messages;
+   DELETE FROM phorum_forums;
+
+   I could do this from this script as well, but I would find that
+   a little bit rude ;-))
+
+6. If you have shell access to your webserver, run this script using the
+   shell from the command line. This is the preferred way of running the
+   upgrade:
+
       php phorum3to5convert.php
-   if you DO NOT have shell access, call 
-      <phorum5-url>/phorum3to5convert.php with your browser.
+
+   If you do not have shell access, call the upgrade script from your browser:
+
+      <phorum5-url>/phorum3to5convert.php
 
    *** THIS STEP MAY TAKE A WHILE ***
    
-6. take a look at the p5-forums ... and if all seems correct
+7. Take a look at the Phorum 5 forums to see if everything was converted
+   correctly.
 
-7. delete phorum3to5convert.php
+8. Delete the upgrade script phorum3to5convert.php.
 
 */
 
@@ -42,22 +63,30 @@ ini_set ( "output_handler", "");
 
 define("PHORUM5_CONVERSION", 1);
 
-// containing the data for accessing the database
+/***** CONFIGURATION FOR THE CONVERSION *****/
+
+// The data for connecting to the old Phorum 3 database.
 $CONVERT['old_dbhost'] = "localhost";
 $CONVERT['old_dbuser'] = "phorum5";
 $CONVERT['old_dbpass'] = "phorum5";
 
-// database of the phorum3-tables
+// The name of the old Phorum 3 database.
 $CONVERT['olddb'] = "phorum";
 
-// main-table-name for phorum3 (default is "forums")
+// The main-table-name for phorum3 (default is "forums")
 $CONVERT['forumstable'] = "forums";
 
-// separator, if you run it from the web <br>\n ... if from the console use only \n
+// Separator character. If you are going to run this script from
+// the web, make it "<br>\n". If you are going to run it from the 
+// shell prompt, make it "\n".
 $CONVERT['lbr'] = "<br>\n";
 
-// absolute path to 3.4.x attachments (like in old admin) 
-$CONVERT['attachmentdir'] = "path/to/files";
+// The full path to the directory where the attachments for Phorum 3.4.x
+// are stored (like in the old admin). 
+$CONVERT['attachmentdir'] = "/full/path/to/files";
+
+/***** THERE'S NO NEED TO CHANGE ANYTHING BELOW THIS LINE *****/
+
 
 // we try to disable the execution timeout
 // that command doesn't work in safe_mode :(
