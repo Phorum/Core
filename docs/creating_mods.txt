@@ -1524,6 +1524,6 @@ Table of contents:
 -------------------------------------------------------------------------------
 
    If you have questions about creating modules for Phorum, please visit
-   the website http://phorum.org/ and ask the dev team for help in the
-   Development forum.
+   the website http://phorum.org/ and ask the development team for help in
+   the Development forum.
 
