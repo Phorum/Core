@@ -329,7 +329,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
  *                messages which are hidden by a moderator.
  */
 
-function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false)
+function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$moddays=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -353,12 +353,18 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false)
         $sql .= "where ";
     }
 
+    if($moddays > 0) {
+        $checktime=time()-(86400*$moddays);
+        $sql .=" datestamp > $checktime AND";
+    }
+
     if($waiting_only){
         $sql.=" status=".PHORUM_STATUS_HOLD;
     } else {
         $sql="($sql status=".PHORUM_STATUS_HOLD.") " .
              "union ($sql status=".PHORUM_STATUS_HIDDEN.")";
     }
+
 
     $sql .=" order by thread, message_id";
 
