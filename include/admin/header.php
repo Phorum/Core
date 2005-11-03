@@ -22,7 +22,6 @@
     if(empty($PHORUM["http_path"])){
         $PHORUM["http_path"]=dirname($_SERVER["PHP_SELF"]);
     }
-
 ?>
 <html>
 <head>
@@ -283,6 +282,15 @@ function hide_help()
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
+<?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
+    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="center" valign="middle">
+      <iframe scrolling="no" frameborder="0" align="top" width="400" height="35" src="versioncheck.php"></iframe>
+    </td>
+<?php } else { 
+    // Reset the cookie that is used for the version check.
+    setcookie("phorum_upgrade_available", '', time()-86400,
+              $PHORUM["session_path"], $PHORUM["session_domain"]);
+} ?>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
 
     <div id="phorum-status">
