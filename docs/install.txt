@@ -15,7 +15,11 @@ Contents:
    3.7 Things to do after installing Phorum
 4. Additional issues 
    4.1 Additional issues for UNIX (Linux, BSD, Solaris, etc.)
+       4.1.2 Cache directory
    4.2 Additional issues for Windows
+       4.2.1 Cache directory
+       4.2.2 Problems sending mail to end-users
+       4.2.3 Date formatting
 5. Support
 
 
@@ -198,7 +202,8 @@ Contents:
  4.1 Additional issues for UNIX (Linux, BSD, Solaris, etc.)
  ----------------------------------------------------------
 
-   * Cache directory
+  4.1.2 Cache directory
+  ---------------------
 
    In step 5 above (Edit Settings) There is an entry called Cache
    Directory. the installer should set that to /tmp if you appear to
@@ -223,7 +228,9 @@ Contents:
  4.2 Additional issues for Windows
  ---------------------------------
 
-   * Cache directory
+
+  4.2.1 Cache directory
+  ---------------------
 
    In step 5 above (Edit Settings) There is an entry called Cache
    Directory. The installer should set that to C:\Windows\Temp, if it
@@ -240,7 +247,30 @@ Contents:
    you that it will need to be something that the web server can write to.
    Changing the Cache Directory to ./cache has worked for some.
 
-   * Date formatting
+
+  4.2.2 Problems sending mail to end-users
+  ----------------------------------------
+
+   PHP has to be configured correctly on Windows systems to be able to
+   send out mail. If this is not done, you might get errors and mail
+   will not arrive. What you need to do is edit the file "php.ini" (this
+   file holds the configuration for PHP). Find the sections that is called
+   "[mail function]". In this section, set the parameter "SMTP" to the
+   hostname or IP-address of the your SMTP server. If you do not know your
+   SMTP server, please ask your internet access provider. After this,
+   PHP will know what mailserver to use for sending out mail messages.
+
+   If you have no access to the php.ini file and the system administrator
+   is not willing to update it for you, you will have to install the
+   SMTP module for Phorum. You can download this module from the module page:
+   http://phorum.org/cgi-bin/trac.cgi/wiki/ListOfModules
+   In the settings for this module, you can specify the SMTP server to use
+   for sending mail. When using this module, you will completely bypass PHP's
+   builtin mail system.
+
+
+  4.2.3 Date formatting
+  ---------------------
 
    Windows does not support the date formatting function strftime() fully.
    If your dates are not showing correctly, you have to edit your language
