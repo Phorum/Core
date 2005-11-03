@@ -35,8 +35,8 @@ function phorum_search_check_valid_vars() {
     $retval=true;
     // these are valid values for some args
     $valid_match_types=array("ALL","ANY","PHRASE");
-    $valid_match_forum=array("THISONE","ALL");    
-    
+    $valid_match_forum=array("THISONE","ALL");
+
     if(!in_array($PHORUM["args"]["match_type"],$valid_match_types)) {
         $retval=false;
     } elseif(!in_array($PHORUM["args"]["match_forum"],$valid_match_forum)) {
@@ -47,7 +47,7 @@ function phorum_search_check_valid_vars() {
         // these were the just numeric args
         $retval=false;
     }
-    
+
     return $retval;
 }
 
@@ -61,7 +61,7 @@ if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
 }
 
 if(isset($PHORUM["args"]["search"])){
-	$phorum_search = $PHORUM["args"]["search"];
+    $phorum_search = $PHORUM["args"]["search"];
 }
 
 if(!isset($PHORUM["args"]["match_type"])) $PHORUM["args"]["match_type"]="ALL";
@@ -80,107 +80,108 @@ if(!phorum_search_check_valid_vars()) {
 // setup some stuff based on the url passed
 if(!empty($phorum_search)){
 
-	$PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search);
+    $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search);
 
-	$offset = (empty($PHORUM["args"]["page"])) ? 0 : $PHORUM["args"]["page"]-1;
+    $offset = (empty($PHORUM["args"]["page"])) ? 0 : $PHORUM["args"]["page"]-1;
 
     if(empty($PHORUM["list_length"])) $PHORUM["list_length"]=30;
 
-	$start = ($offset * $PHORUM["list_length"]);
+    $start = ($offset * $PHORUM["list_length"]);
 
     settype($PHORUM["args"]["match_dates"], "int");
-    
-	$arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"], $PHORUM["args"]["body"], $PHORUM["args"]["author"], $PHORUM["args"]["subject"]);
 
-	if(count($arr["rows"])){
+    $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"], $PHORUM["args"]["body"], $PHORUM["args"]["author"], $PHORUM["args"]["subject"]);
 
-		$match_number = $start + 1;
+    if(count($arr["rows"])){
 
-		foreach($arr["rows"] as $key => $row){
-			$arr["rows"][$key]["number"] = $match_number;
+        $match_number = $start + 1;
+        $forum_ids = array();
+
+        foreach($arr["rows"] as $key => $row){
+            $arr["rows"][$key]["number"] = $match_number;
 
             // For announcements, put the current forum_id in the record.
             // Else the message cannot be read (Phorum will redirect the
             // user back to the index page if the forum id is not set).
             if ($row["forum_id"] == 0) $row["forum_id"] = $PHORUM["forum_id"];
 
-			$arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]); 
+            $arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
-			// strip HTML & BB Code
-			$body = strip_body($arr["rows"][$key]["body"]); 
-			$arr["rows"][$key]["short_body"] = substr($body, 0, 200);
-			$arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
- 			$arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
-      
-			$forum_ids[$row["forum_id"]] = $row["forum_id"];
+            // strip HTML & BB Code
+            $body = strip_body($arr["rows"][$key]["body"]);
+            $arr["rows"][$key]["short_body"] = substr($body, 0, 200);
+            $arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
+            $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
 
-			$match_number++;
-		}
-		
-		$forums = phorum_db_get_forums($forum_ids);
+            $forum_ids[$row["forum_id"]] = $row["forum_id"];
 
-		foreach($arr["rows"] as $key => $row){
-			$arr["rows"][$key]["forum_url"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
+            $match_number++;
+        }
 
-			$arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];
-		}
+        $forums = phorum_db_get_forums($forum_ids);
 
-		$PHORUM["DATA"]["RANGE_START"] = $start + 1;
-		$PHORUM["DATA"]["RANGE_END"] = $start + count($arr["rows"]);
-		$PHORUM["DATA"]["TOTAL"] = $arr["count"];
-		$PHORUM["DATA"]["SEARCH"]["showresults"] = true; 
-		// figure out paging
-		$pages = ceil($arr["count"] / $PHORUM["list_length"]);
-		$page = $offset + 1;
+        foreach($arr["rows"] as $key => $row){
+            $arr["rows"][$key]["forum_url"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
 
-		if ($pages <= 5){
-			$page_start = 1;
-		}elseif ($pages - $page < 2){
-			$page_start = $pages-4;
-		}elseif ($pages > 5 && $page > 3){
-			$page_start = $page-2;
-		}else{
-			$page_start = 1;
-		}
+            $arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];
+        }
 
-		$pageno = 1;
-		for($x = 0;$x < 5 && $x < $pages;$x++){
-			$pageno = $x + $page_start;
-			$PHORUM["DATA"]["PAGES"][] = array("pageno" => $pageno,
-				"url" => phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$pageno", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}")
-				);
-		}
+        $PHORUM["DATA"]["RANGE_START"] = $start + 1;
+        $PHORUM["DATA"]["RANGE_END"] = $start + count($arr["rows"]);
+        $PHORUM["DATA"]["TOTAL"] = $arr["count"];
+        $PHORUM["DATA"]["SEARCH"]["showresults"] = true;
+        // figure out paging
+        $pages = ceil($arr["count"] / $PHORUM["list_length"]);
+        $page = $offset + 1;
 
-		$PHORUM["DATA"]["CURRENTPAGE"] = $page;
-		$PHORUM["DATA"]["TOTALPAGES"] = $pages;
+        if ($pages <= 5){
+            $page_start = 1;
+        }elseif ($pages - $page < 2){
+            $page_start = $pages-4;
+        }elseif ($pages > 5 && $page > 3){
+            $page_start = $page-2;
+        }else{
+            $page_start = 1;
+        }
 
-		if ($page_start > 1){
-			$PHORUM["DATA"]["URL"]["FIRSTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=1", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
-		}
+        $pageno = 1;
+        for($x = 0;$x < 5 && $x < $pages;$x++){
+            $pageno = $x + $page_start;
+            $PHORUM["DATA"]["PAGES"][] = array("pageno" => $pageno,
+                "url" => phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$pageno", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}")
+                );
+        }
 
-		if ($pageno < $pages){
-			$PHORUM["DATA"]["URL"]["LASTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$pages", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
-		}
+        $PHORUM["DATA"]["CURRENTPAGE"] = $page;
+        $PHORUM["DATA"]["TOTALPAGES"] = $pages;
 
-		if ($pages > $page){
-			$nextpage = $page + 1;
-			$PHORUM["DATA"]["URL"]["NEXTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$nextpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
-		}
-		if ($page > 1){
-			$prevpage = $page-1;
-			$PHORUM["DATA"]["URL"]["PREVPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$prevpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
-		}
-		
-		
-		$arr["rows"] = phorum_hook("search", $arr["rows"]);
-		$arr["rows"] = phorum_format_messages($arr["rows"]);
+        if ($page_start > 1){
+            $PHORUM["DATA"]["URL"]["FIRSTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=1", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
+        }
 
-		$PHORUM["DATA"]["MATCHES"] = $arr["rows"];
-		
-	}else{
-		$PHORUM["DATA"]["SEARCH"]["noresults"] = true;
-	}
-} 
+        if ($pageno < $pages){
+            $PHORUM["DATA"]["URL"]["LASTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$pages", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
+        }
+
+        if ($pages > $page){
+            $nextpage = $page + 1;
+            $PHORUM["DATA"]["URL"]["NEXTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$nextpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
+        }
+        if ($page > 1){
+            $prevpage = $page-1;
+            $PHORUM["DATA"]["URL"]["PREVPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "page=$prevpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum={$PHORUM['args']['match_forum']}", "body={$PHORUM['args']['body']}", "author={$PHORUM['args']['author']}", "subject={$PHORUM['args']['subject']}");
+        }
+
+
+        $arr["rows"] = phorum_hook("search", $arr["rows"]);
+        $arr["rows"] = phorum_format_messages($arr["rows"]);
+
+        $PHORUM["DATA"]["MATCHES"] = $arr["rows"];
+
+    }else{
+        $PHORUM["DATA"]["SEARCH"]["noresults"] = true;
+    }
+}
 
 // set all our URL's
 phorum_build_common_urls();
