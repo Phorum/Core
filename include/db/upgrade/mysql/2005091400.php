@@ -5,18 +5,18 @@ if(!defined("PHORUM_ADMIN")) return;
 
 $upgrade_queries[]= "CREATE TABLE {$PHORUM["pm_messages_table"]} ( 
     pm_message_id int(10) unsigned NOT NULL auto_increment, 
-    from_user_id int(10) unsigned NOT NULL,
+    from_user_id int(10) unsigned NOT NULL default '0',
     from_username varchar(50) NOT NULL default'', 
     subject varchar(100) NOT NULL default '', 
-    message text NOT NULL, 
+    message text NOT NULL default '', 
     datestamp int(10) unsigned NOT NULL default '0',
-    meta mediumtext NOT NULL,
+    meta mediumtext NOT NULL default '',
     PRIMARY KEY (pm_message_id)
 ) TYPE=MyISAM";
 
 $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_folders_table"]} ( 
     pm_folder_id int(10) unsigned NOT NULL auto_increment, 
-    user_id int(10) unsigned NOT NULL, 
+    user_id int(10) unsigned NOT NULL default '0', 
     foldername varchar(20) NOT NULL default '',
     KEY user_id (user_id),
     PRIMARY KEY (pm_folder_id)
@@ -24,10 +24,10 @@ $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_folders_table"]} (
 
 $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_xref_table"]} ( 
     pm_xref_id int(10) unsigned NOT NULL auto_increment, 
-    user_id int(10) unsigned NOT NULL, 
-    pm_folder_id int(10) unsigned NOT NULL, 
+    user_id int(10) unsigned NOT NULL default '0', 
+    pm_folder_id int(10) unsigned NOT NULL default '0', 
     special_folder varchar(10),
-    pm_message_id int(10) unsigned NOT NULL, 
+    pm_message_id int(10) unsigned NOT NULL default '0', 
     read_flag tinyint(1) NOT NULL default '0', 
     reply_flag tinyint(1) NOT NULL default '0', 
     PRIMARY KEY (pm_xref_id),
