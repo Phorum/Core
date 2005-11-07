@@ -59,7 +59,7 @@ include_once("./common.php");
 include_once("include/format_functions.php");
 
 // Check if the Phorum is in read-only mode.
-if($PHORUM["status"]=="read-only"){
+if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
     include phorum_get_template("header");
     phorum_hook("after_header");
