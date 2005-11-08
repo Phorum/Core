@@ -78,8 +78,11 @@ elseif ($do_attach && ! empty($_FILES))
         // Isn't the attachment too large?
         if ($PHORUM["max_attachment_size"] > 0 &&
             $file["size"] > $PHORUM["max_attachment_size"]*1024) {
-            $PHORUM["DATA"]["ERROR"] =
-                $PHORUM["DATA"]["LANG"]["AttachFileSize"] . " " .
+            $PHORUM["DATA"]["ERROR"] = str_replace(
+                '%size%', 
+                phorum_filesize($PHORUM["max_attachment_size"] * 1024),
+                $PHORUM["DATA"]["LANG"]["AttachFileSize"]
+            );
             phorum_filesize($PHORUM["max_attachment_size"] * 1024);
             $error_flag = true;
             break;
@@ -88,9 +91,11 @@ elseif ($do_attach && ! empty($_FILES))
         // Isn't the total attachment size too large?
         if ($PHORUM["max_totalattachment_size"] > 0 &&
             ($file["size"] + $attach_totalsize) > $PHORUM["max_totalattachment_size"]*1024) {
-            $PHORUM["DATA"]["ERROR"] =
-                $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"] . " " .
-                phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+            $PHORUM["DATA"]["ERROR"] = str_replace(
+                '%size%',
+                phorum_filesize($PHORUM["max_totalattachment_size"] * 1024),
+                $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]
+            );
             $error_flag = true;
             break;
         }
@@ -102,8 +107,8 @@ elseif ($do_attach && ! empty($_FILES))
             $allowed_exts=explode(";", $PHORUM["allow_attachment_types"]);
             if (! in_array(strtolower($ext), $allowed_exts)) {
                 $PHORUM["DATA"]["ERROR"] =
-                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ". $PHORUM["DATA"]["LANG"]["AttachFileTypes"] . " " .
-                    str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
+                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ". 
+                    str_replace('%types%', str_replace(";", ", ", $PHORUM["allow_attachment_types"]), $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
                 $error_flag = true;
                 break;
             }
