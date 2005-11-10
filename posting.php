@@ -490,7 +490,6 @@ foreach ($message as $var => $val)
 $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["args"]["as_include"]) ? false : true);
 
 // A hook to give modules a last chance to update the message data.
-print_var($message);
 $message = phorum_hook("before_editor", $message);
 
 // Make the message data available to the template engine.
