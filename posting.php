@@ -426,6 +426,10 @@ if ($preview) {
     include("./include/posting/action_preview.php");
 }
 
+// Always put the current mode in the message, so hook
+// writers can use this for identifying what we're doing.
+$message["mode"] = $mode;
+
 // Create hidden form field code. Fields which are read-only are
 // all added as a hidden form fields in the form. Also the fields
 // for which the pf_HIDDEN flag is set will be added to the
@@ -481,12 +485,13 @@ foreach ($message as $var => $val)
 }
 
 // A cancel button is not needed if the editor is included in a page.
-// This can also be used by the before_edit hook to disable the
+// This can also be used by the before_editor hook to disable the
 // cancel button in all pages.
 $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["args"]["as_include"]) ? false : true);
 
 // A hook to give modules a last chance to update the message data.
-$message = phorum_hook("before_edit", $message);
+print_var($message);
+$message = phorum_hook("before_editor", $message);
 
 // Make the message data available to the template engine.
 $PHORUM["DATA"]["POST"] = $message;
