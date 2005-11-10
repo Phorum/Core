@@ -4221,4 +4221,94 @@ function phorum_db_maxpacketsize ()
     return NULL;
 }
 
+/**
+ * This function is used by the sanity checking system to let the
+ * database layer do sanity checks of its own. This function can
+ * be used by every database layer to implement specific checks.
+ *
+ * The return value for this function should be exactly the same
+ * as the return value expected for regular sanity checking
+ * function (see include/admin/sanity_checks.php for information).
+ *
+ * There's no need to load the sanity_check.php file for the needed
+ * constants, because this function should only be called from the
+ * sanity checking system.
+ */
+function phorum_db_sanitychecks()
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Retrieve the MySQL server version.
+    $conn = phorum_db_mysql_connect();
+    $res = mysql_query("SELECT @@global.version");
+    if (!$res) return array(
+        PHORUM_SANITY_WARN,
+        "The database layer could not retrieve the version of the 
+         running MySQL server",
+        "This probably means that you are running a really old MySQL 
+         server, which does not support \"SELECT @@global.version\"
+         as an SQL command. If you are not running a MySQL server
+         with version 4.0.18 or higher, then please upgrade your
+         MySQL server. Else, contact the Phorum developers to see
+         where this warning is coming from"
+    );
+
+    if (mysql_num_rows($res)) 
+    {
+        $row = mysql_fetch_array($res);
+        $ver = explode(".", $row[0]);
+
+        // Version numbering format which is not recognized.
+        if (count($ver) != 3) return array(
+            PHORUM_SANITY_WARN,
+            "The database layer was unable to recognize the MySQL server's
+             version number \"" . htmlspecialchars($row[0]) . "\". Therefore,
+             checking if the right version of MySQL is used is not possible.",
+            "Contact the Phorum developers and report this specific
+             version number, so the checking scripts can be updated."
+        );
+
+        settype($vers[0], 'int');
+        settype($vers[1], 'int');
+        settype($vers[2], 'int');
+
+        // MySQL before version 4.
+        if ($ver[0] < 4) return array(
+            PHORUM_SANITY_CRIT,
+            "The MySQL database server that is used is too old. The
+             running version is \"" . htmlspecialchars($row[0]) . "\", 
+             while MySQL version 4.0.18 or higher is recommended.",
+            "Upgrade your MySQL server to a newer version. If your
+             website is hosted with a service provider, please contact
+             the service provider to upgrade your MySQL database."
+        );
+
+        // MySQL before version 4.0.18, with full text search enabled.
+        if ($PHORUM["DBCONFIG"]["mysql_use_ft"] && 
+            $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
+            PHORUM_SANITY_WARN,
+            "The MySQL database server that is used does not
+             support all Phorum features. The running version is 
+             \"" . htmlspecialchars($row[0]) . "\", while MySQL version
+             4.0.18 or higher is recommended.",
+            "Upgrade your MySQL server to a newer version. If your
+             website is hosted with a service provider, please contact
+             the service provider to upgrade your MySQL database.
+             If upgrading is not possible, you can also disable the
+             option \"mysql_use_ft\" in your database configuration
+             file \"include/db/config.php\""
+        );
+
+        // All checks are okay.
+        return array (PHORUM_SANITY_OK, NULL);
+    }
+
+    return array(
+        PHORUM_SANITY_CRIT, 
+        "An unexpected problem was found in running the sanity
+         check function phorum_db_sanitychecks().",
+        "Contact the Phorum developers to find out what the problem is."
+    );
+}
+
 ?>
