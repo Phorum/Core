@@ -438,11 +438,11 @@ $hidden = "";
 foreach ($post_fields as $var => $spec)
 {
     if ($var == "mode") {
-        $val = htmlentities($mode);
+        $val = $mode;
     } elseif ($spec[pf_TYPE] == "array") {
-        $val = htmlentities(serialize($message[$var]));
+        $val = htmlspecialchars(serialize($message[$var]));
     } else {
-        $val = htmlentities($message[$var]);
+        $val = htmlentities($message[$var], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
     }
     if ($spec[pf_READONLY] || $spec[pf_HIDDEN]) {
         $hidden .= '<input type="hidden" name="' . $var .  '" ' .

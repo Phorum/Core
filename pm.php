@@ -496,7 +496,7 @@ if (!empty($action)) {
 
 
         default:
-            die("Unhandled action for pm.php: " . htmlentities($action));
+            die("Unhandled action for pm.php: " . htmlspecialchars($action));
 
     }
 

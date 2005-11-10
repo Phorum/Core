@@ -325,9 +325,9 @@ switch ($mod_step) {
         else {
             $PHORUM['DATA']["FORM"]["merge_t1"] =$merge_t1;
             $message = phorum_db_get_message($merge_t1, "message_id", true);
-            $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"]);
+            $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
             $message = phorum_db_get_message($msgthd_id);
-            $PHORUM['DATA']["FORM"]["thread_subject"] =htmlentities($message["subject"]);
+            $PHORUM['DATA']["FORM"]["thread_subject"] =htmlentities($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
         }
         break;
 
@@ -405,7 +405,7 @@ switch ($mod_step) {
            $message =phorum_db_get_message($msgthd_id);
            $PHORUM['DATA']["FORM"]["thread_id"]=$message["thread"];
            $PHORUM['DATA']["FORM"]["message_id"]=$msgthd_id;
-           $PHORUM['DATA']["FORM"]["message_subject"]=htmlentities($message["subject"]);
+           $PHORUM['DATA']["FORM"]["message_subject"]=htmlentities($message["subject"],  ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
            $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_SPLIT;
            $template="split_form";
            break;
