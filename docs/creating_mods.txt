@@ -36,7 +36,8 @@ Table of contents:
    2.5 Storing user data
    2.6 Creating custom URLs
    2.7 Implementing settings for your module
-   2.8 Example modules
+   2.8 Changing the template
+   2.9 Example modules
 3. **CAUTIONS AND SECURITY ISSUES**
    3.1 Make modules, not hacks
    3.2 Reload your module if you change the module information
@@ -49,7 +50,9 @@ Table of contents:
        3.7.2 Data stored in $PHORUM
        3.7.3 Language strings stored in $PHORUM
        3.7.4 Data stored in messages, users and settings
-4. Overview of all available hooks
+4. Overview of available Phorum hooks
+   4.1 Code hooks
+   4.2 Template hooks
 5. Support
 
 
@@ -598,7 +601,74 @@ Table of contents:
       if(!defined("PHORUM_ADMIN")) return;
 
 
- 2.8 Example modules
+ 2.8 Changing the templates using template hooks
+ -----------------------------------------------
+
+
+  2.8.1 When to use a template hook
+  ---------------------------------
+
+   Changing the templates should be avoided as much as possible when
+   writing a module. This will basically turn your mod into a hack,
+   because files have to be edited for it. Inexperienced users might
+   find it hard to install your module if they have to modify files
+   to get it to work.
+
+   If you cannot avoid changing the template, then consider to use
+   template hooks for this. You can use these if your template change
+   involves adding extra code to a template. The advantage is that
+   there's only little code that has to be added to the templates,
+   which makes things less confusing to users that want to install the
+   module.
+
+
+  2.8.2 How to use a template hook
+  --------------------------------
+
+   To create a template hook, you do the following:
+
+   * Add "{HOOK tpl_some_hook}" to the template at an appropriate spot;
+
+   * Put "hook: tpl_some_hook|phorum_mod_foo_tpl_some_hook" in your
+     module info;
+
+   * Create the hook function phorum_mod_foo_tpl_some_hook() that 
+     prints out the code that has to be placed at the position of 
+     the "{HOOK tpl_some_hook}" code the the template.
+
+   If you want to pass on the data from template variables to 
+   the hook function, you can simply add the variables to the hook
+   definition in the template. Example:
+
+      {HOOK tpl_some_hook DATA1 DATA2}
+
+   The hook function will get the contents of these variables passed in
+   a single array. This can for example be useful if your template hook
+   needs access to loop data. Example:
+
+      {LOOP MESSAGES}
+         ...
+         {HOOK tpl_some_hook MESSAGES}
+         ...
+      {/LOOP MESSAGES}
+
+
+  2.8.3 Preventing collisions in hook names
+  -----------------------------------------
+
+   You can use any name for "tpl_some_hook", but beware that your
+   name does not collide with an already existing hook name. 
+   
+   The easiest way to do this is use the techniques from section 3.7.
+   As a rule of thumb, you can use the following format: 
+
+      tpl_mod_<modulename>_<identifier>
+
+   Example: If a buttonbar is added in one of the templates for a module
+   named "foo", the name for the hook could be "tpl_mod_foo_buttonbar".
+
+
+ 2.9 Example modules
  -------------------
 
    The best way of learning how to write modules is probably looking
@@ -816,11 +886,10 @@ Table of contents:
    See also sections 2.4 (message data), 2.5 (user data) and 2.7 (settings).
 
 
-4. Overview of all available hooks
+4. Overview of available Phorum hooks
 -------------------------------------------------------------------------------
 
-
-   In this chapter you will find an overview of all available Phorum
+   In this chapter you will find an overview of all available Phorum 
    hooks and a description of what they do.
 
    Remarks:
@@ -847,6 +916,14 @@ Table of contents:
      Hooks will be added as neccessary, especially while Phorum 5
      is young.
 
+
+ 4.1 Code hooks
+ --------------
+
+   Code hooks are hooks that are called from within the Phorum core
+   code. These hooks are typically used for modifying Phorum's internal
+   datastructures.
+   
 
    ----------------------------------------------------------------------------
    admin_general
@@ -897,8 +974,8 @@ Table of contents:
    This hook can be used for performing tasks after a successfull user
    login and for changing the page to which the user will be redirected
    (by returning a different redirection URL). If you need to access the
-   userdata, then you can do this through the global $PHORUM variable.
-   The userdata will be in $PHORUM["user"].
+   user data, then you can do this through the global $PHORUM variable.
+   The user data will be in $PHORUM["user"].
 
    ----------------------------------------------------------------------------
    after_logout
@@ -911,7 +988,7 @@ Table of contents:
 
    This hook can be used for performing tasks after a successfull user
    logout and for changing the page to which the user will be redirected
-   (by returning a different redirection URL). The userdata will still
+   (by returning a different redirection URL). The user data will still
    be availbale in $PHORUM["user"] at this point.
 
    ----------------------------------------------------------------------------
@@ -920,7 +997,7 @@ Table of contents:
    Where  : register.php
    When   : Right after a successfull registration of a new user is done
             and all confirmation mails are sent.
-   Input  : Array containing the userdata of the user (read-only).
+   Input  : Array containing the user data of the user (read-only).
    Return : Same as Input
 
    This hook can be used for performing tasks (like logging and
@@ -1004,15 +1081,15 @@ Table of contents:
 
    Where  : register.php
    When   : Right before a new user is stored in the database.
-   Input  : Array containing the userdata of the user.
+   Input  : Array containing the user data of the user.
    Return : Same as Input
 
    This hook can be used for performing tasks before user registration.
    This hook is useful if you want to add some data to or change some 
-   data in the userdata and to check if the userdata is correct.
+   data in the user data and to check if the user data is correct.
 
    When checking the registration data, the hook can set the "error" field
-   in the returned userdata array. When this field is set after running
+   in the returned user data array. When this field is set after running
    the hook, the registration processed will be halted and the error
    will be displayed. If you created a custom form field "foo" and you
    require that field to be filled in, you could create a hook function
@@ -1034,16 +1111,16 @@ Table of contents:
 
    Where  : control.php
    When   : Right before data for a user is saved in the control panel.
-   Input  : Array containing the userdata to save.
+   Input  : Array containing the user data to save.
    Return : Same as Input
 
    This hook works the same way as the before_register hook, so you can
-   also use it for changing and checking the userdata that will be
+   also use it for changing and checking the user data that will be
    saved in the database. There's one difference. If you want to
    check a custom field, you'll also need to check the panel which
    you are on, because this hook is called from multiple panels.
    The panel that you are on, will be stored in the 'panel' field
-   of the userdata.
+   of the user data.
    
    If you have added a custom field to the template for the option 
    "Edit My Profile" in the control panel, your hook function will
@@ -1303,7 +1380,7 @@ Table of contents:
 
    Where  : include/moderation_functions.php
    When   : Right after storing an edited message in the database.
-   Input  : Array containing messagedata (read-only).
+   Input  : Array containing message data (read-only).
    Return : none
 
    This hook can be used for sending notifications or for making log entries
@@ -1315,7 +1392,7 @@ Table of contents:
    Where  : post.php
    When   : Right after storing a new message in the database and just
             before the user is redirected back to the list.
-   Input  : Array containing messagedata (read-only).
+   Input  : Array containing message data (read-only).
    Return : none
 
    This hook can be used for performing actions based on what the message
@@ -1323,24 +1400,47 @@ Table of contents:
    meta data field.
 
    ----------------------------------------------------------------------------
+   posting_permission
+
+   Where  : posting.php
+   When   : Right after Phorum has determined all abilities that apply
+            to the logged in user.
+   Input  : none
+   Ouput  : none
+
+   This hook can be used for setting up custom abilities and permissions
+   for users, by updating the applicable fields in $GLOBALS["PHORUM"]["DATA"]
+   (e.g. for giving certain users the right to make postings sticky, without
+   having to make the full moderator for a forum).
+
+   Read the code in posting.php before this hook is called to find out
+   what fields can be used.
+
+   Beware: Only use this hook if you know what you are doing and understand
+   Phorum's editor permission code. If used wrong, you can open up security
+   holes in your Phorum installation!
+   
+   ----------------------------------------------------------------------------
    pre_edit
 
    Where  : include/moderation_functions.php
    When   : Right before storing an edited message in the database.
-   Input  : Array containing messagedata.
+   Input  : Array containing message data.
    Return : Same as Input
 
-   This hook can be used for changing the messagedata before storing it.
+   This hook can be used for changing the message data before storing it
+   in the database.
 
    ----------------------------------------------------------------------------
    pre_post
 
    Where  : post.php
    When   : Right before storing a new message in the database.
-   Input  : Array containing messagedata.
+   Input  : Array containing message data.
    Return : Same as Input
 
-   This hook can be used for changing the messagedata before storing it.
+   This hook can be used for changing the message data before storing it
+   in the database.
 
    ----------------------------------------------------------------------------
    profile
@@ -1395,7 +1495,7 @@ Table of contents:
    read_user_info
 
    Where  : read.php post.php include/moderation_functions.php
-   When   : Right after retrieving userdata.
+   When   : Right after retrieving user data.
    Input  : Array of users.
    Return : Same as Input
 
@@ -1566,7 +1666,107 @@ Table of contents:
     the displayed names.
 
 
-5. Support
+ 4.2 Template hooks
+ ------------------
+
+   Template hooks are called from within Phorum's template files.
+   These hooks can be used to extend the user interface with custom
+   elements. From a hook function for one of these template hooks, the
+   module writer can print the HTML code that has to be added to the
+   interface at the postition of the hook call in the template.
+
+
+   ----------------------------------------------------------------------------
+   tpl_editor_after_subject
+
+   Where  : posting_messageform.tpl
+   When   : After the Subject: field in the message editor.
+   Input  : none
+   Return : none
+
+   This hook can be used to add custom form fields to the message editor.
+   In the default template, the hook is run from within a two column table.
+   Column one contains the labels and column two the form fields. So your
+   hook function for adding a field to the editor could look like this:
+
+      function phorum_mod_foo_tpl_editor_after_subject()
+      { 
+         $value = isset($_POST["mod_foo"]) ? $_POST["mod_foo"] : ""'; 
+         ?>
+         <tr>
+           <td>
+             Foo field
+           </td>
+           <td>
+             <input type="text" name="mod_foo" 
+              value="<?php print htmlspecialchars($value) ?>"/>
+           </td>
+         </tr> 
+         <?php
+      }
+
+   ----------------------------------------------------------------------------
+   tpl_editor_attachment_buttons
+
+   Where  : posting_attachments_list.tpl
+   When   : Before the delete button for an attachment. 
+   Input  : Array containing attachment information. 
+   Return : Same as Input
+
+   This hook can be used to add extra buttons to each attachment in the
+   editor, so you can do custom actions for attachments.
+
+   To make your buttons look the same as Phorum's buttons, use the
+   CSS class "PhorumSubmit". 
+
+   Here's an example hook function that will add a button to the attachments,
+   which will send a javascript alert to the user when clicked.
+
+      function phorum_mod_foo_tpl_editor_attachment_buttons($data)
+      { 
+         $id = $data["file_id"];
+         ?>
+         <input type="submit" class="PhorumSubmit" value="Say it!"
+          onclick="alert('You clicked attachment id <?php print $id ?>')" />
+         <?php
+      }
+
+   ----------------------------------------------------------------------------
+   tpl_editor_before_textarea
+
+   Where  : posting_messageform.tpl
+   When   : Before the textarea.
+   Input  : none
+   Return : none
+
+   This hook can be used to add custom user interface elements before the
+   textarea in the message editor.
+
+   ----------------------------------------------------------------------------
+   tpl_editor_buttons
+
+   Where  : posting_buttons.tpl
+   When   : Before the main editor buttons (like Preview, Post and Cancel).
+   Input  : none
+   Return : none
+
+   This hook can be used to add extra buttons to the editor buttons.
+   
+   To make your buttons look the same as Phorum's buttons, use the
+   CSS class "PhorumSubmit". 
+
+   Here's an example hook function that will add a button to the editor,
+   which will send a javascript alert to the user when clicked.
+
+      function phorum_mod_foo_tpl_editor_buttons()
+      { ?>
+         <input type="submit" class="PhorumSubmit" value="Say it!"
+          onclick="alert('Hello, foo!')" />
+        <?php
+      }
+
+
+6. Support
 -------------------------------------------------------------------------------
 
    If you have questions about creating modules for Phorum, please visit
