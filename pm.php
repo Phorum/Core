@@ -709,7 +709,6 @@ switch ($page) {
                 foreach (explode(":", $PHORUM["args"]["to_id"]) as $rcpt_id) {
                     settype($rcpt_id, "int");
                     $user = phorum_user_get($rcpt_id, false);
-                    $user = phorum_hook('user_get', $user);
                     if ($user) {
                         $msg["recipients"][$rcpt_id] = array(
                             "username" => $user["username"],
