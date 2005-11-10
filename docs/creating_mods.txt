@@ -827,8 +827,8 @@ Table of contents:
 
    * Input is what your module function should expect as parameters.
 
-   * Return is what your module function should return.  Most hooks
-     expect the same data structure as was sent.  For those items,
+   * Return is what your module function should return. Most hooks
+     expect the same data structure as was sent. For those items,
      the Return is listed simply as "Same as Input".
 
    * Normally, hook functions are allowed to modify the data that was
@@ -870,8 +870,8 @@ Table of contents:
    Return : Same as Input
 
    The primary use of this hook would be for creating an alternate storage
-   system for attachments.  You would need to use the before_attach hook to
-   remove the file data and in this hook it could be saved properly.  You will
+   system for attachments. You would need to use the before_attach hook to
+   remove the file data and in this hook it could be saved properly. You will
    need to use the file hook to retreive the file data later.
 
    ----------------------------------------------------------------------------
@@ -937,9 +937,55 @@ Table of contents:
    Return : Same as Input
 
    The primary use of this hook would be for creating an alternate storage
-   system for attachments.  You would need to use the after_attach hook to
-   complete the process as you do not yet have the file_id for the file.  You
+   system for attachments. You would need to use the after_attach hook to
+   complete the process as you do not yet have the file_id for the file. You
    will need to use the file hook to retreive the file data later.
+
+   ----------------------------------------------------------------------------
+   before_editor
+
+   Where  : posting.php
+   When   : Just before the message editor is displayed.
+   Input  : Array containing data for the message that will be shown
+            in the editor screen.
+   Return : Same as Input
+
+   This hook can be used for changing message data, just before the editor
+   is displayed. This is done after escaping message data for XSS prevention 
+   is done. So in the hook, the module writer will have to be aware that
+   data is escaped and that he has to escape data himself if needed.
+
+   This hook is called every time the editor is displayed. If modifying
+   the message data does not have to be done on every request (for example
+   only on the first request when replying to a message), the module will
+   have to check the state the editor is in. Here's some hints on what
+   you could do to accomplish this:
+
+   * Check the editor mode: this can be done by looking at the "mode" field
+     in the message data. This field can be one of "post", "reply" and "edit".
+
+   * Check if it's the first request: this can be done by looking at the 
+     $_POST array. If no field "message_id" can be found in there, the
+     editor is handing the first request. 
+
+   Using this, an example hook function that appends the string "FOO!"
+   to the subject when replying to a message (how useful ;-) could look
+   like this:
+
+      function phorum_mod_foo_before_editor ($data)
+      {
+         if ($data["mode"] == "reply" && ! isset($_POST["message_id])) {
+             $data["reply"] = $data["reply"] . " FOO!";
+         }
+
+         return $data;
+      }
+
+   Beware: this hook function only changes message data before it is
+   displayed in the editor. From the editor, the user can still change
+   the data. Therefore, this hook cannot be used to control the data which
+   will be stored in the database. If you need that functionality, then
+   use the hooks pre_edit and/or pre_post instead.
 
    ----------------------------------------------------------------------------
    before_footer
@@ -1330,7 +1376,7 @@ Table of contents:
    The BBCode module that is distributed with Phorum has a quote hook
    function. Because it does not make sense to have more than one quote
    hook active, the BBCode module has an option to disable its quote hook
-   function.  You need to make sure that its quote hook function is disabled
+   function. You need to make sure that its quote hook function is disabled
    when using your own quote hook.
 
    ----------------------------------------------------------------------------
@@ -1499,8 +1545,8 @@ Table of contents:
    Return : true/false - see description
 
    This hook can be used for implementing an alternative mail sending
-   system (e.g. like the SMTP module does).  The hook should return true if
-   Phorum should still send the mails himself.  If you do not want to have
+   system (e.g. like the SMTP module does). The hook should return true if
+   Phorum should still send the mails himself. If you do not want to have
    Phorum send the mails also, return false.
 
    ----------------------------------------------------------------------------
