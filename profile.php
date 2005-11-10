@@ -104,10 +104,7 @@ $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
 
 // set all our URL's
 phorum_build_common_urls();
-// should we show the top-link?
-if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-    unset($PHORUM["DATA"]["URL"]["INDEX"]);
-}
+
 include phorum_get_template("header");
 phorum_hook("after_header");
 include phorum_get_template("profile");
