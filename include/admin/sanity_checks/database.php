@@ -50,6 +50,12 @@
             "Check your database settings in the file include/db/conf.php"
         );
 
+        // Do a database layer specific check, if available.
+        if (function_exists("phorum_db_sanitychecks")) {
+            $res = phorum_db_sanitychecks();
+            if ($res[0] != PHORUM_SANITY_OK) return $res;
+        }
+
         // All checks are OK.
         return array(PHORUM_SANITY_OK, NULL);
     }
