@@ -1386,6 +1386,8 @@ function phorum_db_add_forum($forum)
         if (is_numeric($value)){
             $value = (int)$value;
             $fields[] = "$key=$value";
+        } elseif($value=="NULL") {
+            $fields[] = "$key=$value";
         }else{
             $value = mysql_escape_string($value);
             $fields[] = "$key='$value'";
@@ -4243,9 +4245,9 @@ function phorum_db_sanitychecks()
     $res = mysql_query("SELECT @@global.version");
     if (!$res) return array(
         PHORUM_SANITY_WARN,
-        "The database layer could not retrieve the version of the 
+        "The database layer could not retrieve the version of the
          running MySQL server",
-        "This probably means that you are running a really old MySQL 
+        "This probably means that you are running a really old MySQL
          server, which does not support \"SELECT @@global.version\"
          as an SQL command. If you are not running a MySQL server
          with version 4.0.18 or higher, then please upgrade your
@@ -4253,7 +4255,7 @@ function phorum_db_sanitychecks()
          where this warning is coming from"
     );
 
-    if (mysql_num_rows($res)) 
+    if (mysql_num_rows($res))
     {
         $row = mysql_fetch_array($res);
         $ver = explode(".", $row[0]);
@@ -4276,7 +4278,7 @@ function phorum_db_sanitychecks()
         if ($ver[0] < 4) return array(
             PHORUM_SANITY_CRIT,
             "The MySQL database server that is used is too old. The
-             running version is \"" . htmlspecialchars($row[0]) . "\", 
+             running version is \"" . htmlspecialchars($row[0]) . "\",
              while MySQL version 4.0.18 or higher is recommended.",
             "Upgrade your MySQL server to a newer version. If your
              website is hosted with a service provider, please contact
@@ -4284,11 +4286,11 @@ function phorum_db_sanitychecks()
         );
 
         // MySQL before version 4.0.18, with full text search enabled.
-        if ($PHORUM["DBCONFIG"]["mysql_use_ft"] && 
+        if ($PHORUM["DBCONFIG"]["mysql_use_ft"] &&
             $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
             PHORUM_SANITY_WARN,
             "The MySQL database server that is used does not
-             support all Phorum features. The running version is 
+             support all Phorum features. The running version is
              \"" . htmlspecialchars($row[0]) . "\", while MySQL version
              4.0.18 or higher is recommended.",
             "Upgrade your MySQL server to a newer version. If your
@@ -4304,7 +4306,7 @@ function phorum_db_sanitychecks()
     }
 
     return array(
-        PHORUM_SANITY_CRIT, 
+        PHORUM_SANITY_CRIT,
         "An unexpected problem was found in running the sanity
          check function phorum_db_sanitychecks().",
         "Contact the Phorum developers to find out what the problem is."
