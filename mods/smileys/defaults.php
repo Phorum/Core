@@ -16,4 +16,3 @@ if (! isset($GLOBALS["PHORUM"]['mod_smileys']['editor_panel'])) {
 }
 
 ?>
-
