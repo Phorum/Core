@@ -1201,7 +1201,7 @@ Table of contents:
    common_no_forum
 
    Where  : common.php, so in practice every page
-   When   : Right after no forum-settings where found before doing the redirect
+   When   : Right after no forum settings were found, before doing the redirect
    Input  : none
    Return : none
 
