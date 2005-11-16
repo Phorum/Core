@@ -632,11 +632,11 @@ Table of contents:
    * Put "hook: tpl_some_hook|phorum_mod_foo_tpl_some_hook" in your
      module info;
 
-   * Create the hook function phorum_mod_foo_tpl_some_hook() that 
-     prints out the code that has to be placed at the position of 
+   * Create the hook function phorum_mod_foo_tpl_some_hook() that
+     prints out the code that has to be placed at the position of
      the "{HOOK tpl_some_hook}" code the the template.
 
-   If you want to pass on the data from template variables to 
+   If you want to pass on the data from template variables to
    the hook function, you can simply add the variables to the hook
    definition in the template. Example:
 
@@ -657,10 +657,10 @@ Table of contents:
   -----------------------------------------
 
    You can use any name for "tpl_some_hook", but beware that your
-   name does not collide with an already existing hook name. 
-   
+   name does not collide with an already existing hook name.
+
    The easiest way to do this is use the techniques from section 3.7.
-   As a rule of thumb, you can use the following format: 
+   As a rule of thumb, you can use the following format:
 
       tpl_mod_<modulename>_<identifier>
 
@@ -889,7 +889,7 @@ Table of contents:
 4. Overview of available Phorum hooks
 -------------------------------------------------------------------------------
 
-   In this chapter you will find an overview of all available Phorum 
+   In this chapter you will find an overview of all available Phorum
    hooks and a description of what they do.
 
    Remarks:
@@ -923,7 +923,7 @@ Table of contents:
    Code hooks are hooks that are called from within the Phorum core
    code. These hooks are typically used for modifying Phorum's internal
    datastructures.
-   
+
 
    ----------------------------------------------------------------------------
    admin_general
@@ -1028,7 +1028,7 @@ Table of contents:
    Return : Same as Input
 
    This hook can be used for changing message data, just before the editor
-   is displayed. This is done after escaping message data for XSS prevention 
+   is displayed. This is done after escaping message data for XSS prevention
    is done. So in the hook, the module writer will have to be aware that
    data is escaped and that he has to escape data himself if needed.
 
@@ -1041,9 +1041,9 @@ Table of contents:
    * Check the editor mode: this can be done by looking at the "mode" field
      in the message data. This field can be one of "post", "reply" and "edit".
 
-   * Check if it's the first request: this can be done by looking at the 
+   * Check if it's the first request: this can be done by looking at the
      $_POST array. If no field "message_id" can be found in there, the
-     editor is handing the first request. 
+     editor is handing the first request.
 
    Using this, an example hook function that appends the string "FOO!"
    to the subject when replying to a message (how useful ;-) could look
@@ -1085,7 +1085,7 @@ Table of contents:
    Return : Same as Input
 
    This hook can be used for performing tasks before user registration.
-   This hook is useful if you want to add some data to or change some 
+   This hook is useful if you want to add some data to or change some
    data in the user data and to check if the user data is correct.
 
    When checking the registration data, the hook can set the "error" field
@@ -1104,7 +1104,7 @@ Table of contents:
 
          return $data;
       }
-   
+
 
    ----------------------------------------------------------------------------
    cc_save_user
@@ -1121,11 +1121,11 @@ Table of contents:
    you are on, because this hook is called from multiple panels.
    The panel that you are on, will be stored in the 'panel' field
    of the user data.
-   
-   If you have added a custom field to the template for the option 
+
+   If you have added a custom field to the template for the option
    "Edit My Profile" in the control panel, your hook function will
    look like this:
-   
+
       function phorum_mod_foo_cc_save_user ($data)
       {
          // Only check data for the panel "user".
@@ -1196,6 +1196,17 @@ Table of contents:
 
    This hook can be used for applying custom settings or altering
    Phorum settings based on external parameters.
+
+   ----------------------------------------------------------------------------
+   common_no_forum
+
+   Where  : common.php, so in practice every page
+   When   : Right after no forum-settings where found before doing the redirect
+   Input  : none
+   Return : none
+
+   This hook can be used for returning some other message (i.e. a 404-page)
+   to the visitor if the requested forum was not found.
 
    ----------------------------------------------------------------------------
    common_post_user
@@ -1419,7 +1430,7 @@ Table of contents:
    Beware: Only use this hook if you know what you are doing and understand
    Phorum's editor permission code. If used wrong, you can open up security
    holes in your Phorum installation!
-   
+
    ----------------------------------------------------------------------------
    pre_edit
 
@@ -1551,16 +1562,16 @@ Table of contents:
    Return : Same as Input
 
    This hook can be used to add custom sanity checks to the admin
-   interface option "System Sanity Checks". 
+   interface option "System Sanity Checks".
 
-   Each checking function is expected to return an array containing 
+   Each checking function is expected to return an array containing
    two elements:
 
       [0] A status, which can be one of
           PHORUM_SANITY_OK     No problem found
           PHORUM_SANITY_WARN   Problem found, but no fatal one
           PHORUM_SANITY_CRIT   Critical problem found
-          
+
       [1] A description of the problem that was found or NULL.
 
    A general checking function looks like this:
@@ -1690,18 +1701,18 @@ Table of contents:
    hook function for adding a field to the editor could look like this:
 
       function phorum_mod_foo_tpl_editor_after_subject()
-      { 
-         $value = isset($_POST["mod_foo"]) ? $_POST["mod_foo"] : ""'; 
+      {
+         $value = isset($_POST["mod_foo"]) ? $_POST["mod_foo"] : ""';
          ?>
          <tr>
            <td>
              Foo field
            </td>
            <td>
-             <input type="text" name="mod_foo" 
+             <input type="text" name="mod_foo"
               value="<?php print htmlspecialchars($value) ?>"/>
            </td>
-         </tr> 
+         </tr>
          <?php
       }
 
@@ -1709,21 +1720,21 @@ Table of contents:
    tpl_editor_attachment_buttons
 
    Where  : posting_attachments_list.tpl
-   When   : Before the delete button for an attachment. 
-   Input  : Array containing attachment information. 
+   When   : Before the delete button for an attachment.
+   Input  : Array containing attachment information.
    Return : Same as Input
 
    This hook can be used to add extra buttons to each attachment in the
    editor, so you can do custom actions for attachments.
 
    To make your buttons look the same as Phorum's buttons, use the
-   CSS class "PhorumSubmit". 
+   CSS class "PhorumSubmit".
 
    Here's an example hook function that will add a button to the attachments,
    which will send a javascript alert to the user when clicked.
 
       function phorum_mod_foo_tpl_editor_attachment_buttons($data)
-      { 
+      {
          $id = $data["file_id"];
          ?>
          <input type="submit" class="PhorumSubmit" value="Say it!"
@@ -1751,9 +1762,9 @@ Table of contents:
    Return : none
 
    This hook can be used to add extra buttons to the editor buttons.
-   
+
    To make your buttons look the same as Phorum's buttons, use the
-   CSS class "PhorumSubmit". 
+   CSS class "PhorumSubmit".
 
    Here's an example hook function that will add a button to the editor,
    which will send a javascript alert to the user when clicked.

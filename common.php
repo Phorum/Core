@@ -199,6 +199,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( !empty( $PHORUM["forum_id"] ) ) {
         $forum_settings = phorum_db_get_forums( $PHORUM["forum_id"] );
         if ( empty( $forum_settings[$PHORUM["forum_id"]] ) ) {
+            phorum_hook( "common_no_forum", "" );
             phorum_redirect_by_url( phorum_get_url( PHORUM_INDEX_URL ) );
             exit();
         }
