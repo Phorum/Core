@@ -939,7 +939,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    after_attach
 
-   Where  : include/action_attachments.php
+   Where  : include/posting/action_attachments.php
    When   : Just after a file attachment is saved in the database
    Input  : Two part array where the first element is the message array and
             the second element is a file array that contains the name, size,
@@ -950,6 +950,20 @@ Table of contents:
    system for attachments. You would need to use the before_attach hook to
    remove the file data and in this hook it could be saved properly. You will
    need to use the file hook to retreive the file data later.
+
+   ----------------------------------------------------------------------------
+   after_detach
+
+   Where  : include/posting/action_attachments.php
+   When   : Just after a file attachment is deleted from the database
+   Input  : Two part array where the first element is the message array and
+            the second element is a file array that contains the name, size,
+            and file_id of the deleted file.
+   Return : Same as Input
+
+   The primary use of this hook would be for creating an alternate storage
+   system for attachments. Using this hook, you can delete the file from
+   your alternate storage.
 
    ----------------------------------------------------------------------------
    after_header
@@ -1006,7 +1020,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    before_attach
 
-   Where  : include/action_attachments.php
+   Where  : include/posting/action_attachments.php
    When   : Just before a file attachment is saved in the database
    Input  : Two part array where the first element is the message array and
             the second element is a file array that contains the name, size
