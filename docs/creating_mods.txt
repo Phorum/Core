@@ -1119,6 +1119,29 @@ Table of contents:
          return $data;
       }
 
+   ----------------------------------------------------------------------------
+   buddy_add
+
+   Where  : pm.php
+   When   : Right after a buddy has been added successfully.
+   Input  : The user id of the buddy that has been added.
+   Return : Same as Input
+
+   This hook can be used for performing actions after a buddy has been
+   added for a user (e.g. sending the new buddy a PM about this event,
+   update popularity counters, do logging, synchronizing with other
+   databases, etc.). 
+
+   ----------------------------------------------------------------------------
+   buddy_delete
+
+   Where  : pm.php
+   When   : Right after a buddy has been deleted successfully.
+   Input  : The user id of the buddy that has been deleted.
+   Return : Same as Input
+
+   This hook can be used for performing actions after a buddy has
+   been deleted for a user.
 
    ----------------------------------------------------------------------------
    cc_save_user

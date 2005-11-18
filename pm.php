@@ -464,6 +464,7 @@ if (!empty($action)) {
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $buddy_user_id) {
                     phorum_db_pm_buddy_delete($buddy_user_id);
+                    phorum_hook("buddy_delete", $buddy_user_id);
                 }
             }
 
@@ -488,6 +489,7 @@ if (!empty($action)) {
             if (!empty($buddy_user_id)) {
                 if (phorum_db_pm_buddy_add($buddy_user_id)) {
                     $okmsg = $PHORUM["DATA"]["LANG"]["BuddyAddSuccess"];
+                    phorum_hook("buddy_add", $buddy_user_id);
                 } else {
                     $error = $PHORUM["DATA"]["LANG"]["BuddyAddFail"];
                 }
