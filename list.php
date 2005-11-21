@@ -191,9 +191,25 @@ if ($PHORUM["threaded_list"]){
         if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
            $rows[$key]['moved']=1;
         } elseif ($PHORUM["DATA"]["LOGGEDIN"]){
-            // newflag, if its NOT in newinfo AND newer (min than min_id, then its a new message
-            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
-                $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
+
+            // newflag, if its NOT in newinfo AND newer (min than min_id, 
+            // then its a new message
+
+            // newflag for collapsed special threads (sticky and announcement)
+            if (($rows[$key]['sort'] == PHORUM_SORT_STICKY ||
+                 $rows[$key]['sort'] == PHORUM_SORT_ANNOUNCEMENT) &&
+                 isset($row['meta']['message_ids']) && 
+                 is_array($row['meta']['message_ids'])) {
+                foreach ($row['meta']['message_ids'] as $cur_id) {
+                    if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
+                        $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
+                }
+            } 
+            // newflag for regular messages
+            else {
+                if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
+                    $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
+                }
             }
         }
 
