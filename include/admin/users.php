@@ -19,6 +19,9 @@
 
     if(!defined("PHORUM_ADMIN")) return;
 
+    include('./include/format_functions.php');
+
+
     $error="";
 
     if(count($_POST)){
@@ -271,6 +274,13 @@
             $frm->addrow("Active", $frm->select_tag("active", array("No", "Yes"), $user["active"]));
 
             $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $user["admin"]));
+
+            $frm->addrow("Registration Date", phorum_date("%m/%d/%Y %I:%M%p",$user['date_added']));
+
+            $row=$frm->addrow("Date last active", phorum_date("%m/%d/%Y %I:%M%p",$user['date_last_active']));
+
+            $frm->addhelp($row, "Date last active", "This shows the date, when the user was last seen in the forum. Check your setting on \"Track user usage\" in the \"General Settings\". As long as this setting is not enabled, the activity will not be tracked.");
+
 
             $frm->show();
 
