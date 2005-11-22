@@ -22,7 +22,16 @@
     include_once("./include/format_functions.php");
 
     // Execute file purging.
-    if(count($_POST)){
+    if(count($_POST))
+    {
+        // Run a hook, so file purging can work for alternative
+        // file storage systems as well.
+        if (isset($PHORUM["hooks"]["admin_file_purge"])) {
+            $stale_files = phorum_db_file_purge_stale_files();
+            phorum_hook("admin_file_purge", $stale_files);
+        }
+
+        // Purge stale files from the database.
         phorum_db_file_purge_stale_files(true);
     }
 

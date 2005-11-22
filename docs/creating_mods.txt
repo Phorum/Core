@@ -937,6 +937,25 @@ Table of contents:
    "General Settings" page of the admin interface.
 
    ----------------------------------------------------------------------------
+   admin_file_purge
+
+   Where  : admin interface, option "Purge Stale Files"
+   When   : Right before stale files are deleted from the database.
+   Input  : An array, containing a description of all stale files.
+   Return : Same as Input
+
+   The primary use of this hook would be to cleanup stale files, created
+   by an alternate storage system for attachments (see after_attach and
+   after_detach as well). The array that is passed on to the hook function
+   contains arrays, which contain the following fields:
+
+   file_id      : Internal id to reference the file.
+   filename     : Name of the file.
+   filesize     : Filesize in KB.
+   add_datetime : Epoch timestamp for the time the file was created.
+   reason       : A description why this file is considered to be stale.
+
+   ----------------------------------------------------------------------------
    after_attach
 
    Where  : include/posting/action_attachments.php
