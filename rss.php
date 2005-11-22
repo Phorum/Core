@@ -41,6 +41,7 @@ $forums = phorum_db_get_forums();
 
 unset($rows["users"]);
 
+$items = array();
 $pub_date=0;
 foreach($rows as $key => $row){
 
