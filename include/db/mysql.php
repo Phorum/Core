@@ -110,7 +110,7 @@ function phorum_db_get_thread_list($offset)
         $table.viewcount,
         $table.closed";
     if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
-        $messagefields .= "\n,$table.body";
+        $messagefields .= "\n,$table.body\n,$table.ip";
     }
 
     // The sort mechanism to use.

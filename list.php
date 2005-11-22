@@ -192,19 +192,19 @@ if ($PHORUM["threaded_list"]){
            $rows[$key]['moved']=1;
         } elseif ($PHORUM["DATA"]["LOGGEDIN"]){
 
-            // newflag, if its NOT in newinfo AND newer (min than min_id, 
+            // newflag, if its NOT in newinfo AND newer (min than min_id,
             // then its a new message
 
             // newflag for collapsed special threads (sticky and announcement)
             if (($rows[$key]['sort'] == PHORUM_SORT_STICKY ||
                  $rows[$key]['sort'] == PHORUM_SORT_ANNOUNCEMENT) &&
-                 isset($row['meta']['message_ids']) && 
+                 isset($row['meta']['message_ids']) &&
                  is_array($row['meta']['message_ids'])) {
                 foreach ($row['meta']['message_ids'] as $cur_id) {
                     if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
                         $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
                 }
-            } 
+            }
             // newflag for regular messages
             else {
                 if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
@@ -359,6 +359,64 @@ if ($PHORUM["threaded_list"]){
 
 // run list mods
 $rows = phorum_hook("list", $rows);
+
+// if we retrieve the body too we need to setup some more variables for the messages
+// to make it a little more similar to the view in read.php
+if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
+
+    foreach ($rows as $id => $row) {
+
+        // is the message unapproved?
+        $row["is_unapproved"] = ($row['status'] < 0) ? 1 : 0;
+
+        // check if its the first message in the thread
+        if($row["message_id"] == $row["thread"]) {
+            $row["threadstart"] = true;
+        } else{
+            $row["threadstart"] = false;
+        }
+
+        // mask host if not a moderator
+        if(empty($PHORUM["user"]["admin"]) && (empty($PHORUM["DATA"]["MODERATOR"]) || !PHORUM_MOD_IP_VIEW)){
+            if($PHORUM["display_ip_address"]){
+                if($row["moderator_post"]){
+                    $row["ip"]=$PHORUM["DATA"]["LANG"]["Moderator"];
+                } elseif(is_numeric(str_replace(".", "", $row["ip"]))){
+                    $row["ip"]=substr($row["ip"],0,strrpos($row["ip"],'.')).'.---';
+                } else {
+                    $row["ip"]="---".strstr($row["ip"], ".");
+                }
+
+            } else {
+                $row["ip"]=$PHORUM["DATA"]["LANG"]["IPLogged"];
+            }
+        }
+
+        // add the edited-message to a post if its edited
+        if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
+            $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
+            $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date"],$row['meta']['edit_date']),  $editmessage);
+            $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
+            $row["body"].="\n\n\n\n$editmessage";
+        }
+
+
+        if($PHORUM["max_attachments"]>0 && isset($row["meta"]["attachments"])){
+            $PHORUM["DATA"]["ATTACHMENTS"]=true;
+            $row["attachments"]=$row["meta"]["attachments"];
+            // unset($row["meta"]["attachments"]);
+            foreach($row["attachments"] as $key=>$file){
+                $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
+                $row["attachments"][$key]["name"]=
+                htmlentities($file['name'], ENT_COMPAT,
+                $PHORUM["DATA"]["CHARSET"]);
+                $row["attachments"][$key]["url"]=
+                phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
+            }
+        }
+        $rows[$id] = $row;
+    }
+}
 
 // format messages
 $rows = phorum_format_messages($rows);
