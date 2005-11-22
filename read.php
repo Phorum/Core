@@ -85,11 +85,19 @@ if(empty($PHORUM["args"][1])) {
                 $thread = (int)$PHORUM["args"][1];
                 $thread_message=phorum_db_get_message($thread,'message_id');
 
-                $msg_count=count($thread_message['meta']['message_ids']);
+                $mids=array();
+                foreach($thread_message['meta']['message_ids'] as $mid) {
+                    if(!isset($PHORUM['user']['newinfo'][$mid]) && $mid > $PHORUM['user']['newinfo']['min_id']) {
+                        $mids[]=$mid;
+                    }
+                }
+
+                $msg_count=count($mids);
 
                 // any messages left to update newinfo with?
                 if($msg_count > 0){
-                    phorum_db_newflag_add_read($thread_message['meta']['message_ids']);
+                    phorum_db_newflag_add_read($mids);
+                    unset($mids);
                 }
                 break;
             case "gotonewpost":
