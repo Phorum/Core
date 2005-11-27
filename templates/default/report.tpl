@@ -1,10 +1,13 @@
 {IF ReportPostMessage}
 <div class="PhorumUserError">{ReportPostMessage}</div>
 {/IF}
-
+<div class="PhorumNavBlock" style="text-align: left;">
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{if LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/if}{if LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/if}
+</div>
 <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->Report}</div>
 <div class="PhorumStdBlock" style="text-align: left;">
-{LANG->ConfirmReportMessage}
+<strong>{LANG->ConfirmReportMessage}</strong>
+<br /><br />
 <div class="PhorumReadBodySubject">{PostSubject}</div>
 <div class="PhorumReadBodyHead">{LANG->Postedby}: {PostAuthor}</div>
 <div class="PhorumReadBodyHead">{LANG->Date}: {PostDate}</div>
