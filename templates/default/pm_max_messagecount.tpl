@@ -10,23 +10,6 @@
         $usedperc = floor($used/$total * 100 + 0.5);
     ?>
 
-    <style type="text/css">
-    .PhorumGaugeTable {
-        border-collapse: collapse;
-    }
-    
-    .PhorumGauge {
-        border: 1px solid {tablebordercolor};
-        background-color: {navbackcolor};
-    }
-    
-    .PhorumGaugePrefix {
-        border: none;
-        background-color: white;
-        padding-right: 10px;
-    }
-    </style>
-    
     <div class="phorum-menu" style="margin-top: 6px">
     <div style="text-align: center; padding: 10px 0px 10px 0px">
     
@@ -38,13 +21,13 @@
       {/IF}
     </div> 
         
-    <table class="PhorumGaugeTable" align="center">
+    <table class="phorum-gaugetable" align="center">
     
     <tr>
-      <td class="PhorumGaugePrefix">
+      <td class="phorum-gaugeprefix">
         <?php print "{$usedperc}%" ?>
       </td>
-      <td class="PhorumGauge" width="<?php print $size?>"><img align="left" src="templates/default/images/gauge.gif" width="<?php print $usedsize?>" height="16px"/></td>
+      <td class="phorum-gauge" width="<?php print $size?>"><img align="left" src="{gauge_image}" width="<?php print $usedsize?>" height="16px"/></td>
     </tr>
 
     </table>

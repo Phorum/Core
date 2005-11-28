@@ -16,6 +16,10 @@
 
 {var delete_image templates/default/images/delete.gif}
 
+{! -- This is the image for the gauge bar to show how full the PM box is -- }
+
+{var gauge_image templates/default/images/gauge.gif}
+
 {! --- these are the colors used in the style sheet --- }
 
 {! --- you can use them or replace them in the style sheet --- }

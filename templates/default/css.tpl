@@ -617,6 +617,21 @@ div.phorum-menu a.phorum-current-page
         padding-bottom: 5px;
     }
 
+    .phorum-gaugetable {
+        border-collapse: collapse;
+    }
+
+    .phorum-gauge {
+        border: 1px solid {tablebordercolor};
+        background-color: {navbackcolor};
+    }
+
+    .phorum-gaugeprefix {
+        border: none;
+        background-color: white;
+        padding-right: 10px;
+    }
+
     /********************/
 
     /* Override classes - Must stay at the end */
