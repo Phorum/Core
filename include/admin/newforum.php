@@ -104,7 +104,6 @@
                         if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] === 0) {
                             $error="Settings can't be inherited by this forum, because this forum already inherits the default settings";
                         }
-
                     }
                     break;
             }
@@ -117,9 +116,20 @@
         if(empty($error)){
             unset($_POST["module"]);
 
-            if(empty($_POST["pub_perms"])) $_POST["pub_perms"]=0;
-            if(empty($_POST["reg_perms"])) $_POST["reg_perms"]=0;
+            $old_settings = phorum_db_get_forums($_POST["forum_id"]);
 
+            if($old_settings["inherit_id"]>0 && $_POST["inherit_id"] = "NULL"){ 
+                unset($_POST["pub_perms"]);
+                unset($_POST["reg_perms"]);
+            } else {
+                if($old_settings["pub_perms"]>0){
+                    if(empty($_POST["pub_perms"])) $_POST["pub_perms"]=0;
+                }
+                if($old_settings["reg_perms"]>0){
+                    if(empty($_POST["reg_perms"])) $_POST["reg_perms"]=0;
+                }
+            }
+            
             // handling vroots
             if($_POST['parent_id'] > 0) {
                 $parent_folder=phorum_db_get_forums($_POST['parent_id']);
@@ -164,11 +174,8 @@
 
                     } else {
                         $_POST["inherit_id"]="NULL";
-                        // why should we do this?
-                        /*
                         unset($_POST["pub_perms"]);
                         unset($_POST["reg_perms"]);
-                        */
                     }
                 }
             }
@@ -184,6 +191,7 @@
                 } else {
                     $res=phorum_db_update_forum($forum_settings);
                 }
+
                 $forum_inherit_settings =phorum_db_get_forums(false,false,false,intval($_POST["forum_id"]));
                 foreach($forum_inherit_settings as $inherit_setting) {
                     $forum_settings["forum_id"] =$inherit_setting["forum_id"];
@@ -196,6 +204,7 @@
                     unset($forum_settings["message_count"]);
                     unset($forum_settings["thread_count"]);
                     unset($forum_settings["last_post_time"]);
+
                     $res_inherit =phorum_db_update_forum($forum_settings);
                 }
             } else {
