@@ -282,7 +282,7 @@ function hide_help()
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
-<?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
+<?php if(empty($module)){ // only show the versioncheck if you are on the front page of the admin ?>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="center" valign="middle">
       <iframe scrolling="no" frameborder="0" align="top" width="400" height="35" src="versioncheck.php"></iframe>
     </td>
