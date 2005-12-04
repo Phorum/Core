@@ -21,14 +21,35 @@
 
     $error="";
     $curr="NEW";
+    $exists_already=false;
+
+    // reserved names for custom profile fields, extend as needed
+    $reserved_customfield_names=array('panel','name','value','error');
 
     if(count($_POST) && $_POST["string"]!=""){
+        $_POST['string']=trim($_POST['string']);
+
+
         if(!isset($_POST['html_disabled']))
             $_POST['html_disabled']=0;
 
+        if($_POST['curr'] == 'NEW') {
+            // checking names of existing fields
+            foreach($PHORUM['PROFILE_FIELDS'] as $profile_field) {
+                if($profile_field['name'] == $_POST['string']) {
+                    $exists_already = true;
+                    break;
+                }
+            }
+        }
+
         if(preg_match("/^[^a-z]/i", $_POST["string"]) || preg_match("/[^a-z0-9_]/i", $_POST["string"])){
             $error="Field names can only contain letters, numbers and _.  They must start with a letter.";
-        } else {  
+        } elseif(in_array($_POST['string'],$reserved_customfield_names)) {
+            $error="This name is reserved for use in phorum itself. Please use a different name for your new custom profile-field.";
+        } elseif($exists_already) {
+            $error="A custom profile-field with that name exists. Please use a different name for your new custom profile-field.";
+        } else {
             if(!isset($PHORUM['PROFILE_FIELDS']["num_fields"])) {
                 if(count($PHORUM['PROFILE_FIELDS'])) {
                     $PHORUM['PROFILE_FIELDS']["num_fields"]=count($PHORUM['PROFILE_FIELDS']);
@@ -40,7 +61,7 @@
             if($_POST["curr"]!="NEW"){ // editing an existing field
                 $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['name']=$_POST["string"];
                 $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['length']=$_POST['length'];
-                $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['html_disabled']=$_POST['html_disabled'];                
+                $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['html_disabled']=$_POST['html_disabled'];
             } else { // adding a new field
                 $PHORUM['PROFILE_FIELDS']["num_fields"]++;
                 $PHORUM["PROFILE_FIELDS"][$PHORUM['PROFILE_FIELDS']["num_fields"]]=array();
@@ -54,9 +75,9 @@
             } else {
                 echo "Profile Field Updated<br />";
             }
-        
+
         }
-        
+
     }
 
     if(isset($_GET["curr"])){
