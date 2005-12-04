@@ -45,6 +45,8 @@ if ( count( $_POST ) ) {
         // flip this due to db vs. UI wording.
         $_POST["hide_email"] = ( isset($_POST["hide_email"]) ) ? 0 : 1;
 
+        $_POST['moderation_email'] = ( isset($_POST['moderation_email']) ) ? 1 : 0;
+
         // Remember this for the template.
         if (isset($PHORUM['DATA']['PROFILE']['email_temp_part'])) {
             $email_temp_part = $PHORUM['DATA']['PROFILE']['email_temp_part'];
