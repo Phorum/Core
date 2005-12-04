@@ -8,7 +8,9 @@
 {/if}
 
 {loop MESSAGES}
-<a name="msg-{MESSAGES->message_id}"></a>
+{IF NOT MESSAGES->parent_id 0}
+  <a name="msg-{MESSAGES->message_id}"></a>
+{/IF}
 <div class="PhorumReadMessageBlock">
 {IF MESSAGES->is_unapproved}
 <div class="PhorumStdBlock">
