@@ -318,7 +318,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
     // load languages for localized modules
-    if ( isset( $PHORUM["hooks"]["lang"] ) ) {
+    if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
         foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod ) {
             // load mods for this hook
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
@@ -676,7 +676,8 @@ function phorum_hook( $hook, $arg = "" )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if ( isset( $PHORUM["hooks"][$hook] ) ) {
+    if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
+
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
             // load mods for this hook
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
