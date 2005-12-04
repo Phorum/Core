@@ -16,7 +16,7 @@
 
     // charset for use in converting html into safe valid text
     // also used in the header template for the <xml> and for
-    // the Content-Type header. for a list of supported charsets, see 
+    // the Content-Type header. for a list of supported charsets, see
     // http://www.php.net/manual/en/function.htmlentities.php
     // you may also need to set a meta tag with a charset in it.
     $PHORUM["DATA"]['CHARSET']="iso-8859-1";
@@ -391,6 +391,7 @@
         "ReadPrivateMessages"   =>      "Read Private Messages",
         "RealName"              =>      "Real Name",
         "Received"              =>      "Received",
+        "ReceiveModerationMails"=>      "I want to receive moderation-mails",
         "Recipients"            =>      "recipients",
         "RegApprovedSubject"    =>      "Your account has been approved.",
         "RegApprovedEmailBody"  =>      "Your $PHORUM[title] account has been approved.  You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",

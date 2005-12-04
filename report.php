@@ -47,7 +47,7 @@ if(!empty($_POST["report"])) {
             $_POST["explanation"] = "<" . $PHORUM["DATA"]["LANG"]["None"] . ">";
         }
 
-        $mail_users = phorum_user_get_moderators($PHORUM['forum_id']);
+        $mail_users = phorum_user_get_moderators($PHORUM['forum_id'],false,true);
 
         if(count($mail_users)){
             $mail_data = array(

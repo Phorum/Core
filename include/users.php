@@ -481,6 +481,7 @@ function phorum_user_prepare_data( $new_user, $old_user, $pwd_unchanged = false 
             case "is_dst":
             case "user_language":
             case "user_template":
+            case "moderation_email":
                 break;
             // the phorum built in user module stores md5 passwords.
             case "password":
@@ -568,7 +569,7 @@ function phorum_user_moderate_allowed( $forum_id = 0, $user_data = 0 )
  * calls the db-function for listing all the moderators for a forum
  * This returns an array of moderators, key as their userid, value as their email address.
  */
-function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false)
+function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false, $for_email = false)
 {
     $gotmods=false;
     if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
@@ -578,7 +579,7 @@ function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false)
         }
     }
     if(!$gotmods) {
-        $mods=phorum_db_user_get_moderators( $forum_id , $ignore_user_perms);
+        $mods=phorum_db_user_get_moderators( $forum_id , $ignore_user_perms, $for_email);
     }
     return $mods;
 }

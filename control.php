@@ -186,6 +186,7 @@ function phorum_controlcenter_user_save($panel)
         'email'           => NULL,
         'email_temp'      => NULL,
         'user_template'   => NULL,
+        'moderation_email'=> NULL,
     );
     // Add custom profile fields as acceptable fields.
     foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
@@ -228,7 +229,7 @@ function phorum_controlcenter_user_save($panel)
         // If a new password was set, let's create a new session.
         if (isset($userdata["password"]) && !empty($userdata["password"])) {
             phorum_user_create_session();
-        } 
+        }
 
         // Copy data from the updated user back into the template data.
         // Leave PANEL and forum_id alone (these are injected into the

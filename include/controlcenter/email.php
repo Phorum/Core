@@ -90,6 +90,13 @@ if ( !empty( $PHORUM['DATA']['PROFILE']["hide_email"] ) ) {
     $PHORUM["DATA"]["PROFILE"]["hide_email_checked"] = " checked=\"checked\"";
 }
 
+if ( !empty( $PHORUM['DATA']['PROFILE']["moderation_email"] ) ) {
+    $PHORUM["DATA"]["PROFILE"]["moderation_email_checked"] = " checked=\"checked\"";
+} else {
+    $PHORUM["DATA"]["PROFILE"]["moderation_email_checked"] = "";
+}
+
+
 $PHORUM["DATA"]["PROFILE"]["EMAIL_CONFIRM"]=$PHORUM["registration_control"];
 
 

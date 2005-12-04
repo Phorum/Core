@@ -196,7 +196,7 @@ function phorum_email_moderators($message)
 {
     $PHORUM=$GLOBALS["PHORUM"];
 
-    $mail_users = phorum_user_get_moderators($PHORUM['forum_id']);
+    $mail_users = phorum_user_get_moderators($PHORUM['forum_id'],false,true);
 
     if (count($mail_users)) {
         include_once("./include/format_functions.php");

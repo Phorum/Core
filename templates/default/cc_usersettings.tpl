@@ -36,6 +36,9 @@
 <tr>
     <td colspan="2"><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</td>
 </tr>
+<tr>
+    <td colspan="2"><input type="checkbox" name="moderation_email" value="1"{PROFILE->moderation_email_checked} /> {LANG->ReceiveModerationMails}</td>
+</tr>
 {/IF}
 {IF PROFILE->PRIVACYSETTINGS}
 <tr>
@@ -53,7 +56,7 @@
     {LOOP TIMEZONE}
     <option value="{TIMEZONE->tz}"{TIMEZONE->sel}>{TIMEZONE->str}</option>
     {/LOOP TIMEZONE}
-    
+
     </select></td>
 </tr>
 <tr>
@@ -67,9 +70,9 @@
     {LOOP LANGUAGES}
     <option value="{LANGUAGES->file}"{LANGUAGES->sel}>{LANGUAGES->name}</option>
     {/LOOP LANGUAGES}
-    
+
     </select></td>
-</tr>  
+</tr>
   {IF PROFILE->TMPLSELECTION}
 <tr>
     <td nowrap="nowrap">{LANG->Template}:&nbsp;</td>
@@ -77,9 +80,9 @@
     {LOOP TEMPLATES}
     <option value="{TEMPLATES->file}"{TEMPLATES->sel}>{TEMPLATES->name}</option>
     {/LOOP TEMPLATES}
-    
+
     </select></td>
-</tr>  
+</tr>
   {/IF}
 <tr>
     <td nowrap="nowrap">{LANG->ThreadViewList}:&nbsp;</td>
