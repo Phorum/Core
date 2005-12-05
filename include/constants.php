@@ -147,6 +147,7 @@
     define("PHORUM_BAD_EMAILS", $i++);
     define("PHORUM_BAD_WORDS", $i++);
     define("PHORUM_BAD_USERID", $i++);
+    define("PHORUM_BAD_SPAM_WORDS", $i++);
 
     define("PHORUM_LIST_URL", $i++);
     define("PHORUM_READ_URL", $i++);

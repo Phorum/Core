@@ -22,7 +22,7 @@
     $error="";
     $curr="NEW";
 
-    $ban_types = array(PHORUM_BAD_IPS=>"IP Address/Hostname", PHORUM_BAD_NAMES=>"Name/User Name", PHORUM_BAD_EMAILS=>"Email Address", PHORUM_BAD_USERID=>"User-Id (registered User)");
+    $ban_types = array(PHORUM_BAD_IPS=>"IP Address/Hostname", PHORUM_BAD_NAMES=>"Name/User Name", PHORUM_BAD_EMAILS=>"Email Address", PHORUM_BAD_USERID=>"User-Id (registered User)", PHORUM_BAD_SPAM_WORDS=>"Illegal Words (SPAM)");
 
     $match_types = array("string", "PCRE");
 

@@ -55,7 +55,7 @@ function phorum_gen_password($charpart=4, $numpart=3)
  * automatically generate an appropriate error message when a banlist
  * match is found.
  * @param bans - an array of bans to check. Each element in this array is an
- *               array itself with two elements: the value to check and the 
+ *               array itself with two elements: the value to check and the
  *               type of banlist to check against. One special case:
  *               if the type if PHORUM_BAD_IPS, the value may be NULL.
  *               In that case the IP/hostname of the client will be checked.
@@ -68,10 +68,11 @@ function phorum_check_bans($bans)
 
     // A mapping from bantype -> error message to return on match.
     $phorum_bantype2error = array (
-        PHORUM_BAD_NAMES  => "ErrBannedName",
-        PHORUM_BAD_EMAILS => "ErrBannedEmail",
-        PHORUM_BAD_USERID => "ErrBannedUser",
-        PHORUM_BAD_IPS    => "ErrBannedIP",
+        PHORUM_BAD_NAMES      => "ErrBannedName",
+        PHORUM_BAD_EMAILS     => "ErrBannedEmail",
+        PHORUM_BAD_USERID     => "ErrBannedUser",
+        PHORUM_BAD_IPS        => "ErrBannedIP",
+        PHORUM_BAD_SPAM_WORDS => "ErrBannedContent",
     );
 
     // These language strings are set dynamically, so the language

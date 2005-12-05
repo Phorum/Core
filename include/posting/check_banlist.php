@@ -40,6 +40,11 @@ else {
 // Add check for IP-address bans.
 $bans[] = array(NULL, PHORUM_BAD_IPS);
 
+// Add check for Illegal Content (SPAM) bans.
+$bans[] = array($message["subject"], PHORUM_BAD_SPAM_WORDS);
+$bans[] = array($message["body"], PHORUM_BAD_SPAM_WORDS);
+
+
 // Run the checks.
 $msg = phorum_check_bans($bans);
 if (!is_null($msg)) {
