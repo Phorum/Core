@@ -185,7 +185,7 @@ foreach ($_POST as $var => $val) {
     }
 }
 
-// In case users click on post or preview, without uploading 
+// In case users click on post or preview, without uploading
 // their attachment first, we fake an upload action.
 if (count($_FILES)) {
     list($name, $data) = each($_FILES);
@@ -232,7 +232,7 @@ if ($message["message_id"]) {
 
 // Do ban list checks. Only check the bans on entering and
 // on finishing up. No checking is needed on intermediate requests.
-if (! $error_flag && ($initial or $finish)) {
+if (! $error_flag && ($initial || $finish || $preview)) {
     include("./include/posting/check_banlist.php");
 }
 
@@ -396,7 +396,7 @@ if($PHORUM["max_attachments"]){
     if ($PHORUM["max_attachment_size"]) {
         $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
         $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
-        $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]); 
+        $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]);
     }
     if ($PHORUM["max_totalattachment_size"] && $PHORUM["max_attachments"]>1) {
         $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
