@@ -232,12 +232,9 @@ function phorum_db_get_thread_list($offset)
  * This function executes a query to get the recent messages for
  * all forums the user can read, a particular forum, or a particular
  * thread, and and returns an array of the messages order by message_id.
+ * You can optionally retrieve only new threads.
  *
- * In reality, this function is not used in the Phorum core as of the time
- * of its creationg.  However, several modules have been written that created
- * a function like this.  Therefore, it has been added to aid in module development
- *
- * The bulk of this function came from Jim Winstead of mysql.com
+ * The original version of this function came from Jim Winstead of mysql.com
  */
 function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = 0)
 {
@@ -255,7 +252,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if($threads_only) {
         $use_key='last_post_time';
     } else {
-        $use_key='forum_max_message';
+        $use_key='post_count';
     }
 
     $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} USE KEY($use_key) WHERE status=".PHORUM_STATUS_APPROVED;
@@ -288,11 +285,15 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
     if($threads_only) {
         $sql.= " and parent_id = 0";
-        $sql.= " ORDER BY modifystamp DESC LIMIT $count";
+        $sql.= " ORDER BY thread DESC";
     } else {
-        $sql.= " ORDER BY message_id DESC LIMIT $count";
+        $sql.= " ORDER BY message_id DESC";
     }
 
+    if($count){
+        $sql.= " LIMIT $count";
+    }
+    
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
