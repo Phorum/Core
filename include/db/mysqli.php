@@ -4175,9 +4175,31 @@ function phorum_db_mysqli_connect(){
  * NOTE: This is not a required part of abstraction
  */
 
-function phorum_db_mysqli_error($err){
+function phorum_db_mysql_error($err){
+
+    if(isset($GLOBALS['PHORUM']['error_logging'])) {
+        $logsetting = $GLOBALS['PHORUM']['error_logging'];
+    } else {
+        $logsetting = "";
+    }
+    $adminemail = $GLOBALS['PHORUM']['system_email_from_address'];
+    $cache_dir  = $GLOBALS['PHORUM']['cache'];
+
     if (!defined("PHORUM_ADMIN")){
-        echo htmlspecialchars($err);
+        if($logsetting == 'mail') {
+
+            $data=array('mailmessage'=>"An SQL-error occured in your phorum-installation.\n\nThe error-message was:\n$err\n\n",
+                        'mailsubject'=>'Phorum: an SQL-error occured');
+            phorum_email_user(array($adminemail),$data);
+
+        } elseif($logsetting == 'file') {
+            $fp = fopen($cache_dir."/phorum-sql-errors.log",'a');
+            fputs($fp,time().": $err\n");
+            fclose($fp);
+
+        } else {
+            echo htmlspecialchars($err);
+        }
         exit();
     }else{
         echo "<!-- $err -->";
