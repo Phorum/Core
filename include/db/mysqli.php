@@ -255,7 +255,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if($threads_only) {
         $use_key='last_post_time';
     } else {
-        $use_key='forum_max_message';
+        $use_key='post_count';
     }
 
     $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} USE KEY($use_key) WHERE status=".PHORUM_STATUS_APPROVED;
@@ -288,9 +288,13 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
     if($threads_only) {
         $sql.= " and parent_id = 0";
-        $sql.= " ORDER BY modifystamp DESC LIMIT $count";
+        $sql.= " ORDER BY thread DESC";
     } else {
-        $sql.= " ORDER BY message_id DESC LIMIT $count";
+        $sql.= " ORDER BY message_id DESC";
+    }
+
+    if($count){
+        $sql.= " LIMIT $count";
     }
 
     $res = mysqli_query($conn, $sql);
