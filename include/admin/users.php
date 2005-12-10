@@ -168,6 +168,17 @@
 
         $total=count($users);
 
+        // count active
+        $total_active=0;
+        $total_poster=0;
+        foreach($users as $user){
+          if ($user['active']==1) {
+            $total_active++;
+            if (intval($user['posts'])) $total_poster++;
+          }
+        }
+
+
         settype($_REQUEST["start"], "integer");
 
         $display=30;
@@ -195,13 +206,14 @@
             echo "<input type=\"hidden\" name=\"action\" value=\"deleteUsers\">\n";
             echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
             echo "<tr>\n";
-            echo "    <td colspan=\"3\">$total users found</td>\n";
+            echo "    <td colspan=\"4\">$total users found ($total_active active, $total_poster posting)</td>\n";
             echo "    <td align=\"right\">$nav</td>\n";
             echo "</tr>\n";
             echo "<tr>\n";
             echo "    <td class=\"PhorumAdminTableHead\">User</td>\n";
             echo "    <td class=\"PhorumAdminTableHead\">Email</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Status</td>\n";
+            echo "    <td class=\"PhorumAdminTableHead\">Status (Posts)</td>\n";
+            echo "    <td class=\"PhorumAdminTableHead\">Last Activity</td>\n";
             echo "    <td class=\"PhorumAdminTableHead\">Delete</td>\n";
             echo "</tr>\n";
 
@@ -225,15 +237,19 @@
                         $status = "Deactivated";
                 }
 
+                $status.= intval($user['posts']) ? " (".intval($user['posts']).")" : "";
+
+                $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
 
                 echo "<tr>\n";
-                echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
-                echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($user['email'])."</td>\n";
-                echo "    <td class=\"PhorumAdminTableRow\">{$status}</td>\n";
-                echo "    <td class=\"PhorumAdminTableRow\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
+                echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
+                echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
+                echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
+                echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_last_active']) ? strftime($PHORUM['short_date'], intval($user['date_last_active'])) : "&nbsp;")."</td>\n";
+                echo "    <td class=\"".$ta_class."\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
                 echo "</tr>\n";
             }
-            echo "<tr><td colspan=\"4\" align=\"right\"><input type=\"submit\" name=\"submit\" value=\"Delete Selected\"></td></tr>";
+            echo "<tr><td colspan=\"5\" align=\"right\"><input type=\"submit\" name=\"submit\" value=\"Delete Selected\"></td></tr>";
             echo "</table>\n";
             echo "</form>\n";
 

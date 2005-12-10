@@ -2319,7 +2319,7 @@ function phorum_db_search_users($search)
 
     $search = trim($search);
 
-    $sql = "select user_id, username, email, active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
+    $sql = "select user_id, username, email, active, posts, date_last_active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
 
     $res = mysqli_query( $conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
