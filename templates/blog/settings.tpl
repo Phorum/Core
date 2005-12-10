@@ -6,6 +6,9 @@
 {! --- This is used to load the message-bodies in the message-list for that template if set to 1 --- }
 {define bodies_in_list 1}
 
+{! --- This is used to load all the message-bodies in the read-message-view also in threaded-view for that template if set to 1 --- }
+{define all_bodies_in_threaded_read 0}
+
 {! --- This is the marker for messages in threaded view --- }
 {define marker <img src="templates/default/images/carat.gif" border="0" width="8" height="8" alt="" style="vertical-align: middle;" />&nbsp;}
 

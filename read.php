@@ -170,7 +170,6 @@ if(!$PHORUM["threaded_read"]) {
 }
 
 // Get the thread
-// ... with caching
 $data = phorum_db_get_messages($thread,$page);
 
 
@@ -178,6 +177,18 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $fetch_user_ids = $data['users'];
     unset($data['users']);
+
+    // remove the unneeded message bodies in threaded view
+    // to avoid unnecessary formatting of bodies
+    if ($PHORUM["threaded_read"] &&
+        !(isset($PHORUM['TMP']['all_bodies_in_threaded_read']) &&
+         !empty($PHORUM['TMP']['all_bodies_in_threaded_read']) ) ) {
+
+            $remove_threaded_bodies=1;
+            // the flag is used in the foreach-loop later on
+    } else {
+            $remove_threaded_bodies=0;
+    }
 
     // build URL's that apply only here.
     if($PHORUM["float_to_top"]) {
@@ -269,6 +280,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $read_messages=array(); // needed for newinfo
     foreach($data as $key => $row) {
 
+        // should we remove the bodies in threaded view
+        if($remove_threaded_bodies) {
+            if ($row["message_id"] != $message_id) {
+                unset($row["body"]); // strip body
+            }
+        }
+
         // assign user data to the row
         if($row["user_id"] && isset($user_info[$row["user_id"]])){
             $row["user"]=$user_info[$row["user_id"]];
@@ -337,19 +355,23 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
 
         // should we show the signature?
-        if(isset($row["user"]["signature"]) && isset($row['meta']['show_signature']) && $row['meta']['show_signature']==1){
-            $phorum_sig=trim($row["user"]["signature"]);
-            if(!empty($phorum_sig)){
-                $row["body"].="\n\n$phorum_sig";
-            }
-        }
+        if(isset($row['body'])) {
+            if(isset($row["user"]["signature"])
+               && isset($row['meta']['show_signature']) && $row['meta']['show_signature']==1){
 
-        // add the edited-message to a post if its edited
-        if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
-            $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
-            $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date"],$row['meta']['edit_date']),  $editmessage);
-            $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
-            $row["body"].="\n\n\n\n$editmessage";
+                   $phorum_sig=trim($row["user"]["signature"]);
+                   if(!empty($phorum_sig)){
+                       $row["body"].="\n\n$phorum_sig";
+                   }
+            }
+
+            // add the edited-message to a post if its edited
+            if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
+                $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
+                $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date"],$row['meta']['edit_date']),  $editmessage);
+                $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
+                $row["body"].="\n\n\n\n$editmessage";
+            }
         }
 
 
