@@ -113,10 +113,11 @@
         echo "</tr>\n";
 
         foreach($bad_words as $key => $item){
+            $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
             echo "<tr>\n";
-            echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($item["string"])."</td>\n";
-            echo "    <td class=\"PhorumAdminTableRow\">".$forum_list[$item["forum_id"]]."</td>\n";
-            echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&delete=1\">Delete</a></td>\n";
+            echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";
+            echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
+            echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&delete=1\">Delete</a></td>\n";
             echo "</tr>\n";
         }
 

@@ -2992,7 +2992,7 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
  * This function retrieves the banlists for the current forum
  */
 
-function phorum_db_get_banlists() {
+function phorum_db_get_banlists($ordered=false) {
     $PHORUM = $GLOBALS["PHORUM"];
 
     $retarr = array();
@@ -3009,6 +3009,10 @@ function phorum_db_get_banlists() {
 
 
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} $forumstr";
+
+    if($ordered) {
+        $sql.= " ORDER BY type, string";
+    }
 
     $res = mysql_query($sql, $conn);
 

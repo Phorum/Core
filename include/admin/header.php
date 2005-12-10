@@ -114,6 +114,14 @@ input, textarea, select, td
     font-size: 13px;
 }
 
+.PhorumAdminTableRowAlt
+{
+    background-color: #d6d6e0;
+    color: Navy;
+    padding: 3px;
+    font-size: 13px;
+}
+
 .PhorumAdminTableHead
 {
     background-color: Navy;
@@ -286,7 +294,7 @@ function hide_help()
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="center" valign="middle">
       <iframe scrolling="no" frameborder="0" align="top" width="400" height="35" src="versioncheck.php"></iframe>
     </td>
-<?php } else { 
+<?php } else {
     // Reset the cookie that is used for the version check.
     setcookie("phorum_upgrade_available", '', time()-86400,
               $PHORUM["session_path"], $PHORUM["session_domain"]);

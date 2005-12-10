@@ -91,11 +91,11 @@
 
     $frm->show();
 
-    echo "If using PCRE for comparison, \"Sting To Match\" should be a valid PCRE expression. See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information.";
+    echo "If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression. See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information.";
 
     if($curr=="NEW"){
 
-        $PHORUM['banlists']=phorum_db_get_banlists();
+        $PHORUM['banlists']=phorum_db_get_banlists(true);
         unset($PHORUM['banlists'][PHORUM_BAD_WORDS]);
 
         echo "<hr class=\"PhorumAdminHR\" />";
@@ -114,14 +114,17 @@
 
 
             foreach($PHORUM["banlists"] as $type => $content){
+                $t_last_string = '';
                 foreach($content as $key => $item){
+                    $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
                     echo "<tr>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($item[string])."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".$ban_types[$type]."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".$match_types[$item["pcre"]]."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".$forum_list[$item["forum_id"]]."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&delete=1\">Delete</a></td>\n";
+                    echo "    <td class=\"".$ta_class."\"".($item["string"] == $t_last_string ? " style=\"color:red;\"" : "").">".htmlspecialchars($item['string'])."</td>\n";
+                    echo "    <td class=\"".$ta_class."\">".$ban_types[$type]."</td>\n";
+                    echo "    <td class=\"".$ta_class."\">".$match_types[$item["pcre"]]."</td>\n";
+                    echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
+                    echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&delete=1\">Delete</a></td>\n";
                     echo "</tr>\n";
+                    $t_last_string = $item["string"];
                 }
             }
 

@@ -17,7 +17,7 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// cvs-info: $Id: mysql.php 665 2005-11-15 20:08:46Z ts77 $
+// cvs-info: $Id$
 
 if (!defined("PHORUM")) return;
 
@@ -3030,7 +3030,7 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
  * This function retrieves the banlists for the current forum
  */
 
-function phorum_db_get_banlists() {
+function phorum_db_get_banlists($ordered=false) {
     $PHORUM = $GLOBALS["PHORUM"];
 
     $retarr = array();
@@ -3047,6 +3047,10 @@ function phorum_db_get_banlists() {
 
 
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} $forumstr";
+
+    if($ordered) {
+        $sql.= " ORDER BY type, string";
+    }
 
     $res = mysqli_query( $conn, $sql);
 
