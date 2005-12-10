@@ -33,7 +33,7 @@ Search:<br />
 </form>
 
 <ul>
-<li><a href="/">Home</a></li>
+<li><a href="{URL->TOP}">Home</a></li>
 </ul>
 
 <ul>
@@ -59,5 +59,5 @@ Search:<br />
 
 </div>
 <div id="left-column">
-{IF NAME}<a href="{URL->TOP}">{NAME}</a>&nbsp;:&nbsp;{/IF}{TITLE}</span>
-You should read the docs about setting up the blog template before making it live.  Its in the docs dir in the distro called blog_howto.txt.  You can remove this comment after that.
+<h1 id="title"><a href="{URL->TOP}">{NAME}</a></h1>
+<p>You should read the docs about setting up the blog template before making it live.  Its in the docs dir in the distro called blog_howto.txt.  You can remove this comment after that.</p>

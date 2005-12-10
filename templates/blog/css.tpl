@@ -132,3 +132,16 @@ h4 {
 #search-form #search {
     width: 120px;
 }
+
+#post {
+    margin: 5px 10px 0 10px;
+}
+
+#post td {
+    padding: 3px;
+}
+
+#post-body {
+    width: 99%;
+    margin: 0 10px 0 10px;
+}
