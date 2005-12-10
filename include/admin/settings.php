@@ -173,7 +173,7 @@ $row=$frm->addrow( "Reply form appears", $frm->select_tag( "reply_on_read_page",
 
 $row=$frm->addrow( "After posting goto", $frm->select_tag( "redirect_after_post", array( "list"=>"Message List Page", "read"=>"Message Read Page" ), $PHORUM["redirect_after_post"] ) );
 
-$row=$frm->addrow( "SQL errors go to", $frm->select_tag( "error_logging", array( "screen"=>"Error will show on the screen", "file"=>"Error will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Will be send by mail to the system email address"), $PHORUM["error_logging"] ) );
+$row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
 
 $frm->addbreak( "HTML Settings" );
 
