@@ -50,8 +50,9 @@ for a getting started HOWTO...
 
 Additional variables in settings.tpl:
 {define bodies_in_list 1}
-set this to 1 to have the message-bodies loaded in the list if your template needs them.
+set this to 1 to have the message-bodies loaded in the list if your 
+template needs them.
 
 {define all_bodies_in_threaded_read 0}
-set this to 1 to have all the message-bodies also loaded in threaded-read-view if your
-template needs them
+set this to 1 to have all the message-bodies also loaded in 
+threaded-read-view if your template needs them
