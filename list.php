@@ -273,7 +273,7 @@ if ($PHORUM["threaded_list"]){
             $rows[$key]["last_post_url"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"]);
         }
 
-        $row['meta']['recent_post']['author'] = str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $row['meta']['recent_post']['author'] );
+        $row['meta']['recent_post']['author'] = htmlspecialchars($row['meta']['recent_post']['author']);
         if ($row["meta"]["recent_post"]["user_id"]){
             $url = phorum_get_url(PHORUM_PROFILE_URL, $row["meta"]["recent_post"]["user_id"]);
             $rows[$key]["last_post_profile_url"] = $url;
