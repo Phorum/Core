@@ -233,7 +233,6 @@ if (!empty( $PHORUM["args"]["redir"])) {
 
 // Setup template data.
 $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
-$PHORUM["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
 $PHORUM["DATA"]["URL"]["REGISTER"] = phorum_get_url( PHORUM_REGISTER_URL );
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_LOGIN_ACTION_URL );
 $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
