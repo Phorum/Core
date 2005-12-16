@@ -646,7 +646,8 @@ function phorum_build_common_urls()
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
 
     // RSS-Url only makes sense on a couple of pages
-    if(phorum_page=="index" || phorum_page=="list" || phorum_page=="read"){
+    if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']
+        && (phorum_page=="index" || phorum_page=="list" || phorum_page=="read")){
         $GLOBALS["PHORUM"]["DATA"]["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL );
     }
 

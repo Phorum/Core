@@ -7,6 +7,9 @@
 <style type="text/css">
 {include css}
 </style>
+{IF URL->RSS}
+<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="{URL->RSS}" />
+{/IF}
 {if URL->REDIRECT}
 <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
 {/if}

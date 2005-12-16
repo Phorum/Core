@@ -178,6 +178,7 @@
                 "default_language" => "english",
                 "use_cookies" => "1",
                 "use_bcc" => "1",
+                "use_rss" => "1",
                 "internal_version" => "" . PHORUMINTERNAL . "",
                 "PROFILE_FIELDS" => array(array('name'=>"real_name",'length'=> 255, 'html_disabled'=>1)),
                 "enable_pm" => "1",

@@ -24,7 +24,8 @@ include_once("./common.php");
 include_once("./include/format_functions.php");
 
 // somehow we got to a folder
-if(!empty($PHORUM["folder_flag"])){
+if(!empty($PHORUM["folder_flag"])
+    || !isset($PHORUM['use_rss']) || !$PHORUM['use_rss']){
     exit();
 }
 
