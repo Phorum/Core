@@ -1,5 +1,5 @@
 <div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>{IF URL->POST}&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>{/IF}{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>{IF ENABLE_PM}&bull;<a class="PhorumNavLink" href="{URL->PM}">{LANG->PrivateMessages}</a>{/IF}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}</a>
+  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->TOP}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;{/IF}{IF URL->POST}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;{/IF}{IF LOGGEDIN true}<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>{IF ENABLE_PM}&bull;<a class="PhorumNavLink" href="{URL->PM}">{LANG->PrivateMessages}</a>{/IF}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}</a>
 </div>
 <br/>
 
@@ -54,7 +54,7 @@
     <td class="PhorumStdBlockHeader PhorumNarrowBlock" style="text-align: left;"><b>{LANG->SearchMessages}</b></td>
     <td style="width: 10px">&nbsp;</td>
     <td class="PhorumStdBlockHeader PhorumNarrowBlock" style="text-align: left;"><b>{LANG->SearchAuthors}</b></td>
-  </tr>      
+  </tr>
   <tr>
     <td class="PhorumStdBlock PhorumNarrowBlock" style="padding: 10px;">
       <form action="{URL->ACTION}" method="get" style="display: inline;">
@@ -77,4 +77,4 @@
       </form>
     </td>
   </tr>
-</table>    
+</table>

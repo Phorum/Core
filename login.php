@@ -89,7 +89,7 @@ if (count($_POST) > 0) {
                 $template = "message";
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
             // User registration still need email verification.
-            } elseif ($user["active"] == PHORUM_USER_PENDING_EMAIL || 
+            } elseif ($user["active"] == PHORUM_USER_PENDING_EMAIL ||
                       $user["active"] == PHORUM_USER_PENDING_BOTH) {
 
                 // Generate and store a new email confirmation code.
@@ -100,7 +100,7 @@ if (count($_POST) > 0) {
                 // Mail the new confirmation code to the user.
                 $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
                 $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
-                $maildata["mailmessage"] = 
+                $maildata["mailmessage"] =
                    wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"],72).
                    "\n\n$verify_url\n\n".
                    wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"],72);
@@ -122,10 +122,10 @@ if (count($_POST) > 0) {
                 // Mail the new password.
                 $user = phorum_user_get( $uid );
                 $maildata = array();
-                $maildata['mailmessage'] = 
+                $maildata['mailmessage'] =
                    wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody1"],72).
-                   "\n\n". 
-                   $PHORUM["DATA"]["LANG"]["Username"] .": $user[username]\n". 
+                   "\n\n".
+                   $PHORUM["DATA"]["LANG"]["Username"] .": $user[username]\n".
                    $PHORUM["DATA"]["LANG"]["Password"] .": $newpass".
                    "\n\n".
                    wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody2"],72);
@@ -182,7 +182,7 @@ if (count($_POST) > 0) {
                 }
             }
 
-            // Determine the URL to redirect the user to. 
+            // Determine the URL to redirect the user to.
             // If redir is a number, it is a URL constant.
             if(is_numeric($_POST["redir"])){
                 $redir = phorum_get_url($_POST["redir"]);
@@ -205,7 +205,7 @@ if (count($_POST) > 0) {
             phorum_redirect_by_url($redir);
             exit();
         }
-        
+
         // Login failed.
         else {
             $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
@@ -213,7 +213,7 @@ if (count($_POST) > 0) {
     }
 }
 
-// No data posted, so this is the first request. Here we set 
+// No data posted, so this is the first request. Here we set
 // a temporary cookie, so we can check if the user's browser
 // supports cookies.
 elseif($PHORUM["use_cookies"]) {
@@ -240,11 +240,6 @@ $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
 $PHORUM["DATA"]["LOGIN"]["username"] = htmlspecialchars( $username );
 $PHORUM["DATA"]["ERROR"] = htmlspecialchars( $error );
 $PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg );
-
-// Should we show the top-link?
-if ($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-    unset($PHORUM["DATA"]["URL"]["INDEX"]);
-}
 
 // Set the field to set the focus to after loading.
 $PHORUM["DATA"]["FOCUS_TO_ID"] = empty($username) ? "username" : "password";

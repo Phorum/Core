@@ -26,11 +26,6 @@ include_once("./include/email_functions.php");
 // set all our URL's
 phorum_build_common_urls();
 
-// should we show the top-link?
-if ($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-    unset($PHORUM["DATA"]["URL"]["INDEX"]);
-}
-
 // The URL contains an approve argument, which means that a new user
 // is confirming a new user account.
 if (isset($PHORUM["args"]["approve"])) {
@@ -46,10 +41,10 @@ if (isset($PHORUM["args"]["approve"])) {
         $user = phorum_user_get($user_id);
 
         // The user has been denied by a moderator.
-        if ($user["active"] == PHORUM_USER_INACTIVE) { 
+        if ($user["active"] == PHORUM_USER_INACTIVE) {
              $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
         // The user should still be approved by a moderator.
-        } elseif ($user["active"] == PHORUM_USER_PENDING_MOD) { 
+        } elseif ($user["active"] == PHORUM_USER_PENDING_MOD) {
         	// TODO: this message should be changed in 5.1 to have a unique message!!!
         	$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
         // The user is waiting for email and/or email+moderator confirmation.
@@ -176,13 +171,13 @@ if (count($_POST)) {
             $error = $userdata['error'];
             unset($userdata['error']);
         }
-        // Try to add the user to the database. 
+        // Try to add the user to the database.
         elseif ($user_id = phorum_user_add($userdata)) {
 
             // The user was added. Determine what message to show.
             if ($PHORUM["registration_control"] == PHORUM_REGISTER_INSTANT_ACCESS) {
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegThanks"];
-            } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL || 
+            } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL ||
                      $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH) {
                 $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
             } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_MODERATOR) {
@@ -190,7 +185,7 @@ if (count($_POST)) {
             }
 
             // Send a message to the new user in case email verification is required.
-            if ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH || 
+            if ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH ||
                 $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL) {
                 $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
                 // make the link an anchor tag for AOL users
@@ -222,7 +217,7 @@ if (count($_POST)) {
         }
     }
 
-    // Some error encountered during processing? Then setup the 
+    // Some error encountered during processing? Then setup the
     // data to redisplay the registration form, including an error.
     if (!empty($error)) {
         foreach($_POST as $key => $val){

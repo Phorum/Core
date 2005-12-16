@@ -209,9 +209,6 @@ phorum_build_common_urls();
 if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
     unset($PHORUM["DATA"]["URL"]["INDEX"]);
 }
-if($PHORUM['forum_id'] == 0 || $PHORUM['folder_flag']) {
-    unset($PHORUM["DATA"]["URL"]["POST"]);
-}
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_SEARCH_ACTION_URL);
 $PHORUM["DATA"]["SEARCH"]["forum_id"] = $PHORUM["forum_id"];

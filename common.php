@@ -209,6 +209,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM['vroot']=0;
         $PHORUM['parent_id']=0;
         $PHORUM['active']=1;
+        $PHORUM['folder_flag']=1;
     }
 
     // stick some stuff from the settings into the DATA member
@@ -631,40 +632,62 @@ function phorum_get_template( $page, $is_include = false )
 // creates URLs used on most pages
 function phorum_build_common_urls()
 {
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["TOP"] = phorum_get_url( PHORUM_LIST_URL );
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
+    $PHORUM=$GLOBALS['PHORUM'];
+
+    // those links are only needed in forums, not in folders
+    if(isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["TOP"] = phorum_get_url( PHORUM_LIST_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
+    }
+
+    // those are general urls, needed nearly everywhere
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
+
+    // RSS-Url only makes sense on a couple of pages
     if(phorum_page=="index" || phorum_page=="list" || phorum_page=="read"){
         $GLOBALS["PHORUM"]["DATA"]["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL );
     }
 
-    if(isset($GLOBALS['PHORUM']["use_new_folder_style"]) && $GLOBALS['PHORUM']["use_new_folder_style"] ) { // go to root or vroot
+    $index_id=-1;
+    // in a folder
 
-            $index_id=$GLOBALS["PHORUM"]["vroot"]; // vroot is either 0 (root) or another id
+    if( $PHORUM['folder_flag'] && phorum_page != 'index'
+    && ($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id'])) {
+        // folder where we usually don't show the index-link but on
+        // additional pages like search and login its shown
+        $index_id=$PHORUM['forum_id'];
 
-    } else { // go to parent
+    } elseif( ( $PHORUM['folder_flag'] && phorum_page != 'index') ||
+    (!$PHORUM['folder_flag'] && $PHORUM['active'])) {
+        // either a folder where the link should be shown (not vroot or root)
+        // or an active forum where the link should be shown
 
-            $index_id=$GLOBALS["PHORUM"]["parent_id"]; // parent_id is always set now
+        if(isset($PHORUM["use_new_folder_style"]) && $PHORUM["use_new_folder_style"] ) {
+            // go to root or vroot
+            $index_id=$PHORUM["vroot"]; // vroot is either 0 (root) or another id
+
+        } else {
+            // go to parent
+            $index_id=$PHORUM["parent_id"]; // parent_id is always set now
+
+        }
 
     }
-
-    // only add the index-link if the forum is not hidden
-    if( $GLOBALS["PHORUM"]["active"]) {
-            // check if its the full root, avoid adding an id in this case (SE-optimized ;))
-            if (!empty($index_id))
-                $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $index_id );
-            else
-                $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
+    if($index_id > -1) {
+        // check if its the full root, avoid adding an id in this case (SE-optimized ;))
+        if (!empty($index_id))
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $index_id );
+        else
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
     }
 
-
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
-
+    // these urls depend on the login-status of a user
     if ( $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ) {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL, "logout=1" );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_CONTROLCENTER_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
     } else {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_REGISTER_URL );
