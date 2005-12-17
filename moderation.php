@@ -236,6 +236,11 @@ switch ($mod_step) {
           phorum_email_notice($old_message);
         }
 
+        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum']) && $PHORUM['folder_flag'] && $old_message['sort'] == PHORUM_SORT_ANNOUNCEMENT) {
+            $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
+        }
+
+
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
@@ -265,6 +270,11 @@ switch ($mod_step) {
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
+
+        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum']) && $PHORUM['folder_flag'] && $old_message['sort'] == PHORUM_SORT_ANNOUNCEMENT) {
+            $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
+        }
+
 
         $PHORUM['DATA']['MESSAGE']="$num_approved ".$PHORUM['DATA']['LANG']['MsgApprovedOk'];
         if(isset($PHORUM['args']["prepost"])) {
