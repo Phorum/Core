@@ -36,6 +36,12 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
     }
     $error_flag = true;
     return;
+
+// check that they are logged in according
+// to the security settings in the admin
+} elseif($PHORUM["DATA"]["LOGGEDIN"] && !$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_POSTING_URL));
+    exit();
 }
 
 // Put read-only user info in the message.
