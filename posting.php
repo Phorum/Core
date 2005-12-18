@@ -195,7 +195,7 @@ if (count($_FILES)) {
 
 // Set all our URL's
 phorum_build_common_urls();
-$PHORUM["DATA"]["URL"]["ACTION"] = 'posting.php';
+$PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_POSTING_URL);
 
 // Keep track of errors.
 $error_flag = false;
