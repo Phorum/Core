@@ -519,11 +519,14 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 
     // lock the table so we don't leave orphans.
     mysql_query("LOCK TABLES {$PHORUM['message_table']} WRITE", $conn);
-
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
     $threadset = 0;
     // get the parents of the message to delete.
     $sql = "select forum_id, message_id, thread, parent_id from {$PHORUM['message_table']} where message_id = $message_id ";
     $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
     $rec = mysql_fetch_assoc($res);
 
     if($mode == PHORUM_DELETE_TREE){
@@ -545,6 +548,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         // forum_id is in here for speed by using a key only
         $sql = "update {$PHORUM['message_table']} set parent_id=$rec[parent_id] where forum_id=$rec[forum_id] and parent_id=$rec[message_id]";
         mysql_query($sql, $conn);
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     }else{
         $count = count(explode(",", $mids));
     }
@@ -552,10 +556,12 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // delete the messages
     $sql = "delete from {$PHORUM['message_table']} where message_id in ($mids)";
     mysql_query($sql, $conn);
-
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
     // clear the lock
     mysql_query("UNLOCK TABLES", $conn);
-
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
     // start ft-search stuff
     $sql="delete from {$PHORUM['search_table']} where message_id in ($mids)";
     $res = mysql_query($sql, $conn);
@@ -595,7 +601,8 @@ function phorum_db_get_messagetree($parent_id, $forum_id){
     $sql = "Select message_id from {$PHORUM['message_table']} where forum_id=$forum_id and parent_id=$parent_id";
 
     $res = mysql_query($sql, $conn);
-
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
     $tree = "$parent_id";
 
     while($rec = mysql_fetch_row($res)){
@@ -683,7 +690,6 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
     $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $checkvar";
     $res = mysql_query($sql, $conn);
-
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     $ret = $multiple ? array() : NULL;
@@ -1546,6 +1552,7 @@ function phorum_db_get_groups($group_id=0)
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
     $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     $groups=array();
     while($rec=mysql_fetch_assoc($res)){
@@ -1558,7 +1565,8 @@ function phorum_db_get_groups($group_id=0)
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
     $res = mysql_query($sql, $conn);
-
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    
     while($rec=mysql_fetch_assoc($res)){
 
         $groups[$rec["group_id"]]["permissions"][$rec["forum_id"]]=$rec["permission"];
@@ -2113,6 +2121,7 @@ function phorum_db_user_save($userdata){
 
         $sql = "delete from {$PHORUM['user_permissions_table']} where user_id = $user_id";
         $res=mysql_query($sql, $conn);
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
         foreach($forum_perms as $fid=>$perms){
             $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$perms";
@@ -2126,7 +2135,8 @@ function phorum_db_user_save($userdata){
         // storing custom-fields
         $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id = $user_id";
         $res=mysql_query($sql, $conn);
-
+        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        
         if(is_array($user_data)) {
             foreach($user_data as $key => $val){
                 if(is_array($val)) { /* arrays need to be serialized */
@@ -2165,6 +2175,7 @@ function phorum_db_user_save_groups($user_id, $groups)
     $conn = phorum_db_mysql_connect();
     $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id = $user_id";
     $res=mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     foreach($groups as $group_id => $group_perm){
         $sql = "insert into {$PHORUM['user_group_xref_table']} set user_id=$user_id, group_id=$group_id, status=$group_perm";
@@ -4180,7 +4191,7 @@ function phorum_db_maxpacketsize ()
 {
     $conn = phorum_db_mysql_connect();
     $res = mysql_query("SELECT @@global.max_allowed_packet");
-    if (! $res) return NULL;
+    if (!$res) return NULL;
     if (mysql_num_rows($res)) {
         $row = mysql_fetch_array($res);
         return $row[0];
