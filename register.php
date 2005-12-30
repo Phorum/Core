@@ -40,6 +40,8 @@ if (isset($PHORUM["args"]["approve"])) {
 
         $user = phorum_user_get($user_id);
 
+        $moduser=array();
+
         // The user has been denied by a moderator.
         if ($user["active"] == PHORUM_USER_INACTIVE) {
              $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
