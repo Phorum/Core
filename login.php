@@ -84,6 +84,8 @@ if (count($_POST) > 0) {
             // address. Retrieve the user.
             $user = phorum_user_get($uid);
 
+            $tmp_user=array();
+
             // User registration not yet approved by a moderator.
             if($user["active"] == PHORUM_USER_PENDING_MOD) {
                 $template = "message";
