@@ -293,7 +293,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if($count){
         $sql.= " LIMIT $count";
     }
-    
+
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
@@ -4190,7 +4190,7 @@ function phorum_db_mysql_error($err){
 function phorum_db_maxpacketsize ()
 {
     $conn = phorum_db_mysql_connect();
-    $res = mysql_query("SELECT @@global.max_allowed_packet");
+    $res = mysql_query("SELECT @@global.max_allowed_packet",$conn);
     if (!$res) return NULL;
     if (mysql_num_rows($res)) {
         $row = mysql_fetch_array($res);
@@ -4218,7 +4218,7 @@ function phorum_db_sanitychecks()
 
     // Retrieve the MySQL server version.
     $conn = phorum_db_mysql_connect();
-    $res = mysql_query("SELECT @@global.version");
+    $res = mysql_query("SELECT @@global.version",$conn);
     if (!$res) return array(
         PHORUM_SANITY_WARN,
         "The database layer could not retrieve the version of the
