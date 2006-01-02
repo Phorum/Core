@@ -4246,9 +4246,9 @@ function phorum_db_sanitychecks()
              version number, so the checking scripts can be updated."
         );
 
-        settype($vers[0], 'int');
-        settype($vers[1], 'int');
-        settype($vers[2], 'int');
+        settype($ver[0], 'int');
+        settype($ver[1], 'int');
+        settype($ver[2], 'int');
 
         // MySQL before version 4.
         if ($ver[0] < 4) return array(
