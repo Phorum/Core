@@ -330,10 +330,12 @@
 
             }
             error_reporting(E_WARN);
-            if($err){
-                $message.="Your cache directory is not writable. Please change the permissions on '/cache' inside the Phorum directory to allow writing. In Unix, you may have to use this command: chmod 777 cache<br /><br />If you want to continue anyway and set a cache directory manually, press continue. Note that you must do this, Phorum will not work without a valid cache.";
-            } else {
-                $message.="Cache directory set.  Next we will create a user with administrator privileges.  Press continue when ready.";
+            if ($message == "") {
+                if($err){
+                    $message.="Your cache directory is not writable. Please change the permissions on '/cache' inside the Phorum directory to allow writing. In Unix, you may have to use this command: chmod 777 cache<br /><br />If you want to continue anyway and set a cache directory manually, press continue. Note that you must do this, Phorum will not work without a valid cache.";
+                } else {
+                    $message.="Cache directory set.  Next we will create a user with administrator privileges.  Press continue when ready.";
+                }
             }
 
             $frm =& new PhorumInputForm ("", "post", "Continue ->");
