@@ -290,8 +290,10 @@
             $frm->hidden("module", "install");
             $frm->addbreak("Creating An Administrator");
             $frm->addmessage("Please enter the following information.  This can be your user information or you can create an administrator that is separate from yourself.<br /><br />Note: If you are using a pre-existing authentication database, please enter the username and password of the admin user that already exists.");
-            $frm->addrow("Admin User Name", $frm->text_box("admin_user", "", 30));
-            $frm->addrow("Admin Email Address", $frm->text_box("admin_email", "", 30));
+            $admin_user = isset($_POST["admin_user"]) ? $_POST["admin_user"] : "";
+            $admin_email = isset($_POST["admin_email"]) ? $_POST["admin_email"] : "";
+            $frm->addrow("Admin User Name", $frm->text_box("admin_user", $admin_user, 30));
+            $frm->addrow("Admin Email Address", $frm->text_box("admin_email", $admin_email, 30));
             $frm->addrow("Admin Password", $frm->text_box("admin_pass", "", 30, 0, true));
             $frm->addrow("(again)", $frm->text_box("admin_pass2", "", 30, 0, true));
             $frm->show();
