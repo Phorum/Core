@@ -68,7 +68,12 @@ elseif ($do_attach && ! empty($_FILES))
 
         // check with PHP and MySQL on attachment size
         $php_limit = ini_get('upload_max_filesize')*1024;
-        $db_limit = phorum_db_maxpacketsize()/1024*.6;
+        $max_packetsize = phorum_db_maxpacketsize();
+        if ($max_packetsize == NULL) {
+            $db_limit = $php_limit;
+        } else {
+            $db_limit = $max_packetsize/1024*.6;
+        }
         if($PHORUM["max_attachment_size"]==0){
             $PHORUM["max_attachment_size"] = min($php_limit, $db_limit);
         } else {

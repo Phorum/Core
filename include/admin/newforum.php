@@ -396,7 +396,12 @@
     $frm->addrow("Allowed Files (eg: gif;jpg;png, empty for any)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
     $php_limit = ini_get('upload_max_filesize')*1024;
-    $db_limit = phorum_db_maxpacketsize()/1024*.6;
+    $max_packetsize = phorum_db_maxpacketsize();
+    if ($max_packetsize == NULL) {
+        $db_limit = $php_limit;
+    } else {
+        $db_limit = $max_packetsize/1024*.6;
+    }
     $max_size =  phorum_filesize(min($php_limit, $db_limit)*1024);
 
     $row=$frm->addrow("Max File Size In kB ($max_size maximum)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));

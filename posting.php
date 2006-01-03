@@ -384,7 +384,12 @@ $message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
 if($PHORUM["max_attachments"]){
 
     $php_limit = ini_get('upload_max_filesize')*1024;
-    $db_limit = phorum_db_maxpacketsize()/1024*.6;
+    $max_packetsize = phorum_db_maxpacketsize();
+    if ($max_packetsize == NULL) {
+        $db_limit = $php_limit;
+    } else {
+        $db_limit = $max_packetsize/1024*.6;
+    }
     if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$php_limit;
     $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"], $php_limit, $db_limit, $PHORUM["max_totalattachment_size"]);
 

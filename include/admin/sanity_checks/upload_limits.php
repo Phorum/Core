@@ -40,7 +40,12 @@
         // Get the maximum packet size for the database.
         // For determining the maximum allowed upload size,
         // we have to take packet overhead into account.
-        $db_max_upload = phorum_db_maxpacketsize() * 0.6;
+        $max_packetsize = phorum_db_maxpacketsize();
+        if ($max_packetsize == NULL) {
+            $db_max_upload = $php_max_upload;
+        } else {
+            $db_max_upload = phorum_db_maxpacketsize() * 0.6;
+        }
 
         // Check limits for file uploading in personal profile.
         if ($PHORUM["file_uploads"] && $PHORUM["max_file_size"]) {
