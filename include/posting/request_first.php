@@ -90,7 +90,7 @@ if ($mode == "edit" || $mode == "moderation") {
 }
 
 // For new messages, set some default values for logged in users.
-if (($mode == "post" || $mode == "reply") && $PHORUM["DATA"]["LOGGEDIN"])
+if (($mode == "post" || $mode == "reply" || $mode == "quote") && $PHORUM["DATA"]["LOGGEDIN"])
 {
     if (isset($PHORUM["user"]["show_signature"]) &&
         $PHORUM["user"]["show_signature"]) {
