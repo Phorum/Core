@@ -271,4 +271,35 @@
 
           return $msg;
     }
+
+    function phorum_admin_gen_compare($txt) {
+        $func = 0;
+        if($txt == "gt") {
+            $func = create_function('$a, $b', 'return $a > $b;');
+        } elseif($txt == "gte") {
+            $func = create_function('$a, $b', 'return $a >= $b;');
+        } elseif($txt == "lt") {
+            $func = create_function('$a, $b', 'return $a < $b;');
+        } elseif($txt == "lte") {
+            $func = create_function('$a, $b', 'return $a <= $b;');
+        } elseif($txt == "eq") {
+            $func = create_function('$a, $b', 'return $a == $b;');
+        }
+        if(!$func) {
+            phorum_admin_error("Invalid posts comparison operator.");
+            return NULL;
+        }
+        return $func;
+    }
+
+    function phorum_admin_filter_arr($arr,$field,$value,$cmpfn) {
+        $new = array();
+        foreach($arr as $item){
+            if(isset($item[$field]) && $cmpfn($item[$field],$value)) {
+                array_push($new,$item);
+            }
+        }
+        return $new;
+    }
+
 ?>

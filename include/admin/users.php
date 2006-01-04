@@ -34,7 +34,7 @@
                 foreach($_POST['deleteIds'] as $id => $deluid) {
                     phorum_user_delete($deluid);
                 }
-                echo "$count User(s) deleted.<br />";
+                phorum_admin_okmsg("$count User(s) deleted.");
             }
 
         } else {
@@ -123,13 +123,13 @@
 
             if(empty($error)){
                 phorum_user_save($user_data);
-                echo "User Saved<br />";
+                phorum_admin_okmsg("User Saved");
             }
         }
 
     }
 
-    if($error){
+    if ($error) {
         phorum_admin_error($error);
     }
 
@@ -152,19 +152,52 @@
 
             $frm->hidden("module", "users");
 
-            $frm->addrow("Search", $frm->text_box("search", htmlspecialchars($_REQUEST["search"]), 50)."&nbsp;&nbsp;<a href=\"{$_SERVER['PHP_SELF']}?module=users&search=%\">All Users</a>");
+            $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", htmlspecialchars($_REQUEST["search"]), 30) . " &bull; <a href=\"{$_SERVER['PHP_SELF']}?module=users&search=\">Find All Users</a>");
 
+            $frm->addrow("", "Post count " .  
+                $frm->select_tag("posts_op", array("gte" => ">=", "lte" => "<="), $_REQUEST["posts_op"]) .  
+                $frm->text_box("posts", htmlspecialchars($_REQUEST["posts"]), 5) .
+                " and last active " .
+                // these are flipped because we're going back in time
+                $frm->select_tag("lastactive_op", array("gte" => "<=", "lte" => ">="), $_REQUEST["lastactive_op"]) .
+                $frm->text_box("lastactive", htmlspecialchars($_REQUEST["lastactive"]), 5) . " days ago");
             $frm->show();
-
         }
 
-        echo "<hr class=\"PhorumAdminHR\" />";
+?>
+        <hr class=\"PhorumAdminHR\" />
+
+        <script type="text/javascript">
+        <!--
+        function CheckboxControl(form, onoff) {
+            for (var i = 0; i < form.elements.length; i++)
+                if (form.elements[i].type == "checkbox")
+                    form.elements[i].checked = onoff;
+        }
+        // -->
+        </script>
+<?php
 
         $search=$_REQUEST["search"];
 
         $url_safe_search=urlencode($_REQUEST["search"]);
+        $url_safe_search.="&posts=".urlencode($_REQUEST["posts"]);
+        $url_safe_search.="&posts_op=".urlencode($_REQUEST["posts_op"]);
+        $url_safe_search.="&lastactive=".urlencode($_REQUEST["lastactive"]);
+        $url_safe_search.="&lastactive_op=".urlencode($_REQUEST["lastactive_op"]);
 
         $users=phorum_db_search_users($_REQUEST["search"]);
+
+        if (isset($_REQUEST["posts"]) && $_REQUEST["posts"] != "" && $_REQUEST["posts"] >= 0) {
+            $cmpfn = phorum_admin_gen_compare($_REQUEST["posts_op"]);
+            $users = phorum_admin_filter_arr($users, "posts", $_REQUEST["posts"], $cmpfn);
+        }
+        
+        if(isset($_REQUEST["lastactive"]) && $_REQUEST["lastactive"] != "" && $_REQUEST["lastactive"] >= 0) {
+            $time = time() - ($_REQUEST["lastactive"] * 86400);
+            $cmpfn = phorum_admin_gen_compare($_REQUEST["lastactive_op"]);
+            $users = phorum_admin_filter_arr($users, "date_last_active", $time, $cmpfn);
+        }
 
         $total=count($users);
 
@@ -201,21 +234,26 @@
                 $nav.="<a href=\"$_SERVER[PHP_SELF]?module=users&search=$url_safe_search&start=$new_start\">Next Page</a>";
             }
 
-            echo "<form action=\"{$_SERVER['PHP_SELF']}\" method=\"post\">\n";
-            echo "<input type=\"hidden\" name=\"module\" value=\"users\">\n";
-            echo "<input type=\"hidden\" name=\"action\" value=\"deleteUsers\">\n";
-            echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
-            echo "<tr>\n";
-            echo "    <td colspan=\"4\">$total users found ($total_active active, $total_poster posting)</td>\n";
-            echo "    <td align=\"right\">$nav</td>\n";
-            echo "</tr>\n";
-            echo "<tr>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">User</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Email</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Status (Posts)</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Last Activity</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Delete</td>\n";
-            echo "</tr>\n";
+            echo <<<EOT
+            <form name="UsersForm" action="{$_SERVER['PHP_SELF']}" method="post">
+            <input type="hidden" name="module" value="users">
+            <input type="hidden" name="action" value="deleteUsers">
+            <table border="0" cellspacing="1" cellpadding="0" 
+                   class="PhorumAdminTable" width="100%">
+            <tr>
+                <td>$total users found ($total_active active, $total_poster posting)</td>
+                <td colspan="3">Showing $display users at a time
+                <td colspan="2" align="right">$nav</td>
+            </tr>
+            <tr>
+                <td class="PhorumAdminTableHead">User</td>
+                <td class="PhorumAdminTableHead">Email</td>
+                <td class="PhorumAdminTableHead">Status</td>
+                <td class="PhorumAdminTableHead">Posts</td>
+                <td class="PhorumAdminTableHead">Last Activity</td>
+                <td class="PhorumAdminTableHead">Delete</td>
+            </tr>
+EOT;
 
             foreach($users as $user){
 
@@ -237,7 +275,7 @@
                         $status = "Deactivated";
                 }
 
-                $status.= intval($user['posts']) ? " (".intval($user['posts']).")" : "";
+                $posts = intval($user['posts']);
 
                 $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
 
@@ -245,13 +283,26 @@
                 echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
                 echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
                 echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
+                echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";
                 echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_last_active']) ? strftime($PHORUM['short_date'], intval($user['date_last_active'])) : "&nbsp;")."</td>\n";
-                echo "    <td class=\"".$ta_class."\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
+                echo "    <td class=\"".$ta_class."\"><input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
                 echo "</tr>\n";
             }
-            echo "<tr><td colspan=\"5\" align=\"right\"><input type=\"submit\" name=\"submit\" value=\"Delete Selected\"></td></tr>";
-            echo "</table>\n";
-            echo "</form>\n";
+
+            echo <<<EOT
+            <tr>
+              <td colspan="6" align="right">
+              <input type="button" value="Check All" 
+               onClick="CheckboxControl(this.form, true);">
+              <input type="button" value="Clear All" 
+               onClick="CheckboxControl(this.form, false);">
+              <input type="submit" name="submit" value="Delete Selected Users"
+               onClick="return confirm('Really delete the selected user(s)?')">
+              </td>
+            </tr>
+            </table>
+            </form>
+EOT;
 
         } else {
 
