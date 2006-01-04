@@ -961,7 +961,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         $tmp_row=mysqli_fetch_row($res);
-        $total_count=$row[0];
+        $total_count=$tmp_row[0];
 
         $sql="select message_id from $table order by datestamp desc limit $start, $length";
         $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT );
