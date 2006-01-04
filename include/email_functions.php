@@ -151,6 +151,12 @@ function phorum_email_pm_notice($message, $langusers)
 function phorum_email_notice($message)
 {
     $PHORUM=$GLOBALS["PHORUM"];
+
+    // do we allow email-notification for that forum?
+    if(!$PHORUM['allow_email_notify']) {
+        return;
+    }
+
     include_once("./include/format_functions.php");
 
     $mail_users_full = phorum_db_get_subscribed_users($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);

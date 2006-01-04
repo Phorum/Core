@@ -256,6 +256,9 @@ if (! $error_flag)
         $PHORUM["max_attachments"] > 0 &&
         phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
 
+    $PHORUM["DATA"]["EMAILNOTIFY"] =
+    (isset($PHORUM['allow_email_notify']) && !empty($PHORUM['allow_email_notify']))? 1 : 0;
+
     // What special options can this user set for a message?
     $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
         "sticky"        => false,   // Sticky flag for message sorting

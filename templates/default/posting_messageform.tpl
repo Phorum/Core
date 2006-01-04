@@ -107,12 +107,14 @@ document.write('<input type="submit" name="ignore" style="display:none">');
 {! Email notify ============================================================= }
 
 {IF POST->user_id}
+{IF EMAILNOTIFY}
 <tr>
   <td colspan="2">
     <input type="checkbox" name="email_notify" value="1"
      {IF POST->email_notify} checked="checked"{/IF} /> {LANG->EmailReplies}
   </td>
 </tr>
+{/IF}
 {/IF}
 
 {! Show signature =========================================================== }
