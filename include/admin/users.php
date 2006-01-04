@@ -154,8 +154,8 @@
 
             $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", htmlspecialchars($_REQUEST["search"]), 30) . " &bull; <a href=\"{$_SERVER['PHP_SELF']}?module=users&search=\">Find All Users</a>");
 
-            $frm->addrow("", "Post count " .  
-                $frm->select_tag("posts_op", array("gte" => ">=", "lte" => "<="), $_REQUEST["posts_op"]) .  
+            $frm->addrow("", "Post count " .
+                $frm->select_tag("posts_op", array("gte" => ">=", "lte" => "<="), $_REQUEST["posts_op"]) .
                 $frm->text_box("posts", htmlspecialchars($_REQUEST["posts"]), 5) .
                 " and last active " .
                 // these are flipped because we're going back in time
@@ -192,7 +192,7 @@
             $cmpfn = phorum_admin_gen_compare($_REQUEST["posts_op"]);
             $users = phorum_admin_filter_arr($users, "posts", $_REQUEST["posts"], $cmpfn);
         }
-        
+
         if(isset($_REQUEST["lastactive"]) && $_REQUEST["lastactive"] != "" && $_REQUEST["lastactive"] >= 0) {
             $time = time() - ($_REQUEST["lastactive"] * 86400);
             $cmpfn = phorum_admin_gen_compare($_REQUEST["lastactive_op"]);
@@ -238,7 +238,7 @@
             <form name="UsersForm" action="{$_SERVER['PHP_SELF']}" method="post">
             <input type="hidden" name="module" value="users">
             <input type="hidden" name="action" value="deleteUsers">
-            <table border="0" cellspacing="1" cellpadding="0" 
+            <table border="0" cellspacing="1" cellpadding="0"
                    class="PhorumAdminTable" width="100%">
             <tr>
                 <td>$total users found ($total_active active, $total_poster posting)</td>
@@ -265,7 +265,7 @@ EOT;
 
                     case PHORUM_USER_PENDING_EMAIL:
                     case PHORUM_USER_PENDING_BOTH:
-                        $status = "Pending Confrimation";
+                        $status = "Pending Confirmation";
                         break;
 
                     case PHORUM_USER_PENDING_MOD:
@@ -292,9 +292,9 @@ EOT;
             echo <<<EOT
             <tr>
               <td colspan="6" align="right">
-              <input type="button" value="Check All" 
+              <input type="button" value="Check All"
                onClick="CheckboxControl(this.form, true);">
-              <input type="button" value="Clear All" 
+              <input type="button" value="Clear All"
                onClick="CheckboxControl(this.form, false);">
               <input type="submit" name="submit" value="Delete Selected Users"
                onClick="return confirm('Really delete the selected user(s)?')">
