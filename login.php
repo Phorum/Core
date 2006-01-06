@@ -33,6 +33,18 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
     // killing short-term (write) cookie
     phorum_user_clear_session(PHORUM_SESSION_SHORT_TERM);
 
+    // reset the sessid if not using cookies
+    if(!$PHORUM['use_cookies']) {
+
+        $new_sessid=md5($_POST['username'].microtime().$_POST['password']);
+
+        $user=array(
+        'user_id'=>$PHORUM['user']['user_id'],
+        'sessid_st'=>$new_sessid
+        );
+        phorum_user_save_simple($user);
+    }
+
 
     // Determine the URL to redirect the user to. The hook "after_logout"
     // can be used by module writers to set a custom redirect URL.
