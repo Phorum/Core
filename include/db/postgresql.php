@@ -4270,13 +4270,6 @@ function phorum_db_pg_last_error($err){
  */
 function phorum_db_maxpacketsize ()
 {
-    $conn = phorum_db_postgresql_connect();
-	$res = pg_query("SELECT $@@global.max_allowed_packet");
-    if (! $res) return NULL;
-    if (pg_num_rows($res)) {
-        $row = pg_fetch_array($res);
-        return $row[0];
-    }
     return NULL;
 }
 
