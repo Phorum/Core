@@ -26,17 +26,13 @@ include_once( "./include/email_functions.php" );
 // Handle logout
 // ----------------------------------------------------------------------------
 
-if (!empty($PHORUM["args"]["logout"])) {
+if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
     // killing long-term cookie
     phorum_user_clear_session(PHORUM_SESSION_LONG_TERM);
     // killing short-term (write) cookie
     phorum_user_clear_session(PHORUM_SESSION_SHORT_TERM);
 
-    // Strip the session id from the URL in case URI auth is in use.
-    if (stristr($_SERVER["HTTP_REFERER"], PHORUM_SESSION_LONG_TERM)){
-        $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"]["phorum_session_v5"]), "", $url);
-    }
 
     // Determine the URL to redirect the user to. The hook "after_logout"
     // can be used by module writers to set a custom redirect URL.
@@ -45,6 +41,12 @@ if (!empty($PHORUM["args"]["logout"])) {
     } else {
         $url = phorum_get_url(PHORUM_LIST_URL);
     }
+
+    // Strip the session id from the URL in case URI auth is in use.
+    if (stristr($url, PHORUM_SESSION_LONG_TERM)){
+        $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"][PHORUM_SESSION_LONG_TERM]), "", $url);
+    }
+
     $url = phorum_hook("after_logout", $url);
 
     phorum_redirect_by_url($url);
