@@ -38,8 +38,8 @@ $dbmessage = array(
 );
 
 // Update sort setting, if allowed.
-if (! $message["parent_id"])
-{
+if ( $message["parent_id"]==0 ) {
+
     if ($PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] && $message["special"]=="sticky") {
         $dbmessage["sort"] = PHORUM_SORT_STICKY;
     } elseif ($PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] && $message["special"] == "announcement") {
@@ -54,6 +54,13 @@ if (! $message["parent_id"])
         }
         $dbmessage["sort"] = $sort;
     }
+
+} else {
+
+    // set some key fields to the same values as the first message in the thread
+    $dbmessage["forum_id"] = $top_parent["forum_id"];
+    $dbmessage["sort"] = $top_parent["sort"];
+
 }
 
 // Update the editing info in the meta data.
