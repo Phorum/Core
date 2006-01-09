@@ -517,10 +517,6 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 
     settype($message_id, "int");
 
-    // lock the table so we don't leave orphans.
-    mysql_query("LOCK TABLES {$PHORUM['message_table']} WRITE", $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
     $threadset = 0;
     // get the parents of the message to delete.
     $sql = "select forum_id, message_id, thread, parent_id from {$PHORUM['message_table']} where message_id = $message_id ";
@@ -534,6 +530,11 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     }else{
         $mids = $message_id;
     }
+
+    // unapprove the messages first so replies will not get posted
+    $sql = "update {$PHORUM['message_table']} set status=".PHORUM_STATUS_HOLD." where message_id in ($mids)";
+    $res = mysql_query($sql, $conn);
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     $thread = $rec['thread'];
     if($thread == $message_id && $mode == PHORUM_DELETE_TREE){
@@ -556,10 +557,6 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // delete the messages
     $sql = "delete from {$PHORUM['message_table']} where message_id in ($mids)";
     mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
-    // clear the lock
-    mysql_query("UNLOCK TABLES", $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     
     // start ft-search stuff
