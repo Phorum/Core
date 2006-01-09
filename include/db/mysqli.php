@@ -534,8 +534,8 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 
     // unapprove the messages first so replies will not get posted
     $sql = "update {$PHORUM['message_table']} set status=".PHORUM_STATUS_HOLD." where message_id in ($mids)";
-    $res = mysqli_query($sql, $conn);
-    if ($err = mysqli_error()) phorum_db_mysqli_error("$err: $sql");
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $thread = $rec['thread'];
     if($thread == $message_id && $mode == PHORUM_DELETE_TREE){
