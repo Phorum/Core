@@ -208,9 +208,9 @@
                 "reply_on_read_page" => 1,
                 "status" => "normal",
                 "use_new_folder_style" => 1,
-                "default_forum_options" => serialize($default_forum_options),
-                "hooks"=> serialize($hooks_initial),
-                "mods" => serialize($mods_initial)
+                "default_forum_options" => $default_forum_options,
+                "hooks"=> $hooks_initial,
+                "mods" => $mods_initial
 
                 );
 
