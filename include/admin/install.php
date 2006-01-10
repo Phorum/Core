@@ -145,6 +145,8 @@
                 'vroot'=>0,
                 );
 
+                phorum_db_add_forum($default_forum_options);
+
                 // insert the default module settings
                 // hooks
 
