@@ -17,6 +17,12 @@
     <td>{PROFILE->real_name}</td>
 </tr>
 {/IF}
+{IF PROFILE->posts}
+<tr>
+    <td nowrap="nowrap">{LANG->Posts}:&nbsp;</td>
+    <td>{PROFILE->posts}</td>
+</tr>
+{/IF}
 {IF PROFILE->date_added}
 <tr>
     <td nowrap="nowrap">{LANG->DateReg}:&nbsp;</td>
