@@ -28,7 +28,7 @@ if(!$PHORUM['use_rss']){
     exit();
 }
 
-$cache_key = $_SERVER["QUERY_STRING"]; 
+$cache_key = $_SERVER["QUERY_STRING"].",".$PHORUM["user"]["user_id"]; 
 $data = phorum_cache_get("rss", $cache_key);
 
 if(empty($data)){
