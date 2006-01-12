@@ -28,84 +28,105 @@ if(!$PHORUM['use_rss']){
     exit();
 }
 
-if($PHORUM["forum_id"]==$PHORUM["vroot"]){
-    $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
-    $forum_ids = array_keys($forums);
-} elseif($PHORUM["folder_flag"] && $PHORUM["vroot"]==0 && $PHORUM["forum_id"]!=0){
-    // we don't support rss for normal folders
-    exit();
-} else {
-    $forum_ids = $PHORUM["forum_id"];
-    $forums = phorum_db_get_forums($PHORUM["forum_id"]);
-}
+$cache_key = $_SERVER["QUERY_STRING"]; 
+$data = phorum_cache_get("rss", $cache_key);
 
-// find default forum for announcements
-foreach($forums as $forum_id=>$forum){
-    if($forum["folder_flag"]){
-        unset($forums[$forum_id]);
-    } elseif(empty($default_forum_id)) { 
-        $default_forum_id = $forum_id;
+if(empty($data)){
+
+    if($PHORUM["forum_id"]==$PHORUM["vroot"]){
+        $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
+        $forum_ids = array_keys($forums);
+    } elseif($PHORUM["folder_flag"] && $PHORUM["vroot"]==0 && $PHORUM["forum_id"]!=0){
+        // we don't support rss for normal folders
+        exit();
+    } else {
+        $forum_ids = $PHORUM["forum_id"];
+        $forums = phorum_db_get_forums($PHORUM["forum_id"]);
     }
-}
-
-$PHORUM["threaded_list"]=false;
-$PHORUM["float_to_top"]=false;
-
-// get the thread set started
-$rows = array();
-$thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
-$rows = phorum_db_get_recent_messages(30, $forum_ids, $thread);
-
-unset($rows["users"]);
-
-$items = array();
-$pub_date=0;
-foreach($rows as $key => $row){
-
-    if(!$PHORUM["forum_id"]){
-        $row["subject"]="[".$forums[$row["forum_id"]]["name"]."] ".$row["subject"];
+    
+    // find default forum for announcements
+    foreach($forums as $forum_id=>$forum){
+        if($forum["folder_flag"]){
+            unset($forums[$forum_id]);
+        } elseif(empty($default_forum_id)) { 
+            $default_forum_id = $forum_id;
+        }
     }
+    
+    $PHORUM["threaded_list"]=false;
+    $PHORUM["float_to_top"]=false;
+    
+    // get the thread set started
+    $rows = array();
+    $thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
 
-    $forum_id = ($row["forum_id"]==0) ? $default_forum_id : $row["forum_id"];
-
-    $items[]=array(
-        "pub_date" => date("r",$row["datestamp"]),
-        "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum_id, $row["thread"], $row["message_id"]),
-        "headline" => $row["subject"],
-        "description" => strip_tags($row["body"]),
-        "author" => $row["author"],
-        "category" => $forums[$row["forum_id"]]["name"]
+    $rows = phorum_db_get_recent_messages(30, $forum_ids, $thread);
+    
+    unset($rows["users"]);
+    
+    $items = array();
+    $pub_date=0;
+    foreach($rows as $key => $row){
+    
+        if(!$PHORUM["forum_id"]){
+            $row["subject"]="[".$forums[$row["forum_id"]]["name"]."] ".$row["subject"];
+        }
+    
+        $forum_id = ($row["forum_id"]==0) ? $default_forum_id : $row["forum_id"];
+    
+        $items[]=array(
+            "pub_date" => date("r",$row["datestamp"]),
+            "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum_id, $row["thread"], $row["message_id"]),
+            "headline" => $row["subject"],
+            "description" => strip_tags($row["body"]),
+            "author" => $row["author"],
+            "category" => $forums[$row["forum_id"]]["name"]
+        );
+    
+    
+        $pub_date = max($row["datestamp"], $pub_date);
+    
+    }
+    
+    if (!$PHORUM['locale']) $PHORUM['locale'] ="en"; //if locale not set make it 'en'
+    
+    if($PHORUM["forum_id"]){
+        $url = phorum_get_url(PHORUM_LIST_URL);
+        $name = $PHORUM["name"];
+        $description = strip_tags($PHORUM["description"]);
+    } else {
+        $url = phorum_get_url(PHORUM_INDEX_URL);
+        $name = $PHORUM["title"];
+        $description = "";
+    }
+    
+    $channel = array(
+    
+        "name" => $name,
+        "url" => $url,
+        "description" => $description,
+        "pub_date" => date("r",$pub_date),
+        "language" => $PHORUM['locale']
+    
     );
-
-
-    $pub_date = max($row["datestamp"], $pub_date);
+    
+    
+    $data = create_rss_feed($channel, $items);
 
 }
 
-if (!$PHORUM['locale']) $PHORUM['locale'] ="en"; //if locale not set make it 'en'
-
-if($PHORUM["forum_id"]){
-    $url = phorum_get_url(PHORUM_LIST_URL);
-    $name = $PHORUM["name"];
-    $description = strip_tags($PHORUM["description"]);
-} else {
-    $url = phorum_get_url(PHORUM_INDEX_URL);
-    $name = $PHORUM["title"];
-    $description = "";
+$charset = '';
+if (! empty($GLOBALS["PHORUM"]["DATA"]["CHARSET"])) {
+    $charset = '; charset=' . htmlspecialchars($GLOBALS["PHORUM"]["DATA"]['CHARSET']);
 }
+header("Content-Type: text/xml$charset");
 
-$channel = array(
+echo $data;
 
-    "name" => $name,
-    "url" => $url,
-    "description" => $description,
-    "pub_date" => date("r",$pub_date),
-    "language" => $PHORUM['locale']
-
-);
+phorum_cache_put("rss", $cache_key, $data, 300);
 
 
-create_rss_feed($channel, $items);
+/*******************************************************/
 
 function create_rss_feed($channel, $items)
 {
@@ -149,13 +170,8 @@ function create_rss_feed($channel, $items)
     $data.="  </channel>\n";
     $data.="</rss>\n";
 
-    $charset = '';
-    if (! empty($GLOBALS["PHORUM"]["DATA"]["CHARSET"])) {
-        $charset = '; charset=' . htmlspecialchars($GLOBALS["PHORUM"]["DATA"]['CHARSET']);
-    }
-    header("Content-Type: text/xml$charset");
+    return $data;
 
-    echo $data;
 }
 
 
