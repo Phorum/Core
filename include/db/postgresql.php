@@ -17,7 +17,7 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// cvs-info: $Id: mysql.php 699 2005-12-10 21:13:47Z brian $
+// cvs-info: $Id: postgresql.php 699 2006-01-05 21:13:47Z dvl $
 
 if (!defined("PHORUM")) return;
 
@@ -880,14 +880,18 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
-        $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$search' $forum_where";
-        if($match_date>0){
-            $ts=time()-86400*$match_date;
-            $sql.=" and datestamp>=$ts";
+        $sql = "SELECT message_id INTO $id_table FROM {$PHORUM['message_table']} WHERE author = '$search' $forum_where";
+        if ($match_date > 0 ){
+            $ts  = time() - 86400 * $match_date;
+            $sql.=" and datestamp >= $ts";
         }
 
         $res = pg_query($conn, $sql);
         if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
+
+        $sql = "ALTER TABLE $id_table ADD PRIMARY KEY (message_id)";
+        $res = pg_query($conn, $sql);
+   	    if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
     } else {
 
@@ -954,26 +958,33 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
             }
 
-            $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['search_table']} $use_key where $clause $extra_where";
-            $res = mysql_unbuffered_query($sql, $conn);
+            $sql = "SELECT message_id INTO $id_table from {$PHORUM['search_table']} WHERE $clause $extra_where";
+            $res = pg_query($conn, $sql);	# was mysql_unbuffered_query
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
+            $sql = "ALTER TABLE $id_table ADD PRIMARY KEY (message_id)";
+            $res = pg_query($conn, $sql);
+            if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
         }
     }
 
 
-    if(isset($id_table)){
+    if (isset($id_table)) {
 
         // create a temporary table of the messages we want
-        $table=$PHORUM['search_table']."_".md5(microtime());
-        $sql="create temporary table $table (key (forum_id, status, datestamp)) ENGINE=HEAP select {$PHORUM['message_table']}.message_id, {$PHORUM['message_table']}.datestamp, status, forum_id from {$PHORUM['message_table']} inner join $id_table using (message_id) where status=".PHORUM_STATUS_APPROVED." $forum_where";
-
-        if($match_date>0){
-            $ts=time()-86400*$match_date;
-            $sql.=" and datestamp>=$ts";
+        $table = $PHORUM['search_table']."_".md5(microtime());
+        $sql   = "SELECT {$PHORUM['message_table']}.message_id, {$PHORUM['message_table']}.datestamp, status, forum_id INTO $table FROM {$PHORUM['message_table']} inner join $id_table using (message_id) where status = " . PHORUM_STATUS_APPROVED . " $forum_where";
+        
+        if ($match_date > 0) {
+            $ts  = time() - 86400 * $match_date;
+            $sql.=" and datestamp >= $ts";
         }
 
-        $res=pg_query($conn, $sql);
+        $res = pg_query($conn, $sql);
+        if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
+
+        $sql = "ALTER TABLE $table ADD PRIMARY KEY (forum_id, status, datestamp)";
+        $res = pg_query($conn, $sql);
         if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
         $sql="select count(*) as count from $table";
@@ -982,8 +993,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
         $total_count=pg_fetch_result($res, 0, 0);
 
-        $sql="select message_id from $table order by datestamp desc limit $length offset $start";
-        $res = mysql_unbuffered_query($sql, $conn);
+        $sql = "select message_id from $table order by datestamp desc limit $length offset $start";
+        $res = pg_query($conn, $sql);   # was unbuffered
 
         if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
@@ -994,8 +1005,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         $idstring=substr($idstring, 0, -1);
 
         if($idstring){
-            $sql="select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
-            $res = mysql_unbuffered_query($sql, $conn);
+            $sql = "select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
+            $res = pg_query($conn, $sql);  # was unbuffered
 
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
