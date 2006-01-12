@@ -22,11 +22,14 @@ if(!defined("PHORUM")) return;
 // Retrieve the message id to work with.
 $message_id = 0;
 if ($mode != "post") {
-    if (! isset($PHORUM["args"][2])) {
+
+    $key = (phorum_page=="post") ? 3 : 2;
+
+    if (! isset($PHORUM["args"][$key])) {
         die("Missing message_id parameter in request for mode $mode");
     }
-    if (isset($PHORUM["args"][2])) {
-        $message_id = $PHORUM["args"][2];
+    if (isset($PHORUM["args"][$key])) {
+        $message_id = $PHORUM["args"][$key];
     }
 }
 
