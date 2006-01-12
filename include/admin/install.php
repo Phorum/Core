@@ -200,7 +200,7 @@
                 "system_email_from_name" => "",
                 "hide_forums" => "1",
                 "enable_new_pm_count" => "1",
-                "track_user_activity" => "0",
+                "track_user_activity" => "86400",
                 "html_title" => "Phorum",
                 "head_tags" => "",
                 "cache_users" => 0,
