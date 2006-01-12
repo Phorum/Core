@@ -240,19 +240,17 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 {
     $PHORUM = $GLOBALS["PHORUM"];
     settype($count, "int");
-    settype($forum_id, "int");
     settype($thread, "int");
     $arr = array();
+    $allowed_forums = array();
 
     $conn = phorum_db_mysql_connect();
 
     // we need to differentiate on which key to use
-    // last_post_time is for sort by modifystamp
-    // forum_max_message is for sort by message-id
-    if($threads_only) {
-        $use_key='last_post_time';
+    if($thread) {
+        $use_key='thread_message';
     } else {
-        $use_key='post_count';
+        $use_key='forum_max_message';
     }
 
     $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} USE KEY($use_key) WHERE status=".PHORUM_STATUS_APPROVED;
@@ -266,17 +264,29 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         // if they are not allowed to see any forums, return the emtpy $arr;
         if(empty($allowed_forums))
             return $arr;
+    } elseif(is_array($forum_id)) {
+        // for an array, check each one and return if none are allowed
+        foreach($forum_id as $id){
+            if(phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$id)) {
+                $allowed_forums[]=$id;
+            }
+        }
+
+        // if they are not allowed to see any forums, return the emtpy $arr;
+        if(empty($allowed_forums))
+            return $arr;
     } else {
         // only single forum, *much* fast this way
         if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
             return $arr;
         }
+        settype($forum_id, "int");
     }
 
-    if($forum_id > 0){
-        $sql.=" and forum_id=$forum_id";
-    } else {
+    if(count($allowed_forums)){
         $sql.=" and forum_id in (".implode(",", $allowed_forums).")";
+    } else {
+        $sql.=" and forum_id=$forum_id";
     }
 
     if($thread){

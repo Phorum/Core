@@ -23,22 +23,38 @@ define('phorum_page', 'rss');
 include_once("./common.php");
 include_once("./include/format_functions.php");
 
-// somehow we got to a folder
-if((!empty($PHORUM["folder_flag"]) && $PHORUM['forum_id'] > 0)
-    || !isset($PHORUM['use_rss']) || !$PHORUM['use_rss']){
+// check this forum allows RSS
+if(!$PHORUM['use_rss']){
     exit();
 }
 
+if($PHORUM["forum_id"]==$PHORUM["vroot"]){
+    $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
+    $forum_ids = array_keys($forums);
+} elseif($PHORUM["folder_flag"] && $PHORUM["vroot"]==0 && $PHORUM["forum_id"]!=0){
+    // we don't support rss for normal folders
+    exit();
+} else {
+    $forum_ids = $PHORUM["forum_id"];
+    $forums = phorum_db_get_forums($PHORUM["forum_id"]);
+}
+
+// find default forum for announcements
+foreach($forums as $forum_id=>$forum){
+    if($forum["folder_flag"]){
+        unset($forums[$forum_id]);
+    } elseif(empty($default_forum_id)) { 
+        $default_forum_id = $forum_id;
+    }
+}
 
 $PHORUM["threaded_list"]=false;
 $PHORUM["float_to_top"]=false;
 
 // get the thread set started
 $rows = array();
-
 $thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
-$rows = phorum_db_get_recent_messages(30, $PHORUM["forum_id"], $thread);
-$forums = phorum_db_get_forums();
+$rows = phorum_db_get_recent_messages(30, $forum_ids, $thread);
 
 unset($rows["users"]);
 
@@ -50,9 +66,11 @@ foreach($rows as $key => $row){
         $row["subject"]="[".$forums[$row["forum_id"]]["name"]."] ".$row["subject"];
     }
 
+    $forum_id = ($row["forum_id"]==0) ? $default_forum_id : $row["forum_id"];
+
     $items[]=array(
         "pub_date" => date("r",$row["datestamp"]),
-        "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]),
+        "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum_id, $row["thread"], $row["message_id"]),
         "headline" => $row["subject"],
         "description" => strip_tags($row["body"]),
         "author" => $row["author"],
