@@ -121,7 +121,7 @@
                 $default_forum_options=array(
                 'forum_id'=>0,
                 'moderation'=>0,
-                'email__moderators'=>0,
+                'email_moderators'=>0,
                 'pub_perms'=>1,
                 'reg_perms'=>15,
                 'display_fixed'=>0,
