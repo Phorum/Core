@@ -17,7 +17,7 @@
 <title>{HTML_TITLE}</title>
 {HEAD_TAGS}
 </head>
-<body onload="{IF FOCUS_TO_ID}focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
+<body onload="{IF FOCUS_TO_ID}var focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
 <div align="{forumalign}">
 <div class="PDDiv">
 {IF notice_all}
