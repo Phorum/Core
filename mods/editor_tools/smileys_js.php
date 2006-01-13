@@ -1,27 +1,17 @@
-<?php 
-if(!defined("PHORUM")) return;
-$PHORUM = $GLOBALS["PHORUM"];
-$prefix = $PHORUM["mod_smileys"]["prefix"];
-?>
-
-<style type="text/css">
-#phorum_mod_smileys_panel { display: none; }
-#phorum_mod_smileys_dots { display: inline; }
-#phorum_mod_smileys_loading { display: none; }
-#phorum_mod_smileys { display: none; padding: 0px 5px 5px 5px; }
-#phorum_mod_smileys img {
-    margin: 0px 7px 0px 0px;
-    vertical-align: bottom;
-    cursor: pointer;
-    cursor: hand;
-}
-</style>
+<?php if(!defined("PHORUM")) return; ?>
 
 <script type="text/javascript">
 
-smileys_state = -1;
-smileys_count = 0;
-loaded_count = 0;
+/* ------------------------------------------------------------------------
+ * Javascript functions for Smiley tools.
+ * ------------------------------------------------------------------------ 
+ */
+
+var smileys_state = -1;
+var smileys_count = 0;
+var loaded_count = 0;
+var loadingobj;
+
 function toggle_smileys()
 {
     // On the first request to open the smiley help, load all smiley images.
@@ -37,7 +27,8 @@ function toggle_smileys()
             $src = htmlspecialchars($prefix . $smiley['smiley']);
             $c.="document.getElementById('smiley-button-{$id}').src='$src';\n";
         }
-        print "smileys_count = $smileys_count;\n$c\n"; ?>
+        print "smileys_count = $smileys_count;\n$c\n"; 
+        ?>
 
         smileys_state = 0;
     }
@@ -52,15 +43,15 @@ function show_smileys()
     // We wait with displaying the smiley help until all smileys are loaded.
     if (loaded_count < smileys_count) return false;
 
-    document.getElementById('phorum_mod_smileys').style.display = 'block';
-    document.getElementById('phorum_mod_smileys_dots').style.display = 'none';
+    document.getElementById('phorum_mod_editor_tools_smileys').style.display = 'block';
+    document.getElementById('phorum_mod_editor_tools_smileys_dots').style.display = 'none';
     return false;
 }
 
 function hide_smileys()
 {
-    document.getElementById('phorum_mod_smileys').style.display = 'none';
-    document.getElementById('phorum_mod_smileys_dots').style.display = 'inline';
+    document.getElementById('phorum_mod_editor_tools_smileys').style.display = 'none';
+    document.getElementById('phorum_mod_editor_tools_smileys_dots').style.display = 'inline';
     return false;
 }
 
@@ -101,7 +92,7 @@ function phorum_mod_smileys_insert_smiley(string)
 
 function phorum_mod_smileys_load_smiley (imgobj)
 {
-    loadingobj = document.getElementById('phorum_mod_smileys_loading');
+    loadingobj = document.getElementById('phorum_mod_editor_tools_smileys_loading');
 
     // Another smiley image was loaded. If we have loaded all
     // smiley images, then show the smileys panel.
@@ -121,33 +112,4 @@ function phorum_mod_smileys_load_smiley (imgobj)
     }
 }
 
-</script>
-
-<div id="phorum_mod_smileys_panel"
-     class="PhorumStdBlockHeader PhorumNarrowBlock">
-
-  <a href="javascript:toggle_smileys()">
-    <b><?php print $PHORUM["DATA"]["LANG"]["AddSmiley"]?></b>
-  </a>
-  <div id="phorum_mod_smileys_dots"><b>...</b></div>
-  <div id="phorum_mod_smileys_loading">
-    (<?php print $PHORUM["DATA"]["LANG"]["LoadingSmileys"]; ?>)
-  </div>
-
-  <div id="phorum_mod_smileys"> <?php
-    // Create a list of stub smiley images. The real images are only
-    // loaded when the user opens the smiley panel.
-    foreach($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
-      if (! $smiley["active"] || $smiley["is_alias"] || $smiley["uses"] == 1) continue;
-      print "<img id=\"smiley-button-$id\" onclick=\"phorum_mod_smileys_insert_smiley('" . urlencode($smiley["search"]) . "')\" onload=\"phorum_mod_smileys_load_smiley(this)\" src=\"\"/>";
-    } ?>
-  </div>
-
-</div>
-
-<script type="text/javascript">
-// Display the smileys panel. This way browsers that do not
-// support javascript (but which do support CSS) will not
-// show the smileys panel.
-document.getElementById("phorum_mod_smileys_panel").style.display = 'block';
 </script>
