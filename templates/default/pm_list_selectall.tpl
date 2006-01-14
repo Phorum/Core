@@ -3,9 +3,9 @@
 <script type="text/javascript">
 document.write(
     '<input type="checkbox" name="toggle" onclick="' +
-        'lf=document.getElementById(\'phorum_listform\');' +
+        'var lf=document.getElementById(\'phorum_listform\');' +
         'for (var i=0;i<lf.elements.length;i++) {' +
-            'elt=lf.elements[i];' +
+            'var elt=lf.elements[i];' +
             'if (elt.type==\'checkbox\' && elt.name!=\'toggle\') {' +
                 'elt.checked = this.checked;' +
             '}' +
