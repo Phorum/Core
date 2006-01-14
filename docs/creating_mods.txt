@@ -1773,6 +1773,33 @@ Table of contents:
       }
 
    ----------------------------------------------------------------------------
+   tpl_cc_usersettings
+
+   Where  : cc_usersettings.tpl
+   When   : After the built-in usersettings fields.
+   Input  : Array containing the user's current profile.
+   Return : Same as Input
+
+   This hook can be used to add extra fields to the settings pages in the
+   user's control center. Here's an example hook function that will add
+   an extra field to the "Edit My Profile" page.
+
+      function phorum_mod_foo_tpl_cc_usersettings($profile)
+      {
+          // Check if we're on the userprofile page of cc_usersettings.tpl.
+          if (! $profile["USERPROFILE"]) return;
+
+          $value = isset($profile["shoesize"])
+                 ? htmlspecialchars($profile["shoesize"]) : "";
+          ?>
+          <tr>
+            <td>Shoe size</td>
+            <td><input name="shoesize" type="text" value="<?=$value?>"></td>
+          </tr>
+          <?php
+      }
+
+   ----------------------------------------------------------------------------
    tpl_editor_attachment_buttons
 
    Where  : posting_attachments_list.tpl
