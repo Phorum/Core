@@ -116,20 +116,22 @@
         if(empty($error)){
             unset($_POST["module"]);
 
-            $old_settings = phorum_db_get_forums($_POST["forum_id"]);
+            $old_settings_arr = phorum_db_get_forums($_POST["forum_id"]);
+            $old_settings = array_shift($old_settings_arr);
 
-            if($old_settings["inherit_id"]>0 && $_POST["inherit_id"] = "NULL"){ 
+            if($old_settings["inherit_id"]>0 && $_POST["inherit_id"] == "NULL"){
                 unset($_POST["pub_perms"]);
                 unset($_POST["reg_perms"]);
             } else {
+
                 if($old_settings["pub_perms"]>0){
-                    if(empty($_POST["pub_perms"])) $_POST["pub_perms"]=0;
+                    if(!isset($_POST["pub_perms"]) || empty($_POST["pub_perms"])) $_POST["pub_perms"]=0;
                 }
                 if($old_settings["reg_perms"]>0){
-                    if(empty($_POST["reg_perms"])) $_POST["reg_perms"]=0;
+                    if(!isset($_POST["reg_perms"]) || empty($_POST["reg_perms"])) $_POST["reg_perms"]=0;
                 }
             }
-            
+
             // handling vroots
             if($_POST['parent_id'] > 0) {
                 $parent_folder=phorum_db_get_forums($_POST['parent_id']);
