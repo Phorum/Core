@@ -205,10 +205,6 @@ if(!empty($phorum_search)){
 
 // set all our URL's
 phorum_build_common_urls();
-// should we show the top-link?
-if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-    unset($PHORUM["DATA"]["URL"]["INDEX"]);
-}
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_SEARCH_ACTION_URL);
 $PHORUM["DATA"]["SEARCH"]["forum_id"] = $PHORUM["forum_id"];
