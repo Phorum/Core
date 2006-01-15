@@ -335,8 +335,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["short_datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
         $row["datestamp"] = phorum_date($PHORUM["long_date"], $row["datestamp"]);
         $row["url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
-        $row["reply_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["message_id"]);
-        $row["quote_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["message_id"], "quote=1");
+        $row["reply_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"]);
+        $row["quote_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"], "quote=1");
         $row["report_url"] = phorum_get_url(PHORUM_REPORT_URL, $row["message_id"]);
         $row["follow_url"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
 

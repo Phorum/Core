@@ -21,12 +21,20 @@ if(!defined("PHORUM")) return;
 
 // Retrieve the message id to work with.
 $message_id = 0;
+
 if ($mode != "post") {
 
     if (! isset($PHORUM["args"][2])) {
         die("Missing message_id parameter in request for mode $mode");
     }
-    if (isset($PHORUM["args"][2])) {
+    // we need a different arg for reply on separate page
+    if( isset($PHORUM["reply_on_read_page"]) && !$PHORUM["reply_on_read_page"] &&
+        isset($PHORUM["args"][3]))
+    {
+
+        $message_id = $PHORUM["args"][3];
+
+    } elseif (isset($PHORUM["args"][2])) {
         $message_id = $PHORUM["args"][2];
     }
 }
@@ -58,7 +66,7 @@ if ($mode == "reply" || $mode == "quote")
     // Set thread and parent information.
     $message["parent_id"] = $dbmessage["message_id"];
     $message["thread"] = $dbmessage["thread"];
-    
+
     // Create Re: subject prefix.
     if (substr($dbmessage["subject"], 0, 4) != "Re: ") {
         $dbmessage["subject"] = "Re: " . $dbmessage["subject"];
