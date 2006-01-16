@@ -665,7 +665,8 @@ function phorum_build_common_urls()
         // additional pages like search and login its shown
         $index_id=$PHORUM['forum_id'];
 
-    } elseif( ( $PHORUM['folder_flag'] && phorum_page != 'index') ||
+    } elseif( ( $PHORUM['folder_flag'] &&
+    ($PHORUM['forum_id'] != 0 && $PHORUM['vroot'] != $PHORUM['forum_id'])) ||
     (!$PHORUM['folder_flag'] && $PHORUM['active'])) {
         // either a folder where the link should be shown (not vroot or root)
         // or an active forum where the link should be shown
