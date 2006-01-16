@@ -39,7 +39,7 @@ include_once("./include/users.php");
 
 $user = phorum_user_get($profile_id);
 
-if(!is_array($user)) {
+if(!is_array($user) || $user["active"]==0) {
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["UnknownUser"];
     $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_LIST_URL);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];

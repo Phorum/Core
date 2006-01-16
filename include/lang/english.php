@@ -479,7 +479,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "UnapprovedUsers"       =>      "Unapproved Users",
         "UnapprovedUsersLong"   =>      "There are unapproved users",
         "Unbookmark"            =>      "Unbookmark",
-        "UnknownUser"           =>      "This user doesn't exist",
+        "UnknownUser"           =>      "This user doesn't exist or has been deactivated.",
         "Unsubscribe"           =>      "Unsubscribe",
         "UnsubscribeError"      =>      "You couldn't get unsubscribed from that thread.",
         "UnsubscribeOk"         =>      "You were unsubscribed from the given thread.",
