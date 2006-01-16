@@ -446,7 +446,12 @@ function phorum_get_url()
                 $suffix = "#REPLY";
             } else {
                 $page = "posting";
-                array_unshift($argv, "reply");
+                // For reply on a separate page, we call posting.php on its own.
+                // In that case argv[0] is the editor mode we want to use
+                // (reply in this case). Currently, the thread id is in argv[0],
+                // but we don't need that one for posting.php. So we simply
+                // replace argv[0] with the correct argument.
+                $argv[0] = "reply";
             }
             $add_forum_id = true;
             break;

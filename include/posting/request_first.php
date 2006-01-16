@@ -23,20 +23,10 @@ if(!defined("PHORUM")) return;
 $message_id = 0;
 
 if ($mode != "post") {
-
     if (! isset($PHORUM["args"][2])) {
         die("Missing message_id parameter in request for mode $mode");
     }
-    // we need a different arg for reply on separate page
-    if( isset($PHORUM["reply_on_read_page"]) && !$PHORUM["reply_on_read_page"] &&
-        isset($PHORUM["args"][3]))
-    {
-
-        $message_id = $PHORUM["args"][3];
-
-    } elseif (isset($PHORUM["args"][2])) {
-        $message_id = $PHORUM["args"][2];
-    }
+    $message_id = $PHORUM["args"][2];
 }
 
 // Create an initial message structure.
