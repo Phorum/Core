@@ -207,7 +207,7 @@ if ($success)
     else
     {
         // To the forum index. Do this through the redirect
-        // script, because our POST reqeust is coming from 
+        // script, because our POST request is coming from 
         // an enctype="multipart/mixed" form, which  is buggy
         // with anchored URL redirects in MSIE. 
         $redir_to = phorum_get_url(PHORUM_LIST_URL);
