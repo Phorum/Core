@@ -57,10 +57,6 @@ if(!is_array($user) || $user["active"]==0) {
 unset($user["password"]);
 unset($user["permissions"]);
 
-if($user["active"] == 0){
-    $user = array();
-}
-
 // set any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
     foreach($PHORUM["PROFILE_FIELDS"] as $field) {
