@@ -4178,7 +4178,7 @@ function phorum_db_mysqli_connect(){
  * NOTE: This is not a required part of abstraction
  */
 
-function phorum_db_mysql_error($err){
+function phorum_db_mysqli_error($err){
 
     if(isset($GLOBALS['PHORUM']['error_logging'])) {
         $logsetting = $GLOBALS['PHORUM']['error_logging'];
