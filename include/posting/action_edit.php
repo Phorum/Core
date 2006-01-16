@@ -37,7 +37,8 @@ $dbmessage = array(
     "meta"          => $message["meta"],
 );
 
-// Update sort setting, if allowed.
+// Update sort setting, if allowed. This can only be done 
+// when editing the thread starter message.
 if ( $message["parent_id"]==0 ) {
 
     if ($PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] && $message["special"]=="sticky") {

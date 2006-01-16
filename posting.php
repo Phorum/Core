@@ -266,12 +266,12 @@ if (! $error_flag)
         "allow_reply"   => false,   // Wheter replies are allowed in the thread
     );
     // For moderators and administrators.
-    if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"])&& $message["parent_id"] == 0) {
+    if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"]) && $message["parent_id"] == 0) {
         $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = true;
         $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"] = true;
     }
     // For administrators only.
-    if ($PHORUM["DATA"]["ADMINISTRATOR"] && $message["parent_id"] == 0) {
+    if ($PHORUM["DATA"]["ADMINISTRATOR"]) {
         $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] = true;
     }
 }
@@ -281,10 +281,13 @@ if (! $error_flag)
     // A hook to allow modules to change the abilities from above.
     phorum_hook("posting_permission");
 
-    // Show special sort options in the editor?
+    // Show special sort options in the editor? These only are
+    // honoured for the thread starter messages, so we check the
+    // parent_id for that.
     $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] =
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] ||
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"];
+        $message["parent_id"] == 0 &&  
+        ($PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] ||
+         $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]);
 
     // Show special sort options or allow_reply in the editor?
     $PHORUM["DATA"]["SHOW_THREADOPTIONS"] =

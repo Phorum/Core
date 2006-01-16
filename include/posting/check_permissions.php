@@ -128,10 +128,14 @@ if ($mode == "edit")
         ! $top_parent["closed"] &&
         (! $timelim || $message["datestamp"] + ($timelim * 60) >= time());
 
+    // Moderators are allowed to edit message, but not messages from
+    // announcement threads. Announcements may only be edited by users
+    // for which the option "announcement" is set as allowed.
     $moderatoredit =
         $PHORUM["DATA"]["MODERATOR"] &&
         $message["forum_id"] == $PHORUM["forum_id"] &&
-        ($message["special"] != "announcement" || $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"]);
+        ($message["special"] != "announcement" || 
+         $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"]);
 
     if (!$useredit && !$moderatoredit) {
         $PHORUM["DATA"]["MESSAGE"] =
