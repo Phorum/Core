@@ -40,7 +40,15 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
 // check that they are logged in according
 // to the security settings in the admin
 } elseif($PHORUM["DATA"]["LOGGEDIN"] && !$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_POSTING_URL));
+    if($mode=="post"){
+        $redir=PHORUM_POSTING_URL;
+    } else {
+        // have to send 0 for param 2 because the URL creation kills it
+        // AFAIK, we will only arrive here if reply on separate page is true
+        // so this should not be an issue.
+        $redir = urlencode(phorum_get_url(PHORUM_REPLY_URL, 0, $PHORUM["args"][2]));
+    }
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir"));
     exit();
 }
 
