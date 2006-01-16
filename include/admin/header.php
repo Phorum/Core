@@ -22,15 +22,26 @@
     if(empty($PHORUM["http_path"])){
         $PHORUM["http_path"]=dirname($_SERVER["PHP_SELF"]);
     }
+
+
+    // load the default Phorum language
+    if(isset($PHORUM["default_language"])){
+        include_once( "./include/lang/$PHORUM[default_language].php" );
+    }
+
+    // HTTP Content-Type header with the charset from the default language
+    if (isset($PHORUM["DATA"]['CHARSET'])) {
+        header("Content-Type: text/html; " . 
+               "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
+    }
 ?>
 <html>
 <head>
 <title>Phorum Admin</title>
 <?php
 
-// load the charset from the default Phorum language if there is one
-if(isset($PHORUM["default_language"])){
-    include_once( "./include/lang/$PHORUM[default_language].php" );
+// meta data with the charset from the default language
+if (isset($PHORUM["DATA"]['CHARSET'])) {
     echo "<meta content=\"text/html; charset=".$PHORUM["DATA"]["CHARSET"]."\" http-equiv=\"Content-Type\">\n";
 }
 
