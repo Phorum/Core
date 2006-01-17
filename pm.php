@@ -567,7 +567,12 @@ switch ($page) {
             $buddy_users = array();
         }
 
-        $buddies = array();
+        // Sort the buddies by username.
+        function phorum_sort_buddy_list($a,$b) {
+            return strcasecmp($a["username"], $b["username"]);             
+        }
+        uasort($buddy_users, 'phorum_sort_buddy_list');
+
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
