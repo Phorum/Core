@@ -60,6 +60,7 @@ include_once("include/format_functions.php");
 
 // Check if the Phorum is in read-only mode.
 if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
+    phorum_build_common_urls();
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
     include phorum_get_template("header");
     phorum_hook("after_header");
@@ -285,7 +286,7 @@ if (! $error_flag)
     // honoured for the thread starter messages, so we check the
     // parent_id for that.
     $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] =
-        $message["parent_id"] == 0 &&  
+        $message["parent_id"] == 0 &&
         ($PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] ||
          $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]);
 
