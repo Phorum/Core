@@ -40,7 +40,7 @@ phorum_build_common_urls();
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
-// a user has to be logged in to use his control-center
+// a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
@@ -48,7 +48,15 @@ if (!$PHORUM["DATA"]["LOGGEDIN"]) {
 
 // if the user is not fully logged in, send him to the login page
 if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_PM_URL));
+
+    // Construct the URL to redirect to after logging in.
+    $args = array(PHORUM_PM_URL);
+    foreach ($PHORUM["args"] as $k => $v) {
+        if(is_numeric($k)) $args[] = $v; else $args[] = "$k=$v";
+    }
+    $redir = urlencode(call_user_func_array('phorum_get_url', $args));
+
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir"));
     exit();
 }
 
