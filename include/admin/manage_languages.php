@@ -25,6 +25,10 @@ if(!defined("PHORUM_ADMIN")) return;
 
 define('TOKEN_DEBUGGER', 0);
 
+// Because sometimes the script can take a while, we set the
+// PHP time limit to a high value to prevent execution timeouts.
+set_time_limit(600);
+
 include_once "./include/admin/PhorumInputForm.php";
 
 // Get some form variables.
