@@ -573,6 +573,7 @@ switch ($page) {
         }
         uasort($buddy_users, 'phorum_sort_buddy_list');
 
+        $buddies = array();
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
