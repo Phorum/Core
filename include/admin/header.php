@@ -31,7 +31,7 @@
 
     // HTTP Content-Type header with the charset from the default language
     if (isset($PHORUM["DATA"]['CHARSET'])) {
-        header("Content-Type: text/html; " . 
+        header("Content-Type: text/html; " .
                "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
     }
 ?>
@@ -314,7 +314,7 @@ function hide_help()
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<form id="status-form" action="<?=$_SERVER["PHP_SELF"]?>" method="post">
+<form id="status-form" action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
 <input type="hidden" name="module" value="status" />
 Phorum Status:
 <select name="status" onChange="this.form.submit();">

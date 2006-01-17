@@ -14,7 +14,7 @@
     $class = ($count%2==0) ? "comment-alt" : "";
     $count++;
 ?>
-<div class="comment <?=$class?>">
+<div class="comment <?php echo $class;?>">
 <h1>{MESSAGES->subject}</h1>
 <p>{MESSAGES->body}</p>
 <small>Post by {MESSAGES->linked_author} on {MESSAGES->datestamp}</small>

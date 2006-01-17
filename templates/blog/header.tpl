@@ -7,7 +7,7 @@
 <style type="text/css">
 {include css}
 </style>
-<link rel="alternate" type="application/rss+xml" title="RSS-File" href="http://blogs.phorum.org/rss.php?<?=$PHORUM["forum_id"]?>" />
+<link rel="alternate" type="application/rss+xml" title="RSS-File" href="http://blogs.phorum.org/rss.php?<?php echo $PHORUM["forum_id"];?>" />
 {if URL->REDIRECT}
 <meta http-equiv="refresh" content="5; url={URL->REDIRECT}" />
 {/if}
@@ -55,7 +55,7 @@ Search:<br />
 <li><a href="http://phorum.org/cgi-bin/trac.cgi/report">Report Bugs</a></li>
 </ul>
 
-<a href="rss.php?<?=$PHORUM["forum_id"]?>"><img src="/images/rss20.gif" width="80" height="15" border="0" alt="RSS 2.0" /></a>
+<a href="rss.php?<?php echo $PHORUM["forum_id"];?>"><img src="/images/rss20.gif" width="80" height="15" border="0" alt="RSS 2.0" /></a>
 
 </div>
 <div id="left-column">

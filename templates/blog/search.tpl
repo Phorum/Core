@@ -12,7 +12,7 @@
 <div class="match">
 <h1>{MATCHES->number}.&nbsp;<a href="{MATCHES->url}">{MATCHES->subject}</a></h1>
 <p>{MATCHES->short_body}</p>
-<small>Post by {MATCHES->author} on {MATCHES->datestamp}&nbsp;&nbsp;|&nbsp;&nbsp;<a href="{MATCHES->url}"><? echo $PHORUM["TMP"]["MATCHES"]["thread_count"]-1; ?> comment(s)</a></small>
+<small>Post by {MATCHES->author} on {MATCHES->datestamp}&nbsp;&nbsp;|&nbsp;&nbsp;<a href="{MATCHES->url}"><?php echo $PHORUM["TMP"]["MATCHES"]["thread_count"]-1; ?> comment(s)</a></small>
 </div>
 <hr />
 {/LOOP MATCHES}
