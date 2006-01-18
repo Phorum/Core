@@ -52,6 +52,7 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
     // Construct the URL to redirect to after logging in.
     $args = array(PHORUM_PM_URL);
     foreach ($PHORUM["args"] as $k => $v) {
+        if (in_array("$k=$v", $PHORUM["DATA"]["GET_VARS"])) continue;
         if(is_numeric($k)) $args[] = $v; else $args[] = "$k=$v";
     }
     $redir = urlencode(call_user_func_array('phorum_get_url', $args));
