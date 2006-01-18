@@ -37,6 +37,15 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // If we do URI based authentication, we will only look at the
+    // PHORUM_SESSION_LONG_TERM session (which is the session key that is
+    // stored in the URI). Here we rewrite requests for 
+    // PHORUM_SESSION_SHORT_TERM so we will handle tighter security correctly. 
+    if ( isset($PHORUM["use_cookies"]) && ! $PHORUM["use_cookies"] &&
+         $cookie == PHORUM_SESSION_SHORT_TERM) {
+        $cookie = PHORUM_SESSION_LONG_TERM;
+    }
+
     if ( ( $cookie != PHORUM_SESSION_LONG_TERM || ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] ) ) && isset( $_COOKIE[$cookie] ) ) { // REAL cookies ;)
         $sessid = $_COOKIE[$cookie];
         $GLOBALS["PHORUM"]["use_cookies"]=true;
@@ -113,7 +122,6 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
         }
         phorum_user_save_simple( $tmp_user);
     }
-
 
     return $success;
 }
