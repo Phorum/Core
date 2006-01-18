@@ -1787,7 +1787,8 @@ Table of contents:
       function phorum_mod_foo_tpl_cc_usersettings($profile)
       {
           // Check if we're on the userprofile page of cc_usersettings.tpl.
-          if (! $profile["USERPROFILE"]) return;
+          if (! isset($profile["USERPROFILE"]) || ! $profile["USERPROFILE"])
+             return;
 
           $value = isset($profile["shoesize"])
                  ? htmlspecialchars($profile["shoesize"]) : "";
