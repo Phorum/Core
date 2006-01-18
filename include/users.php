@@ -198,7 +198,7 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refres
 
         } else {
             $sessid = $uri_session_id;
-            $GLOBALS["PHORUM"]["DATA"]["GET_VARS"][] = "$cookie=" . urlencode( $sessid );
+            $GLOBALS["PHORUM"]["DATA"]["GET_VARS"][$cookie] = "$cookie=" . urlencode( $sessid );
             $GLOBALS["PHORUM"]["DATA"]["POST_VARS"] .= "<input type=\"hidden\" name=\"$cookie\" value=\"$sessid\" />";
         }
     }
