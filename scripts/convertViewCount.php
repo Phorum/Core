@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 This script converts viewcount data from mod_viewcount to Phorum's internal viewcounter.
 To use it, copy the script to your main Phorum directory (eg: /phorum5), and run it from the command line.
