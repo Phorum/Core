@@ -150,7 +150,7 @@ if(!phorum_db_check_connection()){
         header("Location: ".$PHORUM["DBCONFIG"]["down_page"]);
         exit();
     } else {
-        echo "The database could not be connected.  If this is a new installation, please go to the admin to complete the installation process";
+        echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
         exit();
     }
 }
