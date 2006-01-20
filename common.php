@@ -232,6 +232,13 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
         }
 
+        // If the user in not fully logged in when in tight security mode,
+        // we cannot put the reply form on the read page.
+        if ($PHORUM["tight_security"] && ! $PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+            $PHORUM["reply_on_read_page"] = false;
+        }
+
+
         if ( $PHORUM["enable_pm"] && phorum_page!="pm" ) {
             // setup the private messages array, we store the number of new messages here
              $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];
