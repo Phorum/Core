@@ -531,11 +531,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
             $goto_mode = "quote";
         }
-        if (! isset($PHORUM["args"][2])) {
-            $PHORUM["args"][2] = $PHORUM["args"][1];
-        }
-        $PHORUM["args"][1] = $goto_mode;
-        $PHORUM["args"]["as_include"] = 1;
+
+        $PHORUM["postingargs"] = array(
+            1 => $goto_mode,
+            2 => $message_id,
+            "as_include" => true
+        );
 
         include("./posting.php");
     }

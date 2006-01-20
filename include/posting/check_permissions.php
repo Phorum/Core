@@ -21,8 +21,7 @@ if(!defined("PHORUM")) return;
 
 // Check if the user is allowed to post a new message or a reply.
 if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
-    ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) {
-    if ($PHORUM["DATA"]["LOGGEDIN"]) {
+    ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) { if ($PHORUM["DATA"]["LOGGEDIN"]) {
         // If users are logged in and can't post, they don't have rights to do so.
         $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoPost"];
     } else {
@@ -31,18 +30,43 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
             ($mode == "post" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_NEW_TOPIC) ) {
             $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PleaseLoginPost"];
         } else {
-            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
     }
     $error_flag = true;
     return;
 
-// check that they are logged in according
-// to the security settings in the admin
+// Check that they are logged in according to the security settings in
+// the admin. If they aren't then either set a message with a login link
+// (when running as include) or redirect to the login page.
 } elseif($PHORUM["DATA"]["LOGGEDIN"] && !$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    $redir = urlencode(phorum_get_url(PHORUM_POSTING_URL, $PHORUM["args"][1], $PHORUM["args"][2]));
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir"));
-    exit();
+
+    if (isset($PHORUM["postingargs"]["as_include"])) {
+
+        // Generate the URL to return to after logging in.
+        $args = array(PHORUM_REPLY_URL, $PHORUM["args"][1]);
+        if (isset($PHORUM["args"][2])) $args[] = $PHORUM["args"][2];
+        if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
+        $redir = urlencode(call_user_func_array('phorum_get_url', $args));
+        $url = phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir");
+        
+        $PHORUM["DATA"]["URL"]["REDIRECT"] = $url;
+        $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["LogIn"];
+        $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
+        $error_flag = true;
+        return;
+
+    } else {
+
+        // Generate the URL to return to after logging in.
+        $args = array(PHORUM_POSTING_URL,$PHORUM["args"][1],$PHORUM["args"][2]);
+        if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
+        $redir = urlencode(call_user_func_array('phorum_get_url', $args));
+
+        phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL,"redir=$redir"));
+        exit();
+
+    } 
 }
 
 // Put read-only user info in the message.

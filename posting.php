@@ -38,13 +38,13 @@
 // http://yoursite/phorum/posting.php?10,post
 //
 // This script can also be included in another page (for putting the editor
-// screen inline in a page), by setting up the $PHORUM["args"] before
+// screen inline in a page), by setting up the $PHORUM["postingargs"] before
 // including:
 //
-// $PHORUM["args"]["as_include"] any true value, to flag for included state
-// $PHORUM["args"][0] the forum id
-// $PHORUM["args"][1] the mode to use (post, reply, quote, edit, moderation)
-// $PHORUM["args"][2] the message id to work with (not needed for "post")
+// $PHORUM["postingargs"]["as_include"] any true value, to flag included state
+// $PHORUM["postingargs"][0] the forum id
+// $PHORUM["postingargs"][1] the mode to use (post,reply,quote,edit,moderation)
+// $PHORUM["postingargs"][2] the message id to work with (omit for "post")
 //
 
 // ----------------------------------------------------------------------
@@ -155,12 +155,17 @@ $finish  = (! $initial && isset($_POST["finish"]));
 $cancel  = (! $initial && isset($_POST["cancel"]));
 $preview = (! $initial && isset($_POST["preview"]));
 
+// Do we already have postingargs or do we use the global args?
+if (! isset($PHORUM["postingargs"])) {
+    $PHORUM["postingargs"] = $PHORUM["args"];
+}
+
 // Find out what editing mode we're running in.
 if ($initial) {
-    $mode = isset($PHORUM["args"][1]) ? $PHORUM["args"][1] : "post";
+    $mode = isset($PHORUM["postingargs"][1]) ? $PHORUM["postingargs"][1] : "post";
 
     // Quote may also be passed as a phorum parameter (quote=1).
-    if ($mode == "reply" && isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
+    if ($mode == "reply" && isset($PHORUM["postingargs"]["quote"]) && $PHORUM["postingargs"]["quote"]) {
         $mode = "quote";
     }
 
@@ -431,7 +436,7 @@ if($PHORUM["max_attachments"]){
 
 // Let the templates know if we're running as an include.
 $PHORUM["DATA"]["EDITOR_AS_INCLUDE"] =
-    isset($PHORUM["args"]["as_include"]) && $PHORUM["args"]["as_include"];
+    isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"];
 
 // Process data for previewing.
 if ($preview) {
@@ -499,7 +504,7 @@ foreach ($message as $var => $val)
 // A cancel button is not needed if the editor is included in a page.
 // This can also be used by the before_editor hook to disable the
 // cancel button in all pages.
-$PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["args"]["as_include"]) ? false : true);
+$PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
 
 // A hook to give modules a last chance to update the message data.
 $message = phorum_hook("before_editor", $message);
@@ -513,7 +518,7 @@ if (!empty($message["subject"])) $focus = "phorum_textarea";
 $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
 
 // Load page header.
-if (! isset($PHORUM["args"]["as_include"])) {
+if (! isset($PHORUM["postingargs"]["as_include"])) {
     include phorum_get_template("header");
     phorum_hook("after_header");
 }
@@ -526,7 +531,7 @@ if (isset($PHORUM["DATA"]["MESSAGE"])) {
 }
 
 // Load page footer.
-if (! isset($PHORUM["args"]["as_include"])) {
+if (! isset($PHORUM["postingargs"]["as_include"])) {
     phorum_hook("before_footer");
     include phorum_get_template("footer");
 }

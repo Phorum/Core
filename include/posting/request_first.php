@@ -23,10 +23,10 @@ if(!defined("PHORUM")) return;
 $message_id = 0;
 
 if ($mode != "post") {
-    if (! isset($PHORUM["args"][2])) {
+    if (! isset($PHORUM["postingargs"][2])) {
         die("Missing message_id parameter in request for mode $mode");
     }
-    $message_id = $PHORUM["args"][2];
+    $message_id = $PHORUM["postingargs"][2];
 }
 
 // Create an initial message structure.
