@@ -17,7 +17,7 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// cvs-info: $Id: postgresql.php 699 2006-01-05 21:13:47Z dvl $
+// cvs-info: $Id$
 
 if (!defined("PHORUM")) return;
 
@@ -294,7 +294,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if($count){
         $sql.= " LIMIT $count";
     }
-    
+
     $res = pg_query($conn, $sql);
     if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
@@ -430,7 +430,7 @@ function phorum_db_post_message(&$message,$convert=false){
     }
 
 	$columns = 'forum_id, datestamp, thread, parent_id, author, subject, email, ip, user_id, moderator_post, status, sort, msgid, body, closed';
-	$values  = "{$message['forum_id']}, 
+	$values  = "{$message['forum_id']},
             $NOW,
             {$message['thread']},
             {$message['parent_id']},
@@ -974,7 +974,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         // create a temporary table of the messages we want
         $table = $PHORUM['search_table']."_".md5(microtime());
         $sql   = "SELECT {$PHORUM['message_table']}.message_id, {$PHORUM['message_table']}.datestamp, status, forum_id INTO $table FROM {$PHORUM['message_table']} inner join $id_table using (message_id) where status = " . PHORUM_STATUS_APPROVED . " $forum_where";
-        
+
         if ($match_date > 0) {
             $ts  = time() - 86400 * $match_date;
             $sql.=" and datestamp >= $ts";
@@ -1203,7 +1203,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
-    } elseif ($inherit_id) {
+    } elseif ($inherit_id != null) {
         $sql .= " where inherit_id = $inherit_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     } elseif ($parent_id >= 0) {
@@ -4395,7 +4395,7 @@ function pgsql_insert_id($conn, $sequence) {
 		if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 	}
 
-	return $insert_id;	
+	return $insert_id;
 }
 
 ?>

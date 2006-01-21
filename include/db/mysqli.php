@@ -1177,7 +1177,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
-    } elseif ($inherit_id) {
+    } elseif ($inherit_id !== null) {
         $sql .= " where inherit_id = $inherit_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     } elseif ($parent_id >= 0) {

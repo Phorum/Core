@@ -532,7 +532,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     $sql = "select forum_id, message_id, thread, parent_id from {$PHORUM['message_table']} where message_id = $message_id ";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     $rec = mysql_fetch_assoc($res);
 
     if($mode == PHORUM_DELETE_TREE){
@@ -568,7 +568,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     $sql = "delete from {$PHORUM['message_table']} where message_id in ($mids)";
     mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     // start ft-search stuff
     $sql="delete from {$PHORUM['search_table']} where message_id in ($mids)";
     $res = mysql_query($sql, $conn);
@@ -609,7 +609,7 @@ function phorum_db_get_messagetree($parent_id, $forum_id){
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     $tree = "$parent_id";
 
     while($rec = mysql_fetch_row($res)){
@@ -1168,7 +1168,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
-    } elseif ($inherit_id) {
+    } elseif ($inherit_id !== null) {
         $sql .= " where inherit_id = $inherit_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     } elseif ($parent_id >= 0) {
@@ -1573,7 +1573,7 @@ function phorum_db_get_groups($group_id=0)
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    
+
     while($rec=mysql_fetch_assoc($res)){
 
         $groups[$rec["group_id"]]["permissions"][$rec["forum_id"]]=$rec["permission"];
@@ -2143,7 +2143,7 @@ function phorum_db_user_save($userdata){
         $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id = $user_id";
         $res=mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        
+
         if(is_array($user_data)) {
             foreach($user_data as $key => $val){
                 if(is_array($val)) { /* arrays need to be serialized */
