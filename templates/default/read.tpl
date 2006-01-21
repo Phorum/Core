@@ -21,7 +21,7 @@
 {IF MESSAGES->parent_id 0}
 <div class="PhorumReadBodySubject">{MESSAGES->subject} <span class="PhorumNewFlag">{MESSAGES->new}</span></div>
 {ELSE}
-<div class="PhorumReadBodyHead"><strong>{MESSAGES->subject}</strong></div>
+<div class="PhorumReadBodyHead"><strong>{MESSAGES->subject}</strong> <span class="PhorumNewFlag">{MESSAGES->new}</span></div>
 {/IF}
 <div class="PhorumReadBodyHead">{LANG->Postedby}: <strong>{MESSAGES->linked_author}</strong> ({MESSAGES->ip})</div>
 <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGES->datestamp}</div>
