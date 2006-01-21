@@ -127,7 +127,7 @@
         "EditFolders"           =>      "Edit Folders",
         "EditPost"              =>      "Edit Post",
         "EditPostForbidden"     =>      "You do not have permission to edit this post. If the administrator has set a time limit on editing, it may have expired.",
-        "EditedMessage"         =>      "Edited %count% times. Last edit at %lastedit% by %lastuser%.",
+        "EditedMessage"         =>      "Edited %count% time(s). Last edit at %lastedit% by %lastuser%.",
         "EditMailsettings"      =>      "Edit Email Settings",
         "EditMyFiles"           =>      "Edit My Files",
         "EditPrivacy"           =>      "Edit My Privacy Options",
