@@ -19,7 +19,7 @@
 {/IF}
 <div class="PhorumStdBlock">
 {IF MESSAGES->parent_id 0}
-<div class="PhorumReadBodySubject">{MESSAGES->subject}</div>
+<div class="PhorumReadBodySubject">{MESSAGES->subject} <span class="PhorumNewFlag">{MESSAGES->new}</span></div>
 {ELSE}
 <div class="PhorumReadBodyHead"><strong>{MESSAGES->subject}</strong></div>
 {/IF}

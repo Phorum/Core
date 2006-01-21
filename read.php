@@ -122,10 +122,10 @@ if(empty($PHORUM["args"][1])) {
                     $new_message=array_shift($message_ids); // get the first element
 
                     if(!$PHORUM['threaded_read']) { // get new page
-                    $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
-                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                        $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
                     } else { // for threaded
-                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
+                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
                     }
                 } else {
                     // lets go back to the index if they are all read
@@ -414,6 +414,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             }
         }
 
+        // newflag, if its NOT in newinfo AND newer than min_id, then its a new message
+        $row["new"]="";
+        if ($PHORUM["DATA"]["LOGGEDIN"]){
+            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
+                $row["new"]= $PHORUM["DATA"]["LANG"]["newflag"];
+            }
+        }
+
         $messages[$row["message_id"]]=$row;
     }
 
@@ -432,14 +440,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // we have to loop again and create the urls for the Next and Previous links.
         foreach($messages as $key => $row) {
-
-            // newflag, if its NOT in newinfo AND newer than min_id, then its a new message
-            $messages[$key]["new"]="";
-            if ($PHORUM["DATA"]["LOGGEDIN"]){
-                if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
-                    $messages[$key]["new"]=" " . $PHORUM["DATA"]["LANG"]["newflag"];
-                }
-            }
 
             if($PHORUM["count_views"]) {  // show viewcount if enabled
                   if($PHORUM["count_views"] == 2) { // viewcount as column
