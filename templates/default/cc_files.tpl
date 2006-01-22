@@ -31,7 +31,7 @@
 <td class="PhorumTableRow">{FILES->dateadded}</td>
 <td class="PhorumTableRow" align="center"><input type="checkbox" name="delete[]" value="{FILES->file_id}" /></td>
 </tr>
-{/LOOP subscriptions}
+{/LOOP FILES}
 <tr>
 <th align="left" class="PhorumTableHeader">{LANG->TotalFiles}: {TOTAL_FILES}</th>
 <th align="left" class="PhorumTableHeader">{LANG->TotalFileSize}: {TOTAL_FILE_SIZE}</th>
