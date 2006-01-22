@@ -3872,7 +3872,9 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
     // Get all mutual buddies.
     $sql = "SELECT DISTINCT a.buddy_user_id " .
            "FROM {$PHORUM["pm_buddies_table"]} as a, {$PHORUM["pm_buddies_table"]} as b " .
-           "WHERE a.user_id=$user_id and b.user_id=a.buddy_user_id";
+           "WHERE a.user_id=$user_id " .
+           "AND b.user_id=a.buddy_user_id " .
+           "AND b.buddy_user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
