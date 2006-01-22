@@ -165,7 +165,7 @@ if ($PHORUM["threaded_list"]){
                   $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
                   $rows[$key]["viewcount"]=$row['viewcount'];
               } else { // viewcount added to the subject
-                  $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} {$PHORUM['DATA']['LANG']['Views']})";
+                  $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} " . strtolower($PHORUM['DATA']['LANG']['Views']) . ")";
               }
         }
 
@@ -252,7 +252,7 @@ if ($PHORUM["threaded_list"]){
                   $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
                   $rows[$key]["viewcount"]=$row['viewcount'];
               } else { // viewcount added to the subject
-                  $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} {$PHORUM['DATA']['LANG']['Views']})";
+                  $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} " . strtolower($PHORUM['DATA']['LANG']['Views']) . ")";
               }
         }
 
