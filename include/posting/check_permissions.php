@@ -59,7 +59,9 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
     } else {
 
         // Generate the URL to return to after logging in.
-        $args = array(PHORUM_POSTING_URL,$PHORUM["args"][1],$PHORUM["args"][2]);
+        $args = array(PHORUM_POSTING_URL);
+        if (isset($PHORUM["args"][1])) $args[] = $PHORUM["args"][1];
+        if (isset($PHORUM["args"][2])) $args[] = $PHORUM["args"][2];
         if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
         $redir = urlencode(call_user_func_array('phorum_get_url', $args));
 
