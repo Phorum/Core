@@ -71,7 +71,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
             return false;
         }
 
-        $user=phorum_user_get($userid);
+        $user=phorum_user_get($userid, true, true);
         if (empty($user)) {
             phorum_user_clear_session( $cookie );
             return false;
@@ -96,7 +96,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
         // this part is for uri-authentication where we only have a session-id
         $uri_session_id = urldecode( $sessid );
         if ( $user_id = phorum_db_user_check_field('sessid_st',$uri_session_id,'=')) {
-            $user = phorum_user_get( $user_id );
+            $user = phorum_user_get( $user_id, true, true );
             if ( $user["active"] ) {
 
                 // write access is enabled for uri-authentication as thats requiring login at every visit
@@ -220,11 +220,12 @@ function phorum_user_clear_session( $cookie = PHORUM_SESSION_LONG_TERM )
  * full information. Setting this to false omits permission data, pm counts,
  * and group membership. $detailed is true by default and may be omitted.
  * @param user_id - can be a single user id, or an array of user ids.
- * @param detailed - get detailed user information. defaults to true
+ * @param detailed - get detailed user information (defaults to true).
+ * @param pmcount - do private messages count for the user (defaults to false).
  * @return array - either an array representing a single user's information,
  *                 or an array of users
  */
-function phorum_user_get( $user_id, $detailed = true )
+function phorum_user_get( $user_id, $detailed = true, $pmcount = false )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -284,9 +285,10 @@ function phorum_user_get( $user_id, $detailed = true )
                         }
                     }
                 }
-                // get the users private message counts for the inbox
+                // get the user's private message counts for the inbox
                 $user["private_messages"] = array("new" => 0, "total" => 0);
-                if ( $detailed && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
+                if ( $pmcount && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
+                print "Count";
                     $user["private_messages"] = phorum_db_pm_messagecount( PHORUM_PM_ALLFOLDERS, $uid );
                 }
 
