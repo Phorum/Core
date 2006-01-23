@@ -288,7 +288,6 @@ function phorum_user_get( $user_id, $detailed = true, $pmcount = false )
                 // get the user's private message counts for the inbox
                 $user["private_messages"] = array("new" => 0, "total" => 0);
                 if ( $pmcount && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
-                print "Count";
                     $user["private_messages"] = phorum_db_pm_messagecount( PHORUM_PM_ALLFOLDERS, $uid );
                 }
 
