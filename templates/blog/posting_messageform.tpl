@@ -65,5 +65,5 @@ document.write('<input type="submit" name="ignore" style="display:none">');
 
 {HOOK tpl_editor_before_textarea}
 
-<textarea name="body" id="post-body" rows="15" cols="50">{POST->body}</textarea>
+<textarea name="body" id="phorum_textarea" rows="15" cols="50">{POST->body}</textarea>
 
