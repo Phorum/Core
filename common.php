@@ -763,7 +763,7 @@ function phorum_get_template_info()
 
     $d = dir( "./templates" );
     while ( false !== ( $entry = $d->read() ) ) {
-        if ( $entry != "." && $entry != ".." && file_exists( "./templates/$entry/info.php" ) ) {
+        if ( $entry != "." && $entry != ".." && !strstr($entry, "-") && file_exists( "./templates/$entry/info.php" ) ) {
             include "./templates/$entry/info.php";
             if ( !isset( $template_hide ) || empty( $template_hide ) || defined( "PHORUM_ADMIN" ) ) {
                 $tpls[$entry] = "$name $version";
