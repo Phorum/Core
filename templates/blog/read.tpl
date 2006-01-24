@@ -1,3 +1,4 @@
+<?php $count = 0; ?>
 {LOOP MESSAGES}
 {IF MESSAGES->parent_id 0}
 <div class="entry">
