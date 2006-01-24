@@ -168,7 +168,7 @@
                 "cache" => "$tmp_dir",
                 "session_timeout" => "30",
                 "short_session_timeout" => "60",
-                "tight_security" => "1",
+                "tight_security" => "0",
                 "session_path" => "/",
                 "session_domain" => "",
                 "admin_session_salt" => microtime(),
