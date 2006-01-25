@@ -45,7 +45,14 @@ document.write('<input type="submit" name="ignore" style="display:none">');
 
 {IF POST->user_id}
 <tr>
-  <td colspan="2">{IF SHOW_THREADOPTIONS}{IF OPTION_ALLOWED->allow_reply}<input type="checkbox" name="allow_reply" value="1" {IF POST->allow_reply} checked="checked"{/IF}> {LANG->AllowReplies}&nbsp;&nbsp;{/IF}{/IF}<input type="checkbox" name="email_notify" value="1" {IF POST->email_notify} checked="checked"{/IF} /> {LANG->EmailReplies}&nbsp;&nbsp;<input type="checkbox" name="show_signature" value="1" {IF POST->show_signature} checked="checked"{/IF} /> {LANG->AddSig}</td>
+  <td></td>
+    <td>
+    {IF SHOW_THREADOPTIONS}{IF OPTION_ALLOWED->allow_reply}
+    <input type="checkbox" name="allow_reply" value="1" {IF POST->allow_reply} checked="checked"{/IF}> {LANG->AllowReplies}<br/>
+    {/IF}{/IF}
+    <input type="checkbox" name="email_notify" value="1" {IF POST->email_notify} checked="checked"{/IF} /> {LANG->EmailReplies}<br/>
+    <input type="checkbox" name="show_signature" value="1" {IF POST->show_signature} checked="checked"{/IF} /> {LANG->AddSig}
+  </td>
 </tr>
 {/IF}
 
