@@ -7,7 +7,7 @@
 <style type="text/css">
 {include css}
 </style>
-<link rel="alternate" type="application/rss+xml" title="RSS-File" href="http://blogs.phorum.org/rss.php?<?php echo $PHORUM["forum_id"];?>" />
+{IF URL->RSS}<link rel="alternate" type="application/rss+xml" title="RSS-File" href="http://blogs.phorum.org/rss.php?<?php echo $PHORUM["forum_id"];?>" />{/IF}
 {if URL->REDIRECT}
 <meta http-equiv="refresh" content="5; url={URL->REDIRECT}" />
 {/if}
@@ -19,10 +19,9 @@
 <div id="right-column">
 
 <h1>The Phorum Blog Template</h1>
-
 Search:<br />
 <form id="search-form" action="<?php echo phorum_get_url(PHORUM_SEARCH_ACTION_URL); ?>" method="get" >
-<input type="hidden" name="forum_id" value="0" />
+<input type="hidden" name="forum_id" value="{FORUM_ID}" />
 <input type="hidden" name="match_type" value="ALL" />
 <input type="hidden" name="match_dates" value="30" />
 <input type="hidden" name="match_forum" value="ALL" />
@@ -55,7 +54,7 @@ Search:<br />
 <li><a href="http://phorum.org/cgi-bin/trac.cgi/report">Report Bugs</a></li>
 </ul>
 
-<a href="rss.php?<?php echo $PHORUM["forum_id"];?>"><img src="/images/rss20.gif" width="80" height="15" border="0" alt="RSS 2.0" /></a>
+{IF URL->RSS}<a href="{URL->RSS}"><img src="/images/rss20.gif" width="80" height="15" border="0" alt="RSS 2.0" /></a>{/IF}
 
 </div>
 <div id="left-column">
