@@ -7,7 +7,7 @@
 <style type="text/css">
 {include css}
 </style>
-{IF URL->RSS}<link rel="alternate" type="application/rss+xml" title="RSS-File" href="http://blogs.phorum.org/rss.php?<?php echo $PHORUM["forum_id"];?>" />{/IF}
+{IF URL->RSS}<link rel="alternate" type="application/rss+xml" title="RSS-File" href="{URL->RSS}" />{/IF}
 {if URL->REDIRECT}
 <meta http-equiv="refresh" content="5; url={URL->REDIRECT}" />
 {/if}
