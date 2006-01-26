@@ -393,7 +393,7 @@
         "ReadPrivateMessages"   =>      "Read Private Messages",
         "RealName"              =>      "Real Name",
         "Received"              =>      "Received",
-        "ReceiveModerationMails"=>      "I want to receive moderation-mails",
+        "ReceiveModerationMails"=>      "I want to receive moderation emails",
         "Recipients"            =>      "recipients",
         "RegApprovedSubject"    =>      "Your account has been approved.",
         "RegApprovedEmailBody"  =>      "Your $PHORUM[title] account has been approved.  You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",

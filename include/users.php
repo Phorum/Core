@@ -565,13 +565,35 @@ function phorum_user_moderate_allowed( $forum_id = 0, $user_data = 0 )
     // if this is an admin, stop now
     if ( $user_data["admin"] ) return true;
 
-    if ( empty( $forum_id ) ) $forum_id = $PHORUM["forum_id"];
-    // check the users permission array
-    if ( isset( $user_data["permissions"][$forum_id] ) && ( $user_data["permissions"][$forum_id] &PHORUM_USER_ALLOW_MODERATE_MESSAGES ) ) {
-        return true;
-    } else {
+    // they have no special permissions, return
+    if(!isset($user_data["permissions"])){
         return false;
     }
+
+    // this sets up a check for moderation at any level
+    if ( $forum_id==PHORUM_MODERATE_ALLOWED_ANYWHERE ){
+        $perms = $user_data["permissions"];
+    } else {
+        // else we check only one forum
+        // if no forum_id passed, check current forum
+        if ( $forum_id==0 ){
+            $forum_id = $PHORUM["forum_id"];
+        }
+        if(isset($user_data["permissions"][$forum_id])){
+            $perms[$forum_id] = $user_data["permissions"][$forum_id];
+        } else {
+            return false;
+        }
+    }
+
+    // check the users permission array
+    foreach($perms as $forum_id => $perm) {
+        if ( $perm & PHORUM_USER_ALLOW_MODERATE_MESSAGES ) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
