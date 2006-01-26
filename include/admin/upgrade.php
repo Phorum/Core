@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
     if(!defined("PHORUM_ADMIN")) return;
-    
+
     if(!phorum_db_check_connection()){
         echo "A database connection could not be established.  Please edit include/db/config.php.";
         return;
@@ -50,8 +50,10 @@
             break;
 
         case 1:
-            if (! ini_get('safe_mode'))
+            if (! ini_get('safe_mode')) {
                 set_time_limit(0);
+                ini_set("memory_limit","64M");
+            }
 
             // ok upgrading tables
             $message = phorum_upgrade_tables($PHORUM['internal_version'],PHORUMINTERNAL);
