@@ -135,7 +135,7 @@
                 if(empty($_POST["reg_perms"])) $_POST["reg_perms"]=0; 
             }
             
-            if($old_settings["inherit_id"]!==NULL && $_POST["inherit_id"]=="NULL"){
+            if($_POST["forum_id"] && $old_settings["inherit_id"]!==NULL && $_POST["inherit_id"]=="NULL"){
                 $reload = true;
             }
 
