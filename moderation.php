@@ -37,6 +37,15 @@ if(empty($msgthd_id) || !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_M
    phorum_return_to_list();
 }
 
+// If the user is not fully logged in, send him to the login page.
+// because moderation action can vary so much, the only safe bet is to send them
+// to the referrer if they are not fully logged in
+if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
+    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]));
+    exit();
+}
+
+
 $template="message";
 // set all our URL's
 phorum_build_common_urls();
