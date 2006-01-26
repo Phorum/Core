@@ -182,6 +182,9 @@
                 $forum_settings=$_POST;
 
                 if(defined("PHORUM_DEFAULT_OPTIONS")){
+                    // these two will not be set if no options were checked
+                    if(empty($forum_settings["pub_perms"])) $forum_settings["pub_perms"] = 0; 
+                    if(empty($forum_settings["reg_perms"])) $forum_settings["reg_perms"] = 0; 
                     $res=phorum_db_update_settings(array("default_forum_options" => $forum_settings));
                 } else {
                     $res=phorum_db_update_forum($forum_settings);
