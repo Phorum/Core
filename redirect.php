@@ -26,8 +26,8 @@ define('phorum_page', 'redirect');
 
 require_once("./common.php");
 
-if (isset($_REQUEST['phorum_redirect_to'])) {
-    $redir = urldecode($_REQUEST['phorum_redirect_to']);
+if (isset($PHORUM["args"]["phorum_redirect_to"])) {
+    $redir = urldecode($PHORUM["args"]["phorum_redirect_to"]);
     phorum_redirect_by_url($redir);
 } else {
     header("Location: index.php");
