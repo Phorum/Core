@@ -188,31 +188,31 @@ if ($success)
         if (isset($top_parent)) { // not set for top parents themselves.
             $readlen = $PHORUM["read_length"];
             $pages = ceil(($top_parent["thread_count"]+1) / $readlen);
+
+            if ($pages > 1) {
+                $redir_url = phorum_get_url(
+                    PHORUM_READ_URL, $message["thread"],
+                    $message["message_id"], "page=$pages"
+                );
+            } else {
+                $redir_url = phorum_get_url(
+                    PHORUM_READ_URL, $message["thread"],
+                    $message["message_id"]
+                );
+            }
+
+            // wrap redirect because of IE
+            $redir_url = phorum_get_url(PHORUM_REDIRECT_URL, 'phorum_redirect_to=' . urlencode($redir_url));
+
         } else {
-            $pages = 1;
+
+            $redir_url = phorum_get_url( PHORUM_READ_URL, $message["thread"] );
         }
 
-        if ($pages > 1) {
-            $redir_url = phorum_get_url(
-                PHORUM_READ_URL, $message["thread"],
-                $message["message_id"], "page=$pages"
-            );
-        } else {
-            $redir_url = phorum_get_url(
-                PHORUM_READ_URL, $message["thread"],
-                $message["message_id"]
-            );
-        }
     }
     else
     {
-        // To the forum index. Do this through the redirect
-        // script, because our POST request is coming from 
-        // an enctype="multipart/mixed" form, which  is buggy
-        // with anchored URL redirects in MSIE. 
-        $redir_to = phorum_get_url(PHORUM_LIST_URL);
-        $redir_to .= "#msg-" . $message["thread"];
-        $redir_url = phorum_get_url(PHORUM_REDIRECT_URL, 'phorum_redirect_to=' . urlencode($redir_to));
+        $redir_url = phorum_get_url(PHORUM_LIST_URL);
     }
 
     phorum_redirect_by_url($redir_url);
