@@ -244,8 +244,9 @@
         $forum_settings = phorum_db_get_forums($_REQUEST["forum_id"]);
         extract($forum_settings[$_REQUEST["forum_id"]]);
 
-    } elseif(defined("PHORUM_DEFAULT_OPTIONS")) {
+    } else {
 
+        // this is either a new forum or we are editing the default options
         extract($PHORUM["default_forum_options"]);
 
     }
@@ -269,14 +270,6 @@
     } else {
         $frm->hidden("module", "newforum");
         $title="Add A Forum";
-        $list_length_flat=20;
-        $list_length_threaded=10;
-        $read_length=10;
-        $pub_perms = PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_NEW_TOPIC;
-        $reg_perms = PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_EDIT;
-        $active=1;
-        $float_to_top=1;
-        $template='default';
     }
 
     $frm->addbreak($title);
