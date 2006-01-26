@@ -6,10 +6,10 @@
 {LOOP FORUMS}
 {IF FORUMS->folder_flag}
 <tr class="folder">
-{IF FORUMS->forum_id}
-<th class="forum-name"><a href="{FORUMS->url}">{FORUMS->name}</a></th>
-{ELSE}
+{IF FORUMS->forum_id FORUMS->vroot}
 <th class="forum-name">{LANG->Forums}</th>
+{ELSE}
+<th class="forum-name"><a href="{FORUMS->url}">{FORUMS->name}</a></th>
 {/IF}
 <th class="forum-threads">{LANG->Threads}</th>
 <th class="forum-posts">{LANG->Posts}</th>

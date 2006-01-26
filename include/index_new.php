@@ -32,7 +32,12 @@ if($PHORUM["forum_id"]==0){
 }
 
 if($PHORUM["vroot"]==$PHORUM["forum_id"]){
-    $forums = array_merge($forums, phorum_db_get_forums( 0, $PHORUM["forum_id"] ) );
+    $more_forums = phorum_db_get_forums( 0, $PHORUM["forum_id"] );
+    foreach($more_forums as $forum_id => $forum){
+        if(empty($forums[$forum_id])){
+            $forums[$forum_id]=$forum;
+        }
+    }
     $folders[$PHORUM["forum_id"]]=$PHORUM["forum_id"];
 }
 
@@ -55,6 +60,7 @@ foreach( $forums as $key=>$forum ) {
         }
     }
 }
+
 
 foreach( $folders as $folder_key=>$folder_id ) {
 
