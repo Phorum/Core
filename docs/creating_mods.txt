@@ -999,12 +999,12 @@ Table of contents:
    after_login
 
    Where  : login.php
-   When   : After a successfull login, just before redirecting the
+   When   : After a successful login, just before redirecting the
             user to a Phorum page.
    Input  : The redirection URL.
    Return : Same as Input
 
-   This hook can be used for performing tasks after a successfull user
+   This hook can be used for performing tasks after a successful user
    login and for changing the page to which the user will be redirected
    (by returning a different redirection URL). If you need to access the
    user data, then you can do this through the global $PHORUM variable.
@@ -1019,7 +1019,7 @@ Table of contents:
    Input  : The redirection URL.
    Return : Same as Input
 
-   This hook can be used for performing tasks after a successfull user
+   This hook can be used for performing tasks after a successful user
    logout and for changing the page to which the user will be redirected
    (by returning a different redirection URL). The user data will still
    be availbale in $PHORUM["user"] at this point.
@@ -1028,13 +1028,13 @@ Table of contents:
    after_register
 
    Where  : register.php
-   When   : Right after a successfull registration of a new user is done
+   When   : Right after a successful registration of a new user is done
             and all confirmation mails are sent.
    Input  : Array containing the user data of the user (read-only).
    Return : Same as Input
 
    This hook can be used for performing tasks (like logging and
-   notification) after a successfull user registration.
+   notification) after a successful user registration.
 
    ----------------------------------------------------------------------------
    before_attach
