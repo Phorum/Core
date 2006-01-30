@@ -1,7 +1,14 @@
 <?php
+
 define("PHORUM_ADMIN",1);
 
-include './common.php';
+// change directory to the main-dir so we can use common.php
+chdir('../');
+
+// include required files
+include_once './common.php';
+include_once './include/users.php';
+
 
 // no database connection?
 if(!phorum_db_check_connection()){
@@ -74,9 +81,9 @@ while(list($dump,$file) = each($upgradefiles)) {
         include($upgradefile);
         $err=phorum_db_run_queries($upgrade_queries);
         if($err){
-            echo "an error occured: $err ... try to continue.<br />\n";
+            echo "an error occured: $err ... try to continue.\n";
         } else {
-            echo "done.<br />\n";
+            echo "done.\n";
         }
         $GLOBALS["PHORUM"]["internal_version"]=$pure_version;
         phorum_db_update_settings(array("internal_version"=>$pure_version));
