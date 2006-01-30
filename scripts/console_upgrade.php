@@ -2,8 +2,17 @@
 
 define("PHORUM_ADMIN",1);
 
+// I guess the phorum-directory is one level up. if you move the script to
+// somewhere else you'll need to change that.
+$PHORUM_DIRECTORY="../";
+
 // change directory to the main-dir so we can use common.php
-chdir('../');
+if(file_exists($PHORUM_DIRECTORY."/common.php")) {
+    chdir($PHORUM_DIRECTORY);
+} else {
+    echo "Can't find common.php in the given directory. Please check the \$PHORUM_DIRECTORY -setting in console_upgrade.php\n";
+    exit();
+}
 
 // include required files
 include_once './common.php';
