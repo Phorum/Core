@@ -1,6 +1,22 @@
 <?php
 
-define("PHORUM_ADMIN",1);
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+// Copyright (C) 2006  Phorum Development Team                               //
+// http://www.phorum.org                                                     //
+//                                                                           //
+// This program is free software. You can redistribute it and/or modify      //
+// it under the terms of either the current Phorum License (viewable at      //
+// phorum.org) or the Phorum License that was distributed with this file     //
+//                                                                           //
+// This program is distributed in the hope that it will be useful,           //
+// but WITHOUT ANY WARRANTY, without even the implied warranty of            //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      //
+//                                                                           //
+// You should have received a copy of the Phorum License                     //
+// along with this program.                                                  //
+///////////////////////////////////////////////////////////////////////////////
+define("phorum_page", "console_upgrade");
 
 // I guess the phorum-directory is one level up. if you move the script to
 // somewhere else you'll need to change that.
@@ -18,6 +34,11 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 include_once './common.php';
 include_once './include/users.php';
 
+// if we are running in the webserver, bail out
+if (isset($_SERVER["REMOTE_ADDR"])) {
+   echo $PHORUM["DATA"]["LANG"]["CannotBeRunFromBrowser"];
+   return;
+}
 
 // no database connection?
 if(!phorum_db_check_connection()){
