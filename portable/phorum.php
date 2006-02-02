@@ -14,7 +14,7 @@ chdir($PHORUM_DIR);
 
 // we set $PHORUM["CUSTOM_QUERY_STRING"] so Phorum will parse it instead of
 // the servers QUERY_STRING.
-if(preg_match("/^([a-z]+),?/", $_SERVER["QUERY_STRING"], $match)){
+if(preg_match("/^([a-z]+)(,|$)/", $_SERVER["QUERY_STRING"], $match)){
     $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] = str_replace($match[0], "", $_SERVER["QUERY_STRING"]);
 	$page = basename($match[1]);
 } elseif(isset($_REQUEST["page"])){
