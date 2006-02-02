@@ -1844,7 +1844,7 @@ function phorum_db_user_get($user_id, $detailed)
     if(is_array($user_id)){
         return $users;
     } else {
-        return $users[$user_id];
+        return isset($users[$user_id]) ? $users[$user_id] : NULL;
     }
 
 }
