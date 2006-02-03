@@ -25,7 +25,8 @@ if(!phorum_check_read_common()) {
 }
 
 include_once("./include/format_functions.php");
-
+// set all our URL's
+phorum_build_common_urls();
 
 $PHORUM["DATA"]["SEARCH"]["noresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["showresults"] = false;
@@ -206,9 +207,6 @@ if(!empty($phorum_search)){
     // Set cursor focus to message search entry.
     $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
 }
-
-// set all our URL's
-phorum_build_common_urls();
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_SEARCH_ACTION_URL);
 $PHORUM["DATA"]["SEARCH"]["forum_id"] = $PHORUM["forum_id"];
