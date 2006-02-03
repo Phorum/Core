@@ -4254,7 +4254,7 @@ function phorum_db_pg_last_error($err){
 
     if (!defined("PHORUM_ADMIN")){
         if($logsetting == 'mail') {
-
+            include_once("./include/email_functions.php");
             $data=array('mailmessage'=>"An SQL-error occured in your phorum-installation.\n\nThe error-message was:\n$err\n\n",
                         'mailsubject'=>'Phorum: an SQL-error occured');
             phorum_email_user(array($adminemail),$data);
