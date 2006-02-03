@@ -134,7 +134,7 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refres
     if ( !empty( $PHORUM["user"] ) ) {
         $user = $PHORUM["user"];
 
-        if ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] ) {
+        if ( (isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"]) || $cookie == PHORUM_SESSION_ADMIN ) {
 
             switch($cookie){
                 case PHORUM_SESSION_SHORT_TERM:
