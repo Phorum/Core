@@ -867,6 +867,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
+        $search=mysql_escape_string($string);
+
         $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$search' $forum_where";
         if($match_date>0){
             $ts=time()-86400*$match_date;
@@ -879,7 +881,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     } else {
 
         if($match_type=="PHRASE"){
-            $search = mysql_escape_string($search);
             $terms = array('"'.$search.'"');
         } else {
             $quote_terms=array();
@@ -887,7 +888,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
                 preg_match_all( '/-*"(.*?)"/', $search, $match );
                 $search = preg_replace( '/-*".*?"/', '', $search );
-                $quote_terms = $match[1];
+                $quote_terms = $match[0];
             }
 
             //finally pull out the rest words in the string
@@ -896,10 +897,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             //merge them all together and return
             $terms = array_merge($terms, $quote_terms);
 
-            //escape the terms
-            foreach ($terms as $id => $term) {
-                $terms[$id] = mysql_escape_string($term);
-            }
         }
 
         if(count($terms)){
@@ -940,6 +937,11 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $conj="and";
                 } else {
                     $conj="or";
+                }
+
+                // quote strings correctly
+                foreach ($terms as $id => $term) {
+                    $terms[$id] = mysql_escape_string($term);
                 }
 
                 $clause = "( search_text like '%".implode("%' $conj search_text like '%", $terms)."%' )";
