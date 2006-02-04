@@ -838,8 +838,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     $conn = phorum_db_mysqli_connect();
 
-    $search = mysqli_real_escape_string($conn, $search);
-
     // have to check what forums they can read first.
     $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
     // if they are not allowed to search any forums, return the emtpy $arr;
@@ -858,6 +856,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
+        $search = mysqli_real_escape_string($conn,$search);
+
         $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$search' $forum_where";
         if($match_date>0){
             $ts=time()-86400*$match_date;
@@ -875,10 +875,11 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $quote_terms=array();
             if ( strstr( $search, '"' ) ){
                 //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
-                preg_match_all( '/-*".*?"/', $search, $match );
+                preg_match_all( '/-*"(.*?)"/', $search, $match );
+
                 $search = preg_replace( '/-*".*?"/', '', $search );
+
                 $quote_terms = $match[0];
-//                $quote_terms = preg_replace( '/"/', '', $match[0] );
             }
 
             //finally pull out the rest words in the string
@@ -926,6 +927,11 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $conj="and";
                 } else {
                     $conj="or";
+                }
+
+                // quote strings correctly
+                foreach ($terms as $id => $term) {
+                    $terms[$id] = mysqli_real_escape_string($conn,$term);
                 }
 
                 $clause = "( search_text like '%".implode("%' $conj search_text like '%", $terms)."%' )";

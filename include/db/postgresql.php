@@ -860,8 +860,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     $conn = phorum_db_postgresql_connect();
 
-    $search = pg_escape_string($search);
-
     // have to check what forums they can read first.
     $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
     // if they are not allowed to search any forums, return the emtpy $arr;
@@ -879,6 +877,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     if($match_type=="AUTHOR"){
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
+
+        $search = pg_escape_string($search);
 
         $sql = "SELECT message_id INTO $id_table FROM {$PHORUM['message_table']} WHERE author = '$search' $forum_where";
         if ($match_date > 0 ){
@@ -901,7 +901,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $quote_terms=array();
             if ( strstr( $search, '"' ) ){
                 //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
-                preg_match_all( '/-*".*?"/', $search, $match );
+                preg_match_all( '/-*"(.*?)"/', $search, $match );
                 $search = preg_replace( '/-*".*?"/', '', $search );
                 $quote_terms = $match[0];
 //                $quote_terms = preg_replace( '/"/', '', $match[0] );
@@ -952,6 +952,10 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $conj="and";
                 } else {
                     $conj="or";
+                }
+
+                foreach($terms as $id => $term) {
+                    $terms[$id] = pg_escape_string($term);
                 }
 
                 $clause = "( search_text like '%".implode("%' $conj search_text like '%", $terms)."%' )";
