@@ -69,7 +69,7 @@ if (! $PHORUM["enable_pm"]) {
     include phorum_get_template("stdblock");
     phorum_hook("before_footer");
     include phorum_get_template("footer");
-    exit;
+    return;
 }
 
 // ------------------------------------------------------------------------
@@ -137,7 +137,7 @@ if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id))
         include phorum_get_template("message");
         phorum_hook("before_footer");
         include phorum_get_template("footer");
-        exit;
+        return;
     }
 }
 
@@ -528,7 +528,7 @@ if (!empty($action)) {
         $redir_url = call_user_func_array('phorum_get_url', $args);
 
         phorum_redirect_by_url($redir_url);
-        exit;
+        exit();
     }
 
 }

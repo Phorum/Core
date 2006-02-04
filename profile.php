@@ -50,7 +50,7 @@ if(!is_array($user) || $user["active"]==0) {
     include phorum_get_template("message");
     phorum_hook("before_footer");
     include phorum_get_template("footer");
-    exit();
+    return;
 }
 
 // security messures

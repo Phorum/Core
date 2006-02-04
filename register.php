@@ -76,7 +76,7 @@ if (isset($PHORUM["args"]["approve"])) {
     include phorum_get_template("message");
     phorum_hook("before_footer");
     include phorum_get_template("footer");
-    exit();
+    return;
 
 }
 
@@ -210,8 +210,7 @@ if (count($_POST)) {
             include phorum_get_template("message");
             phorum_hook("before_footer");
             include phorum_get_template("footer");
-
-            exit();
+            return;
 
         // Adding the user to the database failed.
         } else {

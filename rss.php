@@ -110,7 +110,6 @@ if(empty($data)){
     
     );
     
-    
     $data = create_rss_feed($channel, $items);
 
 }
@@ -124,7 +123,6 @@ header("Content-Type: text/xml$charset");
 echo $data;
 
 phorum_cache_put("rss", $cache_key, $data, 300);
-
 
 /*******************************************************/
 
