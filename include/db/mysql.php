@@ -849,8 +849,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     $conn = phorum_db_mysql_connect();
 
-    $search = mysql_escape_string($search);
-
     // have to check what forums they can read first.
     $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
     // if they are not allowed to search any forums, return the emtpy $arr;
@@ -881,22 +879,27 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     } else {
 
         if($match_type=="PHRASE"){
+            $search = mysql_escape_string($search);
             $terms = array('"'.$search.'"');
         } else {
             $quote_terms=array();
             if ( strstr( $search, '"' ) ){
                 //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
-                preg_match_all( '/-*".*?"/', $search, $match );
+                preg_match_all( '/-*"(.*?)"/', $search, $match );
                 $search = preg_replace( '/-*".*?"/', '', $search );
-                $quote_terms = $match[0];
-//                $quote_terms = preg_replace( '/"/', '', $match[0] );
+                $quote_terms = $match[1];
             }
 
             //finally pull out the rest words in the string
             $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
 
             //merge them all together and return
-            $terms = array_merge( $terms, $quote_terms);
+            $terms = array_merge($terms, $quote_terms);
+
+            //escape the terms
+            foreach ($terms as $id => $term) {
+                $terms[$id] = mysql_escape_string($term);
+            }
         }
 
         if(count($terms)){
