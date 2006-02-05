@@ -490,7 +490,6 @@ function phorum_db_post_message(&$message,$convert=false){
 
             // start ft-search stuff
 
-            $search_text=pg_escape_string("{$message['author']} | {$message['subject']} | {$message['body']}");
             $sql="insert into {$PHORUM['search_table']} (message_id, forum_id, search_text) values ({$message['message_id']}, {$message['forum_id']}, '$search_text')";
             $res = pg_query($conn, $sql);
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");

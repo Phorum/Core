@@ -488,7 +488,6 @@ function phorum_db_post_message(&$message,$convert=false){
 
             // start ft-search stuff
 
-            $search_text=mysqli_real_escape_string ($conn, "{$message['author']} | {$message['subject']} | {$message['body']}");
             $sql="insert delayed into {$PHORUM['search_table']} set message_id={$message['message_id']}, forum_id={$message['forum_id']}, search_text='$search_text'";
             $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
