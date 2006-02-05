@@ -466,7 +466,7 @@ foreach ($post_fields as $var => $spec)
                    'value="' . $val . "\" />\n";
     }
 }
-$PHORUM["DATA"]["POST_VARS"] = $hidden;
+$PHORUM["DATA"]["POST_VARS"] .= $hidden;
 
 // Process data for XSS prevention.
 foreach ($message as $var => $val)
