@@ -25,6 +25,9 @@ ini_set ( "output_handler", "");
 
 include_once("./common.php");
 
+// set all our URL's
+phorum_build_common_urls();
+
 // checking read-permissions
 if(!phorum_check_read_common()) {
   return;

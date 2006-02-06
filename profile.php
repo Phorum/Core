@@ -22,6 +22,9 @@ include_once("./common.php");
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
+// set all our URL's
+phorum_build_common_urls();
+
 $template = "profile";
 $error = "";
 
