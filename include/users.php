@@ -333,7 +333,7 @@ function phorum_user_save( $user )
 
     // Is this the currently logged in user?
     // If so, re-get his stuff from the system.
-    if ( $GLOBALS["PHORUM"]["user"]["user_id"] == $user["user_id"] ) {
+    if ( isset($GLOBALS["PHORUM"]["user"]) && $GLOBALS["PHORUM"]["user"]["user_id"] == $user["user_id"] ) {
         $GLOBALS["PHORUM"]["user"] = phorum_user_get( $user["user_id"] );
     }
 
