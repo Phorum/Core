@@ -305,11 +305,8 @@ function phorum_import_template($tplfile, $outfile)
         }
         $check_deps .=
         "    \$tplfile = phorum_get_template(\"$this_template\");\n" .
-        "    include(\$tplfile);\n" .
-        "    return;\n" .
-        "} else {\n" .
-        "    include(\"" . addslashes($stage2_file) . "\");\n" .
         "}\n" .
+        "include(\"" . addslashes($stage2_file) . "\");\n" .
         "?>\n";
 
         // Reset dependancy list for the next phorum_import_template() call.
