@@ -256,7 +256,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
     // Copy default values beneath DATA to the current language.
     $datafields = array('CHARSET', 'MAILENCODING', 'LANG_META');
     foreach ($datafields as $f) {
-        if (! isset($CURRENT['DATA'][$f])) {
+        if (! isset($CURRENT['DATA'][$f]) || $CURRENT['DATA'][$f] == '') {
             $CURRENT['DATA'][$f] = $DEFAULT['DATA'][$f];
             if (! $generate_new) {
                 $frm->addrow("MISSING VARIABLE", "DATA->$f set to default " . 
