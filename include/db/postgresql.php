@@ -3487,6 +3487,34 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
 }
 
 /**
+ * This function does a quick check if the user has new private messages.
+ * This is useful in case you only want to know whether the user has
+ * new messages or not and when you are not interested in the exact amount
+ * of new messages.
+ *
+ * @param user_id - The user to retrieve messages for or NULL
+ *                 to use the current user (default).
+ * @return A true value, in case there are new messages available.
+ */
+function phorum_db_pm_checknew($user_id = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $conn = phorum_db_postgresql_connect();
+
+    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, "int");
+
+    $sql = "SELECT user_id " .
+           "FROM {$PHORUM['pm_xref_table']} " .
+           "WHERE user_id = $user_id AND read_flag = 0 LIMIT 1";
+    $res = pg_query($conn, $sql);
+    if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
+
+    return pg_num_rows($res);
+}
+
+/**
  * This function inserts a private message in the database. The return value
  * is the pm_message_id of the created message.
  * @param subject - The subject for the private message.
