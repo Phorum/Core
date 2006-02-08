@@ -232,9 +232,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
         }
 
-        if ( $PHORUM["enable_pm"] && phorum_page!="pm" ) {
-            // setup the private messages array, we store the number of new messages here
-             $PHORUM["DATA"]["PRIVATE_MESSAGES"] = $PHORUM["user"]["private_messages"];
+        // Let the templates know whether we have new private messages. 
+        $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] = 0;
+        if ( $PHORUM["enable_pm"] && isset($PHORUM["user"]["new_private_messages"]) ) {
+             $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] = $PHORUM["user"]["new_private_messages"];
         }
 
         $PHORUM["DATA"]["notice_messages"] = false;
@@ -261,7 +262,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             }
         }
 
-        $PHORUM["DATA"]["notice_all"] = ( ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["DATA"]["PRIVATE_MESSAGES"]["new"] > 0) ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"];
+        $PHORUM["DATA"]["notice_all"] = ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"];
 
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {

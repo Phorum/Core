@@ -221,11 +221,11 @@ function phorum_user_clear_session( $cookie = PHORUM_SESSION_LONG_TERM )
  * and group membership. $detailed is true by default and may be omitted.
  * @param user_id - can be a single user id, or an array of user ids.
  * @param detailed - get detailed user information (defaults to true).
- * @param pmcount - do private messages count for the user (defaults to false).
+ * @param checknewpm - check for new private messages for the user (defaults to false).
  * @return array - either an array representing a single user's information,
  *                 or an array of users
  */
-function phorum_user_get( $user_id, $detailed = true, $pmcount = false )
+function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -285,10 +285,10 @@ function phorum_user_get( $user_id, $detailed = true, $pmcount = false )
                         }
                     }
                 }
-                // get the user's private message counts for the inbox
-                $user["private_messages"] = array("new" => 0, "total" => 0);
-                if ( $pmcount && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
-                    $user["private_messages"] = phorum_db_pm_messagecount( PHORUM_PM_ALLFOLDERS, $uid );
+
+                // check if the user has new private messages
+                if ( $checkpm && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
+                    $user["new_private_messages"] = phorum_db_pm_checknew( $uid );
                 }
 
                 // store users in cache if enabled
