@@ -620,13 +620,11 @@ switch ($page) {
         } else {
 
             $list = phorum_db_pm_list($folder_id);
+
             // Prepare data for the templates (formatting and XSS prevention).
+            $list = phorum_pm_format($list);
             foreach ($list as $message_id => $message)
             {
-                $message = phorum_pm_format($message);
-                $list[$message_id]["from_username"] = $message["from_username"];
-                $list[$message_id]["subject"] = $message["subject"];
-                $list[$message_id]["message"] = $message["message"];
                 $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
                 $list[$message_id]["read_url"]=phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
                 $list[$message_id]["date"] = phorum_date($PHORUM["short_date"], $message["datestamp"]);
@@ -646,7 +644,6 @@ switch ($page) {
             $PHORUM["DATA"]["PMLOCATION"] = $pm_folders[$folder_id]["name"];
 
             $template = "pm_list";
-
         }
 
         break;
@@ -666,7 +663,7 @@ switch ($page) {
             }
 
             // Run the message through the default message formatting.
-            $message = phorum_pm_format($message);
+            list($message) = phorum_pm_format(array($message));
 
             // Setup data for recipients.
             foreach ($message["recipients"] as $rcpt_id => $rcpt) {
@@ -793,7 +790,7 @@ switch ($page) {
 
         // Setup data for previewing a message.
         if ($msg["preview"]) {
-            $preview = phorum_pm_format($msg);
+            list($preview) = phorum_pm_format(array($msg));
             $PHORUM["DATA"]["PREVIEW"] = $preview;
         }
 
@@ -914,25 +911,31 @@ include phorum_get_template("footer");
 // ------------------------------------------------------------------------
 
 // Apply the default forum message formatting to a private message.
-function phorum_pm_format($message)
+function phorum_pm_format($messages)
 {
     include_once("./include/format_functions.php");
 
     // Reformat message so it looks like a forum message.
-    $message["author"] = $message["from_username"];
-    $message["body"] = $message["message"];
-    $message["email"] = "";
+    foreach ($messages as $id => $message) 
+    {
+        $messages[$id]["author"] = $message["from_username"];
+        $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
+        $messages[$id]["email"] = "";
+    }
 
-    // Run the message through the formatting code.
-    list($message) = phorum_format_messages(array($message));
+    // Run the messages through the formatting code.
+    $messages = phorum_format_messages($messages);
 
     // Reformat message back to a private message.
-    $message["message"] = $message["body"];
-    $message["from_username"] = $message["author"];
-    unset($message["body"]);
-    unset($message["author"]);
+    foreach ($messages as $id => $message) 
+    {
+        $messages[$id]["message"] = $message["body"];
+        $messages[$id]["from_username"] = $message["author"];
+        unset($messages[$id]["body"]);
+        unset($messages[$id]["author"]);
+    }
 
-    return $message;
+    return $messages;
 }
 
 // Apply message reply quoting to a private message.
