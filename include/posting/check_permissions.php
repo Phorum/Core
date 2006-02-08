@@ -128,7 +128,21 @@ if ($mode == "reply")
         $top_parent["status"] != PHORUM_STATUS_APPROVED ||
         $parent["status"] != PHORUM_STATUS_APPROVED;
 
-    if ($unapproved) {
+    if ($unapproved) 
+    {
+        // In case we run the editor included in the read page,
+        // we should not redirect to the listpage for moderators.
+        // Else a moderator can never read an unapproved message.
+        if (isset($PHORUM["postingargs"]["as_include"])) {
+            if ($PHORUM["DATA"]["MODERATOR"]) {
+                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["UnapprovedMessage"];
+                $error_flag = true;
+                return;
+            }
+        }
+
+        // In other cases, redirect users that are replying to
+        // unapproved messages to the message list.
         phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
         exit;
     }
