@@ -33,9 +33,15 @@ function phorum_import_template($tplfile, $outfile)
     // Remember that we used this template.
     $include_deps[$tplfile] = $outfile;
 
-    $fp=fopen($tplfile, "r");
-    $page=fread($fp, filesize($tplfile));
-    fclose($fp);
+    // In case we're handling 0 byte large files, we set $page
+    // directly. Running fread($fp, 0) gives a PHP warning.
+    if (filesize($tplfile)) {
+        $fp=fopen($tplfile, "r");
+        $page=fread($fp, filesize($tplfile));
+        fclose($fp);
+    } else {
+        $page = '';
+    }
 
     preg_match_all("/\{[\!\/A-Za-z].+?\}/s", $page, $matches);
 
