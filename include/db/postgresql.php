@@ -489,7 +489,7 @@ function phorum_db_post_message(&$message,$convert=false){
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
             // start ft-search stuff
-
+            $search_text="$message[author] | $message[subject] | $message[body]";
             $sql="insert into {$PHORUM['search_table']} (message_id, forum_id, search_text) values ({$message['message_id']}, {$message['forum_id']}, '$search_text')";
             $res = pg_query($conn, $sql);
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
@@ -652,7 +652,7 @@ echo '</pre>';
         if($res){
             // start ft-search stuff
             if(isset($message["author"]) && isset($message["subject"]) && isset($message["body"])){
-                $search_text=pg_escape_string("$message[author] | $message[subject] | $message[body]");
+                $search_text="$message[author] | $message[subject] | $message[body]";
                 $sql="UPDATE {$PHORUM['search_table']} set forum_id={$message['forum_id']}, search_text='$search_text' WHERE message_id={$message_id}";
                 $res = pg_query($conn, $sql);
 				if (pg_affected_rows($res) == 0) {
