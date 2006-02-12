@@ -866,7 +866,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
-        $search=mysql_escape_string($string);
+        $search=mysql_escape_string($search);
 
         $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$search' $forum_where";
         if($match_date>0){
