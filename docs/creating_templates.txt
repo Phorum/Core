@@ -10,8 +10,7 @@ Here are the steps that you have to take to create your own template:
 
 1) Take the default template directory from {phorum dir}/templates/default
    and copy it over to another directory, for example
-   {phorum dir}/templates/mytemplate. Do not use a minus (-) sign in
-   the new directory's name;
+   {phorum dir}/templates/mytemplate.
 
 2) Edit {phorum dir}/templates/mytemplate/info.php. In this file you
    have to edit at least the $name variable, e.g. to

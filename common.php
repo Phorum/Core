@@ -622,7 +622,9 @@ function phorum_get_template( $page, $is_include = false )
     } else {
         // not there, look for a template
         $tplfile = "$tpl.tpl";
-        $phpfile = "$PHORUM[cache]/tpl-$PHORUM[template]-$page-" .
+        $safetemplate = str_replace("-", "_", $PHORUM["template"]);
+        $safepage = str_replace("-", "_", $page);
+        $phpfile = "$PHORUM[cache]/tpl-$safetemplate-$safepage-" .
                ($is_include ? "include" : "toplevel") . "-" .
                md5( dirname( __FILE__ ) ) . ".php";
 
@@ -764,7 +766,7 @@ function phorum_get_template_info()
 
     $d = dir( "./templates" );
     while ( false !== ( $entry = $d->read() ) ) {
-        if ( $entry != "." && $entry != ".." && !strstr($entry, "-") && file_exists( "./templates/$entry/info.php" ) ) {
+        if ( $entry != "." && $entry != ".." && file_exists( "./templates/$entry/info.php" ) ) {
             include "./templates/$entry/info.php";
             if ( !isset( $template_hide ) || empty( $template_hide ) || defined( "PHORUM_ADMIN" ) ) {
                 $tpls[$entry] = "$name $version";
