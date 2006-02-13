@@ -21,7 +21,7 @@
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
 // all other constants in ./include/constants.php
-define( "PHORUM", "5.1.7-RC1" );
+define( "PHORUM", "5.1.8-RC2" );
 
 // our internal version in format of year-month-day-serial
 define( "PHORUMINTERNAL", "2005120400" );
@@ -232,7 +232,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
         }
 
-        // Let the templates know whether we have new private messages. 
+        // Let the templates know whether we have new private messages.
         $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] = 0;
         if ( $PHORUM["enable_pm"] && isset($PHORUM["user"]["new_private_messages"]) ) {
              $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] = $PHORUM["user"]["new_private_messages"];
