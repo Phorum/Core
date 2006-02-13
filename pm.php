@@ -83,9 +83,9 @@ function phorum_getparam($name)
 
     $ret = NULL;
     if (isset($PHORUM["args"][$name])) {
-        $ret = $PHORUM["args"][$name];
+        $ret = trim($PHORUM["args"][$name]);
     }elseif (isset($_POST[$name])) {
-        $ret = $_POST[$name];
+        $ret = trim($_POST[$name]);
     }
 
     return $ret;
@@ -364,9 +364,11 @@ if (!empty($action)) {
 
                 // Only send the message if we have at least one recipient.
                 if (count($recipients)) {
+                    $_POST["subject"] = trim($_POST["subject"]);
+                    $_POST["message"] = trim($_POST["message"]);
 
                     // Only send the message if all required message data is filled in.
-                    if (empty($_POST["subject"]) || empty($_POST["message"])) {
+                    if ($_POST["subject"] == '' || $_POST["message"] == '') {
 
                         $error = $PHORUM["DATA"]["LANG"]["PMRequiredFields"];
 
