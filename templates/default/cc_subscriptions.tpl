@@ -34,7 +34,7 @@
 {LOOP subscriptions}
 <tr>
 <td class="PhorumTableRow"><input type="checkbox" name="delthreads[]" value="{subscriptions->thread}" /></td>
-<td class="PhorumTableRow"><a href="{subscriptions->readurl}">{subscriptions->subject}</a><br /><span class="PhorumListSubText">Forum: {subscriptions->forum}</span></td>
+<td class="PhorumTableRow"><a href="{subscriptions->readurl}">{subscriptions->subject}</a><br /><span class="PhorumListSubText">{LANG->Forum}: {subscriptions->forum}</span></td>
 <td class="PhorumTableRow">{subscriptions->linked_author}</td>
 <td class="PhorumTableRow">{subscriptions->datestamp}</td>
 <td class="PhorumTableRow"><input type="hidden" name="thread_forum_id[{subscriptions->thread}]" value="{subscriptions->forum_id}" /><input type="hidden" name="old_sub_type[{subscriptions->thread}]" value="{subscriptions->sub_type}" /><select name="sub_type[{subscriptions->thread}]"><option {if subscriptions->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected{/if} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option><option {if subscriptions->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected{/if} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option></select></td>
