@@ -66,7 +66,7 @@ Table of contents:
    > That returns 16.
    > So, in our data, the 272 represents what is in the database.
    > The 16 would be one of the permission constancts
-   > Our constants would like like this:
+   > Our constants would look like this:
    >     define("PHORUM_USER_ALLOW_READ", 1);  
    >     define("PHORUM_USER_ALLOW_REPLY", 2); 
    >     define("PHORUM_USER_ALLOW_EDIT", 4); 
