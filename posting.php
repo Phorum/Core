@@ -258,7 +258,7 @@ if (! $error_flag)
         phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
     // Ability: Do we allow attachments?
-    $PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0;
+    $PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
 
     $PHORUM["DATA"]["EMAILNOTIFY"] =
     (isset($PHORUM['allow_email_notify']) && !empty($PHORUM['allow_email_notify']))? 1 : 0;
