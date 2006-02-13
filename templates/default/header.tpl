@@ -30,6 +30,6 @@
 {/IF}
 <span class="PhorumTitleText PhorumLargeFont">
 {IF NAME}<a href="{URL->TOP}">{NAME}</a>&nbsp;:&nbsp;{/IF}{TITLE}</span>
-<img src="templates/default/images/logo.png" alt="The fastest message board....ever." width="170" height="42" />
+<img src="templates/default/images/logo.png" alt="The fastest message board....ever." title="The fastest message board... ever." width="170" height="42" />
 <div class="PhorumFloatingText">{DESCRIPTION}&nbsp;</div>
 
