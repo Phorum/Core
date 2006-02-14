@@ -401,7 +401,12 @@ if($PHORUM["max_attachments"]){
         $db_limit = $max_packetsize/1024*.6;
     }
     if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$php_limit;
-    $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"], $php_limit, $db_limit, $PHORUM["max_totalattachment_size"]);
+    $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"], $php_limit, $db_limit);
+    if ($PHORUM["max_totalattachment_size"]) {
+        if ($PHORUM["max_totalattachment_size"] < $PHORUM["max_attachment_size"]) {
+            $PHORUM["max_attachment_size"] = $PHORUM["max_totalattachment_size"];
+        }
+    }
 
     // Data for attachment explanation.
     if ($PHORUM["allow_attachment_types"]) {
