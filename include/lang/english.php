@@ -137,7 +137,7 @@
         "Email"                 =>      "Email",
         "EmailConfirmRequired"  =>      "Email confirmation required.",
         "EmailVerify"           =>      "Email Verification",
-        "EmailVerifyDesc"       =>      "Verify of the new email-address",
+        "EmailVerifyDesc"       =>      "Verification of the new email-address",
         "EmailVerifyEnterCode"  =>      "Please enter the verification code you got",
         "EmailVerifySubject"    =>      "Verification of your new email-address",
         "EmailVerifyBody"       =>      "Hello %uname%,\n\nThis email is sent to you because you requested to change your email-address in your profile. To confirm that this is a valid email-address you are receiving this mail with your confirmation-code. You can simply ignore this mail if you are not %uname%.\n\nThe new email-address is: %newmail%\nThe confirmation code is: %mailcode%\n\nPlease enter the code in your profile to confirm the change:\n\n<%cc_url%>\n\nThanks, $PHORUM[title]",
