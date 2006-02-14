@@ -150,7 +150,7 @@
         "ErrBody"               =>      "Please fill in the message body.",
         "ErrBodyTooLarge"       =>      "Please shorten your messages, the body is too large.",
         "ErrEmail"              =>      "The email address you entered does not appear to be a valid email address.  Please try again.",
-        "ErrEmailExists"        =>      "The email address you entered is already listed with a another user.",
+        "ErrEmailExists"        =>      "The email address you entered is already listed with another user.",
         "ErrUsername"           =>      "Please fill in the username field.",
         "ErrPassword"           =>      "Either the password field is empty or the passwords do not match.  Please try again.",
         "ErrUserAddUpdate"      =>      "User not added/updated.  Unknown error.",
