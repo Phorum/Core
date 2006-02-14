@@ -1,7 +1,7 @@
 <div class="PhorumStdBlockHeader PhorumNarrowBlock">
 
 {IF POST->attachments}
-  {include posting_attachments_list}
+  {INCLUDE posting_attachments_list}
 
   {ASSIGN AttachPhrase LANG->AttachAnotherFile}
 
@@ -24,10 +24,10 @@
   <b>{AttachPhrase}</b>
 
   <ul>
-  {IF EXPLAIN_ATTACH_FILE_TYPES}<li>{EXPLAIN_ATTACH_FILE_TYPES}{/IF}
-  {IF EXPLAIN_ATTACH_FILE_SIZE}<li>{EXPLAIN_ATTACH_FILE_SIZE}{/IF}
-  {IF EXPLAIN_ATTACH_TOTALFILE_SIZE}<li>{EXPLAIN_ATTACH_TOTALFILE_SIZE}{/IF}
-  {IF EXPLAIN_ATTACH_MAX_ATTACHMENTS}<li>{EXPLAIN_ATTACH_MAX_ATTACHMENTS}{/IF}
+  {IF EXPLAIN_ATTACH_FILE_TYPES}<li>{EXPLAIN_ATTACH_FILE_TYPES}</li>{/IF}
+  {IF EXPLAIN_ATTACH_FILE_SIZE}<li>{EXPLAIN_ATTACH_FILE_SIZE}</li>{/IF}
+  {IF EXPLAIN_ATTACH_TOTALFILE_SIZE}<li>{EXPLAIN_ATTACH_TOTALFILE_SIZE}</li>{/IF}
+  {IF EXPLAIN_ATTACH_MAX_ATTACHMENTS}<li>{EXPLAIN_ATTACH_MAX_ATTACHMENTS}</li>{/IF}
   </ul>
 
   <input type="file" size="50" name="attachment" />

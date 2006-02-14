@@ -24,7 +24,7 @@
 <div class="PhorumStdBlock" style="text-align: left;">
 <table class="PhorumFormTable" cellspacing="0" border="0">
 {IF PROFILE->admin}
-<tr><td colspan="2">
+<tr><td>
 {LANG->PermAdministrator}
 </td></tr>
 {ELSEIF UserPerms}
@@ -34,6 +34,5 @@
 {/LOOP UserPerms}
 {/IF}
 </table>
-{/IF}
-
 </div>
+{/IF}

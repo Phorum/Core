@@ -19,7 +19,7 @@
 
 {IF SEARCH->showresults}
 
-  {include paging}
+  {INCLUDE paging}
 
   <div class="PhorumStdBlockHeader" style="text-align: left;"><span class="PhorumHeadingLeft">{LANG->Results} {RANGE_START} - {RANGE_END} {LANG->of} {TOTAL}</span></div>
 
@@ -41,10 +41,10 @@
    {/LOOP MATCHES}
   </div>
 
-  {include paging}
+  {INCLUDE paging}
 
   <div class="PhorumNavBlock" style="text-align: left;">
-    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}</a>
+    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
   </div>
   <br />
 {/IF}
@@ -61,8 +61,8 @@
       <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
       {POST_VARS}
       <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
-      <div style="margin-top: 3px;"><select name="match_forum"><option value="ALL" {if SEARCH->match_forum ALL}selected{/if}>{LANG->MatchAllForums}</option>{if SEARCH->allow_match_one_forum}<option value="THISONE" {if SEARCH->match_forum THISONE}selected{/if}>{LANG->MatchThisForum}</option>{/if}</select></div>
-      <div style="margin-top: 3px;"><select name="match_dates"><option value="30" {if SEARCH->match_dates 30}selected{/if}>{LANG->Last30Days}</option><option value="90" {if SEARCH->match_dates 90}selected{/if}>{LANG->Last90Days}</option><option value="365" {if SEARCH->match_dates 365}selected{/if}>{LANG->Last365Days}</option><option value="0" {if SEARCH->match_dates 0}selected{/if}>{LANG->AllDates}</option></select>&nbsp;<select name="match_type"><option value="ALL" {if SEARCH->match_type ALL}selected{/if}>{LANG->MatchAll}</option><option value="ANY" {if SEARCH->match_type ANY}selected{/if}>{LANG->MatchAny}</option><option value="PHRASE" {if SEARCH->match_type PHRASE}selected{/if}>{LANG->MatchPhrase}</option></select></div>
+      <div style="margin-top: 3px;"><select name="match_forum"><option value="ALL" {IF SEARCH->match_forum ALL}selected{/IF}>{LANG->MatchAllForums}</option>{IF SEARCH->allow_match_one_forum}<option value="THISONE" {IF SEARCH->match_forum THISONE}selected{/IF}>{LANG->MatchThisForum}</option>{/IF}</select></div>
+      <div style="margin-top: 3px;"><select name="match_dates"><option value="30" {IF SEARCH->match_dates 30}selected{/IF}>{LANG->Last30Days}</option><option value="90" {IF SEARCH->match_dates 90}selected{/IF}>{LANG->Last90Days}</option><option value="365" {IF SEARCH->match_dates 365}selected{/IF}>{LANG->Last365Days}</option><option value="0" {IF SEARCH->match_dates 0}selected{/IF}>{LANG->AllDates}</option></select>&nbsp;<select name="match_type"><option value="ALL" {IF SEARCH->match_type ALL}selected{/IF}>{LANG->MatchAll}</option><option value="ANY" {IF SEARCH->match_type ANY}selected{/IF}>{LANG->MatchAny}</option><option value="PHRASE" {IF SEARCH->match_type PHRASE}selected{/IF}>{LANG->MatchPhrase}</option></select></div>
       </form>
     </td>
     <td style="width: 10px">&nbsp;</td>
@@ -72,8 +72,8 @@
       <input type="hidden" name="match_type" value="AUTHOR" />
       {POST_VARS}
       <input type="text" id="phorum_search_author" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
-      <div style="margin-top: 3px;"><select name="match_forum"><option value="ALL" {if SEARCH->match_forum ALL}selected{/if}>{LANG->MatchAllForums}</option>{if SEARCH->allow_match_one_forum}<option value="THISONE" {if SEARCH->match_forum THISONE}selected{/if}>{LANG->MatchThisForum}</option>{/if}</select></div>
-      <div style="margin-top: 3px;"><select name="match_dates"><option value="30" {if SEARCH->match_dates 30}selected{/if}>{LANG->Last30Days}</option><option value="90" {if SEARCH->match_dates 90}selected{/if}>{LANG->Last90Days}</option><option value="365" {if SEARCH->match_dates 365}selected{/if}>{LANG->Last365Days}</option><option value="0" {if SEARCH->match_dates 0}selected{/if}>{LANG->AllDates}</option></select></div>
+      <div style="margin-top: 3px;"><select name="match_forum"><option value="ALL" {IF SEARCH->match_forum ALL}selected{/IF}>{LANG->MatchAllForums}</option>{IF SEARCH->allow_match_one_forum}<option value="THISONE" {IF SEARCH->match_forum THISONE}selected{/IF}>{LANG->MatchThisForum}</option>{/IF}</select></div>
+      <div style="margin-top: 3px;"><select name="match_dates"><option value="30" {IF SEARCH->match_dates 30}selected{/IF}>{LANG->Last30Days}</option><option value="90" {IF SEARCH->match_dates 90}selected{/IF}>{LANG->Last90Days}</option><option value="365" {IF SEARCH->match_dates 365}selected{/IF}>{LANG->Last365Days}</option><option value="0" {IF SEARCH->match_dates 0}selected{/IF}>{LANG->AllDates}</option></select></div>
       </form>
     </td>
   </tr>

@@ -1,13 +1,13 @@
 <div class="PhorumNavBlock" style="text-align: left;">
 <div style="float: right;"><span class="PhorumNavHeading">{LANG->GotoThread}:</span>&nbsp;<a class="PhorumNavLink" href="{URL->NEWERTHREAD}">{LANG->PrevPage}</a>&bull;<a class="PhorumNavLink" href="{URL->OLDERTHREAD}">{LANG->NextPage}</a></div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>{/IF}{if LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/if}{if LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/if}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>{/IF}{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
 </div>
 
-{if PAGES}
-{include paging}
-{/if}
+{IF PAGES}
+{INCLUDE paging}
+{/IF}
 
-{loop MESSAGES}
+{LOOP MESSAGES}
 {IF NOT MESSAGES->parent_id 0}
   <a name="msg-{MESSAGES->message_id}"></a>
 {/IF}
@@ -37,33 +37,33 @@
 {/IF}
 </div>
 
-{if MODERATOR true}
+{IF MODERATOR true}
 <div class="PhorumReadNavBlock" style="text-align: left;">
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{if MESSAGES->threadstart true}
-<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGES->move_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>{if MESSAGES->closed false}&bull;<a class="PhorumNavLink" href="{MESSAGES->close_url}">{LANG->CloseThread}</a>{/if}{if MESSAGES->closed true}&bull;<a class="PhorumNavLink" href="{MESSAGES->reopen_url}">{LANG->ReopenThread}</a>{/if}
-{/if}
-{if MESSAGES->threadstart false}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{IF MESSAGES->threadstart true}
+<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGES->move_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>{IF MESSAGES->closed false}&bull;<a class="PhorumNavLink" href="{MESSAGES->close_url}">{LANG->CloseThread}</a>{/IF}{IF MESSAGES->closed true}&bull;<a class="PhorumNavLink" href="{MESSAGES->reopen_url}">{LANG->ReopenThread}</a>{/IF}
+{/IF}
+{IF MESSAGES->threadstart false}
 <a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url2}';">{LANG->DelMessReplies}</a>
 &bull;<a class="PhorumNavLink" href="{MESSAGES->split_url}">{LANG->SplitThread}</a>
-{/if}
-{if MESSAGES->is_unapproved}
+{/IF}
+{IF MESSAGES->is_unapproved}
 &bull;<a class="PhorumNavLink" href="{MESSAGES->approve_url}">{LANG->ApproveMessage}</a>
-{else}
+{ELSE}
 &bull;<a class="PhorumNavLink" href="{MESSAGES->hide_url}">{LANG->HideMessage}</a>
-{/if}
+{/IF}
 &bull;<a class="PhorumNavLink" href="{MESSAGES->edit_url}">{LANG->EditPost}</a>
 </div>
-{/if}
+{/IF}
 
 <div class="PhorumReadNavBlock" style="text-align: left;">
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGES->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGES->report_url}">{LANG->Report}</a>{/IF}{if MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/if}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGES->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGES->report_url}">{LANG->Report}</a>{/IF}{IF MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/IF}
 </div>
 
 </div>
-{/loop MESSAGES}
+{/LOOP MESSAGES}
 
-{if PAGES}
-{include paging}
-{/if}
+{IF PAGES}
+{INCLUDE paging}
+{/IF}
 
 <br /><br />

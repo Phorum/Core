@@ -42,13 +42,13 @@
       <div class="phorum-pmuserselection">
       {IF USERS}
         <select id="userselection" name="to_id" size="1" align="middle">
-        <option value=""> {LANG->PMSelectARecipient}
+        <option value=""> {LANG->PMSelectARecipient}</option>
         {LOOP USERS}
-          <option value="{USERS->user_id}" <?php if (isset($_POST["to_id"]) && $_POST["to_id"] == $PHORUM["TMP"]["USERS"]["user_id"]) print 'selected="selected"'?>>{USERS->displayname}</option>
+          <option value="{USERS->user_id}" <?php if (isset($_POST["to_id"]) && $_POST["to_id"] == $PHORUM["TMP"]["USERS"]["user_id"]) echo 'selected="selected"'?>>{USERS->displayname}</option>
         {/LOOP USERS}
         </select>
       {ELSE}
-        <input type="text" id="userselection" name="to_name" value="<?php if (isset($_POST["to_name"])) print htmlspecialchars($_POST["to_name"])?>"/>
+        <input type="text" id="userselection" name="to_name" value="<?php if (isset($_POST["to_name"])) echo htmlspecialchars($_POST["to_name"])?>"/>
       {/IF}
 
       <input type="submit" class="PhorumSubmit" style="font-size: {smallfontsize}" name="rcpt_add" value="{LANG->PMAddRecipient}"/>
@@ -66,7 +66,7 @@
         {MESSAGE->recipients->username}
         <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->username}"/>
         <input type="image" src="{delete_image}"
-         name="del_rcpt::{MESSAGE->recipients->user_id}" 
+         name="del_rcpt::{MESSAGE->recipients->user_id}"
          style="margin-left: 3px;vertical-align:top">
       </div>
     {/LOOP MESSAGE->recipients}

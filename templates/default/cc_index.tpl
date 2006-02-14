@@ -5,12 +5,12 @@
 <table id="phorum-menu-table" cellspacing="0" border="0">
 <tr>
 <td id="phorum-menu" nowrap="nowrap">
-{include cc_menu}
+{INCLUDE cc_menu}
 </td>
 <td id="phorum-content">
 {IF content_template}
-{include_var content_template}
-{else}
+{INCLUDE_VAR content_template}
+{ELSE}
 <div class="PhorumFloatingText">{MESSAGE}</div>
 {/IF}
 </td>

@@ -22,7 +22,7 @@
 {/IF}
 {IF PROFILE->MAILSETTINGS}
 <tr>
-    <td valign="top">{LANG->Email}*:&nbsp;{if PROFILE->EMAIL_CONFIRM}<br />{LANG->EmailConfirmRequired}{/if}</td>
+    <td valign="top">{LANG->Email}*:&nbsp;{IF PROFILE->EMAIL_CONFIRM}<br />{LANG->EmailConfirmRequired}{/IF}</td>
     <td><input type="text" name="email" size="30" value="{PROFILE->email}" /></td>
 </tr>
 {IF PROFILE->email_temp_part}
@@ -63,7 +63,7 @@
 </tr>
 <tr>
     <td nowrap="nowrap">{LANG->IsDST}:&nbsp;</td>
-    <td><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/if}></td>
+    <td><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}></td>
 </tr>
   {/IF}
 <tr>
@@ -88,11 +88,11 @@
   {/IF}
 <tr>
     <td nowrap="nowrap">{LANG->ThreadViewList}:&nbsp;</td>
-    <td><select name="threaded_list"><option value="0">{LANG->Default}</option><option value="1" {if PROFILE->threaded_list}selected{/if}>{LANG->ViewThreaded}</option><option value="2" {if PROFILE->threaded_list 2}selected{/if}>{LANG->ViewFlat}</option></select></td>
+    <td><select name="threaded_list"><option value="0">{LANG->Default}</option><option value="1" {IF PROFILE->threaded_list}selected{/IF}>{LANG->ViewThreaded}</option><option value="2" {IF PROFILE->threaded_list 2}selected{/IF}>{LANG->ViewFlat}</option></select></td>
 </tr>
 <tr>
     <td nowrap="nowrap">{LANG->ThreadViewRead}:&nbsp;</td>
-    <td><select name="threaded_read"><option value="0">{LANG->Default}</option><option value="1" {if PROFILE->threaded_read}selected{/if}>{LANG->ViewThreaded}</option><option value="2" {if PROFILE->threaded_read 2}selected{/if}>{LANG->ViewFlat}</option></select></td>
+    <td><select name="threaded_read"><option value="0">{LANG->Default}</option><option value="1" {IF PROFILE->threaded_read}selected{/IF}>{LANG->ViewThreaded}</option><option value="2" {IF PROFILE->threaded_read 2}selected{/IF}>{LANG->ViewFlat}</option></select></td>
 </tr>
 <tr>
     <td nowrap="nowrap">{LANG->EnableNotifyDefault}:&nbsp;</td>

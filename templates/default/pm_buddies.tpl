@@ -37,7 +37,7 @@
 
   <div class="PhorumStdBlock" style="border-top:none">
     <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}"
-     onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
+     onclick="return confirm('<?php echo addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
     <input type="submit" name="send_pm" class="PhorumSubmit" value="{LANG->SendPM}"/>
   </div>
 {ELSE}

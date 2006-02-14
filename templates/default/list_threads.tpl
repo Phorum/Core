@@ -68,7 +68,7 @@
 {/LOOP ROWS}
 </table>
 
-{include paging}
+{INCLUDE paging}
 
 <div class="PhorumNavBlock" style="text-align: left;">
 <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;{IF LOGGEDIN true}<a class="PhorumNavLink" href="{URL->MARKREAD}">{LANG->MarkRead}</a>{/IF}

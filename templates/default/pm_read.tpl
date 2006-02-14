@@ -31,8 +31,8 @@
 
 <div class="PhorumStdBlock" style="border-top:none">
 {IF FOLDER_IS_INCOMING}
-  {var MOVE_SUBMIT_NAME move_message}
-  {include pm_moveselect}
+  {VAR MOVE_SUBMIT_NAME move_message}
+  {INCLUDE pm_moveselect}
 {/IF}
 <input type="submit" name="close_message" class="PhorumSubmit" value="{LANG->PMCloseMessage}" />
 {IF NOT MESSAGE->from_user_id USERINFO->user_id}
@@ -42,6 +42,6 @@
   {/IF}
 {/IF}
 <input type="submit" name="delete_message" class="PhorumSubmit" value="{LANG->Delete}"
- onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
+ onclick="return confirm('<?php echo addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
 </div>
 </form>

@@ -11,5 +11,5 @@
 
 </div>
 
-{include pm_max_messagecount}
+{INCLUDE pm_max_messagecount}
 

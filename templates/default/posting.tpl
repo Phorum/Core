@@ -4,18 +4,18 @@
 {IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
 
   {IF PREVIEW}
-    {include posting_preview}
+    {INCLUDE posting_preview}
   {/IF}
 
   <form id="post_form" name="post" action="{URL->ACTION}" method="post"
    enctype="multipart/form-data">
   {POST_VARS}
 
-  {include posting_menu}
+  {INCLUDE posting_menu}
 
-  {include posting_messageform}
+  {INCLUDE posting_messageform}
 
-  {include posting_buttons}
+  {INCLUDE posting_buttons}
 
   </form>
 

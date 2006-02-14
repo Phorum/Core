@@ -20,13 +20,13 @@ document.write('<input type="submit" name="ignore" style="display:none">');
       {IF MODERATOR}
         <input type="text" name="author" size="30" value="{POST->author}" />
       {ELSE}
-        <?php print $PHORUM["user"]["username"] ?>
+        <?php echo $PHORUM["user"]["username"] ?>
       {/IF}
     {/IF}
   {! Writing a new message }
   {ELSE}
     {IF LOGGEDIN}
-      <?php print $PHORUM["user"]["username"] ?>
+      <?php echo $PHORUM["user"]["username"] ?>
     {ELSE}
       <input type="text" name="author" size="30" value="{POST->author}" />
     {/IF}
@@ -47,13 +47,13 @@ document.write('<input type="submit" name="ignore" style="display:none">');
       {IF MODERATOR}
         <input type="text" name="email" size="30" value="{POST->email}" />
       {ELSE}
-        <?php print $PHORUM["user"]["email"] ?>
+        <?php echo $PHORUM["user"]["email"] ?>
       {/IF}
     {/IF}
     {! Writing a new message }
   {ELSE}
     {IF LOGGEDIN true}
-      <?php print $PHORUM["user"]["email"] ?>
+      <?php echo $PHORUM["user"]["email"] ?>
     {ELSE}
       <input type="text" name="email" size="30" value="{POST->email}" />
     {/IF}
@@ -136,7 +136,7 @@ document.write('<input type="submit" name="ignore" style="display:none">');
 {! Attachments ============================================================== }
 
 {IF ATTACHMENTS}
-    {include posting_attachments}
+    {INCLUDE posting_attachments}
 {/IF}
 
 

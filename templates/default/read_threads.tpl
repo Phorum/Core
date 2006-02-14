@@ -32,18 +32,18 @@
 <a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->delete_url2}';">{LANG->DelMessReplies}</a>
 &bull;<a class="PhorumNavLink" href="{MESSAGE->split_url}">{LANG->SplitThread}</a>
 {/IF}
-{if MESSAGE->is_unapproved}
+{IF MESSAGE->is_unapproved}
 &bull;<a class="PhorumNavLink" href="{MESSAGE->approve_url}">{LANG->ApproveMessage}</a>
-{else}
+{ELSE}
 &bull;<a class="PhorumNavLink" href="{MESSAGE->hide_url}">{LANG->HideMessage}</a>
-{/if}
+{/IF}
 &bull;<a class="PhorumNavLink" href="{MESSAGE->edit_url}">{LANG->EditPost}</a>
 </div>
 {/IF}
 
 <div class="PhorumNavBlock">
 <div style="float: right;"><span class="PhorumNavHeading">{LANG->Navigate}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->prev_url}">{LANG->PreviousMessage}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->next_url}">{LANG->NextMessage}</a></div>
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGE->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGE->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGE->report_url}">{LANG->Report}</a>{/IF}{if MESSAGE->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGE->edituser_url}">{LANG->EditPost}</a>{/if}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGE->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGE->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->follow_url}">{LANG->FollowThread}</a>{/IF}{IF LOGGEDIN}&bull;<a class="PhorumNavLink" href="{MESSAGE->report_url}">{LANG->Report}</a>{/IF}{IF MESSAGE->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGE->edituser_url}">{LANG->EditPost}</a>{/IF}
 </div>
 
 <br />

@@ -31,6 +31,6 @@
 <div class="PhorumStdBlock" style="border-top:none">
 {VAR MOVE_SUBMIT_NAME move}
 {INCLUDE pm_moveselect}
-<input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" 
- onclick="return confirm('<?php print addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
+<input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}"
+ onclick="return confirm('<?php echo addslashes($PHORUM["DATA"]["LANG"]["AreYouSure"])?>')"/>
 </div>
