@@ -178,7 +178,7 @@
         "Filter"                =>      "Filter",
         "FirstPage"             =>      "First",
         "Folders"               =>      "Folder List",
-        "FollowExplanation"     =>      "Followed threads are listed in your Control Center.<br />You can elect to receive an email when the thread is updated.",
+        "FollowExplanation"     =>      "Followed threads are listed in your Control Center.<br />You can select to receive an email when the thread is updated.",
         "FollowThread"          =>      "Follow This Thread",
         "FollowWithEmail"       =>      "Email me when this thread is updated",
         "Forum"                 =>      "Forum",
