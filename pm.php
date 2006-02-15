@@ -519,7 +519,6 @@ if (!empty($action)) {
     {
         $args = array(
             PHORUM_PM_URL,
-            "panel=" . PHORUM_CC_PM,
             "page=" . $page,
             "folder_id=" . $folder_id,
         );

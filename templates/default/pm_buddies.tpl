@@ -1,6 +1,5 @@
 <form id="phorum_listform" action="{ACTION}" method="post">
 {POST_VARS}
-<input type="hidden" name="panel" value="pm" />
 <input type="hidden" name="page" value="buddies" />
 <input type="hidden" name="action" value="buddies" />
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
