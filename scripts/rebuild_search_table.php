@@ -9,6 +9,8 @@
 
 // YOU NEED TO MOVE THIS SCRIPT TO YOUR PHORUM-DIRECTORY
 
+define('phorum_page', 'rebuild_search_table');
+
 if(!file_exists('./common.php')) {
     echo "You didn't move this script to your phorum-directory!\n";
     exit();
