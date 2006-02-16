@@ -1,18 +1,16 @@
-<form action="{ACTION}" method="post">
-{POST_VARS}
-<input type="hidden" name="action" value="folders" />
-<input type="hidden" name="forum_id" value="{FORUM_ID}" />
-
+{include pm_folders.formstart}
 <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderCreate}</div>
 <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
 <input type="text" name="create_folder_name" value="{CREATE_FOLDER_NAME}" size="20" maxlength="20"/>
 <input type="submit" name="create_folder" value="{LANG->Submit}" class="PhorumSubmit"/>
+</form>
 </div>
 
 {IF PM_USERFOLDERS}
 
     <br/>
 
+    {include pm_folders.formstart}
     <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderRename}</div>
     <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
     {LANG->PMFolderRename}
@@ -26,9 +24,11 @@
     <input type="text" name="rename_folder_to" value="{RENAME_FOLDER_NAME}" size="20" maxlength="20"/>
     <input type="submit" name="rename_folder" value="{LANG->Submit}" class="PhorumSubmit"/>
     </div>
+    </form>
 
     <br/>
 
+    {include pm_folders.formstart}
     <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderDelete}</div>
     <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
     {LANG->PMFolderDeleteExplain}<br/><br/>
@@ -42,9 +42,6 @@
     <input type="submit" name="delete_folder" value="{LANG->Submit}"
      onclick="return confirm('{LANG->PMFolderDeleteConfirm}')" class="PhorumSubmit"/>
     </div>
+    </form>
 
 {/IF}
-
-</form>
-
-
