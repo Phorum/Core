@@ -31,7 +31,7 @@ if ($mode != "post") {
 
 // Create an initial message structure.
 $message = array();
-foreach ($post_fields as $key => $info) {
+foreach ($PHORUM["post_fields"] as $key => $info) {
     $message[$key] = $info[pf_INIT];
 }
 

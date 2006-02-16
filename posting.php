@@ -110,7 +110,7 @@ $valid_modes = array(
 //     (for example if a moderator is editing a message).
 // [3] A default value to initialize the form field with.
 //
-$post_fields = array(
+$PHORUM["post_fields"] = array(
     "message_id"     => array("integer",  true,   true,  0),
     "user_id"        => array("integer",  true,   true,  0),
     "datestamp"      => array("string",   true,   true,  ''),
@@ -302,19 +302,19 @@ if (! $error_flag)
 // Set extra writeable fields, based on the user's abilities.
 if (isset($PHORUM["DATA"]["ATTACHMENTS"]) && $PHORUM["DATA"]["ATTACHMENTS"]) {
     // Keep it as a hidden field.
-    $post_fields["attachments"][pf_READONLY] = false;
+    $PHORUM["post_fields"]["attachments"][pf_READONLY] = false;
 }
 if (isset($PHORUM["DATA"]["MODERATOR"]) && $PHORUM["DATA"]["MODERATOR"]) {
     if (! $message["user_id"]) {
-        $post_fields["author"][pf_READONLY] = false;
-        $post_fields["email"][pf_READONLY] = false;
+        $PHORUM["post_fields"]["author"][pf_READONLY] = false;
+        $PHORUM["post_fields"]["email"][pf_READONLY] = false;
     }
 }
 if (isset($PHORUM["DATA"]["SHOW_SPECIALOPTIONS"]) && $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"]) {
-    $post_fields["special"][pf_READONLY] = false;
+    $PHORUM["post_fields"]["special"][pf_READONLY] = false;
 }
 if (isset($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) && $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) {
-    $post_fields["allow_reply"][pf_READONLY] = false;
+    $PHORUM["post_fields"]["allow_reply"][pf_READONLY] = false;
 }
 
 // Check permissions and apply read-only data.
@@ -455,7 +455,7 @@ $message["mode"] = $mode;
 // for which the pf_HIDDEN flag is set will be added to the
 // hidden fields.
 $hidden = "";
-foreach ($post_fields as $var => $spec)
+foreach ($PHORUM["post_fields"] as $var => $spec)
 {
     if ($var == "mode") {
         $val = $mode;
@@ -548,20 +548,19 @@ if (! isset($PHORUM["postingargs"]["as_include"])) {
 // only the fields which are flagged as read-only will be copied.
 function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 {
-    $post_fields = $GLOBALS['post_fields'];
     $PHORUM = $GLOBALS['PHORUM'];
 
     // If we have a user linked to the current message, then get the
     // user data from the database, if it has to be applied as
     // read-only data.
-    if ($post_fields['email'][pf_READONLY] || $post_fields['author'][pf_READONLY]) {
+    if ($PHORUM["post_fields"]["email"][pf_READONLY] || $PHORUM["post_fields"]["author"][pf_READONLY]) {
         if ($db["user_id"]) {
             $user_info = phorum_user_get($db["user_id"], false);
             $user_info["author"] = $user_info["username"];
         }
     }
 
-    foreach ($post_fields as $key => $info)
+    foreach ($PHORUM["post_fields"] as $key => $info)
     {
         // Skip writeable fields if we only have to apply read-only ones.
         if ($apply_readonly && ! $info[pf_READONLY]) continue;

@@ -25,7 +25,7 @@ $message = array();
 // Inject form field data into the message structure. No checks
 // are done on the data over here. Here we just take care of
 // putting the data in the right format in the data structure.
-foreach ($post_fields as $var => $spec)
+foreach ($PHORUM["post_fields"] as $var => $spec)
 {
     // Format and store the data based on the configuration.
     switch ($spec[pf_TYPE])
