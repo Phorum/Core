@@ -636,12 +636,17 @@ echo '</pre>';
             if (is_numeric($value) && !in_array($field,$PHORUM['string_fields'])){
                 $fields[] = "$field=$value";
             } elseif (is_array($value)){
-                $fields[] = "$field='".pg_escape_string(serialize($value))."'";
+                $value = pg_escape_string(serialize($value));
+                $fields[] = "$field='$value'";
+                $message[$field] = $value;
 			} elseif (is_bool($value)) {
-				$fields[] = "$field=" . ($value ? 'TRUE' : 'FALSE');
+                $value = ($value ? 'TRUE' : 'FALSE');
+				$fields[] = "$field=$value";
+                $message[$field] = $value;
             } else {
                 $value = pg_escape_string($value);
                 $fields[] = "$field='$value'";
+                $message[$field] = $value;
             }
         }
 

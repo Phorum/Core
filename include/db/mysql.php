@@ -637,9 +637,12 @@ function phorum_db_update_message($message_id, $message)
             if (is_numeric($value) && !in_array($field,$PHORUM['string_fields'])){
                 $fields[] = "$field=$value";
             }elseif (is_array($value)){
-                $fields[] = "$field='".mysql_escape_string(serialize($value))."'";
+                $value = mysql_escape_string(serialize($value));
+                $message[$field] = $value;
+                $fields[] = "$field='$value'";
             }else{
                 $value = mysql_escape_string($value);
+                $message[$field] = $value;
                 $fields[] = "$field='$value'";
             }
         }
