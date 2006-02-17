@@ -356,6 +356,8 @@ $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TI
     phorum_hook( "common", "" );
 
     $PHORUM['DATA']['USERINFO'] = $PHORUM['user'];
+    $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
+    $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
 }
 
 
