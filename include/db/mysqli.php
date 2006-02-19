@@ -3415,8 +3415,12 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
         if (mysqli_num_rows($res) > 0){
             while (($row = mysqli_fetch_assoc($res))) {
                 $folder_id = $row["pm_folder_id"] ? $row["pm_folder_id"] : $row["special_folder"];
-                $folders[$folder_id]["total"] = $row["total"];
-                $folders[$folder_id]["new"] = $row["new"];
+                // If there are stale messages, we do not want them
+                // to create non-existant mailboxes in the list.
+                if (isset($folders[$folder_id])) {
+                    $folders[$folder_id]["total"] = $row["total"];
+                    $folders[$folder_id]["new"] = $row["new"];
+                }
             }
         }
     }
