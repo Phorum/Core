@@ -1,5 +1,5 @@
 <div class="PhorumNavBlock" style="text-align: left;">
-<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>{/IF}{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{/IF}{IF LOGGEDIN false}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
+<span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>{IF LOGGEDIN true}&bull;<a class="PhorumNavLink" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{ELSE}&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
 </div>
 {IF MESSAGE->is_unapproved}
 <div class="PhorumStdBlock">
@@ -26,7 +26,7 @@
 {IF MODERATOR true}
 <div class="PhorumReadNavBlock" style="text-align: left;">
 <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{IF MESSAGE->threadstart true}
-<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGE->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGE->move_url}&bull;<a class="PhorumNavLink" href="{MESSAGE->move_url}">{LANG->MoveThread}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->merge_url}">{LANG->MergeThread}</a>{IF MESSAGE->closed false}&bull;<a class="PhorumNavLink" href="{MESSAGE->close_url}">{LANG->CloseThread}</a>{/IF}{IF MESSAGE->closed true}&bull;<a class="PhorumNavLink" href="{MESSAGE->reopen_url}">{LANG->ReopenThread}</a>{/IF}
+<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGE->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGE->move_url}&bull;<a class="PhorumNavLink" href="{MESSAGE->move_url}">{LANG->MoveThread}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->merge_url}">{LANG->MergeThread}</a>{IF MESSAGE->closed false}&bull;<a class="PhorumNavLink" href="{MESSAGE->close_url}">{LANG->CloseThread}</a>{ELSE}&bull;<a class="PhorumNavLink" href="{MESSAGE->reopen_url}">{LANG->ReopenThread}</a>{/IF}
 {/IF}
 {IF MESSAGE->threadstart false}
 <a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->delete_url2}';">{LANG->DelMessReplies}</a>

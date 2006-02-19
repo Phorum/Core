@@ -30,8 +30,8 @@
 [{IF FILTER->enable}<a href="{FILTER->url}">{/IF}{FILTER->name}{IF FILTER->enable}</a>{/IF}]
 {/LOOP FILTER}
 <br /><br />
-<table class="PhorumFormTable" cellspacing="0" border="0">
 <form method="post" action="{GROUP->url}">
+<table class="PhorumFormTable" cellspacing="0" border="0">
 <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
 <tr><th>{LANG->Username}</th><th>{LANG->MembershipType}</th></tr>
 {LOOP USERS}
@@ -52,8 +52,8 @@ $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']
 {/IF}</td></tr>
 {/LOOP USERS}
 <tr><td><input type="submit" value="{LANG->SaveChanges}" /></td><td></td></tr>
-</form>
 </table>
+</form>
 </div>
 
 {ELSE}
