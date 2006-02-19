@@ -23,6 +23,7 @@
 // $PHORUM["DATA"]["LANG"]["PMFolderCreateSuccess"]
 // $PHORUM["DATA"]["LANG"]["PMFolderRenameSuccess"]
 // $PHORUM["DATA"]["LANG"]["PMFolderDeleteSuccess"]
+// $PHORUM["DATA"]["LANG"]["PMSent"]
 
 // PMTODO After posting a reply, stay in the same folder.
 // PMTODO If reading from a mail notify, lookup the folder_id,
