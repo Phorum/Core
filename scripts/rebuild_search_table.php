@@ -27,7 +27,7 @@ echo "Rebuilding search-table ...\n";
 
 $sql=array();
 $sql[]="truncate {$PHORUM['search_table']}";
-$sql[]="insert into {$PHORUM['search_table']} select message_id, concat(author, ' | ', subject, ' | ', body),forum_id from {$PHORUM['message_table']}";
+$sql[]="insert into {$PHORUM['search_table']} (message_id,search_text,forum_id) select message_id, concat(author, ' | ', subject, ' | ', body), forum_id from {$PHORUM['message_table']}";
 
 phorum_db_run_queries($sql);
 
