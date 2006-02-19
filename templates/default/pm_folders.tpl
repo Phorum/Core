@@ -3,8 +3,8 @@
 <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
 <input type="text" name="create_folder_name" value="{CREATE_FOLDER_NAME}" size="20" maxlength="20"/>
 <input type="submit" name="create_folder" value="{LANG->Submit}" class="PhorumSubmit"/>
-</form>
 </div>
+</form>
 
 {IF PM_USERFOLDERS}
 
