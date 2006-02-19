@@ -20,7 +20,7 @@
 &bull; {LANG->AttachFileSize} {ATTACH_FILE_SIZE}
 </blockquote>
 {LOOP INPUTS}
-&nbsp;&nbsp;<input type="file" name="attachment{INPUTS->number}" size="50" /><br /<br />
+&nbsp;&nbsp;<input type="file" name="attachment{INPUTS->number}" size="50" /><br /><br />
 {/LOOP INPUTS}
 &nbsp;&nbsp;<input name="cancel" class="PhorumSubmit" type="submit" value=" {LANG->Cancel} " />&nbsp;&nbsp;<input name="attach" class="PhorumSubmit" type="submit" value=" {LANG->Attach} " />
 </div>
