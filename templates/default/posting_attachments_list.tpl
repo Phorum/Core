@@ -1,9 +1,7 @@
 <b>{LANG->Attachments}:</b>
 <table id="phorum-attachment-list" class="PhorumFormTable" cellspacing="0" width="100%">
-  <?php $alt = "Alt"; ?>
   {ASSIGN LIST POST->attachments}
   {LOOP LIST}
-    <?php $alt = $alt == "" ? "Alt" : "" ;?>
     {IF LIST->keep}
       <tr>
         <td>{LIST->name} ({LIST->size})</td>
