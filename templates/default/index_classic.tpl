@@ -7,17 +7,11 @@
   <div class="PhorumColumnFloatSmall">{LANG->Threads}</div>
   <div style="margin-right: 425px">{LANG->Forums}</div>
 </div>
-<?php
-  $rclass="Alt";
-?>
+
+<?php $rclass="Alt"; ?>
 <div class="PhorumStdBlock">
   {LOOP FORUMS}
-<?php
-  if($rclass=="Alt")
-    $rclass="";
-  else
-    $rclass="Alt";
-?>
+    <?php if($rclass=="Alt") $rclass=""; else $rclass="Alt"; ?>
     <div class="PhorumRowBlock<?php echo $rclass;?>">
       {IF FORUMS->folder_flag}
         <div class="PhorumColumnFloatXLarge">{LANG->ForumFolder}</div>

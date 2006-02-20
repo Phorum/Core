@@ -18,21 +18,14 @@
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->WrittenBy}</th>
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->Posted}</th>
   </tr>
-<?php
-  $oldthread=0;
-  $rclass="";
-?>
+  <?php $oldthread=0; $rclass=""; ?>
   {LOOP ROWS}
-<?php
-  if($oldthread != $PHORUM['TMP']['ROWS']['thread']){
-    if($rclass=="Alt"){
-        $rclass="";
-    } else {
-        $rclass="Alt";
-    }
-    $oldthread=$PHORUM['TMP']['ROWS']['thread'];
-  }
-?>
+    <?php
+      if($oldthread != $PHORUM['TMP']['ROWS']['thread']){
+        if($rclass=="Alt") $rclass=""; else $rclass="Alt";
+        $oldthread=$PHORUM['TMP']['ROWS']['thread'];
+      }
+    ?>
     <tr>
       {IF ROWS->sort PHORUM_SORT_STICKY}
         <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {ROWS->indent_cnt}px">

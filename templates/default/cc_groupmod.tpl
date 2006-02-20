@@ -44,10 +44,11 @@
               {ELSE}
                 <select name="status[{USERS->userid}]">
                   {LOOP STATUS_OPTIONS}
-<?php
-  // to get around a minor templating problem, we'll figure out if we have this line selected here
-  $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']['value'] == $PHORUM['TMP']['USERS']['status']);
-?>
+                    <?php
+                    // to get around a minor templating problem, we'll figure
+                    // out if we have this line selected here
+                    $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']['value'] == $PHORUM['TMP']['USERS']['status']);
+                    ?>
                     <option value="{STATUS_OPTIONS->value}"{IF STATUS_OPTIONS->selected} selected="selected"{/IF}>{STATUS_OPTIONS->name}</option>
                   {/LOOP STATUS_OPTIONS}
                 </select>

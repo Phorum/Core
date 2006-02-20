@@ -41,29 +41,22 @@
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->WrittenBy}</th>
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->Posted}</th>
   </tr>
-<?php
-  $rclass="Alt";
-?>
+  <?php $rclass="Alt"; ?>
   {LOOP MESSAGES}
-<?php
-  if($rclass=="Alt")
-    $rclass="";
-  else
-    $rclass="Alt";
-?>
+    <?php if($rclass=="Alt") $rclass=""; else $rclass="Alt"; ?>
     <tr>
       <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {MESSAGES->indent_cnt}px">
         {marker}
-<?php
-  if($PHORUM['TMP']['MESSAGES']['message_id'] == $PHORUM['DATA']['MESSAGE']['message_id']) {
-    echo '<b>'. $PHORUM['TMP']['MESSAGES']['subject'].'</b>';
-  } else {
-?>
-        <a href="{MESSAGES->url}">{MESSAGES->subject}</a>
-        <span class="PhorumNewFlag">{MESSAGES->new}</span>
-<?php
-  }
-?>
+        <?php
+          if($PHORUM['TMP']['MESSAGES']['message_id'] == $PHORUM['DATA']['MESSAGE']['message_id']) {
+            echo '<b>'. $PHORUM['TMP']['MESSAGES']['subject'].'</b>';
+          } else {
+        ?>
+            <a href="{MESSAGES->url}">{MESSAGES->subject}</a>
+            <span class="PhorumNewFlag">{MESSAGES->new}</span>
+        <?php
+          }
+        ?>
         {IF MESSAGES->is_unapproved} ({LANG->UnapprovedMessage}){/IF}
       </td>
       {IF VIEWCOUNT_COLUMN}

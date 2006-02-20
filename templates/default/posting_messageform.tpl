@@ -16,17 +16,13 @@
             {IF MODERATOR}
               <input type="text" name="author" size="30" value="{POST->author}" />
             {ELSE}
- <?php
-   echo $PHORUM['user']['username']
- ?>
+              <?php echo $PHORUM['user']['username'] ?>
             {/IF}
           {/IF}
         {ELSE}
           {! Writing a new message }
           {IF LOGGEDIN}
-<?php
-  echo $PHORUM['user']['username']
-?>
+            <?php echo $PHORUM['user']['username'] ?>
           {ELSE}
             <input type="text" name="author" size="30" value="{POST->author}" />
           {/IF}
@@ -45,17 +41,13 @@
             {IF MODERATOR}
               <input type="text" name="email" size="30" value="{POST->email}" />
             {ELSE}
-<?php
-  echo $PHORUM['user']['email']
-?>
+              <?php echo $PHORUM['user']['email'] ?>
             {/IF}
           {/IF}
         {ELSE}
           {! Writing a new message }
           {IF LOGGEDIN true}
-<?php
-  echo $PHORUM['user']['email']
-?>
+            <?php echo $PHORUM['user']['email'] ?>
           {ELSE}
             <input type="text" name="email" size="30" value="{POST->email}" />
           {/IF}

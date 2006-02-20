@@ -12,21 +12,12 @@
     <th class="PhorumTableHeader" align="left" nowrap="nowrap" width="150">{LANG->StartedBy}&nbsp;</th>
     <th class="PhorumTableHeader" align="left" nowrap="nowrap" width="150">{LANG->LastPost}&nbsp;</th>
   </tr>
-<?php
-  $rclass="Alt";
-?>
+  <?php $rclass="Alt"; ?>
   {LOOP ROWS}
-<?php
-  if($rclass=="Alt")
-    $rclass="";
-  else
-    $rclass="Alt";
-?>
+    <?php if($rclass=="Alt") $rclass=""; else $rclass="Alt"; ?>
     <tr>
       <td class="PhorumTableRow<?php echo $rclass;?>">
-<?php
-  echo $PHORUM['TMP']['marker']
-?>
+        <?php echo $PHORUM['TMP']['marker'] ?>
         {IF ROWS->sort PHORUM_SORT_STICKY}<span class="PhorumListSubjPrefix">{LANG->Sticky}: </span>{/IF}
         {IF ROWS->sort PHORUM_SORT_ANNOUNCEMENT}<span class="PhorumListSubjPrefix">{LANG->Announcement}: </span>{/IF}
         {IF ROWS->moved}<span class="PhorumListSubjPrefix">{LANG->MovedSubject}: </span>{/IF}
