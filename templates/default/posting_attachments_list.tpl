@@ -1,22 +1,17 @@
 <b>{LANG->Attachments}:</b>
 <table id="phorum-attachment-list" class="PhorumFormTable" cellspacing="0" width="100%">
-
-    <?php $alt = "Alt"; ?>
-    {ASSIGN LIST POST->attachments}
-    {LOOP LIST}
-    <?php $alt = $alt == "" ? "Alt" : "" ;?>
+<?php $alt = "Alt"; ?>
+  {ASSIGN LIST POST->attachments}
+  {LOOP LIST}
+<?php $alt = $alt == "" ? "Alt" : "" ;?>
     {IF LIST->keep}
-        <tr>
-        <td>
-            {LIST->name} ({LIST->size})
-        </td>
+      <tr>
+        <td>{LIST->name} ({LIST->size})</td>
         <td align="right">
-            {HOOK tpl_editor_attachment_buttons LIST}
-            <input type="submit" name="detach:{LIST->file_id}"
-            value="{LANG->Detach}" class="PhorumSubmit" />
+          {HOOK tpl_editor_attachment_buttons LIST}
+          <input type="submit" name="detach:{LIST->file_id}" value="{LANG->Detach}" class="PhorumSubmit" />
         </td>
-        </tr>
+      </tr>
     {/IF}
-    {/LOOP LIST}
-
+  {/LOOP LIST}
 </table>
