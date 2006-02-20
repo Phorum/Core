@@ -21,7 +21,6 @@
     {HEAD_TAGS}
   </head>
   <body onload="{IF FOCUS_TO_ID}var focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
-<!-- TODO noscript mit Hinweis auf Javascript -->
     <div align="{forumalign}">
       <div class="PDDiv">
         {IF notice_all}

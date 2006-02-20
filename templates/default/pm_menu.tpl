@@ -1,6 +1,6 @@
 <div class="phorum-menu" style="text-align: left; white-space: nowrap">
+  {LANG->PrivateMessages}
   <ul>
-    {LANG->PrivateMessages}
     {LOOP PM_FOLDERS}
       {! Put a bit of space between incoming and the outgoing folder, in }
       {! case the user has own folders. }
@@ -10,8 +10,8 @@
       </li>
     {/LOOP PM_FOLDERS}
   </ul>
+  {LANG->Options}
   <ul>
-    {LANG->Options}
     <li><a {IF PM_PAGE "folders"}class="phorum-current-page" {/IF}href="{URL->PM_FOLDERS}">{LANG->EditFolders}</a></li>
     <li><a {IF PM_PAGE "send"}class="phorum-current-page" {/IF}href="{URL->PM_SEND}">{LANG->SendPM}</a></li>
     <li><a {IF PM_PAGE "buddies"}class="phorum-current-page" {/IF} href="{URL->BUDDIES}">{LANG->Buddies}</a></li>
