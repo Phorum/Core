@@ -10,7 +10,6 @@
   {include pm_folders.formstart}
     <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left">{LANG->PMFolderRename}</div>
     <div class="PhorumStdBlock" style="padding-top: 15px; padding-bottom: 15px">
-      {LANG->PMFolderRename}
       <select name="rename_folder_from" style="vertical-align: middle">
         <option value="">{LANG->PMSelectAFolder}</option>
         {LOOP PM_USERFOLDERS}
