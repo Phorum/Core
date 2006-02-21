@@ -3882,13 +3882,12 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 
     // Check if the buddy_user_id is a valid user_id.
     $valid = phorum_db_user_get($buddy_user_id, false);
-    if (! $valid) return NULL;
+    if (!$valid) return NULL;
 
     $pm_buddy_id = phorum_db_pm_is_buddy($buddy_user_id);
     if (is_null($pm_buddy_id)) {
-        $sql = "INSERT INTO {$PHORUM["pm_buddies_table"]} SET " .
-               "user_id = $user_id, " .
-               "buddy_user_id = $buddy_user_id";
+        $sql = "INSERT INTO {$PHORUM["pm_buddies_table"]} (user_id, buddy_user_id) " .
+               "values($user_id, $buddy_user_id)";
         $res = pg_query($conn, $sql);
         if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
         $pm_buddy_id = pgsql_insert_id($conn, "{$PHORUM["pm_buddies_table"]}_pm_buddy_id_seq");
