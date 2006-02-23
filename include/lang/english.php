@@ -234,7 +234,7 @@
         "LostPassInfo"          =>      "Enter your email address below and a new password will be sent to you.",
         "LostPassEmailSubject"  =>      "Your login information for the $PHORUM[title]",
         "LostPassEmailBody1"    =>      "Someone (hopefully you) has requested a new password for your account at $PHORUM[title].  If it was not you, you can ignore this email and continue using your old password.\n\nIf it was you, here is your new login for the forums.",
-        "LostPassEmailBody2"    =>      "You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "LostPassEmailBody2"    =>      "You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL, "redir=list")."\n\nThanks, $PHORUM[title]",
         "LostPassSent"          =>      "A new password has been sent to the email address you provided.",
 
         "MakeSticky"            =>      "Make Sticky",
@@ -396,7 +396,7 @@
         "ReceiveModerationMails"=>      "I want to receive moderation emails",
         "Recipients"            =>      "recipients",
         "RegApprovedSubject"    =>      "Your account has been approved.",
-        "RegApprovedEmailBody"  =>      "Your $PHORUM[title] account has been approved.  You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "RegApprovedEmailBody"  =>      "Your $PHORUM[title] account has been approved.  You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL, "redir=list")."\n\nThanks, $PHORUM[title]",
         "RegAcctActive"         =>      "Your account is now active.",
         "RegBack"               =>      "Click here to login.",
         "Register"              =>      "Create A New Profile",
@@ -495,7 +495,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
 
         "VerifyRegEmailSubject" =>      "Please verify your account",
         "VerifyRegEmailBody1"   =>      "To validate your $PHORUM[title] account, please click on the URL below.",
-        "VerifyRegEmailBody2"   =>      "Once verified, you can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "VerifyRegEmailBody2"   =>      "Once verified, you can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL, "redir=list")."\n\nThanks, $PHORUM[title]",
         "ViewFlat"              =>      "View Flat",
         "ViewJoinGroups"        =>      "View and Join Groups",
         "ViewProfile"           =>      "View My Profile",
