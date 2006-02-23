@@ -17,7 +17,7 @@
     {ELSE}
       <tr class="forum">
         <td class="forum-name">
-          <a href="{FORUMS->url}">{FORUMS->name}</a><p>{FORUMS->description}</p><small>{LANG->Options}: {IF LOGGEDIN true}<a href="{FORUMS->url_markread}">{LANG->MarkForumRead}</a>{/IF}{IF FORUMS->url_rss}{IF LOGGEDIN true}&nbsp;&bull;&nbsp;{/IF}<a href="{FORUMS->url_rss}">{LANG->RSS}</a>{/IF}
+          <a href="{FORUMS->url}">{FORUMS->name}</a><p>{FORUMS->description}</p><small>{LANG->Options}: {IF LOGGEDIN true}<a href="{FORUMS->url_markread}">{LANG->MarkForumRead}</a>{/IF}{IF FORUMS->url_rss}{IF LOGGEDIN true}&nbsp;&bull;&nbsp;{/IF}<a href="{FORUMS->url_rss}">{LANG->RSS}</a>{/IF}</small>
         </td>
         <td class="forum-threads" nowrap="nowrap">
           {FORUMS->thread_count}
