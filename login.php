@@ -203,18 +203,6 @@ if (count($_POST) > 0) {
             if(is_numeric($_POST["redir"])){
                 $redir = phorum_get_url($_POST["redir"]);
             }
-            // A special case, where redir may be the string "list". This one
-            // is used to be able to have a link to the login page on an
-            // external website to the Phorum login page (else after login
-            // the user would be redirected back to the referring website).
-            // We don't want to use a number, because the number for the list
-            // page may change in Phorum. Within Phorum, this is used for
-            // generating the login URL that is sent in the account
-            // confirmation email (because that one can be read from a
-            // webmail account).
-            elseif($_POST["redir"] == 'list') {
-                $redir = phorum_get_url(PHORUM_LIST_URL);
-            }
 
             // Redirecting to the registration or login page is a little weird,
             // so we just go to the list page if we came from one of those.
@@ -254,8 +242,13 @@ if (!empty( $PHORUM["args"]["redir"])) {
 } elseif (!empty( $_REQUEST["redir"])) {
     $redir = htmlspecialchars($_REQUEST["redir"]);
 } elseif (!empty( $_SERVER["HTTP_REFERER"])) {
-    $redir = htmlspecialchars($_SERVER["HTTP_REFERER"]);
-} else {
+    $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
+    $len = strlen($base);
+    if (strtolower(substr($_SERVER["HTTP_REFERER"],0,$len)) == $base) {
+        $redir = htmlspecialchars($_SERVER["HTTP_REFERER"]);
+    }
+}
+if (! isset($redir)) {
     $redir = phorum_get_url(PHORUM_LIST_URL);
 }
 
