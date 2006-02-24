@@ -50,10 +50,11 @@ if(empty($file)){
 $send_file=true;
 
 // check if this phorum allows off site links and if not, check the referrer
-if(isset($_SERVER["HTTP_REFERER"]) && !$PHORUM["file_offsite"] && preg_match('!^https*://!', $_SERVER["HTTP_REFERER"])){
+if(isset($_SERVER["HTTP_REFERER"]) && !$PHORUM["file_offsite"] && preg_match('!^https?://!', $_SERVER["HTTP_REFERER"])){
 
-    $len=strlen($PHORUM["http_path"]);
-    if(strtolower(substr($_SERVER["HTTP_REFERER"], 0, $len))!=strtolower($PHORUM["http_path"])){
+    $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
+    $len = strlen($base);
+    if (strtolower(substr($_SERVER["HTTP_REFERER"], 0, $len)) != $base) {
 
         ob_end_flush();
 
