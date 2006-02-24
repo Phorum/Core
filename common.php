@@ -569,6 +569,10 @@ function phorum_get_url()
             $add_forum_id = $add_forum_id_tmp?true:false;
             break;
 
+        case PHORUM_BASE_URL:
+            // NOOP, will be handled in the last part of this function.
+            break;
+
         default:
             trigger_error( "Unhandled page type.", E_USER_WARNING );
             break;
@@ -590,6 +594,8 @@ function phorum_get_url()
     }
     // build the url
     if ( !function_exists( "phorum_custom_get_url" ) ) {
+        if ($type == PHORUM_BASE_URL) return $PHORUM["http_path"] . '/';
+
         $url = "$PHORUM[http_path]/$page." . PHORUM_FILE_EXTENSION;
 
         if ( count( $query_items ) ) $url .= "?" . implode( ",", $query_items );
