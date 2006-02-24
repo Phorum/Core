@@ -570,7 +570,8 @@ function phorum_get_url()
             break;
 
         case PHORUM_BASE_URL:
-            // NOOP, will be handled in the last part of this function.
+            // only to flag phorum_custom_get_url() that base url is requested
+            $page = ''; 
             break;
 
         default:
