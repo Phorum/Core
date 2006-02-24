@@ -1149,7 +1149,7 @@ Table of contents:
    This hook can be used for performing actions after a buddy has been
    added for a user (e.g. sending the new buddy a PM about this event,
    update popularity counters, do logging, synchronizing with other
-   databases, etc.). 
+   databases, etc.).
 
    ----------------------------------------------------------------------------
    buddy_delete
@@ -1758,7 +1758,7 @@ Table of contents:
 
       function phorum_mod_foo_tpl_editor_after_subject()
       {
-         $value = isset($_POST["mod_foo"]) ? $_POST["mod_foo"] : ""';
+         $value = isset($_POST["mod_foo"]) ? $_POST["mod_foo"] : "";
          ?>
          <tr>
            <td>
