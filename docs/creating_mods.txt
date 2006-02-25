@@ -1463,8 +1463,7 @@ Table of contents:
    Return : none
 
    This hook can be used for performing actions based on what the message
-   contained or for storing extra information for the message using the
-   meta data field.
+   contained.
 
    ----------------------------------------------------------------------------
    posting_permission
