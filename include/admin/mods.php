@@ -24,7 +24,7 @@
     if(count($_POST)){
 
         foreach($_POST as $key=>$value){
-
+            $key = base64_decode($key);
             if(substr($key, 0, 5)=="mods_") {
 
                 $mod=substr($key, 5);
@@ -33,7 +33,7 @@
         }
 
         foreach($_POST as $key=>$value){
-
+            $key = base64_decode($key);
             if(substr($key, 0, 6)=="hooks_"){
                 $mod=substr($key, 6);
                 if($mods[$mod]==1){
@@ -131,8 +131,8 @@
             $settings_link="";
         }
 
-        $frm->hidden("hooks_$name", $plugin["hooks"]);
-        $frm->addrow("$plugin[title]<div class=\"small\">".wordwrap($plugin["desc"], 90, "<br />")."</div>", $frm->select_tag("mods_$name", array("Off", "On"), $thisval).$settings_link);
+        $frm->hidden(base64_encode("hooks_$name"), $plugin["hooks"]);
+        $frm->addrow("$plugin[title]<div class=\"small\">".wordwrap($plugin["desc"], 90, "<br />")."</div>", $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $thisval).$settings_link);
 
     }
 
