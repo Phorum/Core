@@ -25,9 +25,9 @@
 // $PHORUM["DATA"]["LANG"]["PMFolderDeleteSuccess"]
 // $PHORUM["DATA"]["LANG"]["PMSent"]
 
-// PMTODO After posting a reply, stay in the same folder.
 // PMTODO If reading from a mail notify, lookup the folder_id,
 //        so the close button will work. Now the folder_id is empty.
+// PMTODO implement pm_reply_flag functionality
 
 define('phorum_page','pm');
 
