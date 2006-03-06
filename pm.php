@@ -350,7 +350,7 @@ if (!empty($action)) {
 
                 // When deleting a recipient, we always have to
                 // show the user selection. Put it back in, for
-                // situations where we had the user selection 
+                // situations where we had the user selection
                 // hidden intentionally.
                 $hide_userselect = 0;
             }
@@ -428,7 +428,11 @@ if (!empty($action)) {
 
                                 // Sort all recipients that want a notify by language.
                                 $langrcpts = array();
-                                foreach ($recipients as $rcpt) {
+                                foreach ($recipients as $rcpt_id => $rcpt) {
+                                    // clearing the user-cache for the recipients
+                                    if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+                                          phorum_cache_remove('user',$rcpt_id);
+                                    }
                                     if ($rcpt["pm_email_notify"]) {
                                         if (!isset($langrcpts[$rcpt["user_language"]])) {
                                             $langrcpts[$rcpt["user_language"]] = array($rcpt);
@@ -580,7 +584,7 @@ switch ($page) {
 
         // Sort the buddies by username.
         function phorum_sort_buddy_list($a,$b) {
-            return strcasecmp($a["username"], $b["username"]);             
+            return strcasecmp($a["username"], $b["username"]);
         }
         uasort($buddy_users, 'phorum_sort_buddy_list');
 
@@ -918,7 +922,7 @@ function phorum_pm_format($messages)
     include_once("./include/format_functions.php");
 
     // Reformat message so it looks like a forum message.
-    foreach ($messages as $id => $message) 
+    foreach ($messages as $id => $message)
     {
         $messages[$id]["author"] = $message["from_username"];
         $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
@@ -929,7 +933,7 @@ function phorum_pm_format($messages)
     $messages = phorum_format_messages($messages);
 
     // Reformat message back to a private message.
-    foreach ($messages as $id => $message) 
+    foreach ($messages as $id => $message)
     {
         $messages[$id]["message"] = $message["body"];
         $messages[$id]["from_username"] = $message["author"];
