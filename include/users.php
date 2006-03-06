@@ -39,8 +39,8 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
 
     // If we do URI based authentication, we will only look at the
     // PHORUM_SESSION_LONG_TERM session (which is the session key that is
-    // stored in the URI). Here we rewrite requests for 
-    // PHORUM_SESSION_SHORT_TERM so we will handle tighter security correctly. 
+    // stored in the URI). Here we rewrite requests for
+    // PHORUM_SESSION_SHORT_TERM so we will handle tighter security correctly.
     if ( isset($PHORUM["use_cookies"]) && ! $PHORUM["use_cookies"] &&
          $cookie == PHORUM_SESSION_SHORT_TERM) {
         $cookie = PHORUM_SESSION_LONG_TERM;
@@ -331,16 +331,17 @@ function phorum_user_save( $user )
 
     $ret = phorum_db_user_save( $db_user );
 
+    // remove that user from the cache
+    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
+        phorum_cache_remove('user',$user['user_id']);
+    }
+
     // Is this the currently logged in user?
     // If so, re-get his stuff from the system.
     if ( isset($GLOBALS["PHORUM"]["user"]) && $GLOBALS["PHORUM"]["user"]["user_id"] == $user["user_id"] ) {
         $GLOBALS["PHORUM"]["user"] = phorum_user_get( $user["user_id"] );
     }
 
-    // remove that user from the cache
-    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-        phorum_cache_remove('user',$user['user_id']);
-    }
 
     return $ret;
 }
