@@ -429,10 +429,7 @@ if (!empty($action)) {
                                 // Sort all recipients that want a notify by language.
                                 $langrcpts = array();
                                 foreach ($recipients as $rcpt_id => $rcpt) {
-                                    // clearing the user-cache for the recipients
-                                    if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
-                                          phorum_cache_remove('user',$rcpt_id);
-                                    }
+
                                     if ($rcpt["pm_email_notify"]) {
                                         if (!isset($langrcpts[$rcpt["user_language"]])) {
                                             $langrcpts[$rcpt["user_language"]] = array($rcpt);
