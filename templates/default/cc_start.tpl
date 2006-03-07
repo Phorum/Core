@@ -29,7 +29,7 @@
     </tr>
     <tr>
       <td>{LANG->Signature}:</td>
-      <td>{PROFILE->signature}</td>
+      <td>{PROFILE->signature_formatted}</td>
     </tr>
   </table>
 </div>
