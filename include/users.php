@@ -287,7 +287,7 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
                 }
 
                 // check if the user has new private messages
-                if ( $checkpm && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
+                if ( ($checkpm || (isset($PHORUM['cache_users']) && $PHORUM['cache_users'])) && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
                     $user["new_private_messages"] = phorum_db_pm_checknew( $uid );
                 }
 
