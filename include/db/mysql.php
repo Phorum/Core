@@ -4321,10 +4321,7 @@ function phorum_db_sanitychecks()
              4.0.18 or higher is recommended.",
             "Upgrade your MySQL server to a newer version. If your
              website is hosted with a service provider, please contact
-             the service provider to upgrade your MySQL database.
-             If upgrading is not possible, you can also disable the
-             option \"mysql_use_ft\" in your database configuration
-             file \"include/db/config.php\""
+             the service provider to upgrade your MySQL database."
         );
 
         // All checks are okay.
