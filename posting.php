@@ -62,11 +62,16 @@ include_once("include/format_functions.php");
 if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
     phorum_build_common_urls();
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
-    include phorum_get_template("header");
-    phorum_hook("after_header");
+    // Only show header and footer when not included in another page.
+    if (phorum_page == "post") {
+        include phorum_get_template("header");
+        phorum_hook("after_header");
+    }
     include phorum_get_template("message");
-    phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    if (phorum_page == "post") {
+        phorum_hook("before_footer");
+        include phorum_get_template("footer");
+    }
     return;
 }
 
