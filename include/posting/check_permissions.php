@@ -77,7 +77,6 @@ if ($mode == "post" || $mode == "reply")
     if ($PHORUM["DATA"]["LOGGEDIN"]){
         $message["user_id"] = $PHORUM["user"]["user_id"];
         $message["author"]  = $PHORUM["user"]["username"];
-        $message["email"]   = "";
     } else {
         $message["user_id"] = 0;
     }
@@ -103,6 +102,12 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
         $message["parent_id"] = $origmessage["message_id"];
         $message["thread"] = $origmessage["thread"];
     }
+}
+
+// We never store the email address in the message in case it
+// was posted by a registered user.
+if ($message["user_id"]) {
+    $message["email"] = "";
 }
 
 // Find the startmessage for the thread.
