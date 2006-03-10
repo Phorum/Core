@@ -313,7 +313,9 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
     $forum_list["NULL"] ="None - I want to customize this forum's settings";
 
     // Remove this Forum
-    unset($forum_list[$forum_id]);
+    if($forum_id>0){
+        unset($forum_list[$forum_id]);
+    }
 
     // Check for Slaves
     if( intval($forum_id) ) {
