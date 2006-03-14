@@ -3169,7 +3169,9 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
         die ("Illegal folder '$folder' requested for user id '$user_id'");
     }
 
-    $sql = "SELECT * " .
+    $sql = "SELECT m.pm_message_id, from_user_id, from_username, subject, " .
+           "datestamp, meta, pm_xref_id, user_id, pm_folder_id, " .
+           "special_folder, read_flag, reply_flag " .
            "FROM {$PHORUM['pm_messages_table']} as m, {$PHORUM['pm_xref_table']} as x " .
            "WHERE $folder_sql " .
            "AND x.pm_message_id = m.pm_message_id " .
