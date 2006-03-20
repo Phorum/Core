@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -38,7 +38,11 @@ Instructions:
    I could do this from this script as well, but I would find that
    a little bit rude ;-))
 
-6. If you have shell access to your webserver, run this script using the
+6. Turn off unneeded modules for the conversion. All modules hooking into common.php
+   or some other general hook will be run while doing the conversion which will lead to
+   at least a slowdown, unexpected side effects and some strange output.
+
+7. If you have shell access to your webserver, run this script using the
    shell from the command line. This is the preferred way of running the
    upgrade:
 
@@ -49,11 +53,11 @@ Instructions:
       <phorum5-url>/phorum3to5convert.php
 
    *** THIS STEP MAY TAKE A WHILE ***
-   
-7. Take a look at the Phorum 5 forums to see if everything was converted
+
+8. Take a look at the Phorum 5 forums to see if everything was converted
    correctly.
 
-8. Delete the upgrade script phorum3to5convert.php.
+9. Delete the upgrade script phorum3to5convert.php.
 
 */
 
@@ -77,12 +81,12 @@ $CONVERT['olddb'] = "phorum";
 $CONVERT['forumstable'] = "forums";
 
 // Separator character. If you are going to run this script from
-// the web, make it "<br>\n". If you are going to run it from the 
+// the web, make it "<br>\n". If you are going to run it from the
 // shell prompt, make it "\n".
 $CONVERT['lbr'] = "<br>\n";
 
 // The full path to the directory where the attachments for Phorum 3.4.x
-// are stored (like in the old admin). 
+// are stored (like in the old admin).
 $CONVERT['attachmentdir'] = "/full/path/to/files";
 
 /***** THERE'S NO NEED TO CHANGE ANYTHING BELOW THIS LINE *****/
@@ -98,17 +102,17 @@ require './scripts/phorum3_in.php';
 
 // no need to change anything below this line
 // establishing the first link to the old database
-$oldlink = mysql_connect($CONVERT['old_dbhost'], $CONVERT['old_dbuser'], $CONVERT['old_dbpass'], true); 
+$oldlink = mysql_connect($CONVERT['old_dbhost'], $CONVERT['old_dbuser'], $CONVERT['old_dbpass'], true);
 mysql_select_db($CONVERT['olddb'], $oldlink);
 
 if (!$oldlink) {
     print "Couldn't connect to the old database.".$CONVERT['lbr'];
     exit();
-} 
+}
 
 // checking attachment-dir
 if (!file_exists($CONVERT['attachmentdir']) || empty($CONVERT['attachmentdir'])) {
-    echo "Directory {$CONVERT['attachmentdir']} doesn't exist. Attachments won't be converted. (doesn't matter if you don't have message-attachments) {$CONVERT['lbr']}"; 
+    echo "Directory {$CONVERT['attachmentdir']} doesn't exist. Attachments won't be converted. (doesn't matter if you don't have message-attachments) {$CONVERT['lbr']}";
 }
 
 $CONVERT['groups']=array();
@@ -122,7 +126,7 @@ if(phorum_convert_check_groups($oldlink)) {
         echo "Writing groups ... {$CONVERT['lbr']}";
         foreach($CONVERT['groups'] as $groupid => $groupdata) {
             phorum_db_add_group($groupdata['name'],$groupid);
-            $CONVERT['groups'][$groupid]['group_id']=$groupid;        
+            $CONVERT['groups'][$groupid]['group_id']=$groupid;
         }
     }
     $CONVERT['do_groups']=true;
@@ -155,7 +159,7 @@ foreach($forums as $forumid => $forumdata) {
         flush();
         $CONVERT['max_id'] = phorum_db_get_max_messageid();
         $offsets[$forumid]=$CONVERT['max_id'];
-        
+
         if ($forumdata['allow_uploads']=='Y' && file_exists($CONVERT['attachmentdir']."/".$forumdata['table_name'])) {
             $CONVERT['attachments']=phorum_convert_getAttachments($forumdata['table_name']);
             echo "Reading attachments for forum " . $forumdata['name'] . "...{$CONVERT['lbr']}";
@@ -170,7 +174,7 @@ foreach($forums as $forumid => $forumdata) {
 
         $res = phorum_convert_selectMessages($forumdata, $oldlink);
         while ($newmessage = phorum_convert_getNextMessage($res,$forumdata['table_name'])) {
-           
+
             if(phorum_db_post_message($newmessage, true)) {
               phorum_update_thread_info($newmessage['thread']);
               echo "+";
@@ -186,22 +190,22 @@ foreach($forums as $forumid => $forumdata) {
                   }
                   flush();
                   $count = 0;
-              } 
+              }
               $count++;
             } else {
               print "Error in message: ".$CONVERT['lbr'];
               print_var($newmessage);
               print $CONVERT['lbr'];
             }
-        } 
-        
+        }
+
         echo "{$CONVERT['lbr']}Updating forum-statistics: {$CONVERT['lbr']}";
         flush();
         phorum_db_update_forum_stats(true);
         echo $CONVERT['lbr'];
         flush();
-    } 
-} 
+    }
+}
 unset($forums);
 
 // storing the offsets of the forums
