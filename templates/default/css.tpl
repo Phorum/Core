@@ -308,8 +308,8 @@ div.phorum-menu a.phorum-current-page
 
     .PhorumNavBlock
     {
-        font-size: {defaultfontsize};
-        font-family: {defaultfont};
+        font-size: {navfontsize};
+        font-family: {navfont};
         border: 1px solid {tablebordercolor};
         margin-top: 1px;
         margin-bottom: 1px;
@@ -546,8 +546,8 @@ div.phorum-menu a.phorum-current-page
 
     .PhorumReadNavBlock
     {
-        font-size: {defaultfontsize};
-        font-family: {defaultfont};
+        font-size: {navfontsize};
+        font-family: {navfont};
         border-left: 1px solid {tablebordercolor};
         border-right: 1px solid {tablebordercolor};
         border-bottom: 1px solid {tablebordercolor};
