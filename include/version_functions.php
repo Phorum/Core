@@ -36,6 +36,9 @@ function phorum_parse_version($version)
     } elseif (preg_match('/^(\d+)\.(\d+).(\d+)([a-z])?$/', $version, $m)) {
         $release = 'stable';
         $parsed_version = array_slice($m, 1);
+    } elseif (preg_match('/^(\d+)\.(\d+)-(dev)/', $version, $m)) {
+        $release = 'development';
+        $parsed_version = array($m[1], $m[2], 0, $m[3]);
     } elseif (preg_match('/^(\d+)\.(\d+).(\d+)(-alpha|-beta|-RC\d+)?$/', $version, $m)) {
         $release = 'development';
         $parsed_version = array_slice($m, 1);
