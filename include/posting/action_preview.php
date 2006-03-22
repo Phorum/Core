@@ -20,6 +20,12 @@ if(!defined("PHORUM")) return;
 
 $previewmessage = $message;
 
+// Add the user's signature to the message body.
+if (isset($PHORUM["user"]["signature"]) && isset($message["show_signature"]) && $message["show_signature"]) {
+    $previewmessage["body"] .= "\n\n" . $PHORUM["user"]["signature"];
+}
+
+// Add the list of attachments.
 if ($attach_count) 
 {
     define('PREVIEW_NO_ATTACHMENT_CLICK', 
