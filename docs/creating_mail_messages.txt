@@ -10,6 +10,7 @@ Table of contents:
 2. User-notifications about new messages in followed threads
 3. Moderator-notifications about new messages
 4. User-notifications about new private messages
+5. Moderator-notifications about reported messages
 
 
 1. General information
@@ -97,3 +98,26 @@ Table of contents:
    - %read_url%      The url where this message can be read.
 
 
+5. Moderator-notifications about reported messages
+-------------------------------------------------------------------------------
+
+   Related language strings:
+
+   - ReportPostEmailSubject 
+   - ReportPostEmailBody
+
+   Replacement tags:
+
+   - %forumname%     The name of the current forum.
+   - %author%        The name of the author of the message.
+   - %subject%       The subject of the message.
+   - %body%          The body of the message.
+   - %url%           The url where this message can be read.
+   - %reportedby%    The username of the reporter.
+   - %explanation%   The explanation given by the reporter.
+   - %ip%            The IP-address of the reporter.
+   - %date%          The date of reporting.
+   - %delete_url%    The url to delete the message.
+   - %hide_url%      The url to hide the message.
+   - %edit_url%      The url to edit the message.
+   - %reporter_url%  The url of the reporters profile. 
