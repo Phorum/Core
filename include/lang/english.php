@@ -159,9 +159,9 @@
         "ErrBannedName"         =>      'The (user)name "%name%" has been banned from use. Please use a different name or contact the forum administrators.',
         "ErrBannedEmail"        =>      'The e-mail address "%name%" has been banned from use. Please use a different email address or contact the forum administrators.',
         "ErrBannedUser"         =>      'The user "%name%" has been banned from use.',
-
         "ErrRegisterdEmail"     =>      "The email address you entered is listed with a currently registered user. If you are that user, please login.  Otherwise, please use another email address.",
         "ErrRegisterdName"      =>      "The name you entered is already registered by another user. If you are that user, please login.  Otherwise, please use another name.",
+        "ErrWrongMailcode"      =>      "You've entered a wrong email-confirmation-code. Try again!",
         "ExactPhrase"           =>      "Exact Phrase",
 
         "FileForbidden"         =>      "Linking to files in this forum is not allowed from outside the forum.",
@@ -219,7 +219,6 @@
         "Last30Days"            =>      "Last 30 Days",
         "Last90Days"            =>      "Last 90 Days",
         "Last365Days"           =>      "Last Year",
-
         "LastPost"              =>      "Last Post",
         "LastPostLink"          =>      "Last Post",
         "LastPage"              =>      "Last",
@@ -313,6 +312,7 @@
         "OlderMessages"         =>      "Older Messages",
         "OlderThread"           =>      "Older Thread",
         "on"                    =>      "on",  // as in: Posted by user on 01-01-01 01:01pm
+        "OnlyUnapproved"        =>      "only unapproved messages",
         "of"                    =>      "of",  // as in: 1 - 5 of 458
         "Options"               =>      "Options",
 
@@ -384,7 +384,6 @@
         "PrivateMessages"       =>      "Private Messages",
         "PrivateReply"          =>      "Reply via PM",
         "ProfileUpdatedOk"      =>      "Profile successfully updated.",
-        "OnlyUnapproved"        =>      "only unapproved messages",
         "Quote"                 =>      "Quote",
         "QuoteMessage"          =>      "Quote This Message",
 
@@ -503,7 +502,6 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "Views"                 =>      "Views",
 
         "WrittenBy"             =>      "Written By",
-        "ErrWrongMailcode"      =>      "You've entered a wrong email-confirmation-code. Try again!",
         "Wrote"                 =>      "Wrote",
 
         "Year"                  =>      "Year",
@@ -526,9 +524,9 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "-3.5" => "(GMT - 3:30 hours) Newfoundland",
         "-3"   => "(GMT - 3:00 hours) Brazil, Buenos Aires, Georgetown, Falkland Is.",
         "-2"   => "(GMT - 2:00 hours) Mid-Atlantic, Ascention Is., St Helena",
-        "-1"   => "(GMT - 1:00 hours) Azores, Cape Verde Islands",
+        "-1"   => "(GMT - 1:00 hour) Azores, Cape Verde Islands",
         "0"    => "(GMT) Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia",
-        "1"    => "(GMT + 1:00 hours) Berlin, Brussels, Copenhagen, Madrid, Paris, Rome, Warsaw",
+        "1"    => "(GMT + 1:00 hour) Berlin, Brussels, Copenhagen, Madrid, Paris, Rome, Warsaw",
         "2"    => "(GMT + 2:00 hours) Kaliningrad, South Africa",
         "3"    => "(GMT + 3:00 hours) Baghdad, Riyadh, Moscow, Nairobi",
         "3.5"  => "(GMT + 3:30 hours) Tehran",
