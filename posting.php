@@ -184,16 +184,25 @@ if (! in_array($mode, $valid_modes)) {
     die("Illegal mode issued: $mode");
 }
 
-// Find out if we are attaching or detaching something.
-// For detaching $do_detach will be set to the attachment's file_id.
+// Find out if we are detaching an attachment.
+// If we are, $do_detach will be set to the attachment's file_id.
 $do_detach = false;
-$do_attach = false;
 foreach ($_POST as $var => $val) {
     if (substr($var, 0, 7) == "detach:") {
         $do_detach = substr($var, 7);
-    } elseif ($var == "attach") {
-        $do_attach = true;
     }
+}
+
+// Check if the user uploads an attachment.
+$do_attach = false;
+if (count($_FILES)) {
+    foreach ($_FILES as $name => $data) {
+        if ($data["size"]) {
+            $do_attach = true;
+            break;
+        }
+    }
+    reset($_FILES);
 }
 
 // In case users click on post or preview, without uploading
