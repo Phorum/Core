@@ -36,7 +36,7 @@ function phorum_format_messages ($data)
         $replace_vals  = array();
         $replace_words = array();
         foreach ($banlists[PHORUM_BAD_WORDS] as $item) {
-            $replace_words[] = "/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/";
+            $replace_words[] = "/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/i";
             $replace_vals[]  = PHORUM_BADWORD_REPLACE;
             $bad_word_check  = true;
         }
