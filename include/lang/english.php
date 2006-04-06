@@ -500,6 +500,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "ViewProfile"           =>      "View My Profile",
         "ViewThreaded"          =>      "View Threaded",
         "Views"                 =>      "Views",
+        "Views_Subject"         =>      "views",
 
         "WrittenBy"             =>      "Written By",
         "Wrote"                 =>      "Wrote",
