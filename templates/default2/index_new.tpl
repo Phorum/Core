@@ -23,7 +23,7 @@
         <td class="forum-name"><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>
             <p>{FORUMS->description}</p>
             <small>
-                {IF USER->user_id}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/tag_green.png');" href="{FORUMS->URL->MARKREAD}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
+                {IF USER->user_id}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/tag_green.png');" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
                 {IF FORUMS->URL->RSS}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/feed.png');" href="{FORUMS->URL->RSS}">{LANG->RSS}</a>{/IF}
             </small>
         </td>
