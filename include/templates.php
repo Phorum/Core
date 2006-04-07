@@ -204,91 +204,46 @@ function phorum_import_template_pass2($template)
             // Function: Include a template. The name of the template to
             // include is in the <variable>.
             //
+            // TODO with the normalization of value syntax, this could be
+            // TODO moved to {include VAR}. Then the default {include page}
+            // TODO should be changed to {include "page"}.
+            //
             case "include_var":
-                $repl = "<?php include_once phorum_get_template( \$PHORUM[\"DATA\"]['$parts[1]']); ?>";
+                $statement = array_shift($parts); 
+                $variable = phorum_templatevariable_to_php($loopvars, array_shift($parts));
+                $repl = "<?php include_once phorum_get_template($variable); ?>";
                 break;
 
-            // DEFINE --------------------------------------------------------
+            // VAR, ASSIGN and DEFINE ----------------------------------------
 
+            // Syntax:
+            //     {var <variable> <value>}
+            //     {assign <variable> <value>}
+            // Function:
+            //     Set a variable that can be used in the templates.
+            //
+            // This will set $PHORUM["DATA"][<variable>] = <value>;
+            // After this, the variable is usable in template statements like
+            // {<variable>} and {IF <variable>}...{/IF}.
+            //
             // Syntax:
             //    {define <variable> <value>}
             // Function:
             //    Set definitions that are used by the Phorum core.
             //
-            // This will set $PHORUM["TMP"]["<variable>"] = "<value>"
+            // This will set $PHORUM["TMP"][<variable>] = <value>
             // This data is not accessible through templating statements (and
             // it's not supposed to be). The data should only be accessed
             // from Phorum core and module code.
             //
-            case "define":
-                $repl="<?php \$PHORUM[\"TMP\"]['$parts[1]']='";
-                array_shift($parts);
-                array_shift($parts);
-                foreach ($parts as $part) {
-                    $repl .= str_replace("'", "\\'", $part) . " ";
-                }
-                $repl = trim($repl)."'; ?>";
-                break;
-
-            // VAR -----------------------------------------------------------
-
-            // Syntax:
-            //     {var <variable> <value>}
-            // Function:
-            //     Set a variable that can be used in the templates.
-            //
-            // This will set $PHORUM["DATA"]["<variable>"] = "<value>";
-            // After this, the variable is usable in template statements like
-            // {<variable>} and {IF <variable>}...{/IF}.
-            //
             case "var":
-                $repl="<?php \$PHORUM[\"DATA\"]['$parts[1]']='";
-                array_shift($parts);
-                array_shift($parts);
-                foreach ($parts as $part) {
-                    $repl .= str_replace("'", "\\'", $part) . " ";
-                }
-                $repl = trim($repl)."'; ?>";
-                break;
-
-            // ASSIGN --------------------------------------------------------
-
-            // Syntax:
-            //     {assign <variable1> <variable2>}
-            // Function:
-            //     Assign one variable's value to another variable.
-            //
-            // TODO: why have a numeric assignment if we have {var ..} ?
-            // TODO: and why not implement this totally by {var ..} ?
-            // TODO: that can also remove some inconsistency in how
-            // TODO: template values are written down (numerical,
-            // TODO: PHP constant, string, other template variable).
-            // TODO: That way it would be consistent with {if ..}.
-            // TODO: To show what I mean, here are the if constructions:
-            // TODO: (mydefine was set using define("mydefine", "myvalue"))
-            // TODO: {if var1 var2}
-            // TODO: {if var1 "string"}
-            // TODO: {if var1 123}
-            // TODO: {if var1 mydefine}
-            // TODO: But for setting values for variables, it's:
-            // TODO: {assign var1 var2}
-            // TODO: {var var1 string}
-            // TODO: {assign var1 123}
-            // TODO: {assign var1 mydefine}
-            // TODO: It's not consistent.
-            // TODO: If it were, then you'd be able to do
-            // TODO: {var var1 var2}
-            // TODO: {var var1 "string"}
-            // TODO: {var var1 123}
-            // TODO: {var var1 mydefine}
-            //
             case "assign":
-                if (defined($parts[2]) || is_numeric($parts[2])){
-                    $repl = "<?php \$PHORUM[\"DATA\"]['$parts[1]']=$parts[2]; ?>";
-                } else {
-                    $index = phorum_determine_index($loopvars, $parts[2]);
-                    $repl = "<?php \$PHORUM[\"DATA\"]['$parts[1]']=\$PHORUM['$index']['$parts[2]']; ?>";
-                }
+            case "define":
+                $statement = strtolower(array_shift($parts));
+                $where = $statement == "define" ? "TMP" : "DATA";
+                $variable = phorum_templatevariable_to_php($where, array_shift($parts));
+                list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
+                $repl = "<?php $variable = $value; ?>";
                 break;
 
             // LOOP ----------------------------------------------------------
@@ -305,8 +260,8 @@ function phorum_import_template_pass2($template)
             //     {/loop arrayvar}
             //
             // The array variable to loop through has to be set in variable
-            // $PHORUM["DATA"]["<array variable>"]. While looping through this
-            // array, elements are put in $PHORUM["TMP"]["<array variable>"].
+            // $PHORUM["DATA"][<array variable>]. While looping through this
+            // array, elements are put in $PHORUM["TMP"][<array variable>].
             // If constructions like {<array variable>} are used inside the
             // loop, the element in $PHORUM["TMP"] will be used.
             //
@@ -351,39 +306,40 @@ function phorum_import_template_pass2($template)
             //
             // TODO: An "OR" implementation would be very useful.
             //
-            case "elseif":
             case "if":
+            case "elseif":
                 // Determine if we're handling "if" or "elseif".
-                $prefix = (strtolower($parts[0])=="if") ? "if" : "} elseif";
+                $statement = strtolower(array_shift($parts));
+                $prefix = $statement=="if" ? "if" : "} elseif";
 
                 // Determine if we need "==" or "!=" for the condition.
-                if (strtolower($parts[1]) == "not") {
+                if (strtolower($parts[0]) == "not") {
                     $operator = "!=";
-                    array_splice($parts, 1, 1);
+                    array_shift($parts);
                 } else {
                     $operator="==";
                 }
 
                 // Determine what variable we are comparing to in the condition.
-                $index = phorum_determine_index($loopvars, $parts[1]);
+                $variable = phorum_templatevariable_to_php($loopvars, array_shift($parts));
 
-                // If there is no part 2, check that the value is set and not empty.
-                if (!isset($parts[2])) {
+                // If there is no value to compare to, then check if
+                // the value for the variable is set and not empty.
+                if (!isset($parts[0])) {
                     if ($operator == "=="){
-                        $repl = "<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && !empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
+                        $repl = "<?php $prefix (isset($variable) && !empty($variable)) { ?>";
                     } else {
-                        $repl = "<?php $prefix(!isset(\$PHORUM['$index']['$parts[1]']) || empty(\$PHORUM['$index']['$parts[1]'])){ ?>";
+                        $repl = "<?php $prefix (!isset($variable) || empty($variable)) { ?>";
                     }
                 }
-                // If it is numeric, a PHP defined constant or a string, simply set it as is.
-                elseif (is_numeric($parts[2]) || defined($parts[2]) || preg_match('!"[^"]*"!', $parts[2])) {
-                    $repl = "<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && \$PHORUM['$index']['$parts[1]']$operator$parts[2]){ ?>";
-                }
-                // We must be comparing to a template variable.
+                // There is a value. Make a comparison to that value.
                 else {
-                    $index_part2 = phorum_determine_index($loopvars, $parts[2]);
-                    // This is a really complicated IF we are building.
-                    $repl = "<?php $prefix(isset(\$PHORUM['$index']['$parts[1]']) && isset(\$PHORUM['$index_part2']['$parts[2]']) && \$PHORUM['$index']['$parts[1]']$operator\$PHORUM['$index_part2']['$parts[2]']) { ?>";
+                    list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
+                    if ($type == "variable") {
+                        $repl = "<?php $prefix (isset($variable) && isset($value) && $variable $operator $value) { ?>";
+                    } else {
+                        $repl = "<?php $prefix (isset($variable) && $variable $operator $value) { ?>";
+                    }
                 }
                 break;
 
@@ -432,7 +388,7 @@ function phorum_import_template_pass2($template)
                 $repl .= ");?>";
                 break;
 
-            // VARIABLE ECHO -------------------------------------------------
+            // ECHO A VARIABLE -----------------------------------------------
 
             // Syntax:
             //     {<variable>}
@@ -484,6 +440,61 @@ function phorum_determine_index($loopvars, $varname)
     }
 
     return "DATA";
+}
+
+/**
+ * Translates a template variable name into a PHP string.
+ *
+ * @param $index - Determines if TMP or DATA is used 
+ *     as the index. If the $index is an array of loopvars,
+ *     it's determined automatically. If it's set to a scalar
+ *     value of "TMP" or "DATA", then that index is used.
+ * @param $varname - The name of the variable to translate.
+ * @return $phpcode - The PHP representation of the $varname.
+ */
+function phorum_templatevariable_to_php($index, $varname)
+{
+    if (is_array($index)) {
+        $index = phorum_determine_index($index, $varname);
+    }
+    if ($index != "DATA" && $index != "TMP") {
+        die ("phorum_templatevariable_to_php: illegal \$index \"$index\"");
+    }
+    return "\$PHORUM['$index']['$varname']";
+}
+
+/**
+ * Translates a template statement value into a PHP string.
+ * This supports the following structures:
+ * - integer (e.g. 1)
+ * - string (e.g. "string value")
+ * - definition (e.g. mydef when set by define("mydef","myval")
+ * - variable (e.g. USER->username)
+ *
+ * @param $loopvars - The current array of loop variables.
+ * @param $value - The value to translate.
+ * @return $phpcode - The PHP representation of the $value. 
+ * @return $type - The type of value.
+ */
+function phorum_templatevalue_to_php($loopvars, $value)
+{
+    // Integers
+    if (is_numeric($value)) { 
+        return array($value, "integer");
+    }
+    // Strings
+    elseif (preg_match('!^(".*"|\'.*\')$!', $value)) {
+        return array($value, "string");
+    }
+    // PHP definitions
+    elseif (defined($value)) {
+        return array($value, "definition");
+    }
+    // Template variables
+    else {
+        $index = phorum_determine_index($loopvars, $value);
+        return array("\$PHORUM['$index']['$value']", "variable");
+    }
 }
 
 /**
