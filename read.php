@@ -200,9 +200,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     $PHORUM["DATA"]["URL"]["MARKTHREADREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "markthreadread");
-    $PHORUM["DATA"]["POST"]["thread"] = $thread;
-    $PHORUM["DATA"]["POST"]["parentid"] = $message_id;
-    $PHORUM["DATA"]["POST"]["subject"] = $data[$message_id]["subject"];
 
     $thread_is_closed = (bool)$data[$thread]["closed"];
     $thread_is_announcement = ($data[$thread]["sort"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
@@ -535,6 +532,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             2 => $message_id,
             "as_include" => true
         );
+
+        $PHORUM["DATA"]["POST"]["thread"] = $thread;
+        $PHORUM["DATA"]["POST"]["parentid"] = $message_id;
+        $PHORUM["DATA"]["POST"]["subject"] = $messages[$message_id]["subject"];
 
         include("./posting.php");
     }

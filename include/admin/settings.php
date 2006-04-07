@@ -151,6 +151,8 @@ $frm->hidden( "module", "settings" );
 
 $row=$frm->addrow( "Phorum Title", $frm->text_box( "title", $PHORUM["title"], 50 ) );
 
+$row=$frm->addrow( "Phorum Description", $frm->textarea( "description", $PHORUM["description"], 30, 5, "style='width: 100%'" ) );
+
 $row=$frm->addrow( "DNS Lookups", $frm->select_tag( "dns_lookup", array( "No", "Yes" ), $PHORUM["dns_lookup"] ) );
 
 $row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "No", "Yes" ), $PHORUM["SETTINGS"]["use_cookies"] ) );

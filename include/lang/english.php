@@ -40,6 +40,7 @@
         "AddSigDefault"         =>      "Enable &quot;Add my signature&quot; as default",
         "AddToGroup"            =>      "Add New Member To Group:",
         "AdminOnlyMessage"      =>      "This forum is currently disabled.  This is a temporary situation.  Please check back later.",
+        "Advanced"              =>      "Advanced",
         "again"                 =>      "again",
         "AllDates"              =>      "All Dates",
         "AllNotShown"           =>      "all hidden messages",
@@ -502,6 +503,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "Views"                 =>      "Views",
         "Views_Subject"         =>      "views",
 
+        "Welcome"               =>      "Welcome",
         "WrittenBy"             =>      "Written By",
         "Wrote"                 =>      "Wrote",
 

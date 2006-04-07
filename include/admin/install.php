@@ -165,6 +165,7 @@
                 // set initial settings
                 $settings=array(
                 "title" => "Phorum 5",
+                "description" => "Congratulations!  You have installed Phorum 5!  To change this text, go to your admin, choose General Settings and changed the description",
                 "cache" => "$tmp_dir",
                 "session_timeout" => "30",
                 "short_session_timeout" => "60",

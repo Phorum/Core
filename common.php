@@ -166,8 +166,10 @@ include_once( "./include/cache.php" );
 
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
+$PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"] ) ) ? $PHORUM["description"] : "";
 $PHORUM["DATA"]["HTML_TITLE"] = ( !empty( $PHORUM["html_title"] ) ) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
 $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head_tags"] : "";
+$PHORUM["DATA"]["LOCALE"] = ( isset( $PHORUM["locale"] ) ) ? $PHORUM["locale"] : "";
 $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
 ////////////////////////////////////////////////////////////
@@ -210,6 +212,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM['parent_id']=0;
         $PHORUM['active']=1;
         $PHORUM['folder_flag']=1;
+        $PHORUM["template"] = $PHORUM["default_template"]; 
     }
 
     // stick some stuff from the settings into the DATA member
@@ -232,37 +235,33 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
         }
 
-        // Let the templates know whether we have new private messages.
-        $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] = 0;
-        if ( $PHORUM["enable_pm"] && isset($PHORUM["user"]["new_private_messages"]) ) {
-             $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] = $PHORUM["user"]["new_private_messages"];
-        }
-
-        $PHORUM["DATA"]["notice_messages"] = false;
-        $PHORUM["DATA"]["notice_users"] = false;
-        $PHORUM["DATA"]["notice_groups"] = false;
 
         // if moderator notifications are on and the person is a mod, lets find out if anything is new
+
+        $PHORUM["user"]["notice_messages"] = false;
+        $PHORUM["user"]["notice_users"] = false;
+        $PHORUM["user"]["notice_groups"] = false;
+
         if ( $PHORUM["enable_moderator_notifications"] ) {
             $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
             if ( count( $forummodlist ) > 0 ) {
-                $PHORUM["DATA"]["notice_messages"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
-                $PHORUM["DATA"]["notice_messages_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
+                $PHORUM["user"]["notice_messages"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
+                $PHORUM["DATA"]["URL"]["notice_messages"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
             }
             if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
-                $PHORUM["DATA"]["notice_users"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
-                $PHORUM["DATA"]["notice_users_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
+                $PHORUM["user"]["notice_users"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
+                $PHORUM["DATA"]["URL"]["notice_users"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
             }
             if ( phorum_user_allow_moderate_group() ) {
                 $groups = phorum_user_get_moderator_groups();
                 if ( count( $groups ) > 0 ) {
-                    $PHORUM["DATA"]["notice_groups"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
-                    $PHORUM["DATA"]["notice_groups_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
+                    $PHORUM["user"]["notice_groups"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
+                    $PHORUM["DATA"]["URL"]["notice_groups"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
                 }
             }
         }
 
-        $PHORUM["DATA"]["notice_all"] = ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["DATA"]["NEW_PRIVATE_MESSAGES"] ) || $PHORUM["DATA"]["notice_messages"] || $PHORUM["DATA"]["notice_users"] || $PHORUM["DATA"]["notice_groups"];
+        $PHORUM["user"]["notice_all"] = ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["user"]["new_private_messages"] ) || $PHORUM["user"]["notice_messages"] || $PHORUM["user"]["notice_users"] || $PHORUM["user"]["notice_groups"];
 
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
@@ -306,6 +305,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if (! defined('PHORUM_SCRIPT')) {
         ob_start();
         include_once( phorum_get_template( "settings" ) );
+        $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         ob_end_clean();
     }
 
@@ -334,7 +334,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
-$PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
 
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
@@ -355,7 +355,7 @@ $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TI
     // a hook for rewriting vars at the end of common.php
     phorum_hook( "common", "" );
 
-    $PHORUM['DATA']['USERINFO'] = $PHORUM['user'];
+    $PHORUM['DATA']['USER'] = $PHORUM['user'];
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
 }
@@ -678,6 +678,8 @@ function phorum_get_template( $page )
 function phorum_build_common_urls()
 {
     $PHORUM=$GLOBALS['PHORUM'];
+
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE_URL"] = phorum_get_url( PHORUM_BASE_URL );
 
     // those links are only needed in forums, not in folders
     if(isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
