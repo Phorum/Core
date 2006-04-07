@@ -63,13 +63,16 @@
     float: right;
 }
 
-#search-area {
+#phorum #search-area {
     clear: both;
-    padding: 8px;
+    padding: 8px 8px 8px 32px;
     background-color: #EEEFDE;
+    background-repeat: no-repeat;
+    background-position: 8px 12px;
     border: 1px solid #CFD0C1;
     margin: 8px 0 8px 0;
 }
+
 
 #phorum #header-search-form {
     display: inline;
@@ -78,6 +81,137 @@
 #phorum #header-search-form a {
     font-size: 10px;
 }
+
+
+#phorum #forums td.break{
+    height: 26px;
+}
+
+
+#phorum #forums th  {
+    background-color: #EEEFDE; 
+    border-bottom: 1px solid #CFD0C1; 
+    border-top: 1px solid #CFD0C1; 
+    text-align: left;
+}
+
+#phorum #forums th.folder-name  {
+    background-repeat: no-repeat;
+    background-position: 5px 4px;
+    font-size: 16px;
+    padding: 4px 4px 4px 25px;
+    border-left: 1px solid #CFD0C1;    
+}
+
+#phorum #forums th.folder-last-post  {
+    border-right: 1px solid #CFD0C1;    
+}
+
+#phorum #forums th.folder-name a {
+    text-decoration: none;
+}
+
+#phorum #forums td.forum-name{
+    padding: 8px 16px 8px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #CFD0C1; 
+    border-left: 1px solid #CFD0C1; 
+}
+
+#phorum #forums td.forum-name a {
+    text-decoration: none;
+}
+
+#phorum #forums td.forum-name p{
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 16px;
+}
+
+#phorum #forums td.forum-name small{
+    font-size: 10px;
+}
+
+#phorum #forums td.forum-name small a{
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+    padding: 4px 0 0px 21px;
+}
+
+#phorum #forums td.forum-threads{
+    width: 120px;
+    padding: 8px 8px 8px 0;
+    border-bottom: 1px solid #CFD0C1; 
+}
+
+#phorum #forums td.forum-posts{
+    width: 120px;
+    padding: 8px 8px 8px 0;
+    border-bottom: 1px solid #CFD0C1; 
+}
+
+#phorum #forums td.forum-last-post{
+    width: 120px;
+    padding: 8px 8px 8px 0;
+    border-bottom: 1px solid #CFD0C1; 
+    border-right: 1px solid #CFD0C1; 
+}
+
+
+#phorum #folders-header {
+    background-color: #EEEFDE; 
+    background-repeat: no-repeat;
+    background-position: 5px 4px;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 4px 4px 4px 25px;
+    border: 1px solid #CFD0C1;    
+}
+
+#phorum #folders {
+    border: 1px solid #CFD0C1;    
+    border-top: 0;
+    border-bottom: 0;
+    margin-bottom: 26px;
+}
+
+#phorum #folders div.folder {
+    padding: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #CFD0C1; 
+}
+
+#phorum #folders div.folder a {
+    text-decoration: none;
+}
+
+#phorum #folders div.folder p{
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 16px;
+}
+
+#phorum #footer-plug {
+    margin-top: 26px;
+    font-size: 10px;
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

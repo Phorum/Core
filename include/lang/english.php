@@ -14,6 +14,10 @@
     // for the needed string
     $PHORUM['locale']="EN";
 
+    // Numeric separators used to format numbers
+    $PHORUM['thous_sep']=",";
+    $PHORUM['dec_sep']=".";
+
     // charset for use in converting html into safe valid text
     // also used in the header template for the <xml> and for
     // the Content-Type header. for a list of supported charsets, see

@@ -51,6 +51,12 @@ foreach( $forums as $forum ) {
             $forum["last_post"] = "&nbsp;";
         } 
 
+        $forum["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
+        $forum["URL"]["MARK_READ"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
+        if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']) {
+            $forum["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL, $forum["forum_id"] );
+        }
+
         if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
             list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
         }
@@ -58,7 +64,11 @@ foreach( $forums as $forum ) {
 
     $forums_shown=true;
 
-    $PHORUM["DATA"]["FORUMS"][] = $forum;
+    if($forum["folder_flag"]){
+        $PHORUM["DATA"]["FOLDERS"][] = $forum;        
+    } else {
+        $PHORUM["DATA"]["FORUMS"][] = $forum;
+    }
 } 
 
 if(!$forums_shown){

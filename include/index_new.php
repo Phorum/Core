@@ -75,10 +75,10 @@ foreach( $folders as $folder_key=>$folder_id ) {
             continue;
         }
 
-        $forum["url"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
-        $forum["url_markread"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
+        $forum["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
+        $forum["URL"]["MARK_READ"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
         if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']) {
-            $forum["url_rss"] = phorum_get_url( PHORUM_RSS_URL, $forum["forum_id"] );
+            $forum["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL, $forum["forum_id"] );
         }
 
 
@@ -91,6 +91,11 @@ foreach( $folders as $folder_key=>$folder_id ) {
         if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
             list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
         }
+
+        $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]); 
+        $forum["new_messages"] = number_format($forum["new_messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]); 
+        $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]); 
+        $forum["new_threads"] = number_format($forum["new_threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]); 
 
         $shown_sub_forums[] = $forum;
 

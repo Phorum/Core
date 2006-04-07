@@ -16,6 +16,7 @@
 <title>{HTML_TITLE}</title>
 {HEAD_TAGS}
 </head>
+<!-- Icons courtesy of FAMFAMFAM - http://www.famfamfam.com/lab/icons/silk/ -->
 <body>
 
 {! Please leave this div in your template   you can alter anything above this line }
@@ -53,13 +54,13 @@
 
 </div>
 
-<div id="search-area">
+<div id="search-area" style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/zoom.png');">
 <form id="header-search-form" action="{URL->SEARCH}" method="get">
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
 <input type="hidden" name="match_forum" value="ALL" />
 <input type="hidden" name="match_dates" value="365" />
 <input type="hidden" name="match_type" value="ALL" />
-{LANG->Search}: <input type="text" name="search" size="20" value="" /><input type="submit" value="{LANG->Search}" /> <a href="{URL->SEARCH}">{LANG->Advanced}</a>
+<input type="text" name="search" size="20" value="" /><input type="submit" value="{LANG->Search}" /> <a href="{URL->SEARCH}">{LANG->Advanced}</a>
 </form>
 </div>
 
