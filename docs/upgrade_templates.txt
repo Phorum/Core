@@ -1,0 +1,68 @@
+Template changes from 5.1.x to 5.2.x:
+-------------------------------------
+
+ New template engine
+ -------------------
+
+ Some changes have been made to make the Phorum template engine more
+ consistent. As a result the way in which some statements are used has
+ changed. Templates will have to be updated for this. Here is a list of
+ changes.
+
+ ------------------------------------------------------------------------------
+ {var <variable> <value>}
+ ------------------------------------------------------------------------------
+     
+   This statement could previously only be used to assign a string value
+   to the <variable>. Now, <value> can be a variety of things. It can
+   contain integer values (e.g. 123), strings (e.g. "the value"), 
+   PHP definitions (e.g. MYDEF, where this was defined using the PHP code
+   define("MYDEF", "MYDEF's value")) and other template variables
+   (e.g. USER->username).
+
+   Conversion: 
+
+   {var VARIABLE SomeValue}
+
+   has to be changed to:
+
+   {var VARIABLE "SomeValue"}
+
+ ------------------------------------------------------------------------------
+ {assign <variable> <value>}
+ ------------------------------------------------------------------------------
+
+   This statement was previously used for setting a variable to an
+   integer, a PHP definition or another template variable. This functionality 
+   has now been merged into the {var ..} statement.
+
+   Conversion:
+
+   {assign VARIABLE USER->username}
+   {assign VARIABLE 1}
+   {assign VARIABLE true}
+
+   has to be changed to:
+
+   {var VARIABLE USER->username}
+   {var VARIABLE 1}
+   {var VARIABLE true}
+
+
+ ------------------------------------------------------------------------------
+ {define <variable> <value>}
+ ------------------------------------------------------------------------------
+
+   The functionality of the {define ..} statement has been change in the same
+   way as the {var ..} statement. So if you are using string values for 
+   {define ..}, you'll have to convert this. The default template does not
+   use it, but maybe you do.
+
+   Conversion: 
+
+   {define MYTEMPLATEDEFINE SomeValue}
+
+   has to be changed to:
+
+   {define MYTEMPLATEDEFINE "SomeValue"}
+
