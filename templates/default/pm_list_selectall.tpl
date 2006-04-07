@@ -1,6 +1,6 @@
 {IF NOT ITEMCOUNT 0}
   {IF NOT ITEMCOUNT 1}
-    {ASSIGN DID_TOGGLEBLOCK 1}
+    {VAR DID_TOGGLEBLOCK 1}
     <script type="text/javascript">
       document.write
         ( '<input type="checkbox" name="toggle" onclick="' +

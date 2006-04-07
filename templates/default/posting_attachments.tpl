@@ -1,9 +1,9 @@
 <div class="PhorumStdBlockHeader PhorumNarrowBlock">
   {IF POST->attachments}
     {INCLUDE posting_attachments_list}
-    {ASSIGN AttachPhrase LANG->AttachAnotherFile}
+    {VAR AttachPhrase LANG->AttachAnotherFile}
   {ELSE}
-    {ASSIGN AttachPhrase LANG->AttachAFile}
+    {VAR AttachPhrase LANG->AttachAFile}
   {/IF}
   {IF ATTACHMENTS_FULL}
     <b>{LANG->AttachFull}</b>

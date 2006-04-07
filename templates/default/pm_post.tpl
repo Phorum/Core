@@ -5,12 +5,12 @@
     <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="#">{PREVIEW->from_username}</a></strong></div>
     <div class="PhorumReadBodyHead">
       {LANG->To}:
-      {ASSIGN ISFIRST true}
+      {VAR ISFIRST true}
       {LOOP PREVIEW->recipients}
         <div style="display:inline; white-space: nowrap">
           {IF NOT ISFIRST} / {/IF}
           <strong><a href="#">{PREVIEW->recipients->username}</a></strong>
-          {ASSIGN ISFIRST false}
+          {VAR ISFIRST false}
         </div>
       {/LOOP PREVIEW->recipients}
     </div><br />

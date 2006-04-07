@@ -9,7 +9,7 @@
     <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="{MESSAGE->from_profile_url}">{MESSAGE->from_username}</a></strong></div>
     <div class="PhorumReadBodyHead">
       {LANG->To}:
-      {ASSIGN ISFIRST true}
+      {VAR ISFIRST true}
       {LOOP MESSAGE->recipients}
         <div style="display:inline; white-space: nowrap">
           {IF NOT ISFIRST} / {/IF}
@@ -17,7 +17,7 @@
           {IF USERINFO->user_id MESSAGE->from_user_id}
             {IF NOT MESSAGE->recipients->read_flag}({LANG->PMUnread}){/IF}
           {/IF}
-          {ASSIGN ISFIRST false}
+          {VAR ISFIRST false}
         </div>
       {/LOOP MESSAGE->recipients}
     </div>
@@ -26,7 +26,7 @@
   </div>
   <div class="PhorumStdBlock" style="border-top:none">
     {IF FOLDER_IS_INCOMING}
-      {VAR MOVE_SUBMIT_NAME move_message}
+      {VAR MOVE_SUBMIT_NAME "move_message"}
       {INCLUDE pm_moveselect}
     {/IF}
     <input type="submit" name="close_message" class="PhorumSubmit" value="{LANG->PMCloseMessage}" />

@@ -1,6 +1,6 @@
 <b>{LANG->Attachments}:</b>
 <table id="phorum-attachment-list" class="PhorumFormTable" cellspacing="0" width="100%">
-  {ASSIGN LIST POST->attachments}
+  {VAR LIST POST->attachments}
   {LOOP LIST}
     {IF LIST->keep}
       <tr>

@@ -33,8 +33,8 @@
     </tr>
   </table>
 </div>
-{IF PROFILE->admin}{ASSIGN SHOWPERMS 1}{/IF}
-{IF UserPerms}{ASSIGN SHOWPERMS 1}{/IF}
+{IF PROFILE->admin}{VAR SHOWPERMS 1}{/IF}
+{IF UserPerms}{VAR SHOWPERMS 1}{/IF}
 {IF SHOWPERMS}
   <br />
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UserPermissions}</div>

@@ -1,7 +1,7 @@
 <table border="0" cellspacing="0" class="PhorumStdTable">
   <tr>
     <th class="PhorumTableHeader" align="left" width="20">
-      {ASSIGN ITEMCOUNT MESSAGECOUNT}
+      {VAR ITEMCOUNT MESSAGECOUNT}
       {INCLUDE pm_list_selectall}
     </th>
     <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
@@ -39,7 +39,7 @@
   {/IF}
 </table>
 <div class="PhorumStdBlock" style="border-top:none">
-  {VAR MOVE_SUBMIT_NAME move}
+  {VAR MOVE_SUBMIT_NAME "move"}
   {INCLUDE pm_moveselect}
   <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
 </div>
