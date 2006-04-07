@@ -84,7 +84,7 @@ elseif ($do_attach && ! empty($_FILES))
         if ($PHORUM["max_attachment_size"] > 0 &&
             $file["size"] > $PHORUM["max_attachment_size"]*1024) {
             $PHORUM["DATA"]["ERROR"] = str_replace(
-                '%size%', 
+                '%size%',
                 phorum_filesize($PHORUM["max_attachment_size"] * 1024),
                 $PHORUM["DATA"]["LANG"]["AttachFileSize"]
             );
@@ -112,7 +112,7 @@ elseif ($do_attach && ! empty($_FILES))
             $allowed_exts=explode(";", $PHORUM["allow_attachment_types"]);
             if (! in_array(strtolower($ext), $allowed_exts)) {
                 $PHORUM["DATA"]["ERROR"] =
-                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ". 
+                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ".
                     str_replace('%types%', str_replace(";", ", ", $PHORUM["allow_attachment_types"]), $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
                 $error_flag = true;
                 break;
@@ -120,10 +120,7 @@ elseif ($do_attach && ! empty($_FILES))
         }
 
         // Read in the file.
-        $fp = fopen($file["tmp_name"], "r");
-        if (! $fp) continue;
-        $file["data"] = base64_encode(fread($fp, $file["size"]));
-        fclose($fp);
+        $file["data"] = base64_encode(file_get_contents($file["tmp_name"]));
 
         // copy the current user_id to the $file array for the hook
         $file["user_id"]=$PHORUM["user"]["user_id"];
