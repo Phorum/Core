@@ -26,6 +26,12 @@ if(!defined("PHORUM")) return;
 define("PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH", 50);
 
 /**
+ * The message to use for deprecated statements. The % character
+ * is replaced with the statement that has been deprecated.
+ */
+define("PHORUM_DEPRECATED", "[Template statement \"%\" has been deprecated; Please read docs/upgrade_templates.txt]");
+
+/**
  * Converts a Phorum template into PHP code and writes the resulting code
  * to disk. This is the only call from templates.php that is called from
  * outside this file. All other functions are used internally for the
@@ -156,20 +162,20 @@ function phorum_import_template_pass2($template)
     $loopvars = array();
 
     // Find and process all template statements in the code.
-    preg_match_all("/\{[\!\/A-Za-z].+?\}/s", $template, $matches);
+    preg_match_all("/\{[\"\'\!\/A-Za-z0-9].+?\}/s", $template, $matches);
     foreach ($matches[0] as $match)
     {
         // Strip surrounding { .. } from the statement.
         $string=substr($match, 1, -1);
         $string = trim($string);
 
-        // pre-parse pointer variables
+        // Pre-parse pointer variables.
         if (strstr($string, "->")){
             $string = str_replace("->", "']['", $string);
-    }
+        }
 
-        // Process template command statements.
-        $parts = explode(" ", $string);
+        // Process a template statement.
+        $parts = preg_split('/[\t\s]+/', $string);
         switch (strtolower($parts[0]))
         {
             // COMMENTS ------------------------------------------------------
@@ -197,6 +203,10 @@ function phorum_import_template_pass2($template)
             // http://www.phorum.org/cgi-bin/trac.cgi/ticket/68
             // It's now deprecated. In case people really want to use it, we
             // can re-introduce it.
+            //
+            case "include_once":
+                $repl = str_replace("%", "include_once", PHORUM_DEPRECATED);
+                break;
 
             // INCLUDE_VAR ---------------------------------------------------
 
@@ -211,10 +221,10 @@ function phorum_import_template_pass2($template)
             case "include_var":
                 $statement = array_shift($parts); 
                 $variable = phorum_templatevariable_to_php($loopvars, array_shift($parts));
-                $repl = "<?php include_once phorum_get_template($variable); ?>";
+                $repl = "<?php include phorum_get_template($variable); ?>";
                 break;
 
-            // VAR, ASSIGN and DEFINE ----------------------------------------
+            // VAR, DEFINE and ASSIGN ----------------------------------------
 
             // Syntax:
             //     {var <variable> <value>}
@@ -237,13 +247,17 @@ function phorum_import_template_pass2($template)
             // from Phorum core and module code.
             //
             case "var":
-            case "assign":
             case "define":
                 $statement = strtolower(array_shift($parts));
                 $where = $statement == "define" ? "TMP" : "DATA";
                 $variable = phorum_templatevariable_to_php($where, array_shift($parts));
                 list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
                 $repl = "<?php $variable = $value; ?>";
+                break;
+
+            // Assign has been deprecated. Use {var ..} instead.
+            case "assign":
+                $repl = str_replace("%", "assign", PHORUM_DEPRECATED);
                 break;
 
             // LOOP ----------------------------------------------------------
@@ -266,12 +280,13 @@ function phorum_import_template_pass2($template)
             // loop, the element in $PHORUM["TMP"] will be used.
             //
             case "loop":
-                $loopvars[$parts[1]] = true;
                 $index = phorum_determine_index($loopvars, $parts[1]);
+                $loopvars[$parts[1]] = true;
                 $repl = "<?php \$phorum_loopstack[] = isset(\$PHORUM['TMP']['$parts[1]']) ? \$PHORUM['TMP']['$parts[1]']:NULL; if(isset(\$PHORUM['$index']['$parts[1]']) && is_array(\$PHORUM['$index']['$parts[1]'])) foreach(\$PHORUM['$index']['$parts[1]'] as \$PHORUM['TMP']['$parts[1]']){ ?>";
                 break;
+
             case "/loop":
-                if (!isset($parts[1])) print "<h3>Template warning: Missing argument for /loop statement in file '" . htmlspecialchars($tplfile) . "'</h3>";
+                if (!isset($parts[1])) print "[Template warning: Missing argument for /loop statement]";
                 $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); \$phorum_loopstackitem=array_pop(\$phorum_loopstack); if (isset(\$phorum_loopstackitem)) \$PHORUM['TMP']['$parts[1]'] = \$phorum_loopstackitem;?>";
                 unset($loopvars[$parts[1]]);
                 break;
@@ -362,24 +377,17 @@ function phorum_import_template_pass2($template)
             //     the hook. Multiple arguments will be passed in an array.
             //
             case "hook":
+                $statement = array_shift($parts);
+                $hook = array_shift($parts);
+
                 // Setup hook arguments.
                 $hookargs = array();
-                for ($i = 2; !empty($parts[$i]); $i++) {
-                    // For supporting the following construction, where the
-                    // loopvar is passed to the hook in full:
-                    // {LOOP SOMELIST}
-                    //   {HOOK some_hook SOMELIST}
-                    // {/LOOP SOMELIST}
-                    if (isset($loopvars[$parts[$i]])) {
-                        $hookargs[] = "\$PHORUM['TMP']['".addslashes($parts[$i])."']";
-                    } else {
-                        $index = phorum_determine_index($loopvars, $parts[$i]);
-                        $hookargs[] = "\$PHORUM['$index']['".addslashes($parts[$i])."']";
-                    }
+                while ($part = array_shift($parts)) {
+                    $hookargs[] = phorum_templatevariable_to_php($loopvars, $part);
                 }
 
                 // Build the replacement string.
-                $repl = "<?php if(isset(\$PHORUM['hooks']['".addslashes($parts[1])."'])) phorum_hook('".addslashes($parts[1])."'";
+                $repl = "<?php if(isset(\$PHORUM['hooks']['".addslashes($hook)."'])) phorum_hook('".addslashes($hook)."'";
                 if (count($hookargs) == 1) {
                     $repl .= "," . $hookargs[0];
                 } elseif (count($hookargs) > 1) {
@@ -398,12 +406,9 @@ function phorum_import_template_pass2($template)
             //     value, a template loop variable or a template variable.
             //
             default:
-                if (defined($parts[0])) {
-                    $repl = "<?php echo $parts[0]; ?>";
-                } else {
-                    $index = phorum_determine_index($loopvars, $parts[0]);
-                    $repl = "<?php if (isset(\$PHORUM['$index']['$parts[0]'])) echo \$PHORUM['$index']['$parts[0]']; ?>";
-                }
+                list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
+                $repl = "<?php echo $value ?>";
+
         }
 
         $template = str_replace($match, $repl, $template);
@@ -428,15 +433,18 @@ function phorum_import_template_pass2($template)
  */
 function phorum_determine_index($loopvars, $varname)
 {
-    // TODO: this code needs some better documentation.
     if (isset($loopvars) && count($loopvars)) {
-        while (strstr($varname, "]")){
-            $varname = substr($varname, 0, strrpos($varname, "]")-1);
+        for(;;) {
             if (isset($loopvars[$varname])) {
                 return "TMP";
+            }
+            if (strstr($varname, "]")){
+                $varname = substr($varname, 0, strrpos($varname, "]")-1);
+            } else {
                 break;
             }
         }
+
     }
 
     return "DATA";
