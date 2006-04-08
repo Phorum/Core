@@ -115,18 +115,25 @@ $pages=ceil(($PHORUM["thread_count"] - $PHORUM['sticky_count']) / $PHORUM["list_
 // will be zero. In that case, simply use one page.
 if ($pages == 0) $pages = 1;
 
-if($pages<=11){
+$pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"])) ? $PHORUM["TMP"]["list_pages_shown"] : 11; 
+
+// first $pages_shown pages
+if($page - floor($pages_shown/2) <= 0){
     $page_start=1;
-} elseif($pages-$page<5) {
-    $page_start=$pages-10;
-} elseif($pages>11 && $page>6){
-    $page_start=$page-5;
+
+// last $pages_shown pages
+} elseif($page > $pages - floor($pages_shown/2)) {
+    $page_start = $pages - $pages_shown + 1;
+
+// all others
 } else {
-    $page_start=1;
+    $page_start = $page - floor($pages_shown/2);
 }
 
 $pageno=1;
-for($x=0;$x<11 && $x<$pages;$x++){
+
+
+for($x=0;$x<$pages_shown && $x<$pages;$x++){
     $pageno=$x+$page_start;
     $PHORUM["DATA"]["PAGES"][] = array(
     "pageno"=>$pageno,
@@ -163,7 +170,7 @@ if ($PHORUM["threaded_list"]){
         if($PHORUM["count_views"]) {  // show viewcount if enabled
               if($PHORUM["count_views"] == 2) { // viewcount as column
                   $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
-                  $rows[$key]["viewcount"]=$row['viewcount'];
+                  $rows[$key]["viewcount"] = number_format($row['viewcount'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
               } else { // viewcount added to the subject
                   $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} " . $PHORUM['DATA']['LANG']['Views_Subject'] . ")";
               }
@@ -266,6 +273,8 @@ if ($PHORUM["threaded_list"]){
         // default thread-count
         $thread_count=$row["thread_count"];
 
+        $rows[$key]["thread_count"] = number_format($row['thread_count'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+        
         if ($PHORUM["DATA"]["LOGGEDIN"]){
 
                     if($PHORUM["DATA"]["MODERATOR"]){
@@ -332,6 +341,7 @@ if ($PHORUM["threaded_list"]){
                 $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
             }
         }
+
         if(isset($row['meta']['recent_post'])) {
             if($pages>1){
                 $rows[$key]["last_post_url"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"], "page=$pages");
@@ -423,7 +433,7 @@ $rows = phorum_format_messages($rows);
 
 
 // set up the data
-$PHORUM["DATA"]["ROWS"] = $rows;
+$PHORUM["DATA"]["MESSAGES"] = $rows;
 
 $PHORUM["DATA"]["URL"]["MARKREAD"] = phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "markread");
 if($PHORUM["DATA"]["MODERATOR"]) {

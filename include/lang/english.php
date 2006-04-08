@@ -321,7 +321,8 @@
         "of"                    =>      "of",  // as in: 1 - 5 of 458
         "Options"               =>      "Options",
 
-        "Pages"                 =>      "Goto Page",
+        "Page"                  =>      "Page",
+        "Pages"                 =>      "Pages",
         "Password"              =>      "Password",
         "Past180Days"           =>      "Past 180 Days",
         "Past30Days"            =>      "Past 30 Days",

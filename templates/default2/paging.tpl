@@ -1,8 +1,5 @@
-<div class="PhorumNavBlock" style="text-align: left;">
-  {IF NOT TOTALPAGES 1}
-    <div style="float: right;">
-      <span class="PhorumNavHeading">{LANG->Pages}:</span>&nbsp;{IF URL->PREVPAGE}<a class="PhorumNavLink" href="{URL->PREVPAGE}">{LANG->PrevPage}</a>{/IF}{IF URL->FIRSTPAGE}<a class="PhorumNavLink" href="{URL->FIRSTPAGE}">{LANG->FirstPage}...</a>{/IF}{LOOP PAGES}{IF PAGES->pageno CURRENTPAGE}<span class="PhorumNavLink"><strong>{PAGES->pageno}</strong></span>{ELSE}<a class="PhorumNavLink" href="{PAGES->url}">{PAGES->pageno}</a>{/IF}{/LOOP PAGES}{IF URL->LASTPAGE}<a class="PhorumNavLink" href="{URL->LASTPAGE}">...{LANG->LastPage}</a>{/IF}{IF URL->NEXTPAGE}<a class="PhorumNavLink" href="{URL->NEXTPAGE}">{LANG->NextPage}</a>{/IF}
-    </div>
-  {/IF}
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->CurrentPage}: </span>{CURRENTPAGE} {LANG->of} {TOTALPAGES}
+{IF TOTALPAGES}
+<div class="paging">
+  {LANG->Page} {CURRENTPAGE} {LANG->of} {TOTALPAGES}&nbsp;&nbsp;&nbsp;&nbsp;<strong>{LANG->Pages}:</strong>&nbsp;{IF URL->FIRSTPAGE}<a href="{URL->FIRSTPAGE}" title="{LANG->FirstPage}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/control_first.png" width="16" height="16" border="0" alt="{LANG->FirstPage}" /></a>{/IF}{IF URL->PREVPAGE}<a href="{URL->PREVPAGE}" title="{LANG->PrevPage}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/control_prev.png" width="16" height="16" border="0" alt="{LANG->PrevPage}" /></a>{/IF}{LOOP PAGES}{IF PAGES->pageno CURRENTPAGE}<strong class="current-page">{PAGES->pageno}</strong>{ELSE}<a href="{PAGES->url}">{PAGES->pageno}</a>{/IF}{/LOOP PAGES}{IF URL->NEXTPAGE}<a href="{URL->NEXTPAGE}" title="{LANG->NextPage}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/control_next.png" width="16" height="16" border="0" alt="{LANG->NextPage}" /></a>{/IF}{IF URL->LASTPAGE}<a href="{URL->LASTPAGE}" title="{LANG->LastPage}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/control_last.png" width="16" height="16" border="0" alt="{LANG->LastPage}" /></a>{/IF}
 </div>
+{/IF}

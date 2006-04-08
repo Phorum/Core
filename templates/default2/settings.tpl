@@ -6,6 +6,10 @@
 {! --- This is used to load the message-bodies in the message-list for that template if set to 1 --- }
 {define bodies_in_list 0}
 
+{! --- This is used the number of page numbers shown on the list page in the paging section (eg. 1 2 3 4 5) --- }
+{define list_pages_shown 5}
+
+
 {! --- This is the marker for messages in the thread list --- }
 {var marker <img src="templates/default/images/carat.gif" border="0" width="8" height="8" alt="" />}
 

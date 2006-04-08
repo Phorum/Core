@@ -8,6 +8,10 @@
 
 /* HTML level styles */
 
+#phorum td {
+    font-size: 13px;
+}
+
 #phorum a {
     color: #3D6F3D;
 }
@@ -23,11 +27,48 @@
     font-weight: normal;
 }
 
-/* named items styles */
+/* global styles */
+
+#phorum div.paging {
+    padding: 4px 0 4px 0;
+    float: right;
+}
+
+#phorum div.paging a {
+    font-weight: bold;
+    margin: 0 4px 0 4px;
+    padding: 0 0 1px 0;
+}
+
+#phorum div.paging img{
+    vertical-align: bottom;
+}
+
+#phorum div.paging strong.current-page {
+    margin: 0 4px 0 4px;
+}
+
+#phorum input.styled-text {
+    font-family: Arial;
+    border-color: #CFD0C1;
+}
+
+#phorum input.styled-button {
+    font-family: Arial;
+    font-weight: bold;
+    background-color: #EEEFDE;
+    border-color: #CFD0C1;
+    color: #3D6F3D;
+    padding: 2px 0 2px 0;
+    
+}
+
+/* header styles */
 
 #phorum #top {
     padding: 8px;
     border: 1px solid #CFD0C1;
+    background-color: #F9FAF2;
 }
 
 #phorum #description {
@@ -45,7 +86,6 @@
     background-repeat: no-repeat;
     background-position: 1px 2px;
     display: block;
-    border: 1px solid White;
 }
 
 #phorum #user-info img {
@@ -66,7 +106,7 @@
 #phorum #search-area {
     clear: both;
     padding: 8px 8px 8px 32px;
-    background-color: #EEEFDE;
+    background-color: #F9FAF2;
     background-repeat: no-repeat;
     background-position: 8px 12px;
     border: 1px solid #CFD0C1;
@@ -83,10 +123,15 @@
 }
 
 
+/* Forum list styles */
+
+#phorum #forums {
+    width: 100%;
+}
+
 #phorum #forums td.break{
     height: 26px;
 }
-
 
 #phorum #forums th  {
     background-color: #EEEFDE; 
@@ -130,10 +175,11 @@
 }
 
 #phorum #forums td.forum-name small{
-    font-size: 10px;
+    font-size: 11px;
 }
 
-#phorum #forums td.forum-name small a{
+#phorum #forums td.forum-name small a {
+    font-weight: normal;
     background-repeat: no-repeat;
     background-position: 1px 2px;
     padding: 4px 0 0px 21px;
@@ -192,6 +238,102 @@
     font-weight: normal;
     line-height: 16px;
 }
+
+
+/* Message list styles */
+
+#phorum #list-nav {
+    font-size: 11px;
+    margin: 0 0 5px 0;
+}
+
+#phorum #list-nav a {
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+    padding: 4px 10px 1px 21px;
+    text-decoration: none;
+}
+
+#phorum #messages {
+    border: 1px solid #CFD0C1;
+    width: 100%;
+}
+
+#phorum #messages th {
+    text-align: left;
+    background-color: #EEEFDE;    
+    padding: 4px;
+    border-bottom: 1px solid #CFD0C1; 
+}
+
+#phorum #messages th.messages-views {
+    text-align: center;
+}
+
+#phorum #messages th.messages-posts {
+    text-align: center;
+    padding-right: 8px;
+}
+
+#phorum #messages th.messages-moderate {
+    text-align: right;
+}
+
+#phorum #messages td {
+    height: 40px;
+    border-bottom: 1px solid #EEEFDE;    
+}
+
+#phorum #messages td.message-alt {
+    background-color: #F9FAF2;    
+}
+
+#phorum #messages td.message-subject {
+    background-repeat: no-repeat;
+    background-position: 6px 13px;
+    padding: 4px 0 1px 27px;
+}
+
+#phorum #messages td.message-thread-count {
+    width: 80px;
+    padding-left: 4px;
+    padding-right: 8px;
+    text-align: center;    
+}
+
+#phorum #messages td.message-view-count {
+    width: 80px;
+    padding-left: 4px;    
+    text-align: center;    
+}
+
+#phorum #messages td.message-author {
+    width: 120px;
+    padding-left: 4px;    
+}
+
+#phorum #messages td.message-last-post {
+    width: 120px;
+    padding: 0 8px 0 4px;    
+    font-size: 11px;    
+}
+
+#phorum #messages td.message-actions {
+    width: 100px;
+    font-size: 11px;
+    text-align: right;
+}
+
+#phorum #messages td.message-actions a {
+    margin-right: 4px;
+    text-decoration: none;
+}
+
+#phorum #messages a.message-new {
+    font-weight: bold;
+}
+
+/* Footer styles */
 
 #phorum #footer-plug {
     margin-top: 26px;

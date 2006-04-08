@@ -7,7 +7,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen,print" />
 {IF URL->RSS}
-<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="{URL->RSS}" />
+<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{URL->RSS}" />
 {/IF}
 {IF URL->REDIRECT}
 <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
@@ -55,12 +55,13 @@
 </div>
 
 <div id="search-area" style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/zoom.png');">
+{INCLUDE paging}
 <form id="header-search-form" action="{URL->SEARCH}" method="get">
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
 <input type="hidden" name="match_forum" value="ALL" />
 <input type="hidden" name="match_dates" value="365" />
 <input type="hidden" name="match_type" value="ALL" />
-<input type="text" name="search" size="20" value="" /><input type="submit" value="{LANG->Search}" /> <a href="{URL->SEARCH}">{LANG->Advanced}</a>
+<input type="text" name="search" size="20" value="" class="styled-text" /><input type="submit" value="{LANG->Search}" class="styled-button" /> <a href="{URL->SEARCH}">{LANG->Advanced}</a>
 </form>
 </div>
 
