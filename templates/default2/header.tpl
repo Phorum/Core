@@ -40,10 +40,10 @@
 {ELSE}
 <a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_comment.png');" href="{URL->PM}">{LANG->PrivateMessages}</a>
 {/IF}
-{IF notice_all}
-{IF USER->notice_messages}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/table_add.png');" href="{URL->notice_messages}">{LANG->UnapprovedMessagesLong}</a>{/IF}
-{IF USER->notice_users}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_add.png');" href="{URL->notice_users}">{LANG->UnapprovedUsersLong}</a>{/IF}
-{IF USER->notice_groups}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/group_add.png');" href="{URL->notice_groups}">{LANG->UnapprovedGroupMembers}</a>{/IF}
+{IF USER->NOTICE->SHOW}
+{IF USER->NOTICE->MESSAGES}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/table_add.png');" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
+{IF USER->NOTICE->USERS}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_add.png');" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
+{IF USER->NOTICE->GROUPS}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/group_add.png');" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
 {/IF}
 {ELSE}
 {LANG->Welcome}!

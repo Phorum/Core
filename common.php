@@ -238,30 +238,30 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
         // if moderator notifications are on and the person is a mod, lets find out if anything is new
 
-        $PHORUM["user"]["notice_messages"] = false;
-        $PHORUM["user"]["notice_users"] = false;
-        $PHORUM["user"]["notice_groups"] = false;
+        $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
+        $PHORUM["user"]["NOTICE"]["USERS"] = false;
+        $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
 
         if ( $PHORUM["enable_moderator_notifications"] ) {
             $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
             if ( count( $forummodlist ) > 0 ) {
-                $PHORUM["user"]["notice_messages"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
-                $PHORUM["DATA"]["URL"]["notice_messages"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
+                $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
+                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
             }
             if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
-                $PHORUM["user"]["notice_users"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
-                $PHORUM["DATA"]["URL"]["notice_users"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
+                $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
+                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
             }
             if ( phorum_user_allow_moderate_group() ) {
                 $groups = phorum_user_get_moderator_groups();
                 if ( count( $groups ) > 0 ) {
-                    $PHORUM["user"]["notice_groups"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
-                    $PHORUM["DATA"]["URL"]["notice_groups"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
+                    $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
+                    $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
                 }
             }
         }
 
-        $PHORUM["user"]["notice_all"] = ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["user"]["new_private_messages"] ) || $PHORUM["user"]["notice_messages"] || $PHORUM["user"]["notice_users"] || $PHORUM["user"]["notice_groups"];
+        $PHORUM["user"]["NOTICE"]["SHOW"] = ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["user"]["new_private_messages"] ) || $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
 
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
