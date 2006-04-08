@@ -70,11 +70,11 @@
     {IF MODERATOR true}
         <td class="message-actions {altclass}" nowrap="nowrap">
             {IF MESSAGES->threadstart true}
-                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>
-                <a title="{LANG->MoveThread}" href="{MESSAGES->move_url}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
-                <a title="{LANG->MergeThread}" href="{MESSAGES->merge_url}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/arrow_join.png" width="16" height="16" alt="{LANG->MergeThread}" border="0" /></a>
+                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>
+                <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
+                <a title="{LANG->MergeThread}" href="{MESSAGES->URL->MERGE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/arrow_join.png" width="16" height="16" alt="{LANG->MergeThread}" border="0" /></a>
             {ELSE}
-                <a title="{LANG->DeleteMessage}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteMessage}" border="0" /></a>
+                <a title="{LANG->DeleteMessage}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->URL->DELETE_MESSAGE}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteMessage}" border="0" /></a>
             {/IF}
         </td>
     {/IF}

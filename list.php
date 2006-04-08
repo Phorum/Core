@@ -178,7 +178,7 @@ if ($PHORUM["threaded_list"]){
 
         $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
         $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date"], $row["modifystamp"]);
-        $rows[$key]["url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
+        $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
 
         if($row["message_id"] == $row["thread"]){
             $rows[$key]["threadstart"] = true;
@@ -186,12 +186,12 @@ if ($PHORUM["threaded_list"]){
             $rows[$key]["threadstart"] = false;
         }
 
-        $rows[$key]["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-        $rows[$key]["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
+        $rows[$key]["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
+        $rows[$key]["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
         if($build_move_url) {
-                $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+                $rows[$key]["URL"]["MOVE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
         }
-        $rows[$key]["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
+        $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
 
         $rows[$key]["new"] = "";
         // recognizing moved threads
@@ -222,10 +222,10 @@ if ($PHORUM["threaded_list"]){
 
         if ($row["user_id"]){
             $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-            $rows[$key]["profile_url"] = $url;
+            $rows[$key]["URL"]["PROFILE"] = $url;
             $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row['author'])."</a>";
         }else{
-            $rows[$key]["profile_url"] = "";
+            $rows[$key]["URL"]["PROFILE"] = "";
             if(!empty($row['email'])) {
                 $email_url = phorum_html_encode("mailto:$row[email]");
                 // we don't normally put HTML in this code, but this makes it easier on template builders
@@ -249,8 +249,8 @@ if ($PHORUM["threaded_list"]){
 
         $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date"], $row["modifystamp"]);
         $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
-        $rows[$key]["url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
-        $rows[$key]["newpost_url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
+        $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
+        $rows[$key]["URL"]["NEWPOST"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
 
         $rows[$key]["new"] = "";
 
@@ -278,12 +278,12 @@ if ($PHORUM["threaded_list"]){
         if ($PHORUM["DATA"]["LOGGEDIN"]){
 
                     if($PHORUM["DATA"]["MODERATOR"]){
-                        $rows[$key]["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-                        $rows[$key]["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
+                        $rows[$key]["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
+                        $rows[$key]["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
                         if($build_move_url) {
-                                $rows[$key]["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+                                $rows[$key]["URL"]["MOVE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
                         }
-                        $rows[$key]["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
+                        $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
                         // count could be different with hidden or unapproved posts
                         if(!$PHORUM["threaded_read"] && isset($row["meta"]["message_ids_moderator"])) {
                                 $thread_count=count($row["meta"]["message_ids_moderator"]);
@@ -300,10 +300,10 @@ if ($PHORUM["threaded_list"]){
 
         if ($row["user_id"]){
             $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-            $rows[$key]["profile_url"] = $url;
+            $rows[$key]["URL"]["PROFILE"] = $url;
             $rows[$key]["linked_author"] = "<a href=\"$url\">$row[author]</a>";
         }else{
-            $rows[$key]["profile_url"] = "";
+            $rows[$key]["URL"]["PROFILE"] = "";
             if(!empty($row['email'])) {
                 $email_url = phorum_html_encode("mailto:$row[email]");
                 // we don't normally put HTML in this code, but this makes it easier on template builders
@@ -344,18 +344,18 @@ if ($PHORUM["threaded_list"]){
 
         if(isset($row['meta']['recent_post'])) {
             if($pages>1){
-                $rows[$key]["last_post_url"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"], "page=$pages");
+                $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"], "page=$pages");
             } else {
-                $rows[$key]["last_post_url"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"]);
+                $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"]);
             }
 
             $row['meta']['recent_post']['author'] = htmlspecialchars($row['meta']['recent_post']['author']);
             if ($row["meta"]["recent_post"]["user_id"]){
                 $url = phorum_get_url(PHORUM_PROFILE_URL, $row["meta"]["recent_post"]["user_id"]);
-                $rows[$key]["last_post_profile_url"] = $url;
+                $rows[$key]["URL"]["PROFILE_LAST_POST"] = $url;
                 $rows[$key]["last_post_by"] = "<a href=\"$url\">{$row['meta']['recent_post']['author']}</a>";
             }else{
-                $rows[$key]["profile_url"] = "";
+                $rows[$key]["URL"]["PROFILE_LAST_POST"] = "";
                 $rows[$key]["last_post_by"] = $row["meta"]["recent_post"]["author"];
             }
         } else {
@@ -417,11 +417,8 @@ if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] =
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
-                $row["attachments"][$key]["name"]=
-                htmlentities($file['name'], ENT_COMPAT,
-                $PHORUM["DATA"]["CHARSET"]);
-                $row["attachments"][$key]["url"]=
-                phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
+                $row["attachments"][$key]["name"]=htmlentities($file['name'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+                $row["attachments"][$key]["url"] = phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
             }
         }
         $rows[$id] = $row;
