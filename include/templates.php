@@ -230,7 +230,7 @@ function phorum_import_template_pass2($template)
             //     {var <variable> <value>}
             //     {assign <variable> <value>}
             // Function:
-            //     Set a variable that can be used in the templates.
+            //     Set variables that are used in the templates.
             //
             // This will set $PHORUM["DATA"][<variable>] = <value>;
             // After this, the variable is usable in template statements like
@@ -279,16 +279,42 @@ function phorum_import_template_pass2($template)
             // If constructions like {<array variable>} are used inside the
             // loop, the element in $PHORUM["TMP"] will be used.
             //
+            // $PHORUM['LOOPSTACK'] is used to be able to nest {LOOP ..}
+            // statements. If a loopvar already is in use when entering
+            // the loop, that loopvar is pushed on the stack. After the
+            // loop has ended, it can be popped and restored.
+            //
             case "loop":
-                $index = phorum_determine_index($loopvars, $parts[1]);
-                $loopvars[$parts[1]] = true;
-                $repl = "<?php \$phorum_loopstack[] = isset(\$PHORUM['TMP']['$parts[1]']) ? \$PHORUM['TMP']['$parts[1]']:NULL; if(isset(\$PHORUM['$index']['$parts[1]']) && is_array(\$PHORUM['$index']['$parts[1]'])) foreach(\$PHORUM['$index']['$parts[1]'] as \$PHORUM['TMP']['$parts[1]']){ ?>";
+                $statement = array_shift($parts);
+                $varname = array_shift($parts);
+                $variable = phorum_templatevariable_to_php($loopvars, $varname);
+                $loopvariable = "\$PHORUM['TMP']['$varname']";
+                $loopvars[$varname] = true;
+                $repl =
+                    "<?php " .
+                    "\$PHORUM['LOOPSTACK'][] = isset($loopvariable) ? $loopvariable : NULL;" .
+                    "if (isset($variable) && is_array($variable))" .
+                    "  foreach ($variable as $loopvariable) { " .
+                    "?>";
                 break;
 
             case "/loop":
-                if (!isset($parts[1])) print "[Template warning: Missing argument for /loop statement]";
-                $repl="<?php } if(isset(\$PHORUM['TMP']) && isset(\$PHORUM['TMP']['$parts[1]'])) unset(\$PHORUM['TMP']['$parts[1]']); \$phorum_loopstackitem=array_pop(\$phorum_loopstack); if (isset(\$phorum_loopstackitem)) \$PHORUM['TMP']['$parts[1]'] = \$phorum_loopstackitem;?>";
-                unset($loopvars[$parts[1]]);
+                if (!isset($parts[1])) {
+                    print "[Template warning: Missing argument for /loop statement]";
+                }
+                $statement = array_shift($parts);
+                $varname = array_shift($parts);
+                $loopvariable = "\$PHORUM['TMP']['$varname']";
+                $repl =
+                    "<?php " .
+                    "  }" .
+                    "  if (isset(\$PHORUM['TMP']) && isset($loopvariable))" .
+                    "    unset($loopvariable);" .
+                    "  \$PHORUM['LOOPSTACK_ITEM'] = array_pop(\$PHORUM['LOOPSTACK']);" .
+                    "  if (isset(\$PHORUM['LOOPSTACK_ITEM']))" .
+                    "    $loopvariable = \$PHORUM['LOOPSTACK_ITEM']; " .
+                    "?>";
+                unset($loopvars[$varname]);
                 break;
 
             // IF/ELSEIF/ELSE ------------------------------------------------
@@ -416,7 +442,7 @@ function phorum_import_template_pass2($template)
 
     $template = 
         "<?php if(!defined(\"PHORUM\")) return; ?>\n" .
-        "<?php \$phorum_loopstack = array() ?>\n" .
+        "<?php \$PHORUM['LOOPSTACK'] = array() ?>\n" .
         $template;
 
     return $template;
