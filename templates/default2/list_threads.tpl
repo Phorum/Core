@@ -1,67 +1,85 @@
-<div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE loginout_menu}
-</div>
-{IF PAGES}
-  <div class="PhorumNavBlock" style="text-align: left;">
-    <div style="float: right;">
-      <span class="PhorumNavHeading">{LANG->Pages}:</span>&nbsp;{IF URL->PREVPAGE}<a class="PhorumNavLink" href="{URL->PREVPAGE}">{LANG->PrevPage}</a>{/IF}{IF URL->FIRSTPAGE}<a class="PhorumNavLink" href="{URL->FIRSTPAGE}">{LANG->FirstPage}...</a>{/IF}{LOOP PAGES}{IF PAGES->pageno CURRENTPAGE}<span class="PhorumNavLink"><strong>{PAGES->pageno}</strong></span>{ELSE}<a class="PhorumNavLink" href="{PAGES->url}">{PAGES->pageno}</a>{/IF}{/LOOP PAGES}{IF URL->LASTPAGE}<a class="PhorumNavLink" href="{URL->LASTPAGE}">...{LANG->LastPage}</a>{/IF}{IF URL->NEXTPAGE}<a class="PhorumNavLink" href="{URL->NEXTPAGE}">{LANG->NextPage}</a>{/IF}
-    </div>
-    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->CurrentPage}:</span>{CURRENTPAGE} {LANG->of} {TOTALPAGES}
-  </div>
+<div id="list-nav">
+<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/folder.png');" href="{URL->INDEX}">{LANG->ForumList}</a>
+<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/comment_add.png');" href="{URL->POST}">{LANG->NewTopic}</a>
+{IF USER->user_id}
+    <a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/tag_green.png');" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
 {/IF}
-<table class="PhorumStdTable" cellspacing="0">
-  <tr>
-    <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
-    {IF VIEWCOUNT_COLUMN}
-      <th class="PhorumTableHeader" align="center">{LANG->Views}</th>
-    {/IF}
-    <th class="PhorumTableHeader" align="left" nowrap>{LANG->WrittenBy}</th>
-    <th class="PhorumTableHeader" align="left" nowrap>{LANG->Posted}</th>
-  </tr>
-  <?php $oldthread=0; $rclass=""; ?>
-  {LOOP MESSAGES}
-    <?php
-      if($oldthread != $PHORUM['TMP']['MESSAGES']['thread']){
-        if($rclass=="Alt") $rclass=""; else $rclass="Alt";
-        $oldthread=$PHORUM['TMP']['MESSAGES']['thread'];
-      }
-    ?>
+{IF URL->RSS}
+    <a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/feed.png');" href="{URL->RSS}">{LANG->RSS}</a>
+{/IF}
+</div>
+<table border="0" cellspacing="0" id="messages">
     <tr>
-    <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {MESSAGES->indent_cnt}px">&nbsp;{MESSAGES->indent}{marker}
-      {IF MESSAGES->sort PHORUM_SORT_STICKY}
-        <span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>
-      {/IF}
-      {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-        <span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>
-      {/IF}
-      {IF MESSAGES->moved}
-        <span class="PhorumListSubjPrefix">{LANG->MovedSubject}:</span>
-      {/IF}
-      <a href="{MESSAGES->url}">{MESSAGES->subject}</a>&nbsp;<span class="PhorumNewFlag">{MESSAGES->new}</span>
-    </td>
-      {IF VIEWCOUNT_COLUMN}
-        <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
-      {/IF}
-      <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" width="150">
-        {MESSAGES->linked_author}
-      </td>
-      <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap" width="150">
-        {MESSAGES->datestamp}
-        {IF MODERATOR true}
-          <br />
-          <span class="PhorumListModLink">
-            {IF MESSAGES->threadstart false}
-              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';">{LANG->DeleteMessage}</a>
-            {/IF}
-            {IF MESSAGES->threadstart true}
-              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGES->move_url}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>{/IF}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>{/IF}
-          </span>
+        <th class="messages-subject">{LANG->Subject}</th>
+        {IF VIEWCOUNT_COLUMN}
+          <th class="messages-views">{LANG->Views}</th>
         {/IF}
-      </td>
+        <th class="messages-started-by" nowrap="nowrap">{LANG->StartedBy}</th>
+        <th class="messages-last-post" nowrap="nowrap">{LANG->Posted}</th>
+        {IF MODERATOR true}
+            <th class="messages-moderate" nowrap="nowrap">{LANG->Moderate}</th>
+        {/IF}
     </tr>
-  {/LOOP MESSAGES}
+
+    {LOOP MESSAGES}
+
+    {IF MESSAGES->parent_id 0}    
+        {IF altclass ""}
+            {var altclass "message-threaded-alt"}
+        {ELSE}
+            {var altclass ""}
+        {/IF}
+    {/IF}
+
+    {IF MESSAGES->parent_id 0}
+        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
+            {var icon "information"} 
+        {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
+            {var icon "bell"}
+        {ELSEIF MESSAGES->moved}
+            {var icon "page_go"}
+        {ELSEIF MESSAGES->new}
+            {var icon "flag_red"}
+        {ELSE}
+            {var icon "comment"}
+        {/IF}
+    {ELSEIF MESSAGES->new}
+        {var icon "flag_red"}
+    {ELSE}
+        {var icon "bullet_black"}
+    {/IF}
+
+    {IF MESSAGES->new}
+        {var newclass "message-new"}
+    {ELSE}
+        {var newclass ""}
+    {/IF}
+
+    <tr>
+    <td class="message-subject-threaded {altclass}" style="padding-left: {MESSAGES->indent_cnt}px">
+        <a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/{icon}.png');" href="{MESSAGES->url}" class="list-threaded-subject {newclass}">{MESSAGES->subject}</a>
+        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
+        {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
+        {IF MESSAGES->pages}&nbsp;<small>&nbsp;[{LANG->Pages}: {MESSAGES->pages}]</small>{/IF}
+    </td>
+    {IF VIEWCOUNT_COLUMN}
+        <td class="message-view-count {altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
+    {/IF}
+    <td class="message-author {altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
+    <td class="message-posted {altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
+    {IF MODERATOR true}
+        <td class="message-actions {altclass}" nowrap="nowrap">
+            {IF MESSAGES->threadstart true}
+                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>
+                <a title="{LANG->MoveThread}" href="{MESSAGES->move_url}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
+                <a title="{LANG->MergeThread}" href="{MESSAGES->merge_url}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/arrow_join.png" width="16" height="16" alt="{LANG->MergeThread}" border="0" /></a>
+            {ELSE}
+                <a title="{LANG->DeleteMessage}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteMessage}" border="0" /></a>
+            {/IF}
+        </td>
+    {/IF}
+    </tr>
+    {/LOOP MESSAGES}
 </table>
 {INCLUDE paging}
-<div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;{IF LOGGEDIN true}<a class="PhorumNavLink" href="{URL->MARKREAD}">{LANG->MarkRead}</a>{/IF}
-</div>
+

@@ -27,6 +27,10 @@
     font-weight: normal;
 }
 
+#phorum small {
+    font-size: 11px;
+}
+
 /* global styles */
 
 #phorum div.paging {
@@ -288,6 +292,11 @@
     background-color: #F9FAF2;    
 }
 
+#phorum #messages td.message-threaded-alt {
+    background-color: #EEEFDE;    
+    border-bottom: 1px solid #CFD0C1;
+}
+
 #phorum #messages td.message-subject {
     background-repeat: no-repeat;
     background-position: 6px 13px;
@@ -318,6 +327,11 @@
     font-size: 11px;    
 }
 
+#phorum #messages td.message-posted {
+    width: 120px;
+    padding: 0 8px 0 4px;    
+}
+
 #phorum #messages td.message-actions {
     width: 100px;
     font-size: 11px;
@@ -327,6 +341,12 @@
 #phorum #messages td.message-actions a {
     margin-right: 4px;
     text-decoration: none;
+}
+
+#phorum #messages a.list-threaded-subject {
+    background-repeat: no-repeat;
+    background-position: 6px 2px;
+    padding: 4px 0 1px 27px;
 }
 
 #phorum #messages a.message-new {

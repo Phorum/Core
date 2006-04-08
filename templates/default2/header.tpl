@@ -26,7 +26,7 @@
 <div id="user-info">
 {IF USER->user_id}
 {LANG->Welcome}, {USER->username} <small>(<a href="{URL->LOGINOUT}">{LANG->LogOut}</a>)</small>
-<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_edit.png');" href="URL->REGISTERPROFILE">{LANG->MyProfile}</a>
+<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_edit.png');" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>
 {IF USER->new_private_messages}
 <a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_comment.png');" href="{URL->PM}">{LANG->NewPrivateMessages}</a>
 {ELSE}

@@ -33,7 +33,7 @@
         {var icon "information"} 
     {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
         {var icon "bell"}
-    {ELSEIF MESSAGES->moved PHORUM_SORT_STICKY}
+    {ELSEIF MESSAGES->moved}
         {var icon "page_go"}
     {ELSEIF MESSAGES->new}
         {var icon "flag_red"}

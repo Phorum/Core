@@ -1,7 +1,7 @@
 {! --- defines are used by the engine and vars are used by the template --- }
 
 {! --- How many px to indent for each level --- }
-{define indentmultiplier 15}
+{define indentmultiplier 16}
 
 {! --- This is used to load the message-bodies in the message-list for that template if set to 1 --- }
 {define bodies_in_list 0}
