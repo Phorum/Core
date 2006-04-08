@@ -8,7 +8,14 @@
 <html lang="<?php echo $PHORUM['locale']; ?>">
   <head>
     <style type="text/css">
-      {INCLUDE css}
+      {IF PRINTVIEW}
+        {INCLUDE css_print}
+      {ELSE}
+        {INCLUDE css}
+        @media print{
+        {INCLUDE css_print}
+        }
+      {/IF}
     </style>
     {IF URL->RSS}
       <link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="{URL->RSS}" />
@@ -19,6 +26,9 @@
     {LANG_META}
     <title>{HTML_TITLE}</title>
     {HEAD_TAGS}
+    {IF PRINTVIEW}
+      <meta name="robots" content="NOINDEX,NOFOLLOW">
+    {/IF}
   </head>
   <body onload="{IF FOCUS_TO_ID}var focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
     <div align="{forumalign}">

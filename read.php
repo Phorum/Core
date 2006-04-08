@@ -65,9 +65,14 @@ if($PHORUM["DATA"]["MODERATOR"]) {
 if(empty($PHORUM["args"][1])) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
-} elseif(empty($PHORUM["args"][2])) {
+} elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
     $thread = (int)$PHORUM["args"][1];
     $message_id = (int)$PHORUM["args"][1];
+    if($PHORUM["args"][2]=="printview") {
+      $PHORUM["DATA"]["PRINTVIEW"]=1;
+    } else {
+      $PHORUM["DATA"]["PRINTVIEW"]=0;
+    }
 } else{
     if(!is_numeric($PHORUM["args"][2])) {
         $dest_url="";
@@ -152,6 +157,11 @@ if(empty($PHORUM["args"][1])) {
 
     $thread = (int)$PHORUM["args"][1];
     $message_id = (int)$PHORUM["args"][2];
+    if($PHORUM["args"][3]=="printview") {
+      $PHORUM["DATA"]["PRINTVIEW"]=1;
+    } else {
+      $PHORUM["DATA"]["PRINTVIEW"]=0;
+    }
 }
 
 // determining the page if page isn't given and message_id != thread

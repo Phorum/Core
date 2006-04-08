@@ -387,6 +387,7 @@
         "PreviousMatches"       =>      "Previous Matches",
         "PreviousMessage"       =>      "Previous Message",
         "PrevPage"              =>      "Previous",
+        "PrintView"             =>      "Print View",
         "PrivateMessages"       =>      "Private Messages",
         "PrivateReply"          =>      "Reply via PM",
         "ProfileUpdatedOk"      =>      "Profile successfully updated.",
