@@ -210,7 +210,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     $PHORUM["DATA"]["URL"]["MARKTHREADREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "markthreadread");
-
+    if($PHORUM["threaded_read"]) {
+        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, $message_id, "printview");
+    } else {
+        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, "printview");
+    }
     $thread_is_closed = (bool)$data[$thread]["closed"];
     $thread_is_announcement = ($data[$thread]["sort"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
 
@@ -497,7 +501,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["HTML_TITLE"].=htmlentities(PHORUM_SEPARATOR, ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );;
     }
     // No htmlentities() needed. The subject is already escaped.
-    // Strip HTML tags from the HTML title. There might be HTML in 
+    // Strip HTML tags from the HTML title. There might be HTML in
     // here, because of modules adding images and formatting.
     $PHORUM["DATA"]["HTML_TITLE"] .= trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $threadsubject));
 
