@@ -31,12 +31,10 @@ function phorum_valid_email($email){
             // format is valid
             // don't look up mail server
             $ret = true;
-        }else{
-            // get the domain name from the mail address
-            $fulldomain = substr(strstr($email, "@"), 1).".";
+        } elseif(function_exists('checkdnsrr')) {
 
             // check if a mailserver exists for the domain
-            if(function_exists('checkdnsrr') && checkdnsrr($fulldomain, "MX")) {
+            if(checkdnsrr($fulldomain, "MX")) {
                 $ret = true;
             }
 
@@ -49,6 +47,9 @@ function phorum_valid_email($email){
                     $ret = true;
                 }
             }
+        } else {
+            // bah, you must be using windows and we can't run real checks
+            $ret = true;
         }
     }
 
