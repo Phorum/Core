@@ -33,7 +33,7 @@ Structural template changes
  These are changes in templates that are the result of changes in data
  structures that are passed on to the templates.
 
- index.tpl:
+ index*.tpl:
 
  5.1.x templates                      | 5.2.x templates
  -------------------------------------+---------------------------------------
@@ -44,7 +44,7 @@ Structural template changes
  FORUMS->url_rss                      | FORUMS->URL->RSS
  -------------------------------------+---------------------------------------
 
- list.tpl:
+ list*.tpl:
  5.1.x templates                      | 5.2.x templates
  -------------------------------------+---------------------------------------
  {LOOP ROWS}                          | {LOOP MESSAGES}

@@ -19,47 +19,47 @@
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->Posted}</th>
   </tr>
   <?php $oldthread=0; $rclass=""; ?>
-  {LOOP ROWS}
+  {LOOP MESSAGES}
     <?php
-      if($oldthread != $PHORUM['TMP']['ROWS']['thread']){
+      if($oldthread != $PHORUM['TMP']['MESSAGES']['thread']){
         if($rclass=="Alt") $rclass=""; else $rclass="Alt";
-        $oldthread=$PHORUM['TMP']['ROWS']['thread'];
+        $oldthread=$PHORUM['TMP']['MESSAGES']['thread'];
       }
     ?>
     <tr>
-    <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {ROWS->indent_cnt}px">&nbsp;{ROWS->indent}{marker}
-      {IF ROWS->sort PHORUM_SORT_STICKY}
+    <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {MESSAGES->indent_cnt}px">&nbsp;{MESSAGES->indent}{marker}
+      {IF MESSAGES->sort PHORUM_SORT_STICKY}
         <span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>
       {/IF}
-      {IF ROWS->sort PHORUM_SORT_ANNOUNCEMENT}
+      {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
         <span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>
       {/IF}
-      {IF ROWS->moved}
+      {IF MESSAGES->moved}
         <span class="PhorumListSubjPrefix">{LANG->MovedSubject}:</span>
       {/IF}
-      <a href="{ROWS->url}">{ROWS->subject}</a>&nbsp;<span class="PhorumNewFlag">{ROWS->new}</span>
+      <a href="{MESSAGES->url}">{MESSAGES->subject}</a>&nbsp;<span class="PhorumNewFlag">{MESSAGES->new}</span>
     </td>
       {IF VIEWCOUNT_COLUMN}
-        <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" align="center" width="80">{ROWS->viewcount}</td>
+        <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
       {/IF}
       <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" width="150">
-        {ROWS->linked_author}
+        {MESSAGES->linked_author}
       </td>
       <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap" width="150">
-        {ROWS->datestamp}
+        {MESSAGES->datestamp}
         {IF MODERATOR true}
           <br />
           <span class="PhorumListModLink">
-            {IF ROWS->threadstart false}
-              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{ROWS->delete_url1}';">{LANG->DeleteMessage}</a>
+            {IF MESSAGES->threadstart false}
+              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';">{LANG->DeleteMessage}</a>
             {/IF}
-            {IF ROWS->threadstart true}
-              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{ROWS->delete_url2}';">{LANG->DeleteThread}</a>{IF ROWS->move_url}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{ROWS->move_url}">{LANG->MoveThread}</a>{/IF}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{ROWS->merge_url}">{LANG->MergeThread}</a>{/IF}
+            {IF MESSAGES->threadstart true}
+              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGES->move_url}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>{/IF}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>{/IF}
           </span>
         {/IF}
       </td>
     </tr>
-  {/LOOP ROWS}
+  {/LOOP MESSAGES}
 </table>
 {INCLUDE paging}
 <div class="PhorumNavBlock" style="text-align: left;">

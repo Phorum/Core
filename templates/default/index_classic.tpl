@@ -20,7 +20,7 @@
         <div class="PhorumColumnFloatSmall">{FORUMS->message_count}{IF FORUMS->new_messages} (<span class="PhorumNewFlag">{FORUMS->new_messages} {LANG->newflag}</span>){/IF}</div>
         <div class="PhorumColumnFloatSmall">{FORUMS->thread_count}{IF FORUMS->new_threads} (<span class="PhorumNewFlag">{FORUMS->new_threads} {LANG->newflag}</span>){/IF}</div>
       {/IF}
-      <div style="margin-right: 425px" class="PhorumLargeFont"><a href="{FORUMS->url}">{FORUMS->name}</a></div>
+      <div style="margin-right: 425px" class="PhorumLargeFont"><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a></div>
       <div style="margin-right: 425px" class="PhorumFloatingText">{FORUMS->description}</div>
     </div>
   {/LOOP FORUMS}
