@@ -5,7 +5,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html lang="{LOCALE}">
 <head>
-<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen,print" />
+{IF PRINTVIEW} 
+<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="screen,print" />
+{ELSE}
+<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="print" />
+{/IF}
 {IF URL->RSS}
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{URL->RSS}" />
 {/IF}
@@ -15,6 +20,9 @@
 {LANG_META}
 <title>{HTML_TITLE}</title>
 {HEAD_TAGS}
+{IF PRINTVIEW} 
+<meta name="robots" content="NOINDEX,NOFOLLOW"> 
+{/IF}
 </head>
 <!-- Icons courtesy of FAMFAMFAM - http://www.famfamfam.com/lab/icons/silk/ -->
 <body>
