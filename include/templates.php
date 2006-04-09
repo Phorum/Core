@@ -136,7 +136,7 @@ function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
         // Find out if we have a static value for the include statement.
         // Dynamic values are handled in pass 2.
         list ($page,$type) = phorum_templatevalue_to_php(NULL,$matches[1][$i]);
-        if ($type == "variable") continue;
+        if ($type == "variable" || $type == "definition") continue;
         
         // Since $value contains PHP code now, we have to resolve that
         // code into a real value.
@@ -184,8 +184,8 @@ function phorum_import_template_pass2($template)
         }
 
         // Process the template statement by creating replacement code for it.
-        $parts = preg_split('/[\t\s]+/', $string);
-        switch (strtolower($parts[0]))
+        $tokens = phorum_tokenize_statement($string);
+        switch (strtolower($tokens[0]))
         {
             // COMMENTS ------------------------------------------------------
 
@@ -204,18 +204,20 @@ function phorum_import_template_pass2($template)
             // INCLUDE -------------------------------------------------------
 
             // Syntax:
-            //     {include <variable>}
+            //     {include <value>}
             // Function:
             //     Include a template. The name of the template to
-            //     include is in the <variable>.
+            //     include is in the <value>.
             //
-            // Other forms of {include ..} are handled in template pass 1
-            // already. There static includes are fully resolved into one
-            // single temmplate.
+            // {include ..} statements that use a string are handled in
+            // template pass 1 already. There static includes are fully
+            // resolved into one single template. So here, only PHP
+            // defined values and template variables are handled.
             //
             case "include":
-                $statement = array_shift($parts); 
-                list ($value,$type) = phorum_templatevalue_to_php($loopvars, array_shift($parts));
+                $statement = array_shift($tokens); 
+                $variable = array_shift($tokens);
+                list ($value,$type) = phorum_templatevalue_to_php($loopvars, $variable);
                 $repl = "<?php include phorum_get_template($value); ?>";
                 break;
 
@@ -251,10 +253,10 @@ function phorum_import_template_pass2($template)
             //
             case "var":
             case "define":
-                $statement = strtolower(array_shift($parts));
-                $where = $statement == "define" ? "TMP" : "DATA";
-                $variable = phorum_templatevariable_to_php($where, array_shift($parts));
-                list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
+                $statement = strtolower(array_shift($tokens));
+                $index = $statement == "define" ? "TMP" : "DATA";
+                $variable = phorum_templatevariable_to_php($index, array_shift($tokens));
+                list ($value, $type) = phorum_templatevalue_to_php($loopvars, array_shift($tokens));
                 $repl = "<?php $variable = $value; ?>";
                 break;
 
@@ -288,8 +290,8 @@ function phorum_import_template_pass2($template)
             // loop has ended, it can be popped and restored.
             //
             case "loop":
-                $statement = array_shift($parts);
-                $varname = array_shift($parts);
+                $statement = array_shift($tokens);
+                $varname = array_shift($tokens);
                 $variable = phorum_templatevariable_to_php($loopvars, $varname);
                 $loopvariable = "\$PHORUM['TMP']['$varname']";
                 $loopvars[$varname] = true;
@@ -302,11 +304,11 @@ function phorum_import_template_pass2($template)
                 break;
 
             case "/loop":
-                if (!isset($parts[1])) {
+                if (!isset($tokens[1])) {
                     print "[Template warning: Missing argument for /loop statement]";
                 }
-                $statement = array_shift($parts);
-                $varname = array_shift($parts);
+                $statement = array_shift($tokens);
+                $varname = array_shift($tokens);
                 $loopvariable = "\$PHORUM['TMP']['$varname']";
                 $repl =
                     "<?php " .
@@ -353,23 +355,23 @@ function phorum_import_template_pass2($template)
             case "if":
             case "elseif":
                 // Determine if we're handling "if" or "elseif".
-                $statement = strtolower(array_shift($parts));
+                $statement = strtolower(array_shift($tokens));
                 $prefix = $statement=="if" ? "if" : "} elseif";
 
                 // Determine if we need "==" or "!=" for the condition.
-                if (strtolower($parts[0]) == "not") {
+                if (strtolower($tokens[0]) == "not") {
                     $operator = "!=";
-                    array_shift($parts);
+                    array_shift($tokens);
                 } else {
                     $operator="==";
                 }
 
                 // Determine what variable we are comparing to in the condition.
-                $variable = phorum_templatevariable_to_php($loopvars, array_shift($parts));
+                $variable = phorum_templatevariable_to_php($loopvars, array_shift($tokens));
 
                 // If there is no value to compare to, then check if
                 // the value for the variable is set and not empty.
-                if (!isset($parts[0])) {
+                if (!isset($tokens[0])) {
                     if ($operator == "=="){
                         $repl = "<?php $prefix (isset($variable) && !empty($variable)) { ?>";
                     } else {
@@ -378,7 +380,7 @@ function phorum_import_template_pass2($template)
                 }
                 // There is a value. Make a comparison to that value.
                 else {
-                    list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
+                    list ($value, $type) = phorum_templatevalue_to_php($loopvars, array_shift($tokens));
                     if ($type == "variable") {
                         $repl = "<?php $prefix (isset($variable) && isset($value) && $variable $operator $value) { ?>";
                     } else {
@@ -405,14 +407,18 @@ function phorum_import_template_pass2($template)
             //     the hook function. One argument will be passed directly to
             //     the hook. Multiple arguments will be passed in an array.
             //
+            // TODO to be compatible with the new syntax, <hook name> should
+            // TODO be able to take template variables as well.
+            //
             case "hook":
-                $statement = array_shift($parts);
-                $hook = addslashes(array_shift($parts));
+                $statement = array_shift($tokens);
+                $hook = addslashes(array_shift($tokens));
 
                 // Setup hook arguments.
                 $hookargs = array();
-                while ($part = array_shift($parts)) {
-                    $hookargs[] = phorum_templatevariable_to_php($loopvars, $part);
+                while ($token = array_shift($tokens)) {
+                    list ($value, $type) = phorum_templatevalue_to_php($loopvars, $token);
+                    $hookargs[] = $value;
                 }
 
                 // Build the replacement string.
@@ -422,7 +428,7 @@ function phorum_import_template_pass2($template)
                 } elseif (count($hookargs) > 1) {
                     $repl .= ",array(" . implode(",", $hookargs) . ")";
                 }
-                $repl .= ");?>";
+                $repl .= ") ?>";
                 break;
 
             // ECHO A VARIABLE -----------------------------------------------
@@ -435,7 +441,7 @@ function phorum_import_template_pass2($template)
             //     value, a template loop variable or a template variable.
             //
             default:
-                list ($value, $type) = phorum_templatevalue_to_php($loopvars, implode(" ", $parts));
+                list ($value, $type) = phorum_templatevalue_to_php($loopvars, $tokens[0]);
                 $repl = "<?php echo $value ?>";
 
         }
