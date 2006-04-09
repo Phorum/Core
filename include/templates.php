@@ -97,8 +97,8 @@ function phorum_import_template($page, $infile, $outfile)
 
 /**
  * Runs the first stage of the Phorum template processing. In this stage,
- * all {include <template>} statements are recursively resolved. After
- * resolving all includes, a complete single template is constructed.
+ * all (static) {include <template>} statements are recursively resolved.
+ * After resolving all includes, a complete single template is constructed.
  * During this process, the function will keep track of all file
  * dependancies for the constructed template.
  *
@@ -133,7 +133,16 @@ function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
     {
         if (isset($include_done[$matches[0][$i]])) continue;
 
-        list ($subout, $subin) = phorum_get_template_file($matches[1][$i]);
+        // Find out if we have a static value for the include statement.
+        // Dynamic values are handled in pass 2.
+        list ($page,$type) = phorum_templatevalue_to_php(NULL,$matches[1][$i]);
+        if ($type == "variable") continue;
+        
+        // Since $value contains PHP code now, we have to resolve that
+        // code into a real value.
+        eval("\$page = $page;");
+
+        list ($subout, $subin) = phorum_get_template_file($page);
         if ($subout == NULL) {
             $replace = phorum_read_file($subin);
         } else {
@@ -142,7 +151,7 @@ function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
         }
 
         $template = str_replace($matches[0][$i], $replace, $template);
-
+        
         $include_done[$matches[0][$i]] = 1;
     }
 
@@ -174,7 +183,7 @@ function phorum_import_template_pass2($template)
             $string = str_replace("->", "']['", $string);
         }
 
-        // Process a template statement.
+        // Process the template statement by creating replacement code for it.
         $parts = preg_split('/[\t\s]+/', $string);
         switch (strtolower($parts[0]))
         {
@@ -192,36 +201,30 @@ function phorum_import_template_pass2($template)
                 $repl = "";
                 break;
 
-            // INCLUDE_ONCE --------------------------------------------------
+            // INCLUDE -------------------------------------------------------
 
             // Syntax:
-            //    {include_once <variable>}
+            //     {include <variable>}
             // Function:
-            //    Include a template, at most one time per page.
+            //     Include a template. The name of the template to
+            //     include is in the <variable>.
             //
-            // This function was introduced for this change:
-            // http://www.phorum.org/cgi-bin/trac.cgi/ticket/68
-            // It's now deprecated. In case people really want to use it, we
-            // can re-introduce it.
+            // Other forms of {include ..} are handled in template pass 1
+            // already. There static includes are fully resolved into one
+            // single temmplate.
             //
-            case "include_once":
+            case "include":
+                $statement = array_shift($parts); 
+                list ($value,$type) = phorum_templatevalue_to_php($loopvars, array_shift($parts));
+                $repl = "<?php include phorum_get_template($value); ?>";
+                break;
+
+            case "include_var":
                 $repl = str_replace("%", "include_once", PHORUM_DEPRECATED);
                 break;
 
-            // INCLUDE_VAR ---------------------------------------------------
-
-            // Syntax: {include_var <variable>}
-            // Function: Include a template. The name of the template to
-            // include is in the <variable>.
-            //
-            // TODO with the normalization of value syntax, this could be
-            // TODO moved to {include VAR}. Then the default {include page}
-            // TODO should be changed to {include "page"}.
-            //
-            case "include_var":
-                $statement = array_shift($parts); 
-                $variable = phorum_templatevariable_to_php($loopvars, array_shift($parts));
-                $repl = "<?php include phorum_get_template($variable); ?>";
+            case "include_once":
+                $repl = str_replace("%", "include_once", PHORUM_DEPRECATED);
                 break;
 
             // VAR, DEFINE and ASSIGN ----------------------------------------
@@ -404,7 +407,7 @@ function phorum_import_template_pass2($template)
             //
             case "hook":
                 $statement = array_shift($parts);
-                $hook = array_shift($parts);
+                $hook = addslashes(array_shift($parts));
 
                 // Setup hook arguments.
                 $hookargs = array();
@@ -413,7 +416,7 @@ function phorum_import_template_pass2($template)
                 }
 
                 // Build the replacement string.
-                $repl = "<?php if(isset(\$PHORUM['hooks']['".addslashes($hook)."'])) phorum_hook('".addslashes($hook)."'";
+                $repl = "<?php if(isset(\$PHORUM['hooks']['$hook'])) phorum_hook('$hook'";
                 if (count($hookargs) == 1) {
                     $repl .= "," . $hookargs[0];
                 } elseif (count($hookargs) > 1) {
@@ -437,9 +440,11 @@ function phorum_import_template_pass2($template)
 
         }
 
+        // Replace all occurances of the template statement in the template.
         $template = str_replace($match, $repl, $template);
     }
 
+    // Add some initialization code to the template.
     $template = 
         "<?php if(!defined(\"PHORUM\")) return; ?>\n" .
         "<?php \$PHORUM['LOOPSTACK'] = array() ?>\n" .
@@ -514,21 +519,24 @@ function phorum_templatevalue_to_php($loopvars, $value)
 {
     // Integers
     if (is_numeric($value)) { 
-        return array($value, "integer");
+        $type = "integer";
     }
     // Strings
     elseif (preg_match('!^(".*"|\'.*\')$!', $value)) {
-        return array($value, "string");
+        $type = "string";
     }
     // PHP definitions
     elseif (defined($value)) {
-        return array($value, "definition");
+        $type = "definition";
     }
     // Template variables
     else {
+        $type = "variable";
         $index = phorum_determine_index($loopvars, $value);
-        return array("\$PHORUM['$index']['$value']", "variable");
+        $value = "\$PHORUM['$index']['$value']";
     }
+
+    return array($value, $type);
 }
 
 /**
