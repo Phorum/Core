@@ -126,7 +126,7 @@ function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
 
     $template = phorum_read_file($infile);
 
-    // Process {include ...} statements in the template.
+    // Process {include "page"} statements in the template.
     $include_done = array();
     preg_match_all("/\{include\s+(.+?)\}/is", $template, $matches);
     for ($i=0; $i<count($matches[0]); $i++)
@@ -451,6 +451,84 @@ function phorum_import_template_pass2($template)
         $template;
 
     return $template;
+}
+
+/**
+ * Splits a template statement into separate tokens. This will split the
+ * statement on whitespace, except for string tokens that look like 
+ * "a string" or 'a string'. Inside the string tokens, quotes can be
+ * escaped using \" and \' (just like in PHP).
+ *
+ * @param $statement - The statement to tokenize.
+ * @return $tokens - An array of tokens.
+ */
+function phorum_tokenize_statement($statement)
+{
+    $tokens = array();    
+
+    $quote = NULL;
+    $escaped = false;
+    $token = '';
+
+    for ($i=0; $i<strlen($statement); $i++)
+    {
+        $ch = substr($statement, $i, 1);
+
+        // Handle characters inside a quoted piece?
+        if ($quote != NULL)
+        {
+            // Simply add escaped characters.
+            if ($escaped) {
+                $token .= $ch; 
+                $escaped = false;
+                continue;
+            }
+
+            // The start of an escaped character.
+            if ($ch == '\\') {
+                $token .= $ch;
+                $escaped = true;
+                continue;
+            }
+
+            // The end of the quoted string reached?
+            if ($ch == $quote) {
+                $token .= $ch;
+                $quote = NULL;
+                continue;
+            }
+
+            // All other characters add to the current token.
+            $token .= $ch;
+            continue;
+        }
+
+        // " and ' start a new quoted string.
+        if ($token == "" && ($ch == '"' || $ch == "'")) {
+            $quote = $ch;
+            $token .= $ch;
+            continue;
+        }
+
+        // Whitespace starts a new token.
+        if ($ch == "\n" || $ch == " " || $ch == "\t") {
+            if ($token != "") {
+                $tokens[] = $token;
+                $token = "";
+            }
+            continue;
+        }
+
+        // All other characters add to the current token.
+        $token .= $ch;
+    }
+
+    // Add the last token to the array.
+    if ($token != "") {
+        $tokens[] = $token;
+    }
+
+    return $tokens;
 }
 
 /**
