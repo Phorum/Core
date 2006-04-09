@@ -6,7 +6,7 @@
       <tr>
         <td>{LIST->name} ({LIST->size})</td>
         <td align="right">
-          {HOOK tpl_editor_attachment_buttons LIST}
+          {HOOK "tpl_editor_attachment_buttons" LIST}
           <input type="submit" name="detach:{LIST->file_id}" value="{LANG->Detach}" class="PhorumSubmit" />
         </td>
       </tr>

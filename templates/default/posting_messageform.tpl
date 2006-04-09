@@ -59,7 +59,7 @@
       <td style="white-space: nowrap">{LANG->Subject}:&nbsp;</td>
       <td><input type="text" name="subject" id="phorum_subject" size="50" value="{POST->subject}" /></td>
     </tr>
-    {HOOK tpl_editor_after_subject}
+    {HOOK "tpl_editor_after_subject"}
     {! Moderator only fields ==================================================== }
     {IF SHOW_THREADOPTIONS}
       <tr>
@@ -107,7 +107,7 @@
   {INCLUDE "posting_attachments"}
 {/IF}
 {! Body ===================================================================== }
-{HOOK tpl_editor_before_textarea}
+{HOOK "tpl_editor_before_textarea"}
 <div class="PhorumStdBlock PhorumNarrowBlock">
   <textarea name="body" id="phorum_textarea" rows="15" cols="50" style="width: 99%">{POST->body}</textarea>
   {IF MODERATED}
