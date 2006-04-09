@@ -1,90 +1,90 @@
 {! --- defines are used by the engine and vars are used by the template --- }
 
 {! --- How many px to indent for each level --- }
-{define indentmultiplier 16}
+{DEFINE indentmultiplier 16}
 
 {! --- This is used to load the message-bodies in the message-list for that template if set to 1 --- }
-{define bodies_in_list 0}
+{DEFINE bodies_in_list 0}
 
 {! --- This is used the number of page numbers shown on the list page in the paging section (eg. 1 2 3 4 5) --- }
-{define list_pages_shown 5}
+{DEFINE list_pages_shown 5}
 
 
 {! --- This is the marker for messages in the thread list --- }
-{var marker <img src="templates/default/images/carat.gif" border="0" width="8" height="8" alt="" />}
+{VAR marker '<img src="templates/default/images/carat.gif" border="0" width="8" height="8" alt="" />'}
 
 {! -- This is the image to use as a delete button for recipients in PM --- }
-{var delete_image templates/default/images/delete.gif}
+{VAR delete_image "templates/default/images/delete.gif"}
 
 {! -- This is the image for the gauge bar to show how full the PM box is -- }
-{var gauge_image templates/default/images/gauge.gif}
+{VAR gauge_image "templates/default/images/gauge.gif"}
 
 {! --- these are the colors used in the style sheet --- }
 {! --- you can use them or replace them in the style sheet --- }
 
 
 {! --- common body-colors --- }
-{var bodybackground White}
-{var defaulttextcolor Black}
-{var backcolor White}
-{var forumwidth 100%}
-{var forumalign center}
-{var newflagcolor #CC0000}
-{var errorfontcolor Red}
-{var okmsgfontcolor DarkGreen}
+{VAR bodybackground "White"}
+{VAR defaulttextcolor "Black"}
+{VAR backcolor "White"}
+{VAR forumwidth "100%"}
+{VAR forumalign "center"}
+{VAR newflagcolor "#CC0000"}
+{VAR errorfontcolor "Red"}
+{VAR okmsgfontcolor "DarkGreen"}
 
 {! --- for the forum-list ... alternating colors --- }
-{var altbackcolor #EEEEEE}
-{var altlisttextcolor #000000}
+{VAR altbackcolor "#EEEEEE"}
+{VAR altlisttextcolor "#000000"}
 
 {! --- common link-settings --- }
-{var linkcolor #000099}
-{var activelinkcolor #FF6600}
-{var visitedlinkcolor #000099}
-{var hoverlinkcolor #FF6600}
+{VAR linkcolor "#000099"}
+{VAR activelinkcolor "#FF6600"}
+{VAR visitedlinkcolor "#000099"}
+{VAR hoverlinkcolor "#FF6600"}
 
 {! --- for the Navigation --- }
-{var navbackcolor #EEEEEE}
-{var navtextcolor #000000}
-{var navhoverbackcolor #FFFFFF}
-{var navhoverlinkcolor #FF6600}
-{var navtextweight normal}
-{var navfont Lucida Sans Unicode, Lucida Grande, Arial}
-{var navfontsize 12px}
+{VAR navbackcolor "#EEEEEE"}
+{VAR navtextcolor "#000000"}
+{VAR navhoverbackcolor "#FFFFFF"}
+{VAR navhoverlinkcolor "#FF6600"}
+{VAR navtextweight "normal"}
+{VAR navfont "Lucida Sans Unicode, Lucida Grande, Arial"}
+{VAR navfontsize "12px"}
 
 {! --- for the PhorumHead ... the list-header --- }
-{var headerbackcolor #EEEEEE}
-{var headertextcolor #000000}
-{var headertextweight bold}
-{var headerfont Lucida Sans Unicode, Lucida Grande, Arial}
-{var headerfontsize 12px}
+{VAR headerbackcolor "#EEEEEE"}
+{VAR headertextcolor "#000000"}
+{VAR headertextweight "bold"}
+{VAR headerfont "Lucida Sans Unicode, Lucida Grande, Arial"}
+{VAR headerfontsize "12px"}
 
 
 
-{var tablebordercolor #808080}
+{VAR tablebordercolor "#808080"}
 
-{var listlinecolor #F2F2F2}
+{VAR listlinecolor "#F2F2F2"}
 
-{var listpagelinkcolor #707070}
-{var listmodlinkcolor #707070}
+{VAR listpagelinkcolor "#707070"}
+{VAR listmodlinkcolor "#707070"}
 
 
 
 
 
 {! --- You can set the table width globaly here ... ONLY tables, no divs are changed--- }
-{var tablewidth 100%}
-{var narrowtablewidth 600px}
+{VAR tablewidth "100%"}
+{VAR narrowtablewidth "600px"}
 
 
 
 {! --- Some font stuff --- }
-{var defaultfont "Bitstream Vera Sans", "Lucida Sans Unicode", "Lucida Grande", Arial}
-{var largefont "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif}
-{var tinyfont "Bitstream Vera Sans", Arial, sans-serif}
-{var fixedfont Lucida Console, Andale Mono, Courier New, Courier}
-{var defaultfontsize 12px}
-{var defaultboldfontsize 13px}
-{var largefontsize 16px}
-{var smallfontsize 11px}
-{var tinyfontsize 10px}
+{VAR defaultfont '"Bitstream Vera Sans", "Lucida Sans Unicode", "Lucida Grande", Arial'}
+{VAR largefont '"Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif'}
+{VAR tinyfont '"Bitstream Vera Sans", Arial, sans-serif'}
+{VAR fixedfont "Lucida Console, Andale Mono, Courier New, Courier"}
+{VAR defaultfontsize "12px"}
+{VAR defaultboldfontsize "13px"}
+{VAR largefontsize "16px"}
+{VAR smallfontsize "11px"}
+{VAR tinyfontsize "10px"}

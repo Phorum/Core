@@ -14,7 +14,7 @@
   {IF ATTACHMENTS}
     {IF MESSAGE->attachments}
       {LANG->Attachments}:
-      {ASSIGN MESSAGE_ATTACHMENTS MESSAGE->attachments}
+      {VAR MESSAGE_ATTACHMENTS MESSAGE->attachments}
       {LOOP MESSAGE_ATTACHMENTS}
         <a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
       {/LOOP MESSAGE_ATTACHMENTS}

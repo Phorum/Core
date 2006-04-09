@@ -1,5 +1,5 @@
 <table id="forums" cellspacing="0">
-  {var first_pass 1}
+  {VAR first_pass 1}
   {LOOP FORUMS}
     {IF FORUMS->folder_flag}
     {IF NOT first_pass}
@@ -7,7 +7,7 @@
         <td class="break" colspan="4">&nbsp;</td>
     </tr>
     {/IF}
-    {var first_pass 0}
+    {VAR first_pass 0}
     <tr class="folder">
         {IF FORUMS->forum_id FORUMS->vroot}
           <th style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/folder.png');" class="folder-name">{LANG->Forums}</th>

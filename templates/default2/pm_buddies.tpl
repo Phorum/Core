@@ -6,7 +6,7 @@
   <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>
       <th class="PhorumTableHeader" align="left" width="20">
-        {ASSIGN ITEMCOUNT BUDDYCOUNT}
+        {VAR ITEMCOUNT BUDDYCOUNT}
         {INCLUDE "pm_list_selectall"}
       </th>
       <th class="PhorumTableHeader" align="left">{LANG->Buddy}</th>

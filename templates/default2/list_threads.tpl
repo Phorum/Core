@@ -25,34 +25,34 @@
 
     {IF MESSAGES->parent_id 0}    
         {IF altclass ""}
-            {var altclass "message-threaded-alt"}
+            {VAR altclass "message-threaded-alt"}
         {ELSE}
-            {var altclass ""}
+            {VAR altclass ""}
         {/IF}
     {/IF}
 
     {IF MESSAGES->parent_id 0}
         {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-            {var icon "information"} 
+            {VAR icon "information"} 
         {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
-            {var icon "bell"}
+            {VAR icon "bell"}
         {ELSEIF MESSAGES->moved}
-            {var icon "page_go"}
+            {VAR icon "page_go"}
         {ELSEIF MESSAGES->new}
-            {var icon "flag_red"}
+            {VAR icon "flag_red"}
         {ELSE}
-            {var icon "comment"}
+            {VAR icon "comment"}
         {/IF}
     {ELSEIF MESSAGES->new}
-        {var icon "flag_red"}
+        {VAR icon "flag_red"}
     {ELSE}
-        {var icon "bullet_black"}
+        {VAR icon "bullet_black"}
     {/IF}
 
     {IF MESSAGES->new}
-        {var newclass "message-new"}
+        {VAR newclass "message-new"}
     {ELSE}
-        {var newclass ""}
+        {VAR newclass ""}
     {/IF}
 
     <tr>
