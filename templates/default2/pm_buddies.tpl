@@ -7,7 +7,7 @@
     <tr>
       <th class="PhorumTableHeader" align="left" width="20">
         {ASSIGN ITEMCOUNT BUDDYCOUNT}
-        {INCLUDE pm_list_selectall}
+        {INCLUDE "pm_list_selectall"}
       </th>
       <th class="PhorumTableHeader" align="left">{LANG->Buddy}</th>
       <th class="PhorumTableHeader" align="left">{LANG->RealName}</th>

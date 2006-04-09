@@ -63,7 +63,7 @@
 </div>
 
 <div id="search-area" style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/zoom.png');">
-{INCLUDE paging}
+{INCLUDE "paging"}
 <form id="header-search-form" action="{URL->SEARCH}" method="get">
 <input type="hidden" name="forum_id" value="{FORUM_ID}" />
 <input type="hidden" name="match_forum" value="ALL" />

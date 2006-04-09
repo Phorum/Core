@@ -4,8 +4,8 @@
   <input type="hidden" name="folder_id" value="{FOLDER_ID}" />
   <input type="hidden" name="forum_id" value="{FORUM_ID}" />
   {IF FOLDER_IS_INCOMING}
-    {INCLUDE pm_list_incoming}
+    {INCLUDE "pm_list_incoming"}
   {ELSE}
-    {INCLUDE pm_list_outgoing}
+    {INCLUDE "pm_list_outgoing"}
   {/IF}
 </form>

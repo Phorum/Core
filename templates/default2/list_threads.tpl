@@ -81,5 +81,5 @@
     </tr>
     {/LOOP MESSAGES}
 </table>
-{INCLUDE paging}
+{INCLUDE "paging"}
 

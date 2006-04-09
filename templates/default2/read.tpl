@@ -5,7 +5,7 @@
   <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{IF LOGGEDIN true}<a class="PhorumNavLink" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{ELSE}<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
 </div>
 {IF PAGES}
-  {INCLUDE paging}
+  {INCLUDE "paging"}
 {/IF}
 {LOOP MESSAGES}
   {IF NOT MESSAGES->parent_id 0}
@@ -46,6 +46,6 @@
   </div>
 {/LOOP MESSAGES}
 {IF PAGES}
-  {INCLUDE paging}
+  {INCLUDE "paging"}
 {/IF}
 <br /><br />

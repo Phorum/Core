@@ -2,7 +2,7 @@
   <tr>
     <th class="PhorumTableHeader" align="left" width="20">
       {ASSIGN ITEMCOUNT MESSAGECOUNT}
-      {INCLUDE pm_list_selectall}
+      {INCLUDE "pm_list_selectall"}
     </th>
     <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
     <th class="PhorumTableHeader" align="left" nowrap="nowrap">{LANG->To}&nbsp;</th>
