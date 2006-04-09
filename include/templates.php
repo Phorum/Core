@@ -406,13 +406,14 @@ function phorum_import_template_pass2($template)
             //     hook. Other parameters will be passed on as arguments for
             //     the hook function. One argument will be passed directly to
             //     the hook. Multiple arguments will be passed in an array.
-            //
-            // TODO to be compatible with the new syntax, <hook name> should
-            // TODO be able to take template variables as well.
+            // Example:
+            //     {hook "my_hook" USER->username}
             //
             case "hook":
                 $statement = array_shift($tokens);
-                $hook = addslashes(array_shift($tokens));
+
+                // Find the hook to run.
+                list ($hook, $type) = phorum_templatevalue_to_php($loopvars, array_shift($tokens));
 
                 // Setup hook arguments.
                 $hookargs = array();
@@ -422,7 +423,7 @@ function phorum_import_template_pass2($template)
                 }
 
                 // Build the replacement string.
-                $repl = "<?php if(isset(\$PHORUM['hooks']['$hook'])) phorum_hook('$hook'";
+                $repl = "<?php if(isset(\$PHORUM['hooks'][$hook])) phorum_hook($hook";
                 if (count($hookargs) == 1) {
                     $repl .= "," . $hookargs[0];
                 } elseif (count($hookargs) > 1) {

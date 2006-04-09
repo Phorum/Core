@@ -28,6 +28,10 @@ New template engine
                                       | development team if you still need it.
                                       |
  {define MYTEMPLATEDEFINE SomeValue}  | {define MYTEMPLATEDEFINE "SomeValue"}
+                                      |
+ {hook hookname}                      | {hook "hookname"}
+                                      |
+ {hook hookname VARIABLE}             | {hook "hookname" VARIABLE}
  -------------------------------------+---------------------------------------
 
 
