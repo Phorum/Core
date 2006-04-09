@@ -1,5 +1,5 @@
 <div align="center">
-  {INCLUDE posting_menu}
+  {INCLUDE "posting_menu"}
   <form method="POST" action="{URL->ACTION}">
     {POST_VARS}
     <input type="hidden" name="forum_id" value="{FORM->forum_id}" />

@@ -104,7 +104,7 @@
 </div>
 {! Attachments ============================================================== }
 {IF ATTACHMENTS}
-  {INCLUDE posting_attachments}
+  {INCLUDE "posting_attachments"}
 {/IF}
 {! Body ===================================================================== }
 {HOOK tpl_editor_before_textarea}

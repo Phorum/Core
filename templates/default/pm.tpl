@@ -4,7 +4,7 @@
 <table id="phorum-menu-table" cellspacing="0" border="0">
   <tr>
     <td id="phorum-menu">
-      {INCLUDE pm_menu}
+      {INCLUDE "pm_menu"}
     </td>
     <td id="phorum-content">
       {IF ERROR}

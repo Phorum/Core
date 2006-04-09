@@ -3,9 +3,9 @@
 }
 
 <div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE loginout_menu}
+  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE "loginout_menu"}
 </div>
-{INCLUDE paging}
+{INCLUDE "paging"}
 <table border="0" cellspacing="0" class="PhorumStdTable">
   <tr>
     <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
@@ -47,7 +47,7 @@
     </tr>
   {/LOOP MESSAGES}
 </table>
-{INCLUDE paging}
+{INCLUDE "paging"}
 <div class="PhorumNavBlock" style="text-align: left;">
   <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>
   {IF LOGGEDIN true}&nbsp;<a class="PhorumNavLink" href="{URL->MARKREAD}">{LANG->MarkRead}</a>{/IF}

@@ -17,4 +17,4 @@
     <li><a {IF PM_PAGE "buddies"}class="phorum-current-page" {/IF} href="{URL->BUDDIES}">{LANG->Buddies}</a></li>
   </ul>
 </div>
-{INCLUDE pm_max_messagecount}
+{INCLUDE "pm_max_messagecount"}

@@ -9,11 +9,11 @@
   <head>
     <style type="text/css">
       {IF PRINTVIEW}
-        {INCLUDE css_print}
+        {INCLUDE "css_print"}
       {ELSE}
-        {INCLUDE css}
+        {INCLUDE "css"}
         @media print{
-        {INCLUDE css_print}
+        {INCLUDE "css_print"}
         }
       {/IF}
     </style>

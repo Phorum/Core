@@ -2,7 +2,7 @@
   <tr>
     <th class="PhorumTableHeader" align="left" width="20">
       {VAR ITEMCOUNT MESSAGECOUNT}
-      {INCLUDE pm_list_selectall}
+      {INCLUDE "pm_list_selectall"}
     </th>
     <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
     <th class="PhorumTableHeader" align="left" nowrap="nowrap">{LANG->From}&nbsp;</th>
@@ -40,6 +40,6 @@
 </table>
 <div class="PhorumStdBlock" style="border-top:none">
   {VAR MOVE_SUBMIT_NAME "move"}
-  {INCLUDE pm_moveselect}
+  {INCLUDE "pm_moveselect"}
   <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
 </div>
