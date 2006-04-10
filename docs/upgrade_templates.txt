@@ -23,11 +23,9 @@ New template engine
                                       |
  {include_var VARIABLE}               | {include VARIABLE}
                                       |
- {include_once ..}                    | This statement has been fully
-                                      | deprecated. Please contact the
-                                      | development team if you still need it.
+ {include_once page}                  | {include once "page"}
                                       |
- {define MYTEMPLATEDEFINE SomeValue}  | {define MYTEMPLATEDEFINE "SomeValue"}
+ {define TEMPLATEDEFINE SomeValue}    | {define TEMPLATEDEFINE "SomeValue"}
                                       |
  {hook hookname}                      | {hook "hookname"}
                                       |

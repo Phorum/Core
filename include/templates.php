@@ -105,12 +105,13 @@ function phorum_import_template($page, $infile, $outfile)
  * @param $infile - The template file to process.
  * @param $include_depth - Current include depth (only for recursive call).
  * @param $deps - File dependancies (only for recursive call)
+ * @param $include_once - Already include pages (only for recursive call)
  * @return $template - The constructed template data.
  * @return $dependancies - An array containing file dependancies for the
  *     created template data. The keys are filenames and the values are
  *     file modification times.
  */
-function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
+function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array(), $include_once = array())
 {
     $include_depth++;
 
@@ -126,34 +127,40 @@ function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
 
     $template = phorum_read_file($infile);
 
-    // Process {include "page"} statements in the template.
-    $include_done = array();
+    // Process {include [once] "page"} statements in the template.
     preg_match_all("/\{include\s+(.+?)\}/is", $template, $matches);
     for ($i=0; $i<count($matches[0]); $i++)
     {
-        $tokens = phorum_tokenize_statement($matches[0][$i]);
+        $tokens = phorum_tokenize_statement($matches[1][$i]);
 
         // Find out if we have a static value for the include statement.
         // Dynamic values are handled in pass 2.
-        if (count($tokens) != 1) continue;
+        $only_once = false;
+        if (strtolower($tokens[0]) == "once" && isset($tokens[1])) {
+            $only_once = true;
+            array_shift($tokens);
+        }
         list ($page, $type) = phorum_templatevalue_to_php(NULL,$tokens[0]);
         if ($type == "variable" || $type == "definition") continue;
-        
+
         // Since $value contains PHP code now, we have to resolve that
         // code into a real value.
         eval("\$page = $page;");
 
-        list ($subout, $subin) = phorum_get_template_file($page);
-        if ($subout == NULL) {
-            $replace = phorum_read_file($subin);
+        if ($only_once && isset($include_once[$page])) {
+            $replace = '';
         } else {
-            list ($replace, $deps) =
-                phorum_import_template_pass1($subin, $include_depth, $deps);
+            list ($subout, $subin) = phorum_get_template_file($page);
+            if ($subout == NULL) {
+                $replace = phorum_read_file($subin);
+            } else {
+                list ($replace, $deps) =
+                    phorum_import_template_pass1($subin, $include_depth, $deps, $include_once);
+            }
+            $include_once[$page] = true;
         }
 
         $template = str_replace($matches[0][$i], $replace, $template);
-        
-        $include_done[$matches[0][$i]] = 1;
     }
 
     return array($template, $deps);
@@ -205,10 +212,12 @@ function phorum_import_template_pass2($template)
             // INCLUDE -------------------------------------------------------
 
             // Syntax:
-            //     {include <value>}
+            //     {include [once] <value>}
             // Function:
             //     Include a template. The name of the template to
-            //     include is in the <value>.
+            //     include is in the <value>. If the keyword "once"
+            //     is used, the specified template is only included
+            //     once on the page.
             //
             // {include ..} statements that use a string are handled in
             // template pass 1 already. There static includes are fully
@@ -216,10 +225,16 @@ function phorum_import_template_pass2($template)
             // defined values and template variables are handled.
             //
             case "include":
+                $include = "include";
                 $statement = array_shift($tokens); 
+                if (strtolower($tokens[0]) == "once" && isset($tokens[1])) {
+                    $include = "include_once";
+                    array_shift($tokens);
+                }
                 $variable = array_shift($tokens);
+
                 list ($value,$type) = phorum_templatevalue_to_php($loopvars, $variable);
-                $repl = "<?php include phorum_get_template($value); ?>";
+                $repl = "<?php $include phorum_get_template($value); ?>";
                 break;
 
             case "include_var":
