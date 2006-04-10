@@ -17,16 +17,6 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// TODO:
-// * Add an AND/OR feature to the {IF ..} statement.
-// * Add syntax checks to warn template writers of problems in
-//   a controlled way, instead of letting them bump hard into
-//   PHP error messages.
-// * Also add some generic simple syntax checks that for example
-//   check the number of arguments for a template statement.
-// * See if we can allow for {LOOP ARRAYVARIABLE} .. {/LOOP}
-//   (so the loop ending statement without the name of the variable).
-
 if(!defined("PHORUM")) return;
 
 /**
@@ -351,66 +341,99 @@ function phorum_import_template_pass2($template)
             // IF/ELSEIF/ELSE ------------------------------------------------
 
             // Syntax:
-            //     {if [not] <condition>}
+            //     {IF <condition> [OR|AND <condition>]}
             //         .. conditional code ..
-            //     [{elseif [not] <condition>}
+            //     [{ELSEIF <condition>}
             //         .. conditional code ..]
-            //     [{else}
+            //     [{ELSE}
             //         .. conditional code ..]
-            //     {/if}
+            //     {/IF}
             //
-            //     The <condition> can be:
-            //     <variable>
-            //         True if the variable (template variable or loop
-            //         variable) is set and not empty.
-            //     <variable> <number|"string"|php defined constant>
-            //         Compares the variable to a number, string or constant.
-            //     <variable> <othervariable>
-            //         Compares the variale to another variable.
+            //     The syntax for the <condition> is:
+            //
+            //     [NOT] <variable> [value]
+            //
+            //     The variable will be compared to the value. If no value is
+            //     given, the condition will be true if the variable is set
+            //     and not empty.
+            // 
+            //     If the keyword "not" is prepended, the result of the 
+            //     comparison will be negated.
+            //
+            //     Multiple conditions can be linked using the keywords
+            //     AND or OR.
             // Function:
             //     Run conditional code.
             // Example:
-            //     {if somevariable}somevariable is true{/if}
-            //     {if not somevariable 1}somevariable is not 1{/if}
-            //     {if thevar "somevalue"}thevar contains "somevalue"{/if}
-            //     {if thevar phpdefine}thevar and phpdefine are equal{/if}
-            //     {if thevar othervar}thevar and othervar are equal{/if}
+            //     {IF somevariable}somevariable is true{/IF}
+            //     {IF NOT somevariable 1}somevariable is not 1{/IF}
+            //     {IF thevar "somevalue"}thevar contains "somevalue"{/IF}
+            //     {IF thevar phpdefine}thevar and phpdefine are equal{/IF}
+            //     {IF thevar othervar}thevar and othervar are equal{/IF}
+            //     {IF var1 OR var2}at least one of the vars is not empty{/IF}
             //
             case "if":
             case "elseif":
-                // Determine if we're handling "if" or "elseif".
                 $statement = strtolower(array_shift($tokens));
-                $prefix = $statement=="if" ? "if" : "} elseif";
+                $repl = '<?php ' . ($statement == "if" ? "if" : "} elseif") . ' ((';
 
-                // Determine if we need "==" or "!=" for the condition.
-                if (strtolower($tokens[0]) == "not") {
-                    $operator = "!=";
-                    array_shift($tokens);
-                } else {
-                    $operator="==";
-                }
-
-                // Determine what variable we are comparing to in the condition.
-                $variable = phorum_templatevariable_to_php($loopvars, array_shift($tokens));
-
-                // If there is no value to compare to, then check if
-                // the value for the variable is set and not empty.
-                if (!isset($tokens[0])) {
-                    if ($operator == "=="){
-                        $repl = "<?php $prefix (isset($variable) && !empty($variable)) { ?>";
+                // Split into AND / OR conditions.
+                $conditions = array();
+                $condition = array();
+                while (count($tokens)) {
+                    $token = array_shift($tokens);
+                    if (strtolower($token) == "or" || strtolower($token) == "and") {
+                        array_push($conditions, $condition);
+                        array_push($conditions, strtolower($token) == "or" ? '||' : '&&');
+                        $condition = array();
                     } else {
-                        $repl = "<?php $prefix (!isset($variable) || empty($variable)) { ?>";
+                        array_push($condition, $token);
                     }
                 }
-                // There is a value. Make a comparison to that value.
-                else {
-                    list ($value, $type) = phorum_templatevalue_to_php($loopvars, array_shift($tokens));
-                    if ($type == "variable") {
-                        $repl = "<?php $prefix (isset($variable) && isset($value) && $variable $operator $value) { ?>";
+                array_push($conditions, $condition);
+
+                // Build condition PHP code.
+                while (count($conditions)) 
+                {
+                    $condition = array_shift($conditions);
+
+                    if (! is_array($condition)) {
+                        $repl .= ") $condition (";
+                        continue;
+                    }
+
+                    // Determine if we need "==" or "!=" for the condition.
+                    if (strtolower($condition[0]) == "not") {
+                        $operator = "!=";
+                        array_shift($condition);
                     } else {
-                        $repl = "<?php $prefix (isset($variable) && $variable $operator $value) { ?>";
+                        $operator="==";
+                    }
+
+                    // Determine what variable we are comparing to in the condition.
+                    $variable = phorum_templatevariable_to_php($loopvars, array_shift($condition));
+
+                    // If there is no value to compare to, then check if
+                    // the value for the variable is set and not empty.
+                    if (!isset($condition[0])) {
+                        if ($operator == "=="){
+                            $repl .= "isset($variable) && !empty($variable)";
+                        } else {
+                            $repl .= "!isset($variable) || empty($variable)";
+                        }
+                    }
+                    // There is a value. Make a comparison to that value.
+                    else {
+                        list ($value, $type) = phorum_templatevalue_to_php($loopvars, array_shift($condition));
+                        if ($type == "variable") {
+                            $repl .= "isset($variable) && isset($value) && $variable $operator $value";
+                        } else {
+                            $repl .= "isset($variable) && $variable $operator $value";
+                        }
                     }
                 }
+
+                $repl .= ")) { ?>";
                 break;
 
             case "else":
@@ -505,7 +528,7 @@ function phorum_tokenize_statement($statement)
     {
         $ch = substr($statement, $i, 1);
 
-        // Handle characters inside a quoted piece?
+        // Handle characters inside a quoted token.
         if ($quote != NULL)
         {
             // Simply add escaped characters.
@@ -529,7 +552,7 @@ function phorum_tokenize_statement($statement)
                 continue;
             }
 
-            // All other characters add to the current token.
+            // All other characters are added to the current token.
             $token .= $ch;
             continue;
         }
@@ -550,7 +573,7 @@ function phorum_tokenize_statement($statement)
             continue;
         }
 
-        // All other characters add to the current token.
+        // All other characters are added to the current token.
         $token .= $ch;
     }
 
@@ -563,7 +586,7 @@ function phorum_tokenize_statement($statement)
 }
 
 /**
- * Determines wheter a template variable should be used from
+ * Determines whether a template variable should be used from
  * $PHORUM["DATA"] (the default location) or $PHORUM["TMP"]
  * (for loop variables).
  *
