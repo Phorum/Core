@@ -118,7 +118,7 @@ if ($pages == 0) $pages = 1;
 $pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"])) ? $PHORUM["TMP"]["list_pages_shown"] : 11; 
 
 // first $pages_shown pages
-if($page - floor($pages_shown/2) <= 0){
+if($page - floor($pages_shown/2) || $page <= $pages_shown){
     $page_start=1;
 
 // last $pages_shown pages
@@ -132,7 +132,6 @@ if($page - floor($pages_shown/2) <= 0){
 
 $pageno=1;
 
-
 for($x=0;$x<$pages_shown && $x<$pages;$x++){
     $pageno=$x+$page_start;
     $PHORUM["DATA"]["PAGES"][] = array(
@@ -140,6 +139,7 @@ for($x=0;$x<$pages_shown && $x<$pages;$x++){
     "url"=>phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "page=$pageno")
     );
 }
+
 
 $PHORUM["DATA"]["CURRENTPAGE"]=$page;
 $PHORUM["DATA"]["TOTALPAGES"]=$pages;
