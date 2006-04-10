@@ -17,6 +17,16 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
+// TODO:
+// * Add an AND/OR feature to the {IF ..} statement.
+// * Add syntax checks to warn template writers of problems in
+//   a controlled way, instead of letting them bump hard into
+//   PHP error messages.
+// * Also add some generic simple syntax checks that for example
+//   check the number of arguments for a template statement.
+// * See if we can allow for {LOOP ARRAYVARIABLE} .. {/LOOP}
+//   (so the loop ending statement without the name of the variable).
+
 if(!defined("PHORUM")) return;
 
 /**
@@ -365,8 +375,6 @@ function phorum_import_template_pass2($template)
             //     {if thevar "somevalue"}thevar contains "somevalue"{/if}
             //     {if thevar phpdefine}thevar and phpdefine are equal{/if}
             //     {if thevar othervar}thevar and othervar are equal{/if}
-            //
-            // TODO: An "OR" implementation would be very useful.
             //
             case "if":
             case "elseif":
