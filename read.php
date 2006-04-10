@@ -68,7 +68,7 @@ if(empty($PHORUM["args"][1])) {
 } elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
     $thread = (int)$PHORUM["args"][1];
     $message_id = (int)$PHORUM["args"][1];
-    if($PHORUM["args"][2]=="printview") {
+    if(isset($PHORUM["args"][2]) && $PHORUM["args"][2]=="printview") {
       $PHORUM["DATA"]["PRINTVIEW"]=1;
     } else {
       $PHORUM["DATA"]["PRINTVIEW"]=0;
