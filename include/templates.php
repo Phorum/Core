@@ -131,11 +131,12 @@ function phorum_import_template_pass1($infile, $include_depth=0, $deps=array())
     preg_match_all("/\{include\s+(.+?)\}/is", $template, $matches);
     for ($i=0; $i<count($matches[0]); $i++)
     {
-        if (isset($include_done[$matches[0][$i]])) continue;
+        $tokens = phorum_tokenize_statement($matches[0][$i]);
 
         // Find out if we have a static value for the include statement.
         // Dynamic values are handled in pass 2.
-        list ($page,$type) = phorum_templatevalue_to_php(NULL,$matches[1][$i]);
+        if (count($tokens) != 1) continue;
+        list ($page, $type) = phorum_templatevalue_to_php(NULL,$tokens[0]);
         if ($type == "variable" || $type == "definition") continue;
         
         // Since $value contains PHP code now, we have to resolve that
