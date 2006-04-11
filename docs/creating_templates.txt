@@ -250,11 +250,11 @@ Table of contents:
    2.3.3.1 {VALUE}
    ---------------
 
-   Syntax:
-      {VALUE}
-
    Function:
       Display the contents of a value on screen.
+
+   Syntax:
+      {VALUE}
 
    Example:
       The name of the current forum is: {NAME}
@@ -271,11 +271,11 @@ Table of contents:
    2.3.3.2 {! COMMENT TEXT}
    ------------------------
  
-   Syntax:
-      {! COMMENT TEXT}
-
    Function:
       Put comments in your template code.
+
+   Syntax:
+      {! COMMENT TEXT}
 
    Example:
       {! This template was created by John Doe and his lovely wife Jane }
@@ -289,11 +289,11 @@ Table of contents:
    2.3.3.3 {DEFINE PHORUM_VARIABLE VALUE}
    --------------------------------------
  
-   Syntax:
-      {DEFINE PHORUM_VARIABLE VALUE}
-
    Function:
       Set variable definitions that are used by the Phorum software.
+
+   Syntax:
+      {DEFINE PHORUM_VARIABLE VALUE}
 
    Example:
       {DEFINE list_pages_shown 5}
@@ -313,11 +313,11 @@ Table of contents:
    2.3.3.4 {VAR TEMPLATE_VARIABLE VALUE}
    -------------------------------------
 
-   Syntax:
-      {VAR TEMPLATE_VARIABLE VALUE}
-
    Function:
       Set variable definitions that are used by the templates.
+
+   Syntax:
+      {VAR TEMPLATE_VARIABLE VALUE}
 
    Examples:
       {VAR MY_VAR "This is my first variable!"}
@@ -335,6 +335,9 @@ Table of contents:
  
    2.3.3.5 {IF CONDITION} .. {/IF}
    -------------------------------
+
+   Function:
+      The IF statement can be used for running conditional code.
 
    Syntax:
       {IF CONDITION}
@@ -362,22 +365,72 @@ Table of contents:
          You are either an administrator or John.
       {/IF}
 
-   Function:
-      The IF statement can be used for running conditional code.
+      {IF VARIABLE1 VARIABLE2}
+         Variable 1 and 2 have the same value.
+      {/IF}
 
-   TEMPLATE_VARIABLE has to be an existing variable name. The VALUE that
-   is used in the CONDITION can be any of the data types that are supported
-   by the template language (see 2.2.2). If no VALUE is used, then the
-   statement will check whether the TEMPLATE_VARIABLE is set and contains
-   data.
+   Using this function you can control if certain blocks of code in your
+   template are processed or not, based on a given condition. This can for
+   example be useful if you want certain parts of the page to be only
+   visible for registered users. 
+
+   The TEMPLATE_VARIABLE in a CONDITION has to be an existing variable name.
+   The VALUE that is used in the CONDITION can be any of the data types that
+   are supported by the template language (see 2.2.2). If no VALUE is used,
+   then the statement will check whether the TEMPLATE_VARIABLE is set and
+   contains data.
  
- 
+
    2.3.3.6 {LOOP ARRAY_VARIABLE} .. {/LOOP}
    ----------------------------------------
+
+   Function:
+      Loop through the elements of array variables.
+
+   Syntax:
+      {LOOP ARRAY_VARIABLE}
+         {ARRAY_VARIABLE}
+      {/LOOP ARRAY_VARIABLE}
  
+   Example:
+      <ul>
+      {LOOP USERS}
+        <li> {USERS->username} </li>
+      {/LOOP}
+      </ul>
+
+   The LOOP statement is useful for looping through the elements of array
+   based template variables (for example arrays of forums, messages and 
+   users).
+
+   Within a loop, the active element is assigned to a variable that
+   has the same name as the loop variable that you are looping over. In our
+   example, we are looping over USERS, which is an array of users . Within
+   the loop, USERS is no long the array of users itself, but the data for
+   a single user instead. Because the user data is an array on its own, 
+   USERS->username is used to retrieve the username from the active user.
+
  
    2.3.3.7 {INCLUDE VALUE}
    -----------------------
+
+   Function:
+      Include another template in the template.
+
+   Syntax:
+      {INCLUDE [ONCE] VALUE}
+
+   Examples:
+      {INCLUDE "paging"}
+      {INCLUDE include_page} (using a variable)
+      {INCLUDE ONCE "css"}
+
+   The VALUE that is used in the INCLUDE can be any of the data types that
+   are supported by the template language (see 2.2.2).
+
+   By specifiying the keyword ONCE before the template to include,
+   you make sure that the template is only included once per page.
+
  
    2.3.3.8 {HOOK VALUE}
    --------------------
