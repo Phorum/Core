@@ -5,32 +5,56 @@ This documents describes how to create your own template for
 Phorum. The document is not conclusive, but there should be
 enough information in here to get you started.
 
+In this document, {phorum dir} is the location where you installed
+the Phorum software.
+
 
 Table of contents:
 
-1. Starting your own template
+1. General information on Phorum templates
+   1.1 Template directory structure
+   1.2 How Phorum handles templates
+   1.3 Starting your own template
 2. The Phorum template language
    2.1 Introduction
-   2.2 Template language syntax
-       2.2.1 General syntax
-       2.2.2 Data types
-             2.2.2.1 Integers
-             2.2.2.2 Strings
-             2.2.2.3 PHP constants 
-             2.2.2.4 Template variables
-       2.2.3 Statements
-             2.3.3.1 {VALUE}
-             2.3.3.2 {! COMMENT}
-             2.3.3.3 {DEFINE PHORUM_VARIABLE VALUE}
-             2.3.3.4 {VAR TEMPLATE_VARIABLE VALUE}
-             2.3.3.5 {IF CONDITION} .. {/IF}
-             2.3.3.6 {LOOP ARRAY_VARIABLE} .. {/LOOP}
-             2.3.3.7 {INCLUDE VALUE}
-             2.3.3.8 {HOOK VALUE}
+   2.2 General syntax
+   2.3 Need the power of PHP?
+   2.4 Data types
+       2.4.1 Integers
+       2.4.2 Strings
+       2.4.3 PHP constants 
+       2.4.4 Template variables
+   2.5 Statements
+       2.5.1 Display a value
+       2.5.2 Add comments
+       2.5.3 DEFINE
+       2.5.4 VAR
+       2.5.5 IF .. ELSEIF .. ELSE
+       2.5.6 LOOP
+       2.5.7 INCLUDE
+       2.5.8 HOOK
 
 
-1. Starting your own template
+1. General information on Phorum templates
 -------------------------------------------------------------------------------
+
+
+ 1.1 Template directory structure
+ --------------------------------
+
+ TODO: About templates/<template name> and the important files within
+ TODO: the template directory.
+
+
+ 1.2 How Phorum handles templates
+ --------------------------------
+
+ TODO: About automatic compilation, cache dir, automatic recompilation,
+ TODO: .tpl files vs. .php files.
+
+
+ 1.3 Starting your own template
+ ------------------------------
 
    Here are the steps that you have to take to create your own template:
 
@@ -50,8 +74,8 @@ Table of contents:
    
    3) Open Phorum's admin page {phorum url}/admin.php and go to
       "General Settings". There you'll find the option "Default Template".
-      Set that option to your own template. You can also set a specific
-      template for each single forum in the forum's settings.
+      Set that option to your own template. You also have to configure the
+      template in the settings of each single forum.
    
    
    That's it. You are now using your own template. From here on you can start
@@ -85,17 +109,13 @@ Table of contents:
    find a description of the language in chapter 2.2.
 
 
- 2.2 Template language syntax
- ----------------------------
-
-
-  2.2.1 General syntax
-  --------------------
+ 2.2 General syntax
+ ------------------
 
    Templates are built using HTML (and possibly PHP) code. Embedded in
    this HTML code, there can be template language statements. All template
-   statements in the templates are surrounded by { and }. Here's a
-   simple example of what a template could look like:
+   statements in the templates are surrounded by "{" and "}" characters.
+   Here's a simple example of what a template could look like:
    
       <html>
        <head>
@@ -111,28 +131,47 @@ Table of contents:
       </html>
 
 
-   Need the power of PHP?
+ 2.3 Need the power of PHP?
+ --------------------------
 
    Template writers for whom the template language is too limited can break
    into PHP at any point in the templates, using the regular <?php ... ?>
-   syntax. The biggest drawback here, is that more knowledge of the Phorum
+   syntax. Using the Phorum template language is not mandatory at all.
+
+   The biggest drawback here, is that more knowledge of the Phorum
    internals is required. Most template writers will normally only be using
    HTML and the Phorum template language.
 
+   Important:
+   ----------
+   To prevent confusion between PHP code blocks and template statements
+   (which are both surrounded by "{" and "}" characters), always use a
+   whitespace after an opening "{" character in your PHP code. So instead
+   of writing:
+
+      <?php if ($this = true) {print "It's true";} ?>
+
+   you now have to write:
+
+      <?php if ($this = true) { print "It's true"; } ?>
    
-  2.2.2 Data types
-  ----------------
+   This way you can mix PHP code with template code without running
+   into problems.
 
-   The template language know four data types that are used in statements:
    
-   * integers
-   * strings
-   * PHP constants
-   * template variables. 
+ 2.4 Data types
+ --------------
+
+   The template language supports four data types to use in statements:
+   
+   - Integers (see 2.4.1)
+   - Strings (see 2.4.2)
+   - PHP constants (see 2.4.3)
+   - Template variables  (see 2.4.4)
 
 
-   2.2.2.1 Integers
-   ----------------
+  2.4.1 Integers
+  --------------
 
    Integers are formatted as a sequence of numbers. Examples:
 
@@ -150,8 +189,8 @@ Table of contents:
       {/IF}
 
 
-   2.2.2.2 Strings
-   ---------------
+  2.4.2 Strings
+  -------------
 
    Strings are sequences of characters within quotes (both double and
    single quotes can be used). Examples:
@@ -181,8 +220,8 @@ Table of contents:
       {/IF}
 
 
-   2.2.2.3 PHP constants 
-   ---------------------
+  2.4.3 PHP constants 
+  -------------------
 
    It's possible to define constants within PHP. This is done using
    the following type of code:
@@ -206,8 +245,8 @@ Table of contents:
       {/IF}
 
 
-   2.2.2.4 Template variables
-   --------------------------
+  2.4.4 Template variables
+  ------------------------
 
    About the most important data type for the template language is the
    template variable. Template variables are used by Phorum to store
@@ -216,7 +255,7 @@ Table of contents:
 
    You can reference a template variable by using the variable's name,
    without any quotes. Note that this is the same notation that is used
-   for referencing PHP constants (see 2.2.2.3). If there's both a constant
+   for referencing PHP constants (see 2.4.3). If there's both a constant
    and a variable with the same name, the value of the contstant will
    take precedence over the template variable.
 
@@ -243,113 +282,124 @@ Table of contents:
    What variables are available for what pages is fully determined by Phorum.
 
 
-  2.2.3 Statements
-  ----------------
+ 2.5 Statements
+ --------------
 
 
-   2.3.3.1 {VALUE}
-   ---------------
+  2.5.1 Display a value
+  ---------------------
 
    Function:
-      Display the contents of a value on screen.
+      This is both the most simple and the most important template
+      statement there is. Using this statement, you can display the
+      contents of a value. 
 
    Syntax:
-      {VALUE}
+      {<VALUE>}
+   
+      The <VALUE> can be any of the data types that are supported by the 
+      template language (see 2.4). Of course, only the use of constants or
+      template variables is useful (because in a template {"SOME STRING"} is
+      equivalent to simply putting SOME STRING directly in the code).
 
    Example:
       The name of the current forum is: {NAME}
 
-   This is both the most simple and the most important template statement
-   there is. Using this statement, you can display the contents of a value. 
 
-   The VALUE can be any of the data types that are supported by the 
-   template language (see 2.2.2). Of course, only the use of constants or
-   template variables is useful (because in a template {"SOME STRING"} is
-   equivalent to simply putting SOME STRING directly in the code).
- 
-
-   2.3.3.2 {! COMMENT TEXT}
-   ------------------------
+  2.5.2 Add comments
+  ------------------
  
    Function:
-      Put comments in your template code.
+      Sometimes, it's useful to explain what you are doing when writing 
+      complicated templating code. In that case you can use comments to
+      document what you are doing. You can also use comments to add
+      general info to the template (like in the example below).
 
    Syntax:
-      {! COMMENT TEXT}
+      {! <COMMENT TEXT>}
+
+      The <COMMENT TEXT> can contain any characters you like, except for "}".
 
    Example:
       {! This template was created by John Doe and his lovely wife Jane }
 
-   Sometimes, it's useful to explain what you are doing when writing 
-   complicated templating code. In that case you can use comments to
-   document what you are doing. You can also use comments to add general
-   info to the template (like in the example above).
- 
 
-   2.3.3.3 {DEFINE PHORUM_VARIABLE VALUE}
-   --------------------------------------
+  2.5.3 DEFINE
+  ------------
  
    Function:
-      Set variable definitions that are used by the Phorum software.
+      Using this statement, you can set variable definitions that can be used
+      by the Phorum software. These are mainly used for doing settings from
+      the template file "settings.tpl" to tweak Phorum's internal behaviour. 
+      
+      Variables that have been defined using this statement are not available
+      from other template statements.
 
    Syntax:
-      {DEFINE PHORUM_VARIABLE VALUE}
+      {DEFINE <PHORUM VARIABLE> <VALUE>}
+
+      What you can use for <PHORUM VARIABLE>, is fully determined by the
+      Phorum software (and possibly modules). The <VALUE> can be any of
+      the data types that are supported by the template language (see 2.4).
 
    Example:
       {DEFINE list_pages_shown 5}
     
-   Using this statement, you can set variable definitions that can be used
-   by the Phorum software. These are mainly used for doing settings to tweak
-   Phorum's behaviour. 
-   
-   What PHORUM_VARIABLEs are available is defined by the Phorum software
-   (and modules). The VALUE can be any of the data types that are supported
-   by the template language (see 2.2.2).
-
-   Variables that have been defined using this statement are not available
-   from other template statements.
-   
  
-   2.3.3.4 {VAR TEMPLATE_VARIABLE VALUE}
-   -------------------------------------
+  2.5.4 VAR
+  ---------
 
    Function:
-      Set variable definitions that are used by the templates.
+      Using this statement, you can set variable definitions that can
+      be used by the Phorum template language.
 
    Syntax:
-      {VAR TEMPLATE_VARIABLE VALUE}
+      {VAR <TEMPLATE VARIABLE> <VALUE>}
+
+      <TEMPLATE VARIABLE> can be an existing or a new variable name
+      (see 2.4.4). The <VALUE> can be any of the data types that
+      are supported by the template language (see 2.4).
 
    Examples:
       {VAR MY_VAR "This is my first variable!"}
       {VAR MY_VAR OTHER_VAR}
       {VAR MY_VAR 1234}
+
       {VAR IS_COOL true}
+      {IF IS_COOL}Yes, this is cool{/IF}
 
-   Using this statement, you can set variable definitions that can be used
-   by the Phorum template language.
-
-   TEMPLATE_VARIABLE can be an existing or a new variable name. The VALUE can
-   be any of the data types that are supported by the template language
-   (see 2.2.2).
  
- 
-   2.3.3.5 {IF CONDITION} .. {/IF}
-   -------------------------------
+  2.5.5 IF .. ELSEIF .. ELSE
+  --------------------------
 
    Function:
-      The IF statement can be used for running conditional code.
+      Using this function you can control if certain blocks of code in your
+      template are processed or not, based on a given condition. This can for
+      example be useful if you want certain parts of the page to be only
+      visible for registered users. 
 
    Syntax:
-      {IF CONDITION}
+      {IF <CONDITION>}
          .. conditional code ..
-      {ELSEIF CONDITION}
-         .. conditional code ..
-      {ELSE}
-         .. conditional code ..
+      [{ELSEIF <CONDITION>}
+         .. conditional code ..]
+      [{ELSE}
+         .. conditional code ..]
       {/IF}
 
-      CONDITION Syntax: [NOT] TEMPLATE_VARIABLE [VALUE]
+      <CONDITION> Syntax: [NOT] <TEMPLATE VARIABLE> [<VALUE>]
+
+      The <TEMPLATE VARIABLE> in a <CONDITION> has to be an existing
+      variable name. The <VALUE> that is used in the CONDITION can be any
+      of the data types that are supported by the template language
+      (see 2.4).
+      
+      If a <VALUE> is used, the <TEMPLATE VARIABLE> will be compared to the
+      <VALUE>. If no <VALUE> is used, then the condition will check whether
+      the <TEMPLATE VARIABLE> is set and contains data. 
+
       A condition can be negated by prepending the keyword "NOT" to it.
+
       Multiple conditions can be chained using the keywords AND or OR.
 
    Examples:
@@ -368,29 +418,20 @@ Table of contents:
       {IF VARIABLE1 VARIABLE2}
          Variable 1 and 2 have the same value.
       {/IF}
-
-   Using this function you can control if certain blocks of code in your
-   template are processed or not, based on a given condition. This can for
-   example be useful if you want certain parts of the page to be only
-   visible for registered users. 
-
-   The TEMPLATE_VARIABLE in a CONDITION has to be an existing variable name.
-   The VALUE that is used in the CONDITION can be any of the data types that
-   are supported by the template language (see 2.2.2). If no VALUE is used,
-   then the statement will check whether the TEMPLATE_VARIABLE is set and
-   contains data.
  
 
-   2.3.3.6 {LOOP ARRAY_VARIABLE} .. {/LOOP}
-   ----------------------------------------
+  2.5.6 LOOP
+  ----------
 
    Function:
-      Loop through the elements of array variables.
+      The LOOP statement is used for looping through the elements of array
+      based template variables (for example arrays of forums, messages and 
+      users).
 
    Syntax:
-      {LOOP ARRAY_VARIABLE}
-         {ARRAY_VARIABLE}
-      {/LOOP ARRAY_VARIABLE}
+      {LOOP <ARRAY VARIABLE>}
+         {<ARRAY VARIABLE>}
+      {/LOOP <ARRAY VARIABLE>}
  
    Example:
       <ul>
@@ -399,46 +440,113 @@ Table of contents:
       {/LOOP}
       </ul>
 
-   The LOOP statement is useful for looping through the elements of array
-   based template variables (for example arrays of forums, messages and 
-   users).
 
-   Within a loop, the active element is assigned to a variable that
-   has the same name as the loop variable that you are looping over. In our
-   example, we are looping over USERS, which is an array of users . Within
-   the loop, USERS is no long the array of users itself, but the data for
-   a single user instead. Because the user data is an array on its own, 
-   USERS->username is used to retrieve the username from the active user.
+   Within a LOOP, the active element is assigned to a variable that
+   has the same name as the <ARRAY VARIABLE> that you are looping over. In
+   our example, we are looping over USERS, which is an array of user data
+   records. Within the loop, USERS is no long the array of users itself, but
+   the user data record for a single user instead. Because the user data is an
+   array on its own, USERS->username is used to retrieve the username from
+   the active user.
 
  
-   2.3.3.7 {INCLUDE VALUE}
-   -----------------------
+  2.5.7 INCLUDE
+  -------------
 
    Function:
       Include another template in the template.
 
    Syntax:
-      {INCLUDE [ONCE] VALUE}
+      {INCLUDE [ONCE] <INCLUDE PAGE>}
+
+      The <INCLUDE PAGE> that is used in the INCLUDE statement can be
+      any of the data types that are supported by the template language
+      (see 2.4).
+
+      By specifiying the keyword ONCE before the template to include,
+      you can make sure that that template is only included once per page.
 
    Examples:
       {INCLUDE "paging"}
       {INCLUDE include_page} (using a variable)
       {INCLUDE ONCE "css"}
 
-   The VALUE that is used in the INCLUDE can be any of the data types that
-   are supported by the template language (see 2.2.2).
+   Limitation:
+      It is not possible to use a dynamic INCLUDE statement (one where the
+      <INCLUDE PAGE> is set through a template variable) within a LOOP
+      statement, if the included template needs to access the active
+      LOOP element. There is no problem if you use a static INCLUDE
+      statement (one where the <INCLUDE PAGE> is set through a string value).
 
-   By specifiying the keyword ONCE before the template to include,
-   you make sure that the template is only included once per page.
+      If you really need this kind of functionality, you can work easily
+      around it by assigning the active LOOP element to a new template
+      variable, prior to including the dynamic <INCLUDE PAGE>. Example:
+
+      {! include_page holds the dynamic page to include }
+      {VAR include_page "some_page"}
+
+      {LOOP loop_variable}
+        {! Makes loop_variable available as temp_variable in the include }
+        {VAR temp_variable loop_variable}
+        {INCLUDE include_page}
+      {/LOOP}
+
+      This way you can access the active LOOP element from the included
+      template through temp_variable. If you would access loop_variable
+      from there, you'd see that it does not contain the active LOOP element,
+      but the full array that you are looping over instead.
 
  
-   2.3.3.8 {HOOK VALUE}
-   --------------------
+  2.5.8 HOOK
+  ----------
+
+   Function:
+      The HOOK statement can be used to run a module hook from a template.
+      By using hooks in the templates, you have an easy way for modules to
+      add data to a page, without having to change the templates too much.
+      Because these hooks need an activated module that acts upon them,
+      creating HOOK statements is certainly for advanced users only.
+
+   Syntax:
+      {HOOK <HOOK NAME> [<ARG1> <ARG2> .. <ARGn>]}
    
+      Both the <HOOK NAME> and the arguments that are used in the HOOK
+      statement can be any of the data types that are supported by the
+      template language (see 2.4).
+   
+   Examples:
+      {HOOK "template_hook"} 
+
+      {LOOP MESSAGES}
+        {HOOK "show_message" MESSAGES}
+      {/LOOP}
+
+      {VAR HOOKNAME "my_magic_hook"}
+      {HOOK HOOKNAME "my argument"}
 
 
-TODO this should probably go to the wiki, becuase it's quite specific
-for a getting started HOWTO...
+   Depending on the number or arguments that are used in the HOOK statement,
+   different type of calls are made to the hook function for the given
+   <HOOK NAME>:
+
+   * no arguments: the hook function is called without arguments at all:
+     hook_function()
+
+   * one argument: the argument is used directly for the hook function:
+     hook_function($ARG)
+
+   * multiple arguments: the arguments are passed in an array:
+     hook_function(array($ARG1, $ARG2, .. $ARGn));
+
+   Phorum does have a couple of template hooks defined in the default
+   template. Please read {phorum dir}/docs/creating_mods.txt for more
+   information on these default template hooks and on modules in general.
+
+
+
+TODO:
+This should go into a separate chapter that describes template
+variables and define statements that can be used in the templates.
 
 Additional variables in settings.tpl:
 {define bodies_in_list 1}
