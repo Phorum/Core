@@ -33,6 +33,7 @@ function phorum_valid_email($email){
             $ret = true;
         } elseif(function_exists('checkdnsrr')) {
 
+            $fulldomain = substr(strstr($email, "@"), 1).".";
             // check if a mailserver exists for the domain
             if(checkdnsrr($fulldomain, "MX")) {
                 $ret = true;
