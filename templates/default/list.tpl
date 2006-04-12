@@ -28,10 +28,10 @@
         {IF MESSAGES->sort PHORUM_SORT_STICKY}<span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>{/IF}
         {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>{/IF}
         {IF MESSAGES->moved}<span class="PhorumListSubjPrefix">{LANG->MovedSubject}:</span>{/IF}
-        <a href="{MESSAGES->url}">{MESSAGES->subject}</a>
+        <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>
         {IF MESSAGES->new}&nbsp;<span class="PhorumNewFlag">{MESSAGES->new}</span>{/IF}
         {IF MESSAGES->pages}<span class="PhorumListPageLink">&nbsp;&nbsp;&nbsp;{LANG->Pages}: {MESSAGES->pages}</span>{/IF}
-        {IF MODERATOR true}<br /><span class="PhorumListModLink"><a href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>{IF MESSAGES->move_url}&nbsp;&#8226;&nbsp;<a href="{MESSAGES->move_url}">{LANG->MoveThread}</a>{/IF}&nbsp;&#8226;&nbsp;<a href="{MESSAGES->merge_url}">{LANG->MergeThread}</a></span>{/IF}
+        {IF MODERATOR true}<br /><span class="PhorumListModLink"><a href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>{IF MESSAGES->URL->MOVE}&nbsp;&#8226;&nbsp;<a href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a>{/IF}&nbsp;&#8226;&nbsp;<a href="{MESSAGES->URL->MERGE}">{LANG->MergeThread}</a></span>{/IF}
       </td>
       {IF VIEWCOUNT_COLUMN}
         <td class="PhorumTableRow<?php echo $rclass;?>" align="center">{MESSAGES->viewcount}&nbsp;</td>
@@ -41,7 +41,7 @@
       <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap">
         {MESSAGES->lastpost}&nbsp;<br />
         <span class="PhorumListSubText">
-          <a href="{MESSAGES->last_post_url}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}
+          <a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}
         </span>
       </td>
     </tr>

@@ -58,5 +58,17 @@ Structural template changes
                                       | Also, all occurances of ROWS->VAR
                                       | inside the loop have to be changed to
                                       | MESSAGES->VAR accordingly.
+                                      |
+ MESSAGES->delete_url1                | MESSAGES->URL->DELETE_MESSAGE
+                                      |
+ MESSAGES->delete_url2                | MESSAGES->URL->DELETE_THREAD
+                                      |
+ MESSAGES->last_post_url              | MESSAGES->URL->LAST_POST
+                                      |
+ MESSAGES->merge_url                  | MESSAGES->URL->MERGE
+                                      |
+ MESSAGES->move_url                   | MESSAGES->URL->MOVE
+                                      |
+ MESSAGES->url                        | MESSAGES->URL->READ
  -------------------------------------+---------------------------------------
 
