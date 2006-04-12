@@ -39,7 +39,7 @@ function phorum_bb_code($data)
     }
 
     $replace = array(
-        "<img src=\"$1\" />",
+        "<img src=\"$1\" border=\"0\" alt=\"$1\" />",
         "[<a $extra_link_tags href=\"$1\">$3</a>]",
         "<a $extra_link_tags href=\"$1\">$3</a>",
         "'<a $extra_link_tags href=\"'.phorum_html_encode('mailto:$1').'\">'.phorum_html_encode('$1').'</a>'",
