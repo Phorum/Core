@@ -1,0 +1,12 @@
+  <preface>
+    <title>Introduction</title>
+
+    <para>This is the reference manual for Phorum version 5.2.x and up.
+    Although a lot of information will apply, it is not intended for use with
+    older versions of Phorum. We hope that this documentation will prove to be
+    a useful tool for Phorum users in understanding and working with our
+    software.</para>
+
+    <para><emphasis>The Phorum development team</emphasis><sbr /><ulink
+    url="http://www.phorum.org/">Phorum.org</ulink></para>
+  </preface>
