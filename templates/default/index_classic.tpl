@@ -8,11 +8,14 @@
   <div style="margin-right: 425px">{LANG->Forums}</div>
 </div>
 
-<?php $rclass="Alt"; ?>
 <div class="PhorumStdBlock">
   {LOOP FORUMS}
-    <?php if($rclass=="Alt") $rclass=""; else $rclass="Alt"; ?>
-    <div class="PhorumRowBlock<?php echo $rclass;?>">
+    {IF altclass ""}
+      {VAR altclass "Alt"}
+    {ELSE}
+      {VAR altclass ""}
+    {/IF}
+    <div class="PhorumRowBlock{altclass}">
       {IF FORUMS->folder_flag}
         <div class="PhorumColumnFloatXLarge">{LANG->ForumFolder}</div>
       {ELSE}

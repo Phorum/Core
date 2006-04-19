@@ -18,34 +18,34 @@
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->WrittenBy}</th>
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->Posted}</th>
   </tr>
-  <?php $oldthread=0; $rclass=""; ?>
   {LOOP MESSAGES}
-    <?php
-      if($oldthread != $PHORUM['TMP']['MESSAGES']['thread']){
-        if($rclass=="Alt") $rclass=""; else $rclass="Alt";
-        $oldthread=$PHORUM['TMP']['MESSAGES']['thread'];
-      }
-    ?>
+    {IF MESSAGES->parent_id 0}
+      {IF altclass ""}
+          {VAR altclass "Alt"}
+      {ELSE}
+          {VAR altclass ""}
+      {/IF}
+    {/IF}
     <tr>
-    <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {MESSAGES->indent_cnt}px">&nbsp;{MESSAGES->indent}{marker}
-      {IF MESSAGES->sort PHORUM_SORT_STICKY}
-        <span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>
-      {/IF}
-      {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-        <span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>
-      {/IF}
-      {IF MESSAGES->moved}
-        <span class="PhorumListSubjPrefix">{LANG->MovedSubject}:</span>
-      {/IF}
-      <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>&nbsp;<span class="PhorumNewFlag">{MESSAGES->new}</span>
-    </td>
+      <td class="PhorumTableRow{altclass}" style="padding-left: {MESSAGES->indent_cnt}px">&nbsp;{MESSAGES->indent}{marker}
+        {IF MESSAGES->sort PHORUM_SORT_STICKY}
+          <span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>
+        {/IF}
+        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
+          <span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>
+        {/IF}
+        {IF MESSAGES->moved}
+          <span class="PhorumListSubjPrefix">{LANG->MovedSubject}:</span>
+        {/IF}
+        <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>&nbsp;<span class="PhorumNewFlag">{MESSAGES->new}</span>
+      </td>
       {IF VIEWCOUNT_COLUMN}
-        <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
+        <td class="PhorumTableRow{altclass}" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
       {/IF}
-      <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" width="150">
+      <td class="PhorumTableRow{altclass}" nowrap="nowrap" width="150">
         {MESSAGES->linked_author}
       </td>
-      <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap" width="150">
+      <td class="PhorumTableRow{altclass} PhorumSmallFont" nowrap="nowrap" width="150">
         {MESSAGES->datestamp}
         {IF MODERATOR true}
           <br />

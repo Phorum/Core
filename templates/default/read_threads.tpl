@@ -46,11 +46,14 @@
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->WrittenBy}</th>
     <th class="PhorumTableHeader" align="left" nowrap>{LANG->Posted}</th>
   </tr>
-  <?php $rclass="Alt"; ?>
   {LOOP MESSAGES}
-    <?php if($rclass=="Alt") $rclass=""; else $rclass="Alt"; ?>
+    {IF altclass ""}
+      {VAR altclass "Alt"}
+    {ELSE}
+      {VAR altclass ""}
+    {/IF}
     <tr>
-      <td class="PhorumTableRow<?php echo $rclass;?>" style="padding-left: {MESSAGES->indent_cnt}px">
+      <td class="PhorumTableRow{altclass}" style="padding-left: {MESSAGES->indent_cnt}px">
         {marker}
         <?php
           if($PHORUM['TMP']['MESSAGES']['message_id'] == $PHORUM['DATA']['MESSAGE']['message_id']) {
@@ -65,10 +68,10 @@
         {IF MESSAGES->is_unapproved} ({LANG->UnapprovedMessage}){/IF}
       </td>
       {IF VIEWCOUNT_COLUMN}
-        <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
+        <td class="PhorumTableRow{altclass}" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
       {/IF}
-      <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap" width="150">{MESSAGES->linked_author}</td>
-      <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap" width="150">{MESSAGES->short_datestamp}</td>
+      <td class="PhorumTableRow{altclass}" nowrap="nowrap" width="150">{MESSAGES->linked_author}</td>
+      <td class="PhorumTableRow{altclass} PhorumSmallFont" nowrap="nowrap" width="150">{MESSAGES->short_datestamp}</td>
     </tr>
   {/LOOP MESSAGES}
 </table><br /><br />

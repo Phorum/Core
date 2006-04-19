@@ -18,12 +18,12 @@
   </tr>
   {LOOP MESSAGES}
     {IF altclass ""}
-        {var altclass "message-alt"}
+        {VAR altclass "Alt"}
     {ELSE}
-        {var altclass ""}
+        {VAR altclass ""}
     {/IF}
     <tr>
-      <td class="PhorumTableRow<?php echo $rclass;?>">
+      <td class="PhorumTableRow{altclass}">
         {marker}
         {IF MESSAGES->sort PHORUM_SORT_STICKY}<span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>{/IF}
         {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>{/IF}
@@ -34,11 +34,11 @@
         {IF MODERATOR true}<br /><span class="PhorumListModLink"><a href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>{IF MESSAGES->URL->MOVE}&nbsp;&#8226;&nbsp;<a href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a>{/IF}&nbsp;&#8226;&nbsp;<a href="{MESSAGES->URL->MERGE}">{LANG->MergeThread}</a></span>{/IF}
       </td>
       {IF VIEWCOUNT_COLUMN}
-        <td class="PhorumTableRow<?php echo $rclass;?>" align="center">{MESSAGES->viewcount}&nbsp;</td>
+        <td class="PhorumTableRow{altclass}" align="center">{MESSAGES->viewcount}&nbsp;</td>
       {/IF}
-      <td class="PhorumTableRow<?php echo $rclass;?>" align="center" nowrap="nowrap">{MESSAGES->thread_count}&nbsp;</td>
-      <td class="PhorumTableRow<?php echo $rclass;?>" nowrap="nowrap">{MESSAGES->linked_author}&nbsp;</td>
-      <td class="PhorumTableRow<?php echo $rclass;?> PhorumSmallFont" nowrap="nowrap">
+      <td class="PhorumTableRow{altclass}" align="center" nowrap="nowrap">{MESSAGES->thread_count}&nbsp;</td>
+      <td class="PhorumTableRow{altclass}" nowrap="nowrap">{MESSAGES->linked_author}&nbsp;</td>
+      <td class="PhorumTableRow{altclass} PhorumSmallFont" nowrap="nowrap">
         {MESSAGES->lastpost}&nbsp;<br />
         <span class="PhorumListSubText">
           <a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}
