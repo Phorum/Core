@@ -104,7 +104,7 @@ if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER") ) {
     // Backup display_errors setting.
     $orig = ini_get("display_errors");
-    ini_set("display_errors", 0);
+    @ini_set("display_errors", 0);
 
     // Load configuration.
     if (! include_once( "./include/db/config.php" )) {
@@ -137,7 +137,7 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
     }
 
     // Restore original display_errors setting.
-    ini_set("display_errors", $orig);
+    @ini_set("display_errors", $orig);
 } else {
     $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
 }
