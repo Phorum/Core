@@ -38,8 +38,9 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 * type: 
 
   The type of database. Typically 'mysql' (the only database type which
-  is officially supported by the Phorum distribution). Do not change this
-  value, unless you know what you are doing.
+  is officially supported by the Phorum distribution). If your PHP version
+  supports the mysqli interface, then you can also use 'mysqli'.
+  Do not change this value, unless you know what you are doing.
 
 * name:
 
@@ -78,12 +79,11 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 * mysql_use_ft (MySQL-only option):
 
   This field determines whether Phorum will use MySQL's full text 
-  algorithm for searching postings. If enabled, your database will
-  grow larger (because of an extra table for storing search data),
-  but searching for postings will be much faster in return.
-  You will have to disable this feature in case you are running a
-  database version prior to MySQL 4.0.18.
-
+  algorithm for searching postings. If enabled, searching for postings
+  will be much faster. You will have to disable this feature in case you
+  are running a database version prior to MySQL 4.0.18. Also disable 
+  it in case your hosting provider does not allow you to create
+  temporary tables in the database.
 */
 
 ?>
