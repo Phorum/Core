@@ -16,7 +16,7 @@ h4 {
 }
 
 #right-column h1 {
-    color: Gray;    
+    color: Gray;
     margin: 0 0 40px 0;
     font-size: 18px;
 }
@@ -144,4 +144,11 @@ h4 {
 #post-body {
     width: 99%;
     margin: 0 10px 0 10px;
+}
+
+.newflag {
+    font-family: Arial;
+    font-size: 10px;
+    font-weight: bold;
+    color: #CC0000;
 }

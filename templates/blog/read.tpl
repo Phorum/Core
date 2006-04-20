@@ -16,7 +16,7 @@
     $count++;
 ?>
 <div class="comment <?php echo $class;?>">
-<h1>{MESSAGES->subject}</h1>
+<h1>{MESSAGES->subject}<span class="newflag">{MESSAGES->new}</span></h1>
 <p>{MESSAGES->body}</p>
 <small>Post by {MESSAGES->linked_author} on {MESSAGES->datestamp}</small>
 {IF MODERATOR true}<small><a href="{MESSAGES->edit_url}">edit</a>&nbsp;|&nbsp;<a href="{MESSAGES->delete_url1}">delete</a></small>{/IF}
