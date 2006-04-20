@@ -5,6 +5,10 @@
     <!ENTITY part_preface SYSTEM "part_preface.xml">
     <!ENTITY part_installation SYSTEM "part_installation.xml">
     <!ENTITY part_templates SYSTEM "part_templates.xml">
+
+    <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
+    <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
+    <!ENTITY listofmodules '<ulink url="http://phorum.org/cgi-bin/trac.cgi/wiki/ListOfModules"/>'>
 ]>
 <book>
   &bookinfo;
