@@ -10,7 +10,7 @@
     <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
     <!ENTITY listofmodules '<ulink url="http://phorum.org/cgi-bin/trac.cgi/wiki/ListOfModules"/>'>
 ]>
-<book>
+<book lang="en">
   &bookinfo;
   &part_preface;
   &part_installation;
