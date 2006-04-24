@@ -184,11 +184,11 @@ function phorum_strip_body( $body )
 function phorum_filesize( $bytes )
 {
     if ($bytes >= 1024*1024) {
-        return round($bytes/1024/1024, 2) . "MB";
+        return round($bytes/1024/1024, 2) . "&nbsp;MB";
     } elseif ($bytes >= 1024) {
-        return round($bytes/1024, 1) . "kB";
+        return round($bytes/1024, 1) . "&nbsp;KB";
     } else {
-        return $bytes . ($bytes == 1 ? " byte" : " bytes");
+        return $bytes . ($bytes == 1 ? "&nbsp;byte" : "&nbsp;bytes");
     }
 }
 
