@@ -128,7 +128,6 @@ phorum_cache_put("rss", $cache_key, $data, 300);
 
 function create_rss_feed($channel, $items)
 {
-
     if(empty($items)){
         return;
     }
@@ -142,9 +141,9 @@ function create_rss_feed($channel, $items)
     $data.="<rss version=\"2.0\">\n";
     $data.="  <channel>\n";
     $data.="    <title>".htmlspecialchars(strip_tags($channel["name"]))."</title>\n";
-    $data.="    <link>$channel[url]</link>\n";
+    $data.="    <link>" . htmlspecialchars($channel["url"]) . "</link>\n";
     $data.="    <description><![CDATA[$channel[description]]]></description>\n";
-    $data.="    <language>$channel[language]</language>\n";
+    $data.="    <language>" . htmlspecialchars($channel["language"]) . "</language>\n";
 
     $data.="    <pubDate>$channel[pub_date]</pubDate>\n";
     $data.="    <lastBuildDate>$channel[pub_date]</lastBuildDate>\n";
@@ -155,12 +154,12 @@ function create_rss_feed($channel, $items)
 
     foreach($items as $item){
         $data.="    <item>\n";
-        $data.="      <title>".htmlspecialchars($item['headline'])."</title>\n";
+        $data.="      <title>".htmlspecialchars($item["headline"])."</title>\n";
         $data.="      <link>$item[url]</link>\n";
-        $data.="      <author>".htmlspecialchars($item['author'])."</author>\n";
-        $data.="      <description><![CDATA[".htmlspecialchars($item['description'])."]]></description>\n";
-        $data.="      <category>".htmlspecialchars(strip_tags($item['category']))."</category>\n";
-        $data.="      <guid isPermaLink=\"true\">$item[url]</guid>\n";
+        $data.="      <author>".htmlspecialchars($item["author"])."</author>\n";
+        $data.="      <description><![CDATA[".htmlspecialchars($item["description"])."]]></description>\n";
+        $data.="      <category>".htmlspecialchars(strip_tags($item["category"]))."</category>\n";
+        $data.="      <guid isPermaLink=\"true\">".htmlspecialchars($item["url"])."</guid>\n";
         $data.="      <pubDate>$item[pub_date]</pubDate>\n";
         $data.="    </item>\n";
     }
@@ -169,7 +168,6 @@ function create_rss_feed($channel, $items)
     $data.="</rss>\n";
 
     return $data;
-
 }
 
 
