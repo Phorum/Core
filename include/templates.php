@@ -141,7 +141,7 @@ function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array
             array_shift($tokens);
         }
         list ($page, $type) = phorum_templatevalue_to_php(NULL,$tokens[0]);
-        if ($type == "variable" || $type == "definition") continue;
+        if ($type == "variable" || $type == "constant") continue;
 
         // Since $value contains PHP code now, we have to resolve that
         // code into a real value.
@@ -220,9 +220,9 @@ function phorum_import_template_pass2($template)
             //     once on the page.
             //
             // {include ..} statements that use a string are handled in
-            // template pass 1 already. There static includes are fully
+            // template pass 1 already. There, static includes are fully
             // resolved into one single template. So here, only PHP
-            // defined values and template variables are handled.
+            // constants and template variables are handled.
             //
             case "include":
                 $include = "include";
@@ -245,7 +245,7 @@ function phorum_import_template_pass2($template)
                 $repl = str_replace("%", "include_once", PHORUM_DEPRECATED);
                 break;
 
-            // VAR, DEFINE and ASSIGN ----------------------------------------
+            // VAR and DEFINE ------------------------------------------------
 
             // Syntax:
             //     {var <variable> <value>}
@@ -485,8 +485,8 @@ function phorum_import_template_pass2($template)
             //     {<variable>}
             // Function:
             //     Echo the value for the <variable> on screen. The <variable>
-            //     can be (in order of importance) a PHP constant definition
-            //     value, a template loop variable or a template variable.
+            //     can be (in order of importance) a PHP constant value, a
+            //     template loop variable or a template variable.
             //
             default:
                 list ($value, $type) = phorum_templatevalue_to_php($loopvars, $tokens[0]);
@@ -639,7 +639,7 @@ function phorum_templatevariable_to_php($index, $varname)
  * This supports the following structures:
  * - integer (e.g. 1)
  * - string (e.g. "string value")
- * - definition (e.g. mydef when set by define("mydef","myval")
+ * - PHP constant (e.g. mydef when set by define("mydef","myval")
  * - variable (e.g. USER->username)
  *
  * @param $loopvars - The current array of loop variables.
@@ -657,9 +657,9 @@ function phorum_templatevalue_to_php($loopvars, $value)
     elseif (preg_match('!^(".*"|\'.*\')$!', $value)) {
         $type = "string";
     }
-    // PHP definitions
+    // PHP constants
     elseif (defined($value)) {
-        $type = "definition";
+        $type = "constant";
     }
     // Template variables
     else {
