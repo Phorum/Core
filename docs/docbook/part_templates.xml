@@ -360,7 +360,7 @@ The variable INTEGERVAR is {INTEGERVAR}.
 {VAR SOME_OPTION true}
 
 {IF SOME_OPTION true}
-  The options SOME_OPTION is true.
+  The option SOME_OPTION is true.
 {/IF} ]]></programlisting></example>
         </para>
       </section>
