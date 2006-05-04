@@ -62,7 +62,7 @@ foreach($subscr_array as $dummy => $data) {
         $data['forum'] = $forums_arr[$data['forum_id']]['name'];
     } 
 
-    $data['datestamp'] = phorum_date($PHORUM["short_date"], $data["modifystamp"]);
+    $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
     $data['readurl'] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
 
     if(!empty($data["user_id"])) {

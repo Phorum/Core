@@ -217,7 +217,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // stick some stuff from the settings into the DATA member
     $PHORUM["DATA"]["NAME"] = ( isset( $PHORUM["name"] ) ) ? $PHORUM["name"] : "";
-    $PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"] ) ) ? $PHORUM["description"] : "";
+    $PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"]  ) ) ? strip_tags( preg_replace("!\s+!", " ", $PHORUM["description"]) ) : "";
     $PHORUM["DATA"]["ENABLE_PM"] = ( isset( $PHORUM["enable_pm"] ) ) ? $PHORUM["enable_pm"] : "";
     if ( !empty( $PHORUM["DATA"]["HTML_TITLE"] ) && !empty( $PHORUM["DATA"]["NAME"] ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
@@ -238,31 +238,35 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
         // if moderator notifications are on and the person is a mod, lets find out if anything is new
 
-        $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
-        $PHORUM["user"]["NOTICE"]["USERS"] = false;
-        $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
+        // only bug the user on the list, index and cc pages
+        if(phorum_page=="index" || phorum_page=="list" || phorum_page=="cc"){
 
-        if ( $PHORUM["enable_moderator_notifications"] ) {
-            $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
-            if ( count( $forummodlist ) > 0 ) {
-                $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
-                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
-            }
-            if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
-                $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
-                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
-            }
-            if ( phorum_user_allow_moderate_group() ) {
-                $groups = phorum_user_get_moderator_groups();
-                if ( count( $groups ) > 0 ) {
-                    $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
-                    $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
+            $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
+            $PHORUM["user"]["NOTICE"]["USERS"] = false;
+            $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
+    
+            if ( $PHORUM["enable_moderator_notifications"] ) {
+                $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
+                if ( count( $forummodlist ) > 0 ) {
+                    $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
+                    $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
+                }
+                if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
+                    $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
+                    $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
+                }
+                if ( phorum_user_allow_moderate_group() ) {
+                    $groups = phorum_user_get_moderator_groups();
+                    if ( count( $groups ) > 0 ) {
+                        $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
+                        $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
+                    }
                 }
             }
+    
+            $PHORUM["user"]["NOTICE"]["SHOW"] = $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
         }
-
-        $PHORUM["user"]["NOTICE"]["SHOW"] = ( $PHORUM["enable_pm"] && phorum_page!="pm" && $PHORUM["user"]["new_private_messages"] ) || $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
-
+        
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
             if ( $PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON ) {
@@ -683,7 +687,7 @@ function phorum_build_common_urls()
 
     // those links are only needed in forums, not in folders
     if(isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["TOP"] = phorum_get_url( PHORUM_LIST_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );

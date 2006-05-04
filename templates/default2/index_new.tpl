@@ -10,9 +10,14 @@
     {VAR first_pass 0}
     <tr class="folder">
         {IF FORUMS->forum_id FORUMS->vroot}
-          <th style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/folder.png');" class="folder-name">{LANG->Forums}</th>
+            <th class="folder-name icon-folder">
+                {LANG->Forums}
+                {IF FORUMS->description}
+                    <small>{FORUMS->description}</small>
+                {/IF}
+            </th>
         {ELSE}
-          <th style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/folder.png');" class="folder-name"><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a></th>
+          <th class="folder-name icon-folder"><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a></th>
         {/IF}
         <th class="folder-threads">{LANG->Threads}</th>
         <th class="folder-posts">{LANG->Posts}</th>
@@ -23,8 +28,8 @@
         <td class="forum-name"><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>
             <p>{FORUMS->description}</p>
             <small>
-                {IF USER->user_id}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/tag_green.png');" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
-                {IF FORUMS->URL->RSS}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/feed.png');" href="{FORUMS->URL->RSS}">{LANG->RSS}</a>{/IF}
+                {IF USER->user_id}<a class="icon icon-tag-green" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
+                {IF FORUMS->URL->RSS}<a class="icon icon-feed" href="{FORUMS->URL->RSS}">{LANG->RSS}</a>{/IF}
             </small>
         </td>
         <td class="forum-threads" nowrap="nowrap">

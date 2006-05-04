@@ -159,6 +159,95 @@ function phorum_date( $picture, $ts )
 }
 
 /**
+ * Formats an epoch timestamp to a relative time phrase
+ *
+ * @param ts - The epoch timestamp to format
+ * @return phrase - The formatted phrase
+ */
+function phorum_relative_date($time)
+{
+	
+	$PHORUM = $GLOBALS["PHORUM"];
+
+    $today = strtotime(date('M j, Y'));
+
+    $reldays = ($time - $today)/86400;
+
+    if ($reldays >= 0 && $reldays < 1) {
+
+        return $PHORUM["DATA"]["LANG"]["relative_today"];
+
+    } else if ($reldays >= 1 && $reldays < 2) {
+
+        return $PHORUM["DATA"]["LANG"]["relative_tomorrow"];
+
+    } else if ($reldays >= -1 && $reldays < 0) {
+
+        return $PHORUM["DATA"]["LANG"]["relative_yesterday"];
+    }
+	
+
+    if (abs($reldays) < 30) {
+
+		// less than a month
+
+        $reldays = floor($reldays);
+        
+		if($reldays==1){
+			$return = $PHORUM["DATA"]["LANG"]["relative_one_day"];
+		} else {
+			$return = abs($reldays)." ".$PHORUM["DATA"]["LANG"]["relative_days"];
+		}
+
+      	$return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
+
+		return $return;
+
+    } elseif (abs($reldays) < 60) {
+	
+		// weeks ago
+
+        $relweeks = floor(abs($reldays/7));
+        
+        $return = $relweeks." ".$PHORUM["DATA"]["LANG"]["relative_weeks"];
+
+        $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
+
+		return $return;
+
+    } elseif (abs($reldays) < 365) {
+
+		// months ago
+
+        $relmonths = floor(abs($reldays/30));
+
+        $return = $relmonths." ".$PHORUM["DATA"]["LANG"]["relative_months"];
+        
+        $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
+
+		return $return;
+
+    } else {
+
+		// years ago
+
+        $relyears = floor(abs($reldays/365));
+
+        if($relyears==1){
+			$return = $PHORUM["DATA"]["LANG"]["relative_one_year"];
+        } else {
+            $return = $relyears." ".$PHORUM["DATA"]["LANG"]["relative_years"];
+        }
+        
+        $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
+
+		return $return;
+
+	}
+
+}
+
+/**
  * Strips HTML <tags> and BBcode [tags] from the body.
  *
  * @param body - The block of body text to strip

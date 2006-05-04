@@ -84,7 +84,7 @@ foreach($mod_forums as $forum => $rest) {
         $rows[$key]["approve_tree_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
         $rows[$key]["delete_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
         $PHORUM["forum_id"] = $oldforum;
-        $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
+        $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
 
         if ($row["user_id"]) {
             $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);

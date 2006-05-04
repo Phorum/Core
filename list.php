@@ -176,8 +176,8 @@ if ($PHORUM["threaded_list"]){
               }
         }
 
-        $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
-        $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date"], $row["modifystamp"]);
+        $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+        $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
         $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
 
         if($row["message_id"] == $row["thread"]){
@@ -247,8 +247,8 @@ if ($PHORUM["threaded_list"]){
     // loop through and read all the data in.
     foreach($rows as $key => $row){
 
-        $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date"], $row["modifystamp"]);
-        $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
+        $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
+        $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
         $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
         $rows[$key]["URL"]["NEWPOST"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
 
@@ -325,20 +325,20 @@ if ($PHORUM["threaded_list"]){
                     $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
                     $page_links[]="<a href=\"$url\">$x</a>";
                 }
-                $rows[$key]["pages"]=implode(",&nbsp;", $page_links);
+                $rows[$key]["pages"]=implode("&nbsp;", $page_links);
             } else {
                 $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=1");
                 $rows[$key]["pages"]="<a href=\"$url\">1</a>&nbsp;";
                 $rows[$key]["pages"].="...&nbsp;";
                 $pageno=$pages-2;
                 $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
-                $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>,&nbsp;";
+                $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
                 $pageno=$pages-1;
                 $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
-                $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>,&nbsp;";
+                $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
                 $pageno=$pages;
                 $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
-                $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>";
             }
         }
 
@@ -405,7 +405,7 @@ if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] =
         // add the edited-message to a post if its edited
         if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
             $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
-            $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date"],$row['meta']['edit_date']),  $editmessage);
+            $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
             $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
             $row["body"].="\n\n\n\n$editmessage";
         }

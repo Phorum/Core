@@ -1,51 +1,123 @@
-<div class="PhorumNavBlock" style="text-align: left;">
-  <div style="float: right;">
-    <span class="PhorumNavHeading">{LANG->GotoThread}:</span>&nbsp;<a class="PhorumNavLink" href="{URL->NEWERTHREAD}">{LANG->PrevPage}</a>&bull;<a class="PhorumNavLink" href="{URL->OLDERTHREAD}">{LANG->NextPage}</a>
-  </div>
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{IF LOGGEDIN true}<a class="PhorumNavLink" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{ELSE}<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
+<div class="nav">
+    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
+    <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
+    <a class="icon icon-printer" href="{URL->PRINTVIEW}" target="_blank">{LANG->PrintView}</a>
 </div>
-{IF PAGES}
-  {INCLUDE "paging"}
-{/IF}
+
 {LOOP MESSAGES}
-  {IF NOT MESSAGES->parent_id 0}
-    <a name="msg-{MESSAGES->message_id}"></a>
-  {/IF}
-  <div class="PhorumReadMessageBlock">
-    {IF MESSAGES->is_unapproved}
-      <div class="PhorumStdBlock">
-        <div class="PhorumReadBodyHead"><strong>{LANG->UnapprovedMessage}</strong></div>
-      </div>
+
+    {IF NOT MESSAGES->parent_id 0}
+        <a name="msg-{MESSAGES->message_id}"></a>
     {/IF}
-    <div class="PhorumStdBlock">
-      {IF MESSAGES->parent_id 0}
-        <div class="PhorumReadBodySubject">{MESSAGES->subject} <span class="PhorumNewFlag">{MESSAGES->new}</span></div>
-      {ELSE}
-        <div class="PhorumReadBodyHead"><strong>{MESSAGES->subject}</strong> <span class="PhorumNewFlag">{MESSAGES->new}</span></div>
-      {/IF}
-      <div class="PhorumReadBodyHead">{LANG->Postedby}: <strong>{MESSAGES->linked_author}</strong> ({MESSAGES->ip})</div>
-      <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGES->datestamp}</div><br />
-      <div class="PhorumReadBodyText">{MESSAGES->body}</div><br />
-      {IF ATTACHMENTS}
-        {IF MESSAGES->attachments}
-          {LANG->Attachments}:
-          {LOOP MESSAGES->attachments}
-            <a href="{MESSAGES->attachments->url}">{MESSAGES->attachments->name} ({MESSAGES->attachments->size})</a>&nbsp;&nbsp;
-          {/LOOP MESSAGES->attachments}
+
+    <div class="message">
+
+        <div class="generic">
+    
+            <table border="0" cellspacing="0">
+                <tr>
+                    <td width="100%">
+                        <div class="message-author icon-user">
+                            {MESSAGES->linked_author}
+                            {IF LOGGEDIN}
+                                {IF MESSAGES->URL->PM}
+                                    <small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]
+                                {/IF}
+                            {/IF}
+                        </div>
+                        <div class="message-subject">{MESSAGES->subject} <span class="new">{MESSAGES->new}</span></div>
+                        <div class="message-date">{MESSAGES->datestamp}</div>
+                    </td>
+                    <td class="message-user-info" nowrap="nowrap">
+                        {IF MESSAGES->user->admin}
+                            <strong>{LANG->Admin}</strong><br />
+                        {ELSEIF MESSAGES->moderator_post}
+                            <strong>{LANG->Moderator}</strong><br />
+                        {/IF}
+                        {IF MESSAGES->ip}
+                            {LANG->IP}: {MESSAGES->ip}<br />
+                        {/IF}
+                        {LANG->DateReg}: {MESSAGES->user->date_added}<br />
+                        {LANG->Posts}: {MESSAGES->user->posts}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    
+        {IF MODERATOR true}
+            <div class="message-moderation">
+                {IF MESSAGES->threadstart true}
+                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
+                    {IF MESSAGES->URL->MOVE}<a class="icon icon-move" href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
+                {ELSE}
+                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
+                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DelMessReplies}</a>
+                    <a class="icon icon-split" href="{MESSAGES->URL->SPLIT}">{LANG->SplitThread}</a>
+                {/IF}
+                {IF MESSAGES->is_unapproved}
+                    <a class="icon icon-accept" href="{MESSAGES->URL->APPROVE}">{LANG->ApproveMessage}</a>
+                {ELSE}
+                    <a class="icon icon-comment-delete" href="{MESSAGES->URL->HIDE}">{LANG->HideMessage}</a>
+                {/IF}
+                <a class="icon icon-comment-edit" href="{MESSAGES->URL->EDIT}">{LANG->EditPost}</a>
+            </div>
         {/IF}
-      {/IF}
-    </div>
-    {IF MODERATOR true}
-      <div class="PhorumReadNavBlock" style="text-align: left;">
-        <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{IF MESSAGES->threadstart true}<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->delete_url2}';">{LANG->DeleteThread}</a>&bull;{IF MESSAGES->move_url}<a class="PhorumNavLink" href="{MESSAGES->move_url}">{LANG->MoveThread}</a>&bull;{/IF}<a class="PhorumNavLink" href="{MESSAGES->merge_url}">{LANG->MergeThread}</a>&bull;{IF MESSAGES->closed false}<a class="PhorumNavLink" href="{MESSAGES->close_url}">{LANG->CloseThread}</a>{ELSE}<a class="PhorumNavLink" href="{MESSAGES->reopen_url}">{LANG->ReopenThread}</a>{/IF}{ELSE}<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url1}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->delete_url2}';">{LANG->DelMessReplies}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->split_url}">{LANG->SplitThread}</a>{/IF}{IF MESSAGES->is_unapproved}&bull;<a class="PhorumNavLink" href="{MESSAGES->approve_url}">{LANG->ApproveMessage}</a>{ELSE}&bull;<a class="PhorumNavLink" href="{MESSAGES->hide_url}">{LANG->HideMessage}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->edit_url}">{LANG->EditPost}</a>
-      </div>
-    {/IF}
-    <div class="PhorumReadNavBlock" style="text-align: left;">
-      <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGES->reply_url}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->quote_url}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGES->private_reply_url}&bull;<a class="PhorumNavLink" href="{MESSAGES->private_reply_url}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGES->follow_url}">{LANG->FollowThread}</a>&bull;<a class="PhorumNavLink" href="{MESSAGES->report_url}">{LANG->Report}</a>{/IF}{IF MESSAGES->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGES->edituser_url}">{LANG->EditPost}</a>{/IF}
-    </div>
-  </div>
+    
+    
+        <div class="message-body">
+            {IF MESSAGES->is_unapproved}
+                <div class="warning">
+                    {LANG->UnapprovedMessage}
+                </div>
+            {/IF}
+        
+            {MESSAGES->body}
+            <div class="message-options">
+                {IF MESSAGES->edit 1}
+                    {IF MODERATOR false}
+                        <a class="icon icon-comment-edit" href="{MESSAGES->URL->EDIT}">{LANG->EditPost}</a>
+                    {/IF}
+                {/IF}
+                <a class="icon icon-comment-add" href="{MESSAGES->URL->REPLY}">{LANG->Reply}</a>
+                <a class="icon icon-comment-add" href="{MESSAGES->URL->QUOTE}">{LANG->QuoteMessage}</a>
+                <a class="icon icon-exclamation" href="{MESSAGES->URL->REPORT}">{LANG->Report}</a>
+            </div>
+    
+            {IF MESSAGES->attachments}
+                <div class="attachments">
+                    {LANG->Attachments}:
+                    {LOOP MESSAGES->attachments}
+                        <a href="{MESSAGES->attachments->url}">{MESSAGES->attachments->name} ({MESSAGES->attachments->size})</a>&nbsp;&nbsp;
+                    {/LOOP MESSAGES->attachments}
+                </div>
+            {/IF}
+            
+            
+        </div>
+    </div>  
 {/LOOP MESSAGES}
-{IF PAGES}
-  {INCLUDE "paging"}
+
+<div class="nav-right">
+    <a class="icon icon-prev" href="{URL->NEWERTHREAD}">{LANG->NewerThread}</a>
+    <a class="icon icon-next" href="{URL->OLDERTHREAD}">{LANG->OlderThread}</a>
+</div>
+
+{IF USER->user_id}
+    <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
+    <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
 {/IF}
-<br /><br />
+{IF URL->RSS}
+    <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
+{/IF}
+{IF MODERATOR true}
+    <a class="icon icon-merge" href="{TOPIC->URL->MERGE}">{LANG->MergeThread}</a>
+    {IF TOPIC->closed false}
+        <a class="icon icon-close" href="{TOPIC->URL->CLOSE}">{LANG->CloseThread}</a>
+    {ELSE}
+        <a class="icon icon-open" href="{TOPIC->URL->REOPEN}">{LANG->ReopenThread}</a>
+    {/IF}
+{/IF}
+{INCLUDE "paging"}
+
+&nbsp;<br />&nbsp;<br />&nbsp;<br />

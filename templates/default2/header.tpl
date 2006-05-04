@@ -5,71 +5,123 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html lang="{LOCALE}">
 <head>
+
+<title>{HTML_TITLE}</title>
+
+{LANG_META}
+
 {IF PRINTVIEW} 
-<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="screen,print" />
+    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="screen,print" />
+    <meta name="robots" content="NOINDEX,NOFOLLOW"> 
 {ELSE}
-<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="print" />
 {/IF}
 {IF URL->RSS}
-<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{URL->RSS}" />
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{URL->RSS}" />
 {/IF}
 {IF URL->REDIRECT}
-<meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
+    <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
 {/IF}
-{LANG_META}
-<title>{HTML_TITLE}</title>
+
+{IF DESCRIPTION}
+    <meta name="description" content="{DESCRIPTION}">
+{/IF}
+
 {HEAD_TAGS}
-{IF PRINTVIEW} 
-<meta name="robots" content="NOINDEX,NOFOLLOW"> 
-{/IF}
+
 </head>
-<!-- Icons courtesy of FAMFAMFAM - http://www.famfamfam.com/lab/icons/silk/ -->
+<!--
+Some Icons courtesy of:
+    FAMFAMFAM - http://www.famfamfam.com/lab/icons/silk/
+    Tango Project - http://tango-project.org/
+-->
 <body>
 
 {! Please leave this div in your template   you can alter anything above this line }
 <div id="phorum">
 
-<div id="top">
 <div id="user-info">
 {IF USER->user_id}
+
 {LANG->Welcome}, {USER->username} <small>(<a href="{URL->LOGINOUT}">{LANG->LogOut}</a>)</small>
-<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_edit.png');" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>
+<a class="icon icon-user-edit" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>
 {IF USER->new_private_messages}
-<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_comment.png');" href="{URL->PM}">{LANG->NewPrivateMessages}</a>
+<strong><a class="icon icon-user-comment" href="{URL->PM}">{LANG->NewPrivateMessages}</a></strong>
 {ELSE}
-<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_comment.png');" href="{URL->PM}">{LANG->PrivateMessages}</a>
-{/IF}
-{IF USER->NOTICE->SHOW}
-{IF USER->NOTICE->MESSAGES}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/table_add.png');" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
-{IF USER->NOTICE->USERS}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_add.png');" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
-{IF USER->NOTICE->GROUPS}<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/group_add.png');" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
+<a class="icon icon-user-comment" href="{URL->PM}">{LANG->PrivateMessages}</a>
 {/IF}
 {ELSE}
 {LANG->Welcome}!
-<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/key_go.png');" href="{URL->LOGINOUT}">{LANG->LogIn}</a>
-<a style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/user_add.png');" href="{URL->REGISTERPROFILE}">{LANG->Register}</a>
+<a class="icon icon-key-go" href="{URL->LOGINOUT}">{LANG->LogIn}</a>
+<a class="icon icon-user-add" href="{URL->REGISTERPROFILE}">{LANG->Register}</a>
 {/IF}
 </div>
 
-{IF NAME}
-<h2><a href="{URL->INDEX}">{TITLE}</a> > </h2>
-<h1>{NAME}</h1>{! replace with path see http://www.phorum.org/cgi-bin/trac.cgi/ticket/213 }
+<div id="logo">
+
+<a href="{URL->BASE_URL}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/logo.png" width="111" height="25" alt="Phorum" border="0" /></a>
+</div>
+
+<div id="breadcrumb">
+
+{IF TOPIC->subject}
+    {! This is a read page }
+    <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->LIST}">{NAME}</a> &gt;
+{ELSEIF NAME}
+    {! This is a forum page other than a read page or a folder page }
+    <a href="{URL->INDEX}">{TITLE}</a> &gt;
 {ELSE}
-<h1>{TITLE}</h1>
+    {! This is the index }
+    &nbsp;
 {/IF}
-<div id="description">{DESCRIPTION}&nbsp;</div>
 
 </div>
 
-<div id="search-area" style="background-image: url('{URL->BASE_URL}/templates/{TEMPLATE}/images/zoom.png');">
+<div id="top-right">
+    <div id="search-area" class="icon-zoom">
+        <form id="header-search-form" action="{URL->SEARCH}" method="get">
+            <input type="hidden" name="forum_id" value="{FORUM_ID}" />
+            <input type="hidden" name="match_forum" value="ALL" />
+            <input type="hidden" name="match_dates" value="365" />
+            <input type="hidden" name="match_type" value="ALL" />
+            <input type="text" name="search" size="20" value="" class="styled-text" /><input type="submit" value="{LANG->Search}" class="styled-button" /><br />
+            <a href="{URL->SEARCH}">{LANG->Advanced}</a>
+        </form>
+    </div>
+</div>
+
+<div id="top">
+
+{IF MESSAGE->subject}
+    {! This is a threaded read page }
+    <h1>{MESSAGE->subject}</h1>
+{ELSEIF TOPIC->subject}
+    {! This is a read page }
+    <h1>{TOPIC->subject}</h1>
+    <div id="description">{LANG->Postedby} {TOPIC->linked_author}&nbsp;</div>
+{ELSEIF NAME}
+    {! This is a forum page other than a read page or a folder page }
+    <h1>{NAME}</h1>{! replace with path see http://www.phorum.org/cgi-bin/trac.cgi/ticket/213 }
+    <div id="description">{DESCRIPTION}&nbsp;</div>
+{ELSE}
+    {! This is the index }
+    <h1>{TITLE}</h1>
+    <div id="description">{DESCRIPTION}&nbsp;</div>
+{/IF}
+
+
+
+</div>
+   
+{IF USER->NOTICE->SHOW}
+<div class="attention">
+<h4>{LANG->NeedsAttention}</h4>
+{IF USER->NOTICE->MESSAGES}<a class="icon icon-table-add" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
+{IF USER->NOTICE->USERS}<a class="icon icon-user-add" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
+{IF USER->NOTICE->GROUPS}<a class="icon icon-group-add" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
+</div>
+{/IF}
+
 {INCLUDE "paging"}
-<form id="header-search-form" action="{URL->SEARCH}" method="get">
-<input type="hidden" name="forum_id" value="{FORUM_ID}" />
-<input type="hidden" name="match_forum" value="ALL" />
-<input type="hidden" name="match_dates" value="365" />
-<input type="hidden" name="match_type" value="ALL" />
-<input type="text" name="search" size="20" value="" class="styled-text" /><input type="submit" value="{LANG->Search}" class="styled-button" /> <a href="{URL->SEARCH}">{LANG->Advanced}</a>
-</form>
-</div>
 

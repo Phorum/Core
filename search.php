@@ -129,7 +129,7 @@ if(!empty($phorum_search)){
             // strip HTML & BB Code
             $body = phorum_strip_body($arr["rows"][$key]["body"]);
             $arr["rows"][$key]["short_body"] = substr($body, 0, 200);
-            $arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
+            $arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
             $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
             $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
 

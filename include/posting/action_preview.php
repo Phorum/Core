@@ -77,7 +77,7 @@ if ($mode != "edit" && $PHORUM["DATA"]["LOGGEDIN"]) {
 }
 
 // Format datestamp. 
-$previewmessage["datestamp"] = phorum_date($PHORUM["short_date"], $previewmessage["datestamp"]);
+$previewmessage["datestamp"] = phorum_date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
    
 $PHORUM["DATA"]["PREVIEW"] = $previewmessage;
     

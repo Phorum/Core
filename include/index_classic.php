@@ -29,7 +29,7 @@ foreach( $forums as $forum ) {
 
     if ( $forum["folder_flag"] ) {
 
-        $forum["url"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
+        $forum["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
 
     } else {
 
@@ -46,7 +46,7 @@ foreach( $forums as $forum ) {
         } 
 
         if ( $forum["message_count"] > 0 ) {
-            $forum["last_post"] = phorum_date( $PHORUM["long_date"], $forum["last_post_time"] );
+            $forum["last_post"] = phorum_date( $PHORUM["long_date_time"], $forum["last_post_time"] );
         } else {
             $forum["last_post"] = "&nbsp;";
         } 

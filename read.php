@@ -22,7 +22,6 @@ include_once("./common.php");
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
-
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
 
@@ -157,7 +156,7 @@ if(empty($PHORUM["args"][1])) {
 
     $thread = (int)$PHORUM["args"][1];
     $message_id = (int)$PHORUM["args"][2];
-    if($PHORUM["args"][3]=="printview") {
+    if(isset($PHORUM["args"][3]) && $PHORUM["args"][3]=="printview") {
       $PHORUM["DATA"]["PRINTVIEW"]=1;
     } else {
       $PHORUM["DATA"]["PRINTVIEW"]=0;
@@ -182,6 +181,11 @@ if(!$PHORUM["threaded_read"]) {
 // Get the thread
 $data = phorum_db_get_messages($thread,$page);
 
+if($page>1){
+    $first_message = phorum_db_get_message($thread);
+    $data["users"][]=$first_message["user_id"];
+    $data[$first_message["message_id"]] = $first_message;
+}
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
@@ -300,6 +304,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // assign user data to the row
         if($row["user_id"] && isset($user_info[$row["user_id"]])){
+			if(is_numeric($user_info[$row["user_id"]]["date_added"])){
+				$user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);	
+			}
+            if(strlen($user_info[$row["user_id"]]["posts"])>3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
+                $user_info[$row["user_id"]]["posts"] = number_format($user_info[$row["user_id"]]["posts"], 0, "", $PHORUM["thous_sep"]);	
+            }
+            
             $row["user"]=$user_info[$row["user_id"]];
             unset($row["user"]["password"]);
             unset($row["user"]["password_tmp"]);
@@ -313,21 +324,21 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         // all stuff that makes only sense for moderators or admin
         if($PHORUM["DATA"]["MODERATOR"]) {
 
-            $row["delete_url1"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-            $row["delete_url2"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-            $row["edit_url"]=phorum_get_url(PHORUM_POSTING_URL, "moderation", $row["message_id"]);
-            $row["split_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_SPLIT_THREAD, $row["message_id"]);
+            $row["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
+            $row["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
+            $row["URL"]["EDIT"]=phorum_get_url(PHORUM_POSTING_URL, "moderation", $row["message_id"]);
+            $row["URL"]["SPLIT"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_SPLIT_THREAD, $row["message_id"]);
             if($row['is_unapproved']) {
-              $row["approve_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"]);
+              $row["URL"]["APPROVE"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"]);
             } else {
-              $row["hide_url"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $row["message_id"]);
+              $row["URL"]["HIDE"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $row["message_id"]);
             }
             if($build_move_url) {
-                $row["move_url"] = $URLS["move_url"];
+                $row["URL"]["MOVE"] = $URLS["move_url"];
             }
-            $row["merge_url"] = $URLS["merge_url"];
-            $row["close_url"] = $URLS["close_url"];
-            $row["reopen_url"] = $URLS["reopen_url"];
+            $row["URL"]["MERGE"] = $URLS["merge_url"];
+            $row["URL"]["CLOSE"] = $URLS["close_url"];
+            $row["URL"]["REOPEN"] = $URLS["reopen_url"];
         }
 
         // allow editing only if logged in, allowed for forum, the thread is open,
@@ -335,27 +346,25 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         if($PHORUM["user"]["user_id"]==$row["user_id"] && phorum_user_access_allowed(PHORUM_USER_ALLOW_EDIT) &&
             !$thread_is_closed &&($PHORUM["user_edit_timelimit"] == 0 || $row["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())) {
             $row["edit"]=1;
-            if($PHORUM["DATA"]["MODERATOR"]) {
-                $row["edituser_url"]=$row["edit_url"];
-            } else {
-                $row["edituser_url"]=phorum_get_url(PHORUM_POSTING_URL, "edit", $row["message_id"]);
+            if(!$PHORUM["DATA"]["MODERATOR"]) {
+                $row["URL"]["EDIT"]=phorum_get_url(PHORUM_POSTING_URL, "edit", $row["message_id"]);
             }
         }
 
         // this stuff is used in threaded and non threaded.
-        $row["short_datestamp"] = phorum_date($PHORUM["short_date"], $row["datestamp"]);
-        $row["datestamp"] = phorum_date($PHORUM["long_date"], $row["datestamp"]);
-        $row["url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
-        $row["reply_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"]);
-        $row["quote_url"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"], "quote=1");
-        $row["report_url"] = phorum_get_url(PHORUM_REPORT_URL, $row["message_id"]);
-        $row["follow_url"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
+        $row["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+        $row["datestamp"] = phorum_date($PHORUM["long_date_time"], $row["datestamp"]);
+        $row["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
+        $row["URL"]["REPLY"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"]);
+        $row["URL"]["QUOTE"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"], "quote=1");
+        $row["URL"]["REPORT"] = phorum_get_url(PHORUM_REPORT_URL, $row["message_id"]);
+        $row["URL"]["FOLLOW"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
 
         // can only send private replies if the author is a registered user
         if ($PHORUM["enable_pm"] && $row["user_id"]) {
-            $row["private_reply_url"] = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=".$row["message_id"]);
+            $row["URL"]["PM"] = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=".$row["message_id"]);
         } else {
-            $row["private_reply_url"] = false;
+            $row["URL"]["PM"] = false;
         }
 
         // check if its the first message in the thread
@@ -363,6 +372,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $row["threadstart"] = true;
         } else{
             $row["threadstart"] = false;
+        }
+
+        // check if the default reply subject was used
+        if($row["subject"] == "Re: ".$data[$thread]["subject"]){
+            $row["default_reply"] = true;
+        } else {
+            $row["default_reply"] = false;
         }
 
         // should we show the signature?
@@ -379,7 +395,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             // add the edited-message to a post if its edited
             if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
                 $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
-                $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date"],$row['meta']['edit_date']),  $editmessage);
+                $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
                 $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
                 $row["body"].="\n\n\n\n$editmessage";
             }
@@ -387,13 +403,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
 
         if(!empty($row["user_id"])) {
-            $row["profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
+            $row["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
             // we don't normally put HTML in this code, but this makes it easier on template builders
-            $row["linked_author"] = "<a href=\"".$row["profile_url"]."\">$row[author]</a>";
+            $row["linked_author"] = "<a href=\"".$row["URL"]["PROFILE"]."\">$row[author]</a>";
         } elseif(!empty($row["email"])) {
-            $row["email_url"] = phorum_html_encode("mailto:$row[email]");
+            $row["URL"]["EMAIL"] = phorum_html_encode("mailto:$row[email]");
             // we don't normally put HTML in this code, but this makes it easier on template builders
-            $row["linked_author"] = "<a href=\"".$row["email_url"]."\">".htmlspecialchars($row["author"])."</a>";
+            $row["linked_author"] = "<a href=\"".$row["URL"]["EMAIL"]."\">".htmlspecialchars($row["author"])."</a>";
         } else {
             $row["linked_author"] = htmlspecialchars($row["author"]);
         }
@@ -410,7 +426,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 }
 
             } else {
-                $row["ip"]=$PHORUM["DATA"]["LANG"]["IPLogged"];
+                $row["ip"]="";
             }
         }
 
@@ -462,12 +478,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             }
 
 
-            $messages[$key]["next_url"] = $PHORUM["DATA"]["URL"]["NEWERTHREAD"];
+            $messages[$key]["URL"]["NEXT"] = $PHORUM["DATA"]["URL"]["NEWERTHREAD"];
             if(empty($last_key)) {
-                $messages[$key]["prev_url"] = $PHORUM["DATA"]["URL"]["OLDERTHREAD"];
+                $messages[$key]["URL"]["PREV"] = $PHORUM["DATA"]["URL"]["OLDERTHREAD"];
             } else{
-                $messages[$key]["prev_url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $last_key);
-                $messages[$last_key]["next_url"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
+                $messages[$key]["URL"]["PREV"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $last_key);
+                $messages[$last_key]["URL"]["NEXT"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
             }
 
             $last_key = $key;
@@ -486,6 +502,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $messages = phorum_format_messages($messages);
 
     // set up the data
+
+    // this is the message that is the first in the thread
+    $PHORUM["DATA"]["TOPIC"] = $messages[$thread];
+    if($page>1){
+        unset($messages["thread"]);
+    }
+    
+    // this is the message that was referenced by the message_id in the url
     $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
 
     // we need to remove the thread-starter from the data if we are not on the first page
@@ -495,15 +519,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["MESSAGES"] = $messages;
 
-
-    // alter the HTML_TITLE
-    if(!empty($PHORUM["DATA"]["HTML_TITLE"])){
-        $PHORUM["DATA"]["HTML_TITLE"].=htmlentities(PHORUM_SEPARATOR, ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );;
-    }
     // No htmlentities() needed. The subject is already escaped.
     // Strip HTML tags from the HTML title. There might be HTML in
     // here, because of modules adding images and formatting.
-    $PHORUM["DATA"]["HTML_TITLE"] .= trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $threadsubject));
+    $PHORUM["DATA"]["HTML_TITLE"] = trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $threadsubject));
+    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($messages[$message_id]["body"],0,300))));
 
     // include the correct template
 

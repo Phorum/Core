@@ -3,43 +3,75 @@
 
 #phorum {
     font-family: Arial;
-    font-size: 13px;
+    font-size: medium;
+    max-width: 900px;
+    text-align: left;
+    margin: auto;
 }
 
 /* HTML level styles */
 
 #phorum td {
-    font-size: 13px;
+    font-size: medium;
 }
 
 #phorum a {
-    color: #3D6F3D;
+    color: #355F35;
 }
 
 #phorum a:hover {
     color: #709CCC;
 }
 
+#phorum a.icon {
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+    padding: 4px 10px 2px 21px;
+    font-size: small;
+    font-weight: normal;
+}
+
 #phorum h1 {
-    margin: 0;
-    font-size: 18px;
+    margin: 5px 0 0 0;
+    font-size: x-large;
 }
 
 #phorum h2 {
     margin: 0;
-    font-size: 11px;
+    font-size: small;
     font-weight: normal;
 }
 
+#phorum h4 {
+    margin: 0 0 5px 0;
+}
+
+#phorum hr {
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #CBCE99;
+}
+
 #phorum small {
-    font-size: 11px;
+    font-size: small;
 }
 
 /* global styles */
 
+#phorum div.generic {
+    padding: 8px;
+    border: 1px solid #CBCE99;
+    background-color: #EEEFDE;
+}
+
+#phorum div.generic-lower {
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
 #phorum div.paging {
-    padding: 4px 0 4px 0;
     float: right;
+    font-size: small;
 }
 
 #phorum div.paging a {
@@ -56,44 +88,94 @@
     margin: 0 4px 0 4px;
 }
 
+/*
 #phorum input.styled-text {
     font-family: Arial;
-    border-color: #CFD0C1;
+    border-color: #EEEFDE;
 }
 
 #phorum input.styled-button {
     font-family: Arial;
     font-weight: bold;
     background-color: #EEEFDE;
-    border-color: #CFD0C1;
-    color: #3D6F3D;
+    border-color: #EEEFDE;
+    color: #355F35;
     padding: 2px 0 2px 0;
     
+}
+*/
+
+#phorum div.nav {
+    font-size: small;
+    margin: 0 0 5px 0;
+}
+
+#phorum div.nav a {
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+    padding: 4px 10px 2px 21px;
+}
+
+#phorum div.nav-right {
+    float: right;
+}
+
+#phorum div.warning {
+    border: 1px solid #A76262;
+    background-color: #FFD1D1;
+    padding: 8px;
+    margin-bottom: 8px;
 }
 
 /* header styles */
 
+#phorum #logo {
+    height: 46px;
+    background-color: #78ad78;
+    vertical-align: bottom;
+    background-image: url('../images/top-background.png');    
+}
+
+#phorum #logo img {
+    margin: 16px 0 0px 16px;
+}
+
 #phorum #top {
-    padding: 8px;
-    border: 1px solid #CFD0C1;
-    background-color: #F9FAF2;
+    padding: 8px 8px 8px 0;
+    margin: 0 16px 16px 0;
+}
+
+#phorum #top-right {
+    float: right;
+    text-align: right;
 }
 
 #phorum #description {
-    margin: 8px;
+    margin: 8px 8px 0 0;
+    padding-right: 32px;
+    font-size: small;
+}
+
+#phorum #breadcrumb {
+    border: 1px solid #b6b6b6;
+    border-top: 0;
+    background-color: #dedede;    
+    padding: 5px;
+    font-size: small;
 }
 
 #phorum #user-info {
-    float: right;
+    font-size: small;
+    margin: 0 0 4px 0;
+    text-align: right;
 }
 
 #phorum #user-info a {
-    margin: 0;
-    padding: 2px 2px 2px 21px;
-    text-decoration: none;
+    margin: 0 0 0 10px;
+    padding: 4px 0 2px 21px;
+    
     background-repeat: no-repeat;
     background-position: 1px 2px;
-    display: block;
 }
 
 #phorum #user-info img {
@@ -105,6 +187,25 @@
     margin: 0;
     padding: 0;
     display: inline;
+    font-size: x-small;
+}
+
+#phorum div.attention {
+    padding: 8px 8px 8px 64px;
+    border: 1px solid #A76262;
+    background-image: url('../images/dialog-warning.png');    
+    background-color: #FFD1D1;
+    background-repeat: no-repeat;
+    background-position: 8px 8px;
+    margin: 8px 0 8px 0;
+}
+
+#phorum div.attention a {
+    color: #68312C;
+    padding: 2px 2px 2px 21px;
+    display: block;    
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
 }
 
 #phorum #right-nav {
@@ -112,13 +213,10 @@
 }
 
 #phorum #search-area {
-    clear: both;
     padding: 8px 8px 8px 32px;
-    background-color: #F9FAF2;
     background-repeat: no-repeat;
     background-position: 8px 12px;
-    border: 1px solid #CFD0C1;
-    margin: 8px 0 8px 0;
+    margin: 0 16px 8px 0;
 }
 
 
@@ -127,7 +225,7 @@
 }
 
 #phorum #header-search-form a {
-    font-size: 10px;
+    font-size: x-small;
 }
 
 
@@ -135,55 +233,62 @@
 
 #phorum #forums {
     width: 100%;
+    margin-bottom: 4px;
 }
 
 #phorum #forums td.break{
-    height: 26px;
+    height: 16px;
 }
 
 #phorum #forums th  {
     background-color: #EEEFDE; 
-    border-bottom: 1px solid #CFD0C1; 
-    border-top: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
+    border-top: 1px solid #CBCE99; 
     text-align: left;
+    font-size: small;
 }
 
 #phorum #forums th.folder-name  {
     background-repeat: no-repeat;
     background-position: 5px 4px;
-    font-size: 16px;
+    font-size: medium;
     padding: 4px 4px 4px 25px;
-    border-left: 1px solid #CFD0C1;    
+    border-left: 1px solid #CBCE99;    
+}
+
+#phorum #forums th.folder-name small {
+    font-size: x-small;
 }
 
 #phorum #forums th.folder-last-post  {
-    border-right: 1px solid #CFD0C1;    
-}
+    border-right: 1px solid #CBCE99;    
+    }
 
 #phorum #forums th.folder-name a {
-    text-decoration: none;
+    
 }
 
 #phorum #forums td.forum-name{
     padding: 8px 16px 8px 8px;
-    font-size: 16px;
+    font-size: large;
     font-weight: bold;
-    border-bottom: 1px solid #CFD0C1; 
-    border-left: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
+    border-left: 1px solid #CBCE99; 
 }
 
 #phorum #forums td.forum-name a {
-    text-decoration: none;
+    
 }
 
 #phorum #forums td.forum-name p{
-    font-size: 13px;
+    font-size: small;
     font-weight: normal;
     line-height: 16px;
+    margin: 2px 0 16px 0;
 }
 
 #phorum #forums td.forum-name small{
-    font-size: 11px;
+    font-size: small;
 }
 
 #phorum #forums td.forum-name small a {
@@ -196,20 +301,23 @@
 #phorum #forums td.forum-threads{
     width: 120px;
     padding: 8px 8px 8px 0;
-    border-bottom: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
+    font-size: small;
 }
 
 #phorum #forums td.forum-posts{
     width: 120px;
     padding: 8px 8px 8px 0;
-    border-bottom: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
+    font-size: small;
 }
 
 #phorum #forums td.forum-last-post{
     width: 120px;
     padding: 8px 8px 8px 0;
-    border-bottom: 1px solid #CFD0C1; 
-    border-right: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
+    border-right: 1px solid #CBCE99; 
+    font-size: small;
 }
 
 
@@ -217,14 +325,14 @@
     background-color: #EEEFDE; 
     background-repeat: no-repeat;
     background-position: 5px 4px;
-    font-size: 16px;
+    font-size: large;
     font-weight: bold;
     padding: 4px 4px 4px 25px;
-    border: 1px solid #CFD0C1;    
+    border: 1px solid #CBCE99;    
 }
 
 #phorum #folders {
-    border: 1px solid #CFD0C1;    
+    border: 1px solid #CBCE99;    
     border-top: 0;
     border-bottom: 0;
     margin-bottom: 26px;
@@ -232,17 +340,17 @@
 
 #phorum #folders div.folder {
     padding: 8px;
-    font-size: 16px;
+    font-size: large;
     font-weight: bold;
-    border-bottom: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
 }
 
 #phorum #folders div.folder a {
-    text-decoration: none;
+    
 }
 
 #phorum #folders div.folder p{
-    font-size: 13px;
+    font-size: medium;
     font-weight: normal;
     line-height: 16px;
 }
@@ -250,28 +358,17 @@
 
 /* Message list styles */
 
-#phorum #list-nav {
-    font-size: 11px;
-    margin: 0 0 5px 0;
-}
-
-#phorum #list-nav a {
-    background-repeat: no-repeat;
-    background-position: 1px 2px;
-    padding: 4px 10px 1px 21px;
-    text-decoration: none;
-}
-
 #phorum #messages {
-    border: 1px solid #CFD0C1;
+    border: 1px solid #CBCE99;
     width: 100%;
 }
 
 #phorum #messages th {
     text-align: left;
-    background-color: #EEEFDE;    
+    background-color: #D6D9AF;    
     padding: 4px;
-    border-bottom: 1px solid #CFD0C1; 
+    border-bottom: 1px solid #CBCE99; 
+    font-size: small;
 }
 
 #phorum #messages th.messages-views {
@@ -293,18 +390,30 @@
 }
 
 #phorum #messages td.message-alt {
-    background-color: #F9FAF2;    
+    background-color: #F0F2DE;    
 }
 
 #phorum #messages td.message-threaded-alt {
     background-color: #EEEFDE;    
-    border-bottom: 1px solid #CFD0C1;
+    border-bottom: 1px solid #CBCE99;
+}
+
+#phorum #messages td.message-icon {
+    padding: 8px;
 }
 
 #phorum #messages td.message-subject {
+    padding: 8px 0 8px 0;
+}
+
+#phorum #messages td.message-subject-threaded img, #phorum #messages td.message-subject img {
+    vertical-align: bottom;
+}
+
+#phorum #messages td.message-subject-threaded a {
     background-repeat: no-repeat;
-    background-position: 6px 13px;
-    padding: 4px 0 1px 27px;
+    background-position: 8px 8px;
+    padding: 8px 0 8px 32px;
 }
 
 #phorum #messages td.message-thread-count {
@@ -312,39 +421,43 @@
     padding-left: 4px;
     padding-right: 8px;
     text-align: center;    
+    font-size: small;
 }
 
 #phorum #messages td.message-view-count {
     width: 80px;
     padding-left: 4px;    
     text-align: center;    
+    font-size: small;
 }
 
 #phorum #messages td.message-author {
     width: 120px;
     padding-left: 4px;    
+    font-size: small;
 }
 
 #phorum #messages td.message-last-post {
     width: 120px;
     padding: 0 8px 0 4px;    
-    font-size: 11px;    
+    font-size: small;    
 }
 
 #phorum #messages td.message-posted {
     width: 120px;
     padding: 0 8px 0 4px;    
+    font-size: small;
 }
 
 #phorum #messages td.message-actions {
     width: 100px;
-    font-size: 11px;
+    font-size: small;
     text-align: right;
 }
 
 #phorum #messages td.message-actions a {
     margin-right: 4px;
-    text-decoration: none;
+    
 }
 
 #phorum #messages a.list-threaded-subject {
@@ -357,13 +470,250 @@
     font-weight: bold;
 }
 
+/* Read styles */
+
+#phorum td.message-user-info {
+	float: right;
+	font-size: small;
+}
+
+#phorum div.message-author {
+    background-repeat: no-repeat;
+    background-position: 0px 2px;
+    padding: 0px 0 0px 21px;
+	font-size: large;
+	font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#phorum div.message-author small {
+    font-size: x-small;
+    font-weight: normal;
+    margin: 0 0 0 16px;
+}
+
+#phorum div.message-subject {
+	font-weight: bold;
+    font-size: small;
+}
+
+#phorum div.message-body {
+	padding: 16px;
+    margin: 0 0 16px 0;
+    border: 1px solid #CBCE99;
+    border-top: 0;
+}
+
+#phorum div.attachments {
+    margin-top: 8px;
+	padding: 16px;
+    border: 1px solid #CBCE99;
+}
+
+#phorum div.attachments a {
+    display: block;
+}
+
+#phorum div.message-date {
+	font-size: small;
+}
+
+#phorum div.message-moderation {
+    font-size: small;
+    border: 1px solid #CBCE99;
+    border-top: 0;
+    padding: 6px;
+}
+
+#phorum div.message-options {
+    text-align: right;
+    font-size: small;
+}
+
+
 /* Footer styles */
 
 #phorum #footer-plug {
     margin-top: 26px;
-    font-size: 10px;
+    font-size: x-small;
     text-align: center;
 }
+
+
+/* Icon Styles */
+
+.icon-accept {
+    background-image: url('../images/accept.png');
+}
+
+.icon-bell {
+    background-image: url('../images/bell.png');
+}
+
+.icon-bullet-black {
+    background-image: url('../images/bullet_black.png');
+}
+
+.icon-bullet-go {
+    background-image: url('../images/bullet_go.png');
+}
+
+.icon-cancel {
+    background-image: url('../images/cancel.png');
+}
+
+.icon-close {
+    background-image: url('../images/lock.png');
+}
+
+.icon-comment {
+    background-image: url('../images/comment.png');
+}
+
+.icon-comment-add {
+    background-image: url('../images/comment_add.png');
+}
+
+.icon-comment-edit {
+    background-image: url('../images/comment_edit.png');
+}
+
+.icon-comment-delete {
+    background-image: url('../images/comment_delete.png');
+}
+
+.icon-delete {
+    background-image: url('../images/delete.png');
+}
+
+.icon-exclamation {
+    background-image: url('../images/exclamation.png');
+}
+
+.icon-feed {
+    background-image: url('../images/feed.png');
+}
+
+.icon-flag-red {
+    background-image: url('../images/flag_red.png');
+}
+
+.icon-folder {
+    background-image: url('../images/folder.png');
+}
+
+.icon-group-add {
+    background-image: url('../images/group_add.png');
+}
+
+.icon-key-go {
+    background-image: url('../images/key_go.png');
+}
+
+.icon-list {
+    background-image: url('../images/text_align_justify.png');
+}
+
+.icon-merge {
+    background-image: url('../images/arrow_join.png');
+}
+
+.icon-move {
+    background-image: url('../images/page_go.png');
+}
+
+.icon-next {
+    background-image: url('../images/control_next.png');
+}
+
+.icon-note-add {
+    background-image: url('../images/note_add.png');
+}
+
+.icon-open {
+    background-image: url('../images/lock_open.png');
+}
+
+.icon-page-go {
+    background-image: url('../images/page_go.png');
+}
+
+.icon-prev {
+    background-image: url('../images/control_prev.png');
+}
+
+.icon-printer {
+    background-image: url('../images/printer.png');
+}
+
+.icon-split {
+    background-image: url('../images/arrow_divide.png');
+}
+
+.icon-table-add {
+    background-image: url('../images/table_add.png');
+}
+
+.icon-tag-green {
+    background-image: url('../images/tag_green.png');
+}
+
+.icon-user {
+    background-image: url('../images/user.png');
+}
+
+.icon-user-add {
+    background-image: url('../images/user_add.png');
+}
+
+.icon-user-comment {
+    background-image: url('../images/user_comment.png');
+}
+
+.icon-user-edit {
+    background-image: url('../images/user_edit.png');
+}
+
+.icon-zoom {
+    background-image: url('../images/zoom.png');
+}
+
+ 
+.icon-information {
+    background-image: url('../images/information.png');
+}
+
+
+
+
+
+
+
+/*   BBCode styles  */
+
+#phorum blockquote.bbcode {
+    font-size: small;
+    margin: 0 0 0 10px;
+}
+
+#phorum blockquote.bbcode div {
+    margin: 0;
+    padding: 5px;
+    border: 1px solid #808080;
+}
+
+#phorum blockquote.bbcode strong {
+    font-style: italic;
+    margin: 0 0 3px 0;
+}
+
+#phorum pre.bbcode {
+    border: 1px solid #C4C6A2;
+    background-color: #FEFFEC;
+    padding: 8px;
+}
+
+
 
 
 
@@ -387,7 +737,7 @@
 .PDDiv {
     color: Black;
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     width: 100%;
     text-align: left;
 }
@@ -399,7 +749,7 @@
 .PDDiv td, .PDDiv th {
     color: Black;
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
 }
 
 .PDDiv img {
@@ -408,7 +758,7 @@
 }
 
 .PDDiv a {
-    text-decoration: none;
+    
 }
 
 .PDDiv a:hover {
@@ -419,7 +769,7 @@
     background-color: White;
     color: Black;
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
 
     vertical-align: middle;
 
@@ -436,7 +786,7 @@
     border: 1px dotted #808080;
     background-color: #EEEFDE;
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     vertical-align: middle;
 }
 
@@ -447,89 +797,6 @@
 
 /* new styles */
 
-#phorum-index {
-    width: 100%;
-    border: 1px solid #808080;
-    border-bottom-width: 0px;
-    text-align: left;
-}
-
-#phorum-index th {
-    border-bottom: 1px solid #808080;
-    background-color: #EEEFDE;
-    padding: 3px 0 3px 0;
-}
-
-#phorum-index td {
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    background-color: White;
-    padding: 3px 0 3px 0;
-    border-bottom: 1px solid #808080;
-}
-
-#phorum-index th.forum-name {
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    font-size: 14px;
-    padding: 3px 0 3px 3px;
-}
-
-#phorum-index th.forum-name a {
-    color: Black;
-}
-
-#phorum-index th.forum-threads {
-    width: 120px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-#phorum-index th.forum-posts {
-    width: 120px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-#phorum-index th.forum-last-post {
-    padding: 3px 15px 3px 3px;
-    vertical-align: middle;
-}
-
-#phorum-index td.forum-name {
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 5px 0 5px 15px;
-}
-
-#phorum-index td.forum-name p {
-    font-size: 13px;
-    font-weight: normal;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
-    margin: 0 15px 0 0;
-}
-
-#phorum-index td.forum-name small {
-    font-weight: normal;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
-    display: block;
-    margin-top: 4px;
-    padding-top: 3px;
-}
-
-#phorum-index td.forum-threads {
-    width: 120px;
-    text-align: center;
-}
-
-#phorum-index td.forum-posts {
-    width: 120px;
-    text-align: center;
-}
-
-#phorum-index td.forum-last-post {
-    width: 120px;
-    padding: 0 15px 0 0;
-}
 
 #phorum-menu-table {
     width: 100%;
@@ -549,7 +816,6 @@
 
 div.phorum-menu {
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
     background-color: White;
     border: 1px solid #808080;
     padding: 3px;
@@ -564,7 +830,6 @@ div.phorum-menu ul {
 
 div.phorum-menu li {
     font-weight: bold;
-    font-family: Lucida Sans Unicode, Lucida Grande, Arial;
     font-size: 12px;
     padding: 0 0 0 15px;
     margin-top:3px;
@@ -589,7 +854,7 @@ div.phorum-menu a.phorum-current-page {
 #phorum-post-form ul {
     padding: 0 0 0 20px;
     margin: 3px 0px 8px 0px;
-    font-size: 11px;
+    font-size: small;
 }
 
 #phorum-post-form li {
@@ -597,17 +862,7 @@ div.phorum-menu a.phorum-current-page {
 }
 
 #phorum-attachment-list td {
-    font-size: 11px;
-}
-
-/* new class for layouting the submit-buttons in IE too */
-.PhorumSubmit {
-    border: 1px dotted #808080;
-    color: Black;
-    background-color: #EEEFDE;
-    font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
-    vertical-align: middle;
+    font-size: small;
 }
 
 .PhorumTitleText {
@@ -616,7 +871,7 @@ div.phorum-menu a.phorum-current-page {
 
 .PhorumStdBlock {
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     background-color: White;
     border: 1px solid #808080;
     padding: 3px;
@@ -625,7 +880,7 @@ div.phorum-menu a.phorum-current-page {
 
 .PhorumStdBlockHeader {
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     background-color: #EEEFDE;
     border-left: 1px solid #808080;
     border-right: 1px solid #808080;
@@ -640,7 +895,7 @@ div.phorum-menu a.phorum-current-page {
 
 .PhorumNavBlock {
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     border: 1px solid #808080;
     margin-top: 1px;
     margin-bottom: 1px;
@@ -655,7 +910,7 @@ div.phorum-menu a.phorum-current-page {
 
 .PhorumNavLink {
     color: #000000;
-    text-decoration: none;
+    
     font-weight: normal;
     font-family: "Bitstream Vera Sans", Lucida Sans Unicode, Lucida Grande, Arial;
     font-size: 12px;
@@ -667,7 +922,7 @@ div.phorum-menu a.phorum-current-page {
 
 .PhorumSelectedFolder {
     color: #000000;
-    text-decoration: none;
+    
     font-weight: normal;
     font-family: Lucida Sans Unicode, Lucida Grande, Arial;
     font-size: 12px;
@@ -701,7 +956,7 @@ A.PhorumNavLink:hover {
     padding: 10px;
     text-align: center;
     color: Red;
-    font-size: 16px;
+    font-size: large;
     font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
     font-weight: bold;
 }
@@ -710,14 +965,14 @@ A.PhorumNavLink:hover {
     padding: 10px;
     text-align: center;
     color: DarkGreen;
-    font-size: 16px;
+    font-size: large;
     font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
     font-weight: bold;
 }
 
 .PhorumNewFlag {
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
-    font-size: 10px;
+
+    font-size: x-small;
     font-weight: bold;
     color: #CC0000;
 }
@@ -801,7 +1056,7 @@ A.PhorumNavLink:hover {
     border-bottom-width: 1px;
     color: Black;
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     height: 35px;
     padding: 3px;
 }
@@ -813,7 +1068,7 @@ A.PhorumNavLink:hover {
     border-bottom-width: 1px;
     color: #000000;
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     height: 35px;
     padding: 3px;
 }
@@ -833,7 +1088,7 @@ table.PhorumFormTable td {
 
 .PhorumReadBodySubject {
     color: Black;
-    font-size: 16px;
+    font-size: large;
     font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
     font-weight: bold;
     padding-left: 3px;
@@ -845,13 +1100,13 @@ table.PhorumFormTable td {
 
 .PhorumReadBodyText {
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     padding: 5px;
 }
 
 .PhorumReadNavBlock {
     font-size: 12px;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", "Bitstream Vera Sans", Arial;
+
     border-left: 1px solid #808080;
     border-right: 1px solid #808080;
     border-bottom: 1px solid #808080;
@@ -865,13 +1120,13 @@ table.PhorumFormTable td {
 
 .PhorumListSubText {
     color: #707070;
-    font-size: 10px;
+    font-size: x-small;
     font-family: "Bitstream Vera Sans", Arial, sans-serif;
 }
 
 .PhorumListPageLink {
     color: #707070;
-    font-size: 10px;
+    font-size: x-small;
     font-family: "Bitstream Vera Sans", Arial, sans-serif;
 }
 
@@ -885,7 +1140,7 @@ table.PhorumFormTable td {
 
 .PhorumListModLink, .PhorumListModLink a {
     color: #707070;
-    font-size: 10px;
+    font-size: x-small;
     font-family: "Bitstream Vera Sans", Arial, sans-serif;
 }
 
@@ -904,7 +1159,7 @@ table.PhorumFormTable td {
     float:left;
     padding: 1px 1px 1px 5px;
     margin: 0px 5px 5px 0px;
-    font-size: 11px;
+    font-size: small;
     background-color: White;
     border: 1px solid #808080;
     white-space: nowrap;
@@ -938,12 +1193,12 @@ table.PhorumFormTable td {
 }
 
 .PhorumSmallFont {
-    font-size: 11px;
+    font-size: small;
 }
 
 .PhorumLargeFont {
     color: Black;
-    font-size: 16px;
+    font-size: large;
     font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
     font-weight: bold;
 }
@@ -951,32 +1206,10 @@ table.PhorumFormTable td {
 
 .PhorumFooterPlug {
     margin-top: 10px;
-    font-size: 10px;
+    font-size: x-small;
     font-family: "Bitstream Vera Sans", Arial, sans-serif;
 }
 
 
 
-/*   BBCode styles  */
 
-blockquote.bbcode {
-    font-size: 11px;
-    margin: 0 0 0 10px;
-}
-
-blockquote.bbcode div {
-    margin: 0;
-    padding: 5px;
-    border: 1px solid #808080;
-}
-
-blockquote.bbcode strong {
-    font-style: italic;
-    margin: 0 0 3px 0;
-}
-
-pre.bbcode {
-    border: 1px solid #C4C6A2;
-    background-color: #FEFFEC;
-    padding: 8px;
-}

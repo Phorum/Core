@@ -59,7 +59,7 @@ if(!empty($_POST["report"])) {
                 "subject"     => $message["subject"],
                 "body"        => wordwrap($message["body"], 72),
                 "ip"          => $message["ip"],
-                "date"        => phorum_date($PHORUM["short_date"], $message["datestamp"]),
+                "date"        => phorum_date($PHORUM["short_date_time"], $message["datestamp"]),
                 "explanation" => wordwrap($_POST["explanation"], 72),
                 "url"         => phorum_get_url(PHORUM_READ_URL, $message["thread"], $message_id),
                 "delete_url"  => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
@@ -90,7 +90,7 @@ list($message) = phorum_format_messages(array($message));
 $PHORUM["DATA"]["PostSubject"] = $message["subject"];
 $PHORUM["DATA"]["PostAuthor"] = $message["author"];
 $PHORUM["DATA"]["PostBody"] = $message["body"];
-$PHORUM["DATA"]["PostDate"] = phorum_date($PHORUM["short_date"], $message["datestamp"]);
+$PHORUM["DATA"]["PostDate"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
 $PHORUM["DATA"]["ReportURL"] = phorum_get_url(PHORUM_REPORT_URL, $message_id);
 
 // if the report was not successfully sent, keep whatever explanation they gave already

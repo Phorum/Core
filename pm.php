@@ -596,7 +596,7 @@ switch ($page) {
             );
 
             if (!$buddy_user['hide_activity']) {
-              $buddy["date_last_active"] = phorum_date($PHORUM["short_date"], $buddy_user["date_last_active"]);
+              $buddy["date_last_active"] = phorum_date($PHORUM["short_date_time"], $buddy_user["date_last_active"]);
             } else {
               $buddy["date_last_active"] = "-";
             }
@@ -630,7 +630,7 @@ switch ($page) {
             {
                 $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
                 $list[$message_id]["read_url"]=phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
-                $list[$message_id]["date"] = phorum_date($PHORUM["short_date"], $message["datestamp"]);
+                $list[$message_id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
                 $list[$message_id]["recipient_count"] = count($message["recipients"]);
                 $receive_count = 0;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
@@ -677,7 +677,7 @@ switch ($page) {
 
             // Setup URL's and format date.
             $message["from_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
-            $message["date"]=phorum_date($PHORUM["short_date"], $message["datestamp"]);
+            $message["date"]=phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
             $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["PMRead"];
