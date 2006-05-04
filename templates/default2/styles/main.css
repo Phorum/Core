@@ -110,14 +110,15 @@
     margin: 0 0 5px 0;
 }
 
-#phorum div.nav a {
-    background-repeat: no-repeat;
-    background-position: 1px 2px;
-    padding: 4px 10px 2px 21px;
-}
-
 #phorum div.nav-right {
     float: right;
+}
+
+#phorum div.information {
+    padding: 8px;
+    border: 1px solid #62a762;
+    background-color: #e6ffe6;
+    margin-bottom: 8px;
 }
 
 #phorum div.warning {
@@ -125,6 +126,17 @@
     background-color: #FFD1D1;
     padding: 8px;
     margin-bottom: 8px;
+}
+
+#phorum div.attachments {
+    background-color: White;
+    margin-top: 8px;
+	padding: 16px;
+    border: 1px solid #CBCE99;
+}
+
+#phorum div.attachments a {
+    display: block;
 }
 
 /* header styles */
@@ -504,16 +516,6 @@
     border-top: 0;
 }
 
-#phorum div.attachments {
-    margin-top: 8px;
-	padding: 16px;
-    border: 1px solid #CBCE99;
-}
-
-#phorum div.attachments a {
-    display: block;
-}
-
 #phorum div.message-date {
 	font-size: small;
 }
@@ -530,6 +532,59 @@
     font-size: small;
 }
 
+/* Posting styles */
+
+#phorum #post ul {
+    margin: 2px;
+}
+    
+#phorum #post ul li {
+    font-size: small;
+}
+
+#phorum #post-body {
+    border: 1px solid #CBCE99; 
+    background-color: White;
+    padding: 8px;
+}
+
+#phorum #body {
+    font-size: medium;
+    font-family: Arial;
+    width: 100%;
+    border: 0; 
+}
+
+#phorum #post-moderation {
+    font-size: small;
+    float: right;
+    border: 1px solid #CBCE99;
+    background-color: #f9fae8;
+    padding: 8px;
+}
+
+#phorum #post-buttons {
+    text-align: center;
+    margin-top: 8px;
+}
+
+#phorum div.attach-link {
+    background-image: url('../images/attach.png');
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
+    padding: 4px 10px 2px 21px;
+    font-size: small;
+    font-weight: normal;
+}
+
+#phorum #attachment-list td {
+    font-size: small;
+    padding: 6px;
+}
+
+#phorum #attachment-list input {
+    font-size: x-small;
+}
 
 /* Footer styles */
 

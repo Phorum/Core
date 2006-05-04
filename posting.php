@@ -226,6 +226,19 @@ if ($initial) {
 // create page titles which match the editing mode).
 $PHORUM["DATA"]["MODE"] = $mode;
 
+// Set the page title and description accordingly
+switch($mode){
+    case "post":
+        $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["StartNewTopic"];
+        $PHORUM["DATA"]["DESCRIPTION"] = "";
+        break;
+    case "moderation":
+    case "edit":
+        $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMessage"];
+        $PHORUM["DATA"]["DESCRIPTION"] = "";
+        break;
+}
+
 // ----------------------------------------------------------------------
 // Permission and ability handling
 // ----------------------------------------------------------------------
@@ -519,7 +532,7 @@ $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_includ
 $message = phorum_hook("before_editor", $message);
 
 // Make the message data available to the template engine.
-$PHORUM["DATA"]["POST"] = $message;
+$PHORUM["DATA"]["MESSAGE"] = $message;
 
 // Set the field to focus.
 $focus = "phorum_subject";
@@ -533,10 +546,10 @@ if (! isset($PHORUM["postingargs"]["as_include"])) {
 }
 
 // Load page content.
-if (isset($PHORUM["DATA"]["MESSAGE"])) {
-    include phorum_get_template("message");
-} else {
+if (is_array($PHORUM["DATA"]["MESSAGE"])) {
     include phorum_get_template("posting");
+} else {
+    include phorum_get_template("message");
 }
 
 // Load page footer.

@@ -93,7 +93,13 @@ Some Icons courtesy of:
 
 <div id="top">
 
-{IF MESSAGE->subject}
+{IF HEADING}
+    {! This is custom set heading }
+    <h1>{HEADING}</h1>
+    {IF DESCRIPTION}
+        <div id="description">{DESCRIPTION}</div>
+    {/IF}
+{ELSEIF MESSAGE->subject}
     {! This is a threaded read page }
     <h1>{MESSAGE->subject}</h1>
 {ELSEIF TOPIC->subject}

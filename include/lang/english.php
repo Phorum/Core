@@ -132,6 +132,7 @@
 
         "EditBoardsettings"     =>      "Forum Settings",
         "EditFolders"           =>      "Edit Folders",
+        "EditMessage"           =>      "Edit Message",
         "EditPost"              =>      "Edit",
         "EditPostForbidden"     =>      "You do not have permission to edit this post. If the administrator has set a time limit on editing, it may have expired.",
         "EditedMessage"         =>      "Edited %count% time(s). Last edit at %lastedit% by %lastuser%.",
@@ -459,6 +460,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "SplitThreadInfo"       =>      "Move this message and its replies to be its own topic",
         "SrchMsgBodies"         =>      "Message Bodies (slower)",
         "StartedBy"             =>      "Started By",
+        "StartNewTopic"         =>      "Start a New Topic",
         "Sticky"                =>      "Sticky",
         "Subject"               =>      "Subject",
         "Submit"                =>      "Submit",
@@ -524,7 +526,6 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "YourEmail"             =>      "Your Email",
         "YourName"              =>      "Your Name",
         "YouWantToFollow"       =>      "You have indicated you want to follow the topic",
-
 
         // These are separate as they are all related to the relative time formatting
         // Examples: Today, Yesterday, 1 Day ago, 1 month ago, 1 year ago
