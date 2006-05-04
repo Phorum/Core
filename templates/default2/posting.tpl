@@ -107,7 +107,7 @@
                     {ELSE}
                     
                         {LANG->Author}:<br />
-                        {MESSAGE->linked_author}<br />
+                        <big><strong>{MESSAGE->author}</strong></big><br />
                         <br />
                         
                     {/IF}
