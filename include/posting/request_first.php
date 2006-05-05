@@ -45,9 +45,7 @@ if ($mode != "post")
     // load it from the database. So check if we can use the environment.
     // If not, then we load the message from the database. If the message
     // can't be retrieved, then return to the message list.
-    if (isset($PHORUM["DATA"]["TOPIC"]) && $PHORUM["DATA"]["TOPIC"]["message_id"] == $message_id) {
-        $dbmessage = $PHORUM["DATA"]["TOPIC"];
-    } elseif (isset($PHORUM["DATA"]["MESSAGES"]) && isset($PHORUM["DATA"]["MESSAGES"][$message_id])) {
+    if (isset($PHORUM["DATA"]["MESSAGES"]) && isset($PHORUM["DATA"]["MESSAGES"][$message_id])) {
         $dbmessage = $PHORUM["DATA"]["MESSAGES"][$message_id];
     } else {
         $dbmessage = phorum_db_get_message($message_id);
