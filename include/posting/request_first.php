@@ -41,12 +41,20 @@ if ($mode != "post")
     // Check read access on the forum that we're handling.
     if (!phorum_check_read_common()) exit;
 
-    // Retrieve the message from the database. If the message can't be
-    // retrieved, then return to the message list.
-    $dbmessage = phorum_db_get_message($message_id);
-    if (! $dbmessage) {
-        phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-        exit;
+    // If we have the message in the environment already, there's no need to
+    // load it from the database. So check if we can use the environment.
+    // If not, then we load the message from the database. If the message
+    // can't be retrieved, then return to the message list.
+    if (isset($PHORUM["DATA"]["TOPIC"]) && $PHORUM["DATA"]["TOPIC"]["message_id"] == $message_id) {
+        $dbmessage = $PHORUM["DATA"]["TOPIC"];
+    } elseif (isset($PHORUM["DATA"]["MESSAGES"]) && isset($PHORUM["DATA"]["MESSAGES"][$message_id])) {
+        $dbmessage = $PHORUM["DATA"]["MESSAGES"][$message_id];
+    } else {
+        $dbmessage = phorum_db_get_message($message_id);
+        if (! $dbmessage) {
+            phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+            exit;
+        }
     }
 }
 
