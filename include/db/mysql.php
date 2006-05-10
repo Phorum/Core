@@ -1036,8 +1036,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     
             if(count($terms)){
     
-                $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
-    
                 if($match_type=="ALL"){
                     $conj="and";
                 } else {
@@ -1051,13 +1049,13 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
                 $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
     
-                $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause";
+                $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where";
                 $res = mysql_query($sql, $conn);
         
                 if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
                 $total_count=mysql_result($res, 0, 0);
 
-                $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause order by datestamp desc limit $start, $length";
+                $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where order by datestamp desc limit $start, $length";
                 $res = mysql_unbuffered_query($sql, $conn);
                 if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
