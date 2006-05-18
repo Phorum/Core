@@ -17,6 +17,7 @@
 // along with this program.                                                  //
 ///////////////////////////////////////////////////////////////////////////////
 define("phorum_page", "console_upgrade");
+define("PHORUM_ADMIN", 1);
 
 // I guess the phorum-directory is one level up. if you move the script to
 // somewhere else you'll need to change that.
