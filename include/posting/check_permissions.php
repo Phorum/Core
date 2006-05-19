@@ -21,16 +21,10 @@ if(!defined("PHORUM")) return;
 
 // Check if the user is allowed to post a new message or a reply.
 if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
-    ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) { if ($PHORUM["DATA"]["LOGGEDIN"]) {
+    ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) { 
+    if ($PHORUM["DATA"]["LOGGEDIN"]) {
         // If users are logged in and can't post, they don't have rights to do so.
         $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoPost"];
-
-        // If we run the editor on its own page, redirect the user to the
-        // message list.
-        if (! isset($PHORUM["postingargs"]["as_include"])) {
-            phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-            exit;
-        }
     } else {
         // Check if they could post if logged in. If so, let them know to log in.
         if( ($mode == "reply" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_REPLY) ||
