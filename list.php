@@ -115,7 +115,7 @@ $pages=ceil(($PHORUM["thread_count"] - $PHORUM['sticky_count']) / $PHORUM["list_
 // will be zero. In that case, simply use one page.
 if ($pages == 0) $pages = 1;
 
-$pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"])) ? $PHORUM["TMP"]["list_pages_shown"] : 11; 
+$pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"])) ? $PHORUM["TMP"]["list_pages_shown"] : 11;
 
 // first $pages_shown pages
 if($page - floor($pages_shown/2) <= 0  || $page <= $pages_shown){
@@ -274,7 +274,7 @@ if ($PHORUM["threaded_list"]){
         $thread_count=$row["thread_count"];
 
         $rows[$key]["thread_count"] = number_format($row['thread_count'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-        
+
         if ($PHORUM["DATA"]["LOGGEDIN"]){
 
                     if($PHORUM["DATA"]["MODERATOR"]){
@@ -294,6 +294,9 @@ if ($PHORUM["threaded_list"]){
                         foreach ($row['meta']['message_ids'] as $cur_id) {
                             if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
                                 $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
+
+                            if($min_id == 0 || $min_id > $cur_id)
+                                $min_id = $cur_id;
                         }
                     }
         }
@@ -361,9 +364,6 @@ if ($PHORUM["threaded_list"]){
         } else {
             $rows[$key]["last_post_by"] = "";
         }
-
-        if($min_id == 0 || $min_id > $row['message_id'])
-            $min_id = $row['message_id'];
     }
 }
 
