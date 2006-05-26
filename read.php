@@ -289,17 +289,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
 
-
-
     // main loop for template setup
     $read_messages=array(); // needed for newinfo
     foreach($data as $key => $row) {
 
         // should we remove the bodies in threaded view
-        if($remove_threaded_bodies) {
-            if ($row["message_id"] != $message_id) {
-                unset($row["body"]); // strip body
-            }
+        if($remove_threaded_bodies && $row["message_id"]!=$thread && $row["message_id"] != $message_id) {
+            unset($row["body"]); // strip body
         }
 
         // assign user data to the row
@@ -504,26 +500,23 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // set up the data
 
     // this is the message that is the first in the thread
+
     $PHORUM["DATA"]["TOPIC"] = $messages[$thread];
     if($page>1){
-        unset($messages["thread"]);
+        unset($messages[$thread]);
     }
-    
+
     // this is the message that was referenced by the message_id in the url
     $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
 
-    // we need to remove the thread-starter from the data if we are not on the first page
-    $threadsubject = $messages[$thread]["subject"];
-    if($page > 1)
-        unset($messages[$thread]);
-
+    // this is all messages on the page 
     $PHORUM["DATA"]["MESSAGES"] = $messages;
 
     // No htmlentities() needed. The subject is already escaped.
     // Strip HTML tags from the HTML title. There might be HTML in
     // here, because of modules adding images and formatting.
-    $PHORUM["DATA"]["HTML_TITLE"] = trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $threadsubject));
-    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($messages[$message_id]["body"],0,300))));
+    $PHORUM["DATA"]["HTML_TITLE"] = trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $PHORUM["DATA"]["TOPIC"]["subject"]));
+    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($PHORUM["DATA"]["TOPIC"]["body"],0,300))));
 
     // include the correct template
 
@@ -566,10 +559,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             2 => $message_id,
             "as_include" => true
         );
-
-        $PHORUM["DATA"]["POST"]["thread"] = $thread;
-        $PHORUM["DATA"]["POST"]["parentid"] = $message_id;
-        $PHORUM["DATA"]["POST"]["subject"] = $messages[$message_id]["subject"];
 
         include("./posting.php");
     }
