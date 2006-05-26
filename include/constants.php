@@ -68,39 +68,46 @@
     define("PHORUM_UPLOADS_SELECT", 0);
     define("PHORUM_UPLOADS_REG", 1);
 
+    // moderation
     define("PHORUM_MODERATE_OFF", 0);
     define("PHORUM_MODERATE_ON", 1);
-
     define("PHORUM_EMAIL_MODERATOR_OFF", 0);
     define("PHORUM_EMAIL_MODERATOR_ON", 1);
 
+    // message statuses
     define("PHORUM_STATUS_APPROVED", 2);
     define("PHORUM_STATUS_HOLD", -1);
     define("PHORUM_STATUS_HIDDEN", -2);
 
+    // message sorting
     define("PHORUM_SORT_ANNOUNCEMENT", 0);
     define("PHORUM_SORT_STICKY", 1);
     define("PHORUM_SORT_DEFAULT", 2);
 
+    // threaded on/off
     define("PHORUM_THREADED_DEFAULT", 0);
     define("PHORUM_THREADED_ON", 1);
     define("PHORUM_THREADED_OFF", 2);
 
+    // subscription types
     define("PHORUM_SUBSCRIPTION_MESSAGE", 0);
     define("PHORUM_SUBSCRIPTION_DIGEST", 1);
     define("PHORUM_SUBSCRIPTION_BOOKMARK", 2);
 
+    // registration settings
     define("PHORUM_REGISTER_INSTANT_ACCESS", 0);
     define("PHORUM_REGISTER_VERIFY_EMAIL", 1);
     define("PHORUM_REGISTER_VERIFY_MODERATOR", 2);
     define("PHORUM_REGISTER_VERIFY_BOTH", 3);
 
+    // user statuses
     define("PHORUM_USER_PENDING_BOTH", -3);
     define("PHORUM_USER_PENDING_EMAIL", -2);
     define("PHORUM_USER_PENDING_MOD", -1);
     define("PHORUM_USER_INACTIVE", 0);
     define("PHORUM_USER_ACTIVE", 1);
 
+    // user permissions
     define("PHORUM_USER_ALLOW_READ", 1);
     define("PHORUM_USER_ALLOW_REPLY", 2);
     define("PHORUM_USER_ALLOW_EDIT", 4);
@@ -109,48 +116,65 @@
     define("PHORUM_USER_ALLOW_MODERATE_MESSAGES", 64);
     define("PHORUM_USER_ALLOW_MODERATE_USERS", 128);
     define("PHORUM_USER_ALLOW_FORUM_PROPERTIES", 256);
-
     define("PHORUM_MODERATE_ALLOWED_ANYWHERE", -1);
 
+    // group moderation actions
     define("PHORUM_USER_GROUP_REMOVE", -128);
     define("PHORUM_USER_GROUP_SUSPENDED", -1);
     define("PHORUM_USER_GROUP_UNAPPROVED", 0);
     define("PHORUM_USER_GROUP_APPROVED", 1);
     define("PHORUM_USER_GROUP_MODERATOR", 2);
 
+    // more group moderation stuff
     define("PHORUM_GROUP_CLOSED", 0);
     define("PHORUM_GROUP_OPEN", 1);
     define("PHORUM_GROUP_REQUIRE_APPROVAL", 2);
 
-    define("PHORUM_NEWFLAG_MSG", 0);
-    define("PHORUM_NEWFLAG_MIN_ID", 1);
-
+    // attachment status flags
     define("PHORUM_LINK_USER", "user");
     define("PHORUM_LINK_MESSAGE", "message");
     define("PHORUM_LINK_EDITOR", "editor");
 
-    // Definitions for the PM system.
-    // Special folders
+    // PM Special folders
     define("PHORUM_PM_INBOX", "inbox");
     define("PHORUM_PM_OUTBOX", "outbox");
     define("PHORUM_PM_ALLFOLDERS", "allfolder");
-    // Flag types
+
+    // PM Flag types
     define("PHORUM_PM_READ_FLAG", "read_flag");
     define("PHORUM_PM_REPLY_FLAG", "reply_flag");
+
+    // db values for ban list
+    define("PHORUM_BAD_IPS", 1);
+    define("PHORUM_BAD_NAMES", 2);
+    define("PHORUM_BAD_EMAILS", 3);
+    define("PHORUM_BAD_WORDS", 4);
+    define("PHORUM_BAD_USERID", 5);
+    define("PHORUM_BAD_SPAM_WORDS", 6);
+
+    // control center url page names
+    define("PHORUM_CC_SUMMARY", "summary");
+    define("PHORUM_CC_SUBSCRIPTION_THREADS", "subthreads");
+    define("PHORUM_CC_SUBSCRIPTION_FORUMS", "subforums");
+    define("PHORUM_CC_USERINFO", "user");
+    define("PHORUM_CC_SIGNATURE", "sig");
+    define("PHORUM_CC_MAIL", "email");
+    define("PHORUM_CC_BOARD", "forum");
+    define("PHORUM_CC_PASSWORD", "password");
+    define("PHORUM_CC_UNAPPROVED", "messages");
+    define("PHORUM_CC_FILES", "files");
+    define("PHORUM_CC_USERS", "users");
+    define("PHORUM_CC_PM", "pm");
+    define("PHORUM_CC_PRIVACY", "privacy");
+    define("PHORUM_CC_GROUP_MODERATION", "groupmod");
+    define("PHORUM_CC_GROUP_MEMBERSHIP", "groups");
 
     // constants below here do not have to have a constant value,
     // as long as each is unique.  They are used for enumeration.
     // Add to them as you wish knowing that.
 
+    // URL identifiers
     $i=1;
-
-    define("PHORUM_BAD_IPS", $i++);
-    define("PHORUM_BAD_NAMES", $i++);
-    define("PHORUM_BAD_EMAILS", $i++);
-    define("PHORUM_BAD_WORDS", $i++);
-    define("PHORUM_BAD_USERID", $i++);
-    define("PHORUM_BAD_SPAM_WORDS", $i++);
-
     define("PHORUM_LIST_URL", $i++);
     define("PHORUM_READ_URL", $i++);
     define("PHORUM_FOREIGN_READ_URL", $i++);
@@ -185,6 +209,8 @@
     define("PHORUM_CUSTOM_URL", $i++);
     define("PHORUM_BASE_URL", $i++);
 
+    // moderation actions
+    $i=1;
     define("PHORUM_DELETE_MESSAGE", $i++);
     define("PHORUM_DELETE_TREE", $i++);
     define("PHORUM_MOVE_THREAD", $i++);
@@ -199,24 +225,10 @@
     define("PHORUM_SPLIT_THREAD", $i++);
     define("PHORUM_DO_THREAD_SPLIT", $i++);
 
+    // admin sanity checks
+    $i=1;
     define("PHORUM_SANITY_OK", $i++);
     define("PHORUM_SANITY_WARN", $i++);
     define("PHORUM_SANITY_CRIT", $i++);
-
-    define("PHORUM_CC_SUMMARY", "summary");
-    define("PHORUM_CC_SUBSCRIPTION_THREADS", "subthreads");
-    define("PHORUM_CC_SUBSCRIPTION_FORUMS", "subforums");
-    define("PHORUM_CC_USERINFO", "user");
-    define("PHORUM_CC_SIGNATURE", "sig");
-    define("PHORUM_CC_MAIL", "email");
-    define("PHORUM_CC_BOARD", "forum");
-    define("PHORUM_CC_PASSWORD", "password");
-    define("PHORUM_CC_UNAPPROVED", "messages");
-    define("PHORUM_CC_FILES", "files");
-    define("PHORUM_CC_USERS", "users");
-    define("PHORUM_CC_PM", "pm");
-    define("PHORUM_CC_PRIVACY", "privacy");
-    define("PHORUM_CC_GROUP_MODERATION", "groupmod");
-    define("PHORUM_CC_GROUP_MEMBERSHIP", "groups");
 
 ?>
