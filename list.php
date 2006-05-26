@@ -285,6 +285,9 @@ if ($PHORUM["threaded_list"]){
                         foreach ($row['meta']['message_ids'] as $cur_id) {
                             if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
                                 $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
+
+                            if($min_id == 0 || $min_id > $cur_id)
+                                $min_id = $cur_id;
                         }
                     }
         }
@@ -352,8 +355,6 @@ if ($PHORUM["threaded_list"]){
             $rows[$key]["last_post_by"] = "";
         }
 
-        if($min_id == 0 || $min_id > $row['message_id'])
-            $min_id = $row['message_id'];
     }
 }
 
