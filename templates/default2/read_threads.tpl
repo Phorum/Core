@@ -36,8 +36,10 @@
                     {IF MESSAGE->ip}
                         {LANG->IP}: {MESSAGE->ip}<br />
                     {/IF}
-                    {LANG->DateReg}: {MESSAGE->user->date_added}<br />
-                    {LANG->Posts}: {MESSAGE->user->posts}
+                    {IF MESSAGE->user}
+                        {LANG->DateReg}: {MESSAGE->user->date_added}<br />
+                        {LANG->Posts}: {MESSAGE->user->posts}
+                    {/IF}
                 </td>
             </tr>
         </table>
@@ -118,60 +120,64 @@
     {/IF}
 </div>
 
-<table border="0" cellspacing="0" id="messages">
+<table cellspacing="0" class="list">
     <tr>
-        <th class="messages-subject">{LANG->Subject}</th>
-        <th class="messages-started-by" nowrap="nowrap">{LANG->Author}</th>
+        <th align="left">{LANG->Subject}</th>
+        <th align="left" nowrap="nowrap">{LANG->Author}</th>
         {IF VIEWCOUNT_COLUMN}
-          <th class="messages-views">{LANG->Views}</th>
+          <th>{LANG->Views}</th>
         {/IF}
-        <th class="messages-last-post" nowrap="nowrap">{LANG->Posted}</th>
+        <th align="left" nowrap="nowrap">{LANG->Posted}</th>
     </tr>
 
     {LOOP MESSAGES}
 
     {! This is the current message }
     {IF MESSAGES->message_id MESSAGE->message_id}    
-        {VAR altclass "message-threaded-alt"}
+        {VAR altclass "current"}
     {ELSE}
         {VAR altclass ""}
     {/IF}
 
     {IF MESSAGES->message_id MESSAGE->message_id}    
-        {VAR icon "bullet-go"} 
+        {VAR icon "bullet_go"} 
     {ELSEIF MESSAGES->parent_id 0}
         {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
             {VAR icon "information"} 
         {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
             {VAR icon "bell"}
         {ELSEIF MESSAGES->moved}
-            {VAR icon "page-go"}
+            {VAR icon "page_go"}
         {ELSEIF MESSAGES->new}
-            {VAR icon "flag-red"}
+            {VAR icon "flag_red"}
         {ELSE}
             {VAR icon "comment"}
         {/IF}
     {ELSEIF MESSAGES->new}
-        {VAR icon "flag-red"}
+        {VAR icon "flag_red"}
     {ELSE}
-        {VAR icon "bullet-black"}
+        {VAR icon "bullet_black"}
     {/IF}
 
     {IF MESSAGES->new}
-        {VAR newclass "message-new"}
+        {VAR newclass "new"}
     {ELSE}
         {VAR newclass ""}
     {/IF}
 
     <tr>
-        <td class="message-subject-threaded {altclass}" style="padding-left: {MESSAGES->indent_cnt}px">
-            <a class="icon-{icon}" href="{MESSAGES->URL->READ}" class="list-threaded-subject {newclass}">{MESSAGES->subject}</a>
+        <td width="65%" class="message-subject-threaded {altclass}">
+            <h4 style="padding-left: {MESSAGES->indent_cnt}px;">    
+                <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
+                <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
+                {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
+            </h4>
         </td>
-        <td class="message-author {altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
+        <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
         {IF VIEWCOUNT_COLUMN}
-            <td class="message-view-count {altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
+            <td width="10%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
         {/IF}
-        <td class="message-posted {altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
+        <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
     </tr>
     {/LOOP MESSAGES}
 </table>

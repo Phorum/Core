@@ -57,7 +57,7 @@
     {/IF}
 
     {IF MESSAGES->new}
-        {VAR newclass "message_new"}
+        {VAR newclass "message-new"}
     {ELSE}
         {VAR newclass ""}
     {/IF}
@@ -66,11 +66,10 @@
     <td width="65%" class="{altclass}">
         <h4 style="padding-left: {MESSAGES->indent_cnt}px">
             <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
-            <a href="{MESSAGES->URL->READ}" class="list-threaded-subject {newclass}" title="{title}">{MESSAGES->subject}</a>
+            <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
             {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}        
             {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
             {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
-            {IF MESSAGES->pages}&nbsp;<small>&nbsp;[{LANG->Pages}: {MESSAGES->pages}]</small>{/IF}
         </h4>
     </td>
     <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>

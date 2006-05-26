@@ -57,6 +57,7 @@
         </div>
 
         <div class="generic">
+        
             <small>
                 {IF MODERATOR}
     
@@ -124,11 +125,9 @@
                 <input type="checkbox" id="email-notify" name="email_notify" value="1" {IF MESSAGE->email_notify} checked="checked"{/IF} /> <label for="email-notify">{LANG->EmailReplies}</label><br />            
                 <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF MESSAGE->show_signature} checked="checked"{/IF} /> <label for="show-signature">{LANG->AddSig}</label><br />
             </small>
-        </div>
         <br />
 
-        {IF ATTACHMENTS}
-            <div class="generic">
+            {IF ATTACHMENTS}
                 <small>{LANG->Attachments}:</small><br />            
                 {IF MESSAGE->attachments}
                     <table id="attachment-list" cellspacing="0">
@@ -173,20 +172,16 @@
                     <script type="text/javascript">document.write('</div>');</script>
                 {/IF}
     
-            </div>
-            <br />
-        {/IF}
-        
-        <div class="generic">
+                <br />
+            {/IF}
 
             <small>{LANG->Message}:</small>
             <div id="post-body">
                 <textarea name="body" id="body" rows="15" cols="50">{MESSAGE->body}</textarea>
             </div>
             
-    
         </div>
-
+        
         <div id="post-buttons">
         
             {HOOK "tpl_editor_buttons"}
@@ -202,6 +197,6 @@
 </div>
 
 {IF MODERATED}
-    <div class="message">{LANG->ModeratedForum}</div>
+    <div class="notice">{LANG->ModeratedForum}</div>
 {/IF}
 
