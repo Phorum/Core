@@ -26,8 +26,8 @@
                                 {/IF}
                             {/IF}
                         </div>
-                        <div class="message-subject">{MESSAGES->subject} <span class="new">{MESSAGES->new}</span></div>
-                        <div class="message-date">{MESSAGES->datestamp}</div>
+                        <strong>{MESSAGES->subject} <span class="new">{MESSAGES->new}</span></strong><br />
+                        {MESSAGES->datestamp}
                     </td>
                     <td class="message-user-info" nowrap="nowrap">
                         {IF MESSAGES->user->admin}
@@ -38,8 +38,10 @@
                         {IF MESSAGES->ip}
                             {LANG->IP}: {MESSAGES->ip}<br />
                         {/IF}
-                        {LANG->DateReg}: {MESSAGES->user->date_added}<br />
-                        {LANG->Posts}: {MESSAGES->user->posts}
+                        {IF MESSAGES->user}
+                            {LANG->DateReg}: {MESSAGES->user->date_added}<br />
+                            {LANG->Posts}: {MESSAGES->user->posts}
+                        {/IF}
                     </td>
                 </tr>
             </table>
@@ -103,21 +105,22 @@
     <a class="icon icon-next" href="{URL->OLDERTHREAD}">{LANG->OlderThread}</a>
 </div>
 
-{IF USER->user_id}
-    <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
-    <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
-{/IF}
-{IF URL->RSS}
-    <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
-{/IF}
-{IF MODERATOR true}
-    <a class="icon icon-merge" href="{TOPIC->URL->MERGE}">{LANG->MergeThread}</a>
-    {IF TOPIC->closed false}
-        <a class="icon icon-close" href="{TOPIC->URL->CLOSE}">{LANG->CloseThread}</a>
-    {ELSE}
-        <a class="icon icon-open" href="{TOPIC->URL->REOPEN}">{LANG->ReopenThread}</a>
+<div class="nav">
+    {IF USER->user_id}
+        <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
+        <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
     {/IF}
-{/IF}
-{INCLUDE "paging"}
+    {IF URL->RSS}
+        <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
+    {/IF}
+    {IF MODERATOR true}
+        <a class="icon icon-merge" href="{TOPIC->URL->MERGE}">{LANG->MergeThread}</a>
+        {IF TOPIC->closed false}
+            <a class="icon icon-close" href="{TOPIC->URL->CLOSE}">{LANG->CloseThread}</a>
+        {ELSE}
+            <a class="icon icon-open" href="{TOPIC->URL->REOPEN}">{LANG->ReopenThread}</a>
+        {/IF}
+    {/IF}
+    {INCLUDE "paging"}
+</div>
 
-&nbsp;<br />&nbsp;<br />&nbsp;<br />

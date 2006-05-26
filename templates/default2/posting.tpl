@@ -51,11 +51,6 @@
 
         {POST_VARS}
 
-        <div class="nav">
-            <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
-            <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
-        </div>
-
         <div class="generic">
         
             <small>
