@@ -8,22 +8,22 @@
     <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
 {/IF}
 </div>
-<table border="0" cellspacing="0" id="messages">
+<table cellspacing="0" class="list">
     <tr>
-        <th class="messages-subject" colspan="2">{LANG->Subject}</th>
+        <th align="left" colspan="2">{LANG->Subject}</th>
         {IF VIEWCOUNT_COLUMN}
-          <th class="messages-views">{LANG->Views}</th>
+          <th>{LANG->Views}</th>
         {/IF}
-        <th class="messages-posts" nowrap="nowrap">{LANG->Posts}</th>
-        <th class="messages-last-post" nowrap="nowrap">{LANG->LastPost}</th>
+        <th nowrap="nowrap">{LANG->Posts}</th>
+        <th align="left" nowrap="nowrap">{LANG->LastPost}</th>
         {IF MODERATOR true}
-            <th class="messages-moderate" nowrap="nowrap">{LANG->Moderate}</th>
+            <th nowrap="nowrap">{LANG->Moderate}</th>
         {/IF}
     </tr>
 
     {LOOP MESSAGES}
     {IF altclass ""}
-        {VAR altclass "message-alt"}
+        {VAR altclass "alt"}
     {ELSE}
         {VAR altclass ""}
     {/IF}
@@ -52,20 +52,22 @@
     {/IF}
 
     <tr>
-    <td class="message-icon {altclass}"><a href="{MESSAGES->URL->READ}" title="{title}"><img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" /></a></td>
-    <td class="message-subject {altclass}">
-        <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
-        {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}        
-        {IF MESSAGES->pages}&nbsp;<small>&nbsp;({LANG->Pages}:&nbsp;{MESSAGES->pages})</small>{/IF}
-        <br /><small>{LANG->by} {MESSAGES->linked_author}</small>
+    <td width="1%" class="{altclass}"><a href="{MESSAGES->URL->READ}" title="{title}"><img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" /></a></td>
+    <td width="59%" class="{altclass}">
+        <h4>
+            <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
+            {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
+            {IF MESSAGES->pages}&nbsp;<small>&nbsp;({LANG->Pages}:&nbsp;{MESSAGES->pages})</small>{/IF}
+        </h4>
+        {LANG->by} {MESSAGES->linked_author}
       </td>
       {IF VIEWCOUNT_COLUMN}
-        <td class="message-view-count {altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
+        <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
       {/IF}
-      <td class="message-thread-count {altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
-      <td class="message-last-post {altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}</td>
+      <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
+      <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}</td>
       {IF MODERATOR true}
-      <td class="message-actions {altclass}" nowrap="nowrap">
+      <td width="1%" class="{altclass}" nowrap="nowrap">
             <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
             <a title="{LANG->MergeThread}" href="{MESSAGES->URL->MERGE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/arrow_join.png" width="16" height="16" alt="{LANG->MergeThread}" border="0" /></a>
             <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>

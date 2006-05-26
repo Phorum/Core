@@ -5,14 +5,56 @@
     font-family: Arial;
     font-size: medium;
     max-width: 900px;
-    text-align: left;
+/*    text-align: left; */
     margin: auto;
 }
 
 /* HTML level styles */
 
-#phorum td {
+img {
+    vertical-align: top;
+}
+ 
+#phorum table.list {
+    width: 100%;
+    margin-bottom: 4px;
+    border: 1px solid #CBCE99; 
+    border-bottom: 0;
+}
+
+
+#phorum table.list th  {
+    background-repeat: repeat-x;
+    background-image: url('../images/header_background.png');
+    background-color: #f7f7f0; 
+    border-bottom: 1px solid #CBCE99; 
+    font-size: small;
+    padding: 5px;
+}
+
+#phorum table.list td {
+    padding: 8px;
+    border-bottom: 1px solid #CBCE99; 
+    font-size: small;
+}
+
+#phorum table.list td.alt {
+    background-color: #f7f7f0;
+}
+
+#phorum table.list td p {
+    margin: 4px 8px 16px 4px;
+}
+
+#phorum table.list td h3 {
+    margin: 0;
     font-size: medium;
+}
+
+#phorum table.list td h4 {
+    margin: 0;
+    font-size: medium;
+    font-weight: normal;
 }
 
 #phorum a {
@@ -50,10 +92,6 @@
     height: 1px;
     border: 0;
     border-top: 1px solid #CBCE99;
-}
-
-#phorum small {
-    font-size: small;
 }
 
 /* global styles */
@@ -137,6 +175,10 @@
 
 #phorum div.attachments a {
     display: block;
+}
+
+#phorum span.new-flag {
+    color: red;
 }
 
 /* header styles */
@@ -241,246 +283,6 @@
 }
 
 
-/* Forum list styles */
-
-#phorum #forums {
-    width: 100%;
-    margin-bottom: 4px;
-}
-
-#phorum #forums td.break{
-    height: 16px;
-}
-
-#phorum #forums th  {
-    background-color: #EEEFDE; 
-    border-bottom: 1px solid #CBCE99; 
-    border-top: 1px solid #CBCE99; 
-    text-align: left;
-    font-size: small;
-}
-
-#phorum #forums th.folder-name  {
-    background-repeat: no-repeat;
-    background-position: 5px 4px;
-    font-size: medium;
-    padding: 4px 4px 4px 25px;
-    border-left: 1px solid #CBCE99;    
-}
-
-#phorum #forums th.folder-name small {
-    font-size: x-small;
-}
-
-#phorum #forums th.folder-last-post  {
-    border-right: 1px solid #CBCE99;    
-    }
-
-#phorum #forums th.folder-name a {
-    
-}
-
-#phorum #forums td.forum-name{
-    padding: 8px 16px 8px 8px;
-    font-size: large;
-    font-weight: bold;
-    border-bottom: 1px solid #CBCE99; 
-    border-left: 1px solid #CBCE99; 
-}
-
-#phorum #forums td.forum-name a {
-    
-}
-
-#phorum #forums td.forum-name p{
-    font-size: small;
-    font-weight: normal;
-    line-height: 16px;
-    margin: 2px 0 16px 0;
-}
-
-#phorum #forums td.forum-name small{
-    font-size: small;
-}
-
-#phorum #forums td.forum-name small a {
-    font-weight: normal;
-    background-repeat: no-repeat;
-    background-position: 1px 2px;
-    padding: 4px 0 0px 21px;
-}
-
-#phorum #forums td.forum-threads{
-    width: 120px;
-    padding: 8px 8px 8px 0;
-    border-bottom: 1px solid #CBCE99; 
-    font-size: small;
-}
-
-#phorum #forums td.forum-posts{
-    width: 120px;
-    padding: 8px 8px 8px 0;
-    border-bottom: 1px solid #CBCE99; 
-    font-size: small;
-}
-
-#phorum #forums td.forum-last-post{
-    width: 120px;
-    padding: 8px 8px 8px 0;
-    border-bottom: 1px solid #CBCE99; 
-    border-right: 1px solid #CBCE99; 
-    font-size: small;
-}
-
-
-#phorum #folders-header {
-    background-color: #EEEFDE; 
-    background-repeat: no-repeat;
-    background-position: 5px 4px;
-    font-size: large;
-    font-weight: bold;
-    padding: 4px 4px 4px 25px;
-    border: 1px solid #CBCE99;    
-}
-
-#phorum #folders {
-    border: 1px solid #CBCE99;    
-    border-top: 0;
-    border-bottom: 0;
-    margin-bottom: 26px;
-}
-
-#phorum #folders div.folder {
-    padding: 8px;
-    font-size: large;
-    font-weight: bold;
-    border-bottom: 1px solid #CBCE99; 
-}
-
-#phorum #folders div.folder a {
-    
-}
-
-#phorum #folders div.folder p{
-    font-size: medium;
-    font-weight: normal;
-    line-height: 16px;
-}
-
-
-/* Message list styles */
-
-#phorum #messages {
-    border: 1px solid #CBCE99;
-    width: 100%;
-}
-
-#phorum #messages th {
-    text-align: left;
-    background-color: #D6D9AF;    
-    padding: 4px;
-    border-bottom: 1px solid #CBCE99; 
-    font-size: small;
-}
-
-#phorum #messages th.messages-views {
-    text-align: center;
-}
-
-#phorum #messages th.messages-posts {
-    text-align: center;
-    padding-right: 8px;
-}
-
-#phorum #messages th.messages-moderate {
-    text-align: right;
-}
-
-#phorum #messages td {
-    height: 40px;
-    border-bottom: 1px solid #EEEFDE;    
-}
-
-#phorum #messages td.message-alt {
-    background-color: #F0F2DE;    
-}
-
-#phorum #messages td.message-threaded-alt {
-    background-color: #EEEFDE;    
-    border-bottom: 1px solid #CBCE99;
-}
-
-#phorum #messages td.message-icon {
-    padding: 8px;
-}
-
-#phorum #messages td.message-subject {
-    padding: 8px 0 8px 0;
-}
-
-#phorum #messages td.message-subject-threaded img, #phorum #messages td.message-subject img {
-    vertical-align: bottom;
-}
-
-#phorum #messages td.message-subject-threaded a {
-    background-repeat: no-repeat;
-    background-position: 8px 8px;
-    padding: 8px 0 8px 32px;
-}
-
-#phorum #messages td.message-thread-count {
-    width: 80px;
-    padding-left: 4px;
-    padding-right: 8px;
-    text-align: center;    
-    font-size: small;
-}
-
-#phorum #messages td.message-view-count {
-    width: 80px;
-    padding-left: 4px;    
-    text-align: center;    
-    font-size: small;
-}
-
-#phorum #messages td.message-author {
-    width: 120px;
-    padding-left: 4px;    
-    font-size: small;
-}
-
-#phorum #messages td.message-last-post {
-    width: 120px;
-    padding: 0 8px 0 4px;    
-    font-size: small;    
-}
-
-#phorum #messages td.message-posted {
-    width: 120px;
-    padding: 0 8px 0 4px;    
-    font-size: small;
-}
-
-#phorum #messages td.message-actions {
-    width: 100px;
-    font-size: small;
-    text-align: right;
-}
-
-#phorum #messages td.message-actions a {
-    margin-right: 4px;
-    
-}
-
-#phorum #messages a.list-threaded-subject {
-    background-repeat: no-repeat;
-    background-position: 6px 2px;
-    padding: 4px 0 1px 27px;
-}
-
-#phorum #messages a.message-new {
-    font-weight: bold;
-}
 
 /* Read styles */
 

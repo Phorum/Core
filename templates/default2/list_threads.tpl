@@ -8,16 +8,16 @@
     <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
 {/IF}
 </div>
-<table border="0" cellspacing="0" id="messages">
+<table cellspacing="0" class="list">
     <tr>
-        <th class="messages-subject">{LANG->Subject}</th>
-        <th class="messages-started-by" nowrap="nowrap">{LANG->Author}</th>
+        <th align="left">{LANG->Subject}</th>
+        <th align="left" nowrap="nowrap">{LANG->Author}</th>
         {IF VIEWCOUNT_COLUMN}
-          <th class="messages-views">{LANG->Views}</th>
+          <th>{LANG->Views}</th>
         {/IF}
-        <th class="messages-last-post" nowrap="nowrap">{LANG->Posted}</th>
+        <th align="left" nowrap="nowrap">{LANG->Posted}</th>
         {IF MODERATOR true}
-            <th class="messages-moderate" nowrap="nowrap">{LANG->Moderate}</th>
+            <th nowrap="nowrap">{LANG->Moderate}</th>
         {/IF}
     </tr>
 
@@ -25,7 +25,7 @@
 
     {IF MESSAGES->parent_id 0}    
         {IF altclass ""}
-            {VAR altclass "message-threaded-alt"}
+            {VAR altclass "alt"}
         {ELSE}
             {VAR altclass ""}
         {/IF}
@@ -39,44 +39,47 @@
             {VAR icon "bell"}
             {VAR title LANG->Sticky}
         {ELSEIF MESSAGES->moved}
-            {VAR icon "page-go"}
+            {VAR icon "page_go"}
             {VAR title LANG->MovedSubject}
         {ELSEIF MESSAGES->new}
-            {VAR icon "flag-red"}
+            {VAR icon "flag_red"}
             {VAR title LANG->NewMessage}
         {ELSE}
             {VAR icon "comment"}
             {VAR title ""}
         {/IF}
     {ELSEIF MESSAGES->new}
-        {VAR icon "flag-red"}
+        {VAR icon "flag_red"}
         {VAR title LANG->New}
     {ELSE}
-        {VAR icon "bullet-black"}
+        {VAR icon "bullet_black"}
         {VAR title ""}
     {/IF}
 
     {IF MESSAGES->new}
-        {VAR newclass "message-new"}
+        {VAR newclass "message_new"}
     {ELSE}
         {VAR newclass ""}
     {/IF}
 
     <tr>
-    <td class="message-subject-threaded {altclass}" style="padding-left: {MESSAGES->indent_cnt}px">
-        <a class="icon-{icon}" href="{MESSAGES->URL->READ}" class="list-threaded-subject {newclass}" title="{title}">{MESSAGES->subject}</a>
-        {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}        
-        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
-        {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
-        {IF MESSAGES->pages}&nbsp;<small>&nbsp;[{LANG->Pages}: {MESSAGES->pages}]</small>{/IF}
+    <td width="65%" class="{altclass}">
+        <h4 style="padding-left: {MESSAGES->indent_cnt}px">
+            <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
+            <a href="{MESSAGES->URL->READ}" class="list-threaded-subject {newclass}" title="{title}">{MESSAGES->subject}</a>
+            {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}        
+            {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
+            {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
+            {IF MESSAGES->pages}&nbsp;<small>&nbsp;[{LANG->Pages}: {MESSAGES->pages}]</small>{/IF}
+        </h4>
     </td>
-    <td class="message-author {altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
+    <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
     {IF VIEWCOUNT_COLUMN}
-        <td class="message-view-count {altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
+        <td align="center" width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
     {/IF}
-    <td class="message-posted {altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
+    <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
     {IF MODERATOR true}
-        <td class="message-actions {altclass}" nowrap="nowrap">
+        <td width="1%" class="{altclass}" nowrap="nowrap">
             {IF NOT MESSAGES->moved}
                 {IF MESSAGES->threadstart true}
                     <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
