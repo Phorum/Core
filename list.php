@@ -434,6 +434,9 @@ if($PHORUM["DATA"]["MODERATOR"]) {
 // updating new-info for first visit (last message on first page is first new)
 if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
     // setting it as min-id
+
+    // set it -1 as the comparison is "post newer than min_id"
+    $min_id--;
     phorum_db_newflag_add_read($min_id);
 }
 
