@@ -166,7 +166,7 @@ function phorum_date( $picture, $ts )
  */
 function phorum_relative_date($time)
 {
-	
+
 	$PHORUM = $GLOBALS["PHORUM"];
 
     $today = strtotime(date('M j, Y'));
@@ -185,14 +185,14 @@ function phorum_relative_date($time)
 
         return $PHORUM["DATA"]["LANG"]["relative_yesterday"];
     }
-	
+
 
     if (abs($reldays) < 30) {
 
 		// less than a month
 
         $reldays = floor($reldays);
-        
+
 		if($reldays==1){
 			$return = $PHORUM["DATA"]["LANG"]["relative_one_day"];
 		} else {
@@ -204,11 +204,11 @@ function phorum_relative_date($time)
 		return $return;
 
     } elseif (abs($reldays) < 60) {
-	
+
 		// weeks ago
 
         $relweeks = floor(abs($reldays/7));
-        
+
         $return = $relweeks." ".$PHORUM["DATA"]["LANG"]["relative_weeks"];
 
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
@@ -222,7 +222,7 @@ function phorum_relative_date($time)
         $relmonths = floor(abs($reldays/30));
 
         $return = $relmonths." ".$PHORUM["DATA"]["LANG"]["relative_months"];
-        
+
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
 
 		return $return;
@@ -238,7 +238,7 @@ function phorum_relative_date($time)
         } else {
             $return = $relyears." ".$PHORUM["DATA"]["LANG"]["relative_years"];
         }
-        
+
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
 
 		return $return;
@@ -260,6 +260,24 @@ function phorum_strip_body( $body )
     // Strip BB Code [tags]
     $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
 
+
+    // do badwords check
+    // Prepare the bad-words replacement code.
+    $bad_word_check= false;
+    $banlists = phorum_db_get_banlists();
+    if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
+        $replace_vals  = array();
+        $replace_words = array();
+        foreach ($banlists[PHORUM_BAD_WORDS] as $item) {
+            $replace_words[] = "/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/i";
+            $replace_vals[]  = PHORUM_BADWORD_REPLACE;
+            $bad_word_check  = true;
+        }
+    }
+
+    if ($bad_word_check) {
+		$stripped = preg_replace($replace_words, $replace_vals, $stripped);
+    }
     return $stripped;
 }
 
