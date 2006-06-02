@@ -171,6 +171,23 @@ function phorum_strip_body( $body )
     // Strip BB Code [tags]
     $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
 
+    // do badwords check
+    // Prepare the bad-words replacement code.
+    $bad_word_check= false;
+    $banlists = phorum_db_get_banlists();
+    if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
+        $replace_vals  = array();
+        $replace_words = array();
+        foreach ($banlists[PHORUM_BAD_WORDS] as $item) {
+            $replace_words[] = "/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/i";
+            $replace_vals[]  = PHORUM_BADWORD_REPLACE;
+            $bad_word_check  = true;
+        }
+    }
+
+    if ($bad_word_check) {
+		$stripped = preg_replace($replace_words, $replace_vals, $stripped);
+    }
     return $stripped;
 }
 
