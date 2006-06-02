@@ -28,7 +28,7 @@ if(!$PHORUM['use_rss']){
     exit();
 }
 
-$cache_key = $_SERVER["QUERY_STRING"].",".$PHORUM["user"]["user_id"]; 
+$cache_key = $_SERVER["QUERY_STRING"].",".$PHORUM["user"]["user_id"];
 $data = phorum_cache_get("rss", $cache_key);
 
 if(empty($data)){
@@ -43,37 +43,37 @@ if(empty($data)){
         $forum_ids = $PHORUM["forum_id"];
         $forums = phorum_db_get_forums($PHORUM["forum_id"]);
     }
-    
+
     // find default forum for announcements
     foreach($forums as $forum_id=>$forum){
         if($forum["folder_flag"]){
             unset($forums[$forum_id]);
-        } elseif(empty($default_forum_id)) { 
+        } elseif(empty($default_forum_id)) {
             $default_forum_id = $forum_id;
         }
     }
-    
+
     $PHORUM["threaded_list"]=false;
     $PHORUM["float_to_top"]=false;
-    
+
     // get the thread set started
     $rows = array();
     $thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
 
     $rows = phorum_db_get_recent_messages(30, $forum_ids, $thread);
-    
+
     unset($rows["users"]);
-    
+
     $items = array();
     $pub_date=0;
     foreach($rows as $key => $row){
-    
+
         if(!$PHORUM["forum_id"]){
             $row["subject"]="[".$forums[$row["forum_id"]]["name"]."] ".$row["subject"];
         }
-    
+
         $forum_id = ($row["forum_id"]==0) ? $default_forum_id : $row["forum_id"];
-    
+
         $items[]=array(
             "pub_date" => date("r",$row["datestamp"]),
             "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum_id, $row["thread"], $row["message_id"]),
@@ -82,14 +82,14 @@ if(empty($data)){
             "author" => $row["author"],
             "category" => $forums[$row["forum_id"]]["name"]
         );
-    
-    
+
+
         $pub_date = max($row["datestamp"], $pub_date);
-    
+
     }
-    
+
     if (!$PHORUM['locale']) $PHORUM['locale'] ="en"; //if locale not set make it 'en'
-    
+
     if($PHORUM["forum_id"]){
         $url = phorum_get_url(PHORUM_LIST_URL);
         $name = $PHORUM["name"];
@@ -99,17 +99,17 @@ if(empty($data)){
         $name = $PHORUM["title"];
         $description = "";
     }
-    
+
     $channel = array(
-    
+
         "name" => $name,
         "url" => $url,
         "description" => $description,
         "pub_date" => date("r",$pub_date),
         "language" => $PHORUM['locale']
-    
+
     );
-    
+    $items = rss_bad_word_check($items);
     $data = create_rss_feed($channel, $items);
 
 }
@@ -170,5 +170,27 @@ function create_rss_feed($channel, $items)
     return $data;
 }
 
+function rss_bad_word_check($items) {
+	$PHORUM = $GLOBALS["PHORUM"];
 
+    // Prepare the bad-words replacement code.
+    $bad_word_check= false;
+    $banlists = phorum_db_get_banlists();
+    if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
+        $replace_vals  = array();
+        $replace_words = array();
+        foreach ($banlists[PHORUM_BAD_WORDS] as $item) {
+            $replace_words[] = "/\b".preg_quote($item['string'])."(ing|ed|s|er|es)*\b/i";
+            $replace_vals[]  = PHORUM_BADWORD_REPLACE;
+            $bad_word_check  = true;
+        }
+    }
+
+    foreach ($items as $key => $value) {
+    		$items[$key]['headline'] = preg_replace($replace_words, $replace_vals, $items[$key]['headline']);
+    		$items[$key]['description'] = preg_replace($replace_words, $replace_vals, $items[$key]['description']);
+    }
+
+    return $items;
+}
 ?>
