@@ -392,6 +392,12 @@ switch ($mod_step) {
 
                 phorum_db_post_message($msg,true);
 
+                // Link attached files to the new message id.
+                $linked_files = phorum_db_get_message_file_list($oldid);
+                foreach ($linked_files as $linked_file) {
+                    phorum_db_file_link($linked_file["file_id"], $msg["message_id"], PHORUM_LINK_MESSAGE);
+                }
+
                 // save the new message-id for later use
                 $msgid_translation[$oldid]=$msg['message_id'];
             }
