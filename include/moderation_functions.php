@@ -44,7 +44,7 @@ function phorum_moderator_data_get($key = null)
 {
     $PHORUM = $GLOBALS['PHORUM'];
     
-    $user_data =phorum_user_get($PHORUM['DATA']['USERINFO']['user_id'], false);
+    $user_data =phorum_user_get($PHORUM['DATA']['USER']['user_id'], false);
     if( $user_data['moderator_data'] ) {
         $moderator_data =unserialize($user_data['moderator_data']);
     } else {
