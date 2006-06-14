@@ -121,6 +121,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
             $tmp_user["last_active_forum"]= 0;
         }
         phorum_user_save_simple( $tmp_user);
+        $GLOBALS["PHORUM"]["user"]["date_last_active"] = $tmp_user["date_last_active"];
     }
 
     return $success;
@@ -619,7 +620,7 @@ function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false, $fo
 /**
  * phorum_user_access_allowed()
  *
- * @param  $permission Use the PHORUM_ALLOW_* constants
+ * @param  int $permission Use the PHORUM_ALLOW_* constants
  * @return bool
  */
 function phorum_user_access_allowed( $permission, $forum_id = 0 )
@@ -832,6 +833,7 @@ function phorum_user_delete($user_id)
  * 0 - exact match
  * 1 - like-clause
  */
+
 function phorum_user_check_custom_field($field_name,$field_content,$match=0) {
 
     $type=-1;
