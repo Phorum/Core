@@ -121,6 +121,7 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
             $tmp_user["last_active_forum"]= 0;
         }
         phorum_user_save_simple( $tmp_user);
+        $GLOBALS["PHORUM"]["user"]["date_last_active"] = $tmp_user["date_last_active"];
     }
 
     return $success;
