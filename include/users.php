@@ -371,11 +371,20 @@ function phorum_user_check_login( $username, $password )
     $ret = false;
     $temp_check = false;
 
-    $user_id = phorum_db_user_check_pass( $username, md5( $password ) );
-    // regular password failed, try the temp password
-    if ( $user_id == 0 ) {
-        $user_id = phorum_db_user_check_pass( $username, md5( $password ), true );
-        $temp_check = true;
+    $temp_user =phorum_hook("user_check_login",array("user_id"=>"","username"=>$username,"password"=>$password));
+    if( is_array($temp_user) && !empty($temp_user["user_id"]) ) {
+        $user_id = $temp_user["user_id"];
+    }
+
+    if( !isset($user_id) || $user_id===false ) {
+
+        $user_id = phorum_db_user_check_pass( $username, md5( $password ) );
+        // regular password failed, try the temp password
+        if ( $user_id == 0 ) {
+            $user_id = phorum_db_user_check_pass( $username, md5( $password ), true );
+            $temp_check = true;
+        }
+
     }
 
     if ( $user_id > 0 ) {
@@ -391,9 +400,9 @@ function phorum_user_check_login( $username, $password )
         $ret = phorum_user_set_current_user( $user_id );
     }
 
+
     return $ret;
 }
-
 function phorum_user_verify( $user_id, $tmp_pass )
 {
     $user_id = phorum_db_user_check_field( array( "user_id", "password_temp" ), array( $user_id, md5( $tmp_pass ) ), array( "=", "=" ) );
