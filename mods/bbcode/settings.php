@@ -11,6 +11,7 @@
         $PHORUM["mod_bb_code"]["links_in_new_window"]=$_POST["links_in_new_window"] ? 1 : 0;
         $PHORUM["mod_bb_code"]["rel_no_follow"]=$_POST["rel_no_follow"] ? 1 : 0;
         $PHORUM["mod_bb_code"]["quote_hook"]=$_POST["quote_hook"] ? 1 : 0;
+        $PHORUM["mod_bb_code"]["show_full_urls"]=$_POST["show_full_urls"] ? 1 : 0;
 
         if(!phorum_db_update_settings(array("mod_bb_code"=>$PHORUM["mod_bb_code"]))){
             $error="Database error while updating settings.";
@@ -31,6 +32,8 @@
     $frm->addbreak("Edit settings for the BBCode module");
     $frm->addmessage("When users post links on your forum, you can choose whether they open in a new window.");
     $frm->addrow("Open links in new window: ", $frm->checkbox("links_in_new_window", "1", "", $PHORUM["mod_bb_code"]["links_in_new_window"]));
+    $frm->addmessage("URLs will be shown in their whole length and not shortened like [ ... ].");
+    $frm->addrow("Show full urls: ", $frm->checkbox("show_full_urls", "1", "", $PHORUM["mod_bb_code"]["show_full_urls"]));
     $frm->addmessage("Enable <a href=\"http://en.wikipedia.org/wiki/Blog_spam\" target=\"_blank\">
         Google's new anti-spam protocol</a> for links posted on your forums.
         <br/>

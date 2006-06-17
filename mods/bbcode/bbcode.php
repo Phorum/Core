@@ -36,11 +36,22 @@ function phorum_bb_code($data)
         if ($PHORUM["mod_bb_code"]["rel_no_follow"]){
             $extra_link_tags .= "rel=\"nofollow\" ";
         }
+
+        if(isset($PHORUM["mod_bb_code"]["show_full_urls"]) && $PHORUM["mod_bb_code"]["show_full_urls"]) {
+            $url_part="<a $extra_link_tags href=\"$1\">$1</a>";
+        } else {
+            // need to put it here because of the extra_link_tags
+            $url_part="[<a $extra_link_tags href=\"$1\">$3</a>]";
+        }
+
+    } else {
+        // need to put it here because of the extra_link_tags
+        $url_part="[<a $extra_link_tags href=\"$1\">$3</a>]";
     }
 
     $replace = array(
         "<img src=\"$1\" border=\"0\" alt=\"$1\" />",
-        "[<a $extra_link_tags href=\"$1\">$3</a>]",
+        $url_part,
         "<a $extra_link_tags href=\"$1\">$3</a>",
         "'<a $extra_link_tags href=\"'.phorum_html_encode('mailto:$1').'\">'.phorum_html_encode('$1').'</a>'",
         "<span style=\"color: $1\">$2</span>",
