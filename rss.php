@@ -186,9 +186,12 @@ function rss_bad_word_check($items) {
         }
     }
 
-    foreach ($items as $key => $value) {
-    		$items[$key]['headline'] = preg_replace($replace_words, $replace_vals, $items[$key]['headline']);
-    		$items[$key]['description'] = preg_replace($replace_words, $replace_vals, $items[$key]['description']);
+    // only go in if we actually have replace items
+    if($bad_word_check) {
+        foreach ($items as $key => $value) {
+            $items[$key]['headline'] = preg_replace($replace_words, $replace_vals, $items[$key]['headline']);
+            $items[$key]['description'] = preg_replace($replace_words, $replace_vals, $items[$key]['description']);
+        }
     }
 
     return $items;
