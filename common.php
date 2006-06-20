@@ -239,11 +239,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         // if moderator notifications are on and the person is a mod, lets find out if anything is new
 
         // only bug the user on the list, index and cc pages
+        $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
+        $PHORUM["user"]["NOTICE"]["USERS"] = false;
+        $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
         if(phorum_page=="index" || phorum_page=="list" || phorum_page=="cc"){
-
-            $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
-            $PHORUM["user"]["NOTICE"]["USERS"] = false;
-            $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
     
             if ( $PHORUM["enable_moderator_notifications"] ) {
                 $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
