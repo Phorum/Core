@@ -522,7 +522,7 @@ function phorum_db_post_message(&$message,$convert=false){
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
             // start ft-search stuff
-            if($PHORUM["DBCONFIG"]["mysql_use_ft"]){
+            if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
                 $search_text="$message[author] | $message[subject] | $message[body]";
 
