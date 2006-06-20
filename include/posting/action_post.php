@@ -220,10 +220,16 @@ if ($success)
     return;
 }
 
-// If we get here, the posting was not successful.
-// Restore message and setup the data for displaying an error to the user.
+// If we get here, the posting was not successful. The return value from
+// the post function is 0 in case of duplicate posting and FALSE in case
+// a database problem occured.
+
+// Restore the original message.
 $message = $message_copy;
-$PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["PostErrorOccured"];
+
+// Setup the data for displaying an error to the user.
+$langidx = $success === 0 ? 'PostErrorDuplicate' : 'PostErrorOccured';
+$PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"][$langidx];
 $error_flag = true;
 
 ?>

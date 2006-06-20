@@ -387,6 +387,7 @@
         "Posted"                =>      "Posted",
         "Postedby"              =>      "Posted by",   // as in: Posted by user on 01-01-01 01:01pm
         "PostErrorOccured"      =>      "An error occured while trying to post this message.",
+        "PostErrorDuplicate"    =>      "The message could not be posted. The exact same message has already been posted before and posting duplicate messages is not allowed in this forum.",
         "Posts"                 =>      "Posts",
         "Preview"               =>      "Preview",
         "PreviewExplain"        =>      "This is how your message will appear in the forum.",

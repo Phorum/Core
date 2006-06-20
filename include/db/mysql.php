@@ -423,8 +423,8 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$modda
  *
  * @param boolean $convert
  *
- * @return boolean
- * 		TRUE on success, FALSE on failure.
+ * @return
+ * 		TRUE on success, FALSE on failure, 0 on duplicate posts.
  *
  */
 function phorum_db_post_message(&$message,$convert=false){
