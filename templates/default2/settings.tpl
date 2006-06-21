@@ -9,6 +9,8 @@
 {! --- This is used the number of page numbers shown on the list page in the paging section (eg. 1 2 3 4 5) --- }
 {DEFINE list_pages_shown 5}
 
+{! --- Define on what page notifications should be displayed ---- }
+{DEFINE show_notify_for_pages "index,list,cc"}
 
 {! --- This is the marker for messages in the thread list --- }
 {VAR marker '<img src="templates/default/images/carat.gif" border="0" width="8" height="8" alt="" />'}

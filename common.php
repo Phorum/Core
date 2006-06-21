@@ -235,37 +235,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
         }
 
-
-        // if moderator notifications are on and the person is a mod, lets find out if anything is new
-
-        // only bug the user on the list, index and cc pages
-        $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
-        $PHORUM["user"]["NOTICE"]["USERS"] = false;
-        $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
-        if(phorum_page=="index" || phorum_page=="list" || phorum_page=="cc"){
-    
-            if ( $PHORUM["enable_moderator_notifications"] ) {
-                $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
-                if ( count( $forummodlist ) > 0 ) {
-                    $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
-                    $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
-                }
-                if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
-                    $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
-                    $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
-                }
-                if ( phorum_user_allow_moderate_group() ) {
-                    $groups = phorum_user_get_moderator_groups();
-                    if ( count( $groups ) > 0 ) {
-                        $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
-                        $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
-                    }
-                }
-            }
-    
-            $PHORUM["user"]["NOTICE"]["SHOW"] = $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
-        }
-        
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
             if ( $PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON ) {
@@ -354,6 +323,49 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     }
 
+    // If moderator notifications are on and the person is a mod,
+    // lets find out if anything is new.
+
+    $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
+    $PHORUM["user"]["NOTICE"]["USERS"] = false;
+    $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
+
+    if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
+
+        // By default, only bug the user on the list, index and cc pages.
+        // The template can override this behaviour by setting a comma
+        // separated list of phorum_page names in a template define statement
+        // like this: {DEFINE show_notify_for_pages "page 1,page 2,..,page n"}
+        if (isset($PHORUM["TMP"]["show_notify_for_pages"])) {
+            $show_notify_for_pages = explode(",", $PHORUM["TMP"]["show_notify_for_pages"]);
+        } else {
+            $show_notify_for_pages = array('index','list','cc');
+        }
+
+        if ( in_array(phorum_page, $show_notify_for_pages) ) {
+
+            if ( $PHORUM["enable_moderator_notifications"] ) {
+                $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
+                if ( count( $forummodlist ) > 0 ) {
+                    $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
+                    $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
+                }
+                if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
+                    $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
+                    $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
+                }
+                if ( phorum_user_allow_moderate_group() ) {
+                    $groups = phorum_user_get_moderator_groups();
+                    if ( count( $groups ) > 0 ) {
+                        $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
+                        $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
+                    }
+                }
+            }
+    
+            $PHORUM["user"]["NOTICE"]["SHOW"] = $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
+        }
+    }    
 
     // a hook for rewriting vars at the end of common.php
     phorum_hook( "common", "" );
