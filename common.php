@@ -557,7 +557,8 @@ function phorum_get_url()
                     break;
                 case "read":
                     $add_forum_id = true;
-                    array_push($argv, $PHORUM["args"]["1"]);
+                    $thread_id = (int)$PHORUM["args"]["1"];
+                    array_push($argv, $thread_id);
                     break;
             }
             $page = "rss";
