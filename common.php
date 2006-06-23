@@ -212,7 +212,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM['parent_id']=0;
         $PHORUM['active']=1;
         $PHORUM['folder_flag']=1;
-        $PHORUM["template"] = $PHORUM["default_template"]; 
+        $PHORUM["template"] = $PHORUM["default_template"];
     }
 
     // stick some stuff from the settings into the DATA member
@@ -362,10 +362,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                     }
                 }
             }
-    
+
             $PHORUM["user"]["NOTICE"]["SHOW"] = $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
         }
-    }    
+    }
 
     // a hook for rewriting vars at the end of common.php
     phorum_hook( "common", "" );
@@ -572,7 +572,8 @@ function phorum_get_url()
                     break;
                 case "read":
                     $add_forum_id = true;
-                    array_push($argv, $PHORUM["args"]["1"]);
+                    $thread_id = (int)$PHORUM["args"]["1"];
+                    array_push($argv, $thread_id);
                     break;
             }
             $page = "rss";
@@ -626,14 +627,14 @@ function phorum_get_url()
 
 /**
  * Find out what input and output files to use for a template file.
- * 
+ *
  * @param $page - The template base name (e.g. "header", "css", etc.).
  * @return $phpfile - The PHP file to include for the template base name.
  * @return $tplfile - The file to use as template input. In case there's no
  *                    .tpl file to pre-process, the value will be NULL.
- *                    In that case, the $phpfile return value can be 
+ *                    In that case, the $phpfile return value can be
  *                    included directly.
- */ 
+ */
 function phorum_get_template_file( $page )
 {
     $PHORUM = $GLOBALS["PHORUM"];
