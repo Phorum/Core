@@ -109,11 +109,14 @@ function phorum_bb_code($data)
             if(strstr($body, "[")){
 
                 // convert bare email addresses into bbcode tags as best we can.
-                $body = preg_replace("/([a-z0-9][a-z0-9\-_\.\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[a-z0-9])/i", "[email]$1[/email]", $body);
+                $body = preg_replace("/(^|[\s])([a-z0-9][a-z0-9\-_\.\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[a-z0-9])([\?\!\.,;:\s]|$)/i", "$1[email]$2[/email]$3", $body);
 
                 // clean up any BB code we stepped on.
-                $body = str_replace("[email][email]", "[email]", $body);
-                $body = str_replace("[/email][/email]", "[/email]", $body);
+                // Most probably not needed anymore, due to some changes in
+                // the above code (introduced $1 and $3 to match the 
+                // surroundings of the email address).
+                //$body = str_replace("[email][email]", "[email]", $body);
+                //$body = str_replace("[/email][/email]", "[/email]", $body);
 
                 // fiddle with white space around quote and code tags.
                 $body=preg_replace("/\s*(\[\/*(code|quote)\])\s*/", "$1", $body);
