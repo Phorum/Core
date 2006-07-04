@@ -124,13 +124,14 @@
         $forums = phorum_db_get_forums();
 
         foreach($forums as $forum){
-            if($forums_only == 0 || $forum['folder_flag']==0 || ($forums_only=2 && $forum['vroot'] && $forum['vroot'] == $forum['forum_id']))  {
+            if($forums_only == 0 || $forum['folder_flag']==0 || ($forums_only==2 && $forum['vroot'] && $forum['vroot'] == $forum['forum_id']))  {
                 $path = $forum["name"];
                 $parent_id=$forum["parent_id"];
-                while($parent_id!=0){
-                    $path=$forums[$forum["parent_id"]]["name"]."::$path";
+                while($parent_id != 0){
 
+                    $path=$forums[$parent_id]["name"]."::$path";
                     $parent_id=$forums[$parent_id]["parent_id"];
+
                 }
                 if($forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
                         $path.=" (Virtual Root)";
@@ -139,7 +140,7 @@
             }
         }
 
-        asort($folders);
+        asort($folders,SORT_STRING);
 
         return $folders;
 

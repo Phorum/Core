@@ -367,6 +367,8 @@ EOT;
 
             $forums=phorum_db_get_forums();
 
+            $forumpaths = phorum_get_forum_info(1);
+
             $perm_frm = $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_READ."]", 1, "Read")."&nbsp;&nbsp;".
                         $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply")."&nbsp;&nbsp;".
                         $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics")."&nbsp;&nbsp;".
@@ -376,11 +378,11 @@ EOT;
                         $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users")."&nbsp;&nbsp;";
 
             $arr[]="Add A Forum...";
-            foreach($forums as $forum_id=>$forum){
-                if(!isset($user["forum_permissions"][$forum_id]))
-                    $arr[$forum_id]=$forum["name"];
-            }
 
+            foreach($forumpaths as $forum_id=>$forumname){
+                if(!isset($user["forum_permissions"][$forum_id]) && $forums[$forum_id]['folder_flag'] == 0)
+                    $arr[$forum_id]=$forumname;
+            }
             if(count($arr)>1)
                 $frm->addrow($frm->select_tag("new_forum", $arr), $perm_frm);
 
@@ -397,7 +399,7 @@ EOT;
 
                     $frm->hidden("forums[$forum_id]", $forum_id);
 
-                    $row=$frm->addrow($forums[$forum_id]["name"]."<br />".$frm->checkbox("delforum[$forum_id]", 1, "Delete"), $perm_frm);
+                    $row=$frm->addrow($forumpaths[$forum_id]."<br />".$frm->checkbox("delforum[$forum_id]", 1, "Delete"), $perm_frm);
 
                 }
             }
