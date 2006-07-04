@@ -87,7 +87,12 @@ if(!empty($phorum_search)){
 
     include_once("./include/format_functions.php");
 
+    $PHORUM["args"]["page"] = (int)$PHORUM["args"]["page"];
+
     $offset = (empty($PHORUM["args"]["page"])) ? 0 : $PHORUM["args"]["page"]-1;
+
+    if($offset < 0)
+        $offset = 0;
 
     if(empty($PHORUM["list_length"])) $PHORUM["list_length"]=30;
 
