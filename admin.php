@@ -124,7 +124,7 @@
         $forums = phorum_db_get_forums();
 
         foreach($forums as $forum){
-            if($forums_only == 0 || $forum['folder_flag']==0 || ($forums_only=2 && $forum['vroot'] && $forum['vroot'] == $forum['forum_id']))  {
+            if($forums_only == 0 || $forum['folder_flag']==0 || ($forums_only==2 && $forum['vroot'] && $forum['vroot'] == $forum['forum_id']))  {
                 $path = $forum["name"];
                 $parent_id=$forum["parent_id"];
                 while($parent_id!=0){
@@ -139,11 +139,12 @@
             }
         }
 
-        asort($folders);
+        asort($folders,SORT_STRING);
 
         return $folders;
 
     }
+
 
     /*
      * Sets the given vroot for the descending forums / folders
