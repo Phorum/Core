@@ -998,32 +998,13 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     
                 $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
     
-                if($PHORUM["DBCONFIG"]["mysql_use_ft"]){
-    
-                    if($match_type=="ALL" && count($terms)>1){
-                        $against="+".mysql_escape_string(implode(" +", $terms));
-                    } else {
-                        $against=mysql_escape_string(implode(" ", $terms));
-                    }
-    
-                    $clause="MATCH (search_text) AGAINST ('$against' IN BOOLEAN MODE)";
-    
+                if($match_type=="ALL" && count($terms)>1){
+                    $against="+".mysql_escape_string(implode(" +", $terms));
                 } else {
-    
-                    if($match_type=="ALL"){
-                        $conj="and";
-                    } else {
-                        $conj="or";
-                    }
-    
-                    // quote strings correctly
-                    foreach ($terms as $id => $term) {
-                        $terms[$id] = mysql_escape_string($term);
-                    }
-    
-                    $clause = "( search_text like '%".implode("%' $conj search_text like '%", $terms)."%' )";
-    
+                    $against=mysql_escape_string(implode(" ", $terms));
                 }
+
+                $clause="MATCH (search_text) AGAINST ('$against' IN BOOLEAN MODE)";
     
                 $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['search_table']} $use_key where $clause $extra_where";
                 $res = mysql_unbuffered_query($sql, $conn);
