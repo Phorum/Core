@@ -96,10 +96,23 @@ function phorum_getparam($name)
 $action          = phorum_getparam('action');
 $page            = phorum_getparam('page');
 $folder_id       = phorum_getparam('folder_id');
-$pm_id           = phorum_getparam('pm_id');
-$forum_id        = $PHORUM["forum_id"];
-$user_id         = $PHORUM["user"]["user_id"];
+$pm_id           = (int)phorum_getparam('pm_id');
+$forum_id        = (int)$PHORUM["forum_id"];
+$user_id         = (int)$PHORUM["user"]["user_id"];
 $hide_userselect = phorum_getparam('hide_userselect');
+
+// Cleanup folder id.
+if ($folder_id != PHORUM_PM_INBOX && $folder_id != PHORUM_PM_OUTBOX)
+    $folder_id = (int)$folder_id;
+
+// Cleanup array with checked PM items.
+if (isset($_POST["checked"])) {
+    $checked = array();
+    foreach ($_POST["checked"] as $pm_id) {
+        $checked[] = (int)$pm_id;
+    }
+    $_POST["checked"] = $checked;
+}
 
 // Get recipients from the form and create a valid list of recipients.
 $recipients = array();

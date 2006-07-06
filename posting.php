@@ -181,7 +181,7 @@ if ($initial) {
     $mode = $_POST["mode"];
 }
 if (! in_array($mode, $valid_modes)) {
-    die("Illegal mode issued: $mode");
+    die("Illegal mode issued: " . htmlspecialchars($mode));
 }
 
 // Find out if we are detaching an attachment.
