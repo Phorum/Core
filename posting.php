@@ -194,16 +194,7 @@ foreach ($_POST as $var => $val) {
 }
 
 // Check if the user uploads an attachment.
-$do_attach = false;
-if (count($_FILES)) {
-    foreach ($_FILES as $name => $data) {
-        if ($data["size"]) {
-            $do_attach = true;
-            break;
-        }
-    }
-    reset($_FILES);
-}
+$do_attach = count($_FILES) ? true : false;
 
 // Set all our URL's
 phorum_build_common_urls();
