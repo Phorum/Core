@@ -873,7 +873,11 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     // prepare terms
     if($match_type=="PHRASE"){
 
-        $terms = array('"'.$search.'"');
+        if($PHORUM["DBCONFIG"]["mysql_use_ft"]){
+            $terms = array('"'.$search.'"');
+        } else {
+            $terms = array($search);
+        }
 
     } elseif($match_type=="AUTHOR"){
 
