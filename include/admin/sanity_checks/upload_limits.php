@@ -25,6 +25,7 @@
     // but we cannot check that one from PHP.
 
     require_once('./include/format_functions.php'); // For phorum_filesize()
+    require_once('./include/upload_functions.php');
 
     $phorum_check = "File uploading (personal files and attachments)";
 
@@ -35,17 +36,7 @@
         $upload_used = false;
 
         // Get the maximum file upload size for PHP.
-        $php_max_upload = phorum_php_max_upload();
-
-        // Get the maximum packet size for the database.
-        // For determining the maximum allowed upload size,
-        // we have to take packet overhead into account.
-        $max_packetsize = phorum_db_maxpacketsize();
-        if ($max_packetsize == NULL) {
-            $db_max_upload = $php_max_upload;
-        } else {
-            $db_max_upload = phorum_db_maxpacketsize() * 0.6;
-        }
+        list ($system_max_upload, $php_max_upload, $db_max_upload) = phorum_get_system_max_upload();
 
         // Check limits for file uploading in personal profile.
         if ($PHORUM["file_uploads"] && $PHORUM["max_file_size"]) {
@@ -70,6 +61,7 @@
                      in the forum \"{$forum['name']}\"",
                     $php_max_upload, $db_max_upload
                 );
+                if ($res != NULL) return $res;
             }
         }
 
@@ -132,33 +124,4 @@
         return NULL;
     }
 
-    function phorum_php_max_upload()
-    {
-        // Determine the PHP system upload limit. The limit for
-        // maximum upload filesize is not the only thing we
-        // have to look at. We should also take the maximum
-        // POST size in account.
-        $pms = phorum_phpcfgsize2bytes(get_cfg_var('post_max_size'));
-        $umf = phorum_phpcfgsize2bytes(get_cfg_var('upload_max_filesize'));
-        $limit = ($umf > $pms ? $pms : $umf);
-
-        return $limit;
-    }
-
-    // Convert the size parameters that can be used in the
-    // PHP ini-file (e.g. 1024, 10k, 8M) to a number of bytes.
-    function phorum_phpcfgsize2bytes($val) {
-        $val = trim($val);
-        $last = strtolower($val{strlen($val)-1});
-        switch($last) {
-           // The 'G' modifier is available since PHP 5.1.0
-           case 'g':
-               $val *= 1024;
-           case 'm':
-               $val *= 1024;
-           case 'k':
-               $val *= 1024;
-        }
-        return $val;
-    }
 ?>
