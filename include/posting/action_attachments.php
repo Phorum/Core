@@ -50,6 +50,12 @@ if ($do_detach)
 // Attachment(s) uploaded.
 elseif ($do_attach && ! empty($_FILES))
 {
+    // find the maximum allowed attachment size.
+    require_once('./include/upload_functions.php');
+    $system_max_upload = phorum_get_system_max_upload();
+    if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload[0]/1024;
+    $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload[0]/1024);
+
     // The editor template that I use only supports one upload
     // at a time. This code supports multiple uploads.
     $attached = 0;
@@ -58,25 +64,25 @@ elseif ($do_attach && ! empty($_FILES))
         // Not too many attachments?
         if ($attach_count >= $PHORUM["max_attachments"]) break;
 
-        // Check if the tempfile is an uploaded file?
-        if(! is_uploaded_file($file["tmp_name"])) continue;
-
-        // Some problems in uploading result in files which are
-        // zero in size. We asume that people who upload zero byte
-        // files will almost always have problems uploading.
-        if ($file["size"] == 0) continue;
-
-        // find the maximum allowed attachment size.
-        if (! isset($system_max_upload)) {
-            require_once('./include/upload_functions.php');
-            $system_max_upload = phorum_get_system_max_upload();
-            if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload[0]/1024;
-            $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload[0]/1024);
+        // PHP 4.2.0 and later can set an error field for the file
+        // upload, indicating a specific error. In Phorum 5.1, we only
+        // have an error message for too large uploads. Other error
+        // messages will get a generic file upload error.
+        $file_too_large = false;
+        if (isset($file["error"]) && $file["error"]) {
+            if ($file["error"] == UPLOAD_ERR_INI_SIZE ||
+                $file["error"] == UPLOAD_ERR_FORM_SIZE) {
+                // File too large. Just pass it on to the 
+                // following code to handle the error message.
+                $file_too_large = true;
+            } else {
+                // Make sure that a generic error will be shown.
+                $file["size"] = 0;
+            }
         }
 
         // Isn't the attachment too large?
-        if ($PHORUM["max_attachment_size"] > 0 &&
-            $file["size"] > $PHORUM["max_attachment_size"] * 1024) {
+        if ($file_too_large || ($PHORUM["max_attachment_size"] > 0 && $file["size"] > $PHORUM["max_attachment_size"] * 1024)) {
             $PHORUM["DATA"]["ERROR"] = str_replace(
                 '%size%',
                 phorum_filesize($PHORUM["max_attachment_size"] * 1024),
@@ -86,6 +92,14 @@ elseif ($do_attach && ! empty($_FILES))
             $error_flag = true;
             break;
         }
+
+        // Some problems in uploading result in files which are
+        // zero in size. We asume that people who upload zero byte
+        // files will almost always have problems uploading.
+        if ($file["size"] == 0) continue;
+
+        // Check if the tempfile is an uploaded file?
+        if (! is_uploaded_file($file["tmp_name"])) continue;
 
         // Isn't the total attachment size too large?
         if ($PHORUM["max_totalattachment_size"] > 0 &&
