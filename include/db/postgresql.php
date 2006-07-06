@@ -529,6 +529,9 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     $sql = "select forum_id, message_id, thread, parent_id from {$PHORUM['message_table']} where message_id = $message_id ";
     $res = pg_query($conn, $sql);
     $rec = pg_fetch_assoc($res);
+    if (empty($rec)) {
+        phorum_db_pg_last_error("No message found for message_id $message_id");
+    }
 
     if($mode == PHORUM_DELETE_TREE){
         $mids = phorum_db_get_messagetree($message_id, $rec['forum_id']);

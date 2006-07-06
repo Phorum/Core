@@ -35,9 +35,9 @@ if($PHORUM["folder_flag"] || empty($PHORUM["forum_id"])){
 }
 
 if(isset($PHORUM["args"][1])){
-    $thread=$PHORUM["args"][1];
+    $thread=(int)$PHORUM["args"][1];
 } elseif(isset($_POST["thread"])){
-    $thread=$_POST["thread"];
+    $thread=(int)$_POST["thread"];
 }
 
 if(empty($thread)) {

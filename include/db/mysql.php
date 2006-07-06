@@ -565,6 +565,9 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     $rec = mysql_fetch_assoc($res);
+    if (empty($rec)) {
+        phorum_db_mysql_error("No message found for message_id $message_id");
+    }
 
     if($mode == PHORUM_DELETE_TREE){
         $mids = phorum_db_get_messagetree($message_id, $rec['forum_id']);
