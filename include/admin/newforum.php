@@ -398,14 +398,9 @@ $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", 
 
 $frm->addrow("Allowed Files (eg: gif;jpg;png, empty for any)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
-$php_limit = ini_get('upload_max_filesize')*1024;
-$max_packetsize = phorum_db_maxpacketsize();
-if ($max_packetsize == NULL) {
-    $db_limit = $php_limit;
-} else {
-    $db_limit = $max_packetsize/1024*.6;
-}
-$max_size =  phorum_filesize(min($php_limit, $db_limit)*1024);
+require_once('./include/upload_functions.php');
+$system_max_upload = phorum_get_system_max_upload();
+$max_size = phorum_filesize($system_max_upload[0]);
 
 $row=$frm->addrow("Max File Size In kB ($max_size maximum)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 $frm->addhelp($row, "Max File Size", "This is the maximum that one uploaded file can be.  If you see a maximum here, that is the maximum imposed by either your PHP installation, database server or both.  Leaving this field as 0 will use this maximum.");
