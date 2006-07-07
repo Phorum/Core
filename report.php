@@ -36,7 +36,7 @@ $template = "report";
 
 $message=array();
 // get the message
-if (is_numeric($PHORUM["args"][1])) {
+if (isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])) {
     $message_id = $PHORUM["args"][1];
     $message = phorum_db_get_message($message_id);
 }
@@ -105,7 +105,8 @@ if(is_array($message) && count($message)) {
     }
 } else {
 
-    $PHORUM["DATA"]["ReportPostMessage"] = $PHORUM['DATA']['LANG'];
+    $PHORUM["DATA"]["ERROR"] = $PHORUM['DATA']['LANG']['MessageNotFound'];
+    $template = 'message';
 }
 include phorum_get_template("header");
 phorum_hook("after_header");
