@@ -168,24 +168,60 @@ Table of contents:
 
    Here is a list of the types that can be used:
 
-   +--------+-----------------------------------------------------------+
-   | <type> | <data>                                                    |
-   +--------+-----------------------------------------------------------+
-   | title  | This is the title for the module that is displayed in the |
-   |        | "Modules" page of the admin interface.                    |
-   +--------+-----------------------------------------------------------+
-   | desc   | This is the description that is displayed along with the  |
-   |        | title in the admin interface, to give a little more       |
-   |        | information about the module. Using HTML in the <data>    |
-   |        | part is allowed.                                          |
-   +--------+-----------------------------------------------------------+
-   | hook   | This describes which hook functions are called for which  |
-   |        | Phorum hooks. The data consists of two fields, separated  |
-   |        | by a pipe "|" symbol. The first field contains the name   |
-   |        | of the hook that this module is hooking into. The second  |
-   |        | field contains the name of the hook function that will be |
-   |        | called for the hook.                                      |
-   +--------+-----------------------------------------------------------+
+   +----------+-----------------------------------------------------------+
+   | <type>   | <data>                                                    |
+   +----------+-----------------------------------------------------------+
+   | title    | This is the title for the module that is displayed in the |
+   |          | "Modules" page of the admin interface.                    |
+   +----------+-----------------------------------------------------------+
+   | desc     | This is the description that is displayed along with the  |
+   |          | title in the admin interface, to give a little more       |
+   |          | information about the module. Using HTML in the <data>    |
+   |          | part is allowed.                                          |
+   +----------+-----------------------------------------------------------+
+   | hook     | This describes which hook functions are called for which  |
+   |          | Phorum hooks. The data consists of two fields, separated  |
+   |          | by a pipe "|" symbol. The first field contains the name   |
+   |          | of the hook that this module is hooking into. The second  |
+   |          | field contains the name of the hook function that will be |
+   |          | called for the hook.                                      |
+   +----------+-----------------------------------------------------------+
+   | priority | This can be used for changing priorities and dependancies |
+   |          | for modules and hooks. Possible values are (in order in   |
+   |          | which they are processed):                                |
+   |          |                                                           |
+   |          | (1) run module before|after *                             |
+   |          | (2) run module before|after <other module name>           |
+   |          | (3) run hook <hook name> before|after *                   |
+   |          | (4) run hook <hook name> bofore|after <other module name> |
+   |          |                                                           |
+   |          | Examples:                                                 |
+   |          |                                                           |
+   |          | priority: run module before *                             |
+   |          |   Run this module before all other modules.               |
+   |          | priority: run module before bbcode                        |
+   |          |   Run this module before the bbcode module.               |
+   |          | priority: run hook format before smileys                  |
+   |          |   Run the "format" hook for this module before the        |
+   |          |   "format" hook of the smileys module.                    |
+   |          | priority: run hook after_header after *                   |
+   |          |   Run the "after_header" hook for this module after all   |
+   |          |   other "after_header" hooks.                             |
+   |          |                                                           |
+   |          | The main difference between "run module" and "run hook"   |
+   |          | is that "run module" will affect the priority for each    |
+   |          | hook of the module and that "run hooK" is used to         |
+   |          | specifically change the priority of a single hook.        |
+   |          | So to run all hooks for a module as early as possible,    |
+   |          | but run the "foo" hook as late as possible and the        |
+   |          | "bar" hook before the smileys mod, one could use the      |
+   |          | following priority lines:                                 |
+   |          |                                                           |
+   |          | priority: run module before *                             |
+   |          | priority: run hook foo after *                            |
+   |          | priority: run hook bar before smileys                     |
+   |          |                                                           |
+   +----------+-----------------------------------------------------------+
 
    It is allowed to use multiple hook lines in your module information,
    so your module can hook into multiple hooks. When doing this, it
@@ -200,12 +236,14 @@ Table of contents:
       hook: some_hook|phorum_mod_foo_some_hook
       hook: some_other_hook|phorum_mod_foo_some_other_hook
       hook: yet_another_hook|phorum_mod_foo_some_other_hook
+      priority: run some_hook before some_other_module
 
    So what this module info for example does, is telling Phorum that
    when it gets to "some_other_hook", it will have to call the function
    phorum_mod_foo_some_other_hook() in your module. It also tells
    that for "yet_another_hook" the same function has to be called.
-
+   It will also take care that the hook "some_hook" is run before the
+   same hook in the module "some_other_module".
 
   2.1.3 Other "stuff"
   -------------------
