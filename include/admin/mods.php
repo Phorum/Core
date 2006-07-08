@@ -67,7 +67,7 @@
                     $prio = trim($parts[1]);
                     if (preg_match('/^run\s+hook\s+(.+)\s+(before|after)\s(.+)$/i', $prio, $m)) {
                         $priorities['hook'][$m[1]][$entry][] = $m;
-                    } elseif (preg_match('/^load\s+module\s+(before|after)\s(.+)$/i', $prio, $m)) {
+                    } elseif (preg_match('/^run\s+module\s+(before|after)\s(.+)$/i', $prio, $m)) {
                         $priorities['module'][$entry][] = $m;
                     } else {
                         phorum_admin_error(
@@ -117,7 +117,7 @@
         $PHORUM["mods"] = $mods;
 
         // First priority ordering pass:
-        // load modules before|after * 
+        // run module before|after * 
         $active_mods_copy = array_values($active_mods); // array_values reindexes
         foreach ($active_mods as $mod)
         {
@@ -144,7 +144,7 @@
         $active_mods = $active_mods_copy;
 
         // Second priority ordering pass: 
-        // load module before|after <othermodule> 
+        // run module before|after <othermodule> 
         $active_mods_copy = array_values($active_mods);
         foreach ($active_mods as $mod)
         {
