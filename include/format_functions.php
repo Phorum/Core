@@ -193,7 +193,7 @@ function phorum_strip_body( $body )
 
 /**
  * Formats a file size in bytes to a human readable format. Human
- * readable formats are MB (MegaByte), kB (KiloByte) and byte.
+ * readable formats are MB (MegaByte), KB (KiloByte) and byte.
  *
  * @param bytes - The number of bytes
  * @param formatted - The formatted size
@@ -203,7 +203,7 @@ function phorum_filesize( $bytes )
     if ($bytes >= 1024*1024) {
         return round($bytes/1024/1024, 2) . "MB";
     } elseif ($bytes >= 1024) {
-        return round($bytes/1024, 1) . "kB";
+        return round($bytes/1024, 1) . "KB";
     } else {
         return $bytes . ($bytes == 1 ? " byte" : " bytes");
     }
