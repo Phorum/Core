@@ -193,7 +193,14 @@ foreach ($_POST as $var => $val) {
     }
 }
 
-// Check if the user uploads an attachment.
+// Check if the user uploads an attachment. We remove file uploads
+// with no name set, because that simply means the user did not select
+// a file to upload. Not an error condition in this case.
+foreach ($_FILES as $key => $val) {
+    if (!isset($val["name"]) || $val["name"] == "") {
+        unset($_FILES[$key]);
+    }
+}
 $do_attach = count($_FILES) ? true : false;
 
 // Set all our URL's
