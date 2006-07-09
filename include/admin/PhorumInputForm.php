@@ -71,7 +71,9 @@ class PhorumInputForm {
         // Allow title and text to span multiple lines and
         // do escaping for encapsulation within the help
         // javascript code.
+        $title = str_replace("\r", " ", $title);
         $title = addslashes(str_replace("\n", " ", $title));
+        $text = str_replace("\r", " ", $text);
         $text = addslashes(str_replace("\n", " ", $text));
         $this->_help[$row] = array( $title, $text );
     }
