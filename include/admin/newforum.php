@@ -402,10 +402,10 @@ require_once('./include/upload_functions.php');
 $system_max_upload = phorum_get_system_max_upload();
 $max_size = phorum_filesize($system_max_upload[0]);
 
-$row=$frm->addrow("Max File Size In kB ($max_size maximum)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
+$row=$frm->addrow("Max File Size In KB ($max_size maximum)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 $frm->addhelp($row, "Max File Size", "This is the maximum that one uploaded file can be.  If you see a maximum here, that is the maximum imposed by either your PHP installation, database server or both.  Leaving this field as 0 will use this maximum.");
 
-$frm->addrow("Max cumulative File Size In kB (0 for unlimited)", $frm->text_box("max_totalattachment_size", $max_totalattachment_size, 10, false, false, $disabled_form_input));
+$frm->addrow("Max cumulative File Size In KB (0 for unlimited)", $frm->text_box("max_totalattachment_size", $max_totalattachment_size, 10, false, false, $disabled_form_input));
 
 $frm->show();
 

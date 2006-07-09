@@ -283,7 +283,7 @@ function phorum_strip_body( $body )
 
 /**
  * Formats a file size in bytes to a human readable format. Human
- * readable formats are MB (MegaByte), kB (KiloByte) and byte.
+ * readable formats are MB (MegaByte), KB (KiloByte) and byte.
  *
  * @param bytes - The number of bytes
  * @param formatted - The formatted size
