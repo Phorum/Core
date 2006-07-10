@@ -78,7 +78,8 @@ if (! $PHORUM["enable_pm"]) {
 // ------------------------------------------------------------------------
 
 // Retrieve a parameter from either the args-list or $_POST.
-function phorum_getparam($name)
+// Do typecasting if requested.
+function phorum_getparam($name, $type = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -89,21 +90,41 @@ function phorum_getparam($name)
         $ret = trim($_POST[$name]);
     }
 
+    // Apply typecasting if requested.
+    if ($ret != NULL && $type != NULL) {
+        switch ($type) {
+
+            case 'integer':
+                $ret = (int) $ret;
+                break;
+
+            case 'boolean':
+                $ret = $ret ? 1 : 0;
+                break;
+
+            case 'folder_id':
+                if ($ret != PHORUM_PM_INBOX && $ret != PHORUM_PM_OUTBOX) {
+                    $ret = (int)$ret;
+                }
+                break;
+
+            default:
+                die("Internal error in phorum_getparam: " .
+                    "illegal type for typecasting: ".htmlspecialchars($type));
+        }
+    }
+
     return $ret;
 }
 
 // Get basic parameters.
 $action          = phorum_getparam('action');
 $page            = phorum_getparam('page');
-$folder_id       = phorum_getparam('folder_id');
-$pm_id           = (int)phorum_getparam('pm_id');
+$folder_id       = phorum_getparam('folder_id', 'folder_id');
+$pm_id           = phorum_getparam('pm_id', 'integer');
 $forum_id        = (int)$PHORUM["forum_id"];
 $user_id         = (int)$PHORUM["user"]["user_id"];
-$hide_userselect = phorum_getparam('hide_userselect');
-
-// Cleanup folder id.
-if ($folder_id != PHORUM_PM_INBOX && $folder_id != PHORUM_PM_OUTBOX)
-    $folder_id = (int)$folder_id;
+$hide_userselect = phorum_getparam('hide_userselect', 'boolean');
 
 // Cleanup array with checked PM items.
 if (isset($_POST["checked"])) {
