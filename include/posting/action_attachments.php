@@ -88,7 +88,6 @@ elseif ($do_attach && ! empty($_FILES))
                 phorum_filesize($PHORUM["max_attachment_size"] * 1024),
                 $PHORUM["DATA"]["LANG"]["AttachFileSize"]
             );
-            phorum_filesize($PHORUM["max_attachment_size"] * 1024);
             $error_flag = true;
             break;
         }
