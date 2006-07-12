@@ -43,10 +43,15 @@ if($PHORUM["folder_flag"]){
 }
 
 // check for markread
-if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread'){
+if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
     // setting all posts read
     unset($PHORUM['user']['newinfo']);
     phorum_db_newflag_allread();
+    if($PHORUM['cache_newflags']) {
+        phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+        phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+    }
+
 
     // redirect to a fresh list without markread in url
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
@@ -56,7 +61,20 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread'){
 }
 
 if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
-    $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
+
+    $PHORUM['user']['newinfo'] = null;
+
+    if($PHORUM['cache_newflags']) {
+        $newflagkey = $PHORUM['forum_id']."-".$PHORUM['user']['user_id'];
+        $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey);
+    }
+
+    if($PHORUM['user']['newinfo'] == null) {
+        $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
+        if($PHORUM['cache_newflags']) {
+            phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'],86400);
+        }
+    }
 }
 
 // figure out what page we are on
@@ -443,6 +461,10 @@ if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && 
     // set it -1 as the comparison is "post newer than min_id"
     $min_id--;
     phorum_db_newflag_add_read($min_id);
+    if($PHORUM['cache_newflags']) {
+        phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+        phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+    }
 }
 
 include phorum_get_template("header");

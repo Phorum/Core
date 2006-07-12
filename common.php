@@ -304,6 +304,16 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
+
+    // just setting this up for upgraded installs where this might not be set up
+    if(!isset($PHORUM['cache_newflags'])) {
+        $PHORUM['cache_newflags'] = 0;
+    }
+
+    if(!isset($PHORUM['cache_messages'])) {
+        $PHORUM['cache_messages'] = 0;
+    }
+
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
     $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);

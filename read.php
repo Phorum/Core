@@ -38,7 +38,20 @@ if(empty($PHORUM["forum_id"]) || $PHORUM["folder_flag"]){
 }
 
 if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
-    $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
+
+    $PHORUM['user']['newinfo'] = null;
+
+    if($PHORUM['cache_newflags']) {
+        $newflagkey = $PHORUM['forum_id']."-".$PHORUM['user']['user_id'];
+        $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey);
+    }
+
+    if($PHORUM['user']['newinfo'] == null) {
+        $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
+        if($PHORUM['cache_newflags']) {
+            phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'],86400);
+        }
+    }
 }
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
@@ -85,23 +98,30 @@ if(empty($PHORUM["args"][1])) {
                 $thread = phorum_db_get_older_thread($newervar);
                 break;
             case "markthreadread":
-                // thread needs to be in $thread for the redirection
-                $thread = (int)$PHORUM["args"][1];
-                $thread_message=phorum_db_get_message($thread,'message_id');
 
-                $mids=array();
-                foreach($thread_message['meta']['message_ids'] as $mid) {
-                    if(!isset($PHORUM['user']['newinfo'][$mid]) && $mid > $PHORUM['user']['newinfo']['min_id']) {
-                        $mids[]=$mid;
+                if($PHORUM["DATA"]["LOGGEDIN"]) {
+                    // thread needs to be in $thread for the redirection
+                    $thread = (int)$PHORUM["args"][1];
+                    $thread_message=phorum_db_get_message($thread,'message_id');
+
+                    $mids=array();
+                    foreach($thread_message['meta']['message_ids'] as $mid) {
+                        if(!isset($PHORUM['user']['newinfo'][$mid]) && $mid > $PHORUM['user']['newinfo']['min_id']) {
+                            $mids[]=$mid;
+                        }
                     }
-                }
 
-                $msg_count=count($mids);
+                    $msg_count=count($mids);
 
-                // any messages left to update newinfo with?
-                if($msg_count > 0){
-                    phorum_db_newflag_add_read($mids);
-                    unset($mids);
+                    // any messages left to update newinfo with?
+                    if($msg_count > 0){
+                        phorum_db_newflag_add_read($mids);
+                        if($PHORUM['cache_newflags']) {
+                            phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+                            phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+                        }
+                        unset($mids);
+                    }
                 }
                 break;
             case "gotonewpost":
@@ -301,12 +321,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         // assign user data to the row
         if($row["user_id"] && isset($user_info[$row["user_id"]])){
 			if(is_numeric($user_info[$row["user_id"]]["date_added"])){
-				$user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);	
+				$user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);
 			}
             if(strlen($user_info[$row["user_id"]]["posts"])>3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
-                $user_info[$row["user_id"]]["posts"] = number_format($user_info[$row["user_id"]]["posts"], 0, "", $PHORUM["thous_sep"]);	
+                $user_info[$row["user_id"]]["posts"] = number_format($user_info[$row["user_id"]]["posts"], 0, "", $PHORUM["thous_sep"]);
             }
-            
+
             $row["user"]=$user_info[$row["user_id"]];
             unset($row["user"]["password"]);
             unset($row["user"]["password_tmp"]);
@@ -509,7 +529,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // this is the message that was referenced by the message_id in the url
     $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
 
-    // this is all messages on the page 
+    // this is all messages on the page
     $PHORUM["DATA"]["MESSAGES"] = $messages;
 
     // No htmlentities() needed. The subject is already escaped.
@@ -530,6 +550,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
     if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
         phorum_db_newflag_add_read($read_messages);
+        if($PHORUM['cache_newflags']) {
+            phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+            phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+        }
     }
 
     // An anchor so clicking on a reply button can let the browser

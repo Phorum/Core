@@ -27,11 +27,15 @@ if(!phorum_check_read_common()) {
 }
 
 // check for markread
-if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread'){
+if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
     // setting all posts read
     if(isset($PHORUM["forum_id"])){
         unset($PHORUM['user']['newinfo']);
         phorum_db_newflag_allread($PHORUM["forum_id"]);
+        if($PHORUM['cache_newflags']) {
+            phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+            phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+        }
     }
 
     // redirect to a fresh list without markread in url

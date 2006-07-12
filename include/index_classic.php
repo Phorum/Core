@@ -43,13 +43,13 @@ foreach( $forums as $forum ) {
         if ( $parent_id==0 && count( $forums ) < 2 ) {
             phorum_redirect_by_url($forum['url']);
             exit();
-        } 
+        }
 
         if ( $forum["message_count"] > 0 ) {
             $forum["last_post"] = phorum_date( $PHORUM["long_date_time"], $forum["last_post_time"] );
         } else {
             $forum["last_post"] = "&nbsp;";
-        } 
+        }
 
         $forum["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
         $forum["URL"]["MARK_READ"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
@@ -58,18 +58,31 @@ foreach( $forums as $forum ) {
         }
 
         if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
-            list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+            $newflagcounts = null;
+            if($PHORUM['cache_newflags']) {
+                $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
+                $newflagcounts = phorum_cache_get('newflags_index',$newflagkey);
+            }
+
+            if($newflagcounts == null) {
+                $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+                if($PHORUM['cache_newflags']) {
+                    phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400);
+                }
+            }
+
+            list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
         }
-    } 
+    }
 
     $forums_shown=true;
 
     if($forum["folder_flag"]){
-        $PHORUM["DATA"]["FOLDERS"][] = $forum;        
+        $PHORUM["DATA"]["FOLDERS"][] = $forum;
     } else {
         $PHORUM["DATA"]["FORUMS"][] = $forum;
     }
-} 
+}
 
 if(!$forums_shown){
     // we did not show any forums here, show an error-message
@@ -77,25 +90,25 @@ if(!$forums_shown){
     phorum_build_common_urls();
     unset($PHORUM["DATA"]["URL"]["TOP"]);
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoForums"];
-    
+
     include phorum_get_template( "header" );
     phorum_hook( "after_header" );
     include phorum_get_template( "message" );
     phorum_hook( "before_footer" );
     include phorum_get_template( "footer" );
-    
+
 } else {
-    
+
     $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
-    
+
     // set all our URL's
     phorum_build_common_urls();
-    
+
     // should we show the top-link?
-    if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) { 
-        unset($PHORUM["DATA"]["URL"]["INDEX"]);    
+    if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
+        unset($PHORUM["DATA"]["URL"]["INDEX"]);
     }
-    
+
     include phorum_get_template( "header" );
     phorum_hook("after_header");
     include phorum_get_template( "index_classic" );
