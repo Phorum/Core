@@ -5,6 +5,10 @@ Author  : Maurice Makaay
 This module will add a buttonbar to the Phorum message editor, which can be
 used by visitors to easily apply BBcode and smileys to their postings.
 
+Other modules can add extra buttons to the buttonbar through an easy to
+use API. See the API functions at the bottom of editor_tools.php for
+the documentation.
+
 Install:
 --------
 

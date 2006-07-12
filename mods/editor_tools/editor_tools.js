@@ -26,47 +26,29 @@ var editor_tools_textarea_ids = new Array(
     'body'
 );
 
-// Some paths for the module.
-var editor_tools_modpath = "./mods/editor_tools";
-var editor_tools_iconpath = editor_tools_modpath + "/icons";
-
-// Some variables for storing settings. These need to be filled
-// before editor_tools_construct() is called.
-var editor_tools_enabled = new Array();
+// Storage for language translation strings from the Phorum language system.
 var editor_tools_lang = new Array();
 
-// A variable for storing the textarea object that we're working with.
+// Some variables for storing objects that we need globally.
 var editor_tools_textarea_obj = null;
-
-// Variables for storing popups.
 var editor_tools_size_picker_obj = null;
 var editor_tools_smiley_picker_obj = null;
 
 // A variable for storing all popup objects that we have, so we 
-// can hide all at once.
+// can hide them all at once.
 var editor_tools_popup_objects = new Array();
 
-// A list of tools that can be added to the editor_tools panel.
-// The array value contains two fields:
-// 1) the key name for the language string to use for the button description.
-// 2) the image to display as a button.
+// Storage for the tools that have to be added to the editor tools panel.
+// The array value contains the following fields:
+//
+// 1) the id for the tool (must be unique)
+// 2) a description to use as the tooltip title for the button
+// 3) the icon image to display as a button.
+// 4) the javascript action to run when the user clicks the button
+//
+// This array will be filled by javascript that will be generaged
+// from the module's PHP code.
 var editor_tools = new Array();
-editor_tools['bold']        = new Array('bold',        'bold.gif');
-editor_tools['italic']      = new Array('italic',      'italic.gif');
-editor_tools['underline']   = new Array('underline',   'underline.gif');
-editor_tools['strike']      = new Array('strike',      'strike.gif');
-editor_tools['size']        = new Array('size',        'size.gif');
-editor_tools['subscript']   = new Array('subscript',   'subscript.gif');
-editor_tools['superscript'] = new Array('superscript', 'superscript.gif');
-editor_tools['center']      = new Array('center',      'center.gif');
-editor_tools['color']       = new Array('color',       'color.gif');
-editor_tools['url']         = new Array('url',         'url.gif');
-editor_tools['email']       = new Array('email',       'email.gif');
-editor_tools['image']       = new Array('image',       'image.gif');
-editor_tools['smiley']      = new Array('smiley',      'smiley.gif');
-editor_tools['hr']          = new Array('hr',          'hr.gif');
-editor_tools['code']        = new Array('code',        'code.gif');
-editor_tools['quote']       = new Array('quote',       'quote.gif');
 
 // Valid sizes to select from for the size picker. If you add or change sizes,
 // remember to change the module language file to supply some display strings.
@@ -114,6 +96,7 @@ function editor_tools_get_textarea()
     return editor_tools_textarea_obj;
 }
 
+// Return a translated string, based on the Phorum language system.
 function editor_tools_translate(str)
 {
     if (editor_tools_lang[str]) {
@@ -123,11 +106,12 @@ function editor_tools_translate(str)
     }
 }
 
+// Strip whitespace from the start and end of a string.
 function editor_tools_strip_whitespace(str)
 {
     // Strip whitespace from start of string.
     for (;;) {
-        firstchar = str.substring(0,1);
+        var firstchar = str.substring(0,1);
         if (firstchar == ' ') {
             str = str.substring(1);
         } else {
@@ -137,7 +121,7 @@ function editor_tools_strip_whitespace(str)
 
     // Strip whitespace from end of string.
     for (;;) {
-        lastchar = str.substring(str.length-1, str.length);
+        var lastchar = str.substring(str.length-1, str.length);
         if (lastchar == ' ') {
             str = str.substring(0, str.length-1);
         } else {
@@ -146,28 +130,15 @@ function editor_tools_strip_whitespace(str)
     }
 
     return str;
-}
+} 
 
+// Close all popup windows and move the focus to the textarea.
 function editor_tools_focus_textarea()
 {
     var textarea_obj = editor_tools_get_textarea();
     if (textarea_obj == null) return;
     editor_tools_hide_all_popups();
     textarea_obj.focus();
-}
-
-function editor_tools_register_popup_object(object)
-{
-    if (! object) return;
-    editor_tools_popup_objects[editor_tools_popup_objects.length] = object;
-}
-
-function editor_tools_hide_all_popups()
-{
-    for (var i = 0; i < editor_tools_popup_objects.length; i++) {
-        object = editor_tools_popup_objects[i];
-        object.style.display = 'none';
-    }
 }
 
 // ----------------------------------------------------------------------
@@ -182,9 +153,6 @@ function editor_tools_construct()
     var parent_obj;
     var a_obj;
     var img_obj;
-    var i;
-    var tool;
-    var description;
 
     // If the browser does not support document.getElementById,
     // then the javascript code won't run. Do not display the
@@ -192,7 +160,7 @@ function editor_tools_construct()
     if (! document.getElementById) return;
 
     // No editor tools selected to display? Then we're done.
-    if (editor_tools_enabled.length == 0) return;
+    if (editor_tools.length == 0) return;
 
     // Find the textarea object.
     textarea_obj = editor_tools_get_textarea();
@@ -204,28 +172,25 @@ function editor_tools_construct()
     div_obj.id = 'editor_tools';
     parent_obj.insertBefore(div_obj, textarea_obj);
 
-    // Add the buttons to the new <div> for the enabled editor tools.
-    for (i = 0; i < editor_tools_enabled.length; i++)
+    // Add the buttons to the new <div> for the editor tools.
+    for (var i = 0; i < editor_tools.length; i++)
     {
-        tool = editor_tools_enabled[i];
-        if (! editor_tools[tool]) {
-            alert("editor_tools.js library reports: " +
-                  "illegal editor tool id in editor_tools_enabled[]: " + 
-                  tool);
-            continue;
-        }
+        var toolinfo    = editor_tools[i];
+        var tool        = toolinfo[0];
+        var description = toolinfo[1];
+        var icon        = toolinfo[2];
+        var jsaction    = toolinfo[3];
 
-        description = editor_tools_translate(tool);
         a_obj = document.createElement('a');
         a_obj.id = "editor_tools_a_" + tool;
-        a_obj.href = 
-            "javascript:" +
-            "editor_tools_handle_" + tool + "()";
+        a_obj.href = "javascript:" + jsaction;
         a_obj.alt = description;
         a_obj.title = description;
+
         img_obj = document.createElement('img');
         img_obj.id = "editor_tools_img_" + tool;
-        img_obj.src = editor_tools_iconpath + "/" + editor_tools[tool][1];
+        img_obj.src = icon;
+
         a_obj.appendChild(img_obj);
         div_obj.appendChild(a_obj);
     }
@@ -235,6 +200,10 @@ function editor_tools_construct()
         editor_tools_hide_all_popups();
     };
 }
+
+// ----------------------------------------------------------------------
+// Popup window utilities
+// ----------------------------------------------------------------------
 
 // Create a popup window.
 function editor_tools_construct_popup(create_id)
@@ -281,6 +250,23 @@ function editor_tools_toggle_popup(popup_obj, button_obj)
     }
 }
 
+// Register an object as a popup, so editor_tools_hide_all_popups() 
+// can hide it.
+function editor_tools_register_popup_object(object)
+{
+    if (! object) return;
+    editor_tools_popup_objects[editor_tools_popup_objects.length] = object;
+}
+
+// Hide all objects that were registered as a popup.
+function editor_tools_hide_all_popups()
+{
+    for (var i = 0; i < editor_tools_popup_objects.length; i++) {
+        var object = editor_tools_popup_objects[i];
+        object.style.display = 'none';
+    }
+}
+
 // ----------------------------------------------------------------------
 // Textarea manipulation
 // ----------------------------------------------------------------------
@@ -305,7 +291,7 @@ function editor_tools_add_tags(pre, post)
         ta.value = pretext + pre + text + post + posttext;
 
         // Set the cursor to a logical position.
-        cursorpos = pretext.length + pre.length;
+        var cursorpos = pretext.length + pre.length;
         if (text.length != 0) cursorpos += text.length + post.length;
         ta.setSelectionRange(cursorpos, cursorpos);
         ta.focus();
@@ -492,7 +478,7 @@ function editor_tools_handle_size()
         // Populate the new popup.
         for (var i = 0; i < editor_tools_size_picker_sizes.length; i++)
         {
-            size = editor_tools_size_picker_sizes[i];
+            var size = editor_tools_size_picker_sizes[i];
             var a_obj = document.createElement('a');
             a_obj.href = 'javascript:editor_tools_handle_size_select("' + size + '")';
             a_obj.style.fontSize = size;
@@ -536,7 +522,7 @@ function editor_tools_handle_image()
         url = editor_tools_strip_whitespace(url);
         
         // Check the URL scheme (http, https, ftp and mailto are allowed).
-        copy = url.toLowerCase();
+        var copy = url.toLowerCase();
         if (copy.substring(0,7) != 'http://' &&
             copy.substring(0,8) != 'https://' &&
             copy.substring(0,6) != 'ftp://') {
@@ -573,7 +559,7 @@ function editor_tools_handle_smiley()
         {
             var a_obj = document.createElement('a');
             a_obj.href = 'javascript:editor_tools_handle_smiley_select("' + smiley + '")';
-            img_obj = document.createElement('img');
+            var img_obj = document.createElement('img');
             img_obj.src = editor_tools_smileys[smiley];
             a_obj.appendChild(img_obj);
 
@@ -604,7 +590,7 @@ function editor_tools_handle_smiley_select(smiley)
 function editor_tools_handle_quote()
 {
     // Read input.
-    who = prompt(editor_tools_translate("enter who you quote"), '');
+    var who = prompt(editor_tools_translate("enter who you quote"), '');
     if (who == null) return;
 
     who = editor_tools_strip_whitespace(who);
