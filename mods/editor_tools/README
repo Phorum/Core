@@ -5,9 +5,6 @@ Author  : Maurice Makaay
 This module will add a buttonbar to the Phorum message editor, which can be
 used by visitors to easily apply BBcode and smileys to their postings.
 
-Other modules can add extra buttons to the buttonbar through an easy to
-use API. See the API functions at the bottom of editor_tools.php for
-the documentation.
 
 Install:
 --------
@@ -25,6 +22,45 @@ Install:
 - Enable the "BBcode" and/or "Smileys" module (Editor Tools will
   only show tools for the enabled modules, so if you do not enable
   any of these two, no tools will be displayed at all).
+
+
+How to plugin an editor tool button from another module:
+--------------------------------------------------------
+
+Other modules can add extra buttons to the buttonbar through an easy to
+use API. See the API functions at the bottom of editor_tools.php for
+the full documentation. Here is a quick example how to do this.
+
+1) Create a module e.g. "mod_foo".
+
+2) Add a "editor_tool_plugin" hook to the module info, e.g.
+
+   hook: editor_tool_plugin|phorum_mod_foo_editor_tool_plugin
+
+3) Implement the editor_tool_plugin hook function. This function
+   has two tasks: add the javascript for handling a click on the
+   editor tool button to the page and register the extra editor
+   tool so it will be display. Example code:
+
+   function phorum_mod_foo_editor_tool_plugin() {
+       ?>
+       <script type="text/javascript">
+       function mod_foo_editor_tool_action() {
+         alert('You clicked on the mod_foo editor tool');
+       }
+       </script>
+       <?php
+
+        editor_tools_register_tool(
+            'foo',                         // Tool id
+            'Foo module tool',             // Tool description
+            './mods/mod_foo/icon.gif',     // Tool button icon
+            'mod_foo_editor_tool_action()' // Javascript action on button click
+        );
+   }
+
+This is all there is to it. If both mod_foo and the editor_tools module
+are enabled, an extra button will be added to the editor tools.
 
 
 Color picker information:
