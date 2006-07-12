@@ -32,7 +32,7 @@ function phorum_mod_editor_tools_common()
     // this by code to be able to configure this from the module
     // settings page.
     $tools = array();
-    if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"])) {
+    if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"]) && $GLOBALS["PHORUM"]["mods"]["bbcode"]) {
         $tools[] = 'bold';
         $tools[] = 'underline';
         $tools[] = 'italic';
@@ -49,7 +49,7 @@ function phorum_mod_editor_tools_common()
         $tools[] = 'quote';
         $tools[] = 'hr';
     }
-    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"])) {
+    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) && $GLOBALS["PHORUM"]["mods"]["smileys"]) {
         $tools[] = 'smiley';
     }
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"] = $tools;
