@@ -1,0 +1,19 @@
+#editor_tools {
+    padding: 3px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #ddd;
+}
+
+#editor_tools a {
+}
+
+#editor_tools img {
+    border: 1px solid #ddd;
+    padding: 2px;
+    margin-right: 2px;
+    background-color: #eee;
+}
+
+#editor_tools img:hover {
+    border: 1px solid #777;
+}

@@ -1,4 +1,25 @@
 <?php
-$PHORUM["DATA"]["LANG"]["AddSmiley"] = "Smiley invoegen";
-$PHORUM["DATA"]["LANG"]["LoadingSmileys"] = "smileys inlezen";
+$PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
+    'bold'          => 'Vet',
+    'italic'        => 'Schuingedrukt',
+    'underline'     => 'Onderstreept',
+    'strike'        => 'Doorgehaald',
+    'size'          => 'Lettergrootte',
+    'subscript'     => 'Onderschrift',
+    'superscript'   => 'Bovenschrift',
+    'color'         => 'Letterkleur',
+    'center'        => 'Tekst centreren',
+    'url'           => 'URL invoegen',
+    'email'         => 'Email adres invoegen',
+    'image'         => 'Afbeelding invoegen',
+    'smiley'        => 'Smiley invoegen',
+    'hr'            => 'Horizontale lijn invoegen ',
+    'code'          => 'Opgemaakte code',
+    'enter color'   => 'Voer de tekstkleur in:',
+    'enter size'    => 'Voer de tekstgrootte in:',
+    'enter url'     => 'Voer de URL in om naartoe te linken:',
+    'invalid url'   => 'De URL is ongeldig. Deze moet starten met http://, https://, ftp:// of mailto:',
+    'enter image url' => 'Voer de URL in voor de afbeelding die moet worden ingevoegd:',
+    'invalid image url' => 'De URL voor de afbeelding is ongeldig. Deze moet starten met http://, https:// of ftp://',
+);
 ?>

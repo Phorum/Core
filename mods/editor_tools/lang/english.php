@@ -1,4 +1,25 @@
 <?php
-$PHORUM["DATA"]["LANG"]["AddSmiley"] = "Smileys";
-$PHORUM["DATA"]["LANG"]["LoadingSmileys"] = "loading smileys";
+$PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
+    'bold'          => 'Bold',
+    'italic'        => 'Italic',
+    'underline'     => 'Underline',
+    'strike'        => 'Strike through',
+    'size'          => 'Font size',
+    'subscript'     => 'Subscript',
+    'superscript'   => 'Superscript',
+    'color'         => 'Font color',
+    'center'        => 'Center text',
+    'url'           => 'Insert URL',
+    'email'         => 'Insert email address',
+    'image'         => 'Insert image',
+    'smiley'        => 'Insert smiley',
+    'hr'            => 'Insert horizontal line',
+    'code'          => 'Formatted code',
+    'enter color'   => 'Please, enter the text color:',
+    'enter size'    => 'Please, enter the text size:',
+    'enter url'     => 'Please, enter the URL to which you want to create a link:',
+    'invalid url'   => 'The URL is invalid. It should start with http://, https://, ftp:// or mailto:',
+    'enter image url' => 'Please, enter the URL for the image that you want to add:',
+    'invalid image url' => 'The URL for the image is invalid. It should start with http://, https:// or ftp://',
+);
 ?>

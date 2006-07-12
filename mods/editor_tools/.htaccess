@@ -1,0 +1,6 @@
+# Allow access to our image file.
+<Files ~ "\.(png|gif|js|css|html)$">
+    Order allow,deny
+    Allow from all
+</Files>
+

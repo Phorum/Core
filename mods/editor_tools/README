@@ -1,0 +1,39 @@
+Module  : Phorum Editor Tools 
+Version : 1.0.0
+Author  : Maurice Makaay
+
+This module will add a buttonbar to the Phorum message editor, which can be
+used by visitors to easily apply BBcode and smileys to their postings.
+
+
+Install:
+--------
+
+- Unpack the archive;
+
+- Move the directory "editor_tools" to the directory "mods"
+  within your Phorum installation;
+
+- Login as administrator in Phorum's administrative interface and
+  go to the "Modules" section;
+
+- Enable the module "Editor Tools".
+
+
+Color picker:
+-------------
+
+For the color picker, we use the excellent script from dhtmlgoodies.com.
+The script does need some changes to make it work for the editor tools.
+These are the changes that are needed:
+
+1) Delete form{ padding-left:5px; } from the css file.
+
+2) In js_color_picker_v2.js, change all references like 'images/...'
+   to './mods/editor_tools/colorpicker/images/...'
+
+3) In js_color_picker_v2.js, change the action functions
+   chooseColor() and chooseColorSlider() to call the function
+   editor_tools_handle_color_select() with the selected color
+   as the argument.
+
