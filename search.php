@@ -110,6 +110,7 @@ if(!empty($phorum_search)){
     'match_dates' => $PHORUM["args"]["match_dates"],
     'match_forum' => $PHORUM["args"]["match_forum"],
     'results' => array(),
+    'totals' => 0,
     'continue' => 1
     );
 
@@ -120,6 +121,7 @@ if(!empty($phorum_search)){
         $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
     } else {
         $arr['rows'] = $search_request_data['results'];
+        $arr['count']= $search_request_data['totals'];
     }
 
     if(count($arr["rows"])){
