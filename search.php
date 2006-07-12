@@ -119,7 +119,7 @@ if(!empty($phorum_search)){
     if($search_request_data['continue']) {
         $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
     } else {
-        $arr = $search_request_data['results'];
+        $arr['rows'] = $search_request_data['results'];
     }
 
     if(count($arr["rows"])){
