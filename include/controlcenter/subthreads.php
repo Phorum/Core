@@ -82,6 +82,8 @@ foreach($subscr_array as $dummy => $data) {
     $subscr_array_final[] = $data;
 }
 
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Subscriptions"];
+
 $PHORUM['DATA']['subscriptions'] = $subscr_array_final;
 $template = "cc_subscriptions";
 

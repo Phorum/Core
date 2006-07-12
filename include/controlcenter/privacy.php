@@ -45,7 +45,7 @@ if (!empty($PHORUM['DATA']['PROFILE']["hide_activity"])) {
     $PHORUM["DATA"]["PROFILE"]["hide_activity_checked"] = " checked=\"checked\"";
 } 
 
-$PHORUM["DATA"]["PROFILE"]["block_title"] = $PHORUM["DATA"]["LANG"]["EditPrivacy"];
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditPrivacy"];
 
 $PHORUM['DATA']['PROFILE']['PRIVACYSETTINGS'] = 1;
 $template = "cc_usersettings";

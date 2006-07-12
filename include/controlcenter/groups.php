@@ -30,20 +30,20 @@ if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0){
         if ($group[$_POST["joingroup"]]["open"] == PHORUM_GROUP_OPEN){
             $usergroup[$_POST["joingroup"]] = PHORUM_USER_GROUP_APPROVED;
             phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroup);
-            $PHORUM['DATA']['Message'] = $PHORUM['DATA']['LANG']['GroupJoinSuccess'];
+            $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['GroupJoinSuccess'];
         }
         elseif ($group[$_POST["joingroup"]]["open"] == PHORUM_GROUP_REQUIRE_APPROVAL){
             $usergroup[$_POST["joingroup"]] = PHORUM_USER_GROUP_UNAPPROVED;
             phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroup);
-            $PHORUM['DATA']['Message'] = $PHORUM['DATA']['LANG']['GroupJoinSuccessModerated'];
+            $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['GroupJoinSuccessModerated'];
         }
         else
         {
-            $PHORUM['DATA']['Message'] = $PHORUM['DATA']['LANG']['GroupJoinFail'];
+            $PHORUM['DATA']['ERROR'] = $PHORUM['DATA']['LANG']['GroupJoinFail'];
         }
     }
     else{
-        $PHORUM['DATA']['Message'] = $PHORUM['DATA']['LANG']['GroupJoinFail'];
+        $PHORUM['DATA']['ERROR'] = $PHORUM['DATA']['LANG']['GroupJoinFail'];
     }
 }
 
@@ -51,6 +51,8 @@ $template = "cc_groups";
 $PHORUM['DATA']['Groups'] = phorum_readable_groups();
 $PHORUM['DATA']['JOINGROUP'] = phorum_joinable_groups();
 $PHORUM["DATA"]["GROUP"]["url"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
+
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ViewJoinGroups"];
 
 /* --------------------------------------------------------------- */
 

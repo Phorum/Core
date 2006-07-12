@@ -65,7 +65,13 @@ Some Icons courtesy of:
 
 <div id="breadcrumb">
 
-{IF TOPIC->subject}
+{IF PHORUM_PAGE "control"}
+    {! This is the control center }
+    <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a> &gt;
+{ELSEIF PHORUM_PAGE "pm"}
+    {! This is the control center }
+    <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->PM}">{LANG->PrivateMessages}</a> &gt;
+{ELSEIF TOPIC->subject}
     {! This is a read page }
     <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->LIST}">{NAME}</a> &gt;
 {ELSEIF NAME}

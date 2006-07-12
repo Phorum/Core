@@ -104,5 +104,7 @@ if (!$numunapproved) {
     $PHORUM["DATA"]["UNAPPROVEDMESSAGE"] = $PHORUM["DATA"]["LANG"]["NoUnapprovedMessages"];
 }
 
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UnapprovedMessages"];
+
 $template = "cc_prepost";
 ?>

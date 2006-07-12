@@ -1,30 +1,43 @@
-{IF Message}
-  <div class="PhorumUserError">{Message}</div>
-{/IF}
 {IF GROUP->name}
-  <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->AddToGroup} {GROUP->name}</div>
-  <div class="PhorumStdBlock" style="text-align: left;">
-    <form method="post" action="{GROUP->url}">
-      <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-      {IF NEWMEMBERS}
-        <select name="adduser">
-          <option value="0">&nbsp;</option>
-          {LOOP NEWMEMBERS}
-            <option value="{NEWMEMBERS->username}">{NEWMEMBERS->displayname}</option>
-          {/LOOP NEWMEMBERS}
-        </select>
-      {ELSE}
-        <input type="text" name="adduser" />
-      {/IF}
-      <input type="submit" value="{LANG->Add}" />
-    </form>
-  </div><br />
-  <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->GroupMemberList} {GROUP->name}</div>
-  <div class="PhorumStdBlock" style="text-align: left;">
-    {LANG->Filter}:
-    {LOOP FILTER}
-      [{IF FILTER->enable}<a href="{FILTER->url}">{/IF}{FILTER->name}{IF FILTER->enable}</a>{/IF}]
-    {/LOOP FILTER}
+    <h2>{LANG->Moderating} {GROUP->name}</h2>
+    <div class="generic">
+        <h4>{LANG->AddToGroup}</h4>
+        <form method="post" action="{GROUP->url}">
+            {POST_VARS}
+            <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+            {IF NEWMEMBERS}
+                <select name="adduser">
+                    <option value="0">&nbsp;</option>
+                    {LOOP NEWMEMBERS}
+                        <option value="{NEWMEMBERS->username}">{NEWMEMBERS->displayname}</option>
+                    {/LOOP NEWMEMBERS}
+                </select>
+            {ELSE}
+                <input type="text" name="adduser" />
+            {/IF}
+            <input type="submit" value="{LANG->Add}" />
+        </form>
+    </div>
+    
+    <div class="generic">
+        <h4>{LANG->GroupMemberList}</h4>
+        
+        <form action="{URL->ACTION}" method="get">
+            {POST_VARS}
+            <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
+            <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+            <input type="hidden" name="group" value="{GROUP->id}" />
+            {LANG->Filter}:&nbsp;
+            <select name="filter">
+                {LOOP FILTER}
+                    <option value="{FILTER->id}"{IF FILTER->enable} selected="selected"{/IF}>{FILTER->name}</option>
+                {/LOOP FILTER}
+            </select>
+            <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
+        </form>
+        
+        
+        
     <br /><br />
     <form method="post" action="{GROUP->url}">
       <table class="PhorumFormTable" cellspacing="0" border="0">

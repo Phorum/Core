@@ -88,7 +88,7 @@ img {
 
 #phorum h2 {
     margin: 0;
-    font-size: small;
+    font-size: large;
     font-weight: normal;
 }
 
@@ -198,6 +198,73 @@ img {
 
 #phorum a.message-new {
     font-weight: bold;
+}
+
+#phorum table.menu td {
+    vertical-align: top;
+}
+
+#phorum table.menu td.menu {
+    font-size: small;
+    padding: 0 8px 0 0;
+}
+
+#phorum table.menu td.menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 8px 8px;
+}
+
+#phorum table.menu td.menu ul li {
+    margin: 0 0 4px 0;    
+}
+
+#phorum table.menu td.menu ul li a {
+    text-decoration: none;
+}
+
+#phorum table.menu td.menu ul li a.current {
+    font-weight: bold;
+}
+
+#phorum table.menu td.content {
+    width: 100%;
+    padding: 0;
+}
+
+#phorum table.menu td.content h2 {
+    margin: 0 0 8px 0;
+    background-repeat: repeat-x;
+    background-image: url('../images/header_background.png');
+    color: White;
+    background-color: #4d894d;
+    padding: 4px;
+}
+
+#phorum table.menu td.content div.generic {
+    background-color: white;
+    margin: 0 0 8px 0;
+}
+
+#phorum table.menu td.content dl {
+    margin: 0;
+    padding: 0;
+}
+
+#phorum table.menu td.content dt {
+    font-weight: bold;
+}
+
+#phorum table.menu td.content dd {
+    padding: 4px;
+    margin: 0 0 8px 0;
+}
+
+#phorum textarea.body {
+    font-size: medium;
+    font-family: Arial;
+    width: 100%;
+    border: 0; 
 }
 
 /* header styles */
@@ -386,13 +453,6 @@ img {
     border: 1px solid #4d894d; 
     background-color: White;
     padding: 8px;
-}
-
-#phorum #body {
-    font-size: medium;
-    font-family: Arial;
-    width: 100%;
-    border: 0; 
 }
 
 #phorum #post-moderation {
@@ -608,502 +668,6 @@ img {
     padding: 8px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* old stuff */
-.PDDiv {
-    color: Black;
-    font-size: 12px;
-
-    width: 100%;
-    text-align: left;
-}
-
-.PDDiv p {
-    margin: 0 0 10px 0;
-}
-
-.PDDiv td, .PDDiv th {
-    color: Black;
-    font-size: 12px;
-
-}
-
-.PDDiv img {
-    border-width: 0px;
-    vertical-align: middle;
-}
-
-.PDDiv a {
-    
-}
-
-.PDDiv a:hover {
-    color: #5C5CA6;
-}
-
-.PDDiv input[type=text], input[type=password], input[type=file], select {
-    background-color: White;
-    color: Black;
-    font-size: 12px;
-
-
-    vertical-align: middle;
-
-}
-
-.PDDiv textarea {
-    background-color: White;
-    color: Black;
-    font-size: 12px;
-    font-family: Lucida Console, Andale Mono, Courier New, Courier;
-}
-
-.PDDiv input[type=submit] {
-    border: 1px dotted #808080;
-    background-color: #EEEFDE;
-    font-size: 12px;
-
-    vertical-align: middle;
-}
-
-.PDDiv input {
-    vertical-align: middle;
-}
-
-
-/* new styles */
-
-
-#phorum-menu-table {
-    width: 100%;
-    border-width: 0px;
-}
-
-#phorum-menu {
-    padding: 5px 3px 0 0;
-    vertical-align: top;
-    width: 200px;
-}
-
-#phorum-content {
-    padding: 5px 0 0 2px;
-    vertical-align: top;
-}
-
-div.phorum-menu {
-    font-size: 12px;
-    background-color: White;
-    border: 1px solid #808080;
-    padding: 3px;
-}
-
-div.phorum-menu ul {
-    font-weight: bold;
-    list-style: none;
-    padding: 0;
-    margin: 0 0 10px 0;
-}
-
-div.phorum-menu li {
-    font-weight: bold;
-    font-size: 12px;
-    padding: 0 0 0 15px;
-    margin-top:3px;
-    background-image: url('templates/default/images/square_bullet.png');
-    background-repeat: no-repeat;
-    background-position: 1px 2px;
-}
-
-div.phorum-menu a {
-    font-weight: normal;
-    color: #000000;
-}
-
-div.phorum-menu a:hover {
-    color: #5C5CA6;
-}
-
-div.phorum-menu a.phorum-current-page {
-    font-weight: bold;
-}
-
-#phorum-post-form ul {
-    padding: 0 0 0 20px;
-    margin: 3px 0px 8px 0px;
-    font-size: small;
-}
-
-#phorum-post-form li {
-    margin-bottom: 3px;
-}
-
-#phorum-attachment-list td {
-    font-size: small;
-}
-
-.PhorumTitleText {
-    color: #555F55;
-}
-
-.PhorumStdBlock {
-    font-size: 12px;
-
-    background-color: White;
-    border: 1px solid #808080;
-    padding: 3px;
-    text-align: left;
-}
-
-.PhorumStdBlockHeader {
-    font-size: 12px;
-
-    background-color: #EEEFDE;
-    border-left: 1px solid #808080;
-    border-right: 1px solid #808080;
-    border-top: 1px solid #808080;
-    padding: 3px;
-    text-align: left;
-}
-
-.PhorumHeaderText {
-    font-weight: bold;
-}
-
-.PhorumNavBlock {
-    font-size: 12px;
-
-    border: 1px solid #808080;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    background-color: #EEEFDE;
-    padding: 2px 3px 2px 3px;
-}
-
-.PhorumNavHeading {
-    font-weight: bold;
-}
-
-
-.PhorumNavLink {
-    color: #000000;
-    
-    font-weight: normal;
-    font-family: "Bitstream Vera Sans", Lucida Sans Unicode, Lucida Grande, Arial;
-    font-size: 12px;
-    border-style: solid;
-    border-color: #EEEFDE;
-    border-width: 1px;
-    padding: 0px 4px 0px 4px;
-}
-
-.PhorumSelectedFolder {
-    color: #000000;
-    
-    font-weight: normal;
-    font-family: Lucida Sans Unicode, Lucida Grande, Arial;
-    font-size: 12px;
-    border-style: solid;
-    border-color: #EEEFDE;
-    border-width: 1px;
-    padding: 0px 4px 0px 4px;
-}
-
-A.PhorumNavLink:hover {
-    background-color: #FFFFFF;
-    font-weight: normal;
-    font-family: "Bitstream Vera Sans", Lucida Sans Unicode, Lucida Grande, Arial;
-    font-size: 12px;
-    border-style: solid;
-    border-color: #808080;
-    border-width: 1px;
-    color: #5C5CA6;
-}
-
-.PhorumFloatingText {
-    padding: 10px;
-}
-
-.PhorumHeadingLeft {
-    padding-left: 3px;
-    font-weight: bold;
-}
-
-.PhorumUserError {
-    padding: 10px;
-    text-align: center;
-    color: Red;
-    font-size: large;
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    font-weight: bold;
-}
-
-.PhorumOkMsg {
-    padding: 10px;
-    text-align: center;
-    color: DarkGreen;
-    font-size: large;
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    font-weight: bold;
-}
-
-.PhorumNewFlag {
-
-    font-size: x-small;
-    font-weight: bold;
-    color: #CC0000;
-}
-
-.PhorumNotificationArea {
-    float: right;
-    border-style: dotted;
-    border-color: #808080;
-    border-width: 1px;
-}
-
-/* PSUEDO Table classes                                       */
-/* In addition to these, each file that uses them will have a */
-/* column with a style property to set its right margin       */
-
-.PhorumColumnFloatXSmall {
-    float: right;
-    width: 75px;
-}
-
-.PhorumColumnFloatSmall {
-    float: right;
-    width: 100px;
-}
-
-.PhorumColumnFloatMedium {
-    float: right;
-    width: 150px;
-}
-
-.PhorumColumnFloatLarge {
-    float: right;
-    width: 200px;
-}
-
-.PhorumColumnFloatXLarge {
-    float: right;
-    width: 400px;
-}
-
-.PhorumRowBlock {
-    background-color: White;
-    border-bottom: 1px solid #F2F2F2;
-    padding: 5px 0px 0px 0px;
-}
-
-.PhorumRowBlockAlt {
-    background-color: #EEEFDE;
-    border-bottom: 1px solid #F2F2F2;
-    padding: 5px 0px 0px 0px;
-}
-
-/************/
-
-
-/* All that is left of the tables */
-
-.PhorumStdTable {
-    border-style: solid;
-    border-color: #808080;
-    border-width: 1px;
-    width: 100%;
-}
-
-.PhorumTableHeader {
-    background-color: #EEEFDE;
-    border-bottom-style: solid;
-    border-bottom-color: #808080;
-    border-bottom-width: 1px;
-    color: #000000;
-    font-size: 12px;
-    font-family: Lucida Sans Unicode, Lucida Grande, Arial;
-    font-weight: bold;
-    padding: 3px;
-}
-
-.PhorumTableRow {
-    background-color: White;
-    border-bottom-style: solid;
-    border-bottom-color: #F2F2F2;
-    border-bottom-width: 1px;
-    color: Black;
-    font-size: 12px;
-
-    height: 35px;
-    padding: 3px;
-}
-
-.PhorumTableRowAlt {
-    background-color: #EEEFDE;
-    border-bottom-style: solid;
-    border-bottom-color: #F2F2F2;
-    border-bottom-width: 1px;
-    color: #000000;
-    font-size: 12px;
-
-    height: 35px;
-    padding: 3px;
-}
-
-table.PhorumFormTable td {
-    height: 26px;
-}
-
-/**********************/
-
-
-/* Read Page specifics */
-
-.PhorumReadMessageBlock {
-    margin-bottom: 5px;
-}
-
-.PhorumReadBodySubject {
-    color: Black;
-    font-size: large;
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    font-weight: bold;
-    padding-left: 3px;
-}
-
-.PhorumReadBodyHead {
-    padding-left: 5px;
-}
-
-.PhorumReadBodyText {
-    font-size: 12px;
-
-    padding: 5px;
-}
-
-.PhorumReadNavBlock {
-    font-size: 12px;
-
-    border-left: 1px solid #808080;
-    border-right: 1px solid #808080;
-    border-bottom: 1px solid #808080;
-    background-color: #EEEFDE;
-    padding: 2px 3px 2px 3px;
-}
-
-/********************/
-
-/* List page specifics */
-
-.PhorumListSubText {
-    color: #707070;
-    font-size: x-small;
-    font-family: "Bitstream Vera Sans", Arial, sans-serif;
-}
-
-.PhorumListPageLink {
-    color: #707070;
-    font-size: x-small;
-    font-family: "Bitstream Vera Sans", Arial, sans-serif;
-}
-
-.PhorumListSubjPrefix {
-    font-weight: bold;
-}
-
-/********************/
-
-/* Posting editor specifics */
-
-.PhorumListModLink, .PhorumListModLink a {
-    color: #707070;
-    font-size: x-small;
-    font-family: "Bitstream Vera Sans", Arial, sans-serif;
-}
-
-.PhorumAttachmentRow {
-    border-bottom: 1px solid #EEEFDE;
-    padding: 3px 0px 3px 0px;
-}
-
-/********************/
-
-/* PM specifics */
-
-.phorum-recipientblock {
-    border: 1px solid black;
-    position:relative;
-    float:left;
-    padding: 1px 1px 1px 5px;
-    margin: 0px 5px 5px 0px;
-    font-size: small;
-    background-color: White;
-    border: 1px solid #808080;
-    white-space: nowrap;
-}
-
-.phorum-pmuserselection {
-    padding-bottom: 5px;
-}
-
-.phorum-gaugetable {
-    border-collapse: collapse;
-}
-
-.phorum-gauge {
-    border: 1px solid #808080;
-    background-color: #EEEFDE;
-}
-
-.phorum-gaugeprefix {
-    border: none;
-    background-color: white;
-    padding-right: 10px;
-}
-
-/********************/
-
-/* Override classes - Must stay at the end */
-
-.PhorumNarrowBlock {
-    width: 650px;
-}
-
-.PhorumSmallFont {
-    font-size: small;
-}
-
-.PhorumLargeFont {
-    color: Black;
-    font-size: large;
-    font-family: "Bitstream Vera Sans", "Trebuchet MS", Verdana, Arial, sans-serif;
-    font-weight: bold;
-}
-
-
-.PhorumFooterPlug {
-    margin-top: 10px;
-    font-size: x-small;
-    font-family: "Bitstream Vera Sans", Arial, sans-serif;
-}
 
 
 

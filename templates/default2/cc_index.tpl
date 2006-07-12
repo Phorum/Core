@@ -1,15 +1,65 @@
-<div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->TOP}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;{/IF}{IF URL->POST}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{IF LOGGEDIN true}{IF ENABLE_PM}<a class="PhorumNavLink" href="{URL->PM}">{LANG->PrivateMessages}</a>&bull;{/IF}{/IF}<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>
+<div class="nav">
+    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
 </div>
-<table id="phorum-menu-table" cellspacing="0" border="0">
-  <tr>
-    <td id="phorum-menu" nowrap="nowrap">{INCLUDE "cc_menu"}</td>
-    <td id="phorum-content">
-      {IF content_template}
-        {INCLUDE content_template}
-      {ELSE}
-        <div class="PhorumFloatingText">{MESSAGE}</div>
-      {/IF}
-    </td>
-  </tr>
+
+<table class="menu" cellspacing="0" border="0">
+    <tr>
+        <td class="menu" nowrap="nowrap">
+            <div class="generic">
+                {LANG->PersProfile}
+                <ul>
+                    <li><a {IF PROFILE->PANEL "summary"}class="current" {/IF}href="{URL->CC0}">{LANG->ViewProfile}</a></li>
+                    <li><a {IF PROFILE->PANEL "user"}class="current" {/IF}href="{URL->CC3}">{LANG->EditUserinfo}</a></li>
+                    <li><a {IF PROFILE->PANEL "sig"}class="current" {/IF}href="{URL->CC4}">{LANG->EditSignature}</a></li>
+                    <li><a {IF PROFILE->PANEL "email"}class="current" {/IF}href="{URL->CC5}">{LANG->EditMailsettings}</a></li>
+                    <li><a {IF PROFILE->PANEL "privacy"}class="current" {/IF}href="{URL->CC14}">{LANG->EditPrivacy}</a></li>
+                    <li><a {IF PROFILE->PANEL "groups"}class="current" {/IF}href="{URL->CC16}">{LANG->ViewJoinGroups}</a></li>
+                </ul>
+    
+                {LANG->Subscriptions}
+                <ul>
+                    <li><a {IF PROFILE->PANEL "subthreads"}class="current" {/IF}href="{URL->CC1}">{LANG->ListThreads}</a></li>
+                </ul>
+    
+                {LANG->Options}
+                <ul>
+                    <li><a {IF PROFILE->PANEL "forum"}class="current" {/IF}href="{URL->CC6}">{LANG->EditBoardsettings}</a></li>
+                    <li><a {IF PROFILE->PANEL "password"}class="current" {/IF}href="{URL->CC7}">{LANG->ChangePassword}</a></li>
+                </ul>
+    
+                {IF MYFILES}
+                    {LANG->Files}
+                    <ul>
+                        <li><a {IF PROFILE->PANEL "files"}class="current" {/IF}href="{URL->CC9}">{LANG->EditMyFiles}</a></li>
+                    </ul>
+                {/IF}
+    
+                {IF MODERATOR}
+                    {LANG->Moderate}
+                    <ul>
+                        {IF MESSAGE_MODERATOR}
+                            <li><a {IF PROFILE->PANEL "messages"}class="current" {/IF}href="{URL->CC8}">{LANG->UnapprovedMessages}</a></li>
+                        {/IF}
+                        {IF USER_MODERATOR}
+                            <li><a {IF PROFILE->PANEL "users"}class="current" {/IF}href="{URL->CC10}">{LANG->UnapprovedUsers}</a></li>
+                        {/IF}
+                        {IF GROUP_MODERATOR}
+                            <li><a {IF PROFILE->PANEL "groupmod"}class="current" {/IF}href="{URL->CC15}">{LANG->GroupMembership}</a></li>
+                        {/IF}
+                    </ul>
+                {/IF}
+            </div>
+        </td>
+
+        <td class="content">
+
+            {IF content_template}
+                {INCLUDE content_template}
+            {ELSE}
+                <div class="information">{MESSAGE}</div>
+            {/IF}
+            
+        </td>
+    </tr>
 </table>

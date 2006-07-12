@@ -130,6 +130,13 @@ if (file_exists("./include/controlcenter/$panel.php")) {
     include "./include/controlcenter/summary.php";
 }
 
+if(empty($PHORUM["DATA"]["HEADING"])){
+    $PHORUM["DATA"]["HEADING"] = "MyProfile";
+}
+
+// unset default description
+$PHORUM["DATA"]["DESCRIPTION"] = "";
+
 // The include file can set the template we have to use for
 // displaying the main part of the control panel screen
 // in the $template variable.

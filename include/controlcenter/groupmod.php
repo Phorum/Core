@@ -42,7 +42,7 @@ if (isset($PHORUM["args"]["group"])){
         if (!isset($groups[$PHORUM["args"]["group"]])){
             $groups[$PHORUM["args"]["group"]] = PHORUM_USER_GROUP_APPROVED;
             phorum_user_save_groups($userid, $groups);
-            $PHORUM["DATA"]["Message"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
         }
     }
 
@@ -60,10 +60,11 @@ if (isset($PHORUM["args"]["group"])){
             }
             phorum_user_save_groups($userid, $groups);
         }
-        $PHORUM["DATA"]["Message"] = $PHORUM["DATA"]["LANG"]["ChangesSaved"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ChangesSaved"];
     }
 
     $group = phorum_db_get_groups($PHORUM["args"]["group"]);
+    $PHORUM["DATA"]["GROUP"]["id"] = $PHORUM["args"]["group"];        
     $PHORUM["DATA"]["GROUP"]["name"] = $group[$PHORUM["args"]["group"]]["name"];        
     $PHORUM["DATA"]["USERS"] = array();
     $PHORUM["DATA"]["GROUP"]["url"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"]);
@@ -71,19 +72,24 @@ if (isset($PHORUM["args"]["group"])){
     $PHORUM["DATA"]["FILTER"] = array();
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["None"],
         "enable" => !(!isset($PHORUM["args"]["filter"])),
-        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"]));
+        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"]),
+        "id" => 0);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Approved"],
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_APPROVED),
-        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_APPROVED));
+        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_APPROVED),
+        "id" => PHORUM_USER_GROUP_APPROVED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["PermGroupModerator"], 
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_MODERATOR),
-        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_MODERATOR));
+        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_MODERATOR),
+        "id" => PHORUM_USER_GROUP_MODERATOR);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Suspended"], 
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_SUSPENDED),
-        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_SUSPENDED));
+        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_SUSPENDED),
+        "id" => PHORUM_USER_GROUP_SUSPENDED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Unapproved"], 
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_UNAPPROVED),
-        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_UNAPPROVED));
+        "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
+        "id" => PHORUM_USER_GROUP_UNAPPROVED);
 
     $PHORUM["DATA"]["STATUS_OPTIONS"] = array();
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_REMOVE, "name" => "&lt; " . $PHORUM["DATA"]["LANG"]["RemoveFromGroup"] . " &gt;");
@@ -155,6 +161,8 @@ else{
             );
     }
 }
+
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["GroupMembership"];
 
 $template = "cc_groupmod";
 ?>

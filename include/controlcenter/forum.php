@@ -108,7 +108,7 @@ if ( isset( $PHORUM["user_template"] ) ) {
 } 
 $PHORUM['DATA']['TEMPLATES'] = phorum_cc_get_template_info();
 
-$PHORUM["DATA"]["PROFILE"]["block_title"] = $PHORUM["DATA"]["LANG"]["EditBoardsettings"];
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditBoardsettings"];
 $PHORUM['DATA']['PROFILE']['BOARDSETTINGS'] = 1;
 $template = "cc_usersettings";
 

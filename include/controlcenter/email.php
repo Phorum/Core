@@ -106,8 +106,7 @@ if(phorum_user_moderate_allowed(PHORUM_MODERATE_ALLOWED_ANYWHERE)){
 
 $PHORUM["DATA"]["PROFILE"]["EMAIL_CONFIRM"]=$PHORUM["registration_control"];
 
-
-$PHORUM["DATA"]["PROFILE"]["block_title"] = $PHORUM["DATA"]["LANG"]["EditMailsettings"];
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMailsettings"];
 
 $PHORUM['DATA']['PROFILE']['MAILSETTINGS'] = 1;
 $template = "cc_usersettings";

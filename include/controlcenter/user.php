@@ -29,7 +29,7 @@ foreach($PHORUM["DATA"]["PROFILE"] as $key => $data) {
        }       
 }
 
-$PHORUM["DATA"]["PROFILE"]["block_title"] = $PHORUM["DATA"]["LANG"]["EditUserinfo"];
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditUserinfo"];
 $PHORUM['DATA']['PROFILE']['USERPROFILE'] = 1;
 $template = "cc_usersettings";
         

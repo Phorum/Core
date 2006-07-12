@@ -25,7 +25,7 @@ if(count($_POST)) {
 }
 
 
-$PHORUM["DATA"]["PROFILE"]["block_title"] = $PHORUM["DATA"]["LANG"]["EditSignature"];
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditSignature"];
 
 $PHORUM['DATA']['PROFILE']['SIGSETTINGS'] = 1;
 $template = "cc_usersettings";

@@ -1,45 +1,29 @@
-<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->PersProfile}</div>
-<div class="PhorumStdBlock" style="text-align: left;">
-  <table class="PhorumFormTable" cellspacing="0" border="0">
-    <tr>
-      <td>{LANG->Username}:</td>
-      <td>{PROFILE->username}</td>
-    </tr>
-    <tr>
-      <td>{LANG->RealName}:</td>
-      <td>{PROFILE->real_name}</td>
-    </tr>
-    <tr>
-      <td>{LANG->Email}:</td>
-      <td>{PROFILE->email}</td>
-    </tr>
-    <tr>
-      <td>{LANG->DateReg}:</td>
-      <td>{PROFILE->date_added}</td>
-    </tr>
-    {IF PROFILE->date_last_active}
-      <tr>
-        <td>{LANG->DateActive}:</td>
-       <td>{PROFILE->date_last_active}</td>
-      </tr>
-    {/IF}
-    <tr>
-      <td>{LANG->Posts}:</td>
-      <td>{PROFILE->posts}</td>
-    </tr>
-    <tr>
-      <td>{LANG->Signature}:</td>
-      <td>{PROFILE->signature_formatted}</td>
-    </tr>
-  </table>
+<div class="generic">
+    <dl>
+        <dt>{LANG->Username}:</dt>
+        <dd>{PROFILE->username}</dd>
+        <dt>{LANG->RealName}:</dt>
+        <dd>{PROFILE->real_name}</dd>
+        <dt>{LANG->Email}:</dt>
+        <dd>{PROFILE->email}</dd>
+        <dt>{LANG->DateReg}:</dt>
+        <dd>{PROFILE->date_added}</dd>
+        {IF PROFILE->date_last_active}
+            <dt>{LANG->DateActive}:</dt>
+            <dd>{PROFILE->date_last_active}</dd>
+        {/IF}
+        <dt>{LANG->Posts}:</dt>
+        <dd>{PROFILE->posts}</dd>
+        <dt>{LANG->Signature}:</dt>
+        <dd>{PROFILE->signature_formatted}</dd>
+    </dl>
 </div>
 {IF PROFILE->admin}{VAR SHOWPERMS 1}{/IF}
 {IF UserPerms}{VAR SHOWPERMS 1}{/IF}
 {IF SHOWPERMS}
-  <br />
-  <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UserPermissions}</div>
-  <div class="PhorumStdBlock" style="text-align: left;">
-    <table class="PhorumFormTable" cellspacing="0" border="0">
+    <div class="generic">
+    <h4>{LANG->UserPermissions}</h4>
+    <table cellspacing="0" border="0">
       {IF PROFILE->admin}
         <tr>
           <td>{LANG->PermAdministrator}</td>

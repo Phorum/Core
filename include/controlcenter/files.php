@@ -101,4 +101,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["UploadNotAllowed"];
 } 
 
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMyFiles"];
+
+
 ?>

@@ -36,6 +36,9 @@ if( $PHORUM["track_user_activity"] &&
 $PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
 
 $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
+
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["PersProfile"];
+
 /* --------------------------------------------------------------- */
 
 function phorum_readable_permissions()
