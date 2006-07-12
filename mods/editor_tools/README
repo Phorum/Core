@@ -5,7 +5,6 @@ Author  : Maurice Makaay
 This module will add a buttonbar to the Phorum message editor, which can be
 used by visitors to easily apply BBcode and smileys to their postings.
 
-
 Install:
 --------
 
@@ -19,9 +18,13 @@ Install:
 
 - Enable the module "Editor Tools".
 
+- Enable the "BBcode" and/or "Smileys" module (Editor Tools will
+  only show tools for the enabled modules, so if you do not enable
+  any of these two, no tools will be displayed at all).
 
-Color picker:
--------------
+
+Color picker information:
+-------------------------
 
 For the color picker, we use the excellent script from dhtmlgoodies.com.
 The script does need some changes to make it work for the editor tools.
@@ -36,4 +39,16 @@ These are the changes that are needed:
    chooseColor() and chooseColorSlider() to call the function
    editor_tools_handle_color_select() with the selected color
    as the argument.
+
+4) In js_color_picker_v2.js, add the call
+   editor_tools_register_popup_object(color_picker_div);
+   after creating the color_picker_div in the function showColorPicker().
+
+5) In the same function, right after the code block for if(!color_picker_div),
+   the color picker can be made visible by settings style.display to block.
+   Together with that call, the call for closing all popups must be made,
+   so change the code to this:
+   {editor_tools_hide_all_popups(); color_picker_div.style.display='block';}
+
+6) Eye candy: change all #317802 in the js_color_picker_v2.css to #777.
 

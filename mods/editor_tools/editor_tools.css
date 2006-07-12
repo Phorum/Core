@@ -8,12 +8,39 @@
 }
 
 #editor_tools img {
-    border: 1px solid #ddd;
     padding: 2px;
     margin-right: 2px;
     background-color: #eee;
+    border: 1px solid #ddd;
 }
 
 #editor_tools img:hover {
     border: 1px solid #777;
 }
+
+.editor_tools_popup {
+    position:absolute;
+    padding: 5px 10px;
+    background-color:#eee;
+    border:1px solid #777;
+    z-index: 100;
+}
+
+#editor_tools_size_picker a,
+#editor_tools_size_picker a:active,
+#editor_tools_size_picker a:visited {
+    color: black;
+    font-family: arial, helvetica, sans-serif;
+    text-decoration: none;
+}
+
+#editor_tools_size_picker a:hover {
+    text-decoration: underline;
+}
+
+#editor_tools_smiley_picker img {
+    border: none;
+    margin: 3px;
+}
+
+

@@ -1,25 +1,35 @@
 <?php
 $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
+    # Button descriptions.
     'bold'          => 'Bold',
     'italic'        => 'Italic',
     'underline'     => 'Underline',
     'strike'        => 'Strike through',
-    'size'          => 'Font size',
     'subscript'     => 'Subscript',
     'superscript'   => 'Superscript',
-    'color'         => 'Font color',
+    'color'         => 'Select font color',
+    'size'          => 'Select font size',
     'center'        => 'Center text',
     'url'           => 'Insert URL',
     'email'         => 'Insert email address',
-    'image'         => 'Insert image',
+    'image'         => 'Insert image URL',
     'smiley'        => 'Insert smiley',
     'hr'            => 'Insert horizontal line',
     'code'          => 'Formatted code',
-    'enter color'   => 'Please, enter the text color:',
-    'enter size'    => 'Please, enter the text size:',
-    'enter url'     => 'Please, enter the URL to which you want to create a link:',
+    'quote'         => 'Insert quoted text',
+
+    # Dialogs and errors.
+    'enter url'     => 'Please, enter the URL to which you want to create a link.',
     'invalid url'   => 'The URL is invalid. It should start with http://, https://, ftp:// or mailto:',
-    'enter image url' => 'Please, enter the URL for the image that you want to add:',
+    'enter image url' => 'Please, enter the URL for the image that you want to add.',
     'invalid image url' => 'The URL for the image is invalid. It should start with http://, https:// or ftp://',
+    'enter who you quote' => 'Please, enter the name of the person that you are quoting. You can leave this empty if you like.',
+
+    # For the size picker.
+    'x-large'      => 'Extra large font',
+    'large'        => 'Large font',
+    'medium'       => 'Medium font',
+    'small'        => 'Small font',
+    'x-small'      => 'Extra small font',
 );
 ?>

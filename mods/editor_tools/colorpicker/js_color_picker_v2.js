@@ -564,8 +564,13 @@
 			createNamedColors(contentDiv);
 			createAllColorDiv(contentDiv);
 			createStatusBar(color_picker_div);			
+
+            /* Changed for Phorum editor tools */
+            editor_tools_register_popup_object(color_picker_div);
 		}		
-		if(color_picker_div.style.display=='none' || color_picker_active_input!=inputObj)color_picker_div.style.display='block'; else color_picker_div.style.display='none';		
+
+        /* Changed for Phorum editor tools */
+		if(color_picker_div.style.display=='none' || color_picker_active_input!=inputObj){editor_tools_hide_all_popups(); color_picker_div.style.display='block';} else color_picker_div.style.display='none';		
 		color_picker_div.style.left = colorPickerGetLeftPos(inputObj) + 'px';
 		color_picker_div.style.top = colorPickerGetTopPos(inputObj) + inputObj.offsetHeight + 2 + 'px';
 		color_picker_form_field = formField;

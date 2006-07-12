@@ -3,7 +3,7 @@
 		width:250px;
 		padding-bottom:1px;
 		background-color:#FFF;
-		border:1px solid #317082;
+		border:1px solid #777;
 		
 		width: 252px;	/* IE 5.x */
 		width/* */:/**/250px;	/* Other browsers */
@@ -13,7 +13,7 @@
 	
 	#dhtmlgoodies_colorPicker .colorPicker_topRow{
 		padding-bottom:1px;
-		border-bottom:3px double #317082;
+		border-bottom:3px double #777;
 		background-color:#E2EBED;
 		padding-left:2px;
 		
@@ -31,7 +31,7 @@
 		height:13px;
 		padding-bottom:2px;
 		width:248px;
-		border-top:3px double #317082;	
+		border-top:3px double #777;	
 		background-color:#E2EBED;
 		padding-left:2px;
 		clear:both;
@@ -100,7 +100,7 @@
 		height:11px;
 		text-align:center;
 		line-height:10px;
-		border:1px solid #317082;
+		border:1px solid #777;
 		position:absolute;
 		right:1px;
 		font-size:12px;

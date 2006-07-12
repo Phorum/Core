@@ -24,11 +24,9 @@ function phorum_mod_editor_tools_common()
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= 
       '<script type="text/javascript" src="./mods/editor_tools/editor_tools.js"></script>' .
       '<link rel="stylesheet" type="text/css" href="./mods/editor_tools/editor_tools.css"></link>' .
-      '<link rel="stylesheet" href="./mods/editor_tools/colorpicker/js_color_picker_v2.css"/>' .
-      '<script type="text/javascript" src="./mods/editor_tools/colorpicker/color_functions.js"></script>' .
-      '<script type="text/javascript" src="./mods/editor_tools/colorpicker/js_color_picker_v2.js"></script>';
+      '<link rel="stylesheet" href="./mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
 
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["SHOW"] = false;
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"] = false;
 
     // Decide what tools we want to show. Later on we might replace
     // this by code to be able to configure this from the module
@@ -48,12 +46,14 @@ function phorum_mod_editor_tools_common()
         $tools[] = 'url';
         $tools[] = 'email';
         $tools[] = 'code';
+        $tools[] = 'quote';
         $tools[] = 'hr';
     }
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"])) {
         $tools[] = 'smiley';
     }
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"] = $tools;
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"] = array ();
 }
 
 // We want to run some javascript for displaying the editor tools in the
@@ -62,7 +62,7 @@ function phorum_mod_editor_tools_common()
 // for flagging the before_footer hook that the tools should be displayed.
 function phorum_mod_editor_tools_before_editor($data)
 {
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["SHOW"] = true;
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"] = true;
     return $data;
 }
 
@@ -70,11 +70,25 @@ function phorum_mod_editor_tools_before_editor($data)
 function phorum_mod_editor_tools_before_footer()
 { 
     $PHORUM = $GLOBALS["PHORUM"];
-    $tools = $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"];
+    $tools = $PHORUM["MOD_EDITOR_TOOLS"]["TOOLS"];
+    $jslibs = $PHORUM["MOD_EDITOR_TOOLS"]["JSLIBS"];
 
-    if (! $PHORUM["MOD_EDITOR_TOOLS"]["SHOW"]) return;
+    if (! $PHORUM["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"]) return;
 
-    // Add the javascript code to the page.
+    // Add javascript libraries for the color picker.
+    if (in_array('color', $tools)) {
+        $jslibs[] = './mods/editor_tools/colorpicker/color_functions.js';
+        $jslibs[] = './mods/editor_tools/colorpicker/js_color_picker_v2.js';
+    }
+
+    // Load javascript libraries for the editor tools.
+    foreach ($jslibs as $jslib) {
+        $qjslib = htmlspecialchars($jslib);
+        print "    " .
+              "<script type=\"text/javascript\" src=\"$qjslib\"></script>\n";
+    }
+    print "\n";
+
     ?>
     <script type="text/javascript">
         <?php
@@ -92,6 +106,15 @@ function phorum_mod_editor_tools_before_footer()
             print "        editor_tools_enabled[$idx] = '".addslashes($tool)."';\n";
             $idx ++;
         }
+       $prefix = $PHORUM["mod_smileys"]["prefix"]; 
+        if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
+            print "\n        // Add  smileys.\n";
+            foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
+                if (! $smiley["active"] || $smiley["is_alias"] || $smiley["uses"] == 1) continue;
+                print "        editor_tools_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+            }
+        }
+
         ?>
 
         // Construct and display the editor tools panel.
