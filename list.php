@@ -450,7 +450,7 @@ $rows = phorum_format_messages($rows);
 // set up the data
 $PHORUM["DATA"]["MESSAGES"] = $rows;
 
-$PHORUM["DATA"]["URL"]["MARKREAD"] = phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "markread");
+$PHORUM["DATA"]["URL"]["MARK_READ"] = phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "markread");
 if($PHORUM["DATA"]["MODERATOR"]) {
    $PHORUM["DATA"]["URL"]["UNAPPROVED"] = phorum_get_url(PHORUM_PREPOST_URL);
 }
