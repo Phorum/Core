@@ -100,7 +100,27 @@ if(!empty($phorum_search)){
 
     settype($PHORUM["args"]["match_dates"], "int");
 
-    $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
+    // setup the needed data for an alternate search backend
+    // needs to get fed by posted messages
+    $search_request_data = array(
+    'search' => $phorum_search,
+    'offset' => $offset,
+    'length' => $PHORUM["list_length"],
+    'match_type'  => $PHORUM["args"]["match_type"],
+    'match_dates' => $PHORUM["args"]["match_dates"],
+    'match_forum' => $PHORUM["args"]["match_forum"],
+    'results' => array(),
+    'continue' => 1
+    );
+
+    $search_request_data = phorum_hook('search_action',$search_request_data);
+
+    // only continue if our hook was either not run or didn't return a stop request
+    if($search_request_data['continue']) {
+        $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
+    } else {
+        $arr = $search_request_data['results'];
+    }
 
     if(count($arr["rows"])){
 

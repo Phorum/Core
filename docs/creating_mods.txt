@@ -1736,6 +1736,17 @@ Table of contents:
    changes are not stored in the database.
 
    ----------------------------------------------------------------------------
+   search_action
+
+   Where  : search.php
+   When   : Right before the search request to the database
+   Input  : Array of search-request data and a continue flag
+   Return : Same as Input, continue flag can be set to 0 to avoid the db-call
+
+   This hook can be used for using another search application / layer instead
+   of the buildin one.
+
+   ----------------------------------------------------------------------------
    send_mail
 
    Where  : include/email_functions.php in the function phorum_email_user()
