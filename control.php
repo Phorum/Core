@@ -40,6 +40,7 @@ if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
 }
 
 $error_msg = false;
+$template = "";
 
 // Generating the panel id of the page to use.
 $panel = (!isset($PHORUM['args']['panel']) || empty($PHORUM["args"]['panel']))
@@ -140,7 +141,7 @@ $PHORUM["DATA"]["DESCRIPTION"] = "";
 // The include file can set the template we have to use for
 // displaying the main part of the control panel screen
 // in the $template variable.
-if (isset($template)) {
+if (isset($template) && !empty($template)) {
     $PHORUM['DATA']['content_template'] = $template;
 }
 

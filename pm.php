@@ -590,6 +590,8 @@ if ($okmsg_id && isset($PHORUM["DATA"]["LANG"][$okmsg_id])) {
 $PHORUM["DATA"]["ERROR"] = (empty($error)) ? "" : $error;
 $PHORUM["DATA"]["OKMSG"] = (empty($okmsg)) ? "" : $okmsg;
 
+$template = "";
+
 switch ($page) {
 
     // Manage the PM folders.
@@ -877,6 +879,10 @@ switch ($page) {
         $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["SendPM"];
         $template = "pm_post";
         break;
+
+    default:
+
+        die("Illegal page requested: " . htmlspecialchars($page));
 }
 
 if ($hide_userselect) {
