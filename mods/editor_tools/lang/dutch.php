@@ -17,6 +17,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'hr'            => 'Horizontale lijn invoegen ',
     'code'          => 'Opgemaakte code',
     'quote'         => 'Quote invoegen',
+    'help'          => 'Help',
 
     # Dialogs and errors.
     'enter size'    => 'Voer de tekstgrootte in:',
@@ -32,5 +33,12 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'medium'       => 'Normaal lettertype',
     'small'        => 'Klein lettertype',
     'x-small'      => 'Extra kleinlettertype',
+
+    # Help titles.
+    'bbcode help'  => 'BBcode help',
+    'smileys help' => 'Smileys help',
+
+    # For the non-javascript help
+    'help'         => 'Help informatie:',
 );
 ?>

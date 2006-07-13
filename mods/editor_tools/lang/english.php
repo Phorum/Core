@@ -17,6 +17,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'hr'            => 'Insert horizontal line',
     'code'          => 'Formatted code',
     'quote'         => 'Insert quoted text',
+    'help'          => 'help',
 
     # Dialogs and errors.
     'enter url'     => 'Please, enter the URL to which you want to create a link.',
@@ -31,5 +32,11 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'medium'       => 'Medium font',
     'small'        => 'Small font',
     'x-small'      => 'Extra small font',
-);
-?>
+
+    # Help titles.
+    'bbcode help'  => 'BBcode help',
+    'smileys help' => 'Smileys help',
+
+    # For the non javascript help pages.
+    'help'         => 'Help information:',
+); ?>

@@ -24,43 +24,67 @@ Install:
   any of these two, no tools will be displayed at all).
 
 
-How to plugin an editor tool button from another module:
+How to plugin into the editor tools from another module:
 --------------------------------------------------------
 
-Other modules can add extra buttons to the buttonbar through an easy to
-use API. See the API functions at the bottom of editor_tools.php for
-the full documentation. Here is a quick example how to do this.
+Other modules can add extra buttons, javascript libraries and help pages to
+the editor tools through an easy to use API. See the API functions at the
+bottom of editor_tools.php for the full documentation. Here are some quick
+examples on how to do this.
 
-1) Create a module e.g. "mod_foo".
+1) Create a module. We use "mod_foo" in the examples below.
 
-2) Add a "editor_tool_plugin" hook to the module info, e.g.
+2) Add an "editor_tool_plugin" hook to the module info, e.g.
 
    hook: editor_tool_plugin|phorum_mod_foo_editor_tool_plugin
 
-3) Implement the editor_tool_plugin hook function. This function
-   has two tasks: add the javascript for handling a click on the
-   editor tool button to the page and register the extra editor
+3) Implement the editor_tool_plugin hook function in the module code.
+   To add a button, we need to add the javascript for handling a click
+   on the editor tool button to the page and register the extra editor
    tool so it will be display. Example code:
 
-   function phorum_mod_foo_editor_tool_plugin() {
-       ?>
-       <script type="text/javascript">
-       function mod_foo_editor_tool_action() {
-         alert('You clicked on the mod_foo editor tool');
-       }
-       </script>
-       <?php
+      function phorum_mod_foo_editor_tool_plugin() {
+          ?>
+          <script type="text/javascript">
+          function mod_foo_editor_tool_action() {
+            alert('You clicked on the mod_foo editor tool');
+          }
+          </script>
+          <?php
+   
+           editor_tools_register_tool(
+               'foo',                         // Tool id
+               'Foo module tool',             // Tool description
+               './mods/mod_foo/icon.gif',     // Tool button icon
+               'mod_foo_editor_tool_action()' // Javascript action on click
+           );
+      }
 
-        editor_tools_register_tool(
-            'foo',                         // Tool id
-            'Foo module tool',             // Tool description
-            './mods/mod_foo/icon.gif',     // Tool button icon
-            'mod_foo_editor_tool_action()' // Javascript action on button click
-        );
-   }
+4) If you want to load a javascript library for your editor tool, you can
+   of course add the <script src=...> code from your editor_tool_plugin
+   hook directly, but you can also let the editor_tools module handle this
+   by using the following call in the hook function:
 
-This is all there is to it. If both mod_foo and the editor_tools module
-are enabled, an extra button will be added to the editor tools.
+      editor_tools_register_jslib('path/to/your/javascript/library.js');
+
+   Beware that this path is relative to the Phorum installation directory.
+   So if you would like to load foo.js from the mod_foo directory, you
+   would use the following:
+
+      editor_tools_register_jslib('./mods/mod_foo/foo.js');
+
+5) If you want to link a help page to the help button in the editor tools,
+   you can add one from the editor_tool_plugin using the following call
+   in the hook function:
+
+      editor_tools_register_help(
+          'The name of the help link',
+          'http://www.yourhelp.com/page.html'
+      );
+   
+
+If both mod_foo and the editor_tools module are enabled, the extra
+editor tool elements will be available in the button bar.
 
 
 Color picker information:

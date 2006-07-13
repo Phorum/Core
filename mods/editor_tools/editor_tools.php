@@ -20,6 +20,7 @@ if(!defined("PHORUM")) return;
 
 define('MOD_EDITOR_TOOLS_BASE', './mods/editor_tools');
 define('MOD_EDITOR_TOOLS_ICONS', MOD_EDITOR_TOOLS_BASE . '/icons');
+define('MOD_EDITOR_TOOLS_HELP', MOD_EDITOR_TOOLS_BASE . '/help');
 
 // Fields in the editor tool info arrays.
 define('TOOL_ID',          0);
@@ -38,13 +39,17 @@ function phorum_mod_editor_tools_common()
       '<link rel="stylesheet" type="text/css" href="./mods/editor_tools/editor_tools.css"></link>' .
       '<link rel="stylesheet" href="./mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
 
+    $lang = $GLOBALS["PHORUM"]["language"];
+    $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
+
     // Decide what tools we want to show. Later on we might replace
     // this by code to be able to configure this from the module
     // settings page.
 
     $tools = array();
+    $help_chapters = array();
 
-    // Add the tools for supporting the bbcode module.
+    // Add the tools and help page for supporting the bbcode module.
     if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"]) && $GLOBALS["PHORUM"]["mods"]["bbcode"]) {
         $tools[] = array('bold',        NULL, NULL, NULL);
         $tools[] = array('underline',   NULL, NULL, NULL);
@@ -61,11 +66,25 @@ function phorum_mod_editor_tools_common()
         $tools[] = array('code',        NULL, NULL, NULL);
         $tools[] = array('quote',       NULL, NULL, NULL);
         $tools[] = array('hr',          NULL, NULL, NULL);
+
+        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/help/$lang/bbcode.php")) {
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/$lang/bbcode.php";
+        } else {
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/english/bbcode.php";
+        }
+        $help_chapters[] = array($langstr["bbcode help"], $help_url);
     }
 
-    // Add a tool for supporting the smileys module.
+    // Add a tool and help page for supporting the smileys module.
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) && $GLOBALS["PHORUM"]["mods"]["smileys"]) {
-        $tools[] = array('smiley',      NULL, NULL, NULL);
+        $tools[] = array('smiley', NULL, NULL, NULL);
+
+        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/help/$lang/smileys.php")) {
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/$lang/smileys.php";
+        } else {
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/english/smileys.php";
+        }
+        $help_chapters[] = array($langstr["smileys help"], $help_url);
     }
 
     // Store our information for later use.
@@ -74,13 +93,22 @@ function phorum_mod_editor_tools_common()
         "STARTED"           => false,
         "TOOLS"             => $tools,
         "JSLIBS"            => array(),
+        "HELP_CHAPTERS"     => $help_chapters,
     );
+
+    // Give other modules a chance to setup their plugged in
+    // editor tools. This is done through a standard hook call.
+    phorum_hook('editor_tool_plugin');
+
+    // Keep track that the editor tools have been setup. From here
+    // on, the API calls for registering tools, javascript libraries
+    // and help chapters are no longer allowed.
+    $PHORUM["MOD_EDITOR_TOOLS"]["STARTED"] = true;
 }
 
 /**
  * Sets a flag which tell us that we are on a page containing
- * a posting editor. Note: this method of detection will only work
- * for Phorum 5.1+
+ * a posting editor.
  *
  * @param $data - Standard Phorum before_editor hook data.
  * @return $data - The unmodified input data.
@@ -92,6 +120,28 @@ function phorum_mod_editor_tools_before_editor($data)
 }
 
 /**
+ * Implements a fallback mechanism for users that do not have
+ * javascript enabled in their browser. For those users, we 
+ * supply links to the help pages.
+ */
+function phorum_mod_editor_tools_tpl_editor_before_textarea()
+{
+    $help = $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"];
+    $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
+
+    if (!count($help)) return;
+
+    print '<noscript><br/><br/><font size="-1">';
+    print $lang['help'] . "<br/><ul>";
+    foreach ($help as $helpinfo) {
+      print "<li><a href=\"" . htmlspecialchars($helpinfo[1]) . "\" " .
+            "target=\"editor_tools_help\">" .
+            htmlspecialchars($helpinfo[0]) . "</a><br/>";
+    }
+    print '</ul><br/></font></noscript>';
+}
+
+/**
  * Adds the javascript code for constructing and displaying the editor
  * tools to the page. The editor tools will be built completely using
  * only Javascript/DOM technology.
@@ -100,14 +150,15 @@ function phorum_mod_editor_tools_before_footer()
 { 
     if (! $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"]) return;
 
-    // Give other modules a chance to setup their plugged in
-    // editor tools. This is done through a standard hook call.
-    phorum_hook('editor_tool_plugin');
-
     $PHORUM = $GLOBALS["PHORUM"];
     $tools  = $PHORUM["MOD_EDITOR_TOOLS"]["TOOLS"];
     $jslibs = $PHORUM["MOD_EDITOR_TOOLS"]["JSLIBS"];
+    $help   = $PHORUM["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"];
     $lang   = $PHORUM["DATA"]["LANG"]["mod_editor_tools"];
+
+    // Add a help tool. We add it as the first tool, so we can
+    // shift it nicely to the right side of the page using CSS float.
+    array_unshift($tools, array('help', NULL, NULL, NULL));
 
     // Fill in default values for the tools.
     foreach ($tools as $id => $toolinfo)
@@ -153,6 +204,16 @@ function phorum_mod_editor_tools_before_footer()
               " = '" . addslashes($val) . "';\n";
     }
 
+    // Add help chapters.
+    $idx = 0;
+    foreach ($help as $helpinfo) {
+        list ($description, $url) = $helpinfo;
+        print "editor_tools_help_chapters[$idx] = new Array(" .
+              "'" . addslashes($description) . "', " .
+              "'" . addslashes($url) . "');\n";
+        $idx ++;
+    }
+
     // Add the editor tools.
     $idx = 0;
     foreach ($tools as $toolinfo) {
@@ -178,9 +239,6 @@ function phorum_mod_editor_tools_before_footer()
     print "editor_tools_construct();\n";
 
     print "</script>\n";
-
-    // Keep track that the editor tools have been setup.
-    $PHORUM["MOD_EDITOR_TOOLS"]["STARTED"] = true;
 }
 
 // ----------------------------------------------------------------------
@@ -220,7 +278,7 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction)
         die("Internal error for the editor_tools module: " .
             "tool ".htmlspecialchars($toold_id)." is registered " .
             "after the editor_tools were started up. Tools must " .
-            "be registered within the \"editor_tool_plugin\" hook.");
+            "be registered within or before the \"editor_tool_plugin\" hook.");
     }
 
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"][] = array(
@@ -231,7 +289,7 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction)
     );
 }
 
-/*
+/**
  * Register a javascript library that has to be loaded by the editor
  * tools. The library file will be loaded before the editor tools
  * javascript code is written to the page.
@@ -245,10 +303,30 @@ function editor_tools_register_jslib($jslib)
         die("Internal error for the editor_tools module: " .
             "javascript library ".htmlspecialchars($jslib)." is registered " .
             "after the editor_tools were started up. Libraries must " .
-            "be registered within the \"editor_tool_plugin\" hook.");
+            "be registered within or before the \"editor_tool_plugin\" hook.");
     }
 
-    $jslibs = $PHORUM["MOD_EDITOR_TOOLS"]["JSLIBS"];
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $jslib;
+}
+
+/**
+ * Register a help chapter that has to be linked to the editor tools
+ * help button.
+ *
+ * @param $title - The title for the help chapter. This will be used
+ *                 as the text for the link to the help page.
+ * @param $url - The URL for the help page to display. 
+ */
+function editor_tools_register_help($title, $url)
+{
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) {
+        die("Internal error for the editor_tools module: " .
+            "help chapter ".htmlspecialchars($title)." is registered " .
+            "after the editor_tools were started up. Help chapters must " .
+            "be registered within or before the \"editor_tool_plugin\" hook.");
+    }
+
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"][] = array($title, $url);
 }
 
 /**

@@ -33,6 +33,7 @@ var editor_tools_lang = new Array();
 var editor_tools_textarea_obj = null;
 var editor_tools_size_picker_obj = null;
 var editor_tools_smiley_picker_obj = null;
+var editor_tools_help_picker_obj = null;
 
 // A variable for storing all popup objects that we have, so we 
 // can hide them all at once.
@@ -50,6 +51,16 @@ var editor_tools_popup_objects = new Array();
 // from the module's PHP code.
 var editor_tools = new Array();
 
+// Storage for help chapters that must be put under the editor tools
+// help button. The array value contains the following fields:
+// 
+// 1) a description that will be used as the clickable link text.
+// 2) the url for the help page (absolute or relative to the Phorum dir).
+//
+// This array will be filled by javascript that will be generaged
+// from the module's PHP code.
+var editor_tools_help_chapters = new Array();
+
 // Valid sizes to select from for the size picker. If you add or change sizes,
 // remember to change the module language file to supply some display strings.
 var editor_tools_size_picker_sizes = new Array(
@@ -66,6 +77,10 @@ var editor_tools_smileys = new Array();
 
 // The width of the smiley picker popup menu.
 var editor_tools_smileys_popupwidth = '150px';
+
+// The dimensions of the help window.
+var editor_tools_help_width = '400px';
+var editor_tools_help_height = '400px';
 
 // ----------------------------------------------------------------------
 // Uitilty functions
@@ -206,7 +221,7 @@ function editor_tools_construct()
 // ----------------------------------------------------------------------
 
 // Create a popup window.
-function editor_tools_construct_popup(create_id)
+function editor_tools_construct_popup(create_id, anchor)
 {
     // Create the outer div for the popup window.
     var popup_obj = document.createElement('div');
@@ -214,6 +229,8 @@ function editor_tools_construct_popup(create_id)
     popup_obj.className = 'editor_tools_popup';
     popup_obj.style.display = 'none';
     document.body.appendChild(popup_obj);
+
+    popup_obj._anchor = anchor;
 
     // Create the inner content div.
     var content_obj = document.createElement('div');
@@ -237,8 +254,19 @@ function editor_tools_toggle_popup(popup_obj, button_obj)
     }
 
     // Move the popup window to the right place.
-    popup_obj.style.left = left + 'px';
-    popup_obj.style.top = top + 'px';
+    if (popup_obj._anchor == 'r')
+    {
+        var ns6 = document.getElementById && !document.all ? 1 : 0
+        // -16 for scrollbar that is counted in.
+        var scrwidth = ns6 ? window.innerWidth-16 : document.body.clientWidth;
+        var right = scrwidth - left - button_obj.offsetWidth;
+
+        popup_obj.style.right = right + 'px';
+        popup_obj.style.top = top + 'px';
+    } else {
+        popup_obj.style.left = left + 'px';
+        popup_obj.style.top = top + 'px';
+    }
 
     // Toggle the popup window's visibility.
     if (popup_obj.style.display == 'none') {
@@ -471,7 +499,7 @@ function editor_tools_handle_size()
     if (!editor_tools_size_picker_obj)
     {
         // Create a new popup.
-        var popup = editor_tools_construct_popup('editor_tools_size_picker');
+        var popup = editor_tools_construct_popup('editor_tools_size_picker','l');
         editor_tools_size_picker_obj = popup[0];
         var content_obj = popup[1];
 
@@ -547,7 +575,7 @@ function editor_tools_handle_smiley()
     if (!editor_tools_smiley_picker_obj)
     {
         // Create a new popup.
-        var popup = editor_tools_construct_popup('editor_tools_smiley_picker');
+        var popup = editor_tools_construct_popup('editor_tools_smiley_picker','l');
         editor_tools_smiley_picker_obj = popup[0];
         var content_obj = popup[1];
 
@@ -601,5 +629,73 @@ function editor_tools_handle_quote()
     }
     
     editor_tools_focus_textarea();
+}
+
+// ----------------------------------------------------------------------
+// Tool: Help
+// ----------------------------------------------------------------------
+
+function editor_tools_handle_help()
+{
+    var c = editor_tools_help_chapters;
+
+    // Shouldn't happen.
+    if (c.length == 0) {
+        alert('No help chapters available');
+        return;
+    }
+
+    // Exactly one help chapter available. Immediately open the chapter.
+    if (c.length == 1) {
+        alert('Open ' + c[1] + ' as single help page');
+        return;
+    }
+
+    // Multiple chapters available. Show a help picker menu with some
+    // choices. Create the help picker on first access.
+    if (!editor_tools_help_picker_obj)
+    {
+        // Create a new popup.
+        var popup = editor_tools_construct_popup('editor_tools_help_picker','r');
+        editor_tools_help_picker_obj = popup[0];
+        var content_obj = popup[1];
+
+        // Populate the new popup.
+        for (var i = 0; i < editor_tools_help_chapters.length; i++) 
+        {
+            var helpinfo = editor_tools_help_chapters[i];
+            var a_obj = document.createElement('a');
+            a_obj.href = 'javascript:editor_tools_handle_help_select("' + helpinfo[1] + '")';
+            a_obj.innerHTML = helpinfo[0];
+            content_obj.appendChild(a_obj);
+            content_obj.appendChild(document.createElement('br'));
+        }
+
+        // Register the popup with the editor tools.
+        editor_tools_register_popup_object(editor_tools_help_picker_obj);
+    }
+
+    // Display the popup.
+    var button_obj = document.getElementById('editor_tools_img_help');
+    editor_tools_toggle_popup(editor_tools_help_picker_obj, button_obj);
+}
+
+function editor_tools_handle_help_select(url)
+{
+    var help_window = window.open(
+        url,
+        'editor_tools_help',
+        'resizable=yes,' +
+        'menubar=no,' +
+        'directories=no,' +
+        'scrollbars=yes,' +
+        'toolbar=no,' +
+        'status=no,' +
+        'width=' + editor_tools_help_width + ',' +
+        'height=' + editor_tools_help_height
+    );
+
+    editor_tools_focus_textarea();
+    help_window.focus();
 }
 

@@ -1,6 +1,7 @@
 hook: lang|
 hook: common|phorum_mod_editor_tools_common
 hook: before_editor|phorum_mod_editor_tools_before_editor
+hook: tpl_editor_before_textarea|phorum_mod_editor_tools_tpl_editor_before_textarea
 hook: before_footer|phorum_mod_editor_tools_before_footer
 title: Editor tools
 desc: This module implements editor tools for bbcode and smileys to help users with writing their messages, without having to know the codes to use.

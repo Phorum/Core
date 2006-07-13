@@ -23,18 +23,17 @@
     padding: 5px 10px;
     background-color:#eee;
     border:1px solid #777;
-    z-index: 100;
-}
-
-#editor_tools_size_picker a,
-#editor_tools_size_picker a:active,
-#editor_tools_size_picker a:visited {
-    color: black;
     font-family: arial, helvetica, sans-serif;
-    text-decoration: none;
 }
 
-#editor_tools_size_picker a:hover {
+.editor_tools_popup a,
+.editor_tools_popup a:active,
+.editor_tools_popup a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+.editor_tools_popup a:hover {
     text-decoration: underline;
 }
 
@@ -43,4 +42,7 @@
     margin: 3px;
 }
 
+#editor_tools_a_help {
+    float: right;
+}
 
