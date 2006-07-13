@@ -1,0 +1,41 @@
+body {
+    background-color: white;
+    color: black;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 12px;
+}
+
+h2 {
+    color: black;
+    background-color: #cde;
+    border: 1px solid #abc;
+    padding: 5px;
+}
+
+h3 {
+    line-height: 1.3em;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin: 30px 0px 15px 0px;
+}
+
+th {
+    font-size: 12px;
+    text-align: left;
+    padding: 3px;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ddd;
+}
+
+td {
+    font-size: 12px;
+    padding: 3px;
+    vertical-align: top;
+    border-bottom: 1px solid #ddd;
+}
+
+.smiley_column {
+    font-family: courier;
+}

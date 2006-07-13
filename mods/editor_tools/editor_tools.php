@@ -67,10 +67,10 @@ function phorum_mod_editor_tools_common()
         $tools[] = array('quote',       NULL, NULL, NULL);
         $tools[] = array('hr',          NULL, NULL, NULL);
 
-        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/help/$lang/bbcode.php")) {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/$lang/bbcode.php";
+        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php")) {
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php";
         } else {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/english/bbcode.php";
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/english/bbcode.php";
         }
         $help_chapters[] = array($langstr["bbcode help"], $help_url);
     }
@@ -79,10 +79,10 @@ function phorum_mod_editor_tools_common()
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) && $GLOBALS["PHORUM"]["mods"]["smileys"]) {
         $tools[] = array('smiley', NULL, NULL, NULL);
 
-        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/help/$lang/smileys.php")) {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/$lang/smileys.php";
+        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php")) {
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php";
         } else {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/help/english/smileys.php";
+            $help_url = MOD_EDITOR_TOOLS_HELP . "/english/smileys.php";
         }
         $help_chapters[] = array($langstr["smileys help"], $help_url);
     }
