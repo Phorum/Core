@@ -2,6 +2,7 @@
     padding: 3px;
     margin-bottom: 3px;
     border-bottom: 1px solid #ddd;
+    text-align: left;
 }
 
 #editor_tools a {

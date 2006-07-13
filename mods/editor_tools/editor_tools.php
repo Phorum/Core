@@ -148,6 +148,11 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
  */
 function phorum_mod_editor_tools_before_footer()
 { 
+    // Detect if we are handling a PM editor and show
+    // the editor tools in the PM interface as well.
+    // This is a bit hacked in now.
+    if (isset($GLOBALS["PHORUM"]["DATA"]["PM_PAGE"]) && $GLOBALS["PHORUM"]["DATA"]["PM_PAGE"] == 'send') $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"] = true;
+
     if (! $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"]) return;
 
     $PHORUM = $GLOBALS["PHORUM"];

@@ -22,8 +22,9 @@
 // This is done to arrange for backward compatibility between 
 // Phorum versions.
 var editor_tools_textarea_ids = new Array(
-    'phorum_textarea',
-    'body'
+    'phorum_textarea',  // Phorum 5.1
+    'body',             // Phorum 5.2
+    'message'           // PM interface
 );
 
 // Storage for language translation strings from the Phorum language system.
