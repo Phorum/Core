@@ -294,7 +294,7 @@ function phorum_write_language_file($lang, $CURRENT)
 {
     // Sort array keys.
     ksort($CURRENT['DATA']['LANG']);
-    ksort($CURRENT['DATA']['STORE']['DEPRECATED']);
+    ksort($CURRENT['STORE']['DEPRECATED']);
     
     $langfile = 
         "<?php\n" .
@@ -662,8 +662,8 @@ function phorum_extract_language_strings_recurse($path)
                     $strings = array_merge($strings, $m);
                 }
                 foreach ($strings as $string) {
-                    if (! isset($extract_strings[$string])) {
-                        $extract_strings[$string] = array('files'=>array());
+                    if (! isset($extract_strings[$string[1]])) {
+                        $extract_strings[$string[1]] = array('files'=>array());
                     }
                     $extract_strings[$string[1]]['files'][$file]++;
                     $extract_strings[$string[1]]['source'][$string[0]]++;
