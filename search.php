@@ -110,6 +110,7 @@ if(!empty($phorum_search)){
     'match_dates' => $PHORUM["args"]["match_dates"],
     'match_forum' => $PHORUM["args"]["match_forum"],
     'results' => array(),
+    'raw_body' => 0,
     'totals' => 0,
     'continue' => 1
     );
@@ -119,9 +120,11 @@ if(!empty($phorum_search)){
     // only continue if our hook was either not run or didn't return a stop request
     if($search_request_data['continue']) {
         $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
+        $raw_body = 0;
     } else {
         $arr['rows'] = $search_request_data['results'];
         $arr['count']= $search_request_data['totals'];
+        $raw_body = $search_request_data['raw_body'];
     }
 
     if(count($arr["rows"])){
@@ -154,11 +157,14 @@ if(!empty($phorum_search)){
             $arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
             // strip HTML & BB Code
-            $body = phorum_strip_body($arr["rows"][$key]["body"]);
-            $arr["rows"][$key]["short_body"] = substr($body, 0, 200);
+            if(!$raw_body) {
+                $body = phorum_strip_body($arr["rows"][$key]["body"]);
+                $arr["rows"][$key]["short_body"] = substr($body, 0, 200);
+                $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
+            }
             $arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
             $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
-            $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
+
 
             $forum_ids[$row["forum_id"]] = $row["forum_id"];
 
