@@ -22,11 +22,17 @@ define('MOD_EDITOR_TOOLS_BASE', './mods/editor_tools');
 define('MOD_EDITOR_TOOLS_ICONS', MOD_EDITOR_TOOLS_BASE . '/icons');
 define('MOD_EDITOR_TOOLS_HELP', MOD_EDITOR_TOOLS_BASE . '/help');
 
+// Default icon size to use.
+define('MOD_EDITOR_TOOLS_DEFAULT_IWIDTH', 21);
+define('MOD_EDITOR_TOOLS_DEFAULT_IHEIGHT', 20);
+
 // Fields in the editor tool info arrays.
 define('TOOL_ID',          0);
 define('TOOL_DESCRIPTION', 1);
 define('TOOL_ICON',        2);
 define('TOOL_JSACTION',    3);
+define('TOOL_IWIDTH',      4);
+define('TOOL_IHEIGHT',     5);
 
 /**
  * Adds the javascript and CSS for the editor tools to the page header.
@@ -51,21 +57,21 @@ function phorum_mod_editor_tools_common()
 
     // Add the tools and help page for supporting the bbcode module.
     if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"]) && $GLOBALS["PHORUM"]["mods"]["bbcode"]) {
-        $tools[] = array('bold',        NULL, NULL, NULL);
-        $tools[] = array('underline',   NULL, NULL, NULL);
-        $tools[] = array('italic',      NULL, NULL, NULL);
-        $tools[] = array('strike',      NULL, NULL, NULL);
-        $tools[] = array('subscript',   NULL, NULL, NULL);
-        $tools[] = array('superscript', NULL, NULL, NULL);
-        $tools[] = array('color',       NULL, NULL, NULL);
-        $tools[] = array('size',        NULL, NULL, NULL);
-        $tools[] = array('center',      NULL, NULL, NULL);
-        $tools[] = array('image',       NULL, NULL, NULL);
-        $tools[] = array('url',         NULL, NULL, NULL);
-        $tools[] = array('email',       NULL, NULL, NULL);
-        $tools[] = array('code',        NULL, NULL, NULL);
-        $tools[] = array('quote',       NULL, NULL, NULL);
-        $tools[] = array('hr',          NULL, NULL, NULL);
+        $tools[] = array('bold',        NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('underline',   NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('italic',      NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('strike',      NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('subscript',   NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('superscript', NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('color',       NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('size',        NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('center',      NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('image',       NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('url',         NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('email',       NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('code',        NULL, NULL, NULL, NULL, NULL);
+        $tools[] = array('quote',       NULL, NULL, NULL, 20,   NULL);
+        $tools[] = array('hr',          NULL, NULL, NULL, NULL, NULL);
 
         if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php")) {
             $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php";
@@ -77,7 +83,7 @@ function phorum_mod_editor_tools_common()
 
     // Add a tool and help page for supporting the smileys module.
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) && $GLOBALS["PHORUM"]["mods"]["smileys"]) {
-        $tools[] = array('smiley', NULL, NULL, NULL);
+        $tools[] = array('smiley', NULL, NULL, NULL, NULL, NULL);
 
         if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php")) {
             $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php";
@@ -185,6 +191,14 @@ function phorum_mod_editor_tools_before_footer()
             $toolinfo[TOOL_JSACTION] = "editor_tools_handle_{$tool_id}()";
         }
 
+        // Default for the icon size to use.
+        if (!isset($toolinfo[TOOL_IWIDTH]) || empty($toolinfo[TOOL_IWIDTH])) {
+            $toolinfo[TOOL_IWIDTH] = 21;
+        }
+        if (!isset($toolinfo[TOOL_IHEIGHT]) || empty($toolinfo[TOOL_IHEIGHT])) {
+            $toolinfo[TOOL_IHEIGHT] = 20;
+        }
+
         $tools[$id] = $toolinfo;
     }
 
@@ -203,11 +217,14 @@ function phorum_mod_editor_tools_before_footer()
     // Construct javascript code.
     print '<script type="text/javascript">';
 
-    // Make language strings available for the javascript code.\n";
+    // Make language strings available for the javascript code.
     foreach ($PHORUM["DATA"]["LANG"]["mod_editor_tools"] as $key => $val) {
-        print "editor_tools_lang['" . addslashes($key) . "'] " .  
+        print "editor_tools_lang['" . addslashes($key) . "'] " .
               " = '" . addslashes($val) . "';\n";
     }
+
+    // Make default icon height available for the javascript code.
+    print 'editor_tools_default_iconheight = ' . MOD_EDITOR_TOOLS_DEFAULT_IHEIGHT . ";\n";
 
     // Add help chapters.
     $idx = 0;
@@ -222,18 +239,19 @@ function phorum_mod_editor_tools_before_footer()
     // Add the editor tools.
     $idx = 0;
     foreach ($tools as $toolinfo) {
-        list ($tool, $description, $icon, $jsfunction) = $toolinfo;
+        list ($tool, $description, $icon, $jsfunction, $iw, $ih) = $toolinfo;
         print "editor_tools[$idx] = new Array(" .
               "'" . addslashes($tool) . "', " .
               "'" . addslashes($description) . "', " .
               "'" . addslashes($icon) . "', " .
-              "'" . addslashes($jsfunction) . "');\n";
+              "'" . addslashes($jsfunction) . "', " .
+              (int)$iw . ", " . (int)$ih . ");\n";
         $idx ++;
     }
 
     // Add available smileys for the smiley picker.
     if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
-        $prefix = $PHORUM["mod_smileys"]["prefix"]; 
+        $prefix = $PHORUM["mod_smileys"]["prefix"];
         foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
             if (! $smiley["active"] || $smiley["is_alias"] || $smiley["uses"] == 1) continue;
             print "editor_tools_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
@@ -271,13 +289,17 @@ function phorum_mod_editor_tools_before_footer()
  *                web directory.
  *                NULL is allowed as the value. In that case,
  *                the icon will be <module icon path>/<$tool_id>.gif.
- * @param $jsaction - The javascript code to execute when a user 
+ * @param $jsaction - The javascript code to execute when a user
  *                clicks on the editor tool button.
  *                NULL is allowed as the value. In that case,
  *                the javascript function editor_tools_handle_<$tool_id>()
  *                will be used.
+ * @param $iconwidth - The width of the icon. If this parameter is omitted
+ *                or is NULL, then the default value 21 will be used instead.
+ * @param $iconheight - The height of the icon. If this parameter is omitted
+ *                or is NULL, then the default value 20 will be used instead.
  */
-function editor_tools_register_tool($tool_id, $description, $icon, $jsaction) 
+function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $iwidth=NULL, $iheight=NULL)
 {
     if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) {
         die("Internal error for the editor_tools module: " .
@@ -290,7 +312,8 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction)
         $tool_id,
         $description,
         $icon,
-        $jsaction
+        $jsaction,
+        $iwidth, $iheight
     );
 }
 

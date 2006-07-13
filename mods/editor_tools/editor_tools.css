@@ -8,8 +8,8 @@
 #editor_tools a {
 }
 
+/* padding is arranged in editor_tools.js, so do not define it here. */
 #editor_tools img {
-    padding: 2px;
     margin-right: 2px;
     background-color: #eee;
     border: 1px solid #ddd;

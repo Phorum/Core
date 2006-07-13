@@ -1,5 +1,5 @@
 Module  : Phorum Editor Tools 
-Version : 1.0.0
+Version : 1.1.0
 Author  : Maurice Makaay
 
 This module will add a buttonbar to the Phorum message editor, which can be
@@ -57,6 +57,8 @@ examples on how to do this.
                'Foo module tool',             // Tool description
                './mods/mod_foo/icon.gif',     // Tool button icon
                'mod_foo_editor_tool_action()' // Javascript action on click
+               40,                            // Tool icon width
+               18,                            // Tool icon height
            );
       }
 
