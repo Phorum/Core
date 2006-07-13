@@ -649,6 +649,8 @@ function phorum_get_template_file( $page )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    $page = basename($page);
+
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
         $PHORUM['template'] = $PHORUM['user']['user_template'];
     }
