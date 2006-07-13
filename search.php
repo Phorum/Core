@@ -104,7 +104,7 @@ if(!empty($phorum_search)){
     // needs to get fed by posted messages
     $search_request_data = array(
     'search' => $phorum_search,
-    'offset' => $offset,
+    'offset' => $start,
     'length' => $PHORUM["list_length"],
     'match_type'  => $PHORUM["args"]["match_type"],
     'match_dates' => $PHORUM["args"]["match_dates"],
