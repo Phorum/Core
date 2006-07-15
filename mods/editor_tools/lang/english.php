@@ -14,6 +14,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'email'         => 'Insert email address',
     'image'         => 'Insert image URL',
     'smiley'        => 'Insert smiley',
+    'subject_smiley'=> 'Insert smiley into the subject',
     'hr'            => 'Insert horizontal line',
     'code'          => 'Formatted code',
     'quote'         => 'Insert quoted text',

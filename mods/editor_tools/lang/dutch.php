@@ -14,6 +14,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'email'         => 'Email adres invoegen',
     'image'         => 'URL van een afbeelding invoegen',
     'smiley'        => 'Smiley invoegen',
+    'subject_smiley'=> 'Smiley invoegen in het onderwerp',
     'hr'            => 'Horizontale lijn invoegen ',
     'code'          => 'Opgemaakte code',
     'quote'         => 'Quote invoegen',

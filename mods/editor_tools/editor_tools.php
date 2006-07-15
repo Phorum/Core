@@ -34,13 +34,16 @@ define('TOOL_JSACTION',    3);
 define('TOOL_IWIDTH',      4);
 define('TOOL_IHEIGHT',     5);
 
+// Load default settings.
+require_once("./mods/editor_tools/defaults.php");
+
 /**
  * Adds the javascript and CSS for the editor tools to the page header.
  * Sets up internal datastructures for the editor tools module.
  */
 function phorum_mod_editor_tools_common()
 {
-    $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= 
+    $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
       '<script type="text/javascript" src="./mods/editor_tools/editor_tools.js"></script>' .
       '<link rel="stylesheet" type="text/css" href="./mods/editor_tools/editor_tools.css"></link>' .
       '<link rel="stylesheet" href="./mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
@@ -56,22 +59,14 @@ function phorum_mod_editor_tools_common()
     $help_chapters = array();
 
     // Add the tools and help page for supporting the bbcode module.
-    if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"]) && $GLOBALS["PHORUM"]["mods"]["bbcode"]) {
-        $tools[] = array('bold',        NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('underline',   NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('italic',      NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('strike',      NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('subscript',   NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('superscript', NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('color',       NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('size',        NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('center',      NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('image',       NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('url',         NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('email',       NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('code',        NULL, NULL, NULL, NULL, NULL);
-        $tools[] = array('quote',       NULL, NULL, NULL, 20,   NULL);
-        $tools[] = array('hr',          NULL, NULL, NULL, NULL, NULL);
+    if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"]) &&
+        $GLOBALS["PHORUM"]["mods"]["bbcode"] &&
+        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_bbcode"]) {
+        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo) {
+            if ($toolinfo[0] != 'bbcode') continue;
+            if (isset($GLOBALS["PHORUM"]["mod_editor_tools"]["disable_bbcode_tool"][$toolinfo[1][0]])) continue;
+            $tools[] = $toolinfo[1];
+        }
 
         if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php")) {
             $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php";
@@ -82,8 +77,11 @@ function phorum_mod_editor_tools_common()
     }
 
     // Add a tool and help page for supporting the smileys module.
-    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) && $GLOBALS["PHORUM"]["mods"]["smileys"]) {
-        $tools[] = array('smiley', NULL, NULL, NULL, NULL, NULL);
+    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
+        $GLOBALS["PHORUM"]["mods"]["smileys"] &&
+        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"]) {
+        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
+            if ($toolinfo[0] == 'smiley') $tools[] = $toolinfo[1];
 
         if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php")) {
             $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php";
@@ -91,6 +89,14 @@ function phorum_mod_editor_tools_common()
             $help_url = MOD_EDITOR_TOOLS_HELP . "/english/smileys.php";
         }
         $help_chapters[] = array($langstr["smileys help"], $help_url);
+    }
+
+    // Add the subject smileys editor tool.
+    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
+        $GLOBALS["PHORUM"]["mods"]["smileys"] &&
+        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subject_smileys"]) {
+        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
+            if ($toolinfo[0] == 'subject_smiley') $tools[] = $toolinfo[1];
     }
 
     // Store our information for later use.
@@ -127,7 +133,7 @@ function phorum_mod_editor_tools_before_editor($data)
 
 /**
  * Implements a fallback mechanism for users that do not have
- * javascript enabled in their browser. For those users, we 
+ * javascript enabled in their browser. For those users, we
  * supply links to the help pages.
  */
 function phorum_mod_editor_tools_tpl_editor_before_textarea()
@@ -169,7 +175,10 @@ function phorum_mod_editor_tools_before_footer()
 
     // Add a help tool. We add it as the first tool, so we can
     // shift it nicely to the right side of the page using CSS float.
-    array_unshift($tools, array('help', NULL, NULL, NULL));
+    if ($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"]) {
+        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
+            if ($toolinfo[0] == 'help') array_unshift($tools, $toolinfo[1]);
+    }
 
     // Fill in default values for the tools.
     foreach ($tools as $id => $toolinfo)
@@ -253,8 +262,11 @@ function phorum_mod_editor_tools_before_footer()
     if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
         $prefix = $PHORUM["mod_smileys"]["prefix"];
         foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
-            if (! $smiley["active"] || $smiley["is_alias"] || $smiley["uses"] == 1) continue;
-            print "editor_tools_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+            if (! $smiley["active"] || $smiley["is_alias"]) continue;
+            if ($smiley["uses"] == 0 || $smiley["uses"] == 2)
+              print "editor_tools_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+            if ($smiley["uses"] == 1 || $smiley["uses"] == 2)
+              print "editor_tools_subject_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
         }
     }
 

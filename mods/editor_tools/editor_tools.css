@@ -9,13 +9,13 @@
 }
 
 /* padding is arranged in editor_tools.js, so do not define it here. */
-#editor_tools img {
+.editor_tools_button {
     margin-right: 2px;
     background-color: #eee;
     border: 1px solid #ddd;
 }
 
-#editor_tools img:hover {
+.editor_tools_button:hover {
     border: 1px solid #777;
 }
 
@@ -38,7 +38,8 @@
     text-decoration: underline;
 }
 
-#editor_tools_smiley_picker img {
+#editor_tools_smiley_picker img,
+#editor_tools_subject_smiley_picker img {
     border: none;
     margin: 3px;
 }
