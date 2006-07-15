@@ -223,7 +223,7 @@ function phorum_mod_editor_tools_before_footer()
         print "<script type=\"text/javascript\" src=\"$qjslib\"></script>\n";
     }
 
-    // Construct javascript code.
+    // Construct the javascript code for constructing the editor tools.
     print '<script type="text/javascript">';
 
     // Make language strings available for the javascript code.
@@ -245,7 +245,7 @@ function phorum_mod_editor_tools_before_footer()
         $idx ++;
     }
 
-    // Add the editor tools.
+    // Add the list of enabled editor tools.
     $idx = 0;
     foreach ($tools as $toolinfo) {
         list ($tool, $description, $icon, $jsfunction, $iw, $ih) = $toolinfo;

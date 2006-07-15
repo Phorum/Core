@@ -192,6 +192,15 @@ function editor_tools_focus_textarea()
     textarea_obj.focus();
 }
 
+// Close all popup windows and move the focus to the subject field.
+function editor_tools_focus_subjectfield()
+{
+    var subjectfield_obj = editor_tools_get_subjectfield();
+    if (subjectfield_obj == null) return;
+    editor_tools_hide_all_popups();
+    subjectfield_obj.focus();
+}
+
 // ----------------------------------------------------------------------
 // Construction of the editor tools
 // ----------------------------------------------------------------------
@@ -273,10 +282,15 @@ function editor_tools_construct()
         }
     }
 
-    // Hide any open popup when the user clicks the textarea.
+    // Hide any open popup when the user clicks the textarea or subject field.
     textarea_obj.onclick = function() {
         editor_tools_hide_all_popups();
     };
+    if (subjectfield_obj) {
+        subjectfield_obj.onclick = function() {
+            editor_tools_hide_all_popups();
+        }
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -712,7 +726,7 @@ function editor_tools_handle_subject_smiley_select(smiley)
 {
     smiley = editor_tools_strip_whitespace(smiley);
     editor_tools_add_tags(smiley, '', editor_tools_subject_obj);
-    editor_tools_focus_textarea();
+    editor_tools_focus_subjectfield();
 }
 
 // ----------------------------------------------------------------------

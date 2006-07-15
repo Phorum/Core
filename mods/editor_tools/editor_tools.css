@@ -5,9 +5,6 @@
     text-align: left;
 }
 
-#editor_tools a {
-}
-
 /* padding is arranged in editor_tools.js, so do not define it here. */
 .editor_tools_button {
     margin-right: 2px;

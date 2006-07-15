@@ -1,6 +1,6 @@
-Module  : Phorum Editor Tools 
+Module  : Phorum Editor Tools
 Version : 1.1.2
-Author  : Maurice Makaay
+Author  : Maurice Makaay <maurice@makaay.nl>
 
 This module will add a buttonbar to the Phorum message editor, which can be
 used by visitors to easily apply BBcode and smileys to their postings.
@@ -22,6 +22,25 @@ Install:
 - Enable the "BBcode" and/or "Smileys" module (Editor Tools will
   only show tools for the enabled modules, so if you do not enable
   any of these two, no tools will be displayed at all).
+
+
+Language support:
+-----------------
+
+This module supports multiple languages. If you want to translate the module
+to a new language, you'll have to do the following:
+
+1) copy lang/english.php to lang/yourlang.php (yourlang.php must have the
+   same name as Phorum's main language file that you use).
+   After this, translate the strings in lang/yourlang.php.
+
+2) Copy the directory help/english to help/yourlang. After that, translate
+   the text in the files within that directory.
+
+If you have created a translation for this module, please post a zip file
+containing lang/yourlang.php and help/yourlang in the module thread at
+phorum.org, so the translation can be added to the module package.
+See: http://www.phorum.org/phorum5/read.php?16,114352
 
 
 How to plugin into the editor tools from another module:
@@ -61,6 +80,11 @@ examples on how to do this.
                18,                            // Tool icon height
            );
       }
+
+   Beware that you do not use icons that are higher than 20px. If you do so,
+   that might break the layout. Smaller icons are no problem. If you do not
+   provide icon width and height, the default values will be used (21px width
+   and 20px height).
 
 4) If you want to load a javascript library for your editor tool, you can
    of course add the <script src=...> code from your editor_tool_plugin
