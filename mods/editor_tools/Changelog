@@ -1,6 +1,18 @@
 Changelog:
 ----------
 
+2006-07-15 v1.1.2
+
+   - Added a popup for subject smileys. This one is disabled by default,
+     so if you want this, enable subject smileys in the module settings.
+
+   - Added a module settings screen. Here the administrator can configure
+     which tools are enabled (bbcode, smileys, subject smileys and help).
+     In case the bbcode module is enabled, you get extra fields to configure
+     which bbcode tags (bold, italic, etc) are put in the editor tools.
+    
+   - Some small bugfixes.
+
 2006-07-14 v1.1.1
 
     - Tool icon sizes are now explicitly set, for smoother loading.
