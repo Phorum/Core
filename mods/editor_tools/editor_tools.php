@@ -65,7 +65,7 @@ function phorum_mod_editor_tools_common()
         foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo) {
             if ($toolinfo[0] != 'bbcode') continue;
             if (isset($GLOBALS["PHORUM"]["mod_editor_tools"]["disable_bbcode_tool"][$toolinfo[1][0]])) continue;
-            $tools[] = $toolinfo[1];
+            $tools[$toolinfo[1][0]] = $toolinfo[1];
         }
 
         if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php")) {
@@ -81,7 +81,8 @@ function phorum_mod_editor_tools_common()
         $GLOBALS["PHORUM"]["mods"]["smileys"] &&
         $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"]) {
         foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
-            if ($toolinfo[0] == 'smiley') $tools[] = $toolinfo[1];
+            if ($toolinfo[0] == 'smiley')
+                $tools[$toolinfo[1][0]] = $toolinfo[1];
 
         if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php")) {
             $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php";
@@ -96,7 +97,8 @@ function phorum_mod_editor_tools_common()
         $GLOBALS["PHORUM"]["mods"]["smileys"] &&
         $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subject_smileys"]) {
         foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
-            if ($toolinfo[0] == 'subject_smiley') $tools[] = $toolinfo[1];
+            if ($toolinfo[0] == 'subject_smiley')
+                $tools[$toolinfo[1][0]] = $toolinfo[1];
     }
 
     // Store our information for later use.
@@ -217,12 +219,6 @@ function phorum_mod_editor_tools_before_footer()
         $jslibs[] = './mods/editor_tools/colorpicker/js_color_picker_v2.js';
     }
 
-    // Load all dynamic javascript libraries.
-    foreach ($jslibs as $jslib) {
-        $qjslib = htmlspecialchars($jslib);
-        print "<script type=\"text/javascript\" src=\"$qjslib\"></script>\n";
-    }
-
     // Construct the javascript code for constructing the editor tools.
     print '<script type="text/javascript">';
 
@@ -269,11 +265,18 @@ function phorum_mod_editor_tools_before_footer()
               print "editor_tools_subject_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
         }
     }
+    print "</script>\n";
+
+    // Load all dynamic javascript libraries.
+    foreach ($jslibs as $jslib) {
+        $qjslib = htmlspecialchars($jslib);
+        print "<script type=\"text/javascript\" src=\"$qjslib\"></script>\n";
+    }
 
     // Construct and display the editor tools panel.
-    print "editor_tools_construct();\n";
+    print '<script type="text/javascript">editor_tools_construct();</script>';
 
-    print "</script>\n";
+
 }
 
 // ----------------------------------------------------------------------
@@ -287,6 +290,11 @@ function phorum_mod_editor_tools_before_footer()
  * code that has to be run can be added and the tool must be registered
  * through this call. Registering the tool will take care of adding an
  * extra button to the button bar.
+ *
+ * In case this call is made for an already registered tool id, the
+ * existing tool definition will be replaced with the new one. This
+ * can be used to override the functionality of existing editor tool
+ * buttons.
  *
  * @param $tool_id - A unique identifier to use for the tool.
  * @param $description - The description of the tool (this will be
@@ -320,7 +328,7 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $i
             "be registered within or before the \"editor_tool_plugin\" hook.");
     }
 
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"][] = array(
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"][$tool_id] = array(
         $tool_id,
         $description,
         $icon,

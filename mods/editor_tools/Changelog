@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2006-07-16 v1.1.3
+
+   - Some small changes to make it easier to override and extend the
+     editor tools from another module.
+
 2006-07-15 v1.1.2
 
    - Added a popup for subject smileys. This one is disabled by default,

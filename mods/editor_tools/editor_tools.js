@@ -222,9 +222,10 @@ function editor_tools_construct()
     // No editor tools selected to display? Then we're done.
     if (editor_tools.length == 0) return;
 
-    // Find the textarea object.
+    // Find the textarea and subject field object.
     textarea_obj = editor_tools_get_textarea();
-    if (textarea_obj == null) return;
+    if (textarea_obj == null) return; // we consider this fatal.
+    var subjectfield_obj = editor_tools_get_subjectfield();
 
     // Insert a <div> for containing the buttons, just before the textarea.
     parent_obj = textarea_obj.parentNode;
@@ -273,9 +274,7 @@ function editor_tools_construct()
         // subject field instead of the text area.
         // Find the subject text field. If we can't find one,
         // simply continue with the rest of the code.
-        if (tool == 'subject_smiley') {
-            subjectfield_obj = editor_tools_get_subjectfield();
-            if (subjectfield_obj == null) continue;
+        if (tool == 'subject_smiley' && subjectfield_obj) {
             subjectfield_obj.parentNode.insertBefore(a_obj, subjectfield_obj.nextSibling);
         } else {
             div_obj.appendChild(a_obj);
