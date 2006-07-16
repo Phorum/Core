@@ -173,7 +173,10 @@
             <small>{LANG->Message}:</small>
             {HOOK "tpl_editor_before_textarea"}
             <div id="post-body">
+              <!-- fieldset is a work around for an MSIE rendering bug -->
+              <fieldset>
                 <textarea name="body" id="body" class="body" rows="15" cols="50">{MESSAGE->body}</textarea>
+              </fieldset>
             </div>
             
         </div>
