@@ -261,6 +261,12 @@ img {
     margin: 0 0 8px 0;
 }
 
+#phorum fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
 #phorum textarea.body {
     font-size: medium;
     font-family: Arial;
