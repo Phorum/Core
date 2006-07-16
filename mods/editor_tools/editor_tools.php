@@ -103,7 +103,7 @@ function phorum_mod_editor_tools_common()
 
     // Store our information for later use.
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (
-        "ON_EDITOR_PAGE"    => false,
+        "DO_TOOLS"          => false,
         "STARTED"           => false,
         "TOOLS"             => $tools,
         "JSLIBS"            => array(),
@@ -118,19 +118,6 @@ function phorum_mod_editor_tools_common()
     // on, the API calls for registering tools, javascript libraries
     // and help chapters are no longer allowed.
     $PHORUM["MOD_EDITOR_TOOLS"]["STARTED"] = true;
-}
-
-/**
- * Sets a flag which tell us that we are on a page containing
- * a posting editor.
- *
- * @param $data - Standard Phorum before_editor hook data.
- * @return $data - The unmodified input data.
- */
-function phorum_mod_editor_tools_before_editor($data)
-{
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"] = true;
-    return $data;
 }
 
 /**
@@ -156,20 +143,37 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
 }
 
 /**
+ * Flags that there is an editor available on this page.
+ */
+function phorum_mod_editor_tools_before_editor($data)
+{
+    // Workaround for a bug where before_editor was called,
+    // even if no editor was displayed.
+    if (isset($GLOBALS["PHORUM"]["DATA"]["MESSAGE"])) return $data;
+
+    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["DO_TOOLS"] = true;
+    return $data;
+}
+
+/**
  * Adds the javascript code for constructing and displaying the editor
  * tools to the page. The editor tools will be built completely using
  * only Javascript/DOM technology.
  */
 function phorum_mod_editor_tools_before_footer()
 { 
-    // Detect if we are handling a PM editor and show
-    // the editor tools in the PM interface as well.
-    // This is a bit hacked in now.
-    if (isset($GLOBALS["PHORUM"]["DATA"]["PM_PAGE"]) && $GLOBALS["PHORUM"]["DATA"]["PM_PAGE"] == 'send') $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"] = true;
-
-    if (! $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["ON_EDITOR_PAGE"]) return;
-
     $PHORUM = $GLOBALS["PHORUM"];
+
+    $do_tools = false;
+    
+    // A way to flag that the editor tools must be run.
+    if (isset($PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"]) && $PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"]) $do_tools = true;
+
+    // Detect if we are handling a PM editor.
+    if (isset($PHORUM["DATA"]["PM_PAGE"]) && $PHORUM["DATA"]["PM_PAGE"] == 'send') $do_tools = true;
+
+    if (! $do_tools) return;
+
     $tools  = $PHORUM["MOD_EDITOR_TOOLS"]["TOOLS"];
     $jslibs = $PHORUM["MOD_EDITOR_TOOLS"]["JSLIBS"];
     $help   = $PHORUM["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"];

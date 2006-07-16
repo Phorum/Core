@@ -8,6 +8,7 @@
 /* padding is arranged in editor_tools.js, so do not define it here. */
 .editor_tools_button {
     margin-right: 2px;
+    margin-bottom: 2px;
     background-color: #eee;
     border: 1px solid #ddd;
     vertical-align: bottom;

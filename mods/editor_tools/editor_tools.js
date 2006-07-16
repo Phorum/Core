@@ -158,29 +158,38 @@ function editor_tools_translate(str)
 }
 
 // Strip whitespace from the start and end of a string.
-function editor_tools_strip_whitespace(str)
+function editor_tools_strip_whitespace(str, return_stripped)
 {
-    // Strip whitespace from start of string.
-    for (;;) {
-        var firstchar = str.substring(0,1);
-        if (firstchar == ' ') {
-            str = str.substring(1);
-        } else {
-            break;
-        }
-    }
+    var strip_pre = '';
+    var strip_post = '';
 
     // Strip whitespace from end of string.
     for (;;) {
         var lastchar = str.substring(str.length-1, str.length);
         if (lastchar == ' ') {
+            strip_post += ' ';
             str = str.substring(0, str.length-1);
         } else {
             break;
         }
     }
 
-    return str;
+    // Strip whitespace from start of string.
+    for (;;) {
+        var firstchar = str.substring(0,1);
+        if (firstchar == ' ') {
+            strip_pre += ' ';
+            str = str.substring(1);
+        } else {
+            break;
+        }
+    }
+
+    if (return_stripped) {
+        return new Array(str, strip_pre, strip_post);
+    } else {
+        return str;
+    }
 } 
 
 // Close all popup windows and move the focus to the textarea.
@@ -275,7 +284,10 @@ function editor_tools_construct()
         // Find the subject text field. If we can't find one,
         // simply continue with the rest of the code.
         if (tool == 'subject_smiley' && subjectfield_obj) {
-            subjectfield_obj.parentNode.insertBefore(a_obj, subjectfield_obj.nextSibling);
+            img_obj.style.verticalAlign = 'top';
+            var parent = subjectfield_obj.parentNode;
+            var sibling = subjectfield_obj.nextSibling;
+            parent.insertBefore(a_obj, sibling);
         } else {
             div_obj.appendChild(a_obj);
         }
@@ -392,6 +404,14 @@ function editor_tools_add_tags(pre, post, target)
         pretext = ta.value.substring(0, ta.selectionStart);
         text = ta.value.substring(ta.selectionStart, ta.selectionEnd);
         posttext = ta.value.substring(ta.selectionEnd, ta.value.length);
+
+        // Strip whitespace from text selection and move it to the
+        // pre- and post.
+        var res = editor_tools_strip_whitespace(text, true);
+        text = res[0];
+        pre = res[1] + pre;
+        post = post + res[2];
+
         ta.value = pretext + pre + text + post + posttext;
 
         // Set the cursor to a logical position.
@@ -415,6 +435,13 @@ function editor_tools_add_tags(pre, post, target)
             range.moveEnd("character", -(post.length));
             range.select();
         } else {
+            // Strip whitespace from text selection and move it to the
+            // pre- and post.
+            var res = editor_tools_strip_whitespace(text, true);
+            text = res[0];
+            pre = res[1] + pre;
+            post = post + res[2];
+
             // Add pre and post to the text.
             range.text = pre + text + post;
 

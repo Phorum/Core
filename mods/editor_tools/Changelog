@@ -1,6 +1,21 @@
 Changelog:
 ----------
 
+2006-07-17 v1.1.4
+
+   - Changed vertical aligment for the subject smiley button.
+
+   - Bounding whitespace is now ignored when applying some bbcode
+     to a selection. So instead of "this is [b]bold [/b] code"
+     it will be "this is [b]bold[/b] code". Thanks to Milos for 
+     the idea.
+
+   - Improved detection for checking if we are running on a page,
+     containing an editor. The existing detection had a bug that
+     caused a javascript warning about a missing textarea on
+     posting confirmation and error pages. Thanks to Milos for
+     pointing me at this problem.
+
 2006-07-16 v1.1.3
 
    - Some small changes to make it easier to override and extend the
