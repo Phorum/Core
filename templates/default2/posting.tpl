@@ -171,6 +171,7 @@
             {/IF}
 
             <small>{LANG->Message}:</small>
+            {HOOK "tpl_editor_before_textarea"}
             <div id="post-body">
                 <textarea name="body" id="body" class="body" rows="15" cols="50">{MESSAGE->body}</textarea>
             </div>
