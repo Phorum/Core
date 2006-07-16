@@ -10,6 +10,7 @@
     margin-right: 2px;
     background-color: #eee;
     border: 1px solid #ddd;
+    vertical-align: bottom;
 }
 
 .editor_tools_button:hover {
