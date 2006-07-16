@@ -403,7 +403,7 @@ if (! $error_flag && $finish)
 // Display the page
 // ----------------------------------------------------------------------
 
-if (! $error_flag)
+if (! $error_flag && !isset($PHORUM["DATA"]["MESSAGE"]))
 {
     // Make up the text which must be used on the posting form's submit button.
     $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
