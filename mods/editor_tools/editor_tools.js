@@ -44,6 +44,10 @@ var editor_tools_smiley_picker_obj = null;
 var editor_tools_subject_smiley_picker_obj = null;
 var editor_tools_help_picker_obj = null;
 
+// A variable for storing the current selection range of the 
+// textarea. Needed for working around an MSIE problem.
+var editor_tools_textarea_range = null;
+
 // A variable for storing all popup objects that we have, so we
 // can hide them all at once.
 var editor_tools_popup_objects = new Array();
@@ -383,6 +387,26 @@ function editor_tools_hide_all_popups()
     }
 }
 
+// Save the selection range of the textarea. This is needed because
+// sometimes clicking in a popup can clear the selection in MSIE.
+function editor_tools_store_range()
+{
+    var ta = editor_tools_get_textarea();
+    if (ta == null || ta.setSelectionRange) return;
+    ta.focus();
+    editor_tools_textarea_range = document.selection.createRange();
+}
+
+// Restored a saved textarea selection range.
+function editor_tools_restore_range()
+{
+    if (editor_tools_textarea_range != null)
+    {
+        editor_tools_textarea_range.select();
+        editor_tools_textarea_range = null;
+    }
+}
+
 // ----------------------------------------------------------------------
 // Textarea manipulation
 // ----------------------------------------------------------------------
@@ -579,6 +603,8 @@ function editor_tools_handle_url()
 
 function editor_tools_handle_color()
 {
+    editor_tools_store_range();
+
     // Display the color picker.
     var img_obj = document.getElementById('editor_tools_img_color');
     showColorPicker(img_obj);
@@ -588,6 +614,8 @@ function editor_tools_handle_color()
 // Called by the color picker library.
 function editor_tools_handle_color_select(color)
 {
+    editor_tools_restore_range();
+
     editor_tools_add_tags('[color=' + color + ']', '[/color]'); 
     editor_tools_focus_textarea();
 }
@@ -598,6 +626,8 @@ function editor_tools_handle_color_select(color)
 
 function editor_tools_handle_size()
 {
+    editor_tools_store_range();
+
     // Create the size picker on first access.
     if (!editor_tools_size_picker_obj)
     {
@@ -632,6 +662,7 @@ function editor_tools_handle_size()
 function editor_tools_handle_size_select(size)
 {
     editor_tools_hide_all_popups();
+    editor_tools_restore_range();
     size = editor_tools_strip_whitespace(size);
     editor_tools_add_tags('[size=' + size + ']', '[/size]'); 
     editor_tools_focus_textarea();
