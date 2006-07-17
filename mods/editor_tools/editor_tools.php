@@ -95,9 +95,9 @@ function phorum_mod_editor_tools_common()
     // Add the subject smileys editor tool.
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
         $GLOBALS["PHORUM"]["mods"]["smileys"] &&
-        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subject_smileys"]) {
+        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subjectsmileys"]) {
         foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
-            if ($toolinfo[0] == 'subject_smiley')
+            if ($toolinfo[0] == 'subjectsmiley')
                 $tools[$toolinfo[1][0]] = $toolinfo[1];
     }
 
@@ -266,7 +266,7 @@ function phorum_mod_editor_tools_before_footer()
             if ($smiley["uses"] == 0 || $smiley["uses"] == 2)
               print "editor_tools_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
             if ($smiley["uses"] == 1 || $smiley["uses"] == 2)
-              print "editor_tools_subject_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+              print "editor_tools_subjectsmileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
         }
     }
     print "</script>\n";

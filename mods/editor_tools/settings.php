@@ -18,7 +18,7 @@
 
         $PHORUM["mod_editor_tools"]["enable_bbcode"] = $_POST["enable_bbcode"] ? 1 : 0;
         $PHORUM["mod_editor_tools"]["enable_smileys"] = $_POST["enable_smileys"] ? 1 : 0;
-        $PHORUM["mod_editor_tools"]["enable_subject_smileys"] = $_POST["enable_subject_smileys"] ? 1 : 0;
+        $PHORUM["mod_editor_tools"]["enable_subjectsmileys"] = $_POST["enable_subjectsmileys"] ? 1 : 0;
         $PHORUM["mod_editor_tools"]["enable_help"] = $_POST["enable_help"] ? 1 : 0;
 
         if(!phorum_db_update_settings(array("mod_editor_tools"=>$PHORUM["mod_editor_tools"]))){
@@ -48,7 +48,7 @@
     }
 
     $frm->addrow("Enable Smiley tool for the message body", $frm->checkbox("enable_smileys", "1", "", $PHORUM["mod_editor_tools"]["enable_smileys"]));
-    $frm->addrow("Enable Smiley tool for the message subject", $frm->checkbox("enable_subject_smileys", "1", "", $PHORUM["mod_editor_tools"]["enable_subject_smileys"]));
+    $frm->addrow("Enable Smiley tool for the message subject", $frm->checkbox("enable_subjectsmileys", "1", "", $PHORUM["mod_editor_tools"]["enable_subjectsmileys"]));
     $frm->addrow("Enable Help tool", $frm->checkbox("enable_help", "1", "", $PHORUM["mod_editor_tools"]["enable_help"]));
 
     $frm->show();

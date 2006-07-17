@@ -1,4 +1,4 @@
-#editor_tools {
+#editor-tools {
     padding: 3px;
     margin-bottom: 3px;
     border-bottom: 1px solid #ddd;
@@ -6,7 +6,7 @@
 }
 
 /* padding is arranged in editor_tools.js, so do not define it here. */
-.editor_tools_button {
+#editor-tools .editor-tools-button {
     margin-right: 2px;
     margin-bottom: 2px;
     background-color: #eee;
@@ -14,11 +14,11 @@
     vertical-align: bottom;
 }
 
-.editor_tools_button:hover {
+#editor-tools .editor-tools-button:hover {
     border: 1px solid #777;
 }
 
-.editor_tools_popup {
+.editor-tools-popup {
     position:absolute;
     padding: 5px 10px;
     background-color:#eee;
@@ -27,24 +27,24 @@
     z-index: 1000;
 }
 
-.editor_tools_popup a,
-.editor_tools_popup a:active,
-.editor_tools_popup a:visited {
+.editor-tools-popup a,
+.editor-tools-popup a:active,
+.editor-tools-popup a:visited {
     text-decoration: none;
     color: black;
 }
 
-.editor_tools_popup a:hover {
+.editor-tools-popup a:hover {
     text-decoration: underline;
 }
 
-#editor_tools_smiley_picker img,
-#editor_tools_subject_smiley_picker img {
+#editor-tools-smiley-picker img,
+#editor-tools-subjectsmiley-picker img {
     border: none;
     margin: 3px;
 }
 
-#editor_tools_a_help {
+#editor-tools-a-help {
     float: right;
 }
 

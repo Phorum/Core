@@ -1,10 +1,18 @@
 Changelog:
 ----------
 
-2006-07-xx v1.1.6
+2006-07-17 v1.1.6
 
    - Added a z-index CSS property for the popups with a high value,
      to prevent them from popping up behind other page elements.
+
+   - Changed all css classnames and javascript ids to not contain
+     any underscores (thanks to Brian for the hint and pointer to
+     http://www.htmlite.com/CSS003a.php).
+
+   - Changed ".editor-tools-button" in the css to the more specific
+     "#editor-tools .editor-tools-button", because it wasn't 
+     rendered correctly in some cases.
 
 2006-07-17 v1.1.5
 

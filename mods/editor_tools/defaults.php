@@ -19,8 +19,8 @@ if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"])) {
 }
 
 // By default, we will not display the subject smiley tool.
-if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subject_smileys"])) {
-    $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subject_smileys"] = 0;
+if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subjectsmileys"])) {
+    $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subjectsmileys"] = 0;
 }
 
 // By default, we will display the help tool.
@@ -50,6 +50,6 @@ $GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] = array (
     array("bbcode",  array('hr',          NULL, NULL, NULL, NULL, NULL)),
     array("smiley",  array('smiley',      NULL, NULL, NULL, NULL, NULL)),
     array("help",    array('help',        NULL, NULL, NULL, NULL, NULL)),
-    array('subject_smiley', array('subject_smiley', NULL, NULL, NULL, NULL, NULL)),
+    array('subjectsmiley', array('subjectsmiley', NULL, NULL, NULL, NULL, NULL)),
 );
 ?>
