@@ -48,3 +48,20 @@
     float: right;
 }
 
+/* Override fixes for color picker within XHTML transitional */
+
+* html .colorPickerTab_inactive span,
+* html .colorPickerTab_active span{
+    position:relative;
+}
+
+* html .colorPickerTab_inactive img,
+* html .colorPickerTab_active img{
+    position:relative;
+    left:-3px;
+}
+
+* html #dhtmlgoodies_colorPicker .colorPicker_topRow{
+    height: 20px;
+}
+
