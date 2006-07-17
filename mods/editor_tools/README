@@ -140,5 +140,7 @@ These are the changes that are needed:
    so change the code to this:
    {editor_tools_hide_all_popups(); color_picker_div.style.display='block';}
 
-6) Eye candy: change all #317802 in the js_color_picker_v2.css to #777.
+6) Add z-index: 1000 to the definition for #dhtmlgoodies_colorPicker
+   in the css file.
 
+7) Eye candy: change all #317802 in the js_color_picker_v2.css to #777.

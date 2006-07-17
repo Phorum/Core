@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2006-07-xx v1.1.6
+
+   - Added a z-index CSS property for the popups with a high value,
+     to prevent them from popping up behind other page elements.
+
 2006-07-17 v1.1.5
 
    - For MSIE, the active textarea selection is now stored before

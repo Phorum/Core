@@ -9,6 +9,7 @@
 		width/* */:/**/250px;	/* Other browsers */
 		width: /**/250px;	
 				
+        z-index: 1000;
 	}
 	
 	#dhtmlgoodies_colorPicker .colorPicker_topRow{

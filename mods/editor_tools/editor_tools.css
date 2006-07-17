@@ -24,6 +24,7 @@
     background-color:#eee;
     border:1px solid #777;
     font-family: arial, helvetica, sans-serif;
+    z-index: 1000;
 }
 
 .editor_tools_popup a,
