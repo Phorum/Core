@@ -14,6 +14,10 @@ Changelog:
      "#editor-tools .editor-tools-button", because it wasn't 
      rendered correctly in some cases.
 
+   - Fixes for color picker CSS within XHTML transitional pages.
+     The tabs would not show up correctly without this fix
+     (extra padding and top bar too small).
+
 2006-07-17 v1.1.5
 
    - For MSIE, the active textarea selection is now stored before
