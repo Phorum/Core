@@ -52,7 +52,7 @@
 
 * html .colorPickerTab_inactive span,
 * html .colorPickerTab_active span{
-    position:relative;
+    position:/**/relative;
 }
 
 * html .colorPickerTab_inactive img,
@@ -62,6 +62,6 @@
 }
 
 * html #dhtmlgoodies_colorPicker .colorPicker_topRow{
-    height: 20px;
+    height:20px;
 }
 

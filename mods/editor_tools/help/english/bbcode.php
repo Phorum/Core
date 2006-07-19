@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>BBcode help</title>
-    <link rel="stylesheet" type="text/css" href="../help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/help.css"/>
   </head>
   <body>
     <h2>BBcode help information</h2>

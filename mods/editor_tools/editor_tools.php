@@ -19,8 +19,8 @@
 if(!defined("PHORUM")) return;
 
 define('MOD_EDITOR_TOOLS_BASE', './mods/editor_tools');
-define('MOD_EDITOR_TOOLS_ICONS', MOD_EDITOR_TOOLS_BASE . '/icons');
-define('MOD_EDITOR_TOOLS_HELP', MOD_EDITOR_TOOLS_BASE . '/help');
+define('MOD_EDITOR_TOOLS_ICONS', $PHORUM["http_path"] . "/" . MOD_EDITOR_TOOLS_BASE . '/icons');
+define('MOD_EDITOR_TOOLS_HELP', $PHORUM["http_path"] . "/" . MOD_EDITOR_TOOLS_BASE . '/help');
 
 // Default icon size to use.
 define('MOD_EDITOR_TOOLS_DEFAULT_IWIDTH', 21);
@@ -43,13 +43,27 @@ require_once("./mods/editor_tools/defaults.php");
  */
 function phorum_mod_editor_tools_common()
 {
+    $lang = $GLOBALS["PHORUM"]["language"];
+    $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
+
+    // Show a help page and exit.
+    if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_help"])) {
+        $helpid = basename($GLOBALS["PHORUM"]["args"]["editor_tools_help"]);
+        foreach (array($lang, 'english') as $lang) {
+            $helpfile = "./mods/editor_tools/help/$lang/{$helpid}.php";
+            if (file_exists($helpfile)) {
+                include($helpfile);
+                exit;
+            }
+        }
+            
+        die("Illegal help page id: " . htmlspecialchars($helpid));
+    }
+
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
       '<script type="text/javascript" src="./mods/editor_tools/editor_tools.js"></script>' .
       '<link rel="stylesheet" type="text/css" href="./mods/editor_tools/editor_tools.css"></link>' .
       '<link rel="stylesheet" href="./mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
-
-    $lang = $GLOBALS["PHORUM"]["language"];
-    $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
 
     // Decide what tools we want to show. Later on we might replace
     // this by code to be able to configure this from the module
@@ -68,12 +82,10 @@ function phorum_mod_editor_tools_common()
             $tools[$toolinfo[1][0]] = $toolinfo[1];
         }
 
-        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php")) {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/bbcode.php";
-        } else {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/english/bbcode.php";
-        }
-        $help_chapters[] = array($langstr["bbcode help"], $help_url);
+        $help_chapters[] = array(
+            $langstr["bbcode help"],
+            phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_help=bbcode')
+        );
     }
 
     // Add a tool and help page for supporting the smileys module.
@@ -84,12 +96,10 @@ function phorum_mod_editor_tools_common()
             if ($toolinfo[0] == 'smiley')
                 $tools[$toolinfo[1][0]] = $toolinfo[1];
 
-        if (file_exists(MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php")) {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/$lang/smileys.php";
-        } else {
-            $help_url = MOD_EDITOR_TOOLS_HELP . "/english/smileys.php";
-        }
-        $help_chapters[] = array($langstr["smileys help"], $help_url);
+        $help_chapters[] = array(
+            $langstr["smileys help"],
+            phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_help=smileys')
+        );
     }
 
     // Add the subject smileys editor tool.

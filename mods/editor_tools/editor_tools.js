@@ -348,9 +348,18 @@ function editor_tools_toggle_popup(popup_obj, button_obj)
     // Move the popup window to the right place.
     if (popup_obj._anchor == 'r')
     {
-        var ns6 = document.getElementById && !document.all ? 1 : 0
-        // -16 for scrollbar that is counted in.
-        var scrwidth = ns6 ? window.innerWidth-16 : document.body.clientWidth;
+        // Determine the screen width.
+        if (document.documentElement.clientWidth) {
+            // Firefox screen width.
+            scrwidth = document.documentElement.clientWidth;
+        } else {
+            var scrwidth = document.body.clientWidth;
+            // -16 for scrollbar that is counted in in some browsers.
+            if (document.getElementById && !document.all) {
+                scrwidth -= 16;
+            }
+        }
+
         var right = scrwidth - left - button_obj.offsetWidth;
 
         popup_obj.style.right = right + 'px';

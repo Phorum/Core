@@ -1,8 +1,4 @@
 <?php
-  chdir('../../../../');
-  define('phorum_page','smiley_help');
-  include_once( "./common.php" );
-
   // The definition of the possible uses for a smiley.
   $PHORUM_MOD_SMILEY_USES = array(
       0   => "B",
@@ -13,7 +9,7 @@
 <html>
   <head>
     <title>Smiley hulp</title>
-    <link rel="stylesheet" type="text/css" href="../help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/help.css"/>
   </head>
   <body>
     <h2>Smiley hulp informatie</h2>
