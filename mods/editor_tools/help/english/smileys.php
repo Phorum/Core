@@ -16,7 +16,8 @@
 
     On this forum, you can make use of smileys. Smileys are 
     strings of characters that will be displayed as an 
-    image when reading the message. In the table below, you
+    image when reading the message. Smileys are mostly used
+    for expressing the author's mood. In the table below, you
     can find all smileys that are available. The "Where"
     column indicates where in your messages you can use the
     smiley (S = message subject, B = message body, BS = both).

@@ -20,7 +20,6 @@ if(!defined("PHORUM")) return;
 
 define('MOD_EDITOR_TOOLS_BASE', './mods/editor_tools');
 define('MOD_EDITOR_TOOLS_ICONS', $PHORUM["http_path"] . "/" . MOD_EDITOR_TOOLS_BASE . '/icons');
-define('MOD_EDITOR_TOOLS_HELP', $PHORUM["http_path"] . "/" . MOD_EDITOR_TOOLS_BASE . '/help');
 
 // Default icon size to use.
 define('MOD_EDITOR_TOOLS_DEFAULT_IWIDTH', 21);
@@ -257,8 +256,16 @@ function phorum_mod_editor_tools_before_footer()
 
     // Add the list of enabled editor tools.
     $idx = 0;
-    foreach ($tools as $toolinfo) {
+    foreach ($tools as $toolinfo)
+    {
         list ($tool, $description, $icon, $jsfunction, $iw, $ih) = $toolinfo;
+
+        // Turn relative URL icon paths into a full URL, to make this
+        // module work correctly in an embedded environment.
+        if (! preg_match('|^\w+://|', $icon) && substr($icon, 0, 1) != '/') {
+            $icon = $GLOBALS["PHORUM"]["http_path"] . "/$icon";
+        }
+
         print "editor_tools[$idx] = new Array(" .
               "'" . addslashes($tool) . "', " .
               "'" . addslashes($description) . "', " .
@@ -270,7 +277,7 @@ function phorum_mod_editor_tools_before_footer()
 
     // Add available smileys for the smiley picker.
     if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
-        $prefix = $PHORUM["mod_smileys"]["prefix"];
+        $prefix = $PHORUM["http_path"] . "/" . $PHORUM["mod_smileys"]["prefix"];
         foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
             if (! $smiley["active"] || $smiley["is_alias"]) continue;
             if ($smiley["uses"] == 0 || $smiley["uses"] == 2)
@@ -282,7 +289,14 @@ function phorum_mod_editor_tools_before_footer()
     print "</script>\n";
 
     // Load all dynamic javascript libraries.
-    foreach ($jslibs as $jslib) {
+    foreach ($jslibs as $jslib)
+    {
+        // Turn relative URL jslib paths into a full URL, to make this
+        // module work correctly in an embedded environment.
+        if (! preg_match('|^\w+://|', $jslib) && substr($jslib, 0, 1) != '/') {
+            $jslib = $GLOBALS["PHORUM"]["http_path"] . "/$jslib";
+        }
+
         $qjslib = htmlspecialchars($jslib);
         print "<script type=\"text/javascript\" src=\"$qjslib\"></script>\n";
     }

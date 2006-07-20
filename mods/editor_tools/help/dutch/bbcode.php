@@ -57,9 +57,9 @@
     </tt><br/><br/>
     Dit zal worden getoond als:</br></br>
     Wie is er bang voor
-    <span style="color: #FF3300">rood</span>,
+    <span style="color: red">rood</span>,
     <span style="color: #eeaa00">geel</span> en
-    <span style="color: #3300FF">blauw</span>?
+    <span style="color: #30F">blauw</span>?
 
     <h3>Tekstgrootte: [size=...]...[/size]</h3>
     Deze tag wordt gebruikt voor het wijzigen van de tekstgrootte
@@ -125,13 +125,13 @@
 Zonder gebruik te maken van [code] rond deze ASCII art, zou dit 
 niet goed worden weergegeven:
 <br/><br/>
- _____  _                                
-|  __ \| |                               
-| |__) | |__   ___  _ __ _   _ _ __ ___  
-|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ 
-| |    | | | | (_) | |  | |_| | | | | | |
-|_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
-<br/><br/>
+ _____  _                                <br/>
+|  __ \| |                               <br/>
+| |__) | |__   ___  _ __ _   _ _ __ ___  <br/>
+|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ <br/>
+| |    | | | | (_) | |  | |_| | | | | | |<br/>
+|_|    |_| |_|\___/|_|   \__,_|_| |_| |_|<br/>
+<br/>
 Maar met gebruik van [code], ziet het er zo uit:
 <pre style="border: 1px solid #dde; background-color: #ffe; padding: 0px 0px 0px 10px">
   _____  _                                

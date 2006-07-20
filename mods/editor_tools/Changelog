@@ -1,6 +1,23 @@
 Changelog:
 ----------
 
+2006-07-20 v1.1.8
+
+   - Added extra languages to the distribution:
+     * Finnish (by Panu)
+     * German (by Thomas Seifert)
+     Thank you guys, for the translations!
+
+   - Some more fixes for running in a portable / embedded setup.
+     * The smileys are now visible in the popup window.
+     * When registering editor tools from another module, their
+       icon and jslib paths are resolved automatically to an
+       absolute URL.
+
+   - Some small changes to the help files.
+
+   - Just http:// is no longer accepted for URL and image links.
+
 2006-07-19 v1.1.7
 
    - Improved right justification of the help popup in some

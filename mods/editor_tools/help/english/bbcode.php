@@ -54,9 +54,9 @@
     </tt><br/><br/>
     This will be displayed as:<br/><br/>
     Who is afraid of
-    <span style="color: #FF3300">red</span>,
+    <span style="color: red">red</span>,
     <span style="color: #eeaa00">yellow</span> and
-    <span style="color: #3300FF">blue</span>?
+    <span style="color: #30F">blue</span>?
 
     <h3>Font size: [size=...]...[/size]</h3>
     This tag can be used for resizing a piece of text.
@@ -119,13 +119,13 @@
 
 Without the [code] around it, this would look totally scrambled, like:
 <br/><br/>
- _____  _                                
-|  __ \| |                               
-| |__) | |__   ___  _ __ _   _ _ __ ___  
-|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ 
-| |    | | | | (_) | |  | |_| | | | | | |
-|_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
-<br/><br/>
+  _____  _                                <br/>
+ |  __ \| |                               <br/>
+ | |__) | |__   ___  _ __ _   _ _ __ ___  <br/>
+ |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ <br/>
+ | |    | | | | (_) | |  | |_| | | | | | |<br/>
+ |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|<br/>
+<br/>
 But with the [code] around it, it looks like:
 <pre style="border: 1px solid #dde; background-color: #ffe; padding: 0px 0px 0px 10px">
   _____  _                                

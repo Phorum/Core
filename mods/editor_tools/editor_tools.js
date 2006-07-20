@@ -591,10 +591,11 @@ function editor_tools_handle_url()
         
         // Check the URL scheme (http, https, ftp and mailto are allowed).
         copy = url.toLowerCase();
-        if (copy.substring(0,7) != 'http://' &&
+        if (copy == 'http://' || (
+            copy.substring(0,7) != 'http://' &&
             copy.substring(0,8) != 'https://' &&
             copy.substring(0,6) != 'ftp://' &&
-            copy.substring(0,7) != 'mailto:') {
+            copy.substring(0,7) != 'mailto:')) {
             alert(editor_tools_translate("invalid url"));
             continue;
         }
@@ -694,9 +695,10 @@ function editor_tools_handle_image()
         
         // Check the URL scheme (http, https, ftp and mailto are allowed).
         var copy = url.toLowerCase();
-        if (copy.substring(0,7) != 'http://' &&
+        if (copy == 'http://' || (
+            copy.substring(0,7) != 'http://' &&
             copy.substring(0,8) != 'https://' &&
-            copy.substring(0,6) != 'ftp://') {
+            copy.substring(0,6) != 'ftp://')) {
             alert(editor_tools_translate("invalid image url"));
             continue;
         }
