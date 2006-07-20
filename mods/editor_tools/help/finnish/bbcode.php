@@ -97,10 +97,10 @@
     [email]someuser@somesite.com[/email]
     </tt></br></br>
     Mik‰ n‰ytt‰‰ t‰lt‰:<br/><br/> 
-    <img src="../thumbsup.gif" border="0"/><br/>
+    <img src="<?php $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Vieraile Phorum.orgissa!</a><br/>
-    <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#111;&#109;&#101;&#117;&#115;&#101;&#114;&#64;&#115;&#111;&#109;&#101;&#115;&#105;&#116;&#101;&#46;&#99;&#111;&#109;">&#115;&#111;&#109;&#101;&#117;&#115;&#101;&#114;&#64;&#115;&#111;&#109;&#101;&#115;&#105;&#116;&#101;&#46;&#99;&#111;&#109;</a>
+    <a href="mailto:someuser@somesite.com">someuser@somesite.com</a>
 
     <h3>Vakiomittainen, muotoiltu koodi: [code]...[/code]</h3>
     Voi olla ett‰ joskus haluat liitt‰ viestiin ASCII kuvia, 
