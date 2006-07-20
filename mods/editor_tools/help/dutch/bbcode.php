@@ -102,7 +102,7 @@
     [email]iemand@ergens.com[/email]
     </tt></br></br>
     Dit zal worden getoond als:</br></br>
-    <img src="<?php $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/>
+    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Visit Phorum.org!</a><br/>
     <a href="mailto:iemand@ergens.com">iemand@ergens.com</a>
