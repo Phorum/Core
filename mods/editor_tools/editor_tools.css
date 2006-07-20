@@ -19,6 +19,7 @@
 }
 
 .editor-tools-popup {
+    text-align: left;
     position:absolute;
     padding: 5px 10px;
     background-color:#eee;
