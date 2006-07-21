@@ -51,7 +51,7 @@
         if (!count($lines)) {
             phorum_admin_error(
                 "Warning: possible module " .
-                "\"" . htmlspecialchars($entry) . "\" found, but no" .
+                "\"" . htmlspecialchars($entry) . "\" found, but no " .
                 "module information is available for that module.");
             continue;
         }
