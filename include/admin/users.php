@@ -113,6 +113,7 @@
                 $error="Passwords don't match!";
             } elseif(!empty($_POST['password1']) && !empty($_POST['password2'])) {
                 $user_data['password']=$_POST['password1'];
+                $user_data['password_temp']=$_POST['password1'];
             }
 
             // clean up
