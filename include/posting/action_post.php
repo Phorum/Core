@@ -230,11 +230,10 @@ $message = $message_copy;
 // Setup the data for displaying an error to the user.
 // The fallback code for determining what language string to use is there
 // because the duplicate posting error string was added between minor versions.
-$langidx = 'PostErrorOccured';
+$PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["PostErrorOccured"];
 if ($success === 0 && isset($PHORUM["DATA"]["LANG"]["PostErrorDuplicate"])) {
-    $langidx = "PostErrorDuplicate";
+    $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["PostErrorDuplicate"];
 }
-$PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"][$langidx];
 
 $error_flag = true;
 
