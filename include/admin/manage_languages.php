@@ -242,7 +242,15 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
     $CURRENT = $CURRENT_COPY;
     
     // Copy values from our default language to the current language.
-    $copyfields = array('long_date', 'short_date', 'locale');
+    $copyfields = array(
+        'long_date',
+        'long_date_time',
+        'short_date',
+        'short_date_time',
+        'locale',
+        'thous_sep',
+        'dec_sep',
+    );
     foreach ($copyfields as $f) {
         if (! isset($CURRENT[$f])) {
             $CURRENT[$f] = $DEFAULT[$f];
@@ -315,11 +323,17 @@ function phorum_write_language_file($lang, $CURRENT)
         "// entries (http://www.php.net/strftime). One tip: do not use\n" .
         "// %T for showing the time zone, as users can change their time zone.\n" .
         "\$PHORUM['long_date'] = " . urldecode($CURRENT['long_date']) . ";\n" .
+        "\$PHORUM['long_date_time'] = " . urldecode($CURRENT['long_date_time']) . ";\n" .
         "\$PHORUM['short_date'] = " . urldecode($CURRENT['short_date']) . ";\n" .
+        "\$PHORUM['short_date_time'] = " . urldecode($CURRENT['short_date_time']) . ";\n" .
         "\n" .
         "// The locale setting for enabling localized times/dates. Take a look\n" .
         "// at http://www.w3.org/WAI/ER/IG/ert/iso639.htm for the needed string.\n" .
         "\$PHORUM['locale'] = " . urldecode($CURRENT['locale']) . ";\n" .
+        "\n" .
+        "// Numeric separators used to format numbers.\n" .
+        "\$PHORUM['thous_sep'] = " . urldecode($CURRENT['thous_sep']) . ";\n" .
+        "\$PHORUM['dec_sep'] = " . urldecode($CURRENT['dec_sep']) . ";\n" .
         "\n" .
         "// The character set to use for converting html into safe valid text.\n" .
         "// Also used in the header template for the xml tag. For a list of\n" .
