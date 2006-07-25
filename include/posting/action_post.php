@@ -228,8 +228,9 @@ if ($success)
 $message = $message_copy;
 
 // Setup the data for displaying an error to the user.
-$langidx = $success === 0 ? 'PostErrorDuplicate' : 'PostErrorOccured';
-$PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"][$langidx];
+$PHORUM["DATA"]["ERROR"] = $success === 0 
+                         ? $PHORUM["DATA"]["LANG"]['PostErrorDuplicate'] 
+                         : $PHORUM["DATA"]["LANG"]['PostErrorOccured'];
 $error_flag = true;
 
 ?>
