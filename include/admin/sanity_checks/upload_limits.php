@@ -82,9 +82,10 @@
                  or give your webserver more permissions for the current
                  upload directory."
             );
+
+            fclose($fp);
+            unlink("$tmpdir/sanity_checks_dummy_uploadtmpfile");
         }
-        fclose($fp);
-        unlink("$tmpdir/sanity_checks_dummy_uploadtmpfile");
 
         return array(PHORUM_SANITY_OK, NULL);
     }
