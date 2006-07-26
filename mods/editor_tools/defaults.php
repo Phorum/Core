@@ -28,6 +28,20 @@ if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"])) {
     $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"] = 1;
 }
 
+// Smiley popup box dimension control.
+if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["smiley_popup_offset"])) {
+    $GLOBALS["PHORUM"]["mod_editor_tools"]["smiley_popup_offset"] = 0;
+}
+if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["smiley_popup_width"])) {
+    $GLOBALS["PHORUM"]["mod_editor_tools"]["smiley_popup_width"] = 150;
+}
+if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["subjectsmiley_popup_offset"])) {
+    $GLOBALS["PHORUM"]["mod_editor_tools"]["subjectsmiley_popup_offset"] = 0;
+}
+if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["subjectsmiley_popup_width"])) {
+    $GLOBALS["PHORUM"]["mod_editor_tools"]["subjectsmiley_popup_width"] = 150;
+}
+
 // A description of the tools that are implemented by this module.
 // In the arrays, the first element indicates to what editor tool
 // group the tool belongs. The other parameters are the same as

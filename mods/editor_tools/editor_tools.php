@@ -244,6 +244,12 @@ function phorum_mod_editor_tools_before_footer()
     // Make default icon height available for the javascript code.
     print 'editor_tools_default_iconheight = ' . MOD_EDITOR_TOOLS_DEFAULT_IHEIGHT . ";\n";
 
+    // Make the icon popup sizes available for the javascript code.
+    print "editor_tools_smileys_popupwidth = '" . $PHORUM["mod_editor_tools"]["smiley_popup_width"] . "px';\n" .
+          'editor_tools_smileys_popupoffset = ' . $PHORUM["mod_editor_tools"]["smiley_popup_offset"] . ";\n" . 
+          "editor_tools_subjectsmileys_popupwidth = '" . $PHORUM["mod_editor_tools"]["subjectsmiley_popup_width"] . "px';\n" .
+          'editor_tools_subjectsmileys_popupoffset = ' . $PHORUM["mod_editor_tools"]["subjectsmiley_popup_offset"] . ";\n";
+
     // Add help chapters.
     $idx = 0;
     foreach ($help as $helpinfo) {

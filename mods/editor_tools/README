@@ -1,5 +1,5 @@
 Module  : Phorum Editor Tools
-Version : 1.1.9
+Version : 1.1.10
 Author  : Maurice Makaay <maurice@makaay.nl>
 
 This module will add a buttonbar to the Phorum message editor, which can be

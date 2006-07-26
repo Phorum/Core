@@ -22,6 +22,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
 
     # Dialogs and errors.
     'enter url'     => 'Introduce la dirección URL a la que quieres crear un enlace.',
+    'enter url description' => 'Please, enter a description for the URL.',
     'invalid url'   => 'La URL es incorrecta. Debería comenzar con  with http://, https://, ftp:// o mailto:',
     'enter image url' => 'Introduce la dirección URL de la imagen que deseas añadir.',
     'invalid image url' => 'La URL de la imagen es incorrecta. Debería comenzar con http://, https:// o ftp://',

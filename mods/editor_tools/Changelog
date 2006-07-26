@@ -1,97 +1,111 @@
 Changelog:
 ----------
 
+2006-07-25 v1.1.10
+
+    - Settings were added to the control panel to be able to change the
+      size and horizontal placement of the smileys and the subject smileys
+      popup windows. Using this, users can accomodate the the popup windows
+      to the number of smileys that they have.
+
+    - Added a second prompt for the [URL] tool to ask for a description of
+      the link, in case no text has been selected. 
+
+    - A new language string was added: "enter url description".
+      Updated language files for German, Finnish and Spanish (and of
+      course additional translations) are welcome.
+
 2006-07-24 v1.1.9
 
-   - Added extra language to the distribution:
-     * Spanish (by Diego)
-     Thanks for the translation!
+    - Added extra language to the distribution:
+      * Spanish (by Diego)
+      Thanks for the translation!
 
 2006-07-20 v1.1.8
 
-   - Added extra languages to the distribution:
-     * Finnish (by Panu)
-     * German (by Thomas Seifert)
-     Thank you guys, for the translations!
+    - Added extra languages to the distribution:
+      * Finnish (by Panu)
+      * German (by Thomas Seifert)
+      Thank you guys, for the translations!
 
-   - Some more fixes for running in a portable / embedded setup.
-     * The smileys are now visible in the popup window.
-     * When registering editor tools from another module, their
-       icon and jslib paths are resolved automatically to an
-       absolute URL.
+    - Some more fixes for running in a portable / embedded setup.
+      * The smileys are now visible in the popup window.
+      * When registering editor tools from another module, their
+        icon and jslib paths are resolved automatically to an
+        absolute URL.
 
-   - Some small changes to the help files.
+    - Some small changes to the help files.
 
-   - Just http:// is no longer accepted for URL and image links.
+    - Just http:// is no longer accepted for URL and image links.
 
 2006-07-19 v1.1.7
 
-   - Improved right justification of the help popup in some
-     browsers.
+    - Improved right justification of the help popup in some
+      browsers.
 
-   - Various fixes to make the module work correctly in a
-     portable / embedded setup.
+    - Various fixes to make the module work correctly in a
+      portable / embedded setup.
 
 2006-07-18 v1.1.6
 
-   - Added a z-index CSS property for the popups with a high value,
-     to prevent them from popping up behind other page elements.
+    - Added a z-index CSS property for the popups with a high value,
+      to prevent them from popping up behind other page elements.
 
-   - Changed all css classnames and javascript ids to not contain
-     any underscores (thanks to Brian for the hint and pointer to
-     http://www.htmlite.com/CSS003a.php).
+    - Changed all css classnames and javascript ids to not contain
+      any underscores (thanks to Brian for the hint and pointer to
+      http://www.htmlite.com/CSS003a.php).
 
-   - Changed ".editor-tools-button" in the css to the more specific
-     "#editor-tools .editor-tools-button", because it wasn't 
-     rendered correctly in some cases.
+    - Changed ".editor-tools-button" in the css to the more specific
+      "#editor-tools .editor-tools-button", because it wasn't 
+      rendered correctly in some cases.
 
-   - Fixes for color picker CSS in XHTML transitional pages
-     viewed within MSIE. The tabs would not show up correctly
-     without this fix (extra padding and top bar too small).
-     Remark: this makes the tabs a bit off in XHTML strict
-     pages. But since Phorum templates are XHTML transitional
-     by default, I put this fix in the default package.
+    - Fixes for color picker CSS in XHTML transitional pages
+      viewed within MSIE. The tabs would not show up correctly
+      without this fix (extra padding and top bar too small).
+      Remark: this makes the tabs a bit off in XHTML strict
+      pages. But since Phorum templates are XHTML transitional
+      by default, I put this fix in the default package.
 
 2006-07-17 v1.1.5
 
-   - For MSIE, the active textarea selection is now stored before
-     opening the color or text size popup and restored after
-     a selection has been made. This is done, because MSIE looses
-     the selection range when focus moves to another object.
-     This caused for example the color code to be never around
-     the selected text in MSIE.
+    - For MSIE, the active textarea selection is now stored before
+      opening the color or text size popup and restored after
+      a selection has been made. This is done, because MSIE looses
+      the selection range when focus moves to another object.
+      This caused for example the color code to be never around
+      the selected text in MSIE.
 
 2006-07-17 v1.1.4
 
-   - Changed vertical aligment for the subject smiley button.
+    - Changed vertical aligment for the subject smiley button.
 
-   - Bounding whitespace is now ignored when applying some bbcode
-     to a selection. So instead of "this is [b]bold [/b] code"
-     it will be "this is [b]bold[/b] code". Thanks to Milos for 
-     the idea.
+    - Bounding whitespace is now ignored when applying some bbcode
+      to a selection. So instead of "this is [b]bold [/b] code"
+      it will be "this is [b]bold[/b] code". Thanks to Milos for 
+      the idea.
 
-   - Improved detection for checking if we are running on a page,
-     containing an editor. The existing detection had a bug that
-     caused a javascript warning about a missing textarea on
-     posting confirmation and error pages. Thanks to Milos for
-     pointing me at this problem.
+    - Improved detection for checking if we are running on a page,
+      containing an editor. The existing detection had a bug that
+      caused a javascript warning about a missing textarea on
+      posting confirmation and error pages. Thanks to Milos for
+      pointing me at this problem.
 
 2006-07-16 v1.1.3
 
-   - Some small changes to make it easier to override and extend the
-     editor tools from another module.
+    - Some small changes to make it easier to override and extend the
+      editor tools from another module.
 
 2006-07-15 v1.1.2
 
-   - Added a popup for subject smileys. This one is disabled by default,
-     so if you want this, enable subject smileys in the module settings.
-
-   - Added a module settings screen. Here the administrator can configure
-     which tools are enabled (bbcode, smileys, subject smileys and help).
-     In case the bbcode module is enabled, you get extra fields to configure
-     which bbcode tags (bold, italic, etc) are put in the editor tools.
+    - Added a popup for subject smileys. This one is disabled by default,
+      so if you want this, enable subject smileys in the module settings.
+ 
+    - Added a module settings screen. Here the administrator can configure
+      which tools are enabled (bbcode, smileys, subject smileys and help).
+      In case the bbcode module is enabled, you get extra fields to configure
+      which bbcode tags (bold, italic, etc) are put in the editor tools.
     
-   - Some small bugfixes.
+    - Some small bugfixes.
 
 2006-07-14 v1.1.1
 
