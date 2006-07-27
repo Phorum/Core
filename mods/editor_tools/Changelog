@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+2006-07-27 v1.1.11
+
+    - Added extra language to the distribution:
+      * Czech (by Michal)
+      Thanks for the translation!
+
 2006-07-25 v1.1.10
 
     - Settings were added to the control panel to be able to change the
