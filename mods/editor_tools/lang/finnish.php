@@ -22,7 +22,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
 
     # Dialogs and errors.
     'enter url'     => 'Ole hyv‰ ja syˆt‰ linkin osoite.',
-    'enter url description' => 'Please, enter a description for the URL.',
+    'enter url description' => 'Ole hyv‰ ja syˆt‰ linkin kuvaus.',
     'invalid url'   => 'Osoite on ep‰kelpo. Sen pit‰‰ alkaa tekstill‰ http://, https://, ftp:// tai mailto:',
     'enter image url' => 'Ole hyv‰ ja syˆt‰ lis‰tt‰v‰n kuvan osoite.',
     'invalid image url' => 'Kuvan osoite on ep‰kelpo. Sen pit‰‰ alkaa tekstill‰ http://, https:// tai ftp://',
