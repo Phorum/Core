@@ -140,7 +140,15 @@ These are the changes that are needed:
    so change the code to this:
    {editor_tools_hide_all_popups(); color_picker_div.style.display='block';}
 
-6) Add z-index: 1000 to the definition for #dhtmlgoodies_colorPicker
+6) In the same function, remove the formField argument and also remove the
+   line at the end of the function where the formField is stored in a 
+   global variable.
+
+7) Add z-index: 1000 to the definition for #dhtmlgoodies_colorPicker
    in the css file.
 
-7) Eye candy: change all #317802 in the js_color_picker_v2.css to #777.
+8) Eye candy: change all #317802 in the js_color_picker_v2.css to #777.
+
+9) For MSIE5/MacOS9 support, remove the "?" after the "*" in the line:
+   var navigatorVersion = navigator.appVersion.replace(/.*?MSIE...etc)/1;
+

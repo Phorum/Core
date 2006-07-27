@@ -15,7 +15,7 @@
 	************************************************************************************************************/	
 
 	var MSIE = navigator.userAgent.indexOf('MSIE')>=0?true:false;
-	var navigatorVersion = navigator.appVersion.replace(/.*?MSIE (\d\.\d).*/g,'$1')/1;
+	var navigatorVersion = navigator.appVersion.replace(/.*MSIE (\d\.\d).*/g,'$1')/1;
 	
     /* Changed for Phorum editor tools */
 	var form_widget_amount_slider_handle = './mods/editor_tools/colorpicker/images/slider_handle.gif';
@@ -549,7 +549,7 @@
 	}
 	
 	
-	function showColorPicker(inputObj,formField)
+	function showColorPicker(inputObj)
 	{
 		if(!color_picker_div){
 			color_picker_div = document.createElement('DIV');
@@ -573,7 +573,6 @@
 		if(color_picker_div.style.display=='none' || color_picker_active_input!=inputObj){editor_tools_hide_all_popups(); color_picker_div.style.display='block';} else color_picker_div.style.display='none';		
 		color_picker_div.style.left = colorPickerGetLeftPos(inputObj) + 'px';
 		color_picker_div.style.top = colorPickerGetTopPos(inputObj) + inputObj.offsetHeight + 2 + 'px';
-		color_picker_form_field = formField;
 		color_picker_active_input = inputObj;		
 	}
 

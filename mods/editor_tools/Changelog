@@ -3,6 +3,21 @@ Changelog:
 
 2006-07-27 v1.1.11
 
+    - Added basic support for MSIE 5 and Netscape 7 on MacOS 9. Since
+      these browsers are lacking functionality for selections and cursor
+      positioning, the best I could do here is appending the tags to
+      the end of the textarea contents.
+
+      There was also an issue with the color picker on MSIE 5. Running
+      the javascript code for building the popup window was way too heavy
+      for the system. Somehow it even seemed to get stuck and hung.
+      There were also some JavaScript compatibility problems. Based on all
+      this, I decided to never display the color picker button on this
+      browser.
+
+      Thanks to CBiLL for contributing in the costs for a second-hand
+      Powerbook G3 that I bought for working out the problems!
+
     - Added extra language to the distribution:
       * Czech (by Michal)
       Thanks for the translation!

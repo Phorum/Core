@@ -104,6 +104,12 @@ var editor_tools_help_height = '400px';
 // This one is filled from PHP-generated javascript.
 var editor_tools_default_iconheight;
 
+// A simple browser check. We need to know the browser version, because
+// the color picker won't work on at least MacOS MSIE 5.
+var OLD_MSIE =
+    navigator.userAgent.indexOf('MSIE')>=0 &&
+    navigator.appVersion.replace(/.*MSIE (\d\.\d).*/g,'$1')/1 < 6;
+
 // ----------------------------------------------------------------------
 // Uitilty functions
 // ----------------------------------------------------------------------
@@ -260,6 +266,10 @@ function editor_tools_construct()
         var iwidth      = toolinfo[4];
         var iheight     = toolinfo[5];
 
+        // Do not use the color picker on MSIE 5. I tested this on a
+        // Macintosh OS9 system and the color picker about hung MSIE.
+        if (tool == 'color' && OLD_MSIE) continue;
+
         a_obj = document.createElement('a');
         a_obj.id = "editor-tools-a-" + tool;
         a_obj.href = "javascript:" + jsaction;
@@ -408,7 +418,7 @@ function editor_tools_hide_all_popups()
 function editor_tools_store_range()
 {
     var ta = editor_tools_get_textarea();
-    if (ta == null || ta.setSelectionRange) return;
+    if (ta == null || ta.setSelectionRange || ! document.selection) return;
     ta.focus();
     editor_tools_textarea_range = document.selection.createRange();
 }
@@ -467,7 +477,7 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
         ta.setSelectionRange(cursorpos, cursorpos);
         ta.focus();
     }
-    else /* MSIE support */
+    else if (document.selection) /* MSIE support */
     {
         // Add pre and post to the text.
         ta.focus();
@@ -501,6 +511,8 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
             // Set the cursor to a logical position.
             range.select();
         }
+    } else { /* Support for really limited browsers, e.g. MSIE5 on MacOS */
+        ta.value = ta.value + pre + post;
     }
 }
 
@@ -773,7 +785,7 @@ function editor_tools_handle_smiley()
     );
 }
 
-// Called by the size picker library.
+// Called by the smiley picker.
 function editor_tools_handle_smiley_select(smiley)
 {
     smiley = editor_tools_strip_whitespace(smiley);
@@ -817,7 +829,7 @@ function editor_tools_handle_subjectsmiley()
     );
 }
 
-// Called by the size picker library.
+// Called by the subject smiley picker.
 function editor_tools_handle_subjectsmiley_select(smiley)
 {
     smiley = editor_tools_strip_whitespace(smiley);
