@@ -81,7 +81,7 @@
                 "Change the upload_tmp_dir setting in your php.ini file
                  or give your webserver more permissions for the current
                  upload directory."
-            )
+            );
 
             fclose($fp);
             unlink("$tmpdir/sanity_checks_dummy_uploadtmpfile");
