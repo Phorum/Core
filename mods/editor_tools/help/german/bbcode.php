@@ -135,7 +135,7 @@ Aber mit [code] darum, sieht es wie folgt aus:
 
 </pre>
 
-    <h3>Zitierter Text: [quote]...[/quote] oder [quote=...]...[/color]</h3>
+    <h3>Zitierter Text: [quote]...[/quote] oder [quote=...]...[/quote]</h3>
     Wenn Sie ein Zitat Ihrer Nachricht hinzuf&uuml;gen wollen, dann k&ouml;nnen Sie diese Markierung nutzen.
     Dabei k&ouml;nnen Sie ausw&auml;hlen, ob Sie denjenigen, den Sie zitieren m&ouml;chten, mit angeben oder nicht.
     Beispiele:<br/><br/>

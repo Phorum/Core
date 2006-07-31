@@ -60,9 +60,9 @@ function phorum_mod_editor_tools_common()
     }
 
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
-      '<script type="text/javascript" src="./mods/editor_tools/editor_tools.js"></script>' .
-      '<link rel="stylesheet" type="text/css" href="./mods/editor_tools/editor_tools.css"></link>' .
-      '<link rel="stylesheet" href="./mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
+      '<script type="text/javascript" src="$GLOBALS["PHORUM"]["http_path"]/mods/editor_tools/editor_tools.js"></script>' .
+      '<link rel="stylesheet" type="text/css" href="$GLOBALS["PHORUM"]["http_path"]/mods/editor_tools/editor_tools.css"></link>' .
+      '<link rel="stylesheet" href="$GLOBALS["PHORUM"]["http_path"]/mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
 
     // Decide what tools we want to show. Later on we might replace
     // this by code to be able to configure this from the module
@@ -229,7 +229,7 @@ function phorum_mod_editor_tools_before_footer()
     // Add javascript libraries for the color picker.
     if (editor_tools_get_tool('color')) {
         $jslibs[] = './mods/editor_tools/colorpicker/color_functions.js';
-        $jslibs[] = './mods/editor_tools/colorpicker/js_color_picker_v2.js';
+        $jslibs[] = './mods/editor_tools/colorpicker/js_color_picker_v2.js.php';
     }
 
     // Construct the javascript code for constructing the editor tools.

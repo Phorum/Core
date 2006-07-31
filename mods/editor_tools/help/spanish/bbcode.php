@@ -144,7 +144,7 @@ Pero si le aplicamos la etiqueta [code], nos quedará así:
 
 </pre>
 
-    <h3>Citas textuales: [quote]...[/quote] or [quote=...]...[/color]</h3>
+    <h3>Citas textuales: [quote]...[/quote] or [quote=...]...[/quote]</h3>
 	Si quieres citar a alguien en tu mensaje, puedes usar esta etiqueta. 
 	Puedes elegir si incluir el nombre de la persona a la que citas o no. 
 	Ejemplos: 

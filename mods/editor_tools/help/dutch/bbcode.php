@@ -143,7 +143,7 @@ Maar met gebruik van [code], ziet het er zo uit:
 
 </pre>
 
-    <h3>Aangehaalde tekst: [quote]...[/quote] or [quote=...]...[/color]</h3>
+    <h3>Aangehaalde tekst: [quote]...[/quote] or [quote=...]...[/quote]</h3>
     Om een quote van iemand aan te halen in een bericht, kan deze
     tag worden gebruikt. De naam van de persoon van wie de quote is
     hoeft niet verplicht te worden opgegeven. Voorbeelden:

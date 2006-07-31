@@ -137,7 +137,7 @@ But with the [code] around it, it looks like:
 
 </pre>
 
-    <h3>Quoted text: [quote]...[/quote] or [quote=...]...[/color]</h3>
+    <h3>Quoted text: [quote]...[/quote] or [quote=...]...[/quote]</h3>
     If you want to add some quote to your message, you can use
     this tag. You can choose whether you want to include the name of
     the person that you quote or not. Examples:<br/><br/>

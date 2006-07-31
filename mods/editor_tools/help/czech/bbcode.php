@@ -137,7 +137,7 @@ Se znaèkou  [code] vypadá text takto:
 
 </pre>
 
-    <h3>Uvozený text: [quote]...[/quote] or [quote=...]...[/color]</h3>
+    <h3>Uvozený text: [quote]...[/quote] or [quote=...]...[/quote]</h3>
 		Chcete-li pøidat uvozovky do své zprávy, mùžete použít tuto znaèku. 
 		Mužete zvolit, zda chcete ke znaèce zahrnout napøíklad také jméno osoby nebo ne.
 		Pøíklad:<br/><br/>

@@ -16,7 +16,7 @@
 
 	var MSIE = navigator.userAgent.indexOf('MSIE')>=0?true:false;
 	var navigatorVersion = navigator.appVersion.replace(/.*MSIE (\d\.\d).*/g,'$1')/1;
-	
+
     /* Changed for Phorum editor tools */
 	var form_widget_amount_slider_handle = './mods/editor_tools/colorpicker/images/slider_handle.gif';
 	var slider_handle_image_obj = false;
@@ -98,7 +98,7 @@
 	function form_widget_amount_slider(targetElId,formTarget,width,min,max,onchangeAction)
 	{
 		if(!slider_handle_image_obj){
-			getImageSliderHeight();		
+			getImageSliderHeight();
 		}
 				
 		slider_counter = slider_counter +1;
