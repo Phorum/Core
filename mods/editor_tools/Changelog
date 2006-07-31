@@ -4,7 +4,13 @@ Changelog:
 2006-07-30 v1.1.12
 
     - Some last fixes in editor_tools.php for using correct absolute URLs
-      in an embedded environment.
+      in an embedded environment. Also changed the way in which the 
+      colorpicker javascript is loaded. I now load it through the module
+      php code, so paths in that javascript can be made absolute 
+      using $PHORUM["http_path"].
+      I think (again ;-) that all embedding/portable issues are fixed now.
+      Thanks milos for pointing me at the last couple of problems, to
+      get them squeezed out.
 
     - BBcode help fix: most language file had a tag mismatch in them:
       [quote= .. ] .. [/color]. Thanks to James Hatts for the heads up!

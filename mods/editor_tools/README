@@ -1,5 +1,5 @@
 Module  : Phorum Editor Tools
-Version : 1.1.11
+Version : 1.1.12
 Author  : Maurice Makaay <maurice@makaay.nl>
 
 This module will add a buttonbar to the Phorum message editor, which can be
@@ -123,7 +123,8 @@ These are the changes that are needed:
 1) Delete form{ padding-left:5px; } from the css file.
 
 2) In js_color_picker_v2.js, change all references like 'images/...'
-   to './mods/editor_tools/colorpicker/images/...'
+   to '<?php print $GLOBALS["PHORUM"]["http_path"] ?> (continued on next line)
+       /mods/editor_tools/colorpicker/images/...'
 
 3) In js_color_picker_v2.js, change the action functions
    chooseColor() and chooseColorSlider() to call the function

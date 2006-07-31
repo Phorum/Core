@@ -18,8 +18,8 @@
 
 if(!defined("PHORUM")) return;
 
-define('MOD_EDITOR_TOOLS_BASE', './mods/editor_tools');
-define('MOD_EDITOR_TOOLS_ICONS', $PHORUM["http_path"] . "/" . MOD_EDITOR_TOOLS_BASE . '/icons');
+define('MOD_EDITOR_TOOLS_BASE', $PHORUM["http_path"] . '/mods/editor_tools');
+define('MOD_EDITOR_TOOLS_ICONS', MOD_EDITOR_TOOLS_BASE . '/icons');
 
 // Default icon size to use.
 define('MOD_EDITOR_TOOLS_DEFAULT_IWIDTH', 21);
@@ -45,6 +45,14 @@ function phorum_mod_editor_tools_common()
     $lang = $GLOBALS["PHORUM"]["language"];
     $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
 
+    // Load the colorpicker javascript library and exit.
+    // This is done this way, so the paths inside the color picker
+    // library can be made absolute using Phorum's http_path.
+    if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_cpjs"])) {
+        include("./mods/editor_tools/colorpicker/js_color_picker_v2.js.php");
+        exit;
+    }
+
     // Show a help page and exit.
     if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_help"])) {
         $helpid = basename($GLOBALS["PHORUM"]["args"]["editor_tools_help"]);
@@ -60,9 +68,9 @@ function phorum_mod_editor_tools_common()
     }
 
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
-      '<script type="text/javascript" src="$GLOBALS["PHORUM"]["http_path"]/mods/editor_tools/editor_tools.js"></script>' .
-      '<link rel="stylesheet" type="text/css" href="$GLOBALS["PHORUM"]["http_path"]/mods/editor_tools/editor_tools.css"></link>' .
-      '<link rel="stylesheet" href="$GLOBALS["PHORUM"]["http_path"]/mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
+      '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>' .
+      '<link rel="stylesheet" type="text/css" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.css"></link>' .
+      '<link rel="stylesheet" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
 
     // Decide what tools we want to show. Later on we might replace
     // this by code to be able to configure this from the module
@@ -228,8 +236,9 @@ function phorum_mod_editor_tools_before_footer()
 
     // Add javascript libraries for the color picker.
     if (editor_tools_get_tool('color')) {
+        $cpjs= phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_cpjs=1');
         $jslibs[] = './mods/editor_tools/colorpicker/color_functions.js';
-        $jslibs[] = './mods/editor_tools/colorpicker/js_color_picker_v2.js.php';
+        $jslibs[] = $cpjs;
     }
 
     // Construct the javascript code for constructing the editor tools.
