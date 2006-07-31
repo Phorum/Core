@@ -459,7 +459,7 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
 
         if (text == '' && prompt_str) {
             text = prompt(prompt_str, '');
-            if (text == null) text = '';
+            if (text == null) return;
         }
 
         // Strip whitespace from text selection and move it to the
@@ -486,7 +486,7 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
 
         if (text == '' && prompt_str) {
             text = prompt(prompt_str, '');
-            if (text == null) text = '';
+            if (text == null) return;
         }
 
         if (text.length <= 0) {

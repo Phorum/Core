@@ -15,6 +15,10 @@ Changelog:
     - BBcode help fix: most language file had a tag mismatch in them:
       [quote= .. ] .. [/color]. Thanks to James Hatts for the heads up!
 
+    - Do not write tags to the textarea if the user presses Cancel on
+      a second input prompt. Currently, the only second prompt is used
+      for the description in creating URL links.
+
 2006-07-27 v1.1.11
 
     - Added basic support for MSIE 5 and Netscape 7 on MacOS 9. Since
