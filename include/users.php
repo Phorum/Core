@@ -243,23 +243,24 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
 
         // get users from cache if enabled
         if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
-            foreach($user_ids as $id => $cur_user_id) {
-                $data=phorum_cache_get('user',$cur_user_id);
-                if($data != null) { // null if no key found
-                    $cache_users[$cur_user_id]=$data;
 
-                    unset($user_ids[$id]);
-                    $cachecnt++;
+            $cache_users = phorum_cache_get('user',$user_ids);
+
+            $cachecnt = count($cache_users);
+
+            if($cachecnt) {
+                foreach($user_ids as $id => $cur_user_id) {
+                    if(isset($cache_users[$cur_user_id])) {
+                        unset($user_ids[$id]);
+                    }
                 }
-            }
-            unset($data);
-            // we need to get the dynamic data too!
-            // only selecting date_last_active, forum_last_active,
-            // posts ... any more?
-            if($cachecnt > 0) {
+
+                // we need to get the dynamic data too!
+                // only selecting date_last_active, forum_last_active,
+                // posts ... any more?
                 $dynamic_data=phorum_db_user_get_fields(array_keys($cache_users),array('date_last_active','last_active_forum','posts'));
                 foreach($dynamic_data as $d_uid => $d_data) {
-                        $cache_users[$d_uid]=array_merge($cache_users[$d_uid],$d_data);
+                    $cache_users[$d_uid]=array_merge($cache_users[$d_uid],$d_data);
                 }
 
             }
