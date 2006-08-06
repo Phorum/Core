@@ -22,8 +22,8 @@ if(!defined("PHORUM")) return;
 /**
  * This is the callback-function for removing hidden messages from an array of messages
  */
- 
-function phorum_remove_hidden($val) 
+
+function phorum_remove_hidden($val)
 {
     return ($val['status'] > 0);
 }
@@ -35,29 +35,29 @@ function phorum_remove_hidden($val)
 function phorum_update_thread_info($thread)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     $messages=phorum_db_get_messages($thread);
     //these are not needed here
     unset($messages['users']);
-    
+
     // remove hidden/unapproved messages from the array
-    $filtered_messages=array_filter($messages, "phorum_remove_hidden");    
-    
+    $filtered_messages=array_filter($messages, "phorum_remove_hidden");
+
     $thread_count=count($filtered_messages);
 
     if($thread_count>0){
 
         $message_ids=array_keys($filtered_messages);
-    
+
         $parent_message=$filtered_messages[$thread];
-    
+
         if (isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
             reset($filtered_messages);
             $recent_message=current($filtered_messages);
         } else {
             $recent_message=end($filtered_messages);
         }
-        
+
         // prep the message to save
         $message["thread_count"]=$thread_count;
         $message["modifystamp"]=$recent_message["datestamp"];
@@ -69,8 +69,18 @@ function phorum_update_thread_info($thread)
         // used only for mods
         $message["meta"]["message_ids_moderator"]=array_keys($messages);
 
+        if($PHORUM['cache_messages']) {
+            // we can simply store them here again, no need to invalidate the cache
+            // this function is called in any place where we change something to the thread
+            phorum_cache_put('message_index',"$thread-0",$message["meta"]["message_ids"]);
+            phorum_cache_put('message_index',"$thread-1",$message["meta"]["message_ids_moderator"]);
+
+            // but we need to invalidate the main-message as its changed for the recent author/message
+            phorum_cache_remove('message',$thread);
+        }
+
         phorum_db_update_message($thread, $message);
-        
+
     }
 
 }

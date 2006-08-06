@@ -22,6 +22,11 @@ include_once("./common.php");
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
+// for dev-purposes ..
+include_once('./include/timing.php');
+
+timing_start();
+
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
 
@@ -75,11 +80,14 @@ if($PHORUM["DATA"]["MODERATOR"]) {
 
 // setup some stuff based on the url passed
 if(empty($PHORUM["args"][1])) {
+    // we have no forum-id given, redirect to the index
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
 } elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
     $thread = (int)$PHORUM["args"][1];
     $message_id = (int)$PHORUM["args"][1];
+
+    // printview is requested
     if(isset($PHORUM["args"][2]) && $PHORUM["args"][2]=="printview") {
       $PHORUM["DATA"]["PRINTVIEW"]=1;
     } else {
@@ -183,6 +191,8 @@ if(empty($PHORUM["args"][1])) {
     }
 }
 
+timing_mark("before database");
+
 // determining the page if page isn't given and message_id != thread
 $page=0;
 if(!$PHORUM["threaded_read"]) {
@@ -198,14 +208,94 @@ if(!$PHORUM["threaded_read"]) {
     }
 }
 
-// Get the thread
-$data = phorum_db_get_messages($thread,$page);
+if($PHORUM['cache_messages']) {
 
-if($page>1){
+    $data=array();
+
+    // is he a moderator and gets all messages?
+    $approved=1;
+    if($PHORUM["DATA"]["MODERATOR"]) {
+        $approved = 0;
+    }
+
+    $message_index=phorum_cache_get('message_index',"$thread-$approved");
+
+    if($message_index == null) {
+        // nothing in the cache, get it from the database and store it in the cache
+        $data[$thread] = phorum_db_get_message($thread,"message_id");
+
+        if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
+            $message_index=$data[$thread]['meta']['message_ids_moderator'];
+        } else {
+            $message_index=$data[$thread]['meta']['message_ids'];
+        }
+
+        // sort it as expected
+        sort($message_index);
+
+        // put it in the cache now
+        phorum_cache_put('message_index',"$thread-$approved",$message_index);
+
+    }
+
+    // we expect this message_index to be ordered by message-id already!
+
+    // in this case we need the reversed order
+    if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
+        $message_index=array_reverse($message_index);
+    }
+
+    //print_var($message_index);
+
+    $start=$PHORUM["read_length"]*($page-1);
+
+    if(!$PHORUM['threaded_read']) {
+        // get the message-ids from this page (only in flat mode)
+        $message_ids_page = array_slice($message_index, $start,$PHORUM["read_length"]);
+    } else {
+        // we need all message in threaded read ...
+        $message_ids_page = $message_index;
+    }
+
+    //print_var($message_ids_page);
+
+    $messages = phorum_cache_get('message',$message_ids_page);
+
+    //print_var($messages);
+
+    // check the returned messages if they were found in the cache
+    $db_messages=array();
+
+    $msg_not_in_cache=0;
+
+    foreach($message_ids_page as $mid) {
+        if(!isset($messages[$mid])) {
+            $db_messages[]=$mid;
+            $msg_not_in_cache++;
+        } else {
+            $data[$mid]=$messages[$mid];
+        }
+    }
+
+    $db_messages = phorum_db_get_message($db_messages,'message_id');
+    // store the found messages in the cache
+    foreach($db_messages as $mid => $message) {
+        phorum_cache_put('message',$mid,$message);
+        $data[$mid]=$message;
+    }
+
+} else {
+    // Get the thread
+    $data = phorum_db_get_messages($thread,$page);
+}
+
+if($page>1 && !isset($data[$thread])){
     $first_message = phorum_db_get_message($thread);
     $data["users"][]=$first_message["user_id"];
     $data[$first_message["message_id"]] = $first_message;
 }
+
+timing_mark("after database");
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
@@ -631,5 +721,8 @@ function phorum_check_moved_message($thread) {
     }
     return $ret;
 }
+
+timing_mark("end");
+timing_print();
 
 ?>

@@ -37,7 +37,7 @@ $dbmessage = array(
     "meta"          => $message["meta"],
 );
 
-// Update sort setting, if allowed. This can only be done 
+// Update sort setting, if allowed. This can only be done
 // when editing the thread starter message.
 if ( $message["parent_id"]==0 ) {
 
@@ -103,6 +103,12 @@ $dbmessage = phorum_hook("pre_edit", $dbmessage);
 phorum_db_update_message($message["message_id"], $dbmessage);
 phorum_hook("post_edit", $dbmessage);
 
+// remove the message from the cache if caching is enabled
+// no need to clear the thread-index as the message has only been changed
+if($PHORUM['cache_messages']) {
+    phorum_cache_remove('message',$message["message_id"]);
+}
+
 // Update children to the same sort setting and forum_id.
 // The forum_id update is needed for switching between
 // announcements and other types of messages.
@@ -117,6 +123,9 @@ if (! $message["parent_id"] &&
             $msg["sort"]=$dbmessage["sort"];
             $msg["forum_id"]=$dbmessage["forum_id"];
             phorum_db_update_message($message_id, $msg);
+            if($PHORUM['cache_messages']) {
+                phorum_cache_remove('message',$message_id);
+            }
         }
     }
 

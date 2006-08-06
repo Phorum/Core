@@ -113,6 +113,8 @@ if ( count( $_POST ) ) {
                 break;
             case "cache_users":
 
+            case "cache_messages":
+
             case "cache_newflags":
                 if ( empty( $value ) ) {
                     $_POST[$field] = 0;
@@ -201,6 +203,7 @@ $frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster u
 $frm->addbreak("Cache Settings");
 $row=$frm->addrow( "Enable Caching Userdata:", $frm->select_tag( "cache_users", array( "No", "Yes" ), $PHORUM["cache_users"] ) );
 $row=$frm->addrow( "Enable Caching Newflags:", $frm->select_tag( "cache_newflags", array( "No", "Yes" ), $PHORUM["cache_newflags"] ) );
+$row=$frm->addrow( "Enable Caching Messages:", $frm->select_tag( "cache_messages", array( "No", "Yes" ), $PHORUM["cache_messages"] ) );
 
 $frm->addbreak( "Date Options" );
 
