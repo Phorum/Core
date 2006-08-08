@@ -1,6 +1,14 @@
 Changelog:
 ----------
 
+2006-08-08 v1.1.13
+
+    - Added extra language to the distribution:
+      * Swedish (by Per Mattsson)
+        Beware: only the basic language file was translated, so there are
+                no translated help files available in Swedish.
+      Thanks for the translation!
+
 2006-07-30 v1.1.12
 
     - Some last fixes in editor_tools.php for using correct absolute URLs
