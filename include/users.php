@@ -264,6 +264,9 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
                     $cache_users[$d_uid]=array_merge($cache_users[$d_uid],$d_data);
                 }
 
+            } else {
+                // Make sure that $tmp_users + $cache_users will work later on.
+                $cache_users = array();
             }
         }
 
@@ -271,7 +274,6 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
             $tmp_users = phorum_db_user_get( $user_ids, $detailed );
 
             foreach( $tmp_users as $uid => $user ) {
-
                 if ( !$user["admin"] ) {
                     if ( isset( $user["group_permissions"] ) ) {
                         foreach( $user["group_permissions"] as $forum_id => $perm ) {

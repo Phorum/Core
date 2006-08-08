@@ -299,8 +299,11 @@ timing_mark("after database");
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
-    $fetch_user_ids = $data['users'];
-    unset($data['users']);
+    $fetch_user_ids = null;
+    if (isset($data['users'])) {
+        $fetch_user_ids = $data['users'];
+        unset($data['users']);
+    }
 
     // remove the unneeded message bodies in threaded view
     // to avoid unnecessary formatting of bodies

@@ -158,10 +158,15 @@ if(!phorum_db_check_connection()){
 // get the Phorum settings
 phorum_db_load_settings();
 
+// Defaults for missing settings (these can be needed after upgrading, in 
+// case the admin did not yet save a newly added Phorum setting).
+if (! isset($PHORUM["default_feed"])) $PHORUM["default_feed"] = "rss";
+
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
+//include_once( "./include/cache.php" );
 include_once( "./include/cache_memcached.php" );
 
 // stick some stuff from the settings into the DATA member
@@ -737,7 +742,7 @@ function phorum_build_common_urls()
     // RSS-Url only makes sense on a couple of pages
     if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']
         && (phorum_page=="index" || phorum_page=="list" || phorum_page=="read")){
-        if($PHORUM["default_feed"]=="RSS"){
+        if($PHORUM["default_feed"]=="rss"){
             $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=rss" );
             $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["RSS"];
         } else {
