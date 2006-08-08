@@ -3310,7 +3310,13 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 
     $res = pg_query($conn, $sql);
     if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
-    return $res;
+
+    $folder_id = 0;
+    if ($res){
+        $folder_id = pgsql_insert_id($conn, "{$PHORUM['pm_folders_table']}_pm_folder_id_seq");
+    }
+
+    return $folder_id;
 }
 
 /**

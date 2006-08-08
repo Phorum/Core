@@ -3333,7 +3333,13 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    return $res;
+
+    $folder_id = 0;
+    if ($res){
+        $folder_id = mysql_insert_id($conn);
+    }
+
+    return $folder_id;
 }
 
 /**
