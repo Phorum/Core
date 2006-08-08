@@ -3584,7 +3584,7 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
  * @param int $user_id - The user to create the folder for or
  *                  NULL to use the current user (default).
  *
- * @return boolean
+ * @return the folder id of the created folder
  */
 function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 {
@@ -3601,7 +3601,13 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    return $res;
+
+    $folder_id = 0;
+    if ($res){
+        $folder_id = mysql_insert_id($conn);
+    }
+
+    return $folder_id;
 }
 
 /**
