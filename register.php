@@ -44,21 +44,21 @@ if (isset($PHORUM["args"]["approve"])) {
 
         // The user has been denied by a moderator.
         if ($user["active"] == PHORUM_USER_INACTIVE) {
-             $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
+             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
         // The user should still be approved by a moderator.
         } elseif ($user["active"] == PHORUM_USER_PENDING_MOD) {
         	// TODO: this message should be changed in 5.1 to have a unique message!!!
-        	$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+        	$PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
         // The user is waiting for email and/or email+moderator confirmation.
         } else {
             // Waiting for both? Then switch to wait for moderator.
             if ($user["active"] == PHORUM_USER_PENDING_BOTH) {
                 $moduser["active"] = PHORUM_USER_PENDING_MOD;
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
             // Only email confirmation was required. Active the user.
             } else {
                 $moduser["active"] = PHORUM_USER_ACTIVE;
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegAcctActive"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegAcctActive"];
             }
 
             // Save the new user active status.
@@ -68,7 +68,7 @@ if (isset($PHORUM["args"]["approve"])) {
 
     // Validation code incorrect.
     } else {
-        $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
     }
 
     include phorum_get_template("header");
@@ -178,12 +178,12 @@ if (count($_POST)) {
 
             // The user was added. Determine what message to show.
             if ($PHORUM["registration_control"] == PHORUM_REGISTER_INSTANT_ACCESS) {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegThanks"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegThanks"];
             } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL ||
                      $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH) {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
             } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_MODERATOR) {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
             }
 
             // Send a message to the new user in case email verification is required.

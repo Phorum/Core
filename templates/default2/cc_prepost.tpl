@@ -23,7 +23,7 @@
 </form>
 
 {IF UNAPPROVEDMESSAGE}
-    <div class="generic">{UNAPPROVEDMESSAGE}</div>
+    <div class="information">{UNAPPROVEDMESSAGE}</div>
 {ELSE}
     <table cellspacing="0" class="list">
         {LOOP PREPOST}

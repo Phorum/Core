@@ -55,7 +55,7 @@ function phorum_search_check_valid_vars() {
 
 if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
     $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($_GET["search"]), "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($_GET['match_forum']));
-    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["SearchRunning"];
+    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["SearchRunning"];
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToSearch"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=$search_url;
     $PHORUM["DATA"]["REDIRECT_TIME"]=1;
@@ -87,7 +87,11 @@ if(!empty($phorum_search)){
 
     include_once("./include/format_functions.php");
 
-    $PHORUM["args"]["page"] = (int)$PHORUM["args"]["page"];
+    if(isset($PHORUM["args"]["page"])){
+        $PHORUM["args"]["page"] = (int)$PHORUM["args"]["page"];
+    } else {
+        $PHORUM["args"]["page"] = 1;
+    }
 
     $offset = (empty($PHORUM["args"]["page"])) ? 0 : $PHORUM["args"]["page"]-1;
 
@@ -159,10 +163,10 @@ if(!empty($phorum_search)){
             // strip HTML & BB Code
             if(!$raw_body) {
                 $body = phorum_strip_body($arr["rows"][$key]["body"]);
-                $arr["rows"][$key]["short_body"] = substr($body, 0, 200);
+                $arr["rows"][$key]["short_body"] = substr($body, 0, 400);
                 $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
             }
-            $arr["rows"][$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+            $arr["rows"][$key]["datestamp"] = phorum_relative_date($row["datestamp"]);
             $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
 
 
@@ -247,6 +251,16 @@ $PHORUM["DATA"]["SEARCH"]["match_type"] = $PHORUM["args"]["match_type"];
 $PHORUM["DATA"]["SEARCH"]["match_dates"] = $PHORUM["args"]["match_dates"];
 $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
 $PHORUM["DATA"]["SEARCH"]["allow_match_one_forum"] = $PHORUM["forum_id"];
+
+$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Search"];
+
+$PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["html_title"].PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["Search"];
+if(!empty($phorum_search)){
+    $PHORUM["DATA"]["HTML_TITLE"] .= " - ".$phorum_search;
+}
+
+$PHORUM["DATA"]["DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["SearchHelp"];
+
 
 include phorum_get_template("header");
 phorum_hook("after_header");

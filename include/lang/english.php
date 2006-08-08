@@ -25,7 +25,7 @@
     // the Content-Type header. for a list of supported charsets, see
     // http://www.php.net/manual/en/function.htmlentities.php
     // you may also need to set a meta tag with a charset in it.
-    $PHORUM["DATA"]['CHARSET']="iso-8859-1";
+    $PHORUM["DATA"]['CHARSET']="UTF-8";
 
     // some languages need additional meta tags
     // to set encoding, etc.
@@ -64,6 +64,7 @@
         "ApproveMessage"        =>      "Approve Message",
         "ApproveMessageReplies" =>      "Approve +Replies",
         "AreYouSure"            =>      "Are you sure?",
+        "ATOM"                  =>      "Atom",
         "Attach"                =>      "Attach",
         "AttachAFile"           =>      "Attach a file",
         "AttachAnotherFile"     =>      "Attach another file",
@@ -91,7 +92,7 @@
         "BookmarkedThread"      =>      "You are now following this topic in your Control Center.",
         "Buddies"               =>      "Buddies",
         "Buddy"                 =>      "Buddy",
-        "BuddyAdd"              =>      "Add user to my buddy list",
+        "BuddyAdd"              =>      "Add Buddy",
         "BuddyAddFail"          =>      "The user could not be added to your buddy list",
         "BuddyAddSuccess"       =>      "The user has been added to your buddy list successfully",
         "BuddyListIsEmpty"      =>      "Your buddy list is empty.<br/>To add users, view their profile and click \"Add user to my buddy list\".",
@@ -324,6 +325,7 @@
         "NoResultsHelp"         =>      "Your search did not match any messages.<br /><br />Suggestions:<ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li><li>Try fewer keywords.</li></ul>",
         "NoUnapprovedMessages"  =>      "There are currently no unapproved mesages",
         "NoUnapprovedUsers"     =>      "There are currently no unapproved users",
+        "NoUserMatchFilter"     =>      "No users match your current filter",
 
         "OlderMessages"         =>      "Older Messages",
         "OlderThread"           =>      "Older Topic",
@@ -452,14 +454,16 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "SearchAuthors"         =>      "Search Authors",
         "SearchResults"         =>      "Search Results",
         "Search"                =>      "Search",
+        "SearchHelp"            =>      "Use the fields below to find messages. You can search for all words, any words, or an exact phrase.  Searching by author must be an exact match.",
         "SearchMessages"        =>      "Search Messages",
         "SearchRunning"         =>      "Your search is running, please be patient.",
         "SelectGroupMod"        =>      "Select a group to moderate",
         "SelectForum"           =>      "Select the Forum ...",
-        "SendPM"                =>      "Send A Private Message",
+        "SendPM"                =>      "PM",
         "SentItems"             =>      "Sent Items",
         "Showing"               =>      "Showing",
         "ShowOnlyMessages"      =>      "Show",
+        "ShowPosts"             =>      "Find Posts",
         "Signature"             =>      "Signature",
         "Special"               =>      "Special",
         "SplitThread"           =>      "Split Here",
@@ -491,7 +495,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "TotalFiles"            =>      "Total Files",
         "TotalFileSize"         =>      "Space Used",
 
-        "Unapproved"            =>      "Unapproved",
+        "Unapproved"            =>      "awaiting approval",
         "UnapprovedGroupMembers" =>     "There are unapproved group memberships",
         "UnapprovedMessage"     =>      "Unapproved Message",
         "UnapprovedMessages"    =>      "Unapproved Messages",

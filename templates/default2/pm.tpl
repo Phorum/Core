@@ -1,22 +1,59 @@
-<div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->TOP}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;{/IF}{IF URL->POST}<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;<a class="PhorumNavLink" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>&bull;<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>
+<div class="nav">
+    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
 </div>
-<table id="phorum-menu-table" cellspacing="0" border="0">
-  <tr>
-    <td id="phorum-menu">
-      {INCLUDE "pm_menu"}
-    </td>
-    <td id="phorum-content">
-      {IF ERROR}
-        <div class="PhorumUserError">{ERROR}</div>
-      {/IF}
-      {IF OKMSG}
-        <div class="PhorumOkMsg">{OKMSG}</div>
-      {/IF}
-      <?php
-      // don't touch this line
-      include phorum_get_template($template);
-      ?>
-    </td>
-  </tr>
+
+<table class="menu" cellspacing="0" border="0">
+    <tr>
+        <td class="menu" nowrap="nowrap">
+        
+            <div class="generic">
+
+                {LANG->PrivateMessages}
+                <ul>
+                    {LOOP PM_FOLDERS}
+                        <li><a {IF PM_FOLDERS->id FOLDER_ID}class="current" {/IF}href="{PM_FOLDERS->url}">{PM_FOLDERS->name}</a><small>{IF PM_FOLDERS->total}&nbsp;({PM_FOLDERS->total}){/IF}{IF PM_FOLDERS->new}&nbsp;(<span class="PhorumNewFlag">{PM_FOLDERS->new} {LANG->newflag}</span>){/IF}</small></li>
+                    {/LOOP PM_FOLDERS}
+                </ul>
+                {LANG->Options}
+                <ul>
+                    <li><a {IF PM_PAGE "folders"}class="current" {/IF}href="{URL->PM_FOLDERS}">{LANG->EditFolders}</a></li>
+                    <li><a {IF PM_PAGE "send"}class="current" {/IF}href="{URL->PM_SEND}">{LANG->SendPM}</a></li>
+                    <li><a {IF PM_PAGE "buddies"}class="current" {/IF} href="{URL->BUDDIES}">{LANG->Buddies}</a></li>
+                </ul>
+            </div>
+
+            {IF MAX_PM_MESSAGECOUNT}
+                <?php
+                    // move into pm.php
+                    $avail = $PHORUM['DATA']['PM_SPACE_LEFT'];
+                    $used = $PHORUM['DATA']['PM_MESSAGECOUNT'];
+                    $total = $avail + $used;
+                    $size = 130;
+                    $usedsize = ceil($used/$total * $size);
+                    $usedperc = floor($used/$total * 100 + 0.5);
+                ?>
+                <div class="generic">
+                    {IF PM_SPACE_LEFT}
+                      {LANG->PMSpaceLeft}
+                    {ELSE}
+                      {LANG->PMSpaceFull}
+                    {/IF}
+                </div>
+                <table class="phorum-gaugetable" align="center">
+                    <tr>
+                        <td class="phorum-gaugeprefix"><?php echo "{$usedperc}%" ?></td>
+                        <td class="phorum-gauge" width="<?php echo $size?>"><img align="left" src="{gauge_image}" width="<?php echo $usedsize?>" height="16px" /></td>
+                    </tr>
+                </table>
+            {/IF}        
+        </td>
+
+        <td class="content">
+            {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
+            {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
+            <?php include phorum_get_template($template); ?>            
+        </td>
+    </tr>
 </table>
+

@@ -61,7 +61,7 @@ include_once("include/format_functions.php");
 // Check if the Phorum is in read-only mode.
 if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
     phorum_build_common_urls();
-    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
+    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
     // Only show header and footer when not included in another page.
     if (phorum_page == "post") {
         include phorum_get_template("header");
@@ -344,8 +344,7 @@ if (! $error_flag && ($initial || $finish)) {
 // Do permission checks for attachment management.
 if (! $error_flag && ($do_attach || $do_detach)) {
     if (! $PHORUM["DATA"]["ATTACHMENTS"]) {
-        $PHORUM["DATA"]["MESSAGE"] =
-            $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
         $error_flag = true;
     }
 }

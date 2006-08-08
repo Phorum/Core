@@ -115,8 +115,8 @@
         <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
         <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
     {/IF}
-    {IF URL->RSS}
-        <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
+    {IF URL->FEED}
+        <a class="icon icon-feed" href="{URL->FEED}">{FEED}</a>
     {/IF}
 </div>
 

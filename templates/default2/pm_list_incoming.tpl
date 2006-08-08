@@ -1,45 +1,58 @@
-<table border="0" cellspacing="0" class="PhorumStdTable">
-  <tr>
-    <th class="PhorumTableHeader" align="left" width="20">
-      {VAR ITEMCOUNT MESSAGECOUNT}
-      {INCLUDE "pm_list_selectall"}
-    </th>
-    <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
-    <th class="PhorumTableHeader" align="left" nowrap="nowrap">{LANG->From}&nbsp;</th>
-    <th class="PhorumTableHeader" align="left" nowrap="nowrap">{LANG->Date}&nbsp;</th>
-  </tr>
-  {IF MESSAGECOUNT}
-    {LOOP MESSAGES}
-      <tr>
-        <td class="PhorumTableRow">
-          <input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" />
-        </td>
-        <td class="PhorumTableRow">
-          <a href="{MESSAGES->read_url}">{MESSAGES->subject}</a>
-          {IF NOT MESSAGES->read_flag}
-            <span class="PhorumNewFlag">&nbsp;{LANG->newflag}</span>
-          {/IF}
-        </td>
-        <td class="PhorumTableRow" nowrap="nowrap">
-          <a href="{MESSAGES->from_profile_url}">{MESSAGES->from_username}</a>&nbsp;
-        </td>
-        <td class="PhorumTableRow" nowrap="nowrap" width="1">
-          <div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div>
-        </td>
-      </tr>
-    {/LOOP MESSAGES}
-  {ELSE}
-    <tr>
-      <td colspan="4" style="text-align: center" class="PhorumTableRow">
-        <br />
-        <i>{LANG->PMFolderIsEmpty}</i><br />
-        <br />
-      </td>
-    </tr>
-  {/IF}
-</table>
-<div class="PhorumStdBlock" style="border-top:none">
-  {VAR MOVE_SUBMIT_NAME "move"}
-  {INCLUDE "pm_moveselect"}
-  <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
-</div>
+{IF MESSAGECOUNT}
+    <table border="0" cellspacing="0" class="list">
+        <tr>
+            <th align="left" width="20">
+                <script type="text/javascript">
+                    function checkAll() {
+                        var lf=document.getElementById('phorum-pm-list');
+                        for (var i=0;i<lf.elements.length;i++) {
+                            var elt=lf.elements[i];
+                            if (elt.type=='checkbox' && elt.name!='toggle') {
+                                elt.checked = document.getElementById('toggle').checked;
+                            }
+                        }
+                    }
+                    document.write ( '<input type="checkbox" name="toggle" id="toggle" onclick="checkAll()" />' );
+                </script>
+                <noscript>&nbsp;</noscript>
+            </th>
+            <th align="left">{LANG->Subject}</th>
+            <th align="left" nowrap="nowrap">{LANG->From}&nbsp;</th>
+            <th align="left" nowrap="nowrap">{LANG->Date}&nbsp;</th>
+        </tr>
+        {LOOP MESSAGES}
+            <tr>
+                <td><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
+                <td>
+                    <a href="{MESSAGES->read_url}">{MESSAGES->subject}</a>
+                    {IF NOT MESSAGES->read_flag}
+                        <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/flag_red.png" width="16" height="16" border="0" alt="NEW!" />
+                    {/IF}
+                </td>
+                <td nowrap="nowrap"><a href="{MESSAGES->from_profile_url}">{MESSAGES->from_username}</a>&nbsp;</td>
+                <td nowrap="nowrap" width="1">{MESSAGES->date}&nbsp;</td>
+            </tr>
+        {/LOOP MESSAGES}
+    </table>
+    {VAR MOVE_SUBMIT_NAME "move"}
+    {IF PM_USERFOLDERS}
+        <select name="target_folder" style="vertical-align: middle;">
+            <option value=""> {LANG->PMSelectAFolder}</option>
+            {LOOP PM_FOLDERS}
+                {IF NOT PM_FOLDERS->id FOLDER_ID}
+                    {IF NOT PM_FOLDERS->is_outgoing}
+                        <option value="{PM_FOLDERS->id}"> {PM_FOLDERS->name}</option>
+                    {/IF}
+                {/IF}
+            {/LOOP PM_FOLDERS}
+        </select>
+        <input type="submit" name="{MOVE_SUBMIT_NAME}" class="PhorumSubmit" value="{LANG->PMMoveToFolder}" />
+    {/IF}
+    <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
+
+{ELSE}
+
+    <div class="generic">{LANG->PMFolderIsEmpty}</div>
+
+{/IF}
+

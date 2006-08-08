@@ -187,7 +187,9 @@ $row=$frm->addrow( "Phorum HTML Title", $frm->text_box( "html_title", $PHORUM["h
 
 $row=$frm->addrow( "Phorum Head Tags", $frm->textarea( "head_tags", $PHORUM["head_tags"], 30, 5, "style='width: 100%'" ) );
 
-$row=$frm->addrow( "Show and allow RSS-links", $frm->select_tag( "use_rss", array( "No", "Yes" ), $PHORUM["use_rss"] ) );
+$row=$frm->addrow( "Show and allow feed links", $frm->select_tag( "use_rss", array( "No", "Yes" ), $PHORUM["use_rss"] ) );
+
+$row=$frm->addrow( "Default feed type", $frm->select_tag( "default_feed", array( "rss"=>"RSS", "atom"=>"Atom" ), $PHORUM["default_feed"] ) );
 
 $frm->addbreak( "File/Path Settings" );
 

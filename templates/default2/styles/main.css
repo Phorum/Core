@@ -274,6 +274,10 @@ img {
     border: 0; 
 }
 
+#phorum table.form-table {
+    width: 100%;
+}
+
 /* header styles */
 
 #phorum #logo {
@@ -337,7 +341,7 @@ img {
 }
 
 #phorum div.attention {
-    padding: 8px 8px 8px 64px;
+    padding: 24px 8px 24px 64px;
     border: 1px solid #A76262;
     background-image: url('../images/dialog-warning.png');    
     background-color: #FFD1D1;
@@ -491,6 +495,71 @@ img {
 
 #phorum #attachment-list input {
     font-size: x-small;
+}
+
+
+/* PM styles */
+
+#phorum input.rcpt-delete-img {
+    vertical-align: bottom;
+}
+
+
+/* Profile styles */
+
+#phorum #profile div.icon-user {
+    background-repeat: no-repeat;
+    background-position: 0px 2px;
+    padding: 0px 0 0px 21px;
+	font-size: large;
+	font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#phorum #profile div.icon-user small {
+    font-size: x-small;
+    font-weight: normal;
+    margin: 0 0 0 16px;
+}
+
+#phorum #profile dt {
+    font-weight: bold;
+}
+
+#phorum #profile dd {
+    padding: 4px;
+    margin: 0 0 8px 0;
+}
+
+
+/* Search Styles */
+
+#phorum #search-form {
+    margin-bottom: 35px;
+}
+
+#phorum div.search {
+    background-color: White;
+}
+
+#phorum div.search-result {
+    font-size: small;
+    margin-bottom: 20px; 
+}
+    
+#phorum div.search-result h4 {
+    margin: 0;
+    font-size: medium;
+    font-weight: normal;
+}
+
+#phorum div.search-result h4 small {
+    color: Gray;
+}
+
+#phorum div.search-result blockquote {
+    margin: 3px 0 3px 0;
+    padding: 0;
 }
 
 /* Footer styles */

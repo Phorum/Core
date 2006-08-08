@@ -4,8 +4,8 @@
 {IF USER->user_id}
     <a class="icon icon-tag-green" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
 {/IF}
-{IF URL->RSS}
-    <a class="icon icon-feed" href="{URL->RSS}">{LANG->RSS}</a>
+{IF URL->FEED}
+    <a class="icon icon-feed" href="{URL->FEED}">{LANG->FEED}</a>
 {/IF}
 </div>
 <table cellspacing="0" class="list">

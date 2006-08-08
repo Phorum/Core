@@ -35,56 +35,63 @@
             </select>
             <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
         </form>
+
+        <br />
         
-        
-        
-    <br /><br />
-    <form method="post" action="{GROUP->url}">
-      <table class="PhorumFormTable" cellspacing="0" border="0">
-        <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-        <tr>
-          <th>{LANG->Username}</th>
-          <th>{LANG->MembershipType}</th>
-        </tr>
-        {LOOP USERS}
-          <tr>
-            <td>
-              {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->profile}">{USERS->displayname}</a>{IF USERS->flag}</em></strong>{/IF}
-            </td>
-            <td>
-              {IF USERS->disabled}
-                {USERS->statustext}
-              {ELSE}
-                <select name="status[{USERS->userid}]">
-                  {LOOP STATUS_OPTIONS}
-                    <?php
-                    // to get around a minor templating problem, we'll figure
-                    // out if we have this line selected here
-                    $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']['value'] == $PHORUM['TMP']['USERS']['status']);
-                    ?>
-                    <option value="{STATUS_OPTIONS->value}"{IF STATUS_OPTIONS->selected} selected="selected"{/IF}>{STATUS_OPTIONS->name}</option>
-                  {/LOOP STATUS_OPTIONS}
-                </select>
-              {/IF}
-            </td>
-          </tr>
-        {/LOOP USERS}
-        <tr>
-          <td colspan="2"><input type="submit" value="{LANG->SaveChanges}" /></td>
-        </tr>
-      </table>
-    </form>
-  </div>
+        {IF USERS}
+            <form method="post" action="{GROUP->url}">
+                <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+                <table class="list" cellspacing="0" border="0">
+                    <tr>
+                        <th>{LANG->Username}</th>
+                        <th>{LANG->MembershipType}</th>
+                    </tr>
+                    {LOOP USERS}
+                        <tr>
+                            <td>
+                                {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->profile}">{USERS->displayname}</a>{IF USERS->flag}</em></strong>{/IF}
+                            </td>
+                            <td>
+                                {IF USERS->disabled}
+                                    {USERS->statustext}
+                                {ELSE}
+                                    <select name="status[{USERS->userid}]">
+                                        {LOOP STATUS_OPTIONS}
+                                            <?php
+                                            // to get around a minor templating problem, we'll figure
+                                            // out if we have this line selected here
+                                            $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']['value'] == $PHORUM['TMP']['USERS']['status']);
+                                            ?>
+                                            <option value="{STATUS_OPTIONS->value}"{IF STATUS_OPTIONS->selected} selected="selected"{/IF}>{STATUS_OPTIONS->name}</option>
+                                        {/LOOP STATUS_OPTIONS}
+                                    </select>
+                                {/IF}
+                            </td>
+                        </tr>
+                    {/LOOP USERS}
+                </table>
+                <input type="submit" value="{LANG->SaveChanges}" />
+            </form>
+        {ELSE}
+            {LANG->NoUserMatchFilter}
+        {/IF}
+    </div>
+
 {ELSE}
-  <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->SelectGroupMod}</div>
-  <div class="PhorumStdBlock" style="text-align: left;">
-    <table class="PhorumFormTable" cellspacing="0" border="0">
-      {LOOP GROUPS}
-        <tr>
-          <td><a href="{GROUPS->url}">{GROUPS->name}</a></td>
-          <td><a href="{GROUPS->unapproved_url}">{GROUPS->unapproved} {LANG->Unapproved}</a></td>
-        </tr>
-      {/LOOP GROUPS}
-    </table>
-  </div>
+    <div class="generic">
+        <h4>{LANG->SelectGroupMod}</h4>
+        <br />
+        <dl>
+            {LOOP GROUPS}
+                <dt><a href="{GROUPS->url}">{GROUPS->name}</a></dt>
+                <dd>
+                    {IF GROUPS->unapproved}
+                        <a href="{GROUPS->unapproved_url}">{GROUPS->unapproved} {LANG->Unapproved}</a>
+                    {ELSE}
+                        {LANG->NoUnapprovedUsers}
+                    {/IF}
+                </dd>
+            {/LOOP GROUPS}
+        </dl>
+    </div>
 {/IF}

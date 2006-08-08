@@ -12,11 +12,12 @@
 {/IF}
 
 <div class="generic">
-    <table border="0" cellspacing="0">
+    <table border="0" cellspacing="0" class="form-table">
         <tr>
             <td width="50%" valign="top">
+
                 <h4>{LANG->LoginTitle}</h4>
-                <form action="{URL->ACTION}" method="post" style="display: inline;">
+                <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
                     <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />
                     <input type="hidden" name="redir" value="{LOGIN->redir}" />
@@ -28,10 +29,11 @@
                     <br />
                     <input type="submit" value="{LANG->Submit}" />
                 </form>
+
             </td>
             <td width="50%" valign="top">
                 <h4>{LANG->LostPassword}</h4>
-                <form action="{URL->ACTION}" method="post" style="display: inline;">
+                <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
                     <input type="hidden" name="lostpass" value="1" />
                     <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />

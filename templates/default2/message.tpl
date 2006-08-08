@@ -1,7 +1,7 @@
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
-{IF MESSAGE}
+{IF OKMSG}
     <div class="information">
-        {MESSAGE}
+        {OKMSG}
         {IF URL->CLICKHERE}
             <p><a href="{URL->CLICKHERE}">{CLICKHEREMSG}</a></p>
         {/IF}

@@ -162,7 +162,7 @@ phorum_db_load_settings();
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
-include_once( "./include/cache.php" );
+include_once( "./include/cache_memcached.php" );
 
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
@@ -586,7 +586,7 @@ function phorum_get_url()
                 $page = "report";
                 $add_forum_id = true;
                 break;
-            case PHORUM_RSS_URL:
+            case PHORUM_FEED_URL:
                 switch(phorum_page){
                     case "list":
                         $add_forum_id = true;
@@ -597,7 +597,7 @@ function phorum_get_url()
                         array_push($argv, $thread_id);
                         break;
                 }
-                $page = "rss";
+                $page = "feed";
                 break;
             // this is for adding own generic urls
             case PHORUM_CUSTOM_URL:
@@ -737,7 +737,13 @@ function phorum_build_common_urls()
     // RSS-Url only makes sense on a couple of pages
     if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']
         && (phorum_page=="index" || phorum_page=="list" || phorum_page=="read")){
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["RSS"] = phorum_get_url( PHORUM_RSS_URL );
+        if($PHORUM["default_feed"]=="RSS"){
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=rss" );
+            $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["RSS"];
+        } else {
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=atom" );
+            $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["ATOM"];
+        }
     }
 
     $index_id=-1;

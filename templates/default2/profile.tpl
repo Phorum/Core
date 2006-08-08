@@ -1,48 +1,56 @@
-<div align="center">
-  <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
-    <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->TOP}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE "loginout_menu"}
-  </div>
-  <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">
-    {LANG->UserProfile}&nbsp;:&nbsp;{PROFILE->username}
-    {IF ENABLE_PM}
-      {IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}
+<div class="nav">
+    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->LIST}
+        <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     {/IF}
-  </div>
-  <div class="PhorumStdBlock PhorumNarrowBlock" style="text-align: left;">
-    <table cellspacing="0" border="0">
-      <tr>
-        <td nowrap="nowrap">{LANG->Email}:&nbsp;</td>
-        <td>{PROFILE->email}</td>
-      </tr>
-      {IF PROFILE->real_name}
-        <tr>
-          <td nowrap="nowrap">{LANG->RealName}:&nbsp;</td>
-          <td>{PROFILE->real_name}</td>
-        </tr>
-      {/IF}
-      {IF PROFILE->posts}
-        <tr>
-          <td nowrap="nowrap">{LANG->Posts}:&nbsp;</td>
-          <td>{PROFILE->posts}</td>
-        </tr>
-      {/IF}
-      {IF PROFILE->date_added}
-        <tr>
-          <td nowrap="nowrap">{LANG->DateReg}:&nbsp;</td>
-          <td>{PROFILE->date_added}</td>
-        </tr>
-      {/IF}
-      {IF PROFILE->date_last_active}
-        <tr>
-          <td nowrap="nowrap">{LANG->DateActive}:&nbsp;</td>
-          <td>{PROFILE->date_last_active}</td>
-        </tr>
-      {/IF}
-    </table>
-  </div>
-  {IF ENABLE_PM}
-    <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
-      <span class="PhorumNavHeading">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{PROFILE->pm_url}">{LANG->SendPM}</a>{IF NOT PROFILE->is_buddy}&bull;<a class="PhorumNavLink" href="{PROFILE->pm_addbuddy_url}">{LANG->BuddyAdd}</a>{/IF}
-    </div>
-  {/IF}
 </div>
+
+<div id="profile">
+
+    <div class="generic">
+
+        <div class="icon-user">
+            {PROFILE->username}
+            {IF LOGGEDIN}
+                {IF ENABLE_PM}
+                    <small>    
+                        {IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}
+                        [ <a href="{PROFILE->URL->PM}">{LANG->SendPM}</a> ]
+                        {IF NOT PROFILE->is_buddy}
+                            [ <a href="{PROFILE->URL->ADD_BUDDY}">{LANG->BuddyAdd}</a> ]
+                        {/IF}
+                        [ <a href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a> ]
+                    </small>
+                {/IF}
+            {/IF}
+         </div>
+
+         <dl>
+
+            <dt>{LANG->Email}:</dt>
+            <dd>{PROFILE->email}</dd>
+
+            {IF PROFILE->real_name}
+                <dt>{LANG->RealName}:</dt>
+                <dd>{PROFILE->real_name}</dd>
+            {/IF}
+            
+            {IF PROFILE->posts}
+                <dt>{LANG->Posts}:&nbsp;</dt>
+                <dd>{PROFILE->posts}</dd>
+            {/IF}
+            {IF PROFILE->date_added}
+                <dt>{LANG->DateReg}:&nbsp;</dt>
+                <dd>{PROFILE->date_added}</dd>
+            {/IF}
+            {IF PROFILE->date_last_active}
+                <dt>{LANG->DateActive}:&nbsp;</dt>
+                <dd>{PROFILE->date_last_active}</dd>
+            {/IF}
+            
+        </dl>
+            
+    </div>
+    
+</div>
+

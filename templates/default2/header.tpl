@@ -17,8 +17,8 @@
     <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="print" />
 {/IF}
-{IF URL->RSS}
-    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{URL->RSS}" />
+{IF URL->FEED}
+    <link rel="alternate" type="application/rss+xml" title="{FEED}" href="{URL->FEED}" />
 {/IF}
 {IF URL->REDIRECT}
     <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
@@ -71,6 +71,9 @@ Some Icons courtesy of:
 {ELSEIF PHORUM_PAGE "pm"}
     {! This is the control center }
     <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->PM}">{LANG->PrivateMessages}</a> &gt;
+{ELSEIF PHORUM_PAGE "search"}
+    {! This is the control center }
+    <a href="{URL->INDEX}">{TITLE}</a> &gt;
 {ELSEIF TOPIC->subject}
     {! This is a read page }
     <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->LIST}">{NAME}</a> &gt;
@@ -135,5 +138,7 @@ Some Icons courtesy of:
 </div>
 {/IF}
 
-{INCLUDE "paging"}
+{IF PHORUM_PAGE != "search"}
+    {INCLUDE "paging"}
+{/IF}
 

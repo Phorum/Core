@@ -18,7 +18,7 @@
 </form>
 
 {IF subscriptions}
-    <form action="{URL->ACTION}" method="POST">
+    <form action="{URL->ACTION}" method="POST" id="phorum-sub-list">
         {POST_VARS}
         <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
         <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
@@ -26,7 +26,21 @@
 
         <table cellspacing="0" class="list">
             <tr>
-                <th align="left" nowrap="nowrap">{LANG->Delete}</th>
+                <th align="left" nowrap="nowrap">
+                    <script type="text/javascript">
+                        function checkAll() {
+                            var lf=document.getElementById('phorum-sub-list');
+                            for (var i=0;i<lf.elements.length;i++) {
+                                var elt=lf.elements[i];
+                                if (elt.type=='checkbox' && elt.name!='toggle') {
+                                    elt.checked = document.getElementById('toggle').checked;
+                                }
+                            }
+                        }
+                        document.write ( '<input type="checkbox" name="toggle" id="toggle" onclick="checkAll()" />' );
+                    </script>
+                    {LANG->Delete}
+                </th>
                 <th align="left">{LANG->Subject}</th>
                 <th align="left" nowrap="nowrap">{LANG->Author}</th>
                 <th align="left" nowrap="nowrap">{LANG->LastPost}</th>

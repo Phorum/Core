@@ -236,10 +236,11 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
         $user_ids = $user_id;
     }
 
+    $cache_users=array();
+    $tmp_users=array();
+    $cachecnt=0;
+    
     if ( count( $user_ids ) ) {
-        $cache_users=array();
-        $tmp_users=array();
-        $cachecnt=0;
 
         // get users from cache if enabled
         if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
