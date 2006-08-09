@@ -276,7 +276,7 @@
         "Months"                =>      "Months",
         "MoreMatches"           =>      "More Matches",
         "MoveAnnouncementForbidden" => "Announcement topics cannot be moved.",
-        "MovedSubject"          =>      "Moved",
+        "MovedSubject"          =>      "This topic has been moved.",
         "MovedMessage"          =>      "This topic has been moved. You will be redirected to its current location.",
         "MovedMessageTo"        =>      "To the current location of this topic.",
         "MoveNotification"      =>      "Leave behind a move notification",

@@ -289,6 +289,7 @@ if($PHORUM['cache_messages']) {
     $data = phorum_db_get_messages($thread,$page);
 }
 
+
 if($page>1 && !isset($data[$thread])){
     $first_message = phorum_db_get_message($thread);
     $data["users"][]=$first_message["user_id"];
@@ -562,6 +563,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     if($PHORUM["threaded_read"]) {
+
+        // set up MESSAGE template var
+        $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
+
         // don't move this up.  We want it to be conditional.
         include_once("./include/thread_sort.php");
 
@@ -613,14 +618,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // set up the data
 
     // this is the message that is the first in the thread
-
     $PHORUM["DATA"]["TOPIC"] = $messages[$thread];
     if($page>1){
         unset($messages[$thread]);
     }
-
-    // this is the message that was referenced by the message_id in the url
-    $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
 
     // this is all messages on the page
     $PHORUM["DATA"]["MESSAGES"] = $messages;

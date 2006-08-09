@@ -53,27 +53,47 @@
     {/IF}
 
     <tr>
-    <td width="1%" class="{altclass}"><a href="{MESSAGES->URL->READ}" title="{title}"><img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" /></a></td>
-    <td width="59%" class="{altclass}">
-        <h4>
-            <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
-            {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
-            {IF MESSAGES->pages}&nbsp;<small>&nbsp;({LANG->Pages}:&nbsp;{MESSAGES->pages})</small>{/IF}
-        </h4>
-        {LANG->by} {MESSAGES->linked_author}
-      </td>
-      {IF VIEWCOUNT_COLUMN}
-        <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
-      {/IF}
-      <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
-      <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}</td>
-      {IF MODERATOR true}
-      <td width="1%" class="{altclass}" nowrap="nowrap">
-            <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
-            <a title="{LANG->MergeThread}" href="{MESSAGES->URL->MERGE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/arrow_join.png" width="16" height="16" alt="{LANG->MergeThread}" border="0" /></a>
-            <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>
-      </td>
-      {/IF}
+
+        <td width="1%" class="{altclass}"><a href="{MESSAGES->URL->READ}" title="{title}"><img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" /></a></td>
+        <td width="59%" class="{altclass}">
+            <h4>
+                <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
+                {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
+                {IF MESSAGES->pages}&nbsp;<small>&nbsp;({LANG->Pages}:&nbsp;{MESSAGES->pages})</small>{/IF}
+            </h4>
+            {LANG->by} {MESSAGES->linked_author}
+        </td>
+        
+        {IF VIEWCOUNT_COLUMN}
+            <td width="12%" align="center" class="{altclass}" nowrap="nowrap">
+                {IF MESSAGES->moved}
+                    &nbsp;
+                {ELSE}
+                    {MESSAGES->viewcount}
+                {/IF}
+            </td>
+        {/IF}
+
+        {IF MESSAGES->moved}    
+            <td colspan="2" width="30%" align="center" class="{altclass}" nowrap="nowrap">{LANG->MovedSubject}</td>
+        {ELSE}
+        
+            <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
+            <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}</td>
+            
+        {/IF}
+        
+        {IF MODERATOR true}
+            <td width="1%" class="{altclass}" nowrap="nowrap">
+                {IF MESSAGES->moved}    
+                    &nbsp;
+                {ELSE}
+                    <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
+                    <a title="{LANG->MergeThread}" href="{MESSAGES->URL->MERGE}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/arrow_join.png" width="16" height="16" alt="{LANG->MergeThread}" border="0" /></a>
+                    <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>
+                {/IF}
+            </td>
+        {/IF}
 
     </tr>
   {/LOOP MESSAGES}

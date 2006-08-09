@@ -130,15 +130,15 @@ Some Icons courtesy of:
 </div>
    
 {IF USER->NOTICE->SHOW}
-<div class="attention">
-<h4>{LANG->NeedsAttention}</h4>
-{IF USER->NOTICE->MESSAGES}<a class="icon icon-table-add" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
-{IF USER->NOTICE->USERS}<a class="icon icon-user-add" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
-{IF USER->NOTICE->GROUPS}<a class="icon icon-group-add" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
-</div>
+    <div class="attention">
+        <h4>{LANG->NeedsAttention}</h4>
+        {IF USER->NOTICE->MESSAGES}<a class="icon icon-table-add" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
+        {IF USER->NOTICE->USERS}<a class="icon icon-user-add" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
+        {IF USER->NOTICE->GROUPS}<a class="icon icon-group-add" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
+    </div>
 {/IF}
 
-{IF PHORUM_PAGE != "search"}
+{IF NOT PHORUM_PAGE "search"}
     {INCLUDE "paging"}
 {/IF}
 
