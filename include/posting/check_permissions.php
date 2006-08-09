@@ -24,14 +24,14 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
     ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) { 
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
         // If users are logged in and can't post, they don't have rights to do so.
-        $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
     } else {
         // Check if they could post if logged in. If so, let them know to log in.
         if( ($mode == "reply" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_REPLY) ||
             ($mode == "post" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_NEW_TOPIC) ) {
-            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PleaseLoginPost"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginPost"];
         } else {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
     }
     $error_flag = true;
@@ -53,7 +53,7 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
         
         $PHORUM["DATA"]["URL"]["REDIRECT"] = $url;
         $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["LogIn"];
-        $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
         $error_flag = true;
         return;
 
@@ -141,7 +141,7 @@ if ($mode == "reply")
         // Else a moderator can never read an unapproved message.
         if (isset($PHORUM["postingargs"]["as_include"])) {
             if ($PHORUM["DATA"]["MODERATOR"]) {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["UnapprovedMessage"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UnapprovedMessage"];
                 $error_flag = true;
                 return;
             }
@@ -177,8 +177,7 @@ if ($mode == "edit")
          $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"]);
 
     if (!$useredit && !$moderatoredit) {
-        $PHORUM["DATA"]["MESSAGE"] =
-            $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
         $error_flag = true;
         return;
     }

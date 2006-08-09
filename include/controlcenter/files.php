@@ -25,7 +25,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
 
         if($PHORUM["max_file_size"]>0 && $_FILES["newfile"]["size"]>$PHORUM["max_file_size"]*1024){
             $error_msg = true;
-            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["FileTooLarge"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileTooLarge"];
         }
 
         if(!empty($PHORUM["file_types"])){
@@ -33,13 +33,13 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
             $allowed_exts=explode(";", $PHORUM["file_types"]);                
             if(!in_array($ext, $allowed_exts)){
                 $error_msg = true;
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["FileWrongType"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileWrongType"];
             }
         }
 
         if($PHORUM["file_space_quota"]>0 && phorum_db_get_user_filesize_total($PHORUM["user"]["user_id"])+$_FILES["newfile"]["size"]>=$PHORUM["file_space_quota"]*1024){
             $error_msg = true;
-            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["FileOverQuota"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileOverQuota"];
         }
 
         if(empty($error_msg)){
@@ -98,7 +98,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
 } else {
     $template = "message";
 
-    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["UploadNotAllowed"];
+    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UploadNotAllowed"];
 } 
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMyFiles"];

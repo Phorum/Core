@@ -166,7 +166,7 @@ if ($message["user_id"])
     }
 }
 
-$PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["MsgModEdited"];
+$PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["MsgModEdited"];
 $PHORUM['DATA']["BACKMSG"] = $PHORUM['DATA']["LANG"]["BackToThread"];
 $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(
     PHORUM_READ_URL,

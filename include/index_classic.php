@@ -89,7 +89,7 @@ if(!$forums_shown){
     // set all our URL's
     phorum_build_common_urls();
     unset($PHORUM["DATA"]["URL"]["TOP"]);
-    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoForums"];
+    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoForums"];
 
     include phorum_get_template( "header" );
     phorum_hook( "after_header" );

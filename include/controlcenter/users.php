@@ -52,7 +52,7 @@ if(!empty($_POST["user_ids"])){
 }
 
 if(empty($users)){
-    $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoUnapprovedUsers"];
+    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoUnapprovedUsers"];
 } else {
 
     // get a fresh list to update any changes

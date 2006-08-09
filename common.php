@@ -420,14 +420,14 @@ function phorum_check_read_common()
     if ( $PHORUM["forum_id"] > 0 && !$PHORUM["folder_flag"] && !phorum_user_access_allowed( PHORUM_USER_ALLOW_READ ) ) {
         if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
             // if they are logged in and not allowed, they don't have rights
-            $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoRead"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
         } else {
             // check if they could read if logged in.
             // if so, let them know to log in.
             if ( ( empty( $PHORUM["DATA"]["POST"]["parentid"] ) && $PHORUM["reg_perms"] &PHORUM_USER_ALLOW_READ ) ) {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["PleaseLoginRead"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginRead"];
             } else {
-                $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoRead"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
             }
         }
 
