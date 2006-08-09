@@ -76,7 +76,7 @@ foreach( $folders as $folder_key=>$folder_id ) {
         }
 
         $forum["url"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
-        $forum["url_markread"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
+        $forum["url_markread"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread", $PHORUM['forum_id'] );
         if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']) {
             $forum["url_rss"] = phorum_get_url( PHORUM_RSS_URL, $forum["forum_id"] );
         }
