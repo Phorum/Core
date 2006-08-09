@@ -30,8 +30,10 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
         if( ($mode == "reply" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_REPLY) ||
             ($mode == "post" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_NEW_TOPIC) ) {
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginPost"];
+            $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
+            $PHORUM["DATA"]["URL"]["CLICKHERE"] = phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir");
         } else {
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
     }
     $error_flag = true;
