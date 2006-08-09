@@ -2820,7 +2820,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
 
     if($read_msgs["min_id"]==0) return array(0,0);
 
-    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
+    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},{$PHORUM['vroot']}) and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
 
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query( $conn, $sql);
@@ -2830,7 +2830,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
     $tmp_row=mysqli_fetch_row($res);
     $counts[] = $tmp_row[0];
 
-    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},0) and parent_id=0 and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
+    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},{$PHORUM['vroot']}) and parent_id=0 and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
 
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query( $conn, $sql);
