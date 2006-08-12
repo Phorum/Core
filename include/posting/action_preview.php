@@ -23,7 +23,7 @@ $previewmessage = $message;
 // Add the user's signature to the message body.
 if (isset($message["user_id"]) && !empty($message["user_id"])) {
     $user = phorum_user_get($message["user_id"]);
-    if ($user && isset($user["show_signature"]) && $user["show_signature"]) {
+    if ($user && $message["show_signature"]) {
         $previewmessage["body"] .= "\n\n" . $user["signature"];
     }
 }
