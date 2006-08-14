@@ -990,14 +990,21 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
     if (substr($message["subject"], 0, 3) != "Re:") {
         $message["subject"] = "Re: ".$message["subject"];
     }
+    
+    $quote = phorum_hook("quote", array($orig_author, $message["message"]));
 
-    // Build a quoted version of the message body.
-    $quote = phorum_strip_body($message["message"]);
-    $quote = str_replace("\n", "\n> ", $quote);
-    $quote = wordwrap(trim($quote), 50, "\n> ", true);
-    $quote = ($inreplyto != NULL ? "{$PHORUM['DATA']['LANG']['InReplyTo']} {$inreplyto}\n" : '') .
-             "$orig_author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
-             str_repeat("-", 55)."\n> {$quote}\n\n\n";
+    if (empty($quote) || is_array($quote))
+    {
+        // Build a quoted version of the message body.
+        $quote = phorum_strip_body($message["message"]);
+        $quote = str_replace("\n", "\n> ", $quote);
+        $quote = wordwrap(trim($quote), 50, "\n> ", true);
+        $quote = "$orig_author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
+                 str_repeat("-", 55)."\n> {$quote}\n\n\n";
+    }
+        
+    $quote = ($inreplyto != NULL ? "{$PHORUM['DATA']['LANG']['InReplyTo']} {$inreplyto}\n\n" : '') . $quote;
+
     $message["message"] = $quote;
 
     return $message;
