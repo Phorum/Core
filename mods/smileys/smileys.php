@@ -10,7 +10,7 @@ function phorum_mod_smileys_after_header()
 
     // Return immediately if we have no active smiley replacements.
     if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
-        return $data;
+        return;
     } ?>
 
     <style type="text/css">
