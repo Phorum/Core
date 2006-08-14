@@ -583,7 +583,7 @@ function phorum_get_url()
     // build the query string
     $query_items = array();
 
-    if ( $add_forum_id ) {
+    if ( $add_forum_id && $PHORUM["forum_id"]>0 ) {
         $query_items[] = ( int )$PHORUM["forum_id"];
     }
 
