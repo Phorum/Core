@@ -105,11 +105,11 @@ function phorum_bb_code($data)
 
             }
 
+            // convert bare email addresses into bbcode tags as best we can.
+            $body = preg_replace("/(^|[\s])([a-z0-9][a-z0-9\-_\.\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[a-z0-9])([\?\!\.,;:\s]|$)/i", "$1[email]$2[/email]$3", $body);
+
             // no sense doing any of this if there is no [ in the body
             if(strstr($body, "[")){
-
-                // convert bare email addresses into bbcode tags as best we can.
-                $body = preg_replace("/(^|[\s])([a-z0-9][a-z0-9\-_\.\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[a-z0-9])([\?\!\.,;:\s]|$)/i", "$1[email]$2[/email]$3", $body);
 
                 // clean up any BB code we stepped on.
                 // Most probably not needed anymore, due to some changes in
