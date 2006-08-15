@@ -1466,6 +1466,20 @@ Table of contents:
    contained.
 
    ----------------------------------------------------------------------------
+   posting_init
+
+   Where  : posting.php
+   When   : Right after the posting.php script's configuration setup and
+            before starting the posting script processing.
+   Input  : none
+   Output : none
+
+   This hook can be used for doing modifications to the environment 
+   of the posting scripts at an early stage. One of the intended purposes
+   of this hook is to give mods a chance to change the configuration
+   of the posting fields in $PHORUM["posting_fields"].
+
+   ----------------------------------------------------------------------------
    posting_permission
 
    Where  : posting.php
