@@ -79,6 +79,11 @@ foreach ($message["attachments"] as $info)
 {
     if ($info["keep"])
     {
+        // Because there might be inconsistencies in the list due to going
+        // backward in the browser after deleting attachments, a check is
+        // needed to see if the attachments are really in the database.
+        if (! phorum_db_file_get($info["file_id"])) continue;
+
         $dbmessage["meta"]["attachments"][] = array(
             "file_id" => $info["file_id"],
             "name"    => $info["name"],
