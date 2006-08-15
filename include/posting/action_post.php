@@ -95,10 +95,12 @@ $message["msgid"] = md5(uniqid(rand())) . ".$suffix";
 // Run pre post mods.
 $message = phorum_hook("pre_post", $message);
 
-// Add attachments to meta data.
+// Add attachments to meta data. Because there might be inconsistencies in
+// the list due to going backward in the browser after deleting attachments,
+// a check is needed to see if the attachments are really in the database.
 $message["meta"]["attachments"] = array();
 foreach ($message["attachments"] as $info) {
-    if ($info["keep"]) {
+    if ($info["keep"] && phorum_db_file_get($info["file_id"])) {
         $message["meta"]["attachments"][] = array(
             "file_id"   => $info["file_id"],
             "name"      => $info["name"],
