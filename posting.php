@@ -152,6 +152,10 @@ define("READONLYFIELDS", true);
 // Gather information about the editor state and start processing
 // ----------------------------------------------------------------------
 
+// A hook, so mods can do early environment modifications
+// (for example for changing the $PHORUM["post_field"] configuration).
+phorum_hook("posting_init", "");
+
 // Is this an initial request?
 $initial = ! isset($_POST["message_id"]);
 
