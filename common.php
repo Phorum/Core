@@ -158,6 +158,18 @@ if(!phorum_db_check_connection()){
 // get the Phorum settings
 phorum_db_load_settings();
 
+// If we have no private key for signing data, generate one now.
+if (! isset($PHORUM["private_key"]) || empty($PHORUM["private_key"])) {
+   $chars = "0123456789!@#$%&abcdefghijklmnopqr".
+            "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   $private_key = "";
+   for ($i = 0; $i<40; $i++) {
+       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
+   }
+   $PHORUM["private_key"] = $private_key;
+   phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
+}
+
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
@@ -833,6 +845,33 @@ function print_var( $var )
     echo "<xmp>";
     print_r( $var );
     echo "</xmp>";
+}
+
+/** 
+ * Generates an MD5 signature for a piece of data using Phorum's secret
+ * private key. This can be used to sign data which travels an unsafe path
+ * (for example data that is sent to a user's browser and then back to
+ * Phorum) and for which tampering should be prevented.
+ *
+ * @param $data The data to sign.
+ * @return $signature The signature for the data.
+ */
+function phorum_generate_data_signature($data)
+{
+   $signature = md5($data . $PHORUM["private_key"]);
+   return $signature;
+}
+
+/**
+ * Checks whether the signature for a piece of data is valid.
+ *
+ * @param $data The signed data.
+ * @param $signature The signature for the data.
+ * @return True in case the signature is okay, false otherwise.
+ */
+function phorum_check_data_signature($data, $signature)
+{
+    return md5($data . $PHORUM["private_key"]) == $signature;
 }
 
 ?>
