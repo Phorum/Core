@@ -47,6 +47,16 @@ if(empty($file)){
     exit();
 }
 
+// Security check: is the file linked to a forum message and 
+// does the file belong to the current forum?
+if ($file["link"] == PHORUM_LINK_MESSAGE && isset($file["message_id"])) {
+    $message = phorum_db_get_message($file["message_id"]);
+    if (! $message || $message["forum_id"] != $PHORUM["forum_id"]) {
+        phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+        exit();
+    }
+}
+
 $send_file=true;
 
 // check if this phorum allows off site links and if not, check the referrer
