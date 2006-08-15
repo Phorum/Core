@@ -111,6 +111,17 @@ if ( count( $_POST ) ) {
                 $_POST[$field] = strtolower( $value );
 
                 break;
+
+            case "private_key":
+
+                $private_key = trim($value);
+                if (strlen($private_key) < 30) {
+                    $error = "Use at least 30 characters for the secret private key.";
+                }
+                $_POST[$field] = $private_key;
+                break;
+
+
             case "cache_users":
 
             case "cache_messages":
@@ -180,6 +191,9 @@ $row=$frm->addrow( "Reply form appears", $frm->select_tag( "reply_on_read_page",
 $row=$frm->addrow( "After posting goto", $frm->select_tag( "redirect_after_post", array( "list"=>"Message List Page", "read"=>"Message Read Page" ), $PHORUM["redirect_after_post"] ) );
 
 $row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
+
+$row=$frm->addrow( "Secret private key for signing data", $frm->text_box("private_key", $PHORUM["private_key"], 50) );
+$frm->addhelp($row, "Secret key for signing data", "On several occasions, data is transferred from the Phorum system to the user's system and back again. To be sure that there was no tampering with this data on the way, it is signed by Phorum using this secret key. If you do not understand what this is for, then it is safe to simply keep the pre-configured value.<br/><br/><b>Warning:</b> if you change this key, users who are active right now might experience problems.");
 
 $frm->addbreak( "HTML Settings" );
 
