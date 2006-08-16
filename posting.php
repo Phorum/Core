@@ -103,45 +103,87 @@ $valid_modes = array(
     "moderation", // Edit a message in moderator modus
 );
 
+// Form field configuration:
+// -------------------------
+//
 // Configuration that we use for fields that we use in the editor form.
-// Format for the array elements:
-// [0] The type of field (string, integer, boolean, array).
+// The format for the array elements is:
+//
+// [0] The type of field. One of: string, integer, boolean, array.
 // [1] Whether the value must be included as a hidden form field
-//     if the field is read-write flagged. So this is used for
-//     identifying values which are always implemented  as a
-//     hidden form fields.
-// [2] Whether the field is read-only or not. Within the editing process,
+//     This is used for identifying values which are always implemented
+//     as hidden form fields.
+// [2] Whether the field is read-only or not. If a field is marked to be
+//     read-only, then the posting scripts will always use the field data
+//     that is stored in the database for the edited message, regardless
+//     what field data the client sent. Within the editing process,
 //     this parameter can be changed to make the field writable.
-//     (for example if a moderator is editing a message).
-// [3] A default value to initialize the form field with.
+//     (for example if a moderator is editing a message, some fields 
+//     become writable).
+//     Put otherwise: client side read-only, server side read-only.
+// [3] Whether to sign the field data. If this field is set to a true
+//     value, then the data that is sent to the user is signed by Phorum.
+//     When the data is sent back to Phorum, the signature is checked, to
+//     see if the data did not change. This can be used for preventing
+//     tampering with form data for fields that cannot be edited by the
+//     user, but which can be edited by the Phorum software and modules.
+//     Put otherwise: client side read-only, server side writable.
+// [4] A default value to initialize the form field with.
+//
+// Common combinations for fields 1, 2 and 3:
+//
+// hidden r/o   signed   Description
+// ---------------------------------------------------------------------------
+// false  false false    A standard field that can always be edited. 
+//                       Typically, fields like subject and body use this.
+// true   true  false    Totally read-only fields that are put as hidden
+//                       fields in the message form. One could argue that
+//                       these fields could be left out of the form
+//                       completely, because the scripts will override this
+//                       data with actual data from the database.
+// false  true  false    Totally read-only fields that are not put in
+//                       hidden fields in the message form. The templates
+//                       might still display the field data.
+// true   false true     Fields for which the data is put signed in hidden
+//                       fields. These fields can be used for safely
+//                       maintaining state between requests, by putting the
+//                       state data directly in the form. The signing prevents
+//                       tampering with the data by the user. An example
+//                       field for this setup is the "meta" field, which
+//                       carries the message's meta data. The user cannot
+//                       directly change this field's data, but Phorum and
+//                       modules can.
 //
 $PHORUM["post_fields"] = array(
-    "message_id"     => array("integer",  true,   true,  0),
-    "user_id"        => array("integer",  true,   true,  0),
-    "datestamp"      => array("string",   true,   true,  ''),
-    "status"         => array("integer",  false,  true,  0),
-    "author"         => array("string",   false,  true,  ''),
-    "email"          => array("string",   false,  true,  ''),
-    "subject"        => array("string",   false,  false, ''),
-    "body"           => array("string",   false,  false, ''),
-    "forum_id"       => array("integer",  true,   true,  $PHORUM["forum_id"]),
-    "thread"         => array("integer",  true,   true,  0),
-    "parent_id"      => array("integer",  true,   true,  0),
-    "allow_reply"    => array("boolean",  false,  true,  1),
-    "special"        => array("string",   false,  true,  ''),
-    "email_notify"   => array("boolean",  false,  false, 0),
-    "show_signature" => array("boolean",  false,  false, 0),
-    "attachments"    => array("array",    true,   true,  array()),
-    "meta"           => array("array",    true,   true,  array()),
-    "thread_count"   => array("integer",  true,   true,  0),
-    "mode"           => array("string",   true,   true,  ''),
+# field name              data type  hidden r/o    signed default
+#---------------------------------------------------------------
+"message_id"     => array("integer", true,  false, true,  0),
+"user_id"        => array("integer", true,  true,  false, 0),
+"datestamp"      => array("string",  true,  true,  false, ''),
+"status"         => array("integer", false, true,  false, 0),
+"author"         => array("string",  false, true,  false, 0),
+"email"          => array("string",  false, true,  false, ''),
+"subject"        => array("string",  false, false, false, ''),
+"body"           => array("string",  false, false, false, ''),
+"forum_id"       => array("integer", true,  true,  false, $PHORUM["forum_id"]),
+"thread"         => array("integer", true,  true,  false, 0),
+"parent_id"      => array("integer", true,  true,  false, 0),
+"allow_reply"    => array("boolean", false, true,  false, 1),
+"special"        => array("string",  false, true,  false, ''),
+"email_notify"   => array("boolean", false, false, false, 0),
+"show_signature" => array("boolean", false, false, false, 0),
+"attachments"    => array("array",   true,  false, true,  array()),
+"meta"           => array("array",   true,  false, true,  array()),
+"thread_count"   => array("integer", true,  true,  false, 0),
+"mode"           => array("string",  true,  true,  false, ''),
 );
 
 // Indices for referencing the fields in $post_fields.
 define("pf_TYPE",     0);
 define("pf_HIDDEN",   1);
 define("pf_READONLY", 2);
-define("pf_INIT",     3);
+define("pf_SIGNED",   3);
+define("pf_INIT",     4);
 
 // Definitions for a clear $apply_readonly parameter in
 // the function phorum_posting_merge_db2form().
@@ -474,20 +516,32 @@ if (! $error_flag && !isset($PHORUM["DATA"]["MESSAGE"]))
     // Create hidden form field code. Fields which are read-only are
     // all added as a hidden form fields in the form. Also the fields
     // for which the pf_HIDDEN flag is set will be added to the
-    // hidden fields.
+    // hidden fields. Also add signing data for all fields that
+    // need signing.
     $hidden = "";
     foreach ($PHORUM["post_fields"] as $var => $spec)
     {
+        $signval = NULL;
         if ($var == "mode") {
             $val = $mode;
+            if ($spec[pf_SIGNED]) $signval = $mode;
         } elseif ($spec[pf_TYPE] == "array") {
             $val = htmlspecialchars(serialize($message[$var]));
+            if ($spec[pf_SIGNED]) $signval = serialize($message[$var]);
         } else {
             $val = htmlentities($message[$var], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+            if ($spec[pf_SIGNED]) $signval = $message[$var];
         }
+
         if ($spec[pf_READONLY] || $spec[pf_HIDDEN]) {
             $hidden .= '<input type="hidden" name="' . $var .  '" ' .
                        'value="' . $val . "\" />\n";
+        }
+
+        if ($signval !== NULL) {
+            $signature = phorum_generate_data_signature($signval);
+            $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
+                       'value="' . htmlspecialchars($signature) . "\" />\n";
         }
     }
     $PHORUM["DATA"]["POST_VARS"] .= $hidden;
