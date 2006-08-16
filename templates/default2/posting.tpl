@@ -170,8 +170,8 @@
                 <br />
             {/IF}
 
-            <small>{LANG->Message}:</small>
             {HOOK "tpl_editor_before_textarea"}
+            <small>{LANG->Message}:</small>
             <div id="post-body">
               <!-- fieldset is a work around for an MSIE rendering bug -->
               <fieldset>
