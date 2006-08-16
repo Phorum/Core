@@ -356,9 +356,9 @@ EOT;
                         $frm->addbreak('Custom Profile Fields');
                         $cf_header_shown=1;
                     }
-                    $itemval = trim($user[$item['name']]);
-                    if(empty($itemval)) {
-                        $itemval = "[EMPTY]";
+                    $itemval = "[EMPTY]";
+                    if (isset($user[$item['name']]) && trim($user[$item['name']]) != '') {
+                        $itemval = trim($user[$item['name']]);
                     }
                     $frm->addrow($item['name'],$itemval);
                 }
