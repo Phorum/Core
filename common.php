@@ -938,7 +938,7 @@ function print_var( $var )
  */
 function phorum_generate_data_signature($data)
 {
-   $signature = md5($data . $PHORUM["private_key"]);
+   $signature = md5($data . $GLOBALS["PHORUM"]["private_key"]);
    return $signature;
 }
 
@@ -951,7 +951,7 @@ function phorum_generate_data_signature($data)
  */
 function phorum_check_data_signature($data, $signature)
 {
-    return md5($data . $PHORUM["private_key"]) == $signature;
+    return md5($data . $GLOBALS["PHORUM"]["private_key"]) == $signature;
 }
 
 ?>
