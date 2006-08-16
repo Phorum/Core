@@ -27,6 +27,17 @@ $message = array();
 // putting the data in the right format in the data structure.
 foreach ($PHORUM["post_fields"] as $var => $spec)
 {
+    // Check the signature of signed fields.
+    if ($spec[pf_SIGNED]) {
+        $qvar = htmlspecialchars($var);
+        if (! isset($_POST["$var:signature"]))
+            die("Data signing error: signature for field $qvar is missing in the form data.");
+        if (! isset($_POST["$var"]))
+            die("Data signing error: field $qvar is missing in the form data.");
+        if (! phorum_check_data_signature($_POST["$var"], $_POST["$var:signature"]))
+            die("Data signing error: signature for field $qvar is wrong; there was probably tampered with the form data");
+    }
+
     // Format and store the data based on the configuration.
     switch ($spec[pf_TYPE])
     {
