@@ -349,6 +349,17 @@ EOT;
 
             $frm->addhelp($row, "Date last active", "This shows the date, when the user was last seen in the forum. Check your setting on \"Track user usage\" in the \"General Settings\". As long as this setting is not enabled, the activity will not be tracked.");
 
+            $cf_header_shown=0;
+            foreach($PHORUM["PROFILE_FIELDS"] as $key => $item){
+                if(isset($item['show_in_admin']) && !empty($item['show_in_admin'])) {
+                    if(!$cf_header_shown) {
+                        $frm->addbreak('Custom Profile Fields');
+                        $cf_header_shown=1;
+                    }
+                    $frm->addrow($item['name'],$user[$item['name']]);
+                }
+            }
+
 
             $frm->show();
 

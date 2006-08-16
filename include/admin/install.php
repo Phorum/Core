@@ -182,7 +182,7 @@
                 "use_rss" => "1",
                 "default_feed" => "rss",
                 "internal_version" => "" . PHORUMINTERNAL . "",
-                "PROFILE_FIELDS" => array(array('name'=>"real_name",'length'=> 255, 'html_disabled'=>1)),
+                "PROFILE_FIELDS" => array(array('name'=>"real_name",'length'=> 255, 'html_disabled'=>1,'show_in_admin'=>1)),
                 "enable_pm" => "1",
                 "user_edit_timelimit" => "0",
                 "enable_new_pm_count" => "1",
