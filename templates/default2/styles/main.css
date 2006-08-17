@@ -3,7 +3,6 @@
 
 #phorum {
     font-family: Arial;
-    font-size: medium;
     max-width: 900px;
 /*    text-align: left; */
     margin: auto;
@@ -29,7 +28,7 @@ img {
     background-image: url('../images/header_background.png');
     color: White;
     background-color: #4d894d; 
-    font-size: small;
+    font-size: 85%;
     padding: 5px;
 }
 
@@ -40,7 +39,7 @@ img {
 #phorum table.list td {
     padding: 8px;
     border-bottom: 1px solid #4d894d; 
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum table.list td.alt {
@@ -57,12 +56,11 @@ img {
 
 #phorum table.list td h3 {
     margin: 0;
-    font-size: medium;
 }
 
 #phorum table.list td h4 {
+    font-size: 115%;
     margin: 0;
-    font-size: medium;
     font-weight: normal;
 }
 
@@ -78,18 +76,17 @@ img {
     background-repeat: no-repeat;
     background-position: 1px 2px;
     padding: 4px 10px 2px 21px;
-    font-size: small;
     font-weight: normal;
 }
 
 #phorum h1 {
     margin: 5px 0 0 0;
-    font-size: x-large;
+    font-size: 145%;
 }
 
 #phorum h2 {
     margin: 0;
-    font-size: large;
+    font-size: 115%;
     font-weight: normal;
 }
 
@@ -118,7 +115,7 @@ img {
 
 #phorum div.paging {
     float: right;
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum div.paging a {
@@ -153,7 +150,7 @@ img {
 */
 
 #phorum div.nav {
-    font-size: small;
+    font-size: 85%;
     margin: 0 0 5px 0;
 }
 
@@ -206,7 +203,7 @@ img {
 }
 
 #phorum table.menu td.menu {
-    font-size: small;
+    font-size: 85%;
     padding: 0 8px 0 0;
 }
 
@@ -268,7 +265,6 @@ img {
 }
 
 #phorum textarea.body {
-    font-size: medium;
     font-family: Arial;
     width: 100%;
     border: 0; 
@@ -304,18 +300,18 @@ img {
 #phorum #description {
     margin: 8px 8px 0 0;
     padding-right: 32px;
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum #breadcrumb {
     border-bottom: 1px solid #b6b6b6;
     border-top: 0;
     padding: 5px;
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum #user-info {
-    font-size: small;
+    font-size: 85%;
     margin: 0 0 4px 0;
     text-align: right;
 }
@@ -337,7 +333,6 @@ img {
     margin: 0;
     padding: 0;
     display: inline;
-    font-size: x-small;
 }
 
 #phorum div.attention {
@@ -375,7 +370,7 @@ img {
 }
 
 #phorum #header-search-form a {
-    font-size: x-small;
+    font-size: 65%;
 }
 
 
@@ -388,27 +383,27 @@ img {
 
 #phorum td.message-user-info {
 	float: right;
-	font-size: small;
+	font-size: 85%;
 }
 
 #phorum div.message-author {
     background-repeat: no-repeat;
     background-position: 0px 2px;
     padding: 0px 0 0px 21px;
-	font-size: large;
+	font-size: 115%;
 	font-weight: bold;
     margin-bottom: 5px;
 }
 
 #phorum div.message-author small {
-    font-size: x-small;
+    font-size: 65%;
     font-weight: normal;
     margin: 0 0 0 16px;
 }
 
 #phorum div.message-subject {
 	font-weight: bold;
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum div.message-body {
@@ -421,12 +416,12 @@ img {
 }
 
 #phorum div.message-date {
-	font-size: small;
+	font-size: 85%;
 }
 
 #phorum div.message-moderation {
     margin-top: 8px;
-    font-size: small;
+    font-size: 85%;
     border-top: 0;
     padding: 6px;
     background-color: #edf2ed;
@@ -435,7 +430,7 @@ img {
 
 #phorum div.message-options {
     text-align: right;
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum #thread-options {
@@ -457,7 +452,7 @@ img {
 }
     
 #phorum #post ul li {
-    font-size: small;
+    font-size: 85%;
 }
 
 #phorum #post-body {
@@ -467,7 +462,7 @@ img {
 }
 
 #phorum #post-moderation {
-    font-size: small;
+    font-size: 85%;
     float: right;
     border: 1px solid #4d894d;
     background-color: #fffdf6;
@@ -484,17 +479,17 @@ img {
     background-repeat: no-repeat;
     background-position: 1px 2px;
     padding: 4px 10px 2px 21px;
-    font-size: small;
+    font-size: 85%;
     font-weight: normal;
 }
 
 #phorum #attachment-list td {
-    font-size: small;
+    font-size: 85%;
     padding: 6px;
 }
 
 #phorum #attachment-list input {
-    font-size: x-small;
+    font-size: 65%;
 }
 
 
@@ -511,13 +506,13 @@ img {
     background-repeat: no-repeat;
     background-position: 0px 2px;
     padding: 0px 0 0px 21px;
-	font-size: large;
+	font-size: 115%;
 	font-weight: bold;
     margin-bottom: 5px;
 }
 
 #phorum #profile div.icon-user small {
-    font-size: x-small;
+    font-size: 65%;
     font-weight: normal;
     margin: 0 0 0 16px;
 }
@@ -543,13 +538,12 @@ img {
 }
 
 #phorum div.search-result {
-    font-size: small;
+    font-size: 85%;
     margin-bottom: 20px; 
 }
     
 #phorum div.search-result h4 {
     margin: 0;
-    font-size: medium;
     font-weight: normal;
 }
 
@@ -566,7 +560,7 @@ img {
 
 #phorum #footer-plug {
     margin-top: 26px;
-    font-size: x-small;
+    font-size: 65%;
     text-align: center;
 }
 
@@ -723,7 +717,7 @@ img {
 /*   BBCode styles  */
 
 #phorum blockquote.bbcode {
-    font-size: small;
+    font-size: 85%;
     margin: 0 0 0 10px;
 }
 

@@ -74,7 +74,7 @@ Some Icons courtesy of:
 {ELSEIF PHORUM_PAGE "search"}
     {! This is the control center }
     <a href="{URL->INDEX}">{TITLE}</a> &gt;
-{ELSEIF TOPIC->subject}
+{ELSEIF NAME AND NOT PHORUM_PAGE "list"}
     {! This is a read page }
     <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->LIST}">{NAME}</a> &gt;
 {ELSEIF NAME}

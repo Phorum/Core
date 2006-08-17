@@ -59,7 +59,7 @@
             {IF content_template}
                 {INCLUDE content_template}
             {ELSE}
-                <div class="information">{MESSAGE}</div>
+                <div class="information">{OKMSG}</div>
             {/IF}
             
         </td>
