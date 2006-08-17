@@ -406,7 +406,7 @@ $message = phorum_hook("posting_custom_action", $message);
 
 // Only check the integrity of the data on finishing up. During the
 // editing process, the user may produce garbage as much as he likes.
-if (! $error_flag && $finish) {
+if (! $error_flag && ($finish || $preview)) {
     include("./include/posting/check_integrity.php");
 }
 
@@ -453,7 +453,7 @@ if (! $error_flag && $finish)
 // Display the page
 // ----------------------------------------------------------------------
 
-if (! $error_flag && !isset($PHORUM["DATA"]["MESSAGE"]))
+if (!isset($PHORUM["DATA"]["URL"]["REDIRECT"]))
 {
     // Make up the text which must be used on the posting form's submit button.
     $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
@@ -608,10 +608,10 @@ if (! isset($PHORUM["postingargs"]["as_include"])) {
 }
 
 // Load page content.
-if (is_array($PHORUM["DATA"]["MESSAGE"])) {
-    include phorum_get_template("posting");
-} else {
+if (isset($PHORUM["DATA"]["URL"]["REDIRECT"])) {
     include phorum_get_template("message");
+} else {
+    include phorum_get_template("posting");
 }
 
 // Load page footer.
