@@ -116,11 +116,15 @@
                     
                 {HOOK "tpl_editor_after_subject"}
     
-                {LANG->Options}:<br />
-                <input type="checkbox" id="email-notify" name="email_notify" value="1" {IF MESSAGE->email_notify} checked="checked"{/IF} /> <label for="email-notify">{LANG->EmailReplies}</label><br />            
-                <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF MESSAGE->show_signature} checked="checked"{/IF} /> <label for="show-signature">{LANG->AddSig}</label><br />
+                {IF MESSAGE->user_id}
+                    {LANG->Options}:<br />
+                    {IF EMAILNOTIFY}
+                        <input type="checkbox" id="email-notify" name="email_notify" value="1" {IF MESSAGE->email_notify} checked="checked"{/IF} /> <label for="email-notify">{LANG->EmailReplies}</label><br />            
+                    {/IF}
+                    <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF MESSAGE->show_signature} checked="checked"{/IF} /> <label for="show-signature">{LANG->AddSig}</label><br />
+                    <br/>
+                {/IF}
             </small>
-        <br />
 
             {IF ATTACHMENTS}
                 <small>{LANG->Attachments}:</small><br />            
