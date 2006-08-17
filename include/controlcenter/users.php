@@ -47,7 +47,7 @@ if(!empty($_POST["user_ids"])){
 
         $userdata["user_id"]=$user_id;
 
-        phorum_db_user_save($userdata);
+        phorum_user_save($userdata);
     }
 }
 
