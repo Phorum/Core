@@ -150,7 +150,7 @@ function phorum_Markdown ($data)
 {
     foreach($data as $key=>$message){
         if(!empty($message["body"])){
-            $message["body"] = str_replace('<br phorum="true" />', '', $message["body"]);
+            $message["body"] = str_replace('<phorum break>', '', $message["body"]);
             $data[$key]["body"] = Markdown($message["body"]);
         }
     }
