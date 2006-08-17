@@ -36,6 +36,7 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
     }
+    $PHORUM["posting_template"] = "message";
     $error_flag = true;
     return;
 

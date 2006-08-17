@@ -211,6 +211,9 @@ if (! isset($PHORUM["postingargs"])) {
     $PHORUM["postingargs"] = $PHORUM["args"];
 }
 
+// The template to load in the end.
+$PHORUM["posting_template"] = "posting";
+
 // Find out what editing mode we're running in.
 if ($initial) {
     $mode = isset($PHORUM["postingargs"][1]) ? $PHORUM["postingargs"][1] : "post";
@@ -453,7 +456,7 @@ if (! $error_flag && $finish)
 // Display the page
 // ----------------------------------------------------------------------
 
-if (!isset($PHORUM["DATA"]["URL"]["REDIRECT"]))
+if ($PHORUM["posting_template"] == 'posting')
 {
     // Make up the text which must be used on the posting form's submit button.
     $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
@@ -607,12 +610,7 @@ if (! isset($PHORUM["postingargs"]["as_include"])) {
     phorum_hook("after_header");
 }
 
-// Load page content.
-if (isset($PHORUM["DATA"]["URL"]["REDIRECT"])) {
-    include phorum_get_template("message");
-} else {
-    include phorum_get_template("posting");
-}
+include phorum_get_template($PHORUM["posting_template"]);
 
 // Load page footer.
 if (! isset($PHORUM["postingargs"]["as_include"])) {
