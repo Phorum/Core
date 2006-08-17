@@ -1466,6 +1466,20 @@ Table of contents:
    contained.
 
    ----------------------------------------------------------------------------
+   posting_custom_action
+   
+   Where  : posting.php
+   When   : Right after all the initialization tasks are done and
+            just before the posting script starts its own action processing.
+   Input  : Array containing message data.
+   Output : Same as Input
+
+   This hook can be used by modules to handle (custom) data coming from the
+   posting form. The module is allowed to change the data that is in the
+   input message. When a module needs to change the meta data for a
+   message, then this is the designated hook for that task.
+   
+   ----------------------------------------------------------------------------
    posting_init
 
    Where  : posting.php

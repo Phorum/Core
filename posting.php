@@ -387,6 +387,11 @@ if (! $error_flag && ($do_attach || $do_detach)) {
 // Perform actions
 // ----------------------------------------------------------------------
 
+// Give modules a chance to perform actions of their own. These actions
+// can modify the message data if they like. This is the designated 
+// hook for modules that want to modify the meta data for the message.
+$message = phorum_hook("posting_custom_action", $message);
+
 // Only check the integrity of the data on finishing up. During the
 // editing process, the user may produce garbage as much as he likes.
 if (! $error_flag && $finish) {
