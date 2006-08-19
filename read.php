@@ -207,6 +207,9 @@ if(!$PHORUM["threaded_read"]) {
         $page=1;
     }
 }
+/*
+ thats the caching part
+ */
 
 if($PHORUM['cache_messages']) {
 
@@ -245,8 +248,6 @@ if($PHORUM['cache_messages']) {
         $message_index=array_reverse($message_index);
     }
 
-    //print_var($message_index);
-
     $start=$PHORUM["read_length"]*($page-1);
 
     if(!$PHORUM['threaded_read']) {
@@ -257,11 +258,14 @@ if($PHORUM['cache_messages']) {
         $message_ids_page = $message_index;
     }
 
-    //print_var($message_ids_page);
+    // we need the threadstarter too but its not available in the additional pages
+    if($page > 1) {
+        array_unshift($message_ids_page,$thread);
+    }
 
-    $messages = phorum_cache_get('message',$message_ids_page);
 
-    //print_var($messages);
+    $cache_messages = phorum_cache_get('message',$message_ids_page);
+
 
     // check the returned messages if they were found in the cache
     $db_messages=array();
@@ -269,19 +273,29 @@ if($PHORUM['cache_messages']) {
     $msg_not_in_cache=0;
 
     foreach($message_ids_page as $mid) {
-        if(!isset($messages[$mid])) {
+        if(!isset($cache_messages[$mid])) {
             $db_messages[]=$mid;
             $msg_not_in_cache++;
         } else {
-            $data[$mid]=$messages[$mid];
+            $data[$mid]=$cache_messages[$mid];
         }
     }
 
-    $db_messages = phorum_db_get_message($db_messages,'message_id');
-    // store the found messages in the cache
-    foreach($db_messages as $mid => $message) {
-        phorum_cache_put('message',$mid,$message);
-        $data[$mid]=$message;
+    if($msg_not_in_cache) {
+
+        $db_messages = phorum_db_get_message($db_messages,'message_id');
+        // store the found messages in the cache
+
+        foreach($db_messages as $mid => $message) {
+            phorum_cache_put('message',$mid,$message);
+            $data[$mid]=$message;
+        }
+
+        if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
+            krsort($data);
+        } else {
+            ksort($data);
+        }
     }
 
 } else {
@@ -402,8 +416,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $URLS["reopen_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_REOPEN_THREAD, $thread);
     }
 
-
     // main loop for template setup
+    $messages=array();
     $read_messages=array(); // needed for newinfo
     foreach($data as $key => $row) {
 
