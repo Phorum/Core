@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="screen,print" />
     <meta name="robots" content="NOINDEX,NOFOLLOW"> 
 {ELSE}
-    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/blue.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="print" />
 {/IF}
 {IF URL->FEED}
