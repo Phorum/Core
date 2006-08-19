@@ -24,12 +24,12 @@
             <tr>
                 <td><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
                 <td>
-                    <a href="{MESSAGES->read_url}">{MESSAGES->subject}</a>
+                    <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>
                     {IF NOT MESSAGES->read_flag}
                         <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/flag_red.png" width="16" height="16" border="0" alt="NEW!" />
                     {/IF}
                 </td>
-                <td nowrap="nowrap"><a href="{MESSAGES->from_profile_url}">{MESSAGES->from_username}</a>&nbsp;</td>
+                <td nowrap="nowrap"><a href="{MESSAGES->URL->FROM}">{MESSAGES->from_username}</a>&nbsp;</td>
                 <td nowrap="nowrap" width="1">{MESSAGES->date}&nbsp;</td>
             </tr>
         {/LOOP MESSAGES}

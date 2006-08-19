@@ -2,9 +2,11 @@
     <h2>{LANG->Moderating} {GROUP->name}</h2>
     <div class="generic">
         <h4>{LANG->AddToGroup}</h4>
-        <form method="post" action="{GROUP->url}">
+        <form method="post" action="{URL->ACTION}">
             {POST_VARS}
+            <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
             <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+            <input type="hidden" name="group" value="{GROUP->id}" />
             {IF NEWMEMBERS}
                 <select name="adduser">
                     <option value="0">&nbsp;</option>
@@ -22,7 +24,7 @@
     <div class="generic">
         <h4>{LANG->GroupMemberList}</h4>
         
-        <form action="{URL->ACTION}" method="get">
+        <form action="{URL->ACTION}" method="post">
             {POST_VARS}
             <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
             <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
@@ -39,17 +41,20 @@
         <br />
         
         {IF USERS}
-            <form method="post" action="{GROUP->url}">
+            <form method="post" action="{URL->ACTION}">
+                <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
+                <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+                <input type="hidden" name="group" value="{GROUP->id}" />
                 <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
                 <table class="list" cellspacing="0" border="0">
                     <tr>
-                        <th>{LANG->Username}</th>
-                        <th>{LANG->MembershipType}</th>
+                        <th align="left">{LANG->Username}</th>
+                        <th align="left">{LANG->MembershipType}</th>
                     </tr>
                     {LOOP USERS}
                         <tr>
                             <td>
-                                {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->profile}">{USERS->displayname}</a>{IF USERS->flag}</em></strong>{/IF}
+                                {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->url}">{USERS->displayname}</a>{IF USERS->flag}</em></strong>{/IF}
                             </td>
                             <td>
                                 {IF USERS->disabled}
@@ -83,10 +88,10 @@
         <br />
         <dl>
             {LOOP GROUPS}
-                <dt><a href="{GROUPS->url}">{GROUPS->name}</a></dt>
+                <dt><a href="{GROUPS->URL->VIEW}">{GROUPS->name}</a></dt>
                 <dd>
                     {IF GROUPS->unapproved}
-                        <a href="{GROUPS->unapproved_url}">{GROUPS->unapproved} {LANG->Unapproved}</a>
+                        <a href="{GROUPS->URL->UNAPPROVED}">{GROUPS->unapproved} {LANG->Unapproved}</a>
                     {ELSE}
                         {LANG->NoUnapprovedUsers}
                     {/IF}

@@ -158,7 +158,7 @@ if(!empty($phorum_search)){
                 $row["forum_id"] = $announcement_forum_id;
             }
 
-            $arr["rows"][$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
+            $arr["rows"][$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
             // strip HTML & BB Code
             if(!$raw_body) {
@@ -179,7 +179,7 @@ if(!empty($phorum_search)){
             // Skip announcements "forum".
             if ($row["forum_id"] == 0) continue;
 
-            $arr["rows"][$key]["forum_url"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
+            $arr["rows"][$key]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
 
             $arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];
         }

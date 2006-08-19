@@ -36,8 +36,8 @@
             {/IF}
             <tr>
                 <td>
-                    <a href="{PREPOST->url}" target="_blank">{PREPOST->subject}</a><br />
-                    <small>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{PREPOST->delete_url}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->approve_url}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->approve_tree_url}">{LANG->ApproveMessageReplies}</a></small>
+                    <a href="{PREPOST->URL->READ}" target="_blank">{PREPOST->subject}</a><br />
+                    <small>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{PREPOST->URL->DELETE}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_MESSAGE}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_TREE}">{LANG->ApproveMessageReplies}</a></small>
                 </td>
                 <td nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
                 <td nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>

@@ -625,7 +625,7 @@ switch ($page) {
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
-                'profile_url' => phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]),
+                'url' => phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]),
                 'username'    => htmlspecialchars($buddy_user["username"]),
                 'real_name'   => isset($buddy_user["real_name"]) ? htmlspecialchars($buddy_user["real_name"]) : '',
                 'mutual'      => $buddy_list[$id]["mutual"],
@@ -664,15 +664,15 @@ switch ($page) {
             $list = phorum_pm_format($list);
             foreach ($list as $message_id => $message)
             {
-                $list[$message_id]["from_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
-                $list[$message_id]["read_url"]=phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
+                $list[$message_id]["URL"]["FROM"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
+                $list[$message_id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
                 $list[$message_id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
                 $list[$message_id]["recipient_count"] = count($message["recipients"]);
                 $receive_count = 0;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
                     if ($rcpt["read_flag"]) $receive_count++;
                     $list[$message_id]["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
-                    $list[$message_id]["recipients"][$rcpt_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                    $list[$message_id]["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
                 }
                 $list[$message_id]["receive_count"] = $receive_count;
             }
@@ -707,12 +707,12 @@ switch ($page) {
             // Setup data for recipients.
             foreach ($message["recipients"] as $rcpt_id => $rcpt) {
                 $message["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
-                $message["recipients"][$rcpt_id]["to_profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                $message["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
             }
             $message["recipient_count"] = count($message["recipients"]);
 
             // Setup URL's and format date.
-            $message["from_profile_url"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
+            $message["URL"]["FROM"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
             $message["date"]=phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
@@ -931,7 +931,7 @@ $PHORUM["DATA"]["PM_USERFOLDERS"] = count($pm_userfolders) ? $pm_userfolders : 0
 
 
 // Set some default template data.
-$PHORUM["DATA"]["ACTION"]=phorum_get_url( PHORUM_PM_ACTION_URL );
+$PHORUM["DATA"]["URL"]["ACTION"]=phorum_get_url( PHORUM_PM_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
 $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;

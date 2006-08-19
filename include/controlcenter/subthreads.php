@@ -63,16 +63,16 @@ foreach($subscr_array as $dummy => $data) {
     } 
 
     $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
-    $data['readurl'] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
+    $data["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
 
     if(!empty($data["user_id"])) {
-        $data["profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $data["user_id"]);
+        $data["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $data["user_id"]);
         // we don't normally put HTML in this code, but this makes it easier on template builders
-        $data["linked_author"] = "<a href=\"".$data["profile_url"]."\">".htmlspecialchars($data["author"])."</a>";
+        $data["linked_author"] = "<a href=\"".$data["URL"]["PROFILE"]."\">".htmlspecialchars($data["author"])."</a>";
     } elseif(!empty($data["email"])) {
-        $data["email_url"] = phorum_html_encode("mailto:$data[email]");
+        $data["URL"]["EMAIL"] = phorum_html_encode("mailto:$data[email]");
         // we don't normally put HTML in this code, but this makes it easier on template builders
-        $data["linked_author"] = "<a href=\"".$data["email_url"]."\">".htmlspecialchars($data["author"])."</a>";
+        $data["linked_author"] = "<a href=\"".$data["URL"]["EMAIL"]."\">".htmlspecialchars($data["author"])."</a>";
     } else {
         $data["linked_author"] = htmlspecialchars($data["author"]);
     }
@@ -84,7 +84,7 @@ foreach($subscr_array as $dummy => $data) {
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Subscriptions"];
 
-$PHORUM['DATA']['subscriptions'] = $subscr_array_final;
+$PHORUM['DATA']['TOPICS'] = $subscr_array_final;
 $template = "cc_subscriptions";
 
 ?>

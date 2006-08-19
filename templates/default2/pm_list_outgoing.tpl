@@ -25,11 +25,11 @@
         {LOOP MESSAGES}
             <tr>
                 <td width="5%"><input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" /></td>
-                <td width="60%"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a></td>
+                <td width="60%"><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a></td>
                 <td width="15%" nowrap="nowrap">
                     {IF MESSAGES->recipient_count 1}
                         {LOOP MESSAGES->recipients}
-                            <a href="{MESSAGES->recipients->to_profile_url}">{MESSAGES->recipients->username}</a>&nbsp;
+                            <a href="{MESSAGES->recipients->URL->TO}">{MESSAGES->recipients->username}</a>&nbsp;
                         {/LOOP MESSAGES->recipients}
                     {ELSE}
                         {MESSAGES->recipient_count}&nbsp;{LANG->Recipients}&nbsp;

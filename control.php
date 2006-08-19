@@ -43,13 +43,16 @@ $error_msg = false;
 $template = "";
 
 // Generating the panel id of the page to use.
-$panel = (!isset($PHORUM['args']['panel']) || empty($PHORUM["args"]['panel']))
-       ? PHORUM_CC_SUMMARY : $PHORUM["args"]['panel'];
+if(isset($PHORUM['args']['panel'])){
+    $panel = $PHORUM['args']['panel'];
 
-// Sometimes we set the panel id from a post-form.
-if (isset($_POST['panel'])) {
-    $panel = $_POST['panel'];
+} elseif(isset($_POST["panel"])){
+    $panel = $_POST["panel"];
+
+} else {
+    $panel = PHORUM_CC_SUMMARY;
 }
+
 
 // Set all our URLs.
 phorum_build_common_urls();

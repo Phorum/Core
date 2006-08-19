@@ -77,18 +77,18 @@ foreach($mod_forums as $forum => $rest) {
         if ($checkvar)
             $checkvar = 0;
         $rows[$key]['forum_id'] = $forum;
-        $rows[$key]["url"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum, $row["thread"], $row['message_id']);
+        $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum, $row["thread"], $row['message_id']);
         // we need to fake the forum_id here
         $PHORUM["forum_id"] = $forum;
-        $rows[$key]["approve_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
-        $rows[$key]["approve_tree_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
-        $rows[$key]["delete_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
+        $rows[$key]["URL"]["APPROVE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
+        $rows[$key]["URL"]["APPROVE_TREE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
+        $rows[$key]["URL"]["DELETE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
         $PHORUM["forum_id"] = $oldforum;
         $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
 
         if ($row["user_id"]) {
             $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-            $rows[$key]["profile_url"] = $url;
+            $rows[$key]["URL"]["READ"]["PROFILE"] = $url;
             $rows[$key]["linked_author"] = "<a href=\"$url\">$row[author]</a>";
         } else {
             $rows[$key]["profile_url"] = "";

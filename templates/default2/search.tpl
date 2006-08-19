@@ -1,6 +1,8 @@
 <div class="nav">
     <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
-    <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
+    {IF URL->POST}
+        <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
+    {/IF}
 </div>
 
 
@@ -88,14 +90,14 @@
 
             <div class="search-result">
             
-                <h4><a href="{MATCHES->url}">{MATCHES->subject}</a><small> - {MATCHES->datestamp}</small></h4>
+                <h4><a href="{MATCHES->URL->READ}">{MATCHES->subject}</a><small> - {MATCHES->datestamp}</small></h4>
                 
                 <blockquote>{MATCHES->short_body}</blockquote>
     
                 {LANG->by} <strong>{MATCHES->author}</strong> 
 
                 {IF MATCHES->forum_id}
-                    - <a href="{MATCHES->forum_url}">{MATCHES->forum_name}</a> 
+                    - <a href="{MATCHES->URL->FORUM}">{MATCHES->forum_name}</a> 
                 {/IF}
 
             </div>
