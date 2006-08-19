@@ -35,7 +35,6 @@
                 <h4>{LANG->LostPassword}</h4>
                 <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
-                    <input type="hidden" name="lostpass" value="1" />
                     <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />
                     <input type="hidden" name="redir" value="{LOGIN->redir}" />
                     {LANG->LostPassInfo}<br />
