@@ -211,6 +211,9 @@ if (! isset($PHORUM["postingargs"])) {
     $PHORUM["postingargs"] = $PHORUM["args"];
 }
 
+// The template to load in the end.
+$PHORUM["posting_template"] = "posting";
+
 // Find out what editing mode we're running in.
 if ($initial) {
     $mode = isset($PHORUM["postingargs"][1]) ? $PHORUM["postingargs"][1] : "post";
@@ -441,147 +444,150 @@ if (! $error_flag && $finish)
 // Display the page
 // ----------------------------------------------------------------------
 
-// Make up the text which must be used on the posting form's submit button.
-$button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
-$message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
-
-// Attachment config
-if($PHORUM["max_attachments"]){
-
-    // Retrieve upload limits as imposed by the system.
-    require_once('./include/upload_functions.php');
-    $system_max_upload = phorum_get_system_max_upload();
-
-    if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload[0]/1024;
-    $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload[0]/1024);
-    if ($PHORUM["max_totalattachment_size"]) {
-        if ($PHORUM["max_totalattachment_size"] < $PHORUM["max_attachment_size"]) {
-            $PHORUM["max_attachment_size"] = $PHORUM["max_totalattachment_size"];
-        }
-    }
-
-    // Data for attachment explanation.
-    if ($PHORUM["allow_attachment_types"]) {
-        $PHORUM["DATA"]["ATTACH_FILE_TYPES"] = str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
-        $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_TYPES"] = str_replace("%types%", $PHORUM["DATA"]["ATTACH_FILE_TYPES"], $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
-    }
-    if ($PHORUM["max_attachment_size"]) {
-        $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
-        $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
-        $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]);
-    }
-    if ($PHORUM["max_totalattachment_size"] && $PHORUM["max_attachments"]>1) {
-        $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
-        $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
-        $PHORUM["DATA"]["EXPLAIN_ATTACH_TOTALFILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]);
-    }
-    if ($PHORUM["max_attachments"] && $PHORUM["max_attachments"]>1) {
-        $PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
-        $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"] = $PHORUM["max_attachments"] - $attach_count;
-        $PHORUM["DATA"]["EXPLAIN_ATTACH_MAX_ATTACHMENTS"] = str_replace("%count%", $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"], $PHORUM["DATA"]["LANG"]["AttachMaxAttachments"]);
-    }
-
-    // A flag for the template building to be able to see if the
-    // attachment storage space is full.
-    $PHORUM["DATA"]["ATTACHMENTS_FULL"] =
-        $attach_count >= $PHORUM["max_attachments"] ||
-        ($PHORUM["max_totalattachment_size"] &&
-        $attach_totalsize >= $PHORUM["max_totalattachment_size"]*1024);
-}
-
-// Let the templates know if we're running as an include.
-$PHORUM["DATA"]["EDITOR_AS_INCLUDE"] =
-    isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"];
-
-// Process data for previewing.
-if ($preview) {
-    include("./include/posting/action_preview.php");
-}
-
-// Always put the current mode in the message, so hook
-// writers can use this for identifying what we're doing.
-$message["mode"] = $mode;
-
-// Create hidden form field code. Fields which are read-only are
-// all added as a hidden form fields in the form. Also the fields
-// for which the pf_HIDDEN flag is set will be added to the
-// hidden fields.
-$hidden = "";
-foreach ($PHORUM["post_fields"] as $var => $spec)
+if ($PHORUM["posting_template"] == 'posting')
 {
-    $signval = NULL;
-    if ($var == "mode") {
-        $val = $mode;
-        if ($spec[pf_SIGNED]) $signval = $mode;
-    } elseif ($spec[pf_TYPE] == "array") {
-        $val = htmlspecialchars(serialize($message[$var]));
-        if ($spec[pf_SIGNED]) $signval = serialize($message[$var]);
-    } else { 
-        $val = htmlentities($message[$var], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
-        if ($spec[pf_SIGNED]) $signval = $message[$var];
-    }
+    // Make up the text which must be used on the posting form's submit button.
+    $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
+    $message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
 
-    if ($spec[pf_READONLY] || $spec[pf_HIDDEN]) {
-        $hidden .= '<input type="hidden" name="' . $var .  '" ' .
-                   'value="' . $val . "\" />\n";
-    }
+    // Attachment config
+    if($PHORUM["max_attachments"]){
 
-    if ($signval !== NULL) {
-        $signature = phorum_generate_data_signature($signval);
-        $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
-                   'value="' . htmlspecialchars($signature) . "\" />\n";
-    }
-}
-$PHORUM["DATA"]["POST_VARS"] .= $hidden;
+        // Retrieve upload limits as imposed by the system.
+        require_once('./include/upload_functions.php');
+        $system_max_upload = phorum_get_system_max_upload();
 
-// Process data for XSS prevention.
-foreach ($message as $var => $val)
-{
-    // The meta information should not be used in templates, because
-    // nothing is escaped here. But we might want to use the data in
-    // mods which are run after this code. We continue here, so the
-    // data won't be stripped from the message data later on.
-    if ($var == "meta") continue;
-
-    if ($var == "attachments") {
-        if (is_array($val)) {
-            foreach ($val as $nr => $data)
-            {
-                // Do not show attachments which are not kept.
-                if (! $data["keep"]) {
-                    unset($message["attachments"][$nr]);
-                    continue;
-                }
-
-                $message[$var][$nr]["name"] = htmlspecialchars($data["name"]);
-                $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
+        if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload[0]/1024;
+        $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload[0]/1024);
+        if ($PHORUM["max_totalattachment_size"]) {
+            if ($PHORUM["max_totalattachment_size"] < $PHORUM["max_attachment_size"]) {
+                $PHORUM["max_attachment_size"] = $PHORUM["max_totalattachment_size"];
             }
         }
-    } else {
-        if (is_scalar($val)) {
-            $message[$var] = htmlspecialchars($val);
-        } else {
-            // Not used in the template, unless proven otherwise.
-            $message[$var] = '[removed from template data]';
+
+        // Data for attachment explanation.
+        if ($PHORUM["allow_attachment_types"]) {
+            $PHORUM["DATA"]["ATTACH_FILE_TYPES"] = str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
+            $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_TYPES"] = str_replace("%types%", $PHORUM["DATA"]["ATTACH_FILE_TYPES"], $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
+        }
+        if ($PHORUM["max_attachment_size"]) {
+            $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
+            $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
+            $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]);
+        }
+        if ($PHORUM["max_totalattachment_size"] && $PHORUM["max_attachments"]>1) {
+            $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
+            $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+            $PHORUM["DATA"]["EXPLAIN_ATTACH_TOTALFILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]);
+        }
+        if ($PHORUM["max_attachments"] && $PHORUM["max_attachments"]>1) {
+            $PHORUM["DATA"]["ATTACH_MAX_ATTACHMENTS"] = $PHORUM["max_attachments"];
+            $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"] = $PHORUM["max_attachments"] - $attach_count;
+            $PHORUM["DATA"]["EXPLAIN_ATTACH_MAX_ATTACHMENTS"] = str_replace("%count%", $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"], $PHORUM["DATA"]["LANG"]["AttachMaxAttachments"]);
+        }
+
+        // A flag for the template building to be able to see if the
+        // attachment storage space is full.
+        $PHORUM["DATA"]["ATTACHMENTS_FULL"] =
+            $attach_count >= $PHORUM["max_attachments"] ||
+            ($PHORUM["max_totalattachment_size"] &&
+            $attach_totalsize >= $PHORUM["max_totalattachment_size"]*1024);
+    }
+
+    // Let the templates know if we're running as an include.
+    $PHORUM["DATA"]["EDITOR_AS_INCLUDE"] =
+        isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"];
+
+    // Process data for previewing.
+    if ($preview) {
+        include("./include/posting/action_preview.php");
+    }
+
+    // Always put the current mode in the message, so hook
+    // writers can use this for identifying what we're doing.
+    $message["mode"] = $mode;
+
+    // Create hidden form field code. Fields which are read-only are
+    // all added as a hidden form fields in the form. Also the fields
+    // for which the pf_HIDDEN flag is set will be added to the
+    // hidden fields.
+    $hidden = "";
+    foreach ($PHORUM["post_fields"] as $var => $spec)
+    {
+        $signval = NULL;
+        if ($var == "mode") {
+            $val = $mode;
+            if ($spec[pf_SIGNED]) $signval = $mode;
+        } elseif ($spec[pf_TYPE] == "array") {
+            $val = htmlspecialchars(serialize($message[$var]));
+            if ($spec[pf_SIGNED]) $signval = serialize($message[$var]);
+        } else { 
+            $val = htmlentities($message[$var], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+            if ($spec[pf_SIGNED]) $signval = $message[$var];
+        }
+
+        if ($spec[pf_READONLY] || $spec[pf_HIDDEN]) {
+            $hidden .= '<input type="hidden" name="' . $var .  '" ' .
+                       'value="' . $val . "\" />\n";
+        }
+
+        if ($signval !== NULL) {
+            $signature = phorum_generate_data_signature($signval);
+            $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
+                       'value="' . htmlspecialchars($signature) . "\" />\n";
         }
     }
+    $PHORUM["DATA"]["POST_VARS"] .= $hidden;
+
+    // Process data for XSS prevention.
+    foreach ($message as $var => $val)
+    {
+        // The meta information should not be used in templates, because
+        // nothing is escaped here. But we might want to use the data in
+        // mods which are run after this code. We continue here, so the
+        // data won't be stripped from the message data later on.
+        if ($var == "meta") continue;
+
+        if ($var == "attachments") {
+            if (is_array($val)) {
+                foreach ($val as $nr => $data)
+                {
+                    // Do not show attachments which are not kept.
+                    if (! $data["keep"]) {
+                        unset($message["attachments"][$nr]);
+                        continue;
+                    }
+
+                    $message[$var][$nr]["name"] = htmlspecialchars($data["name"]);
+                    $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
+                }
+            }
+        } else {
+            if (is_scalar($val)) {
+                $message[$var] = htmlspecialchars($val);
+            } else {
+                // Not used in the template, unless proven otherwise.
+                $message[$var] = '[removed from template data]';
+            }
+        }
+    }
+
+    // A cancel button is not needed if the editor is included in a page.
+    // This can also be used by the before_editor hook to disable the
+    // cancel button in all pages.
+    $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
+
+    // A hook to give modules a last chance to update the message data.
+    $message = phorum_hook("before_editor", $message);
+
+    // Make the message data available to the template engine.
+    $PHORUM["DATA"]["POST"] = $message;
+
+    // Set the field to focus.
+    $focus = "phorum_subject";
+    if (!empty($message["subject"])) $focus = "phorum_textarea";
+    $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
 }
-
-// A cancel button is not needed if the editor is included in a page.
-// This can also be used by the before_editor hook to disable the
-// cancel button in all pages.
-$PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
-
-// A hook to give modules a last chance to update the message data.
-$message = phorum_hook("before_editor", $message);
-
-// Make the message data available to the template engine.
-$PHORUM["DATA"]["POST"] = $message;
-
-// Set the field to focus.
-$focus = "phorum_subject";
-if (!empty($message["subject"])) $focus = "phorum_textarea";
-$PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
 
 // Load page header.
 if (! isset($PHORUM["postingargs"]["as_include"])) {
@@ -589,12 +595,7 @@ if (! isset($PHORUM["postingargs"]["as_include"])) {
     phorum_hook("after_header");
 }
 
-// Load page content.
-if (isset($PHORUM["DATA"]["MESSAGE"])) {
-    include phorum_get_template("message");
-} else {
-    include phorum_get_template("posting");
-}
+include phorum_get_template($PHORUM["posting_template"]);
 
 // Load page footer.
 if (! isset($PHORUM["postingargs"]["as_include"])) {
