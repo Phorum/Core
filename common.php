@@ -629,17 +629,29 @@ function phorum_get_template( $page, $is_include = false )
 
     $page = basename($page);
 
+    // Check for a module reference in the page name.
+    $fullpage = $page;
+    $prefix = "./templates";
+    if (($pos = strpos($fullpage, "::", 1)) !== false) {
+        $module = substr($fullpage, 0, $pos);
+        $page = substr($fullpage, $pos+2);
+        $prefix = "./mods/$module/templates";
+    }
+
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
         $PHORUM['template'] = $PHORUM['user']['user_template'];
     }
 
     // If no user template is set or if the template folder cannot be found,
     // fallback to the default template.
-    if (empty($PHORUM["template"]) || !file_exists("./templates/{$PHORUM['template']}")) {
+    if (empty($PHORUM["template"]) || !file_exists("$prefix/{$PHORUM['template']}")) {
         $PHORUM["template"] = $PHORUM["default_template"];
+        if ($PHORUM["template"] != "default" && !file_exists("$prefix/{$PHORUM['template']}")) {
+            $PHORUM["template"] = "default";
+        }
     }
 
-    $tpl = "./templates/$PHORUM[template]/$page";
+    $tpl = "$prefix/$PHORUM[template]/$page";
     // check for straight PHP file
     if ( file_exists( "$tpl.php" ) ) {
         $phpfile = "$tpl.php";
@@ -647,10 +659,11 @@ function phorum_get_template( $page, $is_include = false )
         // not there, look for a template
         $tplfile = "$tpl.tpl";
         $safetemplate = str_replace("-", "_", $PHORUM["template"]);
+        if ($module !== NULL) $page = "$module::$page";
         $safepage = str_replace("-", "_", $page);
         $phpfile = "$PHORUM[cache]/tpl-$safetemplate-$safepage-" .
                ($is_include ? "include" : "toplevel") . "-" .
-               md5( dirname( __FILE__ ) ) . ".php";
+               md5( dirname( __FILE__ . $prefix) ) . ".php";
 
         if ( $is_include || !file_exists( $phpfile ) ) {
             include_once "./include/templates.php";
