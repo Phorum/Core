@@ -31,7 +31,9 @@ function phorum_import_template($tplfile, $outfile)
     $include_level++;
 
     // Remember that we used this template.
-    $include_deps[$tplfile] = $outfile;
+    $filemtime = @filemtime($tplfile);
+    if ($filemtime === false) $filemtime = 0;
+    $include_deps[$tplfile] = array( $outfile, $filemtime );
 
     // Check if the file exists.
     if (! file_exists($tplfile)) die(
@@ -302,19 +304,19 @@ function phorum_import_template($tplfile, $outfile)
 
         $check_deps =
             "<?php\n" .
-            '$mymtime = @filemtime("' . addslashes($stage1_file) . '");' . "\n" .
-            "\$update_count = 0;\n" .
             "\$need_update = (\n";
-        foreach ($include_deps as $tpl => $out) {
+        foreach ($include_deps as $tpl => $info) {
+            list ($out, $mtime) = $info;
             $qtpl = addslashes($tpl);
-            $check_deps .= "    @filemtime(\"$qtpl\") > \$mymtime ||\n";
+            $check_deps .= "    @filemtime(\"$qtpl\") != $mtime ||\n";
         }
         $check_deps = substr($check_deps, 0, -4); // strip trailing " ||\n"
         $check_deps .=
         "\n" .
         ");\n" .
         "if (\$need_update) {\n";
-        foreach ($include_deps as $tpl => $out) {
+        foreach ($include_deps as $tpl => $info) {
+            list ($out, $mtime) = $info;
             $qout = addslashes($out);
             $check_deps .= "    @unlink(\"$qout\");\n";
         }
