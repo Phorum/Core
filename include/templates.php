@@ -75,7 +75,7 @@ function phorum_import_template($page, $infile, $outfile)
     $checks = array();
     foreach ($dependancies as $file => $mtime) {
         $qfile = addslashes($file);
-        $checks[] = "@filemtime(\"$qfile\") > $mtime";
+        $checks[] = "@filemtime(\"$qfile\") != $mtime";
     }
     $qstage1file = addslashes($stage1file);
     $qstage2file = addslashes($stage2file);
