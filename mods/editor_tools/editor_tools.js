@@ -339,7 +339,7 @@ function editor_tools_construct_popup(create_id, anchor)
 
     // Create the inner content div.
     var content_obj = document.createElement('div');
-    content_obj.id = 'editor-tools-size-picker-content';
+    content_obj.id = create_id + '-content';
     popup_obj.appendChild(content_obj);
 
     return new Array(popup_obj, content_obj);

@@ -3,13 +3,19 @@ Changelog:
 
 2006-08-08 v1.1.13
 
-    - Added extra language to the distribution:
+    - Fixed a problem in the function editor_tools_construct_popup.
+      The create_id wasn't used for generating the id of the content
+      <div> of the popup window. This had no effect on the
+      functionality of the editor tools.
+
+    - Added extra languages to the distribution:
       * Swedish (by Per Mattsson)
         Beware: only the basic language file was translated, so there are
                 no translated help files available in Swedish.
+      * Italian (by Nicola)
       Thanks for the translation!
 
-2006-07-30 v1.1.12
+2006-07-31 v1.1.12
 
     - Some last fixes in editor_tools.php for using correct absolute URLs
       in an embedded environment. Also changed the way in which the 
