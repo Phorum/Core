@@ -101,6 +101,7 @@ function phorum_db_get_thread_list($offset)
         $table.moderator_post,
         $table.modifystamp,
         $table.parent_id,
+        $table.msgid,
         $table.sort,
         $table.status,
         $table.subject,
