@@ -34,7 +34,6 @@
             </tr>
         {/LOOP MESSAGES}
     </table>
-    {VAR MOVE_SUBMIT_NAME "move"}
     {IF PM_USERFOLDERS}
         <select name="target_folder" style="vertical-align: middle;">
             <option value=""> {LANG->PMSelectAFolder}</option>
@@ -46,7 +45,7 @@
                 {/IF}
             {/LOOP PM_FOLDERS}
         </select>
-        <input type="submit" name="{MOVE_SUBMIT_NAME}" class="PhorumSubmit" value="{LANG->PMMoveToFolder}" />
+        <input type="submit" name="move" class="PhorumSubmit" value="{LANG->PMMoveToFolder}" />
     {/IF}
     <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
 

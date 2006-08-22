@@ -510,6 +510,22 @@ img {
     font-size: 85%;
 }
 
+#phorum .phorum-gaugetable {
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+#phorum .phorum-gauge {
+    border: 1px solid #4d894d;
+    background-color: white;
+}
+
+#phorum .phorum-gaugeprefix {
+    border: none;
+    background-color: white;
+    padding-right: 10px;
+}
+
 
 /* Profile styles */
 

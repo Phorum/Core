@@ -35,19 +35,20 @@
                     $usedsize = ceil($used/$total * $size);
                     $usedperc = floor($used/$total * 100 + 0.5);
                 ?>
+                <br/>
                 <div class="generic">
                     {IF PM_SPACE_LEFT}
                       {LANG->PMSpaceLeft}
                     {ELSE}
                       {LANG->PMSpaceFull}
                     {/IF}
+                    <table class="phorum-gaugetable" align="center">
+                        <tr>
+                            <td class="phorum-gaugeprefix"><?php echo "{$usedperc}%" ?></td>
+                            <td class="phorum-gauge" width="<?php echo $size?>"><img align="left" src="{gauge_image}" width="<?php echo $usedsize?>" height="16px" /></td>
+                        </tr>
+                    </table>
                 </div>
-                <table class="phorum-gaugetable" align="center">
-                    <tr>
-                        <td class="phorum-gaugeprefix"><?php echo "{$usedperc}%" ?></td>
-                        <td class="phorum-gauge" width="<?php echo $size?>"><img align="left" src="{gauge_image}" width="<?php echo $usedsize?>" height="16px" /></td>
-                    </tr>
-                </table>
             {/IF}        
         </td>
 
