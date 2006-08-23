@@ -448,16 +448,16 @@ function phorum_user_check_field( $field_name, $field_value)
 /**
 * function for adding a user to the database (using the db-layer)
 */
-function phorum_user_add( $user, $pwd_unchanged = false )
+function phorum_user_add( $user, $use_raw_password = false )
 {
     if ( empty( $user["password_temp"] ) ) $user["password_temp"] = $user["password"];
-    $db_user = phorum_user_prepare_data( $user, array(), $pwd_unchanged );
+    $db_user = phorum_user_prepare_data( $user, array(), $use_raw_password );
     if(empty($db_user["date_added"])) $db_user["date_added"]=time();
     if(empty($db_user["date_last_active"])) $db_user["date_last_active"]=time();
     return phorum_db_user_add( $db_user );
 }
 
-function phorum_user_prepare_data( $new_user, $old_user, $pwd_unchanged = false )
+function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = false )
 {
     $PHORUM = $GLOBALS["PHORUM"];
     // how the user appears to the app and how it is stored in the db are different.
@@ -511,10 +511,24 @@ function phorum_user_prepare_data( $new_user, $old_user, $pwd_unchanged = false 
             // the phorum built in user module stores md5 passwords.
             case "password":
             case "password_temp":
-                if ( !$pwd_unchanged ) {
-                    $user[$key] = md5( $val );
-                } elseif ( $pwd_unchanged == -1 ) {
+                // If $use_raw_password is true, then the input data
+                // contains a password that is already MD5 encrypted.
+                // This can be used by conversion scripts to use
+                // already MD5 encrypted passwords from another system.
+                if ( $use_raw_password ) {
                     $user[$key] = $val;
+                }
+                // If the new password matches the MD5 encrypted password,
+                // then the old password was sent along with the user data
+                // in phorum_user_save(). Allthough this is not the way in
+                // which it should be (the password fields should only 
+                // contain new clear text passwords), we prevent updates here.
+                elseif (isset($old_user[$key]) && $old_user[$key] == $new_user[$key]) {
+                    $user[$key] = $val;
+                }
+                // Set the password field to the MD5 hash of the new password.
+                else {
+                    $user[$key] = md5( $val );
                 }
                 break;
             // everything that is not one of the above fields is stored in a
