@@ -158,7 +158,7 @@
                 echo "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
                 echo "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
                 echo "    <td class=\"PhorumAdminTableRow\">".($item['show_in_admin']?"Yes":"No")."</td>\n";
-                echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=customprofile&curr=$key&?edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
+                echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=customprofile&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
                 echo "</tr>\n";
             }
 
