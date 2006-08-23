@@ -500,23 +500,29 @@ Table of contents:
    this is the preferred way.
 
    For storing data in the custom profile field, you can make use of the
-   phorum_user_save() function. Below are two pieces of code which show
-   how our example module might store data for a user (asuming $user_id
-   is the id of the user that must be changed).
+   phorum_user_save() function. This function needs the user_id of the
+   user and all fields that need to be updated. Below are two pieces of
+   code which show how our example module might store data for a user
+   (asuming $user_id is the id of the user that must be changed).
 
    When using multiple fields "mod_foo_foodata" and "mod_foo_bardata":
 
-      $user = phorum_user_get($user_id);
-      $user["mod_foo_foodata"] = "Some user data";
-      $user["mod_foo_bardata"] = "Some more user data";
-      phorum_user_save($user);
+      $userdata = array(
+          "user_id"         => $user_id,
+          "mod_foo_foodata" => "Some user data",
+          "mod_foo_bardata" => "Some more user data"
+      );
+      phorum_user_save($userdata);
 
    When using a single custom field "mod_foo" for this module:
 
       $user = phorum_user_get($user_id);
-      $user["mod_foo"] = array (
-        "foodata" => "Some user data",
-        "bardata" => "Some more user data"
+      $userdata = array(
+          "user_id" => $user_id,
+          "mod_foo" => array (
+              "foodata" => "Some user data",
+              "bardata" => "Some more user data"
+          )
       );
       phorum_user_save($user);
 
