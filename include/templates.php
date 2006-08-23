@@ -125,12 +125,7 @@ function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array
 
     $deps[$infile] = filemtime($infile);
 
-
-    // For easy of use for template writers, so they can see where 
-    // templates start and end in the resulting page code.
-    $template = "<!-- start template: " . htmlspecialchars($infile) . " -->\n".
-                phorum_read_file($infile) .
-                "<!-- end template: " . htmlspecialchars($infile) . " -->\n";
+    $template = phorum_read_file($infile);
 
     // Process {include [once] "page"} statements in the template.
     preg_match_all("/\{include\s+(.+?)\}/is", $template, $matches);
