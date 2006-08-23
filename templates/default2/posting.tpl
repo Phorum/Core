@@ -156,7 +156,7 @@
                         document.getElementById('attach-link').style.display='none';
                         document.getElementById('attach-form').style.display='block';
                       }
-                      document.write("<div id=\"attach-link\" class=\"attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...</b></a></div>\n");
+                      document.write("<div id=\"attach-link\" class=\"attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...<\/b><\/a><\/div>\n");
                       document.write("<div id=\"attach-form\" style=\"display: none;\">");
                     </script>
                     <div class="attach-link">{AttachPhrase}</div>
@@ -168,7 +168,7 @@
                     </ul>
                     <input type="file" size="50" name="attachment" />
                     <input type="submit" name="attach" value="{LANG->Attach}" />
-                    <script type="text/javascript">document.write('</div>');</script>
+                    <script type="text/javascript">document.write('<\/div>');</script>
                 {/IF}
     
                 <br />

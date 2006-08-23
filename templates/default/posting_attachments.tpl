@@ -13,7 +13,7 @@
         document.getElementById('phorum-attach-link').style.display='none';
         document.getElementById('phorum-attach-form').style.display='block';
       }
-      document.write("<div id=\"phorum-attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...</b></a></div>\n");
+      document.write("<div id=\"phorum-attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...<\/b><\/a><\/div>\n");
       document.write("<div id=\"phorum-attach-form\" style=\"display: none;\">");
     </script>
     <b>{AttachPhrase}</b>
@@ -25,6 +25,6 @@
     </ul>
     <input type="file" size="50" name="attachment" />
     <input type="submit" name="attach" value="{LANG->Attach}" />
-    <script type="text/javascript">document.write('</div>');</script>
+    <script type="text/javascript">document.write('<\/div>');</script>
   {/IF}
 </div>
