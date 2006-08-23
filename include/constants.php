@@ -184,6 +184,7 @@
     define("PHORUM_RSS_URL", $i++);
     define("PHORUM_CUSTOM_URL", $i++);
     define("PHORUM_BASE_URL", $i++);
+    define("PHORUM_ADDON_URL", $i++);
 
     define("PHORUM_DELETE_MESSAGE", $i++);
     define("PHORUM_DELETE_TREE", $i++);

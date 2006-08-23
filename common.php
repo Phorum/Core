@@ -582,6 +582,18 @@ function phorum_get_url()
             $add_forum_id = $add_forum_id_tmp?true:false;
             break;
 
+        case PHORUM_ADDON_URL:
+            $page = "addon";
+            $add_forum_id = true;
+            if (!isset($argv[0])) {
+               trigger_error('Missing "module" argument for PHORUM_ADDON_URL');
+            }
+            if (substr($argv[0], 0, 7) != "module=") {
+                $argv[0] = "module={$argv[0]}";
+            }
+            print_var($argv);
+            break;
+
         case PHORUM_BASE_URL:
             // only to flag phorum_custom_get_url() that base url is requested
             $page = '';
@@ -630,6 +642,7 @@ function phorum_get_template( $page, $is_include = false )
     $page = basename($page);
 
     // Check for a module reference in the page name.
+    $module = NULL;
     $fullpage = $page;
     $prefix = "./templates";
     if (($pos = strpos($fullpage, "::", 1)) !== false) {
