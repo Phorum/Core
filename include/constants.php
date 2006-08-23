@@ -208,6 +208,7 @@
     define("PHORUM_FEED_URL", $i++);
     define("PHORUM_CUSTOM_URL", $i++);
     define("PHORUM_BASE_URL", $i++);
+    define("PHORUM_ADDON_URL", $i++);
 
     // moderation actions
     $i=1;

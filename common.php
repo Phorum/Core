@@ -627,6 +627,18 @@ function phorum_get_url()
                 $page = '';
                 break;
 
+            case PHORUM_ADDON_URL:
+                $page = "addon";
+                $add_forum_id = true;
+                if (!isset($argv[0])) {
+                   trigger_error('Missing "module" argument for PHORUM_ADDON_URL');
+                }
+                if (substr($argv[0], 0, 7) != "module=") {
+                    $argv[0] = "module={$argv[0]}";
+                }
+                print_var($argv);
+                break;
+
             default:
                 trigger_error( "Unhandled page type.", E_USER_WARNING );
                 break;
