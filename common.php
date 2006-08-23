@@ -636,7 +636,6 @@ function phorum_get_url()
                 if (substr($argv[0], 0, 7) != "module=") {
                     $argv[0] = "module={$argv[0]}";
                 }
-                print_var($argv);
                 break;
 
             default:
