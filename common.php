@@ -340,7 +340,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         // set all our URL's
         phorum_build_common_urls();
 
-        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
+        $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
         include phorum_get_template("header");
         phorum_hook("after_header");
         include phorum_get_template("message");

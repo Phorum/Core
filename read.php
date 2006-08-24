@@ -674,8 +674,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     if($thread_is_closed) {
 
         // Closed announcements have their own specific message.
-        $key = $thread_is_announcement ? "ThreadAnnouncement" : "ThreadClosed";
-        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"][$key];
+        $PHORUM["DATA"]["OKMSG"] = $thread_is_announcement
+            ? $PHORUM["DATA"]["LANG"]["ThreadAnnouncement"]
+            : $PHORUM["DATA"]["LANG"]["ThreadClosed"];
         include phorum_get_template("message");
 
     } elseif (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
@@ -701,7 +702,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
 } elseif($toforum=phorum_check_moved_message($thread)) { // is it a moved thread?
 
-    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["MovedMessage"];
+    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessage"];
     $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessageTo"];
 
