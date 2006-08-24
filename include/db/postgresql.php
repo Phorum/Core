@@ -2777,7 +2777,7 @@ function phorum_db_newflag_allread($forum_id=0)
     phorum_db_newflag_delete(0,$forum_id);
 
     // get the maximum message-id in this forum
-    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id=$forum_id";
+    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id in ($forum_id, {$PHORUM['vroot']})";
     $res = pg_query($conn, $sql);
     if ($err = pg_last_error()){
         phorum_db_pg_last_error("$err: $sql");
