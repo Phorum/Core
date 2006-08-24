@@ -80,7 +80,7 @@ switch ($mod_step) {
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
         break;
 
@@ -125,7 +125,7 @@ switch ($mod_step) {
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
         break;
 
@@ -171,7 +171,7 @@ switch ($mod_step) {
    case PHORUM_DO_THREAD_MOVE: // this is the last step of a message move
 
         $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMoveOk'];
-        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         $message = phorum_db_get_message($msgthd_id);
 
         // find out if we have a notification-message already in this
@@ -212,7 +212,7 @@ switch ($mod_step) {
    case PHORUM_CLOSE_THREAD: // we have to close a thread
 
         $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['ThreadClosedOk'];
-        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_close_thread($msgthd_id);
         phorum_hook("close_thread", $msgthd_id);
         break;
@@ -220,7 +220,7 @@ switch ($mod_step) {
     case PHORUM_REOPEN_THREAD: // we have to reopen a thread
 
         $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['ThreadReopenedOk'];
-        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_reopen_thread($msgthd_id);
         phorum_hook("reopen_thread", $msgthd_id);
         break;
@@ -253,7 +253,7 @@ switch ($mod_step) {
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
         break;
 
@@ -289,7 +289,7 @@ switch ($mod_step) {
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
         break;
 
@@ -322,7 +322,7 @@ switch ($mod_step) {
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
         break;
 
@@ -357,7 +357,7 @@ switch ($mod_step) {
             settype($_POST['thread1'], "int");
             settype($_POST['thread'], "int"); // Thread 2
             $PHORUM['DATA']['MESSAGE'] = $PHORUM["DATA"]['LANG']['MsgMergeOk'];
-            $PHORUM['DATA']["URL"]["REDIRECT"] = $PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"] = $PHORUM["DATA"]["URL"]["LIST"];
             $PHORUM["reverse_threading"] = 0;
 
             // Get the target thread.
@@ -415,7 +415,7 @@ switch ($mod_step) {
         } else {
             // Cancel Thread Merge
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
 
         // unset temporary moderator_data
@@ -438,7 +438,7 @@ switch ($mod_step) {
    case PHORUM_DO_THREAD_SPLIT: // this is the last step of a thread split
 
            $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgSplitOk'];
-           $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+           $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
            settype($_POST['forum_id'], "int");
            settype($_POST['message'], "int");
            settype($_POST['thread'], "int");
@@ -452,7 +452,7 @@ switch ($mod_step) {
     default:
 
         if(!isset($PHORUM['DATA']['MESSAGE'])) $PHORUM['DATA']['MESSAGE']="";
-        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
+        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
 }
 
 if(!isset($PHORUM['DATA']['BACKMSG'])) {
