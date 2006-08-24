@@ -917,7 +917,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
             $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
 
-            if($PHORUM["DBCONFIG"]["mysql_use_ft"]){
+            if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
                 if($match_type=="ALL" && count($terms)>1){
                     $against="+".mysqli_real_escape_string($conn, implode(" +", $terms));
@@ -4347,7 +4347,7 @@ function phorum_db_sanitychecks()
         );
 
         // MySQL before version 4.0.18, with full text search enabled.
-        if ($PHORUM["DBCONFIG"]["mysql_use_ft"] &&
+        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"] &&
             $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
             PHORUM_SANITY_WARN,
             "The MySQL database server that is used does not
