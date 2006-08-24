@@ -142,19 +142,21 @@ if(!empty($phorum_search)){
         // back to the index page if the forum id is zero). If the user came
         // from the index page, no forum id will be set. In that case we
         // use the first available forum id.
-        $announcement_forum_id = 0;
         if ($PHORUM["forum_id"]) {
             $announcement_forum_id = $PHORUM["forum_id"];
         } elseif (count($forums)) {
             list ($f_id, $_data) = each($forums);
             $announcement_forum_id = $f_id;
+        } else {
+            // No forums and still search results? Should not happen of course.
+            $announcement_forum_id = 0;
         }
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
 
-            // Fake a forum_id for folders.
-            if ($row["forum_id"] == 0) {
+            // Fake forum_id for folders (announcements can be linked to them).
+            if ($row["forum_id"] == 0 || $forums[$row["forum_id"]]["folder_flag"]) {
                 $row["forum_id"] = $announcement_forum_id;
             }
 
@@ -176,8 +178,8 @@ if(!empty($phorum_search)){
         }
 
         foreach($arr["rows"] as $key => $row){
-            // Skip announcements "forum".
-            if ($row["forum_id"] == 0) continue;
+            // Skip folders (announcements can be linked to them).
+            if ($row["forum_id"] == 0 || $forums[$row["forum_id"]]["folder_flag"]) continue;
 
             $arr["rows"][$key]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
 
