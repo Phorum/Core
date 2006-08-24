@@ -1516,7 +1516,7 @@ Table of contents:
    When   : Right after all the initialization tasks are done and 
             just before the posting script starts its own action processing. 
    Input  : Array containing message data.
-   Output : Same as Input
+   Return : Same as Input
 
    This hook can be used by modules to handle (custom) data coming from the 
    posting form. The module is allowed to change the data that is in the
@@ -1530,7 +1530,7 @@ Table of contents:
    When   : Right after the posting.php script's configuration setup and
             before starting the posting script processing.
    Input  : none
-   Output : none
+   Return : none
 
    This hook can be used for doing modifications to the environment
    of the posting scripts at an early stage. One of the intended purposes
@@ -1799,6 +1799,87 @@ Table of contents:
    Phorum send the mails also, return false.
 
    ----------------------------------------------------------------------------
+   user_check_login
+
+   Where  : include/users.php
+   When   : Whenever phorum_user_check_login() is called.
+   Input  : Array containing:
+            username    => the username to check
+            password    => the password to check
+            user_id     => empty value
+   Return : Same as input
+
+   This hook can be used to check user authentication against an external
+   source. If the hook decides that the username and password are okay,
+   then it can set the user_id field to the user_id of the authenticated
+   user. If the hook wants to let Phorum use its standard authentication
+   mechanism, then it can set user_id to FALSE.
+   
+   Here is an example (not too useful) hook function:
+
+      function phorum_mod_foo_user_check_login($login)
+      {
+          // Logging in with john / doe will authenticate the user with
+          // user_id 1234.
+          if ($login["username"] == "john" && $login["password"] == "doe") {
+              $login["user_id"] = 1234;
+          }
+          // For all other users, we let Phorum do the authentication.
+          else
+          {
+              $login["user_id"] = FALSE;
+          }
+
+          return $login;
+      }
+
+   Mind that when returning a user_id using this hook, the user data for
+   the user must be available in Phorum's users table. This hook only
+   handles the authentication step. So if this hook is used for 
+   authenticating against an external source, somehow the user data
+   has to be put in Phorum's users table. There are multiple ways of
+   handling this. Here's two of them:
+
+   1) Synchronize the data from the external system when it has changed
+      there. So if a user is created, changed or deleted on the 
+      external system, that system has to update the Phorum users
+      table with the new iformation. The advantage of this method, is
+      that the users table only is updated when changes occur and that
+      the users table is always up-to-date with the latest information.
+
+   2) Synchronize the data on-the-fly from the user_check_login hook.
+      As long as the user data is available before that hook has 
+      ended, it will be okay for Phorum. The advantage of this method
+      is that updating the user data is done in an easy way at the
+      moment a user logs into Phorum. Disadvantages are that the user
+      data is only updated at the moment the user logs in and that a
+      user in only known to Phorum after the first time logging in.
+
+      Here's an example of how a hook function that uses on-the-fly
+      updates could look:
+   
+      function phorum_mod_foo_user_check_login($login)
+      {
+          // Check the authentication against the external system.
+          $username = $login["username"];
+          $password = $login["password"];
+          if (! externalsystem_checkauth($username, $password)) {
+              return $login;
+          }
+
+          // Synchronize the external system with Phorum's users table.
+          $externaluser =  externalsystem_getuser($username);
+          ...code to put $externaluser in Phorum's user table ...
+          ...and determine the Phorum $user_id to return ...
+
+          // Set the user_id to tell Phorum which user logged in.
+          $login["user_id"] = $user_id;
+
+          return $login;
+      }
+
+
+   ----------------------------------------------------------------------------
    user_list
 
    Where  : include/users.php include/controlcenter/groupmod.php
@@ -1823,7 +1904,6 @@ Table of contents:
    elements. From a hook function for one of these template hooks, the
    module writer can print the HTML code that has to be added to the
    interface at the postition of the hook call in the template.
-
 
    ----------------------------------------------------------------------------
    tpl_editor_after_subject
