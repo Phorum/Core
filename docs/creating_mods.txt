@@ -1345,6 +1345,20 @@ Table of contents:
    messages.
 
    ----------------------------------------------------------------------------
+   email_user_start
+
+   Where  : include/email_functions.php
+   When   : Right at the beginning of the function, before any modification of data
+   Input  : array of addresses and data (which are both an array of their own)
+   Return : array of addresses and data
+
+   This hook is put at the very beginning of phorum_email_user and is therefore
+   called for *every* email that is send from phorum.
+   It is put before every replacement done in that function so that every data
+   which is send to that function can be replaced/changed at will
+
+
+   ----------------------------------------------------------------------------
    external
 
    The external hook functions are never called from any of the standard
@@ -1513,14 +1527,14 @@ Table of contents:
    posting_custom_action
 
    Where  : posting.php
-   When   : Right after all the initialization tasks are done and 
-            just before the posting script starts its own action processing. 
+   When   : Right after all the initialization tasks are done and
+            just before the posting script starts its own action processing.
    Input  : Array containing message data.
    Return : Same as Input
 
-   This hook can be used by modules to handle (custom) data coming from the 
+   This hook can be used by modules to handle (custom) data coming from the
    posting form. The module is allowed to change the data that is in the
-   input message. When a module needs to change the meta data for a 
+   input message. When a module needs to change the meta data for a
    message, then this is the designated hook for that task.
 
    ----------------------------------------------------------------------------

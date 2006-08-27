@@ -64,6 +64,8 @@ function phorum_email_user($addresses, $data)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
+
     $mailmessage = $data['mailmessage'];
     unset($data['mailmessage']);
     $mailsubject = $data['mailsubject'];
