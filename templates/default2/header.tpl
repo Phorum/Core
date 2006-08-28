@@ -36,7 +36,7 @@ Some Icons courtesy of:
     FAMFAMFAM - http://www.famfamfam.com/lab/icons/silk/
     Tango Project - http://tango-project.org/
 -->
-<body>
+<body onload="{IF FOCUS_TO_ID}var focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
 
 {! Please leave this div in your template   you can alter anything above this line }
 <div id="phorum">
