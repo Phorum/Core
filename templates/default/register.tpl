@@ -28,6 +28,7 @@
           <td><input type="password" name="password2" size="30" value="" /> ({LANG->again})</td>
         </tr>
       </table>
+      {HOOK tpl_register_form}
       <div style="float: left; margin-top: 5px;">*{LANG->Required}</div>
       <div style="margin-top: 3px;" align="right"><input type="submit" class="PhorumSubmit" value=" {LANG->Submit} " /></div>
     </div>
