@@ -4587,7 +4587,7 @@ function phorum_db_run_queries($queries){
 function phorum_db_check_connection(){
     $conn = phorum_db_mysql_connect();
 
-    return ($conn > 0) ? true : false;
+    return $conn ? true : false;
 }
 
 /**
