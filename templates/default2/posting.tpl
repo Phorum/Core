@@ -76,7 +76,7 @@
                     
                 {/IF}
             
-                {IF MODE "post"}
+                {IF MODE "post" OR MODE "reply"}
             
                     {IF NOT LOGGEDIN}
                     
