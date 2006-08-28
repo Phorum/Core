@@ -599,8 +599,8 @@ if ($PHORUM["posting_template"] == 'posting')
     $PHORUM["DATA"]["MESSAGE"] = $message;
     
     // Set the field to focus.
-    $focus = "phorum_subject";
-    if (!empty($message["subject"])) $focus = "phorum_textarea";
+    $focus = "subject";
+    if (!empty($message["subject"])) $focus = "body";
     $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
 }
 

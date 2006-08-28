@@ -857,7 +857,7 @@ switch ($page) {
         // Determine what input element gets the focus.
         $focus_id = 'userselection';
         if ($PHORUM["DATA"]["RECIPIENT_COUNT"]) $focus_id = 'subject';
-        if (!empty($msg["subject"])) $focus_id = 'message';
+        if (!empty($msg["subject"])) $focus_id = 'body';
         $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus_id;
 
         // Create data for a user dropdown list, if configured.
