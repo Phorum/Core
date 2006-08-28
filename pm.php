@@ -744,6 +744,7 @@ switch ($page) {
 
         // Setup the default array with the message data.
         $msg = array(
+            "from_user_id"  => $PHORUM["user"]["user_id"],
             "from_username" => $PHORUM["user"]["username"],
             "keep"          => isset($_POST["keep"]) && $_POST["keep"] ? 1 : 0,
             "subject"       => isset($_POST["subject"]) ? $_POST["subject"] : '',
