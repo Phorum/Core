@@ -443,7 +443,7 @@ function phorum_user_check_field( $field_name, $field_value)
 /**
 * function for adding a user to the database (using the db-layer)
 */
-function phorum_user_add( $user, $pwd_unchanged = false )
+function phorum_user_add( $user, $use_raw_password = false )
 {
     if ( empty( $user["password_temp"] ) ) $user["password_temp"] = $user["password"];
     $db_user = phorum_user_prepare_data( $user, array(), $use_raw_password );
