@@ -50,7 +50,7 @@ $message=phorum_db_get_message($thread);
 if(isset($PHORUM["args"]["remove"])){
     // we are removing a message from the follow list
     phorum_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
-    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["RemoveFollowed"];
+    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["RemoveFollowed"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $template="message";
@@ -58,7 +58,7 @@ if(isset($PHORUM["args"]["remove"])){
     // we are stopping emails for this thread
     phorum_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
     phorum_user_subscribe( $PHORUM['user']['user_id'], $message["forum_id"], $thread, PHORUM_SUBSCRIPTION_BOOKMARK );
-    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["NoMoreEmails"];
+    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["NoMoreEmails"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $template="message";
@@ -68,7 +68,7 @@ if(isset($PHORUM["args"]["remove"])){
     phorum_user_subscribe( $PHORUM['user']['user_id'], $message["forum_id"], $thread, $type );
     $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
-    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["BookmarkedThread"];
+    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["BookmarkedThread"];
     $template="message";
 } else {
     // we are following a new thread
