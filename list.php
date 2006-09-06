@@ -173,6 +173,7 @@ if($page>1){
 
 $min_id=0;
 
+$rows = NULL;
 if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies'])) {
     $cache_key=$PHORUM['forum_id']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"];
     $rows = phorum_cache_get('message_list',$cache_key);
