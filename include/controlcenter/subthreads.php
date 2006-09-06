@@ -58,6 +58,9 @@ $forums_arr = phorum_db_get_forums($forum_ids,-1,$PHORUM['vroot']);
 // storage for newflags
 $PHORUM['user']['newinfo'] = array();
 
+// A forum id for making announcement links work.
+$announce_forum_id = null;
+
 // go through all subscriptions
 $subscr_array_final = array();
 foreach($subscr_array as $dummy => $data) {
@@ -68,7 +71,39 @@ foreach($subscr_array as $dummy => $data) {
     } 
 
     $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
-    $data["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
+
+    // Create the read URL. We always need a real forum id, else
+    // the read script will redirect us back to the index. Therefore, we 
+    // need to fix the forum id for announcements.
+    $read_forum_id = $data["forum_id"];
+    if ($read_forum_id == $PHORUM["vroot"])
+    {
+        // See if we did search for an announcement forum id before.
+        if ($announce_forum_id !== null) {
+            $read_forum_id = $announce_forum_id;
+        // See if we can use the current forum id.
+        } elseif ($PHORUM["forum_id"] != $PHORUM["vroot"] && ! $PHORUM["folder_flag"]) {
+            $read_forum_id = $announce_forum_id = $PHORUM["forum_id"];
+        } else {
+            // Walk through all forums that we loaded already for this page
+            // for a suitable candidate.
+            foreach ($forums_arr as $id => $dummy) {
+                if ($id != $PHORUM["vroot"]) {
+                    $read_forum_id = $announce_forum_id = $id;
+                }
+            }
+            // Still no luck. Retrieve all forums and pick the first candidate.
+            if ($read_forum_id == $PHORUM["vroot"]) {
+                $forums = phorum_db_get_forums();
+                foreach ($forums_arr as $id => $forum) {
+                    if ($id != $PHORUM["vroot"] && ! $forum["folder_flag"]) {
+                        $read_forum_id = $announce_forum_id = $id;
+                    }
+                }
+            }
+        }
+    }
+    $data["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $read_forum_id, $data["thread"]);
 
     if(!empty($data["user_id"])) {
         $data["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $data["user_id"]);
@@ -84,30 +119,34 @@ foreach($subscr_array as $dummy => $data) {
 
     $data["subject"]=htmlspecialchars($data["subject"]);
 
-    // Check if there are new messages for the current thread. 
+    // Check if there are new messages for the current thread. Skip
+    // announcements, in case we are currently not in a real forum.
+    // Else newflags would never disappear for the announcements.
     $forum_id = $data["forum_id"];
-    if (! isset($PHORUM['user']['newinfo'][$forum_id])) {
-        $PHORUM['user']['newinfo'][$forum_id] = null;
-        if ($PHORUM['cache_newflags']) {
-            $newflagkey = $forum_id."-".$PHORUM['user']['user_id'];
-            $PHORUM['user']['newinfo'][$forum_id] = phorum_cache_get('newflags',$newflagkey);
-        }
-        if ($PHORUM['user']['newinfo'][$forum_id] == null) {
-            $PHORUM['user']['newinfo'][$forum_id] = phorum_db_newflag_get_flags($forum_id);
-            if($PHORUM['cache_newflags']) {
-                phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$forum_id],86400);
+    if ($forum_id == $PHORUM["vroot"] && !$PHORUM["folder_flag"]) {
+        if (! isset($PHORUM['user']['newinfo'][$forum_id])) {
+            $PHORUM['user']['newinfo'][$forum_id] = null;
+            if ($PHORUM['cache_newflags']) {
+                $newflagkey = $forum_id."-".$PHORUM['user']['user_id'];
+                $PHORUM['user']['newinfo'][$forum_id] = phorum_cache_get('newflags',$newflagkey);
+            }
+            if ($PHORUM['user']['newinfo'][$forum_id] == null) {
+                $PHORUM['user']['newinfo'][$forum_id] = phorum_db_newflag_get_flags($forum_id);
+                if($PHORUM['cache_newflags']) {
+                    phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$forum_id],86400);
+                }
             }
         }
-    }
-    $new = array();
-    foreach ($data["meta"]["message_ids"] as $mid) {
-        if (!isset($PHORUM['user']['newinfo'][$forum_id][$mid]) && $mid > $PHORUM['user']['newinfo'][$forum_id]['min_id']) {
-            $new[] = $mid;
+        $new = array();
+        foreach ($data["meta"]["message_ids"] as $mid) {
+            if (!isset($PHORUM['user']['newinfo'][$forum_id][$mid]) && $mid > $PHORUM['user']['newinfo'][$forum_id]['min_id']) {
+                $new[] = $mid;
+            }
         }
-    }
 
-    if (count($new)) {
-        $data["new"] = $PHORUM["DATA"]["LANG"]["newflag"]; 
+        if (count($new)) {
+            $data["new"] = $PHORUM["DATA"]["LANG"]["newflag"]; 
+        }
     }
 
     $subscr_array_final[] = $data;
