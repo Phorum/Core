@@ -2990,7 +2990,7 @@ function phorum_db_get_message_subscriptions($user_id,$days=2){
         $timestr="";
     }
 
-    $sql = "select a.thread, a.forum_id, a.sub_type, b.subject,b.modifystamp,b.author,b.user_id,b.email from {$PHORUM['subscribers_table']} as a,{$PHORUM['message_table']} as b where a.user_id=$user_id and b.message_id=a.thread and (a.sub_type=".PHORUM_SUBSCRIPTION_MESSAGE." or a.sub_type=".PHORUM_SUBSCRIPTION_BOOKMARK.")"."$timestr ORDER BY b.modifystamp desc";
+    $sql = "select a.thread, a.forum_id, a.sub_type, b.subject,b.modifystamp,b.author,b.user_id,b.email,b.meta from {$PHORUM['subscribers_table']} as a,{$PHORUM['message_table']} as b where a.user_id=$user_id and b.message_id=a.thread and (a.sub_type=".PHORUM_SUBSCRIPTION_MESSAGE." or a.sub_type=".PHORUM_SUBSCRIPTION_BOOKMARK.")"."$timestr ORDER BY b.modifystamp desc";
 
     $res = mysqli_query( $conn, $sql);
 
@@ -3000,6 +3000,7 @@ function phorum_db_get_message_subscriptions($user_id,$days=2){
     $forum_ids=array();
 
     while ($rec = mysqli_fetch_assoc($res)){
+        $rec["meta"] = unserialize($rec["meta"]);
         $unsub_url=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=".PHORUM_CC_SUBSCRIPTION_THREADS, "unsub_id=".$rec['thread'], "unsub_forum=".$rec['forum_id'], "unsub_type=".$rec['sub_type']);
         $rec['unsubscribe_url']=$unsub_url;
         $arr[] = $rec;

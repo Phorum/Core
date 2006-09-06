@@ -54,6 +54,11 @@ $subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], 
 $forum_ids = $subscr_array['forum_ids'];
 unset($subscr_array['forum_ids']);
 $forums_arr = phorum_db_get_forums($forum_ids,-1,$PHORUM['vroot']);
+
+// storage for newflags
+$PHORUM['user']['newinfo'] = array();
+
+// go through all subscriptions
 $subscr_array_final = array();
 foreach($subscr_array as $dummy => $data) {
     if ($data['forum_id'] == 0) {
@@ -78,6 +83,32 @@ foreach($subscr_array as $dummy => $data) {
     }
 
     $data["subject"]=htmlspecialchars($data["subject"]);
+
+    // Check if there are new messages for the current thread. 
+    $forum_id = $data["forum_id"];
+    if (! isset($PHORUM['user']['newinfo'][$forum_id])) {
+        $PHORUM['user']['newinfo'][$forum_id] = null;
+        if ($PHORUM['cache_newflags']) {
+            $newflagkey = $forum_id."-".$PHORUM['user']['user_id'];
+            $PHORUM['user']['newinfo'][$forum_id] = phorum_cache_get('newflags',$newflagkey);
+        }
+        if ($PHORUM['user']['newinfo'][$forum_id] == null) {
+            $PHORUM['user']['newinfo'][$forum_id] = phorum_db_newflag_get_flags($forum_id);
+            if($PHORUM['cache_newflags']) {
+                phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$forum_id],86400);
+            }
+        }
+    }
+    $new = array();
+    foreach ($data["meta"]["message_ids"] as $mid) {
+        if (!isset($PHORUM['user']['newinfo'][$forum_id][$mid]) && $mid > $PHORUM['user']['newinfo'][$forum_id]['min_id']) {
+            $new[] = $mid;
+        }
+    }
+
+    if (count($new)) {
+        $data["new"] = $PHORUM["DATA"]["LANG"]["newflag"]; 
+    }
 
     $subscr_array_final[] = $data;
 }
