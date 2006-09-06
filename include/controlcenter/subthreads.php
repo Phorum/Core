@@ -95,7 +95,7 @@ foreach($subscr_array as $dummy => $data) {
             // Still no luck. Retrieve all forums and pick the first candidate.
             if ($read_forum_id == $PHORUM["vroot"]) {
                 $forums = phorum_db_get_forums();
-                foreach ($forums_arr as $id => $forum) {
+                foreach ($forums as $id => $forum) {
                     if ($id != $PHORUM["vroot"] && ! $forum["folder_flag"]) {
                         $read_forum_id = $announce_forum_id = $id;
                     }
