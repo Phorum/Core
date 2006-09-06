@@ -34,14 +34,14 @@ if(isset($_GET['display_up']) || isset($_GET['display_down'])) {
 
     // find the one we are moving
     $key=array_search(isset($_GET['display_up'])?$_GET['display_up']:$_GET['display_down'], $forum_order);
-    
+
     $newkey=NULL;
-    
+
     // set the new key for it
     if($key>0 && isset($_GET['display_up'])){
         $newkey=$key-1;
     }
-    
+
     if($key<count($forum_order)-1 && isset($_GET['display_down'])){
         $newkey=$key+1;
     }
@@ -51,7 +51,7 @@ if(isset($_GET['display_up']) || isset($_GET['display_down'])) {
         $tmp=$forum_order[$key];
         $forum_order[$key]=$forum_order[$newkey];
         $forum_order[$newkey]=$tmp;
-        
+
 
         // loop through all the forums and updated the ones that changed.
         // We have to look at them all because the default value for
@@ -60,7 +60,9 @@ if(isset($_GET['display_up']) || isset($_GET['display_down'])) {
         foreach($forum_order as $new_display_order=>$forum_id){
             if($forums[$forum_id]["display_order"]!=$new_display_order){
                 $forums[$forum_id]["display_order"]=$new_display_order;
-                phorum_db_update_forum($forums[$forum_id]);
+
+                $update_forum = array('forum_id'=>$forum_id,'display_order'=>$new_display_order);
+                phorum_db_update_forum($update_forum);
             }
         }
 
