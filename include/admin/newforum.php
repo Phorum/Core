@@ -207,7 +207,9 @@ if(count($_POST)){
             }
 
         } else {
-
+            if(isset($_POST['forum_id'])) {
+                unset($_POST['forum_id']);
+            }
             $res=phorum_db_add_forum($_POST);
         }
 
