@@ -104,6 +104,7 @@ foreach($subscr_array as $dummy => $data) {
         }
     }
     $data["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $read_forum_id, $data["thread"]);
+    $data["URL"]["NEWPOST"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $read_forum_id, $data["thread"], "gotonewpost");
 
     if(!empty($data["user_id"])) {
         $data["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $data["user_id"]);
@@ -123,7 +124,7 @@ foreach($subscr_array as $dummy => $data) {
     // announcements, in case we are currently not in a real forum.
     // Else newflags would never disappear for the announcements.
     $forum_id = $data["forum_id"];
-    if ($forum_id == $PHORUM["vroot"] && !$PHORUM["folder_flag"]) {
+    if (!($forum_id == $PHORUM["vroot"] && $PHORUM["folder_flag"])) {
         if (! isset($PHORUM['user']['newinfo'][$forum_id])) {
             $PHORUM['user']['newinfo'][$forum_id] = null;
             if ($PHORUM['cache_newflags']) {
