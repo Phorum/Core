@@ -64,6 +64,7 @@ function phorum_email_user($addresses, $data)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    $data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
     list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
 
     $mailmessage = $data['mailmessage'];
@@ -79,7 +80,7 @@ function phorum_email_user($addresses, $data)
     }
 
     $num_addresses = count($addresses);
-    $from_address = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
+    $from_address = $data['from_address'];
 
     $hook_data = array(
         'addresses'  => $addresses,
