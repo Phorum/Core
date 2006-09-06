@@ -158,7 +158,7 @@ if(!phorum_db_check_connection()){
 // get the Phorum settings
 phorum_db_load_settings();
 
-// Defaults for missing settings (these can be needed after upgrading, in 
+// Defaults for missing settings (these can be needed after upgrading, in
 // case the admin did not yet save a newly added Phorum setting).
 if (! isset($PHORUM["default_feed"])) $PHORUM["default_feed"] = "rss";
 
@@ -168,7 +168,7 @@ if (! isset($PHORUM["private_key"]) || empty($PHORUM["private_key"])) {
             "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
    $private_key = "";
    for ($i = 0; $i<40; $i++) {
-       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1); 
+       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
    }
    $PHORUM["private_key"] = $private_key;
    phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
@@ -178,8 +178,10 @@ if (! isset($PHORUM["private_key"]) || empty($PHORUM["private_key"])) {
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
-include_once( "./include/cache.php" );
-//include_once( "./include/cache_memcached.php" );
+// load the caching-layer - you can specify a different one like below
+// one caching layer *needs* to be loaded
+include_once( "./include/cache/file.php" );
+//include_once( "./include/cache/memcached.php" );
 
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
@@ -755,7 +757,7 @@ function phorum_get_template( $page )
         print "phorum_get_template() was called with an empty page name.<br/>";
         print "This might indicate a template problem.<br/>";
         if (function_exists('debug_print_backtrace')) {
-            print "Here's a backtrace that might help finding the error:"; 
+            print "Here's a backtrace that might help finding the error:";
             print "<pre>";
             debug_print_backtrace();
             print "</pre>";
@@ -978,7 +980,7 @@ function print_var( $var )
     echo "</xmp>";
 }
 
-/** 
+/**
  * Generates an MD5 signature for a piece of data using Phorum's secret
  * private key. This can be used to sign data which travels an unsafe path
  * (for example data that is sent to a user's browser and then back to
