@@ -127,8 +127,6 @@ if(!empty($phorum_search)){
         $raw_body = $search_request_data['raw_body'];
     }
 
-    $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
-
     if(count($arr["rows"])){
 
         $match_number = $start + 1;
