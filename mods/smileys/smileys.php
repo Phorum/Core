@@ -11,14 +11,7 @@ function phorum_mod_smileys_after_header()
     // Return immediately if we have no active smiley replacements.
     if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
         return;
-    } ?>
-
-    <style type="text/css">
-    .mod_smileys_img {
-        vertical-align: bottom;
-        margin: 0px 3px 0px 3px;
     }
-    </style> <?php
 }
 
 function phorum_mod_smileys_format($data)
@@ -28,6 +21,18 @@ function phorum_mod_smileys_format($data)
     // Return immediately if we have no active smiley replacements.
     if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
         return $data;
+    }
+
+    // Add the stylesheet for the smileys to the header.
+    if (! isset($PHORUM["mod_smileys"]["added_stylesheet"])) {
+        $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= 
+            "<style type=\"text/css\">\n" .
+            ".mod_smileys_img {\n" .
+            "    vertical-align: middle;\n" .
+            "    margin: 0px 3px 0px 3px;\n" .
+            "}\n" .
+            "</style>\n";
+            $PHORUM["mod_smileys"]["added_stylesheet"] = true;
     }
 
     // Run smiley replacements.
