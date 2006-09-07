@@ -599,10 +599,10 @@ if ($PHORUM["posting_template"] == 'posting')
     $PHORUM["DATA"]["MESSAGE"] = $message;
     
     // Set the field to focus. Only set the focus if we have
-    // no message to display to the user. If we have a message
-    // to display, then it's better to stay at the top of the 
+    // no message to display to the user and if we're not in a preview.
+    // In those cases, it's better to stay at the top of the 
     // page, so the user can see it.
-    if (!isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"])) {
+    if (!isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"]) && !$preview) {
         $focus = "subject";
         if (!empty($message["subject"])) $focus = "body";
         $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
