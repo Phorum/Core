@@ -606,7 +606,7 @@ function phorum_get_url()
     // build the query string
     $query_items = array();
 
-    if ( $add_forum_id && $PHORUM["forum_id"]>0 ) {
+    if ( $add_forum_id ) {
         $query_items[] = ( int )$PHORUM["forum_id"];
     }
 
@@ -872,7 +872,7 @@ function print_var( $var )
     echo "</xmp>";
 }
 
-/** 
+/**
  * Generates an MD5 signature for a piece of data using Phorum's secret
  * private key. This can be used to sign data which travels an unsafe path
  * (for example data that is sent to a user's browser and then back to
