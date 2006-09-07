@@ -370,14 +370,24 @@ function phorum_user_save_simple($user)
     return $ret;
 }
 
-function phorum_user_settings_data_save($key, $val)
+function phorum_user_settings_data_save($settings)
 {
     // shouldn't happen 
     if (empty($GLOBALS["PHORUM"]["user"]["user_id"])) return; 
 
-    if (!isset($GLOBALS["PHORUM"]["user"]["settings_data"][$key]) ||
-        $GLOBALS["PHORUM"]["user"]["settings_data"][$key] !== $val) {
-        $GLOBALS["PHORUM"]["user"]["settings_data"][$key] = $val;
+    $changed_settings = array();
+    foreach ($settings as $key => $val) 
+    {
+        if (!isset($GLOBALS["PHORUM"]["user"]["settings_data"][$key]) ||
+            $GLOBALS["PHORUM"]["user"]["settings_data"][$key] !== $val) {
+            $GLOBALS["PHORUM"]["user"]["settings_data"][$key] = $val;
+            $changed_settings[$key] = $val;
+        }
+    }
+    if (count($changed_settings)) {
+        foreach ($changed_settings as $key => $val) {
+            $GLOBALS["PHORUM"]["user"]["settings_data"][$key] = $val;
+        }
         phorum_db_user_save(array(
             "user_id"       => $GLOBALS["PHORUM"]["user"]["user_id"],
             "settings_data" => $GLOBALS["PHORUM"]["user"]["settings_data"]
