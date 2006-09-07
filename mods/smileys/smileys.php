@@ -16,6 +16,9 @@ function phorum_mod_smileys_after_header()
 
 function phorum_mod_smileys_format($data)
 {
+    // Do not format smileys for the feeds.
+    if (phorum_page == "feed") return $data;
+
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Return immediately if we have no active smiley replacements.
