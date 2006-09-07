@@ -41,19 +41,15 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
     $subdays = $_POST['subdays'];
 } elseif(isset($PHORUM['args']['subdays']) && !empty($PHORUM["args"]['subdays']) && is_numeric($PHORUM["args"]['subdays'])) {
     $subdays = $PHORUM['args']['subdays'];
-} elseif(isset($_COOKIE["phorum_subdays"]) && is_numeric($_COOKIE["phorum_subdays"])) {
-    $subdays = $_COOKIE["phorum_subdays"];
+} elseif(isset($PHORUM["user"]["settings_data"]["cc_subscriptions_subdays"])) {
+    $subdays = $PHORUM["user"]["settings_data"]["cc_subscriptions_subdays"];
 } else {
     $subdays = 2;
 } 
-
 $PHORUM['DATA']['SELECTED'] = $subdays; 
 
-// This can be put in the template to remember the subdays selection.
-$PHORUM['DATA']['SET_SUBDAYS_COOKIE'] = 
-    "<script type=\"text/javascript\">\n<!--\n" .
-    "document.cookie = \"phorum_subdays=$subdays\";\n" .
-    "// -->\n</script>\n"; 
+// Store current selection for the user.
+phorum_user_settings_data_save("cc_subscriptions_subdays", $subdays);
 
 // reading all forums for the current vroot
 $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
