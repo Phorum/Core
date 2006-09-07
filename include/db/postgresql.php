@@ -873,10 +873,10 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     // if they are not allowed to search any forums, return the emtpy $arr;
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
 
-    // Add forum 0 (for announcements) to the allowed forums.
-    $allowed_forums[] = 0;
+    // Add vroot (for announcements) to the allowed forums.
+    $allowed_forums[] = $PHORUM["vroot"];
 
-    if($PHORUM['forum_id']!=0 && $match_forum!="ALL"){
+    if($PHORUM['forum_id']!=$PHORUM["vroot"] && $match_forum!="ALL"){
         $forum_where=" and forum_id={$PHORUM['forum_id']}";
     } else {
         $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
@@ -2995,7 +2995,7 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
  * together with the forum-id and subjects of the threads
  */
 
-function phorum_db_get_message_subscriptions($user_id,$days=2){
+function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_postgresql_connect();
@@ -3010,7 +3010,13 @@ function phorum_db_get_message_subscriptions($user_id,$days=2){
         $timestr="";
     }
 
-    $sql = "select a.thread, a.forum_id, a.sub_type, b.subject,b.modifystamp,b.author,b.user_id,b.email,b.meta from {$PHORUM['subscribers_table']} as a,{$PHORUM['message_table']} as b where a.user_id=$user_id and b.message_id=a.thread and (a.sub_type=".PHORUM_SUBSCRIPTION_MESSAGE." or a.sub_type=".PHORUM_SUBSCRIPTION_BOOKMARK.")"."$timestr ORDER BY b.modifystamp desc";
+    if ($forum_ids != null and is_array($forum_ids)) {
+        $forumidstr = " AND a.forum_id IN (" . implode(",", $forum_ids) . ")";
+    } else {
+        $forumidstr = "";
+    }
+
+    $sql = "select a.thread, a.forum_id, a.sub_type, b.subject,b.modifystamp,b.author,b.user_id,b.email,b.meta from {$PHORUM['subscribers_table']} as a,{$PHORUM['message_table']} as b where a.user_id=$user_id and b.message_id=a.thread and (a.sub_type=".PHORUM_SUBSCRIPTION_MESSAGE." or a.sub_type=".PHORUM_SUBSCRIPTION_BOOKMARK.")"."$timestr $forumidstr ORDER BY b.modifystamp desc";
 
     $res = pg_query($conn, $sql);
 

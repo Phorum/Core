@@ -739,9 +739,9 @@ function phorum_user_access_list( $permission )
         }
     }
 
-    // Admins also have rights for forum_id 0 (announcements)
+    // Admins also have rights for the vroot forum_id (announcements)
     if ($PHORUM["user"]["admin"]) {
-        $forum_list[0] = 0;
+        $forum_list[0] = $PHORUM["vroot"];
     }
 
     return $forum_list;

@@ -47,13 +47,13 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
 
 $PHORUM['DATA']['SELECTED'] = $subdays; 
 
-// reading all subscriptions to messages
-$subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], $subdays); 
+// reading all forums for the current vroot
+$forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
 
-// reading all forums
-$forum_ids = $subscr_array['forum_ids'];
-unset($subscr_array['forum_ids']);
-$forums_arr = phorum_db_get_forums($forum_ids,-1,$PHORUM['vroot']);
+// reading all subscriptions to messages in the current vroot.
+$forum_ids = array($PHORUM["vroot"]);
+foreach ($forums as $forum) { $forum_ids[] = $forum["forum_id"]; }
+$subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids); 
 
 // storage for newflags
 $PHORUM['user']['newinfo'] = array();
@@ -63,11 +63,12 @@ $announce_forum_id = null;
 
 // go through all subscriptions
 $subscr_array_final = array();
-foreach($subscr_array as $dummy => $data) {
-    if ($data['forum_id'] == 0) {
+unset($subscr_array["forum_ids"]);
+foreach($subscr_array as $id => $data) {
+    if ($data['forum_id'] == $PHORUM["vroot"]) {
         $data['forum'] = $PHORUM['DATA']['LANG']['Announcement'];
     } else {
-        $data['forum'] = $forums_arr[$data['forum_id']]['name'];
+        $data['forum'] = $forums[$data['forum_id']]['name'];
     } 
 
     $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
@@ -79,26 +80,18 @@ foreach($subscr_array as $dummy => $data) {
     if ($read_forum_id == $PHORUM["vroot"])
     {
         // See if we did search for an announcement forum id before.
-        if ($announce_forum_id !== null) {
+        if ($announce_forum_id != null) {
             $read_forum_id = $announce_forum_id;
-        // See if we can use the current forum id.
+        // See if we can use the active forum id.
         } elseif ($PHORUM["forum_id"] != $PHORUM["vroot"] && ! $PHORUM["folder_flag"]) {
             $read_forum_id = $announce_forum_id = $PHORUM["forum_id"];
         } else {
-            // Walk through all forums that we loaded already for this page
-            // for a suitable candidate.
-            foreach ($forums_arr as $id => $dummy) {
-                if ($id != $PHORUM["vroot"]) {
-                    $read_forum_id = $announce_forum_id = $id;
-                }
-            }
-            // Still no luck. Retrieve all forums and pick the first candidate.
-            if ($read_forum_id == $PHORUM["vroot"]) {
-                $forums = phorum_db_get_forums();
-                foreach ($forums as $id => $forum) {
-                    if ($id != $PHORUM["vroot"] && ! $forum["folder_flag"]) {
-                        $read_forum_id = $announce_forum_id = $id;
-                    }
+            // Walk through all forums in the current vroot to find 
+            // a suitable candidate.
+            foreach ($forums as $id => $forum) {
+                if ($forum["forum_id"] != $PHORUM["vroot"] && !$forum["folder_flag"]) {
+                    $read_forum_id = $announce_forum_id = $forum["forum_id"];
+                    break;
                 }
             }
         }

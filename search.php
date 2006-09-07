@@ -51,8 +51,6 @@ function phorum_search_check_valid_vars() {
 }
 
 
-
-
 if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
     $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($_GET["search"]), "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($_GET['match_forum']));
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["SearchRunning"];
@@ -135,29 +133,30 @@ if(!empty($phorum_search)){
 
         $match_number = $start + 1;
 
-        $forums = phorum_db_get_forums();
+        $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
 
-        // For announcements, we will put the current forum_id in the record.
-        // Else the message cannot be read (Phorum will redirect the user
-        // back to the index page if the forum id is zero). If the user came
-        // from the index page, no forum id will be set. In that case we
-        // use the first available forum id.
-        if ($PHORUM["forum_id"]) {
-            $announcement_forum_id = $PHORUM["forum_id"];
-        } elseif (count($forums)) {
-            list ($f_id, $_data) = each($forums);
-            $announcement_forum_id = $f_id;
-        } else {
-            // No forums and still search results? Should not happen of course.
-            $announcement_forum_id = 0;
+        // We always need a real forum id, else the read script will
+        // redirect us back to the index. Therefore, we need to fix
+        // the forum id for announcements. Here we make up a forum
+        // id to use in case we're handling an announcement.
+        $announce_forum_id = $PHORUM["forum_id"];
+        if ($PHORUM["forum_id"] == $PHORUM["vroot"]) {
+            // Walk through all forums in the current vroot to find 
+            // a suitable candidate.
+            foreach ($forums as $id => $forum) {
+                if ($forum["forum_id"] != $PHORUM["vroot"] && !$forum["folder_flag"]) {
+                    $announce_forum_id = $forum["forum_id"];
+                    break;
+                }
+            }
         }
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
 
-            // Fake forum_id for folders (announcements can be linked to them).
-            if ($row["forum_id"] == 0 || $forums[$row["forum_id"]]["folder_flag"]) {
-                $row["forum_id"] = $announcement_forum_id;
+            // Fake forum_id for vroots/folders.
+            if ($row["forum_id"] == $PHORUM["vroot"]) {
+                $row["forum_id"] = $announce_forum_id;
             }
 
             $arr["rows"][$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
@@ -178,8 +177,12 @@ if(!empty($phorum_search)){
         }
 
         foreach($arr["rows"] as $key => $row){
-            // Skip folders (announcements can be linked to them).
-            if ($row["forum_id"] == 0 || $forums[$row["forum_id"]]["folder_flag"]) continue;
+            // Unset the forum_id for announcements, so the template won't
+            // show a forum name for these.
+            if ($row["forum_id"] == $PHORUM["vroot"] || $forums[$row["forum_id"]]["folder_flag"]) {
+                unset($arr["rows"]["$key"]["forum_id"]);
+                continue;
+            }
 
             $arr["rows"][$key]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
 
