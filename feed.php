@@ -25,7 +25,7 @@ include_once("./include/format_functions.php");
 include_once("./include/feed_functions.php");
 
 // somehow we got to a folder
-if(!empty($PHORUM["folder_flag"])){
+if(!empty($PHORUM["folder_flag"]) && $PHORUM["forum_id"] != $PHORUM["vroot"]){
     exit();
 }
 
@@ -90,7 +90,7 @@ if(!empty($cache)){
         $feed_description = strip_tags($PHORUM["DATA"]["DESCRIPTION"]);
     } else {
         $feed_url = phorum_get_url(PHORUM_INDEX_URL);
-        $feed_name = $PHORUM["DATA"]["TITLE"];
+        $feed_title = $PHORUM["DATA"]["TITLE"];
         $feed_description = (!empty($PHORUM["description"])) ? $PHORUM["description"] : "";
     }
 
