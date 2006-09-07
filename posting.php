@@ -598,10 +598,15 @@ if ($PHORUM["posting_template"] == 'posting')
     // Make the message data available to the template engine.
     $PHORUM["DATA"]["MESSAGE"] = $message;
     
-    // Set the field to focus.
-    $focus = "subject";
-    if (!empty($message["subject"])) $focus = "body";
-    $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
+    // Set the field to focus. Only set the focus if we have
+    // no message to display to the user. If we have a message
+    // to display, then it's better to stay at the top of the 
+    // page, so the user can see it.
+    if (!isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"])) {
+        $focus = "subject";
+        if (!empty($message["subject"])) $focus = "body";
+        $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
+    }
 }
 
 // Load page header.
