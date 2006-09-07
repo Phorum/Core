@@ -140,7 +140,7 @@ if(!empty($phorum_search)){
         // the forum id for announcements. Here we make up a forum
         // id to use in case we're handling an announcement.
         $announce_forum_id = $PHORUM["forum_id"];
-        if ($PHORUM["forum_id"] == $PHORUM["vroot"]) {
+        if ($PHORUM["forum_id"] == $PHORUM["vroot"] || $PHORUM["folder_flag"]) {
             // Walk through all forums in the current vroot to find 
             // a suitable candidate.
             foreach ($forums as $id => $forum) {
