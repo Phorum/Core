@@ -1816,6 +1816,11 @@ function phorum_db_user_get($user_id, $detailed)
 
     if (mysqli_num_rows($res)){
         while($rec=mysqli_fetch_assoc($res)){
+            if (! empty($rec["settings_data"])) {
+                $rec["settings_data"] = unserialize($rec["settings_data"]);
+            } else {
+                $rec["settings_data"] = array();
+            }
             $users[$rec["user_id"]] = $rec;
         }
 
@@ -2147,6 +2152,14 @@ function phorum_db_user_save($userdata){
         $values = array();
 
         foreach($userdata as $key => $value){
+            if ($key == "settings_data") {
+                if (is_array($value)) {
+                    $value = serialize($value);
+                } else {
+                    die("Internal error: settings_data field for " .
+                        "phorum_db_user_save() must be an array");
+                }
+            }
             $values[] = "$key='".mysqli_real_escape_string($conn, $value)."'";
         }
 

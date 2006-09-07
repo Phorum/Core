@@ -370,6 +370,22 @@ function phorum_user_save_simple($user)
     return $ret;
 }
 
+function phorum_user_settings_data_save($key, $val)
+{
+    // shouldn't happen 
+    if (empty($GLOBALS["PHORUM"]["user"]["user_id"])) return; 
+
+    if (!isset($GLOBALS["PHORUM"]["user"]["settings_data"][$key]) ||
+        $GLOBALS["PHORUM"]["user"]["settings_data"][$key] !== $val) {
+        $GLOBALS["PHORUM"]["user"]["settings_data"][$key] = $val;
+        phorum_db_user_save(array(
+            "user_id"       => $GLOBALS["PHORUM"]["user"]["user_id"],
+            "settings_data" => $GLOBALS["PHORUM"]["user"]["settings_data"]
+        ));
+        phorum_cache_remove('user',$GLOBALS["PHORUM"]["user"]['user_id']);
+    }
+}
+
 function phorum_user_check_login( $username, $password )
 {
     $ret = false;
