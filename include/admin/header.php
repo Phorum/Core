@@ -380,6 +380,7 @@ Phorum Status:
         $menu->add("Check For New Version", "version", "Check for new releases.");
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
         $menu->add("Purge Stale Files", "file_purge", "Purging stale files from the database.");
+        $menu->add("Purge cache", "cache_purge", "Purging the Phorum cache.");
         $menu->add("System Sanity Checks", "sanity_checks", "Perform a number of sanity checks on the system to identify possible problems.");
         $menu->add("Manage Language Files", "manage_languages", "Allows administrator to create new or updated versions of language files.");
 

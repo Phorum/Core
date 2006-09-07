@@ -130,6 +130,56 @@ function phorum_cache_clear() {
 }
 
 /*
+ * Purges stale entries from the cache (mainly used by the admin panel)
+ */
+function phorum_cache_purge() {
+    list ($total, $purged, $dummy) =
+      phorum_cache_purge_recursive($GLOBALS['PHORUM']['real_cache'], "", 0, 0);
+
+    // Return a report about the purging action.
+    require_once("./include/format_functions.php");
+    return "Finished purging the file based data cache<br/>\n" .
+           "Purged " . phorum_filesize($purged) . " of " . 
+           phorum_filesize($total) . "<br/>\n";
+}
+function phorum_cache_purge_recursive($dir, $subdir, $total, $purged) {
+    $dh = opendir ("$dir/$subdir");
+    if (! $dh) die ("Can't opendir " . htmlspecialchars("$dir/$subdir"));
+    $subdirs = array();
+    $did_purge = false;
+    while ($entry = readdir($dh)) {
+        if ($entry == "." || $entry == "..") continue;
+        if (is_dir("$dir/$subdir/$entry")) {
+            $subdirs[] = "$subdir/$entry";
+        } elseif ($entry == "data.php" && is_file("$dir/$subdir/$entry")) {
+            $contents = file_get_contents("$dir/$subdir/$entry");
+            $total += strlen($contents);
+            $data = unserialize($contents);
+            if ($data[0] < time()) {
+                unlink("$dir/$subdir/$entry");
+                $did_purge = true;
+                $purged += strlen($contents);
+            }
+        }
+    }
+    closedir($dh);
+
+    foreach ($subdirs as $s) {
+        list ($total, $purged, $sub_did_purge) = 
+            phorum_cache_purge_recursive($dir, $s, $total, $purged);
+        if ($sub_did_purge) $did_purge = true;
+    }
+
+    // Now just see if we can remove the subdir. We'll be able to
+    // in case the directory is empty. This will effectively clean up
+    // stale directories.
+    if ($did_purge) {
+        @rmdir("$dir/$subdir");
+    }
+    return array($total, $purged, $did_purge);
+}
+
+/*
  type can be nearly each value to specify a group of data
  used are currently:
  'user'
