@@ -769,7 +769,7 @@ function phorum_user_access_list( $permission )
 
     // Admins also have rights for the vroot forum_id (announcements)
     if ($PHORUM["user"]["admin"]) {
-        $forum_list[0] = $PHORUM["vroot"];
+        $forum_list[$PHORUM["vroot"]] = $PHORUM["vroot"];
     }
 
     return $forum_list;
