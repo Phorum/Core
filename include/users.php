@@ -392,7 +392,9 @@ function phorum_user_settings_data_save($settings)
             "user_id"       => $GLOBALS["PHORUM"]["user"]["user_id"],
             "settings_data" => $GLOBALS["PHORUM"]["user"]["settings_data"]
         ));
-        phorum_cache_remove('user',$GLOBALS["PHORUM"]["user"]['user_id']);
+        if(isset($GLOBALS['PHORUM']['cache_users']) && $GLOBALS['PHORUM']['cache_users']) {
+            phorum_cache_remove('user',$GLOBALS["PHORUM"]["user"]['user_id']);
+        }
     }
 }
 
