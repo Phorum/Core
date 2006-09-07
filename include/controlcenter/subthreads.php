@@ -49,7 +49,7 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
 $PHORUM['DATA']['SELECTED'] = $subdays; 
 
 // Store current selection for the user.
-phorum_user_settings_data_save("cc_subscriptions_subdays", $subdays);
+phorum_user_settings_data_save(array("cc_subscriptions_subdays" => $subdays));
 
 // reading all forums for the current vroot
 $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
