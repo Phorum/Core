@@ -217,6 +217,7 @@
                     }
                 }
             }
+            $mods = array_values($mods); // array_values reindexes
             $modules_by_hook[$hook] = $mods;
         }
 
@@ -255,6 +256,7 @@
                     }
                 }
             }
+            $mods = array_values($mods); // array_values reindexes
             $modules_by_hook[$hook] = array_values($mods);
         }
 
