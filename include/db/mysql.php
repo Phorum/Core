@@ -4226,7 +4226,7 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
     $conn = phorum_db_mysql_connect();
-    settype($buddyuser_id, "int");
+    settype($buddy_user_id, "int");
     if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
     settype($user_id, "int");
 
@@ -4260,7 +4260,7 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
     $conn = phorum_db_mysql_connect();
-    settype($buddyuser_id, "int");
+    settype($buddy_user_id, "int");
     if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
     settype($user_id, "int");
 
