@@ -149,7 +149,6 @@ input, textarea, select, td
     padding: 3px;
     background-color: #EEEEFA;
     width: 300px;
-    align: center;
     text-align: left;
 }
 
