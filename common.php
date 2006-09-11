@@ -159,7 +159,7 @@ if(!phorum_db_check_connection()){
 phorum_db_load_settings();
 
 // If we have no private key for signing data, generate one now.
-if (! isset($PHORUM["private_key"]) || empty($PHORUM["private_key"])) {
+if (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUMINTERNAL && (! isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
    $chars = "0123456789!@#$%&abcdefghijklmnopqr".
             "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
    $private_key = "";
