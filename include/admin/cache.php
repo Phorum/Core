@@ -96,7 +96,7 @@ $frm = &new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "cache" );
 $frm->addbreak( "Phorum Cache Settings" );
 $row=$frm->addrow( "Cache Directory", $frm->text_box( "cache", $PHORUM["cache"], 30 ) );
-$frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster use later.  This setting is the directory where Phorum stores that cache.  Most users will be fine using their servers temp directory.  If your server uses PHP Safe Mode, you will need to create a directory under your Phorum directory and make it writable by the web server." );
+$frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster use later. Additionally, some data can be stored in the cache, to take some load of the database and web server. This setting determines the directory where Phorum will build its cache. Most users will be fine using their server's temp directory. If your server uses PHP Safe Mode, you will need to create a directory under your Phorum directory and make it writable by the web server (you can use the directory ./cache which was included in the Phorum distribution for this purpose)." );
 
 $frm->addbreak("Which data to cache");
 $row=$frm->addrow( "Enable Caching Userdata:", $frm->select_tag( "cache_users", array( "No", "Yes" ), $PHORUM["cache_users"] ) );
