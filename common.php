@@ -162,8 +162,8 @@ phorum_db_load_settings();
 // case the admin did not yet save a newly added Phorum setting).
 if (! isset($PHORUM["default_feed"])) $PHORUM["default_feed"] = "rss";
 
-// If we have no private key for signing data, generate one now.
-if (! isset($PHORUM["private_key"]) || empty($PHORUM["private_key"])) {
+// If we have no private key for signing data, generate one now - only if its not a fresh install
+if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUMINTERNAL && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
    $chars = "0123456789!@#$%&abcdefghijklmnopqr".
             "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
    $private_key = "";
