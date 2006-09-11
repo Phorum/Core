@@ -66,6 +66,11 @@ function phorum_cache_remove($type,$key) {
     return $ret;
 }
 
+function phorum_cache_purge() {
+    phorum_cache_clear();
+    return "APC cache purged";
+}
+
 /*
  * Clears all data from the cache
  */
