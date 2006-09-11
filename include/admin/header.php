@@ -353,6 +353,7 @@ Phorum Status:
         $menu = new PhorumAdminMenu("Global Settings");
 
         $menu->add("General Settings", "settings", "Edit the global settings which affect the enter installation.");
+        $menu->add("Cache Settings", "cache", "Edit the cache settings, like which cache layer to use and what to cache.");
         $menu->add("Ban Lists", "banlist", "Edits the list of banned names, email addresses and IP addresses.");
         $menu->add("Censor List", "badwords", "Edit the list of words that are censored in posts.");
         $menu->add("Modules", "mods", "Administer the Phorum Modules that are installed.");

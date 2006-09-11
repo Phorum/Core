@@ -174,13 +174,27 @@ if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM
    phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
 }
 
+if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
+    $PHORUM['cache_layer'] = 'file';
+} else {
+    // safeguard for wrongly selected cache-layers
+
+    // falling back to file-layer if descriptive functions aren't existing
+
+    if($PHORUM['cache_layer'] == 'memcached' && !function_exists('memcache_connect')) {
+        $PHORUM['cache_layer'] = 'file';
+    } elseif($PHORUM['cache_layer'] == 'apc' && !function_exists('apc_fetch')) {
+        $PHORUM['cache_layer'] = 'file';
+    }
+}
+
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
 // load the caching-layer - you can specify a different one like below
 // one caching layer *needs* to be loaded
-include_once( "./include/cache/file.php" );
+include_once( "./include/cache/{$PHORUM['cache_layer']}.php" );
 //include_once( "./include/cache/memcached.php" );
 
 // stick some stuff from the settings into the DATA member

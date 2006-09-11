@@ -43,16 +43,6 @@ if ( count( $_POST ) ) {
 
                 break;
 
-            case "cache":
-
-                if ( empty( $value ) ) {
-                    $_POST[$field] = "/tmp";
-                } elseif ( !file_exists( $value ) ) {
-                    $error = "This cache directory does not exist.  Please create it with the proper permissions.";
-                }
-
-                break;
-
             case "session_timeout":
 
                 $_POST[$field] = (int)$_POST[$field];
@@ -120,16 +110,6 @@ if ( count( $_POST ) ) {
                 }
                 $_POST[$field] = $private_key;
                 break;
-
-
-            case "cache_users":
-
-            case "cache_messages":
-
-            case "cache_newflags":
-                if ( empty( $value ) ) {
-                    $_POST[$field] = 0;
-                }
 
         }
 
@@ -212,14 +192,6 @@ $frm->addhelp($row, "HTTP Path", "This is the base url of your Phorum." );
 
 $row=$frm->addrow( "Disabled URL", $frm->text_box( "disabled_url", $PHORUM["disabled_url"], 50 ) );
 $frm->addhelp($row, "Disabled URL", "This url will be redirected to when the Phorum status is disabled.  If no URL is given, a message in English will be displayed." );
-
-$row=$frm->addrow( "Cache Directory", $frm->text_box( "cache", $PHORUM["cache"], 30 ) );
-$frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster use later.  This setting is the directory where Phorum stores that cache.  Most users will be fine using their servers temp directory.  If your server uses PHP Safe Mode, you will need to create a directory under your Phorum directory and make it writable by the web server." );
-
-$frm->addbreak("Cache Settings");
-$row=$frm->addrow( "Enable Caching Userdata:", $frm->select_tag( "cache_users", array( "No", "Yes" ), $PHORUM["cache_users"] ) );
-$row=$frm->addrow( "Enable Caching Newflags:", $frm->select_tag( "cache_newflags", array( "No", "Yes" ), $PHORUM["cache_newflags"] ) );
-$row=$frm->addrow( "Enable Caching Messages:", $frm->select_tag( "cache_messages", array( "No", "Yes" ), $PHORUM["cache_messages"] ) );
 
 $frm->addbreak( "Date Options" );
 
