@@ -750,7 +750,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
  * This function executes a query to get the rows with the given thread
  * id and returns an array of the message.
  */
-function phorum_db_get_messages($thread,$page=0)
+function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -765,7 +765,7 @@ function phorum_db_get_messages($thread,$page=0)
 
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+    if(!$ignore_mod_perms && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
     }
 
