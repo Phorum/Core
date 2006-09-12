@@ -790,7 +790,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
  * @param int $page
  * @return array
  */
-function phorum_db_get_messages($thread,$page=0)
+function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -805,7 +805,7 @@ function phorum_db_get_messages($thread,$page=0)
 
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+    if(!$ignore_mod_perms && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
     }
 
@@ -2354,7 +2354,7 @@ function phorum_db_user_save($userdata){
         foreach($userdata as $key => $value){
             if ($key == "settings_data") {
                 if (is_array($value)) {
-                    $value = serialize($value); 
+                    $value = serialize($value);
                 } else {
                     die("Internal error: settings_data field for " .
                         "phorum_db_user_save() must be an array");
@@ -3283,7 +3283,7 @@ function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null){
     }
 
     if ($forum_ids != null and is_array($forum_ids)) {
-        $forumidstr = " AND a.forum_id IN (" . implode(",", $forum_ids) . ")"; 
+        $forumidstr = " AND a.forum_id IN (" . implode(",", $forum_ids) . ")";
     } else {
         $forumidstr = "";
     }
@@ -4751,7 +4751,7 @@ function phorum_db_sanitychecks()
         );
 
         // MySQL before version 4.0.18, with full text search enabled.
-        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && 
+        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
             $PHORUM["DBCONFIG"]["mysql_use_ft"] &&
             $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
             PHORUM_SANITY_WARN,
