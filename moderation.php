@@ -170,43 +170,50 @@ switch ($mod_step) {
 
    case PHORUM_DO_THREAD_MOVE: // this is the last step of a message move
 
-        $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['MsgMoveOk'];
-        $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
-        $message = phorum_db_get_message($msgthd_id);
+        $movetoid=(int)$_POST['moveto'];
 
-        // find out if we have a notification-message already in this
-        // target-forum for this thread ... it doesn't make sense to keep this
-        // message any longer as the thread has reappeared on its original location
-        $temp_forum_id=$PHORUM['forum_id'];
-        $PHORUM['forum_id']=$_POST['moveto'];
-        $check_messages=phorum_db_get_messages($msgthd_id);
+        // only do something if a forum was selected
+        if(empty($movetoid)) {
+            $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMoveSelectForum'];
+        } else {
+            $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['MsgMoveOk'];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
+            $message = phorum_db_get_message($msgthd_id);
 
-        unset($check_messages['users']);
+            // find out if we have a notification-message already in this
+            // target-forum for this thread ... it doesn't make sense to keep this
+            // message any longer as the thread has reappeared on its original location
+            $temp_forum_id=$PHORUM['forum_id'];
+            $PHORUM['forum_id']=$_POST['moveto'];
+            $check_messages=phorum_db_get_messages($msgthd_id);
 
-        // ok, we found exactly one message of this thread in the target forum
-        if(is_array($check_messages) && count($check_messages) == 1) {
-            // ... going to delete it
-            $tmp_message=array_shift($check_messages);
-            $retval=phorum_db_delete_message($tmp_message['message_id']);
+            unset($check_messages['users']);
+
+            // ok, we found exactly one message of this thread in the target forum
+            if(is_array($check_messages) && count($check_messages) == 1) {
+                // ... going to delete it
+                $tmp_message=array_shift($check_messages);
+                $retval=phorum_db_delete_message($tmp_message['message_id']);
+            }
+
+            $PHORUM['forum_id']=$temp_forum_id;
+
+            // Move the thread to another forum.
+            phorum_db_move_thread($msgthd_id, $_POST['moveto']);
+
+            // Create a new message in place of the old one to notify
+            // visitors that the thread was moved.
+            if(isset($_POST['create_notification']) && $_POST['create_notification']) {
+                $newmessage = $message;
+                $newmessage['body']=" -- moved topic -- ";
+                $newmessage['meta']=array('moved' => 1);
+                $newmessage['sort']=PHORUM_SORT_DEFAULT;
+                unset($newmessage['message_id']);
+
+                phorum_db_post_message($newmessage);
+            }
+            phorum_hook("move_thread", $msgthd_id);
         }
-
-        $PHORUM['forum_id']=$temp_forum_id;
-
-        // Move the thread to another forum.
-        phorum_db_move_thread($msgthd_id, $_POST['moveto']);
-
-        // Create a new message in place of the old one to notify
-        // visitors that the thread was moved.
-        if(isset($_POST['create_notification']) && $_POST['create_notification']) {
-            $newmessage = $message;
-            $newmessage['body']=" -- moved topic -- ";
-            $newmessage['meta']=array('moved' => 1);
-            $newmessage['sort']=PHORUM_SORT_DEFAULT;
-            unset($newmessage['message_id']);
-
-            phorum_db_post_message($newmessage);
-        }
-        phorum_hook("move_thread", $msgthd_id);
         break;
 
    case PHORUM_CLOSE_THREAD: // we have to close a thread
