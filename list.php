@@ -20,9 +20,9 @@ define('phorum_page','list');
 
 include_once("./common.php");
 include_once("./include/format_functions.php");
-include_once('./include/timing.php');
+//include_once('./include/timing.php');
 
-timing_start();
+//timing_start();
 
 // set all our common URL's
 phorum_build_common_urls();
@@ -182,7 +182,7 @@ if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_co
 if($rows == null) {
 
 
-    timing_mark('before db');
+    //timing_mark('before db');
     // Get the threads
     $rows = array();
 
@@ -190,7 +190,7 @@ if($rows == null) {
     $rows = phorum_db_get_thread_list($offset);
 
 
-    timing_mark('after db');
+    //timing_mark('after db');
 
     // redirect if invalid page
     if(count($rows) < 1 && $offset > 0){
@@ -413,7 +413,7 @@ if($rows == null) {
     }
 }
 
-timing_mark('after preparation');
+//timing_mark('after preparation');
 
 if($PHORUM['cache_messages'] && $PHORUM['DATA']['LOGGEDIN']) {
     // the stuff needed by user
@@ -512,7 +512,7 @@ if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] =
 // format messages
 $rows = phorum_format_messages($rows);
 
-timing_mark('after formatting');
+//timing_mark('after formatting');
 
 // set up the data
 $PHORUM["DATA"]["MESSAGES"] = $rows;
@@ -547,7 +547,7 @@ if ($PHORUM["threaded_list"]){
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 
-timing_mark('end');
-timing_print();
+//timing_mark('end');
+//timing_print();
 
 ?>

@@ -23,9 +23,9 @@ include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
 // for dev-purposes ..
-include_once('./include/timing.php');
+//include_once('./include/timing.php');
 
-timing_start();
+//timing_start();
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
@@ -191,7 +191,7 @@ if(empty($PHORUM["args"][1])) {
     }
 }
 
-timing_mark("before database");
+//timing_mark("before database");
 
 // determining the page if page isn't given and message_id != thread
 $page=0;
@@ -310,7 +310,7 @@ if($page>1 && !isset($data[$thread])){
     $data[$first_message["message_id"]] = $first_message;
 }
 
-timing_mark("after database");
+//timing_mark("after database");
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
@@ -741,7 +741,7 @@ function phorum_check_moved_message($thread) {
     return $ret;
 }
 
-timing_mark("end");
-timing_print();
+//timing_mark("end");
+//timing_print();
 
 ?>
