@@ -304,7 +304,9 @@ function phorum_import_template($tplfile, $outfile)
 
         $check_deps =
             "<?php\n" .
-            "\$need_update = (\n";
+            "\$need_update = (\n" .
+            "    !file_exists(\"".addslashes($stage2_file)."\") ||\n";
+
         foreach ($include_deps as $tpl => $info) {
             list ($out, $mtime) = $info;
             $qtpl = addslashes($tpl);
