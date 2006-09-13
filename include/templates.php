@@ -68,17 +68,19 @@ function phorum_import_template($page, $infile, $outfile)
 
     $stage1file = $outfile;
     $stage2file = $outfile . "-stage2";
+    $qstage1file = addslashes($stage1file);
+    $qstage2file = addslashes($stage2file);
 
     // Output file for stage 1. This file contains code to check the file
     // dependancies. If one of the files that the template depends on is
-    // changed, the template has to be rebuilt.
+    // changed, the template has to be rebuilt. Also rebuild in case the
+    // second stage compiled template is missing.
     $checks = array();
+    $checks[] = "!file_exists(\"$qstage2file\")";
     foreach ($dependancies as $file => $mtime) {
         $qfile = addslashes($file);
         $checks[] = "@filemtime(\"$qfile\") != $mtime";
     }
-    $qstage1file = addslashes($stage1file);
-    $qstage2file = addslashes($stage2file);
     $qpage = addslashes($page);
     $stage1 = "<?php
       if (" . implode(" || ", $checks) . ") {
