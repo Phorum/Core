@@ -996,13 +996,12 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         if($match_type=="AUTHOR"){
 
-            $sql_core = "from {$PHORUM['message_table']} where author='$terms' $forum_where";
+            $sql_core = "from {$PHORUM['message_table']} where author='$terms' $forum_where $sql_date";
 
             if($match_date>0){
                 $ts=time()-86400*$match_date;
                 $sql_core.=" and datestamp>=$ts";
             }
-
 
             $sql = "select count(*) $sql_core";
             $res = mysql_query($sql, $conn);
@@ -1036,15 +1035,21 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $terms[$id] = mysql_escape_string($term);
                 }
 
+                $sql_date = "";
+                if($match_date>0){
+                    $ts=time()-86400*$match_date;
+                    $sql_date =" and datestamp>=$ts";
+                }
+        
                 $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
 
-                $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where";
+                $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date";
                 $res = mysql_query($sql, $conn);
 
                 if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
                 $total_count=mysql_result($res, 0, 0);
 
-                $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where order by datestamp desc limit $start, $length";
+                $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date order by datestamp desc limit $start, $length";
                 $res = mysql_unbuffered_query($sql, $conn);
                 if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
