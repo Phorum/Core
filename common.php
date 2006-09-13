@@ -875,10 +875,16 @@ function phorum_build_common_urls()
 }
 
 // calls phorum mod functions
-function phorum_hook( $hook, $arg = "" )
+function phorum_hook( $hook )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // get arguments passed to the function
+    $args = func_get_args();
+    
+    // shift off hook name
+    array_shift($args);
+    
     if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
@@ -893,12 +899,18 @@ function phorum_hook( $hook, $arg = "" )
         foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
             // call functions for this hook
             if ( function_exists( $func ) ) {
-                $arg = call_user_func( $func, $arg );
+                if(count($args)){
+                    $args[0] = call_user_func_array( $func, $args );
+                } else {
+                    call_user_func( $func );
+                }
             }
         }
     }
 
-    return $arg;
+    if(isset($args[0])){
+        return $args[0];
+    }
 }
 
 // HTML encodes a string
