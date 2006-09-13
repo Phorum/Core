@@ -320,7 +320,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         include_once( phorum_get_template( "settings" ) );
         ob_end_clean();
     }
-
+ 
     // get the language file
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
         $PHORUM['language'] = $PHORUM['user']['user_language'];
@@ -331,6 +331,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
+
     // load languages for localized modules
     if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
         foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod ) {
@@ -346,7 +347,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
-$PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
 
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
@@ -754,10 +755,16 @@ function phorum_build_common_urls()
 }
 
 // calls phorum mod functions
-function phorum_hook( $hook, $arg = "" )
+function phorum_hook( $hook )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // get arguments passed to the function
+    $args = func_get_args();
+    
+    // shift off hook name
+    array_shift($args);
+    
     if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
@@ -772,12 +779,18 @@ function phorum_hook( $hook, $arg = "" )
         foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
             // call functions for this hook
             if ( function_exists( $func ) ) {
-                $arg = call_user_func( $func, $arg );
+                if(count($args)){
+                    $args[0] = call_user_func_array( $func, $args );
+                } else {
+                    call_user_func( $func );
+                }
             }
         }
     }
 
-    return $arg;
+    if(isset($args[0])){
+        return $args[0];
+    }
 }
 
 // HTML encodes a string
