@@ -138,7 +138,7 @@ for( $x = -23;$x <= 23;$x++ ) {
 
 include_once "./include/admin/PhorumInputForm.php";
 
-$frm = &new PhorumInputForm ( "", "post" );
+$frm = new PhorumInputForm ( "", "post" );
 
 $frm->addbreak( "Phorum General Settings" );
 
@@ -169,6 +169,9 @@ $frm->addhelp($row, "User Post Edit Time Limit (minutes)", "If set to a value la
 $row=$frm->addrow( "Reply form appears", $frm->select_tag( "reply_on_read_page", array( "1"=>"On the read page", "0"=>"On a separate page" ), $PHORUM["reply_on_read_page"] ) );
 
 $row=$frm->addrow( "After posting goto", $frm->select_tag( "redirect_after_post", array( "list"=>"Message List Page", "read"=>"Message Read Page" ), $PHORUM["redirect_after_post"] ) );
+
+$row=$frm->addrow( "After submitting a search query", $frm->select_tag( "skip_intermediate_search_page", array( 0=>"show an intermediate page (\"search is running\")", 1=>"directly go to the search results" ), $PHORUM["skip_intermediate_search_page"] ) );
+$frm->addhelp($row, "After search action", "On large forums or slow servers, searching for messages might take a little while. To prevent users from submitting the same search query over and over again (in case they think the search didn't work, because they didn't get their results fast enough), you can show an intermediate page, telling the user that the search is running. If your system can deliver search results quickly enough, then you can skip the intermediate page and go directly to the search results page.");
 
 $row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
 
