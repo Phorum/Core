@@ -625,11 +625,13 @@ switch ($page) {
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
-                'url' => phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]),
                 'username'    => htmlspecialchars($buddy_user["username"]),
                 'real_name'   => isset($buddy_user["real_name"]) ? htmlspecialchars($buddy_user["real_name"]) : '',
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
+
+            $buddy["URL"]["PROFILE"] = 
+                phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]);
 
             if (!$buddy_user['hide_activity']) {
               $buddy["date_last_active"] = phorum_date($PHORUM["short_date_time"], $buddy_user["date_last_active"]);

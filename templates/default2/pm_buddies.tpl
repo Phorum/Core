@@ -31,7 +31,7 @@
             {LOOP BUDDIES}
                 <tr>
                     <td width="5%"><input type="checkbox" name="checked[]" value="{BUDDIES->user_id}"></td>
-                    <td width="20%"><a href="{BUDDIES->url}"><strong>{BUDDIES->username}</strong></a></td>
+                    <td width="20%"><a href="{BUDDIES->URL->PROFILE}"><strong>{BUDDIES->username}</strong></a></td>
                     <td width="20%">{BUDDIES->real_name}</td>
                     <td width="20%" align="center">{IF BUDDIES->mutual}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
                     {IF USERTRACK}
