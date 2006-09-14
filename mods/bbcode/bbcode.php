@@ -159,6 +159,8 @@ function phorum_bb_code_quote ($array)
 
     if(isset($PHORUM["mod_bb_code"]) && $PHORUM["mod_bb_code"]["quote_hook"]){
         return "[quote $array[0]]$array[1][/quote]";
+    } else {
+        return $array;
     }
 }
 ?>
