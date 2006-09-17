@@ -671,9 +671,9 @@ function phorum_get_template( $page, $is_include = false )
     } else {
         // not there, look for a template
         $tplfile = "$tpl.tpl";
-        $safetemplate = str_replace("-", "_", $PHORUM["template"]);
+        $safetemplate = str_replace(array("-",":"), array("_","_"), $PHORUM["template"]);
         if ($module !== NULL) $page = "$module::$page";
-        $safepage = str_replace("-", "_", $page);
+        $safepage = str_replace(array("-",":"), array("_","_"), $page);
         $phpfile = "$PHORUM[cache]/tpl-$safetemplate-$safepage-" .
                ($is_include ? "include" : "toplevel") . "-" .
                md5( dirname( __FILE__ . $prefix) ) . ".php";
