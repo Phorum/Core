@@ -703,9 +703,17 @@ function phorum_get_url()
  *                .tpl file to pre-process, the value will be NULL. In that
  *                case, the $phpfile return value can be included directly.
  */
-function phorum_get_template_file( $page, $module = null )
+function phorum_get_template_file( $page )
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    // Check for a module reference in the page name.
+    $fullpage = $page;
+    $module = null;
+    if (($pos = strpos($fullpage, "::", 1)) !== false) {
+        $module = substr($fullpage, 0, $pos);
+        $page = substr($fullpage, $pos+2);
+    }
 
     $page = basename($page);
 
@@ -779,14 +787,7 @@ function phorum_get_template( $page )
         exit(1);
     }
 
-    // Check for a module reference in the page name.
-    $fullpage = $page;
-    $module = null;
-    if (($pos = strpos($fullpage, "::", 1)) !== false) {
-        $module = substr($fullpage, 0, $pos);
-        $page = substr($fullpage, $pos+2);
-    }
-    list ($phpfile, $tplfile) = phorum_get_template_file($page, $module);
+    list ($phpfile, $tplfile) = phorum_get_template_file($page);
 
     // No template to pre-process.
     if ($tplfile == NULL) return $phpfile;
@@ -794,7 +795,7 @@ function phorum_get_template( $page )
     // Pre-process template if the output file isn't available.
     if (! file_exists($phpfile)) {
         include_once "./include/templates.php";
-        phorum_import_template($fullpage, $tplfile, $phpfile);
+        phorum_import_template($page, $tplfile, $phpfile);
     }
 
     return $phpfile;
