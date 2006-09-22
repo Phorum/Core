@@ -22,8 +22,8 @@ define('phorum_page', 'update_postcount');
 // that command doesn't work in safe_mode :(
 set_time_limit(0);
 
-require './common.php';
-require './include/users.php';
+require_once './common.php';
+require_once './include/users.php';
 
 // no need to change anything below this line
 $sql="select user_id, count(*) as postcnt from ".$PHORUM["message_table"]." group by user_id";
