@@ -15,12 +15,15 @@ Depending on the number of messages and users, it may take some time.
 
 */
 
+define("PHORUM_ADMIN", 1);
+define('phorum_page', 'update_postcount');
 
 // we try to disable the execution timeout
 // that command doesn't work in safe_mode :(
 set_time_limit(0);
 
 require './common.php';
+require './include/users.php';
 
 // no need to change anything below this line
 $sql="select user_id, count(*) as postcnt from ".$PHORUM["message_table"]." group by user_id";
