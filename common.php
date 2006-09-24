@@ -808,9 +808,10 @@ function phorum_build_common_urls()
 
     $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE_URL"] = phorum_get_url( PHORUM_BASE_URL );
 
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL );
+
     // those links are only needed in forums, not in folders
     if(isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
     }
