@@ -170,11 +170,12 @@ if (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUMI
    phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
 }
 
+include_once( "./include/cache.php" );
+
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
-include_once( "./include/cache.php" );
 
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
@@ -320,7 +321,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         include_once( phorum_get_template( "settings" ) );
         ob_end_clean();
     }
- 
+
     // get the language file
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
         $PHORUM['language'] = $PHORUM['user']['user_language'];
@@ -331,7 +332,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
-
     // load languages for localized modules
     if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
         foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod ) {
@@ -347,7 +347,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+$PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
 
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
@@ -671,9 +671,9 @@ function phorum_get_template( $page, $is_include = false )
     } else {
         // not there, look for a template
         $tplfile = "$tpl.tpl";
-        $safetemplate = str_replace(array("-",":"), array("_","_"), $PHORUM["template"]);
+        $safetemplate = str_replace("-", "_", $PHORUM["template"]);
         if ($module !== NULL) $page = "$module::$page";
-        $safepage = str_replace(array("-",":"), array("_","_"), $page);
+        $safepage = str_replace("-", "_", $page);
         $phpfile = "$PHORUM[cache]/tpl-$safetemplate-$safepage-" .
                ($is_include ? "include" : "toplevel") . "-" .
                md5( dirname( __FILE__ . $prefix) ) . ".php";
@@ -692,9 +692,9 @@ function phorum_build_common_urls()
 {
     $PHORUM=$GLOBALS['PHORUM'];
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["TOP"] = phorum_get_url( PHORUM_LIST_URL );
     // those links are only needed in forums, not in folders
     if(isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["TOP"] = phorum_get_url( PHORUM_LIST_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["MARKREAD"] = phorum_get_url( PHORUM_LIST_URL, "markread=1" );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
@@ -755,16 +755,10 @@ function phorum_build_common_urls()
 }
 
 // calls phorum mod functions
-function phorum_hook( $hook )
+function phorum_hook( $hook, $arg = "" )
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    // get arguments passed to the function
-    $args = func_get_args();
-    
-    // shift off hook name
-    array_shift($args);
-    
     if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
@@ -779,18 +773,12 @@ function phorum_hook( $hook )
         foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
             // call functions for this hook
             if ( function_exists( $func ) ) {
-                if(count($args)){
-                    $args[0] = call_user_func_array( $func, $args );
-                } else {
-                    call_user_func( $func );
-                }
+                $arg = call_user_func( $func, $arg );
             }
         }
     }
 
-    if(isset($args[0])){
-        return $args[0];
-    }
+    return $arg;
 }
 
 // HTML encodes a string
