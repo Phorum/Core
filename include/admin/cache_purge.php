@@ -29,10 +29,11 @@
 
         // The standard cache system that is in use should handle its own 
         // cache cleanup if needed. It can do so by implementing the 
-        // phorum_cache_purge(). If this function is not available,
-        // the the caching layer purge will be ignored.
+        // phorum_cache_purge() function. If the required function is not 
+        // available, then the caching layer purge will be ignored.
         if (function_exists("phorum_cache_purge")) {
-            $report = phorum_cache_purge();
+            $full_purge = isset($_POST["purge_all"]) && $_POST["purge_all"];
+            $report = phorum_cache_purge($full_purge);
             print $report . "<br/>";
         }
 
@@ -63,6 +64,9 @@
 
     $frm->addbreak("Purging the Phorum cache");
     $frm->addmessage("For improving performance, Phorum uses caching techniques for taking some load of the database and webserver. After running Phorum for some time, the amount of cached data will grow though. Using this maintenance tool, you can purge stale data from the Phorum cache to bring it back in size. Purging the cache will also cleanup all compiled template files.");
+
+    $frm->addrow("Cleanup all cache items, not only the expired ones", $frm->select_tag("purge_all", array("No", "Yes"), 0));
+
 
     $frm->show();
 

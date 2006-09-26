@@ -84,7 +84,7 @@ function phorum_cache_remove($type,$key) {
     return $ret;
 }
 
-function phorum_cache_purge() {
+function phorum_cache_purge($full = false) {
     phorum_cache_clear();
     return "Memcached cache purged";
 }

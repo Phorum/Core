@@ -31,8 +31,6 @@ if(!isset($PHORUM["cache"])) return;
 /* initializing our real cache-dir */
 $PHORUM['real_cache']=$PHORUM['cache']."/".md5(__FILE__);
 
-
-
 /*
  * This function returns the cached data for the given key 
  * or NULL if no data is cached for this key
@@ -132,9 +130,9 @@ function phorum_cache_clear() {
 /*
  * Purges stale entries from the cache (mainly used by the admin panel)
  */
-function phorum_cache_purge() {
+function phorum_cache_purge($full = false) {
     list ($total, $purged, $dummy) =
-      phorum_cache_purge_recursive($GLOBALS['PHORUM']['real_cache'], "", 0, 0);
+      phorum_cache_purge_recursive($GLOBALS['PHORUM']['real_cache'], "", 0, 0, $full);
 
     // Return a report about the purging action.
     require_once("./include/format_functions.php");
@@ -142,7 +140,8 @@ function phorum_cache_purge() {
            "Purged " . phorum_filesize($purged) . " of " . 
            phorum_filesize($total) . "<br/>\n";
 }
-function phorum_cache_purge_recursive($dir, $subdir, $total, $purged) {
+function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
+    if (!is_dir("$dir/$subdir")) return array($total, $purged, false);
     $dh = opendir ("$dir/$subdir");
     if (! $dh) die ("Can't opendir " . htmlspecialchars("$dir/$subdir"));
     $subdirs = array();
@@ -155,7 +154,7 @@ function phorum_cache_purge_recursive($dir, $subdir, $total, $purged) {
             $contents = file_get_contents("$dir/$subdir/$entry");
             $total += strlen($contents);
             $data = unserialize($contents);
-            if ($data[0] < time()) {
+            if ( $full || ($data[0] < time()) ) {
                 unlink("$dir/$subdir/$entry");
                 $did_purge = true;
                 $purged += strlen($contents);
@@ -166,7 +165,7 @@ function phorum_cache_purge_recursive($dir, $subdir, $total, $purged) {
 
     foreach ($subdirs as $s) {
         list ($total, $purged, $sub_did_purge) = 
-            phorum_cache_purge_recursive($dir, $s, $total, $purged);
+            phorum_cache_purge_recursive($dir, $s, $total, $purged, $full);
         if ($sub_did_purge) $did_purge = true;
     }
 
