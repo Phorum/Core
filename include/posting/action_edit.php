@@ -32,12 +32,12 @@ $dbmessage = array(
     "subject"       => $message["subject"],
     "email"         => $message["email"],
     "status"        => $message["status"],
-    "closed"        => ! $message["allow_reply"],
+    "closed"        => ($message["allow_reply"])?0:1,
     "body"          => $message["body"],
     "meta"          => $message["meta"],
 );
 
-// Update sort setting, if allowed. This can only be done 
+// Update sort setting, if allowed. This can only be done
 // when editing the thread starter message.
 if ( $message["parent_id"]==0 ) {
 
