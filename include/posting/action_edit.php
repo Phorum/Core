@@ -32,7 +32,7 @@ $dbmessage = array(
     "subject"       => $message["subject"],
     "email"         => $message["email"],
     "status"        => $message["status"],
-    "closed"        => ! $message["allow_reply"],
+    "closed"        => ($message["allow_reply"])?0:1,
     "body"          => $message["body"],
     "meta"          => $message["meta"],
 );
