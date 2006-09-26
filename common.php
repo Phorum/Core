@@ -188,14 +188,14 @@ if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
     }
 }
 
+// load the caching-layer - you can specify a different one in the settings
+// one caching layer *needs* to be loaded
+include_once( "./include/cache/{$PHORUM['cache_layer']}.php" );
+
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
 phorum_hook( "common_pre", "" );
 
-// load the caching-layer - you can specify a different one like below
-// one caching layer *needs* to be loaded
-include_once( "./include/cache/{$PHORUM['cache_layer']}.php" );
-//include_once( "./include/cache/memcached.php" );
 
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
@@ -883,10 +883,10 @@ function phorum_hook( $hook )
 
     // get arguments passed to the function
     $args = func_get_args();
-    
+
     // shift off hook name
     array_shift($args);
-    
+
     if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
