@@ -17,6 +17,7 @@ function phorum_mod_smileys_after_header()
     .mod_smileys_img {
         vertical-align: bottom;
         margin: 0px 3px 0px 3px;
+        border: none;
     }
     </style> <?php
 }
