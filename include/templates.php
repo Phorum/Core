@@ -406,10 +406,10 @@ function phorum_import_template_pass2($template)
 
                     // Determine if we need "==" or "!=" for the condition.
                     if (strtolower($condition[0]) == "not") {
-                        $operator = "!=";
+                        $operator = "!";
                         array_shift($condition);
                     } else {
-                        $operator="==";
+                        $operator = "";
                     }
 
                     // Determine what variable we are comparing to in the condition.
@@ -418,19 +418,15 @@ function phorum_import_template_pass2($template)
                     // If there is no value to compare to, then check if
                     // the value for the variable is set and not empty.
                     if (!isset($condition[0])) {
-                        if ($operator == "=="){
-                            $repl .= "isset($variable) && !empty($variable)";
-                        } else {
-                            $repl .= "!isset($variable) || empty($variable)";
-                        }
+                        $repl .= "$operator(isset($variable) && !empty($variable))";
                     }
                     // There is a value. Make a comparison to that value.
                     else {
                         list ($value, $type) = phorum_templatevalue_to_php($loopvars, array_shift($condition));
                         if ($type == "variable") {
-                            $repl .= "isset($variable) && isset($value) && $variable $operator $value";
+                            $repl .= "$operator(isset($variable) && isset($value) && $variable == $value)";
                         } else {
-                            $repl .= "isset($variable) && $variable $operator $value";
+                            $repl .= "$operator(isset($variable) && $variable == $value)";
                         }
                     }
                 }
