@@ -33,6 +33,7 @@ function phorum_mod_smileys_format($data)
             ".mod_smileys_img {\n" .
             "    vertical-align: middle;\n" .
             "    margin: 0px 3px 0px 3px;\n" .
+            "    border: none;\n" .
             "}\n" .
             "</style>\n";
             $PHORUM["mod_smileys"]["added_stylesheet"] = true;
