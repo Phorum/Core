@@ -24,6 +24,22 @@
         return;
     }
 
+
+    if(!file_exists("./include/admin/PhorumInputForm.php")) {
+
+        echo "./include/admin/PhorumInputForm.php doesn't exist but its required for the Phorum-Admin.<br />Please check that this file <strong>with this name</strong> exists.<br />E.g. some ftp-clients change the names to be all lower-case.";
+
+        return;
+    }
+
+    if(!file_exists("./include/admin/PhorumAdminMenu.php")) {
+        echo "<br /><br />./include/admin/PhorumAdminMenu.php doesn't exist but its required for the Phorum-Admin.<br />Please check that this file <strong>with this name</strong> exists.<br />E.g. some ftp-clients change the names to be all lower-case.";
+
+        return;
+    }
+
+
+
     include_once "./include/admin/PhorumInputForm.php";
 
     if(empty($_POST["step"])){
