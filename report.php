@@ -71,6 +71,15 @@ if(is_array($message) && count($message)) {
                 "reporter_url"=> phorum_get_url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"])
                 );
 
+                if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
+                    // strip any auth info from the created urls
+                    $mail_data["url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["url"]);
+                    $mail_data["delete_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["delete_url"]);
+                    $mail_data["hide_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["hide_url"]);
+                    $mail_data["edit_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["edit_url"]);
+                    $mail_data["reporter_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["reporter_url"]);
+                }
+
                 $mail_data = phorum_hook("report", $mail_data);
 
                 phorum_email_user($mail_users, $mail_data);
