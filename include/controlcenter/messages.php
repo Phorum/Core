@@ -77,7 +77,7 @@ $foruminfo[$PHORUM["vroot"]] = array (
 // we need a real forum id, but announcements are linked to the vroot folder.
 $announce_forum_id = $PHORUM["forum_id"];
 if ($PHORUM["forum_id"] == $PHORUM["vroot"] || $PHORUM["folder_flag"]) {
-    // Walk through all forums in the current vroot to find 
+    // Walk through all forums in the current vroot to find
     // a suitable candidate.
     foreach ($foruminfo as $id => $forum) {
         if ($forum["forum_id"] != $PHORUM["vroot"] && !$forum["folder_flag"]) {
@@ -104,13 +104,13 @@ foreach($mod_forums as $forum => $rest) {
             $checkvar = 0;
         $rows[$key]['forum_id'] = $forum;
         // use a real forum id for announcements
-        $read_forum_id = $forum==$PHORUM["vroot"] ? $announce_forum_id:$forum; 
+        $read_forum_id = $forum==$PHORUM["vroot"] ? $announce_forum_id:$forum;
         $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $read_forum_id, $row["thread"], $row['message_id']);
         // we need to fake the forum_id here
         $PHORUM["forum_id"] = $forum;
-        $rows[$key]["URL"]["APPROVE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
-        $rows[$key]["URL"]["APPROVE_TREE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
-        $rows[$key]["URL"]["DELETE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum);
+        $rows[$key]["URL"]["APPROVE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
+        $rows[$key]["URL"]["APPROVE_TREE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
+        $rows[$key]["URL"]["DELETE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
         $PHORUM["forum_id"] = $oldforum;
         $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
 
