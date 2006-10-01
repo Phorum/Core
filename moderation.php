@@ -77,6 +77,11 @@ switch ($mod_step) {
         phorum_hook("delete", $msg_ids);
         $nummsgs=count($msg_ids);
         $PHORUM['DATA']['MESSAGE']=$nummsgs." ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
+
+        if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
+            $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
+        }
+
         if(isset($PHORUM['args']["prepost"])) {
             $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
@@ -122,8 +127,24 @@ switch ($mod_step) {
 
         $nummsgs=count($msg_ids);
         $PHORUM['DATA']['MESSAGE']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
+
+        if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
+            $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
+        }
+
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            // add some additional args
+            $addcode = "";
+            if(isset($PHORUM['args']['moddays']) && is_numeric($PHORUM['args']['moddays'])) {
+                $addcode.="moddays=".$PHORUM['args']['moddays'];
+            }
+            if(isset($PHORUM['args']['onlyunapproved']) && is_numeric($PHORUM['args']['onlyunapproved'])) {
+                if(!empty($addcode))
+                    $addcode.=",";
+
+                $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
+            }
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
@@ -170,7 +191,8 @@ switch ($mod_step) {
 
    case PHORUM_DO_THREAD_MOVE: // this is the last step of a message move
 
-        $movetoid=(int)$_POST['moveto'];
+        $movetoid=trim($_POST['moveto']);
+        $movetoid=(int)$movetoid;
 
         // only do something if a forum was selected
         if(empty($movetoid)) {
@@ -255,13 +277,23 @@ switch ($mod_step) {
           phorum_email_notice($old_message);
         }
 
-        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum']) && $PHORUM['folder_flag'] && $old_message['sort'] == PHORUM_SORT_ANNOUNCEMENT) {
+        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
         }
 
 
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            // add some additional args
+            $addcode = "";
+            if(isset($PHORUM['args']['moddays']) && is_numeric($PHORUM['args']['moddays'])) {
+                $addcode.="moddays=".$PHORUM['args']['moddays'];
+            }
+            if(isset($PHORUM['args']['onlyunapproved']) && is_numeric($PHORUM['args']['onlyunapproved'])) {
+                if(!empty($addcode))
+                    $addcode.=",";
+                $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
+            }
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
@@ -290,14 +322,25 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
 
-        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum']) && $PHORUM['folder_flag'] && $old_message['sort'] == PHORUM_SORT_ANNOUNCEMENT) {
+        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
         }
 
 
         $PHORUM['DATA']['MESSAGE']="$num_approved ".$PHORUM['DATA']['LANG']['MsgApprovedOk'];
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            // add some additional args
+            $addcode = "";
+            if(isset($PHORUM['args']['moddays']) && is_numeric($PHORUM['args']['moddays'])) {
+                $addcode.="moddays=".$PHORUM['args']['moddays'];
+            }
+            if(isset($PHORUM['args']['onlyunapproved']) && is_numeric($PHORUM['args']['onlyunapproved'])) {
+                if(!empty($addcode))
+                    $addcode.=",";
+
+                $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
+            }
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["TOP"];
         }
