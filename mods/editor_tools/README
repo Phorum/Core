@@ -153,3 +153,5 @@ These are the changes that are needed:
 9) For MSIE5/MacOS9 support, remove the "?" after the "*" in the line:
    var navigatorVersion = navigator.appVersion.replace(/.*?MSIE...etc)/1;
 
+10) In js_color_picker_v2.css: -moz-user-select:no; -> -moz-user-select:none; 
+

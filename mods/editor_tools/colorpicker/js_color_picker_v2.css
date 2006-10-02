@@ -91,7 +91,7 @@
 		background-repeat: no-repeat;	
 		float:left;
 		padding-left:6px;
-		-moz-user-select:no;
+		-moz-user-select:none;
 	}	
 	.colorPickerTab_inactive img,.colorPickerTab_active img{
 		float:left;
