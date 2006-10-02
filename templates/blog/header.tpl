@@ -44,7 +44,7 @@ Search:<br />
 <li><a href="{URL->LOGINOUT}">Logout</a></li>
 {ELSE}
 <li><a href="{URL->LOGINOUT}">Login</a></li>
-<li><a href="{URL->REGISTER}">Register</a></li>
+<li><a href="{IF URL->REGISTER}{URL->REGISTER}{ELSE}{IF URL->REGISTERPROFILE}{URL->REGISTERPROFILE}{/IF}{/IF}">Register</a></li>
 {/IF}
 </ul>
 
