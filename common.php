@@ -390,7 +390,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             if ( $PHORUM["enable_moderator_notifications"] ) {
                 $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
                 if ( count( $forummodlist ) > 0 ) {
-                    $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
+                    $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( phorum_db_get_unapproved_list( $forummodlist, true, 0, true) > 0 );
                     $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
                 }
                 if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
