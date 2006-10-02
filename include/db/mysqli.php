@@ -62,6 +62,10 @@ $PHORUM["pm_buddies_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_buddies"
 * used in post-message and update-message, otherwise strange things happen
 */
 $PHORUM['string_fields']= array('author', 'subject', 'body', 'email');
+/*
+* fields in the forum-settings which are always strings
+*/
+$PHORUM['string_fields_forum']= array('name', 'description', 'template');
 
 /* A piece of SQL code that can be used for identifying moved messages. */
 define('PHORUM_SQL_MOVEDMESSAGES', '(parent_id = 0 and thread != message_id)');
@@ -1446,7 +1450,7 @@ function phorum_db_add_forum($forum)
     $conn = phorum_db_mysqli_connect();
 
     foreach($forum as $key => $value){
-        if (is_numeric($value)){
+        if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
             $value = (int)$value;
             $fields[] = "$key=$value";
         } elseif($value=="NULL") {
@@ -1572,7 +1576,7 @@ function phorum_db_update_forum($forum){
         $conn = phorum_db_mysqli_connect();
 
         foreach($forum as $key => $value){
-            if (is_numeric($value)){
+            if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
                 $value = (int)$value;
                 $fields[] = "$key=$value";
             } elseif($value=="NULL") {
