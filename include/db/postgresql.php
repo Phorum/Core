@@ -4263,7 +4263,7 @@ function phorum_db_run_queries($queries){
  */
 
 function phorum_db_check_connection(){
-    $conn = phorum_db_postgresql_connect();
+    $conn = @phorum_db_postgresql_connect();
 
     return ($conn > 0) ? true : false;
 }

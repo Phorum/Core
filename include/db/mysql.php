@@ -4252,7 +4252,7 @@ function phorum_db_run_queries($queries){
  */
 
 function phorum_db_check_connection(){
-    $conn = phorum_db_mysql_connect();
+    $conn = @phorum_db_mysql_connect();
 
     return ($conn) ? true : false;
 }
