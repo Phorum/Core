@@ -277,7 +277,7 @@ $frm->addbreak($title);
 
 if(!defined("PHORUM_DEFAULT_OPTIONS")){
 
-    $frm->addrow("Forum Title", $frm->text_box("name", $name, 30));
+    $frm->addrow("Forum Title", $frm->text_box("name", $name, 30,50));
 
     $frm->addrow("Forum Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
