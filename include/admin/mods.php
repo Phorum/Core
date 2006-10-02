@@ -34,7 +34,7 @@
             $entry == '.svn' || $entry == 'ATTIC' ||
             $entry == '.htaccess') continue;
 
-        // Read in the module information. 
+        // Read in the module information.
         $lines = array();
         if (file_exists("./mods/$entry/info.txt")) {
             $lines = file("./mods/$entry/info.txt");
@@ -46,7 +46,7 @@
                 $lines = preg_split('!(\r|\n|\r\n)!', $data);
             }
         }
-        
+
         // Check if we found module information.
         if (!count($lines)) {
             phorum_admin_error(
@@ -71,7 +71,7 @@
                         $priorities['module'][$entry][] = $m;
                     } else {
                         phorum_admin_error(
-                            "Priority configuration error for module " . 
+                            "Priority configuration error for module " .
                             htmlspecialchars($entry) . "<br/>" .
                             "Cannot parse priority " .
                             "\"" . htmlspecialchars($prio) . "\"<br/>");
@@ -105,7 +105,7 @@
     {
         // Determine the module status (enabled/disabled).
         $mods = array();
-        $active_mods = array(); 
+        $active_mods = array();
         foreach ($_POST as $key => $value) {
             $key = base64_decode($key);
             if(substr($key, 0, 5) == "mods_") {
@@ -117,7 +117,7 @@
         $PHORUM["mods"] = $mods;
 
         // First priority ordering pass:
-        // run module before|after * 
+        // run module before|after *
         $active_mods_copy = array_values($active_mods); // array_values reindexes
         foreach ($active_mods as $mod)
         {
@@ -143,8 +143,8 @@
         }
         $active_mods = $active_mods_copy;
 
-        // Second priority ordering pass: 
-        // run module before|after <othermodule> 
+        // Second priority ordering pass:
+        // run module before|after <othermodule>
         $active_mods_copy = array_values($active_mods);
         foreach ($active_mods as $mod)
         {
@@ -179,18 +179,18 @@
         # Determine what hooks to run for the activated modules.
         $modules_by_hook = array();
         $functions_by_module = array();
-        foreach ($active_mods as $mod) 
+        foreach ($active_mods as $mod)
         {
             if (! isset($modules_info[$mod]["hooks"])) continue;
             foreach ($modules_info[$mod]["hooks"] as $hookinfo) {
-                list ($hook,$func) = explode("|", $hookinfo); 
+                list ($hook,$func) = explode("|", $hookinfo);
                 $modules_by_hook[$hook][] = $mod;
                 $functions_by_module[$mod][$hook] = $func;
             }
         }
 
         // Third priority ordering pass:
-        // run hook <hook> before|after * 
+        // run hook <hook> before|after *
         foreach ($modules_by_hook as $hook => $mods)
         {
             if (!isset($priorities["hook"][$hook])) continue;
@@ -222,7 +222,7 @@
         }
 
         // Fourth priority ordering pass:
-        // run hook <hook> before|after <othermodule> 
+        // run hook <hook> before|after <othermodule>
         foreach ($modules_by_hook as $hook => $mods)
         {
             if (!isset($priorities["hook"][$hook])) continue;
@@ -262,7 +262,7 @@
 
         // Create the hooks configuration.
         $hooks = array();
-        foreach ($modules_by_hook as $hook => $mods) 
+        foreach ($modules_by_hook as $hook => $mods)
         {
             $hooks[$hook] = array();
             foreach ($mods as $mod) {
@@ -278,7 +278,7 @@
             "mods"  => $PHORUM["mods"]
         );
         if (phorum_db_update_settings($data)) {
-            phorum_admin_okmsg("The module settings were successfully updated."); 
+            phorum_admin_okmsg("The module settings were successfully updated.");
         } else {
             phorum_admin_error("Database error while updating settings.");
         }
@@ -306,11 +306,11 @@
 
         if ($info["settings"])
         {
-            if ($enabled==0) {
+            /*if ($enabled==0) {
                 $settings_link="<br /><a href=\"javascript:alert('You can not edit settings for a module unless it is turned On.');\">Settings</a>";
-            } else {
-                $settings_link="<br /><a href=\"$_SERVER[PHP_SELF]?module=modsettings&mod=$name\">Settings</a>";
-            }
+            } else {*/
+            $settings_link="<br /><a href=\"$_SERVER[PHP_SELF]?module=modsettings&mod=$name\">Settings</a>";
+            /* } */
         } else {
             $settings_link="";
         }
