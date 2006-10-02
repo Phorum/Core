@@ -129,7 +129,7 @@ phorum_build_common_urls();
 if(!count($PHORUM["DATA"]["FORUMS"])){
     include phorum_get_template( "header" );
     phorum_hook("after_header");
-    $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["NoRead"];
+    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["NoForums"];
     include phorum_get_template( "message" );
     phorum_hook("before_footer");
     include phorum_get_template( "footer" );
