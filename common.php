@@ -259,7 +259,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         if ( $PHORUM["enable_moderator_notifications"] ) {
             $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
             if ( count( $forummodlist ) > 0 ) {
-                $PHORUM["DATA"]["notice_messages"] = ( count( phorum_db_get_unapproved_list( $forummodlist, true ) ) > 0 );
+                $PHORUM["DATA"]["notice_messages"] = ( phorum_db_get_unapproved_list( $forummodlist, true,0,true ) > 0 );
                 $PHORUM["DATA"]["notice_messages_url"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
             }
             if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
@@ -762,10 +762,10 @@ function phorum_hook( $hook )
 
     // get arguments passed to the function
     $args = func_get_args();
-    
+
     // shift off hook name
     array_shift($args);
-    
+
     if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {

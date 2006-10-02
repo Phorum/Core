@@ -341,7 +341,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
  *                messages which are hidden by a moderator.
  */
 
-function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$moddays=0)
+function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$moddays=0,$countonly=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -350,9 +350,20 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$modda
     $table = $PHORUM["message_table"];
 
     $arr = array();
+    $sum = 0;
+
+    // do we want only a count here?
+    if($countonly) {
+        $selecting = "count(*) as msgcnt";
+
+    // or the full messages?
+    } else {
+        $selecting = "$table.*";
+
+    }
 
     $sql = "select
-            $table.*
+            $selecting
           from
             $table ";
 
@@ -378,20 +389,30 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$modda
     }
 
 
-    $sql .=" order by thread, message_id";
+    if(!$countonly) {
+        $sql .=" order by thread, message_id";
+    }
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     while ($rec = mysql_fetch_assoc($res)){
-        $arr[$rec["message_id"]] = $rec;
-        $arr[$rec["message_id"]]["meta"] = array();
-        if(!empty($rec["meta"])){
-            $arr[$rec["message_id"]]["meta"] = unserialize($rec["meta"]);
+        if($countonly) {
+            $sum += $rec['msgcnt'];
+        } else {
+            $arr[$rec["message_id"]] = $rec;
+            $arr[$rec["message_id"]]["meta"] = array();
+            if(!empty($rec["meta"])){
+                $arr[$rec["message_id"]]["meta"] = unserialize($rec["meta"]);
+            }
         }
     }
 
-    return $arr;
+    if($countonly) {
+        return $sum;
+    } else {
+        return $arr;
+    }
 }
 
 
@@ -1040,7 +1061,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $ts=time()-86400*$match_date;
                     $sql_date =" and datestamp>=$ts";
                 }
-        
+
                 $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
 
                 $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date";
