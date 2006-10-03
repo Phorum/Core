@@ -827,9 +827,11 @@ function phorum_build_common_urls()
         if($PHORUM["default_feed"]=="rss"){
             $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=rss" );
             $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["RSS"];
+            $GLOBALS["PHORUM"]["DATA"]["FEED_CONTENT_TYPE"] = "application/rss+xml";
         } else {
             $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=atom" );
             $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["ATOM"];
+            $GLOBALS["PHORUM"]["DATA"]["FEED_CONTENT_TYPE"] = "application/atom+xml";
         }
     }
 
