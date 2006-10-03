@@ -417,6 +417,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
+    $PHORUM["DATA"]["TEMPLATE_URL"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
 }
 
 //////////////////////////////////////////////////////////
