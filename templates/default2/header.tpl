@@ -1,7 +1,9 @@
 {IF CHARSET}
 <?php header("Content-Type: text/html; charset=".htmlspecialchars($PHORUM['DATA']['CHARSET'])); ?>
-{/IF}
 <?php echo '<?' ?>xml version="1.0" encoding="{CHARSET}"<?php echo '?>' ?>
+{ELSE}
+<?php echo '<?' ?>xml version="1.0" <?php echo '?>' ?>
+{/IF}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html lang="{LOCALE}">
 <head>
