@@ -5,7 +5,7 @@
             <tr>
                 {IF FORUMS->forum_id FORUMS->vroot}
                     <th align="left">
-                        <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
+                        <img src="{URL->TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
                         {LANG->Forums}
                         {IF FORUMS->description}
                             <small>{FORUMS->description}</small>
@@ -13,7 +13,7 @@
                     </th>
                 {ELSE}
                     <th align="left" class="icon-folder">
-                        <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
+                        <img src="{URL->TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
                         <a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>
                     </th>
                 {/IF}

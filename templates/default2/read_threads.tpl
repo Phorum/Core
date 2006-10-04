@@ -168,9 +168,9 @@
     <tr>
         <td width="65%" class="message-subject-threaded {altclass}">
             <h4 style="padding-left: {MESSAGES->indent_cnt}px;">    
-                <img src="{URL->BASE_URL}templates/{TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
+                <img src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
                 <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
-                {IF MESSAGES->meta->attachments}<img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
+                {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
             </h4>
         </td>
         <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>

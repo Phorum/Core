@@ -13,11 +13,11 @@
 {LANG_META}
 
 {IF PRINTVIEW} 
-    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="screen,print" />
+    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="screen,print" />
     <meta name="robots" content="NOINDEX,NOFOLLOW"> 
 {ELSE}
-    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/main.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="templates/{TEMPLATE}/styles/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/main.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="print" />
 {/IF}
 {IF URL->FEED}
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
@@ -62,7 +62,7 @@ Some Icons courtesy of:
 
 <div id="logo">
 
-<a href="{URL->BASE_URL}"><img src="{URL->BASE_URL}/templates/{TEMPLATE}/images/logo.png" width="111" height="25" alt="Phorum" border="0" /></a>
+<a href="{URL->BASE_URL}"><img src="{URL->TEMPLATE}/images/logo.png" width="111" height="25" alt="Phorum" border="0" /></a>
 </div>
 
 <div id="breadcrumb">

@@ -311,6 +311,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         ob_start();
         include_once( phorum_get_template( "settings" ) );
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
+        $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         ob_end_clean();
     }
 
@@ -417,7 +418,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
-    $PHORUM["DATA"]["TEMPLATE_URL"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
 }
 
 //////////////////////////////////////////////////////////
