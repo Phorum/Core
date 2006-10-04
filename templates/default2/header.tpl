@@ -62,7 +62,7 @@ Some Icons courtesy of:
 
 <div id="logo">
 
-<a href="{URL->BASE_URL}"><img src="{URL->TEMPLATE}/images/logo.png" width="111" height="25" alt="Phorum" border="0" /></a>
+<a href="{URL->BASE}"><img src="{URL->TEMPLATE}/images/logo.png" width="111" height="25" alt="Phorum" border="0" /></a>
 </div>
 
 <div id="breadcrumb">
