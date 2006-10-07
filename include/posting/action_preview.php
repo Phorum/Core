@@ -75,9 +75,13 @@ if ($attach_count)
     unset($previewmessage["attachments"]);
 }
 
-// Fill the author name and datestamp for new postings.
+// Fill the author name for new postings.
 if ($mode != "edit" && $PHORUM["DATA"]["LOGGEDIN"]) {
     $previewmessage["author"] = $PHORUM["user"]["username"];
+}
+
+// Fill the datestamp for new postings.
+if ($mode != "edit") {
     $previewmessage["datestamp"] = time();
 }
 
