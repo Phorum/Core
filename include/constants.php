@@ -231,5 +231,6 @@
     define("PHORUM_SANITY_OK", $i++);
     define("PHORUM_SANITY_WARN", $i++);
     define("PHORUM_SANITY_CRIT", $i++);
+    define("PHORUM_SANITY_SKIP", $i++);
 
 ?>

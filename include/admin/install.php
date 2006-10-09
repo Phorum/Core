@@ -24,13 +24,132 @@
         return;
     }
 
-    include_once "./include/admin/PhorumInputForm.php";
-
     if(empty($_POST["step"])){
         $step = 0;
     } else {
         $step = $_POST["step"];
     }
+
+    // Setup some default options (we need to do this at this point,
+    // because the sanity checks need them). 
+    $default_cache_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp";
+    $default_language = "english";
+
+    // Run sanity checks prior to installing Phorum. Here we do some
+    // checks to see if the environment is setup correctly for running
+    // Phorum.
+    if ($step == 0 && !isset($_POST["sanity_checks_done"]))
+    {
+        // Setup some fake environment data for the checks.
+        $GLOBALS["PHORUM"]["default_language"] = $default_language;
+        $GLOBALS["PHORUM"]["cache"] = $default_cache_dir;
+        $GLOBALS["PHORUM"]["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
+
+        // Load and run all available checks.
+        include("include/admin/sanity_checks.php");
+
+        ?>
+        <h1>Checking your system</h1>
+
+        Prior to installing Phorum, your system will be checked to see
+        if there are any problems that might prevent Phorum from running
+        correctly. Below you will find the results of the checks. Warnings
+        indicate that some problem needs attention, but that the problem
+        will not keep Phorum from running. Errors indicate critical 
+        problems, which need to be fixed before running Phorum.
+        <br/><br/>
+
+        <script type="text/javascript">
+        function toggle_sanity_info(check_id)
+        {
+            info_div = document.getElementById("sanity_info_" + check_id);
+            info_link = document.getElementById("sanity_info_link_" + check_id);
+            if (info_div && info_link) {
+                if (info_div.style.display == "block") {
+                    info_div.style.display = "none";
+                    info_link.innerHTML = "show problem info";
+                } else {
+                    info_div.style.display = "block";
+                    info_link.innerHTML = "hide problem info";
+                }
+            }
+        }
+        </script>
+        <?php
+
+        // Display the results of the sanity checks.
+        $got_crit = false;
+        $got_warn = false;
+        foreach ($PHORUM["SANITY_CHECKS"]["CHECKS"] as $check)
+        {
+            if ($check["status"] == PHORUM_SANITY_SKIP) continue;
+            if ($check["status"] == PHORUM_SANITY_CRIT) $got_crit = true;
+            if ($check["status"] == PHORUM_SANITY_WARN) $got_warn = true;
+            $display = $status2display[$check["status"]];
+            print "<div style=\"padding: 10px; background-color:#f5f5f5;border: 1px solid #ccc; margin-bottom: 5px;\">";
+            print "<div style=\"float:left; text-align:center; margin-right: 10px; width:100px; border: 1px solid #444; background-color:{$display[0]}; color:{$display[1]}\">{$display[2]}</div>";
+            print '<b>' . $check["description"] . '</b>';
+
+            if ($check["status"] != PHORUM_SANITY_OK)
+            {
+                print " (<a id=\"sanity_info_link_{$check["id"]}\" href=\"javascript:toggle_sanity_info('{$check["id"]}')\">show problem info</a>)";
+                print "<div id=\"sanity_info_{$check["id"]}\" style=\"display: none; padding-top: 15px\">";
+                print "<b>Problem:</b><br/>";
+                print $check["error"];
+                print "<br/><br/><b>Possible solution:</b><br/>";
+                print $check["solution"];
+                print "</div>";
+            }
+            print "</div>";
+        }
+
+        // Display navigation options, based on the check results.
+        ?>
+        <form method="post" action="<?php print $_SERVER["PHP_SELF"] ?>">
+        <input type="hidden" name="module" value="install" />
+        <?php
+        if ($got_crit) {
+            ?>
+            <br/>
+            One or more critical errors were encountered while checking
+            your system. To see what is causing these errors and what you 
+            can do about them, click the "show problem info" links.
+            Please fix these errors and restart the system checks.
+            <br/><br/>
+            <input type="submit" value="Restart the system checks" />
+            <?php
+            
+        } elseif ($got_warn) {
+            ?>
+            <br/>
+            One or more warnings were encountered while checking
+            your system. To see what is causing these warnings and what you 
+            can do about them, click the "show problem info" links.
+            Phorum probably will run without fixing the warnings, but
+            it's a good idea to fix them anyway for ensuring optimal
+            performance.
+            <br/><br/>
+            <input type="submit" value="Restart the system checks" />
+            <input type="submit" name="sanity_checks_done" value="Continue without fixing the warnings -&gt;" />
+            <?php
+        } else {
+            ?>
+            <br/>
+            No problems were encountered while checking your system.
+            You can now continue with the Phorum installation.
+            <br/><br/>
+            <input type="submit" name="sanity_checks_done" value="Continue -&gt;" />
+            <?php
+        }
+
+        ?>
+        </form>
+        <?php 
+
+        return; 
+    }
+
+    include_once "./include/admin/PhorumInputForm.php";
 
     if(count($_POST)){
 
@@ -97,8 +216,9 @@
 
             $frm =& new PhorumInputForm ("", "post", "Continue ->");
             $frm->addbreak("Welcome to Phorum");
-            $frm->addmessage("This wizard will setup Phorum on your server.  The first step is to prepare the database.  Phorum has already confirmed that it can connect to your database.  Press continue when you are ready.");
+            $frm->addmessage("This wizard will setup Phorum on your server. First, the database will be prepared.  Phorum has already confirmed that it can connect to your database.  Press continue when you are ready.");
             $frm->hidden("module", "install");
+            $frm->hidden("sanity_checks_done", "1");
             $frm->hidden("step", "2");
             $frm->show();
 
@@ -115,9 +235,6 @@
             } else {
                 $message="Tables created.  Next we will check your cache settings. Press continue when ready.";
 
-                // setup vars for initial settings
-                $tmp_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp";
-
                 $default_forum_options=array(
                 'forum_id'=>0,
                 'moderation'=>0,
@@ -126,7 +243,7 @@
                 'reg_perms'=>15,
                 'display_fixed'=>0,
                 'template'=>'default',
-                'language'=>'english',
+                'language'=>$default_language,
                 'threaded_list'=>0,
                 'threaded_read'=>0,
                 'reverse_threading'=>0,
@@ -166,7 +283,7 @@
                 $settings=array(
                 "title" => "Phorum 5",
                 "description" => "Congratulations!  You have installed Phorum 5!  To change this text, go to your admin, choose General Settings and changed the description",
-                "cache" => "$tmp_dir",
+                "cache" => $default_cache_dir,
                 "session_timeout" => "30",
                 "short_session_timeout" => "60",
                 "tight_security" => "0",
@@ -176,7 +293,7 @@
                 "cache_users" => "0",
                 "register_email_confirm" => "0",
                 "default_template" => "default",
-                "default_language" => "english",
+                "default_language" => $default_language,
                 "use_cookies" => "1",
                 "use_bcc" => "1",
                 "use_rss" => "1",
@@ -239,7 +356,7 @@
                 "float_to_top"=>1,
                 "display_ip_address"=>0,
                 "allow_email_notify"=>1,
-                "language"=>'english',
+                "language"=>$default_language,
                 "email_moderators"=>0,
                 "display_order"=>0,
                 "edit_post"=>1,
@@ -283,6 +400,7 @@
             $frm->addmessage($message);
             $frm->hidden("step", "6");
             $frm->hidden("module", "install");
+            $frm->hidden("sanity_checks_done", "1");
             $frm->show();
 
             break;
@@ -292,6 +410,7 @@
             $frm =& new PhorumInputForm ("", "post");
             $frm->hidden("step", "5");
             $frm->hidden("module", "install");
+            $frm->hidden("sanity_checks_done", "1");
             $frm->addbreak("Creating An Administrator");
             $frm->addmessage("Please enter the following information.  This can be your user information or you can create an administrator that is separate from yourself.<br /><br />Note: If you are using a pre-existing authentication database, please enter the username and password of the admin user that already exists.");
             $admin_user = isset($_POST["admin_user"]) ? $_POST["admin_user"] : "";
@@ -346,6 +465,7 @@
 
             $frm =& new PhorumInputForm ("", "post", "Continue ->");
             $frm->hidden("module", "install");
+            $frm->hidden("sanity_checks_done", "1");
             $frm->addbreak("Checking cache....");
             $frm->addmessage($message);
             $frm->hidden("step", "4");

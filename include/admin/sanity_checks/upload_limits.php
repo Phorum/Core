@@ -29,8 +29,12 @@
 
     $phorum_check = "File uploading (personal files and attachments)";
 
-    function phorum_check_upload_limits() {
+    function phorum_check_upload_limits($is_install) {
         $PHORUM = $GLOBALS["PHORUM"];
+
+        if ($is_install) {
+            return array(PHORUM_SANITY_SKIP, NULL, NULL);
+        }
 
         // Keep track if uploads are used.
         $upload_used = false;

@@ -21,8 +21,12 @@
 
     $phorum_check = "Modules (hook collision checks)";
 
-    function phorum_check_modules() {
+    function phorum_check_modules($is_install = false) {
         $PHORUM = $GLOBALS["PHORUM"];
+
+        if ($is_install) {
+            return array(PHORUM_SANITY_SKIP, NULL, NULL);
+        }
 
         // For some hooks, we only want one module enabled to
         // prevent collision problems. This is a list of

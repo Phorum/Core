@@ -22,7 +22,7 @@
 
     $phorum_check = "Language support";
 
-    function phorum_check_language() {
+    function phorum_check_language($is_install = false) {
         $PHORUM = $GLOBALS["PHORUM"];
 
         $checked = array();
@@ -40,6 +40,9 @@
              under General Settings."
         );
         $checked[$PHORUM["default_language"]] = true;
+
+        // If this check is run at install time, we're done.
+        if ($is_install) return array(PHORUM_SANITY_OK, NULL);
 
         // Check for the forum specific language file(s).
         $forums = phorum_db_get_forums();

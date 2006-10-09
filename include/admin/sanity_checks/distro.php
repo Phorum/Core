@@ -185,7 +185,7 @@
              be installed correctly on your server. Below is a list of
              problems:<br/><ul><li>" .
              implode("</li>\n<li>", $errors) .
-             "</li>\n</ul>\n",
+             "</li></ul>",
             "If a file is marked \"<b>missing</b>\", then it's
              probably not uploaded at all. If there's an additional
              \"<b>case mismatch</b>\" notice, then it could be that your
