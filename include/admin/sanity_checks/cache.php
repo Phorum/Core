@@ -53,7 +53,16 @@
              htmlspecialchars($php_errormsg).".",
             $solution_2
         );
-        fclose($fp);
+        if (! fclose($fp)) return array (
+            PHORUM_SANITY_CRIT,
+            "The system is able to write a file to your cache
+             directory \"".htmlspecialchars($dir)."\",
+             however closing the file failed.",
+            "Failure to close a file mostly indicates that the disk
+             on which the file is written is full. So check if your
+             server doesn't have any full disk and free some space
+             if this is the case."
+        );
 
         // Some very unusual thing might happen. On Windows2000 we have seen
         // that the webserver can write a message to the cache directory,
