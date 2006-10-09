@@ -103,8 +103,10 @@
              experience problems with your Phorum installation,
              it might me because of this.",
             "As a work around, you can disable the caching facilities
-             in the admin interface. Please contact the Phorum
-             developers to find out what the problem is.",
+             in the admin interface (note: this will not remove this
+             warning; it will only keep you out of troubles by making
+             sure that the caching system is not used). Please contact
+             the Phorum developers to find out what the problem is.",
         );
 
         return array (PHORUM_SANITY_OK, NULL);
