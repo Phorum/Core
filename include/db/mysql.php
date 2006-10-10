@@ -4754,7 +4754,8 @@ function phorum_db_sanitychecks()
     if (mysql_num_rows($res))
     {
         $row = mysql_fetch_array($res);
-        $ver = explode(".", $row[0]);
+        $verstr = preg_replace('/-.*$/', '', $row[0]);
+        $ver = explode(".", $verstr);
 
         // Version numbering format which is not recognized.
         if (count($ver) != 3) return array(
