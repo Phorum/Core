@@ -248,6 +248,22 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["template"] = $PHORUM["default_template"];
     }
 
+
+
+    // handling vroots
+    if(!empty($PHORUM['vroot'])) {
+        $vroot_folders = phorum_db_get_forums($PHORUM['vroot']);
+
+        $PHORUM["DATA"]["TITLE"]      = $vroot_folders[$PHORUM['vroot']]['name'];
+        $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["DATA"]["TITLE"];
+
+        if($PHORUM['vroot'] == $PHORUM['forum_id']) {
+            // unset the forum-name if we are in the vroot-index
+            // otherwise the NAME and TITLE would be the same and still shown twice
+            unset($PHORUM['name']);
+        }
+    }
+
     // stick some stuff from the settings into the DATA member
     $PHORUM["DATA"]["NAME"] = ( isset( $PHORUM["name"] ) ) ? $PHORUM["name"] : "";
     $PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"]  ) ) ? strip_tags( preg_replace("!\s+!", " ", $PHORUM["description"]) ) : "";
