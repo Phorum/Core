@@ -19,9 +19,9 @@
                     <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" />
                     <br />
                     <select name="match_forum">
-                        <option value="ALL" {IF SEARCH->match_forum ALL}selected="selected"{/IF}>{LANG->MatchAllForums}</option>
+                        <option value="ALL" {IF SEARCH->match_forum "ALL"}selected="selected"{/IF}>{LANG->MatchAllForums}</option>
                         {IF SEARCH->allow_match_one_forum}
-                            <option value="THISONE" {IF SEARCH->match_forum THISONE}selected="selected"{/IF}>{LANG->MatchThisForum}</option>
+                            <option value="THISONE" {IF SEARCH->match_forum "THISONE"}selected="selected"{/IF}>{LANG->MatchThisForum}</option>
                         {/IF}
                     </select>
                     <br />
@@ -49,9 +49,9 @@
                     <input type="text" id="phorum_search_author" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" />
                     <br />
                     <select name="match_forum">
-                        <option value="ALL" {IF SEARCH->match_forum ALL}selected{/IF}>{LANG->MatchAllForums}</option>
+                        <option value="ALL" {IF SEARCH->match_forum "ALL"}selected{/IF}>{LANG->MatchAllForums}</option>
                         {IF SEARCH->allow_match_one_forum}
-                            <option value="THISONE" {IF SEARCH->match_forum THISONE}selected{/IF}>{LANG->MatchThisForum}</option>
+                            <option value="THISONE" {IF SEARCH->match_forum "THISONE"}selected{/IF}>{LANG->MatchThisForum}</option>
                         {/IF}
                     </select>
                     <br />
