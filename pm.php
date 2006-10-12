@@ -475,7 +475,7 @@ if (!empty($action)) {
 
                                 phorum_email_pm_notice($pm_message, $langrcpts);
 
-                                phorum_hook("pm_sent", $pm_message);
+                                phorum_hook("pm_sent", $pm_message, array_keys($recipients));
                             }
                         }
 
