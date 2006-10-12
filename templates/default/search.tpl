@@ -54,9 +54,9 @@
         <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
         <div style="margin-top: 3px;">
           <select name="match_forum">
-            <option value="ALL" {IF SEARCH->match_forum ALL}selected{/IF}>{LANG->MatchAllForums}</option>
+            <option value="ALL" {IF SEARCH->match_forum "ALL"}selected{/IF}>{LANG->MatchAllForums}</option>
             {IF SEARCH->allow_match_one_forum}
-              <option value="THISONE" {IF SEARCH->match_forum THISONE}selected{/IF}>{LANG->MatchThisForum}</option>
+              <option value="THISONE" {IF SEARCH->match_forum "THISONE"}selected{/IF}>{LANG->MatchThisForum}</option>
             {/IF}
           </select>
         </div>
@@ -67,9 +67,9 @@
             <option value="365" {IF SEARCH->match_dates 365}selected{/IF}>{LANG->Last365Days}</option>
             <option value="0" {IF SEARCH->match_dates 0}selected{/IF}>{LANG->AllDates}</option>
           </select>&nbsp;<select name="match_type">
-            <option value="ALL" {IF SEARCH->match_type ALL}selected{/IF}>{LANG->MatchAll}</option>
-            <option value="ANY" {IF SEARCH->match_type ANY}selected{/IF}>{LANG->MatchAny}</option>
-            <option value="PHRASE" {IF SEARCH->match_type PHRASE}selected{/IF}>{LANG->MatchPhrase}</option>
+            <option value="ALL" {IF SEARCH->match_type "ALL"}selected{/IF}>{LANG->MatchAll}</option>
+            <option value="ANY" {IF SEARCH->match_type "ANY"}selected{/IF}>{LANG->MatchAny}</option>
+            <option value="PHRASE" {IF SEARCH->match_type "PHRASE"}selected{/IF}>{LANG->MatchPhrase}</option>
           </select>
         </div>
       </form>
@@ -83,9 +83,9 @@
         <input type="text" id="phorum_search_author" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
         <div style="margin-top: 3px;">
           <select name="match_forum">
-            <option value="ALL" {IF SEARCH->match_forum ALL}selected{/IF}>{LANG->MatchAllForums}</option>
+            <option value="ALL" {IF SEARCH->match_forum "ALL"}selected{/IF}>{LANG->MatchAllForums}</option>
             {IF SEARCH->allow_match_one_forum}
-              <option value="THISONE" {IF SEARCH->match_forum THISONE}selected{/IF}>{LANG->MatchThisForum}</option>
+              <option value="THISONE" {IF SEARCH->match_forum "THISONE"}selected{/IF}>{LANG->MatchThisForum}</option>
             {/IF}
           </select>
         </div>
