@@ -1043,7 +1043,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $idstring=substr($idstring, 0, -1);
 
             mysqli_free_result($res);
-            
+
         } else {
 
             if(count($terms)){
@@ -1064,7 +1064,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $ts=time()-86400*$match_date;
                     $sql_date =" and datestamp>=$ts";
                 }
-        
+
                 $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
 
                 $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date";
@@ -1103,7 +1103,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         }
 
         mysqli_free_result($res);
-        
+
         $arr = array("count" => $total_count, "rows" => $rows);
     }
 
@@ -1446,12 +1446,9 @@ function phorum_db_move_thread($thread_id, $toforum)
 
         if(count($message_ids)) { // we only go in if there are messages ... otherwise an error occured
 
-            $ids_str=implode(",",$message_ids);
+            phorum_db_newflag_update_forum($message_ids);
 
-            // then doing the update to newflags
-            $sql="UPDATE IGNORE {$PHORUM['user_newflags_table']} SET forum_id = $toforum where message_id IN($ids_str)";
-            $res = mysqli_query( $conn, $sql);
-            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            $ids_str=implode(",",$message_ids);
 
             // then doing the update to subscriptions
             $sql="UPDATE {$PHORUM['subscribers_table']} SET forum_id = $toforum where thread IN($ids_str)";
@@ -2982,9 +2979,9 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
         $msg_count = 0;
     }
 
-    $new_messages = max(0, $msg_count - $read_message_count); 
+    $new_messages = max(0, $msg_count - $read_message_count);
     $new_threads = max(0, $thread_count - $read_thread_count);
-    
+
     $counts = array(
         $new_messages,
         $new_threads
@@ -3081,6 +3078,24 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query($conn, $del_sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $del_sql");
+}
+
+
+function phorum_db_newflag_update_forum($message_ids) {
+
+    if(!is_array($message_ids)) {
+        return;
+    }
+
+    $ids_str=implode(",",$message_ids);
+
+    // then doing the update to newflags
+    $sql="UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} as flags, {$GLOBALS['PHORUM']['message_table']} as msg SET flags.forum_id=msg.forum_id where flags.message_id=msg.message_id and flags.message_id IN ($ids_str)";
+    $conn = phorum_db_mysqli_connect();
+    $res = mysqli_query($conn, $del_sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $del_sql");
+
+
 }
 
 /**
