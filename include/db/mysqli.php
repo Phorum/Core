@@ -2926,14 +2926,14 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
     $sql = "select found_rows() as read_thread_count";
     $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-    list($read_thread_count) =  = mysqli_fetch_row($res);
+    list($read_thread_count) = mysqli_fetch_row($res);
 
     //Get user read messages:
     $sql = "select sql_calc_found_rows phorum_user_newflags.message_id as min_message_id from phorum_user_newflags inner join phorum_messages using (message_id) where phorum_user_newflags.user_id={$PHORUM['user']['user_id']} and phorum_user_newflags.forum_id in ({$forum_id}) and status=2 order by phorum_user_newflags.message_id limit 1";
     $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     if(mysqli_num_rows($res)){
-        list($min_message_id) =  = mysqli_fetch_row($res);
+        list($min_message_id) = mysqli_fetch_row($res);
     } else {
         $min_message_id = 0;
     }
@@ -2941,7 +2941,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
     $sql = "select found_rows() as read_message_count";
     $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-    list($read_message_count) =  = mysqli_fetch_row($res);
+    list($read_message_count) = mysqli_fetch_row($res);
 
     if($min_message_id>0){
 
@@ -2949,13 +2949,13 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
         $sql = "select count(*) as thread_count from phorum_messages where forum_id in ({$forum_id}) and message_id>=$min_message_id and status=2 and parent_id=0";
         $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-        list($thread_count) =  = mysqli_fetch_row($res);
+        list($thread_count) = mysqli_fetch_row($res);
 
         // Get message count
         $sql = "select count(*) as msg_count from phorum_messages where forum_id in ({$forum_id}) and message_id>=$min_message_id and status=2";
         $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-        list($msg_count) =  = mysqli_fetch_row($res);
+        list($msg_count) = mysqli_fetch_row($res);
 
     } else {
         $thread_count = 0;
