@@ -878,66 +878,77 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
     }
 
-    if($match_type=="AUTHOR"){
+    // prepare terms
+    if($match_type=="PHRASE"){
 
-        $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
-
-        $search = mysqli_real_escape_string($conn,$search);
-
-        $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$search' $forum_where";
-        if($match_date>0){
-            $ts=time()-86400*$match_date;
-            $sql.=" and datestamp>=$ts";
+        if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
+            $terms = array('"'.$search.'"');
+        } else {
+            $terms = array($search);
         }
 
-        $res = mysqli_query( $conn, $sql);
-        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+    } elseif($match_type=="AUTHOR"){
+
+        $terms = mysqli_real_escape_string($conn, $search);
 
     } else {
 
-        if($match_type=="PHRASE"){
-            $terms = array('"'.$search.'"');
-        } else {
-            $quote_terms=array();
-            if ( strstr( $search, '"' ) ){
-                //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
-                preg_match_all( '/-*"(.*?)"/', $search, $match );
-
-                $search = preg_replace( '/-*".*?"/', '', $search );
-
-                $quote_terms = $match[0];
-            }
-
-            //finally pull out the rest words in the string
-            $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
-
-            //merge them all together and return
-            $terms = array_merge( $terms, $quote_terms);
+        $quote_terms=array();
+        if ( strstr( $search, '"' ) ){
+            //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
+            preg_match_all( '/-*"(.*?)"/', $search, $match );
+            $search = preg_replace( '/-*".*?"/', '', $search );
+            $quote_terms = $match[0];
         }
 
-        if(count($terms)){
+        //finally pull out the rest words in the string
+        $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
 
-            $use_key="";
-            $extra_where="";
+        //merge them all together and return
+        $terms = array_merge($terms, $quote_terms);
 
-            /* using this code on larger forums has shown to make the search faster.
-               However, on smaller forums, it does not appear to help and in fact
-               appears to slow down searches.
+    }
 
-            if($match_date){
-                $min_time=time()-86400*$match_date;
-                $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
-                $res=mysqli_query( $conn, $sql);
-                if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-                $min_id=mysql_result($res, 0, "min_id");
-                $use_key=" use key (primary)";
-                $extra_where="and message_id>=$min_id";
+
+    if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
+
+        if($match_type=="AUTHOR"){
+
+            $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
+
+            $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$terms' $forum_where";
+            if($match_date>0){
+                $ts=time()-86400*$match_date;
+                $sql.=" and datestamp>=$ts";
             }
-            */
 
-            $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
+            $res = mysqli_query($conn, $sql);
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
-            if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
+        } else {
+
+
+            if(count($terms)){
+
+                $use_key="";
+                $extra_where="";
+
+                /* using this code on larger forums has shown to make the search faster.
+                   However, on smaller forums, it does not appear to help and in fact
+                   appears to slow down searches.
+
+                if($match_date){
+                    $min_time=time()-86400*$match_date;
+                    $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
+                    $res=mysqli_query($conn, $sql);
+                    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+                    list($min_id) = mysqli_fetch_row($res);
+                    $use_key=" use key (primary)";
+                    $extra_where="and message_id>=$min_id";
+                }
+                */
+
+                $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
 
                 if($match_type=="ALL" && count($terms)>1){
                     $against="+".mysqli_real_escape_string($conn, implode(" +", $terms));
@@ -947,7 +958,81 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
                 $clause="MATCH (search_text) AGAINST ('$against' IN BOOLEAN MODE)";
 
-            } else {
+                $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['search_table']} $use_key where $clause $extra_where";
+                $res = mysqli_query($conn, $sql);
+                if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+            }
+        }
+
+
+        if(isset($id_table)){
+
+            // create a temporary table of the messages we want
+            $table=$PHORUM['search_table']."_".md5(microtime());
+            $sql="create temporary table $table (key (forum_id, status, datestamp)) ENGINE=HEAP select {$PHORUM['message_table']}.message_id, {$PHORUM['message_table']}.datestamp, status, forum_id from {$PHORUM['message_table']} inner join $id_table using (message_id) where status=".PHORUM_STATUS_APPROVED." $forum_where";
+
+            if($match_date>0){
+                $ts=time()-86400*$match_date;
+                $sql.=" and datestamp>=$ts";
+            }
+
+            $res=mysqli_query($conn, $sql);
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+            $sql="select count(*) as count from $table";
+            $res = mysqli_query($conn, $sql);
+
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            list($total_count) = mysqli_fetch_row($res);
+
+            $sql="select message_id from $table order by datestamp desc limit $start, $length";
+            $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+            $idstring="";
+            while ($rec = mysqli_fetch_row($res)){
+                $idstring.="$rec[0],";
+            }
+            $idstring=substr($idstring, 0, -1);
+
+            mysqli_free_result($res);
+        }
+
+    } else { // not using full text matching
+
+        if($match_type=="AUTHOR"){
+
+            $sql_core = "from {$PHORUM['message_table']} where author='$terms' $forum_where $sql_date";
+
+            if($match_date>0){
+                $ts=time()-86400*$match_date;
+                $sql_core.=" and datestamp>=$ts";
+            }
+
+            $sql = "select count(*) $sql_core";
+            $res = mysqli_query($conn, $sql);
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            list($total_count) = mysqli_fetch_row($res);
+
+
+            $sql = "select message_id $sql_core order by datestamp desc limit $start, $length";
+
+            $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+            $idstring="";
+            while ($rec = mysqli_fetch_row($res)){
+                $idstring.="$rec[0],";
+            }
+            $idstring=substr($idstring, 0, -1);
+
+            mysqli_free_result($res);
+            
+        } else {
+
+            if(count($terms)){
 
                 if($match_type=="ALL"){
                     $conj="and";
@@ -957,72 +1042,55 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
                 // quote strings correctly
                 foreach ($terms as $id => $term) {
-                    $terms[$id] = mysqli_real_escape_string($conn,$term);
+                    $terms[$id] = mysqli_real_escape_string($conn, $term);
                 }
 
-                $clause = "( search_text like '%".implode("%' $conj search_text like '%", $terms)."%' )";
+                $sql_date = "";
+                if($match_date>0){
+                    $ts=time()-86400*$match_date;
+                    $sql_date =" and datestamp>=$ts";
+                }
+        
+                $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
 
+                $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date";
+                $res = mysqli_query($conn, $sql);
+
+                if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+                list($total_count) = mysqli_fetch_row($res);
+
+                $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date order by datestamp desc limit $start, $length";
+                $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+                if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+                $idstring="";
+                while ($rec = mysqli_fetch_row($res)){
+                    $idstring.="$rec[0],";
+                }
+                $idstring=substr($idstring, 0, -1);
+
+                mysqli_free_result($res);
             }
 
-            $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['search_table']} $use_key where $clause $extra_where";
-            $res = mysqli_query($conn, $sql);
-            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
         }
+
     }
 
-
-    if(isset($id_table)){
-
-        // create a temporary table of the messages we want
-        $table=$PHORUM['search_table']."_".md5(microtime());
-        $sql="create temporary table $table (key (forum_id, status, datestamp)) ENGINE=HEAP select {$PHORUM['message_table']}.message_id, {$PHORUM['message_table']}.datestamp, status, forum_id from {$PHORUM['message_table']} inner join $id_table using (message_id) where status=".PHORUM_STATUS_APPROVED." $forum_where";
-
-        if($match_date>0){
-            $ts=time()-86400*$match_date;
-            $sql.=" and datestamp>=$ts";
-        }
-
-        $res=mysqli_query( $conn, $sql);
-        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
-        $sql="select count(*) as count from $table";
-        $res = mysqli_query( $conn, $sql);
+    if($idstring){
+        $sql="select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
+        $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
 
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
-        $tmp_row=mysqli_fetch_row($res);
-        $total_count=$tmp_row[0];
+        $rows = array();
 
-        $sql="select message_id from $table order by datestamp desc limit $start, $length";
-        $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT );
-
-        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
-        $idstring="";
-        while ($rec = mysqli_fetch_row($res)){
-            $idstring.="$rec[0],";
+        while ($rec = mysqli_fetch_assoc($res)){
+            $rows[$rec["message_id"]] = $rec;
         }
-        mysqli_free_result ( $res );
 
-        $idstring=substr($idstring, 0, -1);
-
-        if($idstring){
-            $sql="select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
-            $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
-
-            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
-            $rows = array();
-
-            while ($rec = mysqli_fetch_assoc($res)){
-                $rows[$rec["message_id"]] = $rec;
-            }
-
-            mysqli_free_result ( $res );
-
-            $arr = array("count" => $total_count, "rows" => $rows);
-        }
+        mysqli_free_result($res);
+        
+        $arr = array("count" => $total_count, "rows" => $rows);
     }
 
     return $arr;
