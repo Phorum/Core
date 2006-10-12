@@ -1029,7 +1029,14 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
 
                 if($match_type=="ALL" && count($terms)>1){
-                    $against="+".mysql_escape_string(implode(" +", $terms));
+                    foreach($terms as $term){
+                        if($term[0] == "+" || $term[0] == "-"){
+                            $against .= mysql_escape_string($term)." ";
+                        } else {
+                            $against .= "+".mysql_escape_string($term)." ";
+                        }
+                    }
+                    $against = trim($against);
                 } else {
                     $against=mysql_escape_string(implode(" ", $terms));
                 }
