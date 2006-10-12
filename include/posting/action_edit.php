@@ -125,6 +125,15 @@ if (! $message["parent_id"] &&
         }
     }
 
+    if($dbmessage["sort"] == PHORUM_SORT_ANNOUNCEMENT || $origmessage["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
+
+        // recalculating the newflags
+        $thread_message_ids = array_keys($messages);
+
+        phorum_db_newflag_update_forum($thread_message_ids);
+
+    }
+
     // The forum stats have to be updated. Announcements aren't
     // counted in the thread_count, so if switching to or
     // from announcement, the thread_count will change.
