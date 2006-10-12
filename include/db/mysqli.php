@@ -951,7 +951,14 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
 
                 if($match_type=="ALL" && count($terms)>1){
-                    $against="+".mysqli_real_escape_string($conn, implode(" +", $terms));
+                    foreach($terms as $term){
+                        if($term[0] == "+" || $term[0] == "-"){
+                            $against .= mysqli_real_escape_string($conn, $term)." ";
+                        } else {
+                            $against .= "+".mysqli_real_escape_string($conn, $term)." ";
+                        }
+                    }
+                    $against = trim($against);
                 } else {
                     $against=mysqli_real_escape_string($conn, implode(" ", $terms));
                 }
