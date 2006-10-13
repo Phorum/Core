@@ -965,7 +965,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $terms = array($search);
         }
 
-    } elseif($match_type=="AUTHOR"){
+    } elseif($match_type=="AUTHOR" || $match_type=="USER_ID"){
 
         $terms = mysql_escape_string($search);
 
@@ -990,11 +990,12 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
-        if($match_type=="AUTHOR"){
+        if($match_type=="AUTHOR" || $match_type=="USER_ID"){
 
             $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
-
-            $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where author='$terms' $forum_where";
+          
+            $fld = $match_type=="AUTHOR" ? "author" : "user_id";
+            $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where $fld='$terms' $forum_where";
             if($match_date>0){
                 $ts=time()-86400*$match_date;
                 $sql.=" and datestamp>=$ts";
@@ -1088,9 +1089,10 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     } else { // not using full text matching
 
-        if($match_type=="AUTHOR"){
+        if($match_type=="AUTHOR" || $match_type=="USER_ID"){
 
-            $sql_core = "from {$PHORUM['message_table']} where author='$terms' $forum_where";
+            $fld = $match_type=="AUTHOR" ? "author" : "user_id";
+            $sql_core = "from {$PHORUM['message_table']} where $fld='$terms' $forum_where";
 
             if($match_date>0){
                 $ts=time()-86400*$match_date;

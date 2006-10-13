@@ -5,8 +5,8 @@
     {/IF}
 </div>
 
-
-<div id="search-form" class="generic">
+{IF NOT SEARCH->match_type "USER_ID"}
+  <div id="search-form" class="generic">
     <table border="0" cellspacing="0" class="form-table">
         <tr>
             <td width="50%" valign="top">
@@ -65,7 +65,8 @@
             </td>
         </tr>
     </table>
-</div>
+  </div>
+{/IF}
 
 {IF SEARCH->noresults}
     <div class="information">

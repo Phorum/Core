@@ -36,7 +36,7 @@ function phorum_search_check_valid_vars() {
     $PHORUM=$GLOBALS['PHORUM'];
     $retval=true;
     // these are valid values for some args
-    $valid_match_types=array("ALL","ANY","PHRASE","AUTHOR");
+    $valid_match_types=array("ALL","ANY","PHRASE","AUTHOR","USER_ID");
     $valid_match_forum=array("THISONE","ALL");
 
     if(!in_array($PHORUM["args"]["match_type"],$valid_match_types)) {
