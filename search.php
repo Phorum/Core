@@ -251,6 +251,7 @@ if(!empty($phorum_search)){
         $PHORUM["DATA"]["SEARCH"]["noresults"] = true;
         $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
     }
+
 } else {
     // Set cursor focus to message search entry.
     $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
@@ -263,15 +264,23 @@ $PHORUM["DATA"]["SEARCH"]["match_dates"] = $PHORUM["args"]["match_dates"];
 $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
 $PHORUM["DATA"]["SEARCH"]["allow_match_one_forum"] = $PHORUM["forum_id"];
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Search"];
+if ($PHORUM["args"]["match_type"] == "USER_ID")
+{
+    $search_user = phorum_user_get((int)$phorum_search);
+    $search_name = $search_user == NULL ? $PHORUM["DATA"]["LANG"]["AnonymousUser"] : $search_user["username"];
+    $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];
+    $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];
+    $PHORUM["DATA"]["DESCRIPTION"] = str_replace("%user%", htmlspecialchars($search_name), $PHORUM["DATA"]["LANG"]["SearchAllPostsHelp"]);
+} else {
+    $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Search"];
 
-$PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["html_title"].PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["Search"];
-if(!empty($phorum_search)){
-    $PHORUM["DATA"]["HTML_TITLE"] .= " - ".$phorum_search;
+    $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["html_title"].PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["Search"];
+    if(!empty($phorum_search)){
+        $PHORUM["DATA"]["HTML_TITLE"] .= " - ".$phorum_search;
+    }
+
+    $PHORUM["DATA"]["DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["SearchHelp"];
 }
-
-$PHORUM["DATA"]["DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["SearchHelp"];
-
 
 include phorum_get_template("header");
 phorum_hook("after_header");
