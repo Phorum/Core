@@ -98,7 +98,7 @@
                 {LANG->by} <strong>{MATCHES->author}</strong> 
 
                 {IF MATCHES->forum_id}
-                    - <a href="{MATCHES->URL->FORUM}">{MATCHES->forum_name}</a> 
+                    - <a href="{MATCHES->URL->LIST}">{MATCHES->forum_name}</a> 
                 {/IF}
 
             </div>
