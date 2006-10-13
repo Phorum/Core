@@ -9,20 +9,20 @@
 
     <div class="generic">
 
-        <div class="icon-user">
+         <div class="icon-user">
             {PROFILE->username}
-            {IF LOGGEDIN}
+            <small>    
+              {IF LOGGEDIN}
                 {IF ENABLE_PM}
-                    <small>    
                         {IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}
                         [ <a href="{PROFILE->URL->PM}">{LANG->SendPM}</a> ]
                         {IF NOT PROFILE->is_buddy}
                             [ <a href="{PROFILE->URL->ADD_BUDDY}">{LANG->BuddyAdd}</a> ]
                         {/IF}
-                        [ <a href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a> ]
-                    </small>
                 {/IF}
-            {/IF}
+              {/IF}
+              [ <a href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a> ]
+            </small>
          </div>
 
          <dl>
