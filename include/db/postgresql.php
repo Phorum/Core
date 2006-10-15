@@ -269,7 +269,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         if(empty($allowed_forums))
             return $arr;
     } else {
-        // only single forum, *much* fast this way
+        // only single forum, *much* faster this way
         if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
             return $arr;
         }
