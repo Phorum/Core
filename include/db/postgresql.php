@@ -908,13 +908,14 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
     }
 
-    if($match_type=="AUTHOR"){
+    if($match_type=="AUTHOR" || $match_type=="USER_ID"){
 
         $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
         $search = pg_escape_string($search);
 
-        $sql = "SELECT message_id INTO $id_table FROM {$PHORUM['message_table']} WHERE author = '$search' $forum_where";
+        $fld = $match_type=="AUTHOR" ? "author" : "user_id";
+        $sql = "SELECT message_id INTO $id_table FROM {$PHORUM['message_table']} WHERE $fld = '$search' $forum_where";
         if ($match_date > 0 ){
             $ts  = time() - 86400 * $match_date;
             $sql.=" and datestamp >= $ts";
