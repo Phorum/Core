@@ -112,7 +112,7 @@ if ( count( $_POST ) ) {
 
                 break;
 
-            case "private_key": 
+            case "private_key":
 
                 $private_key = trim($value);
                 if (strlen($private_key) < 30) {
@@ -122,6 +122,7 @@ if ( count( $_POST ) ) {
                 break;
 
             case "cache_users":
+            case "cache_rss":
                 if ( empty( $value ) ) {
                     $_POST[$field] = 0;
                 }
@@ -209,6 +210,7 @@ $frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster u
 
 $frm->addbreak("Cache Settings");
 $row=$frm->addrow( "Enable Caching Userdata:", $frm->select_tag( "cache_users", array( "No", "Yes" ), $PHORUM["cache_users"] ) );
+$row=$frm->addrow( "Enable Caching RSS-Feeds:", $frm->select_tag( "cache_rss", array( "No", "Yes" ), $PHORUM["cache_rss"] ) );
 //$row=$frm->addrow( "Enable Caching Newflags:", $frm->select_tag( "cache_newflags", array( "No", "Yes" ), $PHORUM["cache_newflags"] ) );
 
 $frm->addbreak( "Date Options" );
