@@ -31,7 +31,7 @@
     }
 
     // Setup some default options (we need to do this at this point,
-    // because the sanity checks need them). 
+    // because the sanity checks need them).
     $default_cache_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp";
     $default_language = "english";
 
@@ -55,7 +55,7 @@
         if there are any problems that might prevent Phorum from running
         correctly. Below you will find the results of the checks. Warnings
         indicate that some problem needs attention, but that the problem
-        will not keep Phorum from running. Errors indicate critical 
+        will not keep Phorum from running. Errors indicate critical
         problems, which need to be fixed before running Phorum.
         <br/><br/>
 
@@ -112,18 +112,18 @@
             ?>
             <br/>
             One or more critical errors were encountered while checking
-            your system. To see what is causing these errors and what you 
+            your system. To see what is causing these errors and what you
             can do about them, click the "show problem info" links.
             Please fix these errors and restart the system checks.
             <br/><br/>
             <input type="submit" value="Restart the system checks" />
             <?php
-            
+
         } elseif ($got_warn) {
             ?>
             <br/>
             One or more warnings were encountered while checking
-            your system. To see what is causing these warnings and what you 
+            your system. To see what is causing these warnings and what you
             can do about them, click the "show problem info" links.
             Phorum probably will run without fixing the warnings, but
             it's a good idea to fix them anyway for ensuring optimal
@@ -144,9 +144,9 @@
 
         ?>
         </form>
-        <?php 
+        <?php
 
-        return; 
+        return;
     }
 
     include_once "./include/admin/PhorumInputForm.php";
@@ -291,6 +291,9 @@
                 "session_domain" => "",
                 "admin_session_salt" => microtime(),
                 "cache_users" => "0",
+                "cache_rss" => "0",
+                "cache_newflags" => "0",
+                "cache_messages" => "0",
                 "register_email_confirm" => "0",
                 "default_template" => "default",
                 "default_language" => $default_language,

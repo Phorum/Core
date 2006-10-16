@@ -43,27 +43,31 @@ if(empty($forums) || !phorum_check_read_common()) {
 }
 
 // grab the data from cache if we can
-//  $cache = phorum_cache_get("feed", $_SERVER["REQUEST_URI"]);
+// only do this with caching enabled
+$cache_key = $_SERVER["REQUEST_URI"].",".$PHORUM["user"]["user_id"];
+if(isset($PHORUM['cache_rss']) && !empty($PHORUM['cache_rss'])) {
+  $cache = phorum_cache_get("feed", $_SERVER["REQUEST_URI"]);
+}
 
 if(!empty($cache)){
 
     // extract the two members from cache
     list($data, $content_type) = $cache;
-    
+
 } else {
-    
+
     // if it wasn't in cache, we need to make it
-    
+
     // init array
     $messages = array();
-    
+
     // check if this is a thread subscription
     $thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
-    
-    // check if we are getting replies 
+
+    // check if we are getting replies
     $no_replies = (empty($PHORUM["args"]["replies"])) ? true : false;
-    
-    // check the feed type 
+
+    // check the feed type
     $feed_type = (empty($PHORUM["args"]["type"])) ? "rss" : $PHORUM["args"]["type"];
 
     // generate list of forum ids to grab data for
@@ -74,7 +78,7 @@ if(!empty($cache)){
 
     // remove users from messages array
     unset($messages["users"]);
-    
+
     // run read hooks to get everything formatted
     $messages = phorum_hook("read", $messages);
     $messages = phorum_format_messages($messages);
@@ -94,19 +98,19 @@ if(!empty($cache)){
         $feed_description = (!empty($PHORUM["description"])) ? $PHORUM["description"] : "";
     }
 
-    
+
     switch($feed_type) {
 
         case "html":
             $data = phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed_description);
             $content_type = "text/html";
             break;
-            
+
         case "js":
             $data = phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_description);
             $content_type = "text/javascript";
             break;
-            
+
         case "atom":
             $data = phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed_description);
             $content_type = "application/xml";
@@ -116,11 +120,13 @@ if(!empty($cache)){
             $data = phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_description);
             $content_type = "application/xml";
             break;
-        
+
     }
-        
+
     // stick the xml in cache for 5 minutes for future use
-    phorum_cache_put("feed", $_SERVER["REQUEST_URI"], array($data, $content_type, 600));
+    if(isset($PHORUM['cache_rss']) && !empty($PHORUM['cache_rss'])) {
+        phorum_cache_put("feed", $cache_key, array($data, $content_type, 600));
+    }
 
 }
 
