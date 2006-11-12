@@ -25,6 +25,10 @@ $PHORUM["DATA"]["FORUMS"] = array();
 
 $forums_shown=false;
 
+// get newflag count for the vroot 
+// this is the announcement count
+list($vroot_new_messages, $vroot_new_threads) = phorum_db_newflag_get_unread_count($PHORUM["vroot"]);
+
 foreach( $forums as $forum ) {
 
     if ( $forum["folder_flag"] ) {
@@ -72,6 +76,8 @@ foreach( $forums as $forum ) {
             }
 
             list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
+            $forum["new_messages"] += $vroot_new_messages;
+            $forum["new_threads"] += $vroot_new_threads;
         }
     }
 
