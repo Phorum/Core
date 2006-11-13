@@ -64,7 +64,7 @@ $PHORUM["pm_buddies_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_buddies"
 $PHORUM['string_fields']= array('author', 'subject', 'body', 'email');
 
 /* A piece of SQL code that can be used for identifying moved messages. */
-define('PHORUM_SQL_MOVEDMESSAGES', '(parent_id = 0 and thread != message_id)');
+define('PHORUM_SQL_MOVEDMESSAGES', "({$PHORUM['message_table']}.parent_id = 0 and {$PHORUM['message_table']}.thread != {$PHORUM['message_table']}.message_id)");
 
 /**
  * This function executes a query to select the visible messages from
@@ -2908,6 +2908,8 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
 
     settype($forum_id, "int");
 
+    $counts = array(0,0);
+
     if($forum_id===false) $forum_id=$PHORUM["forum_id"];
 
     $conn = phorum_db_mysqli_connect();
@@ -2920,26 +2922,26 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
         
         list($min_message_id) = mysqli_fetch_row($res);
 
-        // get unread thread count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread<>{$PHORUM['message_table']}.message_id";
-        $res = mysqli_query($conn, $sql);
-        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-        list($new_threads) = mysqli_fetch_row($res);
+        if ($min_message_id > 0) {
 
-        // get unread message count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2 and not ".PHORUM_SQL_MOVEDMESSAGES;        
-        $res = mysqli_query($conn, $sql);
-        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-        list($new_messages) = mysqli_fetch_row($res);
+            // get unread thread count
+            $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread<>{$PHORUM['message_table']}.message_id";
+            $res = mysqli_query($conn, $sql);
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            list($new_threads) = mysqli_fetch_row($res);
+    
+            // get unread message count
+            $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2 and not ".PHORUM_SQL_MOVEDMESSAGES;        
+            $res = mysqli_query($conn, $sql);
+            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            list($new_messages) = mysqli_fetch_row($res);
+    
+            $counts = array(
+                $new_messages,
+                $new_threads
+            );
+       } 
 
-        $counts = array(
-            $new_messages,
-            $new_threads
-        );
-        
-    } else {
-
-        $counts = array(0,0);
     }
 
     return $counts;
