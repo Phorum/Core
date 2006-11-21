@@ -197,7 +197,7 @@
                 "use_bcc" => "1",
                 "use_rss" => "1",
                 "internal_version" => "" . PHORUMINTERNAL . "",
-                "PROFILE_FIELDS" => array(array('name'=>"real_name",'length'=> 255, 'html_disabled'=>1)),
+                "PROFILE_FIELDS" => array('num_fields'=>2,0=>array('name'=>'real_name','length'=>'255','html_disabled'=>'1')),
                 "enable_pm" => "1",
                 "user_edit_timelimit" => "0",
                 "enable_new_pm_count" => "1",
