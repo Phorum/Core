@@ -1654,7 +1654,9 @@ Table of contents:
    This hook can be used for changing information for the users before
    being displayed. For example: add a border around user signatures.
    This is for displaying purposes only, so the changes are not stored
-   in the database.
+   in the database. This hook modifies the MESSAGES->user (in read.tpl)
+   and MESSAGE->user (read_threads.tpl) data that is available in the
+   templates.
 
    ----------------------------------------------------------------------------
    readthreads
