@@ -45,7 +45,7 @@
     } else {
 
         // check for a session
-        phorum_user_check_session("phorum_admin_session");
+        phorum_user_check_session(PHORUM_SESSION_ADMIN);
 
         if(!isset($GLOBALS["PHORUM"]["user"]) || !$GLOBALS["PHORUM"]["user"]["admin"]){
             // if not an admin
