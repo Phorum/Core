@@ -106,6 +106,26 @@ if ( count( $_POST ) ) {
         $okmsg = "$threads_updated threads updated.";
 
     }
+
+
+    if(isset($_POST['rebuild_userposts']) && !empty($_POST['rebuild_userposts'])) {
+
+        $ret = phorum_db_rebuild_user_posts();
+
+
+        $okmsg = "$forums_updated forum(s) updated.";
+
+    }
+
+    if(isset($_POST['rebuild_searchdata']) && !empty($_POST['rebuild_searchdata'])) {
+
+        $ret = phorum_db_rebuild_search_data();
+
+
+        $okmsg = "Searchdata successfully rebuilt.";
+
+    }
+
 }
 
 if ( $error ) {
@@ -125,6 +145,12 @@ $frm->addhelp($row, "Rebuild forumstatistics", "Phorum keeps the count of messag
 
 $row=$frm->addrow( "Rebuild message meta-data", $frm->checkbox('rebuild_metadata',1,"rebuild metadata"));
 $frm->addhelp($row, "Rebuild message meta-data", "Phorum stores meta-data about the thread in the meta-field of the first message in a thread. If you manually delete messages from a thread or in case of errors, this data could be out of sync, leading to wrong paging and new-flag information about a thread. Run this part to rebuild the meta-data for all threads in all forums.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
+
+$row=$frm->addrow( "Rebuild search-data", $frm->checkbox('rebuild_searchdata',1,"rebuild_searchdata"));
+$frm->addhelp($row, "Rebuild search-data", "Phorum stores all posts a second time in a separate table for avoiding concurrency issues and building fulltext indexes.<br />In case of manual changes to the messages or crashing servers this data can be outdated or broken, therefore this option rebuilds the search-table from the original messages.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
+
+$row=$frm->addrow( "Rebuild user post-counts", $frm->checkbox('rebuild_userposts',1,"rebuild_userposts"));
+$frm->addhelp($row, "Rebuild user post-counts", "Phorum stores the numbers of posts a user has made in the user-data.<br />In case of manual changes to the database like deleting messages manually, this data can be outdated or broken, therefore this option rebuilds the post-counts from the existing messages for the user-id.<br /><strong>ATTENTION:</strong>This can take a some time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
 
 $frm->show();
 

@@ -378,7 +378,7 @@ Phorum Status:
         $menu = new PhorumAdminMenu("Maintenance");
 
         $menu->add("Check For New Version", "version", "Check for new releases.");
-        $menu->add("Rebuild Panel", "rebuild", "Rebuild Panel");
+        $menu->add("Database Integrity", "rebuild", "Database Integrity Actions");
         $menu->add("Prune Messages", "message_prune", "Pruning old messages.");
         $menu->add("Purge Stale Files", "file_purge", "Purging stale files from the database.");
         $menu->add("Purge cache", "cache_purge", "Purging the Phorum cache.");
