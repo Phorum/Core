@@ -22,6 +22,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) return;
 $error = "";
 
 if ( count( $_POST ) ) {
+    $okmsg = "";
+
     if(isset($_POST['rebuild_forumstats']) && !empty($_POST['rebuild_forumstats'])) {
         // we need to rebuild the forumstats
         $forums = phorum_db_get_forums();
@@ -44,7 +46,7 @@ if ( count( $_POST ) ) {
 
         $PHORUM['forum_id'] = $old_forum_id;
 
-        $okmsg = "$forums_updated forum(s) updated.";
+        $okmsg .= "$forums_updated forum(s) updated.<br />";
 
     }
 
@@ -103,29 +105,29 @@ if ( count( $_POST ) ) {
 
         $PHORUM['forum_id'] = $old_forum_id;
 
-        $okmsg = "$threads_updated threads updated.";
+        $okmsg .= "$threads_updated threads updated.<br />";
 
     }
 
 
-    if(isset($_POST['rebuild_userposts']) && !empty($_POST['rebuild_userposts'])) {
-
-        $ret = phorum_db_rebuild_user_posts();
-
-
-        $okmsg = "$forums_updated forum(s) updated.";
-
-    }
 
     if(isset($_POST['rebuild_searchdata']) && !empty($_POST['rebuild_searchdata'])) {
 
         $ret = phorum_db_rebuild_search_data();
 
 
-        $okmsg = "Searchdata successfully rebuilt.";
+        $okmsg .= "Searchdata successfully rebuilt.<br />";
 
     }
 
+    if(isset($_POST['rebuild_userposts']) && !empty($_POST['rebuild_userposts'])) {
+
+        $ret = phorum_db_rebuild_user_posts();
+
+
+        $okmsg .= "Postcounts for users updated.<br />";
+
+    }
 }
 
 if ( $error ) {
