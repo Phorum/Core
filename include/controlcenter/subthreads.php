@@ -45,8 +45,8 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
     $subdays = $PHORUM["user"]["settings_data"]["cc_subscriptions_subdays"];
 } else {
     $subdays = 2;
-} 
-$PHORUM['DATA']['SELECTED'] = $subdays; 
+}
+$PHORUM['DATA']['SELECTED'] = $subdays;
 
 // Store current selection for the user.
 phorum_user_settings_data_save(array("cc_subscriptions_subdays" => $subdays));
@@ -57,7 +57,7 @@ $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
 // reading all subscriptions to messages in the current vroot.
 $forum_ids = array($PHORUM["vroot"]);
 foreach ($forums as $forum) { $forum_ids[] = $forum["forum_id"]; }
-$subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids); 
+$subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
 
 // storage for newflags
 $PHORUM['user']['newinfo'] = array();
@@ -73,12 +73,12 @@ foreach($subscr_array as $id => $data) {
         $data['forum'] = $PHORUM['DATA']['LANG']['Announcement'];
     } else {
         $data['forum'] = $forums[$data['forum_id']]['name'];
-    } 
+    }
 
     $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
 
     // Create the read URL. We always need a real forum id, else
-    // the read script will redirect us back to the index. Therefore, we 
+    // the read script will redirect us back to the index. Therefore, we
     // need to fix the forum id for announcements.
     $read_forum_id = $data["forum_id"];
     if ($read_forum_id == $PHORUM["vroot"])
@@ -90,7 +90,7 @@ foreach($subscr_array as $id => $data) {
         } elseif ($PHORUM["forum_id"] != $PHORUM["vroot"] && ! $PHORUM["folder_flag"]) {
             $read_forum_id = $announce_forum_id = $PHORUM["forum_id"];
         } else {
-            // Walk through all forums in the current vroot to find 
+            // Walk through all forums in the current vroot to find
             // a suitable candidate.
             foreach ($forums as $id => $forum) {
                 if ($forum["forum_id"] != $PHORUM["vroot"] && !$forum["folder_flag"]) {
@@ -125,7 +125,7 @@ foreach($subscr_array as $id => $data) {
         if (! isset($PHORUM['user']['newinfo'][$forum_id])) {
             $PHORUM['user']['newinfo'][$forum_id] = null;
             if ($PHORUM['cache_newflags']) {
-                $newflagkey = $forum_id."-".$PHORUM['user']['user_id'];
+                $newflagkey = $forum_id."-".$forums[$forum_id]['cache_version']."-".$PHORUM['user']['user_id'];
                 $PHORUM['user']['newinfo'][$forum_id] = phorum_cache_get('newflags',$newflagkey);
             }
             if ($PHORUM['user']['newinfo'][$forum_id] == null) {
@@ -143,7 +143,7 @@ foreach($subscr_array as $id => $data) {
         }
 
         if (count($new)) {
-            $data["new"] = $PHORUM["DATA"]["LANG"]["newflag"]; 
+            $data["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
         }
     }
 

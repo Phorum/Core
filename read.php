@@ -440,7 +440,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             unset($row["user"]["password"]);
             unset($row["user"]["password_tmp"]);
         }
-        if(!$PHORUM["threaded_read"] && $PHORUM["DATA"]["LOGGEDIN"] && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'] && !isset($PHORUM['user']['newinfo'][$row['message_id']])) { // set this message as read
+        if(!($PHORUM["threaded_read"]==1) && $PHORUM["DATA"]["LOGGEDIN"] && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'] && !isset($PHORUM['user']['newinfo'][$row['message_id']])) { // set this message as read
             $read_messages[] = array("id"=>$row['message_id'],"forum"=>$row['forum_id']);
         }
         // is the message unapproved?

@@ -51,7 +51,7 @@
             {LOOP TOPICS}
                 <tr>
                     <td width="5%"><input type="checkbox" name="delthreads[]" value="{TOPICS->thread}" /></td>
-    
+
                     <td width="65%" class="message-subject {altclass}">
                         <a href="{TOPICS->URL->READ}">
                         {IF TOPICS->new}<img src="{URL->TEMPLATE}/images/flag_red.png" width="16" height="16" border="0" alt="{LANG->New}" title="{LANG->New}"/>{/IF}
@@ -75,5 +75,5 @@
     </form>
 {ELSE}
     <div class="generic">{LANG->NoFollowedThreads}</div>
-{/IF}        
+{/IF}
 <p>{LANG->HowToFollowThreads}</p>
