@@ -1,5 +1,5 @@
 <div class="nav">
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
     {IF USER->user_id}
         <a class="icon icon-tag-green" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
@@ -30,7 +30,7 @@
     {/IF}
 
     {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-        {VAR icon "information"} 
+        {VAR icon "information"}
         {VAR title LANG->Announcement}
     {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
         {VAR icon "bell"}
@@ -63,7 +63,7 @@
             </h4>
             {LANG->by} {MESSAGES->linked_author}
         </td>
-        
+
         {IF VIEWCOUNT_COLUMN}
             <td width="12%" align="center" class="{altclass}" nowrap="nowrap">
                 {IF MESSAGES->moved}
@@ -74,18 +74,18 @@
             </td>
         {/IF}
 
-        {IF MESSAGES->moved}    
+        {IF MESSAGES->moved}
             <td colspan="2" width="30%" align="center" class="{altclass}" nowrap="nowrap">{LANG->MovedSubject}</td>
         {ELSE}
-        
+
             <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
             <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}</td>
-            
+
         {/IF}
-        
+
         {IF MODERATOR true}
             <td width="1%" class="{altclass}" nowrap="nowrap">
-                {IF MESSAGES->moved}    
+                {IF MESSAGES->moved}
                     &nbsp;
                 {ELSE}
                     <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>

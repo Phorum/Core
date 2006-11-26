@@ -4,7 +4,7 @@
         <a class="icon icon-prev" href="{MESSAGE->URL->PREV}">{LANG->PreviousMessage}</a>
         <a class="icon icon-next" href="{MESSAGE->URL->NEXT}">{LANG->NextMessage}</a>
     </div>
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
     <a class="icon icon-printer" href="{URL->PRINTVIEW}" target="_blank">{LANG->PrintView}</a>
@@ -71,7 +71,7 @@
                 {LANG->UnapprovedMessage}
             </div>
         {/IF}
-    
+
         {MESSAGE->body}
         <div class="message-options">
             {IF MESSAGE->edit 1}
@@ -92,7 +92,7 @@
                 {/LOOP MESSAGE->attachments}
             </div>
         {/IF}
-        
+
     </div>
 
 </div>
@@ -133,17 +133,17 @@
     {LOOP MESSAGES}
 
     {! This is the current message }
-    {IF MESSAGES->message_id MESSAGE->message_id}    
+    {IF MESSAGES->message_id MESSAGE->message_id}
         {VAR altclass "current"}
     {ELSE}
         {VAR altclass ""}
     {/IF}
 
-    {IF MESSAGES->message_id MESSAGE->message_id}    
-        {VAR icon "bullet_go"} 
+    {IF MESSAGES->message_id MESSAGE->message_id}
+        {VAR icon "bullet_go"}
     {ELSEIF MESSAGES->parent_id 0}
         {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-            {VAR icon "information"} 
+            {VAR icon "information"}
         {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
             {VAR icon "bell"}
         {ELSEIF MESSAGES->moved}
@@ -167,7 +167,7 @@
 
     <tr>
         <td width="65%" class="message-subject-threaded {altclass}">
-            <h4 style="padding-left: {MESSAGES->indent_cnt}px;">    
+            <h4 style="padding-left: {MESSAGES->indent_cnt}px;">
                 <img src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
                 <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
                 {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}

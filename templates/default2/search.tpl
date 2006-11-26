@@ -1,5 +1,5 @@
 <div class="nav">
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF URL->POST}
         <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
     {/IF}
@@ -86,23 +86,23 @@
 
 
     <div class="generic search">
-    
+
         {LOOP MATCHES}
 
             <div class="search-result">
-            
+
                 <h4><a href="{MATCHES->URL->READ}">{MATCHES->subject}</a><small> - {MATCHES->datestamp}</small></h4>
-                
+
                 <blockquote>{MATCHES->short_body}</blockquote>
-    
-                {LANG->by} <strong>{MATCHES->author}</strong> 
+
+                {LANG->by} <strong>{MATCHES->author}</strong>
 
                 {IF MATCHES->forum_id}
-                    - <a href="{MATCHES->URL->LIST}">{MATCHES->forum_name}</a> 
+                    - <a href="{MATCHES->URL->LIST}">{MATCHES->forum_name}</a>
                 {/IF}
 
             </div>
-            
+
         {/LOOP MATCHES}
     </div>
 

@@ -1,5 +1,5 @@
 <div class="nav">
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
     <a class="icon icon-printer" href="{URL->PRINTVIEW}" target="_blank">{LANG->PrintView}</a>
@@ -14,7 +14,7 @@
     <div class="message">
 
         <div class="generic">
-    
+
             <table border="0" cellspacing="0">
                 <tr>
                     <td width="100%">
@@ -48,14 +48,14 @@
                 </tr>
             </table>
         </div>
-    
+
         <div class="message-body">
             {IF MESSAGES->is_unapproved}
                 <div class="warning">
                     {LANG->UnapprovedMessage}
                 </div>
             {/IF}
-        
+
             {MESSAGES->body}
             <div class="message-options">
                 {IF MESSAGES->edit 1}
@@ -67,7 +67,7 @@
                 <a class="icon icon-comment-add" href="{MESSAGES->URL->QUOTE}">{LANG->QuoteMessage}</a>
                 <a class="icon icon-exclamation" href="{MESSAGES->URL->REPORT}">{LANG->Report}</a>
             </div>
-    
+
             {IF MESSAGES->attachments}
                 <div class="attachments">
                     {LANG->Attachments}:
@@ -95,10 +95,10 @@
                 <a class="icon icon-comment-edit" href="{MESSAGES->URL->EDIT}">{LANG->EditPost}</a>
             </div>
         {/IF}
-            
-            
+
+
         </div>
-    </div>  
+    </div>
 {/LOOP MESSAGES}
 
 <div class="nav">

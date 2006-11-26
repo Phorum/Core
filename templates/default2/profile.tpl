@@ -1,5 +1,5 @@
 <div class="nav">
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF URL->LIST}
         <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     {/IF}
@@ -11,7 +11,7 @@
 
          <div class="icon-user">
             {PROFILE->username}
-            <small>    
+            <small>
               {IF LOGGEDIN}
                 {IF ENABLE_PM}
                         {IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}
@@ -34,7 +34,7 @@
                 <dt>{LANG->RealName}:</dt>
                 <dd>{PROFILE->real_name}</dd>
             {/IF}
-            
+
             {IF PROFILE->posts}
                 <dt>{LANG->Posts}:&nbsp;</dt>
                 <dd>{PROFILE->posts}</dd>
@@ -47,10 +47,10 @@
                 <dt>{LANG->DateActive}:&nbsp;</dt>
                 <dd>{PROFILE->date_last_active}</dd>
             {/IF}
-            
+
         </dl>
-            
+
     </div>
-    
+
 </div>
 

@@ -1,5 +1,5 @@
 <div class="nav">
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF URL->LIST}
         <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     {/IF}
@@ -18,25 +18,25 @@
                     <li><a {IF PROFILE->PANEL "privacy"}class="current" {/IF}href="{URL->CC14}">{LANG->EditPrivacy}</a></li>
                     <li><a {IF PROFILE->PANEL "groups"}class="current" {/IF}href="{URL->CC16}">{LANG->ViewJoinGroups}</a></li>
                 </ul>
-    
+
                 {LANG->Subscriptions}
                 <ul>
                     <li><a {IF PROFILE->PANEL "subthreads"}class="current" {/IF}href="{URL->CC1}">{LANG->ListThreads}</a></li>
                 </ul>
-    
+
                 {LANG->Options}
                 <ul>
                     <li><a {IF PROFILE->PANEL "forum"}class="current" {/IF}href="{URL->CC6}">{LANG->EditBoardsettings}</a></li>
                     <li><a {IF PROFILE->PANEL "password"}class="current" {/IF}href="{URL->CC7}">{LANG->ChangePassword}</a></li>
                 </ul>
-    
+
                 {IF MYFILES}
                     {LANG->Files}
                     <ul>
                         <li><a {IF PROFILE->PANEL "files"}class="current" {/IF}href="{URL->CC9}">{LANG->EditMyFiles}</a></li>
                     </ul>
                 {/IF}
-    
+
                 {IF MODERATOR}
                     {LANG->Moderate}
                     <ul>
@@ -61,7 +61,7 @@
             {ELSE}
                 <div class="information">{OKMSG}</div>
             {/IF}
-            
+
         </td>
     </tr>
 </table>

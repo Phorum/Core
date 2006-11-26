@@ -1,5 +1,5 @@
 <div class="nav">
-    <a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF URL->LIST}
         <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     {/IF}
@@ -8,7 +8,7 @@
 <table class="menu" cellspacing="0" border="0">
     <tr>
         <td class="menu" nowrap="nowrap">
-        
+
             <div class="generic">
 
                 {LANG->PrivateMessages}
@@ -49,13 +49,13 @@
                         </tr>
                     </table>
                 </div>
-            {/IF}        
+            {/IF}
         </td>
 
         <td class="content">
             {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
             {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
-            <?php include phorum_get_template($template); ?>            
+            <?php include phorum_get_template($template); ?>
         </td>
     </tr>
 </table>

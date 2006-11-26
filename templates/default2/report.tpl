@@ -1,11 +1,11 @@
-{IF ReportPostMessage}
-  <div class="PhorumUserError">{ReportPostMessage}</div>
-{/IF}
-<div class="PhorumNavBlock" style="text-align: left;">
-  <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;<a class="PhorumNavLink" href="{URL->POST}">{LANG->NewTopic}</a>&bull;<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{IF LOGGEDIN true}<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogOut}</a>{ELSE}<a class="PhorumNavLink" href="{URL->LOGINOUT}">{LANG->LogIn}</a>{/IF}
+<div class="nav">
+    {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
+    <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
+    <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
 </div>
-<div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->Report}</div>
-<div class="PhorumStdBlock" style="text-align: left;">
+{IF ReportPostMessage}<div class="attention">{ReportPostMessage}</div>{/IF}
+
+<div class="information">
   <strong>{LANG->ConfirmReportMessage}</strong><br /><br />
   <div class="PhorumReadBodySubject">{PostSubject}</div>
   <div class="PhorumReadBodyHead">{LANG->Postedby}: {PostAuthor}</div>

@@ -1,5 +1,5 @@
 <div class="nav">
-<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>
+{IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
 <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
 {IF USER->user_id}
     <a class="icon icon-tag-green" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
@@ -23,7 +23,7 @@
 
     {LOOP MESSAGES}
 
-    {IF MESSAGES->parent_id 0}    
+    {IF MESSAGES->parent_id 0}
         {IF altclass ""}
             {VAR altclass "alt"}
         {ELSE}
@@ -33,7 +33,7 @@
 
     {IF MESSAGES->parent_id 0}
         {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-            {VAR icon "information"} 
+            {VAR icon "information"}
             {VAR title LANG->Announcement}
         {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
             {VAR icon "bell"}
@@ -67,9 +67,9 @@
         <h4 style="padding-left: {MESSAGES->indent_cnt}px">
             <img src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
             <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
-            {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}        
-            {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
-            {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}        
+            {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
+            {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
+            {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
         </h4>
     </td>
     <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
