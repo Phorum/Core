@@ -24,7 +24,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.2-dev" );
 
 // our internal version in format of year-month-day-serial
-define( "PHORUMINTERNAL", "2006102700" );
+define( "PHORUMINTERNAL", "5022006090700" );
 
 define( "DEBUG", 0 );
 
@@ -245,6 +245,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM['parent_id']=0;
         $PHORUM['active']=1;
         $PHORUM['folder_flag']=1;
+        $PHORUM['cache_version']=0;
         $PHORUM["template"] = $PHORUM["default_template"];
     }
 

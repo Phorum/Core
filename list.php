@@ -45,14 +45,16 @@ if($PHORUM["folder_flag"]){
     exit();
 }
 
+$newflagkey = $PHORUM["forum_id"]."-".$PHORUM['cache_version']."-".$PHORUM['user']['user_id'];
+
 // check for markread
 if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
     // setting all posts read
     unset($PHORUM['user']['newinfo']);
     phorum_db_newflag_allread();
     if($PHORUM['cache_newflags']) {
-        phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
-        phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+        phorum_cache_remove('newflags',$newflagkey);
+        phorum_cache_remove('newflags_index',$newflagkey);
     }
 
 
@@ -68,7 +70,6 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
     $PHORUM['user']['newinfo'] = null;
 
     if($PHORUM['cache_newflags']) {
-        $newflagkey = $PHORUM['forum_id']."-".$PHORUM['user']['user_id'];
         $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey);
     }
 
@@ -175,7 +176,7 @@ $min_id=0;
 
 $rows = NULL;
 if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies'])) {
-    $cache_key=$PHORUM['forum_id']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"];
+    $cache_key=$PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"];
     $rows = phorum_cache_get('message_list',$cache_key);
 }
 
@@ -215,6 +216,7 @@ if($rows == null) {
 
             $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
             $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
+
             $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
 
             if($row["message_id"] == $row["thread"]){
@@ -223,48 +225,17 @@ if($rows == null) {
                 $rows[$key]["threadstart"] = false;
             }
 
-            if($PHORUM["DATA"]["MODERATOR"]){
-
-                $rows[$key]["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-                $rows[$key]["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-                if($build_move_url) {
-                    $rows[$key]["URL"]["MOVE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
-                }
-                $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
-
-            }
             $rows[$key]["new"] = "";
             // recognizing moved threads
             if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
                 $rows[$key]['moved']=1;
-            } elseif ($PHORUM["DATA"]["LOGGEDIN"]){
-
-                // newflag, if its NOT in newinfo AND newer (min than min_id,
-                // then its a new message
-
-                // newflag for collapsed special threads (sticky and announcement)
-                if (($rows[$key]['sort'] == PHORUM_SORT_STICKY ||
-                $rows[$key]['sort'] == PHORUM_SORT_ANNOUNCEMENT) &&
-                isset($row['meta']['message_ids']) &&
-                is_array($row['meta']['message_ids'])) {
-                    foreach ($row['meta']['message_ids'] as $cur_id) {
-                        if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
-                        $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
-                    }
-                }
-                // newflag for regular messages
-                else {
-                    if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
-                        $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
-                    }
-                }
             }
 
             if ($row["user_id"]){
                 $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
                 $rows[$key]["URL"]["PROFILE"] = $url;
                 $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row['author'])."</a>";
-            }else{
+            } else {
                 $rows[$key]["URL"]["PROFILE"] = "";
                 if(!empty($row['email'])) {
                     $email_url = phorum_html_encode("mailto:$row[email]");
@@ -415,7 +386,7 @@ if($rows == null) {
 
 //timing_mark('after preparation');
 
-if($PHORUM['cache_messages'] && $PHORUM['DATA']['LOGGEDIN']) {
+if($PHORUM['DATA']['LOGGEDIN']) {
     // the stuff needed by user
     foreach($rows as $key => $row){
         // newflag for collapsed flat view or special threads (sticky and announcement)
@@ -529,8 +500,8 @@ if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && 
     $min_id--;
     phorum_db_newflag_add_read($min_id);
     if($PHORUM['cache_newflags']) {
-        phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
-        phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+        phorum_cache_remove('newflags',$newflagkey);
+        phorum_cache_remove('newflags_index',$newflagkey);
     }
 }
 

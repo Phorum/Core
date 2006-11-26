@@ -42,12 +42,13 @@ if(empty($PHORUM["forum_id"]) || $PHORUM["folder_flag"]){
     exit();
 }
 
+$newflagkey = $PHORUM["forum_id"]."-".$PHORUM['cache_version']."-".$PHORUM['user']['user_id'];
+
 if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 
     $PHORUM['user']['newinfo'] = null;
 
     if($PHORUM['cache_newflags']) {
-        $newflagkey = $PHORUM['forum_id']."-".$PHORUM['user']['user_id'];
         $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey);
     }
 
@@ -125,8 +126,8 @@ if(empty($PHORUM["args"][1])) {
                     if($msg_count > 0){
                         phorum_db_newflag_add_read($mids);
                         if($PHORUM['cache_newflags']) {
-                            phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
-                            phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+                            phorum_cache_remove('newflags',$newflagkey);
+                            phorum_cache_remove('newflags_index',$newflagkey);
                         }
                         unset($mids);
                     }
@@ -153,7 +154,7 @@ if(empty($PHORUM["args"][1])) {
 
                     $new_message=array_shift($message_ids); // get the first element
 
-                    if(!$PHORUM['threaded_read']) { // get new page
+                    if($PHORUM['threaded_read'] == 0) { // get new page
                         $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
                         $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
                     } else { // for threaded
@@ -322,7 +323,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // remove the unneeded message bodies in threaded view
     // to avoid unnecessary formatting of bodies
-    if ($PHORUM["threaded_read"] &&
+    if ($PHORUM["threaded_read"] == 1 &&
         !(isset($PHORUM['TMP']['all_bodies_in_threaded_read']) &&
          !empty($PHORUM['TMP']['all_bodies_in_threaded_read']) ) ) {
 
@@ -651,16 +652,21 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     include phorum_get_template("header");
     phorum_hook("after_header");
 
-    if($PHORUM["threaded_read"]) {
+    if($PHORUM["threaded_read"] == 1) {
         include phorum_get_template("read_threads");
-    } else{
+    } elseif($PHORUM["threaded_read"] == 2) {
+
+        include phorum_get_template("read_hybrid");
+
+    } else {
+
         include phorum_get_template("read");
     }
     if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
         phorum_db_newflag_add_read($read_messages);
         if($PHORUM['cache_newflags']) {
-            phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
-            phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+            phorum_cache_remove('newflags',$newflagkey);
+            phorum_cache_remove('newflags_index',$newflagkey);
         }
     }
 

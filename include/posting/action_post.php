@@ -33,7 +33,7 @@ $message["closed"] = $message["allow_reply"] ? 0 : 1;
 // Determine and set the user's IP address.
 $user_ip = $_SERVER["REMOTE_ADDR"];
 if ($PHORUM["dns_lookup"]) {
-    $resolved = @gethostbyaddr($_SERVER["REMOTE_ADDR"]); 
+    $resolved = @gethostbyaddr($_SERVER["REMOTE_ADDR"]);
     if (!empty($resolved)) {
         $user_ip = $resolved;
     }
@@ -173,6 +173,7 @@ if ($success)
 
         // Mail subscribed users.
         phorum_email_notice($message);
+
     }
 
     // Mail moderators.
@@ -230,8 +231,8 @@ if ($success)
 $message = $message_copy;
 
 // Setup the data for displaying an error to the user.
-$PHORUM["DATA"]["ERROR"] = $success === 0 
-                         ? $PHORUM["DATA"]["LANG"]['PostErrorDuplicate'] 
+$PHORUM["DATA"]["ERROR"] = $success === 0
+                         ? $PHORUM["DATA"]["LANG"]['PostErrorDuplicate']
                          : $PHORUM["DATA"]["LANG"]['PostErrorOccured'];
 $error_flag = true;
 
