@@ -1096,6 +1096,22 @@ Table of contents:
    will need to use the file hook to retreive the file data later.
 
    ----------------------------------------------------------------------------
+   before_delete
+
+   Where  : moderation.php
+   When   : Just before deleting the message(s)
+   Input  : 5 parameters:
+            $delete_handled - default = 0, set it to 1 to avoid the real delete afterwards
+            $nummsgs - number of messages "deleted", needs to be set for the message in the template
+            $msgthd_id - msg- or thread-id to be deleted
+            $message - array of the message retrieved with msgthd_id
+            $delete_mode - mode of deletion, either PHORUM_DELETE_MESSAGE or PHORUM_DELETE_TREE
+   Return : Same as Input
+
+   The primary use of this hook would be for moving the messages to some archive-area
+   instead of really deleting them.
+
+   ----------------------------------------------------------------------------
    before_editor
 
    Where  : posting.php
@@ -1830,7 +1846,7 @@ Table of contents:
    then it can set the user_id field to the user_id of the authenticated
    user. If the hook wants to let Phorum use its standard authentication
    mechanism, then it can set user_id to FALSE.
-   
+
    Here is an example (not too useful) hook function:
 
       function phorum_mod_foo_user_check_login($login)
@@ -1851,20 +1867,20 @@ Table of contents:
 
    Mind that when returning a user_id using this hook, the user data for
    the user must be available in Phorum's users table. This hook only
-   handles the authentication step. So if this hook is used for 
+   handles the authentication step. So if this hook is used for
    authenticating against an external source, somehow the user data
    has to be put in Phorum's users table. There are multiple ways of
    handling this. Here's two of them:
 
    1) Synchronize the data from the external system when it has changed
-      there. So if a user is created, changed or deleted on the 
+      there. So if a user is created, changed or deleted on the
       external system, that system has to update the Phorum users
       table with the new iformation. The advantage of this method, is
       that the users table only is updated when changes occur and that
       the users table is always up-to-date with the latest information.
 
    2) Synchronize the data on-the-fly from the user_check_login hook.
-      As long as the user data is available before that hook has 
+      As long as the user data is available before that hook has
       ended, it will be okay for Phorum. The advantage of this method
       is that updating the user data is done in an easy way at the
       moment a user logs into Phorum. Disadvantages are that the user
@@ -1873,7 +1889,7 @@ Table of contents:
 
       Here's an example of how a hook function that uses on-the-fly
       updates could look:
-   
+
       function phorum_mod_foo_user_check_login($login)
       {
           // Check the authentication against the external system.

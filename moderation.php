@@ -67,15 +67,26 @@ switch ($mod_step) {
             $PHORUM['DATA']['ERROR']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
             break;
         }
-        $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
-        foreach($msg_ids as $id){
-            $files=phorum_db_get_message_file_list($id);
-            foreach($files as $file_id=>$data){
-                phorum_db_file_delete($file_id);
+
+        $delete_handled = 0;
+        $nummsgs = 0;
+
+        list($delete_handled,$nummsgs,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
+
+
+        if(!$delete_handled) {
+
+            $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
+            foreach($msg_ids as $id){
+                $files=phorum_db_get_message_file_list($id);
+                foreach($files as $file_id=>$data){
+                    phorum_db_file_delete($file_id);
+                }
             }
+            phorum_hook("delete", $msg_ids);
+            $nummsgs=count($msg_ids);
+
         }
-        phorum_hook("delete", $msg_ids);
-        $nummsgs=count($msg_ids);
         $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
@@ -95,35 +106,45 @@ switch ($mod_step) {
             break;
         }
 
-        // Delete the message and all its replies.
-        $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
+        $delete_handled = 0;
+        $nummsgs = 0;
 
-        // Cleanup the attachments for all deleted messages.
-        foreach($msg_ids as $id){
-            $files=phorum_db_get_message_file_list($id);
-            foreach($files as $file_id=>$data){
-                phorum_db_file_delete($file_id);
+        list($delete_handled,$nummsgs,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_TREE));
+
+
+        if(!$delete_handled) {
+
+            // Delete the message and all its replies.
+            $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
+
+            // Cleanup the attachments for all deleted messages.
+            foreach($msg_ids as $id){
+                $files=phorum_db_get_message_file_list($id);
+                foreach($files as $file_id=>$data){
+                    phorum_db_file_delete($file_id);
+                }
             }
-        }
 
-        // Check if we have moved threads to delete.
-        // We unset the forum id, so phorum_db_get_messages()
-        // will return messages with the same thread id in
-        // other forums as well (those are the move notifications).
-        $forum_id = $PHORUM["forum_id"];
-        $PHORUM["forum_id"] = 0;
-        $moved = phorum_db_get_messages($msgthd_id);
-        $PHORUM["forum_id"] = $forum_id;
-        foreach ($moved as $id => $data) {
-            if (isset($data["meta"]["moved"])) {
-                phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
+            // Check if we have moved threads to delete.
+            // We unset the forum id, so phorum_db_get_messages()
+            // will return messages with the same thread id in
+            // other forums as well (those are the move notifications).
+            $forum_id = $PHORUM["forum_id"];
+            $PHORUM["forum_id"] = 0;
+            $moved = phorum_db_get_messages($msgthd_id);
+            $PHORUM["forum_id"] = $forum_id;
+            foreach ($moved as $id => $data) {
+                if (isset($data["meta"]["moved"])) {
+                    phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
+                }
             }
+
+            // Run a hook for performing custom cleanup actions.
+            phorum_hook("delete", $msg_ids);
+
+            $nummsgs=count($msg_ids);
+
         }
-
-        // Run a hook for performing custom cleanup actions.
-        phorum_hook("delete", $msg_ids);
-
-        $nummsgs=count($msg_ids);
         $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
