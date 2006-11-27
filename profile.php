@@ -93,7 +93,7 @@ if( $PHORUM["track_user_activity"] &&
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }
 
-$PHORUM["DATA"]["PROFILE"]["posts"]=number_format($PHORUM["DATA"]["PROFILE"]["posts"]);
+$PHORUM["DATA"]["PROFILE"]["posts"] = number_format($PHORUM["DATA"]["PROFILE"]["posts"], 0, "", $PHORUM["thous_sep"]);
 
 $PHORUM["DATA"]["PROFILE"]["URL"]["PM"] = phorum_get_url(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
 $PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = phorum_get_url(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
