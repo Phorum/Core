@@ -15,6 +15,7 @@ Table of contents:
    1.2 Count New Private Messages
    1.3 Enable Moderator Notifications
    1.4 Track User Usage
+   1.5 Show New Count in Forum List
 2. Forum Settings
    2.1 Email Messages to Moderators
    2.2 Allow Email Notification
@@ -108,6 +109,17 @@ Table of contents:
     feature set to "Once per 5 minutes" or "Constantly", as the caching
     will not be of much use.
 
+    
+ 1.5 Show New Count in Forum List
+ --------------------------------
+ 
+    If you have a large number of posts, a large number of forums, a large 
+    number of users or some combination of the three, this setting could cause
+    some issues.  If you want to try and keep the feature, you can adjust the
+    constant PHORUM_MAX_NEW_INFO to something lower than 1000 in 
+    include/constants.php.  Setting this too low however will make messages not
+    show as unread even though they have not been read by the user.
+    
 
 2. Forum Settings
 -------------------------------------------------------------------------------
