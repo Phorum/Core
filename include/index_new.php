@@ -61,9 +61,6 @@ foreach( $forums as $key=>$forum ) {
     }
 }
 
-// get newflag count for the vroot 
-// this is the announcement count
-list($vroot_new_messages, $vroot_new_threads) = phorum_db_newflag_get_unread_count($PHORUM["vroot"]);
 
 foreach( $folders as $folder_key=>$folder_id ) {
 
@@ -93,8 +90,6 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
         if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
             list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
-            $forum["new_messages"] += $vroot_new_messages;
-            $forum["new_threads"] += $vroot_new_threads;
         }
 
         $shown_sub_forums[] = $forum;

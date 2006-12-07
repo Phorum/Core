@@ -2885,48 +2885,36 @@ function phorum_db_newflag_get_flags($forum_id=0)
 * This function returns the count of unread messages the current user and forum
 * optionally for a given forum (for the index)
 */
-function phorum_db_newflag_get_unread_count($forum_id=false)
+function phorum_db_newflag_get_unread_count($forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($forum_id, "int");
 
-    $counts = array(0,0);
-   
-    if($forum_id===false) $forum_id=$PHORUM["forum_id"];
+    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
+
+    // get the read message array
+    $read_msgs = phorum_db_newflag_get_flags($forum_id);
+
+    if($read_msgs["min_id"]==0) return array(0,0);
+
+    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},{$PHORUM['vroot']}) and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
 
     $conn = phorum_db_mysql_connect();
-
-    // get min message id from newflags
-    $sql = "select min(message_id) as min_message_id from {$PHORUM['user_newflags_table']} where user_id={$PHORUM['user']['user_id']} and forum_id={$forum_id}";
     $res = mysql_query($sql, $conn);
+
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    if(mysql_num_rows($res)){
-        
-        $min_message_id = (int)mysql_result($res, 0, "min_message_id");
 
-        if($min_message_id>0){
-        
-            // get unread thread count
-            $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread<>{$PHORUM['message_table']}.message_id";
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            $new_threads = (int)mysql_result($res, 0, "count");
-    
-            // get unread message count
-            $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2 and not ".PHORUM_SQL_MOVEDMESSAGES;        
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            $new_messages = (int)mysql_result($res, 0, "count");
-    
-            $counts = array(
-                $new_messages,
-                $new_threads
-            );
-        
-        }
+    $counts[] = mysql_result($res, 0, "count");
 
-    }
+    $sql="SELECT count(*) as count FROM ".$PHORUM['message_table']." WHERE message_id NOT in (".implode(",", $read_msgs).") and message_id > {$read_msgs['min_id']} and forum_id in ({$forum_id},{$PHORUM['vroot']}) and parent_id=0 and status=".PHORUM_STATUS_APPROVED." and not ".PHORUM_SQL_MOVEDMESSAGES;
+
+    $conn = phorum_db_mysql_connect();
+    $res = mysql_query($sql, $conn);
+
+    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+
+    $counts[] = mysql_result($res, 0, "count");
 
     return $counts;
 }
