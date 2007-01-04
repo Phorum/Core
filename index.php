@@ -33,8 +33,9 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["D
         unset($PHORUM['user']['newinfo']);
         phorum_db_newflag_allread($PHORUM["forum_id"]);
         if($PHORUM['cache_newflags']) {
-            phorum_cache_remove('newflags',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
-            phorum_cache_remove('newflags_index',$PHORUM['forum_id']."-".$PHORUM['user']['user_id']);
+            $newflagkey = $PHORUM["forum_id"]."-".$PHORUM['cache_version']."-".$PHORUM['user']['user_id'];
+            phorum_cache_remove('newflags', $newflagkey);
+            phorum_cache_remove('newflags_index', $newflagkey);
         }
     }
 
