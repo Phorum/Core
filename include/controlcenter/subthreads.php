@@ -75,6 +75,7 @@ foreach($subscr_array as $id => $data) {
         $data['forum'] = $forums[$data['forum_id']]['name'];
     }
 
+    $data['raw_datestamp'] = $data["modifystamp"];
     $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
 
     // Create the read URL. We always need a real forum id, else

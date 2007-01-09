@@ -50,6 +50,7 @@ foreach( $forums as $forum ) {
         }
 
         if ( $forum["message_count"] > 0 ) {
+            $forum["raw_last_post"] = $forum["last_post_time"];
             $forum["last_post"] = phorum_date( $PHORUM["long_date_time"], $forum["last_post_time"] );
         } else {
             $forum["last_post"] = "&nbsp;";

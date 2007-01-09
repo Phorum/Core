@@ -173,6 +173,7 @@ if(!empty($phorum_search)){
                 $arr["rows"][$key]["short_body"] = substr($body, 0, 400);
                 $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
             }
+            $arr["rows"][$key]["raw_datestamp"] = $row["datestamp"];
             $arr["rows"][$key]["datestamp"] = phorum_relative_date($row["datestamp"]);
             $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
 

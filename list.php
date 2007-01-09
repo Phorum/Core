@@ -214,7 +214,9 @@ if($rows == null) {
                 }
             }
 
+            $rows[$key]["raw_datestamp"] = $row["datestamp"];
             $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+            $rows[$key]["raw_lastpost"] = $row["modifystamp"];
             $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
 
             $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
@@ -258,7 +260,9 @@ if($rows == null) {
         // loop through and read all the data in.
         foreach($rows as $key => $row){
 
+            $rows[$key]["raw_lastpost"] = $row["modifystamp"];
             $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
+            $rows[$key]["raw_datestamp"] = $row["datestamp"];
             $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
             $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
             $rows[$key]["URL"]["NEWPOST"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");

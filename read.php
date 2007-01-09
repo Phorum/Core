@@ -430,6 +430,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         // assign user data to the row
         if($row["user_id"] && isset($user_info[$row["user_id"]])){
 			if(is_numeric($user_info[$row["user_id"]]["date_added"])){
+				$user_info[$row["user_id"]]["raw_date_added"] = $user_info[$row["user_id"]]["date_added"];
 				$user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);
 			}
             if(strlen($user_info[$row["user_id"]]["posts"])>3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
@@ -477,7 +478,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
 
         // this stuff is used in threaded and non threaded.
+        $row["raw_short_datestamp"] = $row["datestamp"];
         $row["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+        $row["raw_datestamp"] = $row["datestamp"];
         $row["datestamp"] = phorum_date($PHORUM["long_date_time"], $row["datestamp"]);
         $row["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
         $row["URL"]["REPLY"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"]);

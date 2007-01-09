@@ -21,6 +21,7 @@ if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 $template = "cc_start";
 $PHORUM['DATA']['UserPerms'] = phorum_readable_permissions();
+$PHORUM['DATA']['PROFILE']['raw_date_added'] = $PHORUM['DATA']['PROFILE']['date_added'];
 $PHORUM['DATA']['PROFILE']['date_added'] = phorum_date( $PHORUM['short_date'], $PHORUM['DATA']['PROFILE']['date_added']);
 if( $PHORUM["track_user_activity"] && 
     (!empty($PHORUM["user"]["admin"]) ||
@@ -28,6 +29,7 @@ if( $PHORUM["track_user_activity"] &&
      (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS)) ||
      !$user["hide_activity"])){
 
+    $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];
     $PHORUM["DATA"]["PROFILE"]["date_last_active"]=phorum_date( $PHORUM['short_date'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 } else {
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);

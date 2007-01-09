@@ -62,6 +62,7 @@ if(is_array($message) && count($message)) {
                 "subject"     => $message["subject"],
                 "body"        => wordwrap($message["body"], 72),
                 "ip"          => $message["ip"],
+                "raw_date"    => $message["datestamp"],
                 "date"        => phorum_date($PHORUM["short_date_time"], $message["datestamp"]),
                 "explanation" => wordwrap($_POST["explanation"], 72),
                 "url"         => phorum_get_url(PHORUM_READ_URL, $message["thread"], $message_id),
@@ -102,6 +103,7 @@ if(is_array($message) && count($message)) {
     $PHORUM["DATA"]["PostSubject"] = $message["subject"];
     $PHORUM["DATA"]["PostAuthor"] = $message["author"];
     $PHORUM["DATA"]["PostBody"] = $message["body"];
+    $PHORUM["DATA"]["raw_PostDate"] = $message["datestamp"];
     $PHORUM["DATA"]["PostDate"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
     $PHORUM["DATA"]["ReportURL"] = phorum_get_url(PHORUM_REPORT_URL, $message_id);
 
