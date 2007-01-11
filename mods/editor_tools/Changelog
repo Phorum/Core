@@ -1,6 +1,17 @@
 Changelog:
 ----------
 
+2006-08-09 v1.1.14
+
+    - Fixed wrong CSS declaration in colorpicker's CSS code
+      (-moz-user-select:no instead of -moz-user-select:none).
+
+    - Added updated czech language files (UTF8, WIN1250 and Latin-2 encoded)
+      Thanks to CZVilda for the update.
+
+    - Added localization support for the tab panels of the color picker.
+      Thanks to CZVilda for the proposed code change.
+
 2006-08-08 v1.1.13
 
     - Fixed a problem in the function editor_tools_construct_popup.

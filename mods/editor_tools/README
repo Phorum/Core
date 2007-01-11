@@ -1,5 +1,5 @@
 Module  : Phorum Editor Tools
-Version : 1.1.13
+Version : 1.1.14
 Author  : Maurice Makaay <maurice@makaay.nl>
 
 This module will add a buttonbar to the Phorum message editor, which can be
@@ -154,4 +154,8 @@ These are the changes that are needed:
    var navigatorVersion = navigator.appVersion.replace(/.*?MSIE...etc)/1;
 
 10) In js_color_picker_v2.css: -moz-user-select:no; -> -moz-user-select:none; 
+
+11) In js_color_picker_v2.js.php, for providing more dynamics in the tabs:
+    var tabs = ['<?php print $langstr["rgb"] ?>','<?php print $langstr["named"] ?>','<?php print $langstr["slides"] ?>'];
+    var tabWidths = [<?php print $langstr["rgb_size"] ?>,<?php print $langstr["named_size"] ?>,<?php print $langstr["slides_size"] ?>];
 

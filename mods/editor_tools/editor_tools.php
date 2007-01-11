@@ -236,7 +236,7 @@ function phorum_mod_editor_tools_before_footer()
 
     // Add javascript libraries for the color picker.
     if (editor_tools_get_tool('color')) {
-        $cpjs= phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_cpjs=1');
+        $cpjs= phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], 'editor_tools_cpjs=1');
         $jslibs[] = './mods/editor_tools/colorpicker/color_functions.js';
         $jslibs[] = $cpjs;
     }

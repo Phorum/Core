@@ -3,7 +3,7 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     # Button descriptions.
     'bold'          => 'Bold',
     'italic'        => 'Kurzíva',
-    'underline'     => 'Pdtrhnout',
+    'underline'     => 'Podtržené',
     'strike'        => 'Pøeškrtnout',
     'subscript'     => 'Dolní index',
     'superscript'   => 'Horní index',
@@ -14,11 +14,11 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'email'         => 'Vložit emailovou adresu',
     'image'         => 'Vložit odkaz obrázku',
     'smiley'        => 'Vložit smajlíka',
-    'subjectsmiley' => 'Vložit smajlíka do subjektu',
-    'hr'            => 'Vložit øádku',
-    'code'          => 'Formátovaný kód',
-    'quote'         => 'Vložit kótovaný text',
-    'help'          => 'nápovìda',
+    'subjectsmiley' => 'Vložit smajlíka do pøedmìtu',
+    'hr'            => 'Vložit horizontální èáru',
+    'code'          => 'Neformátovaný text',
+    'quote'         => 'Vložit citaci',
+    'help'          => 'Nápovìda',
 
     # Dialogs and errors.
     'enter url'     => 'Prosím, vložte adresu odkazu.',
@@ -29,15 +29,23 @@ $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     'enter who you quote' => 'Prosím, vložte jméno osoby, která má být v uvozovkách. Mùžete také nechat prázdné.',
 
     # For the size picker.
-    'x-large'      => 'Extra velké písmo',
-    'large'        => 'Velké písmo',
-    'medium'       => 'Støední písmo',
-    'small'        => 'Malé písmo',
-    'x-small'      => 'Extra malé písmo',
+    'x-large'      => 'Extra velké',
+    'large'        => 'Velké',
+    'medium'       => 'Støední',
+    'small'        => 'Malé',
+    'x-small'      => 'Extra malé',
 
     # Help titles.
     'bbcode help'  => 'BBcode nápovìda',
     'smileys help' => 'Smajlíky nápovìda',
+
+    # Color picker text and sizes of text.
+    'rgb'  => 'RGB',
+    'named'  => 'Názvy barev',
+    'slides'  => 'Výbìr',
+    'rgb_size'  => '40',
+    'named_size'  => '85',
+    'slides_size'  => '70',
 
     # For the non javascript help pages.
     'help'         => 'Informace nápovìdy:',

@@ -266,8 +266,9 @@ header("Content-type: text/javascript");
 	}
 	
 	function createColorPickerTopRow(inputObj){
-		var tabs = ['RGB','Named colors','Color slider'];
-		var tabWidths = [37,90,70];
+	        var tabs = ['<?php print $langstr["rgb"] ?>','<?php print $langstr["named"] ?>','<?php print $langstr["slides"] ?>'];
+	        var tabWidths = [<?php print $langstr["rgb_size"] ?>,<?php print $langstr["named_size"] ?>,<?php print $langstr["slides_size"] ?>];
+
 		var div = document.createElement('DIV');
 		div.className='colorPicker_topRow';
 	
