@@ -47,9 +47,9 @@ if (! $error) {
 // Data integrity checks for all messages.
 if (! $error)
 {
-    if (empty($message["subject"])) {
+    if (!isset($message["subject"]) || trim($message["subject"]) == '') {
         $error = $PHORUM["DATA"]["LANG"]["ErrSubject"];
-    } elseif (empty($message["body"])) {
+    } elseif (!isset($message["body"]) || trim($message["body"]) == '') {
         $error = $PHORUM["DATA"]["LANG"]["ErrBody"];
     } elseif (!empty($message["email"]) &&
               !phorum_valid_email($message["email"])) {
