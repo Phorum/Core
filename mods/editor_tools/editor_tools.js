@@ -85,9 +85,13 @@ var editor_tools_size_picker_sizes = new Array(
 );
 
 // Smileys for the smiley picker.
+// *_s = search strings (smileys)
+// *_r = replace strings (image urls)
 // These will be filled from PHP-generated javascript.
-var editor_tools_smileys = new Array();
-var editor_tools_subjectsmileys = new Array();
+var editor_tools_smileys_s = new Array();
+var editor_tools_smileys_r = new Array();
+var editor_tools_subjectsmileys_s = new Array();
+var editor_tools_subjectsmileys_r = new Array();
 
 // The width and offset to the left of the smiley picker popup menus.
 // These will be filled from PHP-generated javascript.
@@ -759,13 +763,14 @@ function editor_tools_handle_smiley()
         editor_tools_smiley_picker_obj.style.width = editor_tools_smileys_popupwidth;
 
         // Populate the new popup.
-        var i = 0;
-        for (var smiley in editor_tools_smileys)
+        for (var i = 0; i < editor_tools_smileys_s.length; i++) 
         {
+	    var s = editor_tools_smileys_s[i];
+	    var r = editor_tools_smileys_r[i];
             var a_obj = document.createElement('a');
-            a_obj.href = 'javascript:editor_tools_handle_smiley_select("' + smiley + '")';
+            a_obj.href = 'javascript:editor_tools_handle_smiley_select("'+s+'")';
             var img_obj = document.createElement('img');
-            img_obj.src = editor_tools_smileys[smiley];
+            img_obj.src = r;
             a_obj.appendChild(img_obj);
 
             content_obj.appendChild(a_obj);
@@ -804,13 +809,15 @@ function editor_tools_handle_subjectsmiley()
         var content_obj = popup[1];
 
         // Populate the new popup.
-        var i = 0;
-        for (var smiley in editor_tools_subjectsmileys)
+        for (var i = 0; i < editor_tools_subjectsmileys_s.length; i++) 
         {
+	    var s = editor_tools_subjectsmileys_s[i];
+	    var r = editor_tools_subjectsmileys_r[i];
+
             var a_obj = document.createElement('a');
-            a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("' + smiley + '")';
+            a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("'+s+'")';
             var img_obj = document.createElement('img');
-            img_obj.src = editor_tools_subjectsmileys[smiley];
+            img_obj.src = r;
             a_obj.appendChild(img_obj);
             content_obj.appendChild(a_obj);
         }

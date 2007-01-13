@@ -293,12 +293,18 @@ function phorum_mod_editor_tools_before_footer()
     // Add available smileys for the smiley picker.
     if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
         $prefix = $PHORUM["http_path"] . "/" . $PHORUM["mod_smileys"]["prefix"];
+	$bsi = 0;
+	$ssi = 0; 
         foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
             if (! $smiley["active"] || $smiley["is_alias"]) continue;
             if ($smiley["uses"] == 0 || $smiley["uses"] == 2)
-              print "editor_tools_smileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+              print "editor_tools_smileys_s[$bsi] = '" . addslashes($smiley["search"]) . "';\n";
+	      print "editor_tools_smileys_r[$bsi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+	      $bsi ++;
             if ($smiley["uses"] == 1 || $smiley["uses"] == 2)
-              print "editor_tools_subjectsmileys['" . addslashes($smiley["search"]) . "'] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+              print "editor_tools_subjectsmileys_s[$ssi] = '" . addslashes($smiley["search"]) . "';\n";
+	      print "editor_tools_subjectsmileys_r[$ssi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+	      $ssi ++;
         }
     }
     print "</script>\n";
