@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+2007-01-13 v1.1.15
+
+    - Fixed a problem with the javascript code which caused MSIE6 to
+      show additional broken images in the smileys popup (known as
+      the red crosses error).
+
 2006-08-09 v1.1.14
 
     - Fixed wrong CSS declaration in colorpicker's CSS code
