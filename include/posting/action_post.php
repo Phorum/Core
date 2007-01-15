@@ -92,9 +92,6 @@ if ($PHORUM["DATA"]["MODERATED"]) {
 $suffix = preg_replace("/[^a-z0-9]/i", "", $PHORUM["name"]);
 $message["msgid"] = md5(uniqid(rand())) . ".$suffix";
 
-// Run pre post mods.
-$message = phorum_hook("pre_post", $message);
-
 // Add attachments to meta data. Because there might be inconsistencies in
 // the list due to going backward in the browser after deleting attachments,
 // a check is needed to see if the attachments are really in the database.
@@ -111,6 +108,9 @@ foreach ($message["attachments"] as $info) {
 if (!count($message["meta"]["attachments"])) {
     unset($message["meta"]["attachments"]);
 }
+
+// Run pre post mods.
+$message = phorum_hook("before_post", $message);
 
 // Keep a copy of the message we have got now.
 $message_copy = $message;
@@ -182,7 +182,7 @@ if ($success)
     }
 
     // Run after post mods.
-    $message = phorum_hook("post_post", $message);
+    $message = phorum_hook("after_post", $message);
 
     // Posting is completed. Take the user back to the forum.
     if ($PHORUM["redirect_after_post"] == "read")

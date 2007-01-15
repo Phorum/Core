@@ -104,9 +104,9 @@ if (!count($dbmessage["meta"]["attachments"])) {
 }
 
 // Update the data in the database and run pre and post editing hooks.
-$dbmessage = phorum_hook("pre_edit", $dbmessage);
+$dbmessage = phorum_hook("before_edit", $dbmessage);
 phorum_db_update_message($message["message_id"], $dbmessage);
-phorum_hook("post_edit", $dbmessage);
+phorum_hook("after_edit", $dbmessage);
 
 // remove the message from the cache if caching is enabled
 // no need to clear the thread-index as the message has only been changed
