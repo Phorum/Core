@@ -468,8 +468,8 @@ Table of contents:
 
    There are some hooks that send a full message structure to the
    hook functions, so these can change the message data before storing
-   the message in the database. Examples are the hooks "pre_post"
-   and "pre_edit". In this case you can simply update the meta
+   the message in the database. Examples are the hooks "before_post"
+   and "before_edit". In this case you can simply update the meta
    information directly. Here's an example of how this would look
    in your hook function:
 
@@ -1155,7 +1155,7 @@ Table of contents:
    displayed in the editor. From the editor, the user can still change
    the data. Therefore, this hook cannot be used to control the data which
    will be stored in the database. If you need that functionality, then
-   use the hooks pre_edit and/or pre_post instead.
+   use the hooks before_edit and/or before_post instead.
 
    ----------------------------------------------------------------------------
    before_footer
@@ -1517,7 +1517,7 @@ Table of contents:
    used to send those notifications.
 
    ----------------------------------------------------------------------------
-   post_edit
+   after_edit
 
    Where  : include/moderation_functions.php
    When   : Right after storing an edited message in the database.
@@ -1528,10 +1528,10 @@ Table of contents:
    in the database when editing takes place.
 
    ----------------------------------------------------------------------------
-   post_post
+   after_post
 
    Where  : post.php
-   When   : Right after storing a new message in the database and just
+   When   : After storing a new message in the database and just
             before the user is redirected back to the list.
    Input  : Array containing message data (read-only).
    Return : none
@@ -1589,7 +1589,7 @@ Table of contents:
    holes in your Phorum installation!
 
    ----------------------------------------------------------------------------
-   pre_edit
+   before_edit
 
    Where  : include/moderation_functions.php
    When   : Right before storing an edited message in the database.
@@ -1600,7 +1600,7 @@ Table of contents:
    in the database.
 
    ----------------------------------------------------------------------------
-   pre_post
+   before_post
 
    Where  : post.php
    When   : Right before storing a new message in the database.
