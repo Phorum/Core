@@ -19,12 +19,23 @@
 
     if (!defined("PHORUM_ADMIN")) return;
 
+    // This array describes deprecated module hook names, which have been
+    // replaced by new hook names. For backward compatibility, the 
+    // module admin will transparently rewrite old hook names to the
+    // new ones.
+    $deprecated_module_hooks = array(
+       "pre_post" => "before_post",
+       "pre_edit" => "before_edit",
+    );
+
     // ----------------------------------------------------------------------
     // Read in the module info for all available modules
     // ----------------------------------------------------------------------
 
     $modules_info = array();
     $priorities = array();
+
+    $deprecate_warn = '';
 
     $d = dir("./mods");
     while (false !== ($entry = $d->read()))
@@ -62,6 +73,12 @@
             if (strstr($line, ":")) {
                 $parts = explode(":", trim($line), 2);
                 if($parts[0]=="hook"){
+		    list ($hook,$function) = explode('|', trim($parts[1]));
+		    if (isset($deprecated_module_hooks[$hook])) {
+		        $deprecate_warn .= "<li> Mod " . htmlspecialchars($entry) . ": rename \"" . htmlspecialchars($hook) . "\"; to \"" . htmlspecialchars($deprecated_module_hooks[$hook]) . "\"</li>\n";
+		        $hook = $deprecated_module_hooks[$hook];
+			$parts[1] = "$hook|$function";
+		    }
                     $info["hooks"][]=trim($parts[1]);
                 } elseif($parts[0]=="priority"){
                     $prio = trim($parts[1]);
@@ -91,6 +108,34 @@
         $modules_info[$entry] = $info;
     }
     $d->close();
+
+    // Show module warnings to the admin in a non intrusive way. In a lot
+    // of cases, the admin won't be the one to fix the problems, therefore
+    // we do not want to display too much noise about warnings here.
+    if ($deprecate_warn != '') {
+        $warn = "One or more deprecated hook names were detected in the " .
+	        "installed modules. Although the modules will still work, " .
+		"we advice you to update the hook names in the module " .
+		"info and/or contact the module author.<br/>" .
+		"Deprecated hook(s):" .
+		"<ul>" . $deprecate_warn . "</ul>"; ?>
+
+        <div id="showmodwarnings" class="PhorumAdminError">
+	One or more module warnings found.
+	<script type="text/javascript">
+	function toggle_module_warnings() {
+	    document.getElementById('modwarnings').style.display='block';
+	    document.getElementById('showmodwarnings').style.display='none'
+	    return false;
+	}
+	</script>
+	<a href="" onclick="return toggle_module_warnings()">Click here to see them</a>
+	</div>
+	<div id="modwarnings" class="PhorumAdminError" style="display:none">
+	<?php print $warn ?>
+	</div>
+	<?php
+    }
 
     // Sort the modules by their title, so they show up in an easy
     // to use way for the user in the admin interface.
