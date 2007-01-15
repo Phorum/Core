@@ -297,14 +297,16 @@ function phorum_mod_editor_tools_before_footer()
 	$ssi = 0; 
         foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
             if (! $smiley["active"] || $smiley["is_alias"]) continue;
-            if ($smiley["uses"] == 0 || $smiley["uses"] == 2)
-              print "editor_tools_smileys_s[$bsi] = '" . addslashes($smiley["search"]) . "';\n";
+            if ($smiley["uses"] == 0 || $smiley["uses"] == 2) {
+              print "editor_tools_smileys[$bsi] = '" . addslashes($smiley["search"]) . "';\n";
 	      print "editor_tools_smileys_r[$bsi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
 	      $bsi ++;
-            if ($smiley["uses"] == 1 || $smiley["uses"] == 2)
-              print "editor_tools_subjectsmileys_s[$ssi] = '" . addslashes($smiley["search"]) . "';\n";
+	    }
+            if ($smiley["uses"] == 1 || $smiley["uses"] == 2) {
+              print "editor_tools_subjectsmileys[$ssi] = '" . addslashes($smiley["search"]) . "';\n";
 	      print "editor_tools_subjectsmileys_r[$ssi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
 	      $ssi ++;
+	    }
         }
     }
     print "</script>\n";

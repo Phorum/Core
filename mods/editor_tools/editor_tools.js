@@ -88,9 +88,9 @@ var editor_tools_size_picker_sizes = new Array(
 // *_s = search strings (smileys)
 // *_r = replace strings (image urls)
 // These will be filled from PHP-generated javascript.
-var editor_tools_smileys_s = new Array();
+var editor_tools_smileys = new Array();
 var editor_tools_smileys_r = new Array();
-var editor_tools_subjectsmileys_s = new Array();
+var editor_tools_subjectsmileys = new Array();
 var editor_tools_subjectsmileys_r = new Array();
 
 // The width and offset to the left of the smiley picker popup menus.
@@ -763,9 +763,9 @@ function editor_tools_handle_smiley()
         editor_tools_smiley_picker_obj.style.width = editor_tools_smileys_popupwidth;
 
         // Populate the new popup.
-        for (var i = 0; i < editor_tools_smileys_s.length; i++) 
+        for (var i = 0; i < editor_tools_smileys.length; i++) 
         {
-	    var s = editor_tools_smileys_s[i];
+	    var s = editor_tools_smileys[i];
 	    var r = editor_tools_smileys_r[i];
             var a_obj = document.createElement('a');
             a_obj.href = 'javascript:editor_tools_handle_smiley_select("'+s+'")';
@@ -809,9 +809,9 @@ function editor_tools_handle_subjectsmiley()
         var content_obj = popup[1];
 
         // Populate the new popup.
-        for (var i = 0; i < editor_tools_subjectsmileys_s.length; i++) 
+        for (var i = 0; i < editor_tools_subjectsmileys.length; i++) 
         {
-	    var s = editor_tools_subjectsmileys_s[i];
+	    var s = editor_tools_subjectsmileys[i];
 	    var r = editor_tools_subjectsmileys_r[i];
 
             var a_obj = document.createElement('a');
