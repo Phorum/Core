@@ -138,7 +138,7 @@ foreach($subscr_array as $id => $data) {
         }
         $new = array();
         foreach ($data["meta"]["message_ids"] as $mid) {
-            if (!isset($PHORUM['user']['newinfo'][$forum_id][$mid]) && $mid > $PHORUM['user']['newinfo'][$forum_id]['min_id']) {
+            if (!isset($PHORUM['user']['newinfo'][$forum_id][$mid]) && $mid > $PHORUM['user']['newinfo'][$forum_id]['min_id'][$forum_id]) {
                 $new[] = $mid;
             }
         }

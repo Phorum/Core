@@ -67,8 +67,6 @@ $PHORUM['string_fields']= array('author', 'subject', 'body', 'email');
 */
 $PHORUM['string_fields_forum']= array('name', 'description', 'template');
 
-/* A piece of SQL code that can be used for identifying moved messages. */
-define('PHORUM_SQL_MOVEDMESSAGES', "({$PHORUM['message_table']}.parent_id = 0 and {$PHORUM['message_table']}.thread != {$PHORUM['message_table']}.message_id)");
 /**
  * Get the visible messages for a given page offset. The main Phorum code
  * handles actually sorting the threads into a threaded list if needed.
@@ -99,6 +97,7 @@ function phorum_db_get_thread_list($offset)
         $table.datestamp,
         $table.email,
         $table.message_id,
+        $table.forum_id,
         $table.meta,
         $table.moderator_post,
         $table.modifystamp,
@@ -1505,7 +1504,8 @@ function phorum_db_move_thread($thread_id, $toforum)
         $search_ids = array();
         foreach($thread_messages as $mid => $data) {
             // gather information for updating the newflags
-            if($mid > $new_newflags['min_id']) { // only using it if its higher than min_id
+	    // only using it if its higher than the min_id of the target forum
+            if($mid > $new_newflags['min_id'][$toforum]) { 
                 $message_ids[]=$mid;
             } else { // newflags to delete
                 $delete_ids[]=$mid;
@@ -3082,15 +3082,16 @@ function phorum_db_newflag_allread($forum_id=0)
  *
  * @return array
  */
-function phorum_db_newflag_get_flags($forum_id=0)
+function phorum_db_newflag_get_flags($forum_id=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    $read_msgs=array('min_id'=>0);
-
-    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
+    $read_msgs=array('min_id' => array());
+    $read_msgs['min_id'][$forum_id] = 0;
+    $read_msgs['min_id'][0] = 0;
 
     $sql="SELECT message_id,forum_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id IN({$forum_id},{$PHORUM['vroot']})";
 
@@ -3101,8 +3102,10 @@ function phorum_db_newflag_get_flags($forum_id=0)
 
     while($row=mysql_fetch_row($res)) {
         // set the min-id if given flag is set
-        if($row[1] != $PHORUM['vroot'] && ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id'])) {
-            $read_msgs['min_id']=$row[0];
+	$forum_id = $row[1];
+        #if($row[1] != $PHORUM['vroot'] && 
+	if (($read_msgs['min_id'][$forum_id]==0 || $row[0] < $read_msgs['min_id'][$forum_id])) {
+            $read_msgs['min_id'][$forum_id]=$row[0];
         } else {
             $read_msgs[$row[0]]=$row[0];
         }
@@ -3120,13 +3123,12 @@ function phorum_db_newflag_get_flags($forum_id=0)
  *
  * @return array
  */
-function phorum_db_newflag_get_unread_count($forum_id=0)
+function phorum_db_newflag_get_unread_count($forum_id=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
-
-    if($forum_id===false) $forum_id=$PHORUM["forum_id"];
 
     $conn = phorum_db_mysql_connect();
 
@@ -3139,13 +3141,15 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
         $min_message_id = (int)mysql_result($res, 0, "min_message_id");
 
         // get unread thread count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread<>{$PHORUM['message_table']}.message_id";
+        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread={$PHORUM['message_table']}.message_id";
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         $new_threads = (int)mysql_result($res, 0, "count");
 
+#select phorum_trunk_messages.message_id, phorum_trunk_user_newflags.message_id as count from phorum_trunk_messages left join phorum_trunk_user_newflags on phorum_trunk_messages.message_id=phorum_trunk_user_newflags.message_id and phorum_trunk_messages.forum_id = phorum_trunk_user_newflags.forum_id and phorum_trunk_user_newflags.user_id=2 where phorum_trunk_messages.forum_id=0 and phorum_trunk_messages.message_id>253;
+
         // get unread message count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2 and not ".PHORUM_SQL_MOVEDMESSAGES;
+        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['message_table']}.forum_id={$PHORUM['user_newflags_table']}.forum_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2";
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         $new_messages = (int)mysql_result($res, 0, "count");

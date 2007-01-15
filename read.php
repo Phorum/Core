@@ -115,7 +115,7 @@ if(empty($PHORUM["args"][1])) {
 
                     $mids=array();
                     foreach($thread_message['meta']['message_ids'] as $mid) {
-                        if(!isset($PHORUM['user']['newinfo'][$mid]) && $mid > $PHORUM['user']['newinfo']['min_id']) {
+                        if(!isset($PHORUM['user']['newinfo'][$mid]) && $mid > $PHORUM['user']['newinfo']['min_id'][$thread_message['forum_id']]) {
                             $mids[]=$mid;
                         }
                     }
@@ -141,7 +141,7 @@ if(empty($PHORUM["args"][1])) {
 
                 foreach($message_ids as $mkey => $mid) {
                 	// if already read, remove it from message-array
-                	if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id']) {
+                	if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id'][$thread_message['forum_id']]) {
                 		unset($message_ids[$mkey]);
                 	}
 
@@ -441,7 +441,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             unset($row["user"]["password"]);
             unset($row["user"]["password_tmp"]);
         }
-        if(!($PHORUM["threaded_read"]==1) && $PHORUM["DATA"]["LOGGEDIN"] && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'] && !isset($PHORUM['user']['newinfo'][$row['message_id']])) { // set this message as read
+        if(!($PHORUM["threaded_read"]==1) && $PHORUM["DATA"]["LOGGEDIN"] && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'][$row['forum_id']] && !isset($PHORUM['user']['newinfo'][$row['message_id']])) { // set this message as read
             $read_messages[] = array("id"=>$row['message_id'],"forum"=>$row['forum_id']);
         }
         // is the message unapproved?
@@ -572,7 +572,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         // newflag, if its NOT in newinfo AND newer than min_id, then its a new message
         $row["new"]="";
         if ($PHORUM["DATA"]["LOGGEDIN"]){
-            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
+            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'][$row['forum_id']]) {
                 $row["new"]= $PHORUM["DATA"]["LANG"]["newflag"];
             }
         }
@@ -593,7 +593,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         $messages = phorum_sort_threads($messages);
 
-        if($PHORUM["DATA"]["LOGGEDIN"] && !isset($PHORUM['user']['newinfo'][$message_id]) && $message_id > $PHORUM['user']['newinfo']['min_id']) {
+        if($PHORUM["DATA"]["LOGGEDIN"] && !isset($PHORUM['user']['newinfo'][$message_id]) && $message_id > $PHORUM['user']['newinfo']['min_id'][$messages[$message_id]['forum_id']]) {
             $read_messages[] = array("id"=>$message_id,"forum"=>$messages[$message_id]['forum_id']);
         }
 

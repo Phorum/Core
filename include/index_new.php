@@ -63,6 +63,7 @@ foreach( $forums as $key=>$forum ) {
 
 // get newflag count for the vroot
 // this is the announcement count
+// TODO this needs caching too.
 list($vroot_new_messages, $vroot_new_threads) = phorum_db_newflag_get_unread_count($PHORUM["vroot"]);
 
 foreach( $folders as $folder_key=>$folder_id ) {

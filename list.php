@@ -190,7 +190,6 @@ if($rows == null) {
     // get the thread set started
     $rows = phorum_db_get_thread_list($offset);
 
-
     //timing_mark('after db');
 
     // redirect if invalid page
@@ -307,7 +306,7 @@ if($rows == null) {
 
                 if(!$rows[$key]['moved'] && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
                     foreach ($row['meta']['message_ids'] as $cur_id) {
-                        if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
+                        if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'][$rows[$key]["forum_id"]])
                         $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
 
                         if($min_id == 0 || $min_id > $cur_id)
@@ -398,13 +397,13 @@ if($PHORUM['DATA']['LOGGEDIN']) {
             $rows[$key]['sort'] == PHORUM_SORT_STICKY || $rows[$key]['sort'] == PHORUM_SORT_ANNOUNCEMENT) &&
             isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
             foreach ($row['meta']['message_ids'] as $cur_id) {
-                if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
+                if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'][$row['forum_id']])
                 $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
             }
         }
         // newflag for regular messages
         else {
-            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
+            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'][$row['forum_id']]) {
                 $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
             }
         }
@@ -498,7 +497,7 @@ if($PHORUM["DATA"]["MODERATOR"]) {
 }
 
 // updating new-info for first visit (last message on first page is first new)
-if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
+if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'][$PHORUM["forum_id"]] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
     // setting it as min-id
     // set it -1 as the comparison is "post newer than min_id"
     $min_id--;
