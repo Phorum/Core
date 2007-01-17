@@ -378,7 +378,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         if(!empty($row["user_id"])) {
             $row["profile_url"] = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
             // we don't normally put HTML in this code, but this makes it easier on template builders
-            $row["linked_author"] = "<a href=\"".$row["profile_url"]."\">$row[author]</a>";
+            $row["linked_author"] = "<a href=\"".$row["profile_url"]."\">".htmlspecialchars($row["author"])."</a>";
         } elseif(!empty($row["email"])) {
             $row["email_url"] = phorum_html_encode("mailto:$row[email]");
             // we don't normally put HTML in this code, but this makes it easier on template builders
