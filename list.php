@@ -295,7 +295,7 @@ if ($PHORUM["threaded_list"]){
         if ($row["user_id"]){
             $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
             $rows[$key]["profile_url"] = $url;
-            $rows[$key]["linked_author"] = "<a href=\"$url\">$row[author]</a>";
+            $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row["author"])."</a>";
         }else{
             $rows[$key]["profile_url"] = "";
             if(!empty($row['email'])) {
