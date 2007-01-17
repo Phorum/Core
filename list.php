@@ -318,7 +318,7 @@ if($rows == null) {
             if ($row["user_id"]){
                 $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
                 $rows[$key]["URL"]["PROFILE"] = $url;
-                $rows[$key]["linked_author"] = "<a href=\"$url\">$row[author]</a>";
+                $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row["author"])."</a>";
             }else{
                 $rows[$key]["URL"]["PROFILE"] = "";
                 if(!empty($row['email'])) {
