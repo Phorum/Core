@@ -280,7 +280,7 @@ $frm->addhelp($row,
      smiley prefix path. If you want to add your own smileys, simply place
      them in \"" . htmlspecialchars($PHORUM["mod_smileys"]["prefix"]) . "\"
      and reload this page.");
-$frm->addrow("ALT tag for the image", $frm->text_box("alt", $alt, 40));
+$frm->addrow("ALT attribute for the image", $frm->text_box("alt", $alt, 40));
 $frm->addrow("Used for", $frm->select_tag("uses", $PHORUM_MOD_SMILEY_USES, $uses));
 $frm->show();
 
@@ -303,7 +303,7 @@ if ($smiley_id == "NEW")
           <td class="PhorumAdminTableHead">String</td>
           <td class="PhorumAdminTableHead">Image file</td>
           <td class="PhorumAdminTableHead">Image</td>
-          <td class="PhorumAdminTableHead">ALT tag</td>
+          <td class="PhorumAdminTableHead">ALT attribute</td>
           <td class="PhorumAdminTableHead">Used for</td>
           <td class="PhorumAdminTableHead">&nbsp;</td>
         </tr>
