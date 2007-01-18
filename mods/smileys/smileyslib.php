@@ -24,8 +24,8 @@ $MOD_SMILEY_DEFAULT_PREFIX = './mods/smileys/images/';
 global $MOD_SMILEY_DEFAULT_SMILEYS;
 $MOD_SMILEY_DEFAULT_SMILEYS = array(
     "(:P)"      => "smiley25.gif spinning smiley sticking its tongue out",
-    "(td)"      => "smiley23.gif thumbs up",
-    "(tu)"      => "smiley24.gif thumbs down",
+    "(td)"      => "smiley23.gif thumbs down",
+    "(tu)"      => "smiley24.gif thumbs up",
     ":)-D"      => "smiley15.gif smileys with beer",
     ">:D<"      => "smiley14.gif the finger smiley",
     "(:D"       => "smiley12.gif smiling bouncing smiley",
