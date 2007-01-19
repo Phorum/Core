@@ -582,9 +582,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     if($PHORUM["threaded_read"]) {
 
-        // set up MESSAGE template var
-        $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
-
         // don't move this up.  We want it to be conditional.
         include_once("./include/thread_sort.php");
 
@@ -639,6 +636,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["TOPIC"] = $messages[$thread];
     if($page>1){
         unset($messages[$thread]);
+    }
+
+    // this is the message that we are viewing in the threaded view.
+    if ($PHORUM["threaded_read"]) {
+        $PHORUM["DATA"]["MESSAGE"] = $messages[$message_id];
     }
 
     // this is all messages on the page
