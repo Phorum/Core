@@ -42,20 +42,20 @@ if(empty($PHORUM["forum_id"]) || $PHORUM["folder_flag"]){
     exit();
 }
 
-$newflagkey = $PHORUM["forum_id"]."-".$PHORUM['cache_version']."-".$PHORUM['user']['user_id'];
+$newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
 
 if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 
     $PHORUM['user']['newinfo'] = null;
 
     if($PHORUM['cache_newflags']) {
-        $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey);
+        $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
     }
 
     if($PHORUM['user']['newinfo'] == null) {
         $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
         if($PHORUM['cache_newflags']) {
-            phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'],86400);
+            phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'],86400,$PHORUM['cache_version']);
         }
     }
 }

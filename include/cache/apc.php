@@ -25,20 +25,28 @@
  * This function returns the cached data for the given key
  * or NULL if no data is cached for this key
  */
-function phorum_cache_get($type,$key) {
-	if(is_array($key)) {
-		$ret=array();
-		foreach($key as $realkey) {
-			$getkey=$type."_".$realkey;
-			$ret[$realkey]=apc_fetch($getkey);
-		}
-	} else {
-		$getkey=$type."_".$key;
-		$ret=apc_fetch($getkey);
-	}
+function phorum_cache_get($type,$key,$version=NULL) {
+    if(is_array($key)) {
+        $ret=array();
+        foreach($key as $realkey) {
+            $getkey=$type."_".$realkey;
+            $data = apc_fetch($getkey);
+            if ($version == NULL ||
+                ($data[1] != NULL && $data[1] == $version)) {
+                $ret[$realkey]=$data[0];
+            }
+        }
+    } else {
+        $getkey=$type."_".$key;
+        $data = apc_fetch($getkey);
+        if ($version == NULL || 
+            ($data[1] != NULL && $data[1] == $version)) {
+            $ret=$data[0];
+        }
+    }   
 
     if($ret === false || (is_array($ret) && count($ret) == 0))
-    	$ret=NULL;
+        $ret=NULL;
 
     return $ret;
 
@@ -49,9 +57,9 @@ function phorum_cache_get($type,$key) {
  * returns number of bytes written (something 'true') or false ...
  * depending of the success of the function
  */
-function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL) {
+function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
 
-	$ret=apc_store($type."_".$key, $data, $ttl);
+    $ret=apc_store($type."_".$key, array($data,$version), $ttl);
     return $ret;
 }
 

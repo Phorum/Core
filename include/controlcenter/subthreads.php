@@ -126,13 +126,13 @@ foreach($subscr_array as $id => $data) {
         if (! isset($PHORUM['user']['newinfo'][$forum_id])) {
             $PHORUM['user']['newinfo'][$forum_id] = null;
             if ($PHORUM['cache_newflags']) {
-                $newflagkey = $forum_id."-".$forums[$forum_id]['cache_version']."-".$PHORUM['user']['user_id'];
-                $PHORUM['user']['newinfo'][$forum_id] = phorum_cache_get('newflags',$newflagkey);
+                $newflagkey = $forum_id."-".$PHORUM['user']['user_id'];
+                $PHORUM['user']['newinfo'][$forum_id] = phorum_cache_get('newflags',$newflagkey,$forums[$forum_id]['cache_version']);
             }
             if ($PHORUM['user']['newinfo'][$forum_id] == null) {
                 $PHORUM['user']['newinfo'][$forum_id] = phorum_db_newflag_get_flags($forum_id);
                 if($PHORUM['cache_newflags']) {
-                    phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$forum_id],86400);
+                    phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$forum_id],86400,$forums[$forum_id]['cache_version']);
                 }
             }
         }

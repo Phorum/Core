@@ -32,51 +32,66 @@ if(!isset($PHORUM["cache"])) return;
 $PHORUM['real_cache']=$PHORUM['cache']."/".md5(__FILE__);
 
 /*
- * This function returns the cached data for the given key 
- * or NULL if no data is cached for this key
+ * This function returns the cached data for the given key(s) 
+ * or NULL if no data is cached.
  */
-function phorum_cache_get($type,$key) {
+function phorum_cache_get($type,$key,$version=NULL) {
 	
-	$partpath=$GLOBALS['PHORUM']['real_cache']."/".$type;
+    $partpath=$GLOBALS['PHORUM']['real_cache']."/".$type;
 
-	if(is_array($key)) {
-		$ret=array();
-		foreach($key as $realkey) {
-		    $path=$partpath."/".wordwrap(md5($realkey), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
-		    if(file_exists($path)){
-		        $retval=unserialize(file_get_contents($path));
-		        // the data is: array($ttl_time,$data)
-		        if($retval[0] < time()) { // timeout
-		        	unlink($path);
-		        } else {
-		        	$ret[$realkey]=$retval[1];	
-		        }
-		        unset($retval);
-		    }				
-		}
-	} else {
-	    $path=$partpath."/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
-	    if(!file_exists($path)){
-	        $ret=NULL;
-	    } else {
-	        $ret=unserialize(file_get_contents($path));
-	        // the data is: array($ttl_time,$data)
-	        if($ret[0] < time()) { // timeout
-	        	$ret=NULL;	
-	        	unlink($path);
-	        } else {
-	        	$ret=$ret[1];	
-	        }
-	    }
-	}
-	
-	
-	if(is_array($ret) && count($ret) == 0) {
-		$ret=NULL;	
-	}
+    if(is_array($key)) {
+        $ret=array();
+	foreach($key as $realkey) {
+            $path=$partpath."/".wordwrap(md5($realkey), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
+	    if(file_exists($path)) {
+                // the data is: array($ttl_time,$data,$version)
+                // $version might not be set.
+                $retval=unserialize(file_get_contents($path));
+
+                // timeout?
+                if($retval[0] < time()) {
+                    unlink($path);
+                // version expired?
+                } elseif ($version != NULL && 
+                          (!isset($retval[2]) || $retval[2] != $version)) {
+                    unlink($path);
+                } else {
+                    $ret[$realkey]=$retval[1];	
+                }
+
+                unset($retval);
+            }
+        }
+
+        if(count($ret) == 0) $ret = NULL;	
     
+    } else {
+        $path=$partpath."/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
+        if(!file_exists($path)){
+            $ret=NULL;
+        } else {
+            // the data is: array($ttl_time,$data,$version)
+            // $version might not be set.
+            $retval=unserialize(file_get_contents($path));
+
+            // timeout?
+            if($retval[0] < time()) {
+                $ret = NULL;
+                unlink($path);
+            // version expired?
+            } elseif ($version != NULL && 
+                      (!isset($retval[2]) || $retval[2]<$version)) {
+                $ret = NULL;
+                unlink($path);
+            } else {
+                $ret = $retval[1];
+            }
+	    
+	    unset($retval);
+        }
+    }
+	
     return $ret;
-    
 }
 
 /*
@@ -84,7 +99,7 @@ function phorum_cache_get($type,$key) {
  * returns number of bytes written (something 'true') or false ... 
  * depending of the success of the function
  */
-function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL) {
+function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version = NULL) {
 
     $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true);
     if(!file_exists($path)){
@@ -93,7 +108,7 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL) {
     $file=$path."/data.php";
     $ttl_time=time()+$ttl;
     $fp=fopen($file,"w");
-    $ret=fwrite($fp,serialize(array($ttl_time,$data)));
+    $ret=fwrite($fp,serialize(array($ttl_time,$data,$version)));
     fclose($fp);    
     
     return $ret;   

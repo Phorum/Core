@@ -63,7 +63,7 @@ foreach( $forums as $key=>$forum ) {
 
 // get newflag count for the vroot
 // this is the announcement count
-// TODO this needs caching too.
+// TODO: cache this too?
 list($vroot_new_messages, $vroot_new_threads) = phorum_db_newflag_get_unread_count($PHORUM["vroot"]);
 
 foreach( $folders as $folder_key=>$folder_id ) {
@@ -100,14 +100,14 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
             $newflagcounts = null;
             if($PHORUM['cache_newflags']) {
-                $newflagkey    = $forum["forum_id"]."-".$forum['cache_version']."-".$PHORUM['user']['user_id'];
-                $newflagcounts = phorum_cache_get('newflags_index',$newflagkey);
+                $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
+                $newflagcounts = phorum_cache_get('newflags_index',$newflagkey,$forum['cache_version']);
             }
 
             if($newflagcounts == null) {
                 $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
                 if($PHORUM['cache_newflags']) {
-                    phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400);
+                    phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400,$forum['cache_version']);
                 }
             }
 

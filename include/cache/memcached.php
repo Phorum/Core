@@ -35,7 +35,7 @@ $PHORUM['memcache_obj']->connect('127.0.0.1', 11211);
  * This function returns the cached data for the given key
  * or NULL if no data is cached for this key
  */
-function phorum_cache_get($type,$key) {
+function phorum_cache_get($type,$key,$version=NULL) {
 	if(is_array($key)) {
 		$getkey=array();
 		foreach($key as $realkey) {
@@ -51,8 +51,11 @@ function phorum_cache_get($type,$key) {
     if(is_array($getkey)) {
     	$typelen=(strlen($type)+1);
     	foreach($ret as $retkey => $retdata) {
-    		$ret[substr($retkey,$typelen)]=$retdata;
-    		unset($ret[$retkey]);
+	    if ($version == NULL || 
+	        ($retdata[1] != NULL && $retdata[1] == $version)) {
+    	        $ret[substr($retkey,$typelen)]=$retdata;
+            }
+    	    unset($ret[$retkey]);
     	}
     }
     if($ret === false || (is_array($ret) && count($ret) == 0))
@@ -67,9 +70,8 @@ function phorum_cache_get($type,$key) {
  * returns number of bytes written (something 'true') or false ...
  * depending of the success of the function
  */
-function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL) {
-
-	$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, $data, 0, $ttl);
+function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
+	$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, array($data,$version), 0, $ttl);
     return $ret;
 }
 
