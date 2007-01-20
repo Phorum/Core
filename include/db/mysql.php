@@ -3146,10 +3146,9 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         $new_threads = (int)mysql_result($res, 0, "count");
 
-#select phorum_trunk_messages.message_id, phorum_trunk_user_newflags.message_id as count from phorum_trunk_messages left join phorum_trunk_user_newflags on phorum_trunk_messages.message_id=phorum_trunk_user_newflags.message_id and phorum_trunk_messages.forum_id = phorum_trunk_user_newflags.forum_id and phorum_trunk_user_newflags.user_id=2 where phorum_trunk_messages.forum_id=0 and phorum_trunk_messages.message_id>253;
-
         // get unread message count
         $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['message_table']}.forum_id={$PHORUM['user_newflags_table']}.forum_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2";
+
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
         $new_messages = (int)mysql_result($res, 0, "count");
