@@ -279,8 +279,6 @@ function editor_tools_construct()
         a_obj = document.createElement('a');
         a_obj.id = "editor-tools-a-" + tool;
         a_obj.href = "javascript:" + jsaction;
-        a_obj.alt = description;
-        a_obj.title = description;
 
         img_obj = document.createElement('img');
         img_obj.id = "editor-tools-img-" + tool;
@@ -289,6 +287,8 @@ function editor_tools_construct()
         img_obj.width = iwidth;
         img_obj.height = iheight;
         img_obj.style.padding = '2px';
+        img_obj.alt = description;
+	img_obj.title = description;
 
         // If an icon is added that is less high than our default icon
         // height, we try to make the button the same height as the
@@ -771,10 +771,11 @@ function editor_tools_handle_smiley()
 	    var r = editor_tools_smileys_r[i];
 	    var a = editor_tools_smileys_a[i];
             var a_obj = document.createElement('a');
-	    a_obj.title = a_obj.alt = a;
             a_obj.href = 'javascript:editor_tools_handle_smiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;
+	    img_obj.title = a;
+	    img_obj.alt = a;
             a_obj.appendChild(img_obj);
 
             content_obj.appendChild(a_obj);
@@ -820,10 +821,11 @@ function editor_tools_handle_subjectsmiley()
 	    var a = editor_tools_subjectsmileys_a[i];
 
             var a_obj = document.createElement('a');
-            a_obj.alt = a_obj.title = a;
             a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;
+            img_obj.alt = a;
+	    img_obj.title = a;
             a_obj.appendChild(img_obj);
             content_obj.appendChild(a_obj);
         }
