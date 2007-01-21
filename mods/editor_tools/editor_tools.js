@@ -90,8 +90,10 @@ var editor_tools_size_picker_sizes = new Array(
 // These will be filled from PHP-generated javascript.
 var editor_tools_smileys = new Array();
 var editor_tools_smileys_r = new Array();
+var editor_tools_smileys_a = new Array();
 var editor_tools_subjectsmileys = new Array();
 var editor_tools_subjectsmileys_r = new Array();
+var editor_tools_subjectsmileys_a = new Array();
 
 // The width and offset to the left of the smiley picker popup menus.
 // These will be filled from PHP-generated javascript.
@@ -767,7 +769,9 @@ function editor_tools_handle_smiley()
         {
 	    var s = editor_tools_smileys[i];
 	    var r = editor_tools_smileys_r[i];
+	    var a = editor_tools_smileys_a[i];
             var a_obj = document.createElement('a');
+	    a_obj.title = a_obj.alt = a;
             a_obj.href = 'javascript:editor_tools_handle_smiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;
@@ -813,8 +817,10 @@ function editor_tools_handle_subjectsmiley()
         {
 	    var s = editor_tools_subjectsmileys[i];
 	    var r = editor_tools_subjectsmileys_r[i];
+	    var a = editor_tools_subjectsmileys_a[i];
 
             var a_obj = document.createElement('a');
+            a_obj.alt = a_obj.title = a;
             a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;

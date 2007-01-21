@@ -300,11 +300,13 @@ function phorum_mod_editor_tools_before_footer()
             if ($smiley["uses"] == 0 || $smiley["uses"] == 2) {
               print "editor_tools_smileys[$bsi] = '" . addslashes($smiley["search"]) . "';\n";
 	      print "editor_tools_smileys_r[$bsi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+	      print "editor_tools_smileys_a[$bsi] = '" . addslashes($smiley["alt"]) . "';\n";
 	      $bsi ++;
 	    }
             if ($smiley["uses"] == 1 || $smiley["uses"] == 2) {
               print "editor_tools_subjectsmileys[$ssi] = '" . addslashes($smiley["search"]) . "';\n";
 	      print "editor_tools_subjectsmileys_r[$ssi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+	      print "editor_tools_subjectsmileys_a[$ssi] = '" . addslashes($smiley["alt"]) . "';\n";
 	      $ssi ++;
 	    }
         }
