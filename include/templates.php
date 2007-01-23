@@ -25,7 +25,7 @@ if(!defined("PHORUM")) return;
 $include_level = 0;
 $include_deps  = array();
 
-function phorum_import_template($tplfile, $outfile)
+function phorum_import_template($tplfile, $outfile, $tplname = NULL)
 {
     global $include_level, $include_deps;
     $include_level++;
@@ -322,8 +322,9 @@ function phorum_import_template($tplfile, $outfile)
             $qout = addslashes($out);
             $check_deps .= "    @unlink(\"$qout\");\n";
         }
+        $use_template = $tplname == NULL ? $this_template : $tplname;
         $check_deps .=
-        "    \$tplfile = phorum_get_template(\"$this_template\");\n" .
+        "    \$tplfile = phorum_get_template(\"$use_template\");\n" .
         "}\n" .
         "include(\"" . addslashes($stage2_file) . "\");\n" .
         "?>\n";

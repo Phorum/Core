@@ -696,7 +696,7 @@ function phorum_get_template( $page, $is_include = false )
 
         if ( $is_include || !file_exists( $phpfile ) ) {
             include_once "./include/templates.php";
-            phorum_import_template( $tplfile, $phpfile );
+            phorum_import_template( $tplfile, $phpfile, $page );
         }
     }
 
