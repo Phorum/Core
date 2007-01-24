@@ -115,7 +115,7 @@ function phorum_email_user($addresses, $data)
             $host = "webserver";
         }
 
-        $msgid="\nMessage-ID: {$data['msgid']}@$host";
+        $msgid="\nMessage-ID: <{$data['msgid']}@$host>";
     } else {
         $msgid="";
     }
