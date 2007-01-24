@@ -47,7 +47,12 @@ if(empty($thread)) {
 
 $message=phorum_db_get_message($thread);
 
-if(isset($PHORUM["args"]["remove"])){
+# We stepped away from using "remove" as the URL parameter to stop 
+# following a certain thread, because it got blacklisted by several  
+# spam filtering programs. We'll still handle the remove parameter 
+# though, to keep supporting the URLs that are in the messages 
+# that were sent out before this change. 
+if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     // we are removing a message from the follow list
     phorum_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
     $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["RemoveFollowed"];
