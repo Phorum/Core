@@ -198,7 +198,7 @@ function phorum_email_notice($message)
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),
             "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
-            "remove_url"  => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "remove=1"),
+            "remove_url"  => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
             "noemail_url" => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
             "followed_threads_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
             "msgid"       => $message["msgid"]
