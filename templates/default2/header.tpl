@@ -68,13 +68,10 @@ Some Icons courtesy of:
 <div id="breadcrumb">
 
 {IF PHORUM_PAGE "control"}
-    {! This is the control center }
     <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a> &gt;
 {ELSEIF PHORUM_PAGE "pm"}
-    {! This is the control center }
     <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->PM}">{LANG->PrivateMessages}</a> &gt;
 {ELSEIF PHORUM_PAGE "search"}
-    {! This is the control center }
     <a href="{URL->INDEX}">{TITLE}</a> &gt;
 {ELSEIF NAME AND NOT PHORUM_PAGE "list"}
     {! This is a read page }
@@ -84,6 +81,7 @@ Some Icons courtesy of:
     <a href="{URL->INDEX}">{TITLE}</a> &gt;
 {ELSE}
     {IF PHORUM_PAGE "read"}
+        {! This is an announcement read page }
         <a href="{URL->INDEX}">{TITLE}</a> &gt;
     {ELSE}
         {! This is the index }
