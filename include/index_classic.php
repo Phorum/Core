@@ -25,7 +25,7 @@ $PHORUM["DATA"]["FORUMS"] = array();
 
 $forums_shown=false;
 
-// get newflag count for the vroot 
+// get newflag count for the vroot
 // this is the announcement count
 list($vroot_new_messages, $vroot_new_threads) = phorum_db_newflag_get_unread_count($PHORUM["vroot"]);
 
@@ -118,6 +118,9 @@ if(!$forums_shown){
 
     include phorum_get_template( "header" );
     phorum_hook("after_header");
+    if($PHORUM["DATA"]["MESSAGES"]){
+        include phorum_get_template( "list" );
+    }
     include phorum_get_template( "index_classic" );
     phorum_hook("before_footer");
     include phorum_get_template( "footer" );

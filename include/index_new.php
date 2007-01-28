@@ -152,6 +152,9 @@ $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
 
 include phorum_get_template( "header" );
 phorum_hook("after_header");
+if($PHORUM["DATA"]["MESSAGES"]){
+    include phorum_get_template( "list" );
+}
 include phorum_get_template( "index_new" );
 phorum_hook("before_footer");
 include phorum_get_template( "footer" );

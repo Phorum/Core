@@ -56,6 +56,7 @@
         "AllowSeeActivity"      =>      "Allow other users to see when I am logged in",
         "AllowSeeEmail"         =>      "Allow other users to see my email address",
         "Announcement"          =>      "Announcement",
+        "Announcements"         =>      "Announcements",
         "AnonymousUser"         =>      "Anonymous User",
         "AnyWord"               =>      "Any Word",
         "Approved"              =>      "Approved",

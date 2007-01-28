@@ -231,6 +231,65 @@ function phorum_db_get_thread_list($offset)
 }
 
 /**
+ * Get the announcements for the entire vroot.
+ *
+ * @return array
+ */
+function phorum_db_get_announcements()
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $messages = array();
+
+    $conn = phorum_db_mysqli_connect();
+
+    $table = $PHORUM["message_table"];
+
+    $sql = "select
+                $table.author,
+                $table.datestamp,
+                $table.email,
+                $table.message_id,
+                $table.forum_id,
+                $table.meta,
+                $table.moderator_post,
+                $table.modifystamp,
+                $table.parent_id,
+                $table.msgid,
+                $table.sort,
+                $table.status,
+                $table.subject,
+                $table.thread,
+                $table.thread_count,
+                $table.user_id,
+                $table.viewcount,
+                $table.closed
+            from
+                $table
+            where
+                status=".PHORUM_STATUS_APPROVED." and
+                sort=".PHORUM_SORT_ANNOUNCEMENT." and
+                forum_id={$PHORUM['vroot']} and
+                parent_id=0
+            order by
+                datestamp desc";
+
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+    while ($rec = mysqli_fetch_assoc($res)){
+        $messages[$rec["message_id"]] = $rec;
+        $messages[$rec["message_id"]]["meta"] = array();
+        if(!empty($rec["meta"])){
+            $messages[$rec["message_id"]]["meta"] = unserialize($rec["meta"]);
+        }
+    }
+
+    return $messages;
+
+}
+
+/**
  * This function executes a query to get the recent messages for
  * all forums the user can read, a particular forum, or a particular
  * thread, and and returns an array of the messages order by message_id.

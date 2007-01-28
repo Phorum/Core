@@ -65,6 +65,102 @@ if ( isset( $PHORUM["forum_id"] ) ) {
 }
 
 
+$announcements = phorum_db_get_announcements();
+if($announcements){
+
+    foreach($announcements as $key => $announcement){
+        $announcements[$key]["raw_lastpost"] = $announcement["modifystamp"];
+        $announcements[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $announcement["modifystamp"]);
+        $announcements[$key]["raw_datestamp"] = $announcement["datestamp"];
+        $announcements[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $announcement["datestamp"]);
+        $announcements[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $announcement["thread"]);
+        $announcements[$key]["URL"]["NEWPOST"] = phorum_get_url(PHORUM_READ_URL, $announcement["thread"],"gotonewpost");
+
+        // save raw thread count
+        $thread_count=$announcement["thread_count"];
+
+        $announcements[$key]["thread_count"] = number_format($announcement['thread_count'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+
+        if($PHORUM["count_views"]) {  // show viewcount if enabled
+            if($PHORUM["count_views"] == 2) { // viewcount as column
+                $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
+                $announcements[$key]["viewcount"]=$announcement['viewcount'];
+            } else { // viewcount added to the subject
+                $announcements[$key]["subject"]=$announcement["subject"]." ({$announcement['viewcount']} " . $PHORUM['DATA']['LANG']['Views_Subject'] . ")";
+            }
+        }
+
+
+        if ($announcement["user_id"]){
+            $url = phorum_get_url(PHORUM_PROFILE_URL, $announcement["user_id"]);
+            $announcements[$key]["URL"]["PROFILE"] = $url;
+            $announcements[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($announcement["author"])."</a>";
+        } else {
+            $announcements[$key]["URL"]["PROFILE"] = "";
+            if(!empty($announcement['email'])) {
+                $email_url = phorum_html_encode("mailto:$announcement[email]");
+                // we don't normally put HTML in this code, but this makes it easier on template builders
+                $announcements[$key]["linked_author"] = "<a href=\"".$email_url."\">".htmlspecialchars($announcement["author"])."</a>";
+            } else {
+                $announcements[$key]["linked_author"] = $announcement["author"];
+            }
+        }
+
+        $pages=1;
+        // thread_count computed above in moderators-section
+        if(!$PHORUM["threaded_read"] && $thread_count>$PHORUM["read_length"]){
+
+            $pages=ceil($thread_count/$PHORUM["read_length"]);
+
+            if($pages<=5){
+                $page_links="";
+                for($x=1;$x<=$pages;$x++){
+                    $url=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], "page=$x");
+                    $page_links[]="<a href=\"$url\">$x</a>";
+                }
+                $announcements[$key]["pages"]=implode("&nbsp;", $page_links);
+            } else {
+                $url=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], "page=1");
+                $announcements[$key]["pages"]="<a href=\"$url\">1</a>&nbsp;";
+                $announcements[$key]["pages"].="...&nbsp;";
+                $pageno=$pages-2;
+                $url=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], "page=$pageno");
+                $announcements[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                $pageno=$pages-1;
+                $url=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], "page=$pageno");
+                $announcements[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                $pageno=$pages;
+                $url=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], "page=$pageno");
+                $announcements[$key]["pages"].="<a href=\"$url\">$pageno</a>";
+            }
+        }
+
+        if(isset($announcement['meta']['recent_post'])) {
+            if($pages>1){
+                $announcements[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], $announcement["meta"]["recent_post"]["message_id"], "page=$pages");
+            } else {
+                $announcements[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $announcement["thread"], $announcement["meta"]["recent_post"]["message_id"]);
+            }
+
+            $announcement['meta']['recent_post']['author'] = htmlspecialchars($announcement['meta']['recent_post']['author']);
+            if ($announcement["meta"]["recent_post"]["user_id"]){
+                $url = phorum_get_url(PHORUM_PROFILE_URL, $announcement["meta"]["recent_post"]["user_id"]);
+                $announcements[$key]["URL"]["PROFILE_LAST_POST"] = $url;
+                $announcements[$key]["last_post_by"] = "<a href=\"$url\">{$announcement['meta']['recent_post']['author']}</a>";
+            }else{
+                $announcements[$key]["URL"]["PROFILE_LAST_POST"] = "";
+                $announcements[$key]["last_post_by"] = $announcement["meta"]["recent_post"]["author"];
+            }
+        } else {
+            $announcements[$key]["last_post_by"] = "";
+        }
+
+    }
+
+    $PHORUM["DATA"]["MESSAGES"] = $announcements;
+
+}
+
 if($PHORUM["use_new_folder_style"]){
     include_once "./include/index_new.php";
 } else {
