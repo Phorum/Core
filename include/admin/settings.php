@@ -273,12 +273,6 @@ $frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phoru
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max number of stored messages", $frm->text_box( "max_pm_messagecount", $PHORUM["max_pm_messagecount"], 30 ) );
 $frm->addhelp($row, "Max number of stored messages", "This is the maximum number of private messages that a user may store on the server. The number of private messages is the total of all messages in all PM folders together. Setting this value to zero will allow for unlimited messages.");
 
-$frm->addbreak( "General Defaults" );
-
-$row=$frm->addrow( "Default Template", $frm->select_tag( "default_template", phorum_get_template_info(), $PHORUM["default_template"] ) );
-
-$row=$frm->addrow( "Default Language", $frm->select_tag( "default_language", phorum_get_language_info(), $PHORUM["default_language"] ) );
-
 $frm->addbreak( "System Email Settings" );
 
 $row=$frm->addrow( "System Emails From Name", $frm->text_box( "system_email_from_name", $PHORUM["system_email_from_name"], 30 ) );
