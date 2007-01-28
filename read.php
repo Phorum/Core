@@ -36,7 +36,7 @@ if(!phorum_check_read_common()) {
 }
 
 // somehow we got to a folder
-if($PHORUM["folder_flag"]){
+if($PHORUM["folder_flag"] && $PHORUM["forum_id"]!=0){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
@@ -63,24 +63,24 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 if($PHORUM["DATA"]["MODERATOR"]) {
-        // find out how many forums this user can moderate
-        $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+    // find out how many forums this user can moderate
+    $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
 
-        $modforums=0;
-        foreach($forums as $id=>$forum){
-                if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
-                   $modforums++;
-                }
-        }
-        if($modforums > 1) {
-                $build_move_url=true;
-        } else {
-                $build_move_url=false;
-        }
+    $modforums=0;
+    foreach($forums as $id=>$forum){
+            if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
+               $modforums++;
+            }
+    }
+    if($modforums > 1) {
+            $build_move_url=true;
+    } else {
+            $build_move_url=false;
+    }
 }
 
 // setup some stuff based on the url passed
-if(empty($PHORUM["args"][1])) {
+if(!isset($PHORUM["args"][1])) {
     // we have no forum-id given, redirect to the index
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();

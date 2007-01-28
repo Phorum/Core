@@ -231,24 +231,30 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     }
 
     // load the forum's settings
-    if ( !empty( $PHORUM["forum_id"] ) ) {
+    if(!empty($PHORUM["forum_id"])){
+
         $forum_settings = phorum_db_get_forums( $PHORUM["forum_id"] );
-        if ( empty( $forum_settings[$PHORUM["forum_id"]] ) ) {
+
+        if ( !isset( $forum_settings[$PHORUM["forum_id"]] ) ) {
             phorum_hook( "common_no_forum", "" );
             phorum_redirect_by_url( phorum_get_url( PHORUM_INDEX_URL ) );
             exit();
         }
+
         $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
-    } else {
-        // some defaults we might need if no forum is set (i.e. on the index-page)
+
+    } elseif(isset($PHORUM["forum_id"]) && $PHORUM["forum_id"]==0){
+
+        $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] );
+
+        // some hard settings are needed if we are looking at forum_id 0
         $PHORUM['vroot']=0;
         $PHORUM['parent_id']=0;
         $PHORUM['active']=1;
         $PHORUM['folder_flag']=1;
         $PHORUM['cache_version']=0;
-        $PHORUM["template"] = $PHORUM["default_template"];
-    }
 
+    }
 
 
     // handling vroots

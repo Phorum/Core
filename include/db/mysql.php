@@ -175,7 +175,7 @@ function phorum_db_get_thread_list($offset)
                         from $table use index ($index)
                         where
                           $sortfield > 0 and
-                          forum_id = {$PHORUM["forum_id"]} and
+                          forum_id = {$PHORUM['forum_id']} and
                           status = ".PHORUM_STATUS_APPROVED." and
                           parent_id = 0 and
                           sort > 1
@@ -1265,9 +1265,6 @@ function phorum_db_load_settings(){
     if (empty($err) && $res){
         while ($rec = mysql_fetch_assoc($res)){
 
-            // only load the default forum options in the admin
-            if($rec["name"]=="default_forum_options" && !defined("PHORUM_ADMIN")) continue;
-
             if ($rec["type"] == "V"){
                 if ($rec["data"] == 'true'){
                     $val = true;
@@ -1354,6 +1351,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     }
 
     $sql = "select * from {$PHORUM['forums_table']} ";
+
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
     } elseif ($inherit_id !== null) {
@@ -1504,8 +1502,8 @@ function phorum_db_move_thread($thread_id, $toforum)
         $search_ids = array();
         foreach($thread_messages as $mid => $data) {
             // gather information for updating the newflags
-	    // only using it if its higher than the min_id of the target forum
-            if($mid > $new_newflags['min_id'][$toforum]) { 
+        // only using it if its higher than the min_id of the target forum
+            if($mid > $new_newflags['min_id'][$toforum]) {
                 $message_ids[]=$mid;
             } else { // newflags to delete
                 $delete_ids[]=$mid;
@@ -2706,7 +2704,7 @@ function phorum_db_user_delete($user_id) {
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // private messages
-    $sql = "select * from {$PHORUM["pm_xref_table"]} where user_id=$user_id";
+    $sql = "select * from {$PHORUM['pm_xref_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     while ($row = mysql_fetch_assoc($res)) {
@@ -2715,12 +2713,12 @@ function phorum_db_user_delete($user_id) {
     }
 
     // pm_buddies
-    $sql = "delete from {$PHORUM["pm_buddies_table"]} where user_id=$user_id or buddy_user_id=$user_id";
+    $sql = "delete from {$PHORUM['pm_buddies_table']} where user_id=$user_id or buddy_user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     // private message folders
-    $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id";
+    $sql = "delete from {$PHORUM['pm_folders_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
@@ -3102,9 +3100,9 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
 
     while($row=mysql_fetch_row($res)) {
         // set the min-id if given flag is set
-	$forum_id = $row[1];
-        #if($row[1] != $PHORUM['vroot'] && 
-	if (($read_msgs['min_id'][$forum_id]==0 || $row[0] < $read_msgs['min_id'][$forum_id])) {
+    $forum_id = $row[1];
+        #if($row[1] != $PHORUM['vroot'] &&
+    if (($read_msgs['min_id'][$forum_id]==0 || $row[0] < $read_msgs['min_id'][$forum_id])) {
             $read_msgs['min_id'][$forum_id]=$row[0];
         } else {
             $read_msgs[$row[0]]=$row[0];
@@ -3987,7 +3985,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     )));
 
     // Create the message.
-    $sql = "INSERT INTO {$PHORUM["pm_messages_table"]} SET " .
+    $sql = "INSERT INTO {$PHORUM['pm_messages_table']} SET " .
            "from_user_id = $from, " .
            "from_username = '".mysql_escape_string($fromuser["username"])."', " .
            "subject = '".mysql_escape_string($subject)."', " .
@@ -4005,12 +4003,12 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
 
     // Put the message in the recipient inboxes.
     foreach ($xref_entries as $xref) {
-        $sql = "INSERT INTO {$PHORUM["pm_xref_table"]} SET " .
-               "user_id = {$xref["user_id"]}, " .
-               "pm_folder_id={$xref["pm_folder_id"]}, " .
-               "special_folder='{$xref["special_folder"]}', " .
+        $sql = "INSERT INTO {$PHORUM['pm_xref_table']} SET " .
+               "user_id = {$xref['user_id']}, " .
+               "pm_folder_id={$xref['pm_folder_id']}, " .
+               "special_folder='{$xref['special_folder']}', " .
                "pm_message_id=$pm_message_id, " .
-               "read_flag = {$xref["read_flag"]}, " .
+               "read_flag = {$xref['read_flag']}, " .
                "reply_flag = 0";
         mysql_query($sql, $conn);
         if ($err = mysql_error()) {
@@ -4054,7 +4052,7 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
     settype($user_id, "int");
 
     // Update the flag in the database.
-    $sql = "UPDATE {$PHORUM["pm_xref_table"]} " .
+    $sql = "UPDATE {$PHORUM['pm_xref_table']} " .
            "SET $flag = $value " .
            "WHERE pm_message_id = $pm_id AND user_id = $user_id";
     $res = mysql_query($sql, $conn);
@@ -4097,7 +4095,7 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
         die ("Illegal folder '$folder' requested for user id '$user_id'");
     }
 
-    $sql = "DELETE FROM {$PHORUM["pm_xref_table"]} " .
+    $sql = "DELETE FROM {$PHORUM['pm_xref_table']} " .
            "WHERE $folder_sql " .
            "user_id = $user_id AND pm_message_id = $pm_id";
 
@@ -4150,7 +4148,7 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
         die ("Illegal target folder '$to' specified");
     }
 
-    $sql = "UPDATE {$PHORUM["pm_xref_table"]} SET " .
+    $sql = "UPDATE {$PHORUM['pm_xref_table']} SET " .
            "pm_folder_id = $pm_folder_id, " .
            "special_folder = $special_folder " .
            "WHERE $folder_sql user_id = $user_id AND pm_message_id = $pm_id";
@@ -4192,7 +4190,7 @@ function phorum_db_pm_update_message_info($pm_id)
 
     // Find the xrefs for this message.
     $sql = "SELECT * " .
-           "FROM {$PHORUM["pm_xref_table"]} " .
+           "FROM {$PHORUM['pm_xref_table']} " .
            "WHERE pm_message_id = $pm_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -4230,18 +4228,18 @@ function phorum_db_pm_update_message_info($pm_id)
 }
 
 /* Take care of warning about deprecation of the old PM API functions. */
-function phorum_db_get_private_messages($arg1, $arg2) {
+function phorum_db_get_private_messages() {
     phorum_db_pm_deprecated('phorum_db_get_private_messages'); }
-function phorum_db_get_private_message($arg1) {
+function phorum_db_get_private_message() {
     phorum_db_pm_deprecated('phorum_db_get_private_message'); }
-function phorum_db_get_private_message_count($arg1) {
+function phorum_db_get_private_message_count() {
     phorum_db_pm_deprecated('phorum_db_get_private_message_count'); }
-function phorum_db_put_private_messages($arg1, $arg2, $arg3, $arg4, $arg5) {
+function phorum_db_put_private_messages() {
     phorum_db_pm_deprecated('phorum_db_put_private_messages'); }
-function phorum_db_update_private_message($arg1, $arg2, $arg3){
+function phorum_db_update_private_message(){
     phorum_db_pm_deprecated('phorum_db_update_private_message'); }
 function phorum_db_pm_deprecated($func) {
-    die("${func}() has been deprecated. Please use the new private message API.");
+    die("{$func}() has been deprecated. Please use the new private message API.");
 }
 
 /**
@@ -4263,7 +4261,7 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
     if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
     settype($user_id, "int");
 
-    $sql = "SELECT pm_buddy_id FROM {$PHORUM["pm_buddies_table"]} " .
+    $sql = "SELECT pm_buddy_id FROM {$PHORUM['pm_buddies_table']} " .
            "WHERE user_id = $user_id AND buddy_user_id = $buddy_user_id";
 
     $res = mysql_query($sql, $conn);
@@ -4303,7 +4301,7 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 
     $pm_buddy_id = phorum_db_pm_is_buddy($buddy_user_id);
     if (is_null($pm_buddy_id)) {
-        $sql = "INSERT INTO {$PHORUM["pm_buddies_table"]} SET " .
+        $sql = "INSERT INTO {$PHORUM['pm_buddies_table']} SET " .
                "user_id = $user_id, " .
                "buddy_user_id = $buddy_user_id";
         $res = mysql_query($sql, $conn);
@@ -4331,7 +4329,7 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
     if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
     settype($user_id, "int");
 
-    $sql = "DELETE FROM {$PHORUM["pm_buddies_table"]} WHERE " .
+    $sql = "DELETE FROM {$PHORUM['pm_buddies_table']} WHERE " .
            "buddy_user_id = $buddy_user_id AND user_id = $user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -4355,7 +4353,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
     settype($user_id, "int");
 
     // Get all buddies for this user.
-    $sql = "SELECT buddy_user_id FROM {$PHORUM["pm_buddies_table"]} " .
+    $sql = "SELECT buddy_user_id FROM {$PHORUM['pm_buddies_table']} " .
            "WHERE user_id = $user_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
@@ -4379,7 +4377,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
 
     // Get all mutual buddies.
     $sql = "SELECT DISTINCT a.buddy_user_id " .
-           "FROM {$PHORUM["pm_buddies_table"]} as a, {$PHORUM["pm_buddies_table"]} as b " .
+           "FROM {$PHORUM['pm_buddies_table']} as a, {$PHORUM['pm_buddies_table']} as b " .
            "WHERE a.user_id=$user_id " .
            "AND b.user_id=a.buddy_user_id " .
            "AND b.buddy_user_id=$user_id";

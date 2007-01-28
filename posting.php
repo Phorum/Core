@@ -76,7 +76,7 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
 }
 
 // No forum id was set. Take the user back to the index.
-if(empty($PHORUM["forum_id"])){
+if(!isset($PHORUM["forum_id"])){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL);
     phorum_redirect_by_url($dest_url);
     exit();
@@ -84,7 +84,7 @@ if(empty($PHORUM["forum_id"])){
 
 // Somehow we got to a folder in posting.php. Take the
 // user back to the folder.
-if($PHORUM["folder_flag"]){
+if($PHORUM["folder_flag"] && $PHORUM["forum_id"]!=0){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
@@ -118,7 +118,7 @@ $valid_modes = array(
 //     that is stored in the database for the edited message, regardless
 //     what field data the client sent. Within the editing process,
 //     this parameter can be changed to make the field writable.
-//     (for example if a moderator is editing a message, some fields 
+//     (for example if a moderator is editing a message, some fields
 //     become writable).
 //     Put otherwise: client side read-only, server side read-only.
 // [3] Whether to sign the field data. If this field is set to a true
@@ -134,7 +134,7 @@ $valid_modes = array(
 //
 // hidden r/o   signed   Description
 // ---------------------------------------------------------------------------
-// false  false false    A standard field that can always be edited. 
+// false  false false    A standard field that can always be edited.
 //                       Typically, fields like subject and body use this.
 // true   true  false    Totally read-only fields that are put as hidden
 //                       fields in the message form. One could argue that
@@ -403,7 +403,7 @@ if (! $error_flag && ($do_attach || $do_detach)) {
 // ----------------------------------------------------------------------
 
 // Give modules a chance to perform actions of their own. These actions
-// can modify the message data if they like. This is the designated 
+// can modify the message data if they like. This is the designated
 // hook for modules that want to modify the meta data for the message.
 $message = phorum_hook("posting_custom_action", $message);
 
@@ -461,10 +461,10 @@ if ($PHORUM["posting_template"] == 'posting')
     // Make up the text which must be used on the posting form's submit button.
     $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
     $message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
-    
+
     // Attachment config
     if($PHORUM["max_attachments"]){
-    
+
         // Retrieve upload limits as imposed by the system.
         require_once('./include/upload_functions.php');
         $system_max_upload = phorum_get_system_max_upload();
@@ -478,7 +478,7 @@ if ($PHORUM["posting_template"] == 'posting')
                 $PHORUM["max_attachment_size"] = $PHORUM["max_totalattachment_size"];
             }
         }
-    
+
         // Data for attachment explanation.
         if ($PHORUM["allow_attachment_types"]) {
             $PHORUM["DATA"]["ATTACH_FILE_TYPES"] = str_replace(";", ", ", $PHORUM["allow_attachment_types"]);
@@ -499,7 +499,7 @@ if ($PHORUM["posting_template"] == 'posting')
             $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"] = $PHORUM["max_attachments"] - $attach_count;
             $PHORUM["DATA"]["EXPLAIN_ATTACH_MAX_ATTACHMENTS"] = str_replace("%count%", $PHORUM["DATA"]["ATTACH_REMAINING_ATTACHMENTS"], $PHORUM["DATA"]["LANG"]["AttachMaxAttachments"]);
         }
-    
+
         // A flag for the template building to be able to see if the
         // attachment storage space is full.
         $PHORUM["DATA"]["ATTACHMENTS_FULL"] =
@@ -507,20 +507,20 @@ if ($PHORUM["posting_template"] == 'posting')
             ($PHORUM["max_totalattachment_size"] &&
             $attach_totalsize >= $PHORUM["max_totalattachment_size"]*1024);
     }
-    
+
     // Let the templates know if we're running as an include.
     $PHORUM["DATA"]["EDITOR_AS_INCLUDE"] =
         isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"];
-    
+
     // Process data for previewing.
     if ($preview) {
         include("./include/posting/action_preview.php");
     }
-    
+
     // Always put the current mode in the message, so hook
     // writers can use this for identifying what we're doing.
     $message["mode"] = $mode;
-    
+
     // Create hidden form field code. Fields which are read-only are
     // all added as a hidden form fields in the form. Also the fields
     // for which the pf_HIDDEN flag is set will be added to the
@@ -553,7 +553,7 @@ if ($PHORUM["posting_template"] == 'posting')
         }
     }
     $PHORUM["DATA"]["POST_VARS"] .= $hidden;
-    
+
     // Process data for XSS prevention.
     foreach ($message as $var => $val)
     {
@@ -562,7 +562,7 @@ if ($PHORUM["posting_template"] == 'posting')
         // mods which are run after this code. We continue here, so the
         // data won't be stripped from the message data later on.
         if ($var == "meta") continue;
-    
+
         if ($var == "attachments") {
             if (is_array($val)) {
                 foreach ($val as $nr => $data)
@@ -572,7 +572,7 @@ if ($PHORUM["posting_template"] == 'posting')
                         unset($message["attachments"][$nr]);
                         continue;
                     }
-    
+
                     $message[$var][$nr]["name"] = htmlspecialchars($data["name"]);
                     $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
                 }
@@ -586,21 +586,21 @@ if ($PHORUM["posting_template"] == 'posting')
             }
         }
     }
-    
+
     // A cancel button is not needed if the editor is included in a page.
     // This can also be used by the before_editor hook to disable the
     // cancel button in all pages.
     $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
-    
+
     // A hook to give modules a last chance to update the message data.
     $message = phorum_hook("before_editor", $message);
-    
+
     // Make the message data available to the template engine.
     $PHORUM["DATA"]["MESSAGE"] = $message;
-    
+
     // Set the field to focus. Only set the focus if we have
     // no message to display to the user and if we're not in a preview.
-    // In those cases, it's better to stay at the top of the 
+    // In those cases, it's better to stay at the top of the
     // page, so the user can see it.
     if (!isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"]) && !$preview) {
         $focus = "subject";
