@@ -36,7 +36,7 @@ if(!phorum_check_read_common()) {
 }
 
 // somehow we got to a folder
-if(empty($PHORUM["forum_id"]) || $PHORUM["folder_flag"]){
+if($PHORUM["folder_flag"]){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
@@ -140,10 +140,10 @@ if(empty($PHORUM["args"][1])) {
                 $message_ids=$thread_message['meta']['message_ids'];
 
                 foreach($message_ids as $mkey => $mid) {
-                	// if already read, remove it from message-array
-                	if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id'][$thread_message['forum_id']]) {
-                		unset($message_ids[$mkey]);
-                	}
+                    // if already read, remove it from message-array
+                    if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id'][$thread_message['forum_id']]) {
+                        unset($message_ids[$mkey]);
+                    }
 
                 }
 
@@ -429,10 +429,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // assign user data to the row
         if($row["user_id"] && isset($user_info[$row["user_id"]])){
-			if(is_numeric($user_info[$row["user_id"]]["date_added"])){
-				$user_info[$row["user_id"]]["raw_date_added"] = $user_info[$row["user_id"]]["date_added"];
-				$user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);
-			}
+            if(is_numeric($user_info[$row["user_id"]]["date_added"])){
+                $user_info[$row["user_id"]]["raw_date_added"] = $user_info[$row["user_id"]]["date_added"];
+                $user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);
+            }
             if(strlen($user_info[$row["user_id"]]["posts"])>3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
                 $user_info[$row["user_id"]]["posts"] = number_format($user_info[$row["user_id"]]["posts"], 0, "", $PHORUM["thous_sep"]);
             }
