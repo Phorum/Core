@@ -155,11 +155,8 @@ function phorum_db_get_thread_list($offset)
                        from $table
                        where
                          status=".PHORUM_STATUS_APPROVED." and
-                         ((parent_id=0 and sort=".PHORUM_SORT_ANNOUNCEMENT."
-                           and forum_id={$PHORUM['vroot']})
-                         or
-                         (parent_id=0 and sort=".PHORUM_SORT_STICKY."
-                          and forum_id={$PHORUM['forum_id']}))
+                         parent_id=0 and sort=".PHORUM_SORT_STICKY." and
+                         forum_id={$PHORUM['forum_id']}
                        order by
                          sort, $sortfield desc";
                 break;
