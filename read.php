@@ -685,9 +685,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     if($thread_is_closed) {
 
         // Closed announcements have their own specific message.
-        $PHORUM["DATA"]["OKMSG"] = $thread_is_announcement
-            ? $PHORUM["DATA"]["LANG"]["ThreadAnnouncement"]
-            : $PHORUM["DATA"]["LANG"]["ThreadClosed"];
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
         include phorum_get_template("message");
 
     } elseif (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {

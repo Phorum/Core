@@ -489,8 +489,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
 
         "Template"              =>      "Template",
         "ThankYou"              =>      "Thank You",
-        "ThreadAnnouncement"    =>      "You can't reply to announcements.",
-        "ThreadClosed"          =>      "This topic has been closed.",
+        "ThreadClosed"          =>      "Sorry, you can't reply to this topic.  It has been closed.",
         "ThreadClosedOk"        =>      "The topic has been closed.",
         "Thread"                =>      "Topic",
         "Threads"               =>      "Topics",
