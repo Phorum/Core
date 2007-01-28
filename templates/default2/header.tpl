@@ -12,9 +12,9 @@
 
 {LANG_META}
 
-{IF PRINTVIEW} 
+{IF PRINTVIEW}
     <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="screen,print" />
-    <meta name="robots" content="NOINDEX,NOFOLLOW"> 
+    <meta name="robots" content="NOINDEX,NOFOLLOW">
 {ELSE}
     <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/main.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="print" />
@@ -83,8 +83,12 @@ Some Icons courtesy of:
     {! This is a forum page other than a read page or a folder page }
     <a href="{URL->INDEX}">{TITLE}</a> &gt;
 {ELSE}
-    {! This is the index }
-    &nbsp;
+    {IF PHORUM_PAGE "read"}
+        <a href="{URL->INDEX}">{TITLE}</a> &gt;
+    {ELSE}
+        {! This is the index }
+        &nbsp;
+    {/IF}
 {/IF}
 
 </div>
@@ -130,7 +134,7 @@ Some Icons courtesy of:
 
 
 </div>
-   
+
 {IF USER->NOTICE->SHOW}
     <div class="attention">
         <h4>{LANG->NeedsAttention}</h4>
