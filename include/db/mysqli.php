@@ -1209,9 +1209,6 @@ function phorum_db_load_settings(){
     if (empty($err) && $res){
         while ($rec = mysqli_fetch_assoc($res)){
 
-            // only load the default forum options in the admin
-            if($rec["name"]=="default_forum_options" && !defined("PHORUM_ADMIN")) continue;
-
             if ($rec["type"] == "V"){
                 if ($rec["data"] == 'true'){
                     $val = true;
