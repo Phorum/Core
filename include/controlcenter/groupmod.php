@@ -29,7 +29,7 @@ else{
 if (!$perm) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
     exit();
-} 
+}
 
 // figure out what the user is trying to do, in this case we have a group to list (and maybe some commands)
 if (isset($PHORUM["args"]["group"])){
@@ -64,10 +64,10 @@ if (isset($PHORUM["args"]["group"])){
     }
 
     $group = phorum_db_get_groups($PHORUM["args"]["group"]);
-    $PHORUM["DATA"]["GROUP"]["name"] = $group[$PHORUM["args"]["group"]]["name"];        
+    $PHORUM["DATA"]["GROUP"]["name"] = $group[$PHORUM["args"]["group"]]["name"];
     $PHORUM["DATA"]["USERS"] = array();
     $PHORUM["DATA"]["GROUP"]["url"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"]);
-        
+
     $PHORUM["DATA"]["FILTER"] = array();
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["None"],
         "enable" => !(!isset($PHORUM["args"]["filter"])),
@@ -75,13 +75,13 @@ if (isset($PHORUM["args"]["group"])){
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Approved"],
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_APPROVED),
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_APPROVED));
-    $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["PermGroupModerator"], 
+    $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["PermGroupModerator"],
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_MODERATOR),
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_MODERATOR));
-    $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Suspended"], 
+    $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Suspended"],
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_SUSPENDED),
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_SUSPENDED));
-    $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Unapproved"], 
+    $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["Unapproved"],
         "enable" => !(isset($PHORUM["args"]["filter"]) && $PHORUM["args"]["filter"] == PHORUM_USER_GROUP_UNAPPROVED),
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $PHORUM["args"]["group"], "filter=" . PHORUM_USER_GROUP_UNAPPROVED));
 
@@ -111,7 +111,7 @@ if (isset($PHORUM["args"]["group"])){
             $statustext = $PHORUM["DATA"]["LANG"]["PermGroupModerator"];
         }
 
-        $PHORUM["DATA"]["USERS"][$userid] = array("userid" => $userid, 
+        $PHORUM["DATA"]["USERS"][$userid] = array("userid" => $userid,
             "name" => $users[$userid]["username"],
             "displayname" => $users[$userid]["username"],
             "status" => $status,
@@ -131,6 +131,8 @@ if (isset($PHORUM["args"]["group"])){
 
         foreach ($userlist as $userid => $userinfo){
             if (!in_array($userid, $usersingroup)){
+                $userinfo["username"] = htmlspecialchars($userinfo["username"]);
+                $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
                 $PHORUM["DATA"]["NEWMEMBERS"][] = $userinfo;
             }
         }
@@ -147,8 +149,8 @@ else{
     foreach ($groups as $groupid => $groupname){
         // get the group members who are unapproved, so we can count them
         $members = phorum_db_get_group_members($groupid, PHORUM_USER_GROUP_UNAPPROVED);
-        $PHORUM["DATA"]["GROUPS"][] = array("id" => $groupid, 
-            "name" => $groupname, 
+        $PHORUM["DATA"]["GROUPS"][] = array("id" => $groupid,
+            "name" => $groupname,
             "unapproved" => count($members),
             "unapproved_url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
             "url" =>  phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid)
