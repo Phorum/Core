@@ -38,9 +38,10 @@ Instructions:
    I could do this from this script as well, but I would find that
    a little bit rude ;-))
 
-6. Turn off unneeded modules for the conversion. All modules hooking into common.php
-   or some other general hook will be run while doing the conversion which will lead to
-   at least a slowdown, unexpected side effects and some strange output.
+6. Turn off unneeded modules for the conversion. All modules hooking into
+   common.php or some other general hook will be run while doing the
+   conversion which will lead to at least a slowdown, unexpected side
+   effects and some strange output.
 
 7. If you have shell access to your webserver, run this script using the
    shell from the command line. This is the preferred way of running the
