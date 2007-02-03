@@ -3,17 +3,23 @@
     <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
 </div>
+
 {IF ReportPostMessage}<div class="attention">{ReportPostMessage}</div>{/IF}
 
-<div class="information">
-  <strong>{LANG->ConfirmReportMessage}</strong><br /><br />
-  <div class="PhorumReadBodySubject">{PostSubject}</div>
-  <div class="PhorumReadBodyHead">{LANG->Postedby}: {PostAuthor}</div>
-  <div class="PhorumReadBodyHead">{LANG->Date}: {PostDate}</div>
-  <div class="PhorumReadBodyText">{PostBody}</div><br />
-  {LANG->ReportPostExplanation}<br />
-  <form method="post" action="{ReportURL}">
-    <textarea name="explanation" rows="5" cols="60" wrap="virtual">{explanation}</textarea><br />
-    <input type="submit" name="report" value="{LANG->Report}" />
-  </form>
+<div class="generic">
+    <h4>{LANG->ConfirmReportMessage}</h4>
+    <p>{LANG->ReportPostExplanation}</p>
+    <form method="post" action="{ReportURL}">
+        <textarea name="explanation" rows="5" cols="60" wrap="virtual">{explanation}</textarea><br />
+        <input type="submit" name="report" value="{LANG->Report}" />
+    </form>
+</div>
+
+<p>&nbsp;</p>
+
+<div class="generic">
+<strong>{PostSubject}</strong>
+<p>{LANG->Postedby}: {PostAuthor}</p>
+<p>{PostBody}</p>
+
 </div>

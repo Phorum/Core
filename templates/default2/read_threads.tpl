@@ -45,26 +45,6 @@
         </table>
     </div>
 
-    {IF MODERATOR true}
-        <div class="message-moderation">
-            {IF MESSAGE->threadstart true}
-                <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
-                {IF MESSAGE->URL->MOVE}<a class="icon icon-move" href="{MESSAGE->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
-            {ELSE}
-                <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
-                <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DelMessReplies}</a>
-                <a class="icon icon-split" href="{MESSAGE->URL->SPLIT}">{LANG->SplitThread}</a>
-            {/IF}
-            {IF MESSAGE->is_unapproved}
-                <a class="icon icon-accept" href="{MESSAGE->URL->APPROVE}">{LANG->ApproveMessage}</a>
-            {ELSE}
-                <a class="icon icon-comment-delete" href="{MESSAGE->URL->HIDE}">{LANG->HideMessage}</a>
-            {/IF}
-            <a class="icon icon-comment-edit" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>
-        </div>
-    {/IF}
-
-
     <div class="message-body">
         {IF MESSAGE->is_unapproved}
             <div class="warning">
@@ -90,6 +70,25 @@
                 {LOOP MESSAGE->attachments}
                     <a href="{MESSAGE->attachments->url}">{MESSAGE->attachments->name} ({MESSAGE->attachments->size})</a>&nbsp;&nbsp;
                 {/LOOP MESSAGE->attachments}
+            </div>
+        {/IF}
+
+        {IF MODERATOR true}
+            <div class="message-moderation">
+                {IF MESSAGE->threadstart true}
+                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
+                    {IF MESSAGE->URL->MOVE}<a class="icon icon-move" href="{MESSAGE->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
+                {ELSE}
+                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
+                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DelMessReplies}</a>
+                    <a class="icon icon-split" href="{MESSAGE->URL->SPLIT}">{LANG->SplitThread}</a>
+                {/IF}
+                {IF MESSAGE->is_unapproved}
+                    <a class="icon icon-accept" href="{MESSAGE->URL->APPROVE}">{LANG->ApproveMessage}</a>
+                {ELSE}
+                    <a class="icon icon-comment-delete" href="{MESSAGE->URL->HIDE}">{LANG->HideMessage}</a>
+                {/IF}
+                <a class="icon icon-comment-edit" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>
             </div>
         {/IF}
 

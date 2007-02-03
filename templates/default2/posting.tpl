@@ -138,7 +138,7 @@
                             <td>{LIST->name} ({LIST->size})</td>
                             <td align="right">
                               {HOOK "tpl_editor_attachment_buttons" LIST}
-                              <input type="submit" name="detach:{LIST->file_id}" value="{LANG->Detach}" class="PhorumSubmit" />
+                              <input type="submit" name="detach:{LIST->file_id}" value="{LANG->Detach}" />
                             </td>
                           </tr>
                         {/IF}
@@ -190,9 +190,9 @@
 
             {HOOK "tpl_editor_buttons"}
 
-            <input type="submit" name="preview" class="PhorumSubmit" value=" {LANG->Preview} " />
-            <input type="submit" name="finish" class="PhorumSubmit" value=" {MESSAGE->submitbutton_text} " />
-            <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')" class="PhorumSubmit" value=" {LANG->Cancel} " />
+            <input type="submit" name="preview" value=" {LANG->Preview} " />
+            <input type="submit" name="finish" value=" {MESSAGE->submitbutton_text} " />
+            <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')" value=" {LANG->Cancel} " />
 
         </div>
 

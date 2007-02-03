@@ -40,10 +40,10 @@
                 </tr>
             {/LOOP BUDDIES}
         </table>
-        <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
-        <input type="submit" name="send_pm" class="PhorumSubmit" value="{LANG->SendPM}" />
+        <input type="submit" name="delete" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
+        <input type="submit" name="send_pm" value="{LANG->SendPM}" />
     </form>
 {ELSE}
     <div class="generic">{LANG->BuddyListIsEmpty}</>
 {/IF}
-    
+

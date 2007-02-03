@@ -5,7 +5,7 @@
     <div class="generic">
         <h4>{LANG->PMFolderCreate}</h4>
         <input type="text" name="create_folder_name" value="{CREATE_FOLDER_NAME}" size="20" maxlength="20" />
-        <input type="submit" name="create_folder" value="{LANG->Submit}" class="PhorumSubmit" />
+        <input type="submit" name="create_folder" value="{LANG->Submit}" />
     </div>
 </form>
 {IF PM_USERFOLDERS}
@@ -23,7 +23,7 @@
             </select>
             {LANG->PMFolderRenameTo}
             <input type="text" name="rename_folder_to" value="{RENAME_FOLDER_NAME}" size="20" maxlength="20" />
-            <input type="submit" name="rename_folder" value="{LANG->Submit}" class="PhorumSubmit" />
+            <input type="submit" name="rename_folder" value="{LANG->Submit}" />
         </div>
     </form>
 
@@ -41,7 +41,7 @@
                     <option value="{PM_USERFOLDERS->id}">{PM_USERFOLDERS->name}{IF PM_USERFOLDERS->total} ({PM_USERFOLDERS->total}){/IF}</option>
                 {/LOOP PM_USERFOLDERS}
             </select>
-            <input type="submit" name="delete_folder" value="{LANG->Submit}" onclick="return confirm('{LANG->PMFolderDeleteConfirm}')" class="PhorumSubmit" />
+            <input type="submit" name="delete_folder" value="{LANG->Submit}" onclick="return confirm('{LANG->PMFolderDeleteConfirm}')" />
         </div>
     </form>
 {/IF}

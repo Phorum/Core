@@ -1,6 +1,6 @@
-<div align="center">
+<div class="generic">
   {IF BLOCK_TITLE}
-    <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left; margin-top: 5px;">{BLOCK_TITLE}</div>
+    <h4>{BLOCK_TITLE}</h4>
   {/IF}
-  <div class="PhorumStdBlock">{BLOCK_CONTENT}</div>
+  <p>{BLOCK_CONTENT}</p>
 </div>

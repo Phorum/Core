@@ -56,7 +56,7 @@
             </tr>
         {/LOOP MESSAGES}
     </table>
-    <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
+    <input type="submit" name="delete" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
 {ELSE}
     <div class="generic">{LANG->PMFolderIsEmpty}</div>
 {/IF}

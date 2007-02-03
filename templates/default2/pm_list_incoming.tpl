@@ -45,9 +45,9 @@
                 {/IF}
             {/LOOP PM_FOLDERS}
         </select>
-        <input type="submit" name="move" class="PhorumSubmit" value="{LANG->PMMoveToFolder}" />
+        <input type="submit" name="move" value="{LANG->PMMoveToFolder}" />
     {/IF}
-    <input type="submit" name="delete" class="PhorumSubmit" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
+    <input type="submit" name="delete" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
 
 {ELSE}
 

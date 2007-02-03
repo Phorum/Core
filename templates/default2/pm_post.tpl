@@ -1,21 +1,30 @@
 {IF PREVIEW}
-  <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->Preview}</div>
-  <div class="PhorumStdBlock" style="text-align: left;">
-    <div class="PhorumReadBodySubject">{PREVIEW->subject}</div>
-    <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="#">{PREVIEW->from_username}</a></strong></div>
-    <div class="PhorumReadBodyHead">
-      {LANG->To}:
-      {VAR ISFIRST true}
-      {LOOP PREVIEW->recipients}
-        <div style="display:inline; white-space: nowrap">
-          {IF NOT ISFIRST} / {/IF}
-          <strong><a href="#">{PREVIEW->recipients->username}</a></strong>
-          {VAR ISFIRST false}
+
+    <div class="information">
+        {LANG->PreviewExplain}
+    </div>
+
+    <div class="pm">
+
+        <h4>{PREVIEW->subject}</h4>
+
+        <div class="message-author icon-user">
+            {LANG->From}: {PREVIEW->from_username}
         </div>
-      {/LOOP PREVIEW->recipients}
-    </div><br />
-    <div class="PhorumReadBodyText">{PREVIEW->message}</div><br />
-  </div><br />
+        <div class="message-author icon-user">
+            {LANG->To}:
+            {LOOP PREVIEW->recipients}
+                {PREVIEW->recipients->username}
+            {/LOOP PREVIEW->recipients}
+        </div>
+    </div>
+
+    <div class="message-body">
+
+        {MESSAGE->message}
+
+    </div>
+
 {/IF}
 
 
@@ -26,9 +35,9 @@
     <input type="hidden" name="hide_userselect" value="{HIDE_USERSELECT}" />
 
     <div class="generic">
-    
+
         <small>
-    
+
             To:<br />
             {! Show user selection}
             {IF SHOW_USERSELECTION}
@@ -57,34 +66,34 @@
                 </div>
             {/LOOP MESSAGE->recipients}
             <br />
-                
+
             {LANG->Subject}:<br />
             <input type="text" name="subject" id="subject" size="50" value="{MESSAGE->subject}" /><br />
             <br />
-    
+
             {LANG->Options}:<br />
             <input type="checkbox" name="keep" value="1"{IF MESSAGE->keep} checked="checked" {/IF} /> {LANG->KeepCopy}<br />
             <br />
-    
-                
+
+
             {LANG->Message}:
             <div id="post-body">
                 <textarea name="message" id="body" class="body" rows="15" cols="50">{MESSAGE->message}</textarea>
             </div>
-        
+
         </small>
-        
+
     </div>
-        
+
     <div id="post-buttons">
-    
+
         {HOOK "tpl_editor_buttons"}
-        
+
       <input name="preview" type="submit" value=" {LANG->Preview} " />
       <input type="submit" value=" {LANG->Post} " />
-        
+
     </div>
-        
+
 </form>
 
 

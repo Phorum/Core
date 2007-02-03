@@ -20,7 +20,7 @@
 <div class="message-body">
 
     {MESSAGE->message}
-    
+
 </div>
 
 
@@ -43,7 +43,7 @@
               {/IF}
             {/LOOP PM_FOLDERS}
           </select>
-          <input type="submit" name="move_message" class="PhorumSubmit" value="{LANG->PMMoveToFolder}" />
+          <input type="submit" name="move_message" value="{LANG->PMMoveToFolder}" />
         </span>
       {/IF}
     {/IF}
