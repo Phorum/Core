@@ -33,5 +33,5 @@
             </tr>
         {/LOOP FILES}
     </table>
-    <input type="submit" class="PhorumSubmit" value="{LANG->Delete}" />&nbsp;&nbsp;&nbsp;{LANG->TotalFiles}: {TOTAL_FILES}&nbsp;&nbsp;{LANG->TotalFileSize}: {TOTAL_FILE_SIZE}
+    <input type="submit" value="{LANG->Delete}" />&nbsp;&nbsp;&nbsp;{LANG->TotalFiles}: {TOTAL_FILES}&nbsp;&nbsp;{LANG->TotalFileSize}: {TOTAL_FILE_SIZE}
 </form>

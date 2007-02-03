@@ -20,10 +20,10 @@
             <input type="submit" value="{LANG->Add}" />
         </form>
     </div>
-    
+
     <div class="generic">
         <h4>{LANG->GroupMemberList}</h4>
-        
+
         <form action="{URL->ACTION}" method="post">
             {POST_VARS}
             <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
@@ -35,11 +35,11 @@
                     <option value="{FILTER->id}"{IF FILTER->enable} selected="selected"{/IF}>{FILTER->name}</option>
                 {/LOOP FILTER}
             </select>
-            <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
+            <input type="submit" value="{LANG->Go}" />
         </form>
 
         <br />
-        
+
         {IF USERS}
             <form method="post" action="{URL->ACTION}">
                 <input type="hidden" name="panel" value="{PROFILE->PANEL}" />

@@ -8,13 +8,13 @@
     <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
 
     <div class="generic">
-    
+
         <dl>
             {IF PROFILE->USERPROFILE}
                 <dt>{LANG->RealName}:&nbsp;</dt>
                 <dd><input type="text" name="real_name" size="30" value="{PROFILE->real_name}" /></dd>
             {/IF}
-    
+
             {IF PROFILE->SIGSETTINGS}
                 <dt>{LANG->Signature}:&nbsp;</dt>
                 <dd><div id="post-body"><textarea name="signature" id="body" class="body" rows="15" cols="50">{PROFILE->signature}</textarea></div></dd>
@@ -39,12 +39,12 @@
                     <dd><input type="checkbox" name="moderation_email" value="1"{PROFILE->moderation_email_checked} /> {LANG->ReceiveModerationMails}</dt>
                 {/IF}
             {/IF}
-    
+
             {IF PROFILE->PRIVACYSETTINGS}
                 <dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>
                 <dd><input type="checkbox" name="hide_activity" value="1"{PROFILE->hide_activity_checked} /> {LANG->AllowSeeActivity}</dd>
             {/IF}
-    
+
             {IF PROFILE->BOARDSETTINGS}
                     {IF PROFILE->TZSELECTION}
                     <dt>{LANG->Timezone}:&nbsp;</dt>
@@ -66,7 +66,7 @@
                         {/LOOP LANGUAGES}
                     </select>
                 </dd>
-    
+
                 {IF PROFILE->TMPLSELECTION}
                     <dt>{LANG->Template}:&nbsp;</dt>
                     <dd>
@@ -134,8 +134,8 @@
             <dd><small>*{LANG->Required}</small></dd>
 
         </dl>
-        
-        <div><input type="submit" class="PhorumSubmit" value=" {LANG->Submit} " /></div>
+
+        <div><input type="submit" value=" {LANG->Submit} " /></div>
 
     </div>
 

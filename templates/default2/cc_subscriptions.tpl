@@ -15,7 +15,7 @@
             <option value="365"{IF SELECTED 365} selected{/IF}>1 {LANG->Year}</option>
             <option value="0"{IF SELECTED 0} selected{/IF}>{LANG->AllDates}</option>
         </select>
-        <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
+        <input type="submit" value="{LANG->Go}" />
     </div>
 </form>
 
@@ -71,7 +71,7 @@
                 </tr>
             {/LOOP TOPICS}
         </table>
-        <input type="submit" class="PhorumSubmit" name="button_update" value="{LANG->Update}" />
+        <input type="submit" name="button_update" value="{LANG->Update}" />
     </form>
 {ELSE}
     <div class="generic">{LANG->NoFollowedThreads}</div>

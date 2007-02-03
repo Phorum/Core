@@ -18,7 +18,7 @@
             <option value="365"{IF SELECTED 365} selected="selected"{/IF}>1 {LANG->Year}</option>
             <option value="0"{IF SELECTED 0} selected="selected"{/IF}>{LANG->AllDates}</option>
         </select>
-        <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
+        <input type="submit" value="{LANG->Go}" />
     </div>
 </form>
 
@@ -43,6 +43,6 @@
                 <td nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
             </tr>
         {/LOOP PREPOST}
-    </table>        
+    </table>
 {/IF}
 
