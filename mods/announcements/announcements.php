@@ -25,6 +25,8 @@ function phorum_show_announcements ()
 
             unset($messages["users"]);
 
+            if (count($messages) == 0) return;
+
             foreach($messages as $message){
 
                 $message["lastpost"] = phorum_date($PHORUM["short_date_time"], $message["modifystamp"]);
