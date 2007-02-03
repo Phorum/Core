@@ -19,8 +19,8 @@
                 </ul>
                 {LANG->Options}
                 <ul>
-                    <li><a {IF PM_PAGE "folders"}class="current" {/IF}href="{URL->PM_FOLDERS}">{LANG->EditFolders}</a></li>
                     <li><a {IF PM_PAGE "send"}class="current" {/IF}href="{URL->PM_SEND}">{LANG->SendPM}</a></li>
+                    <li><a {IF PM_PAGE "folders"}class="current" {/IF}href="{URL->PM_FOLDERS}">{LANG->EditFolders}</a></li>
                     <li><a {IF PM_PAGE "buddies"}class="current" {/IF} href="{URL->BUDDIES}">{LANG->Buddies}</a></li>
                 </ul>
             </div>
