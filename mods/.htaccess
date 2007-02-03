@@ -1,10 +1,10 @@
-# By default, no module files may be accessed 
+# By default, no module files may be accessed
 # directly from a webbrowser.
 Order deny,allow
 Deny from all
 
 # File types for which we make an exception.
-<Files ~ "\.(gif|jpg|jpeg|png)$">
+<Files ~ "\.(gif|jpg|jpeg|png|css|js)$">
     Order allow,deny
     Allow from all
 </Files>

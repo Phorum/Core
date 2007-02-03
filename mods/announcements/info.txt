@@ -1,0 +1,4 @@
+hook:  after_header|phorum_show_announcements
+hook:  common|phorum_setup_announcements
+title: Announcements
+desc:  Shows topics from one forum as announcements in a variety of ways.
