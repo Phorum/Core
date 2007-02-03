@@ -17,7 +17,7 @@
     <meta name="robots" content="NOINDEX,NOFOLLOW">
 {ELSE}
     <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/main.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="print" />
+    <!-- link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="print" /-->
 {/IF}
 {IF URL->FEED}
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
@@ -142,7 +142,4 @@ Some Icons courtesy of:
     </div>
 {/IF}
 
-{IF NOT PHORUM_PAGE "search"}
-    {INCLUDE "paging"}
-{/IF}
 

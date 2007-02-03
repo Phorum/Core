@@ -1,3 +1,4 @@
+{INCLUDE "paging"}
 {IF PHORUM_PAGE "list"}
     <div class="nav">
         {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
