@@ -1,8 +1,6 @@
 <div class="nav">
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
-    {IF URL->LIST}
-        <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
-    {/IF}
+    {IF FORUM_ID}<a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>{/IF}
 </div>
 
 <table class="menu" cellspacing="0" border="0">
