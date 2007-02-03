@@ -78,9 +78,8 @@
 
 {IF SEARCH->showresults}
 
-    {INCLUDE "paging"}
-
     <div class="nav">
+        {INCLUDE "paging"}
         {LANG->Results} {RANGE_START} - {RANGE_END} {LANG->of} {TOTAL}
     </div>
 
@@ -106,7 +105,9 @@
         {/LOOP MATCHES}
     </div>
 
-    {INCLUDE "paging"}
+    <div class="nav">
+        {INCLUDE "paging"}
+    </div>
 
 {/IF}
 
