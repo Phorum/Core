@@ -101,7 +101,7 @@
             "There might be a problem in Phorum's caching system.
              Storing and retrieving a dummy key failed. If you
              experience problems with your Phorum installation,
-             it might me because of this.",
+             it might be because of this.",
             "As a work around, you can disable the caching facilities
              in the admin interface (note: this will not remove this
              warning; it will only keep you out of troubles by making
