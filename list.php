@@ -176,7 +176,7 @@ $min_id=0;
 
 $rows = NULL;
 if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies'])) {
-    $cache_key=$PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"];
+    $cache_key=$PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"]."-".$PHORUM["count_views"];
     $rows = phorum_cache_get('message_list',$cache_key);
 }
 
@@ -206,7 +206,6 @@ if($rows == null) {
 
             if($PHORUM["count_views"]) {  // show viewcount if enabled
                 if($PHORUM["count_views"] == 2) { // viewcount as column
-                    $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
                     $rows[$key]["viewcount"] = number_format($row['viewcount'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
                 } else { // viewcount added to the subject
                     $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} " . $PHORUM['DATA']['LANG']['Views_Subject'] . ")";
@@ -387,6 +386,9 @@ if($rows == null) {
     }
 }
 
+if($PHORUM["count_views"] == 2) { // viewcount as column
+    $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
+}
 //timing_mark('after preparation');
 
 if($PHORUM['DATA']['LOGGEDIN']) {
