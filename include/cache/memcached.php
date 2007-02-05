@@ -47,19 +47,23 @@ function phorum_cache_get($type,$key,$version=NULL) {
 
     $ret=$GLOBALS['PHORUM']['memcache_obj']->get($getkey);
 
-    // rewriting them as we need to strip out the type :(
     if(is_array($getkey)) {
-    	$typelen=(strlen($type)+1);
+        // rewriting them as we need to strip out the type :(
+        $typelen=(strlen($type)+1);
     	foreach($ret as $retkey => $retdata) {
-	    if ($version == NULL || 
-	        ($retdata[1] != NULL && $retdata[1] == $version)) {
-    	        $ret[substr($retkey,$typelen)]=$retdata;
-            }
-    	    unset($ret[$retkey]);
+	        if ($version == NULL || 
+	            ($retdata[1] != NULL && $retdata[1] == $version))
+    	            $ret[substr($retkey,$typelen)]=$retdata[0];
+
+            unset($ret[$retkey]);
     	}
+    } else {
+	    if ( is_array($ret) && count($ret) != 0 && 
+             ($version == NULL || ($ret[1] != NULL && $ret[1] == $version)) )
+            $ret = $ret[0];
+        else
+            $ret = NULL;
     }
-    if($ret === false || (is_array($ret) && count($ret) == 0))
-    	$ret=NULL;
 
     return $ret;
 
