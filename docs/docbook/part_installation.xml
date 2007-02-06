@@ -1,517 +1,486 @@
 <chapter>
-  <title>Installation and upgrading</title>
+  <title>Installation instructions</title>
 
   <section>
-    <title>Installation</title>
+    <title>Requirements</title>
+    <para>
+      Requirement for running Phorum are:
+      <itemizedlist>
+        <listitem>A webserver (like Apache or Microsoft IIS);</listitem>
+        <listitem>PHP, version 4.3.0 or above;</listitem>
+        <listitem>A MySQL server, version 4 or above.</listitem>
+      </itemizedlist>
+      If you do not run your own website, but have hosted your website
+      with a hosting provider, then please ask your hosting provider if
+      your account meets these requirements.
+    </para>
+  </section>
+
+  <section>
+    <title>Quickstart guide</title>
+    <para>
+      This is the quickstart guide for installing Phorum, aimed at people
+      that are used to working with websites, PHP and databases. If you
+      are having problems following this guide, then please read 
+      <xref linkend="installation.detailed"/> instead.
+      <itemizedlist>
+        <listitem>Unpack Phorum into a directory below your website's document root;</listitem>
+        <listitem>Create a database and a full-access database user for that database;</listitem>
+        <listitem>Edit <filename>include/db/config.php.sample</filename>, save it as <filename>include/db/config.php</filename>;</listitem>
+        <listitem>Open <filename>{phorum url}/admin.php</filename> in your web browser and finish the install.</listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section id="installation.detailed">
+    <title>Detailed installation instructions</title>
 
     <section>
-      <title>Requirements</title>
+      <title>Download Phorum</title>
       <para>
-        Requirement for running Phorum are:
-        <itemizedlist>
-          <listitem>A webserver (like Apache or Microsoft IIS);</listitem>
-          <listitem>PHP, version 4.3.0 or above;</listitem>
-          <listitem>A MySQL server, version 4 or above.</listitem>
-        </itemizedlist>
-        If you do not run your own website, but have hosted your website
-        with a hosting provider, then please ask your hosting provider if
-        your account meets these requirements.
+        If you haven't already done so, download the latest stable 
+        Phorum distribution from &www.phorum.org;.
       </para>
     </section>
 
     <section>
-      <title>Quickstart guide</title>
+      <title>Unpack the downloaded archive</title>
       <para>
-        This is the quickstart guide for installing Phorum, aimed at people
-        that are used to working with websites, PHP and databases. If you
-        are having problems following this guide, then please read 
-        <xref linkend="installation.detailed"/> instead.
-        <itemizedlist>
-          <listitem>Unpack Phorum into a directory below your website's document root;</listitem>
-          <listitem>Create a database and a full-access database user for that database;</listitem>
-          <listitem>Edit <filename>include/db/config.php.sample</filename>, save it as <filename>include/db/config.php</filename>;</listitem>
-          <listitem>Open <filename>{phorum url}/admin.php</filename> in your web browser and finish the install.</listitem>
-        </itemizedlist>
+        <emphasis role="bold">From Windows:</emphasis>
       </para>
-    </section>
-
-    <section id="installation.detailed">
-      <title>Detailed installation instructions</title>
-
-      <section>
-        <title>Download Phorum</title>
-        <para>
-          If you haven't already done so, download the latest stable 
-          Phorum distribution from &www.phorum.org;.
-        </para>
-      </section>
-
-      <section>
-        <title>Unpack the downloaded archive</title>
-        <para>
-          <emphasis role="bold">From Windows:</emphasis>
-        </para>
-        <para>
-          If you have downloaded the .zip file, you can extract the
-          files from that archive directly using Windows XP's zipfile support.
-          If you downloaded the .tar.gz file or if you are using a Windows 
-          version that does not have built-in zipfile support, then you will
-          have to download an appropriate tool for unpacking, e.g. WinZip
-          (<ulink url="http://www.winzip.com/">http://www.winzip.com/</ulink>).
-        </para>
-        <para>
-          <emphasis role="bold">From UNIX:</emphasis>
-        </para>
-        <para>
-          If you have access to a UNIX shell, you can unpack the .tar.gz
-          archive using the following command:
-          <screen>
+      <para>
+        If you have downloaded the .zip file, you can extract the
+        files from that archive directly using Windows XP's zipfile support.
+        If you downloaded the .tar.gz file or if you are using a Windows 
+        version that does not have built-in zipfile support, then you will
+        have to download an appropriate tool for unpacking, e.g. WinZip
+        (<ulink url="http://www.winzip.com/">http://www.winzip.com/</ulink>).
+      </para>
+      <para>
+        <emphasis role="bold">From UNIX:</emphasis>
+      </para>
+      <para>
+        If you have access to a UNIX shell, you can unpack the .tar.gz
+        archive using the following command:
+        <screen>
 shell&gt; <literal>tar xvzf phorum-x.y.z.tar.gz</literal></screen>
-          Or if the tar program on your system does not supprt the "z" flag:
-          <screen>
+        Or if the tar program on your system does not supprt the "z" flag:
+        <screen>
 shell&gt; <literal>gunzip phorum-x-y-z.tar.gz</literal>
 shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
-        </para>
-      </section>
-
-      <section>
-        <title>Place the Phorum files in your website's document root</title>
-        <para>
-          <remark>TODO: this section should be in a document conventions
-          section</remark>
-          The document root for a website is the directory in which your
-          site's web pages are stored. If your website's URL is 
-          <filename>http://www.example.com</filename> and you place the Phorum
-          files in a directory called <filename>forum</filename> inside
-          your document root, your Phorum installation will be available
-          at the URL <filename>http://www.example.com/forum</filename>.
-          From now on, we will name this URL simply
-          <filename>{phorum url}</filename>. So if you
-          see <filename>{phorum url}/admin.php</filename>, using the example
-          we actually mean
-          <filename>http://www.example.com/forum/admin.php</filename>.
-        </para>
-        <para>
-          If the webserver is running on the same system as where you have
-          unpacked the downloaded archive, you can move the unpacked files
-          to your website's document root.
-        </para>
-        <para>
-          If the webserver is running on another system, you will have to
-          upload the files to your website's document root. In most cases, 
-          you will use FTP for this, but some hosting providers require
-          SCP (secure copy, which is more secure than FTP). 
-          If you do not know how or where to upload the Phorum files,
-          please contact your hosting provider.
-        </para>
-        <para>
-          <note>
-            <emphasis>
-              (simply ignore this if it does not make sense to you)
-            </emphasis><sbr/>
-            There are software packages that require you to make files
-            writable for the webserver (using the infamous "chmod 777").
-            <emphasis>
-              DO NOT DO THIS FOR ANY OF THE PHORUM FILES.
-            </emphasis>
-            The webserver only needs read access on the distribution files,
-            because all dynamic data is stored in the database. If you run
-            into problems running Phorum, it will never be because you
-            "forgot to do chmod 777" on any the Phorum files.
-          </note>
-        </para>
-      </section>
-
-      <section id="installation.createdb">
-        <title>Create a database and a database user</title>
-        <para>
-          Phorum stores all its data in a database. So if you do not already
-          have a database which you will be using for Phorum, you now need to
-          create one. Officially, only the 
-          <ulink url="http://www.mysql.com/">MySQL</ulink>
-          database server is supported
-          by Phorum, so we recommend to use MySQL whenever possible.
-        </para>
-        <para>
-          If you have hosted your site with a hosting provider, then ask
-          your hosting provider to setup the database and a full access
-          database user for you.
-        </para>
-        <para>
-          If you run your own database server, then you will have to
-          create the database and the user yourself. If you are using
-          a control panel, like phpmyadmin, then use that control panel
-          to create them. You can use the mysql SQL prompt to create 
-          the database by issuing the appropriate commands. For example:
-          <screen>
-mysql&gt; <literal>CREATE DATABASE phorum;</literal>
-mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypassword';</literal></screen>
-          Of course, for security reasons you would not use "myuser" and
-          "mypassword" but a username and password that you made up
-          yourself.
-        </para>
-        <para>
-          If you are unsure on how to create a database and a database user,
-          then please refer to your system's documentation.
-        </para>
-      </section>
-
-      <section>
-        <title>Configure the database access for Phorum</title>
-        <para>
-          After setting up the database, you will have to tell Phorum how
-          to access that database. The configuration for this is put in 
-          the file <filename>include/db/config.php</filename> inside your
-          Phorum directory. This file is not included in the distribution.
-          Only a differently named sample file is included (this is to
-          prevent overwriting your configuration when upgrading Phorum).
-          Copy or rename the sample configuration file 
-          <filename>include/db/config.php.sample</filename> to
-          <filename>include/db/config.php</filename>. Then edit the
-          <filename>config.php</filename> file to match the access
-          settings for the database that was created in
-          <xref linkend="installation.createdb"/>.
-        </para>
-        <para>
-          If you run your website on a remote server, then either edit
-          the configuration file directly on that server (e.g. through a
-          UNIX prompt or an FTP client that supports this) or upload the
-          file to the correct location after editing it locally.
-        </para>
-        <para>
-          In the configuration file, you will find the following settings:
-          <variablelist>
-            <varlistentry>
-              <term>type</term>
-              <listitem>
-                <para>
-                  This setting determines what database backend is used
-                  by Phorum. Backends that are distributed with Phorum are
-                  <literal>mysql</literal> and <literal>mysqli</literal>.
-                  Which one to use depends on the PHP installation. If PHP
-                  has mysqli support, then you can use
-                  <literal>mysqli</literal>. If you do not know whether this
-                  is the case, then use the default value
-                  <literal>mysql</literal> here.
-                </para>
-                <para>
-                  If you use a third party database backend (e.g. PostgreSQL),
-                  then you can configure it here. The backend PHP script must
-                  be installed at the location
-                  <filename>{phorum dir}/include/db/mybackend.php</filename>.
-                  With this example, the setting of the type has to be
-                  <literal>mybackend</literal>.
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>server</term>
-              <listitem>
-                <para>
-                  This is the hostname or IP-address of your database server. 
-                  On a lot of systems, the database server will run on the
-                  same system as the web server. In those cases, the default
-                  value <literal>localhost</literal> will often be correct.
-                  Change this value if the database server is running on
-                  a different system than the web server.
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>name</term>
-              <listitem>
-                <para>
-                  MySQL (and a lot of other database servers) can handle
-                  multiple databases in one database server. Each database
-                  is referenced by its own unique name. This setting is 
-                  used for configuring the name of the database that Phorum
-                  has to use.
-                </para>
-                <para>
-                  If you have created the database using the example command
-                  from above (<literal>CREATE DATABASE phorum</literal>), 
-                  then you can use the default value <literal>phorum</literal>.
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>user</term>
-              <listitem>
-                <para>
-                  The username of the user which is used for accessing the
-                  database server. The user must have full access rights to
-                  the database, for creating and maintaining the needed
-                  tables.
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>password</term>
-              <listitem>
-                <para>
-                  The password for the database user.
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>table_prefix</term>
-              <listitem>
-                <para>
-                  This table prefix will be prepended to all table names
-                  that Phorum uses. If other applications are using the
-                  same database or if you have multiple Phorum installations
-                  that use the same database name, this prefix can be used to
-                  prevent table name collisions. E.g. if you set the 
-                  prefix to <literal>myprefix_</literal>, then the full name
-                  of the users table will be <literal>myprefix_users</literal>.
-                  For most installations, you can keep the default value
-                  <literal>phorum_</literal>.
-                </para>
-                <para>
-                  <important>
-                    Never change the table prefix on a running system!
-                  </important>
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>mysql_use_ft</term>
-              <listitem>
-                <para>
-                  This setting determines whether Phorum will use MySQL's
-                  full text algorithm for searching through postings.
-                  If enabled, searching will be much faster.
-                </para>
-                <para>
-                  To be able to use this feature, the MySQL server that
-                  you are using must be version 4.0.18 or later and the
-                  database user must be allowed to create temporary tables.
-                  If these requirements are not met, then you will have to
-                  disable this setting by assigning the value
-                  <literal>0</literal>.
-                </para>
-              </listitem>
-            </varlistentry>
-            <varlistentry>
-              <term>down_page</term>
-              <listitem>
-                <para>
-                  Phorum uses a built-in error message to inform visitors
-                  when no database connection can be made. If you want to
-                  provide a custom error message page for this, you can
-                  set this setting to the URL of the page that you want
-                  to display.
-                </para>
-              </listitem>
-            </varlistentry>
-          </variablelist>
-        </para>
-      </section>
-
-      <section>
-        <title>Run the web based installer</title>
-        <para>
-          Now that you have uploaded the files, created the database and 
-          configured the database access for Phorum, you are ready to
-          run the web based installation script. Open
-          <filename>{phorum url}/admin.php</filename> using your
-          web browser. This is the administration interface, which will
-          automatically detect that a fresh install has to be 
-          performed.
-        </para>
-        <para>
-          Follow the instructions on screen to finish the Phorum 
-          installation.
-        </para>
-      </section>
-
-      <section>
-        <title>Things to do after installing Phorum</title>
-        <para>
-          <remark>TODO Once the FAQ is documented, this needs a pointer</remark>
-          Now the installation is complete, you could continue with
-          the following actions to get started:
-          <itemizedlist>
-            <listitem>
-              test if the forum is working
-              correctly by opening <filename>{forum url}</filename> in your
-              web browser. If you run into problems, please go to
-              <filename>{forum url}/admin.php</filename> and click on the
-              option "System Sanity Checks" in the menu. This will
-              perform a couple of system checks to rule out some basic
-              problems. If problems are found, please follow the instructions
-              on the sanity checks page to solve them.
-              <sbr/><sbr/>
-            </listitem>
-            <listitem>
-              Login into the admin interface at
-              <filename>{forum url}/admin.php</filename>
-              and check out what settings can be done to customize Phorum
-              to your likings. This is also the place where you can
-              create new forums.
-              <sbr/><sbr/>
-            </listitem>
-            <listitem>
-              Customize the looks of Phorum to your needs by creating a 
-              custom template. Instructions for this can be found in
-              <xref linkend="templates"/>.
-              <sbr/><sbr/>
-            </listitem>
-            <listitem>
-              Read the <xref linkend="install.additionalissues"/> for your
-              system, the FAQ and any other parts of the documentation that
-              may help you understand Phorum.
-            </listitem>
-          </itemizedlist>
-        </para>
-      </section>
+      </para>
     </section>
 
-    <section id="install.additionalissues" xreflabel="additional issues">
-      <title>Additional issues</title>
+    <section>
+      <title>Place the Phorum files in your website's document root</title>
+      <para>
+        <remark>TODO: this section should be in a document conventions
+        section</remark>
+        The document root for a website is the directory in which your
+        site's web pages are stored. If your website's URL is 
+        <filename>http://www.example.com</filename> and you place the Phorum
+        files in a directory called <filename>forum</filename> inside
+        your document root, your Phorum installation will be available
+        at the URL <filename>http://www.example.com/forum</filename>.
+        From now on, we will name this URL simply
+        <filename>{phorum url}</filename>. So if you
+        see <filename>{phorum url}/admin.php</filename>, using the example
+        we actually mean
+        <filename>http://www.example.com/forum/admin.php</filename>.
+      </para>
+      <para>
+        If the webserver is running on the same system as where you have
+        unpacked the downloaded archive, you can move the unpacked files
+        to your website's document root.
+      </para>
+      <para>
+        If the webserver is running on another system, you will have to
+        upload the files to your website's document root. In most cases, 
+        you will use FTP for this, but some hosting providers require
+        SCP (secure copy, which is more secure than FTP). 
+        If you do not know how or where to upload the Phorum files,
+        please contact your hosting provider.
+      </para>
+      <para>
+        <note>
+          <emphasis>
+            (simply ignore this if it does not make sense to you)
+          </emphasis><sbr/>
+          There are software packages that require you to make files
+          writable for the webserver (using the infamous "chmod 777").
+          <emphasis>
+            DO NOT DO THIS FOR ANY OF THE PHORUM FILES.
+          </emphasis>
+          The webserver only needs read access on the distribution files,
+          because all dynamic data is stored in the database. If you run
+          into problems running Phorum, it will never be because you
+          "forgot to do chmod 777" on any of the Phorum files.<sbr/>
+          <sbr/>
+          The only directory that might have to be made writable for the
+          webserver is <filename>./cache</filename> 
+          (see <xref linkend="install.additionalissues"/>).
+          But this directory is not used in a default installation.
+        </note>
+      </para>
+    </section>
+
+    <section id="installation.createdb">
+      <title>Create a database and a database user</title>
+      <para>
+        Phorum stores all its data in a database. So if you do not already
+        have a database which you will be using for Phorum, you now need to
+        create one. Officially, only the 
+        <ulink url="http://www.mysql.com/">MySQL</ulink>
+        database server is supported
+        by Phorum, so we recommend to use MySQL whenever possible.
+      </para>
+      <para>
+        If you have hosted your site with a hosting provider, then ask
+        your hosting provider to setup the database and a full access
+        database user for you.
+      </para>
+      <para>
+        If you run your own database server, then you will have to
+        create the database and the user yourself. If you are using
+        a control panel, like phpmyadmin, then use that control panel
+        to create them. You can use the mysql SQL prompt to create 
+        the database by issuing the appropriate commands. For example:
+        <screen>
+mysql&gt; <literal>CREATE DATABASE phorum;</literal>
+mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypassword';</literal></screen>
+        Of course, for security reasons you would not use "myuser" and
+        "mypassword" but a username and password that you made up
+        yourself.
+      </para>
+      <para>
+        If you are unsure on how to create a database and a database user,
+        then please refer to your system's documentation.
+      </para>
+    </section>
+
+    <section>
+      <title>Configure the database access for Phorum</title>
+      <para>
+        After setting up the database, you will have to tell Phorum how
+        to access that database. The configuration for this is put in 
+        the file <filename>include/db/config.php</filename> inside your
+        Phorum directory. This file is not included in the distribution.
+        Only a differently named sample file is included (this is to
+        prevent overwriting your configuration when upgrading Phorum).
+        Copy or rename the sample configuration file 
+        <filename>include/db/config.php.sample</filename> to
+        <filename>include/db/config.php</filename>. Then edit the
+        <filename>config.php</filename> file to match the access
+        settings for the database that was created in
+        <xref linkend="installation.createdb"/>.
+      </para>
+      <para>
+        If you run your website on a remote server, then either edit
+        the configuration file directly on that server (e.g. through a
+        UNIX prompt or an FTP client that supports this) or upload the
+        file to the correct location after editing it locally.
+      </para>
+      <para>
+        In the configuration file, you will find the following settings:
+        <variablelist>
+          <varlistentry>
+            <term>type</term>
+            <listitem>
+              <para>
+                This setting determines what database backend is used
+                by Phorum. Backends that are distributed with Phorum are
+                <literal>mysql</literal> and <literal>mysqli</literal>.
+                Which one to use depends on the PHP installation. If PHP
+                has mysqli support, then you can use
+                <literal>mysqli</literal>. If you do not know whether this
+                is the case, then use the default value
+                <literal>mysql</literal> here.
+              </para>
+              <para>
+                If you use a third party database backend (e.g. PostgreSQL),
+                then you can configure it here. The backend PHP script must
+                be installed at the location
+                <filename>{phorum dir}/include/db/mybackend.php</filename>.
+                With this example, the setting of the type has to be
+                <literal>mybackend</literal>.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>server</term>
+            <listitem>
+              <para>
+                This is the hostname or IP-address of your database server. 
+                On a lot of systems, the database server will run on the
+                same system as the web server. In those cases, the default
+                value <literal>localhost</literal> will often be correct.
+                Change this value if the database server is running on
+                a different system than the web server.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>name</term>
+            <listitem>
+              <para>
+                MySQL (and a lot of other database servers) can handle
+                multiple databases in one database server. Each database
+                is referenced by its own unique name. This setting is 
+                used for configuring the name of the database that Phorum
+                has to use.
+              </para>
+              <para>
+                If you have created the database using the example command
+                from above (<literal>CREATE DATABASE phorum</literal>), 
+                then you can use the default value <literal>phorum</literal>.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>user</term>
+            <listitem>
+              <para>
+                The username of the user which is used for accessing the
+                database server. The user must have full access rights to
+                the database, for creating and maintaining the needed
+                tables.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>password</term>
+            <listitem>
+              <para>
+                The password for the database user.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>table_prefix</term>
+            <listitem>
+              <para>
+                This table prefix will be prepended to all table names
+                that Phorum uses. If other applications are using the
+                same database or if you have multiple Phorum installations
+                that use the same database name, this prefix can be used to
+                prevent table name collisions. E.g. if you set the 
+                prefix to <literal>myprefix_</literal>, then the full name
+                of the users table will be <literal>myprefix_users</literal>.
+                For most installations, you can keep the default value
+                <literal>phorum_</literal>.
+              </para>
+              <para>
+                <important>
+                  Never change the table prefix on a running system!
+                </important>
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>mysql_use_ft</term>
+            <listitem>
+              <para>
+                This setting determines whether Phorum will use MySQL's
+                full text algorithm for searching through postings.
+                If enabled, searching will be much faster.
+              </para>
+              <para>
+                To be able to use this feature, the MySQL server that
+                you are using must be version 4.0.18 or later and the
+                database user must be allowed to create temporary tables.
+                If these requirements are not met, then you will have to
+                disable this setting by assigning the value
+                <literal>0</literal>.
+              </para>
+            </listitem>
+          </varlistentry>
+          <varlistentry>
+            <term>down_page</term>
+            <listitem>
+              <para>
+                Phorum uses a built-in error message to inform visitors
+                when no database connection can be made. If you want to
+                provide a custom error message page for this, you can
+                set this setting to the URL of the page that you want
+                to display.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </para>
+    </section>
+
+    <section>
+      <title>Run the web based installer</title>
+      <para>
+        Now that you have uploaded the files, created the database and 
+        configured the database access for Phorum, you are ready to
+        run the web based installation script. Open
+        <filename>{phorum url}/admin.php</filename> using your
+        web browser. This is the administration interface, which will
+        automatically detect that a fresh install has to be 
+        performed.
+      </para>
+      <para>
+        Follow the instructions on screen to finish the Phorum 
+        installation.
+      </para>
+    </section>
+
+    <section>
+      <title>Things to do after installing Phorum</title>
+      <para>
+        <remark>TODO Once the FAQ is documented, this needs a pointer</remark>
+        Now the installation is complete, you could continue with
+        the following actions to get started:
+        <itemizedlist>
+          <listitem>
+            test if the forum is working
+            correctly by opening <filename>{forum url}</filename> in your
+            web browser. If you run into problems, please go to
+            <filename>{forum url}/admin.php</filename> and click on the
+            option "System Sanity Checks" in the menu. This will
+            perform a couple of system checks to rule out some basic
+            problems. If problems are found, please follow the instructions
+            on the sanity checks page to solve them.
+            <sbr/><sbr/>
+          </listitem>
+          <listitem>
+            Login into the admin interface at
+            <filename>{forum url}/admin.php</filename>
+            and check out what settings can be done to customize Phorum
+            to your likings. This is also the place where you can
+            create new forums.
+            <sbr/><sbr/>
+          </listitem>
+          <listitem>
+            Customize the looks of Phorum to your needs by creating a 
+            custom template. Instructions for this can be found in
+            <xref linkend="templates"/>.
+            <sbr/><sbr/>
+          </listitem>
+          <listitem>
+            Read the <xref linkend="install.additionalissues"/> for your
+            system, the FAQ and any other parts of the documentation that
+            may help you understand Phorum.
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+  </section>
+
+  <section id="install.additionalissues" xreflabel="additional issues">
+    <title>Additional issues</title>
+    <section>
+      <title>Additional issues for UNIX (Linux, BSD, Solaris, etc.)</title>
       <section>
-        <title>Additional issues for UNIX (Linux, BSD, Solaris, etc.)</title>
-        <section>
-          <title>Cache directory</title>
-          <para>
-            In the Phorum settings, there is an entry called "Cache Directory".
-            On UNIX systems, the installer will have set that to the default
-            location <filename>/tmp</filename>. 
-            The cache directory is used
-            for storing cached data and compiled templates. You can change
-            the location of your cache directory if you do not want the
-            Phorum files to be in <filename>/tmp</filename> or if you see
-            the following kind of error message:
-            <screen>
+        <title>Cache directory</title>
+        <para>
+          In the Phorum settings, there is an entry called "Cache Directory".
+          On UNIX systems, the installer will have set that to the default
+          location <filename>/tmp</filename>. 
+          The cache directory is used
+          for storing cached data and compiled templates. You can change
+          the location of your cache directory if you do not want the
+          Phorum files to be in <filename>/tmp</filename> or if you see
+          the following kind of error message:
+          <screen>
 Warning:
 fopen(/tmp/tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
 failed to open stream: permission denied in 
 /path/to/phorum/include/templates.php on line 184</screen>
-            If you want to change the cache directory settings, we advise
-            you to change it to <filename>./cache</filename> (this directory
-            is already in the Phorum directory).
-          </para>
-          <para>
-            You will have to make sure
-            that this directory is writable by the webserver. Most likely
-            this means that you have to make it world writable. On a 
-            UNIX shell prompt, you can do this using the following
-            commands:
-            <screen>
+          If you want to change the cache directory settings, we advise
+          you to change it to <filename>./cache</filename> (this directory
+          is already in the Phorum directory).
+        </para>
+        <para>
+          You will have to make sure
+          that this directory is writable by the webserver. Most likely
+          this means that you have to make it world writable. On a 
+          UNIX shell prompt, you can do this using the following
+          commands:
+          <screen>
 shell&gt; <literal>cd /path/to/phorum</literal>
 shell&gt; <literal>chmod 777 cache</literal></screen>
-            If you do not have access to the shell prompt of the server and
-            are using FTP to access the server, please check your FTP
-            client's help on how to set the permissions for a directory.
-          </para>
-        </section>
+          If you do not have access to the shell prompt of the server and
+          are using FTP to access the server, please check your FTP
+          client's help on how to set the permissions for a directory.
+        </para>
       </section>
+    </section>
 
+    <section>
+      <title>Additional issues for Windows</title>
       <section>
-        <title>Additional issues for Windows</title>
-        <section>
-          <title>Cache directory</title>
-          <para>
-            In the Phorum settings, there is an entry called "Cache Directory".
-            On Windows systems, the installer will have set that to the default
-            location <filename>C:\Windows\Temp</filename>. The cache directory
-            is used for storing cached data and compiled templates. You can
-            change the location of your cache directory if you do not want the
-            Phorum files to be in <filename>C:\Windows\Temp</filename>
-            or if you see the following kind of error message:
-            <screen>
+        <title>Cache directory</title>
+        <para>
+          In the Phorum settings, there is an entry called "Cache Directory".
+          On Windows systems, the installer will have set that to the default
+          location <filename>C:\Windows\Temp</filename>. The cache directory
+          is used for storing cached data and compiled templates. You can
+          change the location of your cache directory if you do not want the
+          Phorum files to be in <filename>C:\Windows\Temp</filename>
+          or if you see the following kind of error message:
+          <screen>
 Warning:
 fopen(c:\windows\temp\tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
 failed to open stream: permission denied in
 c:\path\to\phorum\include\templates.php on line 184</screen>
-            In that case, you will have to change the cache directory
-            setting to point to a valid location. We advise you to change
-            it to <filename>./cache</filename> (this directory is already
-            in the Phorum directory). Make sure that the webserver can
-            write files to this directory.
-          </para>
-        </section>
-        <section>
-          <title>Problems sending mail to end-users</title>
-          <para>
-            PHP has to be configured correctly on Windows systems to be able to
-            send out mail. If this is not done, you might get errors and mail
-            will not arrive. What you need to do is edit the file "php.ini"
-            (this file holds the configuration for PHP). Find the section that
-            is called "[mail function]". In this section, set the parameter
-            "SMTP" to the hostname or IP-address of the your SMTP server. If
-            you do not know your SMTP server, please ask your internet access
-            provider. After this, PHP will know what mailserver to use for
-            sending out mail messages.
-          </para>
-          <para>
-            If you have no access to the php.ini file and the system
-            administrator is not willing to update it for you, you will have to
-            install the SMTP module for Phorum. You can download this module
-            from the Phorum module page: &listofmodules;
-            In the settings for this module, you can specify the SMTP to use
-            for sending mail. When using this module, you will completely
-            bypass PHP's built-in mail system.
-          </para>
-        </section>
-        <section>
-          <title>Date formatting</title>
-          <para>
-            Windows does not fully support the date formatting function
-            strftime(). So if you want to change the date formatting
-            (which is configured using <literal>$PHORUM['long_date']</literal>
-            and <literal>$PHORUM['short_date']</literal> in the
-            language file
-            <filename>{phorum dir}/include/lang/yourlanguage.php</filename>),
-            please read the PHP documentation for strftime() and its 
-            limitations on the Windows platform at 
-            <ulink url="http://www.php.net/strftime"/>
-          </para>
-        </section>
+          In that case, you will have to change the cache directory
+          setting to point to a valid location. We advise you to change
+          it to <filename>./cache</filename> (this directory is already
+          in the Phorum directory). Make sure that the webserver can
+          write files to this directory.
+        </para>
       </section>
-    </section>
-
-  </section>
-
-  <section>
-    <title>Upgrading</title>
-    <para>
-      This section describes the Phorum upgrading process. Please keep in
-      mind, that these instructions are neither complete, nor final. If you
-      find problems in upgrading which are not described here or if you have
-      useful additions, please let us know.
-    </para>
-
-    <section>
-      <title>Upgrading from a Phorum5 version to another Phorum5 version</title>
       <section>
-        <title>Upgrading the database</title>
+        <title>Problems sending mail to end-users</title>
+        <para>
+          PHP has to be configured correctly on Windows systems to be able to
+          send out mail. If this is not done, you might get errors and mail
+          will not arrive. What you need to do is edit the file "php.ini"
+          (this file holds the configuration for PHP). Find the section that
+          is called "[mail function]". In this section, set the parameter
+          "SMTP" to the hostname or IP-address of the your SMTP server. If
+          you do not know your SMTP server, please ask your internet access
+          provider. After this, PHP will know what mailserver to use for
+          sending out mail messages.
+        </para>
+        <para>
+          If you have no access to the php.ini file and the system
+          administrator is not willing to update it for you, you will have to
+          install the SMTP module for Phorum. You can download this module
+          from the Phorum module page: &listofmodules;
+          In the settings for this module, you can specify the SMTP to use
+          for sending mail. When using this module, you will completely
+          bypass PHP's built-in mail system.
+        </para>
+      </section>
       <section>
-        <section>
-          <title>Preparations</title>
-        </section>
-        <section>
-          <title>From a web browser</title>
-        </section>
-        <section>
-          <title>From a system console</title>
-        </section>
-      </section>
-        <title>Upgrading templates and hacks</title>
+        <title>Date formatting</title>
+        <para>
+          Windows does not fully support the date formatting function
+          strftime(). So if you want to change the date formatting
+          (which is configured using <literal>$PHORUM['long_date']</literal>
+          and <literal>$PHORUM['short_date']</literal> in the
+          language file
+          <filename>{phorum dir}/include/lang/yourlanguage.php</filename>),
+          please read the PHP documentation for strftime() and its 
+          limitations on the Windows platform at 
+          <ulink url="http://www.php.net/strftime"/>
+        </para>
       </section>
     </section>
-    <section>
-      <title>Upgrading from Phorum 3.4.x to Phorum5</title>
-    </section>
+
   </section>
 
   <section>
     <title>Support</title>
     <para>
       <remark>TODO: Link to FAQ</remark>
-      If you have questions about installing or upgrading Phorum which
+      If you have questions about installing Phorum which
       are not answered by this manual, then please visit the website
-      &phorum.org; and ask the development team for help in the support
+      &www.phorum.org; and ask the development team for help in the support
       forum.
     </para>
   </section>

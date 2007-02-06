@@ -112,7 +112,7 @@ Contents:
    There are software packages that require you to make files writable
    for the webserver (using the infamous "chmod 777"). DO NOT DO THIS
    FOR ANY OF THE PHORUM FILES. The webserver only needs read access on
-   the disctribution files, because all dynamic data is stored in the
+   the distribution files, because all dynamic data is stored in the
    database. If you run into problems running Phorum, it will never be
    because you "forgot" to do "chmod 777" on any the Phorum files.
 
@@ -173,6 +173,26 @@ Contents:
 
    Follow the instructions on screen to finish the Phorum installation.
 
+   In case you do not see the installer, but a blank screen instead,
+   something is wrong. Please check the following:
+
+   - Does the PHP installation include support your database server? If
+     the PHP installation is lacking support, it will not be able to
+     connect to the database. If you are running your website with a
+     hosting provider, then ask your provider;
+
+   - Is there a typo in include/db/config.php? A typo might crash PHP.
+     If you have access to your server's error logging, then please check
+     for errors in there. You could ask your provider to look at the error
+     log, in case you have no direct access to it;
+
+   - Did all files get uploaded and was filename case properly preserved
+     by your FTP client? There are some FTP clients which upload all files
+     using lower case only. Check whether the files
+     include/admin/PhorumAdminMenu.php and include/admin/PhorumInputForm.php
+     are uploaded, using exactly these names and not something like
+     include/admin/phorumadminmenu.php for example.
+
 
  3.7 Things to do after installing Phorum
  ----------------------------------------
@@ -222,7 +242,7 @@ Contents:
    writable by the web server. Most likely this means making it world
    writeable (chmod 777). If you do not have access to the shell prompt
    of the server and are using only FTP to access the server, please see
-   your FTP clients help on setting the permissions for a directory.
+   your FTP client's help on setting the permissions for a directory.
 
 
  4.2 Additional issues for Windows
@@ -254,7 +274,7 @@ Contents:
    PHP has to be configured correctly on Windows systems to be able to
    send out mail. If this is not done, you might get errors and mail
    will not arrive. What you need to do is edit the file "php.ini" (this
-   file holds the configuration for PHP). Find the sections that is called
+   file holds the configuration for PHP). Find the section that is called
    "[mail function]". In this section, set the parameter "SMTP" to the
    hostname or IP-address of the your SMTP server. If you do not know your
    SMTP server, please ask your internet access provider. After this,

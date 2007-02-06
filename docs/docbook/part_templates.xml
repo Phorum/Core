@@ -92,7 +92,7 @@
 if (!defined("PHORUM")) return; 
 
 // Template information.
-$name = "A briljant template";
+$name = "A brilliant template";
 $version = "1.2-beta";
 $template_hide = 1;
 ?> ]]></programlisting></example>

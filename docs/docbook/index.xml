@@ -4,6 +4,7 @@
     <!ENTITY bookinfo SYSTEM "bookinfo.xml">
     <!ENTITY part_preface SYSTEM "part_preface.xml">
     <!ENTITY part_installation SYSTEM "part_installation.xml">
+    <!ENTITY part_upgrade SYSTEM "part_upgrade.xml">
     <!ENTITY part_templates SYSTEM "part_templates.xml">
 
     <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
@@ -14,5 +15,6 @@
   &bookinfo;
   &part_preface;
   &part_installation;
+  &part_upgrade;
   &part_templates;
 </book>

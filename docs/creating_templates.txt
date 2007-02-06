@@ -229,7 +229,7 @@ Table of contents:
       <?php define("MY_CONSTANT", "The constant value") ?>
 
    You can reference a PHP constant from the template language by using
-   it's name, without any quotes. So the constant that was defined in the
+   its name, without any quotes. So the constant that was defined in the
    code above, can be used like this:
 
       The value of MY_CONSTANT is {MY_CONSTANT}
@@ -250,12 +250,12 @@ Table of contents:
 
    About the most important data type for the template language is the
    template variable. Template variables are used by Phorum to store
-   dynamic data in, which can be used by your templates. These variables
+   dynamic data, which can be used by your templates. These variables
    can contain both simple values and complex arrays of data. 
 
    You can reference a template variable by using the variable's name,
    without any quotes. Note that this is the same notation that is used
-   for referencing PHP constants (see 2.4.3). If there's both a constant
+   for referencing PHP constants (see 2.4.3). If there are both a constant
    and a variable with the same name, the value of the contstant will
    take precedence over the template variable.
 
@@ -338,7 +338,7 @@ Table of contents:
    Syntax:
       {DEFINE <PHORUM VARIABLE> <VALUE>}
 
-      What you can use for <PHORUM VARIABLE>, is fully determined by the
+      What you can use for <PHORUM VARIABLE> is fully determined by the
       Phorum software (and possibly modules). The <VALUE> can be any of
       the data types that are supported by the template language (see 2.4).
 
@@ -373,8 +373,8 @@ Table of contents:
   --------------------------
 
    Function:
-      Using this function you can control if certain blocks of code in your
-      template are processed or not, based on a given condition. This can for
+      Using these statements, you can control if certain blocks of code in
+      your template are processed or not, based on a given condition. This can for
       example be useful if you want certain parts of the page to be only
       visible for registered users. 
 
@@ -445,9 +445,7 @@ Table of contents:
    has the same name as the <ARRAY VARIABLE> that you are looping over. In
    our example, we are looping over USERS, which is an array of user data
    records. Within the loop, USERS is no long the array of users itself, but
-   the user data record for a single user instead. Because the user data is an
-   array on its own, USERS->username is used to retrieve the username from
-   the active user.
+   the user data record for a single user instead.
 
  
   2.5.7 INCLUDE
