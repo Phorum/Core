@@ -299,9 +299,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 $PHORUM["threaded_list"] = false;
             }
             if ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_ON ) {
-                $PHORUM["threaded_read"] = true;
+                $PHORUM["threaded_read"] = 1;
             } elseif ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_OFF ) {
-                $PHORUM["threaded_read"] = false;
+                $PHORUM["threaded_read"] = 0;
+            } elseif ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_HYBRID ) {
+                $PHORUM["threaded_read"] = 2;
             }
         }
     }

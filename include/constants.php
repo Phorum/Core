@@ -88,6 +88,7 @@
     define("PHORUM_THREADED_DEFAULT", 0);
     define("PHORUM_THREADED_ON", 1);
     define("PHORUM_THREADED_OFF", 2);
+    define("PHORUM_THREADED_HYBRID", 3);
 
     // subscription types
     define("PHORUM_SUBSCRIPTION_MESSAGE", 0);

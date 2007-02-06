@@ -82,8 +82,8 @@
                 <dd>
                     <select name="threaded_list">
                         <option value="0">{LANG->Default}</option>
-                        <option value="1" {IF PROFILE->threaded_list}selected{/IF}>{LANG->ViewThreaded}</option>
-                        <option value="2" {IF PROFILE->threaded_list 2}selected{/IF}>{LANG->ViewFlat}</option>
+                        <option value="1" {IF PROFILE->threaded_list}selected{/IF}>{LANG->ViewThreadedList}</option>
+                        <option value="2" {IF PROFILE->threaded_list 2}selected{/IF}>{LANG->ViewFlatList}</option>
                     </select>
                 </dd>
 
@@ -91,8 +91,9 @@
                 <dd>
                     <select name="threaded_read">
                         <option value="0">{LANG->Default}</option>
-                        <option value="1" {IF PROFILE->threaded_read}selected{/IF}>{LANG->ViewThreaded}</option>
-                        <option value="2" {IF PROFILE->threaded_read 2}selected{/IF}>{LANG->ViewFlat}</option>
+                        <option value="1" {IF PROFILE->threaded_read}selected{/IF}>{LANG->ViewThreadedRead}</option>
+                        <option value="2" {IF PROFILE->threaded_read 2}selected{/IF}>{LANG->ViewFlatRead}</option>
+                        <option value="3" {IF PROFILE->threaded_read 3}selected{/IF}>{LANG->ViewHybridRead}</option>
                     </select>
                 </dd>
 
