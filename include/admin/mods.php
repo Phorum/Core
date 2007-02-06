@@ -360,7 +360,25 @@ foreach ($modules_info as $name => $info)
         $settings_link="";
     }
 
-    $frm->addrow("$info[title]<div class=\"small\">".wordwrap($info["desc"], 90, "<br />")."</div>", $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $enabled).$settings_link);
+    $text = $info["title"];
+    if(isset($info["version"])){
+        $text.=" (version ".$info["version"].")";
+    }
+    if(isset($info["desc"])){
+        $text.="<div class=\"small\">".wordwrap($info["desc"], 90, "<br />")."</div>";
+    }
+    if(isset($info["author"])){
+        $text.="<div class=\"small\">Created by ".$info["author"]."</div>";
+    }
+    if(isset($info["release_date"])){
+        $text.="<div class=\"small\">Released ".$info["release_date"]."</div>";
+    }
+    if(isset($info["url"])){
+        $text.="<div class=\"small\">For more information, visit <a href=\"".$info["url"]."\">".$info["url"]."</a></div>";
+    }
+
+
+    $frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $enabled).$settings_link);
 
 }
 

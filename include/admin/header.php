@@ -177,6 +177,7 @@ input, textarea, select, td
 
 .small
 {
+    margin-bottom: 3px;
     font-size: 10px;
 }
 
