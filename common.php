@@ -202,7 +202,6 @@ $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : ""
 $PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"] ) ) ? $PHORUM["description"] : "";
 $PHORUM["DATA"]["HTML_TITLE"] = ( !empty( $PHORUM["html_title"] ) ) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
 $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head_tags"] : "";
-$PHORUM["DATA"]["LOCALE"] = ( isset( $PHORUM["locale"] ) ) ? $PHORUM["locale"] : "";
 $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
 ////////////////////////////////////////////////////////////
@@ -363,6 +362,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
+    // load the locale from the language file into the template vars
+    $PHORUM["DATA"]["LOCALE"] = ( isset( $PHORUM["locale"] ) ) ? $PHORUM["locale"] : "";
 
     // just setting this up for upgraded installs where this might not be set up
     if(!isset($PHORUM['cache_newflags'])) {
