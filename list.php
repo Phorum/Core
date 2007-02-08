@@ -303,7 +303,7 @@ if ($PHORUM["threaded_list"]){
                 // we don't normally put HTML in this code, but this makes it easier on template builders
                 $rows[$key]["linked_author"] = "<a href=\"".$email_url."\">".htmlspecialchars($row["author"])."</a>";
             } else {
-                $rows[$key]["linked_author"] = $row["author"];
+                $rows[$key]["linked_author"] = htmlspecialchars($row["author"]);
             }
         }
 
