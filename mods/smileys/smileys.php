@@ -41,7 +41,7 @@ function phorum_mod_smileys_format($data)
 
     // Run smiley replacements.
     $replace = $PHORUM["mod_smileys"]["replacements"];
-	foreach ($data as $key => $message)
+    foreach ($data as $key => $message)
     {
         // Do subject replacements.
         if (isset($replace["subject"]) && isset($message["subject"])) {
@@ -51,9 +51,9 @@ function phorum_mod_smileys_format($data)
         if (isset($replace["body"]) && isset($message["body"])) {
             $data[$key]['body'] = str_replace ($replace["body"][0] , $replace["body"][1], $message['body'] );
         }
-	}
+    }
 
-	return $data;
+    return $data;
 }
 
 ?>

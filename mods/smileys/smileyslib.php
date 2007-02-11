@@ -159,6 +159,9 @@ function phorum_mod_smileys_store($modinfo)
     // was replaced first.
     uasort($modinfo["smileys"],'phorum_mod_smileys_sortbylength');
 
+    $prefix = $GLOBALS["PHORUM"]["http_path"] . "/" . $modinfo["prefix"];
+    $prefix = preg_replace('/\/\.\//', '/', $prefix);
+
     // Create and fill replacement arrays for subject and body.
     $smiley_subject_key = array();
     $smiley_subject_val = array();
@@ -181,7 +184,6 @@ function phorum_mod_smileys_store($modinfo)
         $modinfo["smileys"][$id]["is_alias"] = $is_alias;
 
         // Create HTML image code for the smiley.
-        $prefix = $modinfo["prefix"];
         $src = htmlspecialchars("$prefix{$smiley['smiley']}");
         $alttxt = empty($smiley['alt']) ? $smiley["search"] : $smiley["alt"];
         $alt = htmlspecialchars($alttxt);
