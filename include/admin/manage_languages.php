@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // TODO have a better way to differentiate between Phorum distribution
-// TODO and addon files, so we son't index text strings from addon
+// TODO and addon files, so we won't index text strings from addon
 // TODO files in here.
 
 if(!defined("PHORUM_ADMIN")) return;
