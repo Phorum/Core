@@ -759,7 +759,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
     $forum_id_check = "";
     if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and ";
     }
 
     if(is_array($value)) {
@@ -821,7 +821,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms=0)
 
     $forum_id_check = "";
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
     }
 
     // are we really allowed to show this thread/message?
@@ -883,7 +883,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $PHORUM = $GLOBALS["PHORUM"];
 
     // check for valid values
-    if(empty($message_id) || empty($message_id)) {
+    if(empty($thread) || empty($message_id)) {
         return 0;
     }
 
@@ -896,7 +896,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $conn = phorum_db_mysql_connect();
 
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) AND";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND";
     }
 
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
@@ -938,55 +938,54 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     $conn = phorum_db_mysql_connect();
 
-    // have to check what forums they can read first.
-    $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
-    // if they are not allowed to search any forums, return the emtpy $arr;
+    // Check what forums the current user can read.
+    $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+
+    // If the user is not allowed to search any forum or the current
+    // active forum, then return the emtpy $arr.
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
 
-    // Add vroot (for announcements) to the allowed forums.
-    $allowed_forums[] = $PHORUM["vroot"];
-
-    if($PHORUM['forum_id']!=$PHORUM["vroot"] && $match_forum!="ALL"){
-        $forum_where=" and forum_id={$PHORUM['forum_id']}";
+    // Prepare forum_id restriction.
+    if ($match_forum == "ALL") {
+        $forum_where = " and forum_id in (".implode(",", $allowed_forums).")";
     } else {
-        $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
+        $forum_where=" and forum_id = {$PHORUM['forum_id']}";
     }
 
-    // prepare terms
-    if($match_type=="PHRASE"){
-
-        if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
+    // Prepare the search terms.
+    // Search for an exact phrase.
+    if ($match_type=="PHRASE") {
+        if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]) {
             $terms = array('"'.$search.'"');
         } else {
             $terms = array($search);
         }
-
+    // Search for an author name or user id.
     } elseif($match_type=="AUTHOR" || $match_type=="USER_ID"){
-
         $terms = mysql_escape_string($search);
-
+    // Standard query string.
     } else {
-
         $quote_terms=array();
-        if ( strstr( $search, '"' ) ){
-            //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
-            preg_match_all( '/-*"(.*?)"/', $search, $match );
-            $search = preg_replace( '/-*".*?"/', '', $search );
+        
+        // First, pull out all the double quoted strings
+        // (e.g. '"iMac DV" or -"iMac DV"')
+        if (strstr( $search, '"' )) {
+            preg_match_all('/-*"(.*?)"/', $search, $match);
+            $search = preg_replace('/-*".*?"/', '', $search);
             $quote_terms = $match[0];
         }
 
-        //finally pull out the rest words in the string
+        // Finally, pull out the rest of the words in the string.
         $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
 
-        //merge them all together and return
+        // Merge them all together.
         $terms = array_merge($terms, $quote_terms);
-
     }
+    
+    // Handle full text matching.
+    if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
-
-    if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
-
-        if($match_type=="AUTHOR" || $match_type=="USER_ID"){
+        if ($match_type=="AUTHOR" || $match_type=="USER_ID") {
 
             $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
@@ -1002,17 +1001,16 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         } else {
 
-
-            if(count($terms)){
+            if (count($terms)) {
 
                 $use_key="";
                 $extra_where="";
 
-                /* using this code on larger forums has shown to make the search faster.
-                   However, on smaller forums, it does not appear to help and in fact
-                   appears to slow down searches.
+                /* Using this code on larger forums has shown to make the 
+                   search faster. However, on smaller forums, it does not
+                   appear to help and in fact appears to slow down searches.
 
-                if($match_date){
+                if ($match_date) {
                     $min_time=time()-86400*$match_date;
                     $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
                     $res=mysql_query($sql, $conn);
@@ -1027,8 +1025,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
                 $against = "";
 
-                if($match_type=="ALL" && count($terms)>1){
-                    foreach($terms as $term){
+                if ($match_type=="ALL" && count($terms)>1) {
+                    foreach ($terms as $term) {
                         if($term[0] == "+" || $term[0] == "-"){
                             $against .= mysql_escape_string($term)." ";
                         } else {
@@ -1048,7 +1046,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
             }
         }
-
 
         if(isset($id_table)){
 
@@ -1082,8 +1079,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $idstring=substr($idstring, 0, -1);
 
         }
-
-    } else { // not using full text matching
+    // Handle basic matching.
+    } else {
 
         if($match_type=="AUTHOR" || $match_type=="USER_ID"){
 
@@ -3052,18 +3049,18 @@ function phorum_db_newflag_allread($forum_id=0)
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
 
-    // delete all newflags for this user and forum
+    // Delete all the existing newflags for this user in this forum.
     phorum_db_newflag_delete(0,$forum_id);
 
-    // get the maximum message-id in this forum
-    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id in ($forum_id, {$PHORUM['vroot']})";
+    // Get the maximum message-id in this forum.
+    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id = $forum_id";
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()){
         phorum_db_mysql_error("$err: $sql");
     }elseif (mysql_num_rows($res) > 0){
         $row = mysql_fetch_row($res);
         if($row[0] > 0) {
-            // set this message as min-id
+            // Set this message-id as the min-id.
             phorum_db_newflag_add_read(array(0=>array('id'=>$row[0],'forum'=>$forum_id)));
         }
     }
@@ -3085,11 +3082,9 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
     if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    $read_msgs=array('min_id' => array());
-    $read_msgs['min_id'][$forum_id] = 0;
-    $read_msgs['min_id'][0] = 0;
+    $read_msgs=array('min_id' => 0);
 
-    $sql="SELECT message_id,forum_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id IN({$forum_id},{$PHORUM['vroot']})";
+    $sql="SELECT message_id FROM {$PHORUM['user_newflags_table']} WHERE user_id={$PHORUM['user']['user_id']} AND forum_id = $forum_id";
 
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
@@ -3097,13 +3092,10 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
     while($row=mysql_fetch_row($res)) {
-        // set the min-id if given flag is set
-    $forum_id = $row[1];
-        #if($row[1] != $PHORUM['vroot'] &&
-    if (($read_msgs['min_id'][$forum_id]==0 || $row[0] < $read_msgs['min_id'][$forum_id])) {
-            $read_msgs['min_id'][$forum_id]=$row[0];
+        if ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id']) {
+            $read_msgs['min_id'] = $row[0];
         } else {
-            $read_msgs[$row[0]]=$row[0];
+            $read_msgs[$row[0]] = $row[0];
         }
     }
 
@@ -3422,13 +3414,12 @@ function phorum_db_get_banlists($ordered=false) {
 
     $conn = phorum_db_mysql_connect();
 
+    // forum_id = 0 is for GLOBAL ban items.
     if(isset($PHORUM['forum_id']) && !empty($PHORUM['forum_id']))
         $forumstr = "WHERE forum_id = {$PHORUM['forum_id']} OR forum_id = 0";
 
     if(isset($PHORUM['vroot']) && !empty($PHORUM['vroot']))
         $forumstr .= " OR forum_id = {$PHORUM['vroot']}";
-
-
 
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} $forumstr";
 

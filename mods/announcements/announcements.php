@@ -58,8 +58,7 @@ function phorum_show_announcements ()
             if (isset($newinfo)) {
                 $new = 0;
                 foreach ($message["meta"]["message_ids"] as $id) {
-                    if (!isset($newinfo[$id]) && 
-                        $id > $newinfo['min_id'][$PHORUM["mod_announcements"]["forum_id"]]) {
+                    if (!isset($newinfo[$id]) && $id > $newinfo['min_id']) {
                         $new = 1;
                         break;
                     }

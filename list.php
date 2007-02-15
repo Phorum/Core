@@ -305,7 +305,7 @@ if($rows == null) {
 
                 if(!$rows[$key]['moved'] && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
                     foreach ($row['meta']['message_ids'] as $cur_id) {
-                        if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'][$rows[$key]["forum_id"]])
+                        if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
                         $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
 
                         if($min_id == 0 || $min_id > $cur_id)
@@ -394,18 +394,22 @@ if($PHORUM["count_views"] == 2) { // viewcount as column
 if($PHORUM['DATA']['LOGGEDIN']) {
     // the stuff needed by user
     foreach($rows as $key => $row){
-        // newflag for collapsed flat view or special threads (sticky and announcement)
-        if ((!$PHORUM['threaded_list'] ||
-            $rows[$key]['sort'] == PHORUM_SORT_STICKY || $rows[$key]['sort'] == PHORUM_SORT_ANNOUNCEMENT) &&
-            isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
+        // Newflag for collapsed flat view or for sticky threads. For these,
+        // we only show the information for the thread starter. But we have
+        // to go through all the messages in the thread to see if any of
+        // them is new.
+        if ((!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
             foreach ($row['meta']['message_ids'] as $cur_id) {
-                if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'][$row['forum_id']])
-                $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
+                if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id']) {
+                    $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
+                }
             }
         }
-        // newflag for regular messages
+        // For other views, we have a line for each message. So here
+        // we only have to look at the message itself to decide whether
+        // it's new or not.
         else {
-            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'][$row['forum_id']]) {
+            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
                 $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
             }
         }
@@ -499,7 +503,7 @@ if($PHORUM["DATA"]["MODERATOR"]) {
 }
 
 // updating new-info for first visit (last message on first page is first new)
-if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'][$PHORUM["forum_id"]] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
+if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
     // setting it as min-id
     // set it -1 as the comparison is "post newer than min_id"
     $min_id--;
