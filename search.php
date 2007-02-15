@@ -141,29 +141,8 @@ if(!empty($phorum_search)){
 
         $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
 
-        // We always need a real forum id, else the read script will
-        // redirect us back to the index. Therefore, we need to fix
-        // the forum id for announcements. Here we make up a forum
-        // id to use in case we're handling an announcement.
-        $announce_forum_id = $PHORUM["forum_id"];
-        if ($PHORUM["forum_id"] == $PHORUM["vroot"] || $PHORUM["folder_flag"]) {
-            // Walk through all forums in the current vroot to find 
-            // a suitable candidate.
-            foreach ($forums as $id => $forum) {
-                if ($forum["forum_id"] != $PHORUM["vroot"] && !$forum["folder_flag"]) {
-                    $announce_forum_id = $forum["forum_id"];
-                    break;
-                }
-            }
-        }
-
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
-
-            // Fake forum_id for vroots/folders.
-            if ($row["forum_id"] == $PHORUM["vroot"]) {
-                $row["forum_id"] = $announce_forum_id;
-            }
 
             $arr["rows"][$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $row["forum_id"], $row["thread"], $row["message_id"]);
 
@@ -177,22 +156,13 @@ if(!empty($phorum_search)){
             $arr["rows"][$key]["datestamp"] = phorum_relative_date($row["datestamp"]);
             $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
 
-
             $forum_ids[$row["forum_id"]] = $row["forum_id"];
 
             $match_number++;
         }
 
         foreach($arr["rows"] as $key => $row){
-            // Unset the forum_id for announcements, so the template won't
-            // show a forum name for these.
-            if ($row["forum_id"] == $PHORUM["vroot"] || $forums[$row["forum_id"]]["folder_flag"]) {
-                unset($arr["rows"]["$key"]["forum_id"]);
-                continue;
-            }
-
             $arr["rows"][$key]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
-
             $arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];
         }
 
