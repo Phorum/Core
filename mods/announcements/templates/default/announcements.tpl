@@ -1,21 +1,23 @@
-<table>
+<table class="phorum-announcements-table">
   <tr>
-    <th align="left" colspan="2">
+    <th align="left">
       {LANG->Announcements}
     </th>
-    <th align="left" nowrap="nowrap">
+    <th align="left">
+      {LANG->Posted}
+    </th>
+    <th align="left">
       {LANG->LastPost}
     </th>
   </tr>
 
   {LOOP ANNOUNCEMENTS}
   <tr>
-    <td width="80%">
-      <a href="{ANNOUNCEMENTS->URL->READ}">{ANNOUNCEMENTS->subject}</a>
+    <td>
+      <a href="{ANNOUNCEMENTS->URL->READ}">{ANNOUNCEMENTS->subject}</a>{IF ANNOUNCEMENTS->new}&nbsp;<a href="{ANNOUNCEMENTS->URL->NEWPOST}"><span class="phorum-announcements-new">{ANNOUNCEMENTS->new}</span></a>{/IF}
     </td>
-    <td width="20%" nowrap="nowrap">
-      {ANNOUNCEMENTS->lastpost}
-    </td>
+    <td>{ANNOUNCEMENTS->datestamp}</td>
+    <td>{ANNOUNCEMENTS->lastpost}</td>
   </tr>
   {/LOOP ANNOUNCEMENTS}
 
