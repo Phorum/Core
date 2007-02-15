@@ -30,6 +30,8 @@ function phorum_show_announcements ()
             foreach($messages as $message){
 
                 $message["lastpost"] = phorum_date($PHORUM["short_date_time"], $message["modifystamp"]);
+                $message["raw_datestamp"] = $message["datestamp"];
+                $message["datestamp"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
                 $message["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
 
                 $PHORUM["DATA"]["ANNOUNCEMENTS"][] = $message;
