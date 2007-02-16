@@ -331,18 +331,13 @@ if (! $error_flag)
 
     // What special options can this user set for a message?
     $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
-        "sticky"        => false,   // Sticky flag for message sorting
-        "announcement"  => false,   // Announcement flag for message sorting
-        "allow_reply"   => false,   // Wheter replies are allowed in the thread
+        "sticky"        => false, // Sticky flag for message sorting
+        "allow_reply"   => false, // Whether replies are allowed in the thread
     );
     // For moderators and administrators.
     if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"]) && $message["parent_id"] == 0) {
         $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = true;
         $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"] = true;
-    }
-    // For administrators only.
-    if ($PHORUM["DATA"]["ADMINISTRATOR"]) {
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] = true;
     }
 }
 
@@ -356,8 +351,7 @@ if (! $error_flag)
     // parent_id for that.
     $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] =
         $message["parent_id"] == 0 &&
-        ($PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] ||
-         $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]);
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"];
 
     // Show special sort options or allow_reply in the editor?
     $PHORUM["DATA"]["SHOW_THREADOPTIONS"] =
@@ -694,9 +688,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
             }
 
             case "special": {
-                if ($db["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
-                    $form["special"] = "announcement";
-                } elseif ($db["sort"] == PHORUM_SORT_STICKY) {
+                if ($db["sort"] == PHORUM_SORT_STICKY) {
                     $form["special"] = "sticky";
                 } else {
                     $form["special"] = "";

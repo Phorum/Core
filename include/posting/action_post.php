@@ -54,26 +54,19 @@ if ($mode == "post" && ! $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) {
     $message["allow_reply"] = 1;
 }
 
-// For sticky and announcement theads set the sort parameter
-// for replies to the correct value, so threaded views will work.
-if ($mode == "reply")
-{
+// For sticky threads, set the sort parameter for replies to
+// the correct value, so threaded views will work.
+if ($mode == "reply") {
     if ($top_parent["sort"] == PHORUM_SORT_STICKY) {
         $message["sort"] = PHORUM_SORT_STICKY;
-    } elseif ($top_parent["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
-        $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
-        $message["forum_id"] = $top_parent["forum_id"];
     }
 }
 
 // Do specific actions for new threads with a "special" flag.
-if ($mode == "post" && isset($message["special"]))
-{
-    if ($message["special"]=="sticky" && $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]) {
+if ($mode == "post" && isset($message["special"])) {
+    if ($message["special"]=="sticky" && 
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]) {
         $message["sort"] = PHORUM_SORT_STICKY;
-    } elseif ($message["special"] == "announcement" && $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"]) {
-        $message["sort"] = PHORUM_SORT_ANNOUNCEMENT;
-        $message["forum_id"]= $PHORUM["vroot"] ? $PHORUM["vroot"] : 0;
     }
 }
 

@@ -43,14 +43,10 @@ if ( $message["parent_id"]==0 ) {
 
     if ($PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] && $message["special"]=="sticky") {
         $dbmessage["sort"] = PHORUM_SORT_STICKY;
-    } elseif ($PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] && $message["special"] == "announcement") {
-        $dbmessage["forum_id"] = $PHORUM["vroot"] ? $PHORUM["vroot"] : 0;
-        $dbmessage["sort"] = PHORUM_SORT_ANNOUNCEMENT;
     } else {
         // Not allowed to edit. Keep existing sort value.
         switch ($message["special"]) {
             case "sticky": $sort = PHORUM_SORT_STICKY; break;
-            case "announcement": $sort = PHORUM_SORT_ANNOUNCEMENT; break;
             default: $sort = PHORUM_SORT_DEFAULT; break;
         }
         $dbmessage["sort"] = $sort;
@@ -114,9 +110,7 @@ if($PHORUM['cache_messages']) {
     phorum_cache_remove('message',$message["message_id"]);
 }
 
-// Update children to the same sort setting and forum_id.
-// The forum_id update is needed for switching between
-// announcements and other types of messages.
+// Update children to the same sort setting.
 if (! $message["parent_id"] &&
     $origmessage["sort"] != $dbmessage["sort"])
 {
@@ -126,27 +120,12 @@ if (! $message["parent_id"] &&
         if($msg["sort"]!=$dbmessage["sort"] ||
            $msg["forum_id"] != $dbmessage["forum_id"]) {
             $msg["sort"]=$dbmessage["sort"];
-            $msg["forum_id"]=$dbmessage["forum_id"];
             phorum_db_update_message($message_id, $msg);
             if($PHORUM['cache_messages']) {
                 phorum_cache_remove('message',$message_id);
             }
         }
     }
-
-    if($dbmessage["sort"] == PHORUM_SORT_ANNOUNCEMENT || $origmessage["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
-
-        // recalculating the newflags
-        $thread_message_ids = array_keys($messages);
-
-        phorum_db_newflag_update_forum($thread_message_ids);
-
-    }
-
-    // The forum stats have to be updated. Announcements aren't
-    // counted in the thread_count, so if switching to or
-    // from announcement, the thread_count will change.
-    phorum_db_update_forum_stats(true);
 }
 
 // Update all thread messages to the same closed setting.

@@ -80,7 +80,6 @@
     define("PHORUM_STATUS_HIDDEN", -2);
 
     // message sorting
-    define("PHORUM_SORT_ANNOUNCEMENT", 0);
     define("PHORUM_SORT_STICKY", 1);
     define("PHORUM_SORT_DEFAULT", 2);
 
