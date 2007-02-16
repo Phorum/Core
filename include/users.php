@@ -752,7 +752,7 @@ function phorum_user_access_list( $permission )
         if ( $PHORUM["user"]["admin"] || $forum[$field] &$permission ) {
             $forum_list[$forum_id] = $forum_id;
         }
-        // if its a folder, they have read but nothing else
+        // if its a folder, they have read permission but nothing else
         elseif ($forum["folder_flag"] && $permission == PHORUM_USER_ALLOW_READ){
             $forum_list[$forum_id] = $forum_id;
         }
@@ -765,14 +765,6 @@ function phorum_user_access_list( $permission )
                 $forum_list[$forum_id] = $forum_id;
             }
         }
-    }
-
-    // Admins also have all rights for the vroot forum_id (announcements)
-    // Anonymous users have rights for the vroot, if they can read at
-    // least one forum.
-    if ($PHORUM["user"]["admin"] ||
-        ($permission == PHORUM_USER_ALLOW_READ && count($forum_list) > 0)) {
-        $forum_list[$PHORUM["vroot"]] = $PHORUM["vroot"];
     }
 
     return $forum_list;
