@@ -142,12 +142,11 @@ function phorum_db_get_thread_list($offset)
     // Process all groups.
     foreach ($groups as $group) {
 
-
         $sql = NULL;
 
         switch ($group) {
 
-            // Announcements and stickies.
+            // Stickies.
             case "specials":
 
                 $sql = "select $messagefields
@@ -228,65 +227,6 @@ function phorum_db_get_thread_list($offset)
     }
 
     return $messages;
-}
-
-/**
- * Get the announcements for the entire vroot.
- *
- * @return array
- */
-function phorum_db_get_announcements()
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    $messages = array();
-
-    $conn = phorum_db_mysqli_connect();
-
-    $table = $PHORUM["message_table"];
-
-    $sql = "select
-                $table.author,
-                $table.datestamp,
-                $table.email,
-                $table.message_id,
-                $table.forum_id,
-                $table.meta,
-                $table.moderator_post,
-                $table.modifystamp,
-                $table.parent_id,
-                $table.msgid,
-                $table.sort,
-                $table.status,
-                $table.subject,
-                $table.thread,
-                $table.thread_count,
-                $table.user_id,
-                $table.viewcount,
-                $table.closed
-            from
-                $table
-            where
-                status=".PHORUM_STATUS_APPROVED." and
-                sort=".PHORUM_SORT_ANNOUNCEMENT." and
-                forum_id={$PHORUM['vroot']} and
-                parent_id=0
-            order by
-                datestamp desc";
-
-    $res = mysqli_query($conn, $sql);
-    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
-    while ($rec = mysqli_fetch_assoc($res)){
-        $messages[$rec["message_id"]] = $rec;
-        $messages[$rec["message_id"]]["meta"] = array();
-        if(!empty($rec["meta"])){
-            $messages[$rec["message_id"]]["meta"] = unserialize($rec["meta"]);
-        }
-    }
-
-    return $messages;
-
 }
 
 /**
@@ -758,7 +698,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
     $forum_id_check = "";
     if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
     }
 
     if(is_array($value)) {
@@ -818,7 +758,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
 
     $forum_id_check = "";
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) and";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
     }
 
     // are we really allowed to show this thread/message?
@@ -890,7 +830,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $conn = phorum_db_mysqli_connect();
 
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) AND";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
     }
 
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
@@ -929,9 +869,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
     // if they are not allowed to search any forums, return the emtpy $arr;
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
-
-    // Add forum 0 (for announcements) to the allowed forums.
-    $allowed_forums[] = 0;
 
     if($PHORUM['forum_id']!=0 && $match_forum!="ALL"){
         $forum_where=" and forum_id={$PHORUM['forum_id']}";
@@ -2922,7 +2859,7 @@ function phorum_db_newflag_allread($forum_id=0)
     phorum_db_newflag_delete(0,$forum_id);
 
     // get the maximum message-id in this forum
-    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id in ($forum_id, {$PHORUM['vroot']})";
+    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id = $forum_id";
     $res = mysqli_query( $conn, $sql);
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2951,7 +2888,7 @@ function phorum_db_newflag_get_flags($forum_id=0)
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
 
-    $sql="SELECT message_id,forum_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id IN({$forum_id},{$PHORUM['vroot']})";
+    $sql="SELECT message_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id = {$forum_id}";
 
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query( $conn, $sql);
@@ -2960,7 +2897,7 @@ function phorum_db_newflag_get_flags($forum_id=0)
 
     while($row=mysqli_fetch_row($res)) {
         // set the min-id if given flag is set
-        if($row[1] != $PHORUM['vroot'] && ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id'])) {
+        if($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id']) {
             $read_msgs['min_id']=$row[0];
         } else {
             $read_msgs[$row[0]]=$row[0];
@@ -3252,13 +3189,12 @@ function phorum_db_get_banlists($ordered=false) {
 
     $conn = phorum_db_mysqli_connect();
 
+    // forum_id = 0 is for GLOBAL ban items
     if(isset($PHORUM['forum_id']) && !empty($PHORUM['forum_id']))
         $forumstr = "WHERE forum_id = {$PHORUM['forum_id']} OR forum_id = 0";
 
     if(isset($PHORUM['vroot']) && !empty($PHORUM['vroot']))
         $forumstr .= " OR forum_id = {$PHORUM['vroot']}";
-
-
 
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} $forumstr";
 
