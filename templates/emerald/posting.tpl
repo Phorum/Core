@@ -65,9 +65,6 @@
                           {IF OPTION_ALLOWED->sticky}
                             <option value="sticky"{IF MESSAGE->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
                           {/IF}
-                          {IF OPTION_ALLOWED->announcement}
-                            <option value="announcement" {IF MESSAGE->special "announcement"} selected{/IF}>{LANG->MakeAnnouncement}</option>
-                          {/IF}
                         </select><br />
                         <br />
 
