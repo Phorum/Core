@@ -68,25 +68,6 @@ if ($gotforums)
 else
     $foruminfo = array();
 
-// Make sure we have a forum name for unapproved announcements.
-$foruminfo[$PHORUM["vroot"]] = array (
-    'name' => $PHORUM["DATA"]["LANG"]["Announcement"]
-);
-
-// Find a forum id to use for announcements. To read an announcement,
-// we need a real forum id, but announcements are linked to the vroot folder.
-$announce_forum_id = $PHORUM["forum_id"];
-if ($PHORUM["forum_id"] == $PHORUM["vroot"] || $PHORUM["folder_flag"]) {
-    // Walk through all forums in the current vroot to find
-    // a suitable candidate.
-    foreach ($foruminfo as $id => $forum) {
-        if ($forum["forum_id"] != $PHORUM["vroot"] && !$forum["folder_flag"]) {
-            $announce_forum_id = $forum["forum_id"];
-            break;
-        }
-    }
-}
-
 foreach($mod_forums as $forum => $rest) {
 
     $checkvar = 1;
@@ -103,9 +84,7 @@ foreach($mod_forums as $forum => $rest) {
         if ($checkvar)
             $checkvar = 0;
         $rows[$key]['forum_id'] = $forum;
-        // use a real forum id for announcements
-        $read_forum_id = $forum==$PHORUM["vroot"] ? $announce_forum_id:$forum;
-        $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $read_forum_id, $row["thread"], $row['message_id']);
+        $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum, $row["thread"], $row['message_id']);
         // we need to fake the forum_id here
         $PHORUM["forum_id"] = $forum;
         $rows[$key]["URL"]["APPROVE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
