@@ -61,33 +61,29 @@ switch ($mod_step) {
 
    case PHORUM_DELETE_MESSAGE: // this is a message delete
 
-        // check that they're an admin if they want to delete an announcement
         $message = phorum_db_get_message($msgthd_id);
-        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT && !$is_admin_user){
-            $PHORUM['DATA']['ERROR']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
-            break;
-        }
 
+        // A hook to allow modules to implement extra or different
+        // delete functionality.
         $delete_handled = 0;
-        $nummsgs = 0;
-
         list($delete_handled,$nummsgs,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
 
+        // Handle the delete action, unless a module already handled it.
+        if (!$delete_handled) {
 
-        if(!$delete_handled) {
+            // Delete the message from the database.
+            phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
 
-            $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
-            foreach($msg_ids as $id){
-                $files=phorum_db_get_message_file_list($id);
-                foreach($files as $file_id=>$data){
-                    phorum_db_file_delete($file_id);
-                }
+            // Delete the message attachments from the database.
+            $files=phorum_db_get_message_file_list($id);
+            foreach($files as $file_id=>$data) {
+                phorum_db_file_delete($file_id);
             }
-            phorum_hook("delete", $msg_ids);
-            $nummsgs=count($msg_ids);
 
+            // Run a hook for performing custom actions after cleanup.
+            phorum_hook("delete", $msg_ids);
         }
-        $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
+        $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
         }
@@ -99,23 +95,20 @@ switch ($mod_step) {
         break;
 
    case PHORUM_DELETE_TREE: // this is a message delete
-        // check that they're an admin if they want to delete an announcement
-        $message = phorum_db_get_message($msgthd_id);
-        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT && !$is_admin_user){
-            $PHORUM['DATA']['ERROR']=$PHORUM["DATA"]["LANG"]["DeleteAnnouncementForbidden"];
-            break;
-        }
 
-        $delete_handled = 0;
+        $message = phorum_db_get_message($msgthd_id);
+
         $nummsgs = 0;
 
+        // A hook to allow modules to implement extra or different
+        // delete functionality.
+        $delete_handled = 0;
         list($delete_handled,$nummsgs,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_TREE));
-
 
         if(!$delete_handled) {
 
             // Delete the message and all its replies.
-            $msg_ids=phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
+            $msg_ids = phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
 
             // Cleanup the attachments for all deleted messages.
             foreach($msg_ids as $id){
@@ -139,7 +132,7 @@ switch ($mod_step) {
                 }
             }
 
-            // Run a hook for performing custom cleanup actions.
+            // Run a hook for performing custom actions after cleanup.
             phorum_hook("delete", $msg_ids);
 
             $nummsgs=count($msg_ids);
@@ -168,12 +161,9 @@ switch ($mod_step) {
         break;
 
    case PHORUM_MOVE_THREAD: // this is the first step of a message move
-        // check if the thread to move is an announcement thread
+
         $message = phorum_db_get_message($msgthd_id);
-        if ($message["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
-            $PHORUM['DATA']['ERROR']=$PHORUM["DATA"]["LANG"]["MoveAnnouncementForbidden"];
-            break;
-        }
+
         $PHORUM['DATA']['URL']["ACTION"]=phorum_get_url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;
@@ -182,7 +172,6 @@ switch ($mod_step) {
 
         // get all the forums the moderator may move to
         $PHORUM['DATA']["MoveForumsOption"]="";
-
 
         $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
         asort($forums);
@@ -335,11 +324,6 @@ switch ($mod_step) {
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
-
-        if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum']) && $PHORUM['folder_flag'] && $old_message['sort'] == PHORUM_SORT_ANNOUNCEMENT) {
-            $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
-        }
-
 
         $PHORUM['DATA']['OKMSG']="$num_approved ".$PHORUM['DATA']['LANG']['MsgApprovedOk'];
         if(isset($PHORUM['args']["prepost"])) {
