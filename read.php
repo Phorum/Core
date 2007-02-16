@@ -62,21 +62,22 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-if($PHORUM["DATA"]["MODERATOR"]) {
-        // find out how many forums this user can moderate
-        $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
-
-        $modforums=0;
-        foreach($forums as $id=>$forum){
-                if($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)){
-                   $modforums++;
-                }
+// Find out how many forums this user can moderate.
+// If the user can moderate more than one forum, then
+// present the move message moderation link. 
+if ($PHORUM["DATA"]["MODERATOR"]) {
+    $build_move_url=false;
+    $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+    $modforums=0;
+    foreach ($forums as $id=>$forum) {
+        if ($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)) {
+            $modforums++;
+            if ($modforums > 1) {
+                $build_move_url = true;
+                break;
+            }
         }
-        if($modforums > 1) {
-                $build_move_url=true;
-        } else {
-                $build_move_url=false;
-        }
+    }
 }
 
 // setup some stuff based on the url passed
@@ -349,7 +350,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, "printview");
     }
     $thread_is_closed = (bool)$data[$thread]["closed"];
-    $thread_is_announcement = ($data[$thread]["sort"]==PHORUM_SORT_ANNOUNCEMENT)?1:0;
 
     // we might have more messages for mods
     if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
@@ -685,12 +685,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // Never show the reply box if the message is closed.
     if($thread_is_closed) {
 
-        // Closed announcements have their own specific message.
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
         include phorum_get_template("message");
 
     } elseif (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
-
         // Prepare the arguments for the posting.php script.
         $goto_mode = "reply";
         if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
