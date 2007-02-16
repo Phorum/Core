@@ -79,12 +79,15 @@
                 $cur_folder=array_shift($cur_folder_tmp);
 
 
-                if(!$setvroot && (
-                        ($oldfolder['vroot'] &&  $oldfolder['vroot'] == $cur_folder_id) || // we had a vroot before but now we removed it
-                        ($oldfolder['parent_id'] != $cur_folder['parent_id'])  // or we moved this folder somewhere else
-                      )
-                   )
-                   {
+                if (!$setvroot &&
+                    (
+                     // we had a vroot before but now we removed it
+                     ($oldfolder['vroot'] && $oldfolder['vroot'] == $cur_folder_id) || 
+                     // or we moved this folder somewhere else
+                     ($oldfolder['parent_id'] != $cur_folder['parent_id'])
+                    )
+                   ) {
+
                     // get the parent_id and set its vroot (if its a folder) to the desc folders/forums
                     if($cur_folder['parent_id'] > 0) { // is it a real folder?
                         $parent_folder=phorum_db_get_forums($cur_folder['parent_id']);
@@ -95,19 +98,6 @@
                     } else { // just default root ...
                         phorum_admin_set_vroot($cur_folder_id,0,$cur_folder_id);
                     }
-
-                    // need to clear announcements in this vroot
-                    $PHORUM['forum_id']=$oldfolder['vroot'];
-                    $GLOBALS['PHORUM']['forum_id']=$oldfolder['vroot'];
-                    $msg_array=phorum_db_get_message(PHORUM_SORT_ANNOUNCEMENT,'sort');
-                    while(count($msg_array)) {
-                    	// set announcements to forum-id=0 and hidden ...
-                    	$new_msg=array('forum_id'=>0,'status'=>PHORUM_STATUS_HIDDEN);
-
-                    	phorum_db_update_message($msg_array['message_id'],$new_msg);
-                    	$msg_array=phorum_db_get_message(PHORUM_SORT_ANNOUNCEMENT,'sort');
-                    }
-
 
                 // we have now set this folder as vroot
                 } elseif($setvroot && ($oldfolder['vroot']==0 || $oldfolder['vroot'] != $cur_folder_id)) {
