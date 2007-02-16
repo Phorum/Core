@@ -140,9 +140,7 @@
     {IF MESSAGES->message_id MESSAGE->message_id}
         {VAR icon "bullet_go"}
     {ELSEIF MESSAGES->parent_id 0}
-        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-            {VAR icon "information"}
-        {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
+        {IF MESSAGES->sort PHORUM_SORT_STICKY}
             {VAR icon "bell"}
         {ELSEIF MESSAGES->moved}
             {VAR icon "page_go"}

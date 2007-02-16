@@ -34,10 +34,7 @@
     {/IF}
 
     {IF MESSAGES->parent_id 0}
-        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-            {VAR icon "information"}
-            {VAR title LANG->Announcement}
-        {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
+        {IF MESSAGES->sort PHORUM_SORT_STICKY}
             {VAR icon "bell"}
             {VAR title LANG->Sticky}
         {ELSEIF MESSAGES->moved}
@@ -70,7 +67,6 @@
             <img src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" />
             <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
             {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
-            {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
             {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
         </h4>
     </td>

@@ -13,11 +13,7 @@
 <table cellspacing="0" class="list">
     <tr>
         <th align="left" colspan="2">
-            {IF PHORUM_PAGE "index"}
-                {LANG->Announcements}
-            {ELSE}
-                {LANG->Subject}
-            {/IF}
+            {LANG->Subject}
         </th>
         {IF VIEWCOUNT_COLUMN}
           <th>{LANG->Views}</th>
@@ -36,10 +32,7 @@
         {VAR altclass ""}
     {/IF}
 
-    {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}
-        {VAR icon "information"}
-        {VAR title LANG->Announcement}
-    {ELSEIF MESSAGES->sort PHORUM_SORT_STICKY}
+    {IF MESSAGES->sort PHORUM_SORT_STICKY}
         {VAR icon "bell"}
         {VAR title LANG->Sticky}
     {ELSEIF MESSAGES->moved}
