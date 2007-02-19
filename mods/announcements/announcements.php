@@ -33,7 +33,7 @@ function phorum_show_announcements ()
 
         // Read the newflags information for authenticated users.
         $newinfo = NULL;
-        if (!empty($PHORUM["user"])) {
+        if ($PHORUM["DATA"]["LOGGEDIN"]) {
             $newflagkey = $PHORUM["mod_announcements"]["forum_id"]."-".$PHORUM['user']['user_id'];
             if ($PHORUM['cache_newflags']) {
                 $newinfo = phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
