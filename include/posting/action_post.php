@@ -186,29 +186,42 @@ if ($success)
     // Posting is completed. Take the user back to the forum.
     if ($PHORUM["redirect_after_post"] == "read")
     {
-        // To the end of the thread.
-        if (isset($top_parent)) { // not set for top parents themselves.
-            $readlen = $PHORUM["read_length"];
-            $pages = ceil(($top_parent["thread_count"]+1) / $readlen);
+        $not_viewable =
+            $message["status"] != PHORUM_STATUS_APPROVED && 
+            !$PHORUM["DATA"]["MODERATOR"];
 
-            if ($pages > 1) {
+        // To the end of the thread for reply messages.
+        if (isset($top_parent)) {
+            if ($not_viewable) {
                 $redir_url = phorum_get_url(
-                    PHORUM_READ_URL, $message["thread"],
-                    $message["message_id"], "page=$pages"
+                    PHORUM_READ_URL, $message["thread"]
                 );
             } else {
-                $redir_url = phorum_get_url(
-                    PHORUM_READ_URL, $message["thread"],
-                    $message["message_id"]
-                );
+                $readlen = $PHORUM["read_length"];
+                $pages = ceil(($top_parent["thread_count"]+1) / $readlen);
+
+                if ($pages > 1) {
+                    $redir_url = phorum_get_url(
+                        PHORUM_READ_URL, $message["thread"],
+                        $message["message_id"], "page=$pages"
+                    );
+                } else {
+                    $redir_url = phorum_get_url(
+                        PHORUM_READ_URL, $message["thread"],
+                        $message["message_id"]
+                    );
+                }
+
+                // wrap redirect because of an MSIE bug.
+                // See the comments in redirect.php why we need this hack.
+                $redir_url = phorum_get_url(PHORUM_REDIRECT_URL, 'phorum_redirect_to=' . urlencode($redir_url));
             }
 
-            // wrap redirect because of IE
-            $redir_url = phorum_get_url(PHORUM_REDIRECT_URL, 'phorum_redirect_to=' . urlencode($redir_url));
-
+        // This is a thread starter message.
         } else {
-
-            $redir_url = phorum_get_url( PHORUM_READ_URL, $message["thread"] );
+            $redir_url = $not_viewable 
+                       ? phorum_get_url(PHORUM_LIST_URL)
+                       : phorum_get_url(PHORUM_READ_URL, $message["thread"]);
         }
 
     }
