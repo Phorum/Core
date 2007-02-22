@@ -8,24 +8,10 @@
     <tr>
       <td style="white-space: nowrap">{LANG->YourName}:&nbsp;</td>
       <td width="100%">
-        {IF POST->message_id}
-          {! Editing a message }
-          {IF POST->user_id}
-            {POST->author}
-          {ELSE}
-            {IF MODERATOR}
-              <input type="text" name="author" size="30" value="{POST->author}" />
-            {ELSE}
-              <?php echo $PHORUM['user']['username'] ?>
-            {/IF}
-          {/IF}
+        {IF OPTION_ALLOWED->edit_author}
+          <input type="text" name="author" size="30" value="{POST->author}" />
         {ELSE}
-          {! Writing a new message }
-          {IF LOGGEDIN}
-            <?php echo $PHORUM['user']['username'] ?>
-          {ELSE}
-            <input type="text" name="author" size="30" value="{POST->author}" />
-          {/IF}
+          {POST->author}
         {/IF}
       </td>
     </tr>

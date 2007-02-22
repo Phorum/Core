@@ -77,7 +77,12 @@ if ($mode == "post" || $mode == "reply")
 {
     if ($PHORUM["DATA"]["LOGGEDIN"]){
         $message["user_id"] = $PHORUM["user"]["user_id"];
-        $message["author"]  = $PHORUM["user"]["username"];
+        // If the author field is read only or not filled, then 
+        // use the user's username as the author.
+        if ($PHORUM["post_fields"]["author"][pf_READONLY] || 
+            $message["author"] == '') {
+            $message["author"]  = $PHORUM["user"]["username"];
+        }
     } else {
         $message["user_id"] = 0;
     }
@@ -183,6 +188,5 @@ if ($mode == "edit")
         return;
     }
 }
-
 
 ?>

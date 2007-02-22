@@ -316,7 +316,7 @@ if (! $error_flag)
     $PHORUM["DATA"]["EMAILNOTIFY"] =
     (isset($PHORUM['allow_email_notify']) && !empty($PHORUM['allow_email_notify']))? 1 : 0;
 
-    // What special options can this user set for a message?
+    // What options does this user have for a message?
     $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
         "sticky"        => false,   // Sticky flag for message sorting
         "announcement"  => false,   // Announcement flag for message sorting
@@ -330,6 +330,30 @@ if (! $error_flag)
     // For administrators only.
     if ($PHORUM["DATA"]["ADMINISTRATOR"]) {
         $PHORUM["DATA"]["OPTION_ALLOWED"]["announcement"] = true;
+    }
+
+    // Whether the user is allowed to change the author. This reflects the
+    // pre 5.1.20 template logic, which makes the 5.1.20 posting template
+    // easier by using the {OPTION_ALLOWED->edit_author) and backward
+    // compatible at the same time. The only change is that if  the author
+    // field is made read/write, the edit_author option will be set to true.
+    // In that case, the field is handled much like the subject field.
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = false;
+    // Allowed if author was made a read/write field.
+    if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
+        $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
+    } else {
+        // Allowed if a moderator edits a message.
+        if ($mode == "edit") {
+            if ($PHORUM["DATA"]["MODERATOR"]) {
+                $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
+            }
+        // Allowed if an anonymous user posts a new message or a reply.
+        } else {
+            if (! $PHORUM["DATA"]["LOGGEDIN"]) {
+                $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
+            }
+        }
     }
 }
 
@@ -616,12 +640,13 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 
     // If we have a user linked to the current message, then get the
     // user data from the database, if it has to be applied as
-    // read-only data.
-    if ($PHORUM["post_fields"]["email"][pf_READONLY] || $PHORUM["post_fields"]["author"][pf_READONLY]) {
-        if ($db["user_id"]) {
-            $user_info = phorum_user_get($db["user_id"], false);
-            $user_info["author"] = $user_info["username"];
-        }
+    // read-only data. We fetch the data here, so later on we
+    // can apply it to the message.
+    if (($PHORUM["post_fields"]["email"][pf_READONLY] ||
+         $PHORUM["post_fields"]["author"][pf_READONLY]) &&
+         !empty($db["user_id"])) {
+        $user_info = phorum_user_get($db["user_id"], false);
+        $user_info["author"] = $user_info["username"];
     }
 
     foreach ($PHORUM["post_fields"] as $key => $info)
@@ -630,28 +655,24 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
         if ($apply_readonly && ! $info[pf_READONLY]) continue;
 
         switch ($key) {
-            case "show_signature": {
+            case "show_signature":
                 $form[$key] = !empty($db["meta"]["show_signature"]);
                 break;
-            }
 
-            case "allow_reply": {
+            case "allow_reply":
                 $form[$key] = ! $db["closed"];
                 break;
-            }
 
-            case "email_notify": {
+            case "email_notify":
                 $form[$key] = phorum_db_get_if_subscribed(
                     $db["forum_id"], $db["thread"], $db["user_id"]);
                 break;
-            }
 
-            case "forum_id": {
+            case "forum_id":
                 $form["forum_id"] = $db["forum_id"] ? $db["forum_id"] : $PHORUM["forum_id"];
                 break;
-            }
 
-            case "attachments": {
+            case "attachments":
                 $form[$key] = array();
                 if (isset($db["meta"]["attachments"])) {
                     foreach ($db["meta"]["attachments"] as $data) {
@@ -661,19 +682,18 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                     }
                 }
                 break;
-            }
 
             case "author":
-            case "email": {
-                if ($db["user_id"]) {
+            case "email":
+                if ($db["user_id"] &&
+                    $PHORUM["post_fields"][$key][pf_READONLY]) {
                     $form[$key] = $user_info[$key];
                 } else {
                     $form[$key] = $db[$key];
                 }
                 break;
-            }
 
-            case "special": {
+            case "special":
                 if ($db["sort"] == PHORUM_SORT_ANNOUNCEMENT) {
                     $form["special"] = "announcement";
                 } elseif ($db["sort"] == PHORUM_SORT_STICKY) {
@@ -682,12 +702,10 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                     $form["special"] = "";
                 }
                 break;
-            }
 
-            case "mode": {
+            case "mode":
                 // NOOP
                 break;
-            }
 
             default:
                 $form[$key] = $db[$key];

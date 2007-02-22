@@ -7,7 +7,8 @@
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
 //   it under the terms of either the current Phorum License (viewable at     //
-//   phorum.org) or the Phorum License that was distributed with this file    ////                                                                            //
+//   phorum.org) or the Phorum License that was distributed with this file    //
+//                                                                            //
 //   This program is distributed in the hope that it will be useful,          //
 //   but WITHOUT ANY WARRANTY, without even the implied warranty of           //
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     //
@@ -75,9 +76,15 @@ if ($attach_count)
     unset($previewmessage["attachments"]);
 }
 
-// Fill the author for new postings.
-if ($mode != "edit" && $PHORUM["DATA"]["LOGGEDIN"]) {
-    $previewmessage["author"] = $PHORUM["user"]["username"];
+// Fill the author for new postings with the username
+// for authenticated users, if editing the author
+// field is not allowed.
+if (($mode == "post" || $mode == "reply") &&
+    !$PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] &&
+    $PHORUM["DATA"]["LOGGEDIN"]) {
+    $previewmessage["author"] =
+        $message["author"] =
+        $PHORUM["user"]["username"];
 }
 
 // Fill the datestamp for new postings.
