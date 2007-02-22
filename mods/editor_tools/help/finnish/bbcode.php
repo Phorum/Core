@@ -97,7 +97,7 @@
     [email]someuser@somesite.com[/email]
     </tt></br></br>
     Mik‰ n‰ytt‰‰ t‰lt‰:<br/><br/> 
-    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/>
+    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/><br/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Vieraile Phorum.orgissa!</a><br/>
     <a href="mailto:someuser@somesite.com">someuser@somesite.com</a>
