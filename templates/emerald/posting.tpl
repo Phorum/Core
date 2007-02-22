@@ -74,13 +74,22 @@
 
                 {/IF}
 
+                {IF MODE "moderation"}
+                  {LANG->YourName}:<br/>
+                {ELSE}
+                  {LANG->Author}:<br />
+                {/IF}
+                {IF OPTION_ALLOWED->edit_author}
+                    <input type="text" name="author" size="30" value="{MESSAGE->author}" />
+                {ELSE}
+                    <big><strong>{MESSAGE->author}</strong></big><br />
+                {/IF}
+                <br/>
+
                 {IF MODE "post" OR MODE "reply"}
 
                     {IF NOT LOGGEDIN}
 
-                        {LANG->YourName}:<br />
-                        <input type="text" name="author" size="30" value="{MESSAGE->author}" /><br />
-                        <br />
                         {LANG->YourEmail}:<br />
                         <input type="text" name="email" size="30" value="{MESSAGE->email}" /><br />
                         <br />
@@ -91,17 +100,8 @@
 
                     {IF MESSAGE->user_id 0}
 
-                        {LANG->Author}:<br />
-                        <input type="text" name="author" size="30" value="{MESSAGE->author}" /><br />
-                        <br />
                         {LANG->Email}:<br />
                         <input type="text" name="email" size="30" value="{MESSAGE->email}" /><br />
-                        <br />
-
-                    {ELSE}
-
-                        {LANG->Author}:<br />
-                        <big><strong>{MESSAGE->author}</strong></big><br />
                         <br />
 
                     {/IF}
