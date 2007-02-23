@@ -68,15 +68,17 @@ function phorum_bb_code($data)
     );
 
     $quote_search = array(
-        '/\[quote\](.*?)\[\/quote]/is',
-        '/\[quote ([^\]]+?)\](.*?)\[\/quote\]/is',
-        '/\[quote=([^\]]+?)\](.*?)\[\/quote\]/is',
+        "/\[quote\]/is",
+        "/\[quote ([^\]]+?)\]/is",
+        "/\[quote=([^\]]+?)\]/is",
+        "/\[\/quote\]/is"
     );
 
     $quote_replace = array(
-        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div>\\1</div></blockquote>",
-        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div><strong>\\1</strong><br />\\2</div></blockquote>",
-        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div><strong>\\1</strong><br />\\2</div></blockquote>",
+        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div>",
+        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div><strong>$1</strong><br />",
+        "<blockquote class=\"bbcode\">".$PHORUM["DATA"]["LANG"]["Quote"] . ":<div><strong>$1</strong><br />",
+        "</div></blockquote>"
     );
 
     foreach($data as $message_id => $message){
@@ -135,13 +137,12 @@ function phorum_bb_code($data)
 
                 // quote has to be handled differently because they can be embedded.
                 // we only do quote replacement if we have matching start and end tags
-                if(strstr($body, "[quote") && substr_count($body, "[quote")==substr_count($body, "[/quote]")){
+                if(preg_match_all('/\[quote([\s=][^\]]+?)?\]/', $body, $m) && count($m[0])==substr_count($body, "[/quote]")){
                     $body = preg_replace($quote_search, $quote_replace, $body);
                 }
 
 
             }
-
 
             $data[$message_id]["body"] = $body;
         }
