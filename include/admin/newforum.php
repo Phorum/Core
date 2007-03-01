@@ -330,8 +330,17 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
 
     // set to NULL if inherit is disabled
     if($inherit_id=="" && $inherit_id!==0) $inherit_id="NULL";
+    
+    $add_inherit_text="";
+    if(!empty($disabled_form_input_inherit)) {
+    	$add_inherit_text="<br />You can't inherit from another forum as these forums inherit from the current forum already:<br /><ul>\n";
+    	foreach($forum_inherit_settings as $set_id => $set_data) {
+    		$add_inherit_text.="<li>".$set_data['name']." ( Id: $set_id ) </li>\n";
+    	}
+    	$add_inherit_text.="</ul>\n";
+    }
 
-    $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit));
+    $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit).$add_inherit_text);
 
     // Set Settings from inherit forum
     if( $forum_settings_inherit ) {
