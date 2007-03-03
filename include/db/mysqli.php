@@ -1379,8 +1379,8 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
 
         $sticky_count="sticky_count+$sticky_count_change";
     }
+    $sql = "update {$PHORUM['forums_table']} set cache_version = cache_version + 1, thread_count=$thread_count, message_count=$message_count, sticky_count=$sticky_count, last_post_time=$last_post_time where forum_id={$PHORUM['forum_id']}";
 
-    $sql = "update {$PHORUM['forums_table']} set thread_count=$thread_count, message_count=$message_count, sticky_count=$sticky_count, last_post_time=$last_post_time where forum_id={$PHORUM['forum_id']}";
     mysqli_query( $conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -2924,12 +2924,14 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
 
     // get min message id from newflags
     $sql = "select min(message_id) as min_message_id from {$PHORUM['user_newflags_table']} where user_id={$PHORUM['user']['user_id']} and forum_id={$forum_id}";
+
     $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     if(mysqli_num_rows($res)){
 
         list($min_message_id) = mysqli_fetch_row($res);
 
+        if($min_message_id > 0) {
         // get unread thread count
         $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread<>{$PHORUM['message_table']}.message_id";
         $res = mysqli_query($conn, $sql);
@@ -2946,6 +2948,9 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
             $new_messages,
             $new_threads
         );
+	} else {
+		$counts = array(0,0);
+	}
 
     } else {
 

@@ -3128,6 +3128,7 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
 
         $min_message_id = (int)mysql_result($res, 0, "min_message_id");
 
+        if($min_message_id > 0) {
         // get unread thread count
         $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread={$PHORUM['message_table']}.message_id";
         $res = mysql_query($sql, $conn);
@@ -3145,6 +3146,10 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
             $new_messages,
             $new_threads
         );
+
+	} else {
+            $counts = array(0,0);
+	}
 
     } else {
 
