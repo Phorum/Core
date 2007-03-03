@@ -15,13 +15,13 @@
           <input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" />
         </td>
         <td class="PhorumTableRow">
-          <a href="{MESSAGES->read_url}">{MESSAGES->subject}</a>
+          <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>
           {IF NOT MESSAGES->read_flag}
             <span class="PhorumNewFlag">&nbsp;{LANG->newflag}</span>
           {/IF}
         </td>
         <td class="PhorumTableRow" nowrap="nowrap">
-          <a href="{MESSAGES->from_profile_url}">{MESSAGES->from_username}</a>&nbsp;
+          <a href="{MESSAGES->URL->FROM}">{MESSAGES->from_username}</a>&nbsp;
         </td>
         <td class="PhorumTableRow" nowrap="nowrap" width="1">
           <div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div>

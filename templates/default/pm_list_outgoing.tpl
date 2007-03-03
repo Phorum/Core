@@ -15,11 +15,11 @@
         <td class="PhorumTableRow">
           <input type="checkbox" name="checked[]" value="{MESSAGES->pm_message_id}" />
         </td>
-        <td class="PhorumTableRow"><a href="{MESSAGES->read_url}">{MESSAGES->subject}</a></td>
+        <td class="PhorumTableRow"><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a></td>
         <td class="PhorumTableRow" nowrap="nowrap">
           {IF MESSAGES->recipient_count 1}
             {LOOP MESSAGES->recipients}
-              <a href="{MESSAGES->recipients->to_profile_url}">{MESSAGES->recipients->username}</a>&nbsp;
+              <a href="{MESSAGES->recipients->URL->TO}">{MESSAGES->recipients->username}</a>&nbsp;
             {/LOOP MESSAGES->recipients}
           {ELSE}
             {MESSAGES->recipient_count}&nbsp;{LANG->Recipients}&nbsp;

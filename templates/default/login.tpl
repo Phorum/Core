@@ -2,7 +2,7 @@
   {IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
   {IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
   <div align="center" class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
-    <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->TOP}<a class="PhorumNavLink" href="{URL->TOP}">{LANG->MessageList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>
+    <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->LIST}<a class="PhorumNavLink" href="{URL->LIST}">{LANG->MessageList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>
   </div>
   <form action="{URL->ACTION}" method="post" style="display: inline;">
     {POST_VARS}

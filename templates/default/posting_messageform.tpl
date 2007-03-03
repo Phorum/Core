@@ -8,13 +8,13 @@
     <tr>
       <td style="white-space: nowrap">{LANG->YourName}:&nbsp;</td>
       <td width="100%">
-        {IF POST->message_id}
+        {IF MESSAGE->message_id}
           {! Editing a message }
-          {IF POST->user_id}
-            {POST->author}
+          {IF MESSAGE->user_id}
+            {MESSAGE->author}
           {ELSE}
             {IF MODERATOR}
-              <input type="text" name="author" size="30" value="{POST->author}" />
+              <input type="text" name="author" size="30" value="{MESSAGE->author}" />
             {ELSE}
               <?php echo $PHORUM['user']['username'] ?>
             {/IF}
@@ -24,7 +24,7 @@
           {IF LOGGEDIN}
             <?php echo $PHORUM['user']['username'] ?>
           {ELSE}
-            <input type="text" name="author" size="30" value="{POST->author}" />
+            <input type="text" name="author" size="30" value="{MESSAGE->author}" />
           {/IF}
         {/IF}
       </td>
@@ -33,13 +33,13 @@
     <tr>
       <td style="white-space: nowrap">{LANG->YourEmail}:&nbsp;</td>
       <td width="100%">
-        {IF POST->message_id}
+        {IF MESSAGE->message_id}
           {! Editing a message }
-          {IF POST->user_id}
-            {POST->email}
+          {IF MESSAGE->user_id}
+            {MESSAGE->email}
           {ELSE}
             {IF MODERATOR}
-              <input type="text" name="email" size="30" value="{POST->email}" />
+              <input type="text" name="email" size="30" value="{MESSAGE->email}" />
             {ELSE}
               <?php echo $PHORUM['user']['email'] ?>
             {/IF}
@@ -49,7 +49,7 @@
           {IF LOGGEDIN true}
             <?php echo $PHORUM['user']['email'] ?>
           {ELSE}
-            <input type="text" name="email" size="30" value="{POST->email}" />
+            <input type="text" name="email" size="30" value="{MESSAGE->email}" />
           {/IF}
         {/IF}
       </td>
@@ -57,7 +57,7 @@
     {! Subject ================================================================== }
     <tr>
       <td style="white-space: nowrap">{LANG->Subject}:&nbsp;</td>
-      <td><input type="text" name="subject" id="phorum_subject" size="50" value="{POST->subject}" /></td>
+      <td><input type="text" name="subject" id="phorum_subject" size="50" value="{MESSAGE->subject}" /></td>
     </tr>
     {HOOK "tpl_editor_after_subject"}
     {! Moderator only fields ==================================================== }
@@ -69,34 +69,34 @@
             <select name="special">
               <option value=""></option>
               {IF OPTION_ALLOWED->sticky}
-                <option value="sticky"{IF POST->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
+                <option value="sticky"{IF MESSAGE->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
               {/IF}
               {IF OPTION_ALLOWED->announcement}
-                <option value="announcement" {IF POST->special "announcement"} selected{/IF}>{LANG->MakeAnnouncement}</option>
+                <option value="announcement" {IF MESSAGE->special "announcement"} selected{/IF}>{LANG->MakeAnnouncement}</option>
               {/IF}
             </select>
           {/IF}
           {IF OPTION_ALLOWED->allow_reply}
-            <input type="checkbox" name="allow_reply" value="1" {IF POST->allow_reply} checked="checked"{/IF}> {LANG->AllowReplies}
+            <input type="checkbox" name="allow_reply" value="1" {IF MESSAGE->allow_reply} checked="checked"{/IF}> {LANG->AllowReplies}
           {/IF}
         </td>
       </tr>
     {/IF}
     {! Email notify ============================================================= }
-    {IF POST->user_id}
+    {IF MESSAGE->user_id}
       {IF EMAILNOTIFY}
         <tr>
           <td colspan="2">
-            <input type="checkbox" name="email_notify" value="1" {IF POST->email_notify} checked="checked"{/IF} /> {LANG->EmailReplies}
+            <input type="checkbox" name="email_notify" value="1" {IF MESSAGE->email_notify} checked="checked"{/IF} /> {LANG->EmailReplies}
           </td>
         </tr>
       {/IF}
     {/IF}
     {! Show signature =========================================================== }
-    {IF POST->user_id}
+    {IF MESSAGE->user_id}
       <tr>
         <td colspan="2">
-          <input type="checkbox" name="show_signature" value="1" {IF POST->show_signature} checked="checked"{/IF} /> {LANG->AddSig}
+          <input type="checkbox" name="show_signature" value="1" {IF MESSAGE->show_signature} checked="checked"{/IF} /> {LANG->AddSig}
         </td>
       </tr>
     {/IF}
@@ -109,7 +109,7 @@
 {! Body ===================================================================== }
 {HOOK "tpl_editor_before_textarea"}
 <div class="PhorumStdBlock PhorumNarrowBlock">
-  <textarea name="body" id="phorum_textarea" rows="15" cols="50" style="width: 99%">{POST->body}</textarea>
+  <textarea name="body" id="phorum_textarea" rows="15" cols="50" style="width: 99%">{MESSAGE->body}</textarea>
   {IF MODERATED}
     {LANG->ModeratedForum}<br />
   {/IF}

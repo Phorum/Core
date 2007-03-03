@@ -42,7 +42,7 @@
           </div>
         {/IF}
         <span class="PhorumTitleText PhorumLargeFont">
-          {IF NAME}<a href="{URL->TOP}">{NAME}</a>&nbsp;:&nbsp;{/IF}
+          {IF NAME}<a href="{URL->LIST}">{NAME}</a>&nbsp;:&nbsp;{/IF}
           {TITLE}
         </span>
         {IF URL->INDEX}<a href="{URL->INDEX}">{/IF}<img src="templates/default/images/logo.png" alt="The fastest message board... ever. " title="The fastest message board... ever. " width="170" height="42" border="0" />{IF URL->INDEX}</a>{/IF}
