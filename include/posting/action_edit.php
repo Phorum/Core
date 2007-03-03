@@ -108,6 +108,7 @@ phorum_hook("after_edit", $dbmessage);
 // no need to clear the thread-index as the message has only been changed
 if($PHORUM['cache_messages']) {
     phorum_cache_remove('message',$message["message_id"]);
+    phorum_db_update_forum(array('forum_id'=>$PHORUM['forum_id'],'cache_version'=>($PHORUM['cache_version']+1)));
 }
 
 // Update children to the same sort setting.
