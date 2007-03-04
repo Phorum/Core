@@ -72,8 +72,8 @@ function phorum_update_thread_info($thread)
         if($PHORUM['cache_messages']) {
             // we can simply store them here again, no need to invalidate the cache
             // this function is called in any place where we change something to the thread
-            phorum_cache_put('message_index',"$thread-0",$message["meta"]["message_ids"]);
-            phorum_cache_put('message_index',"$thread-1",$message["meta"]["message_ids_moderator"]);
+            phorum_cache_put('message_index',$PHORUM['forum_id']."-$thread-0",$message["meta"]["message_ids"]);
+            phorum_cache_put('message_index',$PHORUM['forum_id']."-$thread-1",$message["meta"]["message_ids_moderator"]);
 
             // but we need to invalidate the main-message as its changed for the recent author/message
             phorum_cache_remove('message',$thread);

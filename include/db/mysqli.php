@@ -3062,7 +3062,7 @@ function phorum_db_newflag_update_forum($message_ids) {
     // then doing the update to newflags
     $sql="UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} as flags, {$GLOBALS['PHORUM']['message_table']} as msg SET flags.forum_id=msg.forum_id where flags.message_id=msg.message_id and flags.message_id IN ($ids_str)";
     $conn = phorum_db_mysqli_connect();
-    $res = mysqli_query($conn, $del_sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $del_sql");
 
 

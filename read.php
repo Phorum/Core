@@ -223,7 +223,9 @@ if($PHORUM['cache_messages']) {
         $approved = 0;
     }
 
-    $message_index=phorum_cache_get('message_index',"$thread-$approved");
+    $message_index=phorum_cache_get('message_index',$PHORUM['forum_id']."-$thread-$approved");
+    
+    $skip_cache = 0;
 
     if($message_index == null) {
         // nothing in the cache, get it from the database and store it in the cache
@@ -234,70 +236,84 @@ if($PHORUM['cache_messages']) {
         } else {
             $message_index=$data[$thread]['meta']['message_ids'];
         }
+        
+        if(is_array($data[$thread])) {
 
-        // sort it as expected
-        sort($message_index);
+        	// sort it as expected
+        	sort($message_index);
 
-        // put it in the cache now
-        phorum_cache_put('message_index',"$thread-$approved",$message_index);
+        	// put it in the cache now
+        	phorum_cache_put('message_index',$PHORUM['forum_id']."-$thread-$approved",$message_index);
+
+        } else {
+        	$skip_cache = 1;
+        }
 
     }
 
-    // we expect this message_index to be ordered by message-id already!
+    // if we errored out in the previous condition we need to skip this whole part!
+    if(!$skip_cache) {
 
-    // in this case we need the reversed order
-    if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
-        $message_index=array_reverse($message_index);
-    }
 
-    $start=$PHORUM["read_length"]*($page-1);
+    	// we expect this message_index to be ordered by message-id already!
 
-    if(!$PHORUM['threaded_read']) {
-        // get the message-ids from this page (only in flat mode)
-        $message_ids_page = array_slice($message_index, $start,$PHORUM["read_length"]);
+    	// in this case we need the reversed order
+    	if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
+    		$message_index=array_reverse($message_index);
+    	}
+
+    	$start=$PHORUM["read_length"]*($page-1);
+
+    	if(!$PHORUM['threaded_read']) {
+    		// get the message-ids from this page (only in flat mode)
+    		$message_ids_page = array_slice($message_index, $start,$PHORUM["read_length"]);
+    	} else {
+    		// we need all message in threaded read ...
+    		$message_ids_page = $message_index;
+    	}
+
+    	// we need the threadstarter too but its not available in the additional pages
+    	if($page > 1) {
+    		array_unshift($message_ids_page,$thread);
+    	}
+
+
+    	$cache_messages = phorum_cache_get('message',$message_ids_page);
+
+
+    	// check the returned messages if they were found in the cache
+    	$db_messages=array();
+
+    	$msg_not_in_cache=0;
+
+    	foreach($message_ids_page as $mid) {
+    		if(!isset($cache_messages[$mid])) {
+    			$db_messages[]=$mid;
+    			$msg_not_in_cache++;
+    		} else {
+    			$data[$mid]=$cache_messages[$mid];
+    		}
+    	}
+
+    	if($msg_not_in_cache) {
+
+    		$db_messages = phorum_db_get_message($db_messages,'message_id');
+    		// store the found messages in the cache
+
+    		foreach($db_messages as $mid => $message) {
+    			phorum_cache_put('message',$mid,$message);
+    			$data[$mid]=$message;
+    		}
+
+    		if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
+    			krsort($data);
+    		} else {
+    			ksort($data);
+    		}
+    	}
+
     } else {
-        // we need all message in threaded read ...
-        $message_ids_page = $message_index;
-    }
-
-    // we need the threadstarter too but its not available in the additional pages
-    if($page > 1) {
-        array_unshift($message_ids_page,$thread);
-    }
-
-
-    $cache_messages = phorum_cache_get('message',$message_ids_page);
-
-
-    // check the returned messages if they were found in the cache
-    $db_messages=array();
-
-    $msg_not_in_cache=0;
-
-    foreach($message_ids_page as $mid) {
-        if(!isset($cache_messages[$mid])) {
-            $db_messages[]=$mid;
-            $msg_not_in_cache++;
-        } else {
-            $data[$mid]=$cache_messages[$mid];
-        }
-    }
-
-    if($msg_not_in_cache) {
-
-        $db_messages = phorum_db_get_message($db_messages,'message_id');
-        // store the found messages in the cache
-
-        foreach($db_messages as $mid => $message) {
-            phorum_cache_put('message',$mid,$message);
-            $data[$mid]=$message;
-        }
-
-        if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
-            krsort($data);
-        } else {
-            ksort($data);
-        }
+    	$data = array();
     }
 
 } else {
