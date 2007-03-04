@@ -81,7 +81,7 @@ switch ($mod_step) {
             }
 
             // Run a hook for performing custom actions after cleanup.
-            phorum_hook("delete", $msg_ids);
+            phorum_hook("delete", array($msgthd_id));
         }
         $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
