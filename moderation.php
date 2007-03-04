@@ -75,7 +75,7 @@ switch ($mod_step) {
             phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
 
             // Delete the message attachments from the database.
-            $files=phorum_db_get_message_file_list($id);
+            $files=phorum_db_get_message_file_list($msgthd_id);
             foreach($files as $file_id=>$data) {
                 phorum_db_file_delete($file_id);
             }
