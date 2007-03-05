@@ -135,6 +135,11 @@
     define("PHORUM_LINK_MESSAGE", "message");
     define("PHORUM_LINK_EDITOR", "editor");
 
+    // Offsite file linking permissions
+    define("PHORUM_OFFSITE_FORUMONLY", 0);
+    define("PHORUM_OFFSITE_ANYSITE", 1);
+    define("PHORUM_OFFSITE_THISSITE", 2);
+
     // PM Special folders
     define("PHORUM_PM_INBOX", "inbox");
     define("PHORUM_PM_OUTBOX", "outbox");

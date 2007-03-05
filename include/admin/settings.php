@@ -178,6 +178,9 @@ $row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging",
 $row=$frm->addrow( "Secret private key for signing data", $frm->text_box("private_key", $PHORUM["private_key"], 50) );
 $frm->addhelp($row, "Secret key for signing data", "On several occasions, data is transferred from the Phorum system to the user's system and back again. To be sure that there was no tampering with this data on the way, it is signed by Phorum using this secret key. If you do not understand what this is for, then it is safe to simply keep the pre-configured value.<br/><br/><b>Warning:</b> if you change this key, users who are active right now might experience problems.");
 
+$row=$frm->addrow( "Allow Linking To Uploaded Files", $frm->select_tag( "file_offsite", array( PHORUM_OFFSITE_FORUMONLY => "Only from the forum", PHORUM_OFFSITE_THISSITE => "From this web site", PHORUM_OFFSITE_ANYSITE => "From any web site" ), $PHORUM["file_offsite"] ) );
+$frm->addhelp($row, "Allow Off Site Links", "You may not want to allow other web sites to link to files that users have uploaded to your forums. If not, then set this option to \"Only from the forum\". If you want to use links on other parts of your web site, then use \"From this web site\". If you want to allow other websites to link to your forum file uploads, then select \"From any web site\".<br/><br/>If your needs are more specific than this (e.g. if you want to allow access from a specific group of web sites), you will need to use your web server's security features to accomplish this. Apache users can reference <i>Prevent \"Image Theft\"</i> at http://httpd.apache.org/docs/env.html#examples." );
+
 $frm->addbreak( "HTML Settings" );
 
 $row=$frm->addrow( "Phorum HTML Title", $frm->text_box( "html_title", $PHORUM["html_title"], 50 ) );
@@ -258,9 +261,6 @@ $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Types (eg. gif;jpg)", $frm->text_box(
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max File Size (KB)", $frm->text_box( "max_file_size", $PHORUM["max_file_size"], 30 ) );
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Space Quota (KB)", $frm->text_box( "file_space_quota", $PHORUM["file_space_quota"], 30 ) );
-
-$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Allow Off Site Links", $frm->select_tag( "file_offsite", array( "No", "Yes" ), $PHORUM["file_offsite"] ) );
-$frm->addhelp($row, "&nbsp;&nbsp;&nbsp;Allow Off Site Links", "You may not want to allow other web sites to link to files that users upload to your forums.  If not, set this to No.  If you want to use links on other parts of your web site or only specific web sites, you will need to use your web server's security features to accomplish this.  For Apache users, you can reference <i>Prevent \"Image Theft\"</i> at http://httpd.apache.org/docs/env.html#examples." );
 
 $row=$frm->addrow( "Private Messaging:", $frm->select_tag( "enable_pm", array( "Off", "On" ), $PHORUM["enable_pm"] ) );
 

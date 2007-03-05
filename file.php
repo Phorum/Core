@@ -59,12 +59,25 @@ if ($file["link"] == PHORUM_LINK_MESSAGE && isset($file["message_id"])) {
 $send_file=true;
 
 // check if this phorum allows off site links and if not, check the referrer
-if(isset($_SERVER["HTTP_REFERER"]) && !$PHORUM["file_offsite"] && preg_match('!^https?://!', $_SERVER["HTTP_REFERER"])){
+if(isset($_SERVER["HTTP_REFERER"]) && $PHORUM["file_offsite"] != PHORUM_OFFSITE_ANYSITE && preg_match('!^https?://!', $_SERVER["HTTP_REFERER"])){
 
+    $allowed = false;
     $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
-    $len = strlen($base);
-    if (strtolower(substr($_SERVER["HTTP_REFERER"], 0, $len)) != $base) {
 
+    if ($PHORUM["file_offsite"] == PHORUM_OFFSITE_FORUMONLY) {
+        $len = strlen($base);
+        if (strtolower(substr($_SERVER["HTTP_REFERER"], 0, $len)) == $base) {
+            $allowed = true;
+        }
+    } elseif ($PHORUM["file_offsite"] == PHORUM_OFFSITE_THISSITE) {
+        if (preg_match('!^https?://([^/]+)/!', $_SERVER["HTTP_REFERER"], $r) &&
+            preg_match('!^https?://([^/]+)/!', $base, $b) &&
+            strtolower($r[1]) == strtolower($b[1])) {
+            $allowed = true;
+        }
+    }
+
+    if (! $allowed) {
         ob_end_flush();
 
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["FileForbidden"];
