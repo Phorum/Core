@@ -67,7 +67,7 @@ if(isset($_SERVER["HTTP_REFERER"]) && !$PHORUM["file_offsite"] && preg_match('!^
 
         ob_end_flush();
 
-        $PHORUM["DATA"]["MESSAGE"]=$PHORUM["DATA"]["LANG"]["FileForbidden"];
+        $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["FileForbidden"];
         include phorum_get_template("header");
         include phorum_get_template("message");
         include phorum_get_template("footer");
