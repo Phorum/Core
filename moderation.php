@@ -57,6 +57,8 @@ $is_admin_user=$PHORUM["user"]["admin"];
 phorum_hook("moderation",$mod_step);
 
 
+$invalidate_message_cache = array();
+
 switch ($mod_step) {
 
    case PHORUM_DELETE_MESSAGE: // this is a message delete
@@ -250,6 +252,12 @@ switch ($mod_step) {
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_close_thread($msgthd_id);
         phorum_hook("close_thread", $msgthd_id);
+
+        $invalidate_message_cache[] = array(
+            "message_id" => $msgthd_id,
+            "forum_id"   => $PHORUM["forum_id"]
+        );
+
         break;
 
     case PHORUM_REOPEN_THREAD: // we have to reopen a thread
@@ -258,6 +266,12 @@ switch ($mod_step) {
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_reopen_thread($msgthd_id);
         phorum_hook("reopen_thread", $msgthd_id);
+
+        $invalidate_message_cache[] = array(
+            "message_id" => $msgthd_id,
+            "forum_id"   => $PHORUM["forum_id"]
+        );
+
         break;
 
     case PHORUM_APPROVE_MESSAGE: // approving a message
@@ -507,6 +521,15 @@ switch ($mod_step) {
         if(!isset($PHORUM['DATA']['OKMSG'])) $PHORUM['DATA']['OKMSG']="";
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
 }
+
+// remove the affected messages from the cache if caching is enabled.
+if ($PHORUM['cache_messages']) {
+    foreach($invalidate_message_cache as $message) {
+        phorum_cache_remove('message', $message["message_id"]);
+        phorum_db_update_forum(array('forum_id'=>$PHORUM['forum_id'],'cache_version'=>($PHORUM['cache_version']+1)));
+    }
+}
+
 
 if(!isset($PHORUM['DATA']['BACKMSG'])) {
     $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
