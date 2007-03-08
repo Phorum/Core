@@ -216,6 +216,7 @@ if(!$PHORUM["threaded_read"]) {
 if($PHORUM['cache_messages']) {
 
     $data=array();
+    $data['users']=array();
 
     // is he a moderator and gets all messages?
     $approved=1;
@@ -230,6 +231,7 @@ if($PHORUM['cache_messages']) {
     if($message_index == null) {
         // nothing in the cache, get it from the database and store it in the cache
         $data[$thread] = phorum_db_get_message($thread,"message_id");
+        $data['users'][] = $data[$thread]['user_id'];
 
         if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
             $message_index=$data[$thread]['meta']['message_ids_moderator'];
@@ -292,6 +294,7 @@ if($PHORUM['cache_messages']) {
     			$msg_not_in_cache++;
     		} else {
     			$data[$mid]=$cache_messages[$mid];
+    			$data['users'][] = $data[$mid]['user_id'];
     		}
     	}
 
@@ -303,6 +306,7 @@ if($PHORUM['cache_messages']) {
     		foreach($db_messages as $mid => $message) {
     			phorum_cache_put('message',$mid,$message);
     			$data[$mid]=$message;
+    			$data['users'][] = $data[$mid]['user_id'];
     		}
 
     		if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
@@ -313,7 +317,7 @@ if($PHORUM['cache_messages']) {
     	}
 
     } else {
-    	$data = array();
+    	$data = array('users'=>array());
     }
 
 } else {
