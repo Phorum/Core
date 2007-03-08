@@ -29,7 +29,6 @@
 
     // conversion of old data if existing
     if(isset($PHORUM["bad_words"]) && count($PHORUM['bad_words'])) {
-    print "upgrading badwords<br>";
         foreach($PHORUM['bad_words'] as $key => $data) {
             phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$data ,0 ,0);
             unset($PHORUM["bad_words"][$key]);
