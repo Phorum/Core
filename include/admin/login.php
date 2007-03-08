@@ -40,7 +40,8 @@
 
     if(count($_REQUEST)){
 
-        $frm->hidden("target", $_SERVER["REQUEST_URI"]);
+        $frm->hidden("target", htmlentities($_SERVER["REQUEST_URI"]));
+        
     }
 
     $frm->addrow("Username", $frm->text_box("username", "", 30));
