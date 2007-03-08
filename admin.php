@@ -115,8 +115,23 @@
         return $folders;
 
     }
+    
+    /*
+     *
+     * $forums_only can be 0,1,2
+     * 0 = all forums / folders
+     * 1 = all forums
+     * 2 = only forums + vroot-folders (used in banlists)
+     * 3 = only vroot-folders
+     *
+     * $vroot can be -1,0 or > 0
+     * -1 works as told above
+     * 0 returns only forums / folders with vroot = 0
+     * > 0 returns only forums / folders with the given vroot
+     *
+     */
 
-    function phorum_get_forum_info($forums_only=0)
+    function phorum_get_forum_info($forums_only=0,$vroot = -1)
     {
         $folders=array();
         $folder_data=array();
@@ -124,14 +139,26 @@
         $forums = phorum_db_get_forums();
 
         foreach($forums as $forum){
-            if($forums_only == 0 || $forum['folder_flag']==0 || ($forums_only==2 && $forum['vroot'] && $forum['vroot'] == $forum['forum_id']))  {
+        	
+            if( (
+	            	$forums_only == 0 || 
+	            	($forum['folder_flag'] == 0 && $forums_only != 4) || 
+	               	($forums_only==2 && $forum['vroot'] > 0 && $forum['vroot'] == $forum['forum_id']) ||
+	               	($forums_only==4 && $forum['vroot'] == $forum['forum_id'] )
+               	) && ($vroot == -1 || $vroot == $forum['vroot']) )  {
+
+        		
                 $path = $forum["name"];
                 $parent_id=$forum["parent_id"];
-                while($parent_id!=0){
+                
+                while( $parent_id!=0 ){
+                	
                     $path=$forums[$forum["parent_id"]]["name"]."::$path";
 
                     $parent_id=$forums[$parent_id]["parent_id"];
+                    
                 }
+                
                 if($forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
                         $path.=" (Virtual Root)";
                 }
