@@ -21,11 +21,28 @@ function phorum_setup_announcements ()
 function phorum_show_announcements ()
 {
     $PHORUM=$GLOBALS["PHORUM"];
+    
+    if($PHORUM['vroot'] > 0 && isset($PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) && 
+       $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) {
+       	
+       	$announcement_forumid = $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']];
+       	
+    } elseif($PHORUM['vroot'] == 0 &&
+    	     isset($PHORUM["mod_announcements"]["forum_id"]) && 
+    	     $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["forum_id"]) {
+    		 	
+        $announcement_forumid = $PHORUM["mod_announcements"]["forum_id"];
+    		 	
+    } else {
+    	// shouldn't go further - no condition met
+    	$announcement_forumid = 0;
+    }
+    
 
-    if(isset($PHORUM["mod_announcements"]["forum_id"]) && $PHORUM["forum_id"]!=$PHORUM["mod_announcements"]["forum_id"] && !empty($PHORUM["mod_announcements"]["pages"][phorum_page])) {
+    if( !empty($announcement_forumid) && !empty($PHORUM["mod_announcements"]["pages"][phorum_page]) ) {
 
         // Retrieve the last number of posts from the announcement forum.
-        $messages = phorum_db_get_recent_messages($PHORUM["mod_announcements"]["number_to_show"], $PHORUM["mod_announcements"]["forum_id"], 0, true);
+        $messages = phorum_db_get_recent_messages($PHORUM["mod_announcements"]["number_to_show"], $announcement_forumid, 0, true);
         unset($messages["users"]);
 
         // No announcements to show? Then we are done.
@@ -34,12 +51,12 @@ function phorum_show_announcements ()
         // Read the newflags information for authenticated users.
         $newinfo = NULL;
         if ($PHORUM["DATA"]["LOGGEDIN"]) {
-            $newflagkey = $PHORUM["mod_announcements"]["forum_id"]."-".$PHORUM['user']['user_id'];
+            $newflagkey = $announcement_forumid."-".$PHORUM['user']['user_id'];
             if ($PHORUM['cache_newflags']) {
                 $newinfo = phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
             }
             if($newinfo == NULL) {
-                $newinfo = phorum_db_newflag_get_flags($PHORUM["mod_announcements"]["forum_id"]);
+                $newinfo = phorum_db_newflag_get_flags($announcement_forumid);
                 if ($PHORUM['cache_newflags']) {
                     phorum_cache_put('newflags',$newflagkey,$newinfo,86400,$PHORUM['cache_version']);
                 }
