@@ -156,6 +156,7 @@ if(count($_POST)){
                 $forum_settings_inherit["name"] =$_POST["name"];
                 $forum_settings_inherit["description"] =$_POST["description"];
                 $forum_settings_inherit["active"] =$_POST["active"];
+                $forum_settings_inherit["vroot"] =$_POST["vroot"];
                 $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
                 $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
 
