@@ -118,7 +118,7 @@
     
     /*
      *
-     * $forums_only can be 0,1,2
+     * $forums_only can be 0,1,2,3
      * 0 = all forums / folders
      * 1 = all forums
      * 2 = only forums + vroot-folders (used in banlists)
@@ -142,9 +142,9 @@
         	
             if( (
 	            	$forums_only == 0 || 
-	            	($forum['folder_flag'] == 0 && $forums_only != 4) || 
+	            	($forum['folder_flag'] == 0 && $forums_only != 3) || 
 	               	($forums_only==2 && $forum['vroot'] > 0 && $forum['vroot'] == $forum['forum_id']) ||
-	               	($forums_only==4 && $forum['vroot'] == $forum['forum_id'] )
+	               	($forums_only==3 && $forum['vroot'] == $forum['forum_id'] )
                	) && ($vroot == -1 || $vroot == $forum['vroot']) )  {
 
         		

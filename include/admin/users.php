@@ -364,6 +364,7 @@ EOT;
                 }
             }
 
+            phorum_hook("admin_users_form", $frm, $user);
 
             $frm->show();
 
