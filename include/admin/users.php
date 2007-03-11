@@ -349,6 +349,7 @@ EOT;
 
             $frm->addhelp($row, "Date last active", "This shows the date, when the user was last seen in the forum. Check your setting on \"Track user usage\" in the \"General Settings\". As long as this setting is not enabled, the activity will not be tracked.");
 
+            phorum_hook("admin_users_form", $frm, $user);
 
             $frm->show();
 
