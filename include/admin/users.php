@@ -123,6 +123,7 @@
             unset($user_data["password2"]);
 
             if(empty($error)){
+                $user_data = phorum_hook("admin_users_form_save", $user_data);
                 phorum_user_save($user_data);
                 phorum_admin_okmsg("User Saved");
             }
