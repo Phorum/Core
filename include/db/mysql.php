@@ -258,7 +258,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if($thread) {
         $use_key='thread_message';
     } else {
-        $use_key='forum_max_message';
+        $use_key='post_count';
     }
 
     $sql = "SELECT {$PHORUM['message_table']}.* FROM {$PHORUM['message_table']} USE KEY($use_key) WHERE status=".PHORUM_STATUS_APPROVED;
