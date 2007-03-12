@@ -38,6 +38,29 @@ class PhorumInputForm {
         $this->_enctype = $enctype;
         $this->_events = $events;
         $this->_submit = $submit;
+        $this->_module = NULL;
+    }
+
+    /**
+     * This method will check if a form row has been added from module code. If this is the case,
+     * it will force feed an addbreak() which tells for which module the form row has been
+     * added. This is done to make absolutely clear by what part of Phorum a certain setting was
+     * put in the admin page. This method is only called internally.
+     */
+    function _add_module_header()
+    {
+        // Should be available, because Phorum requires PHP 4.3.0 or higher, but skip
+        // the functionality for those who are using an older version of PHP.
+        if (!function_exists('debug_backtrace')) return;
+
+        $bt = debug_backtrace();
+        if (preg_match('!^.*/mods/([^/]+)/([^/]+)$!', $bt[1]["file"], $m)) {
+            $module = $m[1];
+            if ($this->_module === NULL || $this->_module != $module) {
+                $this->addbreak("Module configuration: " . htmlspecialchars($module));
+                $this->_module = $module;
+            }
+        }
     }
 
     function hidden( $name, $value )
@@ -47,6 +70,8 @@ class PhorumInputForm {
 
     function addrow( $title, $contents = "", $valign = "middle", $align = "left" )
     {
+        $this->_add_module_header();
+
         list( $talign, $calign ) = explode( ",", $align );
         if ( empty( $calign ) ) $calign = $talign;
 
@@ -80,6 +105,8 @@ class PhorumInputForm {
 
     function addbreak( $break = "&nbsp;" )
     {
+        $this->_add_module_header();
+
         $this->_rows[] = array( "break" => $break );
         end( $this->_rows );
         return key( $this->_rows );
@@ -87,6 +114,8 @@ class PhorumInputForm {
 
     function addmessage( $message )
     {
+        $this->_add_module_header();
+
         $this->_rows[] = array( "message" => $message );
     }
 
