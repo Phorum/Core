@@ -38,6 +38,7 @@ class PhorumInputForm {
         $this->_enctype = $enctype;
         $this->_events = $events;
         $this->_submit = $submit;
+        $this->_module = NULL;
     }
 
     function hidden( $name, $value )
@@ -45,8 +46,26 @@ class PhorumInputForm {
         $this->_hiddens[$name] = $value;
     }
 
+    function add_module_header()
+    {
+        // Should be available, because Phorum requires PHP 4.3.0 or higher, but skip
+        // the functionality for those who are using an older version of PHP.
+        if (!function_exists('debug_backtrace')) return;
+
+        $bt = debug_backtrace();
+        if (preg_match('!^.*/mods/([^/]+)/([^/]+)$!', $bt[1]["file"], $m)) {
+            $module = $m[1];
+            if ($this->_module === NULL || $this->_module != $module) {
+                $this->addbreak("Module configuration: " . htmlspecialchars($module));
+                $this->_module = $module;
+            }
+        }
+    }
+
     function addrow( $title, $contents = "", $valign = "middle", $align = "left" )
     {
+        $this->add_module_header();
+
         list( $talign, $calign ) = explode( ",", $align );
         if ( empty( $calign ) ) $calign = $talign;
 
@@ -80,6 +99,8 @@ class PhorumInputForm {
 
     function addbreak( $break = "&nbsp;" )
     {
+        $this->add_module_header();
+
         $this->_rows[] = array( "break" => $break );
         end( $this->_rows );
         return key( $this->_rows );
@@ -87,6 +108,8 @@ class PhorumInputForm {
 
     function addmessage( $message )
     {
+        $this->add_module_header();
+
         $this->_rows[] = array( "message" => $message );
     }
 
