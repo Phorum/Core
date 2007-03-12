@@ -51,7 +51,7 @@
         $data=array("hooks"=>$hooks, "mods"=>$mods);
 
         if(phorum_db_update_settings($data)){
-            echo "Mods Updated<br />";
+            phorum_admin_okmsg("Module settings updated successfully");
         } else {
             $error="Database error while updating settings.";
         }
