@@ -42,22 +42,32 @@ class PhorumInputForm {
     }
 
     /**
-     * This method will check if a form row has been added from module code. If this is the case,
-     * it will force feed an addbreak() which tells for which module the form row has been
-     * added. This is done to make absolutely clear by what part of Phorum a certain setting was
-     * put in the admin page. This method is only called internally.
+     * This method will check if a form row has been added from module code.
+     * If this is the case, it will force feed an addbreak() which tells for
+     * which module the form row has been added. This is done to make 
+     * absolutely clear by what part of Phorum a certain setting was
+     * put in the admin page. This method is only called internally by
+     * the methods which add rows to a form.
      */
     function _add_module_header()
     {
-        // Should be available, because Phorum requires PHP 4.3.0 or higher, but skip
-        // the functionality for those who are using an older version of PHP.
+        // Only add module headers for forms that are created outside
+        // the settings screen(s) for a module.
+        if (isset($_REQUEST["module"]) && $_REQUEST["module"] == "modsettings")
+            return;
+
+        // Should be available, because Phorum requires PHP 4.3.0 or higher,
+        // but skip the functionality for those who are using an older
+        // version of PHP.
         if (!function_exists('debug_backtrace')) return;
 
         $bt = debug_backtrace();
-        if (preg_match('!^.*/mods/([^/]+)/([^/]+)$!', $bt[1]["file"], $m)) {
+        if (preg_match('!^.*/mods/([^/]+)/.+$!', $bt[1]["file"], $m)) {
             $module = $m[1];
+            if (!isset($GLOBALS["PHORUM"]["mods"][$module])) return;
             if ($this->_module === NULL || $this->_module != $module) {
-                $this->addbreak("Module configuration: " . htmlspecialchars($module));
+                $this->addbreak("Configuration for module " .
+                                '"' . htmlspecialchars($module) . '"');
                 $this->_module = $module;
             }
         }
