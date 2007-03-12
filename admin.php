@@ -156,7 +156,7 @@
                     $parent_id=$forums[$parent_id]["parent_id"];
                 }
 
-                if($forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
+                if($forums_only!=3 && $forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
                     $path.=" (Virtual Root)";
                 }
                 $folders[$forum["forum_id"]]=$path;
