@@ -57,33 +57,42 @@ class PhorumInputForm {
         $this->_hiddens[$name] = $value;
     }
 
-    function add_module_header()
+    function _called_from_module()
+    {
+        // Should be available, because Phorum requires PHP 4.3.0 or higher,
+        // but skip the functionality for those who are using an older
+        // version of PHP.
+        if (!function_exists('debug_backtrace')) return NULL;
+
+        $bt = debug_backtrace();
+        if (preg_match('!^.*/mods/([^/]+)/.+$!', $bt[2]["file"], $m)) {
+            $module = $m[1];
+            if (isset($GLOBALS["PHORUM"]["mods"][$module])) return $module;
+        }
+
+        return NULL;
+    }
+
+    function _add_module_header()
     {
         // Only add module headers for forms that are created outside
         // the settings screen(s) for a module.
         if (isset($_REQUEST["module"]) && $_REQUEST["module"] == "modsettings")
             return;
 
-        // Should be available, because Phorum requires PHP 4.3.0 or higher,
-        // but skip the functionality for those who are using an older
-        // version of PHP.
-        if (!function_exists('debug_backtrace')) return;
+        $module = $this->_called_from_module();
+        if ($module === NULL) { $this->_module = NULL; return; }
 
-        $bt = debug_backtrace();
-        if (preg_match('!^.*/mods/([^/]+)/.+$!', $bt[1]["file"], $m)) {
-            $module = $m[1];
-            if (!isset($GLOBALS["PHORUM"]["mods"][$module])) return;
-            if ($this->_module === NULL || $this->_module != $module) {
-                $this->addbreak("Configuration for module " .
-                                '"' . htmlspecialchars($module) . '"');
-                $this->_module = $module;
-            }
+        if ($this->_module === NULL || $this->_module != $module) {
+            $this->addbreak("Configuration for module " .
+                            '"' . htmlspecialchars($module) . '"');
+            $this->_module = $module;
         }
     }
 
     function addrow( $title, $contents = "", $valign = "middle", $align = "left" )
     {
-        $this->add_module_header();
+        $this->_add_module_header();
 
         list( $talign, $calign ) = explode( ",", $align );
         if ( empty( $calign ) ) $calign = $talign;
@@ -118,16 +127,36 @@ class PhorumInputForm {
 
     function addbreak( $break = "&nbsp;" )
     {
-        $this->add_module_header();
+        $this->_add_module_header();
 
-        $this->_rows[] = array( "break" => $break );
+        // If a module is calling addbreak() from outside the
+        // modsettings module, then replace the addbreak by
+        // addsubbreak() to make it visually clear that the
+        // options below the break do not belong to the Phorum
+        // admin core.
+        $type = 'break';
+        if ($this->_module !== NULL &&
+            isset($_REQUEST["module"]) &&
+            $_REQUEST["module"] != "modsettings") {
+            $type = 'subbreak';
+        }
+
+        $this->_rows[] = array( $type => $break );
+        end( $this->_rows );
+        return key( $this->_rows );
+    }
+
+    function addsubbreak( $break = "&nbsp;" )
+    {
+        $this->_add_module_header();
+        $this->_rows[] = array( "subbreak" => $break );
         end( $this->_rows );
         return key( $this->_rows );
     }
 
     function addmessage( $message )
     {
-        $this->add_module_header();
+        $this->_add_module_header();
 
         $this->_rows[] = array( "message" => $message );
     }
@@ -161,13 +190,18 @@ class PhorumInputForm {
         if ( is_array( $this->_rows ) ) foreach( $this->_rows as $key => $row ) {
 
 
-            if ( $row["break"] ) {
+            if ( $row["break"] || $row["subbreak"]) {
+                $extra_class = '';
+                if ($row["subbreak"]) {
+                    $row["break"] = $row["subbreak"];
+                    $extra_class = "input-form-td-subbreak";
+                }
                 $title = $row["break"];
                 if ( isset( $this->_help[$key] ) ) {
                     $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
                 }
                 echo "<tr class=\"input-form-tr\">\n";
-                echo "  <td colspan=\"2\" class=\"input-form-td-break\">$title</td>\n";
+                echo "  <td colspan=\"2\" class=\"input-form-td-break $extra_class\">$title</td>\n";
                 echo "</tr>\n";
             } elseif ( $row["message"] ) {
                 echo "<tr class=\"input-form-tr\">\n";
