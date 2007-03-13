@@ -148,7 +148,7 @@ class PhorumInputForm {
         if ( !empty( $this->_target ) ) echo " target=\"$this->_target\"";
         if ( !empty( $this->_enctype ) ) echo " enctype=\"$this->_enctype\"";
         foreach ($this->_events as $event => $code) {
-            echo " $event=\"".htmlspecialchars(code)."\"";
+            echo " $event=\"".htmlspecialchars($code)."\"";
         }
         echo ">\n";
 
