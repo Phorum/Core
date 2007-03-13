@@ -24,71 +24,79 @@
 
     if(count($_POST)){
 
-        // set the defaults
-
+        // Post data preprocessing.
         foreach($_POST as $field=>$value){
 
             switch($field){
 
                 case "name":
-                    if(empty($value)){
+                    $value = trim($value);
+                    $_POST["name"] = $value;
+                    if($value == ""){
                         $error="Please fill in Title";
                     }
                     break;
                 case "vroot":
                     // did we set this folder as vroot?
+                    // existing folder new vroot for everything below
                     if($value > 0 &&
-                        (isset($_POST['forum_id']) && $value != $_POST['forum_id'])) { // existing folder new vroot for everything below
+                        (isset($_POST['forum_id']) && $_POST['forum_id'])) {
                         $setvroot=true;
-                    } elseif($value > 0 && !defined("PHORUM_EDIT_FOLDER")) { // new folder which is vroot for everything below
+                    // new folder which is vroot for everything below
+                    } elseif($value > 0 && !defined("PHORUM_EDIT_FOLDER")) {
                         $setvroot=true;
                     }
                     break;
-
             }
+        }
 
-            if($error) break;
+        if(empty($error)){
+            $_POST = phorum_hook("admin_editfolder_form_save", $_POST);
+            if (isset($_POST["error"])) {
+                $error = $_POST["error"];
+                unset($_POST["error"]);
+            }
+        }
 
+        // we need the old folder for vroots ... see below
+        if(defined("PHORUM_EDIT_FOLDER")){
+            $cur_folder_id=$_POST['forum_id'];
+            $oldfolder_tmp=phorum_db_get_forums($cur_folder_id);
+            $oldfolder=array_shift($oldfolder_tmp);
+        } else {
+            $oldfolder=array('vroot'=>0,'parent_id'=>0);
         }
 
         if(empty($error)){
             unset($_POST["module"]);
             unset($_POST["vroot"]); // we set it separately below
 
+            // update the folder
             if(defined("PHORUM_EDIT_FOLDER")){
                 $cur_folder_id=$_POST['forum_id'];
-
-                // we need the old folder for vroots ... see below
-                $oldfolder_tmp=phorum_db_get_forums($cur_folder_id);
-                $oldfolder=array_shift($oldfolder_tmp);
-
-
-                // update the folder
                 $res=phorum_db_update_forum($_POST);
-
+            // add the folder
             } else {
-                $oldfolder=array('vroot'=>0,'parent_id'=>0);
-                // add the folder
                 $res=phorum_db_add_forum($_POST);
                 $cur_folder_id=$res;
             }
 
-            if($res){ // other db-operations done, now doing the work for vroots
+            // other db-operations done, now doing the work for vroots
+            if($res){
 
                 $cur_folder_tmp=phorum_db_get_forums($cur_folder_id);
                 $cur_folder=array_shift($cur_folder_tmp);
 
 
-                if (!$setvroot &&
-                    (
-                     // we had a vroot before but now we removed it
-                     ($oldfolder['vroot'] && $oldfolder['vroot'] == $cur_folder_id) || 
-                     // or we moved this folder somewhere else
-                     ($oldfolder['parent_id'] != $cur_folder['parent_id'])
-                    )
-                   ) {
+                if (!$setvroot && (
+                    // we had a vroot before but now we removed it
+                    ($oldfolder['vroot'] && $oldfolder['vroot'] == $cur_folder_id) || 
+                    // or we moved this folder somewhere else
+                    ($oldfolder['parent_id'] != $cur_folder['parent_id'])
+                   )) {
 
-                    // get the parent_id and set its vroot (if its a folder) to the desc folders/forums
+                    // get the parent_id and set its vroot (if its a folder)
+                    // to the desc folders/forums
                     if($cur_folder['parent_id'] > 0) { // is it a real folder?
                         $parent_folder=phorum_db_get_forums($cur_folder['parent_id']);
 
@@ -121,11 +129,24 @@
             $$key=$value;
         }
 
+        $forum_settings = $_POST;
+
+        if ($setvroot) {
+            $vroot = $_POST["forum_id"];
+        } else {
+            if ($_POST["forum_id"] != $oldfolder["vroot"]) {
+                $vroot = $oldfolder["vroot"];
+            } else {
+                $vroot = 0;
+            }
+        }
+        $forum_settings["vroot"] = $vroot;
+
     } elseif(defined("PHORUM_EDIT_FOLDER")) {
 
-        $forum_settings = phorum_db_get_forums($_REQUEST["forum_id"]);
-        extract($forum_settings[$_REQUEST["forum_id"]]);
-
+        $forums = phorum_db_get_forums($_REQUEST["forum_id"]);
+        $forum_settings = $forums[$_REQUEST["forum_id"]];
+        extract($forum_settings);
     }
 
     if($error){
@@ -134,7 +155,7 @@
 
     include_once "./include/admin/PhorumInputForm.php";
 
-    $frm =& new PhorumInputForm ("", "post");
+    $frm = new PhorumInputForm ("", "post");
 
     $folder_data=phorum_get_folder_info();
 
@@ -158,10 +179,7 @@
         } else {
             $foreign_vroot=$vroot;
             $vroot=0;
-
         }
-
-
 
     } else {
         $frm->hidden("module", "newfolder");
@@ -173,13 +191,11 @@
         $template="default";
     }
 
-
-
     $frm->hidden("folder_flag", "1");
 
     $frm->addbreak($title);
 
-    $frm->addrow("Folder Title", $frm->text_box("name", $name, 30,50));
+    $frm->addrow("Folder Title", $frm->text_box("name", $name, 30));
 
     $frm->addrow("Folder Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
@@ -197,6 +213,8 @@
     if($foreign_vroot > 0) {
         $frm->addrow("This folder is in the Virtual Root of:",$folders[$foreign_vroot]);
     }
+
+    phorum_hook("admin_editfolder_form", $frm, $forum_settings);
 
     $frm->show();
 
