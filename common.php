@@ -260,8 +260,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if(!empty($PHORUM['vroot'])) {
         $vroot_folders = phorum_db_get_forums($PHORUM['vroot']);
 
-        $PHORUM["DATA"]["TITLE"]      = $vroot_folders[$PHORUM['vroot']]['name'];
-        $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["DATA"]["TITLE"];
+        $PHORUM["title"] = $vroot_folders[$PHORUM['vroot']]['name'];
+        $PHORUM["DATA"]["TITLE"] = $PHORUM["title"];
+        $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["title"];
 
         if($PHORUM['vroot'] == $PHORUM['forum_id']) {
             // unset the forum-name if we are in the vroot-index
