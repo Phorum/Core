@@ -30,7 +30,7 @@ class PhorumInputForm {
     var $_submit;
     var $_help;
 
-    function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = "" )
+    function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
         $this->_action = ( empty( $action ) ) ? $_SERVER["PHP_SELF"] : $action;
         $this->_method = $method;
@@ -39,6 +39,17 @@ class PhorumInputForm {
         $this->_events = $events;
         $this->_submit = $submit;
         $this->_module = NULL;
+    }
+
+    function add_formevent($event, $code) 
+    {
+        $event = strtolower($event);
+        if (substr($event, 0, 2) != "on") $event = "on$event";
+        if (!isset($this->_events[$event])) {
+            $this->_events[$event] = $code; 
+        } else {
+            $this->_events[$event] .= ";" . $code; 
+        }
     }
 
     function hidden( $name, $value )
@@ -136,7 +147,9 @@ class PhorumInputForm {
         echo "<form style=\"display: inline;\" action=\"$this->_action\" method=\"$this->_method\"";
         if ( !empty( $this->_target ) ) echo " target=\"$this->_target\"";
         if ( !empty( $this->_enctype ) ) echo " enctype=\"$this->_enctype\"";
-        if ( !empty( $this->_events ) ) echo " $this->_events";
+        foreach ($this->_events as $event => $code) {
+            echo " $event=\"".htmlspecialchars(code)."\"";
+        }
         echo ">\n";
 
         if ( is_array( $this->_hiddens ) ) foreach( $this->_hiddens as $name => $value ) {
