@@ -87,6 +87,12 @@ input, textarea, select, td
     color: White;
 }
 
+.input-form-td-subbreak
+{
+    background-color: #CCCCDA;
+    color: black;
+}
+
 .input-form-td-message
 {
     font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
