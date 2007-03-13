@@ -2020,7 +2020,7 @@ function phorum_db_user_get_list($type = 0){
 
    $where = '';
    if ($type == 1) $where = "where active = 1";
-   elseif ($type == 2) $where = "where active = 0";
+   elseif ($type == 2) $where = "where active != 1";
 
    $users = array();
    $sql = "select user_id, username from {$PHORUM['user_table']} $where order by username asc";
