@@ -140,7 +140,7 @@ $recipients = array();
 if (isset($_POST["recipients"]) && is_array($_POST["recipients"])) {
     foreach ($_POST["recipients"] as $id => $username) {
         $user = phorum_user_get($id, false);
-        if ($user) {
+        if ($user && $user["active"] == 1) {
             $recipients[$id] = $user;
         }
     }
@@ -359,7 +359,6 @@ if (!empty($action)) {
                         $to_user_id = phorum_db_user_check_field('username', $to_name);
                         if ($to_user_id) {
                             $_POST["to_id"] = $to_user_id;
-                            unset($_POST["to_name"]);
                         } else {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
                         }
@@ -369,8 +368,11 @@ if (!empty($action)) {
                 // Add a recipient by id.
                 if (isset($_POST["to_id"]) && is_numeric($_POST["to_id"])) {
                     $user = phorum_user_get($_POST["to_id"], false);
-                    if ($user) {
+                    if ($user && $user["active"] == 1) {
+                        unset($_POST["to_name"]);
                         $recipients[$user["user_id"]] = $user;
+                    } else {
+                        $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
                     }
                 }
 
