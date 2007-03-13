@@ -30,7 +30,7 @@ class PhorumInputForm {
     var $_submit;
     var $_help;
 
-    function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = "" )
+    function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
         $this->_action = ( empty( $action ) ) ? $_SERVER["PHP_SELF"] : $action;
         $this->_method = $method;
@@ -39,6 +39,28 @@ class PhorumInputForm {
         $this->_events = $events;
         $this->_submit = $submit;
         $this->_module = NULL;
+    }
+
+    /**
+     * This method can be used for adding javascript events to the 
+     * form element.
+     *
+     * @param $event - The javascript event, e.g. "submit" or "onsubmit"
+     *                 (both notations are honoured).
+     * @param $code - The javascript code to add to the event. Do not 
+     *                 call "return" directly from code that you're adding,
+     *                 unless you're sure that you don't want any other
+     *                 javascript code to run for the event.
+     */
+    function add_formevent($event, $code)
+    {
+        $event = strtolower($event);
+        if (substr($event, 0, 2) != "on") $event = "on$event";
+        if (!isset($this->_events[$event])) {
+            $this->_events[$event] = $code;
+        } else {
+            $this->_events[$event] .= ";" . $code;
+        }
     }
 
     /**
@@ -144,7 +166,9 @@ class PhorumInputForm {
         echo "<form style=\"display: inline;\" action=\"$this->_action\" method=\"$this->_method\"";
         if ( !empty( $this->_target ) ) echo " target=\"$this->_target\"";
         if ( !empty( $this->_enctype ) ) echo " enctype=\"$this->_enctype\"";
-        if ( !empty( $this->_events ) ) echo " $this->_events";
+        foreach ($this->_events as $event => $code) {
+            echo " $event=\"".htmlspecialchars($code)."\"";
+        }
         echo ">\n";
 
         if ( is_array( $this->_hiddens ) ) foreach( $this->_hiddens as $name => $value ) {
