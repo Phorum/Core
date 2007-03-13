@@ -2149,17 +2149,25 @@ function phorum_db_user_get_fields($user_id, $fields)
 }
 
 /**
- * Get a list of all the active users.
+ * Get a list of all users of a certain type.
  *
- * @return array - (key: userid, value: array (username, displayname)
+ * @param $type - what type of list to retrieve. 
+ *                0 = all users
+ *                1 = all active users
+ *                2 = all inactive users
+ * @return array - key: userid, value: array (username, displayname)
  */
-function phorum_db_user_get_list(){
+function phorum_db_user_get_list($type = 0){
    $PHORUM = $GLOBALS["PHORUM"];
 
    $conn = phorum_db_mysql_connect();
 
+   $where = '';
+   if ($type == 1) $where = "where active = 1";
+   elseif ($type == 2) $where = "where active = 0";
+
    $users = array();
-   $sql = "select user_id, username from {$PHORUM['user_table']} order by username asc";
+   $sql = "select user_id, username from {$PHORUM['user_table']} $where order by username asc";
    $res = mysql_query($sql, $conn);
    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 

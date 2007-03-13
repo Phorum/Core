@@ -322,9 +322,9 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
  * This function gets a list of all the active users.
  * @return array of users (same format as phorum_user_get)
  */
-function phorum_user_get_list()
+function phorum_user_get_list($type)
 {
-   return phorum_hook("user_list", phorum_db_user_get_list());
+   return phorum_hook("user_list", phorum_db_user_get_list($type));
 }
 
 function phorum_user_save( $user )
