@@ -2017,16 +2017,25 @@ function phorum_db_user_get_fields($user_id, $fields)
 }
 
 /**
- * This function gets a list of all the active users.
- * @return array - (key: userid, value: array (username, displayname)
+ * Get a list of all users of a certain type.
+ *
+ * @param $type - what type of list to retrieve.
+ *                0 = all users
+ *                1 = all active users
+ *                2 = all inactive users
+ * @return array - key: userid, value: array (username, displayname)
  */
-function phorum_db_user_get_list(){
+function phorum_db_user_get_list($type = 0){
    $PHORUM = $GLOBALS["PHORUM"];
 
    $conn = phorum_db_mysqli_connect();
 
+   $where = '';
+   if ($type == 1) $where = "where active = 1";
+   elseif ($type == 2) $where = "where active = 0";
+
    $users = array();
-   $sql = "select user_id, username from {$PHORUM['user_table']} order by username asc";
+   $sql = "select user_id, username from {$PHORUM['user_table']} $where order by username asc";
    $res = mysqli_query( $conn, $sql);
    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
