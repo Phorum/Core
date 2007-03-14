@@ -1,11 +1,5 @@
-{IF LOGGEDIN}
-  <h1>
-    Welcome, 
-    <?php print htmlspecialchars($PHORUM["DATA"]["USERINFO"]["username"]) ?>!
-  </h1>
-{/IF}
 <div class="PhorumNavBlock">
-  <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE loginout_menu}&bull;<a class="PhorumNavLink" href="{URL->MOD_GOOGLE_MAPS_USERMAP}">View user locations</a>
+  <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE loginout_menu}
 </div>
 <table id="phorum-index" cellspacing="0">
   {LOOP FORUMS}
