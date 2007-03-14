@@ -4235,6 +4235,7 @@ function phorum_db_create_tables()
         "CREATE TABLE {$PHORUM['user_newflags_table']} ( user_id integer NOT NULL default 0, forum_id bigint NOT NULL default 0, message_id bigint NOT NULL default 0, PRIMARY KEY  (user_id,forum_id,message_id) )",
         "CREATE TABLE {$PHORUM['groups_table']} ( group_id serial8, name varchar(255) NOT NULL default 0, open smallint NOT NULL default 0, PRIMARY KEY  (group_id) )",
         "CREATE TABLE {$PHORUM['forum_group_xref_table']} ( forum_id integer NOT NULL default 0, group_id bigint NOT NULL default 0, permission integer NOT NULL default 0, PRIMARY KEY  (forum_id,group_id) )",
+                "CREATE        INDEX group_id         on {$PHORUM['forum_group_xref_table']} (group_id)",
         "CREATE TABLE {$PHORUM['user_group_xref_table']} ( user_id integer NOT NULL default 0, group_id bigint NOT NULL default 0, status smallint NOT NULL default 1, PRIMARY KEY  (user_id,group_id) )",
         "CREATE TABLE {$PHORUM['files_table']} ( file_id serial8, user_id bigint NOT NULL default 0, filename varchar(255) NOT NULL default '', filesize bigint NOT NULL default 0, file_data text NOT NULL default '', add_datetime integer NOT NULL default 0, message_id integer NOT NULL default 0, link varchar(10) NOT NULL default '', PRIMARY KEY (file_id))",
 		"CREATE INDEX add_datetime    on {$PHORUM['files_table']} (add_datetime)",
