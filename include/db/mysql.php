@@ -4710,8 +4710,9 @@ function phorum_db_run_queries($queries){
     foreach($queries as $sql){
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()){
-            // skip duplicate column name errors
-            if(!stristr($err, "duplicate column")){
+            // skip duplicate column and key name errors
+            if(!stristr($err, "duplicate column") && 
+               !stristr($err, "duplicate key")){
                 $retmsg.= "$err<br />";
                 phorum_db_mysql_error("$err: $sql");
             }

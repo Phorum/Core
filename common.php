@@ -23,8 +23,11 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 // all other constants in ./include/constants.php
 define( "PHORUM", "5.2-dev" );
 
-// our internal version in format of year-month-day-serial
-define( "PHORUMINTERNAL", "5022006090700" );
+// our database schema version in format of year-month-day-serial
+define( "PHORUM_SCHEMA_VERSION", "2007031400" );
+
+// our database patch level in format of year-month-day-serial
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2006090701" );
 
 define( "DEBUG", 0 );
 
@@ -162,8 +165,9 @@ phorum_db_load_settings();
 // case the admin did not yet save a newly added Phorum setting).
 if (! isset($PHORUM["default_feed"])) $PHORUM["default_feed"] = "rss";
 
-// If we have no private key for signing data, generate one now - only if its not a fresh install
-if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUMINTERNAL && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
+// If we have no private key for signing data, generate one now,
+// but only if it's not a fresh install.
+if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
    $chars = "0123456789!@#$%&abcdefghijklmnopqr".
             "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
    $private_key = "";
@@ -222,9 +226,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // checking for upgrade or new install
     if ( !isset( $PHORUM['internal_version'] ) ) {
-        echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is an error with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
+        echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is a problem with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
         exit();
-    } elseif ( $PHORUM['internal_version'] < PHORUMINTERNAL ) {
+    } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
+               !isset($PHORUM['internal_patchlevel']) || 
+               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
         echo "<html><head><title>Error</title></head><body>Looks like you have installed a new version. Go to the admin to complete the upgrade!</body></html>";
         exit();
     }

@@ -37,7 +37,9 @@
         // this is an install
         $module="install";
 
-    } elseif (isset($PHORUM['internal_version']) && $PHORUM['internal_version'] < PHORUMINTERNAL) {
+    } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION || 
+               !isset($PHORUM['internal_patchlevel']) || 
+               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
 
         // this is an upgrade
         $module="upgrade";
@@ -229,75 +231,6 @@
             }
         }
         return $ret_data;
-    }
-
-    function phorum_upgrade_tables($fromversion,$toversion) {
-
-          $PHORUM=$GLOBALS['PHORUM'];
-
-          if(empty($fromversion) || empty($toversion)){
-              die("Something is wrong with the upgrade script.  Please contact the Phorum Dev Team. ($fromversion,$toversion)");
-          }
-
-          $msg="";
-          $upgradepath="./include/db/upgrade/{$PHORUM['DBCONFIG']['type']}/";
-
-          // read in all existing files
-          $dh=opendir($upgradepath);
-          $upgradefiles=array();
-          while ($file = readdir ($dh)) {
-              if (substr($file,-4,4) == ".php") {
-                  $upgradefiles[]=$file;
-              }
-          }
-          unset($file);
-          closedir($dh);
-
-          // sorting by number
-          sort($upgradefiles,SORT_NUMERIC);
-          reset($upgradefiles);
-
-          // advance to current version
-          while(list($key,$val)=each($upgradefiles)) {
-              if($val == $fromversion.".php")
-              break;
-          }
-
-
-
-          // get the file for the next version (which we will upgrade to)
-          list($dump,$file) = each($upgradefiles);
-
-          // extract the pure version, needed as internal version
-          $pure_version = basename($file,".php");
-
-          if(empty($pure_version)){
-              die("Something is wrong with the upgrade script.  Please contact the Phorum Dev Team. ($fromversion,$toversion)");
-          }
-
-
-          $upgradefile=$upgradepath.$file;
-
-          if(file_exists($upgradefile)) {
-              if (! is_readable($upgradefile))
-                die("$upgradefile is not readable. Make sure the file has got the neccessary permissions and try again.");
-
-              $msg.="Upgrading from db-version $fromversion to $pure_version ... ";
-              $upgrade_queries=array();
-              include($upgradefile);
-              $err=phorum_db_run_queries($upgrade_queries);
-              if($err){
-                  $msg.= "an error occured: $err ... try to continue.<br />\n";
-              } else {
-                  $msg.= "done.<br />\n";
-              }
-              $GLOBALS["PHORUM"]["internal_version"]=$pure_version;
-              phorum_db_update_settings(array("internal_version"=>$pure_version));
-          } else {
-              $msg="Ooops, the upgradefile is missing. How could this happen?";
-          }
-
-          return $msg;
     }
 
     function phorum_admin_gen_compare($txt) {
