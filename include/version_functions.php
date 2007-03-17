@@ -19,6 +19,14 @@
 
 if(!defined("PHORUM")) return;
 
+// The internal_patchlevel can be unset, because this setting was
+// added in 5.2. When upgrading from 5.1, this settings is not yet
+// available. To make things work, we'll fake a value for this
+// setting which will always be lower than the available patch ids.
+if (!isset($PHORUM["internal_patchlevel"])) {
+    $PHORUM["internal_patchlevel"] = "1111111111";
+}
+
 /**
  * Parses the Phorum version number.
  * @param version - version number to parse
@@ -179,118 +187,141 @@ function phorum_find_upgrades($version = PHORUM)
 }
 
 /**
- * Perform a single upgrade step to get closer to the $toversion,
- * coming from $fromversion. This function can handle both
- * applying of patches and performing schema upgrades.
+ * Retrieves all database patches and upgrades that have not yet
+ * been processed.
  *
- * @param $fromversion - the Phorum version to upgrade from.
- * @param $toversion - the Phorum version to upgrade to.
- * @param $type - type of upgrade, either "schema" or "patch".
+ * @return $upgradefiles - An array of upgradefiles. The keys in the array
+ *                         are "<version>-<type>", where <type> is either
+ *                         "patch" or "schema". The values are arrays with
+ *                         the following fields set:
+ *                         - version: the version of the upgrade file
+ *                         - type: the type of upgrade ("patch" or "schema")
+ *                         - file: the path to the upgrade file
+ *                         The array is sorted by version number. 
  */
-function phorum_upgrade_tables($fromversion, $toversion, $type) {
+function phorum_dbupgrade_getupgrades()
+{
+    $PHORUM=$GLOBALS['PHORUM'];
 
-      $PHORUM=$GLOBALS['PHORUM'];
+    // Go over both the patches and schema upgrades and find all
+    // upgrades that have not yet been processed.
+    $upgrades = array();
+    foreach (array('patch', 'schema') as $type)
+    {
+        $upgradepath =
+            "./include/db/upgrade/{$PHORUM['DBCONFIG']['type']}" .
+            ($type == 'patch' ? '-patches' : '');
 
-      // Bail out early if the function parameters qualify as "weird".
-      if(empty($fromversion) || empty($toversion) ||
-         ($type != 'schema' && $type != 'patch')){
-          die("Something is wrong with the upgrade script.
-               Please contact the Phorum Dev Team.
-               (from = $fromversion,
-                to = $toversion,
-                type = ".htmlspecialchars($type).")" );
-      }
+        $versionvar = $type == 'patch' 
+                    ? 'internal_patchlevel'
+                    : 'internal_version';
 
-      $upgradepath =
-          "./include/db/upgrade/{$PHORUM['DBCONFIG']['type']}" .
-          ($type == 'patch' ? '-patches' : '');
+        // Find all available upgrade files in the upgrade directory.
+        // Upgrade file are in the format YYYYMMDDSS.php, where 
+        // Y = year, M = month, D = day, S = serial.
+        // Example: "2007031700.php".
+        if (($dh =@opendir($upgradepath)) === FALSE) die (
+            "phorum_dbupgrade_getupgrades(): unable to open the upgrade " .
+            "directory " . htmlspecialchars($upgradepath)
+        );
+        while (($file = readdir ($dh)) !== FALSE) {
+            if (preg_match('/^(\d{10})\.php$/', $file, $m)) {
+                $version = $m[1];
+                if ($version > $PHORUM[$versionvar]) {
+                    $upgrades["$version-$type"] = array(
+                        "version" => $version,
+                        "type"    => $type,
+                        "file"    => "$upgradepath/$file"
+                    );
+                }
+            }
+        }
+        unset($file);
+        closedir($dh);
+    }
 
-      // Find all available upgrade files in the upgrade directory.
-      // Upgrade file are in the format YYYYMMDDSS.php, where 
-      // Y = year, M = month, D = day, S = serial.
-      // Example: "2007031700.php".
-      if (($dh =@opendir($upgradepath)) === FALSE) die (
-          "The upgrade script is unable to open the upgrade " .
-          "directory " . htmlspecialchars($upgradepath)
-      );
-      $upgradefiles = array();
-      while (($file = readdir ($dh)) !== FALSE) {
-          if (preg_match('/^\d{10}\.php$/', $file)) {
-              $upgradefiles[] = $file;
-          }
-      }
-      unset($file);
-      closedir($dh);
+    // Sort the upgradefiles. We can use a standard sort here,
+    // since they are in the strict YYYYMMDDSS-<type> format.
+    // The version numbers will be leading for the sort. If the
+    // same version is available as a patch and a schema upgrade,
+    // then the patch will come before the schema upgrade.
+    asort($upgrades);
 
-      // Sort the upgrade files.
-      sort($upgradefiles, SORT_NUMERIC);
+    return $upgrades;
+}
 
-      // Walk through the list of upgrade files to find the
-      // next upgrade that we have to run.
-      $version = NULL;
-      $file = NULL;
-      foreach ($upgradefiles as $upgradefile) {
-          $upgradeversion = str_replace(".php", "", $upgradefile);
-          if($upgradeversion > $fromversion) {
-              $version = $upgradeversion;
-              $file    = $upgradefile;
-              break;
-          }
-      }
+/**
+ * Perform the upgrade for a single upgrade file.
+ *
+ * @param $upgrades - An upgrade description. One element from the array
+ *                    as returned by phorum_dbupgrade_getupgrades().
+ * @return $msg - Describes the results of the upgrade. 
+ */
+function phorum_dbupgrade_run($upgrade)
+{
+    $PHORUM      = $GLOBALS["PHORUM"];
+    $version     = $upgrade["version"];
+    $type        = $upgrade["type"];
+    $upgradefile = $upgrade["file"];
 
-      // This should not happen with the current code, but let's keep
-      // it in here as an extra layer of defense.
-      if(empty($version)) die(
-          "Something is wrong with the upgrade script. " .
-          "Please contact the Phorum Dev Team. " .
-          "($fromversion, $toversion, $type)"
-      );
+    $versionvar = $type == 'patch' ? 'internal_patchlevel':'internal_version';
 
-      $upgradefile = "$upgradepath/$file";
+    // Find the version from which we're upgrading.
+    $fromversion = $PHORUM[$versionvar];
 
-      // Check if the upgradefile is readable.
-      if (file_exists($upgradefile) && is_readable($upgradefile)) {
+    // Executing large, long running scripts can result in problems,
+    // in case the script hits PHP resource boundaries. Here we try
+    // to prepare the PHP environment for the upgrade. Unfortunately,
+    // if the server is running with safe_mode enabled, we cannot
+    // change the execution time and memory limits.
+    if (! ini_get('safe_mode')) {
+        set_time_limit(0);
+        ini_set("memory_limit","64M");
+    }
 
-          // Patch level 1111111111 is a special value that is used by
-          // phorum if there is no patch level stored in the database.
-          // So this is the first time a patch is installed.
-          if ($fromversion == '1111111111') {
-              $msg = "Upgrading to patch level $version ...<br/>\n";
-          } else {
-              $msg = "Upgrading from " .
-                     ($type == "patch"?"patch level ":"database version ") .
-                     "$fromversion to $version ...<br/>\n";
-          }
+    // Check if the upgradefile is readable.
+    if (file_exists($upgradefile) && is_readable($upgradefile))
+    {
+        // Initialize the return message.
+        // Patch level 1111111111 is a special value that is used by
+        // phorum if there is no patch level stored in the database.
+        // So this is the first time a patch is installed.
+        if ($fromversion == '1111111111') {
+            $msg = "Upgrading to patch level $version ...<br/>\n";
+        } else {
+            $msg = "Upgrading from " .
+                   ($type == "patch"?"patch level ":"database version ") .
+                   "$fromversion to $version ...<br/>\n";
+        }
 
-          // Load the upgrade file. The upgrade file should fill the
-          // $upgrade_queries array with the neccessary queries to run.
-          $upgrade_queries = array();
-          include($upgradefile);
+        // Load the upgrade file. The upgrade file should fill the
+        // $upgrade_queries array with the neccessary queries to run.
+        $upgrade_queries = array();
+        include($upgradefile);
 
-          // Run all upgrade queries.
-          $err = phorum_db_run_queries($upgrade_queries);
-          if($err){
-              $msg.= "An error occured during this upgrade:<br/><br/>\n" .
-                     "<span style=\"color:red\">$err</span><br/><br/>\n" .
-                     "Please make note of this error and contact the " .
-                     "Phorum Dev Team for help.\nYou can try to continue " .
-                     "with the rest of the upgrade.<br/>\n";
-          } else {
-              $msg.= "The upgrade was successful.<br/>\n";
-          }
-          
-          // Update the upgrade version info.
-          $f = $type=='patch'?'internal_patchlevel':'internal_version';
-          $GLOBALS["PHORUM"][$f] = $version;
-          phorum_db_update_settings(array($f => $version));
+        // Run the upgrade queries.
+        $err = phorum_db_run_queries($upgrade_queries);
+        if($err){
+            $msg.= "An error occured during this upgrade:<br/><br/>\n" .
+                   "<span style=\"color:red\">$err</span><br/><br/>\n" .
+                   "Please make note of this error and contact the " .
+                   "Phorum Dev Team for help.\nYou can try to continue " .
+                   "with the rest of the upgrade.<br/>\n";
+        } else {
+            $msg.= "The upgrade was successful.<br/>\n";
+        }
+        
+        // Update the upgrade version info.
+        $GLOBALS["PHORUM"][$versionvar] = $version;
+        phorum_db_update_settings(array($versionvar => $version));
 
-          return $msg;
+        return $msg;
 
-      } else {
-          return "The upgrade file ".htmlspecialchars($upgradefile)." " .
-                 "cannot be opened by Phorum for reading. Please check " .
-                 "the file permissions for this file and try again.";
-      }
+    } else {
+        return "The upgrade file ".htmlspecialchars($upgradefile)." " .
+               "cannot be opened by Phorum for reading. Please check " .
+               "the file permissions for this file and try again.";
+    }
 }
 
 ?>

@@ -28,17 +28,16 @@ if(!phorum_db_check_connection()){
 include_once "./include/admin/PhorumInputForm.php";
 include_once "./include/version_functions.php";
 
+// Find and count the upgrades that have to be run.
+$upgrades = phorum_dbupgrade_getupgrades();
+$upgradecount = count($upgrades);
+
 // Find the upgrade step that we have to run.
 $step = empty($_POST["step"]) ? 0 : $_POST["step"];
 
 // If the database upgrades are all done, then force the script
 // into step 2 (finish) of the upgrading process.
-if (isset($PHORUM['internal_version']) && 
-    $PHORUM['internal_version'] == PHORUM_SCHEMA_VERSION &&
-    isset($PHORUM['internal_patchlevel']) &&
-    $PHORUM['internal_patchlevel'] == PHORUM_SCHEMA_PATCHLEVEL) {
-    $step = 2;
-}
+if ($upgradecount == 0) $step = 2;
 
 switch ($step) {
 
@@ -54,6 +53,7 @@ switch ($step) {
             Press continue when you are ready to start the upgrade.");
         $frm->hidden("module", "upgrade");
         $frm->hidden("step", "1");
+        $frm->hidden("upgradecount", $upgradecount);
         $frm->show();
 
         break;
@@ -61,64 +61,55 @@ switch ($step) {
     // Step 1: this step performs the actual upgrading steps.
     case 1:
 
-        // Executing large, long running scripts from a browser can result
-        // into problems, in case the script hits PHP resource boundaries.
-        // Here we try to prepare the PHP environment for the upgrade.
-        // Unfortunately, if the server is running with safe_mode enabled,
-        // we cannot change the execution time and memory limits.
-        if (! ini_get('safe_mode')) {
-            set_time_limit(0);
-            ini_set("memory_limit","64M");
+        // For some extra status information to the user.
+        $index = isset($_POST["upgradeindex"])
+               ? $_POST["upgradeindex"]+1 : 1;
+        $count = isset($_POST["upgradecount"])
+               ? $_POST["upgradecount"] : $upgradecount;
+        // Make sure that the visual feedback doesn't turn up weird
+        // if the admin does some clicking back and forth in the browser.
+        if ($index > $count) {
+            $index = 1;
+            $count = $upgradecount;
         }
 
-        // The internal_patchlevel can be unset, because this setting was
-        // added in 5.2. When upgrading from 5.1, this settings is not yet
-        // available. To make things work, we'll fake a value for this
-        // setting which will always be lower than the available patch ids.
-        if (!isset($PHORUM["internal_patchlevel"])) {
-            $PHORUM["internal_patchlevel"] = "1111111111";
-        }
+        // Run the first upgrade from the list of available upgrades.
+        list ($dummy, $upgrade) = each($upgrades);
+        $message = phorum_dbupgrade_run($upgrade);
 
-        // For upgrading, we first run all availabe schema patches. Only
-        // after all patches have been applied, we continue with
-        // running the schema upgrades. 
-
-        if ($PHORUM["internal_patchlevel"] < PHORUM_SCHEMA_PATCHLEVEL) {
-            $message = phorum_upgrade_tables(
-                $PHORUM["internal_patchlevel"],
-                PHORUM_SCHEMA_PATCHLEVEL,
-                "patch"
-            );
-        } else {
-            $message = phorum_upgrade_tables(
-                $PHORUM["internal_version"],
-                PHORUM_SCHEMA_PATCHLEVEL,
-                "schema"
-            );
-        }
-
-        // See if we are fully done with upgrading now. This determines
-        // the next step that we have to run in the upgrade process.
-        $next_step = 1;
-        if ($PHORUM['internal_version'] == PHORUM_SCHEMA_VERSION &&
-            $PHORUM['internal_patchlevel'] == PHORUM_SCHEMA_PATCHLEVEL) {
-            $next_step = 2;
-        }
-
+        // Show the results.
         $frm = new PhorumInputForm ("", "post", "Continue -&gt;");
         $frm->addbreak("Upgrading tables (multiple steps possible) ...");
+        $w = floor(($index/$count)*100);
+        $frm->addmessage(
+            '<table><tr><td>' .
+            '<div style="height:20px;width:300px; border:1px solid black">' .
+            '<div style="height:20px;width:'.$w.'%; background-color:green">' .
+            '</div></div></td><td style="padding-left:10px">' . 
+            'upgrade ' . $index . " of " . $count .
+            '</td></tr></table>'
+        );
         $frm->addmessage($message);
-        $frm->hidden("step", $next_step);
+        $frm->hidden("step", 1);
         $frm->hidden("module", "upgrade");
+        $frm->hidden("upgradeindex", $index);
+        $frm->hidden("upgradecount", $count);
         $frm->show();
 
         break;
 
     // Step 2: the upgrade has been completed.
     case 2:
-        print "The upgrade is complete. You may want to look through " .
-              "the <a href=\"$_SERVER[PHP_SELF]\">the admin interface</a> " .
-              "for any new features in this version.";
+
+        // Show the results.
+        $frm = new PhorumInputForm ("", "post", "Finish");
+        $frm->addbreak("The upgrade is complete");
+        $frm->addmessage(
+              "You may want to look through the " .
+              "<a href=\"$_SERVER[PHP_SELF]\">the admin interface</a> " .
+              "for any new features in this version."
+        );
+        $frm->show();
 
         break;
 
