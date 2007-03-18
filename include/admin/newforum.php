@@ -259,7 +259,7 @@ if($error){
 
 include_once "./include/admin/PhorumInputForm.php";
 
-$frm =& new PhorumInputForm ("", "post");
+$frm = new PhorumInputForm ("", "post");
 
 if(defined("PHORUM_DEFAULT_OPTIONS")){
     $frm->hidden("module", "forum_defaults");
