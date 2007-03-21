@@ -156,7 +156,7 @@
                 
                 while( $parent_id!=0 ){
                 	
-                    $path=$forums[$forum["parent_id"]]["name"]."::$path";
+                    $path=$forums[$parent_id]["name"]."::$path";
 
                     $parent_id=$forums[$parent_id]["parent_id"];
                     
