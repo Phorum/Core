@@ -34,7 +34,11 @@ require_once("./include/format_functions.php");
 // ----------------------------------------------------------------------
 
 // Build the match list for the forums.
-$folder_list=phorum_get_folder_info();
+$forum_info=phorum_get_forum_info(2);
+$forum_matches = array();
+foreach ($forum_info as $id => $name) {
+    $forum_matches[htmlspecialchars($name)] = "message.forum_id = $id";
+}
 
 $ruledefs = array
 (
@@ -50,48 +54,12 @@ $ruledefs = array
     "subject" => array(
         "label"         => "Message subject",
         "matches"       => array(
-            "is"                  => "message.subject  = QUERY",
-            "is not"              => "message.subject != QUERY",
+            "is"                  => "message.subject  =  QUERY",
+            "is not"              => "message.subject !=  QUERY",
             "contains"            => "message.subject  = *QUERY*",
             "does not contain"    => "message.subject != *QUERY*",
         ),
         "queryfield"    => "string"
-    ),
-
-    "username" => array(
-        "label"         => "Author username",
-        "matches"       => array(
-            "is"                  => "user.username  = QUERY",
-            "is not"              => "user.username != QUERY",
-            "starts with"         => "user.username  = QUERY*",
-            "does not start with" => "user.username != QUERY*",
-            "ends with"           => "user.username  = *QUERY",
-            "does not end with"   => "user.username != *QUERY",
-        ),
-        "queryfield"    => "string"
-    ),
-
-    "author" => array(
-        "label"         => "Author name",
-        "matches"       => array(
-            "is"                  => "message.author  = QUERY",
-            "is not"              => "message.author != QUERY",
-            "contains"            => "message.author  = *QUERY*",
-            "does not contain"    => "message.author != *QUERY*",
-            "starts with"         => "message.author  = QUERY*",
-            "does not start with" => "message.author != QUERY*",
-            "ends with"           => "message.author  = *QUERY",
-            "does not end with"   => "message.author != QUERY*",
-        ),
-        "queryfield"    => "string"
-    ),
-
-    "authortype" => array(
-        "label"         => "Author type",
-        "matches"       => array(
-            "registered author"   => "message.user_id != 0",
-            "anonymous author"    => "message.user_id  = 0"
-        )
     ),
 
     "date" => array(
@@ -106,38 +74,17 @@ $ruledefs = array
         "queryfield"    => "date"
     ),
 
-    "ipaddress" => array(
-        "label"         => "Author IP/hostname",
-        "matches"       => array(
-            "is"                  => "message.ip  = QUERY",
-            "is not"              => "message.ip != QUERY",
-            "starts with"         => "message.ip  = QUERY*",
-            "does not start with" => "message.ip != QUERY*",
-            "ends with"           => "message.ip  = *QUERY",
-            "does not end with"   => "message.ip != *QUERY",
-        ),
-        "queryfield"    => "string"
-    ),
-
     "status" => array(
         "label"         => "Message status",
         "matches"       => array(
             "approved"
                               => "message.status = ".PHORUM_STATUS_APPROVED,
-            "on hold (waiting for approval)"
+            "waiting for approval (on hold)"
                               => "message.status = ".PHORUM_STATUS_HOLD, 
             "disapproved by moderator"
                               => "message.status = ".PHORUM_STATUS_HIDDEN,
             "hidden (on hold or disapproved)"
                               => "message.status != ".PHORUM_STATUS_APPROVED,
-        ),
-    ),
-
-    "threadstate" => array(
-        "label"         => "Thread status",
-        "matches"       => array(
-            "open for posting"    => "thread.closed = 0",
-            "closed for posting"  => "thread.closed = 1",
         ),
     ),
 
@@ -147,7 +94,75 @@ $ruledefs = array
             "thread starting messages"
                                   => "message.parent_id  = 0",
             "reply messages"      => "message.parent_id != 0",
+        ),
+    ),
+
+    "forum" => array(
+        "label"        => "Forum",
+        "matches"      => $forum_matches,
+    ),
+
+    "username" => array(
+        "label"         => "Author username",
+        "matches"       => array(
+            "is"                  => "user.username  =  QUERY",
+            "is not"              => "user.username !=  QUERY",
+            "contains"            => "user.username  = *QUERY*",
+            "does not contain"    => "user.username != *QUERY*",
+            "starts with"         => "user.username  =  QUERY*",
+            "does not start with" => "user.username !=  QUERY*",
+            "ends with"           => "user.username  = *QUERY",
+            "does not end with"   => "user.username != *QUERY",
+        ),
+        "queryfield"    => "string"
+    ),
+
+    "author" => array(
+        "label"         => "Author name",
+        "matches"       => array(
+            "is"                  => "message.author  =  QUERY",
+            "is not"              => "message.author !=  QUERY",
+            "contains"            => "message.author  = *QUERY*",
+            "does not contain"    => "message.author != *QUERY*",
+            "starts with"         => "message.author  =  QUERY*",
+            "does not start with" => "message.author !=  QUERY*",
+            "ends with"           => "message.author  = *QUERY",
+            "does not end with"   => "message.author !=  QUERY*",
+        ),
+        "queryfield"    => "string"
+    ),
+
+    "authortype" => array(
+        "label"         => "Author type",
+        "matches"       => array(
+            "registered user"     => "message.user_id != 0",
+            "anonymous user"      => "message.user_id  = 0",
+            "moderator"           => "message.moderator_post = 1",
+            "administrator"       => "user.admin = 1",
+            "active user"         => "user.active = " . PHORUM_USER_ACTIVE,
+            "deactivated user"    => "user.active = " . PHORUM_USER_INACTIVE,
         )
+    ),
+
+    "ipaddress" => array(
+        "label"         => "Author IP/hostname",
+        "matches"       => array(
+            "is"                  => "message.ip  =  QUERY",
+            "is not"              => "message.ip !=  QUERY",
+            "starts with"         => "message.ip  =  QUERY*",
+            "does not start with" => "message.ip !=  QUERY*",
+            "ends with"           => "message.ip  = *QUERY",
+            "does not end with"   => "message.ip != *QUERY",
+        ),
+        "queryfield"    => "string"
+    ),
+
+    "threadstate" => array(
+        "label"         => "Thread status",
+        "matches"       => array(
+            "open for posting"    => "thread.closed = 0",
+            "closed for posting"  => "thread.closed = 1",
+        ),
     ),
 );
 
@@ -237,8 +252,6 @@ if (count($_POST) && isset($_POST["filterdesc"]))
     $messages = phorum_db_metaquery_messagesearch($meta);
     if ($messages === NULL) {
         phorum_admin_error("Internal error: failed to run a message search");
-    } else {
-        phorum_admin_okmsg("Found " . count($messages) . " message(s)");
     }
 }
 
@@ -337,7 +350,7 @@ foreach($ruledefs as $filter => $def) {
     $mcount = count($def["matches"]); 
     $idx = 0;
     foreach ($def["matches"] as $k => $v) {
-        print "      '$idx':'$k'" . (--$mcount ? ",\n" : "\n");
+        print "      '$idx':'".addslashes($k)."'" . (--$mcount?",\n":"\n");
         $idx ++;
     }
     print "    }\n" .
@@ -786,8 +799,10 @@ if (count($filters)) {
 // Show selected messages.
 // ----------------------------------------------------------------------
 
-if (isset($messages) && is_array($messages)) {
-?>
+if (isset($messages) && is_array($messages))
+{
+    phorum_admin_okmsg("Found " . count($messages) . " message(s)"); ?>
+
     <div class="input-form-td-break" style="margin-bottom: 10px">
       Overview of selected messages 
     </div>
