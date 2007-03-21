@@ -4722,24 +4722,28 @@ function phorum_db_metaquery_compile($metaquery)
                 $match = $m[3];
 
                 $matchtokens = preg_split(
-                    '/(\*|QUERY)/',
+                    '/(\*|QUERY|NULL)/',
                     $match, -1,
                     PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
                 );
 
-                $matchsql = "'";
+                $matchsql = "";
                 $is_like_query = false;
+                $is_null_query = false;
                 foreach ($matchtokens as $m) {
                     if ($m == '*') {
                         $is_like_query = true;
                         $matchsql .= '%';
                     } elseif ($m == 'QUERY') {
                         $matchsql .= mysql_escape_string($part["query"]); 
+                    } elseif ($m == 'NULL') {
+                        $is_null_query = true;
+                        $matchsql .= 'NULL';
                     } else {
                         $matchsql .= mysql_escape_string($m); 
                     }
                 }
-                $matchsql .= "'";
+                if (! $is_null_query) $matchsql = "'$matchsql'";
 
                 if ($is_like_query)
                 {
@@ -4749,6 +4753,16 @@ function phorum_db_metaquery_compile($metaquery)
                         false,
                         "Illegal metaquery token " . htmlspecialchars($cond) .
                         ": wildcard match does not combine with $comp operator"
+                    );
+                }
+                elseif ($is_null_query)
+                {
+                    if ($comp == '=') { $comp = ' IS '; }
+                    elseif ($comp == '!=') { $comp = ' IS NOT '; }
+                    else return array(
+                        false,
+                        "Illegal metaquery token " . htmlspecialchars($cond) .
+                        ": NULL match does not combine with $comp operator"
                     );
                 }
 
