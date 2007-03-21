@@ -59,7 +59,7 @@ $ruledefs = array
     ),
 
     "username" => array(
-        "label"         => "Message username",
+        "label"         => "Author username",
         "matches"       => array(
             "is"                  => "user.username  = QUERY",
             "is not"              => "user.username != QUERY",
@@ -72,7 +72,7 @@ $ruledefs = array
     ),
 
     "author" => array(
-        "label"         => "Message author name",
+        "label"         => "Author name",
         "matches"       => array(
             "is"                  => "message.author  = QUERY",
             "is not"              => "message.author != QUERY",
@@ -84,6 +84,14 @@ $ruledefs = array
             "does not end with"   => "message.author != QUERY*",
         ),
         "queryfield"    => "string"
+    ),
+
+    "authortype" => array(
+        "label"         => "Author type",
+        "matches"       => array(
+            "registered author"   => "message.user_id != 0",
+            "anonymous author"    => "message.user_id  = 0"
+        )
     ),
 
     "date" => array(
