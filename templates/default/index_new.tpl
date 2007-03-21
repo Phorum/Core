@@ -3,7 +3,7 @@
 </div>
 <table id="phorum-index" cellspacing="0">
   {LOOP FORUMS}
-    {IF FORUMS->folder_flag}
+    {IF FORUMS->level 0}
       <tr class="folder">
         {IF FORUMS->forum_id FORUMS->vroot}
           <th class="forum-name">{LANG->Forums}</th>
@@ -16,8 +16,13 @@
       </tr>
     {ELSE}
       <tr class="forum">
+        {IF FORUMS->folder_flag}
+          <td class="forum-name" colspan="4">
+            <a href="{FORUMS->URL->INDEX}">{FORUMS->name}</a><p>{FORUMS->description}</p><small>
+          </td>
+        {ELSE}
         <td class="forum-name">
-          <a href="{FORUMS->URL->LIST}">{FORUMS->name}</a><p>{FORUMS->description}</p><small>{LANG->Options}: {IF LOGGEDIN true}<a href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>{/IF}{IF FORUMS->URL->RSS}{IF LOGGEDIN true}&nbsp;&bull;&nbsp;{/IF}<a href="{FORUMS->URL->RSS}">{LANG->RSS}</a>{/IF}</small>
+          <a href="{FORUMS->URL->LIST}">{FORUMS->name}</a><p>{FORUMS->description}</p><small>{LANG->Options}: {IF LOGGEDIN true}<a href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>{/IF}{IF FORUMS->URL->FEED}{IF LOGGEDIN true}&nbsp;&bull;&nbsp;{/IF}<a href="{FORUMS->URL->FEED}">{LANG->RSS}</a>{/IF}</small>
         </td>
         <td class="forum-threads" nowrap="nowrap">
           {FORUMS->thread_count}
@@ -32,6 +37,7 @@
           {/IF}
         </td>
         <td class="forum-last-post" nowrap="nowrap">{FORUMS->last_post}</td>
+        {/IF}
       </tr>
     {/IF}
   {/LOOP FORUMS}

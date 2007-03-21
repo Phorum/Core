@@ -1,7 +1,7 @@
 <table cellspacing="0" class="list">
     {VAR first_pass 1}
     {LOOP FORUMS}
-        {IF FORUMS->folder_flag}
+    {IF FORUMS->level 0}
             <tr>
                 {IF FORUMS->forum_id FORUMS->vroot}
                     <th align="left">
@@ -22,7 +22,13 @@
                 <th align="left">{LANG->LastPost}</th>
             </tr>
         {ELSE}
-            <tr>
+      <tr>
+        {IF FORUMS->folder_flag}
+          <td colspan="4">
+                        <img src="{URL->TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
+            			<a href="{FORUMS->URL->INDEX}">{FORUMS->name}</a><p>{FORUMS->description}</p>
+          </td>
+        {ELSE}
                 <td width="55%" ><h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</h3></a>
                     <p>{FORUMS->description}</p>
                     {IF USER->user_id}<a class="icon icon-tag-green" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
@@ -41,7 +47,8 @@
                     {/IF}
                 </td>
                 <td width="21%" nowrap="nowrap">{FORUMS->last_post}</td>
-            </tr>
         {/IF}
+      </tr>
+    {/IF}
     {/LOOP FORUMS}
 </table>

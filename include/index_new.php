@@ -51,10 +51,11 @@ foreach( $forums as $key=>$forum ) {
     if($forum["folder_flag"] && $forum["vroot"]==$PHORUM["vroot"]){
         $folders[$key]=$forum["forum_id"];
         $forums[$key]["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
+        $forums[$key]["level"] = 0;
 
         $sub_forums = phorum_db_get_forums( 0, $forum["forum_id"] );
         foreach($sub_forums as $sub_forum){
-            if(!$sub_forum["folder_flag"]){
+            if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=0)){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
             }
         }
@@ -69,10 +70,13 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
     foreach($folder_forums[$folder_id] as $key=>$forum){
 
-        if($PHORUM["hide_forums"] && !phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
-            unset($folder_forums[$folder_id][$key]);
-            continue;
-        }
+        if($forum["folder_flag"]) {
+            $forum["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
+        } else {
+            if($PHORUM["hide_forums"] && !phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
+                unset($folder_forums[$folder_id][$key]);
+                continue;
+            }
 
         $forum["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
         $forum["URL"]["MARK_READ"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread", $PHORUM['forum_id'] );
@@ -81,15 +85,17 @@ foreach( $folders as $folder_key=>$folder_id ) {
         }
 
 
-        if ( $forum["message_count"] > 0 ) {
-            $forum["raw_last_post"] = $forum["last_post_time"];
-            $forum["last_post"] = phorum_date( $PHORUM["long_date_time"], $forum["last_post_time"] );
-        } else {
-            $forum["last_post"] = "&nbsp;";
+            if ( $forum["message_count"] > 0 ) {
+                $forum["last_post"] = phorum_date( $PHORUM["long_date"], $forum["last_post_time"] );
+            } else {
+                $forum["last_post"] = "&nbsp;";
+            }
+
+            $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+            $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
         }
 
-        $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-        $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+        $forum["level"] = 1;
 
         if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
 
