@@ -366,10 +366,14 @@ foreach($ruledefs as $filter => $def) {
   <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
   <input type="hidden" name="filterdesc" id="filterdesc" value="" />
   <div style="margin-bottom: 5px">
-    <input id="filtermode_and" type="radio" checked="checked" name="filtermode" value="and">
+    <input id="filtermode_and" type="radio" 
+           <?php if ($filtermode=='and') { ?>checked="checked"<?php } ?>
+           name="filtermode" value="and">
       <label for="filtermode_and">Match all of the following</label>
     </input>
-    <input id="filtermode_or" type="radio" name="filtermode" value="or">
+    <input id="filtermode_or" type="radio" 
+           <?php if ($filtermode=='or') { ?>checked="checked"<?php } ?>
+           name="filtermode" value="or">
       <label for="filtermode_or">Match any of the following</label>
     </input>
   </div>
