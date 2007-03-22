@@ -68,7 +68,7 @@ switch ($mod_step) {
         // A hook to allow modules to implement extra or different
         // delete functionality.
         $delete_handled = 0;
-        list($delete_handled,$nummsgs,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
+        list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
 
         // Handle the delete action, unless a module already handled it.
         if (!$delete_handled) {
@@ -106,7 +106,7 @@ switch ($mod_step) {
         // A hook to allow modules to implement extra or different
         // delete functionality.
         $delete_handled = 0;
-        list($delete_handled,$nummsgs,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_TREE));
+        list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
 
         if(!$delete_handled) {
 
@@ -135,8 +135,9 @@ switch ($mod_step) {
                 }
             }
 
-            $nummsgs=count($msg_ids);
         }
+
+        $nummsgs=count($msg_ids);
 
         // Run a hook for performing custom actions after cleanup.
         phorum_hook("delete", $msg_ids);

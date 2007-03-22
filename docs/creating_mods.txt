@@ -1101,15 +1101,18 @@ Table of contents:
    Where  : moderation.php
    When   : Just before deleting the message(s)
    Input  : 5 parameters:
-            $delete_handled - default = 0, set it to 1 to avoid the real delete afterwards
-            $nummsgs - number of messages "deleted", needs to be set for the message in the template
-            $msgthd_id - msg- or thread-id to be deleted
-            $message - array of the message retrieved with msgthd_id
-            $delete_mode - mode of deletion, either PHORUM_DELETE_MESSAGE or PHORUM_DELETE_TREE
-   Return : Same as Input
+            $delete_handled  default = false, set it to true to avoid the 
+                             real delete afterwards
+            $msg_ids         array containing all deleted message ids
+            $msgthd_id       msg- or thread-id to be deleted
+            $message         array of the message retrieved with msgthd_id
+            $delete_mode     mode of deletion, either 
+                             PHORUM_DELETE_MESSAGE or PHORUM_DELETE_TREE
+   Return : Same as Input; $delete_handled and $msg_ids are used as return
+            data for the hook. 
 
-   The primary use of this hook would be for moving the messages to some archive-area
-   instead of really deleting them.
+   The primary use of this hook would be for moving the messages to some 
+   archive-area instead of really deleting them.
 
    ----------------------------------------------------------------------------
    before_editor
