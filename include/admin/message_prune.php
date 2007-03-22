@@ -117,6 +117,15 @@ $ruledefs = array
         "queryfield"    => "string"
     ),
 
+    "user_id" => array(
+        "label"         => "Author user id",
+        "matches"       => array(
+            "is"                  => "message.user_id  = QUERY",
+            "is not"              => "message.user_id != QUERY",
+        ),
+        "queryfield"    => "string"
+    ),
+
     "author" => array(
         "label"         => "Author name",
         "matches"       => array(
@@ -875,7 +884,8 @@ if (isset($messages) && is_array($messages))
               <?php
               if ($data["user_id"]) { 
                   print "Posted by authenticated user \"".
-                        htmlspecialchars($data["user_username"]) . "\"<br/>";
+                        htmlspecialchars($data["user_username"]) .
+                        "\" (user_id ".$data["user_id"].")<br/>";
               } 
               // Might not be available (for announcements).
               // I won't put a lot of stuff in here for handling announcements,
