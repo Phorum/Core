@@ -368,20 +368,26 @@ foreach($ruledefs as $filter => $def) {
 ?>
 
 <div class="input-form-td-break">
-  Select messages to delete
+  Filter messages / threads to delete
 </div>
 <div class="input-form-td-message">
-  ATTENTION!<br/>
+<?php if (!count($_POST)) { ?>
+  <strong>ATTENTION!</strong><br/>
+  <div style="color:darkred">
   This script can delete A LOT of messages at once. So be careful 
   which messages you select for deleting. Use it at your own risk.
   If you do not feel comfortable with this, please make a good
-  database backup before deleting any messages.<br/>
+  database backup before deleting any messages.
+  </div>
   <br/>
-  The first step in deleting messages, is setting up a set of filters,
-  which select the messages that you want to delete. Please add these
-  filters below. After you are done, click the "Show selected messages"
-  button to preview what messages you will be deleting.<br/>
+  The first step in deleting messages is setting up filters
+  for finding the messages that you want to delete. Please add these
+  filters below (use the plus button for adding and the minus button for
+  deleting filters). After you are done, click the "Find messages" button
+  to retrieve a list of messages that match the filters. No messages
+  will be deleted during this step.<br/>
   <br/>
+<?php } ?>
   <form id="filterform" method="post" action="<?php $_SERVER["PHP_SELF"] ?>"
         onsubmit="filter.getFilterDescription()">
   <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
@@ -399,7 +405,7 @@ foreach($ruledefs as $filter => $def) {
     </input>
   </div>
   <table style="
-      width: 95%;
+      width: 96%;
       margin-bottom: 5px;
       border-collapse: collapse;
       background-color: #f0f0f0;
@@ -416,7 +422,7 @@ foreach($ruledefs as $filter => $def) {
       <!-- filter rules will be added dynamically in this table -->
     </tbody>
   </table>
-  <input type="submit" value="Show selected messages" />
+  <input type="submit" value="Find messages" />
   </form>
 
 </div>
@@ -800,19 +806,85 @@ if (count($filters)) {
 // ----------------------------------------------------------------------
 
 if (isset($messages) && is_array($messages))
-{
-    phorum_admin_okmsg("Found " . count($messages) . " message(s)"); ?>
-
+{ 
+  if (count($messages)) { ?>
+    <form id="selectform" method="post" action="<?php $_SERVER["PHP_SELF"] ?>">
+    <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
+    <input type="hidden" name="filterdesc" id="filterdesc" value="<?php 
+        // Remember the filter description if one is available
+        // (should be at this point).
+        if (isset($_POST["filterdesc"])) {
+            print htmlspecialchars($_POST["filterdesc"]);
+        }
+    ?>" />
     <div class="input-form-td-break" style="margin-bottom: 10px">
-      Overview of selected messages 
+    Select messages / threads to delete
+    (<?php print count($messages) ?>
+     result<?php if (count($messages)!=1) print "s" ?> found)
     </div>
-<?php
+    <div class="input-form-td-message">
+    Here you see all messages and threads that were found, based on the
+    above filters. You can still modify the filters if you like.
+    To delete messages or threads, you have to check the checkboxes in front
+    of them and click on "Delete selected". If you need more info about a
+    certain item, then click on the subject for expanding the view.<br/>
+    <br/>
+    The icon and color tell you if are handling a 
+    <span style="color:#009">message</span>
+    (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comment.png"/>)
+    or a <span style="color:#c30">thread</span>
+    (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comments.png"/>).
+    <br/>
+    <br/>
+    <table width="100%" style="border-collapse:collapse">
+    <?php
 
-    foreach ($messages as $id => $data) {
-        print "$id : {$data["subject"]} ";
-        print phorum_date("%Y/%m/%d", $data["datestamp"]);
-        print "<br/>";
-    }
+    foreach ($messages as $id => $data)
+    {
+        $icon  = $data["parent_id"] == 0 ? "comments.png" : "comment.png";
+        $color = $data["parent_id"] == 0 ? "#c30" : "#009";
+        $alt   = $data["parent_id"] == 0 ? "thread" : "message";
+        print "<tr><td style=\"border-bottom:1px dashed #ccc\">" .
+              "<input type=\"checkbox\" name=\"deletemessage[{$id}]\"/>" .
+              "</td><td style=\"width:100%;border-bottom:1px dashed #ccc\">" .
+              "<span style=\"float:right\">" .
+              htmlspecialchars($data["author"]) . " " .
+              phorum_date("%Y/%m/%d", $data["datestamp"]) .
+              "</span>" .
+              "<img align=\"top\" alt=\"$alt\" title=\"$alt\" " .
+              "src=\"".$PHORUM["http_path"]."/images/$icon\"/> " .
+              "<span style=\"color:$color\">" .
+              htmlspecialchars($data["subject"]) .
+              "</span>" .
+              "</td></tr>";
+    } ?>
+
+    </table>
+    <br/>
+    <input type="button" value="Select all"
+           onclick="
+           var f = document.getElementById('selectform');
+           for (var i = 0; i < f.elements.length; i++) {
+               if (f.elements[i].type == 'checkbox') {
+                   f.elements[i].checked = true;
+               }
+           }
+           "/>
+    <input type="submit" value="Delete selected"/>
+    </div>
+    </form>
+    <?php
+  // count($messages) == 0
+  } else { ?>
+    <div class="input-form-td-break" style="margin-bottom: 10px">
+    No messages were found
+    </div>
+    <div class="input-form-td-message">
+    Your current filter do not match any message in your database.
+    </div>
+    
+    <?php 
+  }
 }
 ?>
 
