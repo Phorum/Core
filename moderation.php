@@ -81,10 +81,11 @@ switch ($mod_step) {
             foreach($files as $file_id=>$data) {
                 phorum_db_file_delete($file_id);
             }
-
-            // Run a hook for performing custom actions after cleanup.
-            phorum_hook("delete", array($msgthd_id));
         }
+
+        // Run a hook for performing custom actions after cleanup.
+        phorum_hook("delete", array($msgthd_id));
+
         $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
@@ -134,12 +135,12 @@ switch ($mod_step) {
                 }
             }
 
-            // Run a hook for performing custom actions after cleanup.
-            phorum_hook("delete", $msg_ids);
-
             $nummsgs=count($msg_ids);
-
         }
+
+        // Run a hook for performing custom actions after cleanup.
+        phorum_hook("delete", $msg_ids);
+
         $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
