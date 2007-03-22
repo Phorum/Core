@@ -4657,7 +4657,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
  *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
  *   query has to be done, then that is setup throught the 
- *   <match specification>.
+ *   <match specification> (see below).
  *
  *   The <match specification> tells us with what the field should be
  *   matched. The string "QUERY" inside the specification is preserved to
@@ -4727,23 +4727,19 @@ function phorum_db_metaquery_compile($metaquery)
                     PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
                 );
 
-                $matchsql = "";
+                $matchsql = "'";
                 $is_like_query = false;
-                $is_null_query = false;
                 foreach ($matchtokens as $m) {
                     if ($m == '*') {
                         $is_like_query = true;
                         $matchsql .= '%';
                     } elseif ($m == 'QUERY') {
                         $matchsql .= mysql_escape_string($part["query"]); 
-                    } elseif ($m == 'NULL') {
-                        $is_null_query = true;
-                        $matchsql .= 'NULL';
                     } else {
                         $matchsql .= mysql_escape_string($m); 
                     }
                 }
-                if (! $is_null_query) $matchsql = "'$matchsql'";
+                $matchsql .= "'";
 
                 if ($is_like_query)
                 {
@@ -4753,16 +4749,6 @@ function phorum_db_metaquery_compile($metaquery)
                         false,
                         "Illegal metaquery token " . htmlspecialchars($cond) .
                         ": wildcard match does not combine with $comp operator"
-                    );
-                }
-                elseif ($is_null_query)
-                {
-                    if ($comp == '=') { $comp = ' IS '; }
-                    elseif ($comp == '!=') { $comp = ' IS NOT '; }
-                    else return array(
-                        false,
-                        "Illegal metaquery token " . htmlspecialchars($cond) .
-                        ": NULL match does not combine with $comp operator"
                     );
                 }
 
@@ -4819,6 +4805,11 @@ function phorum_db_metaquery_compile($metaquery)
                 (is_array($part) ? "condition" : htmlspecialchars($part)));
         }
     }
+
+    if ($expect_groupend) die ("Internal error: unclosed group in metaquery");
+
+    // If the metaquery is empty, then provide a safe true WHERE statement.
+    if ($where == '') { $where = "1 = 1"; }
 
     return array(true, $where);
 }
