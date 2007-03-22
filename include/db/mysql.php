@@ -4844,14 +4844,17 @@ function phorum_db_metaquery_messagesearch($metaquery)
       SELECT message.message_id, 
              message.thread,
              message.parent_id,
+             message.forum_id,
              message.subject,
              message.author,
              message.datestamp,
              message.body,
              message.ip,
              message.status,
+             message.user_id,
              user.username user_username,
-             thread.closed thread_closed
+             thread.closed thread_closed,
+             thread.thread_count
       FROM   {$PHORUM["message_table"]} as thread,
              {$PHORUM["message_table"]} as message
                  LEFT JOIN {$PHORUM["user_table"]} user

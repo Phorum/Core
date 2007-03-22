@@ -374,10 +374,10 @@ foreach($ruledefs as $filter => $def) {
 <?php if (!count($_POST)) { ?>
   <strong>ATTENTION!</strong><br/>
   <div style="color:darkred">
-  This script can delete A LOT of messages at once. So be careful 
-  which messages you select for deleting. Use it at your own risk.
-  If you do not feel comfortable with this, please make a good
-  database backup before deleting any messages.
+    This script can delete A LOT of messages at once. So be careful 
+    which messages you select for deleting. Use it at your own risk.
+    If you do not feel comfortable with this, please make a good
+    database backup before deleting any messages.
   </div>
   <br/>
   The first step in deleting messages is setting up filters
@@ -411,7 +411,9 @@ foreach($ruledefs as $filter => $def) {
       background-color: #f0f0f0;
       border: 1px solid #ccc">
     <tbody id="ruleset">
-      <!-- only used for pushing the query field cell 100% wide -->
+      <!-- Only used for pushing the query field cell 100% wide.
+           It does not really work well if I try to do this from the
+           dynamic td generation below. -->
       <tr>
         <th></th>
         <th></th>
@@ -419,7 +421,7 @@ foreach($ruledefs as $filter => $def) {
         <th></th>
         <th></th>
       </tr>
-      <!-- filter rules will be added dynamically in this table -->
+      <!-- filter rules will be added dynamically at this spot in this table -->
     </tbody>
   </table>
   <input type="submit" value="Find messages" />
@@ -817,51 +819,89 @@ if (isset($messages) && is_array($messages))
             print htmlspecialchars($_POST["filterdesc"]);
         }
     ?>" />
-    <div class="input-form-td-break" style="margin-bottom: 10px">
-    Select messages / threads to delete
-    (<?php print count($messages) ?>
-     result<?php if (count($messages)!=1) print "s" ?> found)
-    </div>
-    <div class="input-form-td-message">
-    Here you see all messages and threads that were found, based on the
-    above filters. You can still modify the filters if you like.
-    To delete messages or threads, you have to check the checkboxes in front
-    of them and click on "Delete selected". If you need more info about a
-    certain item, then click on the subject for expanding the view.<br/>
-    <br/>
-    The icon and color tell you if are handling a 
-    <span style="color:#009">message</span>
-    (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comment.png"/>)
-    or a <span style="color:#c30">thread</span>
-    (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comments.png"/>).
-    <br/>
-    <br/>
-    <table width="100%" style="border-collapse:collapse">
-    <?php
 
-    foreach ($messages as $id => $data)
-    {
+    <div class="input-form-td-break" style="margin-bottom: 10px">
+      Select messages / threads to delete
+      (<?php print count($messages) ?>
+       result<?php if (count($messages)!=1) print "s" ?> found)
+    </div>
+
+    <div class="input-form-td-message">
+      Here you see all messages and threads that were found, based on the
+      above filters. You can still modify the filters if you like.
+      To delete messages or threads, you have to check the checkboxes in front
+      of them and click on "Delete selected". If you need more info about a
+      certain item, then click on the subject for expanding the view.<br/>
+      <br/>
+      The icon and color tell you if are handling a 
+      <span style="color:#009">message</span>
+      (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comment.png"/>)
+      or a <span style="color:#c30">thread</span>
+      (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comments.png"/>).
+      <br/>
+      <br/>
+      <table style="width:96%; border-collapse:collapse">
+      <?php
+
+      // Add the messages to the form.
+      foreach ($messages as $id => $data) {
         $icon  = $data["parent_id"] == 0 ? "comments.png" : "comment.png";
         $color = $data["parent_id"] == 0 ? "#c30" : "#009";
         $alt   = $data["parent_id"] == 0 ? "thread" : "message";
-        print "<tr><td style=\"border-bottom:1px dashed #ccc\">" .
-              "<input type=\"checkbox\" name=\"deletemessage[{$id}]\"/>" .
-              "</td><td style=\"width:100%;border-bottom:1px dashed #ccc\">" .
-              "<span style=\"float:right\">" .
-              htmlspecialchars($data["author"]) . " " .
-              phorum_date("%Y/%m/%d", $data["datestamp"]) .
-              "</span>" .
-              "<img align=\"top\" alt=\"$alt\" title=\"$alt\" " .
-              "src=\"".$PHORUM["http_path"]."/images/$icon\"/> " .
-              "<span style=\"color:$color\">" .
-              htmlspecialchars($data["subject"]) .
-              "</span>" .
-              "</td></tr>";
-    } ?>
 
-    </table>
-    <br/>
-    <input type="button" value="Select all"
+        $strippedbody = nl2br(htmlspecialchars($data["body"]));
+
+        ?>
+        <tr>
+          <td valign="top" style="border-bottom:1px dashed #ccc">
+            <input type="checkbox" name="deletemessage[<?php print $id ?>]"/>
+          </td>
+          <td valign="top" style="width:100%;border-bottom:1px dashed #ccc">
+            <span style="float:right">
+              <?php print htmlspecialchars($data["author"]) ?>
+              <?php print phorum_date("%Y/%m/%d", $data["datestamp"]) ?>
+            </span>
+            <img align="top" 
+                 title="<?php print $alt ?>" alt="<?php print $alt ?>" 
+                 src="<?php print $PHORUM["http_path"]."/images/".$icon ?>"/>
+              <a style="text-decoration: none" href="javascript:void" onclick="document.getElementById('message_details_<?php print $id ?>').style.display = 'block'"><span style="color:<?php print $color?>"><?php print htmlspecialchars($data["subject"]) ?></span></a>
+            <div style="margin: 0px 0px 10px 20px; 
+                        padding: 5px; 
+                        border: 1px solid #ccc;
+                        background-color: #f0f0f0;
+                        font-size: 11px;
+                        display: none" 
+                 id="message_details_<?php print $id ?>">
+              <?php
+              if ($data["user_id"]) { 
+                  print "Posted by authenticated user \"".
+                        htmlspecialchars($data["user_username"]) . "\"<br/>";
+              } 
+              // Might not be available (for announcements).
+              // I won't put a lot of stuff in here for handling announcements,
+              // because 5.2 handles them differently than 5.1.
+              if (isset($forum_info[$data["forum_id"]])) {
+                  print "Forum: ".  $forum_info[$data["forum_id"]] . "<br/>";
+              }
+              if ($data["parent_id"] == 0) { 
+                  print "Messages in this thread: {$data["thread_count"]}<br/>";
+              }
+              ?>
+              <div style="max-height: 100px;
+                          padding: 5px;
+                          overflow: auto;
+                          background-color: white;
+                          border: 1px inset #ccc">
+                <?php print $strippedbody ?>
+              </div>
+            </div>
+          </td>
+        </tr> <?php
+      } ?>
+
+      </table>
+      <br/>
+      <input type="button" value="Select all"
            onclick="
            var f = document.getElementById('selectform');
            for (var i = 0; i < f.elements.length; i++) {
@@ -870,7 +910,7 @@ if (isset($messages) && is_array($messages))
                }
            }
            "/>
-    <input type="submit" value="Delete selected"/>
+      <input type="submit" value="Delete selected"/>
     </div>
     </form>
     <?php
