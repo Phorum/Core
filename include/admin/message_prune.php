@@ -102,6 +102,21 @@ $ruledefs = array
         "matches"      => $forum_matches,
     ),
 
+    "author" => array(
+        "label"         => "Author name",
+        "matches"       => array(
+            "is"                  => "message.author  =  QUERY",
+            "is not"              => "message.author !=  QUERY",
+            "contains"            => "message.author  = *QUERY*",
+            "does not contain"    => "message.author != *QUERY*",
+            "starts with"         => "message.author  =  QUERY*",
+            "does not start with" => "message.author !=  QUERY*",
+            "ends with"           => "message.author  = *QUERY",
+            "does not end with"   => "message.author !=  QUERY*",
+        ),
+        "queryfield"    => "string"
+    ),
+
     "username" => array(
         "label"         => "Author username",
         "matches"       => array(
@@ -122,21 +137,6 @@ $ruledefs = array
         "matches"       => array(
             "is"                  => "message.user_id  = QUERY",
             "is not"              => "message.user_id != QUERY",
-        ),
-        "queryfield"    => "string"
-    ),
-
-    "author" => array(
-        "label"         => "Author name",
-        "matches"       => array(
-            "is"                  => "message.author  =  QUERY",
-            "is not"              => "message.author !=  QUERY",
-            "contains"            => "message.author  = *QUERY*",
-            "does not contain"    => "message.author != *QUERY*",
-            "starts with"         => "message.author  =  QUERY*",
-            "does not start with" => "message.author !=  QUERY*",
-            "ends with"           => "message.author  = *QUERY",
-            "does not end with"   => "message.author !=  QUERY*",
         ),
         "queryfield"    => "string"
     ),
@@ -183,10 +183,82 @@ $messages   = null;        // selected messages (based on a filter)
 $filters    = array();     // active filters
 $filtermode = "and";       // active filter mode (and / or)
 
+// If there are messages to delete in the post data, then delete them
+// from the database.
+$delete_count = 0;
+if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
+{
+    $msgids = array_keys($_POST["deletemessage"]);
+    $msgs = phorum_db_get_message($msgids, "message_id", true);
+    $deleted_messages = array();
+
+    foreach ($msgs as $msg) 
+    {
+        $PHORUM["forum_id"] = $msg["forum_id"];
+
+        $delmode = $msg["parent_id"] == 0 
+                 ? PHORUM_DELETE_TREE
+                 : PHORUM_DELETE_MESSAGE;
+
+        // A hook to allow modules to implement extra or different
+        // delete functionality.
+        list($handled, $delids, $msgid, $msg, $delmode) = phorum_hook(
+            "before_delete", 
+            array(false, 0, $msg["message_id"], $msg, $delmode)
+        );
+
+        // If the "before_delete" hook did not handle the delete action,
+        // then we have to handle it here ourselves.
+        if (! $handled)
+        { 
+            // Delete the message or thread.
+            $delids = phorum_db_delete_message($msg["message_id"], $delmode);
+
+            // Cleanup the attachments for all deleted messages.
+            foreach ($delids as $delid) {
+                $files = phorum_db_get_message_file_list($delid);
+                foreach($files as $file_id=>$data) {
+                    phorum_db_file_delete($file_id);
+                }
+            }
+
+            // For deleted threads, check if we have move notifications
+            // to delete. We unset the forum id, so phorum_db_get_messages()
+            // will return messages with the same thread id in
+            // other forums as well (those are the move notifications).
+            if ($mode == PHORUM_DELETE_TREE) {
+                $forum_id = $PHORUM["forum_id"];
+                $PHORUM["forum_id"] = 0;
+                $moved = phorum_db_get_messages($msg["message_id"]);
+                $PHORUM["forum_id"] = $forum_id;
+                foreach ($moved as $id => $data) {
+                    if (isset($data["meta"]["moved"])) {
+                        phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
+                    }
+                }
+            }
+        }
+
+        // Run a hook for performing custom actions after cleanup.
+        phorum_hook("delete", $delids);
+
+        // Keep track of deleted messages ids for counting the deleted
+        // messages at the end. We can't simply add the number of messages
+        // in the message array, because there might be overlap between
+        // messages and threads here.
+        foreach ($delids as $id) {
+            $delete_messages[$id] = 1;
+        }
+    }
+
+    $delete_count = count($delete_messages);
+    phorum_admin_okmsg("Deleted $delete_count message(s) from the database.");
+}
+
 // If a filterdesc field is in the post data, then query the database
 // based on this filterdesc. The results will be shown later on,
 // below the filter form.
-if (count($_POST) && isset($_POST["filterdesc"]))
+if (isset($_POST["filterdesc"]))
 {
     // The filter rules are separated by "&" or "|" based on
     // respectively an "AND" or an "OR" query.
@@ -274,9 +346,21 @@ function prepare_filter_date($meta, $match, $query)
     if (preg_match('/^(\d\d\d\d)\D(\d\d?)\D(\d\d?)$/', $query, $m)) {
         $dy = $m[1]; $dm = $m[2]; $dd = $m[3];
         if ($dm >= 1 && $dm <= 31 && $dm >= 1 && $dm <= 12) {
-            // Okay, we've got a possibly valid date. 
-            $start_of_day = mktime(0,0,0,$dm,$dd,$dy); 
-            $end_of_day   = mktime(23,59,59,$dm,$dd,$dy); 
+            // Okay, we've got a possibly valid date. Determine the 
+            // start and end of this date.
+
+            // First see what our timezone offset is for the logged in user.
+            $offset = $PHORUM['tz_offset'];
+            if ($PHORUM['user_time_zone'] && 
+                isset($PHORUM['user']['tz_offset']) && 
+                $PHORUM['user']['tz_offset'] != -99) {
+                $offset = $PHORUM['user']['tz_offset'];
+            }
+            $offset *= 3600;
+
+            // Compute the start and end epoch time for the date.
+            $start_of_day = gmmktime(0,  0,  0,  $dm, $dd, $dy) + $offset; 
+            $end_of_day   = gmmktime(23, 59, 59, $dm, $dd, $dy) + $offset; 
         }
     }
 
@@ -873,14 +957,20 @@ if (isset($messages) && is_array($messages))
             <img align="top" 
                  title="<?php print $alt ?>" alt="<?php print $alt ?>" 
                  src="<?php print $PHORUM["http_path"]."/images/".$icon ?>"/>
-              <a style="text-decoration: none" href="javascript:void" onclick="document.getElementById('message_details_<?php print $id ?>').style.display = 'block'"><span style="color:<?php print $color?>"><?php print htmlspecialchars($data["subject"]) ?></span></a>
+              <a style="text-decoration: none" href="javascript:" onclick="
+                  var d = document.getElementById('msginfo_<?php print $id ?>');
+                  d.style.display = d.style.display=='none'?'block':'none'">
+                <span style="color:<?php print $color?>">
+                    <?php print htmlspecialchars($data["subject"]) ?>
+                </span>
+              </a>
             <div style="margin: 0px 0px 10px 20px; 
                         padding: 5px; 
                         border: 1px solid #ccc;
                         background-color: #f0f0f0;
                         font-size: 11px;
                         display: none" 
-                 id="message_details_<?php print $id ?>">
+                 id="msginfo_<?php print $id ?>">
               <?php
               if ($data["user_id"]) { 
                   print "Posted by authenticated user \"".
@@ -912,15 +1002,35 @@ if (isset($messages) && is_array($messages))
       </table>
       <br/>
       <input type="button" value="Select all"
-           onclick="
-           var f = document.getElementById('selectform');
-           for (var i = 0; i < f.elements.length; i++) {
-               if (f.elements[i].type == 'checkbox') {
-                   f.elements[i].checked = true;
-               }
-           }
-           "/>
-      <input type="submit" value="Delete selected"/>
+          onclick="
+          var f = document.getElementById('selectform');
+          for (var i = 0; i < f.elements.length; i++) {
+              if (f.elements[i].type == 'checkbox') {
+                  f.elements[i].checked = true;
+              }
+          }"
+      />
+      <input type="submit" value="Delete selected"
+          onclick="
+          var count = 0;
+          var f = document.getElementById('selectform');
+          for (var i = 0; i < f.elements.length; i++) {
+              if (f.elements[i].type == 'checkbox' &&
+                  f.elements[i].checked) {
+                  count ++;
+              }
+          }
+          if (count == 0) {
+              alert('Please select the message(s) that you want to delete.');
+              return false;
+          }
+          if (confirm('Delete the ' + count + ' selected message(s) ' +
+                      '/ thread(s) from the database?')) {
+              return true;
+          } else {
+              return false;
+          }"
+      />
     </div>
     </form>
     <?php
