@@ -535,6 +535,16 @@ foreach($ruledefs as $filter => $def) {
         <th></th>
       </tr>
       <!-- filter rules will be added dynamically at this spot in this table -->
+      <noscript>
+      <tr>
+        <td colspan="5">
+          <strong>
+            Please, enable JavaScript in your browser. This tool
+            requires JavaScript for its operation.
+          </strong>
+        </td>
+      </tr>
+      </noscript>
     </tbody>
   </table>
   <input type="submit" value="Find messages" />
