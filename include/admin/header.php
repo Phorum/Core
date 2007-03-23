@@ -246,6 +246,31 @@ img.question
     margin-bottom: 3px;
 }
 
+.message_prune_filtertable {
+    width: 96%;
+    margin-bottom: 5px;
+    border-collapse: collapse;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
+
+.message_prune_msginfo {
+    margin: 0px 0px 10px 20px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    font-size: 11px;
+    display: none;
+}
+
+.message_prune_msginfo_body {
+    max-height: 100px;
+    padding: 5px;
+    overflow: auto;
+    background-color: white;
+    border: 1px inset #ccc;
+}
+
 </style>
 <script>
 

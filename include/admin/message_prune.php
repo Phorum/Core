@@ -517,12 +517,7 @@ foreach($ruledefs as $filter => $def) {
       <label for="filtermode_or">Match any of the following</label>
     </input>
   </div>
-  <table style="
-      width: 96%;
-      margin-bottom: 5px;
-      border-collapse: collapse;
-      background-color: #f0f0f0;
-      border: 1px solid #ccc">
+  <table class="message_prune_filtertable">
     <tbody id="ruleset">
       <!-- Only used for pushing the query field cell 100% wide.
            It does not really work well if I try to do this from the
@@ -942,7 +937,7 @@ if (isset($messages) && is_array($messages))
     function toggle_msginfo(id)
     {
         var d = document.getElementById('msginfo_'+id);
-        d.style.display = d.style.display == 'none' ? 'block' : 'none';
+        d.style.display = d.style.display != 'block' ? 'block' : 'none';
         return false;
     }
 
@@ -1048,19 +1043,14 @@ if (isset($messages) && is_array($messages))
                     <?php print htmlspecialchars($data["subject"]) ?>
                 </span>
               </a>
-            <div style="margin: 0px 0px 10px 20px; 
-                        padding: 5px; 
-                        border: 1px solid #ccc;
-                        background-color: #f0f0f0;
-                        font-size: 11px;
-                        display: none" 
-                 id="msginfo_<?php print $id ?>">
+            <div class="message_prune_msginfo" id="msginfo_<?php print $id ?>">
               <?php
               if ($data["user_id"]) { 
                   print "Posted by authenticated user \"".
                         htmlspecialchars($data["user_username"]) .
                         "\" (user_id ".$data["user_id"].")<br/>";
               } 
+              print "Date and time: " . phorum_date("%Y/%m/%d %H:%M:%S", $data["datestamp"]) . "<br/>";
               // Might not be available (for announcements).
               // I won't put a lot of stuff in here for handling announcements,
               // because 5.2 handles them differently than 5.1.
@@ -1069,13 +1059,13 @@ if (isset($messages) && is_array($messages))
               }
               if ($data["parent_id"] == 0) { 
                   print "Messages in this thread: {$data["thread_count"]}<br/>";
+                  if ($data["thread_count"] > 1) {
+                      print "Thread's last post: " .
+                            phorum_date("%Y/%m/%d %H:%M:%S", $data["thread_modifystamp"]) . "<br/>";
+                  }
               }
               ?>
-              <div style="max-height: 100px;
-                          padding: 5px;
-                          overflow: auto;
-                          background-color: white;
-                          border: 1px inset #ccc">
+              <div class="message_prune_msginfo_body">
                 <?php print $strippedbody ?>
               </div>
             </div>

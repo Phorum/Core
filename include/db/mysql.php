@@ -4852,15 +4852,17 @@ function phorum_db_metaquery_messagesearch($metaquery)
              message.ip,
              message.status,
              message.user_id,
-             user.username user_username,
-             thread.closed thread_closed,
-             thread.thread_count
+             user.username       user_username,
+             thread.closed       thread_closed,
+             thread.modifystamp  thread_modifystamp,
+             thread.thread_count thread_count
       FROM   {$PHORUM["message_table"]} as thread,
              {$PHORUM["message_table"]} as message
                  LEFT JOIN {$PHORUM["user_table"]} user
                  ON message.user_id = user.user_id
       WHERE  message.thread  = thread.message_id AND
              ($where)
+      ORDER BY message_id ASC
     ";
 
     $conn = phorum_db_mysql_connect();
