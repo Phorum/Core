@@ -4815,7 +4815,7 @@ function phorum_db_metaquery_compile($metaquery)
 }
 
 /**
- * Run a seaerch on the messages, using a metaquery. See the documentation
+ * Run a search on the messages, using a metaquery. See the documentation
  * for the phorum_db_metaquery_compile() function for more info on the
  * metaquery syntax.
  *

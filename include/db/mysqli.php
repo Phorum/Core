@@ -4325,6 +4325,253 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
 
 }
 
+/**
+ * Translates a message searching meta query into a real SQL WHERE
+ * statement for this database backend. The meta query can be used to
+ * define extended SQL queries, based on a meta description of the
+ * search that has to be performed on the database.
+ *
+ * The meta query is an array, containing:
+ * - query conditions
+ * - grouping using "(" and ")"
+ * - AND/OR specifications using "AND" and "OR".
+ *
+ * The query conditions are arrays, containing the following elements:
+ *
+ * - condition
+ *
+ *   A description of a condition. The syntax for this is:
+ *   <field name to query> <operator> <match specification>
+ *
+ *   The <field name to query> is a field in the message query that
+ *   we are running in this function.
+ *
+ *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
+ *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
+ *   query has to be done, then that is setup throught the 
+ *   <match specification> (see below).
+ *
+ *   The <match specification> tells us with what the field should be
+ *   matched. The string "QUERY" inside the specification is preserved to
+ *   specify at which spot in the query the "query" element from the
+ *   condition array should be inserted. If "QUERY" is not available in
+ *   the specification, then a match is made on the exact value in the
+ *   specification. To perform "LIKE" searches (case insensitive wildcard
+ *   searches), you can use the "*" wildcard character in the specification
+ *   to do so.
+ *
+ * - query
+ *
+ *   The data to use in the query, incase the contition element has a 
+ *   <match specification> that uses "QUERY" in it.
+ *
+ * Example:
+ *
+ * $metaquery = array(
+ *     array(
+ *         "condition"  =>  "field1 = *QUERY*",
+ *         "query"      =>  "test data"
+ *     ),
+ *     "AND",
+ *     "(",
+ *     array("condition"  => "field2 = whatever"),
+ *     "OR",
+ *     array("condition"  => "field2 = something else"),
+ *     ")"
+ * );
+ *
+ * For MySQL, this would be turned into the MySQL WHERE statement:
+ * ... WHERE field1 LIKE '%test data%' 
+ *     AND (field2 = 'whatever' OR field2 = 'something else')
+ *
+ * @param $metaquery - A meta query description array.
+ * @return $return - An array containing two elements. The first element
+ *                   is either true or false, based on the success state
+ *                   of the function call (false means that there was an
+ *                   error). The second argument contains either a 
+ *                   WHERE statement or an error message.
+ */
+function phorum_db_metaquery_compile($metaquery)
+{
+    $where = '';
+
+    $expect_condition  = true;
+    $expect_groupstart = true;
+    $expect_groupend   = false;
+    $expect_combine    = false;
+    $in_group          = 0;
+
+    foreach ($metaquery as $part) 
+    {
+        // Found a new condition.
+        if ($expect_condition && is_array($part))
+        {
+            $cond = trim($part["condition"]);
+            if (preg_match('/^([\w_\.]+)\s+(!?=|<=?|>=?)\s+(\S*)$/', $cond, $m))
+            {
+                $field = $m[1];
+                $comp  = $m[2];
+                $match = $m[3];
+
+                $matchtokens = preg_split(
+                    '/(\*|QUERY|NULL)/',
+                    $match, -1,
+                    PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
+                );
+
+                $matchsql = "'";
+                $is_like_query = false;
+                foreach ($matchtokens as $m) {
+                    if ($m == '*') {
+                        $is_like_query = true;
+                        $matchsql .= '%';
+                    } elseif ($m == 'QUERY') {
+                        $matchsql .= mysql_escape_string($part["query"]); 
+                    } else {
+                        $matchsql .= mysql_escape_string($m); 
+                    }
+                }
+                $matchsql .= "'";
+
+                if ($is_like_query)
+                {
+                    if ($comp == '=') { $comp = ' LIKE '; }
+                    elseif ($comp == '!=') { $comp = ' NOT LIKE '; }
+                    else return array(
+                        false,
+                        "Illegal metaquery token " . htmlspecialchars($cond) .
+                        ": wildcard match does not combine with $comp operator"
+                    );
+                }
+
+                $where .= "$field $comp $matchsql ";
+            } else {
+                return array(
+                    false,
+                    "Illegal metaquery token " . htmlspecialchars($cond) .
+                    ": condition does not match the required format"
+                );
+            }
+
+            $expect_condition   = false;
+            $expect_groupstart  = false;
+            $expect_groupend    = $in_group;
+            $expect_combine     = true;
+        }
+        // Found a new group start.
+        elseif ($expect_groupstart && $part == '(')
+        {
+            $where .= "(";
+            $in_group ++;
+
+            $expect_condition   = true;
+            $expect_groupstart  = false;
+            $expect_groupend    = false;
+            $expect_combine     = false;
+        }
+        // Found a new group end.
+        elseif ($expect_groupend && $part == ')')
+        {
+            $where .= ") ";
+            $in_group --;
+
+            $expect_condition   = false;
+            $expect_groupstart  = false;
+            $expect_groupend    = $in_group;
+            $expect_combine     = true;
+        }
+        // Found a combine token (AND or OR).
+        elseif ($expect_combine && preg_match('/^(OR|AND)$/i', $part, $m))
+        {
+            $where .= strtoupper($m[1]) . " ";
+            
+            $expect_condition   = true;
+            $expect_groupstart  = true;
+            $expect_groupend    = false;
+            $expect_combine     = false;
+        }
+        // Unexpected or illegal token.
+        else 
+        {
+            die("Internal error: unexpected token in metaquery description: " .
+                (is_array($part) ? "condition" : htmlspecialchars($part)));
+        }
+    }
+
+    if ($expect_groupend) die ("Internal error: unclosed group in metaquery");
+
+    // If the metaquery is empty, then provide a safe true WHERE statement.
+    if ($where == '') { $where = "1 = 1"; }
+
+    return array(true, $where);
+}
+
+/**
+ * Run a search on the messages, using a metaquery. See the documentation
+ * for the phorum_db_metaquery_compile() function for more info on the
+ * metaquery syntax.
+ *
+ * The query that is run here, does create a view on the messages, which
+ * includes some thread and user info. This is used so these can also
+ * be taken into account when selecting messages. For the condition elements
+ * in the meta query, you can use fully qualified field names for the
+ * <field name to query>. You can use message.*, user.* and thread.* for this.
+ *
+ * The primary goal for this function is to provide a backend for the
+ * message pruning interface.
+ * 
+ * @param $metaquery - A metaquery array.
+ * @return $messages - An array of message records.
+ */
+function phorum_db_metaquery_messagesearch($metaquery)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Compile the metaquery into a where statement.
+    list($success, $where) = phorum_db_metaquery_compile($metaquery);
+    if (!$success) die($where);
+
+    // Build the SQL query.
+    $sql = "
+      SELECT message.message_id, 
+             message.thread,
+             message.parent_id,
+             message.forum_id,
+             message.subject,
+             message.author,
+             message.datestamp,
+             message.body,
+             message.ip,
+             message.status,
+             message.user_id,
+             user.username       user_username,
+             thread.closed       thread_closed,
+             thread.modifystamp  thread_modifystamp,
+             thread.thread_count thread_count
+      FROM   {$PHORUM["message_table"]} as thread,
+             {$PHORUM["message_table"]} as message
+                 LEFT JOIN {$PHORUM["user_table"]} user
+                 ON message.user_id = user.user_id
+      WHERE  message.thread  = thread.message_id AND
+             ($where)
+      ORDER BY message_id ASC
+    ";
+
+    $conn = phorum_db_mysqli_connect();
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error()) { 
+        phorum_db_mysqli_error("$err: $sql");
+        return NULL;
+    } else {
+        $messages = array();
+        if(mysqli_num_rows($res)) {
+            while ($row = mysqli_fetch_assoc($res)) {
+                $messages[$row["message_id"]] = $row;
+            }
+        }
+        return $messages;
+    }
+}
 
 /**
  * This function creates the tables needed in the database.
