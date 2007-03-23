@@ -1074,7 +1074,7 @@ if (isset($messages) && is_array($messages))
     No messages were found
     </div>
     <div class="input-form-td-message">
-    Your current filter do not match any message in your database.
+    Your current filter does not match any message in your database.
     </div>
     
     <?php 
