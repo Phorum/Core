@@ -4280,7 +4280,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  *
  * - query
  *
- *   The data to use in the query, incase the contition element has a 
+ *   The data to use in the query, in case the condition element has a 
  *   <match specification> that uses "QUERY" in it.
  *
  * Example:
