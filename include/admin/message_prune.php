@@ -71,6 +71,7 @@ $ruledefs = array
             "posted after"        => "function:prepare_filter_date",
             "posted on or after"  => "function:prepare_filter_date",
         ),
+        "prepare_filter_date" => "message.datestamp",
         "queryfield"    => "date"
     ),
 
@@ -172,6 +173,18 @@ $ruledefs = array
             "open for posting"    => "thread.closed = 0",
             "closed for posting"  => "thread.closed = 1",
         ),
+    ),
+
+    "threadlastpost" => array(
+        "label"         => "Thread last post date",
+        "matches"       => array(
+            "posted on or before" => "function:prepare_filter_date",
+            "posted before"       => "function:prepare_filter_date",
+            "posted after"        => "function:prepare_filter_date",
+            "posted on or after"  => "function:prepare_filter_date",
+        ),
+        "prepare_filter_date" => "thread.modifystamp",
+        "queryfield"    => "date",
     ),
 );
 
@@ -299,7 +312,7 @@ if (isset($_POST["filterdesc"]))
                                 htmlspecialchars($match) . 
                                 "\" does not exist.");
                         } else {
-                            $meta = call_user_func($func,$meta,$match,$query); 
+                            $meta = call_user_func($func,$meta,$field,$match,$query); 
                         }
                     }
                     // Standard metaquery addition. 
@@ -337,10 +350,17 @@ if (isset($_POST["filterdesc"]))
 }
 
 // Custom filter preparation for the "date" filter.
-function prepare_filter_date($meta, $match, $query)
+function prepare_filter_date($meta, $field, $match, $query)
 {
     $start_of_day = null;
     $end_of_day = null;
+
+    global $ruledefs;
+    if (!$ruledefs[$field] || !isset($ruledefs[$field]["prepare_filter_date"])){
+        die("Internal error: no date field configure in rule defs for field " .
+            '"' . htmlspecialchars($field) . '"');
+    }
+    $dbfield = $ruledefs[$field]["prepare_filter_date"];
 
     $query = trim($query);
     if (preg_match('/^(\d\d\d\d)\D(\d\d?)\D(\d\d?)$/', $query, $m)) {
@@ -369,37 +389,37 @@ function prepare_filter_date($meta, $match, $query)
         if ($match == "posted on") {
             $meta[] = "(";
             $meta[] = array(
-                "condition" => "message.datestamp >= QUERY",
+                "condition" => "$dbfield >= QUERY",
                 "query"     => $start_of_day
             );
             $meta[] = "AND";
             $meta[] = array(
-                "condition" => "message.datestamp <= QUERY",
+                "condition" => "$dbfield <= QUERY",
                 "query"     => $end_of_day
             );
             $meta[] = ")";
         }
         elseif ($match == "posted on or before") {
             $meta[] = array(
-                "condition" => "message.datestamp <= QUERY",
+                "condition" => "$dbfield <= QUERY",
                 "query"     => $end_of_day
             );
         }
         elseif ($match == "posted before") {
             $meta[] = array(
-                "condition" => "message.datestamp < QUERY",
+                "condition" => "$dbfield < QUERY",
                 "query"     => $end_of_day
             );
         }
         elseif ($match == "posted after") {
             $meta[] = array(
-                "condition" => "message.datestamp > QUERY",
+                "condition" => "$dbfield > QUERY",
                 "query"     => $end_of_day
             );
         }
         elseif ($match == "posted on or after") {
             $meta[] = array(
-                "condition" => "message.datestamp >= QUERY",
+                "condition" => "$dbfield >= QUERY",
                 "query"     => $start_of_day
             );
         }
@@ -413,7 +433,7 @@ function prepare_filter_date($meta, $match, $query)
         // We have to insert a condition to not disturb the query.
         // We'll add a condition that will never match.
         $meta[] = array(
-            "condition" => "message.datestamp = 0",
+            "condition" => "$dbfield = 0",
             "query"     => null,
         );
     }
@@ -624,6 +644,7 @@ function PhorumFilterRule(conf)
             this.match_input_td.colSpan = 1;
 
             // Create a new query input if neccessary.
+            var create_new = false;
             if (this.query_input_type == null)
             {
                 this.query_input = document.createElement('input');
@@ -640,6 +661,8 @@ function PhorumFilterRule(conf)
                 }
 
                 this.query_input_type = ruledefs[this.field].queryfield;
+
+                var create_new = true;
             }
 
             // Add the query cell + input to the table.
@@ -649,7 +672,7 @@ function PhorumFilterRule(conf)
                 this.del_button_td
             );
 
-            // Extra options for dat fields.
+            // Extra options for date fields.
             if (ruledefs[this.field].queryfield == 'date')
             {
                 this.query_input_td.style.whiteSpace = 'nowrap';
@@ -660,7 +683,7 @@ function PhorumFilterRule(conf)
                 this.query_input.maxLength = 10;
                 this.query_input.style.marginRight = '6px';
 
-                this.query_input.helptext=document.createTextNode("yyyy/mm/dd");
+                if (create_new) this.query_input.helptext=document.createTextNode("yyyy/mm/dd");
                 this.query_input_td.style.fontSize = '11px';
                 this.query_input_td.appendChild(this.query_input.helptext);
             }
@@ -957,9 +980,10 @@ if (isset($messages) && is_array($messages))
             <img align="top" 
                  title="<?php print $alt ?>" alt="<?php print $alt ?>" 
                  src="<?php print $PHORUM["http_path"]."/images/".$icon ?>"/>
-              <a style="text-decoration: none" href="javascript:" onclick="
+              <a style="text-decoration: none" href="#" onclick="
                   var d = document.getElementById('msginfo_<?php print $id ?>');
-                  d.style.display = d.style.display=='none'?'block':'none'">
+                  d.style.display = d.style.display=='none'?'block':'none';
+                  return false">
                 <span style="color:<?php print $color?>">
                     <?php print htmlspecialchars($data["subject"]) ?>
                 </span>
