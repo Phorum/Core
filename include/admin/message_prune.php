@@ -176,7 +176,7 @@ $ruledefs = array
     ),
 
     "threadlastpost" => array(
-        "label"         => "Thread last post date",
+        "label"         => "Thread last post",
         "matches"       => array(
             "posted on or before" => "function:prepare_filter_date",
             "posted before"       => "function:prepare_filter_date",
@@ -936,6 +936,51 @@ if (count($filters)) {
 if (isset($messages) && is_array($messages))
 { 
   if (count($messages)) { ?>
+    <script type="text/javascript">
+    //<![CDATA[
+
+    function toggle_msginfo(id)
+    {
+        var d = document.getElementById('msginfo_'+id);
+        d.style.display = d.style.display == 'none' ? 'block' : 'none';
+        return false;
+    }
+
+    function select_all_messages()
+    {
+        var f = document.getElementById('selectform');
+        for (var i = 0; i < f.elements.length; i++) {
+            if (f.elements[i].type == 'checkbox') {
+                f.elements[i].checked = true;
+            }
+        }
+        return false;
+    }
+
+    function delete_selected_messages()
+    {
+        var count = 0;
+        var f = document.getElementById('selectform');
+        for (var i = 0; i < f.elements.length; i++) {
+            if (f.elements[i].type == 'checkbox' &&
+                f.elements[i].checked) {
+                count ++;
+            }
+        }
+        if (count == 0) {
+            alert('Please select the message(s) that you want to delete.');
+            return false;
+        }
+
+        return confirm(
+            'Delete the ' + count + ' selected message(s) ' +
+            '/ thread(s) from the database?'
+        );
+    } 
+
+    //]]>
+    </script>
+
     <form id="selectform" method="post" action="<?php $_SERVER["PHP_SELF"] ?>">
     <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
     <input type="hidden" name="filterdesc" id="filterdesc" value="<?php 
@@ -966,6 +1011,13 @@ if (isset($messages) && is_array($messages))
       (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comments.png"/>).
       <br/>
       <br/>
+      <?php if (count($messages) > 10) { ?>
+      <input type="button" value="Select all"
+             onclick="return select_all_messages()" />
+      <input type="submit" value="Delete selected"
+             onclick="return delete_selected_messages()" />
+      <br/><br/>
+      <?php } ?>
       <table style="width:96%; border-collapse:collapse">
       <?php
 
@@ -990,10 +1042,8 @@ if (isset($messages) && is_array($messages))
             <img align="top" 
                  title="<?php print $alt ?>" alt="<?php print $alt ?>" 
                  src="<?php print $PHORUM["http_path"]."/images/".$icon ?>"/>
-              <a style="text-decoration: none" href="#" onclick="
-                  var d = document.getElementById('msginfo_<?php print $id ?>');
-                  d.style.display = d.style.display=='none'?'block':'none';
-                  return false">
+              <a style="text-decoration: none" href="#" 
+                 onclick="return toggle_msginfo(<?php print $id ?>)">
                 <span style="color:<?php print $color?>">
                     <?php print htmlspecialchars($data["subject"]) ?>
                 </span>
@@ -1036,35 +1086,9 @@ if (isset($messages) && is_array($messages))
       </table>
       <br/>
       <input type="button" value="Select all"
-          onclick="
-          var f = document.getElementById('selectform');
-          for (var i = 0; i < f.elements.length; i++) {
-              if (f.elements[i].type == 'checkbox') {
-                  f.elements[i].checked = true;
-              }
-          }"
-      />
+             onclick="return select_all_messages()" />
       <input type="submit" value="Delete selected"
-          onclick="
-          var count = 0;
-          var f = document.getElementById('selectform');
-          for (var i = 0; i < f.elements.length; i++) {
-              if (f.elements[i].type == 'checkbox' &&
-                  f.elements[i].checked) {
-                  count ++;
-              }
-          }
-          if (count == 0) {
-              alert('Please select the message(s) that you want to delete.');
-              return false;
-          }
-          if (confirm('Delete the ' + count + ' selected message(s) ' +
-                      '/ thread(s) from the database?')) {
-              return true;
-          } else {
-              return false;
-          }"
-      />
+             onclick="return delete_selected_messages()" />
     </div>
     </form>
     <?php
