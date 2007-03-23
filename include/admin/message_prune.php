@@ -408,7 +408,7 @@ function prepare_filter_date($meta, $field, $match, $query)
         elseif ($match == "posted before") {
             $meta[] = array(
                 "condition" => "$dbfield < QUERY",
-                "query"     => $end_of_day
+                "query"     => $start_of_day
             );
         }
         elseif ($match == "posted after") {
