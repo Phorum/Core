@@ -770,7 +770,7 @@ function phorum_get_template_file( $page )
     // fallback to the configured default template. If that one can also
     // not be found, then fallback to the template named "default".
     if (empty($PHORUM["template"]) || !file_exists("$prefix/{$PHORUM['template']}")) {
-        $PHORUM["template"] = $PHORUM["default_template"];
+        $PHORUM["template"] = $PHORUM["default_forum_options"]["template"];
         if ($PHORUM["template"] != "default" && !file_exists("$prefix/{$PHORUM['template']}")) {
             $PHORUM["template"] = "default";
         }
