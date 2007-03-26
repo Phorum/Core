@@ -966,7 +966,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     // Standard query string.
     } else {
         $quote_terms=array();
-        
+
         // First, pull out all the double quoted strings
         // (e.g. '"iMac DV" or -"iMac DV"')
         if (strstr( $search, '"' )) {
@@ -981,7 +981,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         // Merge them all together.
         $terms = array_merge($terms, $quote_terms);
     }
-    
+
     // Handle full text matching.
     if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
@@ -1006,7 +1006,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 $use_key="";
                 $extra_where="";
 
-                /* Using this code on larger forums has shown to make the 
+                /* Using this code on larger forums has shown to make the
                    search faster. However, on smaller forums, it does not
                    appear to help and in fact appears to slow down searches.
 
@@ -2021,6 +2021,9 @@ function phorum_db_user_get($user_id, $detailed)
     $conn = phorum_db_mysql_connect();
 
     if(is_array($user_id)){
+        foreach($user_id as &$id){
+            $id = (int)$id;
+        }
         $user_ids=implode(",", $user_id);
     } else {
         $user_ids=(int)$user_id;
@@ -2151,7 +2154,7 @@ function phorum_db_user_get_fields($user_id, $fields)
 /**
  * Get a list of all users of a certain type.
  *
- * @param $type - what type of list to retrieve. 
+ * @param $type - what type of list to retrieve.
  *                0 = all users
  *                1 = all active users
  *                2 = all inactive users
@@ -3155,9 +3158,9 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
             $new_threads
         );
 
-	} else {
+    } else {
             $counts = array(0,0);
-	}
+    }
 
     } else {
 
@@ -4656,7 +4659,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  *
  *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
  *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
- *   query has to be done, then that is setup throught the 
+ *   query has to be done, then that is setup throught the
  *   <match specification> (see below).
  *
  *   The <match specification> tells us with what the field should be
@@ -4670,7 +4673,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  *
  * - query
  *
- *   The data to use in the query, in case the condition element has a 
+ *   The data to use in the query, in case the condition element has a
  *   <match specification> that uses "QUERY" in it.
  *
  * Example:
@@ -4689,14 +4692,14 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  * );
  *
  * For MySQL, this would be turned into the MySQL WHERE statement:
- * ... WHERE field1 LIKE '%test data%' 
+ * ... WHERE field1 LIKE '%test data%'
  *     AND (field2 = 'whatever' OR field2 = 'something else')
  *
  * @param $metaquery - A meta query description array.
  * @return $return - An array containing two elements. The first element
  *                   is either true or false, based on the success state
  *                   of the function call (false means that there was an
- *                   error). The second argument contains either a 
+ *                   error). The second argument contains either a
  *                   WHERE statement or an error message.
  */
 function phorum_db_metaquery_compile($metaquery)
@@ -4709,7 +4712,7 @@ function phorum_db_metaquery_compile($metaquery)
     $expect_combine    = false;
     $in_group          = 0;
 
-    foreach ($metaquery as $part) 
+    foreach ($metaquery as $part)
     {
         // Found a new condition.
         if ($expect_condition && is_array($part))
@@ -4734,9 +4737,9 @@ function phorum_db_metaquery_compile($metaquery)
                         $is_like_query = true;
                         $matchsql .= '%';
                     } elseif ($m == 'QUERY') {
-                        $matchsql .= mysql_escape_string($part["query"]); 
+                        $matchsql .= mysql_escape_string($part["query"]);
                     } else {
-                        $matchsql .= mysql_escape_string($m); 
+                        $matchsql .= mysql_escape_string($m);
                     }
                 }
                 $matchsql .= "'";
@@ -4792,14 +4795,14 @@ function phorum_db_metaquery_compile($metaquery)
         elseif ($expect_combine && preg_match('/^(OR|AND)$/i', $part, $m))
         {
             $where .= strtoupper($m[1]) . " ";
-            
+
             $expect_condition   = true;
             $expect_groupstart  = true;
             $expect_groupend    = false;
             $expect_combine     = false;
         }
         // Unexpected or illegal token.
-        else 
+        else
         {
             die("Internal error: unexpected token in metaquery description: " .
                 (is_array($part) ? "condition" : htmlspecialchars($part)));
@@ -4827,7 +4830,7 @@ function phorum_db_metaquery_compile($metaquery)
  *
  * The primary goal for this function is to provide a backend for the
  * message pruning interface.
- * 
+ *
  * @param $metaquery - A metaquery array.
  * @return $messages - An array of message records.
  */
@@ -4841,7 +4844,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     // Build the SQL query.
     $sql = "
-      SELECT message.message_id, 
+      SELECT message.message_id,
              message.thread,
              message.parent_id,
              message.forum_id,
@@ -4867,7 +4870,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) { 
+    if ($err = mysql_error()) {
         phorum_db_mysql_error("$err: $sql");
         return NULL;
     } else {
@@ -4959,7 +4962,7 @@ function phorum_db_run_queries($queries){
         $res = mysql_query($sql, $conn);
         if ($err = mysql_error()){
             // skip duplicate column and key name errors
-            if(!stristr($err, "duplicate column") && 
+            if(!stristr($err, "duplicate column") &&
                !stristr($err, "duplicate key")){
                 $retmsg.= "$err<br />";
                 phorum_db_mysql_error("$err: $sql");
