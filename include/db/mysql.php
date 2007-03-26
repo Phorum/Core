@@ -1885,6 +1885,9 @@ function phorum_db_user_get($user_id, $detailed)
     $conn = phorum_db_mysql_connect();
 
     if(is_array($user_id)){
+        foreach($user_id as &$id){
+            $id = (int)$id;
+        }
         $user_ids=implode(",", $user_id);
     } else {
         $user_ids=(int)$user_id;

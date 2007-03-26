@@ -301,7 +301,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
     while ($rec = pg_fetch_assoc($res)){
         $arr[$rec["message_id"]] = $rec;
-		$arr[$rec["message_id"]]["closed"] = $arr[$rec["message_id"]]["closed"] === 't' ? TRUE : FALSE;
+        $arr[$rec["message_id"]]["closed"] = $arr[$rec["message_id"]]["closed"] === 't' ? TRUE : FALSE;
 
         // convert meta field
         if(empty($rec["meta"])){
@@ -452,8 +452,8 @@ function phorum_db_post_message(&$message,$convert=false){
             return 0;
     }
 
-	$columns = 'forum_id, datestamp, thread, parent_id, author, subject, email, ip, user_id, moderator_post, status, sort, msgid, body, closed';
-	$values  = "{$message['forum_id']},
+    $columns = 'forum_id, datestamp, thread, parent_id, author, subject, email, ip, user_id, moderator_post, status, sort, msgid, body, closed';
+    $values  = "{$message['forum_id']},
             $NOW,
             {$message['thread']},
             {$message['parent_id']},
@@ -470,23 +470,23 @@ function phorum_db_post_message(&$message,$convert=false){
             " . ($message['closed'] ? 'TRUE' : 'FALSE');
 
     if (isset($message['meta'])){
-		$columns .= ', meta';
-		$values  .= ", '" . $message['meta'] . "'";
+        $columns .= ', meta';
+        $values  .= ", '" . $message['meta'] . "'";
     }
 
     // if in conversion we need the message-id too
     if ($convert && isset($message['message_id'])) {
-		$columns .= ', message_id';
-		$values  .= ', ' . $message['message_id'];
+        $columns .= ', message_id';
+        $values  .= ', ' . $message['message_id'];
     }
 
     if (isset($message['modifystamp'])) {
-		$columns .= ', modifystamp';
+        $columns .= ', modifystamp';
         $values  .= ', ' . $message['modifystamp'];
     }
 
     if (isset($message['viewcount'])) {
-		$columns .= ', viewcount';
+        $columns .= ', viewcount';
         $values  .= ', ' . $message['viewcount'];
     }
 
@@ -666,9 +666,9 @@ echo '</pre>';
                 $value = pg_escape_string(serialize($value));
                 $fields[] = "$field='$value'";
                 $message[$field] = $value;
-			} elseif (is_bool($value)) {
+            } elseif (is_bool($value)) {
                 $value = ($value ? 'TRUE' : 'FALSE');
-				$fields[] = "$field=$value";
+                $fields[] = "$field=$value";
                 $message[$field] = $value;
             } else {
                 $value = pg_escape_string($value);
@@ -687,10 +687,10 @@ echo '</pre>';
                 $search_text="$message[author] | $message[subject] | $message[body]";
                 $sql="UPDATE {$PHORUM['search_table']} set forum_id={$message['forum_id']}, search_text='$search_text' WHERE message_id={$message_id}";
                 $res = pg_query($conn, $sql);
-				if (pg_affected_rows($res) == 0) {
-		            $sql = "INSERT INTO {$PHORUM['search_table']} (message_id, forum_id, search_text) values ({$message_id}, {$message['forum_id']}, '$search_text')";
-    		        $res = pg_query($conn, $sql);
-				}
+                if (pg_affected_rows($res) == 0) {
+                    $sql = "INSERT INTO {$PHORUM['search_table']} (message_id, forum_id, search_text) values ({$message_id}, {$message['forum_id']}, '$search_text')";
+                    $res = pg_query($conn, $sql);
+                }
                 if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
             }
             // end ft-search stuff
@@ -749,7 +749,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
                     $rec["meta"]=unserialize($rec["meta"]);
                 }
                 $ret[$rec['message_id']]=$rec;
-				$ret[$rec['message_id']]['closed'] = $ret[$rec['message_id']]['closed'] === 't' ? TRUE : FALSE;
+                $ret[$rec['message_id']]['closed'] = $ret[$rec['message_id']]['closed'] === 't' ? TRUE : FALSE;
             }
         } else {
             $rec = pg_fetch_assoc($res);
@@ -761,7 +761,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
                 $rec["meta"]=unserialize($rec["meta"]);
             }
             $ret=$rec;
-			$ret['closed'] = $ret['closed'] === 't' ? TRUE : FALSE;
+            $ret['closed'] = $ret['closed'] === 't' ? TRUE : FALSE;
         }
     }
 
@@ -829,7 +829,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
         if(pg_num_rows($res) > 0) {
             $rec = pg_fetch_assoc($res);
             $arr[$rec["message_id"]] = $rec;
-	        $arr[$rec["message_id"]]['closed'] = $arr[$rec["message_id"]]['closed'] == 't' ? TRUE : FALSE;
+            $arr[$rec["message_id"]]['closed'] = $arr[$rec["message_id"]]['closed'] == 't' ? TRUE : FALSE;
             $arr[$rec["message_id"]]["meta"]=unserialize($rec["meta"]);
         }
     }
@@ -922,7 +922,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         $sql = "ALTER TABLE $id_table ADD PRIMARY KEY (message_id)";
         $res = pg_query($conn, $sql);
-   	    if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
+        if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
     } else {
 
@@ -1049,7 +1049,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
             while ($rec = pg_fetch_assoc($res)){
                 $rows[$rec["message_id"]] = $rec;
-		        $rows[$rec["message_id"]]['closed'] = $rows[$rec["message_id"]]['closed'] == 't' ? TRUE : FALSE;
+                $rows[$rec["message_id"]]['closed'] = $rows[$rec["message_id"]]['closed'] == 't' ? TRUE : FALSE;
             }
 
             $arr = array("count" => $total_count, "rows" => $rows);
@@ -1131,14 +1131,14 @@ function phorum_db_load_settings(){
 
     $res = pg_query($conn, $sql);
     if (!$res && !defined("PHORUM_ADMIN")){
-		$err = pg_last_error($conn);
-		$looking_for = 'relation "' . $PHORUM['settings_table'] . '" does not exist';
+        $err = pg_last_error($conn);
+        $looking_for = 'relation "' . $PHORUM['settings_table'] . '" does not exist';
 
-		$pos = strpos($err, $looking_for);
+        $pos = strpos($err, $looking_for);
         if ($pos === FALSE) {
-			if ($err) {
-            	phorum_db_pg_last_error("$err: $sql");
-			}
+            if ($err) {
+                phorum_db_pg_last_error("$err: $sql");
+            }
         } else {
             // settings table does not exist
             return;
@@ -1195,12 +1195,12 @@ function phorum_db_update_settings($settings){
 
             $sql = "UPDATE {$PHORUM['settings_table']} set data='$value', type='$type' WHERE name='$field'";
             $res = pg_query($conn, $sql);
-			if ($res) {
-				if (pg_affected_rows($res) == 0) {
-		            $sql = "INSERT INTO {$PHORUM['settings_table']} (name, data, type) values ('$field', '$value', '$type')";
-    		        $res = pg_query($conn, $sql);
-				}
-			}
+            if ($res) {
+                if (pg_affected_rows($res) == 0) {
+                    $sql = "INSERT INTO {$PHORUM['settings_table']} (name, data, type) values ('$field', '$value', '$type')";
+                    $res = pg_query($conn, $sql);
+                }
+            }
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
         }
 
@@ -1463,8 +1463,8 @@ function phorum_db_add_forum($forum)
 
     $conn = phorum_db_postgresql_connect();
 
-	$values  = array();
-	$columns = array();
+    $values  = array();
+    $columns = array();
 
     foreach($forum as $column => $value){
         if (is_numeric($value)){
@@ -1476,7 +1476,7 @@ function phorum_db_add_forum($forum)
             $value = pg_escape_string($value);
             $values[] = "'$value'";
         }
-		$columns[] = $column;
+        $columns[] = $column;
     }
 
     $sql = "insert into {$PHORUM['forums_table']} (" . implode(', ', $columns) . ") values (" . implode(", ", $values) . ')';
@@ -1845,6 +1845,9 @@ function phorum_db_user_get($user_id, $detailed)
     $conn = phorum_db_postgresql_connect();
 
     if(is_array($user_id)){
+        foreach($user_id as &$id){
+            $id = (int)$id;
+        }
         $user_ids=implode(",", $user_id);
     } else {
         $user_ids=(int)$user_id;
@@ -2097,7 +2100,7 @@ function phorum_db_user_add($userdata){
 
     $sql = "insert into {$PHORUM['user_table']} ";
 
-	$columns = array();
+    $columns = array();
     $values  = array();
 
     foreach($userdata as $column => $value){
@@ -2108,7 +2111,7 @@ function phorum_db_user_add($userdata){
             $values[] = "$value";
         }
 
-		$columns[] = $column;
+        $columns[] = $column;
     }
 
     $sql .= '(' . implode(', ', $columns) . ') values (' . implode(", ", $values) . ')';
@@ -2290,12 +2293,12 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 
     $sql = "UPDATE {$PHORUM['subscribers_table']} SET sub_type=$type WHERE user_id=$user_id AND forum_id=$forum_id AND thread=$thread";
     $res = pg_query($conn, $sql);
-	if ($res) {
-		if (pg_affected_rows($res) == 0) {
+    if ($res) {
+        if (pg_affected_rows($res) == 0) {
             $sql = "INSERT INTO {$PHORUM['subscribers_table']} (user_id, forum_id, sub_type, thread) values ($user_id, $forum_id, $type, $thread)";
-	        $res = pg_query($conn, $sql);
-		}
-	}
+            $res = pg_query($conn, $sql);
+        }
+    }
 
     if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
@@ -3644,7 +3647,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     // Create the message.
     $sql = "INSERT INTO {$PHORUM["pm_messages_table"]} (" .
            "from_user_id, from_username, subject, message, datestamp, meta) " .
-		   "VALUES ( " .
+           "VALUES ( " .
            "$from, " .
            "'".pg_escape_string($fromuser["username"])."', " .
            "'".pg_escape_string($subject)."', " .
@@ -3664,7 +3667,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     foreach ($xref_entries as $xref) {
         $sql = "INSERT INTO {$PHORUM["pm_xref_table"]} (" .
                "user_id, pm_folder_id, special_folder, pm_message_id, read_flag, reply_flag) " .
-			   " values ( " .
+               " values ( " .
                "{$xref["user_id"]}, " .
                "{$xref["pm_folder_id"]}, " .
                "'{$xref["special_folder"]}', " .
@@ -4204,59 +4207,59 @@ function phorum_db_create_tables()
         // create tables
         "CREATE TABLE {$PHORUM['forums_table']} ( forum_id serial8, name varchar(50) NOT NULL default '', active smallint NOT NULL default 0, description text NOT NULL default '', template varchar(50) NOT NULL default '', folder_flag smallint NOT NULL default 0, parent_id integer NOT NULL default 0, list_length_flat integer NOT NULL default 0, list_length_threaded integer NOT NULL default 0, moderation integer NOT NULL default 0, threaded_list smallint NOT NULL default 0, threaded_read smallint NOT NULL default 0, float_to_top smallint NOT NULL default 0, check_duplicate smallint NOT NULL default 0, allow_attachment_types varchar(100) NOT NULL default '', max_attachment_size integer NOT NULL default 0, max_totalattachment_size integer NOT NULL default 0, max_attachments integer NOT NULL default 0, pub_perms integer NOT NULL default 0, reg_perms integer NOT NULL default 0, display_ip_address smallint NOT NULL default '1', allow_email_notify smallint NOT NULL default '1', language varchar(100) NOT NULL default 'english', email_moderators smallint NOT NULL default 0, message_count integer NOT NULL default 0, sticky_count integer NOT NULL default 0, thread_count integer NOT NULL default 0, last_post_time integer NOT NULL default 0, display_order integer NOT NULL default 0, read_length integer NOT NULL default 0, vroot integer NOT NULL default 0, edit_post smallint NOT NULL default '1',template_settings text NOT NULL default '', count_views smallint NOT NULL default 0, display_fixed smallint NOT NULL default 0, reverse_threading smallint NOT NULL default 0,inherit_id integer NULL default NULL, PRIMARY KEY (forum_id))",
         "CREATE INDEX name          on {$PHORUM['forums_table']} (name)",
-		"CREATE INDEX forums_active on {$PHORUM['forums_table']} (active,parent_id)",
-		"CREATE INDEX group_id      on {$PHORUM['forums_table']} (parent_id)",
+        "CREATE INDEX forums_active on {$PHORUM['forums_table']} (active,parent_id)",
+        "CREATE INDEX group_id      on {$PHORUM['forums_table']} (parent_id)",
         "CREATE TABLE {$PHORUM['message_table']} ( message_id serial8, forum_id integer NOT NULL default 0, thread integer NOT NULL default 0, parent_id integer NOT NULL default 0, author varchar(37) NOT NULL default '', subject varchar(255) NOT NULL default '', body text NOT NULL, email varchar(100) NOT NULL default '', ip varchar(255) NOT NULL default '', status smallint NOT NULL default '2', msgid varchar(100) NOT NULL default '', modifystamp integer NOT NULL default 0, user_id integer NOT NULL default 0, thread_count integer NOT NULL default 0, moderator_post smallint NOT NULL default 0, sort smallint NOT NULL default '2', datestamp integer NOT NULL default 0, meta text NOT NULL, viewcount integer NOT NULL default 0, closed boolean NOT NULL default false, PRIMARY KEY (message_id))",
-		"CREATE INDEX thread_message    on {$PHORUM['message_table']} (thread,message_id)",
-		"CREATE INDEX thread_forum      on {$PHORUM['message_table']} (thread,forum_id)",
-		"CREATE INDEX special_threads   on {$PHORUM['message_table']} (sort,forum_id)",
-		"CREATE INDEX status_forum      on {$PHORUM['message_table']} (status,forum_id)",
-		"CREATE INDEX list_page_float   on {$PHORUM['message_table']} (forum_id,parent_id,modifystamp)",
-		"CREATE INDEX list_page_flat    on {$PHORUM['message_table']} (forum_id,parent_id,thread)",
-		"CREATE INDEX post_count        on {$PHORUM['message_table']} (forum_id,status,parent_id)",
-		"CREATE INDEX dup_check         on {$PHORUM['message_table']} (forum_id,author,subject,datestamp)",
-		"CREATE INDEX forum_max_message on {$PHORUM['message_table']} (forum_id,message_id,status,parent_id)",
-		"CREATE INDEX last_post_time    on {$PHORUM['message_table']} (forum_id,status,modifystamp)",
-		"CREATE INDEX next_prev_thread  on {$PHORUM['message_table']} (forum_id,status,thread)",
+        "CREATE INDEX thread_message    on {$PHORUM['message_table']} (thread,message_id)",
+        "CREATE INDEX thread_forum      on {$PHORUM['message_table']} (thread,forum_id)",
+        "CREATE INDEX special_threads   on {$PHORUM['message_table']} (sort,forum_id)",
+        "CREATE INDEX status_forum      on {$PHORUM['message_table']} (status,forum_id)",
+        "CREATE INDEX list_page_float   on {$PHORUM['message_table']} (forum_id,parent_id,modifystamp)",
+        "CREATE INDEX list_page_flat    on {$PHORUM['message_table']} (forum_id,parent_id,thread)",
+        "CREATE INDEX post_count        on {$PHORUM['message_table']} (forum_id,status,parent_id)",
+        "CREATE INDEX dup_check         on {$PHORUM['message_table']} (forum_id,author,subject,datestamp)",
+        "CREATE INDEX forum_max_message on {$PHORUM['message_table']} (forum_id,message_id,status,parent_id)",
+        "CREATE INDEX last_post_time    on {$PHORUM['message_table']} (forum_id,status,modifystamp)",
+        "CREATE INDEX next_prev_thread  on {$PHORUM['message_table']} (forum_id,status,thread)",
         "CREATE TABLE {$PHORUM['settings_table']} ( name varchar(255) NOT NULL default '', type char(1) NOT NULL default 'V' check (type in ('V','S')) , data text NOT NULL, PRIMARY KEY (name))",
         "CREATE TABLE {$PHORUM['subscribers_table']} ( user_id integer NOT NULL default 0, forum_id integer NOT NULL default 0, sub_type integer NOT NULL default 0, thread integer NOT NULL default 0, PRIMARY KEY (user_id,forum_id,thread))",
-		"CREATE INDEX sub_forum_id on {$PHORUM['subscribers_table']} (forum_id,thread,sub_type)",
+        "CREATE INDEX sub_forum_id on {$PHORUM['subscribers_table']} (forum_id,thread,sub_type)",
         "CREATE TABLE {$PHORUM['user_permissions_table']} ( user_id integer NOT NULL default 0, forum_id integer NOT NULL default 0, permission integer NOT NULL default 0, PRIMARY KEY  (user_id,forum_id))",
-		"CREATE INDEX perm_forum_id on {$PHORUM['user_permissions_table']} (forum_id,permission)",
+        "CREATE INDEX perm_forum_id on {$PHORUM['user_permissions_table']} (forum_id,permission)",
         "CREATE TABLE {$PHORUM['user_table']} ( user_id serial8, username varchar(50) NOT NULL default '', password varchar(50) NOT NULL default '',cookie_sessid_lt varchar(50) NOT NULL default '', sessid_st varchar(50) NOT NULL default '', sessid_st_timeout integer NOT NULL default 0, password_temp varchar(50) NOT NULL default '', email varchar(100) NOT NULL default '',  email_temp varchar(110) NOT NULL default '', hide_email smallint NOT NULL default 0, active smallint NOT NULL default 0, user_data text NOT NULL default '', signature text NOT NULL default '', threaded_list smallint NOT NULL default 0, posts integer NOT NULL default 0, admin smallint NOT NULL default 0, threaded_read smallint NOT NULL default 0, date_added integer NOT NULL default 0, date_last_active integer NOT NULL default 0, last_active_forum integer NOT NULL default 0, hide_activity smallint NOT NULL default 0,show_signature smallint DEFAULT 0 NOT NULL, email_notify smallint DEFAULT 0 NOT NULL, pm_email_notify smallint DEFAULT 1 NOT NULL, tz_offset smallint DEFAULT -99 NOT NULL,is_dst smallint DEFAULT 0 NOT NULL ,user_language VARCHAR( 100 ) NOT NULL default '',user_template VARCHAR( 100 ) NOT NULL default '', moderator_data text NOT NULL default '', moderation_email smallint not null default 1, PRIMARY KEY (user_id))",
-		"CREATE UNIQUE INDEX username         on {$PHORUM['user_table']} (username)",
-		"CREATE        INDEX user_active      on {$PHORUM['user_table']} (active)",
-		"CREATE        INDEX userpass         on {$PHORUM['user_table']} (username,password)",
-		"CREATE        INDEX sessid_st        on {$PHORUM['user_table']} (sessid_st)",
-		"CREATE        INDEX cookie_sessid_lt on {$PHORUM['user_table']} (cookie_sessid_lt)",
-		"CREATE        INDEX activity         on {$PHORUM['user_table']} (date_last_active,hide_activity,last_active_forum)",
-		"CREATE        INDEX date_added       on {$PHORUM['user_table']} (date_added)",
-		"CREATE        INDEX email_temp       on {$PHORUM['user_table']} (email_temp)",
+        "CREATE UNIQUE INDEX username         on {$PHORUM['user_table']} (username)",
+        "CREATE        INDEX user_active      on {$PHORUM['user_table']} (active)",
+        "CREATE        INDEX userpass         on {$PHORUM['user_table']} (username,password)",
+        "CREATE        INDEX sessid_st        on {$PHORUM['user_table']} (sessid_st)",
+        "CREATE        INDEX cookie_sessid_lt on {$PHORUM['user_table']} (cookie_sessid_lt)",
+        "CREATE        INDEX activity         on {$PHORUM['user_table']} (date_last_active,hide_activity,last_active_forum)",
+        "CREATE        INDEX date_added       on {$PHORUM['user_table']} (date_added)",
+        "CREATE        INDEX email_temp       on {$PHORUM['user_table']} (email_temp)",
         "CREATE TABLE {$PHORUM['user_newflags_table']} ( user_id integer NOT NULL default 0, forum_id bigint NOT NULL default 0, message_id bigint NOT NULL default 0, PRIMARY KEY  (user_id,forum_id,message_id) )",
         "CREATE TABLE {$PHORUM['groups_table']} ( group_id serial8, name varchar(255) NOT NULL default 0, open smallint NOT NULL default 0, PRIMARY KEY  (group_id) )",
         "CREATE TABLE {$PHORUM['forum_group_xref_table']} ( forum_id integer NOT NULL default 0, group_id bigint NOT NULL default 0, permission integer NOT NULL default 0, PRIMARY KEY  (forum_id,group_id) )",
                 "CREATE        INDEX group_id         on {$PHORUM['forum_group_xref_table']} (group_id)",
         "CREATE TABLE {$PHORUM['user_group_xref_table']} ( user_id integer NOT NULL default 0, group_id bigint NOT NULL default 0, status smallint NOT NULL default 1, PRIMARY KEY  (user_id,group_id) )",
         "CREATE TABLE {$PHORUM['files_table']} ( file_id serial8, user_id bigint NOT NULL default 0, filename varchar(255) NOT NULL default '', filesize bigint NOT NULL default 0, file_data text NOT NULL default '', add_datetime integer NOT NULL default 0, message_id integer NOT NULL default 0, link varchar(10) NOT NULL default '', PRIMARY KEY (file_id))",
-		"CREATE INDEX add_datetime    on {$PHORUM['files_table']} (add_datetime)",
-		"CREATE INDEX message_id_link on {$PHORUM['files_table']} (message_id,link)",
+        "CREATE INDEX add_datetime    on {$PHORUM['files_table']} (add_datetime)",
+        "CREATE INDEX message_id_link on {$PHORUM['files_table']} (message_id,link)",
 
         "CREATE TABLE {$PHORUM['search_table']} ( message_id bigint NOT NULL default 0, forum_id bigint NOT NULL default 0, search_text text NOT NULL default '', PRIMARY KEY  (message_id))",
-		"CREATE INDEX search_forum_id on {$PHORUM['search_table']} (forum_id)",
-		"CREATE INDEX search_text     on {$PHORUM['search_table']} (search_text)",
+        "CREATE INDEX search_forum_id on {$PHORUM['search_table']} (forum_id)",
+        "CREATE INDEX search_text     on {$PHORUM['search_table']} (search_text)",
 
         "CREATE TABLE {$PHORUM['banlist_table']} ( id serial8, forum_id bigint NOT NULL default 0, type smallint NOT NULL default 0, pcre smallint NOT NULL default 0, string varchar(255) NOT NULL default '', PRIMARY KEY  (id))",
-		"CREATE INDEX forum_id on {$PHORUM['banlist_table']} (forum_id)",
+        "CREATE INDEX forum_id on {$PHORUM['banlist_table']} (forum_id)",
 
         "CREATE TABLE {$PHORUM['user_custom_fields_table']} ( user_id integer DEFAULT 0 NOT NULL , type INT DEFAULT 0 NOT NULL , data TEXT NOT NULL default '', PRIMARY KEY ( user_id , type ))",
         "CREATE TABLE {$PHORUM['pm_messages_table']} ( pm_message_id serial8, from_user_id integer NOT NULL default 0, from_username varchar(50) NOT NULL default '', subject varchar(100) NOT NULL default '', message text NOT NULL default '', datestamp integer NOT NULL default 0, meta text NOT NULL default '', PRIMARY KEY(pm_message_id))",
         "CREATE TABLE {$PHORUM['pm_folders_table']} ( pm_folder_id serial8, user_id integer NOT NULL default 0, foldername varchar(20) NOT NULL default '', PRIMARY KEY (pm_folder_id))",
         "CREATE TABLE {$PHORUM['pm_xref_table']} ( pm_xref_id serial8, user_id integer NOT NULL default 0, pm_folder_id integer NOT NULL default 0, special_folder varchar(10), pm_message_id integer NOT NULL default 0, read_flag smallint NOT NULL default 0, reply_flag smallint NOT NULL default 0, PRIMARY KEY (pm_xref_id))",
-		"CREATE INDEX xref      on {$PHORUM['pm_xref_table']} (user_id,pm_folder_id,pm_message_id)",
-		"CREATE INDEX read_flag on {$PHORUM['pm_xref_table']} (read_flag)",
+        "CREATE INDEX xref      on {$PHORUM['pm_xref_table']} (user_id,pm_folder_id,pm_message_id)",
+        "CREATE INDEX read_flag on {$PHORUM['pm_xref_table']} (read_flag)",
         "CREATE TABLE {$PHORUM['pm_buddies_table']} ( pm_buddy_id serial8, user_id integer NOT NULL default 0, buddy_user_id integer NOT NULL default 0, PRIMARY KEY (pm_buddy_id))",
-		"CREATE UNIQUE INDEX userids       on {$PHORUM['pm_buddies_table']} (user_id, buddy_user_id)",
-		"CREATE        INDEX buddy_user_id on {$PHORUM['pm_buddies_table']} (buddy_user_id)",
+        "CREATE UNIQUE INDEX userids       on {$PHORUM['pm_buddies_table']} (user_id, buddy_user_id)",
+        "CREATE        INDEX buddy_user_id on {$PHORUM['pm_buddies_table']} (buddy_user_id)",
 
     );
     foreach($queries as $sql){
@@ -4324,10 +4327,10 @@ function phorum_db_postgresql_connect(){
 
     static $conn;
     if (empty($conn)){
-		$connection_string  = 'host='     . $PHORUM["DBCONFIG"]["server"]   . ' ';
-		$connection_string .= 'user='     . $PHORUM["DBCONFIG"]["user"]     . ' ';
+        $connection_string  = 'host='     . $PHORUM["DBCONFIG"]["server"]   . ' ';
+        $connection_string .= 'user='     . $PHORUM["DBCONFIG"]["user"]     . ' ';
 #		$connection_string .= 'password=' . $PHORUM["DBCONFIG"]["password"] . ' ';
-		$connection_string .= 'dbname='   . $PHORUM["DBCONFIG"]["name"];
+        $connection_string .= 'dbname='   . $PHORUM["DBCONFIG"]["name"];
 
         $conn = pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
     }
@@ -4404,8 +4407,8 @@ function phorum_db_sanitychecks()
     $conn = phorum_db_postgresql_connect();
     $res = pg_query($conn, "SELECT version()");
     if (!$res) {
-		echo ' oh, we do have an error';
-		return array(
+        echo ' oh, we do have an error';
+        return array(
         PHORUM_SANITY_WARN,
         "The database layer could not retrieve the version of the
          running PostgreSQL server",
@@ -4415,8 +4418,8 @@ function phorum_db_sanitychecks()
          with version 7.4 or higher, then please upgrade your
          PostgreSQL server. Else, contact the Phorum developers to see
          where this warning is coming from"
-    	);
-	}
+        );
+    }
 
     if (pg_num_rows($res))
     {
@@ -4433,11 +4436,11 @@ function phorum_db_sanitychecks()
              version number, so the checking scripts can be updated."
         );
 
-		$version = $ver[1];
+        $version = $ver[1];
 
 echo 'version is ' . $version;
 
-		$vers = explode('.', $version);
+        $vers = explode('.', $version);
 
         settype($vers[0], 'int');
         settype($vers[1], 'int');
@@ -4485,16 +4488,16 @@ echo 'version is ' . $version;
 
 function pgsql_insert_id($conn, $sequence) {
 
-	$sql = "select currval('{$sequence}') as currval";
-	$res = pg_query($conn, $sql);
-	if ($res) {
-		$rec = pg_fetch_assoc($res);
-		$insert_id = $rec['currval'];
-	} else {
-		if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
-	}
+    $sql = "select currval('{$sequence}') as currval";
+    $res = pg_query($conn, $sql);
+    if ($res) {
+        $rec = pg_fetch_assoc($res);
+        $insert_id = $rec['currval'];
+    } else {
+        if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
+    }
 
-	return $insert_id;
+    return $insert_id;
 }
 
 ?>
