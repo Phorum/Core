@@ -63,6 +63,10 @@ function phorum_valid_email($email){
 function phorum_email_user($addresses, $data)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    
+    if(!isset($data['from_address'])) {
+    	$data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
+    }    
 
     $mailmessage = $data['mailmessage'];
     unset($data['mailmessage']);
@@ -77,7 +81,7 @@ function phorum_email_user($addresses, $data)
     }
 
     $num_addresses = count($addresses);
-    $from_address = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
+    $from_address = $data['from_address'];
 
     $hook_data = array(
         'addresses'  => $addresses,
