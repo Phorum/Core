@@ -2091,6 +2091,8 @@ function phorum_db_user_get($user_id, $detailed)
 
     if(is_array($user_id)){
         $user_ids=implode(",", $user_id);
+    } else {
+        $user_ids=(int)$user_id;
     }
 
     $users = array();
