@@ -174,8 +174,9 @@ if($page>1){
 $min_id=0;
 
 $rows = NULL;
+$bodies_in_list = isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'];
 if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies'])) {
-    $cache_key=$PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"]."-".$PHORUM["count_views"];
+    $cache_key=$PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"]."-".$PHORUM["count_views"]."-".($bodies_in_list?"1":"0");
     $rows = phorum_cache_get('message_list',$cache_key);
 }
 
@@ -187,7 +188,7 @@ if($rows == null) {
     $rows = array();
 
     // get the thread set started
-    $rows = phorum_db_get_thread_list($offset);
+    $rows = phorum_db_get_thread_list($offset, $bodies_in_list);
 
     //timing_mark('after db');
 
@@ -433,10 +434,10 @@ if($PHORUM['DATA']['LOGGEDIN']) {
 // run list mods
 $rows = phorum_hook("list", $rows);
 
-// if we retrieve the body too we need to setup some more variables for the messages
-// to make it a little more similar to the view in read.php
-if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
-
+// if we retrieve the body too we need to setup some more variables for 
+// the messages to make it a little more similar to the view in read.php
+if ($bodies_in_list)
+{
     foreach ($rows as $id => $row) {
 
         // is the message unapproved?

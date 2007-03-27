@@ -72,16 +72,17 @@ $PHORUM['string_fields_forum']= array('name', 'description', 'template');
  * handles actually sorting the threads into a threaded list if needed.
  *
  * By default, the message body is not included in the fetch queries.
- * If the body is needed in the thread list, $PHORUM['TMP']['bodies_in_list']
- * must be set to "1" (for example using setting.tpl).
+ * To retrieve bodies as well, a true value has to be passed for the
+ * $include_bodies parameter.
  *
  * NOTE: ALL dates should be returned as Unix timestamps
  *
- * @param int $offset - the index of the page to return, starting with 0
- *
- * @return array
+ * @param int $offset - The index of the page to return, starting with 0.
+ * @param bool $include_bodies - Determines whether the message bodies
+ *                      have to be included in the return data or not.
+ * @return $messages - An array containing message records.
  */
-function phorum_db_get_thread_list($offset)
+function phorum_db_get_thread_list($offset, $include_bodies=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -110,9 +111,11 @@ function phorum_db_get_thread_list($offset)
         $table.thread_count,
         $table.user_id,
         $table.viewcount,
-        $table.closed";
-    if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
-        $messagefields .= "\n,$table.body\n,$table.ip";
+        $table.closed,
+        $table.ip";
+
+    if ($include_bodies) {
+        $messagefields .= ",$table.body";
     }
 
     // The sort mechanism to use.

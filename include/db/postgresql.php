@@ -71,25 +71,26 @@ $PHORUM['string_fields_forum']= array('name', 'description', 'template');
 define('PHORUM_SQL_MOVEDMESSAGES', '(parent_id = 0 and thread != message_id)');
 
 /**
- * This function executes a query to select the visible messages from
- * the database for a given page offset. The main Phorum code handles
- * actually sorting the threads into a threaded list if needed.
+ * Get the visible messages for a given page offset. The main Phorum code
+ * handles actually sorting the threads into a threaded list if needed.
  *
  * By default, the message body is not included in the fetch queries.
- * If the body is needed in the thread list, $PHORUM['TMP']['bodies_in_list']
- * must be set to "1" (for example using setting.tpl).
+ * To retrieve bodies as well, a true value has to be passed for the
+ * $include_bodies parameter.
  *
  * NOTE: ALL dates should be returned as Unix timestamps
  *
- * @param offset - the index of the page to return, starting with 0
- * @param messages - an array containing forum messages
+ * @param int $offset - The index of the page to return, starting with 0.
+ * @param bool $include_bodies - Determines whether the message bodies
+ *                      have to be included in the return data or not.
+ * @return $messages - An array containing message records.
  */
-
-function phorum_db_get_thread_list($offset)
+function phorum_db_get_thread_list($offset, $include_bodies=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($offset, "int");
+    settype($include_bodies, "bool");
 
     $conn = phorum_db_postgresql_connect();
 
@@ -113,10 +114,11 @@ function phorum_db_get_thread_list($offset)
         $table.thread_count,
         $table.user_id,
         $table.viewcount,
+        $table.ip,
         CASE WHEN $table.closed THEN 'TRUE' ELSE 'FALSE' END as closed";
 
-    if (isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
-        $messagefields .= "\n,$table.body\n,$table.ip";
+    if ($include_bodies) {
+        $messagefields .= ",$table.body";
     }
 
     // The sort mechanism to use.
