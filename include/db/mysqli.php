@@ -4351,7 +4351,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  *
  *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
  *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
- *   query has to be done, then that is setup throught the
+ *   query has to be done, then that is setup through the
  *   <match specification> (see below).
  *
  *   The <match specification> tells us with what the field should be
