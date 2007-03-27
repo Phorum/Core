@@ -246,6 +246,9 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     settype($count, "int");
     settype($forum_id, "int");
     settype($thread, "int");
+    settype($threads_only, "bool");
+    phorum_db_sanitize_mixed($forum_id, "int");
+
     $arr = array();
 
     $conn = phorum_db_mysqli_connect();
@@ -266,6 +269,18 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     // the user can read the forum
     if($forum_id <= 0) {
         $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+
+        // if they are not allowed to see any forums, return the emtpy $arr;
+        if(empty($allowed_forums))
+            return $arr;
+    } elseif(is_array($forum_id)) {
+        // for an array, check each one and return if none are allowed
+        foreach($forum_id as $id){
+            $id = (int)$id;
+            if(phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$id)) {
+                $allowed_forums[]=$id;
+            }
+        }
 
         // if they are not allowed to see any forums, return the emtpy $arr;
         if(empty($allowed_forums))
@@ -337,6 +352,11 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$moddays=0,$countonly = false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($waiting_only, "bool");
+    settype($moddays, "int");
+    settype($countonly, "bool");
+    phorum_db_sanitize_mixed($forum, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -416,6 +436,8 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$modda
 function phorum_db_post_message(&$message,$convert=false){
     $PHORUM = $GLOBALS["PHORUM"];
     $table = $PHORUM["message_table"];
+
+    settype($convert, "bool");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -539,6 +561,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     $conn = phorum_db_mysqli_connect();
 
     settype($message_id, "int");
+    settype($mode, "int");
 
     $threadset = 0;
     // get the parents of the message to delete.
@@ -645,16 +668,18 @@ function phorum_db_update_message($message_id, $message)
         $conn = phorum_db_mysqli_connect();
 
         foreach($message as $field => $value){
-            if (is_numeric($value) && !in_array($field,$PHORUM['string_fields'])){
-                $fields[] = "$field=$value";
-            }elseif (is_array($value)){
-                $value = mysqli_real_escape_string ($conn, serialize($value));
-                $fields[] = "$field='$value'";
-                $message[$field] = $value;
-            }else{
-                $value = mysqli_real_escape_string ($conn, $value);
-                $fields[] = "$field='$value'";
-                $message[$field] = $value;
+            if(phorum_db_validate_field($field)){
+                if (is_numeric($value) && !in_array($field,$PHORUM['string_fields'])){
+                    $fields[] = "$field=$value";
+                }elseif (is_array($value)){
+                    $value = mysqli_real_escape_string ($conn, serialize($value));
+                    $fields[] = "$field='$value'";
+                    $message[$field] = $value;
+                }else{
+                    $value = mysqli_real_escape_string ($conn, $value);
+                    $fields[] = "$field='$value'";
+                    $message[$field] = $value;
+                }
             }
         }
 
@@ -692,8 +717,14 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
     $conn = phorum_db_mysqli_connect();
 
-    $field=mysqli_real_escape_string($conn, $field);
+    if(!phorum_db_validate_field($field)){
+        return false;
+    }
+
     $multiple=false;
+
+    phorum_db_sanitize_mixed($value, "string");
+    settype($ignore_forum_id, "bool");
 
     $forum_id_check = "";
     if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
@@ -752,6 +783,8 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($thread, "int");
+    settype($page, "int");
+    settype($ignore_mod_perms, "bool");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -857,6 +890,10 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
 function phorum_db_search($search, $offset, $length, $match_type, $match_date, $match_forum)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($offset, "int");
+    settype($length, "int");
+    settype($match_date, "int");
 
     $start = $offset * $PHORUM["list_length"];
 
@@ -1247,6 +1284,8 @@ function phorum_db_update_settings($settings){
                 $type = 'S';
             }
 
+            $field = mysqli_real_escape_string($conn, $field);
+
             $sql = "replace into {$PHORUM['settings_table']} set data='$value', type='$type', name='$field'";
             $res = mysqli_query( $conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
@@ -1268,7 +1307,10 @@ function phorum_db_update_settings($settings){
 function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $inherit_id = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
+    phorum_db_sanitize_mixed($forum_ids, "int");
     settype($parent_id, "int");
+    if($vroot != null) settype($vroot, "int");
+    if($inherit_id != null) settype($inherit_id, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -1320,6 +1362,12 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
 function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $timestamp=0, $thread_count_change=0, $sticky_count_change=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($refresh, "bool");
+    settype($msg_count_change, "int");
+    settype($timestamp, "int");
+    settype($thread_count_change, "int");
+    settype($sticky_count_change, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -1519,14 +1567,16 @@ function phorum_db_add_forum($forum)
     $conn = phorum_db_mysqli_connect();
 
     foreach($forum as $key => $value){
-        if (is_numeric($value)){
-            $value = (int)$value;
-            $fields[] = "$key=$value";
-        } elseif($value=="NULL") {
-            $fields[] = "$key=$value";
-        }else{
-            $value = mysqli_real_escape_string($conn, $value);
-            $fields[] = "$key='$value'";
+        if(phorum_db_validate_field($key)){
+            if (is_numeric($value)){
+                $value = (int)$value;
+                $fields[] = "$key=$value";
+            } elseif($value=="NULL") {
+                $fields[] = "$key=$value";
+            }else{
+                $value = mysqli_real_escape_string($conn, $value);
+                $fields[] = "$key='$value'";
+            }
         }
     }
 
@@ -1633,6 +1683,8 @@ function phorum_db_update_forum($forum){
 
     if (!empty($forum["forum_id"])){
 
+        phorum_db_sanitize_mixed($forum["forum_id"], "int");
+
         // this way we can also update multiple forums at once
         if(is_array($forum["forum_id"])) {
             $forumwhere="forum_id IN (".implode(",",$forum["forum_id"]).")";
@@ -1645,14 +1697,16 @@ function phorum_db_update_forum($forum){
         $conn = phorum_db_mysqli_connect();
 
         foreach($forum as $key => $value){
-            if (is_numeric($value)){
-                $value = (int)$value;
-                $fields[] = "$key=$value";
-            } elseif($value=="NULL") {
-                $fields[] = "$key=$value";
-            } else {
-                $value = mysqli_real_escape_string($conn, $value);
-                $fields[] = "$key='$value'";
+            if(phorum_db_validate_field($key)){
+                if (is_numeric($value)){
+                    $value = (int)$value;
+                    $fields[] = "$key=$value";
+                } elseif($value=="NULL") {
+                    $fields[] = "$key=$value";
+                } else {
+                    $value = mysqli_real_escape_string($conn, $value);
+                    $fields[] = "$key='$value'";
+                }
             }
         }
 
@@ -1676,7 +1730,7 @@ function phorum_db_get_groups($group_id=0)
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysqli_connect();
 
-    settype($group_id, "integer");
+    settype($group_id, "int");
 
     $sql="select * from {$PHORUM['groups_table']}";
     if($group_id!=0) $sql.=" where group_id=$group_id";
@@ -1717,10 +1771,10 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysqli_connect();
 
+    phorum_db_sanitize_mixed($group_id, "int");
+
     if(is_array($group_id)){
         $group_id=implode(",", $group_id);
-    } else {
-        settype($group_id, "int");
     }
 
     // this join is only here so that the list of users comes out sorted
@@ -1750,6 +1804,7 @@ function phorum_db_save_group($group)
     $conn = phorum_db_mysqli_connect();
 
     $ret=false;
+    phorum_db_sanitize_mixed($group, "string");
 
     if(isset($group["name"])){
         $sql="update {$PHORUM['groups_table']} set name='{$group['name']}', open={$group['open']} where group_id={$group['group_id']}";
@@ -1817,6 +1872,7 @@ function phorum_db_add_group($group_name,$group_id=0)
     $conn = phorum_db_mysqli_connect();
 
     settype($group_id, "int");
+    $group_name = mysqli_real_escape_string($conn, $group_name);
 
     if($group_id > 0) { // only used in conversion
         $sql="insert into {$PHORUM['groups_table']} (group_id,name) values ($group_id,'$group_name')";
@@ -1848,6 +1904,8 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
    $conn = phorum_db_mysqli_connect();
 
    settype($forum_id, "int");
+   settype($ignore_user_perms, "bool");
+   settype($for_email, "bool");
 
    if(!$ignore_user_perms) { // sometimes we just don't need them
        if(!$PHORUM['email_ignore_admin']) {
@@ -1896,10 +1954,9 @@ function phorum_db_user_get($user_id, $detailed)
 
     $conn = phorum_db_mysqli_connect();
 
+    phorum_db_sanitize_mixed($user_id, "int");
+
     if(is_array($user_id)){
-        foreach($user_id as &$id){
-            $id = (int)$id;
-        }
         $user_ids=implode(",", $user_id);
     } else {
         $user_ids=(int)$user_id;
@@ -1986,6 +2043,8 @@ function phorum_db_user_get_fields($user_id, $fields)
 
     $conn = phorum_db_mysqli_connect();
 
+    phorum_db_sanitize_mixed($user_id, "int");
+
     // input could be either array or string
     if(is_array($user_id)){
         $user_ids=implode(",", $user_id);
@@ -1993,18 +2052,20 @@ function phorum_db_user_get_fields($user_id, $fields)
         $user_ids=(int)$user_id;
     }
 
-
-    if(is_array($fields)) {
-        $fields_str=implode(",",$fields);
-    } else {
-        $fields_str=$fields;
+    if(!is_array($fields)) {
+        $fields = array($fields);
     }
 
     $users = array();
 
+    foreach($fields as $key=>$field){
+        if(!phorum_db_validate_field($field)){
+            unset($fields[$key]);
+        }
+    }
 
 
-    $sql = "select user_id,$fields_str from {$PHORUM['user_table']} where user_id in ($user_ids)";
+    $sql = "select user_id, ".implode(",", $fields)." from {$PHORUM['user_table']} where user_id in ($user_ids)";
 
     $res = mysqli_query( $conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
@@ -2030,6 +2091,8 @@ function phorum_db_user_get_fields($user_id, $fields)
  */
 function phorum_db_user_get_list($type = 0){
    $PHORUM = $GLOBALS["PHORUM"];
+
+   settype($type, "int");
 
    $conn = phorum_db_mysqli_connect();
 
@@ -2062,6 +2125,8 @@ function phorum_db_user_check_pass($username, $password, $temp_password=false){
     $username = mysqli_real_escape_string($conn, $username);
 
     $password = mysqli_real_escape_string($conn, $password);
+
+    settype($temp_password, "bool");
 
     $pass_field = ($temp_password) ? "password_temp" : "password";
 
@@ -2110,9 +2175,17 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
         $operator=array($operator);
     }
 
+    if(count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){
+        return $ret;
+    }
+
+    $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=");
+
     foreach($field as $key=>$name){
-        $value[$key] = mysqli_real_escape_string($conn, $value[$key]);
-        $clauses[]="$name $operator[$key] '$value[$key]'";
+        if(in_array($operator[$key], $valid_operators) && phorum_db_validate_field($name)){
+            $value[$key] = mysqli_real_escape_string($conn, $value[$key]);
+            $clauses[]="$name $operator[$key] '$value[$key]'";
+        }
     }
 
     $sql = "select user_id from {$PHORUM['user_table']} where ".implode(" and ", $clauses);
@@ -2310,11 +2383,12 @@ function phorum_db_user_save($userdata){
 function phorum_db_user_save_groups($user_id, $groups)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($user_id, "int");
+
     if (!$user_id > 0){
         return false;
     }
-
-    settype($user_id, "int");
 
     // erase the group memberships they have now
     $conn = phorum_db_mysqli_connect();
@@ -2322,6 +2396,8 @@ function phorum_db_user_save_groups($user_id, $groups)
     $res=mysqli_query( $conn, $sql);
 
     foreach($groups as $group_id => $group_perm){
+        $group_id = (int)$group_id;
+        $group_perm = (int)$group_perm;
         $sql = "insert into {$PHORUM['user_group_xref_table']} set user_id=$user_id, group_id=$group_id, status=$group_perm";
         mysqli_query( $conn, $sql);
         if ($err = mysqli_error($conn)){
@@ -2404,11 +2480,11 @@ function phorum_db_user_get_groups($user_id)
     $PHORUM = $GLOBALS["PHORUM"];
     $groups = array();
 
+    settype($user_id, "int");
+
     if (!$user_id > 0){
            return $groups;
     }
-
-    settype($user_id, "int");
 
     $conn = phorum_db_mysqli_connect();
     $sql = "SELECT group_id, status FROM {$PHORUM['user_group_xref_table']} WHERE user_id = $user_id ORDER BY status DESC";
@@ -2438,7 +2514,7 @@ function phorum_db_search_users($search)
 
     $users = array();
 
-    $search = trim($search);
+    $search = mysqli_real_escape_string($conn, trim($search));
 
     $sql = "select user_id, username, email, active, posts, date_last_active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
 
@@ -2612,6 +2688,8 @@ function phorum_db_get_message_file_list($message_id)
 
     $conn = phorum_db_mysqli_connect();
 
+    settype($message_id, "int");
+
     $files=array();
 
     $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where message_id=$message_id and link='" . PHORUM_LINK_MESSAGE . "'";
@@ -2670,12 +2748,6 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if (is_null($link)) {
-        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
-    } else {
-        $link = addslashes($link);
-    }
-
     $conn = phorum_db_mysqli_connect();
 
     $file_id=0;
@@ -2684,7 +2756,14 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     settype($message_id, "int");
     settype($filesize, "int");
 
-    $filename=addslashes($filename);
+    if (is_null($link)) {
+        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
+    } else {
+        $link = mysqli_real_escape_string($conn, $link);
+    }
+
+    $filename=mysqli_real_escape_string($conn, $filename);
+    $buffer=mysqli_real_escape_string($conn, $buffer);
 
     $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
 
@@ -2733,16 +2812,16 @@ function phorum_db_file_link($file_id, $message_id, $link = null)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if (is_null($link)) {
-        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
-    } else {
-        $link = addslashes($link);
-    }
-
     $conn = phorum_db_mysqli_connect();
 
     settype($file_id, "int");
     settype($message_id, "int");
+
+    if (is_null($link)) {
+        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
+    } else {
+        $link = mysqli_real_escape_string($conn, $link);
+    }
 
     $sql="update {$PHORUM['files_table']} " .
          "set message_id=$message_id, link='$link' " .
@@ -2974,8 +3053,11 @@ function phorum_db_newflag_add_read($message_ids) {
 
     foreach($message_ids as $id=>$data) {
         if(is_array($data)) {
+            $data["forum"] = (int)$data["forum"];
+            $data["id"] = (int)$data["id"];
             $values[]="({$PHORUM['user']['user_id']},{$data['forum']},{$data['id']})";
         } else {
+            $data = (int)$data;
             $values[]="({$PHORUM['user']['user_id']},{$PHORUM['forum_id']},$data)";
         }
         $cnt++;
@@ -3051,6 +3133,8 @@ function phorum_db_newflag_update_forum($message_ids) {
         return;
     }
 
+    phorum_db_sanitize_mixed($message_ids, "int");
+
     $ids_str=implode(",",$message_ids);
 
     // then doing the update to newflags
@@ -3106,6 +3190,9 @@ function phorum_db_get_message_subscriptions($user_id,$days=2){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysqli_connect();
+
+    settype($user_id, "int");
+    settype($days, "int");
 
     $userignore="";
     if ($PHORUM["DATA"]["LOGGEDIN"])
@@ -3243,6 +3330,8 @@ function phorum_db_del_banitem($banid) {
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysqli_connect();
+
+    settype($banid, "int");
 
     $sql = "DELETE FROM {$PHORUM['banlist_table']} WHERE id = $banid";
 
@@ -4104,6 +4193,10 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
     $conn = phorum_db_mysqli_connect();
     $numdeleted=0;
 
+    settype($time, "int");
+    settype($forum, "int");
+    settype($mode, "int");
+
     $compare_field = "datestamp";
     if($mode == 2) {
       $compare_field = "modifystamp";
@@ -4347,9 +4440,9 @@ function phorum_db_metaquery_compile($metaquery)
                         $is_like_query = true;
                         $matchsql .= '%';
                     } elseif ($m == 'QUERY') {
-                        $matchsql .= mysql_escape_string($part["query"]);
+                        $matchsql .= mysqli_real_escape_string($conn, $part["query"]);
                     } else {
-                        $matchsql .= mysql_escape_string($m);
+                        $matchsql .= mysqli_real_escape_string($conn, $m);
                     }
                 }
                 $matchsql .= "'";
@@ -4639,6 +4732,47 @@ function phorum_db_mysqli_error($err){
         echo "<!-- $err -->";
     }
 }
+
+/**
+ * This function will sanitize a mixed variable of data based on type
+ *
+ * @param   $var    The variable to be sanitized.  Passed by reference.
+ * @param   $type   Either int or not int.
+ * @return  null
+ *
+ */
+function phorum_db_sanitize_mixed(&$var, $type){
+
+    $conn = phorum_db_mysqli_connect();
+
+    if(is_array($var)){
+        foreach($var as &$val){
+            if($type=="int"){
+                $val = (int)$val;
+            } else {
+                $val = mysqli_real_escape_string($conn, $val);
+            }
+        }
+    } else {
+        if($type=="int"){
+            $var = (int)$var;
+        } else {
+            $var = mysqli_real_escape_string($conn, $var);
+        }
+    }
+}
+
+/**
+ * Checks that a value to be used as a field name contains only characters
+ * that would appear in a field name.
+ *
+ * @param   $field_name     string to be checked
+ * @return  bool
+ *
+ */function phorum_db_validate_field($field_name){
+    return (bool)preg_match('!^[a-zA-Z0-9_]+$!', $field_name);
+}
+
 
 /**
  * This function is used by the sanity checking system in the

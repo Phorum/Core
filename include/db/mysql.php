@@ -1938,6 +1938,8 @@ function phorum_db_user_get($user_id, $detailed)
 
     if(is_array($user_id)){
         $user_ids=implode(",", $user_id);
+    } else {
+        $user_ids=(int)$user_id;
     }
 
     $users = array();
@@ -2021,11 +2023,10 @@ function phorum_db_user_get_fields($user_id, $fields)
 
     $conn = phorum_db_mysql_connect();
 
+    phorum_db_sanitize_mixed($user_id, "int");
+
     // input could be either array or string
     if(is_array($user_id)){
-        foreach($user_id as &$id){
-            $id = (int)$id;
-        }
         $user_ids=implode(",", $user_id);
     } else {
         $user_ids=(int)$user_id;
