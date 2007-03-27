@@ -58,22 +58,18 @@ $PHORUM["pm_folders_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_folders"
 $PHORUM["pm_xref_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_xref";
 $PHORUM["pm_buddies_table"] = "{$PHORUM['DBCONFIG']['table_prefix']}_pm_buddies";
 /*
-* fields which are always strings, even if they contain only numbers
-* used in post-message and update-message, otherwise strange things happen
-*/
+ * fields which are always strings, even if they contain only numbers
+ * used in post-message and update-message, otherwise strange things happen
+ */
 $PHORUM['string_fields']= array('author', 'subject', 'body', 'email');
 /*
-* fields in the forum-settings which are always strings
-*/
+ * fields in the forum-settings which are always strings
+ */
 $PHORUM['string_fields_forum']= array('name', 'description', 'template');
 
-/* A piece of SQL code that can be used for identifying moved messages. */
-define('PHORUM_SQL_MOVEDMESSAGES', "({$PHORUM['message_table']}.parent_id = 0 and {$PHORUM['message_table']}.thread != {$PHORUM['message_table']}.message_id)");
-
 /**
- * This function executes a query to select the visible messages from
- * the database for a given page offset. The main Phorum code handles
- * actually sorting the threads into a threaded list if needed.
+ * Get the visible messages for a given page offset. The main Phorum code
+ * handles actually sorting the threads into a threaded list if needed.
  *
  * By default, the message body is not included in the fetch queries.
  * If the body is needed in the thread list, $PHORUM['TMP']['bodies_in_list']
@@ -81,10 +77,10 @@ define('PHORUM_SQL_MOVEDMESSAGES', "({$PHORUM['message_table']}.parent_id = 0 an
  *
  * NOTE: ALL dates should be returned as Unix timestamps
  *
- * @param offset - the index of the page to return, starting with 0
- * @param messages - an array containing forum messages
+ * @param int $offset - the index of the page to return, starting with 0
+ *
+ * @return array
  */
-
 function phorum_db_get_thread_list($offset)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -101,6 +97,7 @@ function phorum_db_get_thread_list($offset)
         $table.datestamp,
         $table.email,
         $table.message_id,
+        $table.forum_id,
         $table.meta,
         $table.moderator_post,
         $table.modifystamp,
@@ -115,7 +112,7 @@ function phorum_db_get_thread_list($offset)
         $table.viewcount,
         $table.closed";
     if(isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'] == 1) {
-        $messagefields .= "\n,$table.body";
+        $messagefields .= "\n,$table.body\n,$table.ip";
     }
 
     // The sort mechanism to use.
@@ -141,6 +138,7 @@ function phorum_db_get_thread_list($offset)
 
     // Process all groups.
     foreach ($groups as $group) {
+
 
         $sql = NULL;
 
@@ -174,7 +172,7 @@ function phorum_db_get_thread_list($offset)
                         from $table use index ($index)
                         where
                           $sortfield > 0 and
-                          forum_id = {$PHORUM["forum_id"]} and
+                          forum_id = {$PHORUM['forum_id']} and
                           status = ".PHORUM_STATUS_APPROVED." and
                           parent_id = 0 and
                           sort > 1
@@ -229,32 +227,39 @@ function phorum_db_get_thread_list($offset)
     return $messages;
 }
 
+
 /**
- * This function executes a query to get the recent messages for
- * all forums the user can read, a particular forum, or a particular
- * thread, and and returns an array of the messages order by message_id.
+ * Get the recent messages for all forums the user can read, a particular
+ * forum, or a particular thread, and returns an array of the messages
+ * order by message_id. You can optionally retrieve only new threads.
  *
- * In reality, this function is not used in the Phorum core as of the time
- * of its creationg.  However, several modules have been written that created
- * a function like this.  Therefore, it has been added to aid in module development
+ * The original version of this function came from Jim Winstead of mysql.com
  *
- * The bulk of this function came from Jim Winstead of mysql.com
+ * @param int $count
+ * 		Limit the number of returned messages to this number.
+ * @param int $forum_id
+ * @param int $thread
+ * @param boolean $threads_only
+ * 		If set to TRUE, only get the top message from each thread.
+ *
+ * @return array
  */
-function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = 0)
+function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     settype($count, "int");
-    settype($forum_id, "int");
     settype($thread, "int");
+    settype($threads_only, "bool");
+    phorum_db_sanitize_mixed($forum_id, "int");
+
     $arr = array();
+    $allowed_forums = array();
 
     $conn = phorum_db_mysqli_connect();
 
     // we need to differentiate on which key to use
-    // last_post_time is for sort by modifystamp
-    // forum_max_message is for sort by message-id
-    if($threads_only) {
-        $use_key='last_post_time';
+    if($thread) {
+        $use_key='thread_message';
     } else {
         $use_key='post_count';
     }
@@ -270,17 +275,30 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         // if they are not allowed to see any forums, return the emtpy $arr;
         if(empty($allowed_forums))
             return $arr;
+    } elseif(is_array($forum_id)) {
+        // for an array, check each one and return if none are allowed
+        foreach($forum_id as $id){
+            $id = (int)$id;
+            if(phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$id)) {
+                $allowed_forums[]=$id;
+            }
+        }
+
+        // if they are not allowed to see any forums, return the emtpy $arr;
+        if(empty($allowed_forums))
+            return $arr;
     } else {
         // only single forum, *much* fast this way
         if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
             return $arr;
         }
+        settype($forum_id, "int");
     }
 
-    if($forum_id > 0){
-        $sql.=" and forum_id=$forum_id";
-    } else {
+    if(count($allowed_forums)){
         $sql.=" and forum_id in (".implode(",", $allowed_forums).")";
+    } else {
+        $sql.=" and forum_id=$forum_id";
     }
 
     if($thread){
@@ -322,21 +340,32 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
 
 /**
- * This function executes a query to select messages from the database
- * and returns an array.  The main Phorum code handles actually sorting
- * the threads into a threaded list if needed.
+ * Get messages which have not yet been approved by a moderator.
+ * The main Phorum code handles actually sorting the threads into
+ * a threaded list if needed.
  *
  * NOTE: ALL dates should be returned as Unix timestamps
- * @param forum - the forum id to work with. Omit or NULL for all forums.
- *                You can also pass an array of forum_id's.
- * @param waiting_only - only take into account messages which have to
- *                be approved directly after posting. Do not include
- *                messages which are hidden by a moderator.
+ * @param mixed $forum
+ * 		The forum id to work with.
+ * 		Set to NULL if you want to search all forums.
+ *      You can also pass an array of forum id's.
+ * @param boolean $waiting_only
+ * 		Only take into account messages which have to
+ *      be approved directly after posting. Do not include
+ *      messages which are hidden by a moderator.
+ * @param int $moddays
+ * 		Limit the search to the last $moddays number of days.
+ * @return array
+ * 		An array of messages, indexed by message ID.
  */
-
 function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$moddays=0,$countonly = false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($waiting_only, "bool");
+    settype($moddays, "int");
+    settype($countonly, "bool");
+    phorum_db_sanitize_mixed($forum, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -410,13 +439,31 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$modda
 
 
 /**
- * This function posts a message to the tables.
- * The message is passed by reference and message_id and thread are filled
+ * Add a message.  The message will not be posted if it is a duplicate
+ * and $PHORUM['check_duplicate'] is set.
+ *
+ * The $message is passed by reference and when the function completes
+ * successfully, the "message_id" index will be set to the new value.
+ * If the "thread" index is set to zero, a new thread will be started and the
+ * "thread" index will be filled with the new thread ID upon return.
+ *
+ * @param array $message
+ * 	The $message array must contain the following indexes:
+ * 		forum_id, thread, parent_id, author, subject, email, ip,
+ * 		user_id, moderator_post, status, sort, msgid, body, closed
+ *
+ * @param boolean $convert
+ *
+ * @return
+ * 		TRUE on success, FALSE on failure, 0 on duplicate posts.
+ *
  */
-
-function phorum_db_post_message(&$message,$convert=false){
+function phorum_db_post_message(&$message,$convert=false)
+{
     $PHORUM = $GLOBALS["PHORUM"];
     $table = $PHORUM["message_table"];
+
+    settype($convert, "bool");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -426,9 +473,9 @@ function phorum_db_post_message(&$message,$convert=false){
         if (is_numeric($value) && !in_array($key,$PHORUM['string_fields'])){
             $message[$key] = (int)$value;
         } elseif(is_array($value)) {
-            $message[$key] = mysqli_real_escape_string ($conn, serialize($value));
+            $message[$key] = mysqli_real_escape_string($conn, serialize($value));
         } else{
-            $message[$key] = mysqli_real_escape_string ($conn, $value);
+            $message[$key] = mysqli_real_escape_string($conn, $value);
         }
     }
 
@@ -509,11 +556,14 @@ function phorum_db_post_message(&$message,$convert=false){
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
             // start ft-search stuff
-            $search_text="$message[author] | $message[subject] | $message[body]";
-            $sql="insert delayed into {$PHORUM['search_table']} set message_id={$message['message_id']}, forum_id={$message['forum_id']}, search_text='$search_text'";
-            $res = mysqli_query($conn, $sql);
-            if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
+                $search_text="$message[author] | $message[subject] | $message[body]";
+
+                $sql="insert delayed into {$PHORUM['search_table']} set message_id={$message['message_id']}, forum_id={$message['forum_id']}, search_text='$search_text'";
+                $res = mysqli_query($conn, $sql);
+                if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+            }
             // end ft-search stuff
 
             $success = true;
@@ -527,12 +577,13 @@ function phorum_db_post_message(&$message,$convert=false){
 }
 
 /**
- * This function deletes messages from the messages table.
+ * Delete a message.
  *
- * @param message $ _id the id of the message which should be deleted
- * mode the mode of deletion, PHORUM_DELETE_MESSAGE for reconnecting the children, PHORUM_DELETE_TREE for deleting the children
+ * @param int $message_id The id of the message which should be deleted
+ * @param int $mode The mode of deletion,
+ * 		PHORUM_DELETE_MESSAGE for reconnecting the children,
+ * 		PHORUM_DELETE_TREE for deleting the children
  */
-
 function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -540,11 +591,14 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     $conn = phorum_db_mysqli_connect();
 
     settype($message_id, "int");
+    settype($mode, "int");
 
     $threadset = 0;
     // get the parents of the message to delete.
     $sql = "select forum_id, message_id, thread, parent_id from {$PHORUM['message_table']} where message_id = $message_id ";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
     $rec = mysqli_fetch_assoc($res);
     if (empty($rec)) {
         phorum_db_mysqli_error("No message found for message_id $message_id");
@@ -573,18 +627,20 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         // change the children to point to their parent's parent
         // forum_id is in here for speed by using a key only
         $sql = "update {$PHORUM['message_table']} set parent_id=$rec[parent_id] where forum_id=$rec[forum_id] and parent_id=$rec[message_id]";
-        mysqli_query( $conn, $sql);
+        mysqli_query($conn, $sql);
+        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }else{
         $count = count(explode(",", $mids));
     }
 
     // delete the messages
     $sql = "delete from {$PHORUM['message_table']} where message_id in ($mids)";
-    mysqli_query( $conn, $sql);
+    mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // start ft-search stuff
     $sql="delete from {$PHORUM['search_table']} where message_id in ($mids)";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     // end ft-search stuff
 
@@ -596,7 +652,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 
     // we need to delete the subscriptions for that thread too
     $sql = "DELETE FROM {$PHORUM['subscribers_table']} WHERE forum_id > 0 AND thread=$thread";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // this function will be slow with a lot of messages.
@@ -606,9 +662,12 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 }
 
 /**
- * gets all attached messages to a message
+ * Get all attached messages to a message.
  *
- * @param id $ id of the message
+ * @param int $parent_id
+ * @param int $forum_id
+ *
+ * @return string
  */
 function phorum_db_get_messagetree($parent_id, $forum_id){
     $PHORUM = $GLOBALS["PHORUM"];
@@ -620,7 +679,8 @@ function phorum_db_get_messagetree($parent_id, $forum_id){
 
     $sql = "Select message_id from {$PHORUM['message_table']} where forum_id=$forum_id and parent_id=$parent_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $tree = "$parent_id";
 
@@ -632,10 +692,16 @@ function phorum_db_get_messagetree($parent_id, $forum_id){
 }
 
 /**
- * This function updates the message given in the $message array for
- * the row with the given message id.  It returns non 0 on success.
+ * Update a message with new data.
+ *
+ * @param int $message_id
+ * @param array $message
+ * 		See phorum_db_post_message() for a list of available fields.
+ * 		You can pass in as many or as few fields as you wish to update.
+ *
+ * @return boolean
+ * 		TRUE on success, FALSE on failure.
  */
-
 function phorum_db_update_message($message_id, $message)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -646,21 +712,23 @@ function phorum_db_update_message($message_id, $message)
         $conn = phorum_db_mysqli_connect();
 
         foreach($message as $field => $value){
-            if (is_numeric($value) && !in_array($field,$PHORUM['string_fields'])){
-                $fields[] = "$field=$value";
-            }elseif (is_array($value)){
-                $value = mysqli_real_escape_string ($conn, serialize($value));
-                $fields[] = "$field='$value'";
-                $message[$field] = $value;
-            }else{
-                $value = mysqli_real_escape_string ($conn, $value);
-                $fields[] = "$field='$value'";
-                $message[$field] = $value;
+            if (phorum_db_validate_field($field)) {
+                if (is_numeric($value) && !in_array($field,$PHORUM['string_fields'])){
+                    $fields[] = "$field=$value";
+                }elseif (is_array($value)){
+                    $value = mysqli_real_escape_string($conn, serialize($value));
+                    $message[$field] = $value;
+                    $fields[] = "$field='$value'";
+                }else{
+                    $value = mysqli_real_escape_string($conn, $value);
+                    $message[$field] = $value;
+                    $fields[] = "$field='$value'";
+                }
             }
         }
 
         $sql = "update {$PHORUM['message_table']} set " . implode(", ", $fields) . " where message_id=$message_id";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         if($res){
@@ -668,7 +736,7 @@ function phorum_db_update_message($message_id, $message)
             if(isset($message["author"]) && isset($message["subject"]) && isset($message["body"])){
                 $search_text="$message[author] | $message[subject] | $message[body]";
                 $sql="replace delayed into {$PHORUM['search_table']} set message_id={$message_id}, forum_id={$message['forum_id']}, search_text='$search_text'";
-                $res = mysqli_query( $conn, $sql);
+                $res = mysqli_query($conn, $sql);
                 if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
             }
             // end ft-search stuff
@@ -681,38 +749,49 @@ function phorum_db_update_message($message_id, $message)
     }
 }
 
-
 /**
- * This function executes a query to get the row with the given value
- * in the given field and returns the message in an array.
+ * Get the first message that matches the search parameters.  If
+ * you pass in multiple matches targets, this will return an array
+ * of messages.  Otherwise it will return a single message.
+ *
+ * @param mixed $value
+ * 		The value in the database column that you want to match.
+ * 		This can be an array, in which case this will return the messages
+ * 		that match any of the given values in the array.
+ * @param string $field
+ * 		The database column you are searching to find $value.
+ * @param boolean $ignore_forum_id
+ * @return array
  */
-
 function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysqli_connect();
+    if (!phorum_db_validate_field($field)) return false;
 
-    $field=mysqli_real_escape_string($conn, $field);
     $multiple=false;
+
+    phorum_db_sanitize_mixed($value, "string");
+    settype($ignore_forum_id, "bool");
+
+    $conn = phorum_db_mysqli_connect();
 
     $forum_id_check = "";
     if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
-        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and ";
     }
 
     if(is_array($value)) {
         $checkvar="$field IN('".implode("','",$value)."')";
         $multiple=true;
     } else {
-        $value=mysqli_real_escape_string( $conn, $value);
+        $value=mysqli_real_escape_string($conn, $value);
         $checkvar="$field='$value'";
     }
 
 
     $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $checkvar";
-    $res = mysqli_query( $conn, $sql);
-
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $ret = $multiple ? array() : NULL;
@@ -745,14 +824,19 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 }
 
 /**
- * This function executes a query to get the rows with the given thread
- * id and returns an array of the message.
+ * Get messages with the given thread id.  Returns an array of messages.
+ *
+ * @param int $thread
+ * @param int $page
+ * @return array
  */
-function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
+function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($thread, "int");
+    settype($page, "int");
+    settype($ignore_mod_perms, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -775,7 +859,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
            if(isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) $sql.=" desc";
     }
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $arr = array();
@@ -799,7 +883,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
     if(count($arr) && $page != 0) {
         // selecting the thread-starter
         $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check message_id=$thread $approvedval";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         if(mysqli_num_rows($res) > 0) {
             $rec = mysqli_fetch_assoc($res);
@@ -811,13 +895,16 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
 }
 
 /**
- * this function returns the index of a message in a thread
+ * Return the index of a message in a thread.
+ * @param int $thread
+ * @param int $message_id
+ * @return int
  */
 function phorum_db_get_message_index($thread=0,$message_id=0) {
     $PHORUM = $GLOBALS["PHORUM"];
 
     // check for valid values
-    if(empty($message_id) || empty($message_id)) {
+    if(empty($thread) || empty($message_id)) {
         return 0;
     }
 
@@ -830,7 +917,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $conn = phorum_db_mysqli_connect();
 
     if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND";
     }
 
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
@@ -839,7 +926,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
 
     $sql = "select count(*) as msg_index from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval AND message_id <= $message_id order by message_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $rec = mysqli_fetch_assoc($res);
@@ -848,16 +935,27 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
 }
 
 /**
- * This function searches the database for the supplied search
- * criteria and returns an array with two elements.  One is the count
- * of total messages that matched, the second is an array of the
- * messages from the results based on the $start (0 base) given and
- * the $length given.
+ * Search the database for the supplied search criteria and returns
+ * an array with two elements.  One is the count of total messages that
+ * matched, the second is an array of the messages from the results
+ * based on the $start (0 base) given and the $length given.
+ *
+ * @param string $search
+ * @param int $offset
+ * @param int $length
+ * @param string $match_type
+ * @param int $match_date
+ * @param string $match_forum
+ *
+ * @return array
  */
-
 function phorum_db_search($search, $offset, $length, $match_type, $match_date, $match_forum)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($offset, "int");
+    settype($length, "int");
+    settype($match_date, "int");
 
     $start = $offset * $PHORUM["list_length"];
 
@@ -865,52 +963,54 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     $conn = phorum_db_mysqli_connect();
 
-    // have to check what forums they can read first.
-    $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
-    // if they are not allowed to search any forums, return the emtpy $arr;
+    // Check what forums the current user can read.
+    $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+
+    // If the user is not allowed to search any forum or the current
+    // active forum, then return the emtpy $arr.
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
 
-    if($PHORUM['forum_id']!=0 && $match_forum!="ALL"){
-        $forum_where=" and forum_id={$PHORUM['forum_id']}";
+    // Prepare forum_id restriction.
+    if ($match_forum == "ALL") {
+        $forum_where = " and forum_id in (".implode(",", $allowed_forums).")";
     } else {
-        $forum_where=" and forum_id in (".implode(",", $allowed_forums).")";
+        $forum_where=" and forum_id = {$PHORUM['forum_id']}";
     }
 
-    // prepare terms
-    if($match_type=="PHRASE"){
-
-        if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
+    // Prepare the search terms.
+    // Search for an exact phrase.
+    if ($match_type=="PHRASE") {
+        if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]) {
             $terms = array('"'.$search.'"');
         } else {
             $terms = array($search);
         }
-
+    // Search for an author name or user id.
     } elseif($match_type=="AUTHOR" || $match_type=="USER_ID"){
-
         $terms = mysqli_real_escape_string($conn, $search);
-
+    // Standard query string.
     } else {
-
         $quote_terms=array();
-        if ( strstr( $search, '"' ) ){
-            //first pull out all the double quoted strings (e.g. '"iMac DV" or -"iMac DV"')
-            preg_match_all( '/-*"(.*?)"/', $search, $match );
-            $search = preg_replace( '/-*".*?"/', '', $search );
+
+        // First, pull out all the double quoted strings
+        // (e.g. '"iMac DV" or -"iMac DV"')
+        if (strstr( $search, '"' )) {
+            preg_match_all('/-*"(.*?)"/', $search, $match);
+            $search = preg_replace('/-*".*?"/', '', $search);
             $quote_terms = $match[0];
         }
 
-        //finally pull out the rest words in the string
+        // Finally, pull out the rest of the words in the string.
         $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
 
-        //merge them all together and return
+        // Merge them all together.
         $terms = array_merge($terms, $quote_terms);
-
     }
 
+    // Handle full text matching.
+    if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
 
-    if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
-
-        if($match_type=="AUTHOR" || $match_type=="USER_ID"){
+        if ($match_type=="AUTHOR" || $match_type=="USER_ID") {
 
             $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
 
@@ -926,17 +1026,16 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
         } else {
 
-
-            if(count($terms)){
+            if (count($terms)) {
 
                 $use_key="";
                 $extra_where="";
 
-                /* using this code on larger forums has shown to make the search faster.
-                   However, on smaller forums, it does not appear to help and in fact
-                   appears to slow down searches.
+                /* Using this code on larger forums has shown to make the
+                   search faster. However, on smaller forums, it does not
+                   appear to help and in fact appears to slow down searches.
 
-                if($match_date){
+                if ($match_date) {
                     $min_time=time()-86400*$match_date;
                     $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
                     $res=mysqli_query($conn, $sql);
@@ -951,8 +1050,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
                 $against = "";
 
-                if($match_type=="ALL" && count($terms)>1){
-                    foreach($terms as $term){
+                if ($match_type=="ALL" && count($terms)>1) {
+                    foreach ($terms as $term) {
                         if($term[0] == "+" || $term[0] == "-"){
                             $against .= mysqli_real_escape_string($conn, $term)." ";
                         } else {
@@ -973,7 +1072,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             }
         }
 
-
         if(isset($id_table)){
 
             // create a temporary table of the messages we want
@@ -992,10 +1090,10 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $res = mysqli_query($conn, $sql);
 
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-            list($total_count) = mysqli_fetch_row($res);
+            list($total_count)=mysqli_fetch_row($res);
 
             $sql="select message_id from $table order by datestamp desc limit $start, $length";
-            $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+            $res = mysqli_query($conn, $sql);
 
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -1005,30 +1103,29 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             }
             $idstring=substr($idstring, 0, -1);
 
-            mysqli_free_result($res);
         }
-
-    } else { // not using full text matching
+    // Handle basic matching.
+    } else {
 
         if($match_type=="AUTHOR" || $match_type=="USER_ID"){
 
             $fld = $match_type=="AUTHOR" ? "author" : "user_id";
-            $sql_core = "from {$PHORUM['message_table']} where $fld='$terms' $forum_where $sql_date";
+            $sql_core = "from {$PHORUM['message_table']} where $fld='$terms' $forum_where";
 
             if($match_date>0){
                 $ts=time()-86400*$match_date;
                 $sql_core.=" and datestamp>=$ts";
             }
 
+
             $sql = "select count(*) $sql_core";
             $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-            list($total_count) = mysqli_fetch_row($res);
-
+            list($total_count)=mysqli_fetch_row($res);
 
             $sql = "select message_id $sql_core order by datestamp desc limit $start, $length";
 
-            $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+            $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
             $idstring="";
@@ -1037,11 +1134,11 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             }
             $idstring=substr($idstring, 0, -1);
 
-            mysqli_free_result($res);
-
         } else {
 
             if(count($terms)){
+
+                $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
 
                 if($match_type=="ALL"){
                     $conj="and";
@@ -1069,7 +1166,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 list($total_count) = mysqli_fetch_row($res);
 
                 $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date order by datestamp desc limit $start, $length";
-                $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+                $res = mysqli_query($conn, $sql);
                 if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
                 $idstring="";
@@ -1078,7 +1175,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 }
                 $idstring=substr($idstring, 0, -1);
 
-                mysqli_free_result($res);
             }
 
         }
@@ -1087,7 +1183,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     if($idstring){
         $sql="select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
-        $res = mysqli_query($conn, $sql, MYSQLI_USE_RESULT);
+        $res = mysqli_query($conn, $sql);
 
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -1097,8 +1193,6 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             $rows[$rec["message_id"]] = $rec;
         }
 
-        mysqli_free_result($res);
-
         $arr = array("count" => $total_count, "rows" => $rows);
     }
 
@@ -1106,9 +1200,10 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 }
 
 /**
- * This function returns the closest thread that is greater than $thread
+ * Return the closest thread that is greater than $key.
+ * @param int $key
+ * @return mixed
  */
-
 function phorum_db_get_newer_thread($key){
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -1128,7 +1223,7 @@ function phorum_db_get_newer_thread($key){
 
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} $approvedval and $keyfield>$key order by $keyfield limit 1";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res)) {
@@ -1142,9 +1237,10 @@ function phorum_db_get_newer_thread($key){
 }
 
 /**
- * This function returns the closest thread that is less than $thread
+ * Returns the closest thread that is less than $key.
+ * @param int $key
+ * @return mixed
  */
-
 function phorum_db_get_older_thread($key){
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -1163,7 +1259,7 @@ function phorum_db_get_older_thread($key){
 
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']}  $approvedval and $keyfield<$key order by $keyfield desc limit 1";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res)) {
@@ -1177,10 +1273,10 @@ function phorum_db_get_older_thread($key){
 }
 
 /**
- * This function executes a query to get bad items of type $type and
- * returns an array of the results.
+ * Load the settings in the global $PHORUM['SETTINGS'] variable.
+ *
+ * @return void
  */
-
 function phorum_db_load_settings(){
     global $PHORUM;
 
@@ -1189,7 +1285,7 @@ function phorum_db_load_settings(){
 
     $sql = "select * from {$PHORUM['settings_table']}";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if(!$res && !defined("PHORUM_ADMIN")){
         if (mysqli_errno($conn)==1146){
             // settings table does not exist
@@ -1223,10 +1319,12 @@ function phorum_db_load_settings(){
 }
 
 /**
- * This function executes a query to get bad items of type $type and
- * returns an array of the results.
+ * Update Phorum settings.
+ *
+ * @param array $settings
+ *
+ * @return boolean
  */
-
 function phorum_db_update_settings($settings){
     global $PHORUM;
 
@@ -1237,15 +1335,17 @@ function phorum_db_update_settings($settings){
             if (is_numeric($value)){
                 $type = 'V';
             }elseif (is_string($value)){
-                $value = mysqli_real_escape_string ( $conn, $value);
+                $value = mysqli_real_escape_string($conn, $value);
                 $type = 'V';
             }else{
-                $value = mysqli_real_escape_string ( $conn, serialize($value));
+                $value = mysqli_real_escape_string($conn, serialize($value));
                 $type = 'S';
             }
 
+            $field = mysqli_real_escape_string($conn, $field);
+
             $sql = "replace into {$PHORUM['settings_table']} set data='$value', type='$type', name='$field'";
-            $res = mysqli_query( $conn, $sql);
+            $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         }
 
@@ -1256,16 +1356,24 @@ function phorum_db_update_settings($settings){
 }
 
 /**
- * This function executes a query to select all forum data from
- * the database for a flat/collapsed display and returns the data in
+ * Get all forums for a flat/collapsed display and return the data in
  * an array.
+ *
+ * @param mixed $forum_ids
+ * 		Can be an array of forum IDs or an int for one forum ID.
+ * @param int $parent_id
+ * @param unknown $vroot
+ * @param unknown $inherit_id
+ *
+ * @return array
  */
-
-
 function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $inherit_id = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
+    phorum_db_sanitize_mixed($forum_ids, "int");
     settype($parent_id, "int");
+    if ($vroot != null) settype($vroot, "int");
+    if ($inherit_id != null) settype($inherit_id, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -1281,6 +1389,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     }
 
     $sql = "select * from {$PHORUM['forums_table']} ";
+
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
     } elseif ($inherit_id !== null) {
@@ -1297,7 +1406,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
 
     $sql .= " order by display_order ASC, name";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $forums = array();
@@ -1310,13 +1419,26 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
 }
 
 /**
- * This function updates the forums stats.  If refresh is true, it pulls the
- * numbers from the table.
+ * Update the forums stats.
+ *
+ * @param boolean $refresh
+ *   	If true, it pulls the numbers from the table.
+ * @param int $msg_count_change
+ * @param int $timestamp
+ * @param int $thread_count_change
+ * @param int $sticky_count_change
+ *
+ * @return void
  */
-
 function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $timestamp=0, $thread_count_change=0, $sticky_count_change=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($refresh, "bool");
+    settype($msg_count_change, "int");
+    settype($timestamp, "int");
+    settype($thread_count_change, "int");
+    settype($sticky_count_change, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -1328,11 +1450,10 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
     if($refresh || empty($msg_count_change)){
         $sql = "select count(*) as message_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and status=".PHORUM_STATUS_APPROVED;
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
-        $tmp_row=mysqli_fetch_row($res);
-
+        $tmp_row = mysqli_fetch_row($res);
         $message_count = (int)$tmp_row[0];
     } else {
         $message_count="message_count+$msg_count_change";
@@ -1342,7 +1463,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
 
         $sql = "select max(modifystamp) as last_post_time from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and forum_id={$PHORUM['forum_id']}";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         $tmp_row=mysqli_fetch_row($res);
@@ -1355,7 +1476,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
     if($refresh || empty($thread_count_change)){
 
         $sql = "select count(*) as thread_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and parent_id=0 and status=".PHORUM_STATUS_APPROVED;
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         $tmp_row=mysqli_fetch_row($res);
@@ -1369,7 +1490,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
     if($refresh || empty($sticky_count_change)){
 
         $sql = "select count(*) as sticky_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and sort=".PHORUM_SORT_STICKY." and parent_id=0 and status=".PHORUM_STATUS_APPROVED;
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         $tmp_row=mysqli_fetch_row($res);
@@ -1379,15 +1500,20 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
 
         $sticky_count="sticky_count+$sticky_count_change";
     }
-    $sql = "update {$PHORUM['forums_table']} set cache_version = cache_version + 1, thread_count=$thread_count, message_count=$message_count, sticky_count=$sticky_count, last_post_time=$last_post_time where forum_id={$PHORUM['forum_id']}";
 
-    mysqli_query( $conn, $sql);
+    $sql = "update {$PHORUM['forums_table']} set cache_version = cache_version + 1, thread_count=$thread_count, message_count=$message_count, sticky_count=$sticky_count, last_post_time=$last_post_time where forum_id={$PHORUM['forum_id']}";
+    mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
 }
 
 /**
- * actually moves a thread to the given forum
+ * Move a thread to the given forum.
+ *
+ * @param int $thread_id
+ * @param int $toforum
+ *
+ * @return void
  */
 function phorum_db_move_thread($thread_id, $toforum)
 {
@@ -1404,7 +1530,7 @@ function phorum_db_move_thread($thread_id, $toforum)
         // just changing the forum-id, simple isn't it?
         $sql = "UPDATE {$PHORUM['message_table']} SET forum_id=$toforum where thread=$thread_id";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         // we need to update the number of posts in the current forum
@@ -1426,7 +1552,8 @@ function phorum_db_move_thread($thread_id, $toforum)
         $search_ids = array();
         foreach($thread_messages as $mid => $data) {
             // gather information for updating the newflags
-            if($mid > $new_newflags['min_id']) { // only using it if its higher than min_id
+        // only using it if its higher than the min_id of the target forum
+            if($mid > $new_newflags['min_id'][$toforum]) {
                 $message_ids[]=$mid;
             } else { // newflags to delete
                 $delete_ids[]=$mid;
@@ -1444,7 +1571,7 @@ function phorum_db_move_thread($thread_id, $toforum)
 
             // then doing the update to subscriptions
             $sql="UPDATE {$PHORUM['subscribers_table']} SET forum_id = $toforum where thread IN($ids_str)";
-            $res = mysqli_query( $conn, $sql);
+            $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         }
@@ -1453,7 +1580,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             $ids_str=implode(",",$delete_ids);
             // then doing the delete
             $sql="DELETE FROM {$PHORUM['user_newflags_table']} where message_id IN($ids_str)";
-            mysqli_query( $conn, $sql);
+            mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         }
 
@@ -1461,7 +1588,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             $ids_str = implode(",",$search_ids);
             // then doing the search table update
             $sql = "UPDATE {$PHORUM['search_table']} set forum_id = $toforum where message_id in ($ids_str)";
-            mysqli_query( $conn, $sql);
+            mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         }
 
@@ -1469,7 +1596,9 @@ function phorum_db_move_thread($thread_id, $toforum)
 }
 
 /**
- * closes the given thread
+ * Close the given thread.
+ * @param int $thread_id
+ * @return void
  */
 function phorum_db_close_thread($thread_id){
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1481,13 +1610,17 @@ function phorum_db_close_thread($thread_id){
 
         $sql = "UPDATE {$PHORUM['message_table']} SET closed=1 where thread=$thread_id";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }
 }
 
 /**
- * (re)opens the given thread
+ * (Re)opens the given thread.
+ *
+ * @param int $thread_id
+ *
+ * @return void
  */
 function phorum_db_reopen_thread($thread_id){
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1499,16 +1632,42 @@ function phorum_db_reopen_thread($thread_id){
 
         $sql = "UPDATE {$PHORUM['message_table']} SET closed=0 where thread=$thread_id";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }
 }
 
 /**
- * This function executes a query to insert a forum into the forums
- * table and returns the forums id on success or 0 on failure.
+ * Create a forum.
+ *
+ * @param array $forum
+ * 		<pre>
+ * 		Example:
+ * 		"name"=>'Test Forum',
+ *      "active"=>1,
+ *      "description"=>'This is a test forum.',
+ *      "template"=>'default',
+ *      "folder_flag"=>0,
+ *      "parent_id"=>0,
+ *      "list_length_flat"=>30,
+ *      "list_length_threaded"=>15,
+ *      "read_length"=>20,
+ *      "moderation"=>0,
+ *      "threaded_list"=>0,
+ *      "threaded_read"=>0,
+ *      "float_to_top"=>1,
+ *      "display_ip_address"=>0,
+ *      "allow_email_notify"=>1,
+ *      "language"=>'english',
+ *      "email_moderators"=>0,
+ *      "display_order"=>0,
+ *      "edit_post"=>1,
+ *      "pub_perms" =>  1,
+ *      "reg_perms" =>  15
+ *		</pre>
+ * @return int
+ * 		Return the forum ID on success, zero on failure.
  */
-
 function phorum_db_add_forum($forum)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1516,20 +1675,22 @@ function phorum_db_add_forum($forum)
     $conn = phorum_db_mysqli_connect();
 
     foreach($forum as $key => $value){
-        if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
-            $value = (int)$value;
-            $fields[] = "$key=$value";
-        } elseif($value=="NULL") {
-            $fields[] = "$key=$value";
-        }else{
-            $value = mysqli_real_escape_string($conn, $value);
-            $fields[] = "$key='$value'";
+        if (phorum_db_validate_field($key)) {
+            if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
+                $value = (int)$value;
+                $fields[] = "$key=$value";
+            } elseif($value=="NULL") {
+                $fields[] = "$key=$value";
+            }else{
+                $value = mysqli_real_escape_string($conn, $value);
+                $fields[] = "$key='$value'";
+            }
         }
     }
 
     $sql = "insert into {$PHORUM['forums_table']} set " . implode(", ", $fields);
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $forum_id = 0;
@@ -1542,10 +1703,10 @@ function phorum_db_add_forum($forum)
 }
 
 /**
- * This function executes a query to remove a forum from the forums
- * table and its messages.
+ * Delete a forum and all of its messages.
+ * @param int $forum_id
+ * @return void
  */
-
 function phorum_db_drop_forum($forum_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1567,30 +1728,28 @@ function phorum_db_drop_forum($forum_id)
 
     foreach($tables as $table){
         $sql = "delete from $table where forum_id=$forum_id";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }
 
 $sql = "select file_id from {$PHORUM['files_table']} left join {$PHORUM['message_table']} using (message_id) where {$PHORUM['files_table']}.message_id > 0 AND link='" . PHORUM_LINK_MESSAGE . "' AND {$PHORUM['message_table']}.message_id is NULL";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     while($rec=mysqli_fetch_assoc($res)){
         $files[]=$rec["file_id"];
     }
     if(isset($files)){
         $sql = "delete from {$PHORUM['files_table']} where file_id in (".implode(",", $files).")";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }
-
-
 }
 
 /**
- * This function executes a query to remove a folder from the forums
- * table and change the parent of its children.
+ * Remove a folder from the forums and change the parent of its children.
+ * @param int $forum_id
+ * @return void
  */
-
 function phorum_db_drop_folder($forum_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1601,7 +1760,7 @@ function phorum_db_drop_folder($forum_id)
 
     $sql = "select parent_id from {$PHORUM['forums_table']} where forum_id=$forum_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $tmp_row=mysqli_fetch_row($res);
@@ -1609,26 +1768,31 @@ function phorum_db_drop_folder($forum_id)
 
     $sql = "update {$PHORUM['forums_table']} set parent_id=$new_parent_id where parent_id=$forum_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $sql = "delete from {$PHORUM['forums_table']} where forum_id=$forum_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 }
 
 /**
- * This function executes a query to update a forum in the forums
- * table and returns non zero on success or 0 on failure.
+ * Update a forum.
+ *
+ * @param array $forum
+ * 		See phorum_db_add_forum() for a list of possible values.
+ *
+ * @return boolean
  */
-
 function phorum_db_update_forum($forum){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $res = 0;
 
     if (!empty($forum["forum_id"])){
+
+        phorum_db_sanitize_mixed($forum["forum_id"], "int");
 
         // this way we can also update multiple forums at once
         if(is_array($forum["forum_id"])) {
@@ -1642,20 +1806,22 @@ function phorum_db_update_forum($forum){
         $conn = phorum_db_mysqli_connect();
 
         foreach($forum as $key => $value){
-            if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
-                $value = (int)$value;
-                $fields[] = "$key=$value";
-            } elseif($value=="NULL") {
-                $fields[] = "$key=$value";
-            } else {
-                $value = mysqli_real_escape_string($conn, $value);
-                $fields[] = "$key='$value'";
+            if (phorum_db_validate_field($key)) {
+                if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
+                    $value = (int)$value;
+                    $fields[] = "$key=$value";
+                } elseif($value=="NULL") {
+                    $fields[] = "$key=$value";
+                } else {
+                    $value = mysqli_real_escape_string($conn, $value);
+                    $fields[] = "$key='$value'";
+                }
             }
         }
 
         $sql = "update {$PHORUM['forums_table']} set " . implode(", ", $fields) . " where $forumwhere";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }else{
         trigger_error("\$forum[forum_id] cannot be empty in phorum_update_forum()", E_USER_ERROR);
@@ -1665,20 +1831,22 @@ function phorum_db_update_forum($forum){
 }
 
 /**
-*
-*/
-
+ * Get groups that match the given group ID.
+ * @param int $group_id
+ * @return array
+ */
 function phorum_db_get_groups($group_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysqli_connect();
 
-    settype($group_id, "integer");
+    settype($group_id, "int");
 
     $sql="select * from {$PHORUM['groups_table']}";
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $groups=array();
     while($rec=mysqli_fetch_assoc($res)){
@@ -1690,7 +1858,8 @@ function phorum_db_get_groups($group_id=0)
     $sql="select * from {$PHORUM['forum_group_xref_table']}";
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     while($rec=mysqli_fetch_assoc($res)){
 
@@ -1703,21 +1872,22 @@ function phorum_db_get_groups($group_id=0)
 }
 
 /**
-* Get the members of a group.
-* @param group_id - can be an integer (single group), or an array of groups
-* @param status - a specific status to look for, defaults to all
-* @return array - users (key is userid, value is group membership status)
-*/
-
+ * Get the members of a group.
+ *
+ * @param int group_id - can be an integer (single group), or an array of groups
+ * @param int status - a specific status to look for, defaults to all
+ *
+ * @return array - users (key is userid, value is group membership status)
+ */
 function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMOVE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysqli_connect();
 
+    phorum_db_sanitize_mixed($group_id, "int");
+
     if(is_array($group_id)){
         $group_id=implode(",", $group_id);
-    } else {
-        settype($group_id, "int");
     }
 
     // this join is only here so that the list of users comes out sorted
@@ -1726,7 +1896,7 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
     if ($status != PHORUM_USER_GROUP_REMOVE) $sql.=" and {$PHORUM['user_group_xref_table']}.status = $status";
     $sql .=" order by username asc";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     $users=array();
     while($rec=mysqli_fetch_assoc($res)){
@@ -1738,9 +1908,12 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
 }
 
 /**
-*
-*/
-
+ * Update a group.
+ *
+ * @param array $group
+ *
+ * @return boolean
+ */
 function phorum_db_save_group($group)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1748,10 +1921,12 @@ function phorum_db_save_group($group)
 
     $ret=false;
 
+    phorum_db_sanitize_mixed($group, "string");
+
     if(isset($group["name"])){
         $sql="update {$PHORUM['groups_table']} set name='{$group['name']}', open={$group['open']} where group_id={$group['group_id']}";
 
-        $res=mysqli_query( $conn, $sql);
+        $res=mysqli_query($conn, $sql);
 
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -1762,13 +1937,13 @@ function phorum_db_save_group($group)
         if(isset($group["permissions"])){
             $sql="delete from {$PHORUM['forum_group_xref_table']} where group_id={$group['group_id']}";
 
-            $res=mysqli_query( $conn, $sql);
+            $res=mysqli_query($conn, $sql);
 
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
             foreach($group["permissions"] as $forum_id=>$permission){
                 $sql="insert into {$PHORUM['forum_group_xref_table']} set group_id={$group['group_id']}, permission=$permission, forum_id=$forum_id";
-                $res=mysqli_query( $conn, $sql);
+                $res=mysqli_query($conn, $sql);
                 if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
                 if(!$res) break;
             }
@@ -1778,9 +1953,14 @@ function phorum_db_save_group($group)
     if($res>0) $ret=true;
 
     return $ret;
-
 }
 
+/**
+ * Delete a group.
+ *
+ * @param int $group_id
+ * @return void
+ */
 function phorum_db_delete_group($group_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -1789,31 +1969,34 @@ function phorum_db_delete_group($group_id)
     settype($group_id, "int");
 
     $sql = "delete from {$PHORUM['groups_table']} where group_id = $group_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // delete things associated with groups
     $sql = "delete from {$PHORUM['user_group_xref_table']} where group_id = $group_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $sql = "delete from {$PHORUM['forum_group_xref_table']} where group_id = $group_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 }
 
 /**
- * phorum_db_add_group()
+ * Add a group.
  *
- * @param $group_name $group_id
- * @return
- **/
+ * @param string $group_name
+ * @param int $group_id
+ *
+ * @return int
+ */
 function phorum_db_add_group($group_name,$group_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysqli_connect();
 
     settype($group_id, "int");
+    $group_name = mysqli_real_escape_string($conn, $group_name);
 
     if($group_id > 0) { // only used in conversion
         $sql="insert into {$PHORUM['groups_table']} (group_id,name) values ($group_id,'$group_name')";
@@ -1821,7 +2004,7 @@ function phorum_db_add_group($group_name,$group_id=0)
         $sql="insert into {$PHORUM['groups_table']} (name) values ('$group_name')";
     }
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -1835,8 +2018,14 @@ function phorum_db_add_group($group_name,$group_id=0)
 }
 
 /**
-* This function returns all moderators for a particular forum
-*/
+ * Get all moderators for a particular forum.
+ *
+ * @param int $forum_id
+ * @param boolean $ignore_user_perms
+ * @param boolean $for_email
+ *
+ * @return array
+ */
 function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_email=false) {
 
    $PHORUM = $GLOBALS["PHORUM"];
@@ -1845,6 +2034,8 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
    $conn = phorum_db_mysqli_connect();
 
    settype($forum_id, "int");
+   settype($ignore_user_perms, "bool");
+   settype($for_email, "bool");
 
    if(!$ignore_user_perms) { // sometimes we just don't need them
        if(!$PHORUM['email_ignore_admin']) {
@@ -1857,7 +2048,7 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
        $sql="SELECT DISTINCT user.user_id, user.email, user.moderation_email FROM {$PHORUM['user_table']} as user LEFT JOIN {$PHORUM['user_permissions_table']} as perm ON perm.user_id=user.user_id WHERE (perm.permission >= ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0) AND perm.forum_id=$forum_id)$admincheck";
 
 
-       $res = mysqli_query( $conn, $sql);
+       $res = mysqli_query($conn, $sql);
 
        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -1871,7 +2062,7 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
    // get users who belong to groups that have moderator access
    $sql = "SELECT DISTINCT user.user_id, user.email, user.moderation_email FROM {$PHORUM['user_table']} AS user, {$PHORUM['groups_table']} AS groups, {$PHORUM['user_group_xref_table']} AS usergroup, {$PHORUM['forum_group_xref_table']} AS forumgroup WHERE user.user_id = usergroup.user_id AND usergroup.group_id = groups.group_id AND groups.group_id = forumgroup.group_id AND forum_id = $forum_id AND permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0 AND usergroup.status >= ".PHORUM_USER_GROUP_APPROVED;
 
-   $res = mysqli_query( $conn, $sql);
+   $res = mysqli_query($conn, $sql);
 
    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -1883,29 +2074,29 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
 }
 
 /**
- * This function executes a query to select data about a user including
- * his permission data and returns that in an array.
+ * Get a user.
+ *
+ * @param int $user_id
+ * @param boolean $detailed
+ *
+ * @return array
  */
-
 function phorum_db_user_get($user_id, $detailed)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysqli_connect();
 
+    phorum_db_sanitize_mixed($user_id, "int");
+
     if(is_array($user_id)){
-        foreach($user_id as &$id){
-            $id = (int)$id;
-        }
         $user_ids=implode(",", $user_id);
-    } else {
-        $user_ids=(int)$user_id;
     }
 
     $users = array();
 
     $sql = "select * from {$PHORUM['user_table']} where user_id in ($user_ids)";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res)){
@@ -1922,7 +2113,7 @@ function phorum_db_user_get($user_id, $detailed)
             // get the users' permissions
             $sql = "select * from {$PHORUM['user_permissions_table']} where user_id in ($user_ids)";
 
-            $res = mysqli_query( $conn, $sql);
+            $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
             while ($row = mysqli_fetch_assoc($res)){
@@ -1932,7 +2123,7 @@ function phorum_db_user_get($user_id, $detailed)
             // get the users' groups and forum permissions through those groups
             $sql = "select user_id, {$PHORUM['user_group_xref_table']}.group_id, forum_id, permission from {$PHORUM['user_group_xref_table']} left join {$PHORUM['forum_group_xref_table']} using (group_id) where user_id in ($user_ids) AND {$PHORUM['user_group_xref_table']}.status >= ".PHORUM_USER_GROUP_APPROVED;
 
-            $res = mysqli_query( $conn, $sql);
+            $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
             while ($row = mysqli_fetch_assoc($res)){
@@ -1947,7 +2138,7 @@ function phorum_db_user_get($user_id, $detailed)
 
         }
         $sql = "select * from {$PHORUM['user_custom_fields_table']} where user_id in ($user_ids)";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         while ($row = mysqli_fetch_assoc($res)){
@@ -1972,21 +2163,27 @@ function phorum_db_user_get($user_id, $detailed)
     } else {
         return isset($users[$user_id]) ? $users[$user_id] : NULL;
     }
-
 }
 
-/*
- * Generic function to retrieve a couple of fields from the user-table
- * for a couple of users or only one of them
+/**
+ * Retrieve a couple of fields from the user-table for a couple of
+ * users or only one of them.
  *
- * result is always an array with one or more users in it
+ * @param mixed $user_id
+ * 		Can be an int or array or ints.
+ * @param mixed $fields
+ * 		Can be a string or an array of strings.
+ *
+ * @return array
+ * 		One or more users.
  */
-
 function phorum_db_user_get_fields($user_id, $fields)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysqli_connect();
+
+    phorum_db_sanitize_mixed($user_id, "int");
 
     // input could be either array or string
     if(is_array($user_id)){
@@ -1995,21 +2192,22 @@ function phorum_db_user_get_fields($user_id, $fields)
         $user_ids=(int)$user_id;
     }
 
-
-    if(is_array($fields)) {
-        $fields_str=implode(",",$fields);
-    } else {
-        $fields_str=$fields;
+    if(!is_array($fields)) {
+        $fields = array($fields);
     }
 
-    $users = array();
+    foreach($fields as $key=>$field){
+        if(!phorum_db_validate_field($field)){
+            unset($fields[$key]);
+        }
+    }
 
+    $sql = "select user_id, ".implode(",", $fields)." from {$PHORUM['user_table']} where user_id in ($user_ids)";
 
-
-    $sql = "select user_id,$fields_str from {$PHORUM['user_table']} where user_id in ($user_ids)";
-
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
+
+    $users = array();
 
     if (mysqli_num_rows($res)){
         while($rec=mysqli_fetch_assoc($res)){
@@ -2018,7 +2216,6 @@ function phorum_db_user_get_fields($user_id, $fields)
     }
 
     return $users;
-
 }
 
 /**
@@ -2035,13 +2232,15 @@ function phorum_db_user_get_list($type = 0){
 
    $conn = phorum_db_mysqli_connect();
 
+   settype($type, "int");
+
    $where = '';
    if ($type == 1) $where = "where active = 1";
    elseif ($type == 2) $where = "where active != 1";
 
    $users = array();
    $sql = "select user_id, username from {$PHORUM['user_table']} $where order by username asc";
-   $res = mysqli_query( $conn, $sql);
+   $res = mysqli_query($conn, $sql);
    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
    while ($row = mysqli_fetch_assoc($res)){
@@ -2052,24 +2251,29 @@ function phorum_db_user_get_list($type = 0){
 }
 
 /**
- * This function executes a query to select data about a user including
- * his permission data and returns that in an array.
+ * Check if the user's password is correct.
+ *
+ * @param string $username
+ * @param string $password
+ * @param boolean $temp_password
+ *
+ * @return int
+ * 		Return the user ID if the password is correct, or zero if not.
  */
-
 function phorum_db_user_check_pass($username, $password, $temp_password=false){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysqli_connect();
 
+    settype($temp_password, "bool");
     $username = mysqli_real_escape_string($conn, $username);
-
     $password = mysqli_real_escape_string($conn, $password);
 
     $pass_field = ($temp_password) ? "password_temp" : "password";
 
     $sql = "select user_id from {$PHORUM['user_table']} where username='$username' and $pass_field='$password'";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if($res && mysqli_num_rows($res)) {
@@ -2082,21 +2286,28 @@ function phorum_db_user_check_pass($username, $password, $temp_password=false){
 }
 
 /**
- * This function executes a query to check for the given field in the
- * user tableusername and return the user_id of the user it matches or 0
- * if no match is found.
+ * Check for the given field in the user table and return the user_id
+ * of the user it matches or 0 if no match is found.
  *
  * The parameters can be arrays.  If they are, all must be passed and all
  * must have the same number of values.
  *
  * If $return_array is true, an array of all matching rows will be returned.
  * Otherwise, only the first user_id from the results will be returned.
+ *
+ * @param mixed $field
+ * @param mixed $value
+ * @param string $operator
+ * @param boolean $return_array
+ *
+ * @return mixed
  */
-
 function phorum_db_user_check_field($field, $value, $operator="=", $return_array=false){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $ret = 0;
+
+    settype($return_array, "bool");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -2112,14 +2323,22 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
         $operator=array($operator);
     }
 
+    if (count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){ 
+        return $ret; 
+    } 
+
+    $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=");
+
     foreach($field as $key=>$name){
-        $value[$key] = mysqli_real_escape_string($conn, $value[$key]);
-        $clauses[]="$name $operator[$key] '$value[$key]'";
+        if(in_array($operator[$key], $valid_operators) && phorum_db_validate_field($name)){
+            $value[$key] = mysqli_real_escape_string($conn, $value[$key]);
+            $clauses[]="$name $operator[$key] '$value[$key]'";
+        }
     }
 
     $sql = "select user_id from {$PHORUM['user_table']} where ".implode(" and ", $clauses);
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if ($res && mysqli_num_rows($res)){
@@ -2139,10 +2358,13 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
 
 
 /**
- * This function executes a query to add the given user data to the
- * database and returns the userid or 0
+ * Add a user.
+ *
+ * @param array $userdata
+ *
+ * @return int
+ * 		The user ID of the new user.
  */
-
 function phorum_db_user_add($userdata){
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -2174,7 +2396,7 @@ function phorum_db_user_add($userdata){
 
     $sql .= implode(", ", $values);
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $user_id = 0;
@@ -2187,7 +2409,7 @@ function phorum_db_user_add($userdata){
             // storing forum-permissions
             foreach($forum_perms as $fid => $p){
                 $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$p";
-                $res = mysqli_query( $conn, $sql);
+                $res = mysqli_query($conn, $sql);
                 if ($err = mysqli_error($conn)){
                     phorum_db_mysqli_error("$err: $sql");
                     break;
@@ -2204,7 +2426,7 @@ function phorum_db_user_add($userdata){
                     $val = mysqli_real_escape_string($conn, $val);
                 }
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
-                $res = mysqli_query( $conn, $sql);
+                $res = mysqli_query($conn, $sql);
                 if ($err = mysqli_error($conn)){
                     phorum_db_mysqli_error("$err: $sql");
                     break;
@@ -2218,8 +2440,11 @@ function phorum_db_user_add($userdata){
 
 
 /**
- * This function executes a query to update the given user data in the
- * database and returns the true or false
+ * Update a user's data.
+ *
+ * @param array $userdata
+ *
+ * @return boolean
  */
 function phorum_db_user_save($userdata){
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2270,18 +2495,19 @@ function phorum_db_user_save($userdata){
 
         $sql .= " where user_id=$user_id";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }
 
     if (isset($forum_perms)){
 
         $sql = "delete from {$PHORUM['user_permissions_table']} where user_id = $user_id";
-        $res=mysqli_query( $conn, $sql);
+        $res=mysqli_query($conn, $sql);
+        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         foreach($forum_perms as $fid=>$perms){
             $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$perms";
-            $res = mysqli_query( $conn, $sql);
+            $res = mysqli_query($conn, $sql);
             if ($err = mysqli_error($conn)){
                 phorum_db_mysqli_error("$err: $sql");
             }
@@ -2290,7 +2516,8 @@ function phorum_db_user_save($userdata){
     if(isset($user_data)) {
         // storing custom-fields
         $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id = $user_id";
-        $res=mysqli_query( $conn, $sql);
+        $res=mysqli_query($conn, $sql);
+        if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         if(is_array($user_data)) {
             foreach($user_data as $key => $val){
@@ -2302,7 +2529,7 @@ function phorum_db_user_save($userdata){
                 }
 
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
-                $res = mysqli_query( $conn, $sql);
+                $res = mysqli_query($conn, $sql);
                 if ($err = mysqli_error($conn)){
                     phorum_db_mysqli_error("$err: $sql");
                     break;
@@ -2315,25 +2542,34 @@ function phorum_db_user_save($userdata){
 }
 
 /**
- * This function saves a users group permissions.
+ * Save a user's group permissions.
+ *
+ * @param int $user_id
+ * @param array $groups
+ *
+ * @return boolean
  */
 function phorum_db_user_save_groups($user_id, $groups)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($user_id, "int");
+
     if (!$user_id > 0){
         return false;
     }
 
-    settype($user_id, "int");
-
     // erase the group memberships they have now
     $conn = phorum_db_mysqli_connect();
     $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id = $user_id";
-    $res=mysqli_query( $conn, $sql);
+    $res=mysqli_query($conn, $sql);
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     foreach($groups as $group_id => $group_perm){
+        $group_id = (int)$group_id;
+        $group_perm = (int)$group_perm;
         $sql = "insert into {$PHORUM['user_group_xref_table']} set user_id=$user_id, group_id=$group_id, status=$group_perm";
-        mysqli_query( $conn, $sql);
+        mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)){
             phorum_db_mysqli_error("$err: $sql");
             break;
@@ -2343,9 +2579,15 @@ function phorum_db_user_save_groups($user_id, $groups)
 }
 
 /**
- * This function executes a query to subscribe a user to a forum/thread.
+ * Subscribe a user to a forum/thread.
+ *
+ * @param int $user_id
+ * @param int $forum_id
+ * @param int $thread
+ * @param int $type
+ *
+ * @return boolean
  */
-
 function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2359,7 +2601,7 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 
     $sql = "replace into {$PHORUM['subscribers_table']} set user_id=$user_id, forum_id=$forum_id, sub_type=$type, thread=$thread";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -2367,14 +2609,16 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 }
 
 /**
-  * This function increases the post-counter for a user by one
-  */
+ * Increment the post-counter for a user.
+ *
+ * @return boolean
+ */
 function phorum_db_user_addpost() {
 
         $conn = phorum_db_mysqli_connect();
 
         $sql="UPDATE ".$GLOBALS['PHORUM']['user_table']." SET posts=posts+1 WHERE user_id = ".$GLOBALS['PHORUM']['user']['user_id'];
-        $res=mysqli_query( $conn, $sql);
+        $res=mysqli_query($conn, $sql);
 
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -2382,9 +2626,14 @@ function phorum_db_user_addpost() {
 }
 
 /**
- * This function executes a query to unsubscribe a user to a forum/thread.
+ * Unsubscribe a user to a forum/thread.
+ *
+ * @param int $user_id
+ * @param int $thread
+ * @param int $forum_id
+ *
+ * @return boolean
  */
-
 function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2398,7 +2647,7 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
     $sql = "DELETE FROM {$PHORUM['subscribers_table']} WHERE user_id=$user_id AND thread=$thread";
     if($forum_id) $sql.=" and forum_id=$forum_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -2406,24 +2655,28 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 }
 
 /**
- * This function will return a list of groups the user
- * is a member of, as well as the users permissions.
+ * Get a list of groups the user is a member of, as well as the
+ * users permissions.
+ *
+ * @param int $user_id
+ *
+ * @return array
  */
 function phorum_db_user_get_groups($user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $groups = array();
 
+    settype($user_id, "int");
+
     if (!$user_id > 0){
            return $groups;
     }
 
-    settype($user_id, "int");
-
     $conn = phorum_db_mysqli_connect();
     $sql = "SELECT group_id, status FROM {$PHORUM['user_group_xref_table']} WHERE user_id = $user_id ORDER BY status DESC";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -2435,11 +2688,13 @@ function phorum_db_user_get_groups($user_id)
 }
 
 /**
- * This function executes a query to select data about a user including
- * his permission data and returns that in an array.
- * If $search is empty, all users should be returned.
+ * Get users whose username or email match the search string.
+ *
+ * @param string $search
+ * 		If empty, all users will be returned.
+ *
+ * @return array
  */
-
 function phorum_db_search_users($search)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2448,11 +2703,11 @@ function phorum_db_search_users($search)
 
     $users = array();
 
-    $search = trim($search);
+    $search = mysqli_real_escape_string($conn, trim($search));
 
     $sql = "select user_id, username, email, active, posts, date_last_active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res)){
@@ -2464,11 +2719,11 @@ function phorum_db_search_users($search)
     return $users;
 }
 
-
 /**
- * This function gets the users that await approval
+ * Gets the users that await approval.
+ *
+ * @return array
  */
-
 function phorum_db_user_get_unapproved()
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2476,7 +2731,7 @@ function phorum_db_user_get_unapproved()
     $conn = phorum_db_mysqli_connect();
 
     $sql="select user_id, username, email from {$PHORUM['user_table']} where active in(".PHORUM_USER_PENDING_BOTH.", ".PHORUM_USER_PENDING_MOD.") order by username";
-    $res=mysqli_query( $conn, $sql);
+    $res=mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2490,10 +2745,12 @@ function phorum_db_user_get_unapproved()
     }
 
     return $users;
-
 }
+
 /**
- * This function deletes a user completely
+ * Delete a user completely.
+ *
+ * The following will be deleted:
  * - entry in the users-table
  * - entries in the permissions-table
  * - entries in the newflags-table
@@ -2503,6 +2760,9 @@ function phorum_db_user_get_unapproved()
  * - entries in the files-table
  * - sets entries in the messages-table to anonymous
  *
+ * @param int $user_id
+ *
+ * @return boolean
  */
 function phorum_db_user_delete($user_id) {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2515,32 +2775,32 @@ function phorum_db_user_delete($user_id) {
     $conn = phorum_db_mysqli_connect();
     // user-table
     $sql = "delete from {$PHORUM['user_table']} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // permissions-table
     $sql = "delete from {$PHORUM['user_permissions_table']} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // newflags-table
     $sql = "delete from {$PHORUM['user_newflags_table']} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // subscribers-table
     $sql = "delete from {$PHORUM['subscribers_table']} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // group-xref-table
     $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // private messages
-    $sql = "select * from {$PHORUM["pm_xref_table"]} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $sql = "select * from {$PHORUM['pm_xref_table']} where user_id=$user_id";
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     while ($row = mysqli_fetch_assoc($res)) {
         $folder = $row["pm_folder_id"] == 0 ? $row["special_folder"] : $row["pm_folder_id"];
@@ -2548,32 +2808,32 @@ function phorum_db_user_delete($user_id) {
     }
 
     // pm_buddies
-    $sql = "delete from {$PHORUM["pm_buddies_table"]} where user_id=$user_id or buddy_user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $sql = "delete from {$PHORUM['pm_buddies_table']} where user_id=$user_id or buddy_user_id=$user_id";
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // private message folders
-    $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $sql = "delete from {$PHORUM['pm_folders_table']} where user_id=$user_id";
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // files-table
     $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // custom-fields-table
     $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // messages-table
     if(PHORUM_DELETE_CHANGE_AUTHOR) {
-      $sql = "update {$PHORUM['message_table']} set user_id=0,email='',author='".mysqli_real_escape_string($conn,$PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
+      $sql = "update {$PHORUM['message_table']} set user_id=0,email='',author='".mysqli_real_escape_string($conn, $PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
     } else {
       $sql = "update {$PHORUM['message_table']} set user_id=0,email='' where user_id=$user_id";
     }
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     return $ret;
@@ -2581,9 +2841,10 @@ function phorum_db_user_delete($user_id) {
 
 
 /**
- * This function gets the users file list
+ * Get the users file list.
+ * @param int $user_id
+ * @return array
  */
-
 function phorum_db_get_user_file_list($user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2596,7 +2857,7 @@ function phorum_db_get_user_file_list($user_id)
 
     $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2613,12 +2874,15 @@ function phorum_db_get_user_file_list($user_id)
 
 
 /**
- * This function gets the message's file list
+ * Get the message's file list.
+ * @param int $message_id
+ * @return array
  */
-
 function phorum_db_get_message_file_list($message_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($message_id, "int");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -2626,7 +2890,7 @@ function phorum_db_get_message_file_list($message_id)
 
     $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where message_id=$message_id and link='" . PHORUM_LINK_MESSAGE . "'";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2643,22 +2907,23 @@ function phorum_db_get_message_file_list($message_id)
 
 
 /**
- * This function retrieves a file from the db
+ * Retrieve a file.
+ * @param int $file_id
+ * @return array
  */
-
 function phorum_db_file_get($file_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysqli_connect();
-
     settype($file_id, "int");
+
+    $conn = phorum_db_mysqli_connect();
 
     $file=array();
 
     $sql="select * from {$PHORUM['files_table']} where file_id=$file_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2673,18 +2938,21 @@ function phorum_db_file_get($file_id)
 
 
 /**
- * This function saves a file to the db
+ * Save a file to the db and return the new file ID.
+ *
+ * @param int $user_id
+ * @param string $filename
+ * @param int $filesize
+ * @param string $buffer
+ * @param int $message_id
+ * @param string $link
+ *
+ * @return int
+ * 		The file ID.
  */
-
 function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=null)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
-    if (is_null($link)) {
-        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
-    } else {
-        $link = addslashes($link);
-    }
 
     $conn = phorum_db_mysqli_connect();
 
@@ -2694,11 +2962,18 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     settype($message_id, "int");
     settype($filesize, "int");
 
-    $filename=addslashes($filename);
+    if (is_null($link)) {
+        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
+    } else {
+        $link = mysqli_real_escape_string($conn, $link);
+    }
+
+    $filename=mysqli_real_escape_string($conn, $filename);
+    $buffer=mysqli_real_escape_string($conn, $buffer);
 
     $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2713,9 +2988,10 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
 
 
 /**
- * This function saves a file to the db
+ * Delete a file.
+ * @param int $file_id
+ * @return boolean
  */
-
 function phorum_db_file_delete($file_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2726,7 +3002,7 @@ function phorum_db_file_delete($file_id)
 
     $sql="delete from {$PHORUM['files_table']} where file_id=$file_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2736,29 +3012,32 @@ function phorum_db_file_delete($file_id)
 }
 
 /**
- * This function links a file to a specific message
+ * Link a file to a specific message.
+ * @param int $file_id
+ * @param int $message_id
+ * @param string $link
+ * @return boolean
  */
-
 function phorum_db_file_link($file_id, $message_id, $link = null)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-
-    if (is_null($link)) {
-        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
-    } else {
-        $link = addslashes($link);
-    }
 
     $conn = phorum_db_mysqli_connect();
 
     settype($file_id, "int");
     settype($message_id, "int");
 
+    if (is_null($link)) {
+        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
+    } else {
+        $link = mysqli_real_escape_string($conn, $link);
+    }
+
     $sql="update {$PHORUM['files_table']} " .
          "set message_id=$message_id, link='$link' " .
          "where file_id=$file_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2768,9 +3047,12 @@ function phorum_db_file_link($file_id, $message_id, $link = null)
 }
 
 /**
- * This function reads the current total size of all files for a user
+ * Read the current total size of all files for a user.
+ *
+ * @param int $user_id
+ *
+ * @return int
  */
-
 function phorum_db_get_user_filesize_total($user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2783,7 +3065,7 @@ function phorum_db_get_user_filesize_total($user_id)
 
     $sql="select sum(filesize) as total from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
@@ -2795,23 +3077,26 @@ function phorum_db_get_user_filesize_total($user_id)
     }
 
     return $total;
-
 }
 
 /**
- * This function is used for cleaning up stale files from the
- * database. Stale files are files that are not linked to
- * anything. These can for example be caused by users that
- * are writing a message with attachments, but never post
- * it.
- * @param live_run - If set to false (default), the function
+ * Clean up stale files from the database. Stale files are files that
+ * are not linked to anything. These can for example be caused by users
+ * that are writing a message with attachments, but never post it.
+ *
+ * @param boolean $live_run - If set to false (default), the function
  *                  will return a list of files that will
  *                  be purged. If set to true, files will
  *                  be purged.
+ * @return mixed
+ * 		Return TRUE if $live_run is TRUE, return an array of
+ * 		files indexed by file ID.
  */
 function phorum_db_file_purge_stale_files($live_run = false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($live_run, "bool");
 
     $conn = phorum_db_mysqli_connect();
 
@@ -2825,7 +3110,7 @@ function phorum_db_file_purge_stale_files($live_run = false)
         // added a while ago. These are from abandoned posts.
         $sql = "delete from {$PHORUM['files_table']} " .
                "where $where";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         return true;
@@ -2839,7 +3124,7 @@ function phorum_db_file_purge_stale_files($live_run = false)
                "from {$PHORUM['files_table']} " .
                "where $where";
 
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         $purge_files = array();
@@ -2855,9 +3140,12 @@ function phorum_db_file_purge_stale_files($live_run = false)
 }
 
 /**
- * This function returns the newinfo-array for markallread
+ * NOTE: this function seems to call phorum_db_newflag_add_read()
+ * incorrectly!?
+ *
+ * @param int $forum_id
+ * @return void
  */
-
 function phorum_db_newflag_allread($forum_id=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
@@ -2867,52 +3155,53 @@ function phorum_db_newflag_allread($forum_id=0)
 
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
 
-    // delete all newflags for this user and forum
+    // Delete all the existing newflags for this user in this forum.
     phorum_db_newflag_delete(0,$forum_id);
 
-    // get the maximum message-id in this forum
+    // Get the maximum message-id in this forum.
     $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id = $forum_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)){
         phorum_db_mysqli_error("$err: $sql");
     }elseif (mysqli_num_rows($res) > 0){
         $row = mysqli_fetch_row($res);
         if($row[0] > 0) {
-            // set this message as min-id
+            // Set this message-id as the min-id.
             phorum_db_newflag_add_read(array(0=>array('id'=>$row[0],'forum'=>$forum_id)));
         }
     }
-
 }
 
 
 /**
-* This function returns the read messages for the current user and forum
-* optionally for a given forum (for the index)
-*/
-function phorum_db_newflag_get_flags($forum_id=0)
+ * Returns the read messages for the current user and forum
+ * optionally for a given forum (for the index).
+ *
+ * @param int $forum_id
+ *
+ * @return array
+ */
+function phorum_db_newflag_get_flags($forum_id=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    $read_msgs=array('min_id'=>0);
+    $read_msgs=array('min_id' => 0);
 
-    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-
-    $sql="SELECT message_id FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id = {$forum_id}";
+    $sql="SELECT message_id FROM {$PHORUM['user_newflags_table']} WHERE user_id={$PHORUM['user']['user_id']} AND forum_id = $forum_id";
 
     $conn = phorum_db_mysqli_connect();
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     while($row=mysqli_fetch_row($res)) {
-        // set the min-id if given flag is set
-        if($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id']) {
-            $read_msgs['min_id']=$row[0];
+        if ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id']) {
+            $read_msgs['min_id'] = $row[0];
         } else {
-            $read_msgs[$row[0]]=$row[0];
+            $read_msgs[$row[0]] = $row[0];
         }
     }
 
@@ -2921,37 +3210,39 @@ function phorum_db_newflag_get_flags($forum_id=0)
 
 
 /**
-* This function returns the count of unread messages the current user and forum
-* optionally for a given forum (for the index)
-*/
-function phorum_db_newflag_get_unread_count($forum_id=0)
+ * Return the count of unread messages the current user and forum
+ * optionally for a given forum (for the index).
+ *
+ * @param int $forum_id
+ *
+ * @return array
+ */
+function phorum_db_newflag_get_unread_count($forum_id=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
-
-    if($forum_id===false) $forum_id=$PHORUM["forum_id"];
 
     $conn = phorum_db_mysqli_connect();
 
     // get min message id from newflags
     $sql = "select min(message_id) as min_message_id from {$PHORUM['user_newflags_table']} where user_id={$PHORUM['user']['user_id']} and forum_id={$forum_id}";
-
     $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     if(mysqli_num_rows($res)){
-
         list($min_message_id) = mysqli_fetch_row($res);
 
         if($min_message_id > 0) {
         // get unread thread count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread<>{$PHORUM['message_table']}.message_id";
+        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread={$PHORUM['message_table']}.message_id";
         $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         list($new_threads) = mysqli_fetch_row($res);
 
         // get unread message count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2 and not ".PHORUM_SQL_MOVEDMESSAGES;
+        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['message_table']}.forum_id={$PHORUM['user_newflags_table']}.forum_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2";
+
         $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         list($new_messages) = mysqli_fetch_row($res);
@@ -2960,8 +3251,9 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
             $new_messages,
             $new_threads
         );
+
     } else {
-        $counts = array(0,0);
+            $counts = array(0,0);
     }
 
     } else {
@@ -2974,7 +3266,13 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
 
 
 /**
- * This function marks a message as read
+ * Mark a message as read.
+ *
+ * @param array $message_ids
+ * 		This can also be a single int if you just want to
+ * 		mark one message as read.
+ *
+ * @return void
  */
 function phorum_db_newflag_add_read($message_ids) {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -2985,6 +3283,7 @@ function phorum_db_newflag_add_read($message_ids) {
     if(!is_array($message_ids)) {
         $message_ids=array(0=>(int)$message_ids);
     }
+
     // deleting messages which are too much
     $num_end=$num_newflags+count($message_ids);
     if($num_end > PHORUM_MAX_NEW_INFO) {
@@ -2996,8 +3295,11 @@ function phorum_db_newflag_add_read($message_ids) {
 
     foreach($message_ids as $id=>$data) {
         if(is_array($data)) {
+            $data["forum"] = (int)$data["forum"];
+            $data["id"] = (int)$data["id"];
             $values[]="({$PHORUM['user']['user_id']},{$data['forum']},{$data['id']})";
         } else {
+            $data = (int)$data;
             $values[]="({$PHORUM['user']['user_id']},{$PHORUM['forum_id']},$data)";
         }
         $cnt++;
@@ -3014,8 +3316,12 @@ function phorum_db_newflag_add_read($message_ids) {
 }
 
 /**
-* This function returns the number of newflags for this user and forum
-*/
+ * Return the number of newflags for this user and forum.
+ *
+ * @param int $forum_id
+ *
+ * @return int
+ */
 function phorum_db_newflag_get_count($forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -3028,7 +3334,7 @@ function phorum_db_newflag_get_count($forum_id=0)
 
     // fire away
     $conn = phorum_db_mysqli_connect();
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3038,7 +3344,13 @@ function phorum_db_newflag_get_count($forum_id=0)
 }
 
 /**
-* This function removes a number of newflags for this user and forum
+* Remove a number of newflags for this user and forum.
+*
+* @param int $numdelete
+* 		Limit the number of flags deleted to this number.
+* @param int $forum_id
+*
+* @return void
 */
 function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
 {
@@ -3062,12 +3374,13 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $del_sql");
 }
 
-
 function phorum_db_newflag_update_forum($message_ids) {
 
     if(!is_array($message_ids)) {
         return;
     }
+
+    phorum_db_sanitize_mixed($message_ids, "int");
 
     $ids_str=implode(",",$message_ids);
 
@@ -3075,16 +3388,20 @@ function phorum_db_newflag_update_forum($message_ids) {
     $sql="UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} as flags, {$GLOBALS['PHORUM']['message_table']} as msg SET flags.forum_id=msg.forum_id where flags.message_id=msg.message_id and flags.message_id IN ($ids_str)";
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query($conn, $sql);
-    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $del_sql");
+    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
 
 }
 
 /**
- * This function executes a query to get the user ids of the users
- * subscribed to a forum/thread.
+ * Get the user ids of the users subscribed to a forum/thread.
+ *
+ * @param int $forum_id
+ * @param int $thread
+ * @param int $type
+ *
+ * @return array
  */
-
 function phorum_db_get_subscribed_users($forum_id, $thread, $type){
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -3100,7 +3417,7 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
 
     $sql = "select DISTINCT(b.email),user_language from {$PHORUM['subscribers_table']} as a,{$PHORUM['user_table']} as b where a.forum_id=$forum_id and (a.thread=$thread or a.thread=0) and a.sub_type=$type and b.user_id=a.user_id $userignore";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3117,18 +3434,23 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
 }
 
 /**
- * This function executes a query to get the subscriptions of a user-id,
- * together with the forum-id and subjects of the threads
+ * Get the subscriptions of a user-id, together with the forum-id
+ * and subjects of the threads.
+ *
+ * @param int $user_id
+ * @param int $days
+ *
+ * @return array
  */
-
-function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null){
+function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysqli_connect();
+    settype($user_id, "int");
+    settype($days, "int");
+    if ($forum_ids != null) phorum_db_sanitize_mixed($forums_ids, "int");
 
-    $userignore="";
-    if ($PHORUM["DATA"]["LOGGEDIN"])
-       $userignore="and b.user_id != {$PHORUM['user']['user_id']}";
+    $conn = phorum_db_mysqli_connect();
 
     if($days > 0) {
          $timestr=" AND (".time()." - b.modifystamp) <= ($days * 86400)";
@@ -3144,7 +3466,7 @@ function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null){
 
     $sql = "select a.thread, a.forum_id, a.sub_type, b.subject,b.modifystamp,b.author,b.user_id,b.email,b.meta from {$PHORUM['subscribers_table']} as a,{$PHORUM['message_table']} as b where a.user_id=$user_id and b.message_id=a.thread and (a.sub_type=".PHORUM_SUBSCRIPTION_MESSAGE." or a.sub_type=".PHORUM_SUBSCRIPTION_BOOKMARK.")"."$timestr $forumidstr ORDER BY b.modifystamp desc";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3164,9 +3486,15 @@ function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null){
 }
 
 /**
- * This function executes a query to find out if a user is subscribed to a thread
+ * Find out if a user is subscribed to a thread.
+ *
+ * @param int $forum_id
+ * @param int $thread
+ * @param int $user_id
+ * @param int $type
+ *
+ * @return boolean
  */
-
 function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_SUBSCRIPTION_MESSAGE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -3180,7 +3508,7 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
 
     $sql = "select user_id from {$PHORUM['subscribers_table']} where forum_id=$forum_id and thread=$thread and user_id=$user_id and sub_type=$type";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3195,18 +3523,21 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
 
 
 /**
- * This function retrieves the banlists for the current forum
+ * Retrieve the banlists for the current forum.
+ * @param boolean $ordered
+ * @return array
  */
-
 function phorum_db_get_banlists($ordered=false) {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($ordered, "bool");
 
     $retarr = array();
     $forumstr = "";
 
     $conn = phorum_db_mysqli_connect();
 
-    // forum_id = 0 is for GLOBAL ban items
+    // forum_id = 0 is for GLOBAL ban items.
     if(isset($PHORUM['forum_id']) && !empty($PHORUM['forum_id']))
         $forumstr = "WHERE forum_id = {$PHORUM['forum_id']} OR forum_id = 0";
 
@@ -3219,7 +3550,7 @@ function phorum_db_get_banlists($ordered=false) {
         $sql.= " ORDER BY type, string";
     }
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3233,9 +3564,12 @@ function phorum_db_get_banlists($ordered=false) {
 
 
 /**
- * This function retrieves one item from the banlists
+ * Retrieve an item from the banlists.
+ *
+ * @param int $banid
+ *
+ * @return array
  */
-
 function phorum_db_get_banitem($banid) {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -3247,7 +3581,7 @@ function phorum_db_get_banitem($banid) {
 
     $sql = "SELECT * FROM {$PHORUM['banlist_table']} WHERE id = $banid";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3261,17 +3595,20 @@ function phorum_db_get_banitem($banid) {
 
 
 /**
- * This function deletes one item from the banlists
+ * Delete one item from the banlists.
+ * @param int $banid
+ * @return boolean
  */
-
 function phorum_db_del_banitem($banid) {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($banid, "int");
 
     $conn = phorum_db_mysqli_connect();
 
     $sql = "DELETE FROM {$PHORUM['banlist_table']} WHERE id = $banid";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3284,9 +3621,16 @@ function phorum_db_del_banitem($banid) {
 
 
 /**
- * This function adds or modifies a banlist-entry
+ * Add or modify a banlist-entry.
+ *
+ * @param int $type
+ * @param int $pcre
+ * @param string $string
+ * @param int $forum_id
+ * @param int $id
+ *
+ * @return boolean
  */
-
 function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -3305,7 +3649,7 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
         $sql = "INSERT INTO {$PHORUM['banlist_table']} (forum_id,type,pcre,string) VALUES($forum_id,$type,$pcre,'".mysqli_real_escape_string($conn, $string)."')";
     }
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -3319,14 +3663,17 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
 
 
 /**
- * This function lists all private messages in a folder.
- * @param folder - The folder to use. Either a special folder
+ * Get all private messages in a folder.
+ *
+ * @param mixed $folder - The folder to use. Either a special folder
  *                 (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX) or the
  *                 id of a user's custom folder.
- * @param user_id - The user to retrieve messages for or NULL
+ * @param int $user_id - The user to retrieve messages for or NULL
  *                 to use the current user (default).
- * @param reverse - If set to a true value (default), sorting
+ * @param boolean $reverse - If set to a true value (default), sorting
  *                 of messages is done in reverse (newest first).
+ *
+ * @return array
  */
 
 function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
@@ -3337,6 +3684,7 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
 
     if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, "int");
+    settype($reverse, "bool");
 
     $folder_sql = "user_id = $user_id AND ";
     if (is_numeric($folder)) {
@@ -3354,7 +3702,7 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
            "WHERE $folder_sql " .
            "AND x.pm_message_id = m.pm_message_id " .
            "ORDER BY x.pm_message_id " . ($reverse ? "DESC" : "ASC");
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $list = array();
@@ -3373,14 +3721,18 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
 }
 
 /**
- * This function retrieves a private message from the database.
- * @param pm_id - The id for the private message to retrieve.
- * @param user_id - The user to retrieve messages for or NULL
- *                 to use the current user (default).
- * @param folder_id - The folder to retrieve the message from or
+ * Retrieve a private message from the database.
+ *
+ * @param int $pm_id - The id for the private message to retrieve.
+ * @param string $folder - The folder to retrieve the message from or
  *                    NULL if the folder does not matter.
+ * @param int $user_id - The user to retrieve messages for or NULL
+ *                 to use the current user (default).
+ *
+ * @return mixed
+ * 		Return an array (the message) on success,
+ * 		return NULL if the message was not found.
  */
-
 function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -3406,7 +3758,7 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
            "WHERE $folder_sql x.pm_message_id = $pm_id AND x.user_id = $user_id " .
            "AND x.pm_message_id = m.pm_message_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res) > 0){
@@ -3423,10 +3775,13 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
 }
 
 /**
- * This function creates a new folder for a user.
- * @param foldername - The name of the folder to create.
- * @param user_id - The user to create the folder for or
+ * Create a new folder for a user.
+ *
+ * @param string $foldername - The name of the folder to create.
+ * @param int $user_id - The user to create the folder for or
  *                  NULL to use the current user (default).
+ *
+ * @return the folder id of the created folder
  */
 function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 {
@@ -3441,7 +3796,7 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
            "user_id=$user_id, " .
            "foldername='".mysqli_real_escape_string($conn, $foldername)."'";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $folder_id = 0;
@@ -3453,11 +3808,14 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 }
 
 /**
- * This function renames a folder for a user.
- * @param folder_id - The id of the folder to rename.
- * @param newname - The new name for the folder.
- * @param user_id - The user to rename the folder for or
+ * Rename a folder for a user.
+ *
+ * @param int $folder_id - The id of the folder to rename.
+ * @param string $newname - The new name for the folder.
+ * @param int $user_id - The user to rename the folder for or
  *                  NULL to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
 {
@@ -3473,7 +3831,7 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
            "SET foldername = '".mysqli_real_escape_string($conn, $newname)."' " .
            "WHERE pm_folder_id = $folder_id AND user_id = $user_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     return $res;
 }
@@ -3481,11 +3839,14 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
 
 
 /**
- * This function deletes a folder for a user. Along with the
- * folder, all contained messages are deleted as well.
- * @param folder_id - The id of the folder to delete.
- * @param user_id - The user to delete the folder for or
+ * Delete a folder for a user. Along with the folder, all contained
+ * messages are deleted as well.
+ *
+ * @param int $folder_id - The id of the folder to delete.
+ * @param int $user_id - The user to delete the folder for or
  *                  NULL to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
 {
@@ -3506,17 +3867,20 @@ function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
     // Delete the folder itself.
     $sql = "DELETE FROM {$PHORUM['pm_folders_table']} " .
            "WHERE pm_folder_id = $folder_id AND user_id = $user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     return $res;
 }
 
 /**
- * This function retrieves the list of folders for a user.
- * @param user_id - The user to retrieve folders for or NULL
+ * Retrieve the list of folders for a user.
+ *
+ * @param int $user_id - The user to retrieve folders for or NULL
  *                 to use the current user (default).
- * @param count_messages - Count the number of messages for the
+ * @param boolean $count_messages - Count the number of messages for the
  *                 folders. Default, this is not done.
+ *
+ * @return array
  */
 function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
 {
@@ -3526,6 +3890,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
 
     if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, "int");
+    settype($count_messages, "bool");
 
     // Setup the list of folders. Our special folders are
     // not in the database, so these are added here.
@@ -3539,7 +3904,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
     // Select all custom folders for the user.
     $sql = "SELECT * FROM {$PHORUM['pm_folders_table']} " .
            "WHERE user_id = $user_id ORDER BY foldername";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // Add them to the folderlist.
@@ -3572,7 +3937,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
                "FROM {$PHORUM['pm_xref_table']}  " .
                "WHERE user_id = $user_id " .
                "GROUP BY pm_folder_id, special_folder";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
         // Add counters to the folderlist.
@@ -3593,16 +3958,18 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
 }
 
 /**
- * This function computes the number of private messages a user has
- * and returns both the total and the number unread.
- * @param folder - The folder to use. Either a special folder
+ * Compute the number of private messages a user has
+ * and return both the total and the number unread.
+ *
+ * @param mixed $folder - The folder to use. Either a special folder
  *                 (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX), the
  *                 id of a user's custom folder or
  *                 PHORUM_PM_ALLFOLDERS for all folders.
- * @param user_id - The user to retrieve messages for or NULL
+ * @param int $user_id - The user to retrieve messages for or NULL
  *                 to use the current user (default).
+ *
+ * @return array
  */
-
 function phorum_db_pm_messagecount($folder, $user_id = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -3628,7 +3995,7 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
 
     $messagecount=array("total" => 0, "new" => 0);
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res) > 0){
@@ -3641,14 +4008,15 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
 }
 
 /**
- * This function does a quick check if the user has new private messages.
+ * Check if the user has new private messages.
  * This is useful in case you only want to know whether the user has
  * new messages or not and when you are not interested in the exact amount
  * of new messages.
  *
- * @param user_id - The user to retrieve messages for or NULL
+ * @param int $user_id - The user to retrieve messages for or NULL
  *                 to use the current user (default).
- * @return A true value, in case there are new messages available.
+ * @return boolean
+ * 		A true value, in case there are new messages available.
  */
 function phorum_db_pm_checknew($user_id = NULL)
 {
@@ -3662,22 +4030,25 @@ function phorum_db_pm_checknew($user_id = NULL)
     $sql = "SELECT user_id " .
            "FROM {$PHORUM['pm_xref_table']} " .
            "WHERE user_id = $user_id AND read_flag = 0 LIMIT 1";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     return mysqli_num_rows($res);
 }
 
 /**
- * This function inserts a private message in the database. The return value
+ * Insert a private message in the database. The return value
  * is the pm_message_id of the created message.
- * @param subject - The subject for the private message.
- * @param message - The message text for the private message.
- * @param to - A single user_id or an array of user_ids for the recipients.
- * @param from - The user_id of the sender. The current user is used in case
+ *
+ * @param string $subject - The subject for the private message.
+ * @param string $message - The message text for the private message.
+ * @param mixed $to - A single user_id or an array of user_ids for the recipients.
+ * @param int $from - The user_id of the sender. The current user is used in case
  *               the parameter is set to NULL (default).
- * @param keepcopy - If set to a true value, a copy of the mail will be put in
+ * @param boolean $keepcopy - If set to a true value, a copy of the mail will be put in
  *                   the outbox of the user. Default value is false.
+ *
+ * @return int
  */
 function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
 {
@@ -3730,14 +4101,14 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     )));
 
     // Create the message.
-    $sql = "INSERT INTO {$PHORUM["pm_messages_table"]} SET " .
+    $sql = "INSERT INTO {$PHORUM['pm_messages_table']} SET " .
            "from_user_id = $from, " .
            "from_username = '".mysqli_real_escape_string($conn, $fromuser["username"])."', " .
            "subject = '".mysqli_real_escape_string($conn, $subject)."', " .
            "message = '".mysqli_real_escape_string($conn, $message)."', " .
            "datestamp = '".time()."', " .
            "meta = '$meta'";
-    mysqli_query( $conn, $sql);
+    mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) {
         phorum_db_mysqli_error("$err: $sql");
         return;
@@ -3748,14 +4119,14 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
 
     // Put the message in the recipient inboxes.
     foreach ($xref_entries as $xref) {
-        $sql = "INSERT INTO {$PHORUM["pm_xref_table"]} SET " .
-               "user_id = {$xref["user_id"]}, " .
-               "pm_folder_id={$xref["pm_folder_id"]}, " .
-               "special_folder='{$xref["special_folder"]}', " .
+        $sql = "INSERT INTO {$PHORUM['pm_xref_table']} SET " .
+               "user_id = {$xref['user_id']}, " .
+               "pm_folder_id={$xref['pm_folder_id']}, " .
+               "special_folder='{$xref['special_folder']}', " .
                "pm_message_id=$pm_message_id, " .
-               "read_flag = {$xref["read_flag"]}, " .
+               "read_flag = {$xref['read_flag']}, " .
                "reply_flag = 0";
-        mysqli_query( $conn, $sql);
+        mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) {
             phorum_db_mysqli_error("$err: $sql");
             return;
@@ -3767,13 +4138,16 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
 }
 
 /**
- * This function updates a flag for a private message.
- * @param pm_id - The id of the message to update.
- * @param flag - The flag to update. Options are PHORUM_PM_READ_FLAG
+ * Update a flag for a private message.
+ *
+ * @param int $pm_id - The id of the message to update.
+ * @param int $flag - The flag to update. Options are PHORUM_PM_READ_FLAG
  *               and PHORUM_PM_REPLY_FLAG.
- * @param value - The value for the flag (true or false).
- * @param user_id - The user to set a flag for or NULL
+ * @param boolean $value - The value for the flag (true or false).
+ * @param int $user_id - The user to set a flag for or NULL
  *                 to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 {
@@ -3794,10 +4168,10 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
     settype($user_id, "int");
 
     // Update the flag in the database.
-    $sql = "UPDATE {$PHORUM["pm_xref_table"]} " .
+    $sql = "UPDATE {$PHORUM['pm_xref_table']} " .
            "SET $flag = $value " .
            "WHERE pm_message_id = $pm_id AND user_id = $user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // Update message counters.
@@ -3809,11 +4183,14 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 }
 
 /**
- * This function deletes a private message from a folder.
- * @param folder - The folder from which to delete the message
- * @param pm_id - The id of the private message to delete
- * @param user_id - The user to delete the message for or NULL
+ * Delete a private message from a folder.
+ *
+ * @param int $pm_id - The id of the private message to delete
+ * @param string $folder - The folder from which to delete the message
+ * @param int $user_id - The user to delete the message for or NULL
  *                 to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
 {
@@ -3834,11 +4211,11 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
         die ("Illegal folder '$folder' requested for user id '$user_id'");
     }
 
-    $sql = "DELETE FROM {$PHORUM["pm_xref_table"]} " .
+    $sql = "DELETE FROM {$PHORUM['pm_xref_table']} " .
            "WHERE $folder_sql " .
            "user_id = $user_id AND pm_message_id = $pm_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // Update message counters.
@@ -3848,12 +4225,15 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
 }
 
 /**
- * This function moves a private message to a different folder.
- * @param pm_id - The id of the private message to move.
- * @param from - The folder to move the message from.
- * @param to - The folder to move the message to.
- * @param user_id - The user to move the message for or NULL
+ * Move a private message to a different folder.
+ *
+ * @param int $pm_id - The id of the private message to move.
+ * @param int $from - The folder to move the message from.
+ * @param int $to - The folder to move the message to.
+ * @param int $user_id - The user to move the message for or NULL
  *                 to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
 {
@@ -3884,24 +4264,28 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
         die ("Illegal target folder '$to' specified");
     }
 
-    $sql = "UPDATE {$PHORUM["pm_xref_table"]} SET " .
+    $sql = "UPDATE {$PHORUM['pm_xref_table']} SET " .
            "pm_folder_id = $pm_folder_id, " .
            "special_folder = $special_folder " .
            "WHERE $folder_sql user_id = $user_id AND pm_message_id = $pm_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     return $res;
 }
 
 /**
- * This function updates the meta information for a message. If it
- * detects that no xrefs are available for the message anymore,
+ * Update the meta information for a message.  If we
+ * detect that no xrefs are available for the message anymore,
  * the message will be deleted from the database. So this function
  * has to be called after setting the read_flag and after deleting
  * a message.
  * PMTODO maybe we need some locking here to prevent concurrent
  * updates of the message info.
+ *
+ * @param int $pm_id
+ *
+ * @return boolean
  */
 function phorum_db_pm_update_message_info($pm_id)
 {
@@ -3915,23 +4299,23 @@ function phorum_db_pm_update_message_info($pm_id)
     $sql = "SELECT * " .
            "FROM {$PHORUM['pm_messages_table']} " .
            "WHERE pm_message_id = $pm_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     if (mysqli_num_rows($res) == 0) return $res;
     $pm = mysqli_fetch_assoc($res);
 
     // Find the xrefs for this message.
     $sql = "SELECT * " .
-           "FROM {$PHORUM["pm_xref_table"]} " .
+           "FROM {$PHORUM['pm_xref_table']} " .
            "WHERE pm_message_id = $pm_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     // No xrefs left? Then the message can be fully deleted.
     if (mysqli_num_rows($res) == 0) {
         $sql = "DELETE FROM {$PHORUM['pm_messages_table']} " .
                "WHERE pm_message_id = $pm_id";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         return $res;
     }
@@ -3954,33 +4338,36 @@ function phorum_db_pm_update_message_info($pm_id)
     $sql = "UPDATE {$PHORUM['pm_messages_table']} " .
            "SET meta = '$meta' " .
            "WHERE pm_message_id = $pm_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     return $res;
 }
 
 /* Take care of warning about deprecation of the old PM API functions. */
-function phorum_db_get_private_messages($arg1, $arg2) {
+function phorum_db_get_private_messages() {
     phorum_db_pm_deprecated('phorum_db_get_private_messages'); }
-function phorum_db_get_private_message($arg1) {
+function phorum_db_get_private_message() {
     phorum_db_pm_deprecated('phorum_db_get_private_message'); }
-function phorum_db_get_private_message_count($arg1) {
+function phorum_db_get_private_message_count() {
     phorum_db_pm_deprecated('phorum_db_get_private_message_count'); }
-function phorum_db_put_private_messages($arg1, $arg2, $arg3, $arg4, $arg5) {
+function phorum_db_put_private_messages() {
     phorum_db_pm_deprecated('phorum_db_put_private_messages'); }
-function phorum_db_update_private_message($arg1, $arg2, $arg3){
+function phorum_db_update_private_message(){
     phorum_db_pm_deprecated('phorum_db_update_private_message'); }
 function phorum_db_pm_deprecated($func) {
-    die("${func}() has been deprecated. Please use the new private message API.");
+    die("{$func}() has been deprecated. Please use the new private message API.");
 }
 
 /**
- * This function checks if a certain user is buddy of another user.
+ * Check if a certain user is buddy of another user.
  * The function return the pm_buddy_id in case the user is a buddy
  * or NULL in case the user isn't.
- * @param buddy_user_id - The user_id to check for if it's a buddy.
- * @param user_id - The user_id for which the buddy list must be
+ *
+ * @param int $buddy_user_id - The user_id to check for if it's a buddy.
+ * @param int $user_id - The user_id for which the buddy list must be
  *                  checked or NULL to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
 {
@@ -3990,10 +4377,10 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
     if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
     settype($user_id, "int");
 
-    $sql = "SELECT pm_buddy_id FROM {$PHORUM["pm_buddies_table"]} " .
+    $sql = "SELECT pm_buddy_id FROM {$PHORUM['pm_buddies_table']} " .
            "WHERE user_id = $user_id AND buddy_user_id = $buddy_user_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     if (mysqli_num_rows($res)) {
         $row = mysqli_fetch_array($res);
@@ -4004,14 +4391,17 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
 }
 
 /**
- * This function adds a buddy for a user. It will return the
+ * Add a buddy for a user. It will return the
  * pm_buddy_id for the new buddy. If the buddy already exists,
- * it will return the existing pm_buddy_id. If a non existant
+ * it will return the existing pm_buddy_id. If a non-existant
  * user_id is used for the buddy_user_id, the function will
  * return NULL.
- * @param buddy_user_id - The user_id that has to be added as a buddy.
- * @param user_id - The user_id the buddy has to be added for or
+ *
+ * @param int $buddy_user_id - The user_id that has to be added as a buddy.
+ * @param int $user_id - The user_id the buddy has to be added for or
  *                  NULL to use the current user (default).
+ *
+ * @return mixed
  */
 function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 {
@@ -4027,10 +4417,10 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 
     $pm_buddy_id = phorum_db_pm_is_buddy($buddy_user_id);
     if (is_null($pm_buddy_id)) {
-        $sql = "INSERT INTO {$PHORUM["pm_buddies_table"]} SET " .
+        $sql = "INSERT INTO {$PHORUM['pm_buddies_table']} SET " .
                "user_id = $user_id, " .
                "buddy_user_id = $buddy_user_id";
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
         $pm_buddy_id = mysqli_insert_id($conn);
     }
@@ -4039,10 +4429,13 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 }
 
 /**
- * This function deletes a buddy for a user.
- * @param buddy_user_id - The user_id that has to be deleted as a buddy.
- * @param user_id - The user_id the buddy has to be delete for or
+ * Delete a buddy for a user.
+ *
+ * @param int $buddy_user_id - The user_id that has to be deleted as a buddy.
+ * @param int $user_id - The user_id the buddy has to be delete for or
  *                  NULL to use the current user (default).
+ *
+ * @return boolean
  */
 function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
 {
@@ -4052,18 +4445,21 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
     if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
     settype($user_id, "int");
 
-    $sql = "DELETE FROM {$PHORUM["pm_buddies_table"]} WHERE " .
+    $sql = "DELETE FROM {$PHORUM['pm_buddies_table']} WHERE " .
            "buddy_user_id = $buddy_user_id AND user_id = $user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     return $res;
 }
 
 /**
- * This function retrieves a list of buddies for a user.
- * @param user_id - The user_id for which to retrieve the buddies
+ * Retrieve a list of buddies for a user.
+ *
+ * @param int $user_id - The user_id for which to retrieve the buddies
  *                  or NULL to user the current user (default).
- * @param find_mutual - Wheter to find mutual buddies or not (default not).
+ * @param boolean $find_mutual - Wheter to find mutual buddies or not (default not).
+ *
+ * @return array
  */
 function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
 {
@@ -4073,9 +4469,9 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
     settype($user_id, "int");
 
     // Get all buddies for this user.
-    $sql = "SELECT buddy_user_id FROM {$PHORUM["pm_buddies_table"]} " .
+    $sql = "SELECT buddy_user_id FROM {$PHORUM['pm_buddies_table']} " .
            "WHERE user_id = $user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $buddies = array();
@@ -4097,11 +4493,11 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
 
     // Get all mutual buddies.
     $sql = "SELECT DISTINCT a.buddy_user_id " .
-           "FROM {$PHORUM["pm_buddies_table"]} as a, {$PHORUM["pm_buddies_table"]} as b " .
+           "FROM {$PHORUM['pm_buddies_table']} as a, {$PHORUM['pm_buddies_table']} as b " .
            "WHERE a.user_id=$user_id " .
            "AND b.user_id=a.buddy_user_id " .
            "AND b.buddy_user_id=$user_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res)) {
@@ -4114,17 +4510,21 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
 }
 
 /**
-* This function returns messages or threads which are newer or older
-* than the given timestamp
-*
-* $time  - holds the timestamp the comparison is done against
-* $forum - get Threads from this forum
-* $mode  - should we compare against datestamp (1) or modifystamp (2)
-*
-*/
-function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
-
+ * Delete old messages.
+ *
+ * @param timestamp $time  - holds the timestamp the comparison is done against
+ * @param int $forum - delete threads from this forum
+ * @param int $mode  - should we compare against datestamp (1) or modifystamp (2)
+ *
+ * @return int
+ */
+function phorum_db_prune_oldThreads($time,$forum=0,$mode=1)
+{
     $PHORUM = $GLOBALS['PHORUM'];
+
+    settype($time, "int");
+    settype($forum, "int");
+    settype($mode, "int");
 
     $conn = phorum_db_mysqli_connect();
     $numdeleted=0;
@@ -4142,7 +4542,7 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
     // retrieving which threads to delete
     $sql = "select thread from {$PHORUM['message_table']} where $compare_field < $time AND parent_id=0 $forummode";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     $ret=array();
@@ -4155,7 +4555,7 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
     if(count($ret)) {
       // deleting the messages/threads
       $sql="delete from {$PHORUM['message_table']} where thread IN ($thread_ids)";
-      $res = mysqli_query( $conn, $sql);
+      $res = mysqli_query($conn, $sql);
       if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
       $numdeleted = mysqli_affected_rows($conn);
@@ -4165,13 +4565,13 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
 
       // deleting the associated notification-entries
       $sql="delete from {$PHORUM['subscribers_table']} where thread IN ($thread_ids)";
-      $res = mysqli_query( $conn, $sql);
+      $res = mysqli_query($conn, $sql);
       if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
 
       // optimizing the message-table
       $sql="optimize table {$PHORUM['message_table']}";
-      $res = mysqli_query( $conn, $sql);
+      $res = mysqli_query($conn, $sql);
       if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
     }
 
@@ -4179,7 +4579,12 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
 }
 
 /**
- * split thread
+ * Split a thread.
+ *
+ * @param int $message
+ * @param int $forum_id
+ *
+ * @return void
  */
 function phorum_db_split_thread($message, $forum_id)
 {
@@ -4197,7 +4602,8 @@ function phorum_db_split_thread($message, $forum_id)
 }
 
 /**
- * This function returns the maximum message-id in the database
+ * Returns the maximum message-id in the database.
+ * @return int
  */
 function phorum_db_get_max_messageid() {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -4206,7 +4612,7 @@ function phorum_db_get_max_messageid() {
     $maxid = 0;
 
     $sql="SELECT max(message_id) from ".$PHORUM["message_table"];
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -4219,9 +4625,12 @@ function phorum_db_get_max_messageid() {
 }
 
 /**
- * This function increments the viewcount for a post
+ * Increments the viewcount for a post.
+ *
+ * @param int $message_id
+ *
+ * @return boolean
  */
-
 function phorum_db_viewcount_inc($message_id) {
     if($message_id < 1 || !is_numeric($message_id)) {
         return false;
@@ -4229,7 +4638,7 @@ function phorum_db_viewcount_inc($message_id) {
 
     $conn = phorum_db_mysqli_connect();
     $sql="UPDATE ".$GLOBALS['PHORUM']['message_table']." SET viewcount=viewcount+1 WHERE message_id=$message_id";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -4252,7 +4661,7 @@ function phorum_db_rebuild_search_data() {
     $conn = phorum_db_mysqli_connect();
 
     $sql="truncate {$PHORUM['search_table']}";
-    mysqli_query( $conn, $sql);
+    mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -4260,7 +4669,7 @@ function phorum_db_rebuild_search_data() {
     $sql="insert into {$PHORUM['search_table']} (message_id,search_text,forum_id)
           select message_id, concat(author, ' | ', subject, ' | ', body), forum_id from {$PHORUM['message_table']}";
 
-    mysqli_query( $conn, $sql);
+    mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -4276,7 +4685,7 @@ function phorum_db_rebuild_user_posts() {
 
     $sql="select user_id,count(*) as postcnt from {$PHORUM['message_table']} group by user_id";
 
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     while($row = mysqli_fetch_assoc($res)) {
         $all_users[$row['user_id']]['postcnt'] = $row['postcnt'];
@@ -4297,8 +4706,22 @@ function phorum_db_rebuild_user_posts() {
 
 }
 
-function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
-
+/**
+ * Find users that have a certain string in one of the custom fields.
+ *
+ * @param int $field_id
+ * 		The custom field to search.
+ * @param string $field_content
+ * 		The string to search for.
+ * @param boolean $match
+ * 		If FALSE, the $field_content must match exactly,
+ * 		if TRUE, the $field_content can be a substring of the custom field.
+ * @return mixed
+ * 		Return an array of users if any matched, or NULL if there were no
+ * 		matches.
+ */
+function phorum_db_get_custom_field_users($field_id,$field_content,$match) 
+{
     $conn = phorum_db_mysqli_connect();
 
     $field_id=(int)$field_id;
@@ -4311,7 +4734,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
     }
 
     $sql = "select user_id from {$GLOBALS['PHORUM']['user_custom_fields_table']} where type=$field_id and data $compval '$field_content'";
-    $res = mysqli_query( $conn, $sql);
+    $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
@@ -4325,7 +4748,6 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
     }
 
     return $retval;
-
 }
 
 /**
@@ -4404,6 +4826,8 @@ function phorum_db_metaquery_compile($metaquery)
     $expect_combine    = false;
     $in_group          = 0;
 
+    $conn = phorum_db_mysqli_connect();
+
     foreach ($metaquery as $part)
     {
         // Found a new condition.
@@ -4429,9 +4853,9 @@ function phorum_db_metaquery_compile($metaquery)
                         $is_like_query = true;
                         $matchsql .= '%';
                     } elseif ($m == 'QUERY') {
-                        $matchsql .= mysql_escape_string($part["query"]);
+                        $matchsql .= mysqli_real_escape_string($conn, $part["query"]);
                     } else {
-                        $matchsql .= mysql_escape_string($m);
+                        $matchsql .= mysqli_real_escape_string($conn, $m);
                     }
                 }
                 $matchsql .= "'";
@@ -4562,7 +4986,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query($conn, $sql);
-    if ($err = mysqli_error()) {
+    if ($err = mysqli_error($conn)) {
         phorum_db_mysqli_error("$err: $sql");
         return NULL;
     } else {
@@ -4576,10 +5000,12 @@ function phorum_db_metaquery_messagesearch($metaquery)
     }
 }
 
-/**
- * This function creates the tables needed in the database.
- */
 
+/**
+ * Create the tables needed in the database.
+ * @return string
+ * 		Return the empty string on success, error message on failure.
+ */
 function phorum_db_create_tables()
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -4612,7 +5038,7 @@ function phorum_db_create_tables()
 
     );
     foreach($queries as $sql){
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)){
             $retmsg = "$err<br />";
             phorum_db_mysqli_error("$err: $sql");
@@ -4623,9 +5049,14 @@ function phorum_db_create_tables()
     return $retmsg;
 }
 
-// uses the database-dependant functions to escape a string
-function phorum_db_escape_string($str) {
-
+/**
+ * Remark: we don't use it in the layer at all. Remove it?
+ * Uses the database-dependant functions to escape a string.
+ * @param string $str
+ * @return string
+ */
+function phorum_db_escape_string($str)
+{
     $conn = phorum_db_mysqli_connect();
 
     $str_tmp=mysqli_real_escape_string($conn, $str);
@@ -4634,9 +5065,12 @@ function phorum_db_escape_string($str) {
 }
 
 /**
- * This function goes through an array of queries and executes them
+ * Execute an array of queries.
+ *
+ * @param array $queries
+ *
+ * @return string
  */
-
 function phorum_db_run_queries($queries){
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -4645,9 +5079,9 @@ function phorum_db_run_queries($queries){
     $retmsg = "";
 
     foreach($queries as $sql){
-        $res = mysqli_query( $conn, $sql);
+        $res = mysqli_query($conn, $sql);
         if ($err = mysqli_error($conn)){
-            // skip duplicate column name errors
+            // skip duplicate column and key name errors
             if(!stristr($err, "duplicate column") &&
                !stristr($err, "duplicate key")){
                 $retmsg.= "$err<br />";
@@ -4660,9 +5094,10 @@ function phorum_db_run_queries($queries){
 }
 
 /**
- * This function checks that a database connection can be made.
+ * Checks that a database connection can be made.
+ *
+ * @return boolean
  */
-
 function phorum_db_check_connection(){
     $conn = @phorum_db_mysqli_connect();
 
@@ -4670,11 +5105,12 @@ function phorum_db_check_connection(){
 }
 
 /**
- * handy little connection function.  This allows us to not connect to the
+ * Handy little connection function.  This allows us to not connect to the
  * server until a query is actually run.
  * NOTE: This is not a required part of abstraction
+ *
+ * @return resource
  */
-
 function phorum_db_mysqli_connect(){
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -4686,10 +5122,13 @@ function phorum_db_mysqli_connect(){
 }
 
 /**
- * error handling function
+ * Error handling function.
  * NOTE: This is not a required part of abstraction
+ *
+ * @param string $err
+ *
+ * @return void
  */
-
 function phorum_db_mysqli_error($err){
 
     if(isset($GLOBALS['PHORUM']['error_logging'])) {
@@ -4723,18 +5162,62 @@ function phorum_db_mysqli_error($err){
 }
 
 /**
+ * This function will sanitize a mixed variable of data based on type
+ *
+ * @param   $var    The variable to be sanitized.  Passed by reference.
+ * @param   $type   Either int or not int.
+ * @return  null
+ *
+ */
+function phorum_db_sanitize_mixed(&$var, $type)
+{
+    $conn = phorum_db_mysqli_connect();
+
+    if(is_array($var)){
+        foreach($var as &$val){
+            if($type=="int"){
+                $val = (int)$val;
+            } else {
+                $val = mysqli_real_escape_string($conn, $val);
+            }
+        }
+    } else {
+        if($type=="int"){
+            $var = (int)$var;
+        } else {
+            $var = mysqli_real_escape_string($conn, $var);
+        }
+    }
+}
+
+/**
+ * Checks that a value to be used as a field name contains only characters
+ * that would appear in a field name.
+ *
+ * @param   $field_name     string to be checked
+ * @return  bool
+ *
+ */
+function phorum_db_validate_field($field_name){
+    return (bool)preg_match('!^[a-zA-Z0-9_]+$!', $field_name);
+}
+
+
+/**
  * This function is used by the sanity checking system in the
  * admin interface to determine how much data can be transferred
  * in one query. This is used to detect problems with uploads that
  * are larger than the database server can handle.
  * The function returns the size in bytes. For database implementations
  * which do not have this kind of limit, NULL can be returned.
+ *
+ * @return int
  */
 function phorum_db_maxpacketsize ()
 {
     $conn = phorum_db_mysqli_connect();
     $res = mysqli_query($conn, "SELECT @@global.max_allowed_packet");
-    if (! $res) return NULL;
+    if (!$res) return NULL;
     if (mysqli_num_rows($res)) {
         $row = mysqli_fetch_array($res);
         return $row[0];
@@ -4754,6 +5237,8 @@ function phorum_db_maxpacketsize ()
  * There's no need to load the sanity_check.php file for the needed
  * constants, because this function should only be called from the
  * sanity checking system.
+ *
+ * @return array
  */
 function phorum_db_sanitychecks()
 {
@@ -4806,7 +5291,8 @@ function phorum_db_sanitychecks()
         );
 
         // MySQL before version 4.0.18, with full text search enabled.
-        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"] &&
+        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
+            $PHORUM["DBCONFIG"]["mysql_use_ft"] &&
             $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
             PHORUM_SANITY_WARN,
             "The MySQL database server that is used does not

@@ -5023,12 +5023,16 @@ function phorum_db_create_tables()
 }
 
 /**
+ * Remark: we don't use it in the layer at all. Remove it?
  * Uses the database-dependant functions to escape a string.
  * @param string $str
  * @return string
  */
-function phorum_db_escape_string($str) {
-    $str_tmp=mysql_real_escape_string($str);
+function phorum_db_escape_string($str)
+{
+    $conn = phorum_db_mysql_connect();
+
+    $str_tmp=mysql_real_escape_string($str, $conn);
 
     return $str_tmp;
 }
