@@ -186,6 +186,7 @@ function phorum_controlcenter_user_save($panel)
         'hide_email'      => NULL,
         'hide_activity'   => NULL,
         'password'        => NULL,
+        'password_temp'   => NULL,
         'tz_offset'       => NULL,
         'is_dst'          => NULL,
         'user_language'   => NULL,
