@@ -40,6 +40,8 @@ if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
 }
 
 $error_msg = false;
+$error = "";
+$okmsg = "";
 $template = "";
 
 // Generating the panel id of the page to use.
