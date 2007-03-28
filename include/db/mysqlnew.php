@@ -32,9 +32,9 @@ if (!defined("PHORUM")) return;
  * will allow multiple Phorum installations to use the same database.
  */
 
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 // Definitions
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 
 /**
  * These are the table names used for this database system.
@@ -92,15 +92,16 @@ define('PHORUM_DB_RETURN_NEWID',    6);
 define('PHORUM_DB_NOCONNECTOK',     1);
 define('PHORUM_DB_MISSINGTABLEOK',  2);
 
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 // Utility functions
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 
 /**
  * This function is the central function for handling database interaction.
  * The function can be used for setting up a database connection, for running
- * a SQL query and for returning query rows. What actions the function
- * will handle is determined by the $return function parameter.
+ * a SQL query and for returning query rows. Which of these actions the
+ * function will handle and what the function return data will be, is
+ * determined by the $return function parameter.
  *
  * @param $return   - What to return. Options are the following constants:
  *                    PHORUM_DB_RETURN_CONN     a db connection handle
@@ -108,15 +109,15 @@ define('PHORUM_DB_MISSINGTABLEOK',  2);
  *                    PHORUM_DB_RETURN_ROWS     rows as array arrays
  *                    PHORUM_DB_RETURN_ASSOC    rows as associative arrays
  *                    PHORUM_DB_RETURN_VALUE    single row, single column
- *                    PHORUM_DB_RETURN_ROWCOUNT number of selected rows 
+ *                    PHORUM_DB_RETURN_ROWCOUNT number of selected rows
  *                    PHORUM_DB_RETURN_NEWID    new row id for insert query
  * @param $sql      - The SQL query to run.
  * @param $keyfield - When returning an array of rows, the indexes are
  *                    numerical by default (0, 1, 2, etc.). However, if
  *                    the $keyfield parameter is set, then from each
  *                    row the $keyfield index is taken as the key for the
- *                    return array. This way, you can create a direct 
- *                    mapping between some id field and its row in the 
+ *                    return array. This way, you can create a direct
+ *                    mapping between some id field and its row in the
  *                    return data. Mind that there is no error checking
  *                    at all, so you have to make sure that you provide
  *                    a valid $keyfield here!
@@ -127,7 +128,7 @@ define('PHORUM_DB_MISSINGTABLEOK',  2);
  *                                              (useful in combination with
  *                                              PHORUM_DB_RETURN_CONN)
  *                    PHORUM_DB_MISSINGTABLEOK  missing table is not fatal
- * 
+ *
  * @return $res - The result of the query, based on the $return parameter.
  */
 function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
@@ -135,7 +136,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     static $conn;
 
     // Setup a database connection if no database connection is available yet.
-    if (empty($conn)) 
+    if (empty($conn))
     {
         $PHORUM = $GLOBALS["PHORUM"];
 
@@ -160,16 +161,18 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         return $conn;
     }
 
-    // Execute the SQL query. 
-    if ($sql === NULL) {
-        die("Internal error: phorum_db_interact(): " .
-            "missing sql query statement!");
-    }
+    // By now, we really need a SQL query.
+    if ($sql === NULL) trigger_error(
+        "Internal error: phorum_db_interact(): " .
+        "missing sql query statement!", E_USER_ERROR
+    );
+
+    // Execute the SQL query.
     if (($res = mysql_query($sql, $conn)) === false)
     {
-        // See if the $flags tell us to ignore the error.     
+        // See if the $flags tell us to ignore the error.
         $ignore_error = false;
-        switch (mysql_errno()) 
+        switch (mysql_errno())
         {
             // 1146: table does not exist
             case 1146:
@@ -195,7 +198,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     elseif ($return === PHORUM_DB_RETURN_ROWS ||
             $return === PHORUM_DB_RETURN_VALUE)
     {
-        $rows = array();        
+        $rows = array();
         while ($row = mysql_fetch_row($res)) {
             if ($keyfield === NULL) {
                 $rows[] = $row;
@@ -220,7 +223,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     // RETURN: associative array rows
     elseif ($return === PHORUM_DB_RETURN_ASSOC)
     {
-        $rows = array();        
+        $rows = array();
         while ($row = mysql_fetch_assoc($res)) {
             if ($keyfield === NULL) {
                 $rows[] = $row;
@@ -236,8 +239,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         return mysql_insert_id($conn);
     }
 
-    die("Internal error: phorum_db_interact(): " .
-        "illegal return type specified!");
+    trigger_error(
+        "Internal error: phorum_db_interact(): " .
+        "illegal return type specified!", E_USER_ERROR
+    );
 }
 
 /**
@@ -245,18 +250,18 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
  *
  * @param $string - The string to escape.
  *
- * @return $quoted - The SQL escaped string. 
+ * @return $quoted - The SQL escaped string.
  */
 function phorum_db_escape_string($string) {
     return mysql_escape_string($string);
 }
 
 /**
- * A wrapper function for fetching associative records from a 
+ * A wrapper function for fetching associative records from a
  * SQL result resource. This function should be avoided
  * for performance reasons. If possible, let phorum_db_interact()
  * return the rows from the query instead.
- * 
+ *
  * @param $res  - SQL result resource.
  *
  * @return $row - The next row in the result resource or NULL if no
@@ -270,23 +275,23 @@ function phorum_db_fetch_assoc($res) {
 /**
  * DEPRECATED
  * A wrapper function for connecting to the database. This function should
- * be avoided. Instead the phorum_db_interact() function should be used 
+ * be avoided. Instead the phorum_db_interact() function should be used
  * in combination with the PHORUM_DB_RETURN_CONN return type.
  *
- * @return $conn - A database connection resource handle. 
+ * @return $conn - A database connection resource handle.
  */
 function phorum_db_connect() {
     return phorum_db_interact(PHORUM_DB_RETURN_CONN);
 }
 
 
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 // API functions
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 
 /**
- * DEPRECATED?: we can save a function call by directly calling 
- *              phorum_db_interact(). I'm also not sure if we need 
+ * DEPRECATED?: we can save a function call by directly calling
+ *              phorum_db_interact(). I'm also not sure if we need
  *              to do this check from common.php. We could take care
  *              of this in the db layer error handling too. Have to
  *              think about this ...
@@ -298,7 +303,7 @@ function phorum_db_connect() {
 function phorum_db_check_connection()
 {
     return phorum_db_interact(
-        PHORUM_DB_RETURN_CONN, 
+        PHORUM_DB_RETURN_CONN,
         NULL, NULL,
         PHORUM_DB_NOCONNECTOK
     ) ? true : false;
@@ -308,7 +313,7 @@ function phorum_db_check_connection()
  * Load all Phorum key/value pair settings in $PHORUM and $PHORUM['SETTINGS'].
  * The settings are read from the settings table. In this settings
  * table, a type is provided for each setting. The supported types are:
- * 
+ *
  * V = Value       the value of this field is used as is
  * S = Serialized  the value of this field is a serialzed PHP variable,
  *                 which will be unserialized before storing it in $PHORUM
@@ -319,16 +324,17 @@ function phorum_db_load_settings()
 
     // At install time, there is no settings table. So from the
     // admin interface, we do not mind if we do not see that table.
-    $settings = phorum_db_interact(PHORUM_DB_RETURN_ROWS,
+    $settings = phorum_db_interact(
+        PHORUM_DB_RETURN_ROWS,
         "SELECT name, data, type FROM {$PHORUM['settings_table']}",
         NULL,
-        defined("PHORUM_ADMIN") ? PHORUM_DB_MISSINGTABLEOK : 0;
+        defined("PHORUM_ADMIN") ? PHORUM_DB_MISSINGTABLEOK : 0
     );
-     
+
     foreach ($settings as $setting)
     {
-        $val = $setting[2] == 'V' 
-             ? $setting[1] 
+        $val = $setting[2] == 'V'
+             ? $setting[1]
              : unserialize($setting[1]);
 
         $PHORUM[$setting[0]] = $PHORUM['SETTINGS'][$setting[0]] = $val;
@@ -456,7 +462,7 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
                 if (! count($replymsgids)) break;
 
                 $sortorder = "sort, $sortfield DESC, message_id";
-                if (isset($PHORUM["reverse_threading"]) && 
+                if (isset($PHORUM["reverse_threading"]) &&
                     $PHORUM["reverse_threading"])
                     $sortorder.=" DESC";
 
@@ -477,10 +483,10 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
         foreach ($rows as $id => $row)
         {
             // Unpack the thread message meta data.
-            $row["meta"] = empty($row["meta"]) 
+            $row["meta"] = empty($row["meta"])
                          ? array() : unserialize($row["meta"]);
 
-            // Add the row to the list of messages. 
+            // Add the row to the list of messages.
             $messages[$id] = $row;
 
             // We need the message ids for fetching reply messages.
@@ -504,7 +510,7 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
  * @param $count        - Limit the number of returned messages to this number.
  * @param $forum_id     - A forum_id or array of forum_ids.
  * @param $thread       - A thread id.
- * @param $threads_only - If set to TRUE, only the top message from each 
+ * @param $threads_only - If set to TRUE, only the top message from each
  *                        thread is returned.
  *
  * @return $messages    - An array of recent messages, indexed by message id.
@@ -528,7 +534,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         $use_key = 'post_count';
     }
 
-    $sql = "SELECT  {$PHORUM['message_table']}.* 
+    $sql = "SELECT  {$PHORUM['message_table']}.*
             FROM    {$PHORUM['message_table']} USE KEY ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
@@ -673,7 +679,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=false, $m
 
     // Post processing of received messages.
     foreach ($messages as $id => $message) {
-        $messages[$id]["meta"] = empty($message["meta"]) 
+        $messages[$id]["meta"] = empty($message["meta"])
                                ? array() : unserialize($message["meta"]);
     }
 
@@ -683,7 +689,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=false, $m
 /**
  * Store a new message in the database.
  *
- * The message will not be posted if it is a duplicate and if 
+ * The message will not be posted if it is a duplicate and if
  * $PHORUM['check_duplicate'] is set.
  *
  * The $message is passed by reference and in case the function completes
@@ -697,7 +703,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=false, $m
  *                   ip, user_id, moderator_post, status, sort, msgid,
  *                   body, closed. Additionally, the following optional
  *                   fields can be set: meta, modifystamp, viewcount.
- * @param $convert - True in case the message is being inserted by 
+ * @param $convert - True in case the message is being inserted by
  *                   a database conversion script. This will let you set
  *                   the datestamp and message_id of the message from the
  *                   $message data. Also, the duplicate message check will
@@ -747,7 +753,7 @@ function phorum_db_post_message(&$message, $convert=false)
     // The meta field is optional.
     $metaval = isset($message["meta"]) ? ",meta='{$message['meta']}'" : "";
 
-    $sql = "INSERT INTO $table 
+    $sql = "INSERT INTO $table
             SET    forum_id={$message['forum_id']},
                    datestamp=$NOW,
                    thread={$message['thread']},
@@ -789,7 +795,8 @@ function phorum_db_post_message(&$message, $convert=false)
         // Updates for thread starter messages.
         if ($message["thread"] == 0)
         {
-            phorum_db_interact(PHORUM_DB_RETURN_RES, 
+            phorum_db_interact(
+                PHORUM_DB_RETURN_RES,
                 "UPDATE $table
                  SET    thread=$newid
                  WHERE  message_id=$newid"
@@ -799,16 +806,17 @@ function phorum_db_post_message(&$message, $convert=false)
         }
 
         // Full text searching updates.
-        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&  
+        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
             $PHORUM["DBCONFIG"]["mysql_use_ft"])
         {
             $search_text = $message["author"]  .' | '.
                            $message["subject"] .' | '.
                            $message["body"];
 
-            phorum_db_interact(PHORUM_DB_RETURN_RES, 
-                "INSERT DELAYED INTO {$PHORUM['search_table']} 
-                 SET    message_id={$message['message_id']}, 
+            phorum_db_interact(
+                PHORUM_DB_RETURN_RES,
+                "INSERT DELAYED INTO {$PHORUM['search_table']}
+                 SET    message_id={$message['message_id']},
                         forum_id={$message['forum_id']},
                         search_text='$search_text'"
             );
@@ -818,6 +826,76 @@ function phorum_db_post_message(&$message, $convert=false)
     }
 
     return $success;
+}
+
+/**
+ * Update a message in the database.
+ *
+ * Note: an update of the full text searching database is only handled
+ * if all fields that we incorporate in full text searching (author,
+ * subject and body) are in the update fields. If one of the fields is
+ * provided, without providing the other two, then changes in the field
+ * will not reflect in the full text searching info.
+ *
+ * @param $message_id - The message_id of the message to update.
+ * @param $message    - An array containing the data for the message fields
+ *                      that have to be updated. You can pass as many or
+ *                      as few message fields as you wish to update.
+ */
+function phorum_db_update_message($message_id, $message)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($message_id, "int");
+
+    if (count($message) == 0) trigger_error(
+        "\$message cannot be empty in phorum_update_message()",
+        E_USER_ERROR
+    );
+
+    foreach ($message as $field => $value)
+    {
+        if (phorum_db_validate_field($field))
+        {
+            if (is_numeric($value) &&
+                !in_array($field, $PHORUM['string_fields_message'])){
+                $fields[] = "$field=$value";
+            } elseif (is_array($value)) {
+                $value = phorum_db_escape_string(serialize($value));
+                $message[$field] = $value;
+                $fields[] = "$field='$value'";
+            } else {
+                $value = phorum_db_escape_string($value);
+                $message[$field] = $value;
+                $fields[] = "$field='$value'";
+            }
+        }
+    }
+
+    phorum_db_interact(
+        PHORUM_DB_RETURN_RES,
+        "UPDATE {$PHORUM['message_table']}
+        SET " . implode(", ", $fields) . "
+        WHERE message_id=$message_id"
+    );
+
+    // Full text searching updates.
+    if (isset($message["author"]) &&
+        isset($message["subject"]) &&
+        isset($message["body"])) {
+
+        $search_text = $message["author"]  .' | '.
+                       $message["subject"] .' | '.
+                       $message["body"];
+
+        phorum_db_interact(
+            PHORUM_DB_RETURN_RES,
+            "REPLACE DELAYED INTO {$PHORUM['search_table']}
+             SET     message_id={$message_id},
+                     forum_id={$message['forum_id']},
+                     search_text='$search_text'"
+        );
+    }
 }
 
 /**
@@ -839,14 +917,15 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     settype($mode, "int");
 
     // Find the info for the message that has to be deleted.
-    $recs = phorum_db_interact(PHORUM_DB_RETURN_ASSOC, 
+    $recs = phorum_db_interact(
+        PHORUM_DB_RETURN_ASSOC,
         "SELECT forum_id, message_id, thread, parent_id
          FROM   {$PHORUM['message_table']}
          WHERE  message_id = $message_id"
     );
-    if (empty($recs)) {
-        phorum_db_mysql_error("No message found for message_id $message_id");
-    }
+    if (empty($recs)) trigger_error(
+        "No message found for message_id $message_id", E_USER_ERROR
+    );
     $rec = $recs[0];
 
     // Find all message_ids that have to be deleted, based on the mode.
@@ -862,36 +941,40 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // First, the messages are unapproved, so replies will not get posted
     // during the time that we need for deleting them. There is still a
     // race condition here, but this already makes things quite reliable.
-    phorum_db_interact(PHORUM_DB_RETURN_RES,
-        "UPDATE {$PHORUM['message_table']} 
-         SET    status=".PHORUM_STATUS_HOLD." 
+    phorum_db_interact(
+        PHORUM_DB_RETURN_RES,
+        "UPDATE {$PHORUM['message_table']}
+         SET    status=".PHORUM_STATUS_HOLD."
          WHERE  $where"
     );
 
     $thread = $rec['thread'];
 
-    // Change reply messages to point to the parent of the deleted message. 
+    // Change reply messages to point to the parent of the deleted message.
     if ($mode == PHORUM_DELETE_MESSAGE)
     {
-        // The forum_id is in here for speeding up the query 
+        // The forum_id is in here for speeding up the query
         // (with the forum_id a lookup key will be used).
-        phorum_db_interact(PHORUM_DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']} 
-             SET    parent_id={$rec['parent_id']} 
+        phorum_db_interact(
+            PHORUM_DB_RETURN_RES,
+            "UPDATE {$PHORUM['message_table']}
+             SET    parent_id={$rec['parent_id']}
              WHERE  forum_id={$rec['forum_id']} AND
                     parent_id={$rec['message_id']}"
         );
     }
 
     // Delete the messages.
-    phorum_db_interact(PHORUM_DB_RETURN_RES,
-        "DELETE FROM {$PHORUM['message_table']} 
+    phorum_db_interact(
+        PHORUM_DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['message_table']}
          WHERE $where"
     );
 
     // Full text searching updates.
-    phorum_db_interact(PHORUM_DB_RETURN_RES,
-        "DELETE FROM {$PHORUM['search_table']} 
+    phorum_db_interact(
+        PHORUM_DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['search_table']}
          WHERE $where"
     );
 
@@ -902,7 +985,8 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     phorum_update_thread_info($thread);
 
     // We need to delete the subscriptions for the thread too.
-    phorum_db_interact(PHORUM_DB_RETURN_RES,
+    phorum_db_interact(
+        PHORUM_DB_RETURN_RES,
         "DELETE FROM {$PHORUM['subscribers_table']}
          WHERE forum_id > 0 AND thread=$thread"
     );
@@ -930,10 +1014,11 @@ function phorum_db_get_messagetree($message_id, $forum_id)
     settype($forum_id, "int");
 
     // Find all children for the provided message_id.
-    $child_ids = phorum_db_interact(PHORUM_DB_RETURN_ROWS, 
-        "SELECT message_id 
+    $child_ids = phorum_db_interact(
+        PHORUM_DB_RETURN_ROWS,
+        "SELECT message_id
          FROM {$PHORUM['message_table']}
-         WHERE forum_id=$forum_id AND 
+         WHERE forum_id=$forum_id AND
                parent_id=$message_id"
     );
 
@@ -948,68 +1033,7 @@ function phorum_db_get_messagetree($message_id, $forum_id)
 
 // --------------------------------------------------------------------- //
 // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
-// --------------------------------------------------------------------- // 
-
-
-
-
-/**
- * Update a message with new data.
- *
- * @param int $message_id
- * @param array $message
- *              See phorum_db_post_message() for a list of available fields.
- *              You can pass in as many or as few fields as you wish to update.
- *
- * @return boolean
- *              TRUE on success, FALSE on failure.
- */
-function phorum_db_update_message($message_id, $message)
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    settype($message_id, "int");
-
-    if (count($message) > 0){
-        $conn = phorum_db_mysql_connect();
-
-        foreach($message as $field => $value){
-            if (phorum_db_validate_field($field)) {
-                if (is_numeric($value) && !in_array($field,$PHORUM['string_fields_message'])){
-                    $fields[] = "$field=$value";
-                }elseif (is_array($value)){
-                    $value = mysql_escape_string(serialize($value));
-                    $message[$field] = $value;
-                    $fields[] = "$field='$value'";
-                }else{
-                    $value = mysql_escape_string($value);
-                    $message[$field] = $value;
-                    $fields[] = "$field='$value'";
-                }
-            }
-        }
-
-        $sql = "update {$PHORUM['message_table']} set " . implode(", ", $fields) . " where message_id=$message_id";
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-        if($res){
-            // start ft-search stuff
-            if(isset($message["author"]) && isset($message["subject"]) && isset($message["body"])){
-                $search_text="$message[author] | $message[subject] | $message[body]";
-                $sql="replace delayed into {$PHORUM['search_table']} set message_id={$message_id}, forum_id={$message['forum_id']}, search_text='$search_text'";
-                $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            }
-            // end ft-search stuff
-        }
-
-        return ($res > 0) ? true : false;
-
-    }else{
-        trigger_error("\$message cannot be empty in phorum_update_message()", E_USER_ERROR);
-    }
-}
+// --------------------------------------------------------------------- //
 
 /**
  * Get the first message that matches the search parameters.  If
@@ -2516,9 +2540,9 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
         $operator=array($operator);
     }
 
-    if (count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){ 
-        return $ret; 
-    } 
+    if (count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){
+        return $ret;
+    }
 
     $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=");
 
@@ -2675,10 +2699,10 @@ function phorum_db_user_save($userdata){
             if ($key == "settings_data") {
                 if (is_array($value)) {
                     $value = serialize($value);
-                } else {
-                    die("Internal error: settings_data field for " .
-                        "phorum_db_user_save() must be an array");
-                }
+                } else trigger_error(
+                    "Internal error: settings_data field for " .
+                    "phorum_db_user_save() must be an array", E_USER_ERROR
+                );
             }
             $values[] = "$key='".mysql_escape_string($value)."'";
         }
@@ -4252,7 +4276,9 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     if ($from == NULL) $from = $PHORUM['user']['user_id'];
     settype($from, "int");
     $fromuser = phorum_db_user_get($from, false);
-    if (! $fromuser) die("Unknown sender user_id '$from'");
+    if (! $fromuser) trigger_error(
+        "Unknown sender user_id '$from'", E_USER_ERROR
+    );
 
     // This array will be filled with xref database entries.
     $xref_entries = array();
@@ -4263,7 +4289,9 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
     foreach ($to as $user_id) {
         settype($user_id, "int");
         $user = phorum_db_user_get($user_id, false);
-        if (! $user) die("Unknown recipient user_id '$user_id'");
+        if (! $user) trigger_error(
+            "Unknown recipient user_id '$user_id'", E_USER_ERROR
+        );
         $rcpts[$user_id] = array(
             'user_id' => $user_id,
             'username' => $user["username"],
@@ -4533,21 +4561,6 @@ function phorum_db_pm_update_message_info($pm_id)
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
     return $res;
-}
-
-/* Take care of warning about deprecation of the old PM API functions. */
-function phorum_db_get_private_messages() {
-    phorum_db_pm_deprecated('phorum_db_get_private_messages'); }
-function phorum_db_get_private_message() {
-    phorum_db_pm_deprecated('phorum_db_get_private_message'); }
-function phorum_db_get_private_message_count() {
-    phorum_db_pm_deprecated('phorum_db_get_private_message_count'); }
-function phorum_db_put_private_messages() {
-    phorum_db_pm_deprecated('phorum_db_put_private_messages'); }
-function phorum_db_update_private_message(){
-    phorum_db_pm_deprecated('phorum_db_update_private_message'); }
-function phorum_db_pm_deprecated($func) {
-    die("{$func}() has been deprecated. Please use the new private message API.");
 }
 
 /**
@@ -5109,11 +5122,11 @@ function phorum_db_metaquery_compile($metaquery)
             $expect_combine     = false;
         }
         // Unexpected or illegal token.
-        else
-        {
-            die("Internal error: unexpected token in metaquery description: " .
-                (is_array($part) ? "condition" : htmlspecialchars($part)));
-        }
+        else trigger_error(
+            "Internal error: unexpected token in metaquery description: " .
+            (is_array($part) ? "condition" : htmlspecialchars($part)),
+            E_USER_ERROR
+        );
     }
 
     if ($expect_groupend) die ("Internal error: unclosed group in metaquery");
@@ -5147,7 +5160,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     // Compile the metaquery into a where statement.
     list($success, $where) = phorum_db_metaquery_compile($metaquery);
-    if (!$success) die($where);
+    if (!$success) trigger_error($where, E_USER_ERROR);
 
     // Build the SQL query.
     $sql = "
