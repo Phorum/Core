@@ -86,7 +86,6 @@
     function phorum_get_folder_info()
     {
         $folders=array();
-        $folder_data=array();
 
         $forums = phorum_db_get_forums();
 
@@ -134,7 +133,6 @@
     function phorum_get_forum_info($forums_only=0,$vroot = -1)
     {
         $folders=array();
-        $folder_data=array();
 
         $forums = phorum_db_get_forums();
 
