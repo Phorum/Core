@@ -29,6 +29,8 @@ if($PHORUM['registration_control']) {
     }
 }
 
+$email_temp_part="";
+
 if ( count( $_POST ) ) {
 
     if ( empty( $_POST["email"] ) ) {
@@ -56,7 +58,7 @@ if ( count( $_POST ) ) {
         if(isset($PHORUM['DATA']['PROFILE']['email_temp_part']) && !empty($_POST['email_verify_code']) && $PHORUM['DATA']['PROFILE']['email_temp_part']."|".$_POST['email_verify_code'] == $PHORUM['DATA']['PROFILE']['email_temp']) {
                $_POST['email']=$PHORUM['DATA']['PROFILE']['email_temp_part'];
                $_POST['email_temp']="";
-               unset($email_temp_part);
+               $email_temp_part="";
         } elseif($PHORUM['registration_control'] && !empty($_POST['email']) && strtolower($_POST['email']) != strtolower($PHORUM["DATA"]["PROFILE"]['email'])) {
             // ... generate the confirmation-code ... //
             $conf_code= mt_rand ( 1000000, 9999999);
@@ -80,8 +82,8 @@ if ( count( $_POST ) ) {
     }
 }
 
-if (isset($email_temp_part)) {
-$PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
+if (!empty($email_temp_part)) {
+	$PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
 }
 
 // flip this due to db vs. UI wording.
