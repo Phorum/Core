@@ -741,7 +741,6 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
         $checkvar="$field IN('".implode("','",$value)."')";
         $multiple=true;
     } else {
-        $value=mysql_escape_string($value);
         $checkvar="$field='$value'";
     }
 
@@ -2025,13 +2024,11 @@ function phorum_db_user_get_fields($user_id, $fields)
 
     phorum_db_sanitize_mixed($user_id, "int");
 
-    // input could be either array or string
     if(is_array($user_id)){
         $user_ids=implode(",", $user_id);
     } else {
         $user_ids=(int)$user_id;
     }
-
 
     if(!is_array($fields)) {
         $fields = array($fields);
@@ -4351,7 +4348,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
  *
  *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
  *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
- *   query has to be done, then that is setup throught the
+ *   query has to be done, then that is setup through the
  *   <match specification> (see below).
  *
  *   The <match specification> tells us with what the field should be
@@ -4753,7 +4750,8 @@ function phorum_db_sanitize_mixed(&$var, $type){
  * @param   $field_name     string to be checked
  * @return  bool
  *
- */function phorum_db_validate_field($field_name){
+ */
+function phorum_db_validate_field($field_name){
     return (bool)preg_match('!^[a-zA-Z0-9_]+$!', $field_name);
 }
 
