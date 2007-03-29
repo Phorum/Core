@@ -1633,16 +1633,19 @@ Table of contents:
    Input  : Array containing:
             0 => The message author
             1 => The message body
-   Return : The quoted body to use in the post form.
+            2 => The message user_id
+   Return : The quoted body to use in the post form or the input array
+            in case the hook does not handle the quoting.
 
    When quoting a message for reply, by default Phorum formats quoted
    messages using an old school email style of quoting. By using the quote
    hook, you can implement a different quoting mechanism.
 
-   Your hook function will retrieve an array containing two elements:
-   the author and the body of the message to be quoted. The return
-   value for your hook function must be the quoted body that will
-   be pre-filled into the reply form.
+   Your hook function will retrieve an array containing three elements:
+   the author, the body and the user_id of the message to be quoted. The
+   return value for your hook function must be the quoted body that will
+   be pre-filled into the reply form or the original array in case the
+   hook function does not handle the quoting.
 
    The BBCode module that is distributed with Phorum has a quote hook
    function. Because it does not make sense to have more than one quote
