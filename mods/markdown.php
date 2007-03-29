@@ -161,12 +161,15 @@ function phorum_Markdown ($data)
     return ($data);
 }
 
-function phorum_Markdown_quote ($message)
+function phorum_Markdown_quote ($data)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $author = "\n> **".$message[0] . ' ' . $PHORUM['DATA']['LANG']['Wrote'] . ':**';
-    $quote  = phorum_strip_body($message[1]);
+    // Some other hook already formatted the quote.
+    if (!is_array($data)) return $data;
+
+    $author = "\n> **".$data[0] . ' ' . $PHORUM['DATA']['LANG']['Wrote'] . ':**';
+    $quote  = phorum_strip_body($data[1]);
     $quote  = str_replace("\n", "\n> ", $quote);
     $quote  = wordwrap(trim($quote), 50, "\n> ", true);
     $quote  = $author . "\n> \n> " . $quote;

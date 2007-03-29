@@ -152,14 +152,17 @@ function phorum_bb_code($data)
 }
 
 
-function phorum_bb_code_quote ($array)
+function phorum_bb_code_quote ($data)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // Some other hook already formatted the quote.
+    if (!is_array($data)) return $data;
+
     if(isset($PHORUM["mod_bb_code"]) && $PHORUM["mod_bb_code"]["quote_hook"]){
-        return "[quote $array[0]]$array[1][/quote]";
+        return "[quote $data[0]]$data[1][/quote]";
     } else {
-        return $array;
+        return $data;
     }
 }
 ?>
