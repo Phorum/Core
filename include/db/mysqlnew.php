@@ -19,6 +19,10 @@
 
 // cvs-info: $Id: mysql.php 1683 2007-03-27 12:28:59Z mmakaay $
 
+// TODO: phorum_user_access_allowed() is used in this layer, but the
+// TODO: include file for that is not included here. Keep it like that
+// TODO: or add the required include?
+
 if (!defined("PHORUM")) return;
 
 /**
@@ -350,17 +354,17 @@ function phorum_db_load_settings()
  *
  * NOTE: ALL dates must be returned as Unix timestamps
  *
- * @param $offset         - The index of the page to return, starting with 0.
+ * @param $page           - The index of the page to return, starting with 0.
  * @param $include_bodies - Determines whether the message bodies
  *                          have to be included in the return data or not.
  *
  * @return $messages      - An array of recent messages, indexed by message id.
  */
-function phorum_db_get_thread_list($offset, $include_bodies=false)
+function phorum_db_get_thread_list($page, $include_bodies=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    settype($offset, "int");
+    settype($page, "int");
 
     $table = $PHORUM["message_table"];
 
@@ -408,7 +412,7 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
     // threads  : thread starter messages (always)
     // replies  : thread reply messages (only in threaded read mode)
     $groups = array();
-    if ($offset == 0) $groups[] = "stickies";
+    if ($page == 0) $groups[] = "stickies";
     $groups[] = "threads";
     if ($PHORUM["threaded_list"]) $groups[] = "replies";
 
@@ -442,7 +446,7 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
                 } else {
                     $limit = $PHORUM['list_length_flat'];
                 }
-                $start = $offset * $limit;
+                $start = $page * $limit;
 
                 $sql = "SELECT $messagefields
                         FROM   $table USE INDEX ($index)
@@ -484,7 +488,8 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
         {
             // Unpack the thread message meta data.
             $row["meta"] = empty($row["meta"])
-                         ? array() : unserialize($row["meta"]);
+                         ? array() 
+                         : unserialize($row["meta"]);
 
             // Add the row to the list of messages.
             $messages[$id] = $row;
@@ -603,7 +608,8 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     {
         // Unpack the message meta data.
         $messages[$id]["meta"] = empty($message["meta"])
-                               ? array() : unserialize($message["meta"]);
+                               ? array() 
+                               : unserialize($message["meta"]);
 
         // Collect all involved users.
         if ($message["user_id"]) {
@@ -680,7 +686,8 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=false, $m
     // Post processing of received messages.
     foreach ($messages as $id => $message) {
         $messages[$id]["meta"] = empty($message["meta"])
-                               ? array() : unserialize($message["meta"]);
+                               ? array() 
+                               : unserialize($message["meta"]);
     }
 
     return $messages;
@@ -710,6 +717,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=false, $m
  *                   be fully skipped.
  *
  * @return         - TRUE on success, FALSE on failure, 0 on duplicate posts.
+ *                   TODO: can this ever return FALSE?
  */
 function phorum_db_post_message(&$message, $convert=false)
 {
@@ -1031,93 +1039,95 @@ function phorum_db_get_messagetree($message_id, $forum_id)
     return $tree;
 }
 
-// --------------------------------------------------------------------- //
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
-// --------------------------------------------------------------------- //
-
 /**
- * Get the first message that matches the search parameters.  If
- * you pass in multiple matches targets, this will return an array
- * of messages.  Otherwise it will return a single message.
+ * Retrieve message(s) from the messages table by comparing value(s)
+ * for a specified field in that table.
  *
- * @param mixed $value
- *              The value in the database column that you want to match.
- *              This can be an array, in which case this will return the messages
- *              that match any of the given values in the array.
- * @param string $field
- *              The database column you are searching to find $value.
- * @param boolean $ignore_forum_id
- * @return array
+ * You can provide either a single value or an array of values to search
+ * for. If a single value is provided, then the function will return the
+ * first matching message in the table. If an array of values is provided,
+ * the function will return all matching messages in an array.
+ * 
+ * @param $value           - The value that you want to search on in the 
+ *                           messages table. This can be either a single
+ *                           value or an array of values.
+ * @param $field           - The message field (database column) to search on.
+ * @param $ignore_forum_id - By default, this function will only search for
+ *                           messages within the active forum (as defined
+ *                           by $PHORUM["forum_id"). By setting this
+ *                           parameter to a true value, the function will
+ *                           search in any forum.
+ *
+ * @return                 - Either a single message or an array of
+ *                           messages, depending on the $value parameter.
  */
 function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if (!phorum_db_validate_field($field)) return false;
-
-    $multiple=false;
-
     phorum_db_sanitize_mixed($value, "string");
     settype($ignore_forum_id, "bool");
-
-    $conn = phorum_db_mysql_connect();
-
+    if (!phorum_db_validate_field($field)) raise_error(
+        "phorum_db_get_message(): Illegal database field \"" .
+        htmlspecialchars($field) . "\"", E_USER_ERROR
+    );
 
     $forum_id_check = "";
-    if (!$ignore_forum_id && !empty($PHORUM["forum_id"])){
-        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and ";
+    if (!$ignore_forum_id && !empty($PHORUM["forum_id"])) {
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND ";
     }
 
-    if(is_array($value)) {
-        $checkvar="$field IN('".implode("','",$value)."')";
-        $multiple=true;
+    if (is_array($value)) {
+        $multiple = true;
+        $checkvar = "$field IN ('".implode("','",$value)."')";
+        $limit = "";
     } else {
-        $value=mysql_escape_string($value);
-        $checkvar="$field='$value'";
+        $multiple=false;
+        $checkvar = "$field='$value'";
+        $limit = "LIMIT 1";
     }
 
+    $return = $multiple ? array() : NULL;
 
-    $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $checkvar";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    $messages = phorum_db_interact(
+        PHORUM_DB_RETURN_ASSOC,
+        "SELECT * 
+         FROM   {$PHORUM['message_table']}
+         WHERE  $forum_id_check $checkvar
+         $limit"
+    );
 
-    $ret = $multiple ? array() : NULL;
+    foreach ($messages as $message)
+    {
+        $message["meta"] = empty($message["meta"])
+                         ? array() 
+                         : unserialize($message["meta"]);
 
-    if(mysql_num_rows($res)){
-        if($multiple) {
-            while($rec=mysql_fetch_assoc($res)) {
-                // convert meta field
-                if(empty($rec["meta"])){
-                    $rec["meta"]=array();
-                } else {
-                    $rec["meta"]=unserialize($rec["meta"]);
-                }
-                $ret[$rec['message_id']]=$rec;
-            }
-        } else {
-            $rec = mysql_fetch_assoc($res);
-
-            // convert meta field
-            if(empty($rec["meta"])){
-                $rec["meta"]=array();
-            } else {
-                $rec["meta"]=unserialize($rec["meta"]);
-            }
-            $ret=$rec;
+        if (! $multiple) {
+            $return = $message;
+            break;
         }
+
+        $return[$message["message_id"]] = $message;
     }
 
-    return $ret;
+    return $return;
 }
 
 /**
- * Get messages with the given thread id.  Returns an array of messages.
+ * Retrieve messages from a specific thread.
  *
- * @param int $thread
- * @param int $page
- * @return array
+ * @param $thread           - The id of the thread. 
+ * @param $page             - A page offset (based on the configured
+ *                            read_length) starting with 1. All messages
+ *                            are returned in case $page is 0.
+ * @param $ignore_mod_perms - If this parameter is set to a true value, then
+ *                            the function will return hidden messages, even
+ *                            if the active Phorum user is not a moderator.
+ *
+ * @return $messages        - An array of messages.
  */
-function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms=false)
+function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=false)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -1125,69 +1135,90 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms=false)
     settype($page, "int");
     settype($ignore_mod_perms, "int");
 
-    $conn = phorum_db_mysql_connect();
-
+    // Check if the forum_id has to be checked.
     $forum_id_check = "";
-    if (!empty($PHORUM["forum_id"])){
-        $forum_id_check = "forum_id = {$PHORUM['forum_id']} and";
+    if (!empty($PHORUM["forum_id"])) {
+        $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND";
     }
 
-    // are we really allowed to show this thread/message?
+    // Determine if not approved messages should be displayed.
     $approvedval = "";
-    if(!$ignore_mod_perms && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-        $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
+    if (!$ignore_mod_perms && 
+        !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+        $approvedval = "AND status =".PHORUM_STATUS_APPROVED;
     }
 
-    if($page > 0) {
-           $start=$PHORUM["read_length"]*($page-1);
-           $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval order by message_id LIMIT $start,".$PHORUM["read_length"];
+    $sql = "SELECT * 
+            FROM   {$PHORUM['message_table']} 
+            WHERE  $forum_id_check 
+                   thread=$thread 
+                   $approvedval
+            ORDER  BY message_id";
+
+    if ($page > 0) {
+       // Handle the page offset.
+       $start = $PHORUM["read_length"] * ($page-1);
+       $sql .= " LIMIT $start,".$PHORUM["read_length"];
     } else {
-           $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval order by message_id";
-           if(isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) $sql.=" desc";
+       // Handle reverse threading. This is only done if $page is 0.
+       // In that case, the messages for threaded read are retrieved.
+       if (isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"])
+           $sql.=" desc";
     }
 
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    $messages = phorum_db_interact(PHORUM_DB_RETURN_ASSOC, $sql, "message_id");
+    $messages["users"] = array();
 
-    $arr = array();
+    foreach ($messages as $id => $message)
+    {
+        // Unpack the message meta data.
+        $messages[$id]["meta"] = empty($message["meta"])
+                               ? array() 
+                               : unserialize($message["meta"]);
 
-    while ($rec = mysql_fetch_assoc($res)){
-        $arr[$rec["message_id"]] = $rec;
-
-        // convert meta field
-        if(empty($rec["meta"])){
-            $arr[$rec["message_id"]]["meta"]=array();
-        } else {
-            $arr[$rec["message_id"]]["meta"]=unserialize($rec["meta"]);
-        }
-        if(empty($arr['users'])) $arr['users']=array();
-        if($rec["user_id"]){
-            $arr['users'][]=$rec["user_id"];
-        }
-
-    }
-
-    if(count($arr) && $page != 0) {
-        // selecting the thread-starter
-        $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check message_id=$thread $approvedval";
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        if(mysql_num_rows($res) > 0) {
-            $rec = mysql_fetch_assoc($res);
-            $arr[$rec["message_id"]] = $rec;
-            $arr[$rec["message_id"]]["meta"]=unserialize($rec["meta"]);
+        // Collect all involved users.
+        if ($message["user_id"]) {
+            $messages["users"][$message["user_id"]] = $message["user_id"];
         }
     }
-    return $arr;
+
+    // Always include the thread starter message in the return data.
+    // It might not be in the messagelist if a page offset is used
+    // (since the thread starter is only on the first page).
+    if (count($messages) && !isset($messages[$thread]))
+    {
+        $starter = phorum_db_interact(
+            PHORUM_DB_RETURN_ASSOC, 
+            "SELECT *
+             FROM   {$PHORUM['message_table']}
+             WHERE  $forum_id_check 
+                    message_id=$thread
+                    $approvedval"
+        );
+
+        if (isset($starter[0])) {
+            // Unpack the message meta data.
+            $starter[0]["meta"] = empty($starter[0]["meta"])
+                                ? array() 
+                                : unserialize($starter[0]["meta"]);
+
+            $messages[$thread] = $starter[0];
+        }
+    }
+
+    return $messages;
 }
 
 /**
- * Return the index of a message in a thread.
- * @param int $thread
- * @param int $message_id
- * @return int
+ * Get the index of a message in a thread.
+ *
+ * @param $thread     - The thread id.
+ * @param $message_id - The message id.
+ *
+ * @return $index     - The index of the message, starting with 0.
  */
-function phorum_db_get_message_index($thread=0,$message_id=0) {
+function phorum_db_get_message_index($thread=0, $message_id=0)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
     // check for valid values
@@ -1198,28 +1229,33 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     settype($thread, "int");
     settype($message_id, "int");
 
-    $approvedval="";
-    $forum_id_check="";
-
-    $conn = phorum_db_mysql_connect();
-
+    $forum_id_check = "";
     if (!empty($PHORUM["forum_id"])){
         $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND";
     }
 
+    $approvedval = "";
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-        $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
+        $approvedval="AND status =".PHORUM_STATUS_APPROVED;
     }
 
-    $sql = "select count(*) as msg_index from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval AND message_id <= $message_id order by message_id";
+    $index = phorum_db_interact(
+        PHORUM_DB_RETURN_VALUE,
+        "SELECT count(*)
+         FROM   {$PHORUM['message_table']}
+         WHERE  $forum_id_check 
+                thread=$thread
+                $approvedval AND
+                message_id <= $message_id
+         ORDER  BY message_id"
+    );
 
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    $rec = mysql_fetch_assoc($res);
-
-    return $rec['msg_index'];
+    return $index;
 }
+
+// --------------------------------------------------------------------- //
+// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
+// --------------------------------------------------------------------- //
 
 /**
  * Search the database for the supplied search criteria and returns
@@ -2311,7 +2347,11 @@ function phorum_db_user_get($user_id, $detailed)
     phorum_db_sanitize_mixed($user_id, "int");
 
     if(is_array($user_id)){
-        $user_ids=implode(",", $user_id);
+        if (count($user_id)) {
+            $user_ids=implode(",", $user_id);
+        } else {
+            return array();
+        }
     } else {
         $user_ids=(int)$user_id;
     }
