@@ -1845,6 +1845,9 @@ function phorum_db_user_get($user_id, $detailed)
     $conn = phorum_db_postgresql_connect();
 
     if(is_array($user_id)){
+        if (count($user_id) == 0) {
+            return array();
+        }
         foreach($user_id as &$id){
             $id = (int)$id;
         }

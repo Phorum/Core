@@ -1956,7 +1956,11 @@ function phorum_db_user_get($user_id, $detailed)
     phorum_db_sanitize_mixed($user_id, "int");
 
     if(is_array($user_id)){
-        $user_ids=implode(",", $user_id);
+        if (count($user_id)) {
+            $user_ids=implode(",", $user_id);
+        } else {
+            return array();
+        }
     } else {
         $user_ids=(int)$user_id;
     }
