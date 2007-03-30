@@ -87,6 +87,7 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
             if ( $forum["message_count"] > 0 ) {
                 $forum["last_post"] = phorum_date( $PHORUM["long_date"], $forum["last_post_time"] );
+                $forum["raw_last_post"] = $forum["last_post_time"];
             } else {
                 $forum["last_post"] = "&nbsp;";
             }
