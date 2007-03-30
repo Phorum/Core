@@ -21,7 +21,8 @@
 
 // TODO: phorum_user_access_allowed() is used in this layer, but the
 // TODO: include file for that is not included here. Keep it like that
-// TODO: or add the required include?
+// TODO: or add the required include? Or is it functionality that doesn't
+// TODO: belong here and could better go into the core maybe?
 
 if (!defined("PHORUM")) return;
 
@@ -1253,275 +1254,362 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
     return $index;
 }
 
-// --------------------------------------------------------------------- //
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
-// --------------------------------------------------------------------- //
-
 /**
- * Search the database for the supplied search criteria and returns
- * an array with two elements.  One is the count of total messages that
- * matched, the second is an array of the messages from the results
- * based on the $start (0 base) given and the $length given.
+ * Search the database using the provided search criteria and return
+ * an array containing the total count of matches and the visible 
+ * messages based on the page $offset and $length.
  *
- * @param string $search
- * @param int $offset
- * @param int $length
- * @param string $match_type
- * @param int $match_date
- * @param string $match_forum
+ * This function acts as a wrapper around two other search functions:
+ * phorum_db_search_direct() and phorum_db_search_fulltext().
+ * This function will delegate the search request to those functions,
+ * based on the "mysql_use_ft" database layer configuration parameter
+ * (from include/db/config.php).
  *
- * @return array
+ * @param             -  For the required function parameters, see the 
+ *                       documentation for the two delegation functions.
+ *
+ * @return $return     - An array containing two fields: "count" contains 
+ *                       the total number of matching messages and 
+ *                       "rows" contains the messages that are visible,
+ *                       based on the page $offset (starting with 0) and
+ *                       page $length.
  */
-function phorum_db_search($search, $offset, $length, $match_type, $match_date, $match_forum)
+function phorum_db_search($search, $offset, $length, $type, $days, $forum)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    $fulltext_mode = isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && 
+                     $PHORUM["DBCONFIG"]["mysql_use_ft"];
+
     settype($offset, "int");
     settype($length, "int");
-    settype($match_date, "int");
+    settype($days, "int");
 
     $start = $offset * $PHORUM["list_length"];
 
-    $arr = array("count" => 0, "rows" => array());
+    // This variable is used to create a comma separated list of found
+    // message_ids, which is used to retrieve all message data at the
+    // end of this function. If no messages are found, the variable
+    // keeps the NULL value.
+    $idstring = NULL;
 
-    $conn = phorum_db_mysql_connect();
+    // Initialize the return data.
+    $return = array("count" => 0, "rows" => array());
 
     // Check what forums the current user can read.
     $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
 
     // If the user is not allowed to search any forum or the current
-    // active forum, then return the emtpy $arr.
-    if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
+    // active forum, then return the emtpy search results array.
+    if (empty($allowed_forums) || 
+        ($PHORUM['forum_id']>0 && 
+         !in_array($PHORUM['forum_id'], $allowed_forums))) return $return;
 
     // Prepare forum_id restriction.
-    if ($match_forum == "ALL") {
-        $forum_where = " and forum_id in (".implode(",", $allowed_forums).")";
+    if ($forum == "ALL") {
+        $forum_where = " AND forum_id IN (".implode(",", $allowed_forums).")";
     } else {
-        $forum_where=" and forum_id = {$PHORUM['forum_id']}";
+        $forum_where=" AND forum_id = {$PHORUM['forum_id']}";
     }
 
     // Prepare the search terms.
-    // Search for an exact phrase.
-    if ($match_type=="PHRASE") {
-        if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]) {
-            $terms = array('"'.$search.'"');
-        } else {
-            $terms = array($search);
-        }
-    // Search for an author name or user id.
-    } elseif($match_type=="AUTHOR" || $match_type=="USER_ID"){
-        $terms = mysql_escape_string($search);
-    // Standard query string.
-    } else {
-        $quote_terms=array();
+    switch ($type)
+    {
+        // Search for an exact phrase.
+        case "PHRASE":
+            // The code below will handle correct SQL quoting.
+            $terms = $fulltext_mode ? array('"'.$search.'"') : array($search);
+            break;
 
-        // First, pull out all the double quoted strings
-        // (e.g. '"iMac DV" or -"iMac DV"')
-        if (strstr( $search, '"' )) {
-            preg_match_all('/-*"(.*?)"/', $search, $match);
-            $search = preg_replace('/-*".*?"/', '', $search);
-            $quote_terms = $match[0];
-        }
+        // Search for an author's name.
+        case "AUTHOR":
+            $terms = phorum_db_escape_string($search);
+            break;
 
-        // Finally, pull out the rest of the words in the string.
-        $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
+        // Search for an author's user_id.
+        case "USER_ID":
+            $terms = (int)$search;
+            break;
 
-        // Merge them all together.
-        $terms = array_merge($terms, $quote_terms);
-    }
+        // Search for a query string, which can contain quoted phrases,
+        // possibly prefixed by a "-" for negating the phrase.
+        default:
+            $quoted_terms = array();
 
-    // Handle full text matching.
-    if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
-
-        if ($match_type=="AUTHOR" || $match_type=="USER_ID") {
-
-            $id_table=$PHORUM['search_table']."_auth_".md5(microtime());
-
-            $fld = $match_type=="AUTHOR" ? "author" : "user_id";
-            $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['message_table']} where $fld='$terms' $forum_where";
-            if($match_date>0){
-                $ts=time()-86400*$match_date;
-                $sql.=" and datestamp>=$ts";
+            // First, pull out all the double quoted strings
+            // (e.g. '"iMac DV" or -"iMac DV"')
+            if (strstr($search, '"' )) {
+                preg_match_all('/-*"(.*?)"/', $search, $match);
+                $search = preg_replace('/-*".*?"/', '', $search);
+                $quoted_terms = $match[0];
             }
 
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            // Finally, pull out the rest of the words in the string.
+            $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
 
-        } else {
+            // Merge them all together.
+            $terms = array_merge($terms, $quoted_terms);
+    }
+    
+    // --------------------------
+    // HANDLE FULL TEXT MATCHING
+    // --------------------------
 
-            if (count($terms)) {
+    if ($fulltext_mode)
+    {
+        // First step in the full text searching is generating a 
+        // temporary table which holds all message_ids for messages
+        // that match the search parameters.
 
-                $use_key="";
-                $extra_where="";
+        if ($type == "AUTHOR" || $type == "USER_ID")
+        {
+            $infix = $type == "AUTHOR" ? "author" : "userid";
+            $id_table = "{$PHORUM['search_table']}_{$infix}_".md5(microtime());
+            $field = $type=="AUTHOR" ? "author" : "user_id";
 
-                /* Using this code on larger forums has shown to make the
-                   search faster. However, on smaller forums, it does not
-                   appear to help and in fact appears to slow down searches.
+            $sql = "CREATE TEMPORARY TABLE $id_table (
+                        KEY(message_id)
+                    ) ENGINE=HEAP
+                    SELECT message_id
+                    FROM   {$PHORUM['message_table']}
+                    WHERE  $field='$terms' $forum_where";
 
-                if ($match_date) {
-                    $min_time=time()-86400*$match_date;
-                    $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
-                    $res=mysql_query($sql, $conn);
-                    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-                    $min_id=mysql_result($res, 0, "min_id");
-                    $use_key=" use key (primary)";
-                    $extra_where="and message_id>=$min_id";
-                }
-                */
+            if ($days>0) {
+                $ts = time() - 86400*$days;
+                $sql.= " AND datestamp >= $ts";
+            }
 
-                $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
+            phorum_db_interact(PHORUM_DB_RETURN_RES, $sql);
 
-                $against = "";
+        } elseif (count($terms)) {
 
-                if ($match_type=="ALL" && count($terms)>1) {
-                    foreach ($terms as $term) {
-                        if($term[0] == "+" || $term[0] == "-"){
-                            $against .= mysql_escape_string($term)." ";
-                        } else {
-                            $against .= "+".mysql_escape_string($term)." ";
-                        }
+            $use_key = "";
+            $extra_where = "";
+            $against = "";
+
+            /* Using this code on larger forums has shown to make the
+               search faster. However, on smaller forums, it does not
+               appear to help and in fact appears to slow down searches.
+
+            if ($days) {
+                $min_time = time() - 86400*$days;
+                $sql = "SELECT MIN(message_id)
+                        FROM {$PHORUM['message_table']}
+                        WHERE datestamp >= $min_time";
+                $min_id = phorum_db_interact(PHORUM_DB_RETURN_VALUE, $sql);
+                $use_key=" USE KEY (primary)";
+                $extra_where="AND message_id >= $min_id";
+            }
+            */
+
+            $id_table = $PHORUM['search_table']."_terms_".md5(microtime());
+
+            if ($type=="ALL" && count($terms)>1) {
+                foreach ($terms as $term) {
+                    if($term[0] == "+" || $term[0] == "-"){
+                        $against .= phorum_db_escape_string($term)." ";
+                    } else {
+                        $against .= "+".phorum_db_escape_string($term)." ";
                     }
-                    $against = trim($against);
-                } else {
-                    $against=mysql_escape_string(implode(" ", $terms));
                 }
-
-                $clause="MATCH (search_text) AGAINST ('$against' IN BOOLEAN MODE)";
-
-                $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['search_table']} $use_key where $clause $extra_where";
-                $res = mysql_unbuffered_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
+                $against = trim($against);
+            } else {
+                $against = phorum_db_escape_string(implode(" ", $terms));
             }
+
+            $sql = "CREATE TEMPORARY TABLE $id_table (
+                        key(message_id)
+                    ) ENGINE=HEAP 
+                    SELECT message_id
+                    FROM   {$PHORUM['search_table']} $use_key
+                    WHERE  MATCH (search_text) 
+                           AGAINST ('$against' IN BOOLEAN MODE)
+                           $extra_where";
+
+            phorum_db_interact(PHORUM_DB_RETURN_RES, $sql);
         }
 
-        if(isset($id_table)){
+        // Second step in the full text searching is creating a temporary
+        // table which holds the forum_id, status, datestamp and message_id
+        // for all message_ids that are now in the id table. After that,
+        // the number of found messages and the set of message_ids that 
+        // has to be displayed  (based on datestamp, page offset and page
+        // length) is retrieved from this temporary table.
+        //
+        // TODO: Is is needed to create a full table on all message_ids
+        // TODO: instead of including the order/limit in the temporary
+        // TODO: table code immediately? AFAICS, the main reason for 
+        // TODO: doing it like this is to be able to do a count(*) on
+        // TODO: the table for the total count, but that should be the
+        // TODO: same as the amount of records in the temporary table 
+        // TODO: that was created above.
 
-            // create a temporary table of the messages we want
-            $table=$PHORUM['search_table']."_".md5(microtime());
-            $sql="create temporary table $table (key (forum_id, status, datestamp)) ENGINE=HEAP select {$PHORUM['message_table']}.message_id, {$PHORUM['message_table']}.datestamp, status, forum_id from {$PHORUM['message_table']} inner join $id_table using (message_id) where status=".PHORUM_STATUS_APPROVED." $forum_where";
+        if (isset($id_table))
+        {
+            // Create the temporary table.
 
-            if($match_date>0){
-                $ts=time()-86400*$match_date;
-                $sql.=" and datestamp>=$ts";
+            $table = $PHORUM['search_table']."_".md5(microtime());
+            $sql = "CREATE TEMPORARY TABLE $table (
+                        key (forum_id, status, datestamp)
+                    ) ENGINE=HEAP
+                    SELECT {$PHORUM['message_table']}.message_id,
+                           {$PHORUM['message_table']}.datestamp,
+                           status,
+                           forum_id
+                    FROM   {$PHORUM['message_table']} 
+                           INNER JOIN $id_table USING (message_id)
+                    WHERE  status=".PHORUM_STATUS_APPROVED."
+                           $forum_where";
+
+            if($days>0){
+                $ts = time() - 86400*$days;
+                $sql .= " AND datestamp >= $ts";
             }
 
-            $res=mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            phorum_db_interact(PHORUM_DB_RETURN_RES, $sql);
 
-            $sql="select count(*) as count from $table";
-            $res = mysql_query($sql, $conn);
+            // Retrieve the total number of search results.
+            $total_count = phorum_db_interact(
+                PHORUM_DB_RETURN_VALUE,
+                "SELECT count(*)
+                 FROM   $table"
+            );
 
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            $total_count=mysql_result($res, 0, 0);
+            // Retrieve the message_ids for the offset/length.
+            $message_ids = phorum_db_interact(
+                PHORUM_DB_RETURN_ROWS,
+                "SELECT message_id
+                 FROM   $table
+                 ORDER  BY datestamp DESC 
+                 LIMIT  $start, $length"
+            );
 
-            $sql="select message_id from $table order by datestamp desc limit $start, $length";
-            $res = mysql_unbuffered_query($sql, $conn);
-
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-            $idstring="";
-            while ($rec = mysql_fetch_row($res)){
-                $idstring.="$rec[0],";
+            // Create a comma separated list of message_ids, which 
+            // we can use below to construct a query to retrieve
+            // the message data for the message_ids..
+            $idstring = "";
+            foreach ($message_ids as $row) {
+                $idstring .= $row[0] . ",";
             }
-            $idstring=substr($idstring, 0, -1);
-
+            $idstring = substr($idstring, 0, -1);
         }
-    // Handle basic matching.
-    } else {
+    }
 
-        if($match_type=="AUTHOR" || $match_type=="USER_ID"){
+    // ----------------------
+    // HANDLE BASIC MATCHING
+    // ----------------------
 
-            $fld = $match_type=="AUTHOR" ? "author" : "user_id";
-            $sql_core = "from {$PHORUM['message_table']} where $fld='$terms' $forum_where";
+    else
+    {
+        // TODO $terms not escaped here?
 
-            if($match_date>0){
-                $ts=time()-86400*$match_date;
-                $sql_core.=" and datestamp>=$ts";
+        if ($type == "AUTHOR" || $type == "USER_ID")
+        {
+            $field = $type=="AUTHOR" ? "author" : "user_id";
+            $sql_core = "FROM {$PHORUM['message_table']} 
+                         WHERE $field = '$terms'
+                               $forum_where";
+
+            if ($days>0) {
+                $ts = time() - 86400*$days;
+                $sql_core.=" AND datestamp>=$ts";
             }
 
+            // Retrieve the total number of search results.
+            $total_count = phorum_db_interact(
+                PHORUM_DB_RETURN_VALUE,
+                "SELECT count(*) $sql_core"
+            );
 
-            $sql = "select count(*) $sql_core";
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-            $total_count=mysql_result($res, 0, 0);
+            // Retrieve the message_ids for the offset/length.
+            $message_ids = phorum_db_interact(
+                PHORUM_DB_RETURN_ROWS,
+                "SELECT message_id 
+                        $sql_core 
+                 ORDER  BY datestamp DESC 
+                 LIMIT  $start, $length"
+            );
 
-
-            $sql = "select message_id $sql_core order by datestamp desc limit $start, $length";
-
-            $res = mysql_unbuffered_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-            $idstring="";
-            while ($rec = mysql_fetch_row($res)){
-                $idstring.="$rec[0],";
+            // Create a comma separated list of message_ids, which 
+            // we can use below to construct a query to retrieve
+            // the message data for the message_ids..
+            $idstring = "";
+            foreach ($message_ids as $row) {
+                $idstring .= $row[0] . ",";
             }
-            $idstring=substr($idstring, 0, -1);
+            $idstring = substr($idstring, 0, -1);
 
-        } else {
+        } elseif (count($terms)) {
 
-            if(count($terms)){
-
-                $id_table=$PHORUM['search_table']."_ft_".md5(microtime());
-
-                if($match_type=="ALL"){
-                    $conj="and";
-                } else {
-                    $conj="or";
-                }
-
-                // quote strings correctly
-                foreach ($terms as $id => $term) {
-                    $terms[$id] = mysql_escape_string($term);
-                }
-
-                $sql_date = "";
-                if($match_date>0){
-                    $ts=time()-86400*$match_date;
-                    $sql_date =" and datestamp>=$ts";
-                }
-
-                $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
-
-                $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date";
-                $res = mysql_query($sql, $conn);
-
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-                $total_count=mysql_result($res, 0, 0);
-
-                $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date order by datestamp desc limit $start, $length";
-                $res = mysql_unbuffered_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-                $idstring="";
-                while ($rec = mysql_fetch_row($res)){
-                    $idstring.="$rec[0],";
-                }
-                $idstring=substr($idstring, 0, -1);
-
+            // Quote the search terms for use in SQL.
+            foreach ($terms as $id => $term) {
+                $terms[$id] = phorum_db_escape_string($term);
             }
 
+            $conj = $type == "ALL" ? "AND" : "OR";
+
+            $sql_date = "";
+            if ($days>0) {
+                $ts = time() - 86400*$days;
+                $sql_date = " AND datestamp >= $ts";
+            }
+
+            $clause = "( concat(author, ' | ', subject, ' | ', body) like '%".implode("%' $conj concat(author, ' | ', subject, ' | ', body) like '%", $terms)."%' )";
+
+            // Retrieve the total number of search results.
+            $total_count = phorum_db_interact(
+                PHORUM_DB_RETURN_VALUE,
+                "SELECT count(*) 
+                 FROM {$PHORUM['message_table']} 
+                 WHERE status=".PHORUM_STATUS_APPROVED." AND
+                       $clause $forum_where $sql_date"
+            );
+
+            // Retrieve the message_ids for the offset/length.
+            $message_ids = phorum_db_interact(
+                PHORUM_DB_RETURN_ROWS,
+                "SELECT message_id 
+                 FROM   {$PHORUM['message_table']}
+                 WHERE  status=".PHORUM_STATUS_APPROVED." AND
+                        $clause $forum_where $sql_date
+                 ORDER  BY datestamp DESC
+                 LIMIT  $start, $length"
+            );
+
+            // Create a comma separated list of message_ids, which 
+            // we can use below to construct a query to retrieve
+            // the message data for the message_ids..
+            $idstring = "";
+            foreach ($message_ids as $row) {
+                $idstring .= $row[0] . ",";
+            }
+            $idstring = substr($idstring, 0, -1);
         }
 
     }
+    
+    if ($idstring)
+    {
+        $rows = phorum_db_interact(
+            PHORUM_DB_RETURN_ASSOC,
+            "SELECT * 
+             FROM   {$PHORUM['message_table']} 
+             WHERE  message_id IN ($idstring)
+             ORDER  BY datestamp DESC",
+            "message_id"
+        );
 
-    if($idstring){
-        $sql="select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
-        $res = mysql_unbuffered_query($sql, $conn);
-
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-        $rows = array();
-
-        while ($rec = mysql_fetch_assoc($res)){
-            $rows[$rec["message_id"]] = $rec;
-        }
-
-        $arr = array("count" => $total_count, "rows" => $rows);
+        $return["count"] = $total_count;
+        $return["rows"]  = $rows;
     }
 
-    return $arr;
+    return $return;
 }
+
+// --------------------------------------------------------------------- //
+// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
+// --------------------------------------------------------------------- //
+
 
 /**
  * Return the closest thread that is greater than $key.
