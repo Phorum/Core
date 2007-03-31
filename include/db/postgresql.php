@@ -1074,13 +1074,11 @@ function phorum_db_get_newer_thread($key){
 
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
-        $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
-    } else {
-        $approvedval="AND {$PHORUM['message_table']}.parent_id = 0";
+    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+        $approvedval="AND status =".PHORUM_STATUS_APPROVED;
     }
 
-    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} $approvedval and $keyfield>$key order by $keyfield limit 1";
+    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} AND parent_id = 0 $approvedval and $keyfield>$key order by $keyfield limit 1";
 
     $res = pg_query($conn, $sql);
     if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
@@ -1102,13 +1100,11 @@ function phorum_db_get_older_thread($key){
     $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
-        $approvedval="AND {$PHORUM['message_table']}.status=".PHORUM_STATUS_APPROVED;
-    } else {
-        $approvedval="AND {$PHORUM['message_table']}.parent_id = 0";
+    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+        $approvedval="AND status=".PHORUM_STATUS_APPROVED;
     }
 
-    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']}  $approvedval and $keyfield<$key order by $keyfield desc limit 1";
+    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} AND parent_id = 0 $approvedval and $keyfield<$key order by $keyfield desc limit 1";
 
     $res = pg_query($conn, $sql);
     if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
