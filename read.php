@@ -102,10 +102,10 @@ if(empty($PHORUM["args"][1])) {
 
         switch($PHORUM["args"][2]) {
             case "newer":
-                $thread = phorum_db_get_newer_thread($newervar);
+                $thread = phorum_db_get_neighbour_thread($newervar, "newer");
                 break;
             case "older":
-                $thread = phorum_db_get_older_thread($newervar);
+                $thread = phorum_db_get_neighbour_thread($newervar, "older");
                 break;
             case "markthreadread":
 

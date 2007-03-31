@@ -1202,12 +1202,8 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     return $arr;
 }
 
-/**
- * Return the closest thread that is greater than $key.
- * @param int $key
- * @return mixed
- */
-function phorum_db_get_newer_thread($key){
+function phorum_db_get_neighbour_thread($key, $direction)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($key, "int");
@@ -1216,51 +1212,25 @@ function phorum_db_get_newer_thread($key){
 
     $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
 
-    // are we really allowed to show this thread/message?
+    switch ($direction) {
+        case "newer": $compare = ">"; $orderdir = "ASC";  break;
+        case "older": $compare = "<"; $orderdir = "DESC"; break;
+        default:
+            raise_error(
+                "phorum_db_get_neighbour_thread(): " .
+                "Illegal direction \"".htmlspecialchars($direction)."\"",
+                E_USER_ERROR
+            );
+    }
+
+    // If the current user is not a moderator for the forum, then
+    // the neighbour message should be approved.
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
-        $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
-    } else {
-        $approvedval="AND {$PHORUM['message_table']}.parent_id = 0";
+    if (!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+        $approvedval = "AND status = ".PHORUM_STATUS_APPROVED;
     }
 
-    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} $approvedval and $keyfield>$key order by $keyfield limit 1";
-
-    $res = mysqli_query($conn, $sql);
-    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
-    if (mysqli_num_rows($res)) {
-        $tmp_row=mysqli_fetch_row($res);
-        $retid=$tmp_row[0];
-    } else {
-        $retid=0;
-    }
-
-    return $retid;
-}
-
-/**
- * Returns the closest thread that is less than $key.
- * @param int $key
- * @return mixed
- */
-function phorum_db_get_older_thread($key){
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    settype($key, "int");
-
-    $conn = phorum_db_mysqli_connect();
-
-    $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
-    // are we really allowed to show this thread/message?
-    $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
-        $approvedval="AND {$PHORUM['message_table']}.status=".PHORUM_STATUS_APPROVED;
-    } else {
-        $approvedval="AND {$PHORUM['message_table']}.parent_id = 0";
-    }
-
-    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']}  $approvedval and $keyfield<$key order by $keyfield desc limit 1";
+    $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and parent_id = 0 $approvedval and $keyfield $compare $key order by $keyfield $orderdir limit 1";
 
     $res = mysqli_query($conn, $sql);
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
