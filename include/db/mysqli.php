@@ -1781,7 +1781,10 @@ function phorum_db_save_group($group)
     $conn = phorum_db_mysqli_connect();
 
     $ret=false;
+    $permissions = $group["permissions"];
+    phorum_db_sanitize_mixed($permissions, "int");
     phorum_db_sanitize_mixed($group, "string");
+    $group["permissions"] = $permissions;
 
     if(isset($group["name"])){
         $sql="update {$PHORUM['groups_table']} set name='{$group['name']}', open={$group['open']} where group_id={$group['group_id']}";
