@@ -52,7 +52,7 @@
             case "edit":
                 $group = array("group_id" => $_POST["group_id"], "name" => $_POST["name"], "open" => $_POST["open"]);
 
-                if(phorum_db_save_group($group)){
+                if(phorum_db_update_group($group)){
                     echo "Group Saved";
                 } else {
                     echo "Error Saving Group Name";
@@ -101,7 +101,7 @@
                 unset($group["new_forum"]);
                 unset($group["new_permissions"]);
 
-                if(phorum_db_save_group($group)){
+                if(phorum_db_update_group($group)){
                 	// clearing user-cache if needed
                 	if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
 	                	$group_members=phorum_db_get_group_members($_POST["group_id"]);

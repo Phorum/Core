@@ -1888,7 +1888,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
  *
  * @return boolean
  */
-function phorum_db_save_group($group)
+function phorum_db_update_group($group)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysqli_connect();
