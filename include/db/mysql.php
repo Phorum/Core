@@ -1846,12 +1846,13 @@ function phorum_db_get_groups($group_id=0)
  *
  * @return array - users (key is userid, value is group membership status)
  */
-function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMOVE)
+function phorum_db_get_group_members($group_id, $status = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysql_connect();
 
     phorum_db_sanitize_mixed($group_id, "int");
+    if ($status !== NULL) settype($status, "int");
 
     if(is_array($group_id)){
         $group_id=implode(",", $group_id);
@@ -1860,7 +1861,7 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
     // this join is only here so that the list of users comes out sorted
     // if phorum_db_user_get() sorts results itself, this join can go away
     $sql="select {$PHORUM['user_group_xref_table']}.user_id, {$PHORUM['user_group_xref_table']}.status from {$PHORUM['user_table']}, {$PHORUM['user_group_xref_table']} where {$PHORUM['user_table']}.user_id = {$PHORUM['user_group_xref_table']}.user_id and group_id in ($group_id)";
-    if ($status != PHORUM_USER_GROUP_REMOVE) $sql.=" and {$PHORUM['user_group_xref_table']}.status = $status";
+    if ($status !== NULL) $sql.=" and {$PHORUM['user_group_xref_table']}.status = $status";
     $sql .=" order by username asc";
 
     $res = mysql_query($sql, $conn);
@@ -1888,7 +1889,10 @@ function phorum_db_save_group($group)
 
     $ret=false;
 
+    $permissions = $group["permissions"];
+    phorum_db_sanitize_mixed($permissions, "int");
     phorum_db_sanitize_mixed($group, "string");
+    $group["permissions"] = $permissions;
 
     if(isset($group["name"])){
         $sql="update {$PHORUM['groups_table']} set name='{$group['name']}', open={$group['open']} where group_id={$group['group_id']}";
