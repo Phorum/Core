@@ -1714,6 +1714,8 @@ function phorum_db_save_group($group)
             if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
 
             foreach($group["permissions"] as $forum_id=>$permission){
+                settype($forum_id, "int");
+                settype($permission, "int");
                 $sql="insert into {$PHORUM['forum_group_xref_table']} (group_id, permission, forum_id) values ({$group['group_id']}, $permission, $forum_id)";
                 $res=pg_query($conn, $sql);
                 if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
