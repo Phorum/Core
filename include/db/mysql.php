@@ -1775,7 +1775,6 @@ function phorum_db_save_group($group)
     $ret=false;
 
     $permissions = $group["permissions"];
-    phorum_db_sanitize_mixed($permissions, "int");
     phorum_db_sanitize_mixed($group, "string");
     $group["permissions"] = $permissions;
 
@@ -1798,6 +1797,8 @@ function phorum_db_save_group($group)
             if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
             foreach($group["permissions"] as $forum_id=>$permission){
+                settype($forum_id, "int");
+                settype($permission, "int");
                 $sql="insert into {$PHORUM['forum_group_xref_table']} set group_id={$group['group_id']}, permission=$permission, forum_id=$forum_id";
                 $res=mysql_query($sql, $conn);
                 if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
