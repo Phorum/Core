@@ -559,14 +559,14 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
                     $user[$key] = md5( $val );
                 }
                 break;
-            // everything that is not one of the above fields is stored in a
-            // serialized text field for dynamic profile variables.
-            // If the field is not in the PROFILE_FIELDS array, we don't add it.
+            // everything that is not one of the above fields is stored in 
+            // dynamic profile fields. If the field is not in the
+            // PROFILE_FIELDS array, we don't add it.
             default:
                 $type=-1;
                 // find out which ID that custom-field has
                 foreach($PHORUM['PROFILE_FIELDS'] as $ctype => $cdata) {
-                    if($cdata['name'] == $key) {
+                    if($ctype !== 'num_fields' && $cdata['name'] == $key) {
                         $type=$ctype;
                         break;
                     }
@@ -889,7 +889,7 @@ function phorum_user_check_custom_field($field_name,$field_content,$match=0) {
 
     $type=-1;
     foreach($GLOBALS['PHORUM']['PROFILE_FIELDS'] as $ctype => $cdata) {
-        if($cdata['name'] == $field_name) {
+        if($ctype !== 'num_fields' && $cdata['name'] == $field_name) {
             $type=$ctype;
             break;
         }

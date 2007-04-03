@@ -105,7 +105,8 @@ $user["signature_formatted"] = $fake_messages[0]["body"];
 
 // Initialize any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
-    foreach($PHORUM["PROFILE_FIELDS"] as $field) {
+    foreach($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+        if ($id === 'num_fields') continue;
         if (!isset($user[$field['name']])) $user[$field['name']] = "";
     }
 }
@@ -201,7 +202,8 @@ function phorum_controlcenter_user_save($panel)
         'moderation_email'=> NULL,
     );
     // Add custom profile fields as acceptable fields.
-    foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
+    foreach ($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+        if ($id === "num_fields") continue;
         $userdata[$field["name"]] = NULL;
     }
     // Update userdata with $_POST information.
