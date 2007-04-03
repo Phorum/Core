@@ -131,7 +131,8 @@ if (count($_POST)) {
             'email'      => NULL,
         );
         // Add custom profile fields as acceptable fields.
-        foreach ($PHORUM["PROFILE_FIELDS"] as $data) {
+        foreach ($PHORUM["PROFILE_FIELDS"] as $id => $data) {
+            if ($id === 'num_fields') continue;
             $userdata[$data["name"]] = NULL;
         }
         // Update userdata with $_POST information.
@@ -141,7 +142,8 @@ if (count($_POST)) {
            }
         }
         // Remove unused custom profile fields.
-        foreach ($PHORUM["PROFILE_FIELDS"] as $field) {
+        foreach ($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+            if ($id === 'num_fields') continue;
             if (is_null($userdata[$field["name"]])) {
                 unset($userdata[$field["name"]]);
             }
@@ -235,7 +237,8 @@ if (count($_POST)) {
     $PHORUM["DATA"]["ERROR"] = "";
 
     // Initialize custom profile fields.
-    foreach($PHORUM["PROFILE_FIELDS"] as $field) {
+    foreach($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+        if ($id === 'num_fields') continue;
         $PHORUM["DATA"]["REGISTER"][$field["name"]] = "";
     }
 }
