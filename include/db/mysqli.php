@@ -2370,11 +2370,13 @@ function phorum_db_user_add($userdata){
     $values = array();
 
     foreach($userdata as $key => $value){
-        if (!is_numeric($value)){
-            $value = mysqli_real_escape_string($conn, $value);
-            $values[] = "$key='$value'";
-        }else{
-            $values[] = "$key=$value";
+        if (phorum_db_validate_field($key)){
+            if (!is_numeric($value)){
+                $value = mysqli_real_escape_string($conn, $value);
+                $values[] = "$key='$value'";
+            }else{
+                $values[] = "$key=$value";
+            }
         }
     }
 
