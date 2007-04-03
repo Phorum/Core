@@ -327,7 +327,8 @@ function phorum_db_load_settings()
     // admin interface, we do not mind if we do not see that table.
     $settings = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT name, data, type FROM {$PHORUM['settings_table']}",
+        "SELECT name, data, type
+         FROM {$PHORUM['settings_table']}",
         NULL,
         defined("PHORUM_ADMIN") ? DB_MISSINGTABLEOK : 0
     );
@@ -376,9 +377,9 @@ function phorum_db_update_settings($settings)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "REPLACE INTO {$PHORUM['settings_table']}
-                 SET data='$value',
-                     type='$type',
-                     name='$field'"
+                 SET data = '$value',
+                     type = '$type',
+                     name = '$field'"
             );
         }
     }
@@ -495,7 +496,8 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
                 $start = $page * $limit;
 
                 $sql = "SELECT $messagefields
-                        FROM   $table USE INDEX ($index)
+                        FROM   $table
+                        USE    INDEX ($index)
                         WHERE  $sortfield > 0 AND
                                forum_id = {$PHORUM['forum_id']} AND
                                status = ".PHORUM_STATUS_APPROVED." AND
@@ -588,7 +590,8 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     }
 
     $sql = "SELECT  {$PHORUM['message_table']}.*
-            FROM    {$PHORUM['message_table']} USE KEY ($use_key)
+            FROM    {$PHORUM['message_table']}
+            USE     KEY ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
     // We have to check what forums the current user can read first.
@@ -797,10 +800,10 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         $check_timestamp = $NOW - 3600;
         $sql = "SELECT message_id
                 FROM   $table
-                WHERE  forum_id = {$message['forum_id']} AND
-                       author='{$message['author']}' AND
-                       subject='{$message['subject']}' AND
-                       body='{$message['body']}' AND
+                WHERE  forum_id  = {$message['forum_id']} AND
+                       author    ='{$message['author']}' AND
+                       subject   ='{$message['subject']}' AND
+                       body      ='{$message['body']}' AND
                        datestamp > $check_timestamp";
 
         // Return 0 if at least one message can be found.
@@ -811,21 +814,21 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     $metaval = isset($message["meta"]) ? ",meta='{$message['meta']}'" : "";
 
     $sql = "INSERT INTO $table
-            SET    forum_id={$message['forum_id']},
-                   datestamp=$NOW,
-                   thread={$message['thread']},
-                   parent_id={$message['parent_id']},
-                   author='{$message['author']}',
-                   subject='{$message['subject']}',
-                   email='{$message['email']}',
-                   ip='{$message['ip']}',
-                   user_id={$message['user_id']},
-                   moderator_post={$message['moderator_post']},
-                   status={$message['status']},
-                   sort={$message['sort']},
-                   msgid='{$message['msgid']}',
-                   body='{$message['body']}',
-                   closed={$message['closed']}
+            SET    forum_id       = {$message['forum_id']},
+                   datestamp      = $NOW,
+                   thread         = {$message['thread']},
+                   parent_id      = {$message['parent_id']},
+                   author         = '{$message['author']}',
+                   subject        = '{$message['subject']}',
+                   email          = '{$message['email']}',
+                   ip             = '{$message['ip']}',
+                   user_id        = {$message['user_id']},
+                   moderator_post = {$message['moderator_post']},
+                   status         = {$message['status']},
+                   sort           = {$message['sort']},
+                   msgid          = '{$message['msgid']}',
+                   body           = '{$message['body']}',
+                   closed         = {$message['closed']}
                    $metaval";
 
     // When handling a conversion, the message_id can be set.
@@ -873,9 +876,9 @@ function phorum_db_post_message(&$message, $convert=FALSE)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT DELAYED INTO {$PHORUM['search_table']}
-                 SET    message_id={$message['message_id']},
-                        forum_id={$message['forum_id']},
-                        search_text='$search_text'"
+                 SET    message_id  = {$message['message_id']},
+                        forum_id    = {$message['forum_id']},
+                        search_text = '$search_text'"
             );
         }
 
@@ -948,9 +951,9 @@ function phorum_db_update_message($message_id, $message)
         phorum_db_interact(
             DB_RETURN_RES,
             "REPLACE DELAYED INTO {$PHORUM['search_table']}
-             SET     message_id={$message_id},
-                     forum_id={$message['forum_id']},
-                     search_text='$search_text'"
+             SET     message_id  = {$message_id},
+                     forum_id    = {$message['forum_id']},
+                     search_text = '$search_text'"
         );
     }
 }
@@ -1015,9 +1018,9 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
-             SET    parent_id={$rec['parent_id']}
-             WHERE  forum_id={$rec['forum_id']} AND
-                    parent_id={$rec['message_id']}"
+             SET    parent_id = {$rec['parent_id']}
+             WHERE  forum_id  = {$rec['forum_id']} AND
+                    parent_id = {$rec['message_id']}"
         );
     }
 
@@ -1075,8 +1078,8 @@ function phorum_db_get_messagetree($message_id, $forum_id)
         DB_RETURN_ROWS,
         "SELECT message_id
          FROM {$PHORUM['message_table']}
-         WHERE forum_id=$forum_id AND
-               parent_id=$message_id"
+         WHERE forum_id  = $forum_id AND
+               parent_id = $message_id"
     );
 
     // Recursively build the message tree.
@@ -1203,7 +1206,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
     $sql = "SELECT *
             FROM   {$PHORUM['message_table']}
             WHERE  $forum_id_check
-                   thread=$thread
+                   thread = $thread
                    $approvedval
             ORDER  BY message_id";
 
@@ -1244,7 +1247,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
             "SELECT *
              FROM   {$PHORUM['message_table']}
              WHERE  $forum_id_check
-                    message_id=$thread
+                    message_id = $thread
                     $approvedval"
         );
 
@@ -1296,7 +1299,7 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
         "SELECT count(*)
          FROM   {$PHORUM['message_table']}
          WHERE  $forum_id_check
-                thread=$thread
+                thread = $thread
                 $approvedval AND
                 message_id <= $message_id
          ORDER  BY message_id"
@@ -1450,7 +1453,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                  ) ENGINE=HEAP
                  SELECT message_id
                  FROM   {$PHORUM['message_table']}
-                 WHERE  $field='$terms'
+                 WHERE  $field = '$terms'
                         $forum_where
                         $days_where"
             );
@@ -1529,7 +1532,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                         forum_id
                  FROM   {$PHORUM['message_table']}
                         INNER JOIN $id_table USING (message_id)
-                 WHERE  status=".PHORUM_STATUS_APPROVED."
+                 WHERE  status = ".PHORUM_STATUS_APPROVED."
                         $forum_where
                         $days_where"
             );
@@ -1606,7 +1609,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                 DB_RETURN_VALUE,
                 "SELECT count(*)
                  FROM {$PHORUM['message_table']}
-                 WHERE status=".PHORUM_STATUS_APPROVED." AND
+                 WHERE status = ".PHORUM_STATUS_APPROVED." AND
                        $clause
                        $forum_where
                        $days_where"
@@ -1617,7 +1620,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                 DB_RETURN_ROWS,
                 "SELECT message_id
                  FROM   {$PHORUM['message_table']}
-                 WHERE  status=".PHORUM_STATUS_APPROVED." AND
+                 WHERE  status = ".PHORUM_STATUS_APPROVED." AND
                         $clause
                         $forum_where
                         $days_where
@@ -1818,8 +1821,8 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
             DB_RETURN_VALUE,
             "SELECT count(*)
              FROM   {$PHORUM['message_table']}
-             WHERE  forum_id={$PHORUM['forum_id']} AND
-                    status=".PHORUM_STATUS_APPROVED
+             WHERE  forum_id = {$PHORUM['forum_id']} AND
+                    status   = ".PHORUM_STATUS_APPROVED
         );
     } else {
         $message_count = "message_count+$msg_count_change";
@@ -1830,8 +1833,8 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
             DB_RETURN_VALUE,
             "SELECT max(modifystamp)
              FROM   {$PHORUM['message_table']}
-             WHERE  status=".PHORUM_STATUS_APPROVED." AND
-                    forum_id={$PHORUM['forum_id']}"
+             WHERE  status   = ".PHORUM_STATUS_APPROVED." AND
+                    forum_id = {$PHORUM['forum_id']}"
         );
     } else {
         $last_post_time = $timestamp;
@@ -1842,9 +1845,9 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
             DB_RETURN_VALUE,
             "SELECT count(*)
              FROM   {$PHORUM['message_table']}
-             WHERE  forum_id={$PHORUM['forum_id']} AND
-                    parent_id=0 AND
-                    status=".PHORUM_STATUS_APPROVED
+             WHERE  forum_id  = {$PHORUM['forum_id']} AND
+                    parent_id = 0 AND
+                    status    = ".PHORUM_STATUS_APPROVED
         );
     } else {
         $thread_count = "thread_count+$thread_count_change";
@@ -1855,10 +1858,10 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
             DB_RETURN_VALUE,
             "SELECT count(*)
              FROM   {$PHORUM['message_table']}
-             WHERE  forum_id={$PHORUM['forum_id']} AND
-                    sort=".PHORUM_SORT_STICKY." AND
-                    parent_id=0 AND
-                    status=".PHORUM_STATUS_APPROVED
+             WHERE  forum_id  = {$PHORUM['forum_id']} AND
+                    sort      = ".PHORUM_SORT_STICKY." AND
+                    parent_id = 0 AND
+                    status    = ".PHORUM_STATUS_APPROVED
         );
     } else {
         $sticky_count = "sticky_count+$sticky_count_change";
@@ -1903,7 +1906,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
              SET    forum_id = $toforum
-             WHERE  thread = $thread_id"
+             WHERE  thread   = $thread_id"
         );
 
         // Update the stats for the source forum.
@@ -2007,7 +2010,7 @@ function phorum_db_close_thread($thread_id)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
              SET    closed = 1
-             WHERE  thread=$thread_id"
+             WHERE  thread = $thread_id"
         );
     }
 }
@@ -2027,8 +2030,8 @@ function phorum_db_reopen_thread($thread_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
-             SET    closed=0
-             WHERE  thread=$thread_id"
+             SET    closed = 0
+             WHERE  thread = $thread_id"
         );
     }
 }
@@ -2110,7 +2113,7 @@ function phorum_db_drop_forum($forum_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM $table
-             WHERE forum_id=$forum_id"
+             WHERE forum_id = $forum_id"
         );
     }
 
@@ -2153,8 +2156,6 @@ function phorum_db_drop_folder($forum_id)
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($forum_id, "int");
-
-    $conn = phorum_db_mysql_connect();
 
     // See if the $forum_id is really a folder and find its
     // parent_id, which we can use to reattach children of the folder.
@@ -2235,7 +2236,7 @@ function phorum_db_update_forum($forum)
             } elseif($value=="NULL") {
                 $fields[] = "$key=$value";
             } else {
-                $value = mysql_escape_string($value);
+                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
                 $fields[] = "$key='$value'";
             }
         }
@@ -2265,7 +2266,6 @@ function phorum_db_update_forum($forum)
 function phorum_db_get_groups($group_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $conn = phorum_db_mysql_connect();
 
     settype($group_id, "int");
 
@@ -2327,7 +2327,6 @@ function phorum_db_get_groups($group_id=0)
 function phorum_db_get_group_members($group_id, $status = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $conn = phorum_db_mysql_connect();
 
     phorum_db_sanitize_mixed($group_id, "int");
     if ($status !== NULL) settype($status, "int");
@@ -2350,8 +2349,8 @@ function phorum_db_get_group_members($group_id, $status = NULL)
         DB_RETURN_ASSOC,
         "SELECT xref.user_id,
                 xref.status
-         FROM   {$PHORUM['user_table']} users,
-                {$PHORUM['user_group_xref_table']} xref
+         FROM   {$PHORUM['user_table']} AS users,
+                {$PHORUM['user_group_xref_table']} AS xref
          WHERE  users.user_id = xref.user_id
                 $group_where
                 $status_where
@@ -2477,9 +2476,9 @@ function phorum_db_update_group($group)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['forum_group_xref_table']}
-                 SET    group_id = {$group['group_id']},
+                 SET    group_id   = {$group['group_id']},
                         permission = $permission,
-                        forum_id = $forum_id"
+                        forum_id   = $forum_id"
             );
         }
     }
@@ -2510,164 +2509,225 @@ function phorum_db_delete_group($group_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM $table
-             WHERE group_id=$forum_id"
+             WHERE group_id = $forum_id"
         );
     }
 }
 
-
-// --------------------------------------------------------------------- //
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
-// --------------------------------------------------------------------- //
-
 /**
- * Get all moderators for a particular forum.
+ * Get a list of moderators for a particular forum.
  *
- * @param int $forum_id
- * @param boolean $ignore_user_perms
- * @param boolean $for_email
+ * @param $forum_id      - The forum for which to retrieve the moderators.
+ * @param $exclude_admin - If this parameter has a true value, then the
+ *                         admin users are kept out of the list.
+ * @param $for_email     - If this parameter has a true value, then a list
+ *                         of moderators is created for sending moderator
+ *                         mail messages. Moderators which have disabled the
+ *                         moderation_email option will be excluded from 
+ *                         the list in this case.
  *
- * @return array
+ * @return $moderators   - An array of moderators. The keys are user_ids
+ *                         and the values are email addresses.
  */
-function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=FALSE,$for_email=FALSE) {
-
-   $PHORUM = $GLOBALS["PHORUM"];
-   $userinfo=array();
-
-   $conn = phorum_db_mysql_connect();
-
-   settype($forum_id, "int");
-   settype($ignore_user_perms, "bool");
-   settype($for_email, "bool");
-
-   if(!$ignore_user_perms) { // sometimes we just don't need them
-       if(!$PHORUM['email_ignore_admin']) {
-            $admincheck=" OR user.admin=1";
-       } else {
-            $admincheck="";
-       }
-
-
-       $sql="SELECT DISTINCT user.user_id, user.email, user.moderation_email FROM {$PHORUM['user_table']} as user LEFT JOIN {$PHORUM['user_permissions_table']} as perm ON perm.user_id=user.user_id WHERE (perm.permission >= ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0) AND perm.forum_id=$forum_id)$admincheck";
-
-
-       $res = mysql_query($sql, $conn);
-
-       if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-       while ($row = mysql_fetch_row($res)){
-           if(!$for_email || $row[2] == 1)
-                $userinfo[$row[0]]=$row[1];
-       }
-
-   }
-
-   // get users who belong to groups that have moderator access
-   $sql = "SELECT DISTINCT user.user_id, user.email, user.moderation_email FROM {$PHORUM['user_table']} AS user, {$PHORUM['groups_table']} AS groups, {$PHORUM['user_group_xref_table']} AS usergroup, {$PHORUM['forum_group_xref_table']} AS forumgroup WHERE user.user_id = usergroup.user_id AND usergroup.group_id = groups.group_id AND groups.group_id = forumgroup.group_id AND forum_id = $forum_id AND permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0 AND usergroup.status >= ".PHORUM_USER_GROUP_APPROVED;
-
-   $res = mysql_query($sql, $conn);
-
-   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-   while ($row = mysql_fetch_row($res)){
-       if(!$for_email || $row[2] == 1)
-           $userinfo[$row[0]]=$row[1];
-   }
-   return $userinfo;
-}
-
-/**
- * Get a user.
- *
- * @param int $user_id
- * @param boolean $detailed
- *
- * @return array
- */
-function phorum_db_user_get($user_id, $detailed)
+function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_email=FALSE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
+    settype($forum_id, "int");
+    settype($ignore_user_perms, "bool");
+    settype($for_email, "bool");
+
+    // Exclude admins from the list, if requested.
+    $or_where_admin = $exclude_admin ? "" : "OR user.admin=1";
+
+    // If we are gathering email addresses for mailing the moderators,
+    // then honour the moderation_email setting for the user.
+    $where_moderation_mail = $for_email ? "AND user.moderation_email = 1" : "";
+
+    $moderators = array();
+
+    // Look up moderators which are configured through user permissions.
+    $usermods = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT DISTINCT user.user_id,
+                user.email
+         FROM   {$PHORUM['user_table']} AS user
+                LEFT JOIN {$PHORUM['user_permissions_table']} AS perm
+                ON perm.user_id = user.user_id
+         WHERE  ((perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
+                  (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
+                  AND perm.forum_id = $forum_id) $or_where_admin)
+                $where_moderation_mail"
+    );
+
+    // Add them to the moderator list.
+    foreach ($usermods as $mod) $moderators[$mod[0]] = $mod[1];
+    unset($usermods);
+
+    // Look up moderators which are configured through group permissions.
+    $groupmods = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT DISTINCT user.user_id,
+                user.email
+         FROM   {$PHORUM['user_table']} AS user,
+                {$PHORUM['groups_table']} AS groups,
+                {$PHORUM['user_group_xref_table']} AS usergroup,
+                {$PHORUM['forum_group_xref_table']} AS forumgroup
+         WHERE  user.user_id       = usergroup.user_id AND
+                usergroup.group_id = groups.group_id AND
+                groups.group_id    = forumgroup.group_id AND
+                forum_id           = $forum_id AND
+                permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES." > 0 AND
+                usergroup.status  >= ".PHORUM_USER_GROUP_APPROVED."
+                $where_moderation_mail"
+    );
+
+    // Add them to the moderator list.
+    foreach ($groupmods as $mod) $moderators[$mod[0]] = $mod[1];
+    unset($groupmods);
+   
+    return $moderators;
+}
+
+/**
+ * Get one or more users.
+ *
+ * @param $user_id  - The user_id or an array of user_ids for which to
+ *                    retrieve the user data.
+ * @param $detailed - If this parameter has a true value, then the user's
+ *                    permissions and groups are included in the return data.
+ *
+ * @return $return  - If $user_id is a single user_id, then either a 
+ *                    single user or NULL (in case the user_id was not found
+ *                    in the database) is returned.
+ *                    If $user_id is an array of user_ids, then an array of
+ *                    users is returned, indexed by user_id. For user_ids that
+ *                    cannot be found, there will be no array element at all.
+ */
+function phorum_db_user_get($user_id, $detailed = FALSE)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
 
     phorum_db_sanitize_mixed($user_id, "int");
 
-    if(is_array($user_id)){
+    if (is_array($user_id)) {
         if (count($user_id)) {
-            $user_ids=implode(",", $user_id);
+            $user_where = "user_id IN (".implode(",", $user_id).")";
         } else {
             return array();
         }
     } else {
-        $user_ids=(int)$user_id;
+        $user_where = "user_id = $user_id";
     }
 
-    $users = array();
+    // Retrieve the requested user(s) from the database.
+    $users = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT *
+         FROM   {$PHORUM['user_table']}
+         WHERE  $user_where",
+        "user_id"
+    );
 
-    $sql = "select * from {$PHORUM['user_table']} where user_id in ($user_ids)";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    if (mysql_num_rows($res)){
-        while($rec=mysql_fetch_assoc($res)){
-            if (! empty($rec["settings_data"])) {
-                $rec["settings_data"] = unserialize($rec["settings_data"]);
-            } else {
-                $rec["settings_data"] = array();
-            }
-            $users[$rec["user_id"]] = $rec;
-        }
-
-        if ($detailed){
-            // get the users' permissions
-            $sql = "select * from {$PHORUM['user_permissions_table']} where user_id in ($user_ids)";
-
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-            while ($row = mysql_fetch_assoc($res)){
-                $users[$row["user_id"]]["forum_permissions"][$row["forum_id"]] = $row["permission"];
-            }
-
-            // get the users' groups and forum permissions through those groups
-            $sql = "select user_id, {$PHORUM['user_group_xref_table']}.group_id, forum_id, permission from {$PHORUM['user_group_xref_table']} left join {$PHORUM['forum_group_xref_table']} using (group_id) where user_id in ($user_ids) AND {$PHORUM['user_group_xref_table']}.status >= ".PHORUM_USER_GROUP_APPROVED;
-
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-            while ($row = mysql_fetch_assoc($res)){
-                $users[$row["user_id"]]["groups"][$row["group_id"]] = $row["group_id"];
-                if(!empty($row["forum_id"])){
-                    if(!isset($users[$row["user_id"]]["group_permissions"][$row["forum_id"]])) {
-                         $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] = 0;
-                    }
-                    $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] = $users[$row["user_id"]]["group_permissions"][$row["forum_id"]] | $row["permission"];
-                }
-            }
-
-        }
-        $sql = "select * from {$PHORUM['user_custom_fields_table']} where user_id in ($user_ids)";
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-        while ($row = mysql_fetch_assoc($res)){
-            if(isset($PHORUM["PROFILE_FIELDS"][$row['type']])) {
-                if($PHORUM["PROFILE_FIELDS"][$row['type']]['html_disabled']) {
-                    $users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = htmlspecialchars($row["data"]);
-                } else { // not html-disabled
-                    if(substr($row["data"],0,6) == 'P_SER:') {
-                        // P_SER (PHORUM_SERIALIZED) is our marker telling this field is serialized
-                        $users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = unserialize(substr($row["data"],6));
-                    } else {
-                        $users[$row["user_id"]][$PHORUM["PROFILE_FIELDS"][$row['type']]['name']] = $row["data"];
-                    }
-                }
-            }
-        }
-
+    // Unpack the settings_data.
+    foreach ($users as $id => $user) {
+        $users[$id]["settings_data"] = empty($user["settings_data"])
+                                     ? array()
+                                     : unserialize($user["settings_data"]);
     }
 
-    if(is_array($user_id)){
+    // Retrieve detailed group and permission information for the user(s).
+    if ($detailed)
+    {
+        // Retrieve forum user permissions for the requested users.
+        $forum_permissions = phorum_db_interact(
+            DB_RETURN_ROWS,
+            "SELECT user_id,
+                    forum_id,
+                    permission
+             FROM   {$PHORUM['user_permissions_table']}
+             WHERE  $user_where"
+        );
+
+        // Add forum user permissions to the users.
+        foreach ($forum_permissions as $perm) {
+            $users[$perm[0]]["forum_permissions"][$perm[1]] = $perm[2];
+        }
+
+        // Retrieve forum group permissions and groups for the requested users.
+        $group_permissions = phorum_db_interact(
+            DB_RETURN_ROWS,
+            "SELECT user_id,
+                    userxref.group_id,
+                    forum_id,
+                    permission
+             FROM   {$PHORUM['user_group_xref_table']} AS userxref
+                    LEFT JOIN {$PHORUM['forum_group_xref_table']} AS forumxref
+                    USING (group_id)
+             WHERE  $user_where AND
+                    userxref.status >= ".PHORUM_USER_GROUP_APPROVED
+        );
+
+        // Add groups and forum group permissions to the users.
+        foreach ($group_permissions as $perm)
+        {
+            // Add the group_id to the user data.
+            $users[$perm[0]]["groups"][$perm[1]] = $perm[$perm[1]]; 
+
+            // Are we handling a group permissions record?
+            if (!empty($perm[2]))
+            {
+                // Initialize group permissions for the forum_id in the
+                // user data.
+                if (!isset($users[$perm[0]]["group_permissions"][$perm[2]])) {
+                    $users[$perm[0]]["group_permissions"][$perm[2]] = 0;
+                }
+
+                // Merge the group permission by logical OR-ing the permission
+                // with the permissions that we've got so far for the forum_id
+                // in the user data.
+                $users[$perm[0]]["group_permissions"][$perm[2]] |= $perm[3];
+            }
+        }
+    }
+
+    // Retrieve custom user profile fields for the requested users.
+    $custom_fields = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT *
+         FROM   {$PHORUM['user_custom_fields_table']}
+         WHERE  $user_where"
+    );
+
+    // Add custom user profile fields to the users.
+    foreach ($custom_fields as $fld)
+    {
+        // Skip unknown custom profile fields.
+        if (! isset($PHORUM["PROFILE_FIELDS"][$fld["type"]])) continue;
+
+        // Fetch the name for the custom profile field.
+        $name = $PHORUM["PROFILE_FIELDS"][$fld["type"]]["name"];
+
+        // For "html_disabled" fields, the data is XSS protected by
+        // replacing special HTML characters with their HTML entities.
+        if ($PHORUM["PROFILE_FIELDS"][$fld["type"]]["html_disabled"]) {
+            $users[$fld["user_id"]][$name] = htmlspecialchars($fld["data"]);
+            continue;
+        }
+
+        // Other fields can either contain raw values or serialized
+        // arrays. For serialized arrays, the field data is prefixed with
+        // a magic "P_SER:" (Phorum serialized) marker.
+        if (substr($fld["data"],0,6) == "P_SER:") {
+            $users[$fld["user_id"]][$name]=unserialize(substr($fld["data"],6));
+            continue;
+        }
+
+        // The rest of the fields contain raw field data.
+        $users[$fld["user_id"]][$name] = $fld["data"];
+    }
+
+    if (is_array($user_id)) {
         return $users;
     } else {
         return isset($users[$user_id]) ? $users[$user_id] : NULL;
@@ -2675,314 +2735,363 @@ function phorum_db_user_get($user_id, $detailed)
 }
 
 /**
- * Retrieve a couple of fields from the user-table for a couple of
- * users or only one of them.
+ * Get the data for a couple of user table fields for one or more users.
  *
- * @param mixed $user_id
- *              Can be an int or array or ints.
- * @param mixed $fields
- *              Can be a string or an array of strings.
+ * @param $user_id  - The user_id or an array of user_ids for which to
+ *                    retrieve the field data.
+ * @param $fields   - The field or an array of fields for which to 
+ *                    retrieve the data.
  *
- * @return array
- *              One or more users.
+ * @return $users   - An array of users (no matter what type of variable
+ *                    $user_id is), indexed by user_id. For user_ids that
+ *                    cannot be found, there will be no array element at all.
  */
 function phorum_db_user_get_fields($user_id, $fields)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
     phorum_db_sanitize_mixed($user_id, "int");
 
-    // input could be either array or string
-    if(is_array($user_id)){
-        $user_ids=implode(",", $user_id);
+    if (is_array($user_id)) {
+        if (count($user_id)) {
+            $user_where = "user_id IN (".implode(",", $user_id).")";
+        } else {
+            return array();
+        }
     } else {
-        $user_ids=(int)$user_id;
+        $user_where = "user_id = $user_id";
     }
 
     if(!is_array($fields)) {
         $fields = array($fields);
     }
-
-    foreach($fields as $key=>$field){
+    foreach($fields as $key => $field){
         if(!phorum_db_validate_field($field)){
             unset($fields[$key]);
         }
     }
 
-    $sql = "select user_id, ".implode(",", $fields)." from {$PHORUM['user_table']} where user_id in ($user_ids)";
-
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    $users = array();
-
-    if (mysql_num_rows($res)){
-        while($rec=mysql_fetch_assoc($res)){
-            $users[$rec["user_id"]] = $rec;
-        }
-    }
+    $users = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT user_id, ".implode(",", $fields)."
+         FROM   {$PHORUM['user_table']}
+         WHERE  $user_where"
+    );
 
     return $users;
 }
 
 /**
- * Get a list of all users of a certain type.
+ * Get a list of all users for a given type.
  *
- * @param $type - what type of list to retrieve.
- *                0 = all users
- *                1 = all active users
- *                2 = all inactive users
- * @return array - key: userid, value: array (username, displayname)
+ * @param $type   - The type of users to retrieve:
+ *                  0 = all users
+ *                  1 = all active users
+ *                  2 = all inactive users
+ *
+ * @return $users - An array of users, indexed by user_id. The values
+ *                  are arrays containing the fields "user_id", "username" and 
+ *                  "displayname".
  */
-function phorum_db_user_get_list($type = 0){
-   $PHORUM = $GLOBALS["PHORUM"];
+function phorum_db_user_get_list($type = 0)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
 
-   $conn = phorum_db_mysql_connect();
+    settype($type, "int");
 
-   settype($type, "int");
+    $where = '';
+    if     ($type == 1) $where = "WHERE active  = 1";
+    elseif ($type == 2) $where = "WHERE active != 1";
+ 
+    $users = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT user_id,
+                username,
+                username AS displayname
+         FROM   {$PHORUM['user_table']}
+                $where
+         ORDER  BY username ASC",
+        "user_id"
+    );
 
-   $where = '';
-   if ($type == 1) $where = "where active = 1";
-   elseif ($type == 2) $where = "where active != 1";
-
-   $users = array();
-   $sql = "select user_id, username from {$PHORUM['user_table']} $where order by username asc";
-   $res = mysql_query($sql, $conn);
-   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-   while ($row = mysql_fetch_assoc($res)){
-       $users[$row["user_id"]] = array("username" => $row["username"], "displayname" => $row["username"]);
-   }
-
-   return $users;
+    return $users;
 }
 
 /**
- * Check if the user's password is correct.
+ * Check if a user's password is correct.
  *
- * @param string $username
- * @param string $password
- * @param boolean $temp_password
+ * @param $username      - The username for the user.
+ * @param $password      - The password for the user.
+ * @param $temp_password - If this parameter has a true value, the 
+ *                         password_temp field will be checked instead of
+ *                         the password field.
  *
- * @return int
- *              Return the user ID if the password is correct, or zero if not.
+ * @return $user_id      -  The user_id if the password is correct or
+ *                          0 (zero) if the password is wrong.
  */
-function phorum_db_user_check_pass($username, $password, $temp_password=FALSE){
+function phorum_db_user_check_pass($username, $password, $temp_password=FALSE)
+{
     $PHORUM = $GLOBALS["PHORUM"];
-
-    $conn = phorum_db_mysql_connect();
 
     settype($temp_password, "bool");
-    $username = mysql_escape_string($username);
-    $password = mysql_escape_string($password);
+    $username = phorum_db_interact(DB_RETURN_QUOTED, $username);
+    $password = phorum_db_interact(DB_RETURN_QUOTED, $password);
 
-    $pass_field = ($temp_password) ? "password_temp" : "password";
+    $pass_field = $temp_password ? "password_temp" : "password";
 
-    $sql = "select user_id from {$PHORUM['user_table']} where username='$username' and $pass_field='$password'";
+    $user_id = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT user_id
+         FROM   {$PHORUM['user_table']}
+         WHERE  username    = '$username' AND
+                $pass_field = '$password'"
+    );
 
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    return ($res && mysql_num_rows($res)) ? mysql_result($res, 0, "user_id") : 0;
+    return $user_id ? $user_id : 0;
 }
 
 /**
- * Check for the given field in the user table and return the user_id
- * of the user it matches or 0 if no match is found.
+ * Search for users, based on a simple search condition,
+ * which can be used to search on any field in the user table.
  *
- * The parameters can be arrays.  If they are, all must be passed and all
- * must have the same number of values.
+ * The parameters $field, $value and $operator (which are used for defining
+ * the search condition) can be arrays or single values. If arrays are used,
+ * then all three parameter arrays must contain the same number of elements
+ * and the key values in the arrays must be the same.
+ * 
+ * @param $field        - The user table field / fields to search on.
+ * @param $value        - The value / values to search for.
+ * @param $operator     - The operator / operators to use. Valid operators are
+ *                        "=", "!=", "<>", "<", ">", ">=" and "<=".
+ * @param $return_array - If this parameter has a true value, then an array
+ *                        of all matching user_ids will be returned. Else, a 
+ *                        single user_id will be returned.
  *
- * If $return_array is true, an array of all matching rows will be returned.
- * Otherwise, only the first user_id from the results will be returned.
- *
- * @param mixed $field
- * @param mixed $value
- * @param string $operator
- * @param boolean $return_array
- *
- * @return mixed
+ * @return $users       - An array of user_ids or a single user_id, based on
+ *                        the $return_array parameter. If no user_ids can
+ *                        be found at all, then 0 (zero) will be returned.
  */
-function phorum_db_user_check_field($field, $value, $operator="=", $return_array=FALSE){
+function phorum_db_user_check_field($field, $value, $operator="=", $return_array=FALSE)
+{
     $PHORUM = $GLOBALS["PHORUM"];
-
-    $ret = 0;
 
     settype($return_array, "bool");
 
-    $conn = phorum_db_mysql_connect();
+    // Convert all search condition parameters to arrays.
+    if (!is_array($field))    $field    = array($field);
+    if (!is_array($value))    $value    = array($value);
+    if (!is_array($operator)) $operator = array($operator);
 
-    if(!is_array($field)){
-        $field=array($field);
-    }
-
-    if(!is_array($value)){
-        $value=array($value);
-    }
-
-    if(!is_array($operator)){
-        $operator=array($operator);
-    }
-
-    if (count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){
-        return $ret;
-    }
+    // Basic check to see if all condition arrays contain the
+    // same number of elements.
+    if (count($field) != count($value) ||
+        count($field) != count($operator)) raise_error(
+        "phorum_db_user_check_field(): array parameters \$field, \$value, " .
+        "and \$operator do not contain the same number of elements",
+        E_USER_ERROR
+    );
 
     $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=");
 
-    foreach($field as $key=>$name){
-        if(in_array($operator[$key], $valid_operators) && phorum_db_validate_field($name)){
-            $value[$key] = mysql_escape_string($value[$key]);
-            $clauses[]="$name $operator[$key] '$value[$key]'";
+    // Construct the required "WHERE" clauses.
+    foreach($field as $key => $name) {
+        if (in_array($operator[$key], $valid_operators) && 
+            phorum_db_validate_field($name)) {
+            $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
+            $clauses[] = "$name $operator[$key] '$value[$key]'";
         }
     }
 
-    $sql = "select user_id from {$PHORUM['user_table']} where ".implode(" and ", $clauses);
+    // If we do not need to return an array, the we can limit the 
+    // query results to only one record.
+    $limit = $return_array ? "" : "LIMIT 1";
 
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    // Retrieve the matching user_ids from the database.
+    $user_ids = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT user_id
+         FROM   {$PHORUM['user_table']}
+         WHERE ".implode(" AND ", $clauses)."
+         $limit",
+        0
+    );
 
-    if ($res && mysql_num_rows($res)){
-        if($return_array){
-            $ret=array();
-            while($row=mysql_fetch_assoc($res)){
-                $ret[$row["user_id"]]=$row["user_id"];
-            }
-        } else {
-            $ret = mysql_result($res, 0, "user_id");
-        }
+    // No user_ids found at all?
+    if (count($user_ids) == 0) return 0;
+
+    // Return an array of user_ids.
+    if ($return_array) {
+        foreach ($user_ids as &$user_id) $user_id = $user_id[0];
+        return $user_ids;
     }
 
-    return $ret;
+    // Return a single user_id.
+    list ($user_id, $dummy) = each($user_ids);
+    return $user_id;
 }
-
 
 /**
  * Add a user.
  *
- * @param array $userdata
+ * @param $userdata - An array containing the fields to insert into the
+ *                    user table. The array can contain two special fields:
+ *                    forum_permissions  This field can contain an array
+ *                                       with forum permissions for the user.
+ *                                       The keys are forum_ids and the
+ *                                       values are permission values.
+ *                    user_data          This field can contain an array
+ *                                       of key/value pairs which will be
+ *                                       inserted in the database as custom
+ *                                       profile fields. The keys are profile
+ *                                       type ids (as defined by
+ *                                       $PHORUM["PROFILE_FIELDS"]).
  *
- * @return int
- *              The user ID of the new user.
+ * @return $user_id - The user_id that was assigned to the new user.
+ *
+ * TODO: maybe we should use the user_save function for handling
+ * TODO: updating forum_permissions and user_data, because now there's
+ * TODO: quite some overlap between add and save. The add function could
+ * TODO: call the save function after creating the initial basic user record.
  */
-function phorum_db_user_add($userdata){
+function phorum_db_user_add($userdata)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
-    if (isset($userdata["forum_permissions"]) && !empty($userdata["forum_permissions"])){
-        $forum_perms = $userdata["forum_permissions"];
+    // Pull some non user table fields from the userdata.
+    if (isset($userdata["forum_permissions"])) {
+        if (!empty($userdata["forum_permissions"])) {
+            $forum_perms = $userdata["forum_permissions"];
+        }
         unset($userdata["forum_permissions"]);
     }
-
-    if (isset($userdata["user_data"]) && !empty($userdata["user_data"])){
-        $user_data = $userdata["user_data"];
+    if (isset($userdata["user_data"])) {
+        if (!empty($userdata["user_data"])) {
+            $user_data = $userdata["user_data"];
+        }
         unset($userdata["user_data"]);
     }
 
-
-    $sql = "insert into {$PHORUM['user_table']} set ";
-
+    // Prepare the user table fields.
     $values = array();
-
     foreach($userdata as $key => $value){
-        if (!is_numeric($value)){
-            $value = mysql_escape_string($value);
-            $values[] = "$key='$value'";
-        }else{
-            $values[] = "$key=$value";
+        if (phorum_db_validate_field($key)){
+            if (!is_numeric($value)){
+                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                $values[] = "$key='$value'";
+            }else{
+                $values[] = "$key=$value";
+            }
+        }
+    }
+    
+    // Insert the user record in the database.
+    $user_id = phorum_db_interact(
+        DB_RETURN_NEWID,
+        "INSERT INTO {$PHORUM['user_table']}
+         SET ".implode(", ", $values)
+    );
+
+    // Assign user forum permissions.
+    if (isset($forum_perms)) {
+        foreach($forum_perms as $forum_id => $permission) {
+            phorum_db_interact(
+                DB_RETURN_RES,
+                "INSERT INTO {$PHORUM['user_permissions_table']}
+                 SET    user_id    = $user_id,
+                        forum_id   = $forum_id,
+                        permission = $permission"
+            );
         }
     }
 
-    $sql .= implode(", ", $values);
-
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    $user_id = 0;
-    if ($res){
-        $user_id = mysql_insert_id($conn);
-    }
-
-    if ($res){
-        if(isset($forum_perms)) {
-            // storing forum-permissions
-            foreach($forum_perms as $fid => $p){
-                $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$p";
-                $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()){
-                    phorum_db_mysql_error("$err: $sql");
-                    break;
-                }
+    // Assign custom profile fields.
+    if (isset($user_data)) {
+        foreach ($user_data as $key => $val)
+        {
+            // Arrays need to be serialized. The serialized data is prefixed
+            // with "P_SER:" as a marker for serialization.
+            if (is_array($val)) {
+                $val = 'P_SER:'.serialize($val);
+            } else {
+                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
             }
-        }
-        if(isset($user_data)) {
-            /* storing custom-fields */
-            foreach($user_data as $key => $val){
-                if(is_array($val)) { /* arrays need to be serialized */
-                    $val = 'P_SER:'.serialize($val);
-                    /* P_SER: (PHORUM_SERIALIZED is our marker telling this Field is serialized */
-                } else { /* other vars need to be escaped */
-                    $val = mysql_escape_string($val);
-                }
-                $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
-                $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()){
-                    phorum_db_mysql_error("$err: $sql");
-                    break;
-                }
-            }
+
+            phorum_db_interact(
+                DB_RETURN_RES,
+                "INSERT INTO {$PHORUM['user_custom_fields_table']}
+                 SET    user_id = $user_id,
+                        type    = $key,
+                        data    = '$val'"
+            );
         }
     }
 
     return $user_id;
 }
 
-
 /**
- * Update a user's data.
+ * Update a user.
  *
- * @param array $userdata
+ * @param $userdata - An array containing the fields to update in the
+ *                    user table. The array should contain at least 
+ *                    the user_id field to identify the user for which
+ *                    to update the data.
  *
- * @return boolean
+ * @return $success - True if all settings were stored successfully. This
+ *                    function will always return TRUE, so we could
+ *                    do without a return value. The return value is
+ *                    here for backward compatibility.
+ *
+ * TODO: for consistency in function names, this function might have
+ * TODO: be named phorum_db_user_update(). But we should look at all
+ * TODO: function names to see if renaming them makes sense.
  */
-function phorum_db_user_save($userdata){
+function phorum_db_user_save($userdata)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysql_connect();
 
-    if(isset($userdata["permissions"])){
+    // Pull some non user table fields from the userdata.
+    if (isset($userdata["permissions"])) {
         unset($userdata["permissions"]);
     }
-
-    if (isset($userdata["forum_permissions"])){
-        $forum_perms = $userdata["forum_permissions"];
+    if (isset($userdata["forum_permissions"])) {
+        if (!empty($userdata["forum_permissions"])) {
+            $forum_perms = $userdata["forum_permissions"];
+        }
         unset($userdata["forum_permissions"]);
     }
-
-    if (isset($userdata["groups"])){
+    if (isset($userdata["groups"])) {
         $groups = $userdata["groups"];
         unset($userdata["groups"]);
+    }
+    if (isset($userdata["group_permissions"])) {
         unset($userdata["group_permissions"]);
     }
-    if (isset($userdata["user_data"])){
+    if (isset($userdata["user_data"])) {
         $user_data = $userdata["user_data"];
         unset($userdata["user_data"]);
     }
 
+    // The user_id is required as a separate variable.
+    if (!isset($userdata["user_id"])) raise_error(
+        "phorum_db_user_save(): the user_id field is missing in the " .
+        "\$userdata argument",
+        E_USER_ERROR
+    );
     $user_id = $userdata["user_id"];
     unset($userdata["user_id"]);
 
-    if(count($userdata)){
-
-        $sql = "update {$PHORUM['user_table']} set ";
-
+    // If there are standard user table fields in the userdata then
+    // update the user table for the user.
+    if(count($userdata))
+    {
+        // Prepare the user table fields.
         $values = array();
-
-        foreach($userdata as $key => $value){
-            if ($key == "settings_data") {
+        foreach($userdata as $key => $value) {
+            if (!phorum_db_validate_field($key)) continue;
+            if ($key === "settings_data") {
                 if (is_array($value)) {
                     $value = serialize($value);
                 } else trigger_error(
@@ -2990,66 +3099,87 @@ function phorum_db_user_save($userdata){
                     "phorum_db_user_save() must be an array", E_USER_ERROR
                 );
             }
-            $values[] = "$key='".mysql_escape_string($value)."'";
+            $value = phorum_db_interact(DB_RETURN_QUOTED, $value); 
+            $values[] = "$key='$value'";
         }
 
-        $sql .= implode(", ", $values);
-
-        $sql .= " where user_id=$user_id";
-
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        // Update the fields in the database.
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM['user_table']}
+             SET    ".implode(", ", $values)."
+             WHERE  user_id = $user_id"
+        );
     }
 
-    if (isset($forum_perms)){
+    // Update forum permissions for the user.
+    if (isset($forum_perms))
+    {
+        // Delete all the existing forum permissions.
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$PHORUM['user_permissions_table']}
+             WHERE  user_id = $user_id"
+        );
 
-        $sql = "delete from {$PHORUM['user_permissions_table']} where user_id = $user_id";
-        $res=mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        // Add new forum permissions.
+        foreach ($forum_perms as $forum_id => $permission) {
+            phorum_db_interact(
+                DB_RETURN_RES,
+                "INSERT INTO {$PHORUM['user_permissions_table']}
+                 SET    user_id    = $user_id,
+                        forum_id   = $fid,
+                        permission = $perms"
+            );
+        }
+    }
 
-        foreach($forum_perms as $fid=>$perms){
-            $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$perms";
-            $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()){
-                phorum_db_mysql_error("$err: $sql");
+    // Update custom user fields for the user.
+    if (isset($user_data))
+    {
+        // Delete all the existing custom profile fields.
+        phorum_d_interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$PHORUM['user_custom_fields_table']}
+             WHERE  user_id = $user_id"
+        );
+
+        // Insert new custom profile fields.
+        foreach ($user_data as $key => $val)
+        {
+            // Arrays need to be serialized. The serialized data is prefixed
+            // with "P_SER:" as a marker for serialization.
+            if (is_array($val)) {
+                $val = 'P_SER:'.serialize($val);
+            } else {
+                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
             }
-        }
-    }
-    if(isset($user_data)) {
-        // storing custom-fields
-        $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id = $user_id";
-        $res=mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-        if(is_array($user_data)) {
-            foreach($user_data as $key => $val){
-                if(is_array($val)) { /* arrays need to be serialized */
-                    $val = 'P_SER:'.serialize($val);
-                    /* P_SER: (PHORUM_SERIALIZED is our marker telling this Field is serialized */
-                } else { /* other vars need to be escaped */
-                    $val = mysql_escape_string($val);
-                }
-
-                $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
-                $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()){
-                    phorum_db_mysql_error("$err: $sql");
-                    break;
-                }
-            }
+            phorum_db_interact(
+                DB_RETURN_RES,
+                "INSERT INTO {$PHORUM['user_custom_fields_table']}
+                 SET    user_id = $user_id,
+                        type    = $key,
+                        data    = '$val'"
+            );
         }
     }
 
-    return (bool)$res;
+    return TRUE;
 }
 
 /**
- * Save a user's group permissions.
+ * Save the groups memberships for a user.
  *
- * @param int $user_id
- * @param array $groups
+ * @param $user_id  - The user_id for which to save the group memberships.
+ * @param $groups   - The group memberships to save. This is an array in
+ *                    which the keys are group_ids and the values are group
+ *                    statuses.
  *
- * @return boolean
+ * @return $success - True if all settings were stored successfully. This
+ *                    function will always return TRUE, so we could
+ *                    do without a return value. The return value is
+ *                    here for backward compatibility.
  */
 function phorum_db_user_save_groups($user_id, $groups)
 {
@@ -3057,38 +3187,55 @@ function phorum_db_user_save_groups($user_id, $groups)
 
     settype($user_id, "int");
 
-    if (!$user_id > 0){
-        return FALSE;
-    }
+    // Delete all existing group memberships.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['user_group_xref_table']}
+         WHERE  user_id = $user_id"
+    );
 
-    // erase the group memberships they have now
-    $conn = phorum_db_mysql_connect();
-    $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id = $user_id";
-    $res=mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    foreach($groups as $group_id => $group_perm){
+    // Insert new group memberships.
+    foreach ($groups as $group_id => $group_status) {
         $group_id = (int)$group_id;
-        $group_perm = (int)$group_perm;
-        $sql = "insert into {$PHORUM['user_group_xref_table']} set user_id=$user_id, group_id=$group_id, status=$group_perm";
-        mysql_query($sql, $conn);
-        if ($err = mysql_error()){
-            phorum_db_mysql_error("$err: $sql");
-            break;
-        }
+        $group_status = (int)$group_status;
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "INSERT INTO {$PHORUM['user_group_xref_table']}
+             SET    user_id  = $user_id,
+                    group_id = $group_id,
+                    status   = $group_status"
+        );
     }
-    return (bool)$res;
+
+    return TRUE;
 }
 
 /**
  * Subscribe a user to a forum/thread.
  *
- * @param int $user_id
- * @param int $forum_id
- * @param int $thread
- * @param int $type
+ * Remark: currently, there's no active support for subscription type
+ * PHORUM_SUBSCRIPTION_DIGEST in the Phorum core. 
  *
- * @return boolean
+ * @param $user_id  - The id of the user to create a suscription for.
+ * @param $forum_id - The id of the forum to subscribe to
+ * @param $thread   - The id of the thread to subscribe to.
+ * @param $type     - The type of subscription. Available types are:
+ *                    PHORUM_SUBSCRIPTION_MESSAGE
+ *                        Subscribe to the thread and retrieve a mail message
+ *                        for every new message in the thread.
+ *                    PHORUM_SUBSCRIPTION_DIGEST
+ *                        Subscribe to the thread and retrieve periodic
+ *                        digests of new messages in the thread.
+ *                        TODO: is this description correct for the original
+ *                        TODO: intended use of this type?
+ *                    PHORUM_SUBSCRIPTION_BOOKMARK
+ *                        Subscribe to the thread so it's available on the
+ *                        followed threads page.
+ *
+ * @return $success - True if the subscription was stored successfully. This
+ *                    function will always return TRUE, so we could
+ *                    do without a return value. The return value is
+ *                    here for backward compatibility.
  */
 function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 {
@@ -3099,16 +3246,23 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
     settype($thread, "int");
     settype($type, "int");
 
-    $conn = phorum_db_mysql_connect();
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "REPLACE INTO {$PHORUM['subscribers_table']}
+         SET     user_id  = $user_id,
+                 forum_id = $forum_id,
+                 thread   = $thread,
+                 sub_type = $type"
+    );
 
-    $sql = "replace into {$PHORUM['subscribers_table']} set user_id=$user_id, forum_id=$forum_id, sub_type=$type, thread=$thread";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    return (bool)$res;
+    return TRUE;
 }
+
+
+
+// --------------------------------------------------------------------- //
+// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
+// --------------------------------------------------------------------- //
 
 /**
  * Increment the post-counter for a user.
