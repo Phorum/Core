@@ -62,7 +62,8 @@ unset($user["permissions"]);
 
 // set any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
-    foreach($PHORUM["PROFILE_FIELDS"] as $field) {
+    foreach($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+        if ($id === 'num_fields') continue;
         if (!isset($user[$field['name']])) $user[$field['name']] = "";
     }
 }

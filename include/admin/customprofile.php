@@ -35,8 +35,8 @@
 
         if($_POST['curr'] == 'NEW') {
             // checking names of existing fields
-            foreach($PHORUM['PROFILE_FIELDS'] as $profile_field) {
-                if($profile_field['name'] == $_POST['string']) {
+            foreach($PHORUM['PROFILE_FIELDS'] as $id => $profile_field) {
+                if($id !== 'num_fields' && $profile_field['name'] == $_POST['string']) {
                     $exists_already = true;
                     break;
                 }
