@@ -155,7 +155,7 @@ if ($success)
             "id"    => $message["message_id"],
             "forum" => $message["forum_id"],
         )));
-        phorum_user_addpost();
+        phorum_user_addpost($PHORUM["user"]["user_id"]);
     }
 
     // Actions for messages which are approved.

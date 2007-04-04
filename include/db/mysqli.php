@@ -2599,11 +2599,13 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
  *
  * @return boolean
  */
-function phorum_db_user_addpost() {
+function phorum_db_user_addpost($user_id) {
+
+        settype($user_id, "int");
 
         $conn = phorum_db_mysqli_connect();
 
-        $sql="UPDATE ".$GLOBALS['PHORUM']['user_table']." SET posts=posts+1 WHERE user_id = ".$GLOBALS['PHORUM']['user']['user_id'];
+        $sql="UPDATE ".$GLOBALS['PHORUM']['user_table']." SET posts=posts+1 WHERE user_id = $user_id";
         $res=mysqli_query($conn, $sql);
 
         if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");

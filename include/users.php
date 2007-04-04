@@ -860,9 +860,9 @@ function phorum_user_save_groups($user_id, $groups)
     return phorum_db_user_save_groups($user_id, $groups);
 }
 
-function phorum_user_addpost()
+function phorum_user_addpost($user_id)
 {
-    return phorum_db_user_addpost();
+    return phorum_db_user_addpost($user_id);
 }
 
 function phorum_user_delete($user_id)
