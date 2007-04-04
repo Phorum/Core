@@ -1699,8 +1699,8 @@ function phorum_db_get_neighbour_thread($key, $direction)
         $approvedval = "AND status = ".PHORUM_STATUS_APPROVED;
     }
 
-    // Select and return the neighbour from the database.
-    return phorum_db_interact(
+    // Select the neighbour from the database.
+    $thread = phorum_db_interact(
         DB_RETURN_VALUE,
         "SELECT thread
          FROM   {$PHORUM['message_table']}
@@ -1711,6 +1711,8 @@ function phorum_db_get_neighbour_thread($key, $direction)
          ORDER  BY $keyfield $orderdir
          LIMIT  1"
     );
+
+    return $thread;
 }
 
 /**
@@ -2346,7 +2348,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
     // This join is only here so that the list of members comes out sorted.
     // If phorum_db_user_get() sorts results itself, this join can go away.
     $members = phorum_db_interact(
-        DB_RETURN_ASSOC,
+        DB_RETURN_ROWS,
         "SELECT xref.user_id,
                 xref.status
          FROM   {$PHORUM['user_table']} AS users,
@@ -2359,7 +2361,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
     );
 
     // The records are full rows, but we want a user_id -> status mapping.
-    foreach($members as &$member) $member = $member["status"];
+    foreach($members as &$member) $member = $member[1];
 
     return $members;
 }
@@ -2596,6 +2598,9 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
  *                    retrieve the user data.
  * @param $detailed - If this parameter has a true value, then the user's
  *                    permissions and groups are included in the return data.
+ * @param $sortkey  - The user table field to sort the records by.
+ * @param $sortdir  - The direction for sorting. This parameter must be either
+ *                    "ASC" (ascending sort) or "DESC" (descending sort).
  *
  * @return $return  - If $user_id is a single user_id, then either a 
  *                    single user or NULL (in case the user_id was not found
@@ -2604,12 +2609,12 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
  *                    users is returned, indexed by user_id. For user_ids that
  *                    cannot be found, there will be no array element at all.
  */
-function phorum_db_user_get($user_id, $detailed = FALSE)
+function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     phorum_db_sanitize_mixed($user_id, "int");
-
+    
     if (is_array($user_id)) {
         if (count($user_id)) {
             $user_where = "user_id IN (".implode(",", $user_id).")";
@@ -2620,12 +2625,33 @@ function phorum_db_user_get($user_id, $detailed = FALSE)
         $user_where = "user_id = $user_id";
     }
 
+    $orderby = "";
+    if ($sortkey !== NULL)
+    {
+        if (!phorum_db_validate_field($sortkey)) trigger_error(
+            "phorum_db_user_get(): Illegal sortkey parameter",
+            E_USER_ERROR
+        );
+        $orderby = "ORDER BY " . $sortkey;
+
+        if ($sortdir !== NULL) {
+            $sortdir = strtoupper($sortdir);
+            if ($sortdir != 'ASC' && $sortdir != 'DESC') trigger_error(
+                "phorum_db_user_get(): Illegal sortdir parameter (must be " .
+                "either \"ASC\" or \"DESC\")",
+                E_USER_ERROR
+            );
+            $orderby .= " " . $sortdir;
+        }
+    }
+
     // Retrieve the requested user(s) from the database.
     $users = phorum_db_interact(
         DB_RETURN_ASSOC,
         "SELECT *
          FROM   {$PHORUM['user_table']}
-         WHERE  $user_where",
+         WHERE  $user_where
+         $orderby",
         "user_id"
     );
 
@@ -2775,7 +2801,8 @@ function phorum_db_user_get_fields($user_id, $fields)
         DB_RETURN_ASSOC,
         "SELECT user_id, ".implode(",", $fields)."
          FROM   {$PHORUM['user_table']}
-         WHERE  $user_where"
+         WHERE  $user_where",
+        "user_id"
     );
 
     return $users;
@@ -2862,16 +2889,20 @@ function phorum_db_user_check_pass($username, $password, $temp_password=FALSE)
  * @param $field        - The user table field / fields to search on.
  * @param $value        - The value / values to search for.
  * @param $operator     - The operator / operators to use. Valid operators are
- *                        "=", "!=", "<>", "<", ">", ">=" and "<=".
+ *                        "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *                        "*" operator is for executing a "LIKE" match query.
  * @param $return_array - If this parameter has a true value, then an array
  *                        of all matching user_ids will be returned. Else, a 
  *                        single user_id will be returned.
+ * @param $type         - The type of search to perform. This can be one of:
+ *                        AND  match against all fields
+ *                        OR   match against any of the fields
  *
  * @return $users       - An array of user_ids or a single user_id, based on
  *                        the $return_array parameter. If no user_ids can
  *                        be found at all, then 0 (zero) will be returned.
  */
-function phorum_db_user_check_field($field, $value, $operator="=", $return_array=FALSE)
+function phorum_db_user_check_field($field, $value, $operator="=", $return_array=FALSE, $type = "AND")
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -2891,14 +2922,25 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
         E_USER_ERROR
     );
 
-    $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=");
+    $type = strtoupper($type);
+    if ($type != "AND" && $type != "OR") raise_error(
+        "phorum_db_user_check_field(): Illegal search type parameter (must " .
+        "be either \"AND\" or \"OR\")",
+        E_USER_ERROR
+    );
+
+    $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=", "*");
 
     // Construct the required "WHERE" clauses.
     foreach($field as $key => $name) {
         if (in_array($operator[$key], $valid_operators) && 
             phorum_db_validate_field($name)) {
             $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
-            $clauses[] = "$name $operator[$key] '$value[$key]'";
+            if ($operator[$key] == '*') {
+                $clauses[] = "$name LIKE '%$value[$key]%'";
+            } else {
+                $clauses[] = "$name $operator[$key] '$value[$key]'";
+            }
         }
     }
 
@@ -2911,7 +2953,7 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
         DB_RETURN_ROWS,
         "SELECT user_id
          FROM   {$PHORUM['user_table']}
-         WHERE ".implode(" AND ", $clauses)."
+         WHERE ".implode(" $type ", $clauses)."
          $limit",
         0
     );
@@ -2928,6 +2970,40 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
     // Return a single user_id.
     list ($user_id, $dummy) = each($user_ids);
     return $user_id;
+}
+
+/**
+ * Get users whose username or email match the search string.
+ *
+ * TODO: This function is now fully implemented by calling other db layer
+ * TODO: functions, so it could be considered deprecated. It's only used
+ * TODO: by include/admin/users.php in the core, so modifying the core
+ * TODO: would be pretty simple.
+ *
+ * @param $search - The string to search on. If empty, all users
+ *                  will be returned.
+ *
+ * @return $users - An array of users.
+ */
+function phorum_db_search_users($search)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Find a list of matching user_ids.
+    $user_ids = phorum_db_user_check_field(
+        array("username", "email"),
+        array($search,    $search),
+        array("*",        "*"),
+        TRUE, "OR"
+    );
+
+    // No results found? Then return an empty array.
+    if (count($user_ids) == 0) return array();
+
+    // Retrieve the data for the users.
+    $users = phorum_db_user_get($user_ids, FALSE, "username");
+
+    return $users;
 }
 
 /**
@@ -3050,8 +3126,6 @@ function phorum_db_user_save($userdata)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
     // Pull some non user table fields from the userdata.
     if (isset($userdata["permissions"])) {
         unset($userdata["permissions"]);
@@ -3138,7 +3212,7 @@ function phorum_db_user_save($userdata)
     if (isset($user_data))
     {
         // Delete all the existing custom profile fields.
-        phorum_d_interact(
+        phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['user_custom_fields_table']}
              WHERE  user_id = $user_id"
@@ -3224,18 +3298,14 @@ function phorum_db_user_save_groups($user_id, $groups)
  *                        Subscribe to the thread and retrieve a mail message
  *                        for every new message in the thread.
  *                    PHORUM_SUBSCRIPTION_DIGEST
- *                        Subscribe to the thread and retrieve periodic
- *                        digests of new messages in the thread.
- *                        TODO: is this description correct for the original
- *                        TODO: intended use of this type?
+ *                        Subscribe to the thread and have it included
+ *                        in periodic mail digests of new messages 
+ *                        on the forum(s).
  *                    PHORUM_SUBSCRIPTION_BOOKMARK
  *                        Subscribe to the thread so it's available on the
  *                        followed threads page.
  *
- * @return $success - True if the subscription was stored successfully. This
- *                    function will always return TRUE, so we could
- *                    do without a return value. The return value is
- *                    here for backward compatibility.
+ * @return $success - True if the subscription was stored successfully.
  */
 function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 {
@@ -3258,37 +3328,15 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
     return TRUE;
 }
 
-
-
-// --------------------------------------------------------------------- //
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
-// --------------------------------------------------------------------- //
-
 /**
- * Increment the post-counter for a user.
+ * Unsubscribe a user from a forum/thread.
  *
- * @return boolean
- */
-function phorum_db_user_addpost() {
-
-        $conn = phorum_db_mysql_connect();
-
-        $sql="UPDATE ".$GLOBALS['PHORUM']['user_table']." SET posts=posts+1 WHERE user_id = ".$GLOBALS['PHORUM']['user']['user_id'];
-        $res=mysql_query($sql,$conn);
-
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-        return (bool)$res;
-}
-
-/**
- * Unsubscribe a user to a forum/thread.
+ * @param $user_id  - The id of the user to remove a suscription for.
+ * @param $thread   - The id of the thread to unsubscribe from.
+ * @param $forum_id - The id of the forum to unsubscribe from (or 0 (zero)
+ *                    to simply unsubscribe by the thread id alone).
  *
- * @param int $user_id
- * @param int $thread
- * @param int $forum_id
- *
- * @return boolean
+ * @return $success - True if the subscription was stored successfully.
  */
 function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 {
@@ -3298,241 +3346,239 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
     settype($forum_id, "int");
     settype($thread, "int");
 
-    $conn = phorum_db_mysql_connect();
+    $forum_where = $forum_id ? "AND forum_id = $forum_id" : "";
 
-    $sql = "DELETE FROM {$PHORUM['subscribers_table']} WHERE user_id=$user_id AND thread=$thread";
-    if($forum_id) $sql.=" and forum_id=$forum_id";
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['subscribers_table']}
+         WHERE  user_id = $user_id AND
+                thread  = $thread
+                $forum_where"
+    );
 
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    return (bool)$res;
+    return TRUE;
 }
 
 /**
- * Get a list of groups the user is a member of, as well as the
- * users permissions.
+ * Increment the posts counter for a user.
  *
- * @param int $user_id
+ * @param $user_id  - The user_id for which to increment the posts counter.
  *
- * @return array
+ * @return $success - TRUE if the posts counter was updated successfully.
+ */
+function phorum_db_user_addpost($user_id)
+{
+    settype($user_id, "int");
+
+    if (!empty($user_id)) {
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$GLOBALS['PHORUM']['user_table']}
+             SET    posts = posts + 1
+             WHERE  user_id = $user_id"
+        );
+    }
+
+    return TRUE;
+}
+
+/**
+ * Get a list of group memberships and their statuses for a user.
+ *
+ * @param $user_id - The user id for which to retrieve the groups.
+ *
+ * @return $groups - An array of groups for the user. The keys are 
+ *                   group_ids and the values are the membership statuses.
  */
 function phorum_db_user_get_groups($user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $groups = array();
 
     settype($user_id, "int");
 
-    if (!$user_id > 0){
-           return $groups;
-    }
+    // Retrieve the groups for the user_id from the database.
+    $groups = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT group_id,
+                status
+         FROM   {$PHORUM['user_group_xref_table']}
+         WHERE  user_id = $user_id
+         ORDER  BY status DESC",
+        "group_id"
+    );
 
-    $conn = phorum_db_mysql_connect();
-    $sql = "SELECT group_id, status FROM {$PHORUM['user_group_xref_table']} WHERE user_id = $user_id ORDER BY status DESC";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    while($row = mysql_fetch_assoc($res)){
-        $groups[$row["group_id"]] = $row["status"];
-    }
-
+    // The records are full rows, but we want a group_id -> status mapping.
+    foreach ($groups as &$group) $group = $group[1];
+    
     return $groups;
 }
 
 /**
- * Get users whose username or email match the search string.
+ * Get the users that await signup approval.
  *
- * @param string $search
- *              If empty, all users will be returned.
- *
- * @return array
- */
-function phorum_db_search_users($search)
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    $conn = phorum_db_mysql_connect();
-
-    $users = array();
-
-    $search = mysql_escape_string(trim($search));
-
-    $sql = "select user_id, username, email, active, posts, date_last_active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
-
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    if (mysql_num_rows($res)){
-        while ($user = mysql_fetch_assoc($res)){
-            $users[$user["user_id"]] = $user;
-        }
-    }
-
-    return $users;
-}
-
-/**
- * Gets the users that await approval.
- *
- * @return array
+ * @return $users - An array or users, indexed by user_id, that await approval.
+ *                  The elements of the array are arrays containing the fields:
+ *                  user_id, username and email.
  */
 function phorum_db_user_get_unapproved()
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
-    $sql="select user_id, username, email from {$PHORUM['user_table']} where active in(".PHORUM_USER_PENDING_BOTH.", ".PHORUM_USER_PENDING_MOD.") order by username";
-    $res=mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    $users=array();
-    if($res){
-        while($rec=mysql_fetch_assoc($res)){
-            $users[$rec["user_id"]]=$rec;
-        }
-    }
+    $users = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT user_id,
+                username,
+                email
+         FROM   {$PHORUM['user_table']}
+         WHERE  active in (".PHORUM_USER_PENDING_BOTH.",
+                           ".PHORUM_USER_PENDING_MOD.")
+         ORDER  BY username",
+        "user_id"
+    );
 
     return $users;
 }
 
 /**
- * Delete a user completely.
+ * Delete a user completely. Messages that were posted by the user in the
+ * forums, will be changed into anonymous messages (user_id = 0). If the
+ * constant PHORUM_DELETE_CHANGE_AUTHOR is set to a true value, then the
+ * author name of all postings will be set to {LANG->AnonymousUser}. If
+ * it is set to a false value, then the original author name will be kept.
  *
- * The following will be deleted:
- * - entry in the users-table
- * - entries in the permissions-table
- * - entries in the newflags-table
- * - entries in the subscribers-table
- * - entries in the group_xref-table
- * - entries in the private-messages-table
- * - entries in the files-table
- * - sets entries in the messages-table to anonymous
+ * @param $user_id  - The id of the user to delete.
  *
- * @param int $user_id
- *
- * @return boolean
+ * @return $success - True if the user was deleted successfully.
  */
-function phorum_db_user_delete($user_id) {
+function phorum_db_user_delete($user_id)
+{
     $PHORUM = $GLOBALS["PHORUM"];
-
-    // how would we check success???
-    $ret = TRUE;
 
     settype($user_id, "int");
 
-    $conn = phorum_db_mysql_connect();
-    // user-table
-    $sql = "delete from {$PHORUM['user_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    // These are tables that hold user related data.
+    $tables = array (
+        $PHORUM['user_table'],
+        $PHORUM['user_permissions_table'],
+        $PHORUM['user_newflags_table'],
+        $PHORUM['subscribers_table'],
+        $PHORUM['user_group_xref_table'],
+        $PHORUM['pm_buddies_table'],
+        $PHORUM['pm_folders_table'],
+        $PHORUM['pm_xref_table'],
+        $PHORUM['user_custom_fields_table']
+    );
 
-    // permissions-table
-    $sql = "delete from {$PHORUM['user_permissions_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // newflags-table
-    $sql = "delete from {$PHORUM['user_newflags_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // subscribers-table
-    $sql = "delete from {$PHORUM['subscribers_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // group-xref-table
-    $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // private messages
-    $sql = "select * from {$PHORUM['pm_xref_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    while ($row = mysql_fetch_assoc($res)) {
-        $folder = $row["pm_folder_id"] == 0 ? $row["special_folder"] : $row["pm_folder_id"];
-        phorum_db_pm_delete($row["pm_message_id"], $folder, $user_id);
+    // Delete the data for the $user_id from all those tables.
+    foreach ($tables as $table) {
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "DELETE FROM $table
+             WHERE user_id = $user_id"
+        );
     }
 
-    // pm_buddies
-    $sql = "delete from {$PHORUM['pm_buddies_table']} where user_id=$user_id or buddy_user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // private message folders
-    $sql = "delete from {$PHORUM['pm_folders_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // files-table
-    $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // custom-fields-table
-    $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id=$user_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    // messages-table
-    if(PHORUM_DELETE_CHANGE_AUTHOR) {
-      $sql = "update {$PHORUM['message_table']} set user_id=0,email='',author='".mysql_escape_string($PHORUM['DATA']['LANG']['AnonymousUser'])."' where user_id=$user_id";
-    } else {
-      $sql = "update {$PHORUM['message_table']} set user_id=0,email='' where user_id=$user_id";
+    // By deleting the private message xrefs for this user, we might now
+    // have orphin private messages lying around (in case there were only
+    // links to a private message from the xref entries for this user).
+    // Collect all orphin private messages from the database. This might
+    // catch some more orphin messages than the ones for the deleted user
+    // alone.
+    // TODO: We do have a race condition here (if a new PM is inserted and 
+    // TODO: this cleanup is run just before the new PM xrefs are inserted).
+    // TODO: Some locking might be useful to keep things straight, but I
+    // TODO: don't think we've got a really big risk here. We could add
+    // TODO: an extra field to the pm messages which indicates the posting
+    // TODO: status. That field could be changed to some ready state after
+    // TODO: posting the PM and linking all xrefs. The query below can
+    // TODO: then ignore the private messages which are not yet fully posted.
+    $pms = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT pm_message_id
+         FROM   {$PHORUM['pm_messages_table']}
+                LEFT JOIN {$PHORUM['pm_xref_table']}
+                USING (pm_message_id)
+         WHERE pm_xref_id IS NULL",
+         0 // keyfield 0 is the pm_message_id
+    ); 
+    // Delete all orphan private messages.
+    if (!empty($pms)) {
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$PHORUM['pm_messages_table']}
+             WHERE  pm_message_id IN (".implode(",", array_keys($pms)).")"
+        );
     }
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
 
-    return $ret;
+    // Delete personal files that are linked to this user.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['files_table']}
+         WHERE  user_id    = $user_id AND
+                message_id = 0 AND
+                link       = '".PHORUM_LINK_USER."'"
+    );
+
+    // Change the forum postings into anonymous postings.
+    // If PHORUM_DELETE_CHANGE_AUTHOR is set, then the author field is 
+    // updated to {LANG->AnonymousUser}.
+    $author = "author";
+    if (defined('PHORUM_DELETE_CHANGE_AUTHOR') && PHORUM_DELETE_CHANGE_AUTHOR){
+        $anonymous = $PHORUM['DATA']['LANG']['AnonymousUser'];
+        $author = "'".phorum_db_interact(DB_RETURN_QUOTED, $anonymous)."'";
+    }
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['message_table']}
+         SET    user_id = 0,
+                email   = '',
+                author  = $author
+         WHERE  user_id = $user_id"
+    );
+
+    return TRUE;
 }
 
-
 /**
- * Get the users file list.
- * @param int $user_id
- * @return array
+ * Get a list of personal files for a user.
+ *
+ * @param $user_id - The user id for which to retrieve the file list.
+ *
+ * @return $files  - An array of personal user files, indexed by file_id.
+ *                   The array elements are arrays containing the fields:
+ *                   file_id, filename, filesize and add_datetime.
  */
 function phorum_db_get_user_file_list($user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
     settype($user_id, "int");
 
-    $files=array();
-
-    $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    if($res){
-        while($rec=mysql_fetch_assoc($res)){
-            $files[$rec["file_id"]]=$rec;
-        }
-    }
+    // Select the personal user files from the database.
+    $files = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT file_id,
+                filename,
+                filesize,
+                add_datetime
+         FROM   {$PHORUM['files_table']}
+         WHERE  user_id    = $user_id AND
+                message_id = 0 AND
+                link       = '".PHORUM_LINK_USER."'",
+        "file_id"
+    );
 
     return $files;
 }
 
-
 /**
- * Get the message's file list.
- * @param int $message_id
- * @return array
+ * Get a list of files for a message (a.k.a. attachments).
+ *
+ * @param $message_id - The message id for which to retrieve the file list.
+ *
+ * @return $files     - An array of message files, indexed by file_id.
+ *                      The array elements are arrays containing the fields:
+ *                      file_id, filename, filesize and add_datetime.
  */
 function phorum_db_get_message_file_list($message_id)
 {
@@ -3540,32 +3586,32 @@ function phorum_db_get_message_file_list($message_id)
 
     settype($message_id, "int");
 
-    $conn = phorum_db_mysql_connect();
-
-    $files=array();
-
-    $sql="select file_id, filename, filesize, add_datetime from {$PHORUM['files_table']} where message_id=$message_id and link='" . PHORUM_LINK_MESSAGE . "'";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    if($res){
-        while($rec=mysql_fetch_assoc($res)){
-            $files[$rec["file_id"]]=$rec;
-        }
-    }
+    // Select the message files from the database.
+    $files = phorum_db_interact(
+        "SELECT file_id,
+                filename,
+                filesize,
+                add_datetime
+         FROM   {$PHORUM['files_table']}
+         WHERE  message_id = $message_id AND
+                link       = '".PHORUM_LINK_MESSAGE."'",
+        "file_id"
+    );
 
     return $files;
 }
 
-
 /**
- * Retrieve a file.
- * @param int $file_id
- * @return array
+ * Get a file.
+ *
+ * @param $file_id - The file id to retrieve from the database.
+ *
+ * @return $file   - An array, containing the data for all file table fields.
+ *                   If the file id cannot be found in the database, an empty
+ *                   array will be returned instead.
+ *                   TODO: Maybe it'd be nicer if we'd return NULL here,
+ *                   TODO: but we should look at how calls to this function
+ *                   TODO: are handled throughout the code for that.
  */
 function phorum_db_file_get($file_id)
 {
@@ -3573,99 +3619,127 @@ function phorum_db_file_get($file_id)
 
     settype($file_id, "int");
 
-    $conn = phorum_db_mysql_connect();
+    // Select the file from the database.
+    $files = phorum_db_interact(
+        DB_RETURN_ASSOC,
+        "SELECT *
+         FROM   {$PHORUM['files_table']}
+         WHERE  file_id = $file_id"
+    );
 
-    $file=array();
-
-    $sql="select * from {$PHORUM['files_table']} where file_id=$file_id";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
+    if (count($files) == 0) {
+        return array();
+    } else {
+        return $files[0];
     }
-
-    if($res){
-        $file=mysql_fetch_assoc($res);
-    }
-
-    return $file;
 }
 
-
 /**
- * Save a file to the db and return the new file ID.
+ * Add a file.
  *
- * @param int $user_id
- * @param string $filename
- * @param int $filesize
- * @param string $buffer
- * @param int $message_id
- * @param string $link
+ * @param $user_id    - The id of the user for which to add the file.
+ *                      If this file is linked to a message by an anonymous
+ *                      user, then this value can be 0 (zero).
+ * @param $filename   - The name of the file.
+ * @param $filesize   - The size of the file in bytes.
+ * @param $buffer     - The file contents. This should be data which is
+ *                      safe to store in a TEXT field in the database. The
+ *                      calling application has to take care of this.
+ *                      The database layer will simply store and retrieve
+ *                      the file data as provided by the caller.
+ * @param $message_id - The message_id to link the file to. If this file
+ *                      is not linked to a posted message (the link type
+ *                      PHORUM_LINK_MESSAGE) then this value can be 0 (zero).
+ * @param $link       - A file can be linked to a number of different 
+ *                      types of objects. The available link types are:
+ *                      PHORUM_LINK_USER
+ *                          The file is linked to a user. This means that the
+ *                          file is available from within the files section
+ *                          in the user's Control Center.
+ *                      PHORUM_LINK_MESSAGE
+ *                          The file is linked to a message. This means that
+ *                          the file is available as an attachment on a
+ *                          posted forum message.
+ *                      PHORUM_LINK_EDITOR
+ *                          The file is linked to the editor. This means that
+ *                          the file was uploaded as part of editing a 
+ *                          forum message. This message was not yet posted.
+ *                          As soon as the message is posted for final, the
+ *                          link type for the message will be updated to
+ *                          PHORUM_LINK_MESSAGE.
+ *                      Note: these are the official link types. Calling 
+ *                      functions are allowed to provide different custom link
+ *                      types if they need to.
  *
- * @return int
- *              The file ID.
+ * @return $file_id   - The file_id that was assigned to the new file.
  */
 function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
-    $file_id=0;
+    // If a link type is not provided, we'll guess for the type of link.
+    // This is done to provide some backward compatibility.
+    if ($link === NULL) {
+        if     ($message_id) $link = PHORUM_LINK_MESSAGE;
+        elseif ($user_id)    $link = PHORUM_LINK_USER;
+        else raise_error(
+            "phorum_db_file_save(): Missing \$link parameter in the call",
+            E_USER_ERROR
+        );
+    }
 
     settype($user_id, "int");
     settype($message_id, "int");
     settype($filesize, "int");
 
-    if (is_null($link)) {
-        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
-    } else {
-        $link = mysql_escape_string($link);
-    }
+    $link     = phorum_db_interact(DB_RETURN_QUOTED, $link);
+    $filename = phorum_db_interact(DB_RETURN_QUOTED, $filename);
+    $buffer   = phorum_db_interact(DB_RETURN_QUOTED, $buffer);
 
-    $filename=mysql_escape_string($filename);
-    $buffer=mysql_escape_string($buffer);
-
-    $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    if($res){
-        $file_id=mysql_insert_id($conn);
-    }
+    $file_id = phorum_db_interact(
+        DB_RETURN_NEWID,
+        "INSERT INTO {$PHORUM['files_table']}
+         SET    user_id      = $user_id,
+                message_id   = $message_id,
+                link         = '$link',
+                filename     = '$filename',
+                filesize     = $filesize,
+                file_data    = '$buffer',
+                add_datetime = ".time()
+    );
 
     return $file_id;
 }
 
-
 /**
  * Delete a file.
- * @param int $file_id
- * @return boolean
+ *
+ * @param $file_id - The id of the file to delete.
+ *
+ * @return $success - True if the file was deleted successfully.
  */
 function phorum_db_file_delete($file_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
     settype($file_id, "int");
 
-    $sql="delete from {$PHORUM['files_table']} where file_id=$file_id";
+    phorum_db_interact(
+        DB_RETURN_QUOTED,
+        "DELETE FROM {$PHORUM['files_table']}
+         WHERE  file_id = $file_id"
+    );
 
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    return $res;
+    return TRUE;
 }
+
+
+// --------------------------------------------------------------------- //
+// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
+// --------------------------------------------------------------------- //
+
+
+
 
 /**
  * Link a file to a specific message.
