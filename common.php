@@ -336,6 +336,18 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
+    // get the language file
+    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
+        $PHORUM['language'] = $PHORUM['user']['user_language'];
+
+    if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
+        $PHORUM["language"] = $PHORUM["default_language"];
+
+    // set the user-selected template
+    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
+        $PHORUM['template'] = $PHORUM['user']['user_template'];
+    }        
+    
     // user output buffering so we don't get header errors
     // not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
@@ -344,15 +356,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         ob_end_clean();
-    }
-
-    // get the language file
-    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
-        $PHORUM['language'] = $PHORUM['user']['user_language'];
-
-    if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
-        $PHORUM["language"] = $PHORUM["default_language"];
-
+    }    
+    
+        
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
@@ -755,10 +761,6 @@ function phorum_get_template_file( $page )
     }
 
     $page = basename($page);
-
-    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
-        $PHORUM['template'] = $PHORUM['user']['user_template'];
-    }
 
     if ($module === NULL) {
         $prefix = "./templates";
