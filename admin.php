@@ -53,8 +53,8 @@
             $module="login";
         } else {
             // load the default module if none is specified
-            if(!empty($_REQUEST["module"])){
-                $module = basename($_REQUEST["module"]);
+            if(!empty($_REQUEST["module"]) && is_string($_REQUEST["module"])){
+                $module = @basename($_REQUEST["module"]);
             } else {
                 $module = "default";
             }
