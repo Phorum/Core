@@ -3733,20 +3733,16 @@ function phorum_db_file_delete($file_id)
     return TRUE;
 }
 
-
-// --------------------------------------------------------------------- //
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
-// --------------------------------------------------------------------- //
-
-
-
-
 /**
- * Link a file to a specific message.
- * @param int $file_id
- * @param int $message_id
- * @param string $link
- * @return boolean
+ * Update the message to which a file is linked and/or the link type.
+ *
+ * @param $file_id    - The id of the file to update.
+ * @param $message_id - The id of the message to link the file to.
+ * @param $link       - A file can be linked to a number of different 
+ *                      types of objects. See phorum_db_file_save() for
+ *                      the possible link types.
+ *
+ * @return $success   - True if the file was updated successfully.
  */
 function phorum_db_file_link($file_id, $message_id, $link = NULL)
 {
@@ -3757,55 +3753,44 @@ function phorum_db_file_link($file_id, $message_id, $link = NULL)
     settype($file_id, "int");
     settype($message_id, "int");
 
-    if (is_null($link)) {
-        $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
-    } else {
-        $link = mysql_escape_string($link);
-    }
+    $link = $link === NULL
+          ? PHORUM_LINK_MESSAGE
+          : phorum_db_interact(DB_RETURN_QUOTED, $link);
 
-    $sql="update {$PHORUM['files_table']} " .
-         "set message_id=$message_id, link='$link' " .
-         "where file_id=$file_id";
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['files_table']}
+         SET    message_id = $message_id,
+                link       = '$link' 
+         WHERE  file_id    = $file_id"
+    );
 
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    return $res;
+    return TRUE;
 }
 
 /**
- * Read the current total size of all files for a user.
+ * Get the total size for all personal files for a user.
  *
- * @param int $user_id
+ * @param $user_id - The user to compute the total size for.
  *
- * @return int
+ * @return $size   - The total size in bytes.
  */
 function phorum_db_get_user_filesize_total($user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $conn = phorum_db_mysql_connect();
-
     settype($user_id, "int");
 
-    $total=0;
+    $size = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT SUM(filesize)
+         FROM   {$PHORUM['files_table']}
+         WHERE  user_id    = $user_id AND
+                message_id = 0 AND
+                link       = '".PHORUM_LINK_USER."'"
+    );
 
-    $sql="select sum(filesize) as total from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
-
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }
-
-    if($res){
-        $total=mysql_result($res, 0,"total");
-    }
-
-    return $total;
+    return $size;
 }
 
 /**
@@ -3813,13 +3798,12 @@ function phorum_db_get_user_filesize_total($user_id)
  * are not linked to anything. These can for example be caused by users
  * that are writing a message with attachments, but never post it.
  *
- * @param boolean $live_run - If set to FALSE (default), the function
- *                  will return a list of files that will
- *                  be purged. If set to TRUE, files will
- *                  be purged.
- * @return mixed
- *              Return TRUE if $live_run is TRUE, return an array of
- *              files indexed by file ID.
+ * @param $live_run - If set to FALSE (default), the function will return
+ *                    a list of files that will be purged. If set to TRUE,
+ *                    files will be purged for real.
+ * @return $return  - If $live_run is set to a true value, TRUE will be 
+ *                    returned. Else an array of files that would be deleted
+ *                    (indexed by file_id) will be returned.
  */
 function phorum_db_file_purge_stale_files($live_run = FALSE)
 {
@@ -3827,301 +3811,334 @@ function phorum_db_file_purge_stale_files($live_run = FALSE)
 
     settype($live_run, "bool");
 
-    $conn = phorum_db_mysql_connect();
-
-    $where = "link='" . PHORUM_LINK_EDITOR. "' " .
-             "and add_datetime<". (time()-PHORUM_MAX_EDIT_TIME);
+    // WHERE statement for selecting  files that are linked to
+    // the editor and were added a while ago. These are from
+    // posts that were abandoned before posting.
+    $orphin_editor_where = 
+        "link = '".PHORUM_LINK_EDITOR."' " .
+        "AND add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME);
 
     // Purge files.
     if ($live_run) {
 
-        // Delete files that are linked to the editor and are
-        // added a while ago. These are from abandoned posts.
-        $sql = "delete from {$PHORUM['files_table']} " .
-               "where $where";
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        // Delete orphin editor files.
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$PHORUM['files_table']} 
+             WHERE  $orphin_editor_where"
+        );
 
         return TRUE;
+    }
 
     // Only select a list of files that can be purged.
-    } else {
-
-        // Select files that are linked to the editor and are
-        // added a while ago. These are from abandoned posts.
-        $sql = "select file_id, filename, filesize, add_datetime " .
-               "from {$PHORUM['files_table']} " .
-               "where $where";
-
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-        $purge_files = array();
-        if (mysql_num_rows($res) > 0) {
-            while ($row = mysql_fetch_assoc($res)) {
-                $row["reason"] = "Stale editor file";
-                $purge_files[$row["file_id"]] = $row;
-            }
-        }
+    else
+    {
+        // Select orphin editor files.
+        $purge_files = phorum_db_interact(
+            DB_RETURN_ASSOC,
+            "SELECT file_id,
+                    filename,
+                    filesize,
+                    add_datetime,
+                    'Orphin editor file' AS reason
+             FROM   {$PHORUM['files_table']}
+             WHERE  $orphin_editor_where"
+        );
 
         return $purge_files;
     }
 }
 
 /**
- * NOTE: this function seems to call phorum_db_newflag_add_read()
- * incorrectly!?
+ * Mark all messages for a forum read for the active Phorum user.
  *
- * @param int $forum_id
- * @return void
+ * @param $forum_id - The forum to mark read or 0 (zero) to mark
+ *                    the current forum read. 
  */
 function phorum_db_newflag_allread($forum_id=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    $conn = phorum_db_mysql_connect();
 
+    if (empty($forum_id)) $forum_id = $PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
+    // Delete all the existing newflags for this user for this forum.
+    phorum_db_newflag_delete(0, $forum_id);
 
-    // Delete all the existing newflags for this user in this forum.
-    phorum_db_newflag_delete(0,$forum_id);
+    // Get the maximum message_id in this forum.
+    $max_id = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT max(message_id)
+         FROM   {$PHORUM['message_table']}
+         WHERE  forum_id = $forum_id"
+    );
 
-    // Get the maximum message-id in this forum.
-    $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id = $forum_id";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()){
-        phorum_db_mysql_error("$err: $sql");
-    }elseif (mysql_num_rows($res) > 0){
-        $row = mysql_fetch_row($res);
-        if($row[0] > 0) {
-            // Set this message-id as the min-id.
-            phorum_db_newflag_add_read(array(0=>array('id'=>$row[0],'forum'=>$forum_id)));
-        }
+    // Set this message_id as the min-id for the forum.
+    if ($max_id) {
+        phorum_db_newflag_add_read(array(
+            0 => array(
+              'id'    => $max_id,
+              'forum' => $forum_id
+            )
+        ));
     }
 }
 
-
 /**
- * Returns the read messages for the current user and forum
- * optionally for a given forum (for the index).
+ * Get the read messages for a forum for the active Phorum user.
  *
- * @param int $forum_id
+ * @param $forum_id   - The forum to retrieve the read messages for or
+ *                      0 (zero) to retrieve them for the current forum.
  *
- * @return array
+ * @return $read_msgs - An array containing the message_ids that have been
+ *                      read for the forum (key and value are both the
+ *                      message_id). Also an element for the key "min_id",
+ *                      which holds the minimum read message_id. All
+ *                      message_ids lower than the min_id are also considered
+ *                      to be read.
  */
 function phorum_db_newflag_get_flags($forum_id=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
+    if ($forum_id === NULL) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    $read_msgs=array('min_id' => 0);
+    // Initialize the read messages array.
+    $read_msgs = array('min_id' => 0);
 
-    $sql="SELECT message_id FROM {$PHORUM['user_newflags_table']} WHERE user_id={$PHORUM['user']['user_id']} AND forum_id = $forum_id";
+    // Select the read messages from the newflags table.
+    $newflags = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT message_id 
+         FROM   {$PHORUM['user_newflags_table']}
+         WHERE  user_id  = {$PHORUM['user']['user_id']} AND
+                forum_id = $forum_id
+         ORDER  BY message_id ASC"
+    );
 
-    $conn = phorum_db_mysql_connect();
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    while($row=mysql_fetch_row($res)) {
-        if ($read_msgs['min_id']==0 || $row[0] < $read_msgs['min_id']) {
-            $read_msgs['min_id'] = $row[0];
-        } else {
-            $read_msgs[$row[0]] = $row[0];
-        }
+    // Add the newflags to the $read_msgs.
+    // The first newflags element also determines the min_id.
+    foreach ($newflags as $index => $newflag) {
+        if ($index == 0) $read_msgs["min_id"] = $newflag[0];
+        $read_msgs[$newflag[0]] = $newflag[0];
     }
 
     return $read_msgs;
 }
 
-
 /**
- * Return the count of unread messages the current user and forum
- * optionally for a given forum (for the index).
+ * Get the number of new threads and messages for a forum for the
+ * active Phorum user.
  *
- * @param int $forum_id
+ * @param $forum_id    - The forum to retrieve the new counts for or
+ *                       0 (zero) to retrieve them for the current forum.
  *
- * @return array
+ * @return $counts     - An array containing two elements. The first element
+ *                       is the number of new messages. The second one is
+ *                       the number of new threads.
  */
 function phorum_db_newflag_get_unread_count($forum_id=NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    if(is_null($forum_id)) $forum_id=$PHORUM["forum_id"];
+    if ($forum_id === NULL) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    $conn = phorum_db_mysql_connect();
+    // Retrieve the minimum message_id from newflags for the forum.
+    $min_message_id = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT  min(message_id)
+         FROM    {$PHORUM['user_newflags_table']}
+         WHERE   user_id  = {$PHORUM['user']['user_id']} AND
+                 forum_id = {$forum_id}"
+    );
 
-    // get min message id from newflags
-    $sql = "select min(message_id) as min_message_id from {$PHORUM['user_newflags_table']} where user_id={$PHORUM['user']['user_id']} and forum_id={$forum_id}";
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-    if(mysql_num_rows($res)){
+    // No result found? Then we know that the user never read a 
+    // message from this forum. We won't count the new messages
+    // in that case. Return an empty result.
+    if (!$min_message_id) return array(0,0);
 
-        $min_message_id = (int)mysql_result($res, 0, "min_message_id");
+    // Retrieve the unread thread count.
+    $new_threads = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT count(*)
+         FROM {$PHORUM['message_table']} AS m
+              LEFT JOIN {$PHORUM['user_newflags_table']} AS n ON
+               m.message_id = n.message_id AND
+               n.user_id    = {$PHORUM['user']['user_id']}
+         WHERE m.forum_id   = {$forum_id} AND
+               m.message_id > $min_message_id AND
+               n.message_id IS NULL AND
+               m.parent_id  = 0 AND
+               m.status     = ".PHORUM_STATUS_APPROVED." AND
+               m.thread     = m.message_id"
+    );
 
-        if($min_message_id > 0) {
-        // get unread thread count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.parent_id=0 and {$PHORUM['message_table']}.status=2 and {$PHORUM['message_table']}.thread={$PHORUM['message_table']}.message_id";
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        $new_threads = (int)mysql_result($res, 0, "count");
+    // Retrieve the unread message count.
+    $new_messages = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT count(*)
+         FROM   {$PHORUM['message_table']} AS m 
+                LEFT JOIN {$PHORUM['user_newflags_table']} AS n ON
+                m.message_id = n.message_id AND
+                m.forum_id   = n.forum_id AND
+                n.user_id    = {$PHORUM['user']['user_id']}
+         WHERE  m.forum_id   = {$forum_id} AND
+                m.message_id > $min_message_id AND
+                n.message_id IS NULL AND
+                m.status = ".PHORUM_STATUS_APPROVED
+    );
 
-        // get unread message count
-        $sql = "select count(*) as count from {$PHORUM['message_table']} left join {$PHORUM['user_newflags_table']} on {$PHORUM['message_table']}.message_id={$PHORUM['user_newflags_table']}.message_id and {$PHORUM['message_table']}.forum_id={$PHORUM['user_newflags_table']}.forum_id and {$PHORUM['user_newflags_table']}.user_id={$PHORUM['user']['user_id']} where {$PHORUM['message_table']}.forum_id={$forum_id} and {$PHORUM['message_table']}.message_id>$min_message_id and {$PHORUM['user_newflags_table']}.message_id is null and {$PHORUM['message_table']}.status=2";
-
-        $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-        $new_messages = (int)mysql_result($res, 0, "count");
-
-        $counts = array(
-            $new_messages,
-            $new_threads
-        );
-
-    } else {
-            $counts = array(0,0);
-    }
-
-    } else {
-
-        $counts = array(0,0);
-    }
+    $counts = array(
+        $new_messages,
+        $new_threads
+    );
 
     return $counts;
 }
 
-
 /**
- * Mark a message as read.
+ * Mark a message as read for the active Phorum user.
  *
- * @param array $message_ids
- *              This can also be a single int if you just want to
- *              mark one message as read.
- *
- * @return void
+ * @param $message_ids - The message_id of the message to mark read in the
+ *                       active forum or an array description of messages
+ *                       to mark read. Elements in this array can be:
+ *                       - Simple message_id values, for marking messages
+ *                         read in the active forum.
+ *                       - An array containing two fields: "forum" containing
+ *                         a forum_id and "id" containing a message_id. This
+ *                         notation can be used to mark messages read in 
+ *                         other forums than te active one.
  */
-function phorum_db_newflag_add_read($message_ids) {
+function phorum_db_newflag_add_read($message_ids)
+{
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $num_newflags=phorum_db_newflag_get_count();
+    // Find the number of newflags for the user
+    $num_newflags = phorum_db_newflag_get_count();
 
-    // maybe got just one message
-    if(!is_array($message_ids)) {
-        $message_ids=array(0=>(int)$message_ids);
+    if (!is_array($message_ids)) {
+        $message_ids = array(0 => $message_ids);
     }
 
-    // deleting messages which are too much
-    $num_end=$num_newflags+count($message_ids);
-    if($num_end > PHORUM_MAX_NEW_INFO) {
+    // Delete newflags which would exceed the maximum number of
+    // newflags that are allowed in the database per user.
+    $num_end = $num_newflags + count($message_ids);
+    if ($num_end > PHORUM_MAX_NEW_INFO) {
         phorum_db_newflag_delete($num_end - PHORUM_MAX_NEW_INFO);
     }
-    // building the query
-    $values=array();
-    $cnt=0;
 
-    foreach($message_ids as $id=>$data) {
+    // Prepare the rows for the query.
+    $values = array();
+    foreach($message_ids as $id => $data)
+    {
         if(is_array($data)) {
             $data["forum"] = (int)$data["forum"];
-            $data["id"] = (int)$data["id"];
-            $values[]="({$PHORUM['user']['user_id']},{$data['forum']},{$data['id']})";
+            $data["id"]    = (int)$data["id"];
+            $values[] = 
+                "(" . $PHORUM['user']['user_id'] . "," .
+                      $data['forum'] . "," .
+                      $data['id'] . ")";
         } else {
             $data = (int)$data;
-            $values[]="({$PHORUM['user']['user_id']},{$PHORUM['forum_id']},$data)";
+            $values[] =
+                "(" . $PHORUM['user']['user_id'] . "," .
+                      $PHORUM['forum_id'] . "," . 
+                      $data . ")";
         }
-        $cnt++;
     }
-    if($cnt) {
-        $insert_sql="INSERT IGNORE INTO ".$PHORUM['user_newflags_table']." (user_id,forum_id,message_id) VALUES".join(",",$values);
 
-        // fire away
-        $conn = phorum_db_mysql_connect();
-        $res = mysql_query($insert_sql, $conn);
+    // No values prepared? Then there's no need in running the query.
+    if (! count($values)) return;
 
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $insert_sql");
-    }
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "INSERT IGNORE INTO {$PHORUM['user_newflags_table']}
+                (user_id, forum_id, message_id)
+         VALUES ".join(",",$values)
+    );
 }
 
 /**
- * Return the number of newflags for this user and forum.
+ * Get the total number of newflags for a forum for the active Phorum user.
  *
- * @param int $forum_id
+ * @param $forum_id    - The forum to retrieve the count for or
+ *                       0 (zero) to retrieve it for the current forum.
  *
- * @return int
+ * @return $count      - The total number of newflags.
  */
 function phorum_db_newflag_get_count($forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
     settype($forum_id, "int");
 
-    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
+    $count = phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT count(*)
+         FROM   {$PHORUM['user_newflags_table']}
+         WHERE  user_id  = {$PHORUM['user']['user_id']} AND
+                forum_id = {$forum_id}"
+    );
 
-    $sql="SELECT count(*) FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id={$forum_id}";
-
-    // fire away
-    $conn = phorum_db_mysql_connect();
-    $res = mysql_query($sql, $conn);
-
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-    $row=mysql_fetch_row($res);
-
-    return $row[0];
+    return $count;
 }
 
 /**
-* Remove a number of newflags for this user and forum.
+* Remove newflags for a forum for the active Phorum user.
 *
-* @param int $numdelete
-*               Limit the number of flags deleted to this number.
-* @param int $forum_id
-*
-* @return void
+* @param $numdelete - The number of newflags to delete or 0 (zero) to
+*                     delete them all.
+* @param $forum_id  - The forum for which to delete the newflags or
+*                     0 (zero) to delete them for the current forum.
 */
 function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    settype($forum_id, "int");
-    settype($numdelete, "int");
-
     if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
+    settype($numdelete, "int");
+    settype($forum_id, "int");
 
-    if($numdelete>0) {
-        $lvar=" ORDER BY message_id ASC LIMIT $numdelete";
-    } else {
-        $lvar="";
-    }
-    // delete the number of newflags given
-    $del_sql="DELETE FROM ".$PHORUM['user_newflags_table']." WHERE user_id={$PHORUM['user']['user_id']} AND forum_id={$forum_id}".$lvar;
-    // fire away
-    $conn = phorum_db_mysql_connect();
-    $res = mysql_query($del_sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $del_sql");
+    $limit = $numdelete > 0 ? "ORDER BY message_id ASC LIMIT $numdelete" : "";
+
+    // Delete the provided amount of newflags.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['user_newflags_table']}
+         WHERE  user_id  = {$PHORUM['user']['user_id']} AND
+                forum_id = {$forum_id}
+         $limit"
+    );
 }
 
-function phorum_db_newflag_update_forum($message_ids) {
-
-    if(!is_array($message_ids)) {
-        return;
-    }
-
+/**
+ * Update the forum_id for the newflags. The newsflags are updated by setting
+ * their forum_ids to the forum_ids of the referenced message table records.
+ *
+ * @param $message_ids - An array of message_ids which should be updated.
+ */
+function phorum_db_newflag_update_forum($message_ids)
+{
     phorum_db_sanitize_mixed($message_ids, "int");
+    $ids_str = implode(",", $message_ids);
 
-    $ids_str=implode(",",$message_ids);
-
-    // then doing the update to newflags
-    $sql="UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} as flags, {$GLOBALS['PHORUM']['message_table']} as msg SET flags.forum_id=msg.forum_id where flags.message_id=msg.message_id and flags.message_id IN ($ids_str)";
-    $conn = phorum_db_mysql_connect();
-    $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-
-
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} AS flags,
+                       {$GLOBALS['PHORUM']['message_table']} AS msg
+         SET    flags.forum_id   = msg.forum_id
+         WHERE  flags.message_id = msg.message_id AND
+                flags.message_id IN ($ids_str)"
+    );
 }
+
+// --------------------------------------------------------------------- //
+// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO //
+// --------------------------------------------------------------------- //
 
 /**
  * Get the user ids of the users subscribed to a forum/thread.
