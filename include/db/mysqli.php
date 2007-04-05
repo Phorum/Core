@@ -3479,11 +3479,10 @@ function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null)
  * @param int $forum_id
  * @param int $thread
  * @param int $user_id
- * @param int $type
  *
- * @return boolean
+ * @return int $type
  */
-function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_SUBSCRIPTION_MESSAGE)
+function phorum_db_get_if_subscribed($forum_id, $thread, $user_id)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -3494,14 +3493,15 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
 
     $conn = phorum_db_mysqli_connect();
 
-    $sql = "select user_id from {$PHORUM['subscribers_table']} where forum_id=$forum_id and thread=$thread and user_id=$user_id and sub_type=$type";
+    $sql = "select sub_type from {$PHORUM['subscribers_table']} where forum_id=$forum_id and thread=$thread and user_id=$user_id";
 
     $res = mysqli_query($conn, $sql);
 
     if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
 
     if (mysqli_num_rows($res) > 0){
-        $retval = true;
+        $rec = mysqli_fetch_row($res);
+        $retval = $rec[0];
     }else{
         $retval = false;
     }

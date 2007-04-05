@@ -673,8 +673,10 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                 break;
 
             case "email_notify":
-                $form[$key] = phorum_db_get_if_subscribed(
+                $type = phorum_db_get_if_subscribed(
                     $db["forum_id"], $db["thread"], $db["user_id"]);
+                $form[$key] = $type !== NULL && 
+                              $type == PHORUM_SUBSCRIPTION_MESSAGE;
                 break;
 
             case "forum_id":
