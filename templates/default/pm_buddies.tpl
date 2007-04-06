@@ -20,7 +20,7 @@
       {LOOP BUDDIES}
         <tr>
           <td class="PhorumTableRow"><input type="checkbox" name="checked[]" value="{BUDDIES->user_id}"></td>
-          <td class="PhorumTableRow"><a href="{BUDDIES->profile_url}"><strong>{BUDDIES->username}</strong></a></td>
+          <td class="PhorumTableRow"><a href="{BUDDIES->URL->PROFILE}"><strong>{BUDDIES->username}</strong></a></td>
           <td class="PhorumTableRow">{BUDDIES->real_name}</td>
           <td class="PhorumTableRow"align="center">{IF BUDDIES->mutual}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
           {IF USERTRACK}
