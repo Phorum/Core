@@ -182,7 +182,7 @@ class PhorumInputForm {
         echo ">\n";
 
         if ( is_array( $this->_hiddens ) ) foreach( $this->_hiddens as $name => $value ) {
-            echo "<input type=\"hidden\" name=\"$name\" value=\"$value\">\n";
+            echo "<input type=\"hidden\" name=\"$name\" value=\"".htmlspecialchars($value)."\">\n";
         }
 
         echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" class=\"input-form-table\" width=\"100%\">\n";
