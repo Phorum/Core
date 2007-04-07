@@ -1077,4 +1077,136 @@ function phorum_check_data_signature($data, $signature)
     return md5($data . $GLOBALS["PHORUM"]["private_key"]) == $signature;
 }
 
+/**
+ * Database error handling function.
+ *
+ * @param $error - The error message.
+ */
+function phorum_database_error($error)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Flush output that we buffered so far (for displaying a 
+    // clean page in the admin interface).
+    ob_end_clean();
+
+    // Find out what type of error handling is required.
+    $logopt = isset($PHORUM["error_logging"]) 
+            ? $PHORUM["error_logging"] 
+            : 'screen';
+
+    // Create a backtrace report, so it's easier to find out where a problem
+    // is coming from. Allthough Phorum 4.3.0 is the required PHP version
+    // for Phorum at the time of writing, people might still be running
+    // Phorum on older PHP versions. For those people, we'll skip
+    // creation of a backtrace.
+
+    $backtrace = "";
+    if (function_exists("debug_backtrace"))
+    {
+        $bt = debug_backtrace();
+        $phorum_path = dirname(__FILE__); 
+
+        foreach ($bt as $id => $step)
+        {
+            // Don't include the call to this function.
+            if ($id == 0) continue;
+
+            $file = str_replace($phorum_path, "[Phorum path]", $step["file"]);
+            $backtrace .= "Function " . $step["function"] . " called at\n" .
+                          $file . ":" . $step["line"] . "\n";
+            $backtrace .= "----\n";
+        }
+    }
+
+    // Start the error page.
+    ?>
+    <html>
+    <head><title>Phorum database error</title></head>
+    <body>
+    <h1>Phorum Database Error</h1>
+
+    Sorry, a Phorum database error occurred.<br/>
+    <?php
+
+    // In admin scripts, we will always include the 
+    // error message inside a comment in the page.
+    if (defined("PHORUM_ADMIN")) {
+        print "<!-- " .  htmlspecialchars($error) .  " -->";
+    }
+   
+    switch ($logopt)
+    {
+        // Log the database error to a logfile.
+        case "file":
+
+            $cache_dir  = $PHORUM["cache"];
+
+            $fp = fopen($cache_dir."/phorum-sql-errors.log", "a");
+            fputs($fp,
+                "Time: " . time() . "\n" .
+                "Error: $error\n" .
+                "Traceback:\n" .
+                "$backtrace\n\n"
+            );
+            fclose($fp);
+
+            print "The error message has been written<br/>" .
+                  "to the phorum-sql-errors.log error log.<br/>" .
+                  "Please try again later!";
+            break;
+
+        // Display the database error on screen.
+        case "screen":
+
+            print "Please try again later!" .
+                  "<h3>Error:</h3>" .
+                  htmlspecialchars($error) .
+                  "<h3>Backtrace:</h3>";
+            print nl2br(htmlspecialchars($backtrace));
+            break;
+
+        // Send a mail to the administrator about the database error.
+        case "mail":
+        default:
+
+            include_once("./include/email_functions.php");
+
+            $data = array(
+              "mailmessage" => 
+                  "A database error occured in your Phorum installation.\n".
+                  "\n" .
+                  "Error message:\n" .
+                  "--------------\n" .
+                  "\n" .
+                  "$error\n".
+                  "\n" .
+                  "Backtrace:\n" .
+                  "----------\n" .
+                  "\n" .
+                  $backtrace,
+              "mailsubject" =>
+                  "Phorum: A database error occured"
+            );
+
+            $adminmail = $PHORUM["system_email_from_address"];
+            phorum_email_user(array($adminmail), $data);
+
+            print "The administrator of this forum has been<br/>" .
+                  "notified by email about the error.<br/>" .
+                  "Please try again later!";
+            break;
+    }
+
+    // Finish the error page.
+    ?>
+    </body>
+    </html>
+    <?php
+
+    exit();
+}
+
+
+
 ?>
