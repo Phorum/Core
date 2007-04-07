@@ -28,18 +28,18 @@
         $checked = array();
 
         // Check for the default language file.
-        if (! file_exists("./include/lang/{$PHORUM["default_language"]}.php")) return array(
+        if (! file_exists("./include/lang/{$PHORUM["default_forum_options"]["language"]}.php")) return array(
             PHORUM_SANITY_WARN,
             "Your default language is set to
-             \"".htmlspecialchars($PHORUM["default_language"])."\",
+             \"".htmlspecialchars($PHORUM["default_forum_options"]["language"])."\",
              but the language file \"include/lang/".
-             htmlspecialchars($PHORUM["default_language"].".php")."\" is
+             htmlspecialchars($PHORUM["default_forum_options"]["language"].".php")."\" is
              not available on your system (anymore?).",
             "Install the specified language file to make this default
              language work or change the Default Language setting
              under General Settings."
         );
-        $checked[$PHORUM["default_language"]] = true;
+        $checked[$PHORUM["default_forum_options"]["language"]] = true;
 
         // If this check is run at install time, we're done.
         if ($is_install) return array(PHORUM_SANITY_OK, NULL);
