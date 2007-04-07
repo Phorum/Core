@@ -711,7 +711,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         $use_key = 'post_count';
     }
 
-    $sql = "SELECT  {$PHORUM['message_table']}.*
+    $sql = "SELECT  *
             FROM    {$PHORUM['message_table']}
             USE     KEY ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
@@ -776,7 +776,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "message_id");
 
     // Post processing of received messages.
-    $messages["users"] = array();
+    $involved_users = array();
     foreach ($messages as $id => $message)
     {
         // Unpack the message meta data.
@@ -786,9 +786,12 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
         // Collect all involved users.
         if ($message["user_id"]) {
-            $messages["users"][$message["user_id"]] = $message["user_id"];
+            $involved_users[$message["user_id"]] = $message["user_id"];
         }
     }
+
+    // Store the involved users in the message array.
+    $messages["users"] = $involved_users;
 
     return $messages;
 }
@@ -1343,7 +1346,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
     }
 
     $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "message_id");
-    $messages["users"] = array();
+    $involved_users = array();
 
     foreach ($messages as $id => $message)
     {
@@ -1354,7 +1357,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
 
         // Collect all involved users.
         if ($message["user_id"]) {
-            $messages["users"][$message["user_id"]] = $message["user_id"];
+            $involved_users[$message["user_id"]] = $message["user_id"];
         }
     }
 
@@ -1364,7 +1367,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
     if (count($messages) && !isset($messages[$thread]))
     {
         $starter = phorum_db_interact(
-            DB_RETURN_ASSOCS,
+            DB_RETURN_ASSOC,
             "SELECT *
              FROM   {$PHORUM['message_table']}
              WHERE  $forum_id_check
@@ -1372,15 +1375,24 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
                     $approvedval"
         );
 
-        if (isset($starter[0])) {
+        if ($starter)
+        {
             // Unpack the message meta data.
-            $starter[0]["meta"] = empty($starter[0]["meta"])
-                                ? array()
-                                : unserialize($starter[0]["meta"]);
+            $starter["meta"] = empty($starter["meta"])
+                             ? array()
+                             : unserialize($starter["meta"]);
 
-            $messages[$thread] = $starter[0];
+            $messages[$thread] = $starter;
+
+            // Add to involved users.
+            if ($starter["user_id"]) {
+                $involved_users[$starter["user_id"]] = $starter["user_id"];
+            }
         }
     }
+
+    // Store the involved users in the message array.
+    $messages["users"] = $involved_users;
 
     return $messages;
 }
