@@ -86,7 +86,7 @@ $PHORUM['string_fields_forum'] = array('name', 'description', 'template');
 define('DB_RETURN_CONN',     0);
 define('DB_RETURN_QUOTED',   1);
 define('DB_RETURN_RES',      2);
-define('DB_RETURN_ROW ',     3);
+define('DB_RETURN_ROW',      3);
 define('DB_RETURN_ROWS',     4);
 define('DB_RETURN_ASSOC',    5);
 define('DB_RETURN_ASSOCS',   6);
