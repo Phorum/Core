@@ -785,7 +785,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
                                : unserialize($message["meta"]);
 
         // Collect all involved users.
-        if ($message["user_id"]) {
+        if (isset($message["user_id"])) {
             $involved_users[$message["user_id"]] = $message["user_id"];
         }
     }
@@ -4651,9 +4651,9 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
     settype($reverse, "bool");
 
     if (is_numeric($folder)) {
-        $folder_where .= "pm_folder_id = $folder";
+        $folder_where = "pm_folder_id = $folder";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
-        $folder_where .= "(pm_folder_id = 0 AND special_folder = '$folder')";
+        $folder_where = "(pm_folder_id = 0 AND special_folder = '$folder')";
     } else trigger_error(
         "phorum_db_pm_list(): Illegal folder '".htmlspecialchars($folder)."' ".
         "requested for user id '$user_id'",
