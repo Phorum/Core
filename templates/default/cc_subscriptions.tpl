@@ -30,31 +30,31 @@
       <th align="left" class="PhorumTableHeader">{LANG->LastPost}</th>
       <th align="left" class="PhorumTableHeader">{LANG->Email}</th>
     </tr>
-    {LOOP subscriptions}
+    {LOOP TOPICS}
       <tr>
         <td class="PhorumTableRow">
-          <input type="checkbox" name="delthreads[]" value="{subscriptions->thread}" />
+          <input type="checkbox" name="delthreads[]" value="{TOPICS->thread}" />
         </td>
         <td class="PhorumTableRow">
-          <a href="{subscriptions->readurl}">{subscriptions->subject}</a><br />
-          <span class="PhorumListSubText">{LANG->Forum}: {subscriptions->forum}</span>
+          <a href="{TOPICS->URL->READ}">{TOPICS->subject}</a><br />
+          <span class="PhorumListSubText">{LANG->Forum}: {TOPICS->forum}</span>
         </td>
         <td class="PhorumTableRow">
-          {subscriptions->linked_author}
+          {TOPICS->linked_author}
         </td>
         <td class="PhorumTableRow">
-          {subscriptions->datestamp}
+          {TOPICS->datestamp}
         </td>
         <td class="PhorumTableRow">
-          <input type="hidden" name="thread_forum_id[{subscriptions->thread}]" value="{subscriptions->forum_id}" />
-          <input type="hidden" name="old_sub_type[{subscriptions->thread}]" value="{subscriptions->sub_type}" />
-          <select name="sub_type[{subscriptions->thread}]">
-            <option {if subscriptions->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
-            <option {if subscriptions->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
+          <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />
+          <input type="hidden" name="old_sub_type[{TOPICS->thread}]" value="{TOPICS->sub_type}" />
+          <select name="sub_type[{TOPICS->thread}]">
+            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
+            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
           </select>
          </td>
       </tr>
-    {/LOOP subscriptions}
+    {/LOOP TOPICS}
     <tr>
       <th colspan="5" align="right" class="PhorumTableHeader">
         <input type="submit" class="PhorumSubmit" name="button_update" value="{LANG->Update}" />
