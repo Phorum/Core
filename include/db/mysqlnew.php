@@ -887,28 +887,25 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  * If the "thread" index is set to zero, a new thread will be started and the
  * "thread" index will be filled with the new thread id upon return.
  *
- * @param $message - The message to post. This is an array, which should
- *                   contain the following fields:
- *                   forum_id, thread, parent_id, author, subject, email,
- *                   ip, user_id, moderator_post, status, sort, msgid,
- *                   body, closed. Additionally, the following optional
- *                   fields can be set: meta, modifystamp, viewcount.
- * @param $convert - True in case the message is being inserted by
- *                   a database conversion script. This will let you set
- *                   the datestamp and message_id of the message from the
- *                   $message data. Also, the duplicate message check will
- *                   be fully skipped.
+ * @param $message     - The message to post. This is an array, which should
+ *                       contain the following fields:
+ *                       forum_id, thread, parent_id, author, subject, email,
+ *                       ip, user_id, moderator_post, status, sort, msgid,
+ *                       body, closed. Additionally, the following optional
+ *                       fields can be set: meta, modifystamp, viewcount.
+ * @param $convert     - True in case the message is being inserted by
+ *                       a database conversion script. This will let you set
+ *                       the datestamp and message_id of the message from the
+ *                       $message data. Also, the duplicate message check will
+ *                       be fully skipped.
  *
- * @return         - TRUE on success, FALSE on failure, 0 on duplicate posts.
- *                   TODO: can this ever return FALSE?
+ * @return $message_id - The message_id that was assigned to the new message.
  */
 function phorum_db_post_message(&$message, $convert=FALSE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($convert, "bool");
-
-    $success = FALSE;
 
     foreach($message as $key => $value) {
         if (is_numeric($value) &&
@@ -978,53 +975,48 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     }
 
     // Insert the message and get the new message_id.
-    $newid = phorum_db_interact(
+    $message_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM["message_table"]}
                 (".implode(",", array_keys($insertfields)).")
          VALUES (".implode(",", $insertfields).")"
     );
 
-    if (!empty($newid))
+    $message["message_id"] = $message_id;
+    $message["datestamp"]  = $NOW;
+
+    // Updates for thread starter messages.
+    if ($message["thread"] == 0)
     {
-        $message["message_id"] = $newid;
-        $message["datestamp"]  = $NOW;
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM["message_table"]}
+             SET    thread     = $message_id
+             WHERE  message_id = $message_id"
+        );
 
-        // Updates for thread starter messages.
-        if ($message["thread"] == 0)
-        {
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "UPDATE {$PHORUM["message_table"]}
-                 SET    thread     = $newid
-                 WHERE  message_id = $newid"
-            );
-
-            $message["thread"] = $newid;
-        }
-
-        // Full text searching updates.
-        if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
-            $PHORUM["DBCONFIG"]["mysql_use_ft"])
-        {
-            $search_text = $message["author"]  .' | '.
-                           $message["subject"] .' | '.
-                           $message["body"];
-
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "INSERT DELAYED INTO {$PHORUM['search_table']}
-                        (message_id, forum_id, 
-                         search_text)
-                 VALUES ({$message['message_id']}, {$message['forum_id']},
-                         '$search_text')"
-            );
-        }
-
-        $success = TRUE;
+        $message["thread"] = $message_id;
     }
 
-    return $success;
+    // Full text searching updates.
+    if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
+        $PHORUM["DBCONFIG"]["mysql_use_ft"])
+    {
+        $search_text = $message["author"]  .' | '.
+                       $message["subject"] .' | '.
+                       $message["body"];
+
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "INSERT DELAYED INTO {$PHORUM['search_table']}
+                    (message_id, forum_id, 
+                     search_text)
+             VALUES ({$message['message_id']}, {$message['forum_id']},
+                     '$search_text')"
+        );
+    }
+
+    return $message_id;
 }
 
 /**
@@ -3165,96 +3157,34 @@ function phorum_db_search_users($search)
  * Add a user.
  *
  * @param $userdata - An array containing the fields to insert into the
- *                    user table. The array can contain two special fields:
- *                    forum_permissions  This field can contain an array
- *                                       with forum permissions for the user.
- *                                       The keys are forum_ids and the
- *                                       values are permission values.
- *                    user_data          This field can contain an array
- *                                       of key/value pairs which will be
- *                                       inserted in the database as custom
- *                                       profile fields. The keys are profile
- *                                       type ids (as defined by
- *                                       $PHORUM["PROFILE_FIELDS"]).
+ *                    user table. This array should contain at least
+ *                    a "username" field. See phorum_db_user_save() for
+ *                    some more info on the other data in this array.
  *
  * @return $user_id - The user_id that was assigned to the new user.
- *
- * TODO: maybe we should use the user_save function for handling
- * TODO: updating forum_permissions and user_data, because now there's
- * TODO: quite some overlap between add and save. The add function could
- * TODO: call the save function after creating the initial basic user record.
  */
 function phorum_db_user_add($userdata)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    // Pull some non user table fields from the userdata.
-    if (isset($userdata["forum_permissions"])) {
-        if (!empty($userdata["forum_permissions"])) {
-            $forum_perms = $userdata["forum_permissions"];
-        }
-        unset($userdata["forum_permissions"]);
-    }
-    if (isset($userdata["user_data"])) {
-        if (!empty($userdata["user_data"])) {
-            $custom_profile_data = $userdata["user_data"];
-        }
-        unset($userdata["user_data"]);
-    }
+    // We need at least the username for the user.
+    if (! isset($userdata["username"])) trigger_error(
+        "phorum_db_user_add: Missing field in userdata: username",
+        E_USER_ERROR
+    );
+    $username = phorum_db_interact(DB_RETURN_QUOTED, $userdata["username"]);
 
-    // Prepare the user table fields.
-    $insertfields = array();
-    foreach($userdata as $key => $value){
-        if (phorum_db_validate_field($key)){
-            if (!is_numeric($value)){
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $insertfields[$key] = "'$value'";
-            }else{
-                $insertfields[$key] = "$value";
-            }
-        }
-    }
-
-    // Insert the user record in the database.
+    // Insert a bare bone user in the database.
     $user_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['user_table']}
-                (".implode(",", array_keys($insertfields)).")
-         VALUES (".implode(", ", $insertfields).")"
+                (username)
+         VALUES ('$username')"
     );
 
-    // Assign user forum permissions.
-    if (isset($forum_perms)) {
-        foreach($forum_perms as $forum_id => $permission) {
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['user_permissions_table']}
-                        (user_id, forum_id, permission)
-                 VALUES ($user_id, $forum_id, $permission)"
-            );
-        }
-    }
-
-    // Assign custom profile fields.
-    if (isset($custom_profile_data)) {
-        foreach ($custom_profile_data as $key => $val)
-        {
-            // Arrays need to be serialized. The serialized data is prefixed
-            // with "P_SER:" as a marker for serialization.
-            if (is_array($val)) {
-                $val = 'P_SER:'.serialize($val);
-            } else {
-                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
-            }
-
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['user_custom_fields_table']}
-                        (user_id, type, data)
-                 VALUES ($user_id, $key, '$val')"
-            );
-        }
-    }
+    // Set the rest of the data using the phorum_db_user_save() function.
+    $userdata["user_id"] = $user_id;
+    phorum_db_user_save($userdata);
 
     return $user_id;
 }
@@ -3266,6 +3196,17 @@ function phorum_db_user_add($userdata)
  *                    user table. The array should contain at least
  *                    the user_id field to identify the user for which
  *                    to update the data.
+ *                    The array can contain two special fields:
+ *                    forum_permissions  This field can contain an array
+ *                                       with forum permissions for the user.
+ *                                       The keys are forum_ids and the
+ *                                       values are permission values.
+ *                    user_data          This field can contain an array
+ *                                       of key/value pairs which will be
+ *                                       inserted in the database as custom
+ *                                       profile fields. The keys are profile
+ *                                       type ids (as defined by
+ *                                       $PHORUM["PROFILE_FIELDS"]).
  *
  * @return $success - True if all settings were stored successfully. This
  *                    function will always return TRUE, so we could
@@ -3281,6 +3222,9 @@ function phorum_db_user_save($userdata)
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Pull some non user table fields from the userdata.
+    // TODO: are these ever set in the core? It seems a bit useless
+    // TODO: to have data passed to this function that is never
+    // TODO: really used.
     if (isset($userdata["permissions"])) {
         unset($userdata["permissions"]);
     }
