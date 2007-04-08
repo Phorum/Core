@@ -496,12 +496,19 @@ function phorum_db_update_settings($settings)
             $field = phorum_db_interact(DB_RETURN_QUOTED, $field);
             $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
 
+            // Delete existing settings record.
             phorum_db_interact(
                 DB_RETURN_RES,
-                "REPLACE INTO {$PHORUM['settings_table']}
-                 SET data = '$value',
-                     type = '$type',
-                     name = '$field'"
+                "DELETE FROM {$PHORUM["settings_table"]}
+                 WHERE  name = '$field'" 
+            );
+
+            // Insert new settings record.
+            phorum_db_interact(
+                DB_RETURN_RES,
+                "INSERT INTO {$PHORUM['settings_table']}
+                        (data, type, name)
+                 VALUES ('$value', '$type', '$field')"
             );
         }
     }
@@ -898,7 +905,6 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
 function phorum_db_post_message(&$message, $convert=FALSE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $table = $PHORUM["message_table"];
 
     settype($convert, "bool");
 
@@ -924,7 +930,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         // Check for duplicate messages in the last hour.
         $check_timestamp = $NOW - 3600;
         $sql = "SELECT message_id
-                FROM   $table
+                FROM   {$PHORUM["message_table"]}
                 WHERE  forum_id  = {$message['forum_id']} AND
                        author    ='{$message['author']}' AND
                        subject   ='{$message['subject']}' AND
@@ -935,42 +941,49 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         if (phorum_db_interact(DB_RETURN_ROWCOUNT, $sql) > 0) return 0;
     }
 
-    // The meta field is optional.
-    $metaval = isset($message["meta"]) ? ",meta='{$message['meta']}'" : "";
+    $insertfields = array(
+        "forum_id"       => $message["forum_id"],
+        "datestamp"      => $NOW,
+        "thread"         => $message["thread"],
+        "parent_id"      => $message["parent_id"],
+        "author"         => "'" . $message["author"] . "'",
+        "subject"        => "'" . $message["subject"] . "'",
+        "email"          => "'" . $message["email"] . "'",
+        "ip"             => "'" . $message["ip"] . "'",
+        "user_id"        => $message["user_id"],
+        "moderator_post" => $message["moderator_post"],
+        "status"         => $message["status"],
+        "sort"           => $message["sort"],
+        "msgid"          => "'" . $message["msgid"] . "'",
+        "body"           => "'" . $message["body"] . "'",
+        "closed"         => $message["closed"]
+    );
 
-    $sql = "INSERT INTO $table
-            SET    forum_id       = {$message['forum_id']},
-                   datestamp      = $NOW,
-                   thread         = {$message['thread']},
-                   parent_id      = {$message['parent_id']},
-                   author         = '{$message['author']}',
-                   subject        = '{$message['subject']}',
-                   email          = '{$message['email']}',
-                   ip             = '{$message['ip']}',
-                   user_id        = {$message['user_id']},
-                   moderator_post = {$message['moderator_post']},
-                   status         = {$message['status']},
-                   sort           = {$message['sort']},
-                   msgid          = '{$message['msgid']}',
-                   body           = '{$message['body']}',
-                   closed         = {$message['closed']}
-                   $metaval";
+    // The meta field is optional.
+    if (isset($message["meta"])) {
+        $insertfields["meta"] = "'{$message["meta"]}'";    
+    }
 
     // When handling a conversion, the message_id can be set.
-    if ($convert && isset($message['message_id'])) {
-        $sql .= ",message_id=".$message['message_id'];
+    if ($convert && isset($message["message_id"])) {
+        $insertfields["message_id"] = $message["message_id"];
     }
 
-    if(isset($message['modifystamp'])) {
-        $sql.=",modifystamp=".$message['modifystamp'];
+    if (isset($message["modifystamp"])) {
+        $insertfields["modifystamp"] = $message["modifystamp"];
     }
 
-    if(isset($message['viewcount'])) {
-        $sql.=",viewcount=".$message['viewcount'];
+    if(isset($message["viewcount"])) {
+        $insertfields["viewcount"] = $message["viewcount"];
     }
 
     // Insert the message and get the new message_id.
-    $newid = phorum_db_interact(DB_RETURN_NEWID, $sql);
+    $newid = phorum_db_interact(
+        DB_RETURN_NEWID,
+        "INSERT INTO {$PHORUM["message_table"]}
+                (".implode(",", array_keys($insertfields)).")
+         VALUES (".implode(",", $insertfields).")"
+    );
 
     if (!empty($newid))
     {
@@ -982,9 +995,9 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         {
             phorum_db_interact(
                 DB_RETURN_RES,
-                "UPDATE $table
-                 SET    thread=$newid
-                 WHERE  message_id=$newid"
+                "UPDATE {$PHORUM["message_table"]}
+                 SET    thread     = $newid
+                 WHERE  message_id = $newid"
             );
 
             $message["thread"] = $newid;
@@ -1001,9 +1014,10 @@ function phorum_db_post_message(&$message, $convert=FALSE)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT DELAYED INTO {$PHORUM['search_table']}
-                 SET    message_id  = {$message['message_id']},
-                        forum_id    = {$message['forum_id']},
-                        search_text = '$search_text'"
+                        (message_id, forum_id, 
+                         search_text)
+                 VALUES ({$message['message_id']}, {$message['forum_id']},
+                         '$search_text')"
             );
         }
 
@@ -2189,6 +2203,7 @@ function phorum_db_add_forum($forum)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    $insertfields = array();
     foreach($forum as $key => $value)
     {
         if (phorum_db_validate_field($key))
@@ -2196,17 +2211,17 @@ function phorum_db_add_forum($forum)
             if (is_numeric($value) &&
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
-                $fields[] = "$key=$value";
+                $insertfields[$key] = $value;
             // TODO: Wouldn't it be better to have this one set to a real
             // TODO: NULL value from the script that calls this function?
             // TODO: If for some reason somebody wants to use the string
             // TODO: 'NULL' for a value (a geek setting up a Phorum
             // TODO: probably ;-), then strange things will happen.
             } elseif($value=="NULL") {
-                $fields[] = "$key=$value";
+                $insertfields[$key] = $value;
             }else{
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key='$value'";
+                $insertfields[$key] = "'$value'";
             }
         }
     }
@@ -2214,7 +2229,8 @@ function phorum_db_add_forum($forum)
     $forum_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['forums_table']}
-         SET " . implode(", ", $fields)
+                (".implode(",", array_keys($insertfields)).")
+         VALUES (".implode(",", $insertfields).")"
     );
 
     return $forum_id;
@@ -2409,14 +2425,18 @@ function phorum_db_get_groups($group_id=0)
     // Retrieve the group(s) from the database.
     $groups = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT * FROM {$PHORUM['groups_table']} $group_where",
+        "SELECT *
+         FROM {$PHORUM['groups_table']}
+         $group_where",
         "group_id"
     );
 
     // Retrieve the group permissions from the database.
     $perms = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT * FROM {$PHORUM['forum_group_xref_table']} $group_where"
+        "SELECT * 
+         FROM {$PHORUM['forum_group_xref_table']}
+         $group_where"
     );
 
     // Add the permissions to the group(s).
@@ -2518,11 +2538,14 @@ function phorum_db_add_group($group_name, $group_id=0)
     settype($group_id, "int");
     $group_name = phorum_db_interact(DB_RETURN_QUOTED, $group_name);
 
+    $fields = $group_id > 0 ? "name, group_id" : "name";
+    $values = $group_id > 0 ? "'$group_name', $group_id" : "'$group_name'";
+
     $group_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['groups_table']}
-         SET    name = '$group_name'" .
-                ($group_id > 0 ? ", group_id = $group_id" : "")
+                ($fields)
+         VALUES ($values)"
     );
 
     return $group_id;
@@ -2598,7 +2621,7 @@ function phorum_db_update_group($group)
         // First, all existing forum permissions for the group are deleted.
         phorum_db_interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['forum_group_xref_table']}
+            "DELETE FROM {$PHORUM["forum_group_xref_table"]}
              WHERE  $group_where"
         );
 
@@ -2610,10 +2633,9 @@ function phorum_db_update_group($group)
 
             phorum_db_interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['forum_group_xref_table']}
-                 SET    group_id   = {$group['group_id']},
-                        permission = $permission,
-                        forum_id   = $forum_id"
+                "INSERT INTO {$PHORUM["forum_group_xref_table"]}
+                        (group_id, permission, forum_id)
+                 VALUES ({$group["group_id"]}, $permission, $forum_id)"
             );
         }
     }
@@ -3175,20 +3197,20 @@ function phorum_db_user_add($userdata)
     }
     if (isset($userdata["user_data"])) {
         if (!empty($userdata["user_data"])) {
-            $user_data = $userdata["user_data"];
+            $custom_profile_data = $userdata["user_data"];
         }
         unset($userdata["user_data"]);
     }
 
     // Prepare the user table fields.
-    $values = array();
+    $insertfields = array();
     foreach($userdata as $key => $value){
         if (phorum_db_validate_field($key)){
             if (!is_numeric($value)){
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $values[] = "$key='$value'";
+                $insertfields[$key] = "'$value'";
             }else{
-                $values[] = "$key=$value";
+                $insertfields[$key] = "$value";
             }
         }
     }
@@ -3197,7 +3219,8 @@ function phorum_db_user_add($userdata)
     $user_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['user_table']}
-         SET ".implode(", ", $values)
+                (".implode(",", array_keys($insertfields)).")
+         VALUES (".implode(", ", $insertfields).")"
     );
 
     // Assign user forum permissions.
@@ -3206,16 +3229,15 @@ function phorum_db_user_add($userdata)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_permissions_table']}
-                 SET    user_id    = $user_id,
-                        forum_id   = $forum_id,
-                        permission = $permission"
+                        (user_id, forum_id, permission)
+                 VALUES ($user_id, $forum_id, $permission)"
             );
         }
     }
 
     // Assign custom profile fields.
-    if (isset($user_data)) {
-        foreach ($user_data as $key => $val)
+    if (isset($custom_profile_data)) {
+        foreach ($custom_profile_data as $key => $val)
         {
             // Arrays need to be serialized. The serialized data is prefixed
             // with "P_SER:" as a marker for serialization.
@@ -3228,9 +3250,8 @@ function phorum_db_user_add($userdata)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_custom_fields_table']}
-                 SET    user_id = $user_id,
-                        type    = $key,
-                        data    = '$val'"
+                        (user_id, type, data)
+                 VALUES ($user_id, $key, '$val')"
             );
         }
     }
@@ -3263,25 +3284,28 @@ function phorum_db_user_save($userdata)
     if (isset($userdata["permissions"])) {
         unset($userdata["permissions"]);
     }
-    if (isset($userdata["forum_permissions"])) {
-        if (!empty($userdata["forum_permissions"])) {
-            $forum_perms = $userdata["forum_permissions"];
-        }
-        unset($userdata["forum_permissions"]);
-    }
     if (isset($userdata["groups"])) {
-        $groups = $userdata["groups"];
         unset($userdata["groups"]);
     }
     if (isset($userdata["group_permissions"])) {
         unset($userdata["group_permissions"]);
     }
+
+    // Forum permissions are handled by this function too.
+    if (isset($userdata["forum_permissions"])) {
+        if (is_array($userdata["forum_permissions"])) {
+            $forum_perms = $userdata["forum_permissions"];
+        }
+        unset($userdata["forum_permissions"]);
+    }
+
+    // Custom profile fields are handled by this function too.
     if (isset($userdata["user_data"])) {
-        $user_data = $userdata["user_data"];
+        $custom_profile_data = $userdata["user_data"];
         unset($userdata["user_data"]);
     }
 
-    // The user_id is required as a separate variable.
+    // The user_id is required for doing the update.
     if (!isset($userdata["user_id"])) trigger_error(
         "phorum_db_user_save(): the user_id field is missing in the " .
         "\$userdata argument",
@@ -3334,15 +3358,14 @@ function phorum_db_user_save($userdata)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_permissions_table']}
-                 SET    user_id    = $user_id,
-                        forum_id   = $fid,
-                        permission = $perms"
+                        (user_id, forum_id, permission)
+                 VALUES ($user_id, $forum_id, $permission)"
             );
         }
     }
 
     // Update custom user fields for the user.
-    if (isset($user_data))
+    if (isset($custom_profile_data))
     {
         // Delete all the existing custom profile fields.
         phorum_db_interact(
@@ -3352,7 +3375,7 @@ function phorum_db_user_save($userdata)
         );
 
         // Insert new custom profile fields.
-        foreach ($user_data as $key => $val)
+        foreach ($custom_profile_data as $key => $val)
         {
             // Arrays need to be serialized. The serialized data is prefixed
             // with "P_SER:" as a marker for serialization.
@@ -3365,9 +3388,8 @@ function phorum_db_user_save($userdata)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_custom_fields_table']}
-                 SET    user_id = $user_id,
-                        type    = $key,
-                        data    = '$val'"
+                        (user_id, type, data)
+                 VALUES ($user_id, $key, '$val')"
             );
         }
     }
@@ -3408,9 +3430,8 @@ function phorum_db_user_save_groups($user_id, $groups)
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['user_group_xref_table']}
-             SET    user_id  = $user_id,
-                    group_id = $group_id,
-                    status   = $group_status"
+                    (user_id, group_id, status)
+             VALUES ($user_id, $group_id, $group_status)"
         );
     }
 
@@ -3449,13 +3470,21 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
     settype($thread, "int");
     settype($type, "int");
 
+    // Delete a possibly existing subscription record.
     phorum_db_interact(
         DB_RETURN_RES,
-        "REPLACE INTO {$PHORUM['subscribers_table']}
-         SET     user_id  = $user_id,
-                 forum_id = $forum_id,
-                 thread   = $thread,
-                 sub_type = $type"
+        "DELETE FROM {$PHORUM['subscribers_table']}
+         WHERE  user_id  = $user_id AND
+                forum_id = $forum_id AND
+                thread   = $thread"
+    );
+
+    // Insert a new subscription record.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "INSERT INTO {$PHORUM['subscribers_table']}
+                (user_id, forum_id, thread, sub_type)
+         VALUES ($user_id, $forum_id, $thread, $type)"
     );
 
     return TRUE;
@@ -3537,7 +3566,7 @@ function phorum_db_user_get_groups($user_id)
          FROM   {$PHORUM['user_group_xref_table']}
          WHERE  user_id = $user_id
          ORDER  BY status DESC",
-        "group_id"
+        0 // keyfield 0 is the group_id
     );
 
     // The records are full rows, but we want a group_id -> status mapping.
@@ -3833,13 +3862,10 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     $file_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['files_table']}
-         SET    user_id      = $user_id,
-                message_id   = $message_id,
-                link         = '$link',
-                filename     = '$filename',
-                filesize     = $filesize,
-                file_data    = '$buffer',
-                add_datetime = ".time()
+                (user_id, message_id, link,
+                 filename, filesize, file_data, add_datetime)
+         VALUES ($user_id, $message_id, '$link',
+                 '$filename', $filesize, '$buffer', ".time().")"
     );
 
     return $file_id;
@@ -4163,33 +4189,31 @@ function phorum_db_newflag_add_read($message_ids)
     }
 
     // Prepare the rows for the query.
-    $values = array();
+    $values = NULL;
     foreach($message_ids as $id => $data)
     {
         if(is_array($data)) {
             $data["forum"] = (int)$data["forum"];
             $data["id"]    = (int)$data["id"];
-            $values[] =
-                "(" . $PHORUM['user']['user_id'] . "," .
+            $values = $PHORUM['user']['user_id'] . "," .
                       $data['forum'] . "," .
-                      $data['id'] . ")";
+                      $data['id'];
         } else {
             $data = (int)$data;
-            $values[] =
-                "(" . $PHORUM['user']['user_id'] . "," .
+            $values = $PHORUM['user']['user_id'] . "," .
                       $PHORUM['forum_id'] . "," .
-                      $data . ")";
+                      $data;
         }
     }
 
     // No values prepared? Then there's no need in running the query.
-    if (! count($values)) return;
+    if (!$values) return;
 
     phorum_db_interact(
         DB_RETURN_RES,
         "INSERT IGNORE INTO {$PHORUM['user_newflags_table']}
                 (user_id, forum_id, message_id)
-         VALUES ".join(",",$values)
+         VALUES ($values)"
     );
 }
 
@@ -4765,8 +4789,8 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
     $pm_folder_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['pm_folders_table']}
-         SET user_id    = $user_id,
-             foldername = '$foldername'"
+                (user_id, foldername)
+         VALUES ($user_id, '$foldername')"
     );
 
     return $pm_folder_id;
@@ -5077,12 +5101,10 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
     $pm_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['pm_messages_table']}
-         SET    from_user_id  = $from,
-                from_username = '$fromuser',
-                subject       = '$subject',
-                message       = '$message',
-                datestamp     = '".time()."',
-                meta          = '$meta'"
+                (from_user_id, from_username, subject, 
+                 message, datestamp, meta)
+         VALUES ($from, '$fromuser', '$subject',
+                 '$message', '".time()."', '$meta')"
     );
 
     // Put the message in the recipient inboxes.
@@ -5091,12 +5113,12 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['pm_xref_table']}
-             SET    user_id        = {$xref['user_id']},
-                    pm_folder_id   = {$xref['pm_folder_id']},
-                    special_folder = '{$xref['special_folder']}',
-                    pm_message_id  = $pm_id,
-                    read_flag      = {$xref['read_flag']},
-                    reply_flag     = 0"
+                    (user_id, pm_folder_id, 
+                     special_folder, pm_message_id,
+                     read_flag, reply_flag)
+             VALUES ({$xref['user_id']}, {$xref['pm_folder_id']},
+                     '{$xref['special_folder']}', $pm_id,
+                     {$xref['read_flag']}, 0)"
         );
     }
 
@@ -5369,8 +5391,8 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
         $pm_buddy_id = phorum_db_interact(
             DB_RETURN_NEWID,
             "INSERT INTO {$PHORUM['pm_buddies_table']}
-             SET user_id       = $user_id,
-                 buddy_user_id = $buddy_user_id"
+                    (user_id, buddy_user_id)
+             VALUES ($user_id, $buddy_user_id)"
         );
     }
 
