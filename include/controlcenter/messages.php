@@ -64,7 +64,7 @@ $gotforums = (count($mod_forums) > 0);
 $PHORUM['DATA']['PREPOST'] = array();
 
 if ($gotforums)
-    $foruminfo = phorum_db_get_forums($mod_forums,-1,$PHORUM['vroot']);
+    $foruminfo = phorum_db_get_forums($mod_forums, NULL, $PHORUM['vroot']);
 else
     $foruminfo = array();
 

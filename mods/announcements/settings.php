@@ -61,7 +61,7 @@ $forum_list_global = phorum_get_forum_info(1,0);
 
 $frm->addrow("Global Announcement Forum", $frm->select_tag("forum_id", $forum_list_global, $PHORUM["mod_announcements"]["forum_id"]));
 
-//$vroot_folders = phorum_db_get_forums(0,-1,'\'forum_id\'');
+//$vroot_folders = phorum_db_get_forums(0, NULL, '\'forum_id\'');
 $vroot_folders = phorum_get_forum_info(3,-1);
 
 if(count($vroot_folders)) {

@@ -67,7 +67,7 @@ $PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODE
 // present the move message moderation link. 
 if ($PHORUM["DATA"]["MODERATOR"]) {
     $build_move_url=false;
-    $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+    $forums=phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
     $modforums=0;
     foreach ($forums as $id=>$forum) {
         if ($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)) {

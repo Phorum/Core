@@ -1885,8 +1885,6 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
 
     // Backward compatibility: previously, -1 was used for $parent_id
     // instead of NULL for indicating "any parent_id".
-    // TODO: go over the Phorum code and change the core calls to
-    // TODO: phorum_db_get_forums() to use NULL and not -1.
     if ($parent_id !== NULL && $parent_id == -1) $parent_id = NULL;
 
     $where = '';

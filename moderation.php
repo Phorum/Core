@@ -177,7 +177,7 @@ switch ($mod_step) {
         // get all the forums the moderator may move to
         $PHORUM['DATA']["MoveForumsOption"]="";
 
-        $forums=phorum_db_get_forums(0,-1,$PHORUM['vroot']);
+        $forums=phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
         asort($forums);
 
         foreach($forums as $id=>$forum){

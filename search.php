@@ -139,7 +139,7 @@ if(!empty($phorum_search)){
 
         $match_number = $start + 1;
 
-        $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
+        $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;

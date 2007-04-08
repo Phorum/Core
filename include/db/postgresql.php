@@ -1217,10 +1217,14 @@ function phorum_db_update_settings($settings){
  */
 
 
-function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $inherit_id = null){
+function phorum_db_get_forums($forum_ids = 0, $parent_id = null, $vroot = null, $inherit_id = null){
     $PHORUM = $GLOBALS["PHORUM"];
 
-    settype($parent_id, "int");
+    if ($parent_id !== null) settype($parent_id, "int");
+
+    // Backward compatibility: previously, -1 was used for $parent_id
+    // instead of NULL for indicating "any parent_id".
+    if ($parent_id !== NULL && $parent_id == -1) $parent_id = NULL;
 
     $conn = phorum_db_postgresql_connect();
 
@@ -1238,10 +1242,10 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     $sql = "select * from {$PHORUM['forums_table']} ";
     if ($forum_ids){
         $sql .= " where forum_id in ($forum_ids)";
-    } elseif ($inherit_id != null) {
+    } elseif ($inherit_id !== null) {
         $sql .= " where inherit_id = $inherit_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
-    } elseif ($parent_id >= 0) {
+    } elseif ($parent_id !== null) {
         $sql .= " where parent_id = $parent_id";
         if(!defined("PHORUM_ADMIN")) $sql.=" and active=1";
     }  elseif($vroot !== null) {
