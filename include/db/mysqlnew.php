@@ -4132,33 +4132,26 @@ function phorum_db_newflag_add_read($message_ids)
         phorum_db_newflag_delete($num_end - PHORUM_MAX_NEW_INFO);
     }
 
-    // Prepare the rows for the query.
-    $values = NULL;
+    // Insert newflags.
     foreach($message_ids as $id => $data)
     {
         if(is_array($data)) {
-            $data["forum"] = (int)$data["forum"];
-            $data["id"]    = (int)$data["id"];
             $values = $PHORUM['user']['user_id'] . "," .
-                      $data['forum'] . "," .
-                      $data['id'];
+                      (int)$data['forum'] . "," .
+                      (int)$data['id'];
         } else {
-            $data = (int)$data;
             $values = $PHORUM['user']['user_id'] . "," .
                       $PHORUM['forum_id'] . "," .
-                      $data;
+                      (int)$data;
         }
+
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "INSERT IGNORE INTO {$PHORUM['user_newflags_table']}
+                    (user_id, forum_id, message_id)
+             VALUES ($values)"
+        );
     }
-
-    // No values prepared? Then there's no need in running the query.
-    if (!$values) return;
-
-    phorum_db_interact(
-        DB_RETURN_RES,
-        "INSERT IGNORE INTO {$PHORUM['user_newflags_table']}
-                (user_id, forum_id, message_id)
-         VALUES ($values)"
-    );
 }
 
 /**
