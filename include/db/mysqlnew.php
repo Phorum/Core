@@ -24,7 +24,7 @@
 // TODO: or add the required include? Or is it functionality that doesn't
 // TODO: belong here and could better go into the core maybe?
 
-if (!defined("PHORUM")) return;
+if (!defined('PHORUM')) return;
 
 /**
  * The other Phorum code does not care how the messages are stored.
@@ -48,26 +48,26 @@ if (!defined("PHORUM")) return;
 $prefix = $PHORUM['DBCONFIG']['table_prefix'];
 
 // tables needed to be "partitioned"
-$PHORUM["message_table"]            = $prefix . "_messages";
-$PHORUM["user_newflags_table"]      = $prefix . "_user_newflags";
-$PHORUM["subscribers_table"]        = $prefix . "_subscribers";
-$PHORUM["files_table"]              = $prefix . "_files";
-$PHORUM["search_table"]             = $prefix . "_search";
+$PHORUM['message_table']            = $prefix . '_messages';
+$PHORUM['user_newflags_table']      = $prefix . '_user_newflags';
+$PHORUM['subscribers_table']        = $prefix . '_subscribers';
+$PHORUM['files_table']              = $prefix . '_files';
+$PHORUM['search_table']             = $prefix . '_search';
 
 // tables common to all "partitions"
-$PHORUM["settings_table"]           = $prefix . "_settings";
-$PHORUM["forums_table"]             = $prefix . "_forums";
-$PHORUM["user_table"]               = $prefix . "_users";
-$PHORUM["user_permissions_table"]   = $prefix . "_user_permissions";
-$PHORUM["groups_table"]             = $prefix . "_groups";
-$PHORUM["forum_group_xref_table"]   = $prefix . "_forum_group_xref";
-$PHORUM["user_group_xref_table"]    = $prefix . "_user_group_xref";
-$PHORUM['user_custom_fields_table'] = $prefix . "_user_custom_fields";
-$PHORUM["banlist_table"]            = $prefix . "_banlists";
-$PHORUM["pm_messages_table"]        = $prefix . "_pm_messages";
-$PHORUM["pm_folders_table"]         = $prefix . "_pm_folders";
-$PHORUM["pm_xref_table"]            = $prefix . "_pm_xref";
-$PHORUM["pm_buddies_table"]         = $prefix . "_pm_buddies";
+$PHORUM['settings_table']           = $prefix . '_settings';
+$PHORUM['forums_table']             = $prefix . '_forums';
+$PHORUM['user_table']               = $prefix . '_users';
+$PHORUM['user_permissions_table']   = $prefix . '_user_permissions';
+$PHORUM['groups_table']             = $prefix . '_groups';
+$PHORUM['forum_group_xref_table']   = $prefix . '_forum_group_xref';
+$PHORUM['user_group_xref_table']    = $prefix . '_user_group_xref';
+$PHORUM['user_custom_fields_table'] = $prefix . '_user_custom_fields';
+$PHORUM['banlist_table']            = $prefix . '_banlists';
+$PHORUM['pm_messages_table']        = $prefix . '_pm_messages';
+$PHORUM['pm_folders_table']         = $prefix . '_pm_folders';
+$PHORUM['pm_xref_table']            = $prefix . '_pm_xref';
+$PHORUM['pm_buddies_table']         = $prefix . '_pm_buddies';
 
 /**
  * Message fields which are always strings, even if they contain numbers only.
@@ -161,22 +161,22 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        $PHORUM = $GLOBALS['PHORUM'];
 
         $conn = mysql_connect(
-            $PHORUM["DBCONFIG"]["server"],
-            $PHORUM["DBCONFIG"]["user"],
-            $PHORUM["DBCONFIG"]["password"],
+            $PHORUM['DBCONFIG']['server'],
+            $PHORUM['DBCONFIG']['user'],
+            $PHORUM['DBCONFIG']['password'],
             TRUE
         );
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
-            phorum_database_error("Failed to connect to the database.");
+            phorum_database_error('Failed to connect to the database.');
             exit;
         }
-        if (mysql_select_db($PHORUM["DBCONFIG"]["name"], $conn) === FALSE) {
+        if (mysql_select_db($PHORUM['DBCONFIG']['name'], $conn) === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
-            phorum_database_error("Failed to select the database.");
+            phorum_database_error('Failed to select the database.');
             exit;
         }
     }
@@ -188,8 +188,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     // By now, we really need a SQL query.
     if ($sql === NULL) trigger_error(
-        "Internal error: phorum_db_interact(): " .
-        "missing sql query statement!", E_USER_ERROR
+        'Internal error: phorum_db_interact(): ' .
+        'missing sql query statement!', E_USER_ERROR
     );
 
     // Execute the SQL query.
@@ -320,8 +320,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     }
 
     trigger_error(
-        "Internal error: phorum_db_interact(): " .
-        "illegal return type specified!", E_USER_ERROR
+        'Internal error: phorum_db_interact(): ' .
+        'illegal return type specified!', E_USER_ERROR
     );
 }
 
@@ -347,14 +347,14 @@ function phorum_db_sanitize_mixed(&$var, $type)
 {
     if(is_array($var)){
         foreach($var as &$val){
-            if($type == "int"){
+            if($type == 'int'){
                 $val = (int)$val;
             } else {
                 $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
             }
         }
     } else {
-        if($type=="int"){
+        if($type=='int'){
             $var = (int)$var;
         } else {
             $var = phorum_db_interact(DB_RETURN_QUOTED, $var);
@@ -409,7 +409,7 @@ function phorum_db_check_connection()
  */
 function phorum_db_run_queries($queries)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $error = NULL;
 
@@ -426,7 +426,7 @@ function phorum_db_run_queries($queries)
             DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK
         );
 
-        if ($error != NULL) break;
+        if ($error !== NULL) break;
     }
 
     return $error;
@@ -499,7 +499,7 @@ function phorum_db_update_settings($settings)
             // Delete existing settings record.
             phorum_db_interact(
                 DB_RETURN_RES,
-                "DELETE FROM {$PHORUM["settings_table"]}
+                "DELETE FROM {$PHORUM['settings_table']}
                  WHERE  name = '$field'" 
             );
 
@@ -513,7 +513,7 @@ function phorum_db_update_settings($settings)
         }
     }
     else trigger_error(
-        "phorum_db_update_settings(): \$settings cannot be empty",
+        'phorum_db_update_settings(): $settings cannot be empty',
         E_USER_ERROR
     );
 
@@ -538,46 +538,29 @@ function phorum_db_update_settings($settings)
  */
 function phorum_db_get_thread_list($page, $include_bodies=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($page, "int");
-
-    $table = $PHORUM["message_table"];
+    settype($page, 'int');
 
     // The messagefields that we want to fetch from the database.
     $messagefields =
-       "$table.author,
-        $table.datestamp,
-        $table.email,
-        $table.message_id,
-        $table.forum_id,
-        $table.meta,
-        $table.moderator_post,
-        $table.modifystamp,
-        $table.parent_id,
-        $table.msgid,
-        $table.sort,
-        $table.status,
-        $table.subject,
-        $table.thread,
-        $table.thread_count,
-        $table.user_id,
-        $table.viewcount,
-        $table.closed,
-        $table.ip";
+       'author, datestamp, email, message_id, forum_id, meta,
+        moderator_post, modifystamp, parent_id, msgid, sort,
+        status, subject, thread, thread_count, user_id, viewcount,
+        closed, ip';
 
     // Include the message bodies in the thread list if requested.
     if ($include_bodies) {
-        $messagefields .= ",$table.body";
+        $messagefields .= ',body';
     }
 
     // The sort mechanism to use.
-    if($PHORUM["float_to_top"]){
-            $sortfield = "modifystamp";
-            $index = "list_page_float";
-    } else{
-            $sortfield = "thread";
-            $index = "list_page_flat";
+    if ($PHORUM['float_to_top']) {
+        $sortfield = 'modifystamp';
+        $index = 'list_page_float';
+    } else {
+        $sortfield = 'thread';
+        $index = 'list_page_flat';
     }
 
     // Initialize the return array.
@@ -588,9 +571,9 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
     // threads  : thread starter messages (always)
     // replies  : thread reply messages (only in threaded read mode)
     $groups = array();
-    if ($page == 0) $groups[] = "stickies";
-    $groups[] = "threads";
-    if ($PHORUM["threaded_list"]) $groups[] = "replies";
+    if ($page == 0) $groups[] = 'stickies';
+    $groups[] = 'threads';
+    if ($PHORUM['threaded_list']) $groups[] = 'replies';
 
     // For remembering the message ids for which we want to fetch the replies.
     $replymsgids = array();
@@ -603,10 +586,10 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
         switch ($group)
         {
             // Stickies.
-            case "stickies":
+            case 'stickies':
 
                 $sql = "SELECT $messagefields
-                        FROM   $table
+                        FROM   {$PHORUM['message_table']}
                         WHERE  status=".PHORUM_STATUS_APPROVED." AND
                                parent_id=0 AND
                                sort=".PHORUM_SORT_STICKY." AND
@@ -615,9 +598,9 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
                 break;
 
             // Threads.
-            case "threads":
+            case 'threads':
 
-                if ($PHORUM["threaded_list"]) {
+                if ($PHORUM['threaded_list']) {
                     $limit = $PHORUM['list_length_threaded'];
                 } else {
                     $limit = $PHORUM['list_length_flat'];
@@ -625,7 +608,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
                 $start = $page * $limit;
 
                 $sql = "SELECT $messagefields
-                        FROM   $table
+                        FROM   {$PHORUM['message_table']}
                         USE    INDEX ($index)
                         WHERE  $sortfield > 0 AND
                                forum_id = {$PHORUM['forum_id']} AND
@@ -637,18 +620,18 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
                 break;
 
             // Reply messages.
-            case "replies":
+            case 'replies':
 
                 // We're done if we did not collect any messages with replies.
                 if (! count($replymsgids)) break;
 
                 $sortorder = "sort, $sortfield DESC, message_id";
-                if (isset($PHORUM["reverse_threading"]) &&
-                    $PHORUM["reverse_threading"])
-                    $sortorder.=" DESC";
+                if (isset($PHORUM['reverse_threading']) &&
+                    $PHORUM['reverse_threading'])
+                    $sortorder.=' DESC';
 
                 $sql = "SELECT $messagefields
-                        FROM   $table
+                        FROM   {$PHORUM['message_table']}
                         WHERE  status = ".PHORUM_STATUS_APPROVED." AND
                                thread in (" . implode(",",$replymsgids) .")
                         ORDER  BY $sortorder";
@@ -657,22 +640,22 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
         } // End of switch ($group)
 
         // Continue with the next group if no SQL query was formulated.
-        if (is_null($sql)) continue;
+        if ($sql === NULL) continue;
 
         // Query the messages for the current group.
-        $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "message_id");
+        $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
         foreach ($rows as $id => $row)
         {
             // Unpack the thread message meta data.
-            $row["meta"] = empty($row["meta"])
+            $row['meta'] = empty($row['meta'])
                          ? array()
-                         : unserialize($row["meta"]);
+                         : unserialize($row['meta']);
 
             // Add the row to the list of messages.
             $messages[$id] = $row;
 
             // We need the message ids for fetching reply messages.
-            if ($group == 'threads' && $row["thread_count"] > 1) {
+            if ($group == 'threads' && $row['thread_count'] > 1) {
                 $replymsgids[] = $id;
             }
         }
@@ -701,12 +684,12 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
  */
 function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($count, "int");
-    settype($thread, "int");
-    settype($threads_only, "bool");
-    phorum_db_sanitize_mixed($forum_id, "int");
+    settype($count, 'int');
+    settype($thread, 'int');
+    settype($threads_only, 'bool');
+    phorum_db_sanitize_mixed($forum_id, 'int');
 
     $messages = array();
     $allowed_forums = array();
@@ -741,7 +724,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         // Check access for each forum separately.
         foreach ($forum_id as $id) {
             if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $id)) {
-                $allowed_forums[]=$id;
+                $allowed_forums[] = $id;
             }
         }
 
@@ -762,17 +745,17 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if (count($allowed_forums)) {
         $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
     } else {
-        $sql .= " AND forum_id=$forum_id";
+        $sql .= " AND forum_id = $forum_id";
     }
 
     if ($thread){
-        $sql.=" AND thread=$thread";
+        $sql.=" AND thread = $thread";
     }
 
     if($threads_only) {
-        $sql .= " AND parent_id = 0 ORDER BY thread DESC";
+        $sql .= ' AND parent_id = 0 ORDER BY thread DESC';
     } else {
-        $sql .= " ORDER BY message_id DESC";
+        $sql .= ' ORDER BY message_id DESC';
     }
 
     if ($count){
@@ -780,25 +763,25 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     }
 
     // Retrieve matching messages from the database.
-    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "message_id");
+    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
 
     // Post processing of received messages.
     $involved_users = array();
     foreach ($messages as $id => $message)
     {
         // Unpack the message meta data.
-        $messages[$id]["meta"] = empty($message["meta"])
+        $messages[$id]['meta'] = empty($message['meta'])
                                ? array()
-                               : unserialize($message["meta"]);
+                               : unserialize($message['meta']);
 
         // Collect all involved users.
-        if (isset($message["user_id"])) {
-            $involved_users[$message["user_id"]] = $message["user_id"];
+        if (isset($message['user_id'])) {
+            $involved_users[$message['user_id']] = $message['user_id'];
         }
     }
 
     // Store the involved users in the message array.
-    $messages["users"] = $involved_users;
+    $messages['users'] = $involved_users;
 
     return $messages;
 }
@@ -820,20 +803,20 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
  */
 function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $moddays=0, $countonly = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($on_hold_only, "bool");
-    settype($moddays, "int");
-    settype($countonly, "bool");
-    phorum_db_sanitize_mixed($forum_id, "int");
+    settype($on_hold_only, 'bool');
+    settype($moddays, 'int');
+    settype($countonly, 'bool');
+    phorum_db_sanitize_mixed($forum_id, 'int');
 
     // Select a message count or full message records?
-    $sql = "SELECT " . ($countonly ? "count(*) " : "* ") .
-           "FROM " . $PHORUM["message_table"] . " WHERE ";
+    $sql = 'SELECT ' . ($countonly ? 'count(*) ' : '* ') .
+           'FROM ' . $PHORUM['message_table'] . ' WHERE ';
 
     if (is_array($forum_id)) {
-        $sql .= "forum_id IN (" . implode(",", $forum_id) . ") AND ";
-    } elseif (! is_null($forum_id)){
+        $sql .= 'forum_id IN (' . implode(', ', $forum_id) . ') AND ';
+    } elseif ($forum_id !== NULL){
         $sql .= "forum_id = $forum_id AND ";
     }
 
@@ -843,16 +826,16 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
     }
 
     if($on_hold_only){
-        $sql .= " status=".PHORUM_STATUS_HOLD;
+        $sql .= ' status = '.PHORUM_STATUS_HOLD;
     } else {
         // Use an UNION for speed. This is much faster than using
         // a (status=X or status=Y) query.
-        $sql = "($sql status=".PHORUM_STATUS_HOLD.") UNION " .
-               "($sql status=".PHORUM_STATUS_HIDDEN.")";
+        $sql = "($sql status = ".PHORUM_STATUS_HOLD.") UNION " .
+               "($sql status = ".PHORUM_STATUS_HIDDEN.")";
     }
 
     if (!$countonly) {
-        $sql .=" ORDER BY thread, message_id";
+        $sql .= ' ORDER BY thread, message_id';
     }
 
     // Retrieve and return data for counting unapproved messages.
@@ -864,13 +847,13 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
     }
 
     // Retrieve unapproved messages.
-    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "message_id");
+    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
 
     // Post processing of received messages.
     foreach ($messages as $id => $message) {
-        $messages[$id]["meta"] = empty($message["meta"])
+        $messages[$id]['meta'] = empty($message['meta'])
                                ? array()
-                               : unserialize($message["meta"]);
+                               : unserialize($message['meta']);
     }
 
     return $messages;
@@ -903,9 +886,9 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  */
 function phorum_db_post_message(&$message, $convert=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($convert, "bool");
+    settype($convert, 'bool');
 
     foreach($message as $key => $value) {
         if (is_numeric($value) &&
@@ -927,7 +910,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         // Check for duplicate messages in the last hour.
         $check_timestamp = $NOW - 3600;
         $sql = "SELECT message_id
-                FROM   {$PHORUM["message_table"]}
+                FROM   {$PHORUM['message_table']}
                 WHERE  forum_id  = {$message['forum_id']} AND
                        author    ='{$message['author']}' AND
                        subject   ='{$message['subject']}' AND
@@ -939,72 +922,72 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     }
 
     $insertfields = array(
-        "forum_id"       => $message["forum_id"],
-        "datestamp"      => $NOW,
-        "thread"         => $message["thread"],
-        "parent_id"      => $message["parent_id"],
-        "author"         => "'" . $message["author"] . "'",
-        "subject"        => "'" . $message["subject"] . "'",
-        "email"          => "'" . $message["email"] . "'",
-        "ip"             => "'" . $message["ip"] . "'",
-        "user_id"        => $message["user_id"],
-        "moderator_post" => $message["moderator_post"],
-        "status"         => $message["status"],
-        "sort"           => $message["sort"],
-        "msgid"          => "'" . $message["msgid"] . "'",
-        "body"           => "'" . $message["body"] . "'",
-        "closed"         => $message["closed"]
+        'forum_id'       => $message['forum_id'],
+        'datestamp'      => $NOW,
+        'thread'         => $message['thread'],
+        'parent_id'      => $message['parent_id'],
+        'author'         => "'" . $message['author'] . "'",
+        'subject'        => "'" . $message['subject'] . "'",
+        'email'          => "'" . $message['email'] . "'",
+        'ip'             => "'" . $message['ip'] . "'",
+        'user_id'        => $message['user_id'],
+        'moderator_post' => $message['moderator_post'],
+        'status'         => $message['status'],
+        'sort'           => $message['sort'],
+        'msgid'          => "'" . $message['msgid'] . "'",
+        'body'           => "'" . $message['body'] . "'",
+        'closed'         => $message['closed']
     );
 
     // The meta field is optional.
-    if (isset($message["meta"])) {
-        $insertfields["meta"] = "'{$message["meta"]}'";    
+    if (isset($message['meta'])) {
+        $insertfields['meta'] = "'{$message['meta']}'";    
     }
 
     // When handling a conversion, the message_id can be set.
-    if ($convert && isset($message["message_id"])) {
-        $insertfields["message_id"] = $message["message_id"];
+    if ($convert && isset($message['message_id'])) {
+        $insertfields['message_id'] = $message['message_id'];
     }
 
-    if (isset($message["modifystamp"])) {
-        $insertfields["modifystamp"] = $message["modifystamp"];
+    if (isset($message['modifystamp'])) {
+        $insertfields['modifystamp'] = $message['modifystamp'];
     }
 
-    if(isset($message["viewcount"])) {
-        $insertfields["viewcount"] = $message["viewcount"];
+    if(isset($message['viewcount'])) {
+        $insertfields['viewcount'] = $message['viewcount'];
     }
 
     // Insert the message and get the new message_id.
     $message_id = phorum_db_interact(
         DB_RETURN_NEWID,
-        "INSERT INTO {$PHORUM["message_table"]}
-                (".implode(",", array_keys($insertfields)).")
-         VALUES (".implode(",", $insertfields).")"
+        "INSERT INTO {$PHORUM['message_table']}
+                (".implode(', ', array_keys($insertfields)).")
+         VALUES (".implode(', ', $insertfields).")"
     );
 
-    $message["message_id"] = $message_id;
-    $message["datestamp"]  = $NOW;
+    $message['message_id'] = $message_id;
+    $message['datestamp']  = $NOW;
 
     // Updates for thread starter messages.
-    if ($message["thread"] == 0)
+    if ($message['thread'] == 0)
     {
         phorum_db_interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM["message_table"]}
+            "UPDATE {$PHORUM['message_table']}
              SET    thread     = $message_id
              WHERE  message_id = $message_id"
         );
 
-        $message["thread"] = $message_id;
+        $message['thread'] = $message_id;
     }
 
     // Full text searching updates.
-    if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
-        $PHORUM["DBCONFIG"]["mysql_use_ft"])
+    if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
+        $PHORUM['DBCONFIG']['mysql_use_ft'])
     {
-        $search_text = $message["author"]  .' | '.
-                       $message["subject"] .' | '.
-                       $message["body"];
+        $search_text = $message['author']  .' | '.
+                       $message['subject'] .' | '.
+                       $message['body'];
 
         phorum_db_interact(
             DB_RETURN_RES,
@@ -1035,12 +1018,12 @@ function phorum_db_post_message(&$message, $convert=FALSE)
  */
 function phorum_db_update_message($message_id, $message)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($message_id, "int");
+    settype($message_id, 'int');
 
     if (count($message) == 0) trigger_error(
-        "\$message cannot be empty in phorum_update_message()",
+        '$message cannot be empty in phorum_update_message()',
         E_USER_ERROR
     );
 
@@ -1050,15 +1033,15 @@ function phorum_db_update_message($message_id, $message)
         {
             if (is_numeric($value) &&
                 !in_array($field, $PHORUM['string_fields_message'])){
-                $fields[] = "$field=$value";
+                $fields[] = "$field = $value";
             } elseif (is_array($value)) {
                 $value = phorum_db_interact(DB_RETURN_QUOTED,serialize($value));
                 $message[$field] = $value;
-                $fields[] = "$field='$value'";
+                $fields[] = "$field = '$value'";
             } else {
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
                 $message[$field] = $value;
-                $fields[] = "$field='$value'";
+                $fields[] = "$field = '$value'";
             }
         }
     }
@@ -1066,18 +1049,18 @@ function phorum_db_update_message($message_id, $message)
     phorum_db_interact(
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
-        SET " . implode(", ", $fields) . "
-        WHERE message_id=$message_id"
+        SET " . implode(', ', $fields) . "
+        WHERE message_id = $message_id"
     );
 
     // Full text searching updates.
-    if (isset($message["author"]) &&
-        isset($message["subject"]) &&
-        isset($message["body"])) {
+    if (isset($message['author']) &&
+        isset($message['subject']) &&
+        isset($message['body'])) {
 
-        $search_text = $message["author"]  .' | '.
-                       $message["subject"] .' | '.
-                       $message["body"];
+        $search_text = $message['author']  .' | '.
+                       $message['subject'] .' | '.
+                       $message['body'];
 
         phorum_db_interact(
             DB_RETURN_RES,
@@ -1102,10 +1085,10 @@ function phorum_db_update_message($message_id, $message)
  */
 function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($message_id, "int");
-    settype($mode, "int");
+    settype($message_id, 'int');
+    settype($mode, 'int');
 
     // Find the info for the message that has to be deleted.
     $msg = phorum_db_interact(
@@ -1122,7 +1105,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     if ($mode == PHORUM_DELETE_TREE) {
         $mids = phorum_db_get_messagetree($message_id, $msg['forum_id']);
         $where = "message_id IN ($mids)";
-        $mids = explode(",", $mids);
+        $mids = explode(',', $mids);
     }else{
         $mids = array($message_id);
         $where = "message_id = $message_id";
@@ -1171,14 +1154,14 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // It kind of sucks to have this here, but it is the best way
     // to ensure that thread info gets updated if messages are deleted.
     // Leave this include down here, so it is included conditionally.
-    include_once("./include/thread_info.php");
+    include_once('./include/thread_info.php');
     phorum_update_thread_info($thread);
 
     // We need to delete the subscriptions for the thread too.
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['subscribers_table']}
-         WHERE forum_id > 0 AND thread=$thread"
+         WHERE forum_id > 0 AND thread = $thread"
     );
 
     // This function will be slow with a lot of messages.
@@ -1198,10 +1181,10 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
  */
 function phorum_db_get_messagetree($message_id, $forum_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($message_id, "int");
-    settype($forum_id, "int");
+    settype($message_id, 'int');
+    settype($forum_id, 'int');
 
     // Find all children for the provided message_id.
     $child_ids = phorum_db_interact(
@@ -1215,7 +1198,7 @@ function phorum_db_get_messagetree($message_id, $forum_id)
     // Recursively build the message tree.
     $tree = "$message_id";
     foreach ($child_ids as $child_id) {
-        $tree .= "," . phorum_db_get_messagetree($child_id[0], $forum_id);
+        $tree .= ',' . phorum_db_get_messagetree($child_id[0], $forum_id);
     }
 
     return $tree;
@@ -1244,30 +1227,30 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  *                           messages (indexed by message_id), depending on
  *                           the $value parameter.
  */
-function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=FALSE)
+function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    phorum_db_sanitize_mixed($value, "string");
-    settype($ignore_forum_id, "bool");
+    phorum_db_sanitize_mixed($value, 'string');
+    settype($ignore_forum_id, 'bool');
     if (!phorum_db_validate_field($field)) trigger_error(
-        "phorum_db_get_message(): Illegal database field \"" .
-        htmlspecialchars($field) . "\"", E_USER_ERROR
+        'phorum_db_get_message(): Illegal database field ' .
+        '"' . htmlspecialchars($field) . '"', E_USER_ERROR
     );
 
-    $forum_id_check = "";
-    if (!$ignore_forum_id && !empty($PHORUM["forum_id"])) {
+    $forum_id_check = '';
+    if (!$ignore_forum_id && !empty($PHORUM['forum_id'])) {
         $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND ";
     }
 
     if (is_array($value)) {
         $multiple = TRUE;
         $checkvar = "$field IN ('".implode("','",$value)."')";
-        $limit = "";
+        $limit = '';
     } else {
         $multiple=FALSE;
-        $checkvar = "$field='$value'";
-        $limit = "LIMIT 1";
+        $checkvar = "$field = '$value'";
+        $limit = 'LIMIT 1';
     }
 
     $return = $multiple ? array() : NULL;
@@ -1282,16 +1265,16 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=FAL
 
     foreach ($messages as $message)
     {
-        $message["meta"] = empty($message["meta"])
+        $message['meta'] = empty($message['meta'])
                          ? array()
-                         : unserialize($message["meta"]);
+                         : unserialize($message['meta']);
 
         if (! $multiple) {
             $return = $message;
             break;
         }
 
-        $return[$message["message_id"]] = $message;
+        $return[$message['message_id']] = $message;
     }
 
     return $return;
@@ -1314,23 +1297,23 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=FAL
  */
 function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($thread, "int");
-    settype($page, "int");
-    settype($ignore_mod_perms, "int");
+    settype($thread, 'int');
+    settype($page, 'int');
+    settype($ignore_mod_perms, 'int');
 
     // Check if the forum_id has to be checked.
-    $forum_id_check = "";
-    if (!empty($PHORUM["forum_id"])) {
+    $forum_id_check = '';
+    if (!empty($PHORUM['forum_id'])) {
         $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND";
     }
 
     // Determine if not approved messages should be displayed.
-    $approvedval = "";
+    $approvedval = '';
     if (!$ignore_mod_perms &&
         !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-        $approvedval = "AND status =".PHORUM_STATUS_APPROVED;
+        $approvedval = 'AND status ='.PHORUM_STATUS_APPROVED;
     }
 
     $sql = "SELECT *
@@ -1342,28 +1325,28 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
 
     if ($page > 0) {
        // Handle the page offset.
-       $start = $PHORUM["read_length"] * ($page-1);
-       $sql .= " LIMIT $start,".$PHORUM["read_length"];
+       $start = $PHORUM['read_length'] * ($page-1);
+       $sql .= " LIMIT $start,".$PHORUM['read_length'];
     } else {
        // Handle reverse threading. This is only done if $page is 0.
        // In that case, the messages for threaded read are retrieved.
-       if (isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"])
-           $sql.=" desc";
+       if (isset($PHORUM['reverse_threading']) && $PHORUM['reverse_threading'])
+           $sql.=' DESC';
     }
 
-    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "message_id");
+    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
     $involved_users = array();
 
     foreach ($messages as $id => $message)
     {
         // Unpack the message meta data.
-        $messages[$id]["meta"] = empty($message["meta"])
+        $messages[$id]['meta'] = empty($message['meta'])
                                ? array()
-                               : unserialize($message["meta"]);
+                               : unserialize($message['meta']);
 
         // Collect all involved users.
-        if ($message["user_id"]) {
-            $involved_users[$message["user_id"]] = $message["user_id"];
+        if ($message['user_id']) {
+            $involved_users[$message['user_id']] = $message['user_id'];
         }
     }
 
@@ -1384,21 +1367,21 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
         if ($starter)
         {
             // Unpack the message meta data.
-            $starter["meta"] = empty($starter["meta"])
+            $starter['meta'] = empty($starter['meta'])
                              ? array()
-                             : unserialize($starter["meta"]);
+                             : unserialize($starter['meta']);
 
             $messages[$thread] = $starter;
 
             // Add to involved users.
-            if ($starter["user_id"]) {
-                $involved_users[$starter["user_id"]] = $starter["user_id"];
+            if ($starter['user_id']) {
+                $involved_users[$starter['user_id']] = $starter['user_id'];
             }
         }
     }
 
     // Store the involved users in the message array.
-    $messages["users"] = $involved_users;
+    $messages['users'] = $involved_users;
 
     return $messages;
 }
@@ -1413,24 +1396,24 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
  */
 function phorum_db_get_message_index($thread=0, $message_id=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // check for valid values
     if(empty($thread) || empty($message_id)) {
         return 0;
     }
 
-    settype($thread, "int");
-    settype($message_id, "int");
+    settype($thread, 'int');
+    settype($message_id, 'int');
 
-    $forum_id_check = "";
-    if (!empty($PHORUM["forum_id"])){
+    $forum_id_check = '';
+    if (!empty($PHORUM['forum_id'])){
         $forum_id_check = "forum_id = {$PHORUM['forum_id']} AND";
     }
 
-    $approvedval = "";
+    $approvedval = '';
     if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-        $approvedval="AND status =".PHORUM_STATUS_APPROVED;
+        $approvedval='AND status ='.PHORUM_STATUS_APPROVED;
     }
 
     $index = phorum_db_interact(
@@ -1476,14 +1459,14 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
  */
 function phorum_db_search($search, $offset, $length, $type, $days, $forum)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    $fulltext_mode = isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
-                     $PHORUM["DBCONFIG"]["mysql_use_ft"];
+    $fulltext_mode = isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
+                     $PHORUM['DBCONFIG']['mysql_use_ft'];
 
-    settype($offset, "int");
-    settype($length, "int");
-    settype($days, "int");
+    settype($offset, 'int');
+    settype($length, 'int');
+    settype($days, 'int');
 
     // These variable are used to hold information about matching
     // messages during the search query processing.
@@ -1491,7 +1474,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
     $total_count = 0;        // the total amount of matching messages
 
     // Initialize the return data.
-    $return = array("count" => 0, "rows" => array());
+    $return = array('count' => 0, 'rows' => array());
 
     // Check what forums the active Phorum user can read.
     $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
@@ -1503,16 +1486,16 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
          !in_array($PHORUM['forum_id'], $allowed_forums))) return $return;
 
     // For spreading search results over multiple pages.
-    $start = $offset * $PHORUM["list_length"];
+    $start = $offset * $PHORUM['list_length'];
 
     // Prepare forum_id restriction.
-    if ($forum == "ALL") {
-        $forum_where = " AND forum_id IN (".implode(",", $allowed_forums).")";
-    } elseif ($forum == "THISONE") {
+    if ($forum == 'ALL') {
+        $forum_where = ' AND forum_id IN ('.implode(', ', $allowed_forums).')';
+    } elseif ($forum == 'THISONE') {
         $forum_where=" AND forum_id = {$PHORUM['forum_id']}";
     } else trigger_error(
-        "phorum_db_search(): Illegal forum specification \"" .
-        htmlspecialchars($type) . "\"", E_USER_ERROR
+        'phorum_db_search(): Illegal forum specification ' .
+        '"' . htmlspecialchars($type) . '"', E_USER_ERROR
     );
 
     // Prepare day limit restriction.
@@ -1527,25 +1510,25 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
     switch ($type)
     {
         // Search for an author's name.
-        case "AUTHOR":
+        case 'AUTHOR':
             $terms = phorum_db_interact(DB_RETURN_QUOTED, $search);
             break;
 
         // Search for an author's user_id.
-        case "USER_ID":
+        case 'USER_ID':
             $terms = (int)$search;
             break;
 
         // Search for an exact phrase.
-        case "PHRASE":
+        case 'PHRASE':
             // The code below will handle correct SQL quoting.
             $terms = $fulltext_mode ? array('"'.$search.'"') : array($search);
             break;
 
         // Search for a query string, which can contain quoted phrases,
         // possibly prefixed by a "-" for negating the phrase.
-        case "ALL":
-        case "ANY":
+        case 'ALL':
+        case 'ANY':
             $quoted_terms = array();
 
             // First, pull out all the double quoted strings
@@ -1557,7 +1540,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
             }
 
             // Finally, pull out the rest of the words in the string.
-            $terms = preg_split( "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY );
+            $terms = preg_split("/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY);
 
             // Merge them all together.
             $terms = array_merge($terms, $quoted_terms);
@@ -1565,8 +1548,8 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
 
         // Safety net.
         default:
-            trigger_error("phorum_db_search(): Illegal search type \"" .
-                        htmlspecialchars($type) . "\"", E_USER_ERROR);
+            trigger_error('phorum_db_search(): Illegal search type ' .
+                          '"' . htmlspecialchars($type) . '"', E_USER_ERROR);
     }
 
     // --------------------------
@@ -1579,11 +1562,11 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
         // temporary table which holds all message_ids for messages
         // that match the search parameters.
 
-        if ($type == "AUTHOR" || $type == "USER_ID")
+        if ($type == 'AUTHOR' || $type == 'USER_ID')
         {
-            $infix = $type == "AUTHOR" ? "author" : "userid";
+            $infix = $type == 'AUTHOR' ? 'author' : 'userid';
             $id_table = "{$PHORUM['search_table']}_{$infix}_".md5(microtime());
-            $field = $type=="AUTHOR" ? "author" : "user_id";
+            $field = $type=='AUTHOR' ? 'author' : 'user_id';
 
             phorum_db_interact(
                 DB_RETURN_RES,
@@ -1599,15 +1582,15 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
 
         } elseif (count($terms)) {
 
-            $use_key = "";
-            $against = "";
-            $extra_where = "";
+            $use_key = '';
+            $against = '';
+            $extra_where = '';
 
             /* Using this code on larger forums has shown to make the
                search faster. However, on smaller forums, it does not
                appear to help and in fact appears to slow down searches.
 
-               TODO Maybe use $PHORUM["message_count"] for dynamically
+               TODO Maybe use $PHORUM['message_count'] for dynamically
                TODO including this code in the query?
 
             if ($days) {
@@ -1616,24 +1599,24 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                         FROM {$PHORUM['message_table']}
                         WHERE datestamp >= $min_time";
                 $min_id = phorum_db_interact(DB_RETURN_VALUE, $sql);
-                $use_key=" USE KEY (primary)";
+                $use_key=' USE KEY (primary)';
                 $extra_where="AND message_id >= $min_id";
             }
             */
 
-            $id_table = $PHORUM['search_table']."_terms_".md5(microtime());
+            $id_table = $PHORUM['search_table'].'_terms_'.md5(microtime());
 
-            if ($type=="ALL" && count($terms)>1) {
+            if ($type=='ALL' && count($terms)>1) {
                 foreach ($terms as $term) {
-                    if($term[0] == "+" || $term[0] == "-"){
-                        $against .= phorum_db_interact(DB_RETURN_QUOTED, $term)." ";
+                    if($term[0] == '+' || $term[0] == '-'){
+                        $against .= phorum_db_interact(DB_RETURN_QUOTED, $term).' ';
                     } else {
-                        $against .= "+".phorum_db_interact(DB_RETURN_QUOTED, $term)." ";
+                        $against .= '+'.phorum_db_interact(DB_RETURN_QUOTED, $term).' ';
                     }
                 }
                 $against = trim($against);
             } else {
-                $against = phorum_db_interact(DB_RETURN_QUOTED, implode(" ", $terms));
+                $against = phorum_db_interact(DB_RETURN_QUOTED, implode(' ', $terms));
             }
 
             phorum_db_interact(
@@ -1659,7 +1642,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
         if (isset($id_table))
         {
             // Create the temporary table.
-            $table = $PHORUM['search_table']."_".md5(microtime());
+            $table = $PHORUM['search_table'].'_'.md5(microtime());
             phorum_db_interact(
                 DB_RETURN_RES,
                 "CREATE TEMPORARY TABLE $table (
@@ -1701,10 +1684,10 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
 
     else
     {
-        if ($type == "AUTHOR" || $type == "USER_ID")
+        if ($type == 'AUTHOR' || $type == 'USER_ID')
         {
-            $field = $type=="AUTHOR" ? "author" : "user_id";
-            $value = $type=="AUTHOR" ? "'$terms'" : $terms;
+            $field = $type=='AUTHOR' ? 'author' : 'user_id';
+            $value = $type=='AUTHOR' ? "'$terms'" : $terms;
             $sql_core = "FROM {$PHORUM['message_table']}
                          WHERE $field = $value
                                $forum_where
@@ -1737,7 +1720,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
             // performed against the concatenated author, subject and body
             // fields. This way, the query string will be matched against
             // all three fields.
-            $conj = $type == "ALL" ? "AND" : "OR";
+            $conj = $type == 'ALL' ? 'AND' : 'OR';
             $concat = "concat(author, ' | ', subject, ' | ', body)";
             $clause = "( $concat LIKE '%" .
                        implode("%' $conj $concat LIKE '%", $terms) .
@@ -1784,13 +1767,13 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
             DB_RETURN_ASSOCS,
             "SELECT *
              FROM   {$PHORUM['message_table']}
-             WHERE  message_id IN (".implode(",", array_keys($message_ids)).")
+             WHERE  message_id IN (".implode(', ', array_keys($message_ids)).")
              ORDER  BY datestamp DESC",
-            "message_id"
+            'message_id'
         );
 
-        $return["count"] = $total_count;
-        $return["rows"]  = $rows;
+        $return['count'] = $total_count;
+        $return['rows']  = $rows;
     }
 
     return $return;
@@ -1814,28 +1797,28 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
  */
 function phorum_db_get_neighbour_thread($key, $direction)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($key, "int");
+    settype($key, 'int');
 
-    $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
+    $keyfield = $PHORUM['float_to_top'] ? 'modifystamp' : 'thread';
 
     switch ($direction) {
-        case "newer": $compare = ">"; $orderdir = "ASC";  break;
-        case "older": $compare = "<"; $orderdir = "DESC"; break;
+        case 'newer': $compare = '>'; $orderdir = 'ASC';  break;
+        case 'older': $compare = '<'; $orderdir = 'DESC'; break;
         default:
             trigger_error(
-                "phorum_db_get_neighbour_thread(): " .
-                "Illegal direction \"".htmlspecialchars($direction)."\"",
+                'phorum_db_get_neighbour_thread(): ' .
+                'Illegal direction "'.htmlspecialchars($direction).'"',
                 E_USER_ERROR
             );
     }
 
     // If the active Phorum user is not a moderator for the forum, then
     // the neighbour message should be approved.
-    $approvedval = "";
+    $approvedval = '';
     if (!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
-        $approvedval = "AND status = ".PHORUM_STATUS_APPROVED;
+        $approvedval = 'AND status = '.PHORUM_STATUS_APPROVED;
     }
 
     // Select the neighbour from the database.
@@ -1876,12 +1859,12 @@ function phorum_db_get_neighbour_thread($key, $direction)
  */
 function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    phorum_db_sanitize_mixed($forum_ids, "int");
-    if ($parent_id  !== NULL) settype($parent_id, "int");
-    if ($vroot      !== NULL) settype($vroot, "int");
-    if ($inherit_id !== NULL) settype($inherit_id, "int");
+    phorum_db_sanitize_mixed($forum_ids, 'int');
+    if ($parent_id  !== NULL) settype($parent_id, 'int');
+    if ($vroot      !== NULL) settype($vroot, 'int');
+    if ($inherit_id !== NULL) settype($inherit_id, 'int');
 
     // Backward compatibility: previously, -1 was used for $parent_id
     // instead of NULL for indicating "any parent_id".
@@ -1890,20 +1873,20 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
     $where = '';
     if (!empty($forum_ids)){
         if (is_array($forum_ids)) {
-            $where .= "forum_id IN (".implode(",", $forum_ids).")";
+            $where .= 'forum_id IN ('.implode(', ', $forum_ids).')';
         } else {
             $where .= "forum_id = $forum_ids";
         }
     } elseif ($inherit_id !== NULL) {
         $where .= "inherit_id = $inherit_id";
-        if(!defined("PHORUM_ADMIN")) $where.=" AND active=1";
+        if(!defined('PHORUM_ADMIN')) $where.=' AND active=1';
     } elseif ($parent_id !== NULL) {
         $where .= "parent_id = $parent_id";
-        if(!defined("PHORUM_ADMIN")) $where.=" AND active=1";
+        if(!defined('PHORUM_ADMIN')) $where.=' AND active=1';
     } elseif($vroot !== NULL) {
         $where .= "vroot = $vroot";
     } else {
-        $where .= "forum_id <> 0";
+        $where .= 'forum_id <> 0';
     }
 
     $forums = phorum_db_interact(
@@ -1912,7 +1895,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
          FROM   {$PHORUM['forums_table']}
          WHERE  $where
          ORDER  BY display_order ASC, name",
-        "forum_id"
+        'forum_id'
     );
 
     return $forums;
@@ -1942,16 +1925,16 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
  */
 function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $timestamp=0, $thread_count_change=0, $sticky_count_change=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($refresh, "bool");
-    settype($msg_count_change, "int");
-    settype($timestamp, "int");
-    settype($thread_count_change, "int");
-    settype($sticky_count_change, "int");
+    settype($refresh, 'bool');
+    settype($msg_count_change, 'int');
+    settype($timestamp, 'int');
+    settype($thread_count_change, 'int');
+    settype($sticky_count_change, 'int');
 
     // Always do a full refresh on small forums.
-    if (isset($PHORUM["message_count"]) && $PHORUM["message_count"]<1000) {
+    if (isset($PHORUM['message_count']) && $PHORUM['message_count']<1000) {
         $refresh = TRUE;
     }
 
@@ -2026,10 +2009,10 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
  */
 function phorum_db_move_thread($thread_id, $toforum)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($thread_id, "int");
-    settype($toforum, "int");
+    settype($thread_id, 'int');
+    settype($toforum, 'int');
 
     if ($toforum > 0 && $thread_id > 0)
     {
@@ -2052,10 +2035,10 @@ function phorum_db_move_thread($thread_id, $toforum)
         phorum_db_update_forum_stats(TRUE);
 
         // Update the stats for the destination forum.
-        $old_id = $GLOBALS["PHORUM"]["forum_id"];
-        $GLOBALS["PHORUM"]["forum_id"] = $toforum;
+        $old_id = $GLOBALS['PHORUM']['forum_id'];
+        $GLOBALS['PHORUM']['forum_id'] = $toforum;
         phorum_db_update_forum_stats(TRUE);
-        $GLOBALS["PHORUM"]["forum_id"] = $old_id;
+        $GLOBALS['PHORUM']['forum_id'] = $old_id;
 
         // Move the newflags and search data to the destination forum.
 
@@ -2101,7 +2084,7 @@ function phorum_db_move_thread($thread_id, $toforum)
 
         // Update subscriptions.
         if (count($message_ids)) {
-            $ids_str = implode(",",$message_ids);
+            $ids_str = implode(', ',$message_ids);
             phorum_db_interact(
                 DB_RETURN_RES,
                 "UPDATE {$PHORUM['subscribers_table']}
@@ -2112,7 +2095,7 @@ function phorum_db_move_thread($thread_id, $toforum)
 
         // Delete newflags.
         if(count($delete_ids)) {
-            $ids_str=implode(",",$delete_ids);
+            $ids_str = implode(', ',$delete_ids);
             phorum_db_interact(
                 DB_RETURN_RES,
                 "DELETE FROM {$PHORUM['user_newflags_table']}
@@ -2122,7 +2105,7 @@ function phorum_db_move_thread($thread_id, $toforum)
 
         // Update search data.
         if (count($search_ids)) {
-            $ids_str = implode(",",$search_ids);
+            $ids_str = implode(', ',$search_ids);
             phorum_db_interact(
                 DB_RETURN_RES,
                 "UPDATE {$PHORUM['search_table']}
@@ -2140,9 +2123,9 @@ function phorum_db_move_thread($thread_id, $toforum)
  */
 function phorum_db_close_thread($thread_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($thread_id, "int");
+    settype($thread_id, 'int');
 
     if($thread_id > 0) {
         phorum_db_interact(
@@ -2161,9 +2144,9 @@ function phorum_db_close_thread($thread_id)
  */
 function phorum_db_reopen_thread($thread_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($thread_id, "int");
+    settype($thread_id, 'int');
 
     if($thread_id > 0){
         phorum_db_interact(
@@ -2191,7 +2174,7 @@ function phorum_db_reopen_thread($thread_id)
  */
 function phorum_db_add_forum($forum)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $insertfields = array();
     foreach($forum as $key => $value)
@@ -2207,9 +2190,9 @@ function phorum_db_add_forum($forum)
             // TODO: If for some reason somebody wants to use the string
             // TODO: 'NULL' for a value (a geek setting up a Phorum
             // TODO: probably ;-), then strange things will happen.
-            } elseif($value=="NULL") {
+            } elseif ($value == 'NULL') {
                 $insertfields[$key] = $value;
-            }else{
+            } else {
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
                 $insertfields[$key] = "'$value'";
             }
@@ -2219,8 +2202,8 @@ function phorum_db_add_forum($forum)
     $forum_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['forums_table']}
-                (".implode(",", array_keys($insertfields)).")
-         VALUES (".implode(",", $insertfields).")"
+                (".implode(', ', array_keys($insertfields)).")
+         VALUES (".implode(', ', $insertfields).")"
     );
 
     return $forum_id;
@@ -2233,9 +2216,9 @@ function phorum_db_add_forum($forum)
  */
 function phorum_db_drop_forum($forum_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($forum_id, "int");
+    settype($forum_id, 'int');
 
     // These are the tables that hold forum related data.
     $tables = array (
@@ -2294,9 +2277,9 @@ function phorum_db_drop_forum($forum_id)
  */
 function phorum_db_drop_folder($forum_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($forum_id, "int");
+    settype($forum_id, 'int');
 
     // See if the $forum_id is really a folder and find its
     // parent_id, which we can use to reattach children of the folder.
@@ -2346,23 +2329,23 @@ function phorum_db_drop_folder($forum_id)
  */
 function phorum_db_update_forum($forum)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Check if the forum_id is set.
-    if (!isset($forum["forum_id"]) || empty($forum["forum_id"])) trigger_error(
-        "phorum_db_update_forum(): \$forum[\"forum_id\"] cannot be empty",
+    if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
+        'phorum_db_update_forum(): $forum["forum_id"] cannot be empty',
         E_USER_ERROR
     );
 
-    phorum_db_sanitize_mixed($forum["forum_id"], "int");
+    phorum_db_sanitize_mixed($forum['forum_id'], 'int');
 
     // See what forum(s) to update.
-    if (is_array($forum["forum_id"])) {
-        $forumwhere = "forum_id IN (".implode(",",$forum["forum_id"]).")";
+    if (is_array($forum['forum_id'])) {
+        $forumwhere = 'forum_id IN ('.implode(', ',$forum['forum_id']).')';
     } else {
-        $forumwhere = "forum_id = ".$forum["forum_id"];
+        $forumwhere = 'forum_id = ' . $forum['forum_id'];
     }
-    unset($forum["forum_id"]);
+    unset($forum['forum_id']);
 
     // Prepare the SQL code for updating the fields.
     $fields = array();
@@ -2373,12 +2356,12 @@ function phorum_db_update_forum($forum)
             if (is_numeric($value) &&
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
-                $fields[] = "$key=$value";
-            } elseif($value=="NULL") {
-                $fields[] = "$key=$value";
+                $fields[] = "$key = $value";
+            } elseif($value == 'NULL') {
+                $fields[] = "$key = $value";
             } else {
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key='$value'";
+                $fields[] = "$key = '$value'";
             }
         }
     }
@@ -2388,7 +2371,7 @@ function phorum_db_update_forum($forum)
         phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$PHORUM['forums_table']}
-             SET "  .implode(", ", $fields) . "
+             SET "  .implode(', ', $fields) . "
              WHERE  $forumwhere"
         );
     }
@@ -2406,11 +2389,11 @@ function phorum_db_update_forum($forum)
  */
 function phorum_db_get_groups($group_id=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($group_id, "int");
+    settype($group_id, 'int');
 
-    $group_where = $group_id == 0 ? "" : "WHERE group_id = $group_id";
+    $group_where = $group_id == 0 ? '' : "WHERE group_id = $group_id";
 
     // Retrieve the group(s) from the database.
     $groups = phorum_db_interact(
@@ -2418,7 +2401,7 @@ function phorum_db_get_groups($group_id=0)
         "SELECT *
          FROM {$PHORUM['groups_table']}
          $group_where",
-        "group_id"
+        'group_id'
     );
 
     // Retrieve the group permissions from the database.
@@ -2430,14 +2413,14 @@ function phorum_db_get_groups($group_id=0)
     );
 
     // Add the permissions to the group(s).
-    foreach ($groups as &$group) $group["permissions"] = array();
+    foreach ($groups as &$group) $group['permissions'] = array();
     foreach ($perms as $perm)
     {
         // Little safety net against orphin records (shouldn't happen).
-        if (!isset($groups[$perm["group_id"]])) continue;
+        if (!isset($groups[$perm['group_id']])) continue;
 
-        $groups[$perm["group_id"]]["permissions"][$perm["forum_id"]]
-            = $perm["permission"];
+        $groups[$perm['group_id']]['permissions'][$perm['forum_id']]
+            = $perm['permission'];
     }
 
     return $groups;
@@ -2471,13 +2454,13 @@ function phorum_db_get_groups($group_id=0)
  */
 function phorum_db_get_group_members($group_id, $status = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    phorum_db_sanitize_mixed($group_id, "int");
-    if ($status !== NULL) settype($status, "int");
+    phorum_db_sanitize_mixed($group_id, 'int');
+    if ($status !== NULL) settype($status, 'int');
 
     if (is_array($group_id)){
-        $group_where = "AND group_id IN (" . implode(",", $group_id) . ")";
+        $group_where = 'AND group_id IN (' . implode(', ', $group_id) . ')';
     } else {
         $group_where = "AND group_id = $group_id";
     }
@@ -2485,7 +2468,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
     if ($status !== NULL) {
         $status_where = "AND xref.status = $status";
     } else {
-        $status_where = "";
+        $status_where = '';
     }
 
     // This join is only here so that the list of members comes out sorted.
@@ -2500,7 +2483,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
                 $group_where
                 $status_where
          ORDER  BY username ASC",
-         "user_id"
+         'user_id'
     );
 
     // The records are full rows, but we want a user_id -> status mapping.
@@ -2523,12 +2506,12 @@ function phorum_db_get_group_members($group_id, $status = NULL)
  */
 function phorum_db_add_group($group_name, $group_id=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($group_id, "int");
+    settype($group_id, 'int');
     $group_name = phorum_db_interact(DB_RETURN_QUOTED, $group_name);
 
-    $fields = $group_id > 0 ? "name, group_id" : "name";
+    $fields = $group_id > 0 ? 'name, group_id' : 'name';
     $values = $group_id > 0 ? "'$group_name', $group_id" : "'$group_name'";
 
     $group_id = phorum_db_interact(
@@ -2574,25 +2557,25 @@ function phorum_db_add_group($group_name, $group_id=0)
  */
 function phorum_db_update_group($group)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Check if the group_id is set.
-    if (!isset($group["group_id"]) || empty($group["group_id"])) trigger_error(
-        "phorum_db_update_group(): \$group[\"group_id\"] cannot be empty",
+    if (!isset($group['group_id']) || empty($group['group_id'])) trigger_error(
+        'phorum_db_update_group(): $group["group_id"] cannot be empty',
         E_USER_ERROR
     );
 
-    settype($group["group_id"], "int");
-    $group_where = "group_id = " . $group['group_id'];
+    settype($group['group_id'], 'int');
+    $group_where = 'group_id = ' . $group['group_id'];
 
     // See what group fields we have to update.
     $fields = array();
-    if (isset($group["name"])) {
-        $fields = "name = " .
-                  phorum_db_interact(DB_RETURN_QUOTED, $phorum["name"]);
+    if (isset($group['name'])) {
+        $fields = 'name = ' .
+                  phorum_db_interact(DB_RETURN_QUOTED, $phorum['name']);
     }
-    if (isset($group["open"])) {
-        $fields = "open = " . (int)$group["open"];
+    if (isset($group['open'])) {
+        $fields = 'open = ' . (int)$group['open'];
     }
 
     // Update group fields.
@@ -2600,32 +2583,32 @@ function phorum_db_update_group($group)
         phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$PHORUM['groups_table']}
-             SET ". implode(",", $fields) . "
+             SET ". implode(', ', $fields) . "
              WHERE  $group_where"
         );
     }
 
     // Update the group permissions if requested.
-    if (isset($group["permissions"]))
+    if (isset($group['permissions']))
     {
         // First, all existing forum permissions for the group are deleted.
         phorum_db_interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM["forum_group_xref_table"]}
+            "DELETE FROM {$PHORUM['forum_group_xref_table']}
              WHERE  $group_where"
         );
 
         // Second, all new permissions are inserted.
-        foreach($group["permissions"] as $forum_id => $permission)
+        foreach($group['permissions'] as $forum_id => $permission)
         {
-            settype($forum_id, "int");
-            settype($permission, "int");
+            settype($forum_id, 'int');
+            settype($permission, 'int');
 
             phorum_db_interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM["forum_group_xref_table"]}
+                "INSERT INTO {$PHORUM['forum_group_xref_table']}
                         (group_id, permission, forum_id)
-                 VALUES ({$group["group_id"]}, $permission, $forum_id)"
+                 VALUES ({$group['group_id']}, $permission, $forum_id)"
             );
         }
     }
@@ -2640,9 +2623,9 @@ function phorum_db_update_group($group)
  */
 function phorum_db_delete_group($group_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($group_id, "int");
+    settype($group_id, 'int');
 
     // These are the tables that hold group related data.
     $tables = array (
@@ -2678,18 +2661,18 @@ function phorum_db_delete_group($group_id)
  */
 function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_email=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($forum_id, "int");
-    settype($ignore_user_perms, "bool");
-    settype($for_email, "bool");
+    settype($forum_id, 'int');
+    settype($ignore_user_perms, 'bool');
+    settype($for_email, 'bool');
 
     // Exclude admins from the list, if requested.
-    $or_where_admin = $exclude_admin ? "" : "OR user.admin=1";
+    $or_where_admin = $exclude_admin ? '' : 'OR user.admin=1';
 
     // If we are gathering email addresses for mailing the moderators,
     // then honour the moderation_email setting for the user.
-    $where_moderation_mail = $for_email ? "AND user.moderation_email = 1" : "";
+    $where_moderation_mail = $for_email ? 'AND user.moderation_email = 1' : '';
 
     $moderators = array();
 
@@ -2756,13 +2739,13 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
  */
 function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir=NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    phorum_db_sanitize_mixed($user_id, "int");
+    phorum_db_sanitize_mixed($user_id, 'int');
 
     if (is_array($user_id)) {
         if (count($user_id)) {
-            $user_where = "user_id IN (".implode(",", $user_id).")";
+            $user_where = 'user_id IN ('.implode(', ', $user_id).')';
         } else {
             return array();
         }
@@ -2770,23 +2753,23 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         $user_where = "user_id = $user_id";
     }
 
-    $orderby = "";
+    $orderby = '';
     if ($sortkey !== NULL)
     {
         if (!phorum_db_validate_field($sortkey)) trigger_error(
-            "phorum_db_user_get(): Illegal sortkey parameter",
+            'phorum_db_user_get(): Illegal sortkey parameter',
             E_USER_ERROR
         );
-        $orderby = "ORDER BY " . $sortkey;
+        $orderby = 'ORDER BY ' . $sortkey;
 
         if ($sortdir !== NULL) {
             $sortdir = strtoupper($sortdir);
             if ($sortdir != 'ASC' && $sortdir != 'DESC') trigger_error(
-                "phorum_db_user_get(): Illegal sortdir parameter (must be " .
-                "either \"ASC\" or \"DESC\")",
+                'phorum_db_user_get(): Illegal sortdir parameter (must be ' .
+                'either "ASC" or "DESC")',
                 E_USER_ERROR
             );
-            $orderby .= " " . $sortdir;
+            $orderby .= ' ' . $sortdir;
         }
     }
 
@@ -2797,14 +2780,14 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
          FROM   {$PHORUM['user_table']}
          WHERE  $user_where
          $orderby",
-        "user_id"
+        'user_id'
     );
 
     // Unpack the settings_data.
     foreach ($users as $id => $user) {
-        $users[$id]["settings_data"] = empty($user["settings_data"])
+        $users[$id]['settings_data'] = empty($user['settings_data'])
                                      ? array()
-                                     : unserialize($user["settings_data"]);
+                                     : unserialize($user['settings_data']);
     }
 
     // Retrieve detailed group and permission information for the user(s).
@@ -2822,7 +2805,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
 
         // Add forum user permissions to the users.
         foreach ($forum_permissions as $perm) {
-            $users[$perm[0]]["forum_permissions"][$perm[1]] = $perm[2];
+            $users[$perm[0]]['forum_permissions'][$perm[1]] = $perm[2];
         }
 
         // Retrieve forum group permissions and groups for the requested users.
@@ -2843,21 +2826,21 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         foreach ($group_permissions as $perm)
         {
             // Add the group_id to the user data.
-            $users[$perm[0]]["groups"][$perm[1]] = $perm[$perm[1]];
+            $users[$perm[0]]['groups'][$perm[1]] = $perm[$perm[1]];
 
             // Are we handling a group permissions record?
             if (!empty($perm[2]))
             {
                 // Initialize group permissions for the forum_id in the
                 // user data.
-                if (!isset($users[$perm[0]]["group_permissions"][$perm[2]])) {
-                    $users[$perm[0]]["group_permissions"][$perm[2]] = 0;
+                if (!isset($users[$perm[0]]['group_permissions'][$perm[2]])) {
+                    $users[$perm[0]]['group_permissions'][$perm[2]] = 0;
                 }
 
                 // Merge the group permission by logical OR-ing the permission
                 // with the permissions that we've got so far for the forum_id
                 // in the user data.
-                $users[$perm[0]]["group_permissions"][$perm[2]] |= $perm[3];
+                $users[$perm[0]]['group_permissions'][$perm[2]] |= $perm[3];
             }
         }
     }
@@ -2874,28 +2857,28 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
     foreach ($custom_fields as $fld)
     {
         // Skip unknown custom profile fields.
-        if (! isset($PHORUM["PROFILE_FIELDS"][$fld["type"]])) continue;
+        if (! isset($PHORUM['PROFILE_FIELDS'][$fld['type']])) continue;
 
         // Fetch the name for the custom profile field.
-        $name = $PHORUM["PROFILE_FIELDS"][$fld["type"]]["name"];
+        $name = $PHORUM['PROFILE_FIELDS'][$fld['type']]['name'];
 
         // For "html_disabled" fields, the data is XSS protected by
         // replacing special HTML characters with their HTML entities.
-        if ($PHORUM["PROFILE_FIELDS"][$fld["type"]]["html_disabled"]) {
-            $users[$fld["user_id"]][$name] = htmlspecialchars($fld["data"]);
+        if ($PHORUM['PROFILE_FIELDS'][$fld['type']]['html_disabled']) {
+            $users[$fld['user_id']][$name] = htmlspecialchars($fld['data']);
             continue;
         }
 
         // Other fields can either contain raw values or serialized
         // arrays. For serialized arrays, the field data is prefixed with
         // a magic "P_SER:" (Phorum serialized) marker.
-        if (substr($fld["data"],0,6) == "P_SER:") {
-            $users[$fld["user_id"]][$name]=unserialize(substr($fld["data"],6));
+        if (substr($fld['data'],0,6) == 'P_SER:') {
+            $users[$fld['user_id']][$name]=unserialize(substr($fld['data'],6));
             continue;
         }
 
         // The rest of the fields contain raw field data.
-        $users[$fld["user_id"]][$name] = $fld["data"];
+        $users[$fld['user_id']][$name] = $fld['data'];
     }
 
     if (is_array($user_id)) {
@@ -2919,13 +2902,13 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
  */
 function phorum_db_user_get_fields($user_id, $fields)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    phorum_db_sanitize_mixed($user_id, "int");
+    phorum_db_sanitize_mixed($user_id, 'int');
 
     if (is_array($user_id)) {
         if (count($user_id)) {
-            $user_where = "user_id IN (".implode(",", $user_id).")";
+            $user_where = 'user_id IN ('.implode(', ', $user_id).')';
         } else {
             return array();
         }
@@ -2944,10 +2927,10 @@ function phorum_db_user_get_fields($user_id, $fields)
 
     $users = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT user_id, ".implode(",", $fields)."
+        "SELECT user_id, ".implode(', ', $fields)."
          FROM   {$PHORUM['user_table']}
          WHERE  $user_where",
-        "user_id"
+        'user_id'
     );
 
     return $users;
@@ -2967,13 +2950,13 @@ function phorum_db_user_get_fields($user_id, $fields)
  */
 function phorum_db_user_get_list($type = 0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($type, "int");
+    settype($type, 'int');
 
     $where = '';
-    if     ($type == 1) $where = "WHERE active  = 1";
-    elseif ($type == 2) $where = "WHERE active != 1";
+    if     ($type == 1) $where = 'WHERE active  = 1';
+    elseif ($type == 2) $where = 'WHERE active != 1';
 
     $users = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -2983,7 +2966,7 @@ function phorum_db_user_get_list($type = 0)
          FROM   {$PHORUM['user_table']}
                 $where
          ORDER  BY username ASC",
-        "user_id"
+        'user_id'
     );
 
     return $users;
@@ -3003,13 +2986,13 @@ function phorum_db_user_get_list($type = 0)
  */
 function phorum_db_user_check_pass($username, $password, $temp_password=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($temp_password, "bool");
+    settype($temp_password, 'bool');
     $username = phorum_db_interact(DB_RETURN_QUOTED, $username);
     $password = phorum_db_interact(DB_RETURN_QUOTED, $password);
 
-    $pass_field = $temp_password ? "password_temp" : "password";
+    $pass_field = $temp_password ? 'password_temp' : 'password';
 
     $user_id = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -3047,11 +3030,11 @@ function phorum_db_user_check_pass($username, $password, $temp_password=FALSE)
  *                        the $return_array parameter. If no user_ids can
  *                        be found at all, then 0 (zero) will be returned.
  */
-function phorum_db_user_check_field($field, $value, $operator="=", $return_array=FALSE, $type = "AND")
+function phorum_db_user_check_field($field, $value, $operator='=', $return_array=FALSE, $type = 'AND')
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($return_array, "bool");
+    settype($return_array, 'bool');
 
     // Convert all search condition parameters to arrays.
     if (!is_array($field))    $field    = array($field);
@@ -3062,19 +3045,19 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
     // same number of elements.
     if (count($field) != count($value) ||
         count($field) != count($operator)) trigger_error(
-        "phorum_db_user_check_field(): array parameters \$field, \$value, " .
-        "and \$operator do not contain the same number of elements",
+        'phorum_db_user_check_field(): array parameters $field, $value, ' .
+        'and $operator do not contain the same number of elements',
         E_USER_ERROR
     );
 
     $type = strtoupper($type);
-    if ($type != "AND" && $type != "OR") trigger_error(
-        "phorum_db_user_check_field(): Illegal search type parameter (must " .
-        "be either \"AND\" or \"OR\")",
+    if ($type != 'AND' && $type != 'OR') trigger_error(
+        'phorum_db_user_check_field(): Illegal search type parameter (must ' .
+        'be either AND" or "OR")',
         E_USER_ERROR
     );
 
-    $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=", "*");
+    $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*');
 
     // Construct the required "WHERE" clauses.
     foreach($field as $key => $name) {
@@ -3091,7 +3074,7 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
 
     // If we do not need to return an array, the we can limit the
     // query results to only one record.
-    $limit = $return_array ? "" : "LIMIT 1";
+    $limit = $return_array ? '' : 'LIMIT 1';
 
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
@@ -3132,21 +3115,21 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
  */
 function phorum_db_search_users($search)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Find a list of matching user_ids.
     $user_ids = phorum_db_user_check_field(
-        array("username", "email"),
+        array('username', 'email'),
         array($search,    $search),
-        array("*",        "*"),
-        TRUE, "OR"
+        array('*',        '*'),
+        TRUE, 'OR'
     );
 
     // No results found? Then return an empty array.
     if (count($user_ids) == 0) return array();
 
     // Retrieve the data for the users.
-    $users = phorum_db_user_get($user_ids, FALSE, "username");
+    $users = phorum_db_user_get($user_ids, FALSE, 'username');
 
     return $users;
 }
@@ -3163,14 +3146,14 @@ function phorum_db_search_users($search)
  */
 function phorum_db_user_add($userdata)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // We need at least the username for the user.
-    if (! isset($userdata["username"])) trigger_error(
-        "phorum_db_user_add: Missing field in userdata: username",
+    if (! isset($userdata['username'])) trigger_error(
+        'phorum_db_user_add: Missing field in userdata: username',
         E_USER_ERROR
     );
-    $username = phorum_db_interact(DB_RETURN_QUOTED, $userdata["username"]);
+    $username = phorum_db_interact(DB_RETURN_QUOTED, $userdata['username']);
 
     // Insert a bare bone user in the database.
     $user_id = phorum_db_interact(
@@ -3181,7 +3164,7 @@ function phorum_db_user_add($userdata)
     );
 
     // Set the rest of the data using the phorum_db_user_save() function.
-    $userdata["user_id"] = $user_id;
+    $userdata['user_id'] = $user_id;
     phorum_db_user_save($userdata);
 
     return $user_id;
@@ -3217,44 +3200,44 @@ function phorum_db_user_add($userdata)
  */
 function phorum_db_user_save($userdata)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Pull some non user table fields from the userdata.
     // TODO: are these ever set in the core? It seems a bit useless
     // TODO: to have data passed to this function that is never
     // TODO: really used.
-    if (isset($userdata["permissions"])) {
-        unset($userdata["permissions"]);
+    if (isset($userdata['permissions'])) {
+        unset($userdata['permissions']);
     }
-    if (isset($userdata["groups"])) {
-        unset($userdata["groups"]);
+    if (isset($userdata['groups'])) {
+        unset($userdata['groups']);
     }
-    if (isset($userdata["group_permissions"])) {
-        unset($userdata["group_permissions"]);
+    if (isset($userdata['group_permissions'])) {
+        unset($userdata['group_permissions']);
     }
 
     // Forum permissions are handled by this function too.
-    if (isset($userdata["forum_permissions"])) {
-        if (is_array($userdata["forum_permissions"])) {
-            $forum_perms = $userdata["forum_permissions"];
+    if (isset($userdata['forum_permissions'])) {
+        if (is_array($userdata['forum_permissions'])) {
+            $forum_perms = $userdata['forum_permissions'];
         }
-        unset($userdata["forum_permissions"]);
+        unset($userdata['forum_permissions']);
     }
 
     // Custom profile fields are handled by this function too.
-    if (isset($userdata["user_data"])) {
-        $custom_profile_data = $userdata["user_data"];
-        unset($userdata["user_data"]);
+    if (isset($userdata['user_data'])) {
+        $custom_profile_data = $userdata['user_data'];
+        unset($userdata['user_data']);
     }
 
     // The user_id is required for doing the update.
-    if (!isset($userdata["user_id"])) trigger_error(
-        "phorum_db_user_save(): the user_id field is missing in the " .
-        "\$userdata argument",
+    if (!isset($userdata['user_id'])) trigger_error(
+        'phorum_db_user_save(): the user_id field is missing in the ' .
+        '$userdata argument',
         E_USER_ERROR
     );
-    $user_id = $userdata["user_id"];
-    unset($userdata["user_id"]);
+    $user_id = $userdata['user_id'];
+    unset($userdata['user_id']);
 
     // If there are standard user table fields in the userdata then
     // update the user table for the user.
@@ -3264,23 +3247,23 @@ function phorum_db_user_save($userdata)
         $values = array();
         foreach($userdata as $key => $value) {
             if (!phorum_db_validate_field($key)) continue;
-            if ($key === "settings_data") {
+            if ($key === 'settings_data') {
                 if (is_array($value)) {
                     $value = serialize($value);
                 } else trigger_error(
-                    "Internal error: settings_data field for " .
-                    "phorum_db_user_save() must be an array", E_USER_ERROR
+                    'Internal error: settings_data field for ' .
+                    'phorum_db_user_save() must be an array', E_USER_ERROR
                 );
             }
             $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-            $values[] = "$key='$value'";
+            $values[] = "$key = '$value'";
         }
 
         // Update the fields in the database.
         phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$PHORUM['user_table']}
-             SET    ".implode(", ", $values)."
+             SET    ".implode(', ', $values)."
              WHERE  user_id = $user_id"
         );
     }
@@ -3354,9 +3337,9 @@ function phorum_db_user_save($userdata)
  */
 function phorum_db_user_save_groups($user_id, $groups)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
+    settype($user_id, 'int');
 
     // Delete all existing group memberships.
     phorum_db_interact(
@@ -3405,12 +3388,12 @@ function phorum_db_user_save_groups($user_id, $groups)
  */
 function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
-    settype($forum_id, "int");
-    settype($thread, "int");
-    settype($type, "int");
+    settype($user_id, 'int');
+    settype($forum_id, 'int');
+    settype($thread, 'int');
+    settype($type, 'int');
 
     // Delete a possibly existing subscription record.
     phorum_db_interact(
@@ -3444,13 +3427,13 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
  */
 function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
-    settype($forum_id, "int");
-    settype($thread, "int");
+    settype($user_id, 'int');
+    settype($forum_id, 'int');
+    settype($thread, 'int');
 
-    $forum_where = $forum_id ? "AND forum_id = $forum_id" : "";
+    $forum_where = $forum_id ? "AND forum_id = $forum_id" : '';
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -3472,7 +3455,7 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
  */
 function phorum_db_user_addpost($user_id)
 {
-    settype($user_id, "int");
+    settype($user_id, 'int');
 
     if (!empty($user_id)) {
         phorum_db_interact(
@@ -3496,9 +3479,9 @@ function phorum_db_user_addpost($user_id)
  */
 function phorum_db_user_get_groups($user_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
+    settype($user_id, 'int');
 
     // Retrieve the groups for the user_id from the database.
     $groups = phorum_db_interact(
@@ -3526,7 +3509,7 @@ function phorum_db_user_get_groups($user_id)
  */
 function phorum_db_user_get_unapproved()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $users = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -3537,7 +3520,7 @@ function phorum_db_user_get_unapproved()
          WHERE  active in (".PHORUM_USER_PENDING_BOTH.",
                            ".PHORUM_USER_PENDING_MOD.")
          ORDER  BY username",
-        "user_id"
+        'user_id'
     );
 
     return $users;
@@ -3556,9 +3539,9 @@ function phorum_db_user_get_unapproved()
  */
 function phorum_db_user_delete($user_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
+    settype($user_id, 'int');
 
     // These are tables that hold user related data.
     $tables = array (
@@ -3610,7 +3593,7 @@ function phorum_db_user_delete($user_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['pm_messages_table']}
-             WHERE  pm_message_id IN (".implode(",", array_keys($pms)).")"
+             WHERE  pm_message_id IN (".implode(', ', array_keys($pms)).")"
         );
     }
 
@@ -3626,7 +3609,7 @@ function phorum_db_user_delete($user_id)
     // Change the forum postings into anonymous postings.
     // If PHORUM_DELETE_CHANGE_AUTHOR is set, then the author field is
     // updated to {LANG->AnonymousUser}.
-    $author = "author";
+    $author = 'author';
     if (defined('PHORUM_DELETE_CHANGE_AUTHOR') && PHORUM_DELETE_CHANGE_AUTHOR){
         $anonymous = $PHORUM['DATA']['LANG']['AnonymousUser'];
         $author = "'".phorum_db_interact(DB_RETURN_QUOTED, $anonymous)."'";
@@ -3654,9 +3637,9 @@ function phorum_db_user_delete($user_id)
  */
 function phorum_db_get_user_file_list($user_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
+    settype($user_id, 'int');
 
     // Select the personal user files from the database.
     $files = phorum_db_interact(
@@ -3669,7 +3652,7 @@ function phorum_db_get_user_file_list($user_id)
          WHERE  user_id    = $user_id AND
                 message_id = 0 AND
                 link       = '".PHORUM_LINK_USER."'",
-        "file_id"
+        'file_id'
     );
 
     return $files;
@@ -3686,9 +3669,9 @@ function phorum_db_get_user_file_list($user_id)
  */
 function phorum_db_get_message_file_list($message_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($message_id, "int");
+    settype($message_id, 'int');
 
     // Select the message files from the database.
     $files = phorum_db_interact(
@@ -3700,7 +3683,7 @@ function phorum_db_get_message_file_list($message_id)
          FROM   {$PHORUM['files_table']}
          WHERE  message_id = $message_id AND
                 link       = '".PHORUM_LINK_MESSAGE."'",
-        "file_id"
+        'file_id'
     );
 
     return $files;
@@ -3720,9 +3703,9 @@ function phorum_db_get_message_file_list($message_id)
  */
 function phorum_db_file_get($file_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($file_id, "int");
+    settype($file_id, 'int');
 
     // Select the file from the database.
     $files = phorum_db_interact(
@@ -3780,7 +3763,7 @@ function phorum_db_file_get($file_id)
  */
 function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // If a link type is not provided, we'll guess for the type of link.
     // This is done to provide some backward compatibility.
@@ -3788,14 +3771,14 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
         if     ($message_id) $link = PHORUM_LINK_MESSAGE;
         elseif ($user_id)    $link = PHORUM_LINK_USER;
         else trigger_error(
-            "phorum_db_file_save(): Missing \$link parameter in the call",
+            'phorum_db_file_save(): Missing $link parameter in the call',
             E_USER_ERROR
         );
     }
 
-    settype($user_id, "int");
-    settype($message_id, "int");
-    settype($filesize, "int");
+    settype($user_id, 'int');
+    settype($message_id, 'int');
+    settype($filesize, 'int');
 
     $link     = phorum_db_interact(DB_RETURN_QUOTED, $link);
     $filename = phorum_db_interact(DB_RETURN_QUOTED, $filename);
@@ -3822,9 +3805,9 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
  */
 function phorum_db_file_delete($file_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($file_id, "int");
+    settype($file_id, 'int');
 
     phorum_db_interact(
         DB_RETURN_QUOTED,
@@ -3848,10 +3831,10 @@ function phorum_db_file_delete($file_id)
  */
 function phorum_db_file_link($file_id, $message_id, $link = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($file_id, "int");
-    settype($message_id, "int");
+    settype($file_id, 'int');
+    settype($message_id, 'int');
 
     $link = $link === NULL
           ? PHORUM_LINK_MESSAGE
@@ -3877,9 +3860,9 @@ function phorum_db_file_link($file_id, $message_id, $link = NULL)
  */
 function phorum_db_get_user_filesize_total($user_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
+    settype($user_id, 'int');
 
     $size = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -3907,9 +3890,9 @@ function phorum_db_get_user_filesize_total($user_id)
  */
 function phorum_db_file_purge_stale_files($live_run = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($live_run, "bool");
+    settype($live_run, 'bool');
 
     // WHERE statement for selecting  files that are linked to
     // the editor and were added a while ago. These are from
@@ -3960,8 +3943,8 @@ function phorum_db_newflag_allread($forum_id=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    if (empty($forum_id)) $forum_id = $PHORUM["forum_id"];
-    settype($forum_id, "int");
+    if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
+    settype($forum_id, 'int');
 
     // Delete all the existing newflags for this user for this forum.
     phorum_db_newflag_delete(0, $forum_id);
@@ -4000,10 +3983,10 @@ function phorum_db_newflag_allread($forum_id=0)
  */
 function phorum_db_newflag_get_flags($forum_id=NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($forum_id === NULL) $forum_id=$PHORUM["forum_id"];
-    settype($forum_id, "int");
+    if ($forum_id === NULL) $forum_id = $PHORUM['forum_id'];
+    settype($forum_id, 'int');
 
     // Initialize the read messages array.
     $read_msgs = array('min_id' => 0);
@@ -4021,7 +4004,7 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
     // Add the newflags to the $read_msgs.
     // The first newflags element also determines the min_id.
     foreach ($newflags as $index => $newflag) {
-        if ($index == 0) $read_msgs["min_id"] = $newflag[0];
+        if ($index == 0) $read_msgs['min_id'] = $newflag[0];
         $read_msgs[$newflag[0]] = $newflag[0];
     }
 
@@ -4041,10 +4024,10 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
  */
 function phorum_db_newflag_get_unread_count($forum_id=NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($forum_id === NULL) $forum_id=$PHORUM["forum_id"];
-    settype($forum_id, "int");
+    if ($forum_id === NULL) $forum_id = $PHORUM['forum_id'];
+    settype($forum_id, 'int');
 
     // Retrieve the minimum message_id from newflags for the forum.
     $min_message_id = phorum_db_interact(
@@ -4114,7 +4097,7 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
  */
 function phorum_db_newflag_add_read($message_ids)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Find the number of newflags for the user
     $num_newflags = phorum_db_newflag_get_count();
@@ -4134,12 +4117,12 @@ function phorum_db_newflag_add_read($message_ids)
     foreach($message_ids as $id => $data)
     {
         if(is_array($data)) {
-            $values = $PHORUM['user']['user_id'] . "," .
-                      (int)$data['forum'] . "," .
+            $values = $PHORUM['user']['user_id'] . ',' .
+                      (int)$data['forum'] . ',' .
                       (int)$data['id'];
         } else {
-            $values = $PHORUM['user']['user_id'] . "," .
-                      $PHORUM['forum_id'] . "," .
+            $values = $PHORUM['user']['user_id'] . ',' .
+                      $PHORUM['forum_id'] . ',' .
                       (int)$data;
         }
 
@@ -4163,10 +4146,10 @@ function phorum_db_newflag_add_read($message_ids)
  */
 function phorum_db_newflag_get_count($forum_id=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    settype($forum_id, "int");
+    if(empty($forum_id)) $forum_id = $PHORUM['forum_id'];
+    settype($forum_id, 'int');
 
     $count = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -4189,13 +4172,13 @@ function phorum_db_newflag_get_count($forum_id=0)
 */
 function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if(empty($forum_id)) $forum_id=$PHORUM["forum_id"];
-    settype($numdelete, "int");
-    settype($forum_id, "int");
+    if(empty($forum_id)) $forum_id = $PHORUM['forum_id'];
+    settype($numdelete, 'int');
+    settype($forum_id, 'int');
 
-    $limit = $numdelete > 0 ? "ORDER BY message_id ASC LIMIT $numdelete" : "";
+    $limit = $numdelete > 0 ? "ORDER BY message_id ASC LIMIT $numdelete" : '';
 
     // Delete the provided amount of newflags.
     phorum_db_interact(
@@ -4215,8 +4198,8 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
  */
 function phorum_db_newflag_update_forum($message_ids)
 {
-    phorum_db_sanitize_mixed($message_ids, "int");
-    $ids_str = implode(",", $message_ids);
+    phorum_db_sanitize_mixed($message_ids, 'int');
+    $ids_str = implode(', ', $message_ids);
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -4251,16 +4234,16 @@ function phorum_db_newflag_update_forum($message_ids)
  */
 function phorum_db_get_subscribed_users($forum_id, $thread, $type, $ignore_active_user=TRUE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($forum_id, "int");
-    settype($thread, "int");
-    settype($type, "int");
-    settype($ignore_active_user, "bool");
+    settype($forum_id, 'int');
+    settype($thread, 'int');
+    settype($type, 'int');
+    settype($ignore_active_user, 'bool');
 
-    $userignore = "";
-    if ($ignore_active_user && $PHORUM["DATA"]["LOGGEDIN"])
-       $userignore="AND u.user_id != {$PHORUM['user']['user_id']}";
+    $userignore = '';
+    if ($ignore_active_user && $PHORUM['DATA']['LOGGEDIN'])
+       $userignore = "AND u.user_id != {$PHORUM['user']['user_id']}";
 
     // Select all subscriptions for the requested thread.
     // This query also checks on s.thread = 0. This is for
@@ -4317,19 +4300,19 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type, $ignore_activ
  */
 function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($user_id, "int");
-    settype($days, "int");
-    if ($forum_ids != null) phorum_db_sanitize_mixed($forums_ids, "int");
+    settype($user_id, 'int');
+    settype($days, 'int');
+    if ($forum_ids !== NULL) phorum_db_sanitize_mixed($forums_ids, 'int');
 
     $time_where = $days > 0
                 ? " AND (".time()." - m.modifystamp) <= ($days * 86400)"
-                : "";
+                : '';
 
-    $forum_where = ($forum_ids != null and is_array($forum_ids))
+    $forum_where = ($forum_ids !== NULL and is_array($forum_ids))
                  ? " AND s.forum_id IN (" . implode(",", $forum_ids) . ")"
-                 : "";
+                 : '';
 
     // Retrieve all subscribed threads from the database for which the
     // latest message in the thread was posted within the provided time limit.
@@ -4353,7 +4336,7 @@ function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
                 $time_where
                 $forum_where
          ORDER  BY m.modifystamp DESC",
-        "thread"
+        'thread'
     );
 
     // An array for keeping track of all involved forum ids.
@@ -4362,20 +4345,20 @@ function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
     foreach ($threads as $id => $thread)
     {
         // Unpack the thread's meta data.
-        $threads[$id]["meta"] = empty($thread["meta"])
-                              ? array() : unserialize($thread["meta"]);
+        $threads[$id]['meta'] = empty($thread['meta'])
+                              ? array() : unserialize($thread['meta']);
 
         // Create the unsubscribe URL.
         // TODO: shouldn't this be in the core instead?
-        $threads[$id]["unsubscribe_url"] = phorum_get_url(
+        $threads[$id]['unsubscribe_url'] = phorum_get_url(
             PHORUM_CONTROLCENTER_URL,
-            "panel=".PHORUM_CC_SUBSCRIPTION_THREADS,
-            "unsub_id=".$thread['thread'],
-            "unsub_forum=".$thread['forum_id'],
-            "unsub_type=".$thread['sub_type']
+            'panel='.PHORUM_CC_SUBSCRIPTION_THREADS,
+            'unsub_id='.$thread['thread'],
+            'unsub_forum='.$thread['forum_id'],
+            'unsub_type='.$thread['sub_type']
         );
 
-        $forum_ids[$thread["forum_id"]] = $thread["forum_id"];
+        $forum_ids[$thread['forum_id']] = $thread['forum_id'];
     }
 
     // Store the involved forum_ids in the thread array.
@@ -4398,12 +4381,12 @@ function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
  */
 function phorum_db_get_if_subscribed($forum_id, $thread, $user_id)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($forum_id, "int");
-    settype($thread, "int");
-    settype($user_id, "int");
-    settype($type, "int");
+    settype($forum_id, 'int');
+    settype($thread, 'int');
+    settype($user_id, 'int');
+    settype($type, 'int');
 
     $type = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -4432,16 +4415,16 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id)
  */
 function phorum_db_get_banlists($ordered=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($ordered, "bool");
+    settype($ordered, 'bool');
 
-    $forum_where = "";
+    $forum_where = '';
     if (isset($PHORUM['forum_id']) && !empty($PHORUM['forum_id']))
     {
         $forum_where = "WHERE forum_id = {$PHORUM['forum_id']} " .
                        // forum_id = 0 is used for GLOBAL ban items
-                       "OR forum_id = 0";
+                       'OR forum_id = 0';
 
         // If we're inside a vroot, then retrieve the ban items that apply
         // to this vroot as well.
@@ -4450,7 +4433,7 @@ function phorum_db_get_banlists($ordered=FALSE)
         }
     }
 
-    $order = $ordered ? "ORDER BY type, string" : "";
+    $order = $ordered ? 'ORDER BY type, string' : '';
 
     $bans = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -4462,10 +4445,10 @@ function phorum_db_get_banlists($ordered=FALSE)
 
     $banlists = array();
     foreach ($bans as $ban) {
-        $banlists[$ban["type"]][$ban["id"]] = array (
-            "pcre"     => $ban["pcre"],
-            "string"   => $ban["string"],
-            "forum_id" => $ban["forum_id"]
+        $banlists[$ban['type']][$ban['id']] = array (
+            'pcre'     => $ban['pcre'],
+            'string'   => $ban['string'],
+            'forum_id' => $ban['forum_id']
         );
     }
 
@@ -4484,9 +4467,9 @@ function phorum_db_get_banlists($ordered=FALSE)
  */
 function phorum_db_get_banitem($banid)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($banid, "int");
+    settype($banid, 'int');
 
     $bans = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -4497,10 +4480,10 @@ function phorum_db_get_banitem($banid)
 
     if (count($bans)) {
         $ban = array(
-            "pcre"     => $bans[0]["pcre"],
-            "string"   => $bans[0]["string"],
-            "forum_id" => $bans[0]["forum_id"],
-            "type"     => $bans[0]["type"]
+            'pcre'     => $bans[0]['pcre'],
+            'string'   => $bans[0]['string'],
+            'forum_id' => $bans[0]['forum_id'],
+            'type'     => $bans[0]['type']
         );
     } else {
         $ban = array();
@@ -4516,9 +4499,9 @@ function phorum_db_get_banitem($banid)
  */
 function phorum_db_del_banitem($banid)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($banid, "int");
+    settype($banid, 'int');
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -4551,14 +4534,14 @@ function phorum_db_del_banitem($banid)
  */
 function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $retarr = array();
 
-    settype($type, "int");
-    settype($pcre, "int");
-    settype($forum_id, "int");
-    settype($banid, "int");
+    settype($type, 'int');
+    settype($pcre, 'int');
+    settype($forum_id, 'int');
+    settype($banid, 'int');
 
     $string = phorum_db_interact(DB_RETURN_QUOTED, $string);
 
@@ -4603,19 +4586,19 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
 
 function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
-    settype($reverse, "bool");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
+    settype($reverse, 'bool');
 
     if (is_numeric($folder)) {
         $folder_where = "pm_folder_id = $folder";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "(pm_folder_id = 0 AND special_folder = '$folder')";
     } else trigger_error(
-        "phorum_db_pm_list(): Illegal folder '".htmlspecialchars($folder)."' ".
-        "requested for user id '$user_id'",
+        'phorum_db_pm_list(): Illegal folder "'.htmlspecialchars($folder).'" '.
+        'requested for user id "'.$user_id.'"',
         E_USER_ERROR
     );
 
@@ -4633,14 +4616,14 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
          WHERE  user_id = $user_id AND
                 $folder_where AND
                 x.pm_message_id = m.pm_message_id
-         ORDER  BY x.pm_message_id " . ($reverse ? "DESC" : "ASC"),
-        "pm_message_id"
+         ORDER  BY x.pm_message_id " . ($reverse ? 'DESC' : 'ASC'),
+        'pm_message_id'
     );
 
     // Add the recipient information unserialized to the messages.
     foreach ($messages as $id => $message) {
-        $meta = unserialize($message["meta"]);
-        $messages[$id]["recipients"] = $meta["recipients"];
+        $meta = unserialize($message['meta']);
+        $messages[$id]['recipients'] = $meta['recipients'];
     }
 
     return $messages;
@@ -4660,21 +4643,21 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
  */
 function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
-    settype($pm_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
+    settype($pm_id, 'int');
 
-    if (is_null($folder)) {
+    if ($folder === NULL) {
         $folder_where = '';
     } elseif (is_numeric($folder)) {
         $folder_where = "pm_folder_id = $folder AND ";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "pm_folder_id = 0 AND special_folder = '$folder' AND ";
     } else trigger_error(
-        "phorum_db_pm_get(): Illegal folder '".htmlspecialchars($folder)."' ".
-        "requested for user id '$user_id'",
+        'phorum_db_pm_get(): Illegal folder "'.htmlspecialchars($folder).'" '.
+        'requested for user id "'.$user_id.'"',
         E_USER_ERROR
     );
 
@@ -4697,8 +4680,8 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
         $message = $messages[0];
 
         // Add the recipient information unserialized to the message..
-        $meta = unserialize($message["meta"]);
-        $message["recipients"] = $meta["recipients"];
+        $meta = unserialize($message['meta']);
+        $message['recipients'] = $meta['recipients'];
     }
 
     return $message;
@@ -4715,10 +4698,10 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
  */
 function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
     $foldername = phorum_db_interact(DB_RETURN_QUOTED, $foldername);
 
     $pm_folder_id = phorum_db_interact(
@@ -4741,11 +4724,11 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
  */
 function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
-    settype($folder_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
+    settype($folder_id, 'int');
     $newname = phorum_db_interact(DB_RETURN_QUOTED, $newname);
 
     phorum_db_interact(
@@ -4767,11 +4750,11 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
  */
 function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
-    settype($folder_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
+    settype($folder_id, 'int');
 
     // Retrieve the private messages in this folder and delete them.
     $list = phorum_db_pm_list($folder_id, $user_id);
@@ -4805,11 +4788,11 @@ function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
  */
 function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
-    settype($count, "bool");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
+    settype($count, 'bool');
 
     // Initialize the list of folders. Our special folders are
     // not in the database, so these are added hard-coded to the list.
@@ -4817,7 +4800,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
     $folders = array(
         PHORUM_PM_INBOX => array(
             'id'   => PHORUM_PM_INBOX,
-            'name' => $PHORUM["DATA"]["LANG"]["INBOX"],
+            'name' => $PHORUM['DATA']['LANG']['INBOX'],
         ),
     );
 
@@ -4829,7 +4812,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
          FROM   {$PHORUM['pm_folders_table']}
          WHERE  user_id = $user_id
          ORDER  BY foldername",
-        "id"
+        'id'
     );
 
     // Add them to the folder list.
@@ -4840,7 +4823,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
     // Add the outgoing folder.
     $folders[PHORUM_PM_OUTBOX] = array(
         'id'   => PHORUM_PM_OUTBOX,
-        'name' => $PHORUM["DATA"]["LANG"]["SentItems"],
+        'name' => $PHORUM['DATA']['LANG']['SentItems'],
     );
 
     // Count the number of messages in the folders if requested.
@@ -4848,8 +4831,8 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
     {
         // Initialize counters.
         foreach ($folders as $id => $data) {
-            $folders[$id]["total"] = 0;
-            $folders[$id]["new"]   = 0;
+            $folders[$id]['total'] = 0;
+            $folders[$id]['new']   = 0;
         }
 
         // Collect count information.
@@ -4867,16 +4850,16 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
         // Merge the count information with the folders.
         foreach ($countinfo as $info)
         {
-            $folder_id = $info["pm_folder_id"]
-                       ? $info["pm_folder_id"]
-                       : $info["special_folder"];
+            $folder_id = $info['pm_folder_id']
+                       ? $info['pm_folder_id']
+                       : $info['special_folder'];
 
             // If there are stale messages for no longer existing folders
             // (shouldn't happen), we do not want them to create non-existant
             // mailboxes in the list.
             if (isset($folders[$folder_id])) {
-                $folders[$folder_id]["total"] = $info["total"];
-                $folders[$folder_id]["new"]   = $info["new"];
+                $folders[$folder_id]['total'] = $info['total'];
+                $folders[$folder_id]['new']   = $info['new'];
             }
         }
     }
@@ -4899,10 +4882,10 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
  */
 function phorum_db_pm_messagecount($folder, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     if (is_numeric($folder)) {
         $folder_where = "pm_folder_id = $folder AND";
@@ -4911,8 +4894,8 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
     } elseif ($folder == PHORUM_PM_ALLFOLDERS) {
         $folder_where = '';
     } else trigger_error(
-        "phorum_db_pm_messagecount(): Illegal folder " .
-        "'".htmlspecialchars($folder)."' requested for user id '$user_id'",
+        'phorum_db_pm_messagecount(): Illegal folder "' .
+        htmlspecialchars($folder).'" requested for user id "'.$user_id.'"',
         E_USER_ERROR
     );
 
@@ -4924,10 +4907,10 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
          WHERE  $folder_where user_id = $user_id"
      );
 
-     $count = array( "total" => 0, "new" => 0 );
+     $count = array( 'total' => 0, 'new' => 0 );
      if (count($counters) > 0) {
-        $count["total"] = $counters[0]["total"];
-        $count["new"]   = ($counters[0]["new"] >= 1) ? $counters[0]["new"] : 0;
+        $count['total'] = $counters[0]['total'];
+        $count['new']   = ($counters[0]['new'] >= 1) ? $counters[0]['new'] : 0;
     }
 
     return $count;
@@ -4944,10 +4927,10 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
  */
 function phorum_db_pm_checknew($user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     $new = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -4977,17 +4960,17 @@ function phorum_db_pm_checknew($user_id = NULL)
  */
 function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Prepare the sender.
-    if ($from == NULL) $from = $PHORUM['user']['user_id'];
-    settype($from, "int");
+    if ($from === NULL) $from = $PHORUM['user']['user_id'];
+    settype($from, 'int');
     $fromuser = phorum_db_user_get($from, FALSE);
     if (! $fromuser) trigger_error(
         "phorum_db_pm_send(): Unknown sender user_id '$from'",
         E_USER_ERROR
     );
-    $fromuser = phorum_db_interact(DB_RETURN_QUOTED, $fromuser["username"]);
+    $fromuser = phorum_db_interact(DB_RETURN_QUOTED, $fromuser['username']);
     $subject = phorum_db_interact(DB_RETURN_QUOTED, $subject);
     $message = phorum_db_interact(DB_RETURN_QUOTED, $message);
 
@@ -4997,7 +4980,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
     if (! is_array($to)) $to = array($to);
     foreach ($to as $user_id)
     {
-        settype($user_id, "int");
+        settype($user_id, 'int');
 
         $user = phorum_db_user_get($user_id, FALSE);
         if (! $user) trigger_error(
@@ -5006,7 +4989,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
         );
         $rcpts[$user_id] = array(
             'user_id'        => $user_id,
-            'username'       => $user["username"],
+            'username'       => $user['username'],
             'read_flag'      => 0,
         );
         $xref_entries[] = array(
@@ -5072,21 +5055,21 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
  */
 function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($pm_id, "int");
+    settype($pm_id, 'int');
 
     if ($flag != PHORUM_PM_READ_FLAG &&
         $flag != PHORUM_PM_REPLY_FLAG) trigger_error(
-        "phorum_db_pm_setflag(): Illegal value \"" . htmlspecialchars($flag) .
-        "\" for parameter \$flag",
+        'phorum_db_pm_setflag(): Illegal value "' . htmlspecialchars($flag) .
+        '" for parameter $flag',
         E_USER_WARNING
     );
 
     $value = $value ? 1 : 0;
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     // Update the flag in the database.
     phorum_db_interact(
@@ -5113,20 +5096,20 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
  */
 function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($pm_id, "int");
+    settype($pm_id, 'int');
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     if (is_numeric($folder)) {
         $folder_where = "pm_folder_id = $folder";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "(pm_folder_id = 0 AND special_folder = '$folder')";
     } else trigger_error(
-        "phorum_db_pm_delete(): Illegal folder " .
-        "'".htmlspecialchars($folder)."' requested for user id '$user_id'",
+        'phorum_db_pm_delete(): Illegal folder "' .
+        htmlspecialchars($folder).'" requested for user id "'.$user_id.'"',
         E_USER_ERROR
     );
 
@@ -5153,20 +5136,20 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
  */
 function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($pm_id, "int");
+    settype($pm_id, 'int');
 
-    if ($user_id == NULL) $user_id = $PHORUM['user']['user_id'];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     if (is_numeric($from)) {
         $folder_where = "pm_folder_id = $from";
     } elseif ($from == PHORUM_PM_INBOX || $from == PHORUM_PM_OUTBOX) {
         $folder_where = "(pm_folder_id = 0 AND special_folder = '$from')";
     } else trigger_error(
-        "phorum_db_pm_move(): Illegal source folder " .
-        "'".htmlspecialchars($from)."' requested for user id '$user_id'",
+        'phorum_db_pm_move(): Illegal source folder "' .
+        htmlspecialchars($from).'" requested for user id "'.$user_id.'"',
         E_USER_ERROR
     );
 
@@ -5177,8 +5160,8 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
         $pm_folder_id = 0;
         $special_folder = "'$to'";
     } else trigger_error(
-        "phorum_db_pm_move(): Illegal target folder " .
-        "'".htmlspecialchars($to)."' requested for user_id '$user_id'",
+        'phorum_db_pm_move(): Illegal target folder "' .
+        htmlspecialchars($to).'" requested for user_id "'.$user_id.'"',
         E_USER_ERROR
     );
 
@@ -5207,7 +5190,7 @@ function phorum_db_pm_update_message_info($pm_id)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($pm_id, "int");
+    settype($pm_id, 'int');
 
     // Retrieve the meta data for the private message.
     $pm = phorum_db_interact(
@@ -5239,17 +5222,17 @@ function phorum_db_pm_update_message_info($pm_id)
     }
 
     // Update the read flags for the recipients in the meta data.
-    $meta = unserialize($pm["meta"]);
-    $rcpts = $meta["recipients"];
+    $meta = unserialize($pm['meta']);
+    $rcpts = $meta['recipients'];
     foreach ($xrefs as $xref) {
         // Only update if available. A copy that is kept in the outbox will
         // not be in the meta list, so if the copy is read, the meta data
         // does not have to be updated here.
         if (isset($rcpts[$xref[0]])) {
-            $rcpts[$xref[0]]["read_flag"] = $xref[1];
+            $rcpts[$xref[0]]['read_flag'] = $xref[1];
         }
     }
-    $meta["recipients"] = $rcpts;
+    $meta['recipients'] = $rcpts;
 
     // Store the new meta data.
     $meta = phorum_db_interact(DB_RETURN_QUOTED, serialize($meta));
@@ -5277,10 +5260,10 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($buddy_user_id, "int");
+    settype($buddy_user_id, 'int');
 
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     $pm_buddy_id = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -5309,10 +5292,10 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($buddy_user_id, "int");
+    settype($buddy_user_id, 'int');
 
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     // Check if the buddy_user_id is a valid user_id.
     $valid = phorum_db_user_get($buddy_user_id, FALSE);
@@ -5322,7 +5305,7 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
     $pm_buddy_id = phorum_db_pm_is_buddy($buddy_user_id);
 
     // If not, then create insert a new buddy relation.
-    if ($pm_buddy_id == NULL) {
+    if ($pm_buddy_id === NULL) {
         $pm_buddy_id = phorum_db_interact(
             DB_RETURN_NEWID,
             "INSERT INTO {$PHORUM['pm_buddies_table']}
@@ -5345,10 +5328,10 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($buddy_user_id, "int");
+    settype($buddy_user_id, 'int');
 
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -5371,10 +5354,10 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    if (is_null($user_id)) $user_id = $PHORUM["user"]["user_id"];
-    settype($user_id, "int");
+    if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
+    settype($user_id, 'int');
 
-    settype($find_mutual, "bool");
+    settype($find_mutual, 'bool');
 
     // Retrieve all buddies for this user.
     $buddies = phorum_db_interact(
@@ -5382,7 +5365,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
         "SELECT buddy_user_id AS user_id
          FROM {$PHORUM['pm_buddies_table']}
          WHERE user_id = $user_id",
-        "user_id"
+        'user_id'
     );
 
     // If we do not have to lookup mutual buddies, we're done.
@@ -5390,7 +5373,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
 
     // Initialize mutual buddy value.
     foreach ($buddies as $id => $data) {
-        $buddies[$id]["mutual"] = FALSE;
+        $buddies[$id]['mutual'] = FALSE;
     }
 
     // Retrieve all mutual buddies.
@@ -5406,7 +5389,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
 
     // Merge the mutual buddies with the buddies array.
     foreach ($mutuals as $mutual) {
-        $buddies[$mutual[0]]["mutual"] = TRUE;
+        $buddies[$mutual[0]]['mutual'] = TRUE;
     }
 
     return $buddies;
@@ -5420,8 +5403,8 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
  */
 function phorum_db_split_thread($message_id, $forum_id)
 {
-    settype($message_id, "int");
-    settype($forum_id, "int");
+    settype($message_id, 'int');
+    settype($forum_id, 'int');
 
     if($message_id > 0 && $forum_id > 0)
     {
@@ -5456,7 +5439,7 @@ function phorum_db_split_thread($message_id, $forum_id)
  */
 function phorum_db_get_max_messageid()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $maxid = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -5475,7 +5458,7 @@ function phorum_db_get_max_messageid()
  */
 function phorum_db_viewcount_inc($message_id)
 {
-    settype($message_id, "int");
+    settype($message_id, 'int');
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -5490,7 +5473,7 @@ function phorum_db_viewcount_inc($message_id)
  */
 function phorum_db_rebuild_search_data()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Delete all records from the search table.
     phorum_db_interact(
@@ -5515,12 +5498,12 @@ function phorum_db_rebuild_search_data()
  */
 function phorum_db_rebuild_user_posts()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Reset the post count for all users.
     phorum_db_interact(
         DB_RETURN_RES,
-        "UPDATE {$PHORUM["user_table"]}
+        "UPDATE {$PHORUM['user_table']}
          SET posts = 0"
     );
 
@@ -5536,7 +5519,7 @@ function phorum_db_rebuild_user_posts()
     foreach ($postcounts as $postcount) {
         phorum_db_interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM["user_table"]}
+            "UPDATE {$PHORUM['user_table']}
              SET    posts   = {$postcount[1]}
              WHERE  user_id = {$postcount[0]}"
         );
@@ -5557,11 +5540,11 @@ function phorum_db_rebuild_user_posts()
  */
 function phorum_db_get_custom_field_users($field_id, $field_content, $submatch)
 {
-    settype($field_id, "int");
+    settype($field_id, 'int');
     $field_content = phorum_db_interact(DB_RETURN_QUOTED, ($field_content));
-    settype($submatch, "bool");
+    settype($submatch, 'bool');
 
-    $compare = $match ? "LIKE" : "=";
+    $compare = $match ? 'LIKE' : '=';
 
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
@@ -5664,7 +5647,7 @@ function phorum_db_metaquery_compile($metaquery)
         // Found a new condition.
         if ($expect_condition && is_array($part))
         {
-            $cond = trim($part["condition"]);
+            $cond = trim($part['condition']);
             if (preg_match('/^([\w_\.]+)\s+(!?=|<=?|>=?)\s+(\S*)$/', $cond, $m))
             {
                 $field = $m[1];
@@ -5684,9 +5667,10 @@ function phorum_db_metaquery_compile($metaquery)
                         $is_like_query = TRUE;
                         $matchsql .= '%';
                     } elseif ($m == 'QUERY') {
-                        $matchsql .= mysql_escape_string($part["query"]);
+                        $p = $part['query'];
+                        $matchsql .= phorum_db_interact(DB_RETURN_QUOTED, $p);
                     } else {
-                        $matchsql .= mysql_escape_string($m);
+                        $matchsql .= phorum_db_interact(DB_RETURN_QUOTED, $m);
                     }
                 }
                 $matchsql .= "'";
@@ -5697,7 +5681,7 @@ function phorum_db_metaquery_compile($metaquery)
                     elseif ($comp == '!=') { $comp = ' NOT LIKE '; }
                     else return array(
                         FALSE,
-                        "Illegal metaquery token " . htmlspecialchars($cond) .
+                        'Illegal metaquery token ' . htmlspecialchars($cond) .
                         ": wildcard match does not combine with $comp operator"
                     );
                 }
@@ -5706,8 +5690,8 @@ function phorum_db_metaquery_compile($metaquery)
             } else {
                 return array(
                     FALSE,
-                    "Illegal metaquery token " . htmlspecialchars($cond) .
-                    ": condition does not match the required format"
+                    'Illegal metaquery token ' . htmlspecialchars($cond) .
+                    ': condition does not match the required format'
                 );
             }
 
@@ -5719,7 +5703,7 @@ function phorum_db_metaquery_compile($metaquery)
         // Found a new group start.
         elseif ($expect_groupstart && $part == '(')
         {
-            $where .= "(";
+            $where .= '(';
             $in_group ++;
 
             $expect_condition   = TRUE;
@@ -5730,7 +5714,7 @@ function phorum_db_metaquery_compile($metaquery)
         // Found a new group end.
         elseif ($expect_groupend && $part == ')')
         {
-            $where .= ") ";
+            $where .= ') ';
             $in_group --;
 
             $expect_condition   = FALSE;
@@ -5741,7 +5725,7 @@ function phorum_db_metaquery_compile($metaquery)
         // Found a combine token (AND or OR).
         elseif ($expect_combine && preg_match('/^(OR|AND)$/i', $part, $m))
         {
-            $where .= strtoupper($m[1]) . " ";
+            $where .= strtoupper($m[1]) . ' ';
 
             $expect_condition   = TRUE;
             $expect_groupstart  = TRUE;
@@ -5750,16 +5734,16 @@ function phorum_db_metaquery_compile($metaquery)
         }
         // Unexpected or illegal token.
         else trigger_error(
-            "Internal error: unexpected token in metaquery description: " .
-            (is_array($part) ? "condition" : htmlspecialchars($part)),
+            'Internal error: unexpected token in metaquery description: ' .
+            (is_array($part) ? 'condition' : htmlspecialchars($part)),
             E_USER_ERROR
         );
     }
 
-    if ($expect_groupend) die ("Internal error: unclosed group in metaquery");
+    if ($expect_groupend) die ('Internal error: unclosed group in metaquery');
 
     // If the metaquery is empty, then provide a safe true WHERE statement.
-    if ($where == '') { $where = "1 = 1"; }
+    if ($where == '') { $where = '1 = 1'; }
 
     return array(TRUE, $where);
 }
@@ -5784,7 +5768,7 @@ function phorum_db_metaquery_compile($metaquery)
  */
 function phorum_db_metaquery_messagesearch($metaquery)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Compile the metaquery into a where statement.
     list($success, $where) = phorum_db_metaquery_compile($metaquery);
@@ -5808,14 +5792,14 @@ function phorum_db_metaquery_messagesearch($metaquery)
                 thread.closed       AS thread_closed,
                 thread.modifystamp  AS thread_modifystamp,
                 thread.thread_count AS thread_count
-         FROM   {$PHORUM["message_table"]} AS thread,
-                {$PHORUM["message_table"]} AS message
-                    LEFT JOIN {$PHORUM["user_table"]} AS user
+         FROM   {$PHORUM['message_table']} AS thread,
+                {$PHORUM['message_table']} AS message
+                    LEFT JOIN {$PHORUM['user_table']} AS user
                     ON message.user_id = user.user_id
          WHERE  message.thread  = thread.message_id AND
                 ($where)
          ORDER BY message_id ASC",
-        "message_id"
+        'message_id'
     );
 
     return $messages;
@@ -5834,7 +5818,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
  */
 function phorum_db_create_tables()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $create_table_queries = array(
 
@@ -6138,7 +6122,7 @@ function phorum_db_maxpacketsize ()
 {
     $maxsize = phorum_db_interact(
         DB_RETURN_VALUE,
-        "SELECT @@global.max_allowed_packet"
+        'SELECT @@global.max_allowed_packet'
     );
 
     return $maxsize;
@@ -6161,12 +6145,12 @@ function phorum_db_maxpacketsize ()
  */
 function phorum_db_sanitychecks()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Retrieve the MySQL server version.
     $version = phorum_db_interact(
         DB_RETURN_VALUE,
-        "SELECT @@global.version"
+        'SELECT @@global.version'
     );
     if (!$version) return array(
         PHORUM_SANITY_WARN,
@@ -6181,7 +6165,7 @@ function phorum_db_sanitychecks()
     );
 
     $verstr = preg_replace('/-.*$/', '', $version);
-    $ver = explode(".", $verstr);
+    $ver = explode('. ', $verstr);
 
     // Version numbering format which is not recognized.
     if (count($ver) != 3) return array(
@@ -6209,8 +6193,8 @@ function phorum_db_sanitychecks()
     );
 
     // MySQL before version 4.0.18, with full text search enabled.
-    if (isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) &&
-        $PHORUM["DBCONFIG"]["mysql_use_ft"] &&
+    if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
+        $PHORUM['DBCONFIG']['mysql_use_ft'] &&
         $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
         PHORUM_SANITY_WARN,
         "The MySQL database server that is used does not
