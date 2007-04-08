@@ -4424,15 +4424,15 @@ function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
     // An array for keeping track of all involved forum ids.
     $forum_ids = array();
 
-    foreach ($threads as $thread)
+    foreach ($threads as $id => $thread)
     {
         // Unpack the thread's meta data.
-        $thread["meta"] = empty($thread["meta"])
-                        ? array() : unserialize($thread["meta"]);
+        $threads[$id]["meta"] = empty($thread["meta"])
+                              ? array() : unserialize($thread["meta"]);
 
         // Create the unsubscribe URL.
         // TODO: shouldn't this be in the core instead?
-        $thread["unsubscribe_url"] = phorum_get_url(
+        $threads[$id]["unsubscribe_url"] = phorum_get_url(
             PHORUM_CONTROLCENTER_URL,
             "panel=".PHORUM_CC_SUBSCRIPTION_THREADS,
             "unsub_id=".$thread['thread'],
