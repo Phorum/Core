@@ -3155,12 +3155,22 @@ function phorum_db_user_add($userdata)
     );
     $username = phorum_db_interact(DB_RETURN_QUOTED, $userdata['username']);
 
+    // We can set the user_id. If not, then we'll create a new user_id.
+    if (isset($userdata['user_id'])) {
+        $user_id = (int)$userdata['user_id'];
+        $fields = 'user_id, username';
+        $values = "$user_id, '$username'";
+    } else {
+        $fields = 'username';
+        $values = "'$username'";
+    }
+
     // Insert a bare bone user in the database.
     $user_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['user_table']}
-                (username)
-         VALUES ('$username')"
+                ($fields)
+         VALUES ($values)"
     );
 
     // Set the rest of the data using the phorum_db_user_save() function.
