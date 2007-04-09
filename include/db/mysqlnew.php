@@ -3203,19 +3203,14 @@ function phorum_db_user_add($userdata)
  *                    function will always return TRUE, so we could
  *                    do without a return value. The return value is
  *                    here for backward compatibility.
- *
- * TODO: for consistency in function names, this function might have
- * TODO: be named phorum_db_user_update(). But we should look at all
- * TODO: function names to see if renaming them makes sense.
  */
 function phorum_db_user_save($userdata)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // Pull some non user table fields from the userdata.
-    // TODO: are these ever set in the core? It seems a bit useless
-    // TODO: to have data passed to this function that is never
-    // TODO: really used.
+    // Pull some non user table fields from the userdata. These can be
+    // set in case the $userdata parameter that is used is coming from
+    // phorum_user_get() or phorum_db_user_get().
     if (isset($userdata['permissions'])) {
         unset($userdata['permissions']);
     }
@@ -3226,15 +3221,15 @@ function phorum_db_user_save($userdata)
         unset($userdata['group_permissions']);
     }
 
-    // Forum permissions are handled by this function too.
+    // Forum permissions and custom profile fields are handled by this
+    // function too, but they need to be extracted from the userdata, so
+    // they won't be used for updating the standard user fields.
     if (isset($userdata['forum_permissions'])) {
         if (is_array($userdata['forum_permissions'])) {
             $forum_perms = $userdata['forum_permissions'];
         }
         unset($userdata['forum_permissions']);
     }
-
-    // Custom profile fields are handled by this function too.
     if (isset($userdata['user_data'])) {
         $custom_profile_data = $userdata['user_data'];
         unset($userdata['user_data']);
@@ -3620,6 +3615,7 @@ function phorum_db_user_delete($user_id)
     // If PHORUM_DELETE_CHANGE_AUTHOR is set, then the author field is
     // updated to {LANG->AnonymousUser}.
     $author = 'author';
+
     if (defined('PHORUM_DELETE_CHANGE_AUTHOR') && PHORUM_DELETE_CHANGE_AUTHOR){
         $anonymous = $PHORUM['DATA']['LANG']['AnonymousUser'];
         $author = "'".phorum_db_interact(DB_RETURN_QUOTED, $anonymous)."'";
