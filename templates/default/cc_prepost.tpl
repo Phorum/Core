@@ -43,8 +43,8 @@
       {/IF}
       <tr>
         <td class="PhorumTableRow">
-          <?php echo $PHORUM['TMP']['marker'] ?><a href="{PREPOST->url}" target="_blank">{PREPOST->subject}</a><br />
-          <span class="PhorumListModLink">&nbsp;&nbsp;&nbsp;&nbsp;<a class="PhorumListModLink" href="{PREPOST->delete_url}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->approve_url}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->approve_tree_url}">{LANG->ApproveMessageReplies}</a></span>
+          <?php echo $PHORUM['TMP']['marker'] ?><a href="{PREPOST->URL->READ}" target="_blank">{PREPOST->subject}</a><br />
+          <span class="PhorumListModLink">&nbsp;&nbsp;&nbsp;&nbsp;<a class="PhorumListModLink" href="{PREPOST->URL->DELETE}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->URL->APPROVE_MESSAGE}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->URL->APPROVE_TREE}">{LANG->ApproveMessageReplies}</a></span>
         </td>
         <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
         <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
