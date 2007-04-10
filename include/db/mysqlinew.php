@@ -39,7 +39,7 @@ if (!defined('PHORUM')) return;
  * This way, the mysql and the mysqli database layers can share the same
  * API core code.
  */
-include('./include/db/mysql_core.php');
+include('./include/db/mysql_shared.php');
 
 
 // ----------------------------------------------------------------------
