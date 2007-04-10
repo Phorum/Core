@@ -101,6 +101,7 @@ define('DB_NOCONNECTOK',     1);
 define('DB_MISSINGTABLEOK',  2);
 define('DB_DUPFIELDNAMEOK',  4);
 define('DB_DUPKEYNAMEOK',    8);
+define('DB_DUPKEYOK',       16);
 
 
 // ----------------------------------------------------------------------
@@ -128,11 +129,11 @@ function phorum_db_mysql_connect() {
 function phorum_db_sanitize_mixed(&$var, $type)
 {
     if (is_array($var)) {
-        foreach ($var as &$val) {
+        foreach ($var as $id => $val) {
             if ($type == 'int') {
-                $val = (int)$val;
+                $var[$id] = (int)$val;
             } else {
-                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
+                $var[$id] = phorum_db_interact(DB_RETURN_QUOTED, $val);
             }
         }
     } else {
@@ -2200,7 +2201,7 @@ function phorum_db_get_groups($group_id=0)
     );
 
     // Add the permissions to the group(s).
-    foreach ($groups as &$group) $group['permissions'] = array();
+    foreach ($groups as $id => $group) $groups[$id]['permissions'] = array();
     foreach ($perms as $perm)
     {
         // Little safety net against orphin records (shouldn't happen).
@@ -2274,7 +2275,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
     );
 
     // The records are full rows, but we want a user_id -> status mapping.
-    foreach ($members as &$member) $member = $member[1];
+    foreach ($members as $id => $member) $members[$id] = $member[1];
 
     return $members;
 }
@@ -2879,7 +2880,7 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
 
     // Return an array of user_ids.
     if ($return_array) {
-        foreach ($user_ids as &$user_id) $user_id = $user_id[0];
+        foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
         return $user_ids;
     }
 
@@ -3288,7 +3289,7 @@ function phorum_db_user_get_groups($user_id)
     );
 
     // The records are full rows, but we want a group_id -> status mapping.
-    foreach ($groups as &$group) $group = $group[1];
+    foreach ($groups as $id => $group) $groups[$id] = $group[1];
 
     return $groups;
 }
@@ -3912,20 +3913,22 @@ function phorum_db_newflag_add_read($message_ids)
     foreach ($message_ids as $id => $data)
     {
         if (is_array($data)) {
-            $values = $PHORUM['user']['user_id'] . ',' .
-                      (int)$data['forum'] . ',' .
-                      (int)$data['id'];
+            $user_id    = $PHORUM['user']['user_id'];
+            $forum_id   = (int)$data['forum'];
+            $message_id = (int)$data['id'];
         } else {
-            $values = $PHORUM['user']['user_id'] . ',' .
-                      $PHORUM['forum_id'] . ',' .
-                      (int)$data;
+            $user_id    = $PHORUM['user']['user_id'];
+            $forum_id   = $PHORUM['forum_id'];
+            $message_id = (int)$data;
         }
 
+        // We ignore duplicate record errors here.
         phorum_db_interact(
             DB_RETURN_RES,
-            "INSERT IGNORE INTO {$PHORUM['user_newflags_table']}
+            "INSERT INTO {$PHORUM['user_newflags_table']}
                     (user_id, forum_id, message_id)
-             VALUES ($values)"
+             VALUES ($user_id, $forum_id, $message_id)",
+            NULL, DB_DUPKEYOK 
         );
     }
 }
@@ -5359,7 +5362,7 @@ function phorum_db_get_custom_field_users($field_id, $field_content, $submatch)
     if (count($user_ids) == 0) return NULL;
 
     // The records are full rows, but we want a user_id -> user_id mapping.
-    foreach ($user_ids as &$user_id) $user_id = $user_id[0];
+    foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
 
     return $user_ids;
 }

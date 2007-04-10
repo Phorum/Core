@@ -79,12 +79,13 @@ include('./include/db/mysql_shared.php');
  *                    a valid $keyfield here!
  * @param $flags    - Special flags for modifying the function's behavior.
  *                    These flags can be OR'ed if multiple flags are needed.
- *                    DB_NOCONNECTOK      Failure to connect is not fatal but
- *                                        lets the call return FALSE (useful
- *                                        in combination with DB_RETURN_CONN).
- *                    DB_MISSINGTABLEOK   Missing table errors are not fatal.
- *                    DB_DUPFIELDNAMEOK   Duplicate field errors are not fatal.
- *                    DB_DUPKEYNAMEOK     Duplicate key errors are not fatal.
+ *                    DB_NOCONNECTOK     Failure to connect is not fatal but
+ *                                       lets the call return FALSE (useful
+ *                                       in combination with DB_RETURN_CONN).
+ *                    DB_MISSINGTABLEOK  Missing table errors not fatal.
+ *                    DB_DUPFIELDNAMEOK  Duplicate field errors not fatal.
+ *                    DB_DUPKEYNAMEOK    Duplicate key name errors not fatal.
+ *                    DB_DUPKEYOK        Duplicate key errors not fatal.
  *
  * @return $res     - The result of the query, based on the $return parameter.
  */
@@ -146,6 +147,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             // Duplicate key name.
             case 1061:
               if ($flags & DB_DUPKEYNAMEOK) $ignore_error = TRUE;
+              break;
+
+            // Duplicate key content.
+            case 1022:
+              if ($flags & DB_DUPKEYOK) $ignore_error = TRUE;
               break;
         }
 
