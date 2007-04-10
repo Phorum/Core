@@ -203,13 +203,23 @@ function phorum_dbupgrade_getupgrades()
 {
     $PHORUM=$GLOBALS['PHORUM'];
 
+    // Find the core type for the used db layer. By default, the core type
+    // is the same as the db layer type. A db layer can however override the
+    // core type to hike along with database upgrades from another database
+    // layer. This allows for example to have the mysqli and mysql layers
+    // share the same core type (since their only real difference is not in
+    // the database schema/data, but in the use of different PHP calls).
+    $core_type = isset($PHORUM['DBCONFIG']['core_type'])
+               ? $PHORUM['DBCONFIG']['core_type']
+               : $PHORUM['DBCONFIG']['type'];
+
     // Go over both the patches and schema upgrades and find all
     // upgrades that have not yet been processed.
     $upgrades = array();
     foreach (array('patch', 'schema') as $type)
     {
         $upgradepath =
-            "./include/db/upgrade/{$PHORUM['DBCONFIG']['type']}" .
+            "./include/db/upgrade/{$core_type}" .
             ($type == 'patch' ? '-patches' : '');
 
         $versionvar = $type == 'patch' 
