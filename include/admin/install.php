@@ -41,7 +41,7 @@
     if ($step == 0 && !isset($_POST["sanity_checks_done"]))
     {
         // Setup some fake environment data for the checks.
-        $GLOBALS["PHORUM"]["default_language"] = $default_language;
+        $GLOBALS["PHORUM"]["default_forum_options"]["language"] = $default_language;
         $GLOBALS["PHORUM"]["cache"] = $default_cache_dir;
         $GLOBALS["PHORUM"]["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
 

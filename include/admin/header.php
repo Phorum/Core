@@ -25,8 +25,9 @@
 
 
     // load the default Phorum language
-    if(isset($PHORUM["default_language"])){
-        include_once( "./include/lang/$PHORUM[default_language].php" );
+    if(isset($PHORUM["default_forum_options"]["language"])){
+        $lang = $PHORUM["default_forum_options"]["language"];
+        include_once( "./include/lang/{$lang}.php" );
     }
 
     // HTTP Content-Type header with the charset from the default language

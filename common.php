@@ -341,7 +341,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM['language'] = $PHORUM['user']['user_language'];
 
     if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
-        $PHORUM["language"] = $PHORUM["default_language"];
+        $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
 
     // set the user-selected template
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
