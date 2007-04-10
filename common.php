@@ -229,7 +229,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is a problem with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
         exit();
     } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
-               !isset($PHORUM['internal_patchlevel']) || 
+               !isset($PHORUM['internal_patchlevel']) ||
                $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
         echo "<html><head><title>Error</title></head><body>Looks like you have installed a new version. Go to the admin to complete the upgrade!</body></html>";
         exit();
@@ -346,8 +346,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // set the user-selected template
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
         $PHORUM['template'] = $PHORUM['user']['user_template'];
-    }        
-    
+    }
+
     // user output buffering so we don't get header errors
     // not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
@@ -356,9 +356,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         ob_end_clean();
-    }    
-    
-        
+    }
+
+
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
@@ -1028,6 +1028,11 @@ function phorum_get_language_info()
 
 function phorum_redirect_by_url( $redir_url )
 {
+    // check for response splitting and valid http(s) URLs
+    if(preg_match("/\s/", $redir_url) || !preg_match("!^https?://!i", $redir_url)){
+        $redir_url = phorum_get_url(PHORUM_INDEX_URL);
+    }
+
     if ( stristr( $_SERVER['SERVER_SOFTWARE'], "Microsoft-IIS" ) ) {
         // the ugly IIS-hack to avoid crashing IIS
         print "<html><head>\n<title>Redirecting ...</title>\n";
@@ -1086,13 +1091,13 @@ function phorum_database_error($error)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    // Flush output that we buffered so far (for displaying a 
+    // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).
     ob_end_clean();
 
     // Find out what type of error handling is required.
-    $logopt = isset($PHORUM["error_logging"]) 
-            ? $PHORUM["error_logging"] 
+    $logopt = isset($PHORUM["error_logging"])
+            ? $PHORUM["error_logging"]
             : 'screen';
 
     // Create a backtrace report, so it's easier to find out where a problem
@@ -1105,7 +1110,7 @@ function phorum_database_error($error)
     if (function_exists("debug_backtrace"))
     {
         $bt = debug_backtrace();
-        $phorum_path = dirname(__FILE__); 
+        $phorum_path = dirname(__FILE__);
 
         foreach ($bt as $id => $step)
         {
@@ -1129,12 +1134,12 @@ function phorum_database_error($error)
     Sorry, a Phorum database error occurred.<br/>
     <?php
 
-    // In admin scripts, we will always include the 
+    // In admin scripts, we will always include the
     // error message inside a comment in the page.
     if (defined("PHORUM_ADMIN")) {
         print "<!-- " .  htmlspecialchars($error) .  " -->";
     }
-   
+
     switch ($logopt)
     {
         // Log the database error to a logfile.
@@ -1173,7 +1178,7 @@ function phorum_database_error($error)
             include_once("./include/email_functions.php");
 
             $data = array(
-              "mailmessage" => 
+              "mailmessage" =>
                   "A database error occured in your Phorum installation.\n".
                   "\n" .
                   "Error message:\n" .
