@@ -4355,16 +4355,6 @@ function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
         $threads[$id]['meta'] = empty($thread['meta'])
                               ? array() : unserialize($thread['meta']);
 
-        // Create the unsubscribe URL.
-        // TODO: shouldn't this be in the core instead?
-        $threads[$id]['unsubscribe_url'] = phorum_get_url(
-            PHORUM_CONTROLCENTER_URL,
-            'panel='.PHORUM_CC_SUBSCRIPTION_THREADS,
-            'unsub_id='.$thread['thread'],
-            'unsub_forum='.$thread['forum_id'],
-            'unsub_type='.$thread['sub_type']
-        );
-
         $forum_ids[$thread['forum_id']] = $thread['forum_id'];
     }
 

@@ -3453,8 +3453,6 @@ function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null)
 
     while ($rec = mysql_fetch_assoc($res)){
         $rec["meta"] = unserialize($rec["meta"]);
-        $unsub_url=phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=".PHORUM_CC_SUBSCRIPTION_THREADS, "unsub_id=".$rec['thread'], "unsub_forum=".$rec['forum_id'], "unsub_type=".$rec['sub_type']);
-        $rec['unsubscribe_url']=$unsub_url;
         $arr[] = $rec;
         $forum_ids[]=$rec['forum_id'];
     }
