@@ -880,6 +880,11 @@ function phorum_get_language_info()
 
 function phorum_redirect_by_url( $redir_url )
 {
+    // check for response splitting and valid http(s) URLs
+    if(preg_match("/\s/", $redir_url) || !preg_match("!^https?://!i", $redir_url)){
+        $redir_url = phorum_get_url(PHORUM_INDEX_URL);
+    }
+
     if ( stristr( $_SERVER['SERVER_SOFTWARE'], "Microsoft-IIS" ) ) {
         // the ugly IIS-hack to avoid crashing IIS
         print "<html><head>\n<title>Redirecting ...</title>\n";
