@@ -29,6 +29,7 @@
 
     // conversion of old data if existing
     if(isset($PHORUM["bad_words"]) && count($PHORUM['bad_words'])) {
+        echo "upgrading badwords<br />";
         foreach($PHORUM['bad_words'] as $key => $data) {
             phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$data ,0 ,0);
             unset($PHORUM["bad_words"][$key]);
@@ -50,14 +51,15 @@
         }
     }
 
-    if(isset($_GET["curr"])){
-        if(isset($_GET["delete"])){
-            phorum_db_del_banitem($_GET['curr']);
-            echo "Ban Item Deleted<br />";
-        } else {
-            $curr = $_GET["curr"];
-        }
+    if(isset($_POST["curr"]) && isset($_POST["delete"]) && $_POST["confirm"]=="Yes"){
+        phorum_db_del_banitem((int)$_POST['curr']);
+        phorum_admin_okmsg("Bad Word Deleted");
     }
+
+    if(isset($_GET["curr"])){
+        $curr = $_GET["curr"];
+    }
+
     if($curr!="NEW"){
         extract(phorum_db_get_banitem($curr));
         $title="Edit Bad Word Item";
@@ -80,51 +82,71 @@
         phorum_admin_error($error);
     }
 
-    // load bad-words-list
-    $banlists=phorum_db_get_banlists();
-    $bad_words=$banlists[PHORUM_BAD_WORDS];
+    if($_GET["curr"] && $_GET["delete"]){
 
-    include_once "./include/admin/PhorumInputForm.php";
+        ?>
 
-    $frm = new PhorumInputForm ("", "post", $submit);
+        <div class="PhorumInfoMessage">
+            Are you sure you want to delete this entry?
+            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+                <input type="hidden" name="module" value="<?php echo $module; ?>" />
+                <input type="hidden" name="curr" value="<?php echo $_GET['curr']; ?>" />
+                <input type="hidden" name="delete" value="1" />
+                <input type="submit" name="confirm" value="Yes" />&nbsp;<input type="submit" name="confirm" value="No" />
+            </form>
+        </div>
 
-    $frm->hidden("module", "badwords");
-
-    $frm->hidden("curr", "$curr");
-
-    $frm->addbreak($title);
-
-    $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
-
-    $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
-
-    $frm->show();
-
-    echo "<hr class=\"PhorumAdminHR\" />";
-
-    if(count($bad_words)){
-
-        echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
-        echo "<tr>\n";
-        echo "    <td class=\"PhorumAdminTableHead\">Word</td>\n";
-        echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";
-        echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
-        echo "</tr>\n";
-
-        foreach($bad_words as $key => $item){
-            $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
-            echo "<tr>\n";
-            echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";
-            echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
-            echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&delete=1\">Delete</a></td>\n";
-            echo "</tr>\n";
-        }
-
-        echo "</table>\n";
+        <?php
 
     } else {
 
-        echo "No bad words in list currently.";
 
+        // load bad-words-list
+        $banlists=phorum_db_get_banlists();
+        $bad_words=$banlists[PHORUM_BAD_WORDS];
+
+        include_once "./include/admin/PhorumInputForm.php";
+
+        $frm =& new PhorumInputForm ("", "post", $submit);
+
+        $frm->hidden("module", "badwords");
+
+        $frm->hidden("curr", "$curr");
+
+        $frm->addbreak($title);
+
+        $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
+
+        $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
+
+        $frm->show();
+
+        echo "<hr class=\"PhorumAdminHR\" />";
+
+        if(count($bad_words)){
+
+            echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
+            echo "<tr>\n";
+            echo "    <td class=\"PhorumAdminTableHead\">Word</td>\n";
+            echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";
+            echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
+            echo "</tr>\n";
+
+            foreach($bad_words as $key => $item){
+                $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
+                echo "<tr>\n";
+                echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";
+                echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
+                echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=badwords&curr=$key&delete=1\">Delete</a></td>\n";
+                echo "</tr>\n";
+            }
+
+            echo "</table>\n";
+
+        } else {
+
+            echo "No bad words in list currently.";
+
+        }
     }
 ?>

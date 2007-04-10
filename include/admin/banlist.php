@@ -40,17 +40,17 @@
         if(!$ret){
             $error="Database error while updating settings.";
         } else {
-            echo "Ban Item Updated<br />";
+            phorum_admin_okmsg("Ban Item Updated");
         }
     }
 
+    if(isset($_POST["curr"]) && isset($_POST["delete"]) && $_POST["confirm"]=="Yes"){
+        phorum_db_del_banitem((int)$_POST['curr']);
+        phorum_admin_okmsg("Ban Item Deleted");
+    }
+
     if(isset($_GET["curr"])){
-        if(isset($_GET["delete"])){
-            phorum_db_del_banitem($_GET['curr']);
-            echo "Ban Item Deleted<br />";
-        } else {
-            $curr = $_GET["curr"];
-        }
+        $curr = (int)$_GET["curr"];
     }
 
     if($curr!="NEW"){
@@ -70,72 +70,89 @@
         phorum_admin_error($error);
     }
 
-    include_once "./include/admin/PhorumInputForm.php";
+    if($_GET["curr"] && $_GET["delete"]){
+
+        ?>
+
+        <div class="PhorumInfoMessage">
+            Are you sure you want to delete this entry?
+            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+                <input type="hidden" name="module" value="<?php echo $module; ?>" />
+                <input type="hidden" name="curr" value="<?php echo $_GET['curr']; ?>" />
+                <input type="hidden" name="delete" value="1" />
+                <input type="submit" name="confirm" value="Yes" />&nbsp;<input type="submit" name="confirm" value="No" />
+            </form>
+        </div>
+
+        <?php
+
+    } else {
+
+        include_once "./include/admin/PhorumInputForm.php";
+
+        $frm =& new PhorumInputForm ("", "post", $submit);
+
+        $frm->hidden("module", "banlist");
+
+        $frm->hidden("curr", "$curr");
+
+        $frm->addbreak($title);
+
+        $frm->addrow("String To Match", $frm->text_box("string", $string, 50));
+
+        $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
+
+        $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
+
+        $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
+
+        $frm->show();
+
+        echo "If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression. See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information.";
+
+        if($curr=="NEW"){
+
+            $PHORUM['banlists']=phorum_db_get_banlists(true);
+            unset($PHORUM['banlists'][PHORUM_BAD_WORDS]);
+
+            echo "<hr class=\"PhorumAdminHR\" />";
+
+            if(count($PHORUM['banlists'])){
+
+                echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
+                echo "<tr>\n";
+                echo "    <td class=\"PhorumAdminTableHead\">String</td>\n";
+                echo "    <td class=\"PhorumAdminTableHead\">Field</td>\n";
+                echo "    <td class=\"PhorumAdminTableHead\">Compare Method</td>\n";
+                echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";
+                echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
+                echo "</tr>\n";
 
 
-    $frm = new PhorumInputForm ("", "post", $submit);
 
-    $frm->hidden("module", "banlist");
-
-    $frm->hidden("curr", "$curr");
-
-    $frm->addbreak($title);
-
-    $frm->addrow("String To Match", $frm->text_box("string", $string, 50));
-
-    $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
-
-    $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
-
-    $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
-
-    $frm->show();
-
-    echo "If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression. See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information.";
-
-    if($curr=="NEW"){
-
-        $PHORUM['banlists']=phorum_db_get_banlists(true);
-        unset($PHORUM['banlists'][PHORUM_BAD_WORDS]);
-
-        echo "<hr class=\"PhorumAdminHR\" />";
-
-        if(count($PHORUM['banlists'])){
-
-            echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
-            echo "<tr>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">String</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Field</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Compare Method</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">Valid for Forum</td>\n";
-            echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
-            echo "</tr>\n";
-
-
-
-            foreach($PHORUM["banlists"] as $type => $content){
-                $t_last_string = '';
-                foreach($content as $key => $item){
-                    $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
-                    echo "<tr>\n";
-                    echo "    <td class=\"".$ta_class."\"".($item["string"] == $t_last_string ? " style=\"color:red;\"" : "").">".htmlspecialchars($item['string'])."</td>\n";
-                    echo "    <td class=\"".$ta_class."\">".$ban_types[$type]."</td>\n";
-                    echo "    <td class=\"".$ta_class."\">".$match_types[$item["pcre"]]."</td>\n";
-                    echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
-                    echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&delete=1\">Delete</a></td>\n";
-                    echo "</tr>\n";
-                    $t_last_string = $item["string"];
+                foreach($PHORUM["banlists"] as $type => $content){
+                    $t_last_string = '';
+                    foreach($content as $key => $item){
+                        $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
+                        echo "<tr>\n";
+                        echo "    <td class=\"".$ta_class."\"".($item["string"] == $t_last_string ? " style=\"color:red;\"" : "").">".htmlspecialchars($item['string'])."</td>\n";
+                        echo "    <td class=\"".$ta_class."\">".$ban_types[$type]."</td>\n";
+                        echo "    <td class=\"".$ta_class."\">".$match_types[$item["pcre"]]."</td>\n";
+                        echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
+                        echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=banlist&curr=$key&delete=1\">Delete</a></td>\n";
+                        echo "</tr>\n";
+                        $t_last_string = $item["string"];
+                    }
                 }
+
+                echo "</table>\n";
+
+            } else {
+
+                echo "No bans in list currently.";
+
             }
 
-            echo "</table>\n";
-
-        } else {
-
-            echo "No bans in list currently.";
-
         }
-
     }
-
 ?>
