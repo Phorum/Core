@@ -486,7 +486,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
     $sql = "SELECT  *
             FROM    {$PHORUM['message_table']}
-            USE     KEY ($use_key)
+            USE     INDEX ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
     // We have to check what forums the active Phorum user can read first.
@@ -1382,7 +1382,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                         FROM {$PHORUM['message_table']}
                         WHERE datestamp >= $min_time";
                 $min_id = phorum_db_interact(DB_RETURN_VALUE, $sql);
-                $use_key=' USE KEY (primary)';
+                $use_key=' USE INDEX (primary)';
                 $extra_where="AND message_id >= $min_id";
             }
             */
@@ -1431,8 +1431,8 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
                 "CREATE TEMPORARY TABLE $table (
                     key (forum_id, status, datestamp)
                  ) ENGINE=HEAP
-                 SELECT {$PHORUM['message_table']}.message_id,
-                        {$PHORUM['message_table']}.datestamp,
+                 SELECT {$PHORUM['message_table']}.message_id AS message_id,
+                        {$PHORUM['message_table']}.datestamp  AS datestamp,
                         status,
                         forum_id
                  FROM   {$PHORUM['message_table']}
@@ -2262,8 +2262,8 @@ function phorum_db_get_group_members($group_id, $status = NULL)
     // If phorum_db_user_get() sorts results itself, this join can go away.
     $members = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT xref.user_id,
-                xref.status
+        "SELECT xref.user_id AS user_id,
+                xref.status  AS status
          FROM   {$PHORUM['user_table']} AS users,
                 {$PHORUM['user_group_xref_table']} AS xref
          WHERE  users.user_id = xref.user_id
@@ -2466,8 +2466,8 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
     // Look up moderators which are configured through user permissions.
     $usermods = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT DISTINCT user.user_id,
-                user.email
+        "SELECT DISTINCT user.user_id AS user_id,
+                user.email AS email
          FROM   {$PHORUM['user_table']} AS user
                 LEFT JOIN {$PHORUM['user_permissions_table']} AS perm
                 ON perm.user_id = user.user_id
@@ -2484,8 +2484,8 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
     // Look up moderators which are configured through group permissions.
     $groupmods = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT DISTINCT user.user_id,
-                user.email
+        "SELECT DISTINCT user.user_id AS user_id,
+                user.email AS email
          FROM   {$PHORUM['user_table']} AS user,
                 {$PHORUM['groups_table']} AS groups,
                 {$PHORUM['user_group_xref_table']} AS usergroup,
@@ -2596,17 +2596,18 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         }
 
         // Retrieve forum group permissions and groups for the requested users.
+        // TODO: why "status >= ..." and not "status = ..." ?
         $group_permissions = phorum_db_interact(
             DB_RETURN_ROWS,
             "SELECT user_id,
-                    userxref.group_id,
+                    {$PHORUM['user_group_xref_table']}.group_id AS group_id,
                     forum_id,
                     permission
-             FROM   {$PHORUM['user_group_xref_table']} AS userxref
-                    LEFT JOIN {$PHORUM['forum_group_xref_table']} AS forumxref
+             FROM   {$PHORUM['user_group_xref_table']}
+                    LEFT JOIN {$PHORUM['forum_group_xref_table']}
                     USING (group_id)
              WHERE  $user_where AND
-                    userxref.status >= ".PHORUM_USER_GROUP_APPROVED
+                    status >= ".PHORUM_USER_GROUP_APPROVED
         );
 
         // Add groups and forum group permissions to the users.
@@ -4048,7 +4049,7 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type, $ignore_activ
     // somebody wants to write a module for handling this functionality.
     $users = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT DISTINCT(u.email),
+        "SELECT DISTINCT(u.email) AS email,
                 user_language
          FROM   {$PHORUM['subscribers_table']} AS s,
                 {$PHORUM['user_table']} AS u
@@ -4112,15 +4113,15 @@ function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
     // latest message in the thread was posted within the provided time limit.
     $threads = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT s.thread,
-                s.forum_id,
-                s.sub_type,
-                m.subject,
-                m.modifystamp,
-                m.author,
-                m.user_id,
-                m.email,
-                m.meta
+        "SELECT s.thread      AS thread,
+                s.forum_id    AS forum_id,
+                s.sub_type    AS sub_type,
+                m.subject     AS subject,
+                m.modifystamp AS modifystamp,
+                m.author      AS author,
+                m.user_id     AS user_id,
+                m.email       AS email,
+                m.meta        AS meta
          FROM   {$PHORUM['subscribers_table']} AS s,
                 {$PHORUM['message_table']} AS m
          WHERE  s.user_id    = $user_id AND
@@ -4389,12 +4390,13 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
     // Retrieve the messages from the folder.
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT m.pm_message_id, from_user_id,
-                from_username,   subject,
-                datestamp,       meta,
-                pm_xref_id,      user_id,
-                pm_folder_id,    special_folder,
-                read_flag,       reply_flag
+        "SELECT m.pm_message_id AS pm_message_id
+                from_user_id,    from_username,
+                subject,         datestamp,
+                meta,            pm_xref_id,
+                user_id,         pm_folder_id,
+                special_folder,  read_flag,
+                reply_flag
          FROM   {$PHORUM['pm_messages_table']} AS m,
                 {$PHORUM['pm_xref_table']} AS x
          WHERE  user_id = $user_id AND
@@ -4448,7 +4450,20 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
     // Retrieve the private message.
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT *
+        "SELECT m.pm_message_id  AS pm_message_id,
+                m.from_user_id   AS from_user_id,
+                m.from_username  AS from_username,
+                m.subject        AS subject,
+                m.message        AS message,
+                m.datestamp      AS datestamp,
+                m.meta           AS meta,
+                x.pm_xref_id     AS pm_xref_id,
+                x.user_id        AS user_id,
+                x.pm_folder_id   AS pm_folder_id,
+                x.special_folder AS special_folder,
+                x.pm_message_id  AS pm_message_id,
+                x.read_flag      AS read_flag,
+                x.reply_flag     AS reply_flag
          FROM {$PHORUM['pm_messages_table']} AS m,
               {$PHORUM['pm_xref_table']} AS x
          WHERE $folder_where
@@ -4592,7 +4607,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
     $customfolders = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT pm_folder_id AS id,
-                foldername AS name
+                foldername   AS name
          FROM   {$PHORUM['pm_folders_table']}
          WHERE  user_id = $user_id
          ORDER  BY foldername",
@@ -5163,7 +5178,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
     // Retrieve all mutual buddies.
     $mutuals = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT DISTINCT a.buddy_user_id
+        "SELECT DISTINCT a.buddy_user_id AS buddy_user_id
          FROM {$PHORUM['pm_buddies_table']} AS a,
               {$PHORUM['pm_buddies_table']} AS b
          WHERE a.user_id       = $user_id AND
@@ -5561,17 +5576,17 @@ function phorum_db_metaquery_messagesearch($metaquery)
     // Retrieve matching messages.
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT message.message_id,
-                message.thread,
-                message.parent_id,
-                message.forum_id,
-                message.subject,
-                message.author,
-                message.datestamp,
-                message.body,
-                message.ip,
-                message.status,
-                message.user_id,
+        "SELECT message.message_id  AS message_id,
+                message.thread      AS thread,
+                message.parent_id   AS parent_id,
+                message.forum_id    AS forum_id,
+                message.subject     AS subject,
+                message.author      AS author,
+                message.datestamp   AS datestamp,
+                message.body        AS body,
+                message.ip          AS ip,
+                message.status      AS status,
+                message.user_id     AS user_id,
                 user.username       AS user_username,
                 thread.closed       AS thread_closed,
                 thread.modifystamp  AS thread_modifystamp,
