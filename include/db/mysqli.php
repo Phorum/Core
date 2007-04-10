@@ -5130,11 +5130,11 @@ function phorum_db_sanitize_mixed(&$var, $type)
     $conn = phorum_db_mysqli_connect();
 
     if(is_array($var)){
-        foreach($var as &$val){
+        foreach($var as $id => $val){
             if($type=="int"){
-                $val = (int)$val;
+                $var[$id] = (int)$val;
             } else {
-                $val = mysqli_real_escape_string($conn, $val);
+                $var[$id] = mysqli_real_escape_string($conn, $val);
             }
         }
     } else {

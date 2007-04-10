@@ -5107,11 +5107,11 @@ function phorum_db_mysql_connect(){
  */
 function phorum_db_sanitize_mixed(&$var, $type){
     if(is_array($var)){
-        foreach($var as &$val){
+        foreach($var as $id => $val){
             if($type=="int"){
-                $val = (int)$val;
+                $var[$id] = (int)$val;
             } else {
-                $val = mysql_escape_string($val);
+                $var[$id] = mysql_escape_string($val);
             }
         }
     } else {
