@@ -1571,7 +1571,7 @@ function phorum_db_search($search, $offset, $length, $type, $days, $forum)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "CREATE TEMPORARY TABLE $id_table (
-                     KEY(message_id)
+                     KEY (message_id)
                  ) ENGINE=HEAP
                  SELECT message_id
                  FROM   {$PHORUM['message_table']}
@@ -6045,7 +6045,7 @@ function phorum_db_create_tables()
       "CREATE TABLE {$PHORUM['user_custom_fields_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            type                     int unsigned   NOT NULL default '0',
-           data                     TEXT           NOT NULL default '',
+           data                     text           NOT NULL default '',
   
            PRIMARY KEY (user_id, type)
        ) TYPE=MyISAM",
@@ -6102,7 +6102,7 @@ function phorum_db_create_tables()
         }
     }
 
-    return $retmsg;
+    return NULL;
 }
 
 /**
@@ -6162,7 +6162,7 @@ function phorum_db_sanitychecks()
     );
 
     $verstr = preg_replace('/-.*$/', '', $version);
-    $ver = explode('. ', $verstr);
+    $ver = explode('.', $verstr);
 
     // Version numbering format which is not recognized.
     if (count($ver) != 3) return array(
