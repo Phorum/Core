@@ -33,6 +33,12 @@ if (!defined("PHORUM")) return;
  */
 
 /**
+ * The core_type is set here, to let this database layer use the
+ * database upgrade files from the "mysql" database layer.
+ */
+$PHORUM["DBCONFIG"]["core_type"] = "mysql";
+
+/**
  * These are the table names used for this database system.
  */
 
