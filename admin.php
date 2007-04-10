@@ -29,6 +29,14 @@
     include_once "./common.php";
     include_once "./include/users.php";
 
+    // determine absolute URI for the admin
+    if(isset($_SERVER["SCRIPT_URI"])){
+        $PHORUM["admin_http_path"] = $_SERVER["SCRIPT_URI"];
+    } else {
+        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
+        $port = ($_SERVER["SERVER_PORT"]!=443 || $_SERVER["SERVER_PORT"]!=80) ? ":".$_SERVER["SERVER_PORT"] : "";
+        $PHORUM["admin_http_path"] = $protocol."://".$_SERVER["HTTP_HOST"].$port.$_SERVER["PHP_SELF"];
+    }
 
     // if we are installing or upgrading, we don't need to check for a session
     // 2005081000 was the internal version that introduced the installed flag
@@ -38,8 +46,8 @@
         $module="install";
 
     } elseif ( $_REQUEST["module"] == "upgrade" ||
-               $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION || 
-               !isset($PHORUM['internal_patchlevel']) || 
+               $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
+               !isset($PHORUM['internal_patchlevel']) ||
                $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
 
         // this is an upgrade
@@ -118,7 +126,7 @@
         return $folders;
 
     }
-    
+
     /*
      *
      * $forums_only can be 0,1,2,3
@@ -142,26 +150,26 @@
         $forums = phorum_db_get_forums();
 
         foreach($forums as $forum){
-        	
-            if( (
-	            	$forums_only == 0 || 
-	            	($forum['folder_flag'] == 0 && $forums_only != 3) || 
-	               	($forums_only==2 && $forum['vroot'] > 0 && $forum['vroot'] == $forum['forum_id']) ||
-	               	($forums_only==3 && $forum['vroot'] == $forum['forum_id'] )
-               	) && ($vroot == -1 || $vroot == $forum['vroot']) )  {
 
-        		
+            if( (
+                    $forums_only == 0 ||
+                    ($forum['folder_flag'] == 0 && $forums_only != 3) ||
+                    ($forums_only==2 && $forum['vroot'] > 0 && $forum['vroot'] == $forum['forum_id']) ||
+                    ($forums_only==3 && $forum['vroot'] == $forum['forum_id'] )
+                ) && ($vroot == -1 || $vroot == $forum['vroot']) )  {
+
+
                 $path = $forum["name"];
                 $parent_id=$forum["parent_id"];
-                
+
                 while( $parent_id!=0 ){
-                	
+
                     $path=$forums[$parent_id]["name"]."::$path";
 
                     $parent_id=$forums[$parent_id]["parent_id"];
-                    
+
                 }
-                
+
                 if($forums_only!=3 && $forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
                         $path.=" (Virtual Root)";
                 }

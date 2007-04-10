@@ -27,7 +27,7 @@
                 if(!empty($_POST["target"])){
                     phorum_redirect_by_url($_POST['target']);
                 } else {
-                    phorum_redirect_by_url($_SERVER['PHP_SELF']);
+                    phorum_redirect_by_url($PHORUM["admin_http_path"]);
                 }
                 exit();
             }
@@ -40,8 +40,8 @@
 
     if(count($_REQUEST)){
 
-        $frm->hidden("target", htmlentities($_SERVER["REQUEST_URI"]));
-        
+        $frm->hidden("target", htmlentities($PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]));
+
     }
 
     $frm->addrow("Username", $frm->text_box("username", "", 30));
