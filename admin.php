@@ -29,6 +29,14 @@
     include_once "./common.php";
     include_once "./include/users.php";
 
+    // determine absolute URI for the admin
+    if(isset($_SERVER["SCRIPT_URI"])){
+        $PHORUM["admin_http_path"] = $_SERVER["SCRIPT_URI"];
+    } else {
+        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
+        $port = ($_SERVER["SERVER_PORT"]!=443 || $_SERVER["SERVER_PORT"]!=80) ? ":".$_SERVER["SERVER_PORT"] : "";
+        $PHORUM["admin_http_path"] = $protocol."://".$_SERVER["HTTP_HOST"].$port.$_SERVER["PHP_SELF"];
+    }
 
     // if we are installing or upgrading, we don't need to check for a session
     // 2005081000 was the internal version that introduced the installed flag
