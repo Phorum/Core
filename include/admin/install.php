@@ -208,7 +208,7 @@
 
     // THIS IS THE OUTPUT STEP
 
-    if($PHORUM["installed"]) $step=5;
+    if(isset($PHORUM["installed"]) && $PHORUM["installed"]) $step=5;
 
     switch ($step){
 

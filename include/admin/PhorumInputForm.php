@@ -215,9 +215,10 @@ class PhorumInputForm {
 
         if ( is_array( $this->_rows ) ) foreach( $this->_rows as $key => $row ) {
 
-            if ( $row["break"] || $row["subbreak"]) {
+            if ( (isset($row["break"]) && $row['break']) ||
+                 (isset($row["subbreak"]) && $row['subbreak']) ) {
                 $extra_class = '';
-                if ($row["subbreak"]) {
+                if (isset($row["subbreak"]) && $row["subbreak"]) {
                     $row["break"] = $row["subbreak"];
                     $extra_class = "input-form-td-subbreak";
                 }
