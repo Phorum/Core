@@ -92,32 +92,27 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 {
     static $conn;
 
-    // Return a quoted parameter.
-    if ($return === DB_RETURN_QUOTED) {
-        return mysql_escape_string($sql);
-    }
-
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
     {
         $PHORUM = $GLOBALS['PHORUM'];
 
-        $conn = mysql_connect(
+        $conn = mysqli_connect(
             $PHORUM['DBCONFIG']['server'],
             $PHORUM['DBCONFIG']['user'],
             $PHORUM['DBCONFIG']['password'],
-            TRUE
+            $PHORUM['DBCONFIG']['name']
         );
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
             phorum_database_error('Failed to connect to the database.');
             exit;
         }
-        if (mysql_select_db($PHORUM['DBCONFIG']['name'], $conn) === FALSE) {
-            if ($flags & DB_NOCONNECTOK) return FALSE;
-            phorum_database_error('Failed to select the database.');
-            exit;
-        }
+    }
+
+    // Return a quoted parameter.
+    if ($return === DB_RETURN_QUOTED) {
+        return mysqli_real_escape_string($conn, $sql);
     }
 
     // RETURN: database connection handle
@@ -132,11 +127,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     );
 
     // Execute the SQL query.
-    if (($res = mysql_query($sql, $conn)) === FALSE)
+    if (($res = mysqli_query($conn, $sql)) === FALSE)
     {
         // See if the $flags tell us to ignore the error.
         $ignore_error = FALSE;
-        switch (mysql_errno($conn))
+        switch (mysqli_errno($conn))
         {
             // Table does not exist.
             case 1146:
@@ -157,7 +152,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         // Handle this error if it's not to be ignored.
         if (! $ignore_error)
         {
-            $err = mysql_error($conn);
+            $err = mysqli_error($conn);
 
             // RETURN: error message or NULL
             if ($return === DB_RETURN_ERROR) return $err;     
@@ -180,7 +175,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     // RETURN: number of rows
     elseif ($return === DB_RETURN_ROWCOUNT) {
-        return mysql_num_rows($res);
+        return mysqli_num_rows($res);
     }
 
     // RETURN: array rows or single value
@@ -192,7 +187,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($return !== DB_RETURN_ROWS) $keyfield = NULL;
 
         $rows = array();
-        while ($row = mysql_fetch_row($res)) {
+        while ($row = mysqli_fetch_row($res)) {
             if ($keyfield === NULL) {
                 $rows[] = $row;
             } else {
@@ -230,7 +225,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($return !== DB_RETURN_ASSOCS) $keyfield = NULL;
 
         $rows = array();
-        while ($row = mysql_fetch_assoc($res)) {
+        while ($row = mysqli_fetch_assoc($res)) {
             if ($keyfield === NULL) {
                 $rows[] = $row;
             } else {
@@ -255,7 +250,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     // RETURN: new id after inserting a new record
     elseif ($return === DB_RETURN_NEWID) {
-        return mysql_insert_id($conn);
+        return mysqli_insert_id($conn);
     }
 
     trigger_error(
