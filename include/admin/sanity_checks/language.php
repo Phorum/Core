@@ -42,7 +42,7 @@
         $checked[$PHORUM["default_forum_options"]["language"]] = true;
 
         // If this check is run at install time, we're done.
-        if ($is_install) return array(PHORUM_SANITY_OK, NULL);
+        if ($is_install) return array(PHORUM_SANITY_OK, NULL, NULL);
 
         // Check for the forum specific language file(s).
         $forums = phorum_db_get_forums();
@@ -65,6 +65,6 @@
         }
 
         // All checks are OK.
-        return array(PHORUM_SANITY_OK, NULL);
+        return array(PHORUM_SANITY_OK, NULL, NULL);
     }
 ?>

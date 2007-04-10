@@ -297,6 +297,6 @@
              language file(s): " . implode(", ", $PHORUM["distro_languages"])
         );
 
-        return array (PHORUM_SANITY_OK, NULL);
+        return array (PHORUM_SANITY_OK, NULL, NULL);
     }
 ?>

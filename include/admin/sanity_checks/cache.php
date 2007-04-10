@@ -109,6 +109,6 @@
              the Phorum developers to find out what the problem is.",
         );
 
-        return array (PHORUM_SANITY_OK, NULL);
+        return array (PHORUM_SANITY_OK, NULL, NULL);
     }
 ?>

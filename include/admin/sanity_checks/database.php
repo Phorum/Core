@@ -57,6 +57,6 @@
         }
 
         // All checks are OK.
-        return array(PHORUM_SANITY_OK, NULL);
+        return array(PHORUM_SANITY_OK, NULL, NULL);
     }
 ?>

@@ -42,6 +42,6 @@
              company, please contact them to do this for you."
         );
 
-        return array (PHORUM_SANITY_OK, NULL);
+        return array (PHORUM_SANITY_OK, NULL, NULL);
     }
 ?>
