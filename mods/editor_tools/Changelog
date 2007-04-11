@@ -1,6 +1,13 @@
 Changelog:
 ----------
 
+2007-04-11 v1.1.18
+
+    - It's now possible to put the editor tools at a specific spot in the
+      editor page, by creating a container element with id="editor-tools".
+      The editor tools will automatically use that container for adding
+      the buttons to the page.
+
 2007-01-21 v1.1.17
 
     - Added ALT and TITLE attributes to the images in the smileys popup.

@@ -255,11 +255,16 @@ function editor_tools_construct()
     if (textarea_obj == null) return; // we consider this fatal.
     var subjectfield_obj = editor_tools_get_subjectfield();
 
-    // Insert a <div> for containing the buttons, just before the textarea.
-    parent_obj = textarea_obj.parentNode;
-    div_obj = document.createElement('div');
-    div_obj.id = 'editor-tools';
-    parent_obj.insertBefore(div_obj, textarea_obj);
+    // Insert a <div> for containing the buttons, just before the textarea,
+    // unless there is already an object with id "editor-tools". In that
+    // case, the existing object is used instead.
+    div_obj = document.getElementById('editor-tools');
+    if (! div_obj) {
+        parent_obj = textarea_obj.parentNode;
+        div_obj = document.createElement('div');
+        div_obj.id = 'editor-tools';
+        parent_obj.insertBefore(div_obj, textarea_obj);
+    }
 
     // Add the buttons to the new <div> for the editor tools.
     for (var i = 0; i < editor_tools.length; i++)
