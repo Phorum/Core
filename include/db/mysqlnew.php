@@ -137,7 +137,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     {
         // See if the $flags tell us to ignore the error.
         $ignore_error = FALSE;
-        switch (mysql_errno($conn))
+        $errno = mysql_errno($conn);
+        switch ($errno)
         {
             // Table does not exist.
             case 1146:
@@ -154,8 +155,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
               if ($flags & DB_DUPKEYNAMEOK) $ignore_error = TRUE;
               break;
 
-            // Duplicate key content.
-            case 1022:
+            // Duplicate entry for key.
+            case 1062:
               if ($flags & DB_DUPKEYOK) $ignore_error = TRUE;
               break;
         }
@@ -169,7 +170,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             if ($return === DB_RETURN_ERROR) return $err;     
 
             // Trigger an error.
-            phorum_database_error("$err: $sql");
+            phorum_database_error("$err ($errno): $sql");
             exit;
         }
     }
