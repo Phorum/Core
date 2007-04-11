@@ -19,11 +19,6 @@
 
     if(!defined("PHORUM_ADMIN")) return;
 
-    if(empty($PHORUM["http_path"])){
-        $PHORUM["http_path"]=dirname($_SERVER["PHP_SELF"]);
-    }
-
-
     // load the default Phorum language
     if(isset($PHORUM["default_forum_options"]["language"])){
         $lang = $PHORUM["default_forum_options"]["language"];
@@ -346,7 +341,7 @@ function hide_help()
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<form id="status-form" action="<?php echo $_SERVER["PHP_SELF"];?>" method="post">
+<form id="status-form" action="<?php echo {$PHORUM["admin_http_path"]} ?>" method="post">
 <input type="hidden" name="module" value="status" />
 Phorum Status:
 <select name="status" onChange="this.form.submit();">

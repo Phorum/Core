@@ -40,7 +40,7 @@
 
     if(count($_REQUEST)){
 
-        $frm->hidden("target", htmlentities($PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]));
+        $frm->hidden("target", $PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]);
 
     }
 

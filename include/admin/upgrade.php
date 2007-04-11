@@ -106,7 +106,7 @@ switch ($step) {
         $frm->addbreak("The upgrade is complete");
         $frm->addmessage(
               "You may want to look through the " .
-              "<a href=\"$_SERVER[PHP_SELF]\">the admin interface</a> " .
+              "<a href=\"{$PHORUM["admin_http_path"]}\">the admin interface</a> " .
               "for any new features in this version."
         );
         $frm->show();

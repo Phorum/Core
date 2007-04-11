@@ -53,10 +53,12 @@
             echo ">";
 
             foreach($this->_links as $link){
-                $desc=$link["description"];
-                $html ="<a title='$desc' href=\"$_SERVER[PHP_SELF]";
+                $desc = htmlspecialchars($link["description"]);
+                $href = htmlspecialchars($_SERVER["PHP_SELF"]);
+                $title = htmlspecialchars($link["title"]);
+                $html ="<a title=\"$desc\" href=\"$href";
                 if(!empty($link["module"])) $html.="?module=$link[module]";
-                $html.="\">$link[title]</a><br />";
+                $html.="\">$title</a><br />";
                 echo $html;
             }
 

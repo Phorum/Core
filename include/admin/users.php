@@ -161,7 +161,7 @@
 
             $frm->hidden("module", "users");
 
-            $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", htmlspecialchars($_REQUEST["search"]), 30) . " &bull; <a href=\"{$_SERVER['PHP_SELF']}?module=users&search=\">Find All Users</a>");
+            $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", htmlspecialchars($_REQUEST["search"]), 30) . " &bull; <a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Find All Users</a>");
 
             $frm->addrow("", "Post count " .
                 $frm->select_tag("posts_op", array("gte" => ">=", "lte" => "<="), $_REQUEST["posts_op"]) .
@@ -233,18 +233,18 @@
 
             if($_REQUEST["start"]>0){
                 $old_start=$_REQUEST["start"]-$display;
-                $nav.="<a href=\"$_SERVER[PHP_SELF]?module=users&search=$url_safe_search&start=$old_start\">Previous Page</a>";
+                $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=$url_safe_search&start=$old_start\">Previous Page</a>";
             }
 
             $nav.="&nbsp;&nbsp;";
 
             if($_REQUEST["start"]+$display<$total){
                 $new_start=$_REQUEST["start"]+$display;
-                $nav.="<a href=\"$_SERVER[PHP_SELF]?module=users&search=$url_safe_search&start=$new_start\">Next Page</a>";
+                $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=$url_safe_search&start=$new_start\">Next Page</a>";
             }
 
             echo <<<EOT
-            <form name="UsersForm" action="{$_SERVER['PHP_SELF']}" method="post">
+            <form name="UsersForm" action="{$PHORUM["admin_http_path"]}" method="post">
             <input type="hidden" name="module" value="users">
             <input type="hidden" name="action" value="deleteUsers">
             <table border="0" cellspacing="1" cellpadding="0"
@@ -289,7 +289,7 @@ EOT;
                 $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
 
                 echo "<tr>\n";
-                echo "    <td class=\"".$ta_class."\"><a href=\"$_SERVER[PHP_SELF]?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
+                echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
                 echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
                 echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
                 echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";

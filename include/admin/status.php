@@ -21,7 +21,7 @@
     
     phorum_db_update_settings( array("status"=>$_POST["status"]) );
         
-    header("Location: $_SERVER[PHP_SELF]");
+    phorum_redirect_by_url($PHORUM["admin_http_path"]);
     exit();
     
 ?>

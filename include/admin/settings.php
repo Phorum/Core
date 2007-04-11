@@ -120,7 +120,7 @@ if ( count( $_POST ) ) {
         unset( $_POST["module"] );
 
         if ( phorum_db_update_settings( $_POST ) ) {
-            phorum_redirect_by_url($_SERVER['PHP_SELF']);
+            phorum_redirect_by_url($PHORUM["admin_http_path"]);
             exit();
         } else {
             $error = "Database error while updating settings.";

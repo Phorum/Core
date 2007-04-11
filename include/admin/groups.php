@@ -230,7 +230,7 @@
         $frm->show();
 
         echo "<hr class=\"PhorumAdminHR\" />";
-        echo "<form action=\"{$_SERVER['PHP_SELF']}\" method=\"post\">\n";
+        echo "<form action=\"{$PHORUM["admin_http_path"]}\" method=\"post\">\n";
         echo "<input type=\"hidden\" name=\"module\" value=\"groups\">\n";
         echo "<input type=\"hidden\" name=\"action\" value=\"deleteGroups\">\n";
         echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
@@ -241,7 +241,7 @@
 
         foreach($groups as $group){
             echo "<tr>\n";
-            echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=groups&edit=1&group_id={$group['group_id']}\">".htmlspecialchars($group['name'])."</a></td>\n";
+            echo "    <td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=groups&edit=1&group_id={$group['group_id']}\">".htmlspecialchars($group['name'])."</a></td>\n";
             echo "    <td class=\"PhorumAdminTableRow\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$group['group_id']}\"></td>\n";
             echo "</tr>\n";
         }

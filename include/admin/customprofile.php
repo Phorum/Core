@@ -119,7 +119,7 @@
 
         <div class="PhorumInfoMessage">
             Are you sure you want to delete this entry?
-            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+            <form action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
                 <input type="hidden" name="module" value="<?php echo $module; ?>" />
                 <input type="hidden" name="curr" value="<?php echo $_GET['curr']; ?>" />
                 <input type="hidden" name="delete" value="1" />
@@ -171,7 +171,7 @@
                     echo "    <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
                     echo "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
                     echo "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=customprofile&curr=$key&?edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
+                    echo "    <td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&?edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
                     echo "</tr>\n";
                 }
 
