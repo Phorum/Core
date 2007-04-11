@@ -501,7 +501,8 @@ foreach($ruledefs as $filter => $def) {
   will be deleted during this step.<br/>
   <br/>
 <?php } ?>
-  <form id="filterform" method="post" action="<?php $_SERVER["PHP_SELF"] ?>"
+  <form id="filterform" method="post" 
+        action="<?php print $PHORUM["admin_http_path"] ?>"
         onsubmit="filter.getFilterDescription()">
   <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
   <input type="hidden" name="filterdesc" id="filterdesc" value="" />
@@ -976,7 +977,8 @@ if (isset($messages) && is_array($messages))
     //]]>
     </script>
 
-    <form id="selectform" method="post" action="<?php $_SERVER["PHP_SELF"] ?>">
+    <form id="selectform" method="post" 
+          action="<?php print $PHORUM["admin_http_path"] ?>">
     <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
     <input type="hidden" name="filterdesc" id="filterdesc" value="<?php 
         // Remember the filter description if one is available

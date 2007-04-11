@@ -54,7 +54,7 @@
 
     if(!empty($_SERVER["QUERY_STRING"])){
 
-        $frm->hidden("target", htmlentities($PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]));
+        $frm->hidden("target", $PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]);
     }
 
     $frm->addrow("Username", $frm->text_box("username", "", 30));

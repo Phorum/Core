@@ -76,7 +76,7 @@
             break;
 
         case 2:
-            echo "The upgrade is complete.  You may want to look through the <a href=\"$_SERVER[PHP_SELF]\">the admin</a> for any new features in this version.";
+            echo "The upgrade is complete.  You may want to look through the <a href=\"{$PHORUM["admin_http_path"]}\">the admin</a> for any new features in this version.";
 
             break;
 

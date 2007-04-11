@@ -216,9 +216,9 @@ if(count($_POST)){
 
         if($res){
             if($reload){
-                $url = $_SERVER['PHP_SELF']."?module=editforum&forum_id=$_POST[forum_id]";
+                $url = $PHORUM["admin_http_path"]."?module=editforum&forum_id=$_POST[forum_id]";
             } else {
-                $url = $_SERVER['PHP_SELF']."?module=default&parent_id=$_POST[parent_id]";
+                $url = $PHORUM["admin_http_path"]."?module=default&parent_id=$_POST[parent_id]";
             }
 
             phorum_redirect_by_url($url);

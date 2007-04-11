@@ -125,7 +125,7 @@
             if($thisval==0){
                 $settings_link="<br /><a href=\"javascript:alert('You can not edit settings for a module unless it is turned On.');\">Settings</a>";
             } else {
-                $settings_link="<br /><a href=\"$_SERVER[PHP_SELF]?module=modsettings&mod=$name\">Settings</a>";
+                $settings_link="<br /><a href=\"{$PHORUM["admin_http_path"]}?module=modsettings&mod=$name\">Settings</a>";
             }
         } else {
             $settings_link="";

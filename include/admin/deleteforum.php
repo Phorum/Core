@@ -60,7 +60,7 @@
         } else {
             $msg="Are you sure you want to delete $forum[name]?  All messages in this forum will be deleted";
         }
-        $msg.="<form action=\"$_SERVER[PHP_SELF]\" method=\"get\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"$_GET[forum_id]\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
+        $msg.="<form action=\"{$PHORUM["admin_http_path"]}\" method=\"get\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"$_GET[forum_id]\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
 
     }
 

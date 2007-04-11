@@ -38,6 +38,11 @@
         $PHORUM["admin_http_path"] = $protocol."://".$_SERVER["HTTP_HOST"].$port.$_SERVER["PHP_SELF"];
     }
 
+    // determine http_path (at install time; after that it's in the settings)
+    if(!isset($PHORUM["http_path"])){
+        $PHORUM["http_path"] = dirname($_SERVER["PHP_SELF"]);
+    }
+
     // if we are installing or upgrading, we don't need to check for a session
     // 2005081000 was the internal version that introduced the installed flag
     if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHORUM['internal_version']>='2005081000')) {

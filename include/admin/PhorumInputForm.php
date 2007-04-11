@@ -173,7 +173,10 @@ class PhorumInputForm {
             }
             echo "</script>\n";
         }
-        echo "<form style=\"display: inline;\" action=\"$this->_action\" method=\"$this->_method\"";
+
+        echo "<form style=\"display: inline;\" " .
+             "action=\"".htmlspecialchars($this->_action)."\" " .
+             "method=\"$this->_method\"";
         if ( !empty( $this->_target ) ) echo " target=\"$this->_target\"";
         if ( !empty( $this->_enctype ) ) echo " enctype=\"$this->_enctype\"";
         foreach ($this->_events as $event => $code) {

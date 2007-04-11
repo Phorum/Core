@@ -78,15 +78,15 @@ foreach($forums as $forum_id => $forum){
 
     if($forum["folder_flag"]){
         $type="Folder";
-        $actions="<a href=\"$_SERVER[PHP_SELF]?module=default&parent_id=$forum_id&pparent=$parent_id\">Browse</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=editfolder&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=deletefolder&forum_id=$forum_id\">Delete</a>";
-        $editurl="$_SERVER[PHP_SELF]?module=editfolder&forum_id=$forum_id";
+        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id=$forum_id&pparent=$parent_id\">Browse</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deletefolder&forum_id=$forum_id\">Delete</a>";
+        $editurl="{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id";
     } else {
         $type="Forum";
-        $actions="<a href=\"$_SERVER[PHP_SELF]?module=editforum&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=deleteforum&forum_id=$forum_id\">Delete</a>";
-        $editurl="$_SERVER[PHP_SELF]?module=editforum&forum_id=$forum_id";
+        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editforum&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deleteforum&forum_id=$forum_id\">Delete</a>";
+        $editurl="{$PHORUM["admin_http_path"]}?module=editforum&forum_id=$forum_id";
     }
 
-    $rows.="<tr><td class=\"PhorumAdminTableRow\"><a href=\"$editurl\">$forum[name]</a><br />$forum[description]</td><td class=\"PhorumAdminTableRow\">$type</td><td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=default&display_up=$forum_id&parent_id=$parent_id\">Up</a>&nbsp;&#149;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=default&display_down=$forum_id&parent_id=$parent_id\">Down</a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
+    $rows.="<tr><td class=\"PhorumAdminTableRow\"><a href=\"$editurl\">$forum[name]</a><br />$forum[description]</td><td class=\"PhorumAdminTableRow\">$type</td><td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=default&display_up=$forum_id&parent_id=$parent_id\">Up</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=default&display_down=$forum_id&parent_id=$parent_id\">Down</a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
 if(empty($rows)){
@@ -105,7 +105,7 @@ if($parent_id>0){
 
 ?>
 
-<div class="PhorumAdminTitle"><?php echo "$path &nbsp;&nbsp; <a href=\"$_SERVER[PHP_SELF]?module=default&parent_id={$parent_parent_id}\"><span class=\"PhorumAdminTitle\">Go Up</span></a>";?></div>
+<div class="PhorumAdminTitle"><?php echo "$path &nbsp;&nbsp; <a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$parent_parent_id}\"><span class=\"PhorumAdminTitle\">Go Up</span></a>";?></div>
 <table border="0" cellspacing="2" cellpadding="3" width="100%">
 <tr>
     <td class="PhorumAdminTableHead">Name</td>

@@ -134,7 +134,7 @@
         }
 
         if(empty($error)) {
-            phorum_redirect_by_url("{$_SERVER['PHP_SELF']}?parent_id={$cur_folder["parent_id"]}");
+            phorum_redirect_by_url("{$PHORUM["admin_http_path"]}?parent_id={$cur_folder["parent_id"]}");
             exit();
         }
 
