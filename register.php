@@ -196,6 +196,7 @@ if (count($_POST)) {
                 if (preg_match("!aol\.com$!i", $userdata["email"])) {
                     $verify_url = "<a href=\"$verify_url\">$verify_url</a>";
                 }
+                $maildata = array();
                 $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
                 $maildata["mailmessage"] = wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
                 phorum_email_user(array($userdata["email"]), $maildata);
