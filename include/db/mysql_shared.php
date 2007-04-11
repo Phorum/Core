@@ -4393,7 +4393,7 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
     // Retrieve the messages from the folder.
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT m.pm_message_id AS pm_message_id
+        "SELECT m.pm_message_id AS pm_message_id,
                 from_user_id,    from_username,
                 subject,         datestamp,
                 meta,            pm_xref_id,
