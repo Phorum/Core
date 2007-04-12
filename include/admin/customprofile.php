@@ -134,7 +134,7 @@
 
         include_once "./include/admin/PhorumInputForm.php";
 
-        $frm =& new PhorumInputForm ("", "post", $submit);
+        $frm = new PhorumInputForm ("", "post", $submit);
 
         $frm->hidden("module", "customprofile");
 

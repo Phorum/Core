@@ -47,7 +47,11 @@
         if(!$ret){
             $error="Database error while updating badwords.";
         } else {
-            echo "Bad Word Added<br />";
+            if ($_POST["curr"]!="NEW"){
+                phorum_admin_okmsg("Bad Word Updated");
+            } else {
+                phorum_admin_okmsg("Bad Word Added");
+            }
         }
     }
 
@@ -65,15 +69,11 @@
         $title="Edit Bad Word Item";
         $submit="Update";
     } else {
-        settype($string, "string");
-        settype($type, "int");
-        settype($pcre, "int");
-        settype($forumid,"int");
         $title="Add A Bad Word";
         $submit="Add";
     }
 
-
+    settype($forum_id,"int");
     settype($string, "string");
     settype($type, "int");
     settype($pcre, "int");
@@ -107,17 +107,18 @@
 
         include_once "./include/admin/PhorumInputForm.php";
 
-        $frm =& new PhorumInputForm ("", "post", $submit);
+        $frm = new PhorumInputForm ("", "post", $submit);
 
         $frm->hidden("module", "badwords");
 
         $frm->hidden("curr", "$curr");
 
-        $frm->addbreak($title);
+        $row = $frm->addbreak($title);
+        $frm->addhelp($row, "Censor List", "This feature can be used to mask bad words in forum messages with \"".PHORUM_BADWORD_REPLACE."\". All bad words will automatically be replaced by that string.<br/><br/>If you want to use a different string (e.g. \"CENSORED\" or \"*****\", then change the definition of the constant \"PHORUM_BADWORD_REPLACE\" in the Phorum file include/constants.php.");
 
         $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
 
-        $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
+        $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forum_id));
 
         $frm->show();
 
