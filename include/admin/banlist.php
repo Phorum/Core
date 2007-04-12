@@ -24,7 +24,7 @@
 
     $ban_types = array(PHORUM_BAD_IPS=>"IP Address/Hostname", PHORUM_BAD_NAMES=>"Name/User Name", PHORUM_BAD_EMAILS=>"Email Address", PHORUM_BAD_USERID=>"User-Id (registered User)", PHORUM_BAD_SPAM_WORDS=>"Illegal Words (SPAM)");
 
-    $match_types = array("string", "PCRE");
+    $match_types = array("String", "PCRE");
 
     $forum_list=phorum_get_forum_info(2);
     $forum_list[0]="GLOBAL";
@@ -101,9 +101,53 @@
 
         $frm->addrow("String To Match", $frm->text_box("string", $string, 50));
 
-        $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
+        $row = $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
+        $frm->addhelp($row, "Field To Match", "
+            Below, you will find an overview of what 
+            ban items are used by what Phorum actions:<br/>
+            <br/>
+            <b>User registration</b>:<br/>
+            \"Name/User Name\" checks the new username<br/>
+            \"Email Address\" checks the new email address<br/>
+            \"IP Address/Hostname\" checks the visitor's IP<br/>
+            <br/>
+            <b>Posting forum messages by anonymous users</b><br/>
+            \"Name/User Name\" checks the author's name<br/>
+            \"Email Address\" checks the author's email address<br/>
+            \"Illegal Words (SPAM)\" checks the subject and body<br/>
+            \"IP Address/Hostname\" checks the author's IP<br/>
+            <br/>
+            <b>Posting forum messages by registered users</b><br/>
+            \"Name/User Name\" checks the author's username<br/>
+            \"User-Id (registered User)\" checks the author's user id<br/>
+            \"Email Address\" checks the author's email address<br/>
+            \"IP Address/Hostname\" checks the author's IP<br/>
+            \"Illegal Words (SPAM)\" checks the subject and body<br/>
+            <br/>
+            <b>Posting private messages</b><br/>
+            \"Name/User Name\" checks the sender's username<br/>
+            \"User-Id (registered User)\" checks the sender's user id<br/>
+            \"Email Address\" checks the sender's email address<br/>
+            \"IP Address/Hostname\" checks the sender's IP
+        ");
 
-        $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
+        $row = $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
+        $frm->addhelp($row, "Compare As", "
+            This setting can be used to specify the matching method
+            that has to be used for the ban item. There are two options:<br/>
+            <br/>
+            <ul>
+              <li><b>String</b><br/>
+                  The exact string from the \"String To Match\" field 
+                  will be used for matching. Wildcards are not available
+                  for the String field type.<br/><br/></li>
+
+              <li><b>PCRE</b><br/>
+                  The \"String To Match\" field will be treated as 
+                  a <a href=\"http://www.php.net/pcre\">Perl Compatible
+                  Regular Expression</a>.</li>
+            </ul>
+        ");
 
         $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
 
