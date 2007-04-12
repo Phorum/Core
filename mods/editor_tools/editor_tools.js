@@ -158,8 +158,6 @@ function editor_tools_get_subjectfield()
     }
 
     if (! editor_tools_subject_obj) {
-        alert("editor_tools.js library reports: " +
-              "no subject field found on the current page.");
         return null;
     }
 
