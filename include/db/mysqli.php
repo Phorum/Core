@@ -3303,7 +3303,7 @@ function phorum_db_get_banitem($banid) {
 
     if (mysqli_num_rows($res) > 0){
         while($row = mysqli_fetch_assoc($res)) {
-            $retarr=array('pcre'=>$row['pcre'],'string'=>$row['string'],'forumid'=>$row['forum_id'],'type'=>$row['type']);
+            $retarr=array('pcre'=>$row['pcre'],'string'=>$row['string'],'forum_id'=>$row['forum_id'],'type'=>$row['type']);
         }
     }
     return $retarr;
@@ -3359,12 +3359,11 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
 
     $res = mysqli_query( $conn, $sql);
 
-    if ($err = mysqli_error($conn)) phorum_db_mysqli_error("$err: $sql");
-
-    if(mysqli_affected_rows($conn) > 0) {
-        return true;
-    } else {
+    if ($err = mysqli_error($conn)) {
+        phorum_db_mysqli_error("$err: $sql");
         return false;
+    } else {
+        return true;
     }
 }
 
