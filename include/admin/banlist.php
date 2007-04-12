@@ -32,9 +32,9 @@
     if(count($_POST) && $_POST["string"]!=""){
 
         if($_POST["curr"]!="NEW"){
-            $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forumid'],$_POST["curr"]);
+            $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST["curr"]);
         } else {
-            $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forumid'],0);
+            $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],0);
         }
 
         if(!$ret){
@@ -58,13 +58,14 @@
         $title="Edit Ban Item";
         $submit="Update";
     } else {
-        settype($string, "string");
-        settype($type, "int");
-        settype($pcre, "int");
-        settype($forumid,"int");
         $title="Add A Ban Item";
         $submit="Add";
     }
+
+    settype($string, "string");
+    settype($type, "int");
+    settype($pcre, "int");
+    settype($forum_id,"int");
 
     if($error){
         phorum_admin_error($error);
@@ -104,7 +105,7 @@
 
         $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
 
-        $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forumid));
+        $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
 
         $frm->show();
 

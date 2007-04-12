@@ -3583,7 +3583,7 @@ function phorum_db_get_banitem($banid) {
 
     if (mysqli_num_rows($res) > 0){
         while($row = mysqli_fetch_assoc($res)) {
-            $retarr=array('pcre'=>$row['pcre'],'string'=>$row['string'],'forumid'=>$row['forum_id'],'type'=>$row['type']);
+            $retarr=array('pcre'=>$row['pcre'],'string'=>$row['string'],'forum_id'=>$row['forum_id'],'type'=>$row['type']);
         }
     }
     return $retarr;

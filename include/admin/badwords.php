@@ -39,9 +39,9 @@
 
     if(count($_POST) && $_POST["string"]!=""){
         if($_POST["curr"]!="NEW"){
-            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forumid'] ,$_POST['curr']);
+            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,$_POST['curr']);
         } else {
-            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forumid'] ,0);
+            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,0);
         }
 
         if(!$ret){
@@ -118,7 +118,7 @@
 
         $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
 
-        $frm->addrow("Valid for Forum", $frm->select_tag("forumid", $forum_list, $forum_id));
+        $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
 
         $frm->show();
 
