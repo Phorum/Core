@@ -1881,7 +1881,7 @@ Table of contents:
    1) Synchronize the data from the external system when it has changed
       there. So if a user is created, changed or deleted on the
       external system, that system has to update the Phorum users
-      table with the new iformation. The advantage of this method, is
+      table with the new information. The advantage of this method, is
       that the users table only is updated when changes occur and that
       the users table is always up-to-date with the latest information.
 
