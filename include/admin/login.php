@@ -21,7 +21,7 @@
     if(!defined("PHORUM_ADMIN")) exit();
 
     if(isset($_POST["username"]) && isset($_POST["password"])){
-        if(phorum_user_check_login($_POST["username"], $_POST["password"])!=0){
+        if(phorum_user_check_login($_POST["username"], $_POST["password"])){
             if($PHORUM["user"]["admin"]){
                 phorum_user_create_session(PHORUM_SESSION_ADMIN);
                 if(!empty($_POST["target"])){
