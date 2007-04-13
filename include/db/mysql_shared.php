@@ -2571,6 +2571,9 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         'user_id'
     );
 
+    // No users found?
+    if (count($users) == 0) return array();
+
     // Unpack the settings_data.
     foreach ($users as $id => $user) {
         $users[$id]['settings_data'] = empty($user['settings_data'])
@@ -2614,6 +2617,12 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         // Add groups and forum group permissions to the users.
         foreach ($group_permissions as $perm)
         {
+            // Skip permissions for users which are not in our
+            // $users array. This should not happen, but it could
+            // happen in case some orphin group permissions are
+            // lingering in the database.
+            if (!isset($users[$perm[0]])) continue;
+
             // Add the group_id to the user data.
             $users[$perm[0]]['groups'][$perm[1]] = $perm[$perm[1]];
 
@@ -2645,6 +2654,12 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
     // Add custom user profile fields to the users.
     foreach ($custom_fields as $fld)
     {
+        // Skip profile fields for users which are not in our
+        // $users array. This should not happen, but it could
+        // happen in case some orphin custom user fields
+        // are lingering in the database.
+        if (!isset($users[$fld['user_id']])) continue;
+
         // Skip unknown custom profile fields.
         if (! isset($PHORUM['PROFILE_FIELDS'][$fld['type']])) continue;
 
