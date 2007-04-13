@@ -21,7 +21,7 @@
 
     <div class="message-body">
 
-        {MESSAGE->message}
+        {PREVIEW->message}
 
     </div>
 
