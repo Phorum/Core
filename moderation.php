@@ -431,7 +431,10 @@ switch ($mod_step) {
 
             // Get the target thread.
             $target =phorum_db_get_message($_POST['thread1'], "message_id", true);
-            if (!$target) die("Can't retrieve target thread " . $_POST['thread1']);
+            if (!$target) trigger_error(
+                "Can't retrieve target thread " . $_POST['thread1'],
+                E_USER_ERROR
+            );
 
             // Get all messages from the thread that we have to merge.
             $merge_messages=phorum_db_get_messages($_POST['thread']);

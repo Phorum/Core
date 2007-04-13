@@ -304,13 +304,14 @@ if (isset($_POST["filterdesc"]))
                     // Use a custom function for filling the metaquery.
                     if (substr($condition, 0, 9) == "function:"){
                         $func = substr($condition, 9);  
-                        if (!function_exists($func)) {
-                            die("Internal error: filter function \"" .
+                        if (!function_exists($func)) { 
+                            trigger_error( 
+                                "Internal error: filter function \"" .
                                 htmlspecialchars($func) . "\" from the match ".
                                 "specification for \"" .
                                 htmlspecialchars($field) . "/" .
                                 htmlspecialchars($match) . 
-                                "\" does not exist.");
+                                "\" does not exist.", E_USER_ERROR);
                         } else {
                             $meta = call_user_func($func,$meta,$field,$match,$query); 
                         }
@@ -337,8 +338,11 @@ if (isset($_POST["filterdesc"]))
             elseif ($spec == '|') {$meta[]="OR" ; $filtermode="or" ; continue;}
         }
 
-        die('Internal error: illegal filter specification (' .
-            'unexpected token "'.htmlspecialchars($spec).'")');
+        trigger_error(
+            'Internal error: illegal filter specification (' .
+            'unexpected token "'.htmlspecialchars($spec).'")',
+            E_USER_ERROR
+        );
     }
 
     // Let the database layer turn the metaquery into a real query 
@@ -357,8 +361,10 @@ function prepare_filter_date($meta, $field, $match, $query)
 
     global $ruledefs;
     if (!$ruledefs[$field] || !isset($ruledefs[$field]["prepare_filter_date"])){
-        die("Internal error: no date field configure in rule defs for field " .
-            '"' . htmlspecialchars($field) . '"');
+        trigger_error(
+            "Internal error: no date field configure in rule defs for field " .
+            '"' . htmlspecialchars($field) . '"', E_USER_ERROR
+        );
     }
     $dbfield = $ruledefs[$field]["prepare_filter_date"];
 
@@ -424,8 +430,10 @@ function prepare_filter_date($meta, $field, $match, $query)
             );
         }
         else {
-            die("prepare_filter_date(): illegal match \"" .
-                htmlspecialchars($match) . "\"");
+            trigger_error(
+                "prepare_filter_date(): illegal match \"" .
+                htmlspecialchars($match) . "\"", E_USER_ERROR
+            );
         }
     }
     else

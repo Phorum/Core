@@ -64,7 +64,10 @@ function phorum_mod_editor_tools_common()
             }
         }
             
-        die("Illegal help page id: " . htmlspecialchars($helpid));
+        trigger_error(
+            "Illegal help page id: " . htmlspecialchars($helpid),
+            E_USER_ERROR
+        );
     }
 
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
@@ -374,12 +377,13 @@ function phorum_mod_editor_tools_before_footer()
  */
 function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $iwidth=NULL, $iheight=NULL)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) {
-        die("Internal error for the editor_tools module: " .
-            "tool ".htmlspecialchars($toold_id)." is registered " .
-            "after the editor_tools were started up. Tools must " .
-            "be registered within or before the \"editor_tool_plugin\" hook.");
-    }
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+        "Internal error for the editor_tools module: " .
+        "tool ".htmlspecialchars($toold_id)." is registered " .
+        "after the editor_tools were started up. Tools must " .
+        "be registered within or before the \"editor_tool_plugin\" hook.",
+        E_USER_ERROR
+    );
 
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"][$tool_id] = array(
         $tool_id,
@@ -400,12 +404,13 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $i
  */
 function editor_tools_register_jslib($jslib)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) {
-        die("Internal error for the editor_tools module: " .
-            "javascript library ".htmlspecialchars($jslib)." is registered " .
-            "after the editor_tools were started up. Libraries must " .
-            "be registered within or before the \"editor_tool_plugin\" hook.");
-    }
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+        "Internal error for the editor_tools module: " .
+        "javascript library ".htmlspecialchars($jslib)." is registered " .
+        "after the editor_tools were started up. Libraries must " .
+        "be registered within or before the \"editor_tool_plugin\" hook.",
+        E_USER_ERROR
+    );
 
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $jslib;
 }
@@ -420,12 +425,13 @@ function editor_tools_register_jslib($jslib)
  */
 function editor_tools_register_help($title, $url)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) {
-        die("Internal error for the editor_tools module: " .
-            "help chapter ".htmlspecialchars($title)." is registered " .
-            "after the editor_tools were started up. Help chapters must " .
-            "be registered within or before the \"editor_tool_plugin\" hook.");
-    }
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+        "Internal error for the editor_tools module: " .
+        "help chapter ".htmlspecialchars($title)." is registered " .
+        "after the editor_tools were started up. Help chapters must " .
+        "be registered within or before the \"editor_tool_plugin\" hook.",
+        E_USER_ERROR
+    );
 
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"][] = array($title, $url);
 }

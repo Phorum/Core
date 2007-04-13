@@ -117,13 +117,15 @@ function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array
 {
     $include_depth++;
 
-    if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) die(
+    if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) trigger_error( 
         "phorum_import_template_pass1: the include depth has passed " .
         "the maximum allowed include depth of " .
         PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH . ". Maybe some circular " .
         "include loop was introduced? If not, then you can raise the " .
         "value for the PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH definition " .
-        "in " . htmlspecialchars(__FILE__) . ".");
+        "in " . htmlspecialchars(__FILE__) . ".",
+        E_USER_ERROR
+    );
 
     $deps[$infile] = filemtime($infile);
 
@@ -678,9 +680,11 @@ function phorum_templatevalue_to_php($loopvars, $value)
 function phorum_read_file($file)
 {
     // Check if the file exists.
-    if (! file_exists($file)) die(
+    if (! file_exists($file)) trigger_error(
         "phorum_get_file_contents: file \"" . htmlspecialchars($file) . "\" " .
-        "does not exist");
+        "does not exist",
+        E_USER_ERROR
+    );
 
     // In case we're handling a zero byte large file, we don't read it in.
     // Running fread($fp, 0) gives a PHP warning.
@@ -688,9 +692,11 @@ function phorum_read_file($file)
     if ($size == 0) return "";
 
     // Read in the file contents.
-    if (! $fp = fopen($file, "r")) die(
+    if (! $fp = fopen($file, "r")) trigger_error(
         "phorum_get_file_contents: failed to read file " .
-        "\"" . htmlspecialchars($file) . "\"");
+        "\"" . htmlspecialchars($file) . "\"",
+        E_USER_ERROR
+    );
     $data = fread($fp, $size);
     fclose($fp);
 
@@ -706,24 +712,29 @@ function phorum_read_file($file)
 function phorum_write_file($file, $data)
 {
     // Write the data to the file.
-    if (! $fp = fopen($file, "w")) die(
+    if (! $fp = fopen($file, "w")) trigger_error(
         "phorum_write_file: failed to write to file " .
         "\"" . htmlspecialchars($file) . "\". This is probably caused by " .
-        "the file permissions on your Phorum cache directory"); 
+        "the file permissions on your Phorum cache directory",
+        E_USER_ERROR
+    ); 
     fputs($fp, $data);
-    if (! fclose($fp)) die(
+    if (! fclose($fp)) trigger_error(
         "phorum_write_file: error on closing the file " .
-        "\"" . htmlspecialchars($file) . "\". Is your disk full?");
+        "\"" . htmlspecialchars($file) . "\". Is your disk full?",
+        E_USER_ERROR
+    );
 
     // A special check on the created outputfile. We have seen strange
     // things happen on Windows2000 where the webserver could not read
     // the file it just had written :-/
-    if (! $fp = fopen($file, "r")) die(
+    if (! $fp = fopen($file, "r")) trigger_error(
         "Failed to write a usable compiled template to the file " .
         "\"" . htmlspecialchars($outfile) . "\". The file was created " .
         "successfully, but it could not be read by the webserver " .
         "afterwards. This is probably caused by the filepermissions " .
-        "on your cache directory."
+        "on your cache directory.",
+        E_USER_ERROR
     );
     fclose($fp);
 }

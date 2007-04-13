@@ -109,8 +109,11 @@ function phorum_getparam($name, $type = NULL)
                 break;
 
             default:
-                die("Internal error in phorum_getparam: " .
-                    "illegal type for typecasting: ".htmlspecialchars($type));
+                trigger_error(
+                    "Internal error in phorum_getparam: " .
+                    "illegal type for typecasting: ".htmlspecialchars($type),
+                    E_USER_ERROR
+                );
         }
     }
 
@@ -547,7 +550,10 @@ if (!empty($action)) {
 
 
         default:
-            die("Unhandled action for pm.php: " . htmlspecialchars($action));
+            trigger_error(
+                "Unhandled action for pm.php: " . htmlspecialchars($action),
+                E_USER_ERROR
+            );
 
     }
 
@@ -890,7 +896,10 @@ switch ($page) {
 
     default:
 
-        die("Illegal page requested: " . htmlspecialchars($page));
+        trigger_error(
+            "Illegal page requested: " . htmlspecialchars($page),
+            E_USER_ERROR
+        );
 }
 
 if ($hide_userselect) {

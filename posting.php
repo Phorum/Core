@@ -224,14 +224,14 @@ if ($initial) {
     }
 
 } else {
-    if (! isset($_POST["mode"])) {
-        die("Missing parameter \"mode\" in request");
-    }
+    if (! isset($_POST["mode"])) trigger_error(
+        "Missing parameter \"mode\" in request", E_USER_ERROR
+    );
     $mode = $_POST["mode"];
 }
-if (! in_array($mode, $valid_modes)) {
-    die("Illegal mode issued: " . htmlspecialchars($mode));
-}
+if (! in_array($mode, $valid_modes)) trigger_error(
+    "Illegal mode issued: " . htmlspecialchars($mode), E_USER_ERROR
+);
 
 // Find out if we are detaching an attachment.
 // If we are, $do_detach will be set to the attachment's file_id.
@@ -460,9 +460,10 @@ if (! $error_flag && $finish)
         include("./include/posting/action_edit.php");
     }
     // A little safety net.
-    else {
-        die("Internal error: finish action for \"$mode\" not available");
-    }
+    else trigger_error(
+        "Internal error: finish action for \"$mode\" not available",
+        E_USER_ERROR
+    );
 }
 
 // ----------------------------------------------------------------------
