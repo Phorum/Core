@@ -187,7 +187,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     // RETURN: number of rows
     elseif ($return === DB_RETURN_ROWCOUNT) {
-        return mysql_num_rows($res);
+        return $res ? mysql_num_rows($res) : 0;
     }
 
     // RETURN: array rows or single value
@@ -199,11 +199,13 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($return !== DB_RETURN_ROWS) $keyfield = NULL;
 
         $rows = array();
-        while ($row = mysql_fetch_row($res)) {
-            if ($keyfield === NULL) {
-                $rows[] = $row;
-            } else {
-                $rows[$row[$keyfield]] = $row;
+        if ($res) {
+            while ($row = mysql_fetch_row($res)) {
+                if ($keyfield === NULL) {
+                    $rows[] = $row;
+                } else {
+                    $rows[$row[$keyfield]] = $row;
+                }
             }
         }
 
@@ -237,11 +239,13 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($return !== DB_RETURN_ASSOCS) $keyfield = NULL;
 
         $rows = array();
-        while ($row = mysql_fetch_assoc($res)) {
-            if ($keyfield === NULL) {
-                $rows[] = $row;
-            } else {
-                $rows[$row[$keyfield]] = $row;
+        if ($res) {
+            while ($row = mysql_fetch_assoc($res)) {
+                if ($keyfield === NULL) {
+                    $rows[] = $row;
+                } else {
+                    $rows[$row[$keyfield]] = $row;
+                }
             }
         }
 
