@@ -1336,7 +1336,9 @@ Table of contents:
 
    Where  : login.php
    When   : When a user login fails.
-   Input  : An array containing two fields: username and password.
+   Input  : An array containing three fields: username, password and location.
+            The location field specifies where the login failure occurred and
+            its value can be either "forum" or "admin".
    Return : Same as Input
 
    This hook can be used for tracking failing login attempts. This can be used
