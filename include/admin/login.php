@@ -31,6 +31,12 @@
                 }
                 exit();
             }
+        } else {
+            phorum_hook("failed_login", array(
+                "username" => $_POST["username"],
+                "password" => $_POST["password"],
+                "location" => "admin"
+            ));
         }
     }
 
