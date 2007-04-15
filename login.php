@@ -226,6 +226,10 @@ if (count($_POST) > 0) {
 
         // Login failed.
         else {
+            phorum_hook("failed_login", array(
+                "username" => $username,
+                "password" => $password
+            ));
             $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
         }
     }
