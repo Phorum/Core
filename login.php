@@ -28,7 +28,7 @@ include_once( "./include/email_functions.php" );
 
 if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
-    phorum_hook( "before_logout", "" );
+    phorum_hook("before_logout");
 
     // killing long-term cookie
     phorum_user_clear_session(PHORUM_SESSION_LONG_TERM);
