@@ -1332,6 +1332,18 @@ Table of contents:
    For easy use, you can of course put these commands in a script file.
 
    ----------------------------------------------------------------------------
+   failed_login
+
+   Where  : login.php
+   When   : When a user login fails.
+   Input  : An array containing two fields: username and password.
+   Return : Same as Input
+
+   This hook can be used for tracking failing login attempts. This can be used
+   for things like logging or implementing login failure penalties (like
+   temporary denying access after X login attempts).
+
+   ----------------------------------------------------------------------------
    file
 
    Where  : file.php
