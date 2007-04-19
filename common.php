@@ -1083,6 +1083,55 @@ function phorum_check_data_signature($data, $signature)
 }
 
 /**
+ * Generate a debug back trace. 
+ *
+ * @param $skip       - The amount of back trace levels to skip. The call
+ *                      to this function is skipped by default, so you don't
+ *                      have to count that in.
+ * @param $hidepath   - NULL to not hide paths or a string to replace the
+ *                      Phorum path with.
+ *
+ * @return $backtrace - The back trace in text format or NULL if no back trace
+ *                      was generated.
+ */
+function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}")
+{
+    // Allthough Phorum 4.3.0 is the required PHP version
+    // for Phorum at the time of writing, people might still be running
+    // Phorum on older PHP versions. For those people, we'll skip
+    // creation of a back trace.
+
+    $backtrace = NULL;
+
+    if (function_exists("debug_backtrace"))
+    {
+        $bt = debug_backtrace();
+        $mypath = dirname(__FILE__);
+        $backtrace = '';
+
+        foreach ($bt as $id => $step)
+        {
+            // Don't include the call to this function.
+            if ($id == 0) continue;
+
+            // Skip the required number of steps. 
+            if ($id <= $skip) continue;
+
+            if ($hidepath !== NULL && isset($step["file"])) {
+                $file = str_replace($mypath, $hidepath, $step["file"]);
+            }
+            $backtrace .= "Function " . $step["function"] . " called" .
+                          (!empty($step["line"])
+                           ? " at\n" .  $file . ":" . $step["line"]
+                           : "") . "\n----\n";
+        }
+    }
+
+    return $backtrace;
+}
+
+
+/**
  * Database error handling function.
  *
  * @param $error - The error message.
@@ -1093,7 +1142,10 @@ function phorum_database_error($error)
 
     // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).
-    ob_end_clean();
+    while (ob_get_level()) ob_end_clean();
+
+    // Give modules a chance to handle or process the database error.
+    phorum_hook("database_error", $error);
 
     // Find out what type of error handling is required.
     $logopt = isset($PHORUM["error_logging"])
@@ -1101,29 +1153,9 @@ function phorum_database_error($error)
             : 'screen';
 
     // Create a backtrace report, so it's easier to find out where a problem
-    // is coming from. Allthough Phorum 4.3.0 is the required PHP version
-    // for Phorum at the time of writing, people might still be running
-    // Phorum on older PHP versions. For those people, we'll skip
-    // creation of a backtrace.
-
-    $backtrace = "";
-    if (function_exists("debug_backtrace"))
-    {
-        $bt = debug_backtrace();
-        $phorum_path = dirname(__FILE__);
-
-        foreach ($bt as $id => $step)
-        {
-            // Don't include the call to this function.
-            if ($id == 0) continue;
-
-            $file = str_replace($phorum_path, "[Phorum path]", $step["file"]);
-            $backtrace .= "Function " . $step["function"] . " called at\n" .
-                          $file . ":" . $step["line"] . "\n";
-            $backtrace .= "----\n";
-        }
-    }
-
+    // is coming from. 
+    $backtrace = phorum_generate_backtrace(1);
+    
     // Start the error page.
     ?>
     <html>
@@ -1151,8 +1183,9 @@ function phorum_database_error($error)
             fputs($fp,
                 "Time: " . time() . "\n" .
                 "Error: $error\n" .
-                "Traceback:\n" .
-                "$backtrace\n\n"
+                ($backtrace !== NULL
+                 ? "Back trace:\n$backtrace\n\n"
+                 : "")
             );
             fclose($fp);
 
@@ -1164,11 +1197,16 @@ function phorum_database_error($error)
         // Display the database error on screen.
         case "screen":
 
+            $htmlbacktrace = $backtrace === NULL
+                           ? NULLL 
+                           : nl2br(htmlspecialchars($backtrace));
+
             print "Please try again later!" .
                   "<h3>Error:</h3>" .
                   htmlspecialchars($error) .
-                  "<h3>Backtrace:</h3>";
-            print nl2br(htmlspecialchars($backtrace));
+                  ($backtrace !== NULL
+                   ? "<h3>Backtrace:</h3>\n$htmlbacktrace"
+                   : "");
             break;
 
         // Send a mail to the administrator about the database error.
@@ -1186,10 +1224,9 @@ function phorum_database_error($error)
                   "\n" .
                   "$error\n".
                   "\n" .
-                  "Backtrace:\n" .
-                  "----------\n" .
-                  "\n" .
-                  $backtrace,
+                  ($backtrace !== NULL
+                   ? "Backtrace:\n----------\n\n$backtrace"
+                   : ""),
               "mailsubject" =>
                   "Phorum: A database error occured"
             );
@@ -1211,7 +1248,5 @@ function phorum_database_error($error)
 
     exit();
 }
-
-
 
 ?>

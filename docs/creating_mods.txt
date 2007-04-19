@@ -1352,6 +1352,19 @@ Table of contents:
    Phorum settings based on external parameters.
 
    ----------------------------------------------------------------------------
+   database_error
+
+   Where  : common.php
+   When   : Right after a database error has occurred.
+   Input  : The database error that occurred.
+   Return : Same as Input
+
+   This hook can be used for handling database errors differently than the
+   standard database error handling (a module can handle the error in its own
+   way and then call exit() to finish processing) or for other purposes like
+   logging database errors.
+
+   ----------------------------------------------------------------------------
    delete
 
    Where  : moderation.php
