@@ -120,11 +120,17 @@ class PhorumInputForm {
     {
         $this->_add_module_header();
 
-        list( $talign, $calign ) = explode( ",", $align );
-        if ( empty( $calign ) ) $calign = $talign;
+        if (strstr($align, ",")) {
+            list( $talign, $calign ) = explode( ",", $align );
+        } else {
+            $talign = $calign = $align;
+        }
 
-        list( $tvalign, $cvalign ) = explode( ",", $valign );
-        if ( empty( $cvalign ) ) $cvalign = $tvalign;
+        if (strstr($valign, ",")) {
+            list( $tvalign, $cvalign ) = explode( ",", $valign );
+        } else {
+            $tvalign = $cvalign = $valign;
+        }
 
         $this->_rows[] = array( "title" => $title,
             "contents" => $contents,
@@ -231,7 +237,7 @@ class PhorumInputForm {
                 echo "<tr class=\"input-form-tr\">\n";
                 echo "  <td colspan=\"2\" class=\"input-form-td-break $extra_class\">$title</td>\n";
                 echo "</tr>\n";
-            } elseif ( $row["message"] ) {
+            } elseif ( isset($row["message"]) ) {
                 echo "<tr class=\"input-form-tr\">\n";
                 echo "  <td colspan=\"2\" class=\"input-form-td-message\">$row[message]</td>\n";
                 echo "</tr>\n";
