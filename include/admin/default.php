@@ -71,6 +71,7 @@ if(isset($_GET['display_up']) || isset($_GET['display_down'])) {
 
 }
 
+$rows = '';
 foreach($forums as $forum_id => $forum){
 
 

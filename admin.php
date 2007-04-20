@@ -50,7 +50,7 @@
         // this is an install
         $module="install";
 
-    } elseif ( $_REQUEST["module"] == "upgrade" ||
+    } elseif ( (isset($_REQUEST["module"]) && $_REQUEST["module"]=="upgrade") ||
                $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
                !isset($PHORUM['internal_patchlevel']) ||
                $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {

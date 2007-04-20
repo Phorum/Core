@@ -20,6 +20,7 @@
 if ( !defined( "PHORUM_ADMIN" ) ) return;
 
 $error = "";
+$okmsg = "";
 
 if ( count( $_POST ) ) {
     $new_settings = array();
