@@ -13,6 +13,8 @@ Table of contents:
 8. I need to embed Phorum in my page/application.
 9. Why do you not use the 'global' keyword in your functions?
 10. What are Sticky posts?
+11. Can I post announcements?
+12. Why do I always end up at the top of a page when using the back button?
 
 
 1. Why did you switch from number of replies to number of posts in the list?
@@ -151,13 +153,14 @@ Table of contents:
 
 
 10. What are Sticky posts?
---------------------------
+-------------------------------------------------------------------------------
 
     Sticky posts stay at the top of the forum they are posted in and do not
     get bumped down as new topics are posted.
 
+
 11. Can I post announcements?
------------------------------
+-------------------------------------------------------------------------------
 
     For announcements, create a forum in which you will post announcement
     messages. Setup the permissions, so only the users who are allowed to
@@ -166,4 +169,20 @@ Table of contents:
     After this, enable the Announcements module and edit the settings
     for that module. In the settings, point the module at the new
     announcement forum.
+
+
+12. Why do I always end up at the top of a page when using the back button?
+-------------------------------------------------------------------------------
+
+    Your PHP setup is probably sending headers along with the reply, telling
+    the browser to not cache the page. Therefore, when going to the previous
+    page, it will be reloaded as if it were a new page. You can tweak the
+    PHP settings to not have PHP sending these headers. Edit the php.ini and
+    set the "session.cache_limiter" directive to have no value at all. So
+    the line in php.ini would end up like this:
+
+    session.cache_limiter =
+
+    After editing the php.ini, restart the webserver. From then on, using
+    the back button should work like expected.
 
