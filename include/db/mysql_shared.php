@@ -5361,7 +5361,7 @@ function phorum_db_get_custom_field_users($field_id, $field_content, $submatch)
     $field_content = phorum_db_interact(DB_RETURN_QUOTED, ($field_content));
     settype($submatch, 'bool');
 
-    $compare = $match ? 'LIKE' : '=';
+    $compare = $submatch ? 'LIKE' : '=';
 
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
