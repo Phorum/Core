@@ -239,7 +239,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
             // to delete. We unset the forum id, so phorum_db_get_messages()
             // will return messages with the same thread id in
             // other forums as well (those are the move notifications).
-            if ($mode == PHORUM_DELETE_TREE) {
+            if ($delmode == PHORUM_DELETE_TREE) {
                 $forum_id = $PHORUM["forum_id"];
                 $PHORUM["forum_id"] = 0;
                 $moved = phorum_db_get_messages($msg["message_id"]);
