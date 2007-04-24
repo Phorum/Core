@@ -77,6 +77,7 @@ function phorum_email_user($addresses, $data)
 
     if(is_array($data) && count($data)) {
         foreach(array_keys($data) as $key){
+            if ($data[$key] === NULL || is_array($data[$key])) continue;
             $mailmessage = str_replace("%$key%", $data[$key], $mailmessage);
             $mailsubject = str_replace("%$key%", $data[$key], $mailsubject);
         }
