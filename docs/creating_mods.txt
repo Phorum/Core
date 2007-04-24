@@ -1000,6 +1000,19 @@ Table of contents:
    reason       : A description why this file is considered to be stale.
 
    ----------------------------------------------------------------------------
+   after_approve
+   
+   Where  : moderation.php
+   When   : Just after approving a message and possibly its replies.
+   Input  : An array containing two elements: the message data and the 
+            type of approval (either PHORUM_APPROVE_MESSAGE or
+            PHORUM_APPROVE_MESSAGE_TREE).
+   Return : Same as Input.
+
+   This hook can be used for performing extra actions after a message has
+   been approved.
+
+   ----------------------------------------------------------------------------
    after_attach
 
    Where  : include/posting/action_attachments.php
@@ -1100,7 +1113,7 @@ Table of contents:
 
    Where  : moderation.php
    When   : Just before deleting the message(s)
-   Input  : 5 parameters:
+   Input  : an array containing the following 5 parameters
             $delete_handled  default = false, set it to true to avoid the 
                              real delete afterwards
             $msg_ids         array containing all deleted message ids
@@ -1461,7 +1474,7 @@ Table of contents:
    only, so the changes are not stored in the database.
 
    ----------------------------------------------------------------------------
-   hide
+   hide_thread
 
    Where  : moderation.php
    When   : Right after a message has been hidden by a moderator.
