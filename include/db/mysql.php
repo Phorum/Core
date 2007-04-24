@@ -208,7 +208,7 @@ function phorum_db_get_thread_list($offset)
 
         // Fetch the messages for the current group.
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         $rows = mysql_num_rows($res);
         if($rows > 0){
             while ($rec = mysql_fetch_assoc($res)){
@@ -310,7 +310,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     }
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     while ($rec = mysql_fetch_assoc($res)){
         $arr[$rec["message_id"]] = $rec;
@@ -403,7 +403,7 @@ function phorum_db_get_unapproved_list($forum = NULL, $waiting_only=false,$modda
     }
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     while ($rec = mysql_fetch_assoc($res)){
         if($countonly) {
@@ -465,7 +465,7 @@ function phorum_db_post_message(&$message,$convert=false)
         // check_query
         $chk_query="SELECT message_id FROM $table WHERE forum_id = {$message['forum_id']} AND author='{$message['author']}' AND subject='{$message['subject']}' AND body='{$message['body']}' AND datestamp > $check_timestamp";
         $res = mysql_query($chk_query, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $chk_query");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $chk_query");
         if(mysql_num_rows($res))
             return 0;
     }
@@ -509,7 +509,7 @@ function phorum_db_post_message(&$message,$convert=false)
 
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if ($res){
         $message["message_id"] = mysql_insert_id($conn);
@@ -522,10 +522,10 @@ function phorum_db_post_message(&$message,$convert=false)
                 $message["thread"] = $message["message_id"];
                 $sql = "update $table set thread={$message['message_id']} where message_id={$message['message_id']}";
                 $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
             }
 
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             // start ft-search stuff
             if(isset($PHORUM["DBCONFIG"]["mysql_use_ft"]) && $PHORUM["DBCONFIG"]["mysql_use_ft"]){
@@ -533,7 +533,7 @@ function phorum_db_post_message(&$message,$convert=false)
 
                 $sql="insert delayed into {$PHORUM['search_table']} set message_id={$message['message_id']}, forum_id={$message['forum_id']}, search_text='$search_text'";
                 $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
             }
             // end ft-search stuff
 
@@ -567,7 +567,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // get the parents of the message to delete.
     $sql = "select forum_id, message_id, thread, parent_id from {$PHORUM['message_table']} where message_id = $message_id ";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $rec = mysql_fetch_assoc($res);
     if (empty($rec)) {
@@ -583,7 +583,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // unapprove the messages first so replies will not get posted
     $sql = "update {$PHORUM['message_table']} set status=".PHORUM_STATUS_HOLD." where message_id in ($mids)";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $thread = $rec['thread'];
     if($thread == $message_id && $mode == PHORUM_DELETE_TREE){
@@ -598,7 +598,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         // forum_id is in here for speed by using a key only
         $sql = "update {$PHORUM['message_table']} set parent_id=$rec[parent_id] where forum_id=$rec[forum_id] and parent_id=$rec[message_id]";
         mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }else{
         $count = count(explode(",", $mids));
     }
@@ -606,12 +606,12 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // delete the messages
     $sql = "delete from {$PHORUM['message_table']} where message_id in ($mids)";
     mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // start ft-search stuff
     $sql="delete from {$PHORUM['search_table']} where message_id in ($mids)";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     // end ft-search stuff
 
     // it kind of sucks to have this here, but it is the best way
@@ -623,7 +623,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // we need to delete the subscriptions for that thread too
     $sql = "DELETE FROM {$PHORUM['subscribers_table']} WHERE forum_id > 0 AND thread=$thread";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // this function will be slow with a lot of messages.
     phorum_db_update_forum_stats(true);
@@ -647,7 +647,7 @@ function phorum_db_get_messagetree($parent_id, $forum_id){
     $sql = "Select message_id from {$PHORUM['message_table']} where forum_id=$forum_id and parent_id=$parent_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $tree = "$parent_id";
 
@@ -690,7 +690,7 @@ function phorum_db_update_message($message_id, $message)
 
         $sql = "update {$PHORUM['message_table']} set " . implode(", ", $fields) . " where message_id=$message_id";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         if($res){
             // start ft-search stuff
@@ -698,7 +698,7 @@ function phorum_db_update_message($message_id, $message)
                 $search_text="$message[author] | $message[subject] | $message[body]";
                 $sql="replace delayed into {$PHORUM['search_table']} set message_id={$message_id}, forum_id={$message['forum_id']}, search_text='$search_text'";
                 $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
             }
             // end ft-search stuff
         }
@@ -747,7 +747,7 @@ function phorum_db_get_message($value, $field="message_id", $ignore_forum_id=fal
 
     $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check $checkvar";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $ret = $multiple ? array() : NULL;
 
@@ -812,7 +812,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
     }
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $arr = array();
 
@@ -836,7 +836,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms = 0)
         // selecting the thread-starter
         $sql = "select {$PHORUM['message_table']}.* from {$PHORUM['message_table']} where $forum_id_check message_id=$thread $approvedval";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         if(mysql_num_rows($res) > 0) {
             $rec = mysql_fetch_assoc($res);
             $arr[$rec["message_id"]] = $rec;
@@ -876,7 +876,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $sql = "select count(*) as msg_index from {$PHORUM['message_table']} where $forum_id_check thread=$thread $approvedval AND message_id <= $message_id order by message_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $rec = mysql_fetch_assoc($res);
 
@@ -964,7 +964,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             }
 
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         } else {
 
@@ -982,7 +982,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                     $min_time=time()-86400*$match_date;
                     $sql="select min(message_id) as min_id from {$PHORUM['message_table']} where datestamp>=$min_time";
                     $res=mysql_query($sql, $conn);
-                    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
                     $min_id=mysql_result($res, 0, "min_id");
                     $use_key=" use key (primary)";
                     $extra_where="and message_id>=$min_id";
@@ -1010,7 +1010,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
                 $sql = "create temporary table $id_table (key(message_id)) ENGINE=HEAP select message_id from {$PHORUM['search_table']} $use_key where $clause $extra_where";
                 $res = mysql_unbuffered_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             }
         }
@@ -1028,18 +1028,18 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
             }
 
             $res=mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             $sql="select count(*) as count from $table";
             $res = mysql_query($sql, $conn);
 
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
             $total_count=mysql_result($res, 0, 0);
 
             $sql="select message_id from $table order by datestamp desc limit $start, $length";
             $res = mysql_unbuffered_query($sql, $conn);
 
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             $idstring="";
             while ($rec = mysql_fetch_row($res)){
@@ -1062,14 +1062,14 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
             $sql = "select count(*) $sql_core";
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
             $total_count=mysql_result($res, 0, 0);
 
 
             $sql = "select message_id $sql_core order by datestamp desc limit $start, $length";
 
             $res = mysql_unbuffered_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             $idstring="";
             while ($rec = mysql_fetch_row($res)){
@@ -1103,12 +1103,12 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
                 $sql = "select count(*) from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date";
                 $res = mysql_query($sql, $conn);
 
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
                 $total_count=mysql_result($res, 0, 0);
 
                 $sql = "select message_id from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and $clause $forum_where $sql_date order by datestamp desc limit $start, $length";
                 $res = mysql_unbuffered_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
                 $idstring="";
                 while ($rec = mysql_fetch_row($res)){
@@ -1126,7 +1126,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
         $sql="select * from {$PHORUM['message_table']} where message_id in ($idstring) order by datestamp desc";
         $res = mysql_unbuffered_query($sql, $conn);
 
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         $rows = array();
 
@@ -1182,7 +1182,7 @@ function phorum_db_get_neighbour_thread($key, $direction)
     $sql = "select thread from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and parent_id = 0 $approvedval and $keyfield $compare $key order by $keyfield $orderdir limit 1";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     return (mysql_num_rows($res)) ? mysql_result($res, 0, "thread") : 0;
 }
@@ -1205,7 +1205,7 @@ function phorum_db_load_settings(){
         if (mysql_errno($conn)==1146){
             // settings table does not exist
             return;
-        } elseif(($err = mysql_error())){
+        } elseif(($err = mysql_error($conn))){
             phorum_db_mysql_error("$err: $sql");
         }
     }
@@ -1262,7 +1262,7 @@ function phorum_db_update_settings($settings){
 
             $sql = "replace into {$PHORUM['settings_table']} set data='$value', type='$type', name='$field'";
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         }
 
         return ($res > 0) ? true : false;
@@ -1317,7 +1317,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = -1, $vroot = null, $i
     $sql .= " order by display_order ASC, name";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $forums = array();
 
@@ -1354,7 +1354,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
         $sql = "select count(*) as message_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and status=".PHORUM_STATUS_APPROVED;
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         $message_count = (int)mysql_result($res, 0, "message_count");
     } else {
@@ -1366,7 +1366,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
         $sql = "select max(modifystamp) as last_post_time from {$PHORUM['message_table']} where status=".PHORUM_STATUS_APPROVED." and forum_id={$PHORUM['forum_id']}";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         $last_post_time = (int)mysql_result($res, 0, "last_post_time");
     } else {
@@ -1378,7 +1378,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
 
         $sql = "select count(*) as thread_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and parent_id=0 and status=".PHORUM_STATUS_APPROVED;
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         $thread_count = (int)mysql_result($res, 0, "thread_count");
 
     } else {
@@ -1390,7 +1390,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
 
         $sql = "select count(*) as sticky_count from {$PHORUM['message_table']} where forum_id={$PHORUM['forum_id']} and sort=".PHORUM_SORT_STICKY." and parent_id=0 and status=".PHORUM_STATUS_APPROVED;
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         $sticky_count = (int)mysql_result($res, 0, "sticky_count");
 
     } else {
@@ -1400,7 +1400,7 @@ function phorum_db_update_forum_stats($refresh=false, $msg_count_change=0, $time
 
     $sql = "update {$PHORUM['forums_table']} set thread_count=$thread_count, message_count=$message_count, sticky_count=$sticky_count, last_post_time=$last_post_time where forum_id={$PHORUM['forum_id']}";
     mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
 }
 
@@ -1423,7 +1423,7 @@ function phorum_db_move_thread($thread_id, $toforum)
         $sql = "UPDATE {$PHORUM['message_table']} SET forum_id=$toforum where thread=$thread_id";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         // we need to update the number of posts in the current forum
         phorum_db_update_forum_stats(true);
@@ -1463,7 +1463,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             // then doing the update to subscriptions
             $sql="UPDATE {$PHORUM['subscribers_table']} SET forum_id = $toforum where thread IN($ids_str)";
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         }
 
@@ -1472,7 +1472,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             // then doing the delete
             $sql="DELETE FROM {$PHORUM['user_newflags_table']} where message_id IN($ids_str)";
             mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         }
 
         if (count($search_ids)) {
@@ -1480,7 +1480,7 @@ function phorum_db_move_thread($thread_id, $toforum)
             // then doing the search table update
             $sql = "UPDATE {$PHORUM['search_table']} set forum_id = $toforum where message_id in ($ids_str)";
             mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         }
 
     }
@@ -1500,7 +1500,7 @@ function phorum_db_close_thread($thread_id){
         $sql = "UPDATE {$PHORUM['message_table']} SET closed=1 where thread=$thread_id";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }
 }
 
@@ -1518,7 +1518,7 @@ function phorum_db_reopen_thread($thread_id){
         $sql = "UPDATE {$PHORUM['message_table']} SET closed=0 where thread=$thread_id";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }
 }
 
@@ -1550,7 +1550,7 @@ function phorum_db_add_forum($forum)
     $sql = "insert into {$PHORUM['forums_table']} set " . implode(", ", $fields);
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $forum_id = 0;
 
@@ -1588,19 +1588,19 @@ function phorum_db_drop_forum($forum_id)
     foreach($tables as $table){
         $sql = "delete from $table where forum_id=$forum_id";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }
 
 $sql = "select file_id from {$PHORUM['files_table']} left join {$PHORUM['message_table']} using (message_id) where {$PHORUM['files_table']}.message_id > 0 AND link='" . PHORUM_LINK_MESSAGE . "' AND {$PHORUM['message_table']}.message_id is NULL";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     while($rec=mysql_fetch_assoc($res)){
         $files[]=$rec["file_id"];
     }
     if(isset($files)){
         $sql = "delete from {$PHORUM['files_table']} where file_id in (".implode(",", $files).")";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }
 
 
@@ -1622,19 +1622,19 @@ function phorum_db_drop_folder($forum_id)
     $sql = "select parent_id from {$PHORUM['forums_table']} where forum_id=$forum_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $new_parent_id = mysql_result($res, 0, "parent_id");
 
     $sql = "update {$PHORUM['forums_table']} set parent_id=$new_parent_id where parent_id=$forum_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $sql = "delete from {$PHORUM['forums_table']} where forum_id=$forum_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 }
 
 /**
@@ -1679,7 +1679,7 @@ function phorum_db_update_forum($forum){
         $sql = "update {$PHORUM['forums_table']} set " . implode(", ", $fields) . " where $forumwhere";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }else{
         trigger_error("\$forum[forum_id] cannot be empty in phorum_update_forum()", E_USER_ERROR);
     }
@@ -1702,7 +1702,7 @@ function phorum_db_get_groups($group_id=0)
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $groups=array();
     while($rec=mysql_fetch_assoc($res)){
@@ -1715,7 +1715,7 @@ function phorum_db_get_groups($group_id=0)
     if($group_id!=0) $sql.=" where group_id=$group_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     while($rec=mysql_fetch_assoc($res)){
 
@@ -1753,7 +1753,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
     $sql .=" order by username asc";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     $users=array();
     while($rec=mysql_fetch_assoc($res)){
         $users[$rec["user_id"]]=$rec["status"];
@@ -1783,7 +1783,7 @@ function phorum_db_save_group($group)
 
         $res=mysql_query($sql, $conn);
 
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     }
 
@@ -1794,14 +1794,14 @@ function phorum_db_save_group($group)
 
             $res=mysql_query($sql, $conn);
 
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             foreach($group["permissions"] as $forum_id=>$permission){
                 settype($forum_id, "int");
                 settype($permission, "int");
                 $sql="insert into {$PHORUM['forum_group_xref_table']} set group_id={$group['group_id']}, permission=$permission, forum_id=$forum_id";
                 $res=mysql_query($sql, $conn);
-                if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+                if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
                 if(!$res) break;
             }
         }
@@ -1822,16 +1822,16 @@ function phorum_db_delete_group($group_id)
 
     $sql = "delete from {$PHORUM['groups_table']} where group_id = $group_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // delete things associated with groups
     $sql = "delete from {$PHORUM['user_group_xref_table']} where group_id = $group_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $sql = "delete from {$PHORUM['forum_group_xref_table']} where group_id = $group_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 }
 
 /**
@@ -1856,7 +1856,7 @@ function phorum_db_add_group($group_name,$group_id=0)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $group_id = 0;
 
@@ -1894,7 +1894,7 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
 
        $res = mysql_query($sql, $conn);
 
-       if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+       if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
        while ($row = mysql_fetch_row($res)){
            if(!$for_email || $row[2] == 1)
@@ -1908,7 +1908,7 @@ function phorum_db_user_get_moderators($forum_id,$ignore_user_perms=false,$for_e
 
    $res = mysql_query($sql, $conn);
 
-   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+   if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
    while ($row = mysql_fetch_row($res)){
        if(!$for_email || $row[2] == 1)
@@ -1944,7 +1944,7 @@ function phorum_db_user_get($user_id, $detailed)
 
     $sql = "select * from {$PHORUM['user_table']} where user_id in ($user_ids)";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res)){
         while($rec=mysql_fetch_assoc($res)){
@@ -1956,7 +1956,7 @@ function phorum_db_user_get($user_id, $detailed)
             $sql = "select * from {$PHORUM['user_permissions_table']} where user_id in ($user_ids)";
 
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             while ($row = mysql_fetch_assoc($res)){
                 $users[$row["user_id"]]["forum_permissions"][$row["forum_id"]] = $row["permission"];
@@ -1966,7 +1966,7 @@ function phorum_db_user_get($user_id, $detailed)
             $sql = "select user_id, {$PHORUM['user_group_xref_table']}.group_id, forum_id, permission from {$PHORUM['user_group_xref_table']} left join {$PHORUM['forum_group_xref_table']} using (group_id) where user_id in ($user_ids) AND {$PHORUM['user_group_xref_table']}.status >= ".PHORUM_USER_GROUP_APPROVED;
 
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+            if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
             while ($row = mysql_fetch_assoc($res)){
                 $users[$row["user_id"]]["groups"][$row["group_id"]] = $row["group_id"];
@@ -1981,7 +1981,7 @@ function phorum_db_user_get($user_id, $detailed)
         }
         $sql = "select * from {$PHORUM['user_custom_fields_table']} where user_id in ($user_ids)";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         while ($row = mysql_fetch_assoc($res)){
             if(isset($PHORUM["PROFILE_FIELDS"][$row['type']])) {
@@ -2045,7 +2045,7 @@ function phorum_db_user_get_fields($user_id, $fields)
     $sql = "select user_id, ".implode(",", $fields)." from {$PHORUM['user_table']} where user_id in ($user_ids)";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res)){
         while($rec=mysql_fetch_assoc($res)){
@@ -2080,7 +2080,7 @@ function phorum_db_user_get_list($type = 0){
    $users = array();
    $sql = "select user_id, username from {$PHORUM['user_table']} $where order by username asc";
    $res = mysql_query($sql, $conn);
-   if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+   if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
    while ($row = mysql_fetch_assoc($res)){
        $users[$row["user_id"]] = array("username" => $row["username"], "displayname" => $row["username"]);
@@ -2110,7 +2110,7 @@ function phorum_db_user_check_pass($username, $password, $temp_password=false){
     $sql = "select user_id from {$PHORUM['user_table']} where username='$username' and $pass_field='$password'";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     return ($res && mysql_num_rows($res)) ? mysql_result($res, 0, "user_id") : 0;
 }
@@ -2167,7 +2167,7 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
     $sql = "select user_id from {$PHORUM['user_table']} where ".implode(" and ", $clauses);
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if ($res && mysql_num_rows($res)){
         if($return_array){
@@ -2223,7 +2223,7 @@ function phorum_db_user_add($userdata){
     $sql .= implode(", ", $values);
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $user_id = 0;
     if ($res){
@@ -2236,7 +2236,7 @@ function phorum_db_user_add($userdata){
             foreach($forum_perms as $fid => $p){
                 $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$p";
                 $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()){
+                if ($err = mysql_error($conn)){
                     phorum_db_mysql_error("$err: $sql");
                     break;
                 }
@@ -2253,7 +2253,7 @@ function phorum_db_user_add($userdata){
                 }
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
                 $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()){
+                if ($err = mysql_error($conn)){
                     phorum_db_mysql_error("$err: $sql");
                     break;
                 }
@@ -2311,19 +2311,19 @@ function phorum_db_user_save($userdata){
         $sql .= " where user_id=$user_id";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }
 
     if (isset($forum_perms)){
 
         $sql = "delete from {$PHORUM['user_permissions_table']} where user_id = $user_id";
         $res=mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         foreach($forum_perms as $fid=>$perms){
             $sql = "insert into {$PHORUM['user_permissions_table']} set user_id=$user_id, forum_id=$fid, permission=$perms";
             $res = mysql_query($sql, $conn);
-            if ($err = mysql_error()){
+            if ($err = mysql_error($conn)){
                 phorum_db_mysql_error("$err: $sql");
             }
         }
@@ -2332,7 +2332,7 @@ function phorum_db_user_save($userdata){
         // storing custom-fields
         $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id = $user_id";
         $res=mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         if(is_array($user_data)) {
             foreach($user_data as $key => $val){
@@ -2345,7 +2345,7 @@ function phorum_db_user_save($userdata){
 
                 $sql = "insert into {$PHORUM['user_custom_fields_table']} (user_id,type,data) VALUES($user_id,$key,'$val')";
                 $res = mysql_query($sql, $conn);
-                if ($err = mysql_error()){
+                if ($err = mysql_error($conn)){
                     phorum_db_mysql_error("$err: $sql");
                     break;
                 }
@@ -2373,14 +2373,14 @@ function phorum_db_user_save_groups($user_id, $groups)
     $conn = phorum_db_mysql_connect();
     $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id = $user_id";
     $res=mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     foreach($groups as $group_id => $group_perm){
         $group_id = (int)$group_id;
         $group_perm = (int)$group_perm;
         $sql = "insert into {$PHORUM['user_group_xref_table']} set user_id=$user_id, group_id=$group_id, status=$group_perm";
         mysql_query($sql, $conn);
-        if ($err = mysql_error()){
+        if ($err = mysql_error($conn)){
             phorum_db_mysql_error("$err: $sql");
             break;
         }
@@ -2407,7 +2407,7 @@ function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     return (bool)$res;
 }
@@ -2422,7 +2422,7 @@ function phorum_db_user_addpost() {
         $sql="UPDATE ".$GLOBALS['PHORUM']['user_table']." SET posts=posts+1 WHERE user_id = ".$GLOBALS['PHORUM']['user']['user_id'];
         $res=mysql_query($sql,$conn);
 
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         return (bool)$res;
 }
@@ -2446,7 +2446,7 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     return (bool)$res;
 }
@@ -2471,7 +2471,7 @@ function phorum_db_user_get_groups($user_id)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     while($row = mysql_fetch_assoc($res)){
         $groups[$row["group_id"]] = $row["status"];
@@ -2499,7 +2499,7 @@ function phorum_db_search_users($search)
     $sql = "select user_id, username, email, active, posts, date_last_active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res)){
         while ($user = mysql_fetch_assoc($res)){
@@ -2524,7 +2524,7 @@ function phorum_db_user_get_unapproved()
     $sql="select user_id, username, email from {$PHORUM['user_table']} where active in(".PHORUM_USER_PENDING_BOTH.", ".PHORUM_USER_PENDING_MOD.") order by username";
     $res=mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2562,32 +2562,32 @@ function phorum_db_user_delete($user_id) {
     // user-table
     $sql = "delete from {$PHORUM['user_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // permissions-table
     $sql = "delete from {$PHORUM['user_permissions_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // newflags-table
     $sql = "delete from {$PHORUM['user_newflags_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // subscribers-table
     $sql = "delete from {$PHORUM['subscribers_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // group-xref-table
     $sql = "delete from {$PHORUM['user_group_xref_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // private messages
     $sql = "select * from {$PHORUM["pm_xref_table"]} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     while ($row = mysql_fetch_assoc($res)) {
         $folder = $row["pm_folder_id"] == 0 ? $row["special_folder"] : $row["pm_folder_id"];
         phorum_db_pm_delete($row["pm_message_id"], $folder, $user_id);
@@ -2596,22 +2596,22 @@ function phorum_db_user_delete($user_id) {
     // pm_buddies
     $sql = "delete from {$PHORUM["pm_buddies_table"]} where user_id=$user_id or buddy_user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // private message folders
     $sql = "delete from {$PHORUM["pm_folders_table"]} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // files-table
     $sql = "delete from {$PHORUM['files_table']} where user_id=$user_id and message_id=0 and link='" . PHORUM_LINK_USER . "'";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // custom-fields-table
     $sql = "delete from {$PHORUM['user_custom_fields_table']} where user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // messages-table
     if(PHORUM_DELETE_CHANGE_AUTHOR) {
@@ -2620,7 +2620,7 @@ function phorum_db_user_delete($user_id) {
       $sql = "update {$PHORUM['message_table']} set user_id=0,email='' where user_id=$user_id";
     }
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     return $ret;
 }
@@ -2644,7 +2644,7 @@ function phorum_db_get_user_file_list($user_id)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2676,7 +2676,7 @@ function phorum_db_get_message_file_list($message_id)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2708,7 +2708,7 @@ function phorum_db_file_get($file_id)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2749,7 +2749,7 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2777,7 +2777,7 @@ function phorum_db_file_delete($file_id)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2809,7 +2809,7 @@ function phorum_db_file_link($file_id, $message_id, $link = null)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2834,7 +2834,7 @@ function phorum_db_get_user_filesize_total($user_id)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }
 
@@ -2876,7 +2876,7 @@ function phorum_db_file_purge_stale_files($live_run = false)
         $sql = "delete from {$PHORUM['files_table']} " .
                "where $where";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         return true;
 
@@ -2890,7 +2890,7 @@ function phorum_db_file_purge_stale_files($live_run = false)
                "where $where";
 
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         $purge_files = array();
         if (mysql_num_rows($res) > 0) {
@@ -2923,7 +2923,7 @@ function phorum_db_newflag_allread($forum_id=0)
     // get the maximum message-id in this forum
     $sql = "select max(message_id) from {$PHORUM['message_table']} where forum_id in ($forum_id, {$PHORUM['vroot']})";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()){
+    if ($err = mysql_error($conn)){
         phorum_db_mysql_error("$err: $sql");
     }elseif (mysql_num_rows($res) > 0){
         $row = mysql_fetch_row($res);
@@ -2955,7 +2955,7 @@ function phorum_db_newflag_get_flags($forum_id=0)
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     while($row=mysql_fetch_row($res)) {
         // set the min-id if given flag is set
@@ -2992,7 +2992,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $counts[] = mysql_result($res, 0, "count");
 
@@ -3001,7 +3001,7 @@ function phorum_db_newflag_get_unread_count($forum_id=0)
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $counts[] = mysql_result($res, 0, "count");
 
@@ -3049,7 +3049,7 @@ function phorum_db_newflag_add_read($message_ids) {
         $conn = phorum_db_mysql_connect();
         $res = mysql_query($insert_sql, $conn);
 
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $insert_sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $insert_sql");
     }
 }
 
@@ -3070,7 +3070,7 @@ function phorum_db_newflag_get_count($forum_id=0)
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $row=mysql_fetch_row($res);
 
@@ -3099,7 +3099,7 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
     // fire away
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($del_sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $del_sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $del_sql");
 }
 
 
@@ -3121,7 +3121,7 @@ function phorum_db_newflag_update_forum($message_ids) {
     $sql="UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} as flags, {$GLOBALS['PHORUM']['message_table']} as msg SET flags.forum_id=msg.forum_id where flags.message_id=msg.message_id and flags.message_id IN ($ids_str)";
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
 }
 
@@ -3147,7 +3147,7 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         $arr=array();
 
@@ -3189,7 +3189,7 @@ function phorum_db_get_message_subscriptions($user_id,$days=2)
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $arr=array();
     $forum_ids=array();
@@ -3224,7 +3224,7 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id, $type=PHORUM_
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res) > 0){
         $retval = true;
@@ -3266,7 +3266,7 @@ function phorum_db_get_banlists($ordered=false) {
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
@@ -3294,7 +3294,7 @@ function phorum_db_get_banitem($banid) {
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res) > 0){
         while($row = mysql_fetch_assoc($res)) {
@@ -3320,7 +3320,7 @@ function phorum_db_del_banitem($banid) {
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if(mysql_affected_rows($conn) > 0) {
         return true;
@@ -3354,7 +3354,7 @@ function phorum_db_mod_banlists($type,$pcre,$string,$forum_id,$id=0) {
 
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) {
+    if ($err = mysql_error($conn)) {
         phorum_db_mysql_error("$err: $sql");
         return false;
     } else {
@@ -3403,7 +3403,7 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = true)
            "AND x.pm_message_id = m.pm_message_id " .
            "ORDER BY x.pm_message_id " . ($reverse ? "DESC" : "ASC");
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $list = array();
     if (mysql_num_rows($res) > 0){
@@ -3455,7 +3455,7 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
            "AND x.pm_message_id = m.pm_message_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res) > 0){
         $row = mysql_fetch_assoc($res);
@@ -3490,7 +3490,7 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
            "foldername='".mysql_escape_string($foldername)."'";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $folder_id = 0;
     if ($res){
@@ -3522,7 +3522,7 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
            "WHERE pm_folder_id = $folder_id AND user_id = $user_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     return $res;
 }
 
@@ -3555,7 +3555,7 @@ function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
     $sql = "DELETE FROM {$PHORUM['pm_folders_table']} " .
            "WHERE pm_folder_id = $folder_id AND user_id = $user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     return $res;
 }
 
@@ -3590,7 +3590,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
     $sql = "SELECT * FROM {$PHORUM['pm_folders_table']} " .
            "WHERE user_id = $user_id ORDER BY foldername";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // Add them to the folderlist.
     if (mysql_num_rows($res) > 0){
@@ -3623,7 +3623,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count_messages = false)
                "WHERE user_id = $user_id " .
                "GROUP BY pm_folder_id, special_folder";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
         // Add counters to the folderlist.
         if (mysql_num_rows($res) > 0){
@@ -3679,7 +3679,7 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
     $messagecount=array("total" => 0, "new" => 0);
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res) > 0){
         $row = mysql_fetch_assoc($res);
@@ -3713,7 +3713,7 @@ function phorum_db_pm_checknew($user_id = NULL)
            "FROM {$PHORUM['pm_xref_table']} " .
            "WHERE user_id = $user_id AND read_flag = 0 LIMIT 1";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     return mysql_num_rows($res);
 }
@@ -3788,7 +3788,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
            "datestamp = '".time()."', " .
            "meta = '$meta'";
     mysql_query($sql, $conn);
-    if ($err = mysql_error()) {
+    if ($err = mysql_error($conn)) {
         phorum_db_mysql_error("$err: $sql");
         return;
     }
@@ -3806,7 +3806,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=false)
                "read_flag = {$xref["read_flag"]}, " .
                "reply_flag = 0";
         mysql_query($sql, $conn);
-        if ($err = mysql_error()) {
+        if ($err = mysql_error($conn)) {
             phorum_db_mysql_error("$err: $sql");
             return;
         }
@@ -3848,7 +3848,7 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
            "SET $flag = $value " .
            "WHERE pm_message_id = $pm_id AND user_id = $user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // Update message counters.
     if ($flag == PHORUM_PM_READ_FLAG) {
@@ -3889,7 +3889,7 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
            "user_id = $user_id AND pm_message_id = $pm_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // Update message counters.
     phorum_db_pm_update_message_info($pm_id);
@@ -3940,7 +3940,7 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
            "WHERE $folder_sql user_id = $user_id AND pm_message_id = $pm_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     return $res;
 }
 
@@ -3966,7 +3966,7 @@ function phorum_db_pm_update_message_info($pm_id)
            "FROM {$PHORUM['pm_messages_table']} " .
            "WHERE pm_message_id = $pm_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     if (mysql_num_rows($res) == 0) return $res;
     $pm = mysql_fetch_assoc($res);
 
@@ -3975,14 +3975,14 @@ function phorum_db_pm_update_message_info($pm_id)
            "FROM {$PHORUM["pm_xref_table"]} " .
            "WHERE pm_message_id = $pm_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     // No xrefs left? Then the message can be fully deleted.
     if (mysql_num_rows($res) == 0) {
         $sql = "DELETE FROM {$PHORUM['pm_messages_table']} " .
                "WHERE pm_message_id = $pm_id";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         return $res;
     }
 
@@ -4005,7 +4005,7 @@ function phorum_db_pm_update_message_info($pm_id)
            "SET meta = '$meta' " .
            "WHERE pm_message_id = $pm_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     return $res;
 }
 
@@ -4044,7 +4044,7 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
            "WHERE user_id = $user_id AND buddy_user_id = $buddy_user_id";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     if (mysql_num_rows($res)) {
         $row = mysql_fetch_array($res);
         return $row[0];
@@ -4081,7 +4081,7 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
                "user_id = $user_id, " .
                "buddy_user_id = $buddy_user_id";
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+        if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
         $pm_buddy_id = mysql_insert_id($conn);
     }
 
@@ -4105,7 +4105,7 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
     $sql = "DELETE FROM {$PHORUM["pm_buddies_table"]} WHERE " .
            "buddy_user_id = $buddy_user_id AND user_id = $user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     return $res;
 }
 
@@ -4126,7 +4126,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
     $sql = "SELECT buddy_user_id FROM {$PHORUM["pm_buddies_table"]} " .
            "WHERE user_id = $user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $buddies = array();
     if (mysql_num_rows($res)) {
@@ -4152,7 +4152,7 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = false)
            "AND b.user_id=a.buddy_user_id " .
            "AND b.buddy_user_id=$user_id";
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res)) {
         while ($row = mysql_fetch_array($res)) {
@@ -4197,7 +4197,7 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
     $sql = "select thread from {$PHORUM['message_table']} where $compare_field < $time AND parent_id=0 $forummode";
 
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     $ret=array();
     while($row=mysql_fetch_row($res)) {
@@ -4210,7 +4210,7 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
       // deleting the messages/threads
       $sql="delete from {$PHORUM['message_table']} where thread IN ($thread_ids)";
       $res = mysql_query($sql, $conn);
-      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+      if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
       $numdeleted = mysql_affected_rows($conn);
       if($numdeleted < 0) {
@@ -4220,13 +4220,13 @@ function phorum_db_prune_oldThreads($time,$forum=0,$mode=1) {
       // deleting the associated notification-entries
       $sql="delete from {$PHORUM['subscribers_table']} where thread IN ($thread_ids)";
       $res = mysql_query($sql, $conn);
-      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+      if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
 
       // optimizing the message-table
       $sql="optimize table {$PHORUM['message_table']}";
       $res = mysql_query($sql, $conn);
-      if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+      if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
     }
 
     return $numdeleted;
@@ -4262,7 +4262,7 @@ function phorum_db_get_max_messageid() {
     $sql="SELECT max(message_id) from ".$PHORUM["message_table"];
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if (mysql_num_rows($res) > 0){
         $row = mysql_fetch_row($res);
@@ -4285,7 +4285,7 @@ function phorum_db_viewcount_inc($message_id) {
     $sql="UPDATE ".$GLOBALS['PHORUM']['message_table']." SET viewcount=viewcount+1 WHERE message_id=$message_id";
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
 
     return true;
@@ -4310,7 +4310,7 @@ function phorum_db_get_custom_field_users($field_id,$field_content,$match) {
     $sql = "select user_id from {$GLOBALS['PHORUM']['user_custom_fields_table']} where type=$field_id and data $compval '$field_content'";
     $res = mysql_query($sql, $conn);
 
-    if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
 
     if(mysql_num_rows($res)) {
         $retval=array();
@@ -4559,7 +4559,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     $conn = phorum_db_mysql_connect();
     $res = mysql_query($sql, $conn);
-    if ($err = mysql_error()) {
+    if ($err = mysql_error($conn)) {
         phorum_db_mysql_error("$err: $sql");
         return NULL;
     } else {
@@ -4611,7 +4611,7 @@ function phorum_db_create_tables()
     );
     foreach($queries as $sql){
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()){
+        if ($err = mysql_error($conn)){
             $retmsg = "$err<br />";
             phorum_db_mysql_error("$err: $sql");
             break;
@@ -4641,7 +4641,7 @@ function phorum_db_run_queries($queries){
 
     foreach($queries as $sql){
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error()){
+        if ($err = mysql_error($conn)){
             // skip duplicate column name errors
             if(!stristr($err, "duplicate column")){
                 $retmsg.= "$err<br />";
