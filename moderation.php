@@ -273,6 +273,8 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
 
+        phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
+
         if($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
           phorum_email_notice($old_message);
         }
@@ -321,6 +323,8 @@ switch ($mod_step) {
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
+
+        phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
 
         if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum'])) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
