@@ -68,7 +68,8 @@ if(is_array($message) && count($message)) {
                 "delete_url"  => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
                 "hide_url"    => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
                 "edit_url"    => phorum_get_url(PHORUM_POSTING_URL, 'moderation', $message_id),
-                "reporter_url"=> phorum_get_url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"])
+                "reporter_url"=> phorum_get_url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
+                "message"     => $message
                 );
 
                 if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
