@@ -9,50 +9,50 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
     $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
     $buffer.= "<rss version=\"2.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
     $buffer.= "    <channel>\n";
-    $buffer.= "        <title>".htmlentities($feed_title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
-    $buffer.= "        <description>".htmlentities($feed_description, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</description>\n";
-    $buffer.= "        <link>".htmlentities($feed_url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</link>\n";
-    $buffer.= "        <lastBuildDate>".htmlentities(date("r"), ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</lastBuildDate>\n";
-    $buffer.= "        <generator>".htmlentities("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</generator>\n";
+    $buffer.= "        <title>".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
+    $buffer.= "        <description>".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</description>\n";
+    $buffer.= "        <link>".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</link>\n";
+    $buffer.= "        <lastBuildDate>".htmlspecialchars(date("r"), ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</lastBuildDate>\n";
+    $buffer.= "        <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</generator>\n";
 
     foreach($messages as $message) {
-        
+
         $title = $message["subject"];
         if(empty($PHORUM["args"]["replies"])){
             switch($message["thread_count"]){
                 case 1:
-                    $title.= " (no replies)";
+                    $title.= " (no ".$PHORUM["DATA"]["LANG"]["replies"].")";
                     break;
                 case 2:
-                    $title.= " (1 reply)";
+                    $title.= " (1 ".$PHORUM["DATA"]["LANG"]["reply"].")";
                     break;
-                default: 
+                default:
                     $replies = $message["thread_count"] - 1;
-                    $title.= " ($replies replies)";
+                    $title.= " ($replies ".$PHORUM["DATA"]["LANG"]["replies"].")";
             }
-            
+
             $date = date("r", $message["modifystamp"]);
 
         } else {
-        
+
             $date = date("r", $message["datestamp"]);
         }
 
         $url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
-        
+
         $category = $forums[$message["forum_id"]]["name"];
-        
+
         $buffer.= "        <item>\n";
-        $buffer.= "            <guid>".htmlentities($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</guid>\n";
-        $buffer.= "            <title>".htmlentities($title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
-        $buffer.= "            <link>".htmlentities($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</link>\n";
+        $buffer.= "            <guid>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</guid>\n";
+        $buffer.= "            <title>".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
+        $buffer.= "            <link>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</link>\n";
         $buffer.= "            <description><![CDATA[".$message["body"]."]]></description>\n";
-        $buffer.= "            <dc:creator>".htmlentities($message["author"], ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</dc:creator>\n";
-        $buffer.= "            <category>".htmlentities($category, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</category>\n";
-        $buffer.= "            <pubDate>".htmlentities($date, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</pubDate>\n";
+        $buffer.= "            <dc:creator>".htmlspecialchars($message["author"], ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</dc:creator>\n";
+        $buffer.= "            <category>".htmlspecialchars($category, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</category>\n";
+        $buffer.= "            <pubDate>".htmlspecialchars($date, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</pubDate>\n";
         $buffer.= "        </item>\n";
     }
-    
+
     $buffer.= "    </channel>\n";
     $buffer.= "</rss>\n";
 
@@ -63,50 +63,50 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
 function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed_description) {
 
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     $self = $PHORUM["http_path"]."/feed.php?".$_SERVER["QUERY_STRING"];
-    
+
     $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
     $buffer.= "<feed xmlns=\"http://www.w3.org/2005/Atom\">\n";
-    $buffer.= "    <title>".htmlentities($feed_title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
-    $buffer.= "    <subtitle>".htmlentities($feed_description, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</subtitle>\n";
-    $buffer.= "    <link rel=\"self\" href=\"".htmlentities($self, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" />\n";
-    $buffer.= "    <id>".htmlentities($feed_url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</id>\n";
-    $buffer.= "    <updated>".htmlentities(date("c"), ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</updated>\n";
-    $buffer.= "    <generator>".htmlentities("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</generator>\n";
+    $buffer.= "    <title>".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
+    $buffer.= "    <subtitle>".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</subtitle>\n";
+    $buffer.= "    <link rel=\"self\" href=\"".htmlspecialchars($self, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" />\n";
+    $buffer.= "    <id>".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</id>\n";
+    $buffer.= "    <updated>".htmlspecialchars(date("c"), ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</updated>\n";
+    $buffer.= "    <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</generator>\n";
 
     foreach($messages as $message) {
 
         if($message["thread_count"]<1) continue;
-        
+
         $title = $message["subject"];
         if(empty($PHORUM["args"]["replies"])){
             switch($message["thread_count"]){
                 case 1:
-                    $title.= " (no replies)";
+                    $title.= " (no ".$PHORUM["DATA"]["LANG"]["replies"].")";
                     break;
                 case 2:
-                    $title.= " (1 reply)";
+                    $title.= " (1 ".$PHORUM["DATA"]["LANG"]["reply"].")";
                     break;
-                default: 
+                default:
                     $replies = $message["thread_count"] - 1;
-                    $title.= " ($replies replies)";
+                    $title.= " ($replies ".$PHORUM["DATA"]["LANG"]["replies"].")";
             }
         }
 
         $url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
-        
+
         $category = $forums[$message["forum_id"]]["name"];
-        
+
         $buffer.= "    <entry>\n";
-        $buffer.= "        <title>".htmlentities($title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
-        $buffer.= "        <link href=\"".htmlentities($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" />\n";
-        $buffer.= "        <category term=\"".htmlentities($category, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" />\n";
+        $buffer.= "        <title>".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</title>\n";
+        $buffer.= "        <link href=\"".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" />\n";
+        $buffer.= "        <category term=\"".htmlspecialchars($category, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" />\n";
         $buffer.= "        <published>".date("c", $message["datestamp"])."</published>\n";
         $buffer.= "        <updated>".date("c", $message["modifystamp"])."</updated>\n";
-        $buffer.= "        <id>".htmlentities($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</id>\n";
+        $buffer.= "        <id>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</id>\n";
         $buffer.= "        <author>\n";
-        $buffer.= "            <name>".htmlentities($message["author"], ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</name>\n";
+        $buffer.= "            <name>".htmlspecialchars($message["author"], ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</name>\n";
         $buffer.= "        </author>\n";
         $buffer.= "        <summary type=\"html\"><![CDATA[".$message["body"]."]]></summary>\n";
         $buffer.= "    </entry>\n";
@@ -124,38 +124,38 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
     $PHORUM = $GLOBALS["PHORUM"];
 
     $buffer = "<div id=\"phorum_feed\">\n";
-    $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlentities($feed_url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" title=\"".htmlentities($feed_description, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\">".htmlentities($feed_title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</div>\n";
-    $buffer.= "    <div id=\"phorum_feed_date\">".htmlentities(phorum_date($PHORUM['long_date'], time()), ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</lastBuildDate>\n";
+    $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" title=\"".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\">".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</div>\n";
+    $buffer.= "    <div id=\"phorum_feed_date\">".htmlspecialchars(phorum_date($PHORUM['long_date'], time()), ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</lastBuildDate>\n";
     $buffer.= "    <ul>\n";
 
     foreach($messages as $message) {
-        
+
         $title = $message["subject"];
 
         if(empty($PHORUM["args"]["replies"])){
 
             switch($message["thread_count"]){
                 case 1:
-                    $title.= " (no replies)";
+                    $title.= " (no ".$PHORUM["DATA"]["LANG"]["replies"].")";
                     break;
                 case 2:
-                    $title.= " (1 reply)";
+                    $title.= " (1 ".$PHORUM["DATA"]["LANG"]["reply"].")";
                     break;
-                default: 
+                default:
                     $replies = $message["thread_count"] - 1;
-                    $title.= " ($replies replies)";
+                    $title.= " ($replies ".$PHORUM["DATA"]["LANG"]["replies"].")";
             }
-            
+
         }
 
         $url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
-        
+
         $body = phorum_strip_body($message["body"]);
         $body = substr($body, 0, 200);
 
-        $buffer.= "        <li><a href=\"".htmlentities($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" title=\"".htmlentities($message["body"], ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\">".htmlentities($title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</a></li>\n";
+        $buffer.= "        <li><a href=\"".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\" title=\"".htmlspecialchars($message["body"], ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."\">".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['CHARSET'])."</a></li>\n";
     }
-    
+
     $buffer.= "    </ul>\n";
     $buffer.= "</div>\n";
 
@@ -166,7 +166,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
 function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_description) {
 
     $PHORUM = $GLOBALS["PHORUM"];
-    
+
     // build PHP array to later be turned into a JS object
 
     $feed["title"] = $feed_title;
@@ -174,9 +174,9 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
     $feed["modified"] = phorum_date($PHORUM['short_date'], time());
 
     foreach($messages as $message) {
-        
+
         $item = array(
-        
+
             "title" => $message["subject"],
             "author" => $message["author"],
             "category" => $forums[$message["forum_id"]]["name"],
@@ -185,18 +185,18 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
             "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]),
             "description" => $message["body"]
         );
-        
+
         if($message["thread_count"]){
             $replies = $message["thread_count"] - 1;
             $item["replies"] = $replies;
         }
-        
+
         $feed["items"][] = $item;
     }
 
     // this is where we convert the array into js
     $buffer = phorum_array_to_javascript("phorum_feed", $feed);
-    
+
     return $buffer;
 
 }
@@ -204,16 +204,16 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
 
 // js helper functions
 
-/**************************************************** 
+/****************************************************
  * phorum_array_to_javascript() support functions
  * Do not expect these functions to create complete javascript
- * code; use phorum_array_to_javascript() instead. 
+ * code; use phorum_array_to_javascript() instead.
  *
  * phorum_conv_str_to_js() returns escaped string surrounded by single quotes
  * phorum_conv_array_to_js() returns nested arrays in javascript object shorthand
  *
  */
-function phorum_conv_str_to_js($str, $raw = false) { 
+function phorum_conv_str_to_js($str, $raw = false) {
     $str = str_replace("\\", "\\\\", $str);
     $str = str_replace("'", "\\'", $str);
     $str = str_replace("\r\n", "\n", $str);
@@ -228,26 +228,26 @@ function phorum_conv_str_to_js($str, $raw = false) {
 function phorum_conv_array_to_js($array)
 {
     $tmp = array();
-    
+
     foreach($array as $vkey => $vval) {
-        
+
         if (is_array($vval) || is_object($vval)) {
             $vval = phorum_conv_array_to_js($vval);
-        
+
         } else if (is_string($vval)) {
             $vval = phorum_conv_str_to_js($vval);
-        
+
         } else if (is_numeric($vval)) {
             $vval = $vval; // don't do anything, but we need to check it
-        
+
         } else if (is_bool($vval)) {
             $vval = (($vval) ? "true" : "false");
-        
+
         } else {
             $vval = "null";
-        
+
         }
-    
+
         if (preg_match("/^\w+\$/i", $vkey)) {
             $vkey = phorum_conv_str_to_js($vkey, true);
         } else {
@@ -255,72 +255,72 @@ function phorum_conv_array_to_js($array)
         }
         $tmp[] = "$vkey:$vval";
     }
-    
+
     return("{" . implode(", ", $tmp) . "}");
 }
 
-/**************************************************** 
+/****************************************************
  * string phorum_array_to_javascript(string $name, [mixed $var = null]);
  *
  * string $name : javascript variable name
  *   mixed $var : optional variable to convert
  *                if no variable given, $$name from the
  *                global symbol table will be used instead
- * 
+ *
  * returns a string of javascript code
  *
- * Creating the nested shorthand javascript object syntax does 
- * not allow us to use a recursive function here, the 
+ * Creating the nested shorthand javascript object syntax does
+ * not allow us to use a recursive function here, the
  * phorum_conv_array_to_js() function serves that purpose for us.
- * 
+ *
  */
 function phorum_array_to_javascript($name, $var = null) {
     $buf = "";
     if ($var === null) $var = $GLOBALS[$name];
-    
+
     // object or array
     if (is_array($var) || is_object($var)) {
         $buf .= "$name = {};\n";
-        
+
         foreach($var as $key => $value) {
             $key = phorum_conv_str_to_js($key, true);
-            
+
             if (is_array($value) || is_object($value)) {
                 $buf .= "{$name}['$key'] = " . phorum_conv_array_to_js($value) . ";\n";
-            
+
             } else if (is_string($value)) {
                 $buf .= "{$name}['$key'] = " . phorum_conv_str_to_js($value) . ";\n";
-            
+
             } else if (is_numeric($value)) {
                 $buf .= "{$name}['$key'] = $value;\n";
-            
+
             } else if (is_bool($value)) {
                 $buf .= "{$name}['$key'] = " . (($value) ? "true" : "false") . ";\n";
-            
+
             } else {
                 $buf .= "{$name}['$key'] = null;\n";
             }
         }
-        
+
     // string value
     } else if (is_string($var)) {
         $buf .= "$name = " . phorum_conv_str_to_js($var) . ";\n";
-        
+
     // numeric
     } else if (is_numeric($var)) {
         $buf .= "$name = $var;\n";
-    
+
     // boolean
     } else if (is_bool($var)) {
         $buf .= "$name = " . (($var) ? "true" : "false") . ";\n";
-    
+
     } else {
         $buf .= "$name = null;\n";
-    
+
     }
-    
+
     return($buf);
-    
+
 }
 
 ?>
