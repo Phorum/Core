@@ -46,16 +46,16 @@ function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
         $cookie = PHORUM_SESSION_LONG_TERM;
     }
 
-    if ( ( $cookie != PHORUM_SESSION_LONG_TERM || ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] ) ) && isset( $_COOKIE[$cookie] ) ) { // REAL cookies ;)
+    if ( ( $cookie != PHORUM_SESSION_LONG_TERM || ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] > PHORUM_NO_COOKIES ) ) && isset( $_COOKIE[$cookie] ) ) { // REAL cookies ;)
         $sessid = $_COOKIE[$cookie];
         $GLOBALS["PHORUM"]["use_cookies"]=true;
-    } elseif ( isset( $PHORUM["args"][$cookie] ) ) { // in the p5-urls
+    } elseif ( $PHORUM["use_cookies"] < PHORUM_REQUIRE_COOKIES && isset( $PHORUM["args"][$cookie] ) ) { // in the p5-urls
         $sessid = $PHORUM["args"][$cookie];
         $GLOBALS["PHORUM"]["use_cookies"]=false;
-    } elseif ( isset( $_POST[$cookie] ) ) { // from post-forms
+    } elseif ( $PHORUM["use_cookies"] < PHORUM_REQUIRE_COOKIES && isset( $_POST[$cookie] ) ) { // from post-forms
         $sessid = $_POST[$cookie];
         $GLOBALS["PHORUM"]["use_cookies"]=false;
-    } elseif ( isset( $_GET[$cookie] ) ) { // should rarely happen but helps in some cases
+    } elseif ( $PHORUM["use_cookies"] < PHORUM_REQUIRE_COOKIES && isset( $_GET[$cookie] ) ) { // should rarely happen but helps in some cases
         $sessid = $_GET[$cookie];
         $GLOBALS["PHORUM"]["use_cookies"]=false;
     }
@@ -135,7 +135,7 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refres
     if ( !empty( $PHORUM["user"] ) ) {
         $user = $PHORUM["user"];
 
-        if ( (isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"]) || $cookie == PHORUM_SESSION_ADMIN ) {
+        if ( (isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] > PHORUM_NO_COOKIES) || $cookie == PHORUM_SESSION_ADMIN ) {
 
             switch($cookie){
                 case PHORUM_SESSION_SHORT_TERM:
@@ -239,7 +239,7 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
     $cache_users=array();
     $tmp_users=array();
     $cachecnt=0;
-    
+
     if ( count( $user_ids ) ) {
 
         // get users from cache if enabled
@@ -372,11 +372,11 @@ function phorum_user_save_simple($user)
 
 function phorum_user_settings_data_save($settings)
 {
-    // shouldn't happen 
-    if (empty($GLOBALS["PHORUM"]["user"]["user_id"])) return; 
+    // shouldn't happen
+    if (empty($GLOBALS["PHORUM"]["user"]["user_id"])) return;
 
     $changed_settings = array();
-    foreach ($settings as $key => $val) 
+    foreach ($settings as $key => $val)
     {
         if (!isset($GLOBALS["PHORUM"]["user"]["settings_data"][$key]) ||
             $GLOBALS["PHORUM"]["user"]["settings_data"][$key] !== $val) {
@@ -420,6 +420,7 @@ function phorum_user_check_login( $username, $password )
     if( $user_id === NULL )
     {
         $user_id = phorum_db_user_check_pass( $username, md5( $password ) );
+
         // regular password failed, try the temp password
         if ( $user_id == 0 ) {
             $user_id = phorum_db_user_check_pass( $username, md5( $password ), true );
@@ -558,7 +559,7 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
                 // If the new password matches the MD5 encrypted password,
                 // then the old password was sent along with the user data
                 // in phorum_user_save(). Allthough this is not the way in
-                // which it should be (the password fields should only 
+                // which it should be (the password fields should only
                 // contain new clear text passwords), we prevent updates here.
                 elseif (isset($old_user[$key]) && $old_user[$key] == $new_user[$key]) {
                     $user[$key] = $val;
@@ -568,7 +569,7 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
                     $user[$key] = md5( $val );
                 }
                 break;
-            // everything that is not one of the above fields is stored in 
+            // everything that is not one of the above fields is stored in
             // dynamic profile fields. If the field is not in the
             // PROFILE_FIELDS array, we don't add it.
             default:

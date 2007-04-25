@@ -150,7 +150,8 @@ $row=$frm->addrow( "Phorum Description", $frm->textarea( "description", $PHORUM[
 
 $row=$frm->addrow( "DNS Lookups", $frm->select_tag( "dns_lookup", array( "No", "Yes" ), $PHORUM["dns_lookup"] ) );
 
-$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "No", "Yes" ), $PHORUM["SETTINGS"]["use_cookies"] ) );
+$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "Use no cookies", "Allow cookies", "Require cookies" ), $PHORUM["SETTINGS"]["use_cookies"] ) );
+$frm->addhelp($row, "Use Cookies", "Phorum can track logged in users by using cookies or session information on URLs." );
 
 $row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
 $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );

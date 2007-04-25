@@ -130,6 +130,11 @@
     define("PHORUM_GROUP_OPEN", 1);
     define("PHORUM_GROUP_REQUIRE_APPROVAL", 2);
 
+    // session cookie usage
+    define("PHORUM_NO_COOKIES", 0);
+    define("PHORUM_USE_COOKIES", 1);
+    define("PHORUM_REQUIRE_COOKIES", 2);
+
     // attachment status flags
     define("PHORUM_LINK_USER", "user");
     define("PHORUM_LINK_MESSAGE", "message");

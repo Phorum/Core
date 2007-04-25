@@ -440,6 +440,7 @@
         "ReportPostExplanation" =>      "You may optionally give an explanation for why this post was reported, which will be sent to the moderators along with the report. This can help the moderator to understand why you reported the post.",
         "ReportPostNotAllowed"  =>      "You must be logged in to report a post.",
         "ReportPostSuccess"     =>      "This post has been reported to the forum moderators.",
+        "RequireCookies"        =>      "Sorry, you must have cookies enabled in order to log in to the this site.",
         "Required"              =>      "Required Items",
         "Results"               =>      "Results",
         "Report"                =>      "Report",

@@ -166,72 +166,79 @@ if (count($_POST) > 0) {
 
         // Check if the phorum_tmp_cookie was set. If not, the user's
         // browser does not support cookies.
-        if($PHORUM["use_cookies"] && !isset($_COOKIE["phorum_tmp_cookie"])) {
-            $PHORUM["use_cookies"] = false;
-        }
+        if($PHORUM["use_cookies"] == PHORUM_REQUIRE_COOKIES && !isset($_COOKIE["phorum_tmp_cookie"])) {
 
-        $username = trim($_POST["username"]);
-        $password = trim($_POST["password"]);
+            $error = $PHORUM["DATA"]["LANG"]["RequireCookies"];
 
-        // Check if the login credentials are right.
-        if (phorum_user_check_login($username, $password)) {
+        } else {
 
-            // Destroy the temporary cookie.
-            if(isset($_COOKIE["phorum_tmp_cookie"])){
-                setcookie( "phorum_tmp_cookie", "", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
+            if(!isset($_COOKIE["phorum_tmp_cookie"])) {
+                $PHORUM["use_cookies"] = false;
             }
+echo "here";
+            $username = trim($_POST["username"]);
+            $password = trim($_POST["password"]);
 
-            // Create an URI session id if cookies are not used..
-            if(!$PHORUM["use_cookies"]) {
-                $uri_session_id = md5($_POST['username'].microtime().$_POST['password']);
-                $user = array(
-                    'user_id'  => $PHORUM['user']['user_id'],
-                    'sessid_st'=> $uri_session_id
-                );
-                phorum_user_save_simple($user);
-                phorum_user_create_session(PHORUM_SESSION_LONG_TERM,true,$uri_session_id);
-            // Create cookie session(s).
-            } else {
-                if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-                    phorum_user_create_session(PHORUM_SESSION_LONG_TERM, false);
+            // Check if the login credentials are right.
+            if (phorum_user_check_login($username, $password)) {
+
+                // Destroy the temporary cookie.
+                if(isset($_COOKIE["phorum_tmp_cookie"])){
+                    setcookie( "phorum_tmp_cookie", "", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
                 }
-                if($PHORUM["tight_security"]){
-                    phorum_user_create_session(PHORUM_SESSION_SHORT_TERM, true);
+
+                // Create an URI session id if cookies are not used..
+                if(!$PHORUM["use_cookies"]) {
+                    $uri_session_id = md5($_POST['username'].microtime().$_POST['password']);
+                    $user = array(
+                        'user_id'  => $PHORUM['user']['user_id'],
+                        'sessid_st'=> $uri_session_id
+                    );
+                    phorum_user_save_simple($user);
+                    phorum_user_create_session(PHORUM_SESSION_LONG_TERM,true,$uri_session_id);
+                // Create cookie session(s).
+                } else {
+                    if (!$PHORUM["DATA"]["LOGGEDIN"]) {
+                        phorum_user_create_session(PHORUM_SESSION_LONG_TERM, false);
+                    }
+                    if($PHORUM["tight_security"]){
+                        phorum_user_create_session(PHORUM_SESSION_SHORT_TERM, true);
+                    }
                 }
+
+                // Determine the URL to redirect the user to.
+                // If redir is a number, it is a URL constant.
+                if(is_numeric($_POST["redir"])){
+                    $redir = phorum_get_url($_POST["redir"]);
+                }
+
+                // Redirecting to the registration or login page is a little weird,
+                // so we just go to the list page if we came from one of those.
+                elseif (isset($PHORUM['use_cookies']) && $PHORUM["use_cookies"] && !strstr($_POST["redir"], "register." . PHORUM_FILE_EXTENSION) && !strstr($_POST["redir"], "login." . PHORUM_FILE_EXTENSION)) {
+                    $redir = $_POST["redir"];
+
+                // By default, we redirect to the list page.
+                } else {
+                    $redir = phorum_get_url( PHORUM_LIST_URL );
+                }
+
+                // The hook "after_login" can be used by module writers to
+                // set a custom redirect URL.
+                $redir =phorum_hook( "after_login", $redir );
+
+                phorum_redirect_by_url($redir);
+                exit();
             }
 
-            // Determine the URL to redirect the user to.
-            // If redir is a number, it is a URL constant.
-            if(is_numeric($_POST["redir"])){
-                $redir = phorum_get_url($_POST["redir"]);
+            // Login failed.
+            else {
+                phorum_hook("failed_login", array(
+                    "username" => $username,
+                    "password" => $password,
+                    "location" => "forum"
+                ));
+                $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
             }
-
-            // Redirecting to the registration or login page is a little weird,
-            // so we just go to the list page if we came from one of those.
-            elseif (isset($PHORUM['use_cookies']) && $PHORUM["use_cookies"] && !strstr($_POST["redir"], "register." . PHORUM_FILE_EXTENSION) && !strstr($_POST["redir"], "login." . PHORUM_FILE_EXTENSION)) {
-                $redir = $_POST["redir"];
-
-            // By default, we redirect to the list page.
-            } else {
-                $redir = phorum_get_url( PHORUM_LIST_URL );
-            }
-
-            // The hook "after_login" can be used by module writers to
-            // set a custom redirect URL.
-            $redir =phorum_hook( "after_login", $redir );
-
-            phorum_redirect_by_url($redir);
-            exit();
-        }
-
-        // Login failed.
-        else {
-            phorum_hook("failed_login", array(
-                "username" => $username,
-                "password" => $password,
-                "location" => "forum"
-            ));
-            $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
         }
     }
 }
@@ -239,7 +246,7 @@ if (count($_POST) > 0) {
 // No data posted, so this is the first request. Here we set
 // a temporary cookie, so we can check if the user's browser
 // supports cookies.
-elseif($PHORUM["use_cookies"]) {
+elseif($PHORUM["use_cookies"] > PHORUM_NO_COOKIES) {
     setcookie( "phorum_tmp_cookie", "this will be destroyed once logged in", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
 }
 
