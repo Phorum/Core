@@ -19,7 +19,7 @@
 
 // if we are running in the webserver, bail out
 if (isset($_SERVER["REMOTE_ADDR"])) {
-   echo $PHORUM["DATA"]["LANG"]["CannotBeRunFromBrowser"];
+   echo "This script cannot be run from a browser.";
    return;
 }
 
