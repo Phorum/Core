@@ -37,7 +37,7 @@ if ( count( $_POST ) ) {
 
                 if ( empty( $value ) ) {
                     $_POST[$field] = dirname( $_SERVER["HTTP_REFERER"] );
-                } elseif ( !preg_match( "/^(http|https):\/\/(([a-z0-9][a-z0-9_-]*)(\.[a-z0-9][a-z0-9_-]*)+)(:(\d+))?/i", $value ) && !preg_match( "/^(http|https):\/\/[a-z0-9][a-z0-9_-]*(:\d+)?\//i", $value ) ) {
+                } elseif ( !preg_match( "/^(http|https):\/\/(([a-z0-9][a-z0-9_-]*)(\.[a-z0-9][a-z0-9_-]*)+)(:(\d+))?/i", $value ) && !preg_match( "/^(http|https):\/\/[a-z0-9][a-z0-9_-]*(:\d+)?/i", $value ) ) {
                     $error = "The provided HTTP Path is not a valid URL.";
                 }
 
