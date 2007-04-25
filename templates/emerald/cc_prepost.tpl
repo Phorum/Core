@@ -1,3 +1,24 @@
+<script type="text/javascript">
+var phorum_marked_all = false;
+function phorum_markAllCheckboxes() {
+	var pageform = document.getElementById('fprepost');
+	var elems = pageform.getElementsByTagName('input');
+
+	if(phorum_marked_all) {
+		newval = false;	
+	} else {
+		newval = true;
+	}
+	for(i=0; i<elems.length; i++){
+        if(elems[i].type == 'checkbox') {
+	   	   elems[i].checked=newval;
+        }
+	 
+	}
+	phorum_marked_all = newval;
+}
+</script>
+
 <form action="{URL->ACTION}" method="POST">
     {POST_VARS}
     <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
@@ -25,6 +46,10 @@
 {IF UNAPPROVEDMESSAGE}
     <div class="information">{UNAPPROVEDMESSAGE}</div>
 {ELSE}
+<form action="{URL->ACTION}" method="POST" id="fprepost">
+  {POST_VARS}
+    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
+    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     <table cellspacing="0" class="list">
         {LOOP PREPOST}
             {IF PREPOST->checkvar 1}
@@ -32,6 +57,7 @@
                     <th align="left">{PREPOST->forumname}</th>
                     <th align="left" nowrap="nowrap" width="150">{LANG->Author}&nbsp;</th>
                     <th align="left" nowrap="nowrap" width="150">{LANG->Date}&nbsp;</th>
+                    <th align="left" nowrap="nowrap" width="150" onclick="phorum_markAllCheckboxes()">{LANG->Delete}&nbsp;</th>
                 </tr>
             {/IF}
             <tr>
@@ -41,8 +67,15 @@
                 </td>
                 <td nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
                 <td nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
+                <td nowrap="nowrap" width="150"><input type="checkbox" name="deleteids[{PREPOST->message_id}]" value="1" /></td>
             </tr>
         {/LOOP PREPOST}
-    </table>
+<tr>
+<td colspan="3">&nbsp;</td>
+<td><input type="submit" name="submit" value="{LANG->Delete}" /></td>
+</tr>    
+</table>
+</form>
+    
 {/IF}
 

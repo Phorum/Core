@@ -61,6 +61,46 @@ $oldforum = $PHORUM['forum_id'];
 $mod_forums = phorum_user_access_list(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 $gotforums = (count($mod_forums) > 0);
 
+
+if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
+	//print_var($_POST['deleteids']);
+	$deleteids = $_POST['deleteids'];
+	foreach($deleteids as $did => $did_var) {
+	    $deleteids[$did] = (int)$did_var;
+	}
+	$delete_messages = phorum_db_get_message(array_keys($deleteids),'message_id',true);
+	//print_var($delete_messages);
+	foreach($deleteids as $msgthd_id => $doit) {
+		
+        // A hook to allow modules to implement extra or different
+        // delete functionality.
+        if($doit && isset($mod_forums[$delete_messages[$msgthd_id]['forum_id']])) {
+
+
+            $delete_handled = 0;
+            list($delete_handled,$msg_ids,$msgthd_id,$delete_messages[$msgthd_id],$delete_mode) =
+            phorum_hook("before_delete", array(0,0,$msgthd_id,$delete_messages[$msgthd_id],PHORUM_DELETE_MESSAGE));
+
+            // Handle the delete action, unless a module already handled it.
+            if (!$delete_handled) {
+
+                // Delete the message from the database.
+                phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
+
+                // Delete the message attachments from the database.
+                $files=phorum_db_get_message_file_list($msgthd_id);
+                foreach($files as $file_id=>$data) {
+                    phorum_db_file_delete($file_id);
+                }
+            }
+
+            // Run a hook for performing custom actions after cleanup.
+            phorum_hook("delete", array($msgthd_id));
+        }
+		
+	}
+}
+
 $PHORUM['DATA']['PREPOST'] = array();
 
 if ($gotforums)

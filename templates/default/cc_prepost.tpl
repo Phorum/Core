@@ -1,3 +1,24 @@
+<script type="text/javascript">
+var phorum_marked_all = false;
+function phorum_markAllCheckboxes() {
+	var pageform = document.getElementById('fprepost');
+	var elems = pageform.getElementsByTagName('input');
+
+	if(phorum_marked_all) {
+		newval = false;	
+	} else {
+		newval = true;
+	}
+	for(i=0; i<elems.length; i++){
+        if(elems[i].type == 'checkbox') {
+	   	   elems[i].checked=newval;
+        }
+	 
+	}
+	phorum_marked_all = newval;
+}
+</script>
+
 <form action="{URL->ACTION}" method="POST">
   {POST_VARS}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UnapprovedMessages}</div>
@@ -22,6 +43,8 @@
     <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
   </div>
 </form><br />
+<form action="{URL->ACTION}" method="POST" id="fprepost">
+  {POST_VARS}
 <table border="0" cellspacing="0" class="PhorumStdTable">
   {IF UNAPPROVEDMESSAGE}
     <tr>
@@ -33,12 +56,13 @@
     {LOOP PREPOST}
       {IF PREPOST->checkvar 1}
         <tr>
-          <th class="PhorumTableHeader" align="left" colspan="3">{PREPOST->forumname}</th>
+          <th class="PhorumTableHeader" align="left" colspan="4">{PREPOST->forumname}</th>
         </tr>
         <tr>
           <th class="PhorumTableHeader" align="left">{LANG->Subject}</th>
           <th class="PhorumTableHeader" align="left" nowrap="nowrap" width="150">{LANG->Author}&nbsp;</th>
           <th class="PhorumTableHeader" align="left" nowrap="nowrap" width="150">{LANG->Date}&nbsp;</th>
+          <th class="PhorumTableHeader" align="left" nowrap="nowrap" width="150" onclick="phorum_markAllCheckboxes()">{LANG->Delete}&nbsp;</th>
         </tr>
       {/IF}
       <tr>
@@ -48,7 +72,13 @@
         </td>
         <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
         <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
+        <td class="PhorumListTableRowSmall" nowrap="nowrap" width="150"><input type="checkbox" name="deleteids[{PREPOST->message_id}]" value="1" /></td>
       </tr>
     {/LOOP PREPOST}
+<tr>
+ 	<td class="PhorumListTableRow" colspan="3">&nbsp;</td>
+    <td class="PhorumListTableRowSmall"><input type="submit" name="submit" value="{LANG->Delete}" /></td>
+</tr>    
   {/IF}
 </table>
+</form>
