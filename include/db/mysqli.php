@@ -5065,37 +5065,34 @@ function phorum_db_escape_string($str)
  *
  * @param array $queries
  *
- * @return string
+ * @return Either NULL (no error occurred) or a string containing an error.
  */
 function phorum_db_run_queries($queries){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_mysqli_connect();
 
-    $retmsg = "";
-
-    foreach($queries as $sql){
-        $ignore_error = false;
-
+    foreach($queries as $sql)
+    {
         $res = mysqli_query($conn, $sql);
         $errno = mysqli_errno($conn);
 
-        switch ($errno) {
-            case 1050: // Table already exists.
-            case 1060: // Duplicate column name.
-            case 1061: // Duplicate key name.
-            case 1091: // Can't drop column, doesn't exist
-              $ignore_error = TRUE;
-              break;
-        }
+        if($errno) {
+            // Some errors that we ignore, because these might be run
+            // twice during upgrades where things went wrong.
+            switch ($errno) {
+                case 1050: // Table already exists
+                case 1060: // Duplicate column name.
+                case 1061: // Duplicate key name.
+                case 1091: // Can't drop column, doesn't exist
+                    continue;
+            }
 
-        if(!$ignore_error){
-            $err = mysqli_error($conn);
-            phorum_database_error("$err: $sql");
+            return mysqli_error($conn);
         }
     }
 
-    return $retmsg;
+    return NULL;
 }
 
 /**

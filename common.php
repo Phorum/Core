@@ -1161,7 +1161,7 @@ function phorum_database_error($error)
 
     // Create a backtrace report, so it's easier to find out where a problem
     // is coming from.
-    $backtrace = phorum_generate_backtrace(1);
+    $backtrace = phorum_generate_backtrace(0);
 
     // Start the error page.
     ?>

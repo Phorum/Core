@@ -311,7 +311,7 @@ function phorum_dbupgrade_run($upgrade)
 
         // Run the upgrade queries.
         $err = phorum_db_run_queries($upgrade_queries);
-        if($err){
+        if($err !== NULL){
             $msg.= "An error occured during this upgrade:<br/><br/>\n" .
                    "<span style=\"color:red\">$err</span><br/><br/>\n" .
                    "Please make note of this error and contact the " .

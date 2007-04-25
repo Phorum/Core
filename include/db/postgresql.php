@@ -4302,7 +4302,7 @@ function phorum_db_run_queries($queries){
 
     $conn = phorum_db_postgresql_connect();
 
-    $retmsg = "";
+    $retmsg = NULL;
 
     foreach($queries as $sql){
         $res = pg_query($conn, $sql);
