@@ -145,6 +145,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
               if ($flags & DB_MISSINGTABLEOK) $ignore_error = TRUE;
               break;
 
+            // Table already exists.
+            case 1050:
+              if ($flags & DB_TABLEEXISTSOK) $ignore_error = TRUE;
+              break;
+
             // Duplicate column name.
             case 1060:
               if ($flags & DB_DUPFIELDNAMEOK) $ignore_error = TRUE;

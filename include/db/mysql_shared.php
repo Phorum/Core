@@ -102,6 +102,7 @@ define('DB_MISSINGTABLEOK',  2);
 define('DB_DUPFIELDNAMEOK',  4);
 define('DB_DUPKEYNAMEOK',    8);
 define('DB_DUPKEYOK',       16);
+define('DB_TABLEEXISTSOK',  32);
 
 
 // ----------------------------------------------------------------------
@@ -207,7 +208,7 @@ function phorum_db_run_queries($queries)
         $error = phorum_db_interact(
             DB_RETURN_ERROR,
             $sql, NULL,
-            DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK
+            DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK | DB_TABLEEXISTSOK
         );
 
         if ($error !== NULL) break;

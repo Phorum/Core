@@ -5060,6 +5060,7 @@ function phorum_db_run_queries($queries){
         $errno = mysql_errno($conn);
 
         switch ($errno) {
+            case 1050: // Table already exists
             case 1060: // Duplicate column name.
             case 1061: // Duplicate key name.
             case 1091: // Can't drop column, doesn't exist
