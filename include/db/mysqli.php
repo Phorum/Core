@@ -2317,9 +2317,9 @@ function phorum_db_user_check_field($field, $value, $operator="=", $return_array
         $operator=array($operator);
     }
 
-    if (count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){ 
-        return $ret; 
-    } 
+    if (count($field)!=count($value) || count($field)!=count($operator) || count($operator)!=count($value)){
+        return $ret;
+    }
 
     $valid_operators = array("=", "<>", "!=", ">", "<", ">=", "<=");
 
@@ -4716,7 +4716,7 @@ function phorum_db_rebuild_user_posts() {
  * 		Return an array of users if any matched, or NULL if there were no
  * 		matches.
  */
-function phorum_db_get_custom_field_users($field_id,$field_content,$match) 
+function phorum_db_get_custom_field_users($field_id,$field_content,$match)
 {
     $conn = phorum_db_mysqli_connect();
 
@@ -5075,14 +5075,22 @@ function phorum_db_run_queries($queries){
     $retmsg = "";
 
     foreach($queries as $sql){
+        $ignore_error = false;
+
         $res = mysqli_query($conn, $sql);
-        if ($err = mysqli_error($conn)){
-            // skip duplicate column and key name errors
-            if(!stristr($err, "duplicate column") &&
-               !stristr($err, "duplicate key")){
-                $retmsg.= "$err<br />";
-                phorum_database_error("$err: $sql");
-            }
+        $errno = mysqli_errno($conn);
+
+        switch ($errno) {
+            case 1060: // Duplicate column name.
+            case 1061: // Duplicate key name.
+            case 1091: // Can't drop column, doesn't exist
+              $ignore_error = TRUE;
+              break;
+        }
+
+        if(!$ignore_error){
+            $err = mysqli_error($conn);
+            phorum_database_error("$err: $sql");
         }
     }
 

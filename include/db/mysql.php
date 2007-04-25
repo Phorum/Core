@@ -5054,14 +5054,22 @@ function phorum_db_run_queries($queries){
     $retmsg = "";
 
     foreach($queries as $sql){
+
+        $ignore_error = false;
         $res = mysql_query($sql, $conn);
-        if ($err = mysql_error($conn)){
-            // skip duplicate column and key name errors
-            if(!stristr($err, "duplicate column") &&
-               !stristr($err, "duplicate key")){
-                $retmsg.= "$err<br />";
-                phorum_database_error("$err: $sql");
-            }
+        $errno = mysql_errno($conn);
+
+        switch ($errno) {
+            case 1060: // Duplicate column name.
+            case 1061: // Duplicate key name.
+            case 1091: // Can't drop column, doesn't exist
+              $ignore_error = TRUE;
+              break;
+        }
+
+        if(!$ignore_error){
+            $err = mysql_error($conn);
+            phorum_database_error("$err: $sql");
         }
     }
 
