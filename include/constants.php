@@ -179,6 +179,13 @@
     define("PHORUM_CC_GROUP_MODERATION", "groupmod");
     define("PHORUM_CC_GROUP_MEMBERSHIP", "groups");
 
+    // Phorum up/down status
+    define("PHORUM_MASTER_STATUS_NORMAL", "normal");
+    define("PHORUM_MASTER_STATUS_READ_ONLY", "read-only");
+    define("PHORUM_MASTER_STATUS_ADMIN_ONLY", "admin-only");
+    define("PHORUM_MASTER_STATUS_DISABLED", "disabled");
+
+
     // constants below here do not have to have a constant value,
     // as long as each is unique.  They are used for enumeration.
     // Add to them as you wish knowing that.

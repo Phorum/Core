@@ -133,6 +133,8 @@ Some Icons courtesy of:
 
 </div>
 
+{IF GLOBAL_ERROR}<div class="attention">{GLOBAL_ERROR}</div>{/IF}
+
 {IF USER->NOTICE->SHOW}
     <div class="attention">
         <h4>{LANG->NeedsAttention}</h4>

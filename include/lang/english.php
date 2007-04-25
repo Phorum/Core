@@ -414,7 +414,7 @@
         "QuoteMessage"          =>      "Quote",
 
         "read"                  =>      "read",
-        "ReadOnlyMessage"       =>      "This forum is currently read only.  This is a temporary situation.  Please check back later.",
+        "ReadOnlyMessage"       =>      "This forum is currently read only.  You can not log in or make any changes. This is a temporary situation.",
         "ReadPrivateMessages"   =>      "Read Private Messages",
         "RealName"              =>      "Real Name",
         "Received"              =>      "Received",

@@ -214,7 +214,7 @@ $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // if the Phorum is disabled, display a message.
-    if(isset($PHORUM["status"]) && $PHORUM["status"]=="disabled"){
+    if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_DISABLED){
         if(!empty($PHORUM["disabled_url"])){
             header("Location: ".$PHORUM["disabled_url"]);
             exit();
@@ -288,6 +288,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // check the user session
     include_once( "./include/users.php" );
+
     if ( phorum_user_check_session() ) {
         $PHORUM["DATA"]["LOGGEDIN"] = true;
 
@@ -392,18 +393,24 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
 
     // if the Phorum is disabled, display a message.
-    if(isset($PHORUM["status"]) && $PHORUM["status"]=="admin-only" && !$PHORUM["user"]["admin"]){
-        // set all our URL's
-        phorum_build_common_urls();
+    if( !$PHORUM["user"]["admin"] ) {
+        if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_ADMIN_ONLY ){
+            // set all our URL's
+            phorum_build_common_urls();
 
-        $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-        include phorum_get_template("header");
-        phorum_hook("after_header");
-        include phorum_get_template("message");
-        phorum_hook("before_footer");
-        include phorum_get_template("footer");
-        exit();
+            $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
+            include phorum_get_template("header");
+            phorum_hook("after_header");
+            include phorum_get_template("message");
+            phorum_hook("before_footer");
+            include phorum_get_template("footer");
+            exit();
 
+        } elseif($PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
+            $PHORUM["DATA"]["GLOBAL_ERROR"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
+            $PHORUM["user"] = array( "user_id" => 0, "username" => "", "admin" => false, "newinfo" => array() );
+            $PHORUM["DATA"]["LOGGEDIN"] = false;
+        }
     }
 
     // If moderator notifications are on and the person is a mod,
@@ -1083,7 +1090,7 @@ function phorum_check_data_signature($data, $signature)
 }
 
 /**
- * Generate a debug back trace. 
+ * Generate a debug back trace.
  *
  * @param $skip       - The amount of back trace levels to skip. The call
  *                      to this function is skipped by default, so you don't
@@ -1114,7 +1121,7 @@ function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}")
             // Don't include the call to this function.
             if ($id == 0) continue;
 
-            // Skip the required number of steps. 
+            // Skip the required number of steps.
             if ($id <= $skip) continue;
 
             if ($hidepath !== NULL && isset($step["file"])) {
@@ -1153,9 +1160,9 @@ function phorum_database_error($error)
             : 'screen';
 
     // Create a backtrace report, so it's easier to find out where a problem
-    // is coming from. 
+    // is coming from.
     $backtrace = phorum_generate_backtrace(1);
-    
+
     // Start the error page.
     ?>
     <html>
@@ -1198,7 +1205,7 @@ function phorum_database_error($error)
         case "screen":
 
             $htmlbacktrace = $backtrace === NULL
-                           ? NULLL 
+                           ? NULLL
                            : nl2br(htmlspecialchars($backtrace));
 
             print "Please try again later!" .
