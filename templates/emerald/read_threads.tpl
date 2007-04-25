@@ -74,10 +74,7 @@
 
         {IF MODERATOR true}
             <div class="message-moderation">
-                {IF MESSAGE->threadstart true}
-                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
-                    {IF MESSAGE->URL->MOVE}<a class="icon icon-move" href="{MESSAGE->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
-                {ELSE}
+                {IF MESSAGE->threadstart false}
                     <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
                     <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DelMessReplies}</a>
                     <a class="icon icon-split" href="{MESSAGE->URL->SPLIT}">{LANG->SplitThread}</a>
