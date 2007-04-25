@@ -64,7 +64,7 @@ if ($mode == "reply") {
 
 // Do specific actions for new threads with a "special" flag.
 if ($mode == "post" && isset($message["special"])) {
-    if ($message["special"]=="sticky" && 
+    if ($message["special"]=="sticky" &&
         $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"]) {
         $message["sort"] = PHORUM_SORT_STICKY;
     }
@@ -242,6 +242,5 @@ $message = $message_copy;
 $PHORUM["DATA"]["ERROR"] = $success === 0
                          ? $PHORUM["DATA"]["LANG"]['PostErrorDuplicate']
                          : $PHORUM["DATA"]["LANG"]['PostErrorOccured'];
-$error_flag = true;
 
 ?>

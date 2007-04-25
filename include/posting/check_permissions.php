@@ -21,10 +21,10 @@ if(!defined("PHORUM")) return;
 
 // Check if the user is allowed to post a new message or a reply.
 if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
-    ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) { 
+    ($mode == "reply" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_REPLY)) ) {
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
         // If users are logged in and can't post, they don't have rights to do so.
-        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+        $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
     } else {
         // Check if they could post if logged in. If so, let them know to log in.
         if( ($mode == "reply" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_REPLY) ||
@@ -33,11 +33,10 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
             $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
             $PHORUM["DATA"]["URL"]["CLICKHERE"] = phorum_get_url(PHORUM_LOGIN_URL);
         } else {
-            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
     }
     $PHORUM["posting_template"] = "message";
-    $error_flag = true;
     return;
 
 // Check that they are logged in according to the security settings in
@@ -53,11 +52,10 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
         if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
         $redir = urlencode(call_user_func_array('phorum_get_url', $args));
         $url = phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir");
-        
+
         $PHORUM["DATA"]["URL"]["REDIRECT"] = $url;
         $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["LogIn"];
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
-        $error_flag = true;
         return;
 
     } else {
@@ -72,7 +70,7 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
         phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL,"redir=$redir"));
         exit();
 
-    } 
+    }
 }
 
 // Put read-only user info in the message.
@@ -142,7 +140,7 @@ if ($mode == "reply")
         $top_parent["status"] != PHORUM_STATUS_APPROVED ||
         $parent["status"] != PHORUM_STATUS_APPROVED;
 
-    if ($unapproved) 
+    if ($unapproved)
     {
         // In case we run the editor included in the read page,
         // we should not redirect to the listpage for moderators.
@@ -150,7 +148,6 @@ if ($mode == "reply")
         if (isset($PHORUM["postingargs"]["as_include"])) {
             if ($PHORUM["DATA"]["MODERATOR"]) {
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UnapprovedMessage"];
-                $error_flag = true;
                 return;
             }
         }
@@ -181,8 +178,7 @@ if ($mode == "edit")
         $message["forum_id"] == $PHORUM["forum_id"];
 
     if (!$useredit && !$moderatoredit) {
-        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
-        $error_flag = true;
+        $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
         return;
     }
 }

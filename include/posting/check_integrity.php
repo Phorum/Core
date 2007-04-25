@@ -61,7 +61,6 @@ if (! $error)
 
 if ($error) {
     $PHORUM["DATA"]["ERROR"] = $error;
-    $error_flag = true;
 }
 
 ?>

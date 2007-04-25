@@ -48,8 +48,7 @@ $bans[] = array($message["body"], PHORUM_BAD_SPAM_WORDS);
 // Run the checks.
 $msg = phorum_check_bans($bans);
 if (!is_null($msg)) {
-    $PHORUM["DATA"]["MESSAGE"] = $msg;
-    $error_flag = true;
+    $PHORUM["DATA"]["ERROR"] = $msg;
 }
 
 ?>

@@ -257,7 +257,6 @@ phorum_build_common_urls();
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_POSTING_URL);
 
 // Keep track of errors.
-$error_flag = false;
 $PHORUM["DATA"]["MESSAGE"] = null;
 $PHORUM["DATA"]["ERROR"] = null;
 
@@ -304,79 +303,74 @@ if ($message["message_id"]) {
 
 // Do ban list checks. Only check the bans on entering and
 // on finishing up. No checking is needed on intermediate requests.
-if (! $error_flag && ($initial || $finish || $preview)) {
+if ($initial || $finish || $preview) {
     include("./include/posting/check_banlist.php");
 }
 
 // Determine the abilities that the current user has.
-if (! $error_flag)
-{
-    // Is the forum running in a moderated state?
-    $PHORUM["DATA"]["MODERATED"] =
-        $PHORUM["moderation"] == PHORUM_MODERATE_ON &&
-        !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+// Is the forum running in a moderated state?
+$PHORUM["DATA"]["MODERATED"] =
+    $PHORUM["moderation"] == PHORUM_MODERATE_ON &&
+    !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-    // Does the user have administrator permissions?
-    $PHORUM["DATA"]["ADMINISTRATOR"] = $PHORUM["user"]["admin"];
+// Does the user have administrator permissions?
+$PHORUM["DATA"]["ADMINISTRATOR"] = $PHORUM["user"]["admin"];
 
-    // Does the user have moderator permissions?
-    $PHORUM["DATA"]["MODERATOR"] =
-        phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+// Does the user have moderator permissions?
+$PHORUM["DATA"]["MODERATOR"] =
+    phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-    // Ability: Do we allow attachments?
-    $PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
+// Ability: Do we allow attachments?
+$PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
 
-    $PHORUM["DATA"]["EMAILNOTIFY"] =
-    (isset($PHORUM['allow_email_notify']) && !empty($PHORUM['allow_email_notify']))? 1 : 0;
+$PHORUM["DATA"]["EMAILNOTIFY"] =
+(isset($PHORUM['allow_email_notify']) && !empty($PHORUM['allow_email_notify']))? 1 : 0;
 
-    // What options does this user have for a message?
-    $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
-        "sticky"        => false, // Sticky flag for message sorting
-        "allow_reply"   => false, // Whether replies are allowed in the thread
-    );
-    // For moderators and administrators.
-    if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"]) && $message["parent_id"] == 0) {
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = true;
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"] = true;
-    }
+// What options does this user have for a message?
+$PHORUM["DATA"]["OPTION_ALLOWED"] = array(
+    "sticky"        => false, // Sticky flag for message sorting
+    "allow_reply"   => false, // Whether replies are allowed in the thread
+);
+// For moderators and administrators.
+if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"]) && $message["parent_id"] == 0) {
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = true;
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"] = true;
+}
 
-    // Whether the user is allowed to change the author.
-    $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = false;
-    // Allowed if author was made a read/write field.
-    if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
+// Whether the user is allowed to change the author.
+$PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = false;
+// Allowed if author was made a read/write field.
+if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
+} else {
+    // Allowed if a moderator edits a message.
+    if ($mode == "edit") {
+        if ($PHORUM["DATA"]["MODERATOR"]) {
+            $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
+        }
+    // Allowed if an anonymous user posts a new message or a reply.
     } else {
-        // Allowed if a moderator edits a message.
-        if ($mode == "edit") {
-            if ($PHORUM["DATA"]["MODERATOR"]) {
-                $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
-            }
-        // Allowed if an anonymous user posts a new message or a reply.
-        } else {
-            if (! $PHORUM["DATA"]["LOGGEDIN"]) {
-                $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
-            }
+        if (! $PHORUM["DATA"]["LOGGEDIN"]) {
+            $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
         }
     }
 }
 
-if (! $error_flag)
-{
-    // A hook to allow modules to change the abilities from above.
-    phorum_hook("posting_permission");
 
-    // Show special sort options in the editor? These only are
-    // honoured for the thread starter messages, so we check the
-    // parent_id for that.
-    $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] =
-        $message["parent_id"] == 0 &&
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"];
+// A hook to allow modules to change the abilities from above.
+phorum_hook("posting_permission");
 
-    // Show special sort options or allow_reply in the editor?
-    $PHORUM["DATA"]["SHOW_THREADOPTIONS"] =
-        $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] ||
-        $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"];
-}
+// Show special sort options in the editor? These only are
+// honoured for the thread starter messages, so we check the
+// parent_id for that.
+$PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] =
+    $message["parent_id"] == 0 &&
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"];
+
+// Show special sort options or allow_reply in the editor?
+$PHORUM["DATA"]["SHOW_THREADOPTIONS"] =
+    $PHORUM["DATA"]["SHOW_SPECIALOPTIONS"] ||
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"];
 
 // Set extra writeable fields, based on the user's abilities.
 if (isset($PHORUM["DATA"]["ATTACHMENTS"]) && $PHORUM["DATA"]["ATTACHMENTS"]) {
@@ -399,15 +393,14 @@ if (isset($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) && $PHORUM["DATA"]["
 // Check permissions and apply read-only data.
 // Only do this on entering and on finishing up.
 // No checking is needed on intermediate requests.
-if (! $error_flag && ($initial || $finish)) {
+if ($initial || $finish) {
     include("./include/posting/check_permissions.php");
 }
 
 // Do permission checks for attachment management.
-if (! $error_flag && ($do_attach || $do_detach)) {
+if ($do_attach || $do_detach) {
     if (! $PHORUM["DATA"]["ATTACHMENTS"]) {
-        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
-        $error_flag = true;
+        $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["AttachNotAllowed"];
     }
 }
 
@@ -422,12 +415,12 @@ $message = phorum_hook("posting_custom_action", $message);
 
 // Only check the integrity of the data on finishing up. During the
 // editing process, the user may produce garbage as much as he likes.
-if (! $error_flag && ($finish || $preview)) {
+if ($finish || $preview) {
     include("./include/posting/check_integrity.php");
 }
 
 // Handle cancel request.
-if (! $error_flag && $cancel) {
+if ($cancel) {
     include("./include/posting/action_cancel.php");
 }
 
@@ -444,12 +437,12 @@ foreach ($message["attachments"] as $attachment) {
 
 // Attachment management. This will update the
 // $attach_count and $attach_totalsize variables.
-if (! $error_flag && ($do_attach || $do_detach)) {
+if ($do_attach || $do_detach) {
     include("./include/posting/action_attachments.php");
 }
 
 // Handle finishing actions.
-if (! $error_flag && $finish)
+if ( !$PHORUM["DATA"]["ERROR"] && $finish )
 {
     // Posting mode
     if ($mode == "post" || $mode == "reply") {
@@ -676,7 +669,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
             case "email_notify":
                 $type = phorum_db_get_if_subscribed(
                     $db["forum_id"], $db["thread"], $db["user_id"]);
-                $form[$key] = $type !== NULL && 
+                $form[$key] = $type !== NULL &&
                               $type == PHORUM_SUBSCRIPTION_MESSAGE;
                 break;
 
@@ -695,7 +688,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                 }
                 break;
 
-            case "author": 
+            case "author":
             case "email":
                 if ($db["user_id"] &&
                     $PHORUM["post_fields"][$key][pf_READONLY]) {

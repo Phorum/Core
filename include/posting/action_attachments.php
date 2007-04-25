@@ -72,7 +72,7 @@ elseif ($do_attach && ! empty($_FILES))
         if (isset($file["error"]) && $file["error"]) {
             if ($file["error"] == UPLOAD_ERR_INI_SIZE ||
                 $file["error"] == UPLOAD_ERR_FORM_SIZE) {
-                // File too large. Just pass it on to the 
+                // File too large. Just pass it on to the
                 // following code to handle the error message.
                 $file_too_large = true;
             } else {
@@ -88,7 +88,6 @@ elseif ($do_attach && ! empty($_FILES))
                 phorum_filesize($PHORUM["max_attachment_size"] * 1024),
                 $PHORUM["DATA"]["LANG"]["AttachFileSize"]
             );
-            $error_flag = true;
             break;
         }
 
@@ -108,7 +107,6 @@ elseif ($do_attach && ! empty($_FILES))
                 phorum_filesize($PHORUM["max_totalattachment_size"] * 1024),
                 $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]
             );
-            $error_flag = true;
             break;
         }
 
@@ -121,7 +119,6 @@ elseif ($do_attach && ! empty($_FILES))
                 $PHORUM["DATA"]["ERROR"] =
                     $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ".
                     str_replace('%types%', str_replace(";", ", ", $PHORUM["allow_attachment_types"]), $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
-                $error_flag = true;
                 break;
             }
         }
@@ -170,14 +167,13 @@ elseif ($do_attach && ! empty($_FILES))
 
     // Show a generic error message if nothing was attached and
     // no specific message was set.
-    if (! $error_flag && ! $attached) {
+    if (! $PHORUM["DATA"]["ERROR"] && ! $attached) {
         $PHORUM["DATA"]["ERROR"] =
             $PHORUM["DATA"]["LANG"]["AttachmentsMissing"];
-        $error_flag = true;
     }
 
     // Show a success message in case an attachment is added.
-    if (! $error_flag && $attached) {
+    if ( $attached) {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AttachmentAdded"];
 
     }
