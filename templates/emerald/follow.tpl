@@ -12,7 +12,7 @@
         {LANG->YouWantToFollow}<br />
         <strong>{SUBJECT}</strong><br /><br />
         {LANG->FollowExplanation}<br /><br />
-        <input type="checkbox" name="send_email" checked="checked" />&nbsp;{LANG->FollowWithEmail}<br /><br />
+        <input type="checkbox" name="send_email" id="send-email" checked="checked" /><label for="send-email">&nbsp;{LANG->FollowWithEmail}</label><br /><br />
         <input type="submit" value="{LANG->Submit}" />
     </div>
   </form>

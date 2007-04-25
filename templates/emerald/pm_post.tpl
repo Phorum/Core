@@ -72,7 +72,7 @@
             <br />
 
             {LANG->Options}:<br />
-            <input type="checkbox" name="keep" value="1"{IF MESSAGE->keep} checked="checked" {/IF} /> {LANG->KeepCopy}<br />
+            <input type="checkbox" id="keep" name="keep" value="1"{IF MESSAGE->keep} checked="checked" {/IF} /><label for="keep"> {LANG->KeepCopy}</label><br />
             <br />
 
 
