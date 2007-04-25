@@ -175,7 +175,7 @@ if (count($_POST) > 0) {
             if(!isset($_COOKIE["phorum_tmp_cookie"])) {
                 $PHORUM["use_cookies"] = false;
             }
-echo "here";
+
             $username = trim($_POST["username"]);
             $password = trim($_POST["password"]);
 

@@ -7,6 +7,19 @@ function phorum_bb_code($data)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // TODO This is just for testing event logging. This should not
+    // TODO go in the core code. If it does, then kick Maurice, so
+    // TODO he'll remove it.
+    /*
+    trigger_error("Trigger error from the bbcode mod", E_USER_WARNING);
+    print $thisvardoesnotexist;
+    if (function_exists('event_logging_writelog')) {
+        event_logging_writelog(array(
+            "message"   => "Just a test log message from the bbcode mod"
+        ));
+    }
+    */
+
     $search = array(
         "/\[img\]((http|https|ftp):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%# ]+?)\[\/img\]/is",
         "/\[url\]((http|https|ftp|mailto):\/\/([a-z0-9\.\-@:]+)[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),\#%~ ]*?)\[\/url\]/is",
