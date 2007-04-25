@@ -27,7 +27,7 @@ define( "PHORUM", "5.2-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2007042401" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2007042502" );
 
 define( "DEBUG", 0 );
 

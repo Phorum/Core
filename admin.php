@@ -276,5 +276,48 @@
         }
         return $new;
     }
+    
+    function phorum_admin_build_path_array($only_forum = -1)
+    {
+
+        $folders=array();
+        $folder_data=array();
+
+        $forums = phorum_db_get_forums();
+        $forums[0]=array('vroot'=>0,'forum_id'=>0,'name'=>$GLOBALS['PHORUM']['title']);
+
+        //print_var($forums['20428']);
+
+        foreach($forums as $forum){
+
+            if($only_forum == -1 || $forum['forum_id'] == $only_forum)  {
+                
+                $path = array();
+                $path[$forum['forum_id']] = $forum["name"];
+                $parent_id=$forum["parent_id"];
+
+                if($forum['forum_id'] != $forum['vroot']) {
+
+                    while( true ){
+
+                        $path[$parent_id]=$forums[$parent_id]["name"];
+
+                        // get-out condition
+                        if($parent_id == 0 || $forums[$parent_id]["vroot"] == $forums[$parent_id]["forum_id"]) {
+                            break;
+                        }
+
+                        $parent_id=$forums[$parent_id]["parent_id"];
+
+                    }
+                }
+            }
+            $folders[$forum["forum_id"]]=$path;
+        }
+
+
+        return $folders;
+
+    }
 
 ?>

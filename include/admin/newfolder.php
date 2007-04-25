@@ -76,16 +76,55 @@
                 $cur_folder_id=$_POST['forum_id'];
                 $res=phorum_db_update_forum($_POST);
             // add the folder
-            } else {
+            } else {                
+                
                 $res=phorum_db_add_forum($_POST);
                 $cur_folder_id=$res;
+                
+                $built_paths = phorum_admin_build_path_array($cur_folder_id);
+
+                $update_forum = array('forum_id'=>$cur_folder_id,
+                'forum_path'=>serialize($built_paths[$cur_folder_id]));
+                phorum_db_update_forum($update_forum);
             }
+            
+            // check for changes which require a forum-path update
+            $setforumpath = false;
+            if(defined("PHORUM_EDIT_FOLDER")){
+                if($oldfolder['name'] != $_POST['name'] ||
+                   $oldfolder['parent_id'] != $_POST['parent_id'] ) {
+                       $setforumpath = true;
+                   }
+            // add the folder
+            }
+                        
 
             // other db-operations done, now doing the work for vroots
             if($res){
 
                 $cur_folder_tmp=phorum_db_get_forums($cur_folder_id);
                 $cur_folder=array_shift($cur_folder_tmp);
+                
+                if($setforumpath) {
+                    $setforum_children = phorum_admin_get_descending($cur_folder_id);
+
+                    $built_paths = phorum_admin_build_path_array();
+                    
+                    $update_forum = array('forum_id'=>$cur_folder_id,
+                                    'forum_path'=>serialize($built_paths[$cur_folder_id]));
+                    phorum_db_update_forum($update_forum);
+                    
+                    if(is_array($setforum_children) && count($setforum_children)) {
+
+                        foreach ($setforum_children as $child_forum_id => $child) {
+                            $update_forum = array('forum_id'=>$child['forum_id'],
+                            'forum_path'=>serialize($built_paths[$child_forum_id]));
+                            phorum_db_update_forum($update_forum);
+                        }
+                        
+                    }
+                    
+                }
 
 
                 if (!$setvroot && (

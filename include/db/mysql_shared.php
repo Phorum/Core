@@ -5673,6 +5673,7 @@ function phorum_db_create_tables()
            vroot                    int unsigned   NOT NULL default '0',
            edit_post                tinyint(1)     NOT NULL default '1',
            template_settings        text           NOT NULL default '',
+           forum_path               text           NOT NULL default '',           
            count_views              tinyint(1)     NOT NULL default '0',
            display_fixed            tinyint(1)     NOT NULL default '0',
            reverse_threading        tinyint(1)     NOT NULL default '0',
