@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoverageXmlParser</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoverageXmlParser</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Special parser for SpikePHPCoverage data parsing</p>
+<p class="description"><p>Expect input in following format:  &lt;spike-phpcoverage&gt;    &lt;file path=&quot;/complete/file/path&quot;&gt;      &lt;line line-number=&quot;10&quot; frequency=&quot;1&quot;/&gt;      &lt;line line-number=&quot;12&quot; frequency=&quot;2&quot;/&gt;    &lt;/file&gt;    &lt;file path=&quot;/another/file/path&quot;&gt;      ...    &lt;/file&gt;  &lt;/spike-phpcoverage&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">version:</span> $Revision: $</li>
+				<li><span class="field">author:</span> Nimish Pachapurkar &lt;<a href="mailto:npac@spikesource.com">npac@spikesource.com</a>&gt;</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_parser_CoverageXmlParser_php.html">/parser/CoverageXmlParser.php</a> (line <span class="field">31</span>)
+		</p>
+		
+				
+		<pre>XML_Parser
+   |
+   --<a href="../SpikePHPCoverage_Parser/BasicXmlParser.html">BasicXmlParser</a>
+      |
+      --CoverageXmlParser</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$_data" title="details" class="var-name">$_data</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$_lastFilePath" title="details" class="var-name">$_lastFilePath</a>
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getCoverageData" title="details" class="method-name">getCoverageData</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#startHandler" title="details" class="method-name">startHandler</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$xp</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$attrs</span>)
+									</div>
+							</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$_data" id="$_data"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$_data</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">34</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_lastFilePath" id="$_lastFilePath"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$_lastFilePath</span>
+						(line <span class="line-number">35</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html">BasicXmlParser</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#var$docroot">BasicXmlParser::$docroot</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#var$openTags">BasicXmlParser::$openTags</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodgetCoverageData" id="getCoverageData"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCoverageData</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns coverage data array from the XML</p>
+<p class="description"><p>Format:  Array  (    [/php/src/remote/RemoteCoverageRecorder.php] =&gt; Array    (      [220] =&gt; 1      [221] =&gt; 1    )</p><p>[/opt/oss/share/apache2/htdocs/web/sample.php] =&gt; Array    (      [16] =&gt; 1      [18] =&gt; 1    )  )</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getCoverageData
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodstartHandler" id="startHandler"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">startHandler</span> (line <span class="line-number">40</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			startHandler
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$xp</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$attrs</span>)
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodstartHandler">BasicXmlParser::startHandler()</a></dt>
+						<dd>Function to handle start of an element</dd>
+					</dl>
+		
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html">BasicXmlParser</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodBasicXmlParser">BasicXmlParser::BasicXmlParser()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodcdataHandler">BasicXmlParser::cdataHandler()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodendHandler">BasicXmlParser::endHandler()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodgetCData">BasicXmlParser::getCData()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodgetDocumentArray">BasicXmlParser::getDocumentArray()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodgetLastOpenTag">BasicXmlParser::getLastOpenTag()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodhandleAttrTag">BasicXmlParser::handleAttrTag()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Parser/BasicXmlParser.html#methodstartHandler">BasicXmlParser::startHandler()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 27 Feb 2006 14:51:49 -0800 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>

@@ -1,0 +1,802 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class RemoteCoverageRecorder</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class RemoteCoverageRecorder</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A Coverage recorder extension for remote Coverage measurement.</p>
+	<ul class="tags">
+				<li><span class="field">version:</span> $Revision: $</li>
+				<li><span class="field">author:</span> Nimish Pachapurkar &lt;<a href="mailto:npac@spikesource.com">npac@spikesource.com</a>&gt;</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_remote_RemoteCoverageRecorder_php.html">/remote/RemoteCoverageRecorder.php</a> (line <span class="field">27</span>)
+		</p>
+		
+				
+		<pre><a href="../SpikePHPCoverage/CoverageRecorder.html">CoverageRecorder</a>
+   |
+   --RemoteCoverageRecorder</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$coverageFileName" title="details" class="var-name">$coverageFileName</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$tmpDir" title="details" class="var-name">$tmpDir</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$tmpTraceFilename" title="details" class="var-name">$tmpTraceFilename</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$traceFilePath" title="details" class="var-name">$traceFilePath</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$xdebugTraceReader" title="details" class="var-name">$xdebugTraceReader</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$xmlEnd" title="details" class="var-name">$xmlEnd</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$xmlStart" title="details" class="var-name">$xmlStart</a>
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+								
+				<div class="method-definition">
+											<span class="method-result">RemoteCoverageRecorder</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$includePaths</span> = <span class="var-default">array(".")</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$excludePaths</span> = <span class="var-default">array()</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$reporter</span> = <span class="var-default">"new HtmlCoverageReporter()"</span>])
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">True</span>
+										<a href="#appendDataToFile" title="details" class="method-name">appendDataToFile</a>
+											(<span class="var-type">$newXml</span>&nbsp;<span class="var-name">$newXml</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Boolean</span>
+										<a href="#cleanCoverageFile" title="details" class="method-name">cleanCoverageFile</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generateReport" title="details" class="method-name">generateReport</a>
+											(<span class="var-type">$xmlUrl</span>&nbsp;<span class="var-name">$xmlUrl</span>, [<span class="var-type">$stream=false</span>&nbsp;<span class="var-name">$stream</span> = <span class="var-default">false</span>])
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getCoverageFileName" title="details" class="method-name">getCoverageFileName</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getCoverageXml" title="details" class="method-name">getCoverageXml</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTmpDir" title="details" class="method-name">getTmpDir</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTraceFilePath" title="details" class="method-name">getTraceFilePath</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#parseCoverageXml" title="details" class="method-name">parseCoverageXml</a>
+											(<span class="var-type">$xml</span>&nbsp;<span class="var-name">&$xml</span>, [<span class="var-type">$stream=false</span>&nbsp;<span class="var-name">$stream</span> = <span class="var-default">false</span>])
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">String</span>
+										<a href="#prepareCoverageXml" title="details" class="method-name">prepareCoverageXml</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Boolean</span>
+										<a href="#saveCoverageXml" title="details" class="method-name">saveCoverageXml</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setCoverageFileName" title="details" class="method-name">setCoverageFileName</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$covFileName</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setTmpDir" title="details" class="method-name">setTmpDir</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$tmpTraceDir</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setTraceFilePath" title="details" class="method-name">setTraceFilePath</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$traceFilePath</span>)
+									</div>
+							</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$coverageFileName" id="$coverageFileName"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$coverageFileName</span>
+			 = <span class="var-default"> &quot;phpcoverage.coverage.xml&quot;</span>			(line <span class="line-number">34</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$tmpDir" id="$tmpDir"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$tmpDir</span>
+						(line <span class="line-number">32</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$tmpTraceFilename" id="$tmpTraceFilename"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$tmpTraceFilename</span>
+			 = <span class="var-default"> &quot;phpcoverage.xdebug.trace&quot;</span>			(line <span class="line-number">33</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$traceFilePath" id="$traceFilePath"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$traceFilePath</span>
+						(line <span class="line-number">30</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$xdebugTraceReader" id="$xdebugTraceReader"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$xdebugTraceReader</span>
+						(line <span class="line-number">31</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$xmlEnd" id="$xmlEnd"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$xmlEnd</span>
+			 = <span class="var-default"> &quot;&lt;/spike-phpcoverage&gt;&quot;</span>			(line <span class="line-number">37</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$xmlStart" id="$xmlStart"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$xmlStart</span>
+			 = <span class="var-default"> &quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;utf-8\&quot; ?&gt;&lt;spike-phpcoverage&gt;&quot;</span>			(line <span class="line-number">36</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../SpikePHPCoverage/CoverageRecorder.html">CoverageRecorder</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$coverageData">CoverageRecorder::$coverageData</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$excludePaths">CoverageRecorder::$excludePaths</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$includePaths">CoverageRecorder::$includePaths</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$isRemote">CoverageRecorder::$isRemote</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$logger">CoverageRecorder::$logger</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$phpCoverageFiles">CoverageRecorder::$phpCoverageFiles</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$phpExtensions">CoverageRecorder::$phpExtensions</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$reporter">CoverageRecorder::$reporter</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$stripped">CoverageRecorder::$stripped</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#var$version">CoverageRecorder::$version</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">47</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">RemoteCoverageRecorder</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$includePaths</span> = <span class="var-default">array(".")</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$excludePaths</span> = <span class="var-default">array()</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$reporter</span> = <span class="var-default">"new HtmlCoverageReporter()"</span>])
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage/CoverageRecorder.html#method__construct">CoverageRecorder::__construct()</a></dt>
+						<dd>Constructor (PHP5 only)</dd>
+					</dl>
+		
+	</div>
+<a name="methodappendDataToFile" id="appendDataToFile"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">appendDataToFile</span> (line <span class="line-number">212</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Append coverage data to xml file</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> on success; false otherwise</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">True</span>
+		<span class="method-name">
+			appendDataToFile
+		</span>
+					(<span class="var-type">$newXml</span>&nbsp;<span class="var-name">$newXml</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$newXml</span>
+				<span class="var-name">$newXml</span><span class="var-description">: New xml recorded</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodcleanCoverageFile" id="cleanCoverageFile"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">cleanCoverageFile</span> (line <span class="line-number">99</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Deletes a coverage data file if one exists.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> True on success, False on failure.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Boolean</span>
+		<span class="method-name">
+			cleanCoverageFile
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgenerateReport" id="generateReport"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">generateReport</span> (line <span class="line-number">286</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Generate report from the xml coverage data  The preferred method for usage of this function is  passing a stream of the XML data in. This is much more  efficient and consumes less memory.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generateReport
+		</span>
+					(<span class="var-type">$xmlUrl</span>&nbsp;<span class="var-name">$xmlUrl</span>, [<span class="var-type">$stream=false</span>&nbsp;<span class="var-name">$stream</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$xmlUrl</span>
+				<span class="var-name">$xmlUrl</span><span class="var-description">: Url where XML data is available or string</span>			</li>
+					<li>
+				<span class="var-type">$stream=false</span>
+				<span class="var-name">$stream</span><span class="var-description">: Is the xml available as stream?</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgenerateReport">CoverageRecorder::generateReport()</a></dt>
+						<dd>Generate the code coverage report</dd>
+					</dl>
+		
+	</div>
+<a name="methodgetCoverageFileName" id="getCoverageFileName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCoverageFileName</span> (line <span class="line-number">82</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getCoverageFileName
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetCoverageXml" id="getCoverageXml"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCoverageXml</span> (line <span class="line-number">178</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Dumps the coverage data in XML format</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getCoverageXml
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetTmpDir" id="getTmpDir"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTmpDir</span> (line <span class="line-number">74</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTmpDir
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetTraceFilePath" id="getTraceFilePath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTraceFilePath</span> (line <span class="line-number">66</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTraceFilePath
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodparseCoverageXml" id="parseCoverageXml"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">parseCoverageXml</span> (line <span class="line-number">158</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Parse coverage XML to regenerate the Coverage data array.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			parseCoverageXml
+		</span>
+					(<span class="var-type">$xml</span>&nbsp;<span class="var-name">&$xml</span>, [<span class="var-type">$stream=false</span>&nbsp;<span class="var-name">$stream</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$xml</span>
+				<span class="var-name">&$xml</span><span class="var-description">: XML String or URL of the coverage data</span>			</li>
+					<li>
+				<span class="var-type">$stream=false</span>
+				<span class="var-name">$stream</span><span class="var-description">: Is the input a stream?</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodprepareCoverageXml" id="prepareCoverageXml"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">prepareCoverageXml</span> (line <span class="line-number">123</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Convert the Coverage data into an XML.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> XML generated from Coverage data</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">String</span>
+		<span class="method-name">
+			prepareCoverageXml
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsaveCoverageXml" id="saveCoverageXml"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">saveCoverageXml</span> (line <span class="line-number">254</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Append coverage xml to a xml data file.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> True on success, False on error</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Boolean</span>
+		<span class="method-name">
+			saveCoverageXml
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsetCoverageFileName" id="setCoverageFileName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setCoverageFileName</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setCoverageFileName
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$covFileName</span>)
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsetTmpDir" id="setTmpDir"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setTmpDir</span> (line <span class="line-number">78</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setTmpDir
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$tmpTraceDir</span>)
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsetTraceFilePath" id="setTraceFilePath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setTraceFilePath</span> (line <span class="line-number">70</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setTraceFilePath
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$traceFilePath</span>)
+			</div>
+	
+		
+		
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../SpikePHPCoverage/CoverageRecorder.html">CoverageRecorder</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#method__construct">CoverageRecorder::__construct()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodaddFiles">CoverageRecorder::addFiles()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodexcludeCoverageDir">CoverageRecorder::excludeCoverageDir()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgenerateReport">CoverageRecorder::generateReport()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetErrors">CoverageRecorder::getErrors()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetExcludePaths">CoverageRecorder::getExcludePaths()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetFilesAndDirs">CoverageRecorder::getFilesAndDirs()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetIncludePaths">CoverageRecorder::getIncludePaths()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetPhpExtensions">CoverageRecorder::getPhpExtensions()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetReporter">CoverageRecorder::getReporter()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodgetVersion">CoverageRecorder::getVersion()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodlogErrors">CoverageRecorder::logErrors()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodprocessSourcePaths">CoverageRecorder::processSourcePaths()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodremoveAbsentPaths">CoverageRecorder::removeAbsentPaths()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodsetExcludePaths">CoverageRecorder::setExcludePaths()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodsetIncludePaths">CoverageRecorder::setIncludePaths()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodsetPhpExtensions">CoverageRecorder::setPhpExtensions()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodsetReporter">CoverageRecorder::setReporter()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodstartInstrumentation">CoverageRecorder::startInstrumentation()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodstopInstrumentation">CoverageRecorder::stopInstrumentation()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodstripCoverageData">CoverageRecorder::stripCoverageData()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/CoverageRecorder.html#methodunixifyCoverageData">CoverageRecorder::unixifyCoverageData()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 27 Feb 2006 14:51:50 -0800 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>

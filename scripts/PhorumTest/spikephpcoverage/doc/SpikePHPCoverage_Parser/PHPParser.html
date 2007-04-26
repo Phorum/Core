@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class PHPParser</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class PHPParser</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Parser for PHP files</p>
+	<ul class="tags">
+				<li><span class="field">version:</span> $Revision: 14665 $</li>
+				<li><span class="field">author:</span> Nimish Pachapurkar (npac@spikesource.com)</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_parser_PHPParser_php.html">/parser/PHPParser.php</a> (line <span class="field">24</span>)
+		</p>
+		
+				
+		<pre><a href="../SpikePHPCoverage/Parser.html">Parser</a>
+   |
+   --PHPParser</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$contTypes" title="details" class="var-name">$contTypes</a>
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+								
+				<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getLastTokenType" title="details" class="method-name">getLastTokenType</a>
+											(<span class="var-type">&$tokens</span>&nbsp;<span class="var-name">&$tokens</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Line</span>
+										<a href="#getLineType" title="details" class="method-name">getLineType</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Token</span>
+										<a href="#getTokenType" title="details" class="method-name">getTokenType</a>
+											(<span class="var-type">$token</span>&nbsp;<span class="var-name">$token</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Boolean</span>
+										<a href="#isContinuation" title="details" class="method-name">isContinuation</a>
+											(<span class="var-type">&$token</span>&nbsp;<span class="var-name">&$token</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#processLine" title="details" class="method-name">processLine</a>
+											(<span class="var-type">$line</span>&nbsp;<span class="var-name">$line</span>)
+									</div>
+							</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$contTypes" id="$contTypes"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$contTypes</span>
+			 = <span class="var-default">array(<br />            &quot;(&quot;,<br />            &quot;,&quot;,<br />            &quot;.&quot;,<br />            &quot;=&quot;,<br />            T_LOGICAL_XOR,<br />            T_LOGICAL_AND,<br />            T_LOGICAL_OR,<br />            T_PLUS_EQUAL,<br />            T_MINUS_EQUAL,<br />            T_MUL_EQUAL,<br />            T_DIV_EQUAL,<br />            T_CONCAT_EQUAL,<br />            T_MOD_EQUAL,<br />            T_AND_EQUAL,<br />            T_OR_EQUAL,<br />            T_XOR_EQUAL,<br />            T_BOOLEAN_AND,<br />            T_BOOLEAN_OR,<br />            T_OBJECT_OPERATOR, <br />            T_DOUBLE_ARROW, <br />            &quot;[&quot;, <br />            &quot;]&quot;,<br />            T_LOGICAL_OR, <br />            T_LOGICAL_XOR, <br />            T_LOGICAL_AND<br />        )</span>			(line <span class="line-number">35</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">static:</span> </li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../SpikePHPCoverage/Parser.html">Parser</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$coveredLines">Parser::$coveredLines</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$filename">Parser::$filename</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$fileRef">Parser::$fileRef</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$line">Parser::$line</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$logger">Parser::$logger</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$totalLines">Parser::$totalLines</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage/Parser.html#var$uncoveredLines">Parser::$uncoveredLines</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodgetLastTokenType" id="getLastTokenType"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getLastTokenType</span> (line <span class="line-number">378</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return the type of last non-empty token in a line</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Last non-empty token type (or token) if exists; false otherwise</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getLastTokenType
+		</span>
+					(<span class="var-type">&$tokens</span>&nbsp;<span class="var-name">&$tokens</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">&$tokens</span>
+				<span class="var-name">&$tokens</span><span class="var-description">: Array of tokens for a line</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodgetLineType" id="getLineType"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getLineType</span> (line <span class="line-number">289</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the type of line just read</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> type</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Line</span>
+		<span class="method-name">
+			getLineType
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage/Parser.html#methodgetLineType">Parser::getLineType()</a></dt>
+						<dd>Returns the type of last line read.</dd>
+					</dl>
+		
+	</div>
+<a name="methodgetTokenType" id="getTokenType"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTokenType</span> (line <span class="line-number">359</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the token type of a token (if exists) or  the token itself.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> type or token itself</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Token</span>
+		<span class="method-name">
+			getTokenType
+		</span>
+					(<span class="var-type">$token</span>&nbsp;<span class="var-name">$token</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$token</span>
+				<span class="var-name">$token</span><span class="var-description">: Token</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodisContinuation" id="isContinuation"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">isContinuation</span> (line <span class="line-number">302</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Check if a line is a continuation of the previous line</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> True if the line is a continuation; false otherwise</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Boolean</span>
+		<span class="method-name">
+			isContinuation
+		</span>
+					(<span class="var-type">&$token</span>&nbsp;<span class="var-name">&$token</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">&$token</span>
+				<span class="var-name">&$token</span><span class="var-description">: Second token in a line (after PHP start)</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodprocessLine" id="processLine"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">processLine</span> (line <span class="line-number">76</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Process a line read from the file and determine if it is an  executable line or not.</p>
+<p class="description"><p>This is the work horse function that does most of the parsing.  To parse PHP, get_all_tokens() tokenizer function is used.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			processLine
+		</span>
+					(<span class="var-type">$line</span>&nbsp;<span class="var-name">$line</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$line</span>
+				<span class="var-name">$line</span><span class="var-description">: Line to be parsed.</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage/Parser.html#methodprocessLine">Parser::processLine()</a></dt>
+						<dd>Process the line and classify it into either  covered and uncovered.</dd>
+					</dl>
+		
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../SpikePHPCoverage/Parser.html">Parser</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#method__construct">Parser::__construct()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodgetCoveredLines">Parser::getCoveredLines()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodgetLine">Parser::getLine()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodgetLineType">Parser::getLineType()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodgetLineTypeStr">Parser::getLineTypeStr()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodgetTotalLines">Parser::getTotalLines()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodgetUncoveredLines">Parser::getUncoveredLines()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodopenFileReadOnly">Parser::openFileReadOnly()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodparse">Parser::parse()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage/Parser.html#methodprocessLine">Parser::processLine()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 27 Feb 2006 14:51:50 -0800 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>

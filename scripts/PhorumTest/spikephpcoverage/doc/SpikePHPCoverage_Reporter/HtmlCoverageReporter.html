@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class HtmlCoverageReporter</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class HtmlCoverageReporter</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class that implements HTML Coverage Reporter.</p>
+	<ul class="tags">
+				<li><span class="field">version:</span> $Revision: 14665 $</li>
+				<li><span class="field">author:</span> Nimish Pachapurkar &lt;<a href="mailto:npac@spikesource.com">npac@spikesource.com</a>&gt;</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_reporter_HtmlCoverageReporter_php.html">/reporter/HtmlCoverageReporter.php</a> (line <span class="field">26</span>)
+		</p>
+		
+				
+		<pre><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html">CoverageReporter</a>
+   |
+   --HtmlCoverageReporter</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+								
+				<div class="method-definition">
+											<span class="method-result">HtmlCoverageReporter</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">$heading</span>&nbsp;<span class="var-name">$heading</span> = <span class="var-default">"Coverage Report"</span>], [<span class="var-type">$style</span>&nbsp;<span class="var-name">$style</span> = <span class="var-default">""</span>], [<span class="var-type">$dir</span>&nbsp;<span class="var-name">$dir</span> = <span class="var-default">"report"</span>])
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generateReport" title="details" class="method-name">generateReport</a>
+											(<span class="var-type">&$data</span>&nbsp;<span class="var-name">&$data</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#markFile" title="details" class="method-name">markFile</a>
+											(<span class="var-type">$phpFile</span>&nbsp;<span class="var-name">$phpFile</span>, <span class="var-type">$fileLink</span>&nbsp;<span class="var-name">$fileLink</span>, <span class="var-type">&$coverageLines</span>&nbsp;<span class="var-name">&$coverageLines</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#preserveSpacing" title="details" class="method-name">preserveSpacing</a>
+											(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#writeFileTableHead" title="details" class="method-name">writeFileTableHead</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#writeFileTableRow" title="details" class="method-name">writeFileTableRow</a>
+											(<span class="var-type">$color</span>&nbsp;<span class="var-name">$type</span>, <span class="var-type">$bgcolor</span>&nbsp;<span class="var-name">$lineCnt</span>, <span class="var-type">$lineCnt</span>&nbsp;<span class="var-name">$line</span>, <span class="var-type">$line</span>&nbsp;<span class="var-name">$coverageLineCnt</span>, <span class="var-type">$coverageLineCnt</span>&nbsp;<span class="var-name">4</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#writeIndexFile" title="details" class="method-name">writeIndexFile</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#writeIndexFileGrandTotalPercentage" title="details" class="method-name">writeIndexFileGrandTotalPercentage</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#writeIndexFileTableHead" title="details" class="method-name">writeIndexFileTableHead</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#writeIndexFileTableRow" title="details" class="method-name">writeIndexFileTableRow</a>
+											(<span class="var-type">$fileLink</span>&nbsp;<span class="var-name">$fileLink</span>, <span class="var-type">$realFile</span>&nbsp;<span class="var-name">$realFile</span>, <span class="var-type">$fileCoverage</span>&nbsp;<span class="var-name">$fileCoverage</span>)
+									</div>
+							</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html">CoverageReporter</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$fileCoverage">CoverageReporter::$fileCoverage</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$grandTotalCoveredLines">CoverageReporter::$grandTotalCoveredLines</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$grandTotalFiles">CoverageReporter::$grandTotalFiles</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$grandTotalLines">CoverageReporter::$grandTotalLines</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$grandTotalUncoveredLines">CoverageReporter::$grandTotalUncoveredLines</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$heading">CoverageReporter::$heading</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$logger">CoverageReporter::$logger</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$outputDir">CoverageReporter::$outputDir</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$recorder">CoverageReporter::$recorder</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#var$style">CoverageReporter::$style</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">49</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor method (PHP5 only)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">HtmlCoverageReporter</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">$heading</span>&nbsp;<span class="var-name">$heading</span> = <span class="var-default">"Coverage Report"</span>], [<span class="var-type">$style</span>&nbsp;<span class="var-name">$style</span> = <span class="var-default">""</span>], [<span class="var-type">$dir</span>&nbsp;<span class="var-name">$dir</span> = <span class="var-default">"report"</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$heading</span>
+				<span class="var-name">$heading</span><span class="var-description">: Heading of the report (shown as title)</span>			</li>
+					<li>
+				<span class="var-type">$style</span>
+				<span class="var-name">$style</span><span class="var-description">: Name of the stylesheet file</span>			</li>
+					<li>
+				<span class="var-type">$dir</span>
+				<span class="var-name">$dir</span><span class="var-description">: Directory where the report files should be dumped</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#method__construct">CoverageReporter::__construct()</a></dt>
+						<dd>The constructor (PHP5 compatible)</dd>
+					</dl>
+		
+	</div>
+<a name="methodgenerateReport" id="generateReport"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">generateReport</span> (line <span class="line-number">68</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Implementaion of generateReport abstract function.</p>
+<p class="description"><p>This is the only function that will be called  by the instrumentor.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generateReport
+		</span>
+					(<span class="var-type">&$data</span>&nbsp;<span class="var-name">&$data</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">&$data</span>
+				<span class="var-name">&$data</span><span class="var-description">: Reference to Coverage Data</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgenerateReport">CoverageReporter::generateReport()</a></dt>
+						<dd>This function generates report using one of the concrete subclasses.</dd>
+					</dl>
+		
+	</div>
+<a name="methodmarkFile" id="markFile"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">markFile</span> (line <span class="line-number">434</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Mark a source code file based on the coverage data gathered</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> FALSE on failure</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			markFile
+		</span>
+					(<span class="var-type">$phpFile</span>&nbsp;<span class="var-name">$phpFile</span>, <span class="var-type">$fileLink</span>&nbsp;<span class="var-name">$fileLink</span>, <span class="var-type">&$coverageLines</span>&nbsp;<span class="var-name">&$coverageLines</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$phpFile</span>
+				<span class="var-name">$phpFile</span><span class="var-description">: Name of the actual source file</span>			</li>
+					<li>
+				<span class="var-type">$fileLink</span>
+				<span class="var-name">$fileLink</span><span class="var-description">: Link to the html mark-up file for the $phpFile</span>			</li>
+					<li>
+				<span class="var-type">&$coverageLines</span>
+				<span class="var-name">&$coverageLines</span><span class="var-description">: Coverage recording for $phpFile</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodpreserveSpacing" id="preserveSpacing"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">preserveSpacing</span> (line <span class="line-number">603</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Changes all tabs and spaces with HTML non-breakable spaces.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> HTML string with replacements.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			preserveSpacing
+		</span>
+					(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span><span class="var-description">: String containing spaces and tabs.</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodwriteFileTableHead" id="writeFileTableHead"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">writeFileTableHead</span> (line <span class="line-number">543</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Writes table heading for file details table.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> HTML string representing one table row.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			writeFileTableHead
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodwriteFileTableRow" id="writeFileTableRow"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">writeFileTableRow</span> (line <span class="line-number">566</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Write a line for file details table.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> HTML code for a table row.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			writeFileTableRow
+		</span>
+					(<span class="var-type">$color</span>&nbsp;<span class="var-name">$type</span>, <span class="var-type">$bgcolor</span>&nbsp;<span class="var-name">$lineCnt</span>, <span class="var-type">$lineCnt</span>&nbsp;<span class="var-name">$line</span>, <span class="var-type">$line</span>&nbsp;<span class="var-name">$coverageLineCnt</span>, <span class="var-type">$coverageLineCnt</span>&nbsp;<span class="var-name">4</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$coverageLineCnt</span>
+				<span class="var-name">4</span><span class="var-description">: Number of time the line was executed.</span>			</li>
+					<li>
+				<span class="var-type">$color</span>
+				<span class="var-name">$type</span><span class="var-description">: Text color</span>			</li>
+					<li>
+				<span class="var-type">$bgcolor</span>
+				<span class="var-name">$lineCnt</span><span class="var-description">: Row bgcolor</span>			</li>
+					<li>
+				<span class="var-type">$lineCnt</span>
+				<span class="var-name">$line</span><span class="var-description">: Line number</span>			</li>
+					<li>
+				<span class="var-type">$line</span>
+				<span class="var-name">$coverageLineCnt</span><span class="var-description">: The source code line</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodwriteIndexFile" id="writeIndexFile"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">writeIndexFile</span> (line <span class="line-number">320</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Writes index.html file from all coverage recordings.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> FALSE on failure</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			writeIndexFile
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodwriteIndexFileGrandTotalPercentage" id="writeIndexFileGrandTotalPercentage"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">writeIndexFileGrandTotalPercentage</span> (line <span class="line-number">264</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Writes the grand total for coverage recordings on the index.html</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> HTML code for grand total row</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			writeIndexFileGrandTotalPercentage
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodwriteIndexFileTableHead" id="writeIndexFileTableHead"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">writeIndexFileTableHead</span> (line <span class="line-number">196</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Writes the table heading for index.html</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Table heading row code</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			writeIndexFileTableHead
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodwriteIndexFileTableRow" id="writeIndexFileTableRow"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">writeIndexFileTableRow</span> (line <span class="line-number">229</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Writes one row in the index.html table to display filename  and coverage recording.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> HTML code for a single row.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			writeIndexFileTableRow
+		</span>
+					(<span class="var-type">$fileLink</span>&nbsp;<span class="var-name">$fileLink</span>, <span class="var-type">$realFile</span>&nbsp;<span class="var-name">$realFile</span>, <span class="var-type">$fileCoverage</span>&nbsp;<span class="var-name">$fileCoverage</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$fileLink</span>
+				<span class="var-name">$fileLink</span><span class="var-description">: link to html details file.</span>			</li>
+					<li>
+				<span class="var-type">$realFile</span>
+				<span class="var-name">$realFile</span><span class="var-description">: path to real PHP file.</span>			</li>
+					<li>
+				<span class="var-type">$fileCoverage</span>
+				<span class="var-name">$fileCoverage</span><span class="var-description">: Coverage recording for that file.</span>			</li>
+				</ul>
+		
+		
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html">CoverageReporter</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#method__construct">CoverageReporter::__construct()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodcreateReportDir">CoverageReporter::createReportDir()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgenerateReport">CoverageReporter::generateReport()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgetFileCoverageInfo">CoverageReporter::getFileCoverageInfo()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgetGrandCodeCoveragePercentage">CoverageReporter::getGrandCodeCoveragePercentage()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgetHeading">CoverageReporter::getHeading()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgetOutputDir">CoverageReporter::getOutputDir()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgetRelativeOutputDirPath">CoverageReporter::getRelativeOutputDirPath()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodgetStyle">CoverageReporter::getStyle()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodmakeRelative">CoverageReporter::makeRelative()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodprintTextSummary">CoverageReporter::printTextSummary()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodrecordFileCoverageInfo">CoverageReporter::recordFileCoverageInfo()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodsetCoverageRecorder">CoverageReporter::setCoverageRecorder()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodsetHeading">CoverageReporter::setHeading()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodsetOutputDir">CoverageReporter::setOutputDir()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodsetStyle">CoverageReporter::setStyle()</a></span><br>
+													<span class="method-name"><a href="../SpikePHPCoverage_Reporter/CoverageReporter.html#methodupdateGrandTotals">CoverageReporter::updateGrandTotals()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 27 Feb 2006 14:51:49 -0800 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>

@@ -1,0 +1,1086 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class CoverageRecorder</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class CoverageRecorder</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+							<a href="#sec-descendents">Descendents</a>
+			|											<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The Coverage Recorder utility</p>
+<p class="description"><p>This is the main class for the CoverageRecorder. User should  instantiate this class and set various parameters of it.  The startInstrumentation and stopInstrumentation methods will  switch code coverage recording on and off respectively.</p><p>The code coverage is recorded using XDebug Zend Extension. Therefore,  it is required to install that extension on the system where  code coverage measurement is going to take place. See  <a href="http://www.xdebug.org">www.xdebug.org</a> for more  information.</p></p>
+	<ul class="tags">
+				<li><span class="field">version:</span> $Revision: 14665 $</li>
+				<li><span class="field">author:</span> Nimish Pachapurkar &lt;<a href="mailto:npac@spikesource.com">npac@spikesource.com</a>&gt;</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_CoverageRecorder_php.html">/CoverageRecorder.php</a> (line <span class="field">37</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">Direct descendents</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+			<span class="disabled">Descendents</span>
+			|												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+								|															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">Class</th>
+					<th class="class-table-header">Description</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../SpikePHPCoverage_Remote/RemoteCoverageRecorder.html">RemoteCoverageRecorder</a></td>
+					<td>
+											A Coverage recorder extension for remote Coverage measurement.
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$coverageData" title="details" class="var-name">$coverageData</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$excludePaths" title="details" class="var-name">$excludePaths</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$includePaths" title="details" class="var-name">$includePaths</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$isRemote" title="details" class="var-name">$isRemote</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$logger" title="details" class="var-name">$logger</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$phpCoverageFiles" title="details" class="var-name">$phpCoverageFiles</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$phpExtensions" title="details" class="var-name">$phpExtensions</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$reporter" title="details" class="var-name">$reporter</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$stripped" title="details" class="var-name">$stripped</a>
+				</div>
+								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$version" title="details" class="var-name">$version</a>
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+								
+				<div class="method-definition">
+											<span class="method-result">CoverageRecorder</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">$includePaths</span>&nbsp;<span class="var-name">$includePaths</span> = <span class="var-default">array(".")</span>], [<span class="var-type">$excludePaths</span>&nbsp;<span class="var-name">$excludePaths</span> = <span class="var-default">array()</span>], [<span class="var-type">$reporter</span>&nbsp;<span class="var-name">$reporter</span> = <span class="var-default">"new HtmlCoverageReporter()"</span>])
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addFiles" title="details" class="method-name">addFiles</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#excludeCoverageDir" title="details" class="method-name">excludeCoverageDir</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generateReport" title="details" class="method-name">generateReport</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getErrors" title="details" class="method-name">getErrors</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getExcludePaths" title="details" class="method-name">getExcludePaths</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getFilesAndDirs" title="details" class="method-name">getFilesAndDirs</a>
+											(<span class="var-type">$dir</span>&nbsp;<span class="var-name">$dir</span>, <span class="var-type">&$files</span>&nbsp;<span class="var-name">&$files</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getIncludePaths" title="details" class="method-name">getIncludePaths</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getPhpExtensions" title="details" class="method-name">getPhpExtensions</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getReporter" title="details" class="method-name">getReporter</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getVersion" title="details" class="method-name">getVersion</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#logErrors" title="details" class="method-name">logErrors</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#processSourcePaths" title="details" class="method-name">processSourcePaths</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#removeAbsentPaths" title="details" class="method-name">removeAbsentPaths</a>
+											(<span class="var-type">&$dirs</span>&nbsp;<span class="var-name">&$dirs</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setExcludePaths" title="details" class="method-name">setExcludePaths</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$excludePaths</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setIncludePaths" title="details" class="method-name">setIncludePaths</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$includePaths</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setPhpExtensions" title="details" class="method-name">setPhpExtensions</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">&$extensions</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setReporter" title="details" class="method-name">setReporter</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">&$reporter</span>)
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#startInstrumentation" title="details" class="method-name">startInstrumentation</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#stopInstrumentation" title="details" class="method-name">stopInstrumentation</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">Processed</span>
+										<a href="#stripCoverageData" title="details" class="method-name">stripCoverageData</a>
+										()
+									</div>
+								
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#unixifyCoverageData" title="details" class="method-name">unixifyCoverageData</a>
+										()
+									</div>
+							</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$coverageData" id="$coverageData"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$coverageData</span>
+						(line <span class="line-number">44</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$excludePaths" id="$excludePaths"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$excludePaths</span>
+						(line <span class="line-number">42</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$includePaths" id="$includePaths"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$includePaths</span>
+						(line <span class="line-number">41</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$isRemote" id="$isRemote"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$isRemote</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">45</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$logger" id="$logger"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$logger</span>
+						(line <span class="line-number">49</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$phpCoverageFiles" id="$phpCoverageFiles"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$phpCoverageFiles</span>
+			 = <span class="var-default">array(&quot;phpcoverage.inc.php&quot;)</span>			(line <span class="line-number">47</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$phpExtensions" id="$phpExtensions"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$phpExtensions</span>
+						(line <span class="line-number">56</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">What extensions are treated as php files.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$reporter" id="$reporter"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$reporter</span>
+						(line <span class="line-number">43</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$stripped" id="$stripped"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$stripped</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">46</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$version" id="$version"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$version</span>
+						(line <span class="line-number">48</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">69</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor (PHP5 only)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">CoverageRecorder</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">$includePaths</span>&nbsp;<span class="var-name">$includePaths</span> = <span class="var-default">array(".")</span>], [<span class="var-type">$excludePaths</span>&nbsp;<span class="var-name">$excludePaths</span> = <span class="var-default">array()</span>], [<span class="var-type">$reporter</span>&nbsp;<span class="var-name">$reporter</span> = <span class="var-default">"new HtmlCoverageReporter()"</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$includePaths</span>
+				<span class="var-name">$includePaths</span><span class="var-description">: Directories to be included in code coverage report</span>			</li>
+					<li>
+				<span class="var-type">$excludePaths</span>
+				<span class="var-name">$excludePaths</span><span class="var-description">: Directories to be excluded from code coverage report</span>			</li>
+					<li>
+				<span class="var-type">$reporter</span>
+				<span class="var-name">$reporter</span><span class="var-description">: Instance of a Reporter subclass</span>			</li>
+				</ul>
+		
+		
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../SpikePHPCoverage_Remote/RemoteCoverageRecorder.html#method__construct">RemoteCoverageRecorder::__construct()</a>
+								: Constructor
+							</li>
+				</ul>
+	</div>
+<a name="methodaddFiles" id="addFiles"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addFiles</span> (line <span class="line-number">244</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add all source files to the list of files that need to be parsed.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addFiles
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodexcludeCoverageDir" id="excludeCoverageDir"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">excludeCoverageDir</span> (line <span class="line-number">431</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Exclude the directory containing the coverage measurement code.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			excludeCoverageDir
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgenerateReport" id="generateReport"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">generateReport</span> (line <span class="line-number">135</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Generate the code coverage report</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generateReport
+		</span>
+				()
+			</div>
+	
+		
+		
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../SpikePHPCoverage_Remote/RemoteCoverageRecorder.html#methodgenerateReport">RemoteCoverageRecorder::generateReport()</a>
+								: Generate report from the xml coverage data  The preferred method for usage of this function is  passing a stream of the XML data in. This is much more  efficient and consumes less memory.
+							</li>
+				</ul>
+	</div>
+<a name="methodgetErrors" id="getErrors"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getErrors</span> (line <span class="line-number">366</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the errors array containing all error encountered so far.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> of error messages</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getErrors
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetExcludePaths" id="getExcludePaths"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getExcludePaths</span> (line <span class="line-number">394</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getExcludePaths
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetFilesAndDirs" id="getFilesAndDirs"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFilesAndDirs</span> (line <span class="line-number">206</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the list of files that match the extensions in $this-&gt;phpExtensions</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getFilesAndDirs
+		</span>
+					(<span class="var-type">$dir</span>&nbsp;<span class="var-name">$dir</span>, <span class="var-type">&$files</span>&nbsp;<span class="var-name">&$files</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$dir</span>
+				<span class="var-name">$dir</span><span class="var-description">: Root directory</span>			</li>
+					<li>
+				<span class="var-type">&$files</span>
+				<span class="var-name">&$files</span><span class="var-description">: Array of filenames to append to</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodgetIncludePaths" id="getIncludePaths"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIncludePaths</span> (line <span class="line-number">386</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getIncludePaths
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetPhpExtensions" id="getPhpExtensions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPhpExtensions</span> (line <span class="line-number">411</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getPhpExtensions
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetReporter" id="getReporter"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getReporter</span> (line <span class="line-number">403</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getReporter
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodgetVersion" id="getVersion"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getVersion</span> (line <span class="line-number">419</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getVersion
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodlogErrors" id="logErrors"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">logErrors</span> (line <span class="line-number">378</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Writes all error messages to error log</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			logErrors
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodprocessSourcePaths" id="processSourcePaths"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">processSourcePaths</span> (line <span class="line-number">189</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Processes and validates the source directories</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			processSourcePaths
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodremoveAbsentPaths" id="removeAbsentPaths"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">removeAbsentPaths</span> (line <span class="line-number">166</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Remove the directories that do not exist from the input array</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			removeAbsentPaths
+		</span>
+					(<span class="var-type">&$dirs</span>&nbsp;<span class="var-name">&$dirs</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">&$dirs</span>
+				<span class="var-name">&$dirs</span><span class="var-description">: Array of directory names</span>			</li>
+				</ul>
+		
+		
+	</div>
+<a name="methodsetExcludePaths" id="setExcludePaths"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setExcludePaths</span> (line <span class="line-number">398</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setExcludePaths
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$excludePaths</span>)
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsetIncludePaths" id="setIncludePaths"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setIncludePaths</span> (line <span class="line-number">390</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setIncludePaths
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$includePaths</span>)
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsetPhpExtensions" id="setPhpExtensions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setPhpExtensions</span> (line <span class="line-number">415</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setPhpExtensions
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">&$extensions</span>)
+			</div>
+	
+		
+		
+	</div>
+<a name="methodsetReporter" id="setReporter"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setReporter</span> (line <span class="line-number">407</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setReporter
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">&$reporter</span>)
+			</div>
+	
+		
+		
+	</div>
+<a name="methodstartInstrumentation" id="startInstrumentation"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">startInstrumentation</span> (line <span class="line-number">98</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Starts the code coverage recording</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			startInstrumentation
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodstopInstrumentation" id="stopInstrumentation"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">stopInstrumentation</span> (line <span class="line-number">116</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Stops code coverage recording</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			stopInstrumentation
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodstripCoverageData" id="stripCoverageData"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">stripCoverageData</span> (line <span class="line-number">286</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes the unwanted coverage data from the recordings</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> coverage data</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Processed</span>
+		<span class="method-name">
+			stripCoverageData
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+<a name="methodunixifyCoverageData" id="unixifyCoverageData"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">unixifyCoverageData</span> (line <span class="line-number">348</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Convert filepaths in coverage data to forward slash separated  paths.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			unixifyCoverageData
+		</span>
+				()
+			</div>
+	
+		
+		
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 27 Feb 2006 14:51:48 -0800 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>
