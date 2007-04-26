@@ -59,4 +59,4 @@
     
 ?>
 
-<a href="report/index.html">CodeCoverage Report should now be available at this url</a>
+<a href="report/index.html">CodeCoverage Report should now be available at this site</a>
