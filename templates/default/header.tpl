@@ -33,6 +33,7 @@
   <body onload="{IF FOCUS_TO_ID}var focuselt=document.getElementById('{FOCUS_TO_ID}'); if (focuselt) focuselt.focus();{/IF}">
     <div align="{forumalign}">
       <div class="PDDiv">
+      {IF NOT PRINTVIEW}
         {IF notice_all}
           <div class="PhorumNotificationArea PhorumNavBlock">
             {IF NEW_PRIVATE_MESSAGES}<a class="PhorumNavLink" href="{URL->PM}">{LANG->NewPrivateMessages}</a><br />{/IF}
@@ -47,3 +48,4 @@
         </span>
         {IF URL->INDEX}<a href="{URL->INDEX}">{/IF}<img src="templates/default/images/logo.png" alt="The fastest message board... ever. " title="The fastest message board... ever. " width="170" height="42" border="0" />{IF URL->INDEX}</a>{/IF}
         <div class="PhorumFloatingText">{DESCRIPTION}&nbsp;</div>
+        {/IF}

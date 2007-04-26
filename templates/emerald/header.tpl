@@ -13,7 +13,8 @@
 {LANG_META}
 
 {IF PRINTVIEW}
-    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="screen,print" />
+    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/main.css" media="screen,print" />  
+    <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/print.css" media="screen,print" />  
     <meta name="robots" content="NOINDEX,NOFOLLOW">
 {ELSE}
     <link rel="stylesheet" type="text/css" href="{URL->TEMPLATE}/styles/main.css" media="screen" />
@@ -42,7 +43,7 @@ Some Icons courtesy of:
 
 {! Please leave this div in your template   you can alter anything above this line }
 <div id="phorum">
-
+{IF NOT PRINTVIEW}
 <div id="user-info">
 {IF USER->user_id}
 
@@ -144,4 +145,4 @@ Some Icons courtesy of:
     </div>
 {/IF}
 
-
+{/IF}
