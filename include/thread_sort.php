@@ -31,17 +31,80 @@ if(!defined("PHORUM")) return;
 
 function phorum_sort_threads($rows)
 {
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    foreach($rows as $row){
+        $tmp_rows[$row["message_id"]]["parent_id"]=$row["parent_id"];
+        $tmp_rows[$row["parent_id"]]["children"][]=$row["message_id"];
+    }
+
+    $order = array();
+    $stack = array();
+    $curr_id = 0;
+    while(count($tmp_rows)){
+        if(empty($seen[$curr_id])){
+            if($curr_id!=0){
+                $seen[$curr_id] = true;
+                $order[$curr_id] = $rows[$curr_id];
+                unset($rows[$curr_id]);
+                $indent = count($stack)-1;
+                // new style of indenting by padding-left
+                $order[$curr_id]["indent_cnt"]=$indent*$PHORUM['TMP']['indentmultiplier'];
+                if($indent < 31) {
+                    $wrapnum=80-($indent*2);
+                } else {
+                    $wrapnum=20;
+                }
+                $order[$curr_id]["subject"]=wordwrap($order[$curr_id]["subject"],$wrapnum," ",1);
+            }
+        }
+        array_unshift($stack, $curr_id);
+        $data = $tmp_rows[$curr_id];
+        if(isset($data["children"])){
+            if(count($data["children"])){
+                $curr_id = array_shift($tmp_rows[$curr_id]["children"]);
+            } else {
+                unset($tmp_rows[$curr_id]);
+                array_shift($stack);
+                $curr_id = array_shift($stack);
+            }
+        } else {
+            unset($tmp_rows[$curr_id]);
+            array_shift($stack);
+            if(count($tmp_rows[$data["parent_id"]]["children"])){
+                $curr_id = array_shift($tmp_rows[$data["parent_id"]]["children"]);
+            } else {
+                unset($tmp_rows[$data["parent_id"]]);
+                array_shift($stack);
+                $curr_id = array_shift($stack);
+            }
+        }
+
+    }
+
+    return $order;
+
+}
+/*
+function phorum_sort_threads($rows)
+{
+    $start = microtime(true);
+    $mem_start = memory_get_usage();
     foreach($rows as $row){
         $rows[$row["parent_id"]]["children"][]=$row["message_id"];
     }
-    
+
     $sorted_rows=array(0=>array());
 
     _phorum_recursive_sort($rows, $sorted_rows);
 
     unset($sorted_rows[0]);
 
+    echo microtime(true) - $start."<br />";
+    echo memory_get_usage() - $mem_start."<br />";
+    print_var($GLOBALS["x"]);
     return $sorted_rows;
+
 }
 
 
@@ -50,6 +113,9 @@ function phorum_sort_threads($rows)
 function _phorum_recursive_sort($rows, &$threads, $seed=0, $indent=0)
 {
     global $PHORUM;
+    global $x;
+
+    $x++;
 
     if($seed>0){
         $threads[$rows[$seed]["message_id"]]=$rows[$seed];
@@ -62,7 +128,7 @@ function _phorum_recursive_sort($rows, &$threads, $seed=0, $indent=0)
             $wrapnum=20;
         }
         $threads[$rows[$seed]["message_id"]]["subject"]=wordwrap($rows[$seed]['subject'],$wrapnum," ",1);
-        
+
         $indent++;
 
     }
@@ -72,7 +138,7 @@ function _phorum_recursive_sort($rows, &$threads, $seed=0, $indent=0)
         }
     }
 }
-
+*/
 
 
 
