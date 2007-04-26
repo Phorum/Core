@@ -276,7 +276,7 @@
         }
         return $new;
     }
-    
+
     function phorum_admin_build_path_array($only_forum = -1)
     {
 
@@ -291,7 +291,7 @@
         foreach($forums as $forum){
 
             if($only_forum == -1 || $forum['forum_id'] == $only_forum)  {
-                
+
                 $path = array();
                 $path[$forum['forum_id']] = $forum["name"];
                 $parent_id=$forum["parent_id"];
@@ -315,6 +315,7 @@
             $folders[$forum["forum_id"]]=$path;
         }
 
+        $folders = array_reverse($folders, true);
 
         return $folders;
 

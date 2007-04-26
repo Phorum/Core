@@ -563,6 +563,10 @@ img {
     margin-bottom: 35px;
 }
 
+#phorum #search-form form {
+    font-size: 85%;
+}
+
 #phorum div.search {
     background-color: White;
 }
@@ -575,7 +579,6 @@ img {
 #phorum div.search-result h4 {
     font-size: 125%;
     margin: 0;
-    font-weight: normal;
 }
 
 #phorum div.search-result h4 small {

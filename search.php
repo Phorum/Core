@@ -19,6 +19,7 @@
 define('phorum_page','search');
 
 include_once("./common.php");
+include_once("./include/forum_functions.php");
 
 if(!phorum_check_read_common()) {
   return;
@@ -31,17 +32,16 @@ phorum_build_common_urls();
 $PHORUM["DATA"]["SEARCH"]["noresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["showresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["safe_search"] = "";
+$PHORUM["DATA"]["SEARCH"]["safe_author"] = "";
 
 function phorum_search_check_valid_vars() {
     $PHORUM=$GLOBALS['PHORUM'];
     $retval=true;
     // these are valid values for some args
-    $valid_match_types=array("ALL","ANY","PHRASE","AUTHOR","USER_ID");
+    $valid_match_types=array("ALL","ANY","PHRASE","USER_ID");
     $valid_match_forum=array("THISONE","ALL");
 
     if(!in_array($PHORUM["args"]["match_type"],$valid_match_types)) {
-        $retval=false;
-    } elseif(!in_array($PHORUM["args"]["match_forum"],$valid_match_forum)) {
         $retval=false;
     } elseif(!is_numeric($PHORUM["args"]["match_dates"])) {
         $retval=false;
@@ -52,7 +52,32 @@ function phorum_search_check_valid_vars() {
 
 
 if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
-    $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($_GET["search"]), "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($_GET['match_forum']));
+
+    if(!empty($_GET["match_forum"])){
+        if(is_array($_GET["match_forum"])){
+            foreach($_GET["match_forum"] as $forum_id){
+                if(is_numeric($forum_id)){
+                    $match_forum[] = $forum_id;
+                } elseif($forum_id=="ALL") {
+                    $match_forum="ALL";
+                    break;
+                }
+            }
+
+            if(is_array($match_forum)){
+                $match_forum = implode(",", $match_forum);
+            }
+
+        } else {
+            if(is_numeric($forum_id)){
+                $match_forum = $forum_id;
+            } elseif($forum_id=="ALL") {
+                $match_forum="ALL";
+            }
+        }
+    }
+
+    $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($_GET["search"]), "author=" . urlencode($_GET["author"]), "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($match_forum), "match_threads=" . urlencode($_GET['match_threads']));
 
     if (isset($PHORUM["skip_intermediate_search_page"]) && $PHORUM["skip_intermediate_search_page"]) {
         phorum_redirect_by_url($search_url);
@@ -73,21 +98,36 @@ if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
 
 if(isset($PHORUM["args"]["search"])){
     $phorum_search = $PHORUM["args"]["search"];
+} else {
+    $phorum_search = "";
+}
+
+if(isset($PHORUM["args"]["author"])){
+    $phorum_author = $PHORUM["args"]["author"];
+} else {
+    $phorum_author = "";
 }
 
 if(!isset($PHORUM["args"]["match_type"])) $PHORUM["args"]["match_type"]="ALL";
 if(!isset($PHORUM["args"]["match_dates"])) $PHORUM["args"]["match_dates"]="30";
 if(!isset($PHORUM["args"]["match_forum"])) $PHORUM["args"]["match_forum"]="ALL";
+if(!isset($PHORUM["args"]["match_threads"])) $PHORUM["args"]["match_threads"]=true;
+
+settype($PHORUM["args"]["match_threads"], "bool");
 
 if(!phorum_search_check_valid_vars()) {
     $redir_url=phorum_get_url(PHORUM_LIST_URL);
     phorum_redirect_by_url($redir_url);
 }
 
+// Check what forums the current user can read.
+$allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+
 // setup some stuff based on the url passed
-if(!empty($phorum_search)){
+if(!empty($phorum_search) || !empty($phorum_author)){
 
     $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search);
+    $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author);
 
     include_once("./include/format_functions.php");
 
@@ -112,11 +152,13 @@ if(!empty($phorum_search)){
     // needs to get fed by posted messages
     $search_request_data = array(
     'search' => $phorum_search,
+    'author' => $phorum_author,
     'offset' => $start,
     'length' => $PHORUM["list_length"],
     'match_type'  => $PHORUM["args"]["match_type"],
     'match_dates' => $PHORUM["args"]["match_dates"],
     'match_forum' => $PHORUM["args"]["match_forum"],
+    'match_threads' => $PHORUM["args"]["match_threads"],
     'results' => array(),
     'raw_body' => 0,
     'totals' => 0,
@@ -127,7 +169,7 @@ if(!empty($phorum_search)){
 
     // only continue if our hook was either not run or didn't return a stop request
     if($search_request_data['continue']) {
-        $arr = phorum_db_search($phorum_search, $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
+        $arr = phorum_db_search($phorum_search, $phorum_author, $PHORUM["args"]["match_threads"], $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
         $raw_body = 0;
     } else {
         $arr['rows'] = $search_request_data['results'];
@@ -233,7 +275,19 @@ $PHORUM["DATA"]["SEARCH"]["forum_id"] = $PHORUM["forum_id"];
 $PHORUM["DATA"]["SEARCH"]["match_type"] = $PHORUM["args"]["match_type"];
 $PHORUM["DATA"]["SEARCH"]["match_dates"] = $PHORUM["args"]["match_dates"];
 $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
-$PHORUM["DATA"]["SEARCH"]["allow_match_one_forum"] = $PHORUM["forum_id"];
+$PHORUM["DATA"]["SEARCH"]["match_threads"] = (int)$PHORUM["args"]["match_threads"];
+
+$PHORUM["DATA"]["SEARCH"]["forum_list"] = phorum_build_forum_list();
+if(isset($PHORUM["args"]["match_forum"])){
+    $match_forum = explode(",", $PHORUM["args"]["match_forum"]);
+    foreach($PHORUM["DATA"]["SEARCH"]["forum_list"] as $key=>$list_item){
+        if(in_array($list_item["forum_id"], $match_forum)){
+            $PHORUM["DATA"]["SEARCH"]["forum_list"][$key]["selected"] = true;
+        }
+    }
+}
+
+$PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["SEARCH"]["forum_list"]));
 
 if ($PHORUM["args"]["match_type"] == "USER_ID")
 {
