@@ -195,7 +195,7 @@ if(count($_POST)){
                 $built_paths = phorum_admin_build_path_array($cur_forum_id);
 
                 $update_forum = array('forum_id'=>$cur_forum_id,
-                'forum_path'=>serialize($built_paths[$cur_forum_id]));
+                'forum_path'=>$built_paths[$cur_forum_id]);
                 phorum_db_update_forum($update_forum);
             }
 
@@ -227,7 +227,7 @@ if(count($_POST)){
             $built_paths = phorum_admin_build_path_array($cur_forum_id);
 
             $update_forum = array('forum_id'=>$cur_forum_id,
-            'forum_path'=>serialize($built_paths[$cur_forum_id]));
+            'forum_path'=>$built_paths[$cur_forum_id]);
             phorum_db_update_forum($update_forum);
         }
 

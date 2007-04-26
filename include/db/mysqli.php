@@ -1790,7 +1790,10 @@ function phorum_db_update_forum($forum){
 
         foreach($forum as $key => $value){
             if (phorum_db_validate_field($key)) {
-                if (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
+                if ($key == 'forum_path') {
+                    $value = serialize($value);
+                    $value = mysqli_real_escape_string($conn, $value);
+                } elseif (is_numeric($value) && !in_array($key,$PHORUM['string_fields_forum'])){
                     $value = (int)$value;
                     $fields[] = "$key=$value";
                 } elseif($value=="NULL") {

@@ -2142,7 +2142,11 @@ function phorum_db_update_forum($forum)
     {
         if (phorum_db_validate_field($key))
         {
-            if (is_numeric($value) &&
+            if ($key == 'forum_path') {
+                $value = serialize($value);
+                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                $fields[] = "$key = '$value'";                
+            } elseif (is_numeric($value) &&
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
                 $fields[] = "$key = $value";

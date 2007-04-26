@@ -84,7 +84,7 @@
                 $built_paths = phorum_admin_build_path_array($cur_folder_id);
 
                 $update_forum = array('forum_id'=>$cur_folder_id,
-                'forum_path'=>serialize($built_paths[$cur_folder_id]));
+                'forum_path'=>$built_paths[$cur_folder_id]);
                 phorum_db_update_forum($update_forum);
             }
             
@@ -111,14 +111,14 @@
                     $built_paths = phorum_admin_build_path_array();
                     
                     $update_forum = array('forum_id'=>$cur_folder_id,
-                                    'forum_path'=>serialize($built_paths[$cur_folder_id]));
+                                    'forum_path'=>$built_paths[$cur_folder_id]);
                     phorum_db_update_forum($update_forum);
                     
                     if(is_array($setforum_children) && count($setforum_children)) {
 
                         foreach ($setforum_children as $child_forum_id => $child) {
                             $update_forum = array('forum_id'=>$child['forum_id'],
-                            'forum_path'=>serialize($built_paths[$child_forum_id]));
+                            'forum_path'=>$built_paths[$child_forum_id]);
                             phorum_db_update_forum($update_forum);
                         }
                         
