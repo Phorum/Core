@@ -559,6 +559,10 @@ function phorum_get_url()
                 $add_forum_id = true;
                 if ( !empty( $argv[1] ) && is_numeric( $argv[1] ) ) $suffix = "#msg-$argv[1]";
                 break;
+            case PHORUM_CHANGES_URL:
+                $page = "changes";
+                $add_forum_id = true;
+                break;
             case PHORUM_FOREIGN_READ_URL:
                 $page = "read";
                 if ( !empty( $argv[2] ) && is_numeric( $argv[2] ) ) $suffix = "#msg-$argv[2]";

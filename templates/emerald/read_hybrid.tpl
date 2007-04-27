@@ -58,6 +58,9 @@
             {/IF}
 
             {MESSAGES->body}
+            {IF MESSAGES->URL->CHANGES}
+                (<a href="{MESSAGES->URL->CHANGES}">{LANG->ViewChanges}</a>)
+            {/IF}
             <div class="message-options">
                 {IF MESSAGES->edit 1}
                     {IF MODERATOR false}

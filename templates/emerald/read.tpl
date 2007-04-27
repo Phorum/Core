@@ -1,9 +1,7 @@
 <div class="nav">
-    {INCLUDE "paging"}
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
-    {IF FORUM_ID}<a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>{/IF}
-    {IF FORUM_ID}<a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>{/IF}
-    <a class="icon icon-printer" href="{URL->PRINTVIEW}" target="_blank">{LANG->PrintView}</a>
+    <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
+    <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
 </div>
 
 {LOOP MESSAGES}
@@ -58,6 +56,9 @@
             {/IF}
 
             {MESSAGES->body}
+            {IF MESSAGES->URL->CHANGES}
+                (<a href="{MESSAGES->URL->CHANGES}">{LANG->ViewChanges}</a>)
+            {/IF}
             <div class="message-options">
                 {IF MESSAGES->edit 1}
                     {IF MODERATOR false}

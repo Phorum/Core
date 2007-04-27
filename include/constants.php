@@ -89,6 +89,11 @@
     define("PHORUM_THREADED_OFF", 2);
     define("PHORUM_THREADED_HYBRID", 3);
 
+    // edit tracking
+    define("PHORUM_EDIT_TRACK_OFF", 0);
+    define("PHORUM_EDIT_TRACK_ON", 1);
+    define("PHORUM_EDIT_TRACK_MODERATOR", 2);
+
     // subscription types
     define("PHORUM_SUBSCRIPTION_MESSAGE", 0);
     define("PHORUM_SUBSCRIPTION_DIGEST", 1);
@@ -226,6 +231,7 @@
     define("PHORUM_CUSTOM_URL", $i++);
     define("PHORUM_BASE_URL", $i++);
     define("PHORUM_ADDON_URL", $i++);
+    define("PHORUM_CHANGES_URL", $i++);
 
     // moderation actions
     $i=1;

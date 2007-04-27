@@ -102,7 +102,10 @@
         "Cancel"                =>      "Cancel",
         "CancelConfirm"         =>      "Are you sure you want to cancel?",
         "CannotBeRunFromBrowser"=>      "This script cannot be run from a web browser.",
+        "ChangeBy"              =>      "Changed By",
+        "ChangeDate"            =>      "Change Date",
         "ChangeEMail"           =>      "Change Email",
+        "ChangeHistory"         =>      "Change History",
         "ChangePassword"        =>      "Change Password",
         "ChangesSaved"          =>      "The changes have been saved.",
         "CheckToDelete"         =>      "Check To Delete",
@@ -339,6 +342,7 @@
         "OnlyUnapproved"        =>      "only unapproved messages",
         "of"                    =>      "of",  // as in: 1 - 5 of 458
         "Options"               =>      "Options",
+        "OriginalMessage"       =>      "Original Message",
 
         "Page"                  =>      "Page",
         "Pages"                 =>      "Pages",
@@ -535,6 +539,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "VerifyRegEmailSubject" =>      "Please verify your account",
         "VerifyRegEmailBody1"   =>      "To validate your $PHORUM[title] account, please click on the URL below.",
         "VerifyRegEmailBody2"   =>      "Once verified, you can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "ViewChanges"           =>      "view changes",
         "ViewFlatList"          =>      "One entry per topic",
         "ViewFlatRead"          =>      "Multiple messages per page sorted by time",
         "ViewHybridRead"        =>      "Multiple messages per page, threaded",

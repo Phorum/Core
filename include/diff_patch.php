@@ -223,4 +223,36 @@ function phorum_unpatch($text, $diff) {
     return $text;
 }
 
+/**
+* Undo patched changes to a string.
+* $text: Final string
+* $diff: Changes that were applied
+* return: Unpatched string
+*/
+function phorum_unpatch_color($text, $diff) {
+    if(!is_array($diff)) {
+        $n = 0;
+        for($i=0; $i<strlen($diff); $i++) {
+            $c = substr($diff, $i, 1);
+            if($c == "-") {
+                $n = substr($diff, 0, $i);
+                $pre = substr($text, 0, $n);
+                $post = substr($text, $n);
+                return $pre."[phorum removal]".substr($diff, $i+1)."[/phorum removal]".$post;
+            } elseif($c == "+") {
+                $n = substr($diff, 0, $i);
+                $pre = substr($text, 0, $n);
+                $post = substr($text, $n);
+                $colored_text = substr($diff, $i+1);
+                return $pre."[phorum addition]".$colored_text."[phorum addition]".substr($post, strlen($diff)-$i-1);
+            }
+        }
+        return $text;
+    }
+    foreach(array_reverse($diff) as $d) {
+        $text = phorum_unpatch_color($text, $d);
+    }
+    return $text;
+}
+
 ?>

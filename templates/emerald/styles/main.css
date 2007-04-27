@@ -444,6 +444,16 @@ img {
     text-align: center;
 }
 
+/* Changes styles */
+
+#phorum span.addition {
+    background-color: #CBFFCB;
+}
+
+#phorum span.removal {
+    background-color: #FFCBCB;
+}
+
 /* Posting styles */
 
 #phorum #post {
