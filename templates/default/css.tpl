@@ -111,7 +111,7 @@ input
 
 #phorum-index th.forum-name a
 {
-    color: Black;
+    color: {defaulttextcolor};
 }
 
 #phorum-index th.forum-threads
@@ -525,7 +525,7 @@ div.phorum-menu a.phorum-current-page
 
    .PhorumReadBodySubject
     {
-        color: Black;
+        color: {defaulttextcolor};
         font-size: {largefontsize};
         font-family: {largefont};
         font-weight: bold;
@@ -601,7 +601,7 @@ div.phorum-menu a.phorum-current-page
 
     .phorum-recipientblock
     {
-        border: 1px solid black;
+        border: 1px solid {tablebordercolor};
         position:relative;
         float:left;
         padding: 1px 1px 1px 5px;
@@ -628,7 +628,7 @@ div.phorum-menu a.phorum-current-page
 
     .phorum-gaugeprefix {
         border: none;
-        background-color: white;
+        background-color: {backcolor};
         padding-right: 10px;
     }
 
