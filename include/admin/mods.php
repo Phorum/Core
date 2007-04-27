@@ -66,10 +66,14 @@ while (false !== ($entry = $d->read()))
         "module information is available for that module.");
         continue;
     }
+    
+    include_once('./include/version_functions.php');
 
     // Parse the module information.
     $info = array();
+    $info['version_disabled'] = false;
     foreach ($lines as $line) {
+    					
         if (strstr($line, ":")) {
             $parts = explode(":", trim($line), 2);
             if($parts[0]=="hook"){
@@ -93,6 +97,24 @@ while (false !== ($entry = $d->read()))
                     "Cannot parse priority " .
                     "\"" . htmlspecialchars($prio) . "\"<br/>");
                 }
+            } elseif($parts[0]=="required_version") {
+            	$required_ver = trim($parts[1]);
+				$phorum_ver = PHORUM;
+				
+				list ($release, $current_version)  = phorum_parse_version($phorum_ver);
+				list ($release, $required_version) = phorum_parse_version($required_ver);  
+
+				if(phorum_compare_version($current_version, $required_version) == -1) {
+					phorum_admin_error(
+					"Minimum Phorum-Version requirement not met for module " .
+					"\"" . htmlspecialchars($entry) . "\"<br/>" .
+					"Requires at least version " .
+					"\"" . htmlspecialchars($required_ver) . "\" and current version is \" " . PHORUM . "\"<br />" . 
+					"The module was disabled to avoid malfunction of your Phorum because of that requirement.<br/>");
+									
+					$info['version_disabled'] = true;
+				}
+
             } else {
                 $info[$parts[0]]=trim($parts[1]);
             }
@@ -341,6 +363,8 @@ $frm->addbreak("Phorum Module Settings");
 
 $frm->hidden("module", "mods");
 
+$module_changes = false;
+
 foreach ($modules_info as $name => $info)
 {
     if (isset($PHORUM["mods"]["$name"])) {
@@ -378,8 +402,34 @@ foreach ($modules_info as $name => $info)
     }
 
 
-    $frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $enabled).$settings_link);
+    if(!$info['version_disabled']) {
+    	$frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $enabled).$settings_link);
+    } else {
+    	$frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off"),0,'disabled=\'disabled\'').$settings_link);
+    	if($enabled) {
+    		foreach($info['hooks'] as $hookdata) {
+				list($hook,$hookfunction)=explode('|',$hookdata);
+				foreach($PHORUM['hooks'][$hook]['funcs'] as $hid => $functionname) {
+					if($functionname == $hookfunction) {
+						unset($PHORUM['hooks'][$hook]['funcs'][$hid]);
+						unset($PHORUM['hooks'][$hook]['mods'][$hid]);							
+					}
+				}
+    		}
+    		unset($PHORUM["mods"]["$name"]);
+    		$module_changes = true;
+    	}
+    }
+}
 
+if($module_changes) {
+    // Store the settings in the database.
+	// changes could occur with a disabled module
+    $data = array(
+    "hooks" => $PHORUM["hooks"],
+    "mods"  => $PHORUM["mods"]
+    );
+    phorum_db_update_settings($data);
 }
 
 $frm->show();

@@ -221,7 +221,17 @@ Table of contents:
    |          | priority: run hook foo after *                            |
    |          | priority: run hook bar before smileys                     |
    |          |                                                           |
-   +----------+-----------------------------------------------------------+
+   +----------+-----------------------------------------------------------+-------+
+   | required_version | This describes which phorum version is required to use    |
+   |          		  | this module. Modules with a requirement above the current |
+   |          		  | phorum version are automatically disabled when going to   |
+   |          		  | the modules page.										  |
+   |         		  |                                                           |   
+   |         		  | Example:                                                  |`
+   |         		  |                                                           |   
+   |         		  | required_version: 5.2.0                                   |
+   |				  | This will require to be the phorum version at least 5.2.0 |      
+   +------------------+-----------------------------------------------------------+
 
    It is allowed to use multiple hook lines in your module information,
    so your module can hook into multiple hooks. When doing this, it
@@ -237,6 +247,7 @@ Table of contents:
       hook: some_other_hook|phorum_mod_foo_some_other_hook
       hook: yet_another_hook|phorum_mod_foo_some_other_hook
       priority: run some_hook before some_other_module
+      required_version: 5.2.0      
 
    So what this module info for example does, is telling Phorum that
    when it gets to "some_other_hook", it will have to call the function
