@@ -56,6 +56,8 @@ if ( count( $_POST ) ) {
             case "cache_users":
 
             case "cache_messages":
+            	
+			case "cache_banlists":            	
 
             case "cache_newflags":
                 if ( empty( $value ) ) {
@@ -104,6 +106,7 @@ $frm->addbreak("Which data to cache");
 $row=$frm->addrow( "Enable Caching Userdata:", $frm->select_tag( "cache_users", array( "No", "Yes" ), $PHORUM["cache_users"] ) );
 $row=$frm->addrow( "Enable Caching Newflags:", $frm->select_tag( "cache_newflags", array( "No", "Yes" ), $PHORUM["cache_newflags"] ) );
 $row=$frm->addrow( "Enable Caching Messages:", $frm->select_tag( "cache_messages", array( "No", "Yes" ), $PHORUM["cache_messages"] ) );
+$row=$frm->addrow( "Enable Caching Banlists:", $frm->select_tag( "cache_banlists", array( "No", "Yes" ), $PHORUM["cache_banlists"] ) );
 $row=$frm->addrow( "Enable Caching RSS-Feeds:", $frm->select_tag( "cache_rss", array( "No", "Yes" ), $PHORUM["cache_rss"] ) );
 
 $frm->addbreak("Cache-Layer - make sure you have the prerequesites for the layer installed");

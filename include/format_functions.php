@@ -31,7 +31,22 @@ function phorum_format_messages ($data)
 
     // Prepare the bad-words replacement code.
     $bad_word_check= false;
-    $banlists = phorum_db_get_banlists();
+
+    $banlists = NULL;
+    if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
+    	$cache_key = $PHORUM['forum_id'];
+    	$banlists=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+    }
+    // not found or no caching enabled
+    if($banlists === NULL ) {
+    	$banlists = phorum_db_get_banlists();
+
+    	if(isset($PHORUM['cache_banlists']) &&
+    	$PHORUM['cache_banlists']) {
+    		phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
+    	}
+    }
+    
     if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
         $replace_vals  = array();
         $replace_words = array();
@@ -264,7 +279,22 @@ function phorum_strip_body( $body )
     // do badwords check
     // Prepare the bad-words replacement code.
     $bad_word_check= false;
-    $banlists = phorum_db_get_banlists();
+	
+    $banlists = NULL;
+    if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
+    	$cache_key = $PHORUM['forum_id'];
+    	$banlists=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+    }
+    // not found or no caching enabled
+    if($banlists === NULL ) {
+    	$banlists = phorum_db_get_banlists();
+
+    	if(isset($PHORUM['cache_banlists']) &&
+    	$PHORUM['cache_banlists']) {
+    		phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
+    	}
+    }
+    
     if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
         $replace_vals  = array();
         $replace_words = array();

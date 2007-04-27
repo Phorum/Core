@@ -33,6 +33,17 @@
 
         if($_POST["curr"]!="NEW"){
             $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST["curr"]);
+            if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
+            	// we need to increase the version in that case to invalidate them all
+				// TODO: I think I have to work out a way to make the same work with vroots
+            	if($_POST['forum_id'] == 0) {
+            		$PHORUM['banlist_version'] = $PHORUM['banlist_version'] + 1;
+            		phorum_db_update_settings(array('banlist_version'=>$PHORUM['banlist_version']));
+            	} else {
+            		// remove the one for that forum
+					phorum_cache_remove('banlist',$_POST['forum_id']);
+            	}
+            }
         } else {
             $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],0);
         }
