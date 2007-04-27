@@ -513,6 +513,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "Total"                 =>      "Total",
         "TotalFiles"            =>      "Total Files",
         "TotalFileSize"         =>      "Space Used",
+        "TotalRecipients"       =>      "total recipients",
 
         "Unapproved"            =>      "awaiting approval",
         "UnapprovedGroupMembers" =>     "There are unapproved group memberships",

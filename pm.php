@@ -638,7 +638,7 @@ switch ($page) {
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
 
-            $buddy["URL"]["PROFILE"] = 
+            $buddy["URL"]["PROFILE"] =
                 phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]);
 
             if (!$buddy_user['hide_activity']) {
@@ -717,11 +717,16 @@ switch ($page) {
             list($message) = phorum_pm_format(array($message));
 
             // Setup data for recipients.
-            foreach ($message["recipients"] as $rcpt_id => $rcpt) {
-                $message["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
-                $message["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
-            }
             $message["recipient_count"] = count($message["recipients"]);
+            if($message["recipient_count"] < 10){
+                $message["show_recipient_list"] = true;
+                foreach ($message["recipients"] as $rcpt_id => $rcpt) {
+                    $message["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
+                    $message["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                }
+            } else {
+                $message["show_recipient_list"] = false;
+            }
 
             // Setup URL's and format date.
             $message["URL"]["FROM"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
@@ -1007,7 +1012,7 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
     if (substr($message["subject"], 0, 3) != "Re:") {
         $message["subject"] = "Re: ".$message["subject"];
     }
-    
+
     $quote = phorum_hook("quote", array($orig_author, $message["message"]));
 
     if (empty($quote) || is_array($quote))
@@ -1019,7 +1024,7 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
         $quote = "$orig_author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
                  str_repeat("-", 55)."\n> {$quote}\n\n\n";
     }
-        
+
     $quote = ($inreplyto != NULL ? "{$PHORUM['DATA']['LANG']['InReplyTo']} {$inreplyto}\n\n" : '') . $quote;
 
     $message["message"] = $quote;

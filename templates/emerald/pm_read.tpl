@@ -7,12 +7,16 @@
     </div>
     <div class="message-author icon-user">
         {LANG->To}:
-        {LOOP MESSAGE->recipients}
-            <a href="{MESSAGE->recipients->URL->TO}">{MESSAGE->recipients->username}</a>
-            {IF USER->user_id MESSAGE->from_user_id}
-                {IF NOT MESSAGE->recipients->read_flag}({LANG->PMUnread}){/IF}
-            {/IF}
-        {/LOOP MESSAGE->recipients}
+        {IF MESSAGE->show_recipient_list}
+            {LOOP MESSAGE->recipients}
+                <a href="{MESSAGE->recipients->URL->TO}">{MESSAGE->recipients->username}</a>
+                {IF USER->user_id MESSAGE->from_user_id}
+                    {IF NOT MESSAGE->recipients->read_flag}({LANG->PMUnread}){/IF}
+                {/IF}
+            {/LOOP MESSAGE->recipients}
+        {ELSE}
+            {MESSAGE->recipient_count} {LANG->TotalRecipients}
+        {/IF}
     </div>
     <div class="message-date">{MESSAGE->date}</div>
 </div>
