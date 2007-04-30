@@ -19,10 +19,13 @@
 
 if(!defined("PHORUM")) return;
 
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
+
 // Clean up unlinked attachments from the database.
 foreach ($message["attachments"] as $info) {
     if (! $info["linked"]) {
-        phorum_db_file_delete($info["file_id"]);
+        phorum_api_file_delete($info["file_id"]);
     }
 }
 

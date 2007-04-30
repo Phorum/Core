@@ -19,6 +19,9 @@
 
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
+
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
     exit();
@@ -90,7 +93,7 @@ if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
                 // Delete the message attachments from the database.
                 $files=phorum_db_get_message_file_list($msgthd_id);
                 foreach($files as $file_id=>$data) {
-                    phorum_db_file_delete($file_id);
+                    phorum_api_file_delete($file_id);
                 }
             }
 

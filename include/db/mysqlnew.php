@@ -133,7 +133,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     );
 
     // Execute the SQL query.
-    if (($res = mysql_query($sql, $conn)) === FALSE)
+    $res = $return === DB_RETURN_ASSOCS ||
+           $return === DB_RETURN_ROWS
+         ? mysql_unbuffered_query($sql, $conn)
+         : mysql_query($sql);
+
+    if ($res === FALSE)
     {
         // See if the $flags tell us to ignore the error.
         $ignore_error = FALSE;

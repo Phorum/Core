@@ -14,11 +14,9 @@
     {IF PREVIEW->attachments}
       {LANG->Attachments}:
       {LOOP PREVIEW->attachments}
-        {IF PREVIEW->attachments->keep}
-          <span style="white-space:nowrap">
-            <a href="{PREVIEW->attachments->url}">{PREVIEW->attachments->name} ({PREVIEW->attachments->size})</a>&nbsp;&nbsp;
-          </span>
-        {/IF}
+        <span style="white-space:nowrap">
+          <a href="{PREVIEW->attachments->url}">{PREVIEW->attachments->name} ({PREVIEW->attachments->size})</a>&nbsp;&nbsp;
+        </span>
       {/LOOP PREVIEW->attachments}
     {/IF}
   {/IF}

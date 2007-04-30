@@ -2591,7 +2591,7 @@ function phorum_db_get_message_file_list($message_id)
  * This function retrieves a file from the db
  */
 
-function phorum_db_file_get($file_id)
+function phorum_db_file_get($file_id, $include_file_data)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -2599,9 +2599,13 @@ function phorum_db_file_get($file_id)
 
     settype($file_id, "int");
 
+    $fields = "file_id, user_id, filename, filesize, " .
+              "add_datetime, message_id, link";
+    if ($include_file_data) $fields .= ",file_data";
+
     $file=array();
 
-    $sql="select * from {$PHORUM['files_table']} where file_id=$file_id";
+    $sql="select $fields from {$PHORUM['files_table']} where file_id=$file_id";
 
     $res = pg_query($conn, $sql);
 

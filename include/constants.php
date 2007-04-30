@@ -144,6 +144,7 @@
     define("PHORUM_LINK_USER", "user");
     define("PHORUM_LINK_MESSAGE", "message");
     define("PHORUM_LINK_EDITOR", "editor");
+    define("PHORUM_LINK_TEMPFILE", "tempfile");
 
     // Offsite file linking permissions
     define("PHORUM_OFFSITE_FORUMONLY", 0);

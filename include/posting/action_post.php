@@ -25,6 +25,9 @@ include_once("./include/thread_info.php");
 // For phorum_email_moderators() and phorum_email_notice().
 include_once("./include/email_functions.php");
 
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
+
 // Set some values.
 $message["moderator_post"] = $PHORUM["DATA"]["MODERATOR"] ? 1 : 0;
 $message["sort"] = PHORUM_SORT_DEFAULT;
@@ -90,7 +93,7 @@ $message["msgid"] = md5(uniqid(rand())) . ".$suffix";
 // a check is needed to see if the attachments are really in the database.
 $message["meta"]["attachments"] = array();
 foreach ($message["attachments"] as $info) {
-    if ($info["keep"] && phorum_db_file_get($info["file_id"])) {
+    if ($info["keep"] && phorum_api_file_exists($info["file_id"])) {
         $message["meta"]["attachments"][] = array(
             "file_id"   => $info["file_id"],
             "name"      => $info["name"],
@@ -124,7 +127,7 @@ if ($success)
                 PHORUM_LINK_MESSAGE
             );
         } else {
-            phorum_db_file_delete($info["file_id"]);
+            phorum_api_file_delete($info["file_id"]);
         }
     }
 

@@ -53,11 +53,14 @@ $previewmessage = array_shift($previewmessages);
 
 // Recount the number of attachments. Formatting mods might have changed
 // the number of attachments we have to display using default formatting.
+// Also, remove the attachments that are not visible from the preview data.
 $attach_count = 0;
 if (isset($previewmessage["attachments"])) {
-    foreach ($previewmessage["attachments"] as $attachment) {
+    foreach ($previewmessage["attachments"] as $id => $attachment) {
         if ($attachment["keep"]) {
             $attach_count ++;
+        } else {
+            unset($previewmessage["attachments"][$id]);
         }
     }    
 }

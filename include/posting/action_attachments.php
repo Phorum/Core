@@ -19,6 +19,9 @@
 
 if(!defined("PHORUM")) return;
 
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
+
 if ($do_detach)
 {
     // Find the message to detach.
@@ -30,7 +33,7 @@ if ($do_detach)
             // can be deleted immediately. Linked attachments should
             // be kept in the db, in case the users clicks "Cancel".
             if (! $info["linked"]) {
-                phorum_db_file_delete($info["file_id"]);
+                phorum_api_file_delete($info["file_id"]);
                 unset($message["attachments"][$id]);
             } else {
                 $message["attachments"][$id]["keep"] = false;
@@ -96,7 +99,7 @@ elseif ($do_attach && ! empty($_FILES))
         // files will almost always have problems uploading.
         if ($file["size"] == 0) continue;
 
-        // Check if the tempfile is an uploaded file?
+        // Is the tempfile is an uploaded file?
         if (! is_uploaded_file($file["tmp_name"])) continue;
 
         // Isn't the total attachment size too large?
@@ -124,7 +127,7 @@ elseif ($do_attach && ! empty($_FILES))
         }
 
         // Read in the file.
-        $file["data"] = base64_encode(file_get_contents($file["tmp_name"]));
+        $file["data"] = file_get_contents($file["tmp_name"]);
 
         // copy the current user_id to the $file array for the hook
         $file["user_id"]=$PHORUM["user"]["user_id"];
@@ -133,23 +136,26 @@ elseif ($do_attach && ! empty($_FILES))
         list($message, $file) =
             phorum_hook("before_attach", array($message, $file));
 
-        // Add the file to the database. We add it using message_id
+        // Store the file. We add it using message_id
         // 0 (zero). Only when the message gets saved definitely,
         // the message_id will be updated to link the file to the
         // forum message. This is mainly done so we can support
         // attachments for new messages, which do not yet have
         // a message_id assigned.
-        $file_id = phorum_db_file_save(
-            $PHORUM["user"]["user_id"],
-            $file["name"], $file["size"],
-            $file["data"], 0, PHORUM_LINK_EDITOR
-        );
+        $file = phorum_api_file_store(array(
+            "filename"   => $file["name"],
+            "file_data"  => $file["data"],
+            "filesize"   => $file["size"],
+            "link"       => PHORUM_LINK_EDITOR,
+            "user_id"    => 0,
+            "message_id" => 0
+        ));
 
         // Create new attachment information.
         $new_attachment = array(
-            "file_id" => $file_id,
-            "name"    => $file["name"],
-            "size"    => $file["size"],
+            "file_id" => $file["file_id"],
+            "name"    => $file["filename"],
+            "size"    => $file["filesize"],
             "keep"    => true,
             "linked"  => false,
         );

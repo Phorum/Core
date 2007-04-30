@@ -3509,6 +3509,9 @@ function phorum_db_get_message_file_list($message_id)
  * Retrieve a file.
  *
  * @param $file_id - The file id to retrieve from the database.
+ * @param $include_file_data - If this parameter is set to a false value
+ *                   (TRUE is the default), the file data will not be
+ *                   included in the return data.
  *
  * @return $file   - An array, containing the data for all file table fields.
  *                   If the file id cannot be found in the database, an empty
@@ -3517,16 +3520,20 @@ function phorum_db_get_message_file_list($message_id)
  *                   TODO: but we should look at how calls to this function
  *                   TODO: are handled throughout the code for that.
  */
-function phorum_db_file_get($file_id)
+function phorum_db_file_get($file_id, $include_file_data = TRUE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
     settype($file_id, 'int');
 
+    $fields = "file_id, user_id, filename, filesize, " .
+              "add_datetime, message_id, link";
+    if ($include_file_data) $fields .= ",file_data";
+
     // Select the file from the database.
     $files = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT *
+        "SELECT $fields 
          FROM   {$PHORUM['files_table']}
          WHERE  file_id = $file_id"
     );
@@ -3539,14 +3546,14 @@ function phorum_db_file_get($file_id)
 }
 
 /**
- * Add a file.
+ * Add or updates a file.
  *
  * @param $user_id    - The id of the user for which to add the file.
  *                      If this file is linked to a message by an anonymous
  *                      user, then this value can be 0 (zero).
  * @param $filename   - The name of the file.
  * @param $filesize   - The size of the file in bytes.
- * @param $buffer     - The file contents. This should be data which is
+ * @param $file_data  - The file contents. This should be data which is
  *                      safe to store in a TEXT field in the database. The
  *                      calling application has to take care of this.
  *                      The database layer will simply store and retrieve
@@ -3574,40 +3581,62 @@ function phorum_db_file_get($file_id)
  *                      Note: these are the official link types. Calling
  *                      functions are allowed to provide different custom link
  *                      types if they need to.
+ * @param $file_id    - If the $file_id is set, then this will be used for
+ *                      updating the existing file data for the given $file_id.
  *
- * @return $file_id   - The file_id that was assigned to the new file.
+ * @return $file_id   - The file_id that was assigned to the new file or
+ *                      the file_id of the existing file if the $file_id
+ *                      parameter was used.
  */
-function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=NULL)
+function phorum_db_file_save($file)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
     // If a link type is not provided, we'll guess for the type of link.
     // This is done to provide some backward compatibility.
-    if ($link === NULL) {
-        if     ($message_id) $link = PHORUM_LINK_MESSAGE;
-        elseif ($user_id)    $link = PHORUM_LINK_USER;
+    if ($file["link"] === NULL) {
+        if     ($message_id) $file["link"] = PHORUM_LINK_MESSAGE;
+        elseif ($user_id)    $file["link"] = PHORUM_LINK_USER;
         else trigger_error(
-            'phorum_db_file_save(): Missing $link parameter in the call',
+            'phorum_db_file_save(): Missing link field in the \$file parameter',
             E_USER_ERROR
         );
     }
 
-    settype($user_id, 'int');
-    settype($message_id, 'int');
-    settype($filesize, 'int');
+    $user_id    = (int)$file["user_id"];
+    $message_id = (int)$file["message_id"];
+    $filesize   = (int)$file["filesize"];
+    $file_id    = !isset($file["file_id"]) || $file["file_id"] === NULL
+                ? NULL : (int)$file["file_id"];
+    $link       = phorum_db_interact(DB_RETURN_QUOTED, $file["link"]);
+    $filename   = phorum_db_interact(DB_RETURN_QUOTED, $file["filename"]);
+    $file_data  = phorum_db_interact(DB_RETURN_QUOTED, $file["file_data"]);
 
-    $link     = phorum_db_interact(DB_RETURN_QUOTED, $link);
-    $filename = phorum_db_interact(DB_RETURN_QUOTED, $filename);
-    $buffer   = phorum_db_interact(DB_RETURN_QUOTED, $buffer);
-
-    $file_id = phorum_db_interact(
-        DB_RETURN_NEWID,
-        "INSERT INTO {$PHORUM['files_table']}
-                (user_id, message_id, link,
-                 filename, filesize, file_data, add_datetime)
-         VALUES ($user_id, $message_id, '$link',
-                 '$filename', $filesize, '$buffer', ".time().")"
-    );
+    // Create a new file record.
+    if ($file_id === NULL) {
+        $file_id = phorum_db_interact(
+            DB_RETURN_NEWID,
+            "INSERT INTO {$PHORUM['files_table']}
+                    (user_id, message_id, link,
+                     filename, filesize, file_data, add_datetime)
+             VALUES ($user_id, $message_id, '$link',
+                     '$filename', $filesize, '$file_data', ".time().")"
+        );
+    }
+    // Update an existing file record.
+    else {
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM['files_table']}
+             SET    user_id      = $user_id,
+                    message_id   = $message_id,
+                    link         = '$link',
+                    filename     = '$filename',
+                    filesize     = $filesize,
+                    file_data    = '$file_data'
+             WHERE  file_id      = $file_id"
+        );
+    }
 
     return $file_id;
 }
@@ -3626,7 +3655,7 @@ function phorum_db_file_delete($file_id)
     settype($file_id, 'int');
 
     phorum_db_interact(
-        DB_RETURN_QUOTED,
+        DB_RETURN_RES,
         "DELETE FROM {$PHORUM['files_table']}
          WHERE  file_id = $file_id"
     );

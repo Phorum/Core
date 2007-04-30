@@ -2912,17 +2912,21 @@ function phorum_db_get_message_file_list($message_id)
  * @param int $file_id
  * @return array
  */
-function phorum_db_file_get($file_id)
+function phorum_db_file_get($file_id, $include_file_data = TRUE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($file_id, "int");
 
+    $fields = "file_id, user_id, filename, filesize, " .
+              "add_datetime, message_id, link";
+    if ($include_file_data) $fields .= ",file_data";
+
     $conn = phorum_db_mysqli_connect();
 
     $file=array();
 
-    $sql="select * from {$PHORUM['files_table']} where file_id=$file_id";
+    $sql="select $fields from {$PHORUM['files_table']} where file_id=$file_id";
 
     $res = mysqli_query($conn, $sql);
 
@@ -2951,7 +2955,7 @@ function phorum_db_file_get($file_id)
  * @return int
  * 		The file ID.
  */
-function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=null)
+function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_id=0, $link=null, $file_id=null)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -2962,6 +2966,7 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     settype($user_id, "int");
     settype($message_id, "int");
     settype($filesize, "int");
+    if ($file_id !== NULL) settype($file_id, "int");
 
     if (is_null($link)) {
         $link = $message_id ? PHORUM_LINK_MESSAGE : PHORUM_LINK_USER;
@@ -2972,7 +2977,11 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     $filename=mysqli_real_escape_string($conn, $filename);
     $buffer=mysqli_real_escape_string($conn, $buffer);
 
-    $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
+    if ($file_id === NULL) {
+        $sql="insert into {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$buffer', add_datetime=".time();
+    } else {
+        $sql = "update {$PHORUM['files_table']} set user_id=$user_id, message_id=$message_id, link='$link', filename='$filename', filesize=$filesize, file_data='$file_data' where file_id=$file_id";
+    }
 
     $res = mysqli_query($conn, $sql);
 
@@ -2981,7 +2990,7 @@ function phorum_db_file_save($user_id, $filename, $filesize, $buffer, $message_i
     }
 
     if($res){
-        $file_id=mysqli_insert_id($conn);
+        $file_id = $file_id === NULL ? mysql_insert_id($conn) : $file_id;
     }
 
     return $file_id;

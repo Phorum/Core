@@ -29,6 +29,9 @@ define("ADMIN_MODULE", "message_prune");
 
 require_once("./include/format_functions.php");
 
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
+
 // ----------------------------------------------------------------------
 // Possible filter rules description
 // ----------------------------------------------------------------------
@@ -231,7 +234,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
             foreach ($delids as $delid) {
                 $files = phorum_db_get_message_file_list($delid);
                 foreach($files as $file_id=>$data) {
-                    phorum_db_file_delete($file_id);
+                    phorum_api_file_delete($file_id);
                 }
             }
 

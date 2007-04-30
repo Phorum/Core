@@ -19,45 +19,93 @@
 
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
-if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
 
-    if(!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"])){
+// First a basic write access check for user files in general.
+// Specific checks for uploaded files is done below here.
+$allow_upload = phorum_api_file_check_write_access(array(
+    "link" => PHORUM_LINK_USER)
+);
 
-        if($PHORUM["max_file_size"]>0 && $_FILES["newfile"]["size"]>$PHORUM["max_file_size"]*1024){
+// No error message means that write access is granted.
+if ($allow_upload["error"] === NULL)
+{
+    // Handle new uploaded file.
+    if (!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"]))
+    {
+        // Create a file array that we can use for checking write access
+        // more detailed than using the basic check above.
+        $file = array(
+            "user_id"   => $PHORUM["user"]["user_id"],
+            "filename"  => $_FILES["newfile"]["name"],
+            "filesize"  => $_FILES["newfile"]["size"],
+            "file_data" => '',
+            "link"      => PHORUM_LINK_USER
+        );
+
+        // Check write access and enforce quota limits.
+        $file = phorum_api_file_check_write_access($file);
+        print "TODO add_datetime in PM<br>";
+        print "<br>End of todo!";
+        exit;
+
+        if ($PHORUM["max_file_size"]>0 && 
+            $_FILES["newfile"]["size"]>$PHORUM["max_file_size"]*1024) {
             $error_msg = true;
-            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileTooLarge"];
+            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["FileTooLarge"];
         }
 
-        if(!empty($PHORUM["file_types"])){
-            $ext=strtolower(substr($_FILES["newfile"]["name"], strrpos($_FILES["newfile"]["name"], ".")+1));
+        if (!empty($PHORUM["file_types"]))
+        {
+            $ext = strtolower(substr($_FILES["newfile"]["name"], strrpos($_FILES["newfile"]["name"], ".")+1));
             $allowed_exts=explode(";", $PHORUM["file_types"]);                
             if(!in_array($ext, $allowed_exts)){
                 $error_msg = true;
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileWrongType"];
+                $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["FileWrongType"];
             }
         }
 
         if($PHORUM["file_space_quota"]>0 && phorum_db_get_user_filesize_total($PHORUM["user"]["user_id"])+$_FILES["newfile"]["size"]>=$PHORUM["file_space_quota"]*1024){
             $error_msg = true;
-            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileOverQuota"];
+            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["FileOverQuota"];
         }
 
         if(empty($error_msg)){
 
-            // read in the file
-            $fp=fopen($_FILES["newfile"]["tmp_name"], "r");
-            $buffer=base64_encode(fread($fp, $_FILES["newfile"]["size"]));
+            // Read in the uploaded file.
+            $fp = fopen($_FILES["newfile"]["tmp_name"], "r");
+            $file_data = fread($fp, $_FILES["newfile"]["size"]);
             fclose($fp);
 
-            $file_id=phorum_db_file_save($PHORUM["user"]["user_id"], $_FILES["newfile"]["name"], $_FILES["newfile"]["size"], $buffer);
+            // Store the file.
+            $file = phorum_api_file_store(array(
+                "user_id"   => $PHORUM["user"]["user_id"],
+                "filename"  => $_FILES["newfile"]["name"],
+                "filesize"  => $_FILES["newfile"]["size"],
+                "file_data" => $file_data,
+                "link"      => PHORUM_LINK_USER
+            ));
 
+            // Display error if an error was returned.
+            if ($file["error"] !== NULL) {
+                $PHORUM["DATA"]["ERROR"] = $file["error"];
+                include phorum_get_template("header");
+                phorum_hook("after_header");
+                include phorum_get_template("message");
+                phorum_hook("before_footer");
+                include phorum_get_template("footer");
+                exit();
+            }
         }
+    }
 
-    } elseif(!empty($_POST["delete"])) {
+    // Handle deleting selected messages.
+    elseif(!empty($_POST["delete"])) {
 
         foreach($_POST["delete"] as $file_id){
 
-            phorum_db_file_delete($file_id);
+            phorum_api_file_delete($file_id);
 
         }                
 
@@ -99,7 +147,7 @@ if ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]) {
 } else {
     $template = "message";
 
-    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UploadNotAllowed"];
+    $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["UploadNotAllowed"];
 } 
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMyFiles"];

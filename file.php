@@ -1,5 +1,4 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 //   Copyright (C) 2007  Phorum Development Team                              //
@@ -15,130 +14,57 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','file');
 
+include_once("./common.php");
+include_once("./include/api/base.php");
+include_once("./include/api/file_storage.php");
+
+// We start a buffer here, so we can catch any (warning) output
+// from being prepended to file data that we return. The file
+// API layer will handle cleaning up of the buffered data.
 ob_start();
 
-ini_set ( "zlib.output_compression", "0");
-ini_set ( "output_handler", "");
-
-include_once("./common.php");
-
-// set all our URL's
-phorum_build_common_urls();
-
-// checking read-permissions
-if(!phorum_check_read_common()) {
-  return;
-}
-
-if(empty($PHORUM["args"]["file"])){
+// The "file" argument contains the ID of the requested file.
+// If this argument is missing, we redirect the user back to
+// the message list for the forum.
+if (empty($PHORUM["args"]["file"])) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
 }
+$file_id = (int) $PHORUM["args"]["file"];
 
-$filearg=(int)$PHORUM["args"]["file"];
-$file=phorum_db_file_get($filearg);
+// Check if the file is available and if the user is allowed to read it.
+$file = phorum_api_file_check_read_access($file_id);
 
-if(empty($file)){
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+// Handle file access errors.
+if (!is_array($file))
+{
+    // Determine the error message to show.
+    switch ($file)
+    {
+      // An illegal external link to a file in the forum.
+      // Display an error page, explaining that linking is not allowed. 
+      case PHORUM_ERRNO_FILEEXTLINK:
+          $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["FileForbidden"];
+          break;
+
+       // For all other errors, we use Phorum's internal error message.
+       default: 
+         $PHORUM["DATA"]["ERROR"] = phorum_api_strerror($file);
+    }
+
+    // Show an error screen.
+    phorum_build_common_urls();
+    include phorum_get_template("header");
+    include phorum_get_template("message");
+    include phorum_get_template("footer");
     exit();
 }
 
-// Security check: is the file linked to a forum message and 
-// does the file belong to the current forum?
-if ($file["link"] == PHORUM_LINK_MESSAGE && isset($file["message_id"])) {
-    $message = phorum_db_get_message($file["message_id"]);
-    if (! $message || $message["forum_id"] != $PHORUM["forum_id"]) {
-        phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-        exit();
-    }
-}
-
-$send_file=true;
-
-// check if this phorum allows off site links and if not, check the referrer
-if(isset($_SERVER["HTTP_REFERER"]) && $PHORUM["file_offsite"] != PHORUM_OFFSITE_ANYSITE && preg_match('!^https?://!', $_SERVER["HTTP_REFERER"])){
-
-    $allowed = false;
-    $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
-
-    if ($PHORUM["file_offsite"] == PHORUM_OFFSITE_FORUMONLY) {
-        $len = strlen($base);
-        if (strtolower(substr($_SERVER["HTTP_REFERER"], 0, $len)) == $base) {
-            $allowed = true;
-        }
-    } elseif ($PHORUM["file_offsite"] == PHORUM_OFFSITE_THISSITE) {
-        if (preg_match('!^https?://([^/]+)/!', $_SERVER["HTTP_REFERER"], $r) &&
-            preg_match('!^https?://([^/]+)/!', $base, $b) &&
-            strtolower($r[1]) == strtolower($b[1])) {
-            $allowed = true;
-        }
-    }
-
-    if (! $allowed) {
-        ob_end_flush();
-
-        $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["FileForbidden"];
-        include phorum_get_template("header");
-        include phorum_get_template("message");
-        include phorum_get_template("footer");
-
-        $send_file=false;
-    }
-}
-
-if($send_file){
-
-    // Mime Types for Attachments
-    $mime_types["default"]="text/plain";
-    $mime_types["pdf"]="application/pdf";
-    $mime_types["doc"]="application/msword";
-    $mime_types["xls"]="application/vnd.ms-excel";
-    $mime_types["gif"]="image/gif";
-    $mime_types["png"]="image/png";
-    $mime_types["jpg"]="image/jpeg";
-    $mime_types["jpeg"]="image/jpeg";
-    $mime_types["jpe"]="image/jpeg";
-    $mime_types["tiff"]="image/tiff";
-    $mime_types["tif"]="image/tiff";
-    $mime_types["xml"]="text/xml";
-    $mime_types["mpeg"]="video/mpeg";
-    $mime_types["mpg"]="video/mpeg";
-    $mime_types["mpe"]="video/mpeg";
-    $mime_types["qt"]="video/quicktime";
-    $mime_types["mov"]="video/quicktime";
-    $mime_types["avi"]="video/x-msvideo";
-    $mime_types["gz"]="application/x-gzip";
-    $mime_types["tgz"]="application/x-gzip";
-    $mime_types["zip"]="application/zip";
-    $mime_types["tar"]="application/x-tar";
-    $mime_types["exe"]="application/octet-stream";
-    $mime_types["rar"]="application/octet-stream";
-    $mime_types["wma"]="application/octet-stream";
-    $mime_types["wmv"]="application/octet-stream";
-    $mime_types["mp3"]="audio/mpeg";
-
-    $type=strtolower(substr($file["filename"], strrpos($file["filename"], ".")+1));
-
-    if(isset($mime_types[$type])){
-        $mime=$mime_types[$type];
-    }
-    else{
-        $mime=$mime_types["default"];
-    }
-
-    list($mime, $file) = phorum_hook("file", array($mime, $file));
-
-    ob_end_clean();
-
-    header("Content-Type: $mime");
-    header("Content-Disposition: filename=\"{$file['filename']}\"");
-
-    echo base64_decode($file["file_data"]);
-
-    exit();
-}
+// Access is allowed. Send the file to the browser.
+phorum_api_file_send($file);
 
 ?>

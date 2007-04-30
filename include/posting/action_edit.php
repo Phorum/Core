@@ -24,6 +24,9 @@ include_once("./include/thread_info.php");
 
 include_once("./include/diff_patch.php");
 
+require_once("./include/api/base.php");
+require_once("./include/api/file_storage.php");
+
 // Create a message which can be used by the database library.
 $dbmessage = array(
     "message_id"    => $message["message_id"],
@@ -97,7 +100,7 @@ foreach ($message["attachments"] as $info)
         // Because there might be inconsistencies in the list due to going
         // backward in the browser after deleting attachments, a check is
         // needed to see if the attachments are really in the database.
-        if (! phorum_db_file_get($info["file_id"])) continue;
+        if (! phorum_api_file_exists($info["file_id"])) continue;
 
         $dbmessage["meta"]["attachments"][] = array(
             "file_id" => $info["file_id"],
@@ -111,7 +114,7 @@ foreach ($message["attachments"] as $info)
             PHORUM_LINK_MESSAGE
         );
     } else {
-        phorum_db_file_delete($info["file_id"]);
+        phorum_api_file_delete($info["file_id"]);
     }
 }
 if (!count($dbmessage["meta"]["attachments"])) {
