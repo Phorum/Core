@@ -106,6 +106,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     );
 
     // Execute the SQL query.
+    // For queries where we are going to retrieve multiple rows, we
+    // use an unuffered query result.
     $res = $return === DB_RETURN_ASSOCS ||
            $return === DB_RETURN_ROWS
          ? mysql_unbuffered_query($sql, $conn)

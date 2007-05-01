@@ -101,7 +101,19 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     );
 
     // Execute the SQL query.
-    if (($res = mysqli_query($conn, $sql)) === FALSE)
+    // For queries where we are going to retrieve multiple rows, we
+    // use an unuffered query result. 
+    if ($return === DB_RETURN_ASSOCS || $return === DB_RETURN_ROWS) {
+         $res = FALSE;
+         if (mysqli_real_query($conn, $sql) !== FALSE) {
+             $res = mysqli_use_result($conn);
+         }
+    } else {
+         $res = mysqli_query($conn, $sql);
+    }
+
+    // Execute the SQL query.
+    if ($res === FALSE)
     {
         // See if the $flags tell us to ignore the error.
         $ignore_error = FALSE;
@@ -184,6 +196,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         // Return all rows.
         if ($return === DB_RETURN_ROWS) {
+            mysqli_free_result($res);
             return $rows;
         }
 
@@ -224,6 +237,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         // Return all rows.
         if ($return === DB_RETURN_ASSOCS) {
+            mysqli_free_result($res);
             return $rows;
         }
 
