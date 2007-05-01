@@ -51,7 +51,7 @@ function phorum_search_check_valid_vars() {
 }
 
 
-if(!empty($_GET["search"]) && !isset($PHORUM["args"]["page"])){
+if((!empty($_GET["search"]) || !empty($_GET["author"])) && !isset($PHORUM["args"]["page"])){
 
     if(!empty($_GET["match_forum"])){
         if(is_array($_GET["match_forum"])){
