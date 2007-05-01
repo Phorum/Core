@@ -6047,7 +6047,22 @@ if (isset($PHORUM['DBCONFIG']['php_extension'])) {
    $ext = "mysqli";
 } elseif (function_exists('mysql_connect')) {
    $ext = "mysql";
+} else {
+   // Up to here, no PHP extension was found. This probably means that no
+   // MySQL extension is loaded. Here we'll try to dynamically load an
+   // extension ourselves.
+   @dl("mysqli.so");
+   if (function_exists('mysqli_connect')) {
+       $ext = "mysqli";
+   } else {
+       @dl("mysql.so");
+       if (function_exists('mysql_connect')) {
+           $ext = "mysql";
+       }
+   }
 }
+
+// If we have no extension by now, we are very much out of luck.
 if ($ext === NULL) trigger_error(
    "The Phorum MySQL database layer is unable to determine the PHP " .
    "MySQL extension to use. This might indicate that there is no " .
@@ -6055,6 +6070,7 @@ if ($ext === NULL) trigger_error(
    E_USER_ERROR
 );
 
+// Load the specific code for the PHP extension that we use.
 $extfile = "./include/db/mysql/{$ext}.php";
 if (!file_exists($extfile)) trigger_error(
    "The Phorum MySQL database layer is unable to find the extension " .
@@ -6063,7 +6079,6 @@ if (!file_exists($extfile)) trigger_error(
    "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
    E_USER_ERROR
 );
-
 include($extfile);
 
 ?>

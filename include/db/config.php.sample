@@ -25,7 +25,14 @@ $PHORUM['DBCONFIG']=array(
 
     // 'down_page'     => 'http://www.example.com/phorum/down.html',
 
-    // 1=enabled, 0=disabled 
+    // Specific options for the "mysql" database layer type.
+    // -----------------------------------------------------------------
+
+    // Use which MySQL PHP extension? Either NULL, "mysql" or "mysqli".
+    // If NULL, Phorum will autodetect the extension to use.
+    'php_extension' =>  NULL,
+
+    // Full text searching? 1=enabled, 0=disabled 
     // (always disable this option for MySQL versions prior to 4.0.18!)
     'mysql_use_ft'  =>  '1'
 );
@@ -76,14 +83,22 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
   An optional URL for redirecting the user when database is down.    
   If you want to use this field, remove the "//" in front of it.
 
+* php_extension (MySQL-only option):
+
+  PHP has multiple extesions for supporting MySQL connections.
+  This option can be use to configure the extension to use. Options are:
+  NULL     : Automatically detect the available database extension.
+  "mysql"  : Use the mysql extension (php.ini needs a line like
+             "extension=mysql.so" for this to work).
+  "mysqli" : Use the mysqli extension (php.ini needs a line like
+            "extension=mysqli.so" for this to work).
+
 * mysql_use_ft (MySQL-only option):
 
   This field determines whether Phorum will use MySQL's full text 
   algorithm for searching postings. If enabled, searching for postings
   will be much faster. You will have to disable this feature in case you
-  are running a database version prior to MySQL 4.0.18. Also disable 
-  it in case your hosting provider does not allow you to create
-  temporary tables in the database.
+  are running a database version prior to MySQL 4.0.18.
 */
 
 ?>
