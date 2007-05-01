@@ -287,7 +287,7 @@ if(isset($PHORUM["args"]["match_forum"])){
     }
 }
 
-$PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["SEARCH"]["forum_list"]));
+$PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["SEARCH"]["forum_list"])+1);
 
 if ($PHORUM["args"]["match_type"] == "USER_ID")
 {
