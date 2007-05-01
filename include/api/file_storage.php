@@ -377,8 +377,10 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // is on disk), so here we give them a chance to check for it.
     // This hook can also be used for implementing additional access
     // rules. The hook can set one of the file api constants as the 
-    // error code to return.
-    $errno = phorum_hook("file_check_read_access", 0, $file, $flags); 
+    // error code to return. A module function has to check if the
+    // function input argument is an array or not. If it's not, it has to
+    // return that argument immediately.
+    $errno = phorum_hook("file_check_read_access", 0, array($file, $flags)); 
     if ($errno) return $errno;
 
     // If we do not do any permission checking, then we are done.
@@ -501,14 +503,14 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         E_USER_ERROR
     );
     settype($file["file_id"], "int");
-
+        
     // Allow modules to handle the file data retrieval.
     $file["result"]    = 0; 
-    $file["mime_type"] = NULL;
+    $file["mime_type"] = phorum_api_file_get_mimetype($file["filename"]);
     $file["file_data"] = NULL;
     $file["error"]     = NULL;
     $file["errno"]     = NULL;
-    $file = phorum_hook("file_retrieve", $file, $flags);
+    list($file, $flags) = phorum_hook("file_retrieve", array($file, $flags));
 
     // If a module returned an error or sent the file data
     // to the browser, then we are done.
@@ -533,10 +535,8 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         $file["file_data"] = base64_decode($dbfile["file_data"]);
     }
 
-    // Set the MIME type information if it was not set by a module.
-    if ($file["mime_type"] === NULL) {
-        $file["mime_type"] = phorum_api_file_get_mimetype($file["filename"]);
-    }
+    // Give modules a chance to modify the retrieved file data.
+    list($file, $flags) = phorum_hook("file_after_retrieve", array($file, $flags));
 
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
