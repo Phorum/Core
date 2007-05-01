@@ -110,7 +110,7 @@ while (false !== ($entry = $d->read()))
                         "module \"" . htmlspecialchars($entry) . "\"<br/>" .
                         "It requires at least version " .
                         "\"" . htmlspecialchars($required_ver) . "\", " .
-                        "but the current version is \"" . PHORUM . "\"<br />".
+                        "but the current version is \"" . PHORUM . "\".<br />".
                         "The module was disabled to avoid malfunction of " .
                         "your Phorum because of that requirement.<br/>"
                     );
