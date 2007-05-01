@@ -1221,17 +1221,18 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
  * messages based on the page $offset and $length.
  *
  * @param $search         - The query to search on in messages and subjects.
- * @param $author         - The query to search on in the message authors.
+ * @param $author         - The query to search on in the message authors or
+ *                          a numerical user_id if searching for all messages
+ *                          for a certain user_id.
  * @param $return_threads - Whether to return the results as threads (TRUE)
  *                          or messages (FALSE).
  * @param $offset         - The result page offset starting with 0.
  * @param $length         - The result page length (nr. of results per page).
  * @param $match_type     - The type of search. This can be one of:
- *                          AUTHOR   search for an author name
- *                          USER_ID  search for an author id
- *                          ALL      search on all of the words
- *                          ANY      search on any of the words
- *                          PHRASE   search for an exact phrase
+ *                          ALL      search on all of the words (uses $search)
+ *                          ANY      search on any of the words (uses $search)
+ *                          PHRASE   search for an exact phrase (uses $search)
+ *                          USER_ID  search for an author id (uses $author)
  * @param $days           - The number of days to go back in the database for
  *                          searching (last [x] days) or zero to search within
  *                          all dates.
@@ -1304,8 +1305,8 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         $datestamp_where = '';
     }
 
-    // We make use of temporary tables for each search segement.
-    // The table are stored in $tables during processing.
+    // We make use of temporary tables for storing intermediate search
+    // results. These tables are stored in $tables during processing.
     $tables = array();
 
     // ----------------------------------------------------------------------
@@ -1430,7 +1431,14 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     {
         $table_name = $PHORUM['search_table']."_author_".md5(microtime());
 
-        $author = phorum_db_interact(DB_RETURN_QUOTED, $author);
+        // Search either by user_id or by username.
+        if ($match_type == "USER_ID") {
+            $author = (int) $author;
+            $author_where = "user_id = $author";
+        } else {
+            $author = phorum_db_interact(DB_RETURN_QUOTED, $author);
+            $author_where = "user_id = '$author'";
+        }
 
         phorum_db_interact(
             DB_RETURN_RES,
@@ -1439,7 +1447,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
              ) ENGINE=HEAP
                SELECT message_id
                FROM   {$PHORUM["message_table"]}
-               WHERE  author = '$author'"
+               WHERE  $author_where"
         );
 
         $tables[] = $table_name;
