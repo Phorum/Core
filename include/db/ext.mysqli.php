@@ -19,29 +19,6 @@
 
 if (!defined('PHORUM')) return;
 
-/**
- * The other Phorum code does not care how the messages are stored.
- * The only requirement is that they are returned from these functions
- * in the right way.  This means each database can use as many or as
- * few tables as it likes.  It can store the fields anyway it wants.
- * The only thing to worry about is the table_prefix for the tables.
- * all tables for a Phorum install should be prefixed with the
- * table_prefix that will be entered in include/db/config.php.  This
- * will allow multiple Phorum installations to use the same database.
- */
-
-// ----------------------------------------------------------------------
-// API functions and definitions
-// ----------------------------------------------------------------------
-
-/**
- * The API functions and definitions are included from a separate file.
- * This way, the mysql and the mysqli database layers can share the same
- * API core code.
- */
-include('./include/db/mysql_shared.php');
-
-
 // ----------------------------------------------------------------------
 // Database layer specific functions
 // ----------------------------------------------------------------------

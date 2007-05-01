@@ -20,40 +20,40 @@
 
 if (!defined('PHORUM')) return;
 
-// This script implements shared functionality that is needed for the MySQL
-// database layers (mysql and mysqli). Those database layers only implement
-// their specific code and include this script for handling the shared code.
+/**
+ * This script implements a MySQL Phorum database layer.
+ *
+ * The other Phorum code does not care how the messages are stored.
+ * The only requirement is that they are returned from these functions
+ * in the right way.  This means each database can use as many or as
+ * few tables as it likes.  It can store the fields anyway it wants.
+ *
+ * The only thing to worry about is the table_prefix for the tables.
+ * all tables for a Phorum install should be prefixed with the
+ * table_prefix that will be entered in include/db/config.php.  This
+ * will allow multiple Phorum installations to use the same database.
+ */
 
 // TODO: phorum_user_access_allowed() is used in this layer, but the
 // TODO: include file for that is not included here. Keep it like that
 // TODO: or add the required include? Or is it functionality that doesn't
 // TODO: belong here and could better go into the core maybe?
 
-
 // ----------------------------------------------------------------------
 // Definitions
 // ----------------------------------------------------------------------
 
 /**
- * The core_type is set here, to let the database layer use the 
- * database upgrade files from the "mysql" database layer.
- */
-$PHORUM["DBCONFIG"]["core_type"] = "mysql";
-
-/**
- * These are the table names used for this database system.
+ * These are the table names that are used for this database system.
  */
 
 $prefix = $PHORUM['DBCONFIG']['table_prefix'];
 
-// tables needed to be "partitioned"
 $PHORUM['message_table']            = $prefix . '_messages';
 $PHORUM['user_newflags_table']      = $prefix . '_user_newflags';
 $PHORUM['subscribers_table']        = $prefix . '_subscribers';
 $PHORUM['files_table']              = $prefix . '_files';
 $PHORUM['search_table']             = $prefix . '_search';
-
-// tables common to all "partitions"
 $PHORUM['settings_table']           = $prefix . '_settings';
 $PHORUM['forums_table']             = $prefix . '_forums';
 $PHORUM['user_table']               = $prefix . '_users';
@@ -106,14 +106,16 @@ define('DB_TABLEEXISTSOK',  32);
 
 
 // ----------------------------------------------------------------------
-// Utility functions (not directly part of the API)
+// Utility functions (not directly part of the Phorum db API)
 // ----------------------------------------------------------------------
 
 /**
- * DEPRECATED
+ * @deprecated
  * A wrapper function for connecting to the database. This function should
- * be avoided. Instead the phorum_db_interact() function should be used
- * in combination with the DB_RETURN_CONN return type.
+ * not be used from the db layer code. Instead the phorum_db_interact()
+ * function should be used in combination with the DB_RETURN_CONN return type.
+ * This function is only implemented for module writers that use this function
+ * in their code.
  *
  * @return $conn - A database connection resource handle.
  */
@@ -6028,4 +6030,40 @@ function phorum_db_sanitychecks()
     // All checks are okay.
     return array (PHORUM_SANITY_OK, NULL);
 }
+
+// ----------------------------------------------------------------------
+// Load specific code for the required PHP database module.
+// ----------------------------------------------------------------------
+
+// PHP has support for MySQL connections through multiple extensions.
+// If the config.php specifies a PHP database extension, then this one is
+// used for loading the specific PHP database extension code. Otherwise,
+// we try to auto-detect which one is available.
+
+$ext = NULL;
+if (isset($PHORUM['DBCONFIG']['php_extension'])) {
+   $ext = $PHORUM['DBCONFIG']['php_extension'];
+} elseif (function_exists('mysqli_connect')) {
+   $ext = "mysqli";
+} elseif (function_exists('mysql_connect')) {
+   $ext = "mysql";
+}
+if ($ext === NULL) trigger_error(
+   "The Phorum MySQL database layer is unable to determine the PHP " .
+   "MySQL extension to use. This might indicate that there is no " .
+   "extension loaded from the php.ini.",
+   E_USER_ERROR
+);
+
+$extfile = "./include/db/ext.{$ext}.php";
+if (!file_exists($extfile)) trigger_error(
+   "The Phorum MySQL database layer is unable to find the extension " .
+   "file $extfile on the system. Check if all Phorum files are uploaded " .
+   "and if you did specify the correct \"php_extension\" in the file " .
+   "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
+   E_USER_ERROR
+);
+
+include($extfile);
+
 ?>
