@@ -6055,7 +6055,7 @@ if ($ext === NULL) trigger_error(
    E_USER_ERROR
 );
 
-$extfile = "./include/db/ext.{$ext}.php";
+$extfile = "./include/db/mysql/{$ext}.php";
 if (!file_exists($extfile)) trigger_error(
    "The Phorum MySQL database layer is unable to find the extension " .
    "file $extfile on the system. Check if all Phorum files are uploaded " .
