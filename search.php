@@ -50,8 +50,10 @@ function phorum_search_check_valid_vars() {
     return $retval;
 }
 
-if((!empty($_GET["search"]) || !empty($_GET["author"])) && !isset($PHORUM["args"]["page"])){
+if((!empty($_GET["search"]) || !empty($_GET["author"])) &&
+   !isset($PHORUM["args"]["page"])) {
 
+    $match_forum = "ALL";
     if(!empty($_GET["match_forum"])){
         if(is_array($_GET["match_forum"])){
             foreach($_GET["match_forum"] as $forum_id){
@@ -68,9 +70,9 @@ if((!empty($_GET["search"]) || !empty($_GET["author"])) && !isset($PHORUM["args"
             }
 
         } else {
-            if(is_numeric($forum_id)){
-                $match_forum = $forum_id;
-            } elseif($forum_id=="ALL") {
+            if(is_numeric($_GET["match_forum"])){
+                $match_forum = $_GET["match_forum"];
+            } elseif($_GET["match_forum"]=="ALL") {
                 $match_forum="ALL";
             }
         }
