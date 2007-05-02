@@ -1439,7 +1439,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
             $author_where = "user_id = $author";
         } else {
             $author = phorum_db_interact(DB_RETURN_QUOTED, $author);
-            $author_where = "user_id = '$author'";
+            $author_where = "author = '$author'";
         }
 
         phorum_db_interact(
