@@ -56,6 +56,7 @@ if((!empty($_GET["search"]) || !empty($_GET["author"])) &&
     $match_forum = "ALL";
     if(!empty($_GET["match_forum"])){
         if(is_array($_GET["match_forum"])){
+            $match_forum = array();
             foreach($_GET["match_forum"] as $forum_id){
                 if(is_numeric($forum_id)){
                     $match_forum[] = $forum_id;
