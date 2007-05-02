@@ -145,6 +145,14 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
     $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
 }
 
+// Backward compatbility: the "mysqli" layer was merged with the "mysql"
+// layer, but people might still be using "mysqli" as their configured
+// database type.
+if ($PHORUM["DBCONFIG"]["type"] == "mysqli" && 
+    !file_exists("./include/db/mysqli.php")) {
+    $PHORUM["DBCONFIG"]["type"] = "mysql";
+}
+
 // Load the database layer.
 include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
