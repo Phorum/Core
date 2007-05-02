@@ -30,7 +30,7 @@ $PHORUM['DBCONFIG']=array(
 
     // Use which MySQL PHP extension? Either NULL, "mysql" or "mysqli".
     // If NULL, Phorum will autodetect the extension to use.
-    'php_extension' =>  NULL,
+    'mysql_php_extension' =>  NULL,
 
     // Full text searching? 1=enabled, 0=disabled 
     // (always disable this option for MySQL versions prior to 4.0.18!)
@@ -83,7 +83,7 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
   An optional URL for redirecting the user when database is down.    
   If you want to use this field, remove the "//" in front of it.
 
-* php_extension (MySQL-only option):
+* mysql_php_extension (MySQL-only option):
 
   PHP has multiple extesions for supporting MySQL connections.
   This option can be use to configure the extension to use. Options are:

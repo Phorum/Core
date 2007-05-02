@@ -6041,8 +6041,8 @@ function phorum_db_sanitychecks()
 // we try to auto-detect which one is available.
 
 $ext = NULL;
-if (isset($PHORUM['DBCONFIG']['php_extension'])) {
-   $ext = $PHORUM['DBCONFIG']['php_extension'];
+if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
+   $ext = $PHORUM['DBCONFIG']['mysql_php_extension'];
 } elseif (function_exists('mysqli_connect')) {
    $ext = "mysqli";
 } elseif (function_exists('mysql_connect')) {
@@ -6075,7 +6075,7 @@ $extfile = "./include/db/mysql/{$ext}.php";
 if (!file_exists($extfile)) trigger_error(
    "The Phorum MySQL database layer is unable to find the extension " .
    "file $extfile on the system. Check if all Phorum files are uploaded " .
-   "and if you did specify the correct \"php_extension\" in the file " .
+   "and if you did specify the correct \"mysql_php_extension\" in the file " .
    "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
    E_USER_ERROR
 );
