@@ -24,7 +24,9 @@ function phorum_build_forum_list() {
     while(count($tmp_forums)){
         if(empty($seen[$curr_id])){
             if($curr_id!=0){
-                $order[$curr_id] = $forums[$curr_id];
+                if ($forums[$curr_id]["active"]) {
+                    $order[$curr_id] = $forums[$curr_id];
+                }
                 $seen[$curr_id] = true;
             }
         }
