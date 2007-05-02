@@ -49,6 +49,7 @@
   <tr>
     <td class="PhorumStdBlock PhorumNarrowBlock" style="padding: 10px;">
       <form action="{URL->ACTION}" method="get" style="display: inline;">
+        <input type="hidden" name="page" value="search" />
         <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
         {POST_VARS}
         <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />

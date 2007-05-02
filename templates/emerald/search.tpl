@@ -54,6 +54,7 @@
     <div class="generic" id="search-form">
 
         <form action="{URL->ACTION}" method="get">
+            <input type="hidden" name="page" value="search" />
             <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
             {POST_VARS}
             {LANG->SearchMessages}:<br />
