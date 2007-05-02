@@ -37,13 +37,14 @@ $PHORUM["DATA"]["SEARCH"]["safe_author"] = "";
 function phorum_search_check_valid_vars() {
     $PHORUM=$GLOBALS['PHORUM'];
     $retval=true;
-    // these are valid values for some args
-    $valid_match_types=array("ALL","ANY","PHRASE","USER_ID");
-    $valid_match_forum=array("THISONE","ALL");
 
+    // Check the match_type.
+    $valid_match_types=array("ALL","ANY","PHRASE","USER_ID");
     if(!in_array($PHORUM["args"]["match_type"],$valid_match_types)) {
         $retval=false;
-    } elseif(!is_numeric($PHORUM["args"]["match_dates"])) {
+    }
+    // Check the match_dates.
+    elseif(!is_numeric($PHORUM["args"]["match_dates"])) {
         $retval=false;
     }
 
