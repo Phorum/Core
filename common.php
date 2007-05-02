@@ -1067,8 +1067,10 @@ function phorum_redirect_by_url( $redir_url )
 }
 
 // might remove these, might not.  Need it for debugging.
-function print_var( $var )
+function print_var( $var, $admin_only = FALSE )
 {
+    if ($admin_only && ! $GLOBALS["PHORUM"]["user"]["admin"]) return;
+
     echo "<xmp>";
     print_r( $var );
     echo "</xmp>";
