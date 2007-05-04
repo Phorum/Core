@@ -18,54 +18,116 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @package   Phorum base API, implementing basic shared API functionality
- * @author    Maurice Makaay <maurice@phorum.org>
- * @copyright 2007, Phorum Development Team
+ * This script implements basic API functionality.
+ *
+ * The functionality of this script is shared between all other API scripts.
+ * If you include any of the other API scripts in your code, then this script
+ * should be included as well.
+ *
+ * @package    PhorumAPI
+ * @copyright  2007, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
 if (!defined("PHORUM")) return;
 
-/**
- * Phorum errno values for specifying errors.
- */
-define("PHORUM_ERRNO_NOACCESS",        1);
-define("PHORUM_ERRNO_INTEGRITY",       2);
-define("PHORUM_ERRNO_FILENOTFOUND",    3);
-define("PHORUM_ERRNO_FILEEXTLINK",     4);
+// Initialize the Phorum API space.
+$GLOBALS["PHORUM"]["API"] = array(
+    "errno" => NULL,
+    "error" => NULL
+);
+
+// ----------------------------------------------------------------------
+// Definitions
+// ----------------------------------------------------------------------
 
 /**
- * Phorum flags for steering function behaviour.
+ * A general purpose errno value, mostly used for returning a generic
+ * errno with a specific error message.
  */
-define("PHORUM_FLAG_GET",          1);
-define("PHORUM_FLAG_SEND",         2);
-define("PHORUM_FLAG_IGNORE_PERMS", 8);
+define("PHORUM_ERRNO_ERROR",           1);
 
 /**
- * A mapping of errno values to their readable error message.
- * TODO: Maybe move this to the language files, so the error message can
- * TODO: be internationalized?
+ * An errno value, which indicates a permission problem.
  */
-$GLOBALS["PHORUM"]["phorum_api_errors"] = array(
-    PHORUM_ERRNO_NOACCESS       => "Permisison denied.",
-    PHORUM_ERRNO_INTEGRITY      => "Integrity problem in the database.", PHORUM_ERRNO_FILENOTFOUND   => "File not found.",
-    PHORUM_ERRNO_FILEEXTLINK    => "External link to file denied.",
+define("PHORUM_ERRNO_NOACCESS",        2);
+
+/**
+ * An errno value, which indicates that something was not found.
+ */
+define("PHORUM_ERRNO_NOTFOUND",        3);
+
+/**
+ * An errno value, which indicates a database integrity problem.
+ */
+define("PHORUM_ERRNO_INTEGRITY",       4);
+
+/**
+ * An errno value, which indicates invalid input data.
+ */
+define("PHORUM_ERRNO_INVALIDINPUT",    5);
+
+// A mapping of Phorum errno values to a human readable counter part.
+$GLOBALS["PHORUM"]["API"]["errormessages"] = array(
+    PHORUM_ERRNO_ERROR        => "An error occurred.",
+    PHORUM_ERRNO_NOACCESS     => "Permisison denied.",
+    PHORUM_ERRNO_NOTFOUND     => "Not found.",
+    PHORUM_ERRNO_INTEGRITY    => "Database integrity problem detected.",
+    PHORUM_ERRNO_INVALIDINPUT => "Invalid input.",
 );
 
 /**
- * Lookup the textual error message for a Phorum errno.
+ * Set a Phorum API error.
  *
- * @param $errno - The errno to lookup.
+ * @param integer $errno
+ *     The errno value for the error that occurred. There are several
+ *     specific errno values available, but for a generic error message
+ *     that does not need a specific errno, {@link PHORUM_ERRNO_ERROR} can be
+ *     used.
  *
- * @param $error - The textual error message.
+ * @param string $error
+ *     This is the error message, describing the error that occurred.
+ *     if this parameter is omitted or NULL, then the message will be
+ *     set to a generic message for the {@link $errno} that was used.
+ *
+ * @return bool
+ *     This function will always return FALSE as its return value,
+ *     so a construction like "return phorum_api_error_set(...)" can
+ *     be used for setting an error and returning FALSE at the same time.
  */
-function phorum_api_strerror($errno)
+function phorum_api_error_set($errno, $error = NULL)
 {
-    settype($errno, "int");
+    if ($error === NULL) {
+        if (isset($GLOBALS["PHORUM"]["API"]["errormessages"][$errno])) {
+            $error = $GLOBALS["PHORUM"]["API"]["errormessages"][$errno];
+        } else {
+            $error = "Unknown errno value ($errno).";
+        }
+    }
 
-    if (isset($GLOBALS["PHORUM"]["phorum_api_errors"][$errno])) {
-        return $GLOBALS["PHORUM"]["phorum_api_errors"][$errno];
+    $GLOBALS["PHORUM"]["API"]["errno"] = $errno;
+    $GLOBALS["PHORUM"]["API"]["error"] = $error;
+
+    return FALSE;
+}
+
+/**
+ * Retrieve the error data for the last Phorum API function that was called.
+ *
+ * @return mixed
+ *     If no error is set, then this function will return NULL. 
+ *     Else, an array containing two elements is returned. The first
+ *     element will be the errno and the second one the error message.
+ */
+function phorum_api_error()
+{
+    if ($GLOBALS["PHORUM"]["API"]["errno"] === NULL) {
+        return NULL;
     } else {
-        "Unknown errno value ($errno).";
+        return array(
+            $GLOBALS["PHORUM"]["API"]["errno"],
+            $GLOBALS["PHORUM"]["API"]["error"]
+        );
     }
 }
 
