@@ -40,24 +40,13 @@ $file_id = (int) $PHORUM["args"]["file"];
 $file = phorum_api_file_check_read_access($file_id);
 
 // Handle file access errors.
-if (!is_array($file))
+if ($file === FALSE)
 {
-    // Determine the error message to show.
-    switch ($file)
-    {
-      // An illegal external link to a file in the forum.
-      // Display an error page, explaining that linking is not allowed. 
-      case PHORUM_ERRNO_FILEEXTLINK:
-          $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["FileForbidden"];
-          break;
+    $err = phorum_api_error();
+    $PHORUM["DATA"]["ERROR"] = $err[1];
 
-       // For all other errors, we use Phorum's internal error message.
-       default: 
-         $PHORUM["DATA"]["ERROR"] = phorum_api_strerror($file);
-    }
-
-    // Show an error screen.
     phorum_build_common_urls();
+
     include phorum_get_template("header");
     include phorum_get_template("message");
     include phorum_get_template("footer");
