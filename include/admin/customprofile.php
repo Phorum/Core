@@ -17,172 +17,225 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-    if(!defined("PHORUM_ADMIN")) return;
+if(!defined("PHORUM_ADMIN")) return;
 
-    $error="";
-    $curr="NEW";
-    $exists_already=false;
+include("./include/api/base.php");
+include("./include/api/custom_profile_fields.php");
 
-    // reserved names for custom profile fields, extend as needed
-    $reserved_customfield_names=array('panel','name','value','error');
+// Create or update a custom profile field.
+if(count($_POST) && $_POST['name'] != '')
+{
+    $_POST['curr'] = $_POST['curr'] == 'NEW' ? 'NEW' : (int)$_POST['curr'];
+    $_POST['name'] = trim($_POST['name']);
+    $_POST['length'] = (int)$_POST['length'];
+    $_POST['html_disabled'] = isset($_POST['html_disabled']) ? 1 : 0;
 
-    if(count($_POST) && $_POST["string"]!=""){
-        $_POST['string']=trim($_POST['string']);
-
-
-        if(!isset($_POST['html_disabled']))
-            $_POST['html_disabled']=0;
-
-        if($_POST['curr'] == 'NEW') {
-            // checking names of existing fields
-            foreach($PHORUM['PROFILE_FIELDS'] as $id => $profile_field) {
-                if($id !== 'num_fields' && $profile_field['name'] == $_POST['string']) {
-                    $exists_already = true;
-                    break;
-                }
-            }
-        }
-
-        if(preg_match("/^[^a-z]/i", $_POST["string"]) || preg_match("/[^a-z0-9_]/i", $_POST["string"])){
-            $error="Field names can only contain letters, numbers and _.  They must start with a letter.";
-        } elseif(in_array($_POST['string'],$reserved_customfield_names)) {
-            $error="This name is reserved for use in phorum itself. Please use a different name for your new custom profile-field.";
-        } elseif($exists_already) {
-            $error="A custom profile-field with that name exists. Please use a different name for your new custom profile-field.";
+    // Check if there is a deleted field with the same name.
+    // If this is the case, then we want to give the admin a chance
+    // to restore the deleted field.
+    $check = phorum_api_custom_profile_field_byname($_POST['name']);
+    if ($check !== FALSE && !empty($check["deleted"]))
+    { 
+      // Handle restoring a deleted field.
+      if (isset($_POST["restore"])) {
+        if (phorum_api_custom_profile_field_restore($check["id"]) === FALSE) {
+            $error = phorum_api_error();
+            phorum_admin_error($error[1]);
         } else {
-            if(!isset($PHORUM['PROFILE_FIELDS']["num_fields"])) {
-                if(count($PHORUM['PROFILE_FIELDS'])) {
-                    $PHORUM['PROFILE_FIELDS']["num_fields"]=count($PHORUM['PROFILE_FIELDS']);
-                } else {
-                    $PHORUM['PROFILE_FIELDS']["num_fields"]=0;
-                }
-            }
-
-            if($_POST["curr"]!="NEW"){ // editing an existing field
-                $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['name']=$_POST["string"];
-                $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['length']=$_POST['length'];
-                $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['html_disabled']=$_POST['html_disabled'];
-            } else { // adding a new field
-                $PHORUM['PROFILE_FIELDS']["num_fields"]++;
-                $PHORUM["PROFILE_FIELDS"][$PHORUM['PROFILE_FIELDS']["num_fields"]]=array();
-                $PHORUM["PROFILE_FIELDS"][$PHORUM['PROFILE_FIELDS']["num_fields"]]['name']=$_POST["string"];
-                $PHORUM["PROFILE_FIELDS"][$PHORUM['PROFILE_FIELDS']["num_fields"]]['length']=$_POST['length'];
-                $PHORUM["PROFILE_FIELDS"][$PHORUM['PROFILE_FIELDS']["num_fields"]]['html_disabled']=$_POST['html_disabled'];
-            }
-
-            if(!phorum_db_update_settings(array("PROFILE_FIELDS"=>$PHORUM["PROFILE_FIELDS"]))){
-                $error="Database error while updating settings.";
-            } else {
-                phorum_admin_okmsg("Profile Field Updated");
-            }
-
+            phorum_admin_okmsg("The custom profile field " .
+                               "\"{$check["name"]}\" has been restored.");
         }
 
-    }
+        // Empty the POST array, so the code below won't try to
+        // create or update a field.
+        $_POST = array();
+      }
 
-    if(isset($_POST["curr"]) && isset($_POST["delete"]) && $_POST["confirm"]=="Yes"){
-        $_POST["curr"] = (int)$_POST["curr"];
-        unset($PHORUM["PROFILE_FIELDS"][$_POST["curr"]]);
-        if(!phorum_db_update_settings(array("PROFILE_FIELDS"=>$PHORUM["PROFILE_FIELDS"]))){
-            $error="Database error while updating settings.";
-        } else {
-            phorum_admin_okmsg("Profile Field Deleted");
-        }
-    }
+      // Handle hard deleting a deleted field, so a new field with
+      // the same name can be created.
+      elseif (isset($_POST["create"])) {
+          phorum_api_custom_profile_field_delete($check["id"], TRUE);
+      }
 
-    if(isset($_GET["curr"])){
-        $curr = (int)$_GET["curr"];
-    }
-
-
-    if($curr!="NEW"){
-        $string=$PHORUM["PROFILE_FIELDS"][$curr]['name'];
-        $length=$PHORUM["PROFILE_FIELDS"][$curr]['length'];
-        $html_disabled=$PHORUM["PROFILE_FIELDS"][$curr]['html_disabled'];
-        $title="Edit Profile Field";
-        $submit="Update";
-    } else {
-        settype($string, "string");
-        $title="Add A Profile Field";
-        $submit="Add";
-        $length=255;
-        $html_disabled=1;
-    }
-
-    if($error){
-        phorum_admin_error($error);
-    }
-
-    if($_GET["curr"] && $_GET["delete"]){
-
-        ?>
-
+      // Ask the admin what to do.
+      else
+      { ?>
         <div class="PhorumInfoMessage">
-            Are you sure you want to delete this entry?
-            <form action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
-                <input type="hidden" name="module" value="<?php echo $module; ?>" />
-                <input type="hidden" name="curr" value="<?php echo $_GET['curr']; ?>" />
-                <input type="hidden" name="delete" value="1" />
-                <input type="submit" name="confirm" value="Yes" />&nbsp;<input type="submit" name="confirm" value="No" />
-            </form>
+          <strong>Restored deleted field?</strong><br/></br>
+          A previously deleted custom profile field with the same name
+          "<?php print htmlspecialchars($_POST['name']) ?>"
+          was found.<br/<br/>
+          If you accidentally deleted that old field, then
+          you can choose to restore the old field configuration and
+          data. You can also create a totally new field and ignore
+          the deleted field. What do you want to do?<br/><br/>
+          <form action="<?php print $PHORUM["admin_http_path"] ?>" method="post">
+            <input type="hidden" name="module" 
+                value="<?php print $module; ?>" />
+            <input type="hidden" name="curr" 
+                value="<?php print htmlspecialchars($_POST['curr']) ?>" />
+            <input type="hidden" name="name" 
+                value="<?php print htmlspecialchars($_POST['name']) ?>" />
+            <input type="hidden" name="length" 
+                value="<?php print htmlspecialchars($_POST['length']) ?>" />
+            <input type="hidden" name="html_disabled" 
+                value="<?php print htmlspecialchars($_POST['html_disabled']) ?>" />
+            <input type="submit" name="restore" value="Restore deleted field" />
+            <input type="submit" name="create" value="Create new field" />
+          </form>
         </div>
-
         <?php
+        return;
+      }
+    }
 
-    } else {
+    // $_POST could have been emptied in the previous code.
+    if(count($_POST))
+    {
+        // Create or update the custom profile field.
+        $field = phorum_api_custom_profile_field_save(array (
+            'id'            => $_POST['curr'] == 'NEW' ? NULL : $_POST['curr'],
+            'name'          => $_POST['name'],
+            'length'        => $_POST['length'],
+            'html_disabled' => $_POST['html_disabled'],
+        ));
 
-
-        include_once "./include/admin/PhorumInputForm.php";
-
-        $frm = new PhorumInputForm ("", "post", $submit);
-
-        $frm->hidden("module", "customprofile");
-
-        $frm->hidden("curr", "$curr");
-
-        $frm->addbreak($title);
-
-        $frm->addrow("Field Name", $frm->text_box("string", $string, 50));
-        $frm->addrow("Field Length (Max. 65000)", $frm->text_box("length", $length, 50));
-        $frm->addrow("Disable HTML", $frm->checkbox("html_disabled",1,"Yes",$html_disabled));
-
-        $frm->show();
-
-        echo "This will only add the field to the list of allowed fields.  You will need to edit the register and profile templates to actually allow users to use the fields.  Use the name you enter here as the name property of the HTML form element.";
-
-        if($curr=="NEW"){
-
-            echo "<hr class=\"PhorumAdminHR\" />";
-            if(isset($PHORUM['PROFILE_FIELDS']["num_fields"]))
-                unset($PHORUM['PROFILE_FIELDS']["num_fields"]);
-
-            if(count($PHORUM["PROFILE_FIELDS"])){
-
-                echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
-                echo "<tr>\n";
-                echo "    <td class=\"PhorumAdminTableHead\">Field</td>\n";
-                echo "    <td class=\"PhorumAdminTableHead\">Length</td>\n";
-                echo "    <td class=\"PhorumAdminTableHead\">HTML disabled</td>\n";
-                echo "    <td class=\"PhorumAdminTableHead\">&nbsp;</td>\n";
-                echo "</tr>\n";
-
-                foreach($PHORUM["PROFILE_FIELDS"] as $key => $item){
-                    echo "<tr>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
-                    echo "    <td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&?edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
-                    echo "</tr>\n";
-                }
-
-                echo "</table>\n";
-
-            } else {
-
-                echo "No custom fields currently allowed.";
-
-            }
-
+        if ($field === FALSE) {
+            $error = phorum_api_error();
+            $action = $_POST['curr'] == 'NEW' ? "create" : "update";
+            phorum_admin_error("Failed to $action profile field: ".$error[1]); 
+        } else {
+            $action = $_POST['curr'] == 'NEW' ? "created" : "updated";
+            phorum_admin_okmsg("Profile field $action");
         }
     }
+}
+
+// Confirm deleting a profile field. 
+if (isset($_GET["curr"]) && isset($_GET["delete"]))
+{ ?>
+  <div class="PhorumInfoMessage">
+    Are you sure you want to delete this custom profile field?
+    <br/><br/>
+    <form action="<?php print $PHORUM["admin_http_path"] ?>" method="post">
+      <input type="hidden" name="module" value="<?php print $module; ?>" />
+      <input type="hidden" name="curr" value="<?php print (int) $_GET['curr']; ?>" />
+      <input type="hidden" name="delete" value="1" />
+      <input type="submit" name="confirm" value="Yes" />
+      <input type="submit" name="confirm" value="No" />
+    </form>
+  </div>
+  <?php
+  return;
+}
+
+// Delete a custom profile field after confirmation.
+if (isset($_POST["curr"]) && isset($_POST["delete"]) &&
+    $_POST["confirm"] == "Yes") {
+    phorum_api_custom_profile_field_delete((int)$_POST["curr"]);
+    phorum_admin_okmsg("Profile field deleted");
+}
+
+// Check if we are in create or edit mode.
+$curr = isset($_GET['curr']) ? (int)$_GET['curr'] : "NEW";
+$field = ($curr != 'NEW' && isset($PHORUM['PROFILE_FIELDS'][$curr]))
+       ? $PHORUM['PROFILE_FIELDS'][$curr] : NULL;
+
+// Setup data for create mode.
+if ($field === NULL) {
+    $name          = '';
+    $length        = 255;
+    $html_disabled = 1;
+    $title         = "Add A Profile Field";
+    $submit        = "Add";
+// Setup data for edit mode.
+} else {
+    $name          = $field['name'];
+    $length        = $field['length'];
+    $html_disabled = $field['html_disabled'];
+    $title         = "Edit Profile Field";
+    $submit        = "Update";
+}
+
+// Display the custom profile field editor.
+include_once "./include/admin/PhorumInputForm.php";
+
+$frm = new PhorumInputForm ("", "post", $submit);
+$frm->hidden("module", "customprofile");
+$frm->hidden("curr", "$curr");
+
+$frm->addbreak($title);
+$frm->addrow("Field Name", $frm->text_box('name', $name, 50));
+$frm->addrow("Field Length (Max. ".PHORUM_MAX_CPLENGTH.")", $frm->text_box("length", $length, 50));
+$row = $frm->addrow("Disable HTML", $frm->checkbox("html_disabled",1,"Yes",$html_disabled));
+$frm->addhelp($row, "Disable HTML", "
+    If this field is checked, then HTML code will not be usable
+    in this field. When displaying the custom field's data,
+    Phorum will automatically replace special HTML characters
+    with their safe HTML counter parts.<br/>
+    <br/> 
+    There are two possible reasons for unchecking it:<br/>
+    <ol>
+      <li>You need HTML in this field and run a module which formats
+          the field data into safe html (before storing it to the database
+          or before displaying it on screen).
+      <li>You run a module that needs to store an array in the field. 
+    </ol>
+    So in practice, you only uncheck this box if module documentation tells
+    you to do so or if you are writing a module which needs this. If you don't
+    understand what's going on here, then don't uncheck the option.<br/>
+    <br/>    
+    To learn about the security risks involved, search for \"XSS\" and 
+    \"cross site scripting\" on the internet.");
+
+$frm->show();
+
+// If we are not in edit mode, we show the list of available profile fields.
+if ($curr == "NEW")
+{
+    print "Creating a custom profile field here merely allows for the use 
+           of the field. If you want to use it as an extra info field for
+           your users, you will need to edit the register, control center
+           and profile templates to actually allow users to enter data in
+           the fields and have it stored. You will have to use the name
+           you enter here as the name property of the HTML form element.
+           <hr class=\"PhorumAdminHR\" />";
+
+    if (isset($PHORUM['PROFILE_FIELDS']["num_fields"]))
+        unset($PHORUM['PROFILE_FIELDS']["num_fields"]);
+
+    $active_fields = 0;
+    foreach($PHORUM["PROFILE_FIELDS"] as $f) {
+        if (empty($f['deleted'])) $active_fields ++;
+    }
+
+    if ($active_fields > 0)
+    { ?>
+        <table border="0" cellspacing="1" cellpadding="0" 
+               class="PhorumAdminTable" width="100%">
+        <tr>
+          <td class="PhorumAdminTableHead">Field</td>
+          <td class="PhorumAdminTableHead">Length</td>
+          <td class="PhorumAdminTableHead">HTML disabled</td>
+          <td class="PhorumAdminTableHead">&nbsp;</td>
+        </tr> <?php
+
+        foreach($PHORUM["PROFILE_FIELDS"] as $key => $item)
+        {
+            // Do not show deleted fields.
+            if (!empty($item['deleted'])) continue;
+
+            print "<tr>\n";
+            print "  <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
+            print "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
+            print "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
+            print "    <td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&?edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
+            print "</tr>\n";
+        }
+        print "</table>\n";
+
+    } else {
+        echo "There are currently no custom profile fields configured.";
+    }
+}
 ?>
