@@ -127,7 +127,7 @@ elseif ($do_attach && ! empty($_FILES))
         }
 
         // Read in the file.
-        $file["data"] = file_get_contents($file["tmp_name"]);
+        $file["data"] = @file_get_contents($file["tmp_name"]);
 
         // copy the current user_id to the $file array for the hook
         $file["user_id"]=$PHORUM["user"]["user_id"];
@@ -150,25 +150,28 @@ elseif ($do_attach && ! empty($_FILES))
             "user_id"    => 0,
             "message_id" => 0
         ));
+        
+        if ($file !== FALSE)
+        {
+            // Create new attachment information.
+            $new_attachment = array(
+                "file_id" => $file["file_id"],
+                "name"    => $file["filename"],
+                "size"    => $file["filesize"],
+                "keep"    => true,
+                "linked"  => false,
+            );
 
-        // Create new attachment information.
-        $new_attachment = array(
-            "file_id" => $file["file_id"],
-            "name"    => $file["filename"],
-            "size"    => $file["filesize"],
-            "keep"    => true,
-            "linked"  => false,
-        );
+            // Run the after_attach hook.
+            list($message, $new_attachment) =
+                phorum_hook("after_attach", array($message, $new_attachment));
 
-        // Run the after_attach hook.
-        list($message, $new_attachment) =
-            phorum_hook("after_attach", array($message, $new_attachment));
-
-        // Add the attachment to the message.
-        $message['attachments'][] = $new_attachment;
-        $attach_totalsize += $new_attachment["size"];
-        $attach_count++;
-        $attached++;
+            // Add the attachment to the message.
+            $message['attachments'][] = $new_attachment;
+            $attach_totalsize += $new_attachment["size"];
+            $attach_count++;
+            $attached++;
+        }
     }
 
     // Show a generic error message if nothing was attached and
@@ -181,7 +184,6 @@ elseif ($do_attach && ! empty($_FILES))
     // Show a success message in case an attachment is added.
     if ( $attached) {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AttachmentAdded"];
-
     }
 }
 ?>

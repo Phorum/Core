@@ -29,7 +29,7 @@ $allow_upload = phorum_api_file_check_write_access(array(
 );
 
 // No error message means that write access is granted.
-if ($allow_upload["error"] === NULL)
+if ($allow_upload)
 {
     // Handle new uploaded file.
     if (!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"]))
@@ -45,10 +45,8 @@ if ($allow_upload["error"] === NULL)
         );
 
         // Check write access and enforce quota limits.
-        $file = phorum_api_file_check_write_access($file);
-        print "TODO add_datetime in PM<br>";
-        print "<br>End of todo!";
-        exit;
+        // TODO extend and handle API checks.
+        // if (phorum_api_file_check_write_access($file) === FALSE) return FALSE;
 
         if ($PHORUM["max_file_size"]>0 && 
             $_FILES["newfile"]["size"]>$PHORUM["max_file_size"]*1024) {
@@ -88,8 +86,8 @@ if ($allow_upload["error"] === NULL)
             ));
 
             // Display error if an error was returned.
-            if ($file["error"] !== NULL) {
-                $PHORUM["DATA"]["ERROR"] = $file["error"];
+            if ($file === FALSE) {
+                $PHORUM["DATA"]["ERROR"] = phorum_api_error();
                 include phorum_get_template("header");
                 phorum_hook("after_header");
                 include phorum_get_template("message");
@@ -146,7 +144,6 @@ if ($allow_upload["error"] === NULL)
 
 } else {
     $template = "message";
-
     $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["UploadNotAllowed"];
 } 
 
