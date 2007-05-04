@@ -34,7 +34,7 @@
         $PHORUM["admin_http_path"] = $_SERVER["SCRIPT_URI"];
     } else {
         $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
-        $port = ($_SERVER["SERVER_PORT"]!=443 || $_SERVER["SERVER_PORT"]!=80) ? ":".$_SERVER["SERVER_PORT"] : "";
+        $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80) ? ":".$_SERVER["SERVER_PORT"] : "";
         $PHORUM["admin_http_path"] = $protocol."://".$_SERVER["HTTP_HOST"].$port.$_SERVER["PHP_SELF"];
     }
 
