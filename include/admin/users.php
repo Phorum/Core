@@ -359,7 +359,8 @@ EOT;
 
             $cf_header_shown=0;
             foreach($PHORUM["PROFILE_FIELDS"] as $key => $item){
-                if(isset($item['show_in_admin']) && !empty($item['show_in_admin'])) {
+                if ($key === 'num_rows' || !empty($item['deleted'])) continue;
+                if(!empty($item['show_in_admin'])) {
                     if(!$cf_header_shown) {
                         $frm->addbreak('Custom Profile Fields');
                         $cf_header_shown=1;

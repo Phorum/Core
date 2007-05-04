@@ -301,7 +301,7 @@
                 "default_feed" => "rss",
                 "internal_version" => "" . PHORUM_SCHEMA_VERSION . "",
                 "internal_patchlevel" => "" . PHORUM_SCHEMA_PATCHLEVEL . "",
-                "PROFILE_FIELDS" => array('num_fields'=>1,0=>array('name'=>'real_name','length'=>'255','html_disabled'=>'1','show_in_admin'=>'1')),
+                "PROFILE_FIELDS" => array(),
                 "enable_pm" => "1",
                 "user_edit_timelimit" => "0",
                 "enable_new_pm_count" => "1",
