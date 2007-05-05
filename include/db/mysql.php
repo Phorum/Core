@@ -5753,9 +5753,13 @@ function phorum_db_create_tables()
            KEY forum_id (forum_id,permission)
        ) TYPE=MyISAM",
   
+      // When creating extra fields, then mind to update the file
+      // include/api/custom_profile_fields.php script too (it contains a
+      // list of reserved names for custom profile fields).
       "CREATE TABLE {$PHORUM['user_table']} (
            user_id                  int unsigned   NOT NULL auto_increment,
            username                 varchar(50)    NOT NULL default '',
+           real_name                varchar(255)   NOT NULL default '',
            password                 varchar(50)    NOT NULL default '',
            password_temp            varchar(50)    NOT NULL default '',
            cookie_sessid_lt         varchar(50)    NOT NULL default '',

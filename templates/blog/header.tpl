@@ -5,7 +5,7 @@
 <head>
 <title>{HTML_TITLE}</title>
 <style type="text/css">
-{include css}
+{include "css"}
 </style>
 {IF URL->RSS}<link rel="alternate" type="application/rss+xml" title="RSS-File" href="{URL->RSS}" />{/IF}
 {if URL->REDIRECT}

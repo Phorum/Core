@@ -520,6 +520,9 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
             // table.  We don't need to do anything to them.
             case "user_id":
             case "username":
+            case "real_name":
+            case "display_name":
+            case "profile_url":
             case "email":
             case "email_temp":
             case "hide_email":

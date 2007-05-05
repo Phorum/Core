@@ -180,7 +180,7 @@ function phorum_controlcenter_user_save($panel)
     $error = "";
     $okmsg = "";
 
-    // Setup the default userdata fields that may be changed
+    // Setup the default userdata fields that can be changed
     // from the control panel interface.
     $userdata = array(
         'signature'       => NULL,
@@ -200,6 +200,7 @@ function phorum_controlcenter_user_save($panel)
         'email_temp'      => NULL,
         'user_template'   => NULL,
         'moderation_email'=> NULL,
+        'real_name'       => NULL,
     );
     // Add custom profile fields as acceptable fields.
     foreach ($PHORUM["PROFILE_FIELDS"] as $id => $field) {

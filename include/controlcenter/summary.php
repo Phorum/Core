@@ -36,6 +36,7 @@ if( $PHORUM["track_user_activity"] &&
 }
 
 $PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
+$PHORUM["DATA"]["PROFILE"]["real_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"]);
 
 $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
 

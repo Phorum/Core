@@ -38,11 +38,11 @@ if (!defined('PHORUM')) return;
 // Reserved custom profile field names.
 $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
     'panel', 'name', 'value', 'error',
-    'user_id', 'username', 'real_name', 'html_displayname', 'password',
-    'password_temp', 'cookie_sessid_lt', 'sessid_st', 'sessid_st_timeout',
-    'email', 'email_temp', 'hide_email', 'active', 'signature',
-    'threaded_list', 'posts', 'admin', 'threaded_read', 'date_added',
-    'date_last_active', 'last_active_forum', 'hide_activity',
+    'user_id', 'username', 'real_name', 'display_name', 'profile_link',
+    'password', 'password_temp', 'cookie_sessid_lt', 'sessid_st',
+    'sessid_st_timeout', 'email', 'email_temp', 'hide_email', 'active',
+    'signature', 'threaded_list', 'posts', 'admin', 'threaded_read',
+    'date_added', 'date_last_active', 'last_active_forum', 'hide_activity',
     'show_signature', 'email_notify', 'pm_email_notify', 'tz_offset',
     'is_dst', 'user_language', 'user_template', 'moderator_data',
     'moderation_email', 'settings_data',

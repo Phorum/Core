@@ -20,13 +20,13 @@
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 if(count($_POST)) {
-     list($error,$okmsg) = phorum_controlcenter_user_save($panel);
+    list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 }
 
 foreach($PHORUM["DATA"]["PROFILE"] as $key => $data) {
-       if(!is_array($data)) {
-            $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data);
-       }       
+    if(!is_array($data)) {
+        $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data);
+    }       
 }
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditUserinfo"];
