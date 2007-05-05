@@ -69,11 +69,14 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *           This name can only contain letters, numbers and underscores
  *           (_) and it has to start with a letter.
  *
+ *     The following fields are optional. If they are missing, then a default
+ *     value will be used for them.
+ *
  *     - length: The maximum length for the field data. This will make sure
  *           that the data that is stored in the custom profile field will
  *           be truncated in case its length surpasses the configured
- *           custom profile field length. If this field is set to NULL, then
- *           the default length 255 will be used.
+ *           custom profile field length. If this field is missing or set
+ *           to NULL, then the default length 255 will be used.
  *
  *     - html_disabled: If this field is set to a true value, then
  *           special HTML characters are not usable in this field. When
@@ -82,8 +85,13 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *           field if the data that will be saved in the field is really safe
  *           for direct use in a web page (to learn about the security risks
  *           involved, search for "XSS" and "cross site scripting" on 
- *           the internet). If this field is set to NULL, then the default
- *           setting TRUE will be used.
+ *           the internet). If this field is missing or set to NULL, then 
+ *           the default setting TRUE will be used.
+ *
+ *     - show_in_admin: If this field is set to a true value, then the field
+ *           will be displayed on the details page for a user in the admin
+ *           "Edit Users" section. If this field is missing or set to NULL,
+ *           then the default setting FALSE will be used.
  *
  * @return array
  *    This function returns the profile field data in an array, containing
@@ -97,19 +105,41 @@ function phorum_api_custom_profile_field_save($field)
 {
     global $PHORUM;
 
+    // The available fields and their defaults.
+    // NULL indicates a mandatory field.
+    $fields = array(
+        'id'            => NULL,
+        'name'          => NULL,
+        'length'        => 255,
+        'html_disabled' => TRUE,
+        'show_in_admin' => FALSE
+    );
+
     // Check if all required fields are in the $field argument.
-    foreach (array('id','name','length','html_disabled') as $f) {
-        if (!array_key_exists($f, $field)) trigger_error(
-            'phorum_api_custom_profile_field_save(): Missing field in ' .
-            "\$field parameter: $f",
+    // Assign default values for missing or NULL fields or trigger
+    // or an error if the field is mandatory.
+    foreach ($fields as $f => $default) {
+        if (!array_key_exists($f, $field)) {
+            if ($default === NULL) trigger_error(
+                'phorum_api_custom_profile_field_save(): Missing field in ' .
+                "\$field parameter: $f",
+                E_USER_ERROR
+            );
+
+            $field[$f] = $default;
+        }
+        elseif ($f != 'id' && $field[$f] === NULL) trigger_error(
+            'phorum_api_custom_profile_field_save(): Field $f in ' .
+            "\$field parameter cannot be NULL",
             E_USER_ERROR
         );
     }
  
     $field['id'] = $field['id'] === NULL ? NULL : (int)$field['id'];
     $field['name'] = trim($field['name']);
-    $field['length'] = $field['length'] === NULL ? 255 : (int) $field['length'];
-    $field['html_disabled'] = $field['html_disabled'] ? TRUE : FALSE;
+    settype($field['length'], 'int');
+    settype($field['html_disabled'], 'bool');
+    settype($field['show_in_admin'], 'bool');
 
     // Check the profile field name.    
     if (!preg_match('/^[a-z][\w_]*$/i', $field['name'])) {
