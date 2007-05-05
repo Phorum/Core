@@ -29,6 +29,7 @@ if(count($_POST) && $_POST['name'] != '')
     $_POST['name'] = trim($_POST['name']);
     $_POST['length'] = (int)$_POST['length'];
     $_POST['html_disabled'] = isset($_POST['html_disabled']) ? 1 : 0;
+    $_POST['show_in_admin'] = isset($_POST['show_in_admin']) ? 1 : 0;
 
     // Check if there is a deleted field with the same name.
     // If this is the case, then we want to give the admin a chance
@@ -80,6 +81,8 @@ if(count($_POST) && $_POST['name'] != '')
                 value="<?php print htmlspecialchars($_POST['length']) ?>" />
             <input type="hidden" name="html_disabled" 
                 value="<?php print htmlspecialchars($_POST['html_disabled']) ?>" />
+            <input type="hidden" name="show_in_admin" 
+                value="<?php print htmlspecialchars($_POST['show_in_admin']) ?>" />
             <input type="submit" name="restore" value="Restore deleted field" />
             <input type="submit" name="create" value="Create new field" />
           </form>
@@ -98,6 +101,7 @@ if(count($_POST) && $_POST['name'] != '')
             'name'          => $_POST['name'],
             'length'        => $_POST['length'],
             'html_disabled' => $_POST['html_disabled'],
+            'show_in_admin' => $_POST['show_in_admin'],
         ));
 
         if ($field === FALSE) {
@@ -146,6 +150,7 @@ if ($field === NULL) {
     $name          = '';
     $length        = 255;
     $html_disabled = 1;
+    $show_in_admin = 0;
     $title         = "Add A Profile Field";
     $submit        = "Add";
 // Setup data for edit mode.
@@ -153,6 +158,8 @@ if ($field === NULL) {
     $name          = $field['name'];
     $length        = $field['length'];
     $html_disabled = $field['html_disabled'];
+    $show_in_admin = isset($field['show_in_admin']) 
+                   ? $field['show_in_admin'] : 0;
     $title         = "Edit Profile Field";
     $submit        = "Update";
 }
@@ -165,28 +172,35 @@ $frm->hidden("module", "customprofile");
 $frm->hidden("curr", "$curr");
 
 $frm->addbreak($title);
-$frm->addrow("Field Name", $frm->text_box('name', $name, 50));
+
+$row = $frm->addrow("Field Name", $frm->text_box('name', $name, 50));
+$frm->addhelp($row, "Field Name", "This is the name to assign to the custom profile field. Because it must be possible to use this name as the name property for an input element in an HTML form, there are a few restrictions to it:<br/><ul><li>it can only contain letters, numbers<br/> and underscores (_);</li><li>it must start with a letter.</li></ul>");
+
 $frm->addrow("Field Length (Max. ".PHORUM_MAX_CPLENGTH.")", $frm->text_box("length", $length, 50));
+
 $row = $frm->addrow("Disable HTML", $frm->checkbox("html_disabled",1,"Yes",$html_disabled));
 $frm->addhelp($row, "Disable HTML", "
-    If this field is checked, then HTML code will not be usable
+    If this option is enabled, then HTML code will not be usable
     in this field. When displaying the custom field's data,
     Phorum will automatically replace special HTML characters
     with their safe HTML counter parts.<br/>
     <br/> 
-    There are two possible reasons for unchecking it:<br/>
+    There are two possible reasons for disabling it:<br/>
     <ol>
       <li>You need HTML in this field and run a module which formats
           the field data into safe html (before storing it to the database
           or before displaying it on screen).
       <li>You run a module that needs to store an array in the field. 
     </ol>
-    So in practice, you only uncheck this box if module documentation tells
+    So in practice, you only disable this option if module documentation tells
     you to do so or if you are writing a module which needs this. If you don't
-    understand what's going on here, then don't uncheck the option.<br/>
+    understand what's going on here, then don't disable the option.<br/>
     <br/>    
     To learn about the security risks involved, search for \"XSS\" and 
     \"cross site scripting\" on the internet.");
+
+$row = $frm->addrow("Show in user admin", $frm->checkbox("show_in_admin",1,"Yes",$show_in_admin));
+$frm->addhelp($row, "Show in user admin", "If this option is enabled, then the contents of the field will be displayed on the user details page in the Phorum admin interface (section \"Edit Users\").");
 
 $frm->show();
 
