@@ -65,9 +65,10 @@ function phorum_update_thread_info($thread)
         $message["recent_user_id"] = $recent_message["user_id"];
         $message["recent_author"] = $recent_message["author"];
         $message["meta"]=$parent_message["meta"];
-        $message["meta"]["recent_post"]["user_id"]=$recent_message["user_id"];
-        $message["meta"]["recent_post"]["author"]=$recent_message["author"];
-        $message["meta"]["recent_post"]["message_id"]=$recent_message["message_id"];
+
+        // For cleaning up pre-5.2 recent post data.
+        unset($message["meta"]["recent_post"]);
+
         $message["meta"]["message_ids"]=$message_ids;
         // used only for mods
         $message["meta"]["message_ids_moderator"]=array_keys($messages);

@@ -358,21 +358,21 @@ if($rows == null) {
                 }
             }
 
-            if(isset($row['meta']['recent_post'])) {
+            if(isset($row['recent_message_id'])) { // should always be true
                 if($pages>1){
-                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"], "page=$pages");
+                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
                 } else {
-                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["meta"]["recent_post"]["message_id"]);
+                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
                 }
 
-                $row['meta']['recent_post']['author'] = htmlspecialchars($row['meta']['recent_post']['author']);
-                if ($row["meta"]["recent_post"]["user_id"]){
-                    $url = phorum_get_url(PHORUM_PROFILE_URL, $row["meta"]["recent_post"]["user_id"]);
+                $row['recent_author'] = htmlspecialchars($row['recent_author']);
+                if ($row['recent_user_id']){
+                    $url = phorum_get_url(PHORUM_PROFILE_URL, $row['recent_user_id']);
                     $rows[$key]["URL"]["PROFILE_LAST_POST"] = $url;
-                    $rows[$key]["last_post_by"] = "<a href=\"$url\">{$row['meta']['recent_post']['author']}</a>";
+                    $rows[$key]["last_post_by"] = "<a href=\"$url\">{$row['recent_author']}</a>";
                 }else{
                     $rows[$key]["URL"]["PROFILE_LAST_POST"] = "";
-                    $rows[$key]["last_post_by"] = $row["meta"]["recent_post"]["author"];
+                    $rows[$key]["last_post_by"] = $row['recent_author'];
                 }
             } else {
                 $rows[$key]["last_post_by"] = "";
