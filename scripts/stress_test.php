@@ -134,7 +134,6 @@ if ($tcount)
     $count = 0;
     while ($tcount)
     {
-        $u = $user_ids[$count % count($user_ids)];
         $f = $forum_ids[$count % count($forum_ids)];
 
         print ".";
@@ -148,6 +147,8 @@ if ($tcount)
 
         for ($i=0; $i<$mcount; $i++)
         {
+            $u = $user_ids[$i % count($user_ids)];
+
             $msg = array(
                 "parent_id" => $parent,
                 "thread"    => $thread,

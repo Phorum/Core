@@ -61,6 +61,9 @@ function phorum_update_thread_info($thread)
         // prep the message to save
         $message["thread_count"]=$thread_count;
         $message["modifystamp"]=$recent_message["datestamp"];
+        $message["recent_message_id"] = $recent_message["message_id"];
+        $message["recent_user_id"] = $recent_message["user_id"];
+        $message["recent_author"] = $recent_message["author"];
         $message["meta"]=$parent_message["meta"];
         $message["meta"]["recent_post"]["user_id"]=$recent_message["user_id"];
         $message["meta"]["recent_post"]["author"]=$recent_message["author"];

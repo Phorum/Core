@@ -128,7 +128,7 @@ if ($pages == 0) $pages = 1;
 $pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"])) ? $PHORUM["TMP"]["list_pages_shown"] : 11;
 
 // first $pages_shown pages
-if($page - floor($pages_shown/2) <= 0  || $page <= $pages_shown){
+if($page - floor($pages_shown/2) <= 0  || $page < $pages_shown){
     $page_start=1;
 
 // last $pages_shown pages

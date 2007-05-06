@@ -15,7 +15,7 @@
  // that's here for security measures, remove it if you want to use the script!!!
  exit();
  
- //chdir("../");
+ /chdir("../");
  
 include './common.php';
 

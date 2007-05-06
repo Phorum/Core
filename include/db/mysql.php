@@ -334,7 +334,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
        'author, datestamp, email, message_id, forum_id, meta,
         moderator_post, modifystamp, parent_id, msgid, sort,
         status, subject, thread, thread_count, user_id, viewcount,
-        closed, ip';
+        closed, ip, recent_message_id, recent_user_id, recent_author';
 
     // Include the message bodies in the thread list if requested.
     if ($include_bodies) {
@@ -5694,7 +5694,8 @@ function phorum_db_create_tables()
            forum_id                 int unsigned   NOT NULL default '0',
            thread                   int unsigned   NOT NULL default '0',
            parent_id                int unsigned   NOT NULL default '0',
-           author                   varchar(37)    NOT NULL default '',
+           user_id                  int unsigned   NOT NULL default '0',
+           author                   varchar(255)   NOT NULL default '',
            subject                  varchar(255)   NOT NULL default '',
            body                     text           NOT NULL,
            email                    varchar(100)   NOT NULL default '',
@@ -5702,7 +5703,6 @@ function phorum_db_create_tables()
            status                   tinyint(4)     NOT NULL default '2',
            msgid                    varchar(100)   NOT NULL default '',
            modifystamp              int unsigned   NOT NULL default '0',
-           user_id                  int unsigned   NOT NULL default '0',
            thread_count             int unsigned   NOT NULL default '0',
            moderator_post           tinyint(1)     NOT NULL default '0',
            sort                     tinyint(4)     NOT NULL default '2',
@@ -5710,6 +5710,9 @@ function phorum_db_create_tables()
            meta                     mediumtext         NULL,
            viewcount                int unsigned   NOT NULL default '0',
            closed                   tinyint(1)     NOT NULL default '0',
+           recent_message_id        int unsigned   NOT NULL default '0',   
+           recent_user_id           int unsigned   NOT NULL default '0',
+           recent_author            varchar(255)   NOT NULL default '',
   
            PRIMARY KEY (message_id),
            KEY thread_message (thread,message_id),
@@ -5723,7 +5726,8 @@ function phorum_db_create_tables()
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
            KEY next_prev_thread (forum_id,status,thread),
-           KEY user_id (user_id)
+           KEY user_id (user_id),
+           KEY recent_user_id (recent_user_id)
        ) TYPE=MyISAM",
   
       "CREATE TABLE {$PHORUM['settings_table']} (
@@ -5760,6 +5764,8 @@ function phorum_db_create_tables()
            user_id                  int unsigned   NOT NULL auto_increment,
            username                 varchar(50)    NOT NULL default '',
            real_name                varchar(255)   NOT NULL default '',
+           display_name             varchar(255)   NOT NULL default '',
+           profile_link             varchar(255)   NOT NULL default '',
            password                 varchar(50)    NOT NULL default '',
            password_temp            varchar(50)    NOT NULL default '',
            cookie_sessid_lt         varchar(50)    NOT NULL default '',
