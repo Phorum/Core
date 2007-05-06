@@ -55,7 +55,7 @@ $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
 define('PHORUM_MAX_CPLENGTH', 65000);
 
 /**
- * Create or update a custom profile field.
+ * Create or update the configuration for a custom profile field.
  *
  * @param array $field
  *     This parameter holds the field configuration to save. This array
@@ -101,7 +101,7 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *    also be updated to their defaults if they were set to NULL in
  *    the $field argument. 
  */
-function phorum_api_custom_profile_field_save($field)
+function phorum_api_custom_profile_field_configure($field)
 {
     global $PHORUM;
 
@@ -121,15 +121,15 @@ function phorum_api_custom_profile_field_save($field)
     foreach ($fields as $f => $default) {
         if (!array_key_exists($f, $field)) {
             if ($default === NULL) trigger_error(
-                'phorum_api_custom_profile_field_save(): Missing field in ' .
-                "\$field parameter: $f",
+                'phorum_api_custom_profile_field_configure(): Missing field ' .
+                "in \$field parameter: $f",
                 E_USER_ERROR
             );
 
             $field[$f] = $default;
         }
         elseif ($f != 'id' && $field[$f] === NULL) trigger_error(
-            'phorum_api_custom_profile_field_save(): Field $f in ' .
+            'phorum_api_custom_profile_field_configure(): Field $f in ' .
             "\$field parameter cannot be NULL",
             E_USER_ERROR
         );

@@ -96,7 +96,7 @@ if(count($_POST) && $_POST['name'] != '')
     if(count($_POST))
     {
         // Create or update the custom profile field.
-        $field = phorum_api_custom_profile_field_save(array (
+        $field = phorum_api_custom_profile_field_configure(array (
             'id'            => $_POST['curr'] == 'NEW' ? NULL : $_POST['curr'],
             'name'          => $_POST['name'],
             'length'        => $_POST['length'],
