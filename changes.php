@@ -75,12 +75,12 @@ array_push($diffs, array());
 foreach($diffs as $diff_info){
 
     if(empty($diff_info["username"])){
-        $this_version["username"] = $message["author"];
+        $this_version["username"] = htmlspecialchars($message["author"]);
         $this_version["user_id"] = $message["user_id"];
         $this_version["date"] = phorum_date($PHORUM["long_date_time"], $message["datestamp"]);
         $this_version["original"] = true;
     } else {
-        $this_version["username"] = $diff_info["username"];
+        $this_version["username"] = htmlspecialchars($diff_info["username"]);
         $this_version["user_id"] = $diff_info["user_id"];
         $this_version["date"] = phorum_date($PHORUM["long_date_time"], $diff_info["time"]);
         $this_version["original"] = false;
