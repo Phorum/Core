@@ -262,4 +262,39 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     );
 }
 
+/**
+ * Return a single row from a query result. This function can be used
+ * if a lot of rows have to be processed one by one, in which case the 
+ * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the 
+ * {@link phorum_db_interact()} function might consume lots of memory.
+ *
+ * @param resource $res
+ *     The result set resource handle. This is the return value of the
+ *     function {@link phorum_db_interact()}, when running a query
+ *     with the DB_RETURN_RES return type.
+ *
+ * @param integer $type
+ *     A flag, which indicates what type of row has to be returned.
+ *     One of {@link DB_RETURN_ASSOC} or {@link DB_RETURN_ROW}, which
+ *     will let this function return respectively an associative array
+ *     (field name -> value) or an array (field index -> value).
+ *
+ * @return mixed
+ *     This function returns either an array containing a single row
+ *     or NULL if there are no more rows to retrieve.
+ */
+function phorum_db_fetch_row($res, $type)
+{
+    if ($type === DB_RETURN_ASSOC) {
+        $row = mysqli_fetch_assoc($res);
+    } elseif ($type === DB_RETURN_ROW) {
+        $row = mysqli_fetch_row($res);
+    } else trigger_error(
+        'Internal error: phorum_db_fetch_row(): ' .
+        'illegal \$type parameter used', E_USER_ERROR
+    );
+
+    return $row ? $row : NULL;
+}
+
 ?>
