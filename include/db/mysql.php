@@ -2482,6 +2482,43 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
 }
 
 /**
+ * @todo document function.
+ */
+function phorum_db_user_count()
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    return phorum_db_interact(
+        DB_RETURN_VALUE,
+        "SELECT count(*)
+         FROM   {$PHORUM['user_table']}"
+    );
+}
+
+/**
+ * @todo document function.
+ */
+function phorum_db_user_get_all($offset = 0, $length = 0)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    settype($offset, 'int');
+    settype($length, 'int');
+
+    $limit = '';
+    if ($length > 0) {
+        $limit = "LIMIT $offset, $length";         
+    }
+    
+    return phorum_db_interact(
+        DB_RETURN_RES,
+        "SELECT * 
+         FROM   {$PHORUM['user_table']} 
+         $limit"
+    );
+}
+
+/**
  * Retrieve one or more users.
  *
  * @param $user_id  - The user_id or an array of user_ids for which to
@@ -3106,6 +3143,51 @@ function phorum_db_user_save($userdata)
 }
 
 /**
+ * Run the updates that are needed after changing the display_name for a user.
+ *
+ * The display_name for users is stored redundant at several places
+ * in the database (this improves the speed of the system, because joins
+ * with the user table do not have to be made). This function will update
+ * that redundant information to match the active display_name field in
+ * the user data.
+ *
+ * @param array $userdata 
+ *     A userdata array containing at least the fields "user_id" and
+ *     "display_name".
+ */
+function phorum_db_user_display_name_updates($userdata)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+    if (!isset($userdata['user_id'])) trigger_error(
+        'phorum_db_user_display_name_updates(): Missing user_id field in ' .
+        'the $file parameter',
+        E_USER_ERROR
+    );
+    if (!isset($userdata['display_name'])) trigger_error(
+        'phorum_db_user_display_name_updates(): Missing user_id field in ' .
+        'the $file parameter',
+        E_USER_ERROR
+    );
+
+    $author = phorum_db_interact(DB_RETURN_QUOTED, $userdata['display_name']);
+    $user_id = (int) $userdata['user_id'];
+
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['message_table']}
+         SET    author = '$author'
+         WHERE  user_id = $user_id"
+    );
+
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['message_table']}
+         SET    recent_author = '$author'
+         WHERE  recent_user_id = $user_id"
+    );
+}
+
+/**
  * Save the groups memberships for a user.
  *
  * @param $user_id  - The user_id for which to save the group memberships.
@@ -3567,7 +3649,7 @@ function phorum_db_file_save($file)
         if     ($message_id) $file["link"] = PHORUM_LINK_MESSAGE;
         elseif ($user_id)    $file["link"] = PHORUM_LINK_USER;
         else trigger_error(
-            'phorum_db_file_save(): Missing link field in the \$file parameter',
+            'phorum_db_file_save(): Missing link field in the $file parameter',
             E_USER_ERROR
         );
     }

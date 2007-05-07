@@ -340,6 +340,8 @@ EOT;
 
             $frm->addrow("User Name", htmlspecialchars($user["username"])."&nbsp;&nbsp;<a href=\"#forums\">Edit Forum Permissions</a>&nbsp;&nbsp;<a href=\"#groups\">Edit Groups</a>");
 
+            $frm->addrow("Real Name", $frm->text_box("real_name", $user["real_name"], 50));
+
             $frm->addrow("Email", $frm->text_box("email", $user["email"], 50));
             $frm->addrow("Password (Enter to change)", $frm->text_box("password1",""));
             $frm->addrow("Password (Confirmation)", $frm->text_box("password2",""));

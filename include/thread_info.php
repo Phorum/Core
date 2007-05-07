@@ -15,6 +15,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 if(!defined("PHORUM")) return;

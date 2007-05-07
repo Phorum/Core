@@ -21,7 +21,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) return;
 
 $error = "";
 
-if ( count( $_POST ) ) {
+if ( count( $_POST ) )
+{
+    // Keep track if we need to run display name updates.
+    $need_display_name_updates = FALSE;
+
     // set the defaults
     foreach( $_POST as $field => $value ) {
         switch ( $field ) {
@@ -111,6 +115,12 @@ if ( count( $_POST ) ) {
                 $_POST[$field] = $private_key;
                 break;
 
+            case "display_name_source":
+
+                if ($_POST[$field] != $PHORUM["display_name_source"]) {
+                    $need_display_name_updates = TRUE;
+                }
+                break;
         }
 
         if ( $error ) break;
@@ -120,7 +130,11 @@ if ( count( $_POST ) ) {
         unset( $_POST["module"] );
 
         if ( phorum_db_update_settings( $_POST ) ) {
-            phorum_redirect_by_url($PHORUM["admin_http_path"]);
+            $redir = $PHORUM["admin_http_path"];
+            if ($need_display_name_updates) {
+                $redir .= "?module=update_display_names";
+            }
+            phorum_redirect_by_url($redir);
             exit();
         } else {
             $error = "Database error while updating settings.";

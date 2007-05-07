@@ -336,6 +336,12 @@ function phorum_user_save( $user )
 
     $ret = phorum_db_user_save( $db_user );
 
+    // If the display_name changed for this user, then we have to update
+    // related data in the database.
+    if ($old_user['display_name'] != $db_user['display_name']) {
+        phorum_db_user_display_name_updates( $db_user );
+    }
+
     // remove that user from the cache
     if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
         phorum_cache_remove('user',$user['user_id']);
@@ -484,8 +490,8 @@ function phorum_user_check_field( $field_name, $field_value)
 }
 
 /**
-* function for adding a user to the database (using the db-layer)
-*/
+ * function for adding a user to the database (using the db-layer)
+ */
 function phorum_user_add( $user, $use_raw_password = false )
 {
     if ( empty( $user["password_temp"] ) ) $user["password_temp"] = $user["password"];
@@ -495,16 +501,21 @@ function phorum_user_add( $user, $use_raw_password = false )
     return phorum_db_user_add( $db_user );
 }
 
+/**
+ * How the user appears to the app and how it is stored in the db 
+ * are different. This function prepares the data for storage in the
+ * database. While this may seem like a crossing of database vs. front
+ * end, it is better that this is here as it is not directly related
+ * to database interaction. We need to preserve some data, therefore
+ * we use the old user in the arguments.
+ */
 function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = false )
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    // how the user appears to the app and how it is stored in the db are different.
-    // This function prepares the data for storage in the database.
-    // While this may seem like a crossing of database vs. front end, it is better that
-    // this is here as it is not directly related to database interaction.
-    // we need to preserve some data, therefore we use the old user
+
     unset( $old_user['password'] );
     unset( $old_user['password_temp'] );
+
     if ( is_array( $old_user ) ) {
         $user = $old_user;
     } else {
@@ -521,7 +532,6 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
             case "user_id":
             case "username":
             case "real_name":
-            case "display_name":
             case "profile_url":
             case "email":
             case "email_temp":
@@ -602,6 +612,14 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
             $user["user_data"] = $user_data;
         }
     }
+
+    // Determine the display name to use for the user.
+    $display_name = $user['username'];
+    if ($PHORUM['display_name_source'] == 'real_name' &&
+        trim($user['real_name']) != '') {
+        $display_name = $user['real_name'];         
+    }
+    $user['display_name'] = $display_name;
 
     return $user;
 }

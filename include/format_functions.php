@@ -107,6 +107,7 @@ function phorum_format_messages ($data)
         // Some special things we have to do for the escaped author name.
         // We never should have put HTML in the core. Now we have to
         // do this hack to get the escaped author name in the linked_author.
+        // DISPLAY_NAME
         if (isset($message["author"])) {
             $data[$key]["author"]  = str_replace(array("<",">"), array("&lt;","&gt;"), $message["author"]);
             $safe_author = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $message["author"]);
