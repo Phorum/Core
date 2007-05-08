@@ -12,7 +12,7 @@ extern zend_module_entry phorum_module_entry;
 typedef struct phorum_treenode {
     long  id;          /* The id of the node. */
     long  parent_id;   /* The parent id of the node; 0 (zero) for root node. */
-    long  indent_cnt;  /* The indent level of the node. */
+    long  indent_lvl;  /* The indent level of the node. */
     void *prev;        /* Previous node in linear mode. */
     void *next;        /* Next node in linear mode. */
     void *parent;      /* Parent node in tree mode. */
