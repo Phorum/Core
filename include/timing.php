@@ -27,29 +27,37 @@
     function timing_start($key="default")
     {
         $GLOBALS["_TIMING"][$key]["start"]=microtime();
+        $GLOBALS["_MEMORY"][$key]["start"]=memory_get_usage();
     }
     
     function timing_mark($mark, $key="default")
     {
         $GLOBALS["_TIMING"][$key][$mark]=microtime();
+        $GLOBALS["_MEMORY"][$key][$mark]=memory_get_usage();
     }
 
     function timing_print($key="default")
     {
         echo '<table border="1" cellspacing="0" cellpadding="2">';
-        echo "<tr><th>Mark</th><th>Time</th><th>Elapsed</th></tr>";
+        echo "<tr><th>Mark</th><th>Time</th><th>Elapsed</th><th>Memory delta</th><th>Memory</th></tr>";
         foreach($GLOBALS["_TIMING"][$key] as $mark => $mt){
+            $thismem=$GLOBALS["_MEMORY"][$key][$mark];
             $thistime=array_sum(explode(" ", $mt));
             if(isset($lasttime)){
                 $elapsed=round($thistime-$start, 4);
                 $curr=round($thistime-$lasttime, 4);
-                echo "<tr><td>$mark</td><td>$curr sec.</td><td>$elapsed sec.</td></tr>"; 
+                $currmem=$thismem-$lastmem;
+                $totalmem=$thismem-$startmem;
+                echo "<tr><td>$mark</td><td>$curr sec.</td><td>$elapsed sec.</td>";
+                echo "<td>$currmem</td><td>$totalmem</td></tr>"; 
 
 
             } else {
                 $start=$thistime;
+                $startmem=$thismem;
             }
             $lasttime=$thistime;
+            $lastmem=$thismem;
         }
         echo "</table>";
     }
