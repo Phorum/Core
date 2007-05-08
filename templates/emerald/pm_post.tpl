@@ -52,7 +52,7 @@
                     {ELSE}
                         <input type="text" id="userselection" name="to_name" value="<?php if (isset($_POST['to_name'])) echo htmlspecialchars($_POST['to_name'])?>" />
                     {/IF}
-                    <input type="submit" style="font-size: {smallfontsize}" name="rcpt_add" value="{LANG->PMAddRecipient}" />
+                    <input type="submit" name="rcpt_add" value="{LANG->PMAddRecipient}" />
                     {! Always show recipient list on a separate line}
                     {IF RECIPIENT_COUNT}<br style="clear:both" />{/IF}
                 </div>
