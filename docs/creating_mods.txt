@@ -1868,6 +1868,18 @@ Table of contents:
 
    This hook can be used for using another search application / layer instead
    of the buildin one.
+   
+   ----------------------------------------------------------------------------
+   search_start
+
+   Where  : search.php
+   When   : Right before calling the template on first call to search page
+   Input  : Array of input variables
+   Return : Same as Input
+
+   This hook can be used for modifying the input variables, e.g. for modifying the 
+   default values
+
 
    ----------------------------------------------------------------------------
    send_mail

@@ -274,6 +274,8 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 } else {
     // Set cursor focus to message search entry.
     $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
+    
+    $PHORUM['args'] = phorum_hook('search_start',$PHORUM['args']);
 }
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_SEARCH_ACTION_URL);

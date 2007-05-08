@@ -45,7 +45,7 @@ function phorum_build_forum_list() {
             array_shift($stack);
             $curr_id = array_shift($stack);
         }
-
+        if(!is_numeric($curr_id)) break;
     }
 
     foreach($order as $forum){
