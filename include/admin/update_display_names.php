@@ -72,7 +72,8 @@ else
         $updated = 0;
         while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC)) {
             $updated ++;
-            phorum_user_save( $user );
+            // This is enough to have the display name updated.
+            phorum_user_save(array("user_id" => $user["user_id"]));
         }
 
         if ($updated == 0) {
