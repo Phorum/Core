@@ -1,0 +1,7 @@
+You can install the Phorum extension using the following commands:
+
+# phpize
+# ./configure
+# make
+# make install
+
