@@ -33,6 +33,37 @@ function phorum_sort_threads($rows)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // Use the Phorum PHP extension if it can be loaded. */
+    if (!function_exists('phorum_ext_treesort')) @dl('phorum.so');
+    if (function_exists('phorum_ext_treesort'))
+    {
+        //$start = microtime(true);
+        //$mem_start = memory_get_usage();
+
+        phorum_ext_treesort($rows, "message_id", "parent_id", $PHORUM['TMP']['indentmultiplier']);
+        //echo microtime(true) - $start."<br />";
+        //echo memory_get_usage() - $mem_start."<br />";
+
+        foreach ($rows as $id => $row) {
+           $lvl = $row["indent_cnt"] / $PHORUM['TMP']['indentmultiplier'];
+            if($lvl < 31) {
+                $wrapnum=80-($lvl*2);
+            } else {
+                $wrapnum=20;
+            }
+            $rows[$id]["subject"]=wordwrap($row["subject"],$wrapnum," ",1);
+        }
+        //echo microtime(true) - $start."<br />";
+        //echo memory_get_usage() - $mem_start."<br />";
+
+        return $rows;
+    }
+
+    // PHP extension not loaded. Revert to the pure PHP solution.
+
+    $start = microtime(true);
+    $mem_start = memory_get_usage();
+
     foreach($rows as $row){
         $tmp_rows[$row["message_id"]]["parent_id"]=$row["parent_id"];
         $tmp_rows[$row["parent_id"]]["children"][]=$row["message_id"];
@@ -81,6 +112,9 @@ function phorum_sort_threads($rows)
         }
 
     }
+
+    echo microtime(true) - $start."<br />";
+    echo memory_get_usage() - $mem_start."<br />";
 
     return $order;
 

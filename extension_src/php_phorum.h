@@ -4,7 +4,7 @@
 #define PHP_PHORUM_VERSION "1.0"
 #define PHP_PHORUM_EXTNAME "phorum"
 
-PHP_FUNCTION(phorum_treesort);
+PHP_FUNCTION(phorum_ext_treesort);
 
 extern zend_module_entry phorum_module_entry;
 #define phpext_phorum_ptr &phorum_module_entry
@@ -12,7 +12,7 @@ extern zend_module_entry phorum_module_entry;
 typedef struct phorum_treenode {
     long  id;          /* The id of the node. */
     long  parent_id;   /* The parent id of the node; 0 (zero) for root node. */
-    long  indent;      /* The indent level of the node. */
+    long  indent_cnt;  /* The indent level of the node. */
     void *prev;        /* Previous node in linear mode. */
     void *next;        /* Next node in linear mode. */
     void *parent;      /* Parent node in tree mode. */
