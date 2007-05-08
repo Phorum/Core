@@ -33,7 +33,20 @@ function phorum_sort_threads($rows)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    // Use the Phorum PHP extension if it can be loaded. */
+    // Get template defined settings values.
+    $indentmultiplier = isset($PHORUM['TMP']['indentmultiplier'])
+                      ? $PHORUM['TMP']['indentmultiplier'] : 20;
+    $cut_min          = isset($PHORUM['TMP']['subject_cut_min'])
+                      ? $PHORUM['TMP']['subject_cut_min'] : 20;
+    $cut_max          = isset($PHORUM['TMP']['subject_cut_max'])
+                      ? $PHORUM['TMP']['subject_cut_max'] : 60;
+    $cut_indentfactor = isset($PHORUM['TMP']['subject_cut_indentfactor'])
+                      ? $PHORUM['TMP']['subject_cut_indentfactor'] : 2;
+
+    // ------------------------------------------------------------------
+    // Use the Phorum PHP extension if it can be loaded.
+    // ------------------------------------------------------------------
+
     if (!function_exists('phorum_ext_treesort')) @dl('phorum.so');
     if (function_exists('phorum_ext_treesort'))
     {
@@ -42,8 +55,8 @@ function phorum_sort_threads($rows)
 
         phorum_ext_treesort(
             $rows, "message_id", "parent_id", 
-            $PHORUM['TMP']['indentmultiplier'],
-            "subject", 20, 60, 2 
+            $indentmultiplier,
+            "subject", $cut_min, $cut_max, $cut_indentfactor
         );
 
         //echo "Time: " .( microtime(true) - $start )."<br />";
@@ -52,11 +65,12 @@ function phorum_sort_threads($rows)
         return $rows;
     }
 
-    // PHP extension not loaded. Revert to the pure PHP solution.
-
-    print "Do pure PHP sorting ...<br>";
-    $start = microtime(true);
-    $mem_start = memory_get_usage();
+    // ------------------------------------------------------------------
+    // PHP extension not available. Revert to the pure PHP solution.
+    // ------------------------------------------------------------------
+   
+    //$start = microtime(true);
+    //$mem_start = memory_get_usage();
 
     foreach($rows as $row){
         $tmp_rows[$row["message_id"]]["parent_id"]=$row["parent_id"];
@@ -73,14 +87,15 @@ function phorum_sort_threads($rows)
                 $order[$curr_id] = $rows[$curr_id];
                 unset($rows[$curr_id]);
                 $indent = count($stack)-1;
+
                 // new style of indenting by padding-left
-                $order[$curr_id]["indent_cnt"]=$indent*$PHORUM['TMP']['indentmultiplier'];
-                if($indent < 31) {
-                    $wrapnum=80-($indent*2);
-                } else {
-                    $wrapnum=20;
-                }
-                $order[$curr_id]["subject"]=wordwrap($order[$curr_id]["subject"],$wrapnum," ",1);
+                $order[$curr_id]["indent_cnt"] = $indent*$indentmultiplier;
+
+                // Break up long words in the subject.
+                $cut_len = $cut_max - $indent*$cut_indentfactor;
+                if ($cut_len < $cut_min) $cut_len = $cut_min;
+                $order[$curr_id]["subject"] =
+                    wordwrap($order[$curr_id]["subject"], $cut_len, " ", TRUE);
             }
         }
         array_unshift($stack, $curr_id);
@@ -107,13 +122,18 @@ function phorum_sort_threads($rows)
 
     }
 
-    echo "Time: " .( microtime(true) - $start )."<br />";
-    echo "Mem: " .( memory_get_usage() - $mem_start )."<br />";
+    //echo "Time: " .( microtime(true) - $start )."<br />";
+    //echo "Mem: " .( memory_get_usage() - $mem_start )."<br />";
 
     return $order;
 
 }
+
 /*
+=========================================================================
+ This is the recursive tree sorting routine, which was replaced by the
+ non-recursive new function above.
+
 function phorum_sort_threads($rows)
 {
     $start = microtime(true);
