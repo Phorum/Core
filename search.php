@@ -29,6 +29,10 @@ include_once("./include/format_functions.php");
 // set all our URL's
 phorum_build_common_urls();
 
+// A pointer for the portable code that the search page is used.
+$PHORUM["DATA"]["POST_VARS"] = 
+    '<input type="hidden" name="phorum_page" value="search">';
+
 $PHORUM["DATA"]["SEARCH"]["noresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["showresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["safe_search"] = "";
@@ -51,8 +55,7 @@ function phorum_search_check_valid_vars() {
     return $retval;
 }
 
-if((!empty($_GET["search"]) || !empty($_GET["author"])) &&
-   !isset($PHORUM["args"]["page"])) {
+if(!empty($_GET["search"]) || !empty($_GET["author"])) {
 
     $match_forum = "ALL";
     if(!empty($_GET["match_forum"])){

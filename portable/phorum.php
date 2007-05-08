@@ -17,11 +17,11 @@ chdir($PHORUM_DIR);
 if(preg_match("/^([a-z]+)(,|$)/", $_SERVER["QUERY_STRING"], $match)){
     $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] = str_replace($match[0], "", $_SERVER["QUERY_STRING"]);
 	$page = basename($match[1]);
-} elseif(isset($_REQUEST["page"])){
-    $page = basename($_REQUEST["page"]);
+} elseif(isset($_REQUEST["phorum_page"])){
+    $page = basename($_REQUEST["phorum_page"]);
     $getparts = array();
     foreach (explode("&", $_SERVER["QUERY_STRING"]) as $q) {
-        if (substr($q, 0, 5) != "page=") {
+        if (substr($q, 0, 12) != "phorum_page=") {
             $getparts[] = $q;
         }
     }

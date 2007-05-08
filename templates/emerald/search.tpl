@@ -54,9 +54,8 @@
     <div class="generic" id="search-form">
 
         <form action="{URL->ACTION}" method="get">
-            <input type="hidden" name="page" value="search" />
-            <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
             {POST_VARS}
+            <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
             {LANG->SearchMessages}:<br />
             <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />
             <select name="match_type">
