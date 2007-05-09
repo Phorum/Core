@@ -94,6 +94,7 @@ if ($mode != "edit") {
 
 // Format datestamp. 
 $previewmessage["datestamp"] = phorum_date($PHORUM["short_date"], $previewmessage["datestamp"]);
+$previewmessage["author"] = htmlspecialchars($previewmessage["author"]);
    
 $PHORUM["DATA"]["PREVIEW"] = $previewmessage;
     
