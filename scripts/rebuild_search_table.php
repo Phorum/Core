@@ -5,30 +5,31 @@
 // this needs some time, please make sure that its really needed
 // i.e. in case of errors, required updates etc.
 
-// YOU NEED TO MOVE THIS SCRIPT TO YOUR PHORUM-DIRECTORY
-
 define('phorum_page', 'rebuild_search_table');
 
-if(!file_exists('./common.php')) {
-    echo "You didn't move this script to your phorum-directory!\n";
-    exit();
+// if we are running in the webserver, bail out
+if (isset($_SERVER["REMOTE_ADDR"])) {
+    echo "This script cannot be run from a browser.";
+    return;
 }
 
 define("phorum_page", "rebuild_search_table");
 define("PHORUM_ADMIN", 1);
 
-include './common.php';
+chdir(dirname(__FILE__) . "/..");
+require_once './common.php';
+require_once './include/users.php';
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
     ini_set("memory_limit","64M");
 }
 
-echo "Rebuilding search-table ...\n";
+echo "\nRebuilding search-table ...\n";
 
 phorum_db_rebuild_search_data();
 
 echo "If no errors were logged above,\n" .
-     "then the search table was successfully rebuilt.\n";
+     "then the search table was successfully rebuilt.\n\n";
 
 ?>
