@@ -2245,7 +2245,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
                 $group_where
                 $status_where
          ORDER  BY username ASC",
-         'user_id'
+         0
     );
 
     // The records are full rows, but we want a user_id -> status mapping.
