@@ -649,7 +649,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
          $PHORUM["post_fields"]["author"][pf_READONLY]) &&
          !empty($db["user_id"])) {
         $user_info = phorum_user_get($db["user_id"], false);
-        $user_info["author"] = $user_info["username"];
+        $user_info["author"] = $user_info["display_name"];
     }
 
     foreach ($PHORUM["post_fields"] as $key => $info)

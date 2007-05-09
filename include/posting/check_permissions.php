@@ -79,10 +79,10 @@ if ($mode == "post" || $mode == "reply")
     if ($PHORUM["DATA"]["LOGGEDIN"]){
         $message["user_id"] = $PHORUM["user"]["user_id"];
         // If the author field is read only or not filled, then
-        // use the user's username as the author.
+        // use the user's display name as the author.
         if ($PHORUM["post_fields"]["author"][pf_READONLY] ||
             $message["author"] == '') {
-            $message["author"]  = $PHORUM["user"]["username"];
+            $message["author"]  = $PHORUM["user"]["display_name"];
         }
     } else {
         $message["user_id"] = 0;
