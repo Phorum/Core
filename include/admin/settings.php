@@ -164,9 +164,6 @@ $row=$frm->addrow( "Phorum Description", $frm->textarea( "description", $PHORUM[
 
 $row=$frm->addrow( "DNS Lookups", $frm->select_tag( "dns_lookup", array( "No", "Yes" ), $PHORUM["dns_lookup"] ) );
 
-$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "Use no cookies", "Allow cookies", "Require cookies" ), $PHORUM["SETTINGS"]["use_cookies"] ) );
-$frm->addhelp($row, "Use Cookies", "Phorum can track logged in users by using cookies or session information on URLs." );
-
 $row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
 $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
 
@@ -194,6 +191,7 @@ $frm->addhelp($row, "After search action", "On large forums or slow servers, sea
 $row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
 
 $row=$frm->addrow( "Secret private key for signing data", $frm->text_box("private_key", $PHORUM["private_key"], 50) );
+$frm->addhelp($row, "Secret key for signing data", "On several occasions, data is transferred from the Phorum system to the user's system and back again. To be sure that there was no tampering with this data on the way, it is signed by Phorum using this secret key. If you do not understand what this is for, then it is safe to simply keep the pre-configured value.<br/><br/><b>Warning:</b> if you change this key, users who are active right now might experience problems.");
 
 $row=$frm->addrow( "Allow Linking To Uploaded Files", $frm->select_tag( "file_offsite", array( PHORUM_OFFSITE_FORUMONLY => "Only from the forum", PHORUM_OFFSITE_THISSITE => "From this web site", PHORUM_OFFSITE_ANYSITE => "From any web site" ), $PHORUM["file_offsite"] ) );
 $frm->addhelp($row, "Allow Off Site Links", "You may not want to allow other web sites to link to files that users have uploaded to your forums. If not, then set this option to \"Only from the forum\". If you want to use links on other parts of your web site, then use \"From this web site\". If you want to allow other websites to link to your forum file uploads, then select \"From any web site\".<br/><br/>If your needs are more specific than this (e.g. if you want to allow access from a specific group of web sites), you will need to use your web server's security features to accomplish this. Apache users can reference <i>Prevent \"Image Theft\"</i> at http://httpd.apache.org/docs/env.html#examples." );
@@ -222,6 +220,9 @@ $row=$frm->addrow( "Time Zone Offset", $frm->select_tag( "tz_offset", $tz_range,
 $frm->addhelp($row, "Time Zone Offset", "If you and/or your users are in a different time zone than the server, you can have the default displayed time adjusted by using this option." );
 
 $frm->addbreak( "Cookie/Session Settings" );
+
+$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "Use no cookies", "Allow cookies", "Require cookies" ), $PHORUM["SETTINGS"]["use_cookies"] ) );
+$frm->addhelp($row, "Use Cookies", "Phorum can track logged in users by using cookies or session information on URLs.<br/><br/><b>Use no cookies</b>: The session information will always be included on the URL.<br/><br/><b>Allow cookies</b>: The session information will be stored in cookies, if the user's browser supports it. Otherwise the information is included on the URL.<br/><br/><b>Require cookies</b>: Session information is only stored in cookies. If the user's browser does not support cookies, the user will not be able to login.");
 
 $row=$frm->addrow( "Main Session Timeout (days)", $frm->text_box( "session_timeout", $PHORUM["session_timeout"], 10 ) );
 $frm->addhelp($row, "Session Timeout", "When users log in to your Phorum, they are issued a cookie.  You can set this timeout to the number of days that you want the cookie to stay on the users computer.  If you set it to 0, the cookie will only last as long as the user has the browser open." );
