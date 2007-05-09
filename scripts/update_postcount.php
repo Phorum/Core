@@ -5,40 +5,60 @@ This is just a simple script for updating the post-count of each user, which
 is shown in the user's profile. It can be run multiple times, but should at
 least be run once after a conversion from Phorum 3 to Phorum 5.
 
-How to use?
-
-Just copy this script to your main Phorum 5 directory and run it either
-from your webbrowser or from the console. It will show only some summary
-in the end, nothing more.
-
 Depending on the number of messages and users, it may take some time.
 
 */
 
+// if we are running in the webserver, bail out
+if (isset($_SERVER["REMOTE_ADDR"])) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
+
 define("PHORUM_ADMIN", 1);
-define('phorum_page', 'update_postcount');
+define('phorum_page', 'rebuild_postcount');
 
-// we try to disable the execution timeout
-// that command doesn't work in safe_mode :(
-set_time_limit(0);
-
+chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
 require_once './include/users.php';
 
-// no need to change anything below this line
-$sql="select user_id, count(*) as postcnt from ".$PHORUM["message_table"]." group by user_id";
-$conn = phorum_db_mysql_connect();
-$res = mysql_query($sql, $conn);
-if ($err = mysql_error()) phorum_db_mysql_error("$err: $sql");
-if(mysql_num_rows($res)) {
-    $usercnt=0;
-    while($row = mysql_fetch_row($res)) {
-        $user=array("user_id"=>$row[0],"posts"=>$row[1]);
-        phorum_user_save_simple($user);
-        $usercnt++;
-    }
+if (! ini_get('safe_mode')) {
+    set_time_limit(0);
+    ini_set("memory_limit","64M");
 }
 
-print "$usercnt Users updated with their current postcounts. Done!<br>\n";
+print "\nCounting the posts for all users ...\n";
+$postcounts = phorum_db_interact(
+    DB_RETURN_ROWS,
+    "SELECT user_id, count(*) 
+     FROM   {$PHORUM["message_table"]}
+     GROUP  BY user_id"
+);
+
+print "Updating the post counts ...\n";
+
+$count_total = count($postcounts);
+$size = strlen($count_total);
+$count = 0;
+foreach ($postcounts as $row) {
+    phorum_user_save_simple(array(
+        "user_id" => $row[0],
+        "posts"   => $row[1]
+    ));
+
+    $count ++;
+
+    $perc = floor(($count/$count_total)*100);
+    $barlen = floor(20*($perc/100));
+    $bar = "[";
+    $bar .= str_repeat("=", $barlen);
+    $bar .= str_repeat(" ", (20-$barlen));
+    $bar .= "]";
+    printf("updating %{$size}d / %{$size}d  %s (%d%%)\r",
+           $count, $count_total, $bar, $perc);
+
+}
+
+print "\n\n";
 
 ?>
