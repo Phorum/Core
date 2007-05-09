@@ -1,5 +1,3 @@
-{SET_SUBDAYS_COOKIE}
-
 <form action="{URL->ACTION}" method="POST">
     {POST_VARS}
     <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
