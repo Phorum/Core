@@ -11,17 +11,22 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 
 define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_real_names');
-set_time_limit(0);
 
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
 require_once './include/users.php';
 
+if (! ini_get('safe_mode')) {
+    set_time_limit(0);
+    ini_set("memory_limit","64M");
+}
+
 $count_total = phorum_db_user_count();
 $res = phorum_db_user_get_all();
 
-print "\n";
+print "\nRebuilding display name information ...\n";
 
+$size = strlen($count_total);
 $count = 0;
 while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
 {
@@ -45,7 +50,7 @@ while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
     $bar .= str_repeat("=", $barlen);
     $bar .= str_repeat(" ", (20-$barlen));
     $bar .= "]";
-    printf("updating %6d / %6d  %s (%d%%)\r",
+    printf("updating %{$size}d / %{$size}d  %s (%d%%)\r",
            $count, $count_total, $bar, $perc);
 }
 

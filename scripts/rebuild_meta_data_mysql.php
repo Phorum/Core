@@ -1,22 +1,20 @@
 <?php
-// rebuild meta-data
-// this script rebuilds the meta-data for the messages
+// rebuild thread info
+// this script rebuilds the thread info data for all threads 
 
 // this needs some time, please make sure that its really needed
 // i.e. in case of errors, required updates etc.
 
-// it only works with the mysql-layer.
-
-// YOU NEED TO MOVE THIS SCRIPT TO YOUR PHORUM-DIRECTORY
-
-define('phorum_page', 'rebuild_meta_data');
-
-if(!file_exists('./common.php')) {
-    echo "You didn't move this script to your phorum-directory!\n";
-    exit();
+// if we are running in the webserver, bail out
+if (isset($_SERVER["REMOTE_ADDR"])) {
+    echo "This script cannot be run from a browser.";
+    return;
 }
 
-include './common.php';
+define('phorum_page', 'rebuild_thread_info');
+
+chdir(dirname(__FILE__) . "/..");
+require_once './common.php';
 include './include/thread_info.php';
 
 if (! ini_get('safe_mode')) {
@@ -24,28 +22,48 @@ if (! ini_get('safe_mode')) {
     ini_set("memory_limit","64M");
 }
 
-echo "Rebuilding meta-data ...\n";
-
-$conn = phorum_db_mysql_connect();
+print "\nRebuilding thread info meta data ...\n";
 
 // this should be enabled if you switched to utf-8
 /*
 mysql_query( "SET NAMES 'utf8'", $conn);
 mysql_query( "SET CHARACTER SET utf8", $conn);
- */
+*/
 
-$res = mysql_query("SELECT message_id, forum_id FROM {$PHORUM["message_table"]} WHERE parent_id = 0 and message_id = thread",$conn);
+$count_total = phorum_db_interact(
+    DB_RETURN_VALUE,
+    "SELECT count(*)
+     FROM   {$PHORUM["message_table"]}
+     WHERE  parent_id = 0 AND
+            message_id = thread"
+);
 
-$rebuild = 0;
-while($row = mysql_fetch_row($res)) {
+$res = phorum_db_interact(
+    DB_RETURN_RES,
+    "SELECT message_id, forum_id
+     FROM   {$PHORUM["message_table"]}
+     WHERE  parent_id = 0 AND
+            message_id = thread"
+);
+
+$size = strlen($count_total);
+$count = 0;
+while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
     $PHORUM['forum_id'] = $row[1];
     phorum_update_thread_info($row[0]);
-    $rebuild++;
+
+    $count ++;
+
+    $perc = floor(($count/$count_total)*100);
+    $barlen = floor(20*($perc/100));
+    $bar = "[";
+    $bar .= str_repeat("=", $barlen);
+    $bar .= str_repeat(" ", (20-$barlen));
+    $bar .= "]";
+    printf("updating %{$size}d / %{$size}d  %s (%d%%)\r",
+           $count, $count_total, $bar, $perc);
 }
 
-flush();
-echo "$rebuild messages done.\n";
-echo "Rebuilding meta-data finished successfully if no errors were logged above.\n";
-
+print "\n\n";
 
 ?>
