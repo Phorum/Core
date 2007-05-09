@@ -14,7 +14,7 @@
         <div class="message-author icon-user">
             {LANG->To}:
             {LOOP PREVIEW->recipients}
-                {PREVIEW->recipients->username}
+                {PREVIEW->recipients->display_name}
             {/LOOP PREVIEW->recipients}
         </div>
     </div>

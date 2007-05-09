@@ -623,9 +623,9 @@ switch ($page) {
             $buddy_users = array();
         }
 
-        // Sort the buddies by username.
+        // Sort the buddies by name.
         function phorum_sort_buddy_list($a,$b) {
-            return strcasecmp($a["username"], $b["username"]);
+            return strcasecmp($a["display_name"], $b["display_name"]);
         }
         uasort($buddy_users, 'phorum_sort_buddy_list');
 
@@ -633,8 +633,6 @@ switch ($page) {
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
-                'username'    => htmlspecialchars($buddy_user["username"]),
-                'real_name'   => isset($buddy_user["real_name"]) ? htmlspecialchars($buddy_user["real_name"]) : '',
                 'display_name' => htmlspecialchars($buddy_user["display_name"]),
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
@@ -784,8 +782,8 @@ switch ($page) {
                     $user = phorum_user_get($rcpt_id, false);
                     if ($user) {
                         $msg["recipients"][$rcpt_id] = array(
-                            "username" => $user["username"],
-                            "user_id"  => $user["user_id"]
+                            "display_name" => $user["display_name"],
+                            "user_id"      => $user["user_id"]
                         );
                     }
                 }
@@ -799,7 +797,7 @@ switch ($page) {
                 $msg["subject"] = $message["subject"];
                 $msg["message"] = $message["message"];
                 $msg["recipients"][$message["user_id"]] = array(
-                    "author"   => $message["author"],
+                    "display_name" => $message["author"],
                     "user_id"  => $message["user_id"]
                 );
                 $msg = phorum_pm_quoteformat($message["author"], $msg);
@@ -810,7 +808,7 @@ switch ($page) {
                     foreach($message["recipients"] as $rcpt) {
                         if ($user_id == $rcpt["user_id"]) continue;
                         $msg["recipients"][$rcpt["user_id"]] = array(
-                            "username" => $rcpt["username"],
+                            "display_name" => $rcpt["display_name"],
                             "user_id"  => $rcpt["user_id"],
                         );
                     }
@@ -829,18 +827,18 @@ switch ($page) {
                     $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
                     // Find the real username, because some mods rewrite the
-                    // username in the message table. There will be a better solution
-                    // for selecting recipients, but for now this will fix some
-                    // of the problems.
+                    // username in the message table. There will be a better
+                    // solution for selecting recipients, but for now this
+                    // will fix some of the problems.
                     $user = phorum_user_get($message["user_id"], false);
 
                     $msg["subject"] = $message["subject"];
                     $msg["message"] = $message["body"];
                     $msg["recipients"][$message["user_id"]] = array(
-                        'username' => $user["username"],
+                        'display_name' => $user["display_name"],
                         'user_id'  => $user["user_id"]
                     );
-                    $msg = phorum_pm_quoteformat($user["username"], $msg, $origurl);
+                    $msg = phorum_pm_quoteformat($user["display_name"], $msg, $origurl);
                 }
 
                 $hide_userselect = 1;
@@ -858,7 +856,6 @@ switch ($page) {
             switch ($key) {
                 case "recipients": {
                     foreach ($val as $id => $data) {
-                        $msg[$key][$id]["username"] = htmlspecialchars($data["username"]);
                         $msg[$key][$id]["display_name"] = htmlspecialchars($data["display_name"]);
                     }
                     break;
@@ -889,7 +886,6 @@ switch ($page) {
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
                 $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"]);
-                $userinfo["username"] = htmlspecialchars($userinfo["username"]);
                 $userinfo["user_id"] = $user_id;
                 $allusers[] = $userinfo;
             }

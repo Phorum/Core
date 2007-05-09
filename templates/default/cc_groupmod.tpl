@@ -10,7 +10,7 @@
         <select name="adduser">
           <option value="0">&nbsp;</option>
           {LOOP NEWMEMBERS}
-            <option value="{NEWMEMBERS->username}">{NEWMEMBERS->displayname}</option>
+            <option value="{NEWMEMBERS->username}">{NEWMEMBERS->display_name}</option>
           {/LOOP NEWMEMBERS}
         </select>
       {ELSE}
@@ -36,7 +36,7 @@
         {LOOP USERS}
           <tr>
             <td>
-              {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->profile}">{USERS->displayname}</a>{IF USERS->flag}</em></strong>{/IF}
+              {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->profile}">{USERS->display_name}</a>{IF USERS->flag}</em></strong>{/IF}
             </td>
             <td>
               {IF USERS->disabled}

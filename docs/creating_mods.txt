@@ -1988,8 +1988,8 @@ Table of contents:
    Input  : Array containing:
             <user_id> => <data>
             Where <data> is an array containing:
-            username    => the username for the user
-            displayname => the way to display the username
+              username     => the username for the user
+              display_name => the way to display the username
    Return : Same as Input
 
     This hook can be used for reformatting the list of users in some

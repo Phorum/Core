@@ -262,6 +262,7 @@
         "MatchMessages"         =>      "Show results as messages",
         "MatchPhrase"           =>      "Exact Phrase",
         "MatchThreads"          =>      "Show results as threads",
+        "Member"                =>      "Member",
         "MembershipType"        =>      "Membership Type",
         "MergeThread"           =>      "Merge Topic",
         "MergeThreadCancel"     =>      "Cancel Merge",

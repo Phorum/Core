@@ -11,7 +11,7 @@
                 <select name="adduser">
                     <option value="0">&nbsp;</option>
                     {LOOP NEWMEMBERS}
-                        <option value="{NEWMEMBERS->username}">{NEWMEMBERS->displayname}</option>
+                        <option value="{NEWMEMBERS->username}">{NEWMEMBERS->display_name}</option>
                     {/LOOP NEWMEMBERS}
                 </select>
             {ELSE}
@@ -48,13 +48,13 @@
                 <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
                 <table class="list" cellspacing="0" border="0">
                     <tr>
-                        <th align="left">{LANG->Username}</th>
+                        <th align="left">{LANG->Member}</th>
                         <th align="left">{LANG->MembershipType}</th>
                     </tr>
                     {LOOP USERS}
                         <tr>
                             <td>
-                                {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->url}">{USERS->displayname}</a>{IF USERS->flag}</em></strong>{/IF}
+                                {IF USERS->flag}<strong><em>{/IF}<a href="{USERS->url}">{USERS->display_name}</a>{IF USERS->flag}</em></strong>{/IF}
                             </td>
                             <td>
                                 {IF USERS->disabled}

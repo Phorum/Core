@@ -140,8 +140,8 @@ if (!empty($group_id)){
         }
 
         $PHORUM["DATA"]["USERS"][$userid] = array("userid" => $userid,
-            "name" => $users[$userid]["username"],
-            "displayname" => $users[$userid]["username"],
+            "name" => htmlspecialchars($users[$userid]["username"]),
+            "display_name" => htmlspecialchars($users[$userid]["display_name"]),
             "status" => $status,
             "statustext" => $statustext,
             "disabled" => $disabled,
@@ -154,13 +154,13 @@ if (!empty($group_id)){
 
     // if the option to build a dropdown list is enabled, build the list of members that could be added
     if ($PHORUM["enable_dropdown_userlist"]){
-        $userlist = phorum_user_get_list();
+        $userlist = phorum_user_get_list(1);
         $PHORUM["DATA"]["NEWMEMBERS"] = array();
 
         foreach ($userlist as $userid => $userinfo){
             if (!in_array($userid, $usersingroup)){
                 $userinfo["username"] = htmlspecialchars($userinfo["username"]);
-                $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
+                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"]);
                 $PHORUM["DATA"]["NEWMEMBERS"][] = $userinfo;
             }
         }
