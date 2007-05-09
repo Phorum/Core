@@ -1,0 +1,54 @@
+<?php 
+
+// Rebuild all real name information in the database from scratch.
+// This can take a while, so only run this script if needed.
+
+// if we are running in the webserver, bail out
+if (isset($_SERVER["REMOTE_ADDR"])) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
+
+define("PHORUM_ADMIN", 1);
+define('phorum_page', 'rebuild_real_names');
+set_time_limit(0);
+
+chdir(dirname(__FILE__) . "/..");
+require_once './common.php';
+require_once './include/users.php';
+
+$count_total = phorum_db_user_count();
+$res = phorum_db_user_get_all();
+
+print "\n";
+
+$count = 0;
+while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
+{
+    // To make sure that the display name has got the right value.
+    phorum_user_save(array("user_id" => $user["user_id"]));
+
+    // Load the user from the db for a fresh display name value.
+    $user = phorum_db_user_get($user["user_id"]);
+
+    // To run all updates needed for propagating this user's display name. 
+    phorum_db_user_display_name_updates(array(
+        "user_id"      => $user["user_id"],
+        "display_name" => $user["display_name"]
+    ));
+
+    $count ++;
+
+    $perc = floor(($count/$count_total)*100);
+    $barlen = floor(20*($perc/100));
+    $bar = "[";
+    $bar .= str_repeat("=", $barlen);
+    $bar .= str_repeat(" ", (20-$barlen));
+    $bar .= "]";
+    printf("updating %6d / %6d  %s (%d%%)\r",
+           $count, $count_total, $bar, $perc);
+}
+
+print "\n\n";
+
+?>

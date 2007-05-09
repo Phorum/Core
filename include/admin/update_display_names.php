@@ -70,10 +70,22 @@ else
 
         // Handle batch.
         $updated = 0;
-        while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC)) {
+        while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
+        {
             $updated ++;
-            // This is enough to have the display name updated.
+
+            // To make sure that the display name has got the right value.
             phorum_user_save(array("user_id" => $user["user_id"]));
+
+            // Load the user from the db for a fresh display name value.
+            $user = phorum_db_user_get($user["user_id"]);
+
+            // To run all updates needed for propagating this user's
+            // current display name.
+            phorum_db_user_display_name_updates(array(
+                "user_id"      => $user["user_id"],
+                "display_name" => $user["display_name"]
+            ));
         }
 
         if ($updated == 0) {

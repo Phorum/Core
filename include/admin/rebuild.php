@@ -147,21 +147,22 @@ include_once "./include/admin/PhorumInputForm.php";
 $frm = &new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "rebuild" );
 $frm->addbreak( "Rebuild parameters" );
-$row=$frm->addrow( "Rebuild forumstatistics", $frm->checkbox('rebuild_forumstats',1,"rebuild forumstats"));
-$frm->addhelp($row, "Rebuild forumstatistics", "Phorum keeps the count of messages and threads in a forum and also the date of the last post in some variables in the forums-table. If you manually delete messages from or manually add messages to the forum, this data will usually be out of sync. This leads to wrong paging on the list of messages and wrong counts on the index-page. Therefore run this part to update the forumstatistics this way." );
+$row=$frm->addrow( "Rebuild forum statistics", $frm->checkbox('rebuild_forumstats',1,"Yes"));
+$frm->addhelp($row, "Rebuild forum statistics", "Phorum keeps the count of messages and threads in a forum and also the date of the last post in some variables in the forums-table. If you manually delete messages from or manually add messages to the forum, this data will usually be out of sync. This leads to wrong paging on the list of messages and wrong counts on the index-page. Therefore run this part to update the forumstatistics this way." );
 
 
-$row=$frm->addrow( "Rebuild message meta-data", $frm->checkbox('rebuild_metadata',1,"rebuild metadata"));
-$frm->addhelp($row, "Rebuild message meta-data", "Phorum stores meta-data about the thread in the meta-field of the first message in a thread. If you manually delete messages from a thread or in case of errors, this data could be out of sync, leading to wrong paging and new-flag information about a thread. Run this part to rebuild the meta-data for all threads in all forums.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
+$row=$frm->addrow( "Rebuild thread info meta data", $frm->checkbox('rebuild_metadata',1,"Yes"));
+$frm->addhelp($row, "Rebuild message meta-data", "Phorum stores meta-data about the thread in the first message of the thread. If you manually delete messages from a thread or in case of errors, this data could be out of sync, leading to wrong paging and new-flag information about a thread. Run this part to rebuild the meta-data for all threads in all forums.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
 
-$row=$frm->addrow( "Rebuild search-data", $frm->checkbox('rebuild_searchdata',1,"rebuild searchdata"));
-$frm->addhelp($row, "Rebuild search-data", "Phorum stores all posts a second time in a separate table for avoiding concurrency issues and building fulltext indexes.<br />In case of manual changes to the messages or crashing servers this data can be outdated or broken, therefore this option rebuilds the search-table from the original messages.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
+$row=$frm->addrow( "Rebuild search data", $frm->checkbox('rebuild_searchdata',1,"Yes"));
+$frm->addhelp($row, "Rebuild search data", "Phorum stores all posts a second time in a separate table for avoiding concurrency issues and building fulltext indexes.<br />In case of manual changes to the messages or crashing servers this data can be outdated or broken, therefore this option rebuilds the search-table from the original messages.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
 
-$row=$frm->addrow( "Rebuild user post-counts", $frm->checkbox('rebuild_userposts',1,"rebuild userposts"));
-$frm->addhelp($row, "Rebuild user post-counts", "Phorum stores the numbers of posts a user has made in the user-data.<br />In case of manual changes to the database like deleting messages manually, this data can be outdated or broken, therefore this option rebuilds the post-counts from the existing messages for the user-id.<br /><strong>ATTENTION:</strong>This can take a some time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
+$row=$frm->addrow( "Rebuild user post counts", $frm->checkbox('rebuild_userposts',1,"Yes"));
+$frm->addhelp($row, "Rebuild user post counts", "Phorum stores the numbers of posts a user has made in the user-data.<br />In case of manual changes to the database like deleting messages manually, this data can be outdated or broken, therefore this option rebuilds the post-counts from the existing messages for the user-id.<br /><strong>ATTENTION:</strong>This can take a some time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
 
 // TODO add help
-$row=$frm->addrow( "Rebuild display names", $frm->checkbox('rebuild_display_names', 1 ,"rebuild display names"));
+$row=$frm->addrow( "Rebuild display names", $frm->checkbox('rebuild_display_names', 1 ,"Yes"));
+$frm->addhelp($row, "Rebuild display names", "Phorum stores the name to display for users redundantly in the database at several places. This is done for speeding up Phorum (because this way, Phorum does not need to retrieve the display name separately when showing for example a forum message list or a PM inbox list). The administrator can choose whether to use the username or the user's real name as the name to display.<br/><br/>If for some reason, the display names get out of sync or if you installed a module that modifies the display name (in which case you need to reprocess the display name for all users), you can rebuild all real name data using this option.");
 
 $frm->show();
 
