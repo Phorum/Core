@@ -27,7 +27,7 @@ define( "PHORUM", "5.2-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2007050603" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2007050901" );
 
 define( "DEBUG", 0 );
 
@@ -470,6 +470,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     $PHORUM['DATA']['USER'] = $PHORUM['user'];
     $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"]);
+    $PHORUM['DATA']['USER']["real_name"] = htmlspecialchars($PHORUM['DATA']['USER']["real_name"]);
+    $PHORUM['DATA']['USER']["display_name"] = htmlspecialchars($PHORUM['DATA']['USER']["display_name"]);
     if(isset($PHORUM['DATA']['USER']["email"])) $PHORUM['DATA']['USER']["email"] = htmlspecialchars($PHORUM['DATA']['USER']["email"]);
     if(isset($PHORUM['DATA']['USER']["signature"])) $PHORUM['DATA']['USER']["signature"] = htmlspecialchars($PHORUM['DATA']['USER']["signature"]);
 

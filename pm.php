@@ -461,8 +461,8 @@ if (!empty($action)) {
                                     'pm_message_id' => $pm_message_id,
                                     'subject'       => $_POST['subject'],
                                     'message'       => $_POST['message'],
-                                    'from_username' => $PHORUM['user']['username'],
-                                    'from_user_id'  => $user_id,
+                                    'from_username' => $PHORUM['user']['display_name'],
+                                    'user_id'       => $user_id,
                                 );
 
                                 // Sort all recipients that want a notify by language.
@@ -635,6 +635,7 @@ switch ($page) {
                 'user_id'     => $id,
                 'username'    => htmlspecialchars($buddy_user["username"]),
                 'real_name'   => isset($buddy_user["real_name"]) ? htmlspecialchars($buddy_user["real_name"]) : '',
+                'display_name' => htmlspecialchars($buddy_user["display_name"]),
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
 
@@ -675,7 +676,7 @@ switch ($page) {
             $list = phorum_pm_format($list);
             foreach ($list as $message_id => $message)
             {
-                $list[$message_id]["URL"]["FROM"] = phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
+                $list[$message_id]["URL"]["FROM"] = phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
                 $list[$message_id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
                 $list[$message_id]["raw_date"] = $message["datestamp"];
                 $list[$message_id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
@@ -683,7 +684,7 @@ switch ($page) {
                 $receive_count = 0;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
                     if ($rcpt["read_flag"]) $receive_count++;
-                    $list[$message_id]["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
+                    $list[$message_id]["recipients"][$rcpt_id]["display_name"] = htmlspecialchars($rcpt["display_name"]);
                     $list[$message_id]["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
                 }
                 $list[$message_id]["receive_count"] = $receive_count;
@@ -721,7 +722,7 @@ switch ($page) {
             if($message["recipient_count"] < 10){
                 $message["show_recipient_list"] = true;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
-                    $message["recipients"][$rcpt_id]["username"] = htmlspecialchars($rcpt["username"]);
+                    $message["recipients"][$rcpt_id]["display_name"] = htmlspecialchars($rcpt["display_name"]);
                     $message["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
                 }
             } else {
@@ -729,7 +730,7 @@ switch ($page) {
             }
 
             // Setup URL's and format date.
-            $message["URL"]["FROM"]=phorum_get_url(PHORUM_PROFILE_URL, $message["from_user_id"]);
+            $message["URL"]["FROM"]=phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
             $message["raw_date"]=$message["datestamp"];
             $message["date"]=phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
 
@@ -762,8 +763,8 @@ switch ($page) {
 
         // Setup the default array with the message data.
         $msg = array(
-            "from_user_id"  => $PHORUM["user"]["user_id"],
-            "from_username" => $PHORUM["user"]["username"],
+            "user_id"       => $PHORUM["user"]["user_id"],
+            "author"        => $PHORUM["user"]["display_name"],
             "keep"          => isset($_POST["keep"]) && $_POST["keep"] ? 1 : 0,
             "subject"       => isset($_POST["subject"]) ? $_POST["subject"] : '',
             "message"       => isset($_POST["message"]) ? $_POST["message"] : '',
@@ -797,11 +798,11 @@ switch ($page) {
                 $message = phorum_db_pm_get($pm_id);
                 $msg["subject"] = $message["subject"];
                 $msg["message"] = $message["message"];
-                $msg["recipients"][$message["from_user_id"]] = array(
-                    "username" => $message["from_username"],
-                    "user_id"  => $message["from_user_id"]
+                $msg["recipients"][$message["user_id"]] = array(
+                    "author"   => $message["author"],
+                    "user_id"  => $message["user_id"]
                 );
-                $msg = phorum_pm_quoteformat($message["from_username"], $msg);
+                $msg = phorum_pm_quoteformat($message["author"], $msg);
 
                 // Include the other recipient, excecpt the active
                 // user himself, when replying to all.
@@ -858,6 +859,7 @@ switch ($page) {
                 case "recipients": {
                     foreach ($val as $id => $data) {
                         $msg[$key][$id]["username"] = htmlspecialchars($data["username"]);
+                        $msg[$key][$id]["display_name"] = htmlspecialchars($data["display_name"]);
                     }
                     break;
                 }
@@ -886,7 +888,7 @@ switch ($page) {
             $userlist = phorum_user_get_list(1);
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
-                $userinfo["displayname"] = htmlspecialchars($userinfo["displayname"]);
+                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"]);
                 $userinfo["username"] = htmlspecialchars($userinfo["username"]);
                 $userinfo["user_id"] = $user_id;
                 $allusers[] = $userinfo;
@@ -983,7 +985,6 @@ function phorum_pm_format($messages)
     // Reformat message so it looks like a forum message.
     foreach ($messages as $id => $message)
     {
-        $messages[$id]["author"] = $message["from_username"];
         $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
         $messages[$id]["email"] = "";
     }
@@ -995,9 +996,7 @@ function phorum_pm_format($messages)
     foreach ($messages as $id => $message)
     {
         $messages[$id]["message"] = $message["body"];
-        $messages[$id]["from_username"] = $message["author"];
         unset($messages[$id]["body"]);
-        unset($messages[$id]["author"]);
     }
 
     return $messages;

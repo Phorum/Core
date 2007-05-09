@@ -22,7 +22,6 @@
                     <noscript>&nbsp;</noscript>
                 </th>
                 <th align="left">{LANG->Buddy}</th>
-                <th align="left">{LANG->RealName}</th>
                 <th align="center">{LANG->Mutual}</th>
                 {IF USERTRACK}
                     <th align="right">{LANG->DateActive}&nbsp;</th>
@@ -31,8 +30,7 @@
             {LOOP BUDDIES}
                 <tr>
                     <td width="5%"><input type="checkbox" name="checked[]" value="{BUDDIES->user_id}"></td>
-                    <td width="20%"><a href="{BUDDIES->URL->PROFILE}"><strong>{BUDDIES->username}</strong></a></td>
-                    <td width="20%">{BUDDIES->real_name}</td>
+                    <td width="40%"><a href="{BUDDIES->URL->PROFILE}"><strong>{BUDDIES->display_name}</strong></a></td>
                     <td width="20%" align="center">{IF BUDDIES->mutual}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
                     {IF USERTRACK}
                         <td width="20%" align="right">{BUDDIES->date_last_active}&nbsp;</td>

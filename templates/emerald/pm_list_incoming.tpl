@@ -29,7 +29,7 @@
                         <img src="{URL->TEMPLATE}/images/flag_red.png" width="16" height="16" border="0" alt="NEW!" />
                     {/IF}
                 </td>
-                <td nowrap="nowrap"><a href="{MESSAGES->URL->FROM}">{MESSAGES->from_username}</a>&nbsp;</td>
+                <td nowrap="nowrap"><a href="{MESSAGES->URL->FROM}">{MESSAGES->author}</a>&nbsp;</td>
                 <td nowrap="nowrap" width="1">{MESSAGES->date}&nbsp;</td>
             </tr>
         {/LOOP MESSAGES}

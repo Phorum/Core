@@ -68,6 +68,12 @@ if (!empty($PHORUM["PROFILE_FIELDS"])) {
     }
 }
 
+// No need to show the real name in case it's the same
+// as the display name.
+if ($user["real_name"] == $user["display_name"]) {
+    unset($user["real_name"]);
+}
+
 $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = $PHORUM["forum_id"];
 
@@ -106,7 +112,10 @@ $PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"])
 $PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = phorum_get_url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0");
 
 $PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
-$PHORUM["DATA"]["PROFILE"]["real_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"]);
+if (isset($PHORUM["DATA"]["PROFILE"]["real_name"])) {
+    $PHORUM["DATA"]["PROFILE"]["real_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"]);
+}
+$PHORUM["DATA"]["PROFILE"]["display_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"]);
 
 $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
 

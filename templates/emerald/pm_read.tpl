@@ -3,14 +3,14 @@
     <h4>{MESSAGE->subject}</h4>
 
     <div class="message-author icon-user">
-        {LANG->From}: <a href="{MESSAGE->URL->FROM}">{MESSAGE->from_username}</a>
+        {LANG->From}: <a href="{MESSAGE->URL->FROM}">{MESSAGE->author}</a>
     </div>
     <div class="message-author icon-user">
         {LANG->To}:
         {IF MESSAGE->show_recipient_list}
             {LOOP MESSAGE->recipients}
-                <a href="{MESSAGE->recipients->URL->TO}">{MESSAGE->recipients->username}</a>
-                {IF USER->user_id MESSAGE->from_user_id}
+                <a href="{MESSAGE->recipients->URL->TO}">{MESSAGE->recipients->display_name}</a>
+                {IF USER->user_id MESSAGE->user_id}
                     {IF NOT MESSAGE->recipients->read_flag}({LANG->PMUnread}){/IF}
                 {/IF}
             {/LOOP MESSAGE->recipients}
@@ -52,7 +52,7 @@
       {/IF}
     {/IF}
     <input type="submit" name="close_message" value="{LANG->PMCloseMessage}" />
-    {IF NOT MESSAGE->from_user_id USERINFO->user_id}
+    {IF NOT MESSAGE->user_id USERINFO->user_id}
         <input type="submit" name="reply" value="{LANG->PMReply}" />
         {IF NOT MESSAGE->recipient_count 1}
             <input type="submit" name="reply_to_all" value="{LANG->PMReplyToAll}" />

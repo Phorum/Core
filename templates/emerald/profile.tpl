@@ -10,7 +10,7 @@
     <div class="generic">
 
          <div class="icon-user">
-            {PROFILE->username}
+            {PROFILE->display_name}
             <small>
               {IF LOGGEDIN}
                 {IF ENABLE_PM}

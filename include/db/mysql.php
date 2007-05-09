@@ -2761,7 +2761,7 @@ function phorum_db_user_get_fields($user_id, $fields)
  *
  * @return $users - An array of users, indexed by user_id. The values
  *                  are arrays containing the fields "user_id", "username" and
- *                  "displayname".
+ *                  "display_name".
  */
 function phorum_db_user_get_list($type = 0)
 {
@@ -2777,7 +2777,7 @@ function phorum_db_user_get_list($type = 0)
         DB_RETURN_ASSOCS,
         "SELECT user_id,
                 username,
-                username AS displayname
+                display_name
          FROM   {$PHORUM['user_table']}
                 $where
          ORDER  BY username ASC",
@@ -3172,6 +3172,7 @@ function phorum_db_user_display_name_updates($userdata)
     $author = phorum_db_interact(DB_RETURN_QUOTED, $userdata['display_name']);
     $user_id = (int) $userdata['user_id'];
 
+    // Update forum message authors.
     phorum_db_interact(
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
@@ -3179,12 +3180,43 @@ function phorum_db_user_display_name_updates($userdata)
          WHERE  user_id = $user_id"
     );
 
+    // Update recent forum reply authors.
     phorum_db_interact(
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
          SET    recent_author = '$author'
          WHERE  recent_user_id = $user_id"
     );
+
+    // Update PM author data.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['pm_messages_table']}
+         SET    author = '$author'
+         WHERE  user_id = $user_id"
+    );
+
+    // Update PM recipient data.
+    $res = phorum_db_interact(
+        DB_RETURN_RES,
+        "SELECT m.pm_message_id AS pm_message_id, meta
+         FROM   {$PHORUM['pm_messages_table']} AS m,
+                {$PHORUM['pm_xref_table']} AS x
+         WHERE  m.pm_message_id = x.pm_message_id AND
+                x.user_id = $user_id AND
+                special_folder != 'outbox'"
+    );
+    while ($row = phorum_db_fetch_row($res, DB_RETURN_ASSOC)) {
+        $meta = unserialize($row['meta']);         
+        $meta['recipients'][$user_id]['display_name'] = $author;
+        $meta = phorum_db_interact(DB_RETURN_QUOTED, serialize($meta));
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM['pm_messages_table']}
+             SET    meta='$meta'
+             WHERE  pm_message_id = {$row['pm_message_id']}"
+        );
+    }
 }
 
 /**
@@ -4494,15 +4526,14 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT m.pm_message_id AS pm_message_id,
-                from_user_id,    from_username,
+                m.user_id,       author,
                 subject,         datestamp,
                 meta,            pm_xref_id,
-                user_id,         pm_folder_id,
-                special_folder,  read_flag,
-                reply_flag
+                pm_folder_id,    special_folder,
+                read_flag,       reply_flag
          FROM   {$PHORUM['pm_messages_table']} AS m,
                 {$PHORUM['pm_xref_table']} AS x
-         WHERE  user_id = $user_id AND
+         WHERE  x.user_id = $user_id AND
                 $folder_where AND
                 x.pm_message_id = m.pm_message_id
          ORDER  BY x.pm_message_id " . ($reverse ? 'DESC' : 'ASC'),
@@ -4554,8 +4585,8 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT m.pm_message_id  AS pm_message_id,
-                m.from_user_id   AS from_user_id,
-                m.from_username  AS from_username,
+                m.user_id        AS user_id,
+                m.author         AS author,
                 m.subject        AS subject,
                 m.message        AS message,
                 m.datestamp      AS datestamp,
@@ -4872,7 +4903,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
         "phorum_db_pm_send(): Unknown sender user_id '$from'",
         E_USER_ERROR
     );
-    $fromuser = phorum_db_interact(DB_RETURN_QUOTED, $fromuser['username']);
+    $fromuser = phorum_db_interact(DB_RETURN_QUOTED, $fromuser['display_name']);
     $subject = phorum_db_interact(DB_RETURN_QUOTED, $subject);
     $message = phorum_db_interact(DB_RETURN_QUOTED, $message);
 
@@ -4891,7 +4922,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
         );
         $rcpts[$user_id] = array(
             'user_id'        => $user_id,
-            'username'       => $user['username'],
+            'display_name'   => $user['display_name'],
             'read_flag'      => 0,
         );
         $xref_entries[] = array(
@@ -4921,7 +4952,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
     $pm_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['pm_messages_table']}
-                (from_user_id, from_username, subject, 
+                (user_id, author, subject, 
                  message, datestamp, meta)
          VALUES ($from, '$fromuser', '$subject',
                  '$message', '".time()."', '$meta')"
@@ -5968,8 +5999,8 @@ function phorum_db_create_tables()
   
       "CREATE TABLE {$PHORUM['pm_messages_table']} (
            pm_message_id            int unsigned   NOT NULL auto_increment,
-           from_user_id             int unsigned   NOT NULL default '0',
-           from_username            varchar(50)    NOT NULL default '',
+           user_id                  int unsigned   NOT NULL default '0',
+           author                   varchar(255)   NOT NULL default '',
            subject                  varchar(100)   NOT NULL default '',
            message                  text           NOT NULL default '',
            datestamp                int unsigned   NOT NULL default '0',

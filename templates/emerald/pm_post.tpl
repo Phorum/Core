@@ -9,7 +9,7 @@
         <h4>{PREVIEW->subject}</h4>
 
         <div class="message-author icon-user">
-            {LANG->From}: {PREVIEW->from_username}
+            {LANG->From}: {PREVIEW->author}
         </div>
         <div class="message-author icon-user">
             {LANG->To}:
@@ -46,7 +46,7 @@
                         <select id="userselection" name="to_id" size="1" align="middle">
                             <option value=""> {LANG->PMSelectARecipient}</option>
                             {LOOP USERS}
-                                <option value="{USERS->user_id}" <?php if (isset($_POST['to_id']) && $_POST['to_id'] == $PHORUM['TMP']['USERS']['user_id']) echo 'selected="selected"'?>>{USERS->displayname}</option>
+                                <option value="{USERS->user_id}" <?php if (isset($_POST['to_id']) && $_POST['to_id'] == $PHORUM['TMP']['USERS']['user_id']) echo 'selected="selected"'?>>{USERS->display_name}</option>
                             {/LOOP USERS}
                         </select>
                     {ELSE}
@@ -60,8 +60,8 @@
             {! Display the current list of recipients}
             {LOOP MESSAGE->recipients}
                 <div class="phorum-recipientblock">
-                    {MESSAGE->recipients->username}
-                    <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->username}" />
+                    {MESSAGE->recipients->display_name}
+                    <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->display_name}" />
                     <input type="image" src="{URL->TEMPLATE}/images/delete.png" name="del_rcpt::{MESSAGE->recipients->user_id}" class="rcpt-delete-img" title="" />
                 </div>
             {/LOOP MESSAGE->recipients}
