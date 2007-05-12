@@ -1,4 +1,4 @@
-typedef struct phorum_treenode {
+typedef struct treenode {
     long  id;          /* The id of the node. */
     long  parent_id;   /* The parent id of the node; 0 (zero) for root node. */
     long  indent_lvl;  /* The indent level of the node. */
@@ -10,10 +10,10 @@ typedef struct phorum_treenode {
     void *sibling;     /* Next sibling child. */
     int   seen;        /* Keep track if the node was seen during tree walk. */
     HashPosition hp;   /* The Zend hash position. */
-} phorum_treenode;
+} treenode;
 
-typedef struct phorum_tree {
-    phorum_treenode *node_first;
-    phorum_treenode *node_last;
-} phorum_tree;
+typedef struct tree {
+    treenode *node_first;
+    treenode *node_last;
+} tree;
 

@@ -1,0 +1,103 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "php.h"
+#include "php_phorum.h"
+#include "phorum_utils.h"
+
+long
+get_constant_long(char *key)
+{
+    zval  zkey;
+    zval  zvalue;
+
+    ZVAL_STRING(&zkey, key, 0);
+
+    if (!zend_get_constant(Z_STRVAL(zkey), Z_STRLEN(zkey), &zvalue TSRMLS_CC)) {
+        zend_error(E_ERROR, "get_constant_long(): Cannot find symbol %s, is this function called inside an initialized Phorum environment?", key);
+    }
+
+    convert_to_long(&zvalue);
+    return Z_LVAL(zvalue);
+}
+
+char *
+get_constant_string(char *key)
+{
+    zval  zkey;
+    zval  zvalue;
+
+    ZVAL_STRING(&zkey, key, 0);
+
+    if (!zend_get_constant(Z_STRVAL(zkey), Z_STRLEN(zkey), &zvalue TSRMLS_CC)) {
+        zend_error(E_ERROR, "get_constant_long(): Cannot find symbol %s, is this function called inside an initialized Phorum environment?", key);
+    }
+
+    convert_to_string(&zvalue);
+    return Z_STRVAL(zvalue);
+}
+
+/* Lookup a key from the global $PHORUM array. */
+zval *
+get_PHORUM(char *key)
+{
+    static HashTable *PHORUM = NULL;
+
+    zval **P;
+
+    /* Lookup the global $PHORUM variable. */
+    if (PHORUM == NULL) {
+        if (zend_hash_find(&EG(symbol_table), "PHORUM", sizeof("PHORUM"), (void**)&P) == FAILURE) {
+            zend_error(E_ERROR, "get_PHORUM(): Cannot find symbol $PHORUM, is this function called inside an initialized Phorum environment?");
+        }
+        PHORUM = Z_ARRVAL_PP(P);
+    }
+
+    if (zend_hash_find(PHORUM, key, strlen(key)+1, (void**)&P) == FAILURE) {
+        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[%s]", key);
+    }
+
+    return *P;
+}
+
+char *
+get_PHORUM_string(char *key) {
+    zval *P = get_PHORUM(key);
+    convert_to_string(P);
+    return Z_STRVAL_P(P);
+}
+
+long
+get_PHORUM_long(char *key) {
+    zval *P = get_PHORUM(key);
+    convert_to_long(P);
+    return Z_LVAL_P(P);
+}
+
+/* Lookup a key from the $PHORUM["args"] array. */
+zval *
+get_PHORUM_args(char *key)
+{
+    static HashTable *args = NULL;
+    zval   zkey;
+    zval **P;
+
+    /* Lookup the $PHORUM["args"] variable. */
+    if (args == NULL) {
+        zval *A = get_PHORUM("args");
+        args = Z_ARRVAL_P(A);
+    }
+
+    ZVAL_STRING(&zkey, key, 1);
+
+    if (zend_hash_find(args, Z_STRVAL(zkey), Z_STRLEN(zkey)+1, (void**)&P) == FAILURE) {
+        convert_to_long(&zkey);
+        if (zend_hash_index_find(args, Z_LVAL(zkey), (void**)&P) == FAILURE) {
+          return NULL;
+        }
+    }
+
+    return *P;
+}
+

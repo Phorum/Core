@@ -53,11 +53,11 @@ PHP_FUNCTION(phorum_ext_treesort)
     HashTable       *nodes_hash;
     HashPosition     node_pointer;
     long             treepos;
-    phorum_tree      tree;
-    phorum_treenode *top_node;
-    phorum_treenode *cur_node;
-    phorum_treenode *new_node;
-    phorum_treenode **hash_node;
+    tree             tree;
+    treenode        *top_node;
+    treenode        *cur_node;
+    treenode        *new_node;
+    treenode       **hash_node;
     HashTable       *id_to_node;
 
     /* Function argument storage. */
@@ -72,15 +72,15 @@ PHP_FUNCTION(phorum_ext_treesort)
     long             cut_min = 20;
     long             cut_indent_factor = 2;
 
-    bzero(&tree, sizeof(phorum_tree));
+    bzero(&tree, sizeof(tree));
 
     RETVAL_TRUE;
 
     /* Create a top level node to which all the parent id = 0
      * nodes can be connected. */
-    top_node = (phorum_treenode *)emalloc(sizeof(phorum_treenode));
+    top_node = (treenode *)emalloc(sizeof(treenode));
     if (! top_node) {RETVAL_FALSE; goto error; }
-    bzero(top_node, sizeof(phorum_treenode));
+    bzero(top_node, sizeof(treenode));
     top_node->id = 0;
     top_node->parent_id = 0;
     top_node->seen = 1;
@@ -176,9 +176,9 @@ PHP_FUNCTION(phorum_ext_treesort)
         }
 
         /* Create a new phorum tree node. */
-        new_node = (phorum_treenode *)emalloc(sizeof(phorum_treenode));
+        new_node = (treenode *)emalloc(sizeof(treenode));
         if (! new_node) zend_error(E_ERROR, "Out of memory");
-        bzero(new_node, sizeof(phorum_treenode));
+        bzero(new_node, sizeof(treenode));
         new_node->id = id;
         new_node->parent_id = parent_id;
         new_node->hp = node_pointer;
@@ -188,7 +188,7 @@ PHP_FUNCTION(phorum_ext_treesort)
             zend_error(
                 E_WARNING,
                 "Phorum sort threads: "
-                "No parent found for tree node (id %ld)\n", new_node->id
+                "Unable to add node (%ld) to internal hash\n", new_node->id
             );
             RETVAL_FALSE;
             goto error;
@@ -225,7 +225,7 @@ PHP_FUNCTION(phorum_ext_treesort)
             cur_node->child_first = new_node;
             cur_node->child_last = new_node;
         } else {
-            phorum_treenode *n = cur_node->child_last;
+            treenode *n = cur_node->child_last;
             n->sibling = new_node;
             cur_node->child_last = new_node;
         }
@@ -347,8 +347,8 @@ PHP_FUNCTION(phorum_ext_treesort)
     cur_node = tree.node_first;
     while (cur_node != NULL)
     {
-        phorum_treenode *next = NULL;
-        phorum_treenode *free = NULL;
+        treenode *next = NULL;
+        treenode *free = NULL;
 
         /* If we did not process this node before, then add it 
          * to the resulting sorted tree hashtable.
@@ -400,7 +400,7 @@ PHP_FUNCTION(phorum_ext_treesort)
 
     cur_node = tree.node_first;
     while (cur_node != NULL) {
-        phorum_treenode *next = cur_node->next;
+        treenode *next = cur_node->next;
         efree(cur_node);
         cur_node = next;
     }

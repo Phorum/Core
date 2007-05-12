@@ -1,25 +1,44 @@
-static HashTable phorum_get_url_handlers;
+typedef struct url_arg {
+    char             *data;
+    long              length;
+} url_arg;
 
-static int phorum_get_url_initialized = 0;
+typedef char *(url_handler_func)(void *, void *, int, zval ***);
 
-typedef char *(phorum_get_url_handler_func)(void *, int, zval ***);
+typedef struct url_info {
+    HashTable         args;
+    HashPosition      p;
+    int               add_forum_id;
+    int               add_get_vars;
+    int               add_slash;
+    int               arg_count;
+    int               arg_length;
+    int               url_length;
+    char             *page;
+} url_info;
 
-typedef struct phorum_get_url_handler {
-    char                        *typename;
-    long                         type;
-    phorum_get_url_handler_func *func;
-    char                        *page;
-    int                          add_forum_id;
-    int                          add_get_vars;
-} phorum_get_url_handler;
+typedef struct url_handler {
+    char             *typename;
+    long              type;
+    url_handler_func *func;
+    char             *page;
+    int               add_forum_id;
+    int               add_get_vars;
+} url_handler;
 
+static HashTable url_handlers;
+static int get_url_initialized = 0;
 
-long *_phorum_get_constant(char *);
-void  _phorum_register_get_url_handler(char *, phorum_get_url_handler_func *, char *, int, int);
+void  register_url_handler (char *, url_handler_func *, char *, int, int);
 
-char  *hello_world(void *, int, zval ***);
+void  default_url_build (void *, void *, int, zval ***);
+char *default_url_format (void *);
 
-/* For _phorum_register_get_url_handler() calls. */
+char *basic_url   (void *, void *, int, zval ***);
+char *read_url    (void *, void *, int, zval ***);
+char *feed_url    (void *, void *, int, zval ***);
+
+/* For _phorum_register_url_handler() calls. */
 #define FORUM_ID     1
 #define NO_FORUM_ID  0
 #define GET_VARS     1
