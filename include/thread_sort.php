@@ -44,23 +44,16 @@ function phorum_sort_threads($rows)
                       ? $PHORUM['TMP']['subject_cut_indentfactor'] : 2;
 
     // ------------------------------------------------------------------
-    // Use the Phorum PHP extension if it can be loaded.
+    // Use the Phorum PHP extension if it is available
     // ------------------------------------------------------------------
 
-    if (!function_exists('phorum_ext_treesort')) @dl('phorum.so');
     if (function_exists('phorum_ext_treesort'))
     {
-        //$start = microtime(true);
-        //$mem_start = memory_get_usage();
-
         phorum_ext_treesort(
             $rows, "message_id", "parent_id", 
             $indentmultiplier,
             "subject", $cut_min, $cut_max, $cut_indentfactor
         );
-
-        //echo "Time: " .( microtime(true) - $start )."<br />";
-        //echo "Mem: " .( memory_get_usage() - $mem_start )."<br />";
 
         return $rows;
     }
@@ -69,9 +62,6 @@ function phorum_sort_threads($rows)
     // PHP extension not available. Revert to the pure PHP solution.
     // ------------------------------------------------------------------
    
-    //$start = microtime(true);
-    //$mem_start = memory_get_usage();
-
     foreach($rows as $row){
         $tmp_rows[$row["message_id"]]["parent_id"]=$row["parent_id"];
         $tmp_rows[$row["parent_id"]]["children"][]=$row["message_id"];
@@ -122,22 +112,17 @@ function phorum_sort_threads($rows)
 
     }
 
-    //echo "Time: " .( microtime(true) - $start )."<br />";
-    //echo "Mem: " .( memory_get_usage() - $mem_start )."<br />";
-
     return $order;
-
 }
 
-/*
-=========================================================================
- This is the recursive tree sorting routine, which was replaced by the
- non-recursive new function above.
 
-function phorum_sort_threads($rows)
+/*
+// =========================================================================
+//  This is the old recursive tree sorting routine, which was replaced by
+//  the non-recursive code above.
+
+function phorum_recursive_sort_threads($rows)
 {
-    $start = microtime(true);
-    $mem_start = memory_get_usage();
     foreach($rows as $row){
         $rows[$row["parent_id"]]["children"][]=$row["message_id"];
     }
@@ -148,9 +133,6 @@ function phorum_sort_threads($rows)
 
     unset($sorted_rows[0]);
 
-    echo microtime(true) - $start."<br />";
-    echo memory_get_usage() - $mem_start."<br />";
-    print_var($GLOBALS["x"]);
     return $sorted_rows;
 
 }
@@ -187,7 +169,6 @@ function _phorum_recursive_sort($rows, &$threads, $seed=0, $indent=0)
     }
 }
 */
-
 
 
 ?>
