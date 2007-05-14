@@ -11,7 +11,7 @@
 
 #include "php.h"
 #include "php_phorum.h"
-#include "phorum_ext_get_url.h"
+#include "phorum_get_url.h"
 #include "phorum_utils.h"
 
 initialize_get_url_handlers()
@@ -123,7 +123,7 @@ PHP_FUNCTION(phorum_get_url)
     if (argc < 1) {
         zend_error(
             E_WARNING,
-            "phorum_ext_get_url() takes at least one argument."
+            "phorum_get_url() takes at least one argument."
         );
         goto error;
     }
@@ -138,7 +138,7 @@ PHP_FUNCTION(phorum_get_url)
     if (Z_TYPE_P(*argv[0]) != IS_LONG) {
         zend_error(
             E_WARNING,
-            "phorum_ext_get_url(): the first argument needs to be "
+            "phorum_get_url(): the first argument needs to be "
             "an integer value, describing the type of URL to create."
         );
         goto error;
@@ -149,7 +149,7 @@ PHP_FUNCTION(phorum_get_url)
     if (zend_hash_index_find(&url_handlers, type, (void **)&handler) == FAILURE) {
         zend_error(
             E_WARNING,
-            "phorum_ext_get_url(): URL type \"%ld\" unknown", type
+            "phorum_get_url(): URL type \"%ld\" unknown", type
         );
         goto error;
     }
