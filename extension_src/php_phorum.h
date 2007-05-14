@@ -7,7 +7,7 @@
 PHP_MINFO_FUNCTION(phorum);
 
 PHP_FUNCTION(phorum_ext_treesort);
-PHP_FUNCTION(phorum_ext_get_url);
+PHP_FUNCTION(phorum_get_url);
 
 extern zend_module_entry phorum_module_entry;
 

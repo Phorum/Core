@@ -7,7 +7,7 @@
 
 static function_entry phorum_functions[] = {
     PHP_FE(phorum_ext_treesort, NULL)
-    PHP_FE(phorum_ext_get_url,  NULL)
+    PHP_FE(phorum_get_url,  NULL)
     {NULL, NULL, NULL}
 };
 

@@ -11,22 +11,21 @@ $PHORUM["args"] = array(
     "2" => "2345"
 );
 
-define('PHORUM_FILE_EXTENSION', 'php');
-define('PHORUM_INDEX_URL', 1);
-define('PHORUM_LIST_URL',  2);
-define('PHORUM_READ_URL',  3);
-define('PHORUM_FEED_URL',  4);
+define('PHORUM', 'dev');
+include(dirname(__FILE__) . "/../include/constants.php");
 
 define('phorum_page', 'read');
 
-var_dump(phorum_ext_get_url(PHORUM_INDEX_URL, 10, "type=ok"));
-var_dump(phorum_ext_get_url(PHORUM_LIST_URL, 1, "cleanup=what"));
-var_dump(phorum_ext_get_url(PHORUM_LIST_URL, 1, 2, 3, "thisisa=value", "someswitch", 4, 5));
-var_dump(phorum_ext_get_url(PHORUM_READ_URL, 2, 10, "markread=1"));
-var_dump(phorum_ext_get_url(PHORUM_READ_URL, "test=nomessageid"));
-var_dump(phorum_ext_get_url(PHORUM_FEED_URL, "type=rss"));
-##
-#$i = phorum_ext_get_url(PHORUM_INDEX_URL);
-#print " = $i\n";
+var_dump(phorum_get_url(PHORUM_BASE_URL));
+var_dump(phorum_get_url(PHORUM_INDEX_URL, 10, "type=ok"));
+var_dump(phorum_get_url(PHORUM_LIST_URL, 1, "cleanup=what"));
+var_dump(phorum_get_url(PHORUM_LIST_URL));
+var_dump(phorum_get_url(PHORUM_LIST_URL, 1, 2, 3, "thisisa=value", "someswitch", 4, 5));
+var_dump(phorum_get_url(PHORUM_READ_URL, 2, 10, "markread=1"));
+var_dump(phorum_get_url(PHORUM_READ_URL, "test=nomessageid"));
+var_dump(phorum_get_url(PHORUM_FEED_URL, "type=rss"));
+var_dump(phorum_get_url(PHORUM_REGISTER_URL));
+var_dump(phorum_get_url(PHORUM_REGISTER_ACTION_URL));
+
 
 ?>
