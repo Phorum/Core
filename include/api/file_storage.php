@@ -35,6 +35,8 @@
 
 if (!defined("PHORUM")) return;
 
+// {{{ Constant and variable definitions
+
 /**
  * Function call flag, which tells {@link phorum_api_file_retrieve()}
  * that the retrieved Phorum file data has to be returned to the caller.
@@ -85,6 +87,9 @@ $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
     "mp3"  => "audio/mpeg",
 );
 
+// }}}
+
+// {{{ Function: phorum_api_file_get_mimetype
 /**
  * Lookup the MIME type for a given filename.
  *
@@ -116,7 +121,9 @@ function phorum_api_file_get_mimetype($filename)
 
     return $mime_type;
 }
+// }}}
 
+// {{{ Function: phorum_api_file_check_write_access
 /**
  * Check if the user has permissions to store a personal
  * file or a message attachment.
@@ -169,7 +176,9 @@ function phorum_api_file_check_write_access($file)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_api_file_store
 /** 
  * Store or update a file in the database.
  *
@@ -355,7 +364,9 @@ function phorum_api_file_store($file)
 
     return $file;
 }
+// }}}
 
+// {{{ Function: phorum_api_file_check_read_access
 /**
  * Check if a file exists and if the user has permission to read the file.
  *
@@ -502,7 +513,9 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
 
     return $file;
 }
+// }}}
 
+// {{{ Function: phorum_api_file_retrieve
 /**
  * Retrieve a Phorum file.
  *
@@ -635,7 +648,9 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         E_USER_ERROR
     );
 }
+// }}}
 
+// {{{ Function: phorum_api_file_delete
 /**
  * Delete a Phorum file.
  *
@@ -667,11 +682,13 @@ function phorum_api_file_delete($file)
     // Delete the file from the Phorum database.
     phorum_db_file_delete($file);
 }
+// }}}
 
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
 // ------------------------------------------------------------------------
 
+// {{{ Function: phorum_api_file_exists
 /**
  * Check if a Phorum file exists.
  *
@@ -689,7 +706,9 @@ function phorum_api_file_exists($file_id) {
     $exists = empty($file) ? FALSE : TRUE;
     return $exists;
 }
+// }}}
 
+// {{{ Function: phorum_api_file_send
 /**
  * Send a file to the browser.
  *
@@ -712,7 +731,9 @@ function phorum_api_file_exists($file_id) {
 function phorum_api_file_send($file, $flags = 0) {
     return phorum_api_file_retrieve($file, $flags | PHORUM_FLAG_SEND);
 }
+// }}}
 
+// {{{ Function: phorum_api_file_get
 /**
  * Retrieve and return a Phorum file.
  * 
@@ -736,6 +757,6 @@ function phorum_api_file_send($file, $flags = 0) {
 function phorum_api_file_get($file, $flags = 0) {
     return phorum_api_file_retrieve($file, $flags | PHORUM_FLAG_GET);
 }
-
+// }}}
 
 ?>

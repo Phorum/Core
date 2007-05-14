@@ -35,6 +35,8 @@
 
 if (!defined('PHORUM')) return;
 
+// {{{ Constant and variable definitions
+
 // Reserved custom profile field names.
 $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
     'panel', 'name', 'value', 'error',
@@ -54,6 +56,9 @@ $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
  */
 define('PHORUM_MAX_CPLENGTH', 65000);
 
+// }}}
+
+// {{{ Function: phorum_api_custom_profile_field_configure
 /**
  * Create or update the configuration for a custom profile field.
  *
@@ -230,7 +235,9 @@ function phorum_api_custom_profile_field_configure($field)
 
     return $field;
 }
+// }}}
 
+// {{{ Function: phorum_api_custom_profile_field_byname
 /**
  * Retrieve the information for a custom profile field by its name.
  *
@@ -252,7 +259,9 @@ function phorum_api_custom_profile_field_byname($name)
 
     return NULL;
 }
+// }}}
 
+// {{{ Function: phorum_api_custom_profile_field_delete
 /**
  * Delete a custom profile field.
  *
@@ -287,7 +296,9 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
         ));
     }
 }
+// }}}
 
+// {{{ Function: phorum_api_custom_profile_field_restore
 /**
  * Restore a previously deleted custom profile field.
  *
@@ -325,4 +336,6 @@ function phorum_api_custom_profile_field_restore($id)
 
     return TRUE;
 }
+// }}}
+
 ?>

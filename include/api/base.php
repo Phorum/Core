@@ -31,15 +31,13 @@
 
 if (!defined("PHORUM")) return;
 
+// {{{ Constant and variable definitions
+
 // Initialize the Phorum API space.
 $GLOBALS["PHORUM"]["API"] = array(
     "errno" => NULL,
     "error" => NULL
 );
-
-// ----------------------------------------------------------------------
-// Definitions
-// ----------------------------------------------------------------------
 
 /**
  * A general purpose errno value, mostly used for returning a generic
@@ -76,6 +74,9 @@ $GLOBALS["PHORUM"]["API"]["errormessages"] = array(
     PHORUM_ERRNO_INVALIDINPUT => "Invalid input.",
 );
 
+// }}}
+
+// {{{ Function: phorum_api_error_set
 /**
  * Set a Phorum API error.
  *
@@ -110,7 +111,9 @@ function phorum_api_error_set($errno, $error = NULL)
 
     return FALSE;
 }
+// }}}
 
+// {{{ Function: phorum_api_error
 /**
  * Retrieve the error data for the last Phorum API function that was called.
  *
@@ -130,5 +133,6 @@ function phorum_api_error()
         );
     }
 }
+// }}}
 
 ?>
