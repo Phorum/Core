@@ -1,8 +1,7 @@
 /* TODO:
- * - cleanup created handler map on request finish.
- * - finish all URL types
- * - add GET args
+ * - cleanup args that are not used
  * - make sure that array format is nowhere called in the core code.
+ * - implement phorum_custom_get_url().
  */
 
 #ifdef HAVE_CONFIG_H
@@ -19,15 +18,17 @@ initialize_get_url_handlers()
     zend_hash_init(&url_handlers, 0, NULL, NULL, 0);
   
     register_url_handler(
-     "PHORUM_INDEX_URL",             &basic_url, "index",      NO_FORUM_ID, GET_VARS);
+     "PHORUM_BASE_URL",              &basic_url, "",           NO_FORUM_ID, GET_VARS);
     register_url_handler(
      "PHORUM_LIST_URL",              &list_url,  "list",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
      "PHORUM_READ_URL",              &read_url,  "read",       FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_FEED_URL",              &feed_url,  "feed",       NO_FORUM_ID, GET_VARS);
+     "PHORUM_FOREIGN_READ_URL",      &read_url,  "read",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
      "PHORUM_CHANGES_URL",           &basic_url, "changes",    FORUM_ID,    GET_VARS);
+    register_url_handler(
+     "PHORUM_REPLY_URL",             &reply_url, "posting",    FORUM_ID,    GET_VARS);
     register_url_handler(
      "PHORUM_POSTING_URL",           &basic_url, "posting",    FORUM_ID,    GET_VARS);
     register_url_handler(
@@ -41,7 +42,11 @@ initialize_get_url_handlers()
     register_url_handler(
      "PHORUM_VIOLATION_URL",         &basic_url, "violation",  FORUM_ID,    GET_VARS);
     register_url_handler(
+     "PHORUM_INDEX_URL",             &basic_url, "index",      NO_FORUM_ID, GET_VARS);
+    register_url_handler(
      "PHORUM_LOGIN_URL",             &basic_url, "login",      FORUM_ID,    GET_VARS);
+    register_url_handler(
+     "PHORUM_LOGIN_ACTION_URL",      &basic_url, "login",      NO_FORUM_ID, GET_VARS);
     register_url_handler(
      "PHORUM_REGISTER_URL",          &basic_url, "register",   FORUM_ID,    GET_VARS);
     register_url_handler(
@@ -55,54 +60,31 @@ initialize_get_url_handlers()
     register_url_handler(
      "PHORUM_MODERATION_ACTION_URL", &basic_url, "moderation", NO_FORUM_ID, NO_GET_VARS);
     register_url_handler(
-     "PHORUM_PROFILE_URL",           &basic_url, "profile",    FORUM_ID,    GET_VARS);
-    register_url_handler(
-     "PHORUM_PM_URL",                &basic_url, "pm",         FORUM_ID,    GET_VARS);
+     "PHORUM_PREPOST_URL",           &prepost_url, "control",  NO_FORUM_ID, GET_VARS);
     register_url_handler(
      "PHORUM_CONTROLCENTER_URL",     &basic_url, "control",    FORUM_ID,    GET_VARS);
     register_url_handler(
      "PHORUM_CONTROLCENTER_ACTION_URL", &basic_url, "control", NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_BASE_URL",              &basic_url, "",           NO_FORUM_ID, GET_VARS);
+     "PHORUM_PM_URL",                &basic_url, "pm",         FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_PREPOST_URL",           &prepost_url, "",         NO_FORUM_ID, GET_VARS);
-  
+     "PHORUM_PM_ACTION_URL",         &basic_url, "pm",         NO_FORUM_ID, GET_VARS);
+    register_url_handler(
+     "PHORUM_FILE_URL",              &basic_url, "file",       FORUM_ID,    GET_VARS);
+    register_url_handler(
+     "PHORUM_FOLLOW_URL",            &basic_url, "follow",     FORUM_ID,    GET_VARS);
+    register_url_handler(
+     "PHORUM_FOLLOW_ACTION_URL",     &basic_url, "follow",     NO_FORUM_ID, GET_VARS);
+    register_url_handler(
+     "PHORUM_REPORT_URL",            &basic_url, "report",     FORUM_ID,    GET_VARS);
+    register_url_handler(
+     "PHORUM_FEED_URL",              &feed_url,  "feed",       NO_FORUM_ID, GET_VARS);
+    register_url_handler(
+     "PHORUM_ADDON_URL",             &addon_url, "addon",      FORUM_ID,    GET_VARS);
+    register_url_handler(
+     "PHORUM_CUSTOM_URL",            &custom_url,"",           NO_FORUM_ID, GET_VARS);
+
     get_url_initialized = 1;
-}
-
-/* Destroy all memory that is related to a url_info struct. */
-void destroy_url(url_info **urlp)
-{
-    url_info *url = *urlp;
-    url_arg  *arg;
-
-    if (url != NULL) {
-        if (url->page != NULL) {
-            efree(url->page);
-            url->page = NULL;
-        }
-        for (arg = url->arg_first; arg; arg = arg->next) {
-             efree(arg->str);
-             efree(arg);
-        }
-        efree(url);
-    }
-    *urlp = NULL;
-}
-
-/* Destroy all memory that is related to a url_arg struct. */
-void destroy_url_arg(url_arg **argp)
-{
-    url_arg *arg = *argp; 
-   
-    if (arg != NULL) {
-        if (arg->str != NULL) {
-            efree(arg->str);
-        }
-        efree(arg);
-    }
-
-    *argp = NULL;
 }
 
 
@@ -164,14 +146,17 @@ PHP_FUNCTION(phorum_get_url)
     url->page         = estrdup((*handler)->page);
     if (!url->page) zend_error(E_ERROR, "Out of memory");
 
-    /* Call the URL handler function for the requested URL type. */
-    urlstr = (*(*handler)->func)(*handler, url, argc, argv);
+    /* Call the URL handler function for the requested URL type.
+     * The url type is stripped from the argument list. */
+    urlstr = (*(*handler)->func)(*handler, url, argc-1, (argc==1 ? NULL : &argv[1]));
 
     error:
 
+    /* Cleanup work data. */
     if (argv != NULL) efree(argv);
     destroy_url(&url);
 
+    /* Return the URL string or FALSE in case some error occurred. */
     if (urlstr != NULL) {
         RETURN_STRING(urlstr, 0);
     } else {
@@ -179,22 +164,30 @@ PHP_FUNCTION(phorum_get_url)
     }
 }
 
-
+/* Register a single Phorum URL type. This adds the URL type to the
+ * internal hash table, which will be used for dispatching phorum_get_url()
+ * requests to the appropriate URL formatting function.
+ */
 void
 register_url_handler(char *typename, url_handler_func *func, char *page, int add_forum_id, int add_get_vars)
 {
+    /* Lookup the value of the Phorum URL constant. These constants are
+     * all defined by Phorum and look like PHORUM_..._URL (e.g.
+     * PHORUM_INDEX_URL or PHORUM_READ_URL). */
     long type = get_constant_long(typename);
 
     /* Create a new url handler description. */
     url_handler *handler = (url_handler *)emalloc(sizeof(url_handler));
     if (!handler) zend_error(E_ERROR, "Out of memory");
     bzero(handler, sizeof(url_handler));
+    handler->typename     = typename;
     handler->type         = type;
     handler->func         = func;
     handler->page         = page; 
     handler->add_forum_id = add_forum_id ? 1 : 0;
     handler->add_get_vars = add_get_vars ? 1 : 0;
 
+    /* Add the description to the url handlers hash. */
     if (zend_hash_index_update(&url_handlers, type, (void *)&handler, sizeof(void *), NULL) == SUCCESS) {
     }
 }
@@ -203,6 +196,48 @@ register_url_handler(char *typename, url_handler_func *func, char *page, int add
 /* Helper functions for URL handlers                                      */
 /* ====================================================================== */
 
+/* Destroy all memory that is related to a url_info struct. */
+void destroy_url(url_info **urlp)
+{
+    url_info *url = *urlp;
+    url_arg  *arg;
+
+    if (url != NULL) {
+        if (url->page != NULL) {
+            efree(url->page);
+            url->page = NULL;
+        }
+        arg = url->arg_first;
+        while (arg) {
+             url_arg *next = arg->next;
+             destroy_url_arg(&arg);
+             arg = next;
+        }
+        if (url->suffix != NULL) {
+            efree(url->suffix);
+            url->suffix = NULL;
+        }
+        efree(url);
+    }
+    *urlp = NULL;
+}
+
+/* Destroy all memory that is related to a url_arg struct. */
+void destroy_url_arg(url_arg **argp)
+{
+    url_arg *arg = *argp; 
+   
+    if (arg != NULL) {
+        if (arg->str != NULL) efree(arg->str);
+        efree(arg);
+    }
+
+    *argp = NULL;
+}
+
+/* Allocate memory and format a string using vsnprintf(). Return the
+ * result as an url_arg struct.
+ */
 url_arg *format_url_arg(char *fmt, ...)
 {
     va_list  args;
@@ -235,7 +270,11 @@ url_arg *format_url_arg(char *fmt, ...)
     return arg;
 }
 
-void append_url_arg(url_info **urlp, url_arg *arg)
+/* Add a url_arg struct to the linked list of url URL arguments in a
+ * url_info struct. The "prepend" argument is used to tell the function
+ * whether to prepend (1) or append (0) the new url_arg.
+ */
+void add_url_arg(url_info **urlp, url_arg *arg, int prepend)
 {
     url_info *url = *urlp;
 
@@ -246,13 +285,25 @@ void append_url_arg(url_info **urlp, url_arg *arg)
         url->arg_first = arg;
         url->arg_last = arg;
     } else {
-        url_arg *last;
-        last = url->arg_last;
-        last->next = arg;
-        url->arg_last = arg;
+        if (prepend) {
+            /* prepend */
+            arg->next = url->arg_first;
+            url->arg_first = arg;
+        } else { 
+            /* append */
+            url_arg *last;
+            last = url->arg_last;
+            last->next = arg;
+            url->arg_last = arg;
+        }
     }
 }
 
+/* Handle the standard url_info building. This includes:
+ * - adding the forum_id in the arguments;
+ * - adding the arguments that were passed on to phorum_get_url();
+ * - adding the arguments that are stored in $PHORUM["GET_VARS"].
+ */
 void
 default_url_build(void *h, void *u, int argc, zval ***argv)
 {
@@ -269,23 +320,41 @@ default_url_build(void *h, void *u, int argc, zval ***argv)
     if (url->add_forum_id)
     {
         arg = format_url_arg("%ld", get_PHORUM_long("forum_id"));
-        append_url_arg(&url, arg);
+        add_url_arg(&url, arg, 0);
     }
 
-    /* Add the rest of argv to the argument list.
-     * Starts with i=1, because argv[0] is the URL type constant. */
-    for (i=1; i<argc; i++)
+    /* Add the rest of argv to the argument list. */
+    for (i=0; i<argc; i++)
     {
         zval **a = argv[i];
         convert_to_string(*a);
         arg = format_url_arg("%s", Z_STRVAL_PP(a));
-        append_url_arg(&url, arg);
+        add_url_arg(&url, arg, 0);
     }
 
-    /* Add GET vars to the argument list. */
-    /* TODO */
+    /* Add $PHORUM["GET_VARS"] to the argument list (used for URI
+     * authentication). */
+    if (url->add_get_vars)
+    {
+        zval *get_vars = get_PHORUM("GET_VARS");
+        if (get_vars != NULL && Z_TYPE_P(get_vars) == IS_ARRAY) {
+            HashTable    *t;
+            HashPosition  p;
+            zval        **v;
+            t = HASH_OF(get_vars);
+            for (zend_hash_internal_pointer_reset_ex(t, &p);
+                 zend_hash_get_current_data_ex(t, (void**)&v, &p) == SUCCESS;
+                 zend_hash_move_forward_ex(t, &p)) {
+                 if (Z_TYPE_PP(v) == IS_STRING) {
+                     arg = format_url_arg("%s", Z_STRVAL_PP(v));
+                     add_url_arg(&url, arg, 0);
+                 }
+            }
+        }
+    }
 }
 
+/* Format a URL, based on the data in a url_info struct. */
 char *
 default_url_format(void *u)
 {
@@ -311,15 +380,25 @@ default_url_format(void *u)
         url->add_slash = 1;
     }
 
-    /* Add the script page name.extension. */
-    if (strlen(url->page)) {
+    /* Add the script page name.extension, arguments and suffix.
+     * If the page name is empty, then none of these are added
+     * (used for PHORUM_BASE_URL). */
+    if (strlen(url->page))
+    {
         extension = get_constant_string("PHORUM_FILE_EXTENSION");
         url->url_length += strlen(url->page) + 1 + strlen(extension) + 1;
-    }
 
-    /* Add arguments (plus "?" and space for a comma between each argument). */
-    if (url->arg_count > 0) {
-        url->url_length += 1 + url->arg_length + url->arg_count;
+        /* Add arguments (plus "?" and space for a comma between 
+         * each argument). */
+        if (url->arg_count > 0) {
+            url->url_length += 1 + url->arg_length + url->arg_count;
+        }
+
+        /* Add suffix. */
+        if (url->suffix != NULL) {
+            arg = url->suffix;
+            url->url_length += arg->length;
+        }
     }
 
     /* ------------------------------------------------------------- */
@@ -335,13 +414,17 @@ default_url_format(void *u)
         strcat(urlstr, url->page);
         strcat(urlstr, ".");
         strcat(urlstr, extension);
-    }
-    if (url->arg_count > 0) { 
-        strcat(urlstr, "?");
-        i = url->arg_count;
-        for (arg = url->arg_first; arg; arg = arg->next) {
-             strcat(urlstr, arg->str);
-             if (--i) strcat(urlstr, ",");
+        if (url->arg_count > 0) { 
+            strcat(urlstr, "?");
+            i = url->arg_count;
+            for (arg = url->arg_first; arg; arg = arg->next) {
+                 strcat(urlstr, arg->str);
+                 if (--i) strcat(urlstr, ",");
+            }
+        }
+        if (url->suffix != NULL) {
+            arg = url->suffix;
+            strcat(urlstr, arg->str);
         }
     }
 
@@ -351,6 +434,7 @@ default_url_format(void *u)
     return urlstr;
 }
 
+/* Check if a string contains only numbers. */
 int string_is_numeric(char *string)
 {
     char *p;
@@ -372,48 +456,94 @@ basic_url(void *h, void *u, int argc, zval ***argv)
     return default_url_format(u);
 }
 
+/* Reply URL handler.
+ * If we have replies on the read page, then create a URL to show the
+ * reply form there. Else create a URL to the posting page.
+ */
+char *
+reply_url(void *h, void *u, int argc, zval ***argv)
+{
+    url_info    *url = (url_info *)u;
+    int          reply_on_read_page = 0;
+    zval        *z;
+
+    /* Check if "reply on read page" is configured. */
+    z = get_PHORUM("reply_on_read_page");
+    if (z != NULL) {
+        convert_to_long(z);
+        if (Z_LVAL_P(z) > 0) reply_on_read_page = 1;
+    }
+
+    if (reply_on_read_page) {
+        efree(url->page);
+        url->page = estrdup("read");
+        url->suffix = format_url_arg("#REPLY");
+        return basic_url(h, u, argc, argv);
+    }
+    else /* reply on separate page */
+    {
+        default_url_build(h, u, argc, argv);
+
+        /* For reply on a separate page, we call posting.php on its own.
+         * In that case the first argument should be the editor mode we
+         * want to use ("reply" in this case). Currently, the thread id
+         * is the first argument. We don't need that one for the posting.php
+         * script though, so we simply replace that argument with the
+         * editor mode argument.
+         */
+        if (url->arg_first != NULL) {
+            url_arg *first, *next, *newarg;
+            first = url->arg_first; next  = first->next;
+            newarg = format_url_arg("reply");
+            newarg->next = next;
+            url->arg_first = newarg;
+            destroy_url_arg(&first);
+        }
+        return default_url_format(u);
+    }
+}
+
 /* List URL handler.
- * If there are no url arguments in the argv array (except for the
- * URL type to generate), then we add the active forum_id to the arguments.
+ * If there are no url arguments in the argv array,
+ * then we add the active forum_id to the arguments.
  */ 
 char *
 list_url(void *h, void *u, int argc, zval ***argv)
 {
     url_info *url = (url_info *)u;
-    if (argc == 1) url->add_forum_id = 1;
+    if (argc == 0) url->add_forum_id = 1;
     return basic_url(h, u, argc, argv);
 }
 
 /* Read URL handler.
- * If argv[2] (message_id) is set, the anchor #msg-<message_id> is
- * added to the formatted URL.
+ * If argv[1] (for read url) or argv[2] (for foreign read url) is set
+ * (which is the message_id), the anchor #msg-<message_id> is added to
+ * the formatted URL.
  */ 
 char *
 read_url(void *h, void *u, int argc, zval ***argv)
 {
     url_handler *handler = (url_handler *)h;
     url_info    *url     = (url_info *)u;
-    
-    char *urlstr = basic_url(h, u, argc, argv);
+    int          idx;
 
-    /* Add #msg-<msgid> to the URL, if a message id is known. */
-    if (argc >= 3) {
-        zval **zarg = argv[2]; /* message id */
+    /* The argv field to look at depends on the type of URL. For
+     * PHORUM_READ_URL it is field 1 and for PHORUM_FOREIGN_READ_URL
+     * it is field 2.  */
+    idx = strcmp(handler->typename, "PHORUM_READ_URL") == 0 ? 1 : 2;
+    
+    /* Create a #msg-<msgid> suffix, if a message id is known. */
+    if (argc >= (idx+1)) {
+        zval **zarg = argv[idx]; /* message id */
         convert_to_string(*zarg);
 
         if (string_is_numeric(Z_STRVAL_PP(zarg))) {
             url_arg *anchor = format_url_arg("#msg-%s", Z_STRVAL_PP(zarg));
-            int newlen = strlen(urlstr) + anchor->length;
-            urlstr = erealloc(urlstr, newlen + 1);
-            if (!urlstr) zend_error(E_ERROR, "Out of memory");
-            strcat(urlstr, anchor->str);
-            urlstr[newlen] = '\0';
-            efree(anchor->str);
-            efree(anchor);
+            url->suffix = anchor;
         }
     }
 
-    return urlstr;
+    return basic_url(h, u, argc, argv);
 }
 
 /* Prepost URL handler.
@@ -423,11 +553,15 @@ char *prepost_url(void *h, void *u, int argc, zval ***argv)
 {
     url_info *url = (url_info *)u;
     url_arg  *arg = format_url_arg("panel=messages"); 
-    append_url_arg(&url, arg);
+    add_url_arg(&url, arg, 0);
     return basic_url(h, u, argc, argv);
 }
 
-/* Feed URL handler. */
+/* Feed URL handler.
+ * By default, the forum_id is not added, but on the "list" and "read"
+ * page, the forum_id is added. On the read page, the active thread_id
+ * is inserted as the first argument.
+ */
 char *feed_url(void *h, void *u, int argc, zval ***argv)
 {
     url_handler *handler = (url_handler *)h;
@@ -436,31 +570,20 @@ char *feed_url(void *h, void *u, int argc, zval ***argv)
 
     default_url_build(h, u, argc, argv);
 
-    if (!strcmp(phorum_page, "list"))
-    {
+    if (!strcmp(phorum_page, "list")) {
         url->add_forum_id = 1; 
     }
 
     if (!strcmp(phorum_page, "read"))
     {
-        /* Add $PHORUM["args"]["1"] (the thread id on a read page) 
+        /* Prepend $PHORUM["args"]["1"] (the thread id on a read page) 
          * as the first URL argument. */
         zval *arg = get_PHORUM_args("1");
         if (arg != NULL) {
             convert_to_string(arg);
-            if (string_is_numeric(Z_STRVAL_P(arg)))
-            {
+            if (string_is_numeric(Z_STRVAL_P(arg))) {
                 url_arg *newarg = format_url_arg("%s", (char *)Z_STRVAL_P(arg));
-                
-                url->arg_length += newarg->length;
-                url->arg_count ++;
-                if (url->arg_first == NULL) {
-                    url->arg_first = newarg;
-                    url->arg_last = newarg;
-                } else {
-                    newarg->next = url->arg_first;
-                    url->arg_first = newarg;
-                }
+                add_url_arg(&url, newarg, 1);
             }
         }
 
@@ -472,4 +595,76 @@ char *feed_url(void *h, void *u, int argc, zval ***argv)
 
     return default_url_format(u);
 }
+
+/* Addon URL handler.
+ * argv[0] = The module name for which to call the addon script.
+ *           If this argument does not start with "module=", then
+ *           that string is prepended to the argument.
+ */
+char *addon_url(void *h, void *u, int argc, zval ***argv)
+{
+    url_handler *handler = (url_handler *)h;
+    url_info    *url     = (url_info *)u;
+
+    /* We need at least the module name argument. */
+    if (argc < 1) {
+        zend_error(
+            E_WARNING,
+            "phorum_get_url(PHORUM_ADDON_URL, ..) takes at least "
+            "two arguments."
+        );
+        return NULL; 
+    }
+
+    /* Make sure that the first argument starts with "module=". */
+    if (strncmp(Z_STRVAL_PP(argv[0]), "module=", 7) != 0) {
+        url_arg *arg = format_url_arg("module=%s", Z_STRVAL_PP(argv[0]));
+        efree(Z_STRVAL_PP(argv[0]));
+        Z_STRVAL_PP(argv[0]) = arg->str;
+        Z_STRLEN_PP(argv[0]) = arg->length;
+        efree(arg);
+    }
+
+    return basic_url(h, u, argc, argv);
+}
+
+/* Custom URL handler.
+ * argv[0] = page name
+ * argv[1] = whether to add the forum id (true / false)
+ * argv[n] = URL argument(s)
+ */
+char *custom_url(void *h, void *u, int argc, zval ***argv)
+{
+    url_handler *handler = (url_handler *)h;
+    url_info    *url     = (url_info *)u;
+    int          skip    = 1;
+    char        *page; 
+
+    /* We need at least the page name argument. */
+    if (argc < 1) {
+        zend_error(
+            E_WARNING,
+            "phorum_get_url(PHORUM_CUSTOM_URL, ..) takes at least "
+            "two arguments."
+        );
+        return NULL; 
+    }
+
+    /* Set the page name. */
+    page = Z_STRVAL_PP(argv[0]);
+    efree(url->page); 
+    url->page = estrdup(page);
+
+    /* See if we have to add the forum id. */ 
+    if (argc >= 2) {
+        convert_to_boolean(*argv[1]);
+        if (Z_LVAL_PP(argv[1])) {
+            url->add_forum_id = 1;
+        }
+        skip ++;
+    }
+
+    return basic_url(h, u, (argc-skip), &argv[skip]);
+}
+
 

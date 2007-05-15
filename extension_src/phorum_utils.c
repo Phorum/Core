@@ -54,7 +54,7 @@ get_PHORUM(char *key)
 
     /* Lookup the key in $PHORUM. */
     if (zend_hash_find(PHORUM, key, strlen(key)+1, (void**)&P) == FAILURE) {
-        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[%s]", key);
+        return NULL;
     }
 
     return *P;
@@ -63,6 +63,9 @@ get_PHORUM(char *key)
 char *
 get_PHORUM_string(char *key) {
     zval *P = get_PHORUM(key);
+    if (P == NULL) {
+        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[%s]", key);
+    }
     convert_to_string(P);
     return Z_STRVAL_P(P);
 }
@@ -70,6 +73,9 @@ get_PHORUM_string(char *key) {
 long
 get_PHORUM_long(char *key) {
     zval *P = get_PHORUM(key);
+    if (P == NULL) {
+        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[%s]", key);
+    }
     convert_to_long(P);
     return Z_LVAL_P(P);
 }
@@ -84,6 +90,9 @@ get_PHORUM_args(char *key)
 
     /* Lookup the $PHORUM["args"] variable. */
     zval *A = get_PHORUM("args");
+    if (A == NULL) {
+        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[args]");
+    }
     args = Z_ARRVAL_P(A);
 
     /* Lookup the key in the args table. */
