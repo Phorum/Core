@@ -196,7 +196,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         // Return all rows.
         if ($return === DB_RETURN_ROWS) {
-            mysqli_free_result($res);
+            /* Might be FALSE in case of ignored errors. */
+            if (!is_bool($res)) mysqli_free_result($res);
             return $rows;
         }
 
@@ -237,7 +238,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         // Return all rows.
         if ($return === DB_RETURN_ASSOCS) {
-            mysqli_free_result($res);
+            /* Might be FALSE in case of ignored errors. */
+            if (!is_bool($res)) mysqli_free_result($res);
             return $rows;
         }
 
