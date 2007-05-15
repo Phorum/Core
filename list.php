@@ -432,7 +432,8 @@ if($PHORUM['DATA']['LOGGEDIN']) {
 }
 
 // run list mods
-$rows = phorum_hook("list", $rows);
+if (isset($PHORUM["hooks"]["list"]))
+    $rows = phorum_hook("list", $rows);
 
 // if we retrieve the body too we need to setup some more variables for 
 // the messages to make it a little more similar to the view in read.php

@@ -119,7 +119,8 @@ function phorum_format_messages ($data)
     }
 
     // A hook for module writers to apply custom message formatting.
-    $data = phorum_hook("format", $data);
+    if (isset($PHORUM["hooks"]["format"]))
+        $data = phorum_hook("format", $data);
 
     // Clean up after the mods are done.
     foreach( $data as $key => $message ) {

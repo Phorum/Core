@@ -324,7 +324,10 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
  */
 function phorum_user_get_list($type)
 {
-   return phorum_hook("user_list", phorum_db_user_get_list($type));
+    $list = phorum_db_user_get_list($type);
+    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"]))
+        $list = phorum_hook("user_list", $list);
+    return $list;
 }
 
 function phorum_user_save( $user )
