@@ -158,13 +158,15 @@ if (isset($okmsg) && !empty($okmsg)) $PHORUM['DATA']['OKMSG'] = $okmsg;
 
 // Display the control panel page.
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 if ($error_msg) { // Possibly set from the panel include file.
     include phorum_get_template("message");
 } else {
     include phorum_get_template("cc_index");
 }
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"])) 
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 // ============================================================================
@@ -224,7 +226,8 @@ function phorum_controlcenter_user_save($panel)
     $userdata["user_id"] = $PHORUM["user"]["user_id"];
 
     // Run a hook, so module writers can update and check the userdata.
-    $userdata = phorum_hook("cc_save_user", $userdata);
+    if (isset($PHORUM["hooks"]["cc_save_user"]))
+        $userdata = phorum_hook("cc_save_user", $userdata);
 
     // Set $error, in case the before_register hook did set an error.
     if (isset($userdata['error'])) {

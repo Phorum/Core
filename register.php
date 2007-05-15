@@ -72,9 +72,11 @@ if (isset($PHORUM["args"]["approve"])) {
     }
 
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
     include phorum_get_template("message");
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
     return;
 
@@ -168,7 +170,8 @@ if (count($_POST)) {
         }
 
         // Run a hook, so module writers can update and check the userdata.
-        $userdata = phorum_hook("before_register", $userdata);
+        if (isset($PHORUM["hooks"]["before_register"]))
+            $userdata = phorum_hook("before_register", $userdata);
 
         // Set $error, in case the before_register hook did set an error.
         if (isset($userdata['error'])) {
@@ -206,12 +209,15 @@ if (count($_POST)) {
             $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
 
             // Run a hook, so module writers can run tasks after registering.
-            phorum_hook("after_register",$userdata);
+            if (isset($PHORUM["hooks"]["after_register"]))
+                phorum_hook("after_register",$userdata);
 
             include phorum_get_template("header");
-            phorum_hook("after_header");
+            if (isset($PHORUM["hooks"]["after_header"]))
+                phorum_hook("after_header");
             include phorum_get_template("message");
-            phorum_hook("before_footer");
+            if (isset($PHORUM["hooks"]["before_footer"]))
+                phorum_hook("before_footer");
             include phorum_get_template("footer");
             return;
 
@@ -251,9 +257,11 @@ $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"]
 
 // Display the registration page.
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 include phorum_get_template("register");
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 ?>

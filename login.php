@@ -28,7 +28,8 @@ include_once( "./include/email_functions.php" );
 
 if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
-    phorum_hook("before_logout");
+    if (isset($PHORUM["hooks"]["before_logout"]))
+        phorum_hook("before_logout");
 
     // killing long-term cookie
     phorum_user_clear_session(PHORUM_SESSION_LONG_TERM);
@@ -61,7 +62,8 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
         $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"][PHORUM_SESSION_LONG_TERM]), "", $url);
     }
 
-    $url = phorum_hook("after_logout", $url);
+    if (isset($PHORUM["hooks"]["after_logout"]))
+        $url = phorum_hook("after_logout", $url);
 
     phorum_redirect_by_url($url);
     exit();
@@ -224,7 +226,8 @@ if (count($_POST) > 0) {
 
                 // The hook "after_login" can be used by module writers to
                 // set a custom redirect URL.
-                $redir =phorum_hook( "after_login", $redir );
+                if (isset($PHORUM["hooks"]["after_login"]))
+                    $redir = phorum_hook( "after_login", $redir );
 
                 phorum_redirect_by_url($redir);
                 exit();
@@ -232,11 +235,12 @@ if (count($_POST) > 0) {
 
             // Login failed.
             else {
-                phorum_hook("failed_login", array(
-                    "username" => $username,
-                    "password" => $password,
-                    "location" => "forum"
-                ));
+                if (isset($PHORUM["hooks"]["failed_login"]))
+                    phorum_hook("failed_login", array(
+                        "username" => $username,
+                        "password" => $password,
+                        "location" => "forum"
+                    ));
                 $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
             }
         }
@@ -280,9 +284,11 @@ $PHORUM["DATA"]["FOCUS_TO_ID"] = empty($username) ? "username" : "password";
 
 // Display the page.
 include phorum_get_template( "header" );
-phorum_hook( "after_header" );
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook( "after_header" );
 include phorum_get_template( $template );
-phorum_hook( "before_footer" );
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook( "before_footer" );
 include phorum_get_template( "footer" );
 
 ?>

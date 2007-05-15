@@ -68,7 +68,8 @@ function phorum_email_user($addresses, $data)
     	$data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
     }
     
-    list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
+    if (isset($PHORUM["hooks"]["email_user_start"]))
+        list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
 
     $mailmessage = $data['mailmessage'];
     unset($data['mailmessage']);
@@ -86,15 +87,19 @@ function phorum_email_user($addresses, $data)
     $num_addresses = count($addresses);
     $from_address = $data['from_address'];
 
-    $hook_data = array(
-        'addresses'  => $addresses,
-        'from'       => $from_address,
-        'subject'    => $mailsubject,
-        'body'       => $mailmessage,
-        'bcc'        => $PHORUM['use_bcc']
-    );
+    $send_messages = 1;
+    if (isset($PHORUM["hooks"]["send_mail"]))
+    {
+        $hook_data = array(
+            'addresses'  => $addresses,
+            'from'       => $from_address,
+            'subject'    => $mailsubject,
+            'body'       => $mailmessage,
+            'bcc'        => $PHORUM['use_bcc']
+        );
 
-    $send_messages = phorum_hook("send_mail", $hook_data);
+        $send_messages = phorum_hook("send_mail", $hook_data);
+    }
 
     if(isset($data["msgid"])){
 

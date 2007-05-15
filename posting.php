@@ -65,11 +65,13 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
     // Only show header and footer when not included in another page.
     if (phorum_page == "post") {
         include phorum_get_template("header");
-        phorum_hook("after_header");
+        if (isset($PHORUM["hooks"]["after_header"]))
+            phorum_hook("after_header");
     }
     include phorum_get_template("message");
     if (phorum_page == "post") {
-        phorum_hook("before_footer");
+        if (isset($PHORUM["hooks"]["before_footer"]))
+            phorum_hook("before_footer");
         include phorum_get_template("footer");
     }
     return;
@@ -196,7 +198,8 @@ define("READONLYFIELDS", true);
 
 // A hook, so mods can do early environment modifications
 // (for example for changing the $PHORUM["post_field"] configuration).
-phorum_hook("posting_init", "");
+if (isset($PHORUM["hooks"]["posting_init"]))
+    phorum_hook("posting_init", "");
 
 // Is this an initial request?
 $initial = ! isset($_POST["message_id"]);
@@ -358,7 +361,8 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
 
 
 // A hook to allow modules to change the abilities from above.
-phorum_hook("posting_permission");
+if (isset($PHORUM["hooks"]["posting_permissions"]))
+    phorum_hook("posting_permission");
 
 // Show special sort options in the editor? These only are
 // honoured for the thread starter messages, so we check the
@@ -411,7 +415,8 @@ if ($do_attach || $do_detach) {
 // Give modules a chance to perform actions of their own. These actions
 // can modify the message data if they like. This is the designated
 // hook for modules that want to modify the meta data for the message.
-$message = phorum_hook("posting_custom_action", $message);
+if (isset($PHORUM["hooks"]["posting_custom_action"]))
+    $message = phorum_hook("posting_custom_action", $message);
 
 // Only check the integrity of the data on finishing up. During the
 // editing process, the user may produce garbage as much as he likes.
@@ -600,7 +605,8 @@ if ($PHORUM["posting_template"] == 'posting')
     $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
 
     // A hook to give modules a last chance to update the message data.
-    $message = phorum_hook("before_editor", $message);
+    if (isset($PHORUM["hooks"]["before_editor"]))
+        $message = phorum_hook("before_editor", $message);
 
     // Make the message data available to the template engine.
     $PHORUM["DATA"]["MESSAGE"] = $message;
@@ -619,14 +625,16 @@ if ($PHORUM["posting_template"] == 'posting')
 // Load page header.
 if (! isset($PHORUM["postingargs"]["as_include"])) {
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
 }
 
 include phorum_get_template($PHORUM["posting_template"]);
 
 // Load page footer.
 if (! isset($PHORUM["postingargs"]["as_include"])) {
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
 }
 

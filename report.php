@@ -82,7 +82,8 @@ if(is_array($message) && count($message)) {
                     $mail_data["reporter_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["reporter_url"]);
                 }
 
-                $mail_data = phorum_hook("report", $mail_data);
+                if (isset($PHORUM["hooks"]["report"]))
+                    $mail_data = phorum_hook("report", $mail_data);
 
                 phorum_email_user($mail_users, $mail_data);
 
@@ -121,9 +122,11 @@ if(is_array($message) && count($message)) {
     $template='message';
 }
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 include phorum_get_template($template);
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 ?>

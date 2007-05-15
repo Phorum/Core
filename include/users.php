@@ -416,13 +416,15 @@ function phorum_user_check_login( $username, $password )
     // to authenticate against an external source). The module can return a
     // user_id if a user is considered to be authenticated.
     $user_id = NULL;
-    $temp_user = phorum_hook("user_check_login", array(
-        "user_id"  => FALSE,
-        "username" => $username,
-        "password" => $password)
-    );
-    if( is_array($temp_user) && $temp_user["user_id"] !== FALSE ) {
-        $user_id = $temp_user["user_id"];
+    if (isset($PHORUM["hooks"]["user_check_login"])) {
+        $temp_user = phorum_hook("user_check_login", array(
+            "user_id"  => FALSE,
+            "username" => $username,
+            "password" => $password
+        ));
+        if (is_array($temp_user) && $temp_user["user_id"] !== FALSE ) {
+            $user_id = $temp_user["user_id"];
+        }
     }
 
     // If no module handled the authentication, then let Phorum handle it.

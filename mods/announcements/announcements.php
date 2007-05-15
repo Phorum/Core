@@ -105,7 +105,8 @@ function phorum_show_announcements ()
         if (!isset($PHORUM["DATA"]["ANNOUNCEMENTS"])) return;
 
         // Apply standard formatting to the messages.
-        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
+        if (isset($PHORUM["hooks"]["format"]))
+            $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
 
         // Display the announcements.
         include phorum_get_template("announcements::announcements");

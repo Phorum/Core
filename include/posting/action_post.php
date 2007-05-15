@@ -106,7 +106,8 @@ if (!count($message["meta"]["attachments"])) {
 }
 
 // Run pre post mods.
-$message = phorum_hook("before_post", $message);
+if (isset($PHORUM["hooks"]["before_post"]))
+    $message = phorum_hook("before_post", $message);
 
 // Keep a copy of the message we have got now.
 $message_copy = $message;
@@ -178,7 +179,8 @@ if ($success)
     }
 
     // Run after post mods.
-    $message = phorum_hook("after_post", $message);
+    if (isset($PHORUM["hooks"]["after_post"]))
+        $message = phorum_hook("after_post", $message);
 
     // Posting is completed. Take the user back to the forum.
     if ($PHORUM["redirect_after_post"] == "read")

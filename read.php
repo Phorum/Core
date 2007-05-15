@@ -423,7 +423,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     if(isset($fetch_user_ids) && count($fetch_user_ids)){
         $user_info=phorum_user_get($fetch_user_ids, false);
         // hook to modify user info
-        $user_info = phorum_hook("read_user_info", $user_info);
+        if (isset($PHORUM["hooks"]["read_user_info"]))
+            $user_info = phorum_hook("read_user_info", $user_info);
     }
 
     // URLS which are common for the thread
@@ -609,7 +610,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         include_once("./include/thread_sort.php");
 
         // run read-threads mods
-        $messages = phorum_hook("readthreads", $messages);
+        if (isset($PHORUM["hooks"]["readthreads"]))
+            $messages = phorum_hook("readthreads", $messages);
 
         $messages = phorum_sort_threads($messages);
 
@@ -643,7 +645,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     // run read mods
-    $messages = phorum_hook("read", $messages);
+    if (isset($PHORUM["hooks"]["read"]))
+        $messages = phorum_hook("read", $messages);
 
     // increment viewcount if enabled
     if($PHORUM['count_views'] && $PHORUM["status"]==PHORUM_MASTER_STATUS_NORMAL) {
@@ -678,7 +681,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // include the correct template
 
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
 
     if($PHORUM["threaded_read"] == 1) {
         include phorum_get_template("read_threads");
@@ -726,7 +730,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         include("./posting.php");
     }
 
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
 
 
@@ -739,9 +744,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
     // have to include the header here for the Redirect
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
     include phorum_get_template("message");
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
 
 } else { // message not found
@@ -752,9 +759,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["HTML_TITLE"] = htmlentities( $PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );
     // have to include the header here for the Redirect
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
     include phorum_get_template("message");
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
 }
 

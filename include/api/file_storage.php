@@ -333,18 +333,22 @@ function phorum_api_file_store($file)
     // Hooks should be aware that their input might not be $file, but
     // FALSE instead, in which case they should immediately return
     // FALSE themselves.
-    $hook_result = phorum_hook("file_store", $file);
-
-    // Return if a module returned an error.
-    if ($hook_result === FALSE)
+    if (isset($PHORUM["hooks"]["file_store"]))
     {
-        // Cleanup the skeleton file from the database.
-        phorum_db_file_delete($file["file_id"]); 
-        $file["file_id"] = NULL;
+        $hook_result = phorum_hook("file_store", $file);
 
-        return FALSE;
+        // Return if a module returned an error.
+        if ($hook_result === FALSE)
+        {
+            // Cleanup the skeleton file from the database.
+            phorum_db_file_delete($file["file_id"]); 
+            $file["file_id"] = NULL;
+
+            return FALSE;
+        }
+
+        $file = $hook_result;
     }
-    $file = $hook_result;
 
     // Phorum stores the files in base64 format in the database, to
     // prevent problems with upgrading and migrating database servers.
@@ -444,8 +448,10 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // Hooks should be aware that their input might not be $file, but
     // FALSE instead, in which case they should immediately return
     // FALSE themselves.
-    $file = phorum_hook("file_check_read_access", $file, $flags); 
-    if ($file === FALSE) return FALSE;
+    if (isset($PHORUM["hooks"]["file_check_read_access"])) {
+        $file = phorum_hook("file_check_read_access", $file, $flags); 
+        if ($file === FALSE) return FALSE;
+    }
 
     // If we do not do any permission checking, then we are done.
     if ($flags & PHORUM_FLAG_IGNORE_PERMS) return $file;
@@ -592,11 +598,13 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     $file["result"]    = 0; 
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
-    $file = phorum_hook("file_retrieve", $file, $flags);
-    if ($file === FALSE) return FALSE;
+    if (isset($PHORUM["hooks"]["file_retrieve"])) {
+        $file = phorum_hook("file_retrieve", $file, $flags);
+        if ($file === FALSE) return FALSE;
 
-    // If a module sent the file data to the browser, then we are done.
-    if ($file["result"] == PHORUM_FLAG_SEND) return NULL; 
+        // If a module sent the file data to the browser, then we are done.
+        if ($file["result"] == PHORUM_FLAG_SEND) return NULL; 
+    }
 
     // If no module handled file retrieval, we will retrieve the
     // file from the Phorum database.
@@ -677,7 +685,8 @@ function phorum_api_file_delete($file)
     // exist. The Phorum core does not throw errors when deleting a
     // non existant file. Therefore modules should accept that case
     // as well, without throwing errors.
-    phorum_hook("file_delete", $file_id);
+    if (isset($PHORUM["hooks"]["file_delete"]))
+        phorum_hook("file_delete", $file_id);
 
     // Delete the file from the Phorum database.
     phorum_db_file_delete($file);

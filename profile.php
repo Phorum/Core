@@ -49,9 +49,11 @@ if(!is_array($user) || $user["active"]==0) {
 
     // have to include the header here for the Redirect
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
     include phorum_get_template("message");
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
     return;
 }
@@ -117,7 +119,8 @@ if (isset($PHORUM["DATA"]["PROFILE"]["real_name"])) {
 }
 $PHORUM["DATA"]["PROFILE"]["display_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"]);
 
-$PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
+if (isset($PHORUM["hooks"]["profile"]))
+    $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UserProfile"];
 $PHORUM["DATA"]["DESCRIPTION"] = "";
@@ -127,9 +130,11 @@ $PHORUM["DATA"]["DESCRIPTION"] = "";
 phorum_build_common_urls();
 
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 include phorum_get_template("profile");
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 ?>

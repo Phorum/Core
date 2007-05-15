@@ -54,7 +54,8 @@ phorum_build_common_urls();
 $is_admin_user=$PHORUM["user"]["admin"];
 
 // a hook for doing stuff in moderation, i.e. logging moderator-actions
-phorum_hook("moderation",$mod_step);
+if (isset($PHORUM["hooks"]["moderation"]))
+    phorum_hook("moderation",$mod_step);
 
 
 $invalidate_message_cache = array();
@@ -68,7 +69,8 @@ switch ($mod_step) {
         // A hook to allow modules to implement extra or different
         // delete functionality.
         $delete_handled = 0;
-        list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
+        if (isset($PHORUM["hooks"]["before_delete"]))
+            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
 
         // Handle the delete action, unless a module already handled it.
         if (!$delete_handled) {
@@ -84,7 +86,8 @@ switch ($mod_step) {
         }
 
         // Run a hook for performing custom actions after cleanup.
-        phorum_hook("delete", array($msgthd_id));
+        if (isset($PHORUM["hooks"]["delete"]))
+            phorum_hook("delete", array($msgthd_id));
 
         $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
@@ -106,7 +109,8 @@ switch ($mod_step) {
         // A hook to allow modules to implement extra or different
         // delete functionality.
         $delete_handled = 0;
-        list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
+        if (isset($PHORUM["hooks"]["before_delete"]))
+            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
 
         if(!$delete_handled) {
 
@@ -140,7 +144,8 @@ switch ($mod_step) {
         $nummsgs=count($msg_ids);
 
         // Run a hook for performing custom actions after cleanup.
-        phorum_hook("delete", $msg_ids);
+        if (isset($PHORUM["hooks"]["delete"]))
+            phorum_hook("delete", $msg_ids);
 
         $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
@@ -244,7 +249,8 @@ switch ($mod_step) {
 
                 phorum_db_post_message($newmessage);
             }
-            phorum_hook("move_thread", $msgthd_id);
+            if (isset($PHORUM["hooks"]["move_thread"]))
+                phorum_hook("move_thread", $msgthd_id);
         }
         break;
 
@@ -253,7 +259,8 @@ switch ($mod_step) {
         $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['ThreadClosedOk'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_close_thread($msgthd_id);
-        phorum_hook("close_thread", $msgthd_id);
+        if (isset($PHORUM["hooks"]["close_thread"]))
+            phorum_hook("close_thread", $msgthd_id);
 
         $invalidate_message_cache[] = array(
             "message_id" => $msgthd_id,
@@ -267,7 +274,8 @@ switch ($mod_step) {
         $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['ThreadReopenedOk'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_reopen_thread($msgthd_id);
-        phorum_hook("reopen_thread", $msgthd_id);
+        if (isset($PHORUM["hooks"]["reopen_thread"]))
+            phorum_hook("reopen_thread", $msgthd_id);
 
         $invalidate_message_cache[] = array(
             "message_id" => $msgthd_id,
@@ -292,7 +300,8 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
 
-        phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
+        if (isset($PHORUM["hooks"]["after_approve"]))
+            phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
 
         if($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
           phorum_email_notice($old_message);
@@ -343,7 +352,8 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
 
-        phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
+        if (isset($PHORUM["hooks"]["after_approve"]))
+            phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
 
         $PHORUM['DATA']['OKMSG']="$num_approved ".$PHORUM['DATA']['LANG']['MsgApprovedOk'];
         if(isset($PHORUM['args']["prepost"])) {
@@ -381,7 +391,8 @@ switch ($mod_step) {
 
         }
 
-        phorum_hook("hide", $msgthd_id);
+        if (isset($PHORUM["hooks"]["hide"]))
+            phorum_hook("hide", $msgthd_id);
 
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
@@ -545,8 +556,10 @@ if(!isset($PHORUM['DATA']['BACKMSG'])) {
 }
 
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 include phorum_get_template($template);
+if (isset($PHORUM["hooks"]["before_footer"]))
 phorum_hook("before_footer");
 include phorum_get_template("footer");
 

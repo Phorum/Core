@@ -82,7 +82,8 @@ if(!empty($cache)){
     unset($messages["users"]);
 
     // run read hooks to get everything formatted
-    $messages = phorum_hook("read", $messages);
+    if (isset($PHORUM["hooks"]["read"]))
+        $messages = phorum_hook("read", $messages);
     $messages = phorum_format_messages($messages);
 
     // set up the feed specifics based on the info we are getting

@@ -150,7 +150,8 @@ if (!empty($group_id)){
             );
     }
 
-    $PHORUM["DATA"]["USERS"] = phorum_hook("user_list", $PHORUM["DATA"]["USERS"]);
+    if (isset($PHORUM["hooks"]["user_list"]))
+        $PHORUM["DATA"]["USERS"] = phorum_hook("user_list", $PHORUM["DATA"]["USERS"]);
 
     // if the option to build a dropdown list is enabled, build the list of members that could be added
     if ($PHORUM["enable_dropdown_userlist"]){

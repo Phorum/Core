@@ -66,7 +66,10 @@ if ($mode == "reply" || $mode == "quote")
     // Add a quoted version of the body for quoted reply messages.
     if ($mode == "quote")
     {
-        $quoted = phorum_hook("quote", array($dbmessage["author"], $dbmessage["body"], $dbmessage["user_id"]));
+        $quoted = 0;
+        if (isset($PHORUM["hooks"]["quote"])) {
+            $quoted = phorum_hook("quote", array($dbmessage["author"], $dbmessage["body"], $dbmessage["user_id"]));
+        }
 
         if (empty($quoted) || is_array($quoted))
         {

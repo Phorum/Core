@@ -94,9 +94,11 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
         $PHORUM["DATA"]["URL"]["REDIRECT"]=$search_url;
         $PHORUM["DATA"]["REDIRECT_TIME"]=1;
         include phorum_get_template("header");
-        phorum_hook("after_header");
+        if (isset($PHORUM["hooks"]["after_header"]))
+            phorum_hook("after_header");
         include phorum_get_template("message");
-        phorum_hook("before_footer");
+        if (isset($PHORUM["hooks"]["before_footer"]))
+            phorum_hook("before_footer");
         include phorum_get_template("footer");
         return;
     }
@@ -171,7 +173,8 @@ if(!empty($phorum_search) || !empty($phorum_author)){
     'continue' => 1
     );
 
-    $search_request_data = phorum_hook('search_action',$search_request_data);
+    if (isset($PHORUM["hooks"]["search_action"]))
+        $search_request_data = phorum_hook('search_action',$search_request_data);
 
     // only continue if our hook was either not run or didn't return a stop request
     if($search_request_data['continue']) {
@@ -262,7 +265,9 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
 
 
-        $arr["rows"] = phorum_hook("search", $arr["rows"]);
+        if (isset($PHORUM["hooks"]["search"]))
+            $arr["rows"] = phorum_hook("search", $arr["rows"]);
+
         $arr["rows"] = phorum_format_messages($arr["rows"]);
         $PHORUM["DATA"]["MATCHES"] = $arr["rows"];
 
@@ -275,7 +280,8 @@ if(!empty($phorum_search) || !empty($phorum_author)){
     // Set cursor focus to message search entry.
     $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
     
-    $PHORUM['args'] = phorum_hook('search_start',$PHORUM['args']);
+    if (isset($PHORUM["hooks"]["search_start"]))
+        $PHORUM['args'] = phorum_hook('search_start',$PHORUM['args']);
 }
 
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_SEARCH_ACTION_URL);
@@ -316,9 +322,11 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
 }
 
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 include phorum_get_template("search");
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 ?>

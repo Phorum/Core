@@ -66,9 +66,11 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
 if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
     include phorum_get_template("stdblock");
-    phorum_hook("before_footer");
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
     include phorum_get_template("footer");
     return;
 }
@@ -171,9 +173,11 @@ if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id))
     if (! empty($error)) {
         $PHORUM["DATA"]["ERROR"] = $error;
         include phorum_get_template("header");
-        phorum_hook("after_header");
+        if (isset($PHORUM["hooks"]["after_header"]))
+            phorum_hook("after_header");
         include phorum_get_template("message");
-        phorum_hook("before_footer");
+        if (isset($PHORUM["hooks"]["before_footer"]))
+            phorum_hook("before_footer");
         include phorum_get_template("footer");
         return;
     }
@@ -480,7 +484,8 @@ if (!empty($action)) {
 
                                 phorum_email_pm_notice($pm_message, $langrcpts);
 
-                                phorum_hook("pm_sent", $pm_message, array_keys($recipients));
+                                if (isset($PHORUM["hooks"]["pm_sent"]))
+                                    phorum_hook("pm_sent", $pm_message, array_keys($recipients));
                             }
                         }
 
@@ -516,7 +521,8 @@ if (!empty($action)) {
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $buddy_user_id) {
                     phorum_db_pm_buddy_delete($buddy_user_id);
-                    phorum_hook("buddy_delete", $buddy_user_id);
+                    if (isset($PHORUM["hooks"]["buddy_delete"]))
+                        phorum_hook("buddy_delete", $buddy_user_id);
                 }
             }
 
@@ -541,7 +547,8 @@ if (!empty($action)) {
             if (!empty($buddy_user_id)) {
                 if (phorum_db_pm_buddy_add($buddy_user_id)) {
                     $okmsg = $PHORUM["DATA"]["LANG"]["BuddyAddSuccess"];
-                    phorum_hook("buddy_add", $buddy_user_id);
+                    if (isset($PHORUM["hooks"]["buddy_add"]))
+                        phorum_hook("buddy_add", $buddy_user_id);
                 } else {
                     $error = $PHORUM["DATA"]["LANG"]["BuddyAddFail"];
                 }
@@ -618,7 +625,8 @@ switch ($page) {
         $buddy_list = phorum_db_pm_buddy_list(NULL, true);
         if (count($buddy_list)) {
             $buddy_users = phorum_user_get(array_keys($buddy_list), false);
-            $buddy_users = phorum_hook("read_user_info", $buddy_users);
+            if (isset($PHORUM["hooks"]["read_user_info"]))
+                $buddy_users = phorum_hook("read_user_info", $buddy_users);
         } else {
             $buddy_users = array();
         }
@@ -958,7 +966,8 @@ $PHORUM["DATA"]["PM_PAGE"] = $page;
 $PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
 
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 if ($error_msg) {
     $PHORUM["DATA"]["ERROR"] = $error_msg;
     unset($PHORUM["DATA"]["MESSAGE"]);
@@ -966,7 +975,8 @@ if ($error_msg) {
 } else {
     include phorum_get_template("pm");
 }
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 // ------------------------------------------------------------------------
@@ -1008,7 +1018,8 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
         $message["subject"] = "Re: ".$message["subject"];
     }
 
-    $quote = phorum_hook("quote", array($orig_author, $message["message"]));
+    if (isset($PHORUM["hooks"]["quote"]))
+        $quote = phorum_hook("quote", array($orig_author, $message["message"]));
 
     if (empty($quote) || is_array($quote))
     {

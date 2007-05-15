@@ -89,9 +89,11 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 phorum_build_common_urls();
 
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 include phorum_get_template($template);
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 

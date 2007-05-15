@@ -39,7 +39,7 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
 }
 
 // A hook entry for checking the data from a module.
-if (! $error) {
+if (! $error && isset($PHORUM["hooks"]["check_post"]))
     list($message, $error) =
         phorum_hook("check_post", array($message, $error));
 }

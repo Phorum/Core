@@ -81,8 +81,8 @@ if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
 
 
             $delete_handled = 0;
-            list($delete_handled,$msg_ids,$msgthd_id,$delete_messages[$msgthd_id],$delete_mode) =
-            phorum_hook("before_delete", array(0,0,$msgthd_id,$delete_messages[$msgthd_id],PHORUM_DELETE_MESSAGE));
+            if (isset($PHORUM["hooks"]["before_delete"]))
+                list($delete_handled,$msg_ids,$msgthd_id,$delete_messages[$msgthd_id],$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$delete_messages[$msgthd_id],PHORUM_DELETE_MESSAGE));
 
             // Handle the delete action, unless a module already handled it.
             if (!$delete_handled) {
@@ -98,7 +98,8 @@ if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
             }
 
             // Run a hook for performing custom actions after cleanup.
-            phorum_hook("delete", array($msgthd_id));
+            if (isset($PHORUM["hooks"]["delete"]))
+                phorum_hook("delete", array($msgthd_id));
         }
 		
 	}

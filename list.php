@@ -516,7 +516,8 @@ if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && 
 }
 
 include phorum_get_template("header");
-phorum_hook("after_header");
+if (isset($PHORUM["hooks"]["after_header"]))
+    phorum_hook("after_header");
 
 // include the correct template
 if ($PHORUM["threaded_list"]){
@@ -525,7 +526,8 @@ if ($PHORUM["threaded_list"]){
     include phorum_get_template("list");
 }
 
-phorum_hook("before_footer");
+if (isset($PHORUM["hooks"]["before_footer"]))
+    phorum_hook("before_footer");
 include phorum_get_template("footer");
 
 //timing_mark('end');
