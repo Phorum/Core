@@ -482,7 +482,7 @@ if ($bodies_in_list)
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
-                $row["attachments"][$key]["name"]=htmlentities($file['name'], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+                $row["attachments"][$key]["name"]=htmlspecialchars($file['name']);
                 $row["attachments"][$key]["url"] = phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
             }
         }

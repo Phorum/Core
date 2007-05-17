@@ -20,11 +20,7 @@
     $PHORUM['thous_sep']=",";
     $PHORUM['dec_sep']=".";
 
-    // charset for use in converting html into safe valid text
-    // also used in the header template for the <xml> and for
-    // the Content-Type header. for a list of supported charsets, see
-    // http://www.php.net/manual/en/function.htmlentities.php
-    // you may also need to set a meta tag with a charset in it.
+    // The charset to use for displaying special characters.
     $PHORUM["DATA"]['CHARSET']="UTF-8";
 
     // some languages need additional meta tags

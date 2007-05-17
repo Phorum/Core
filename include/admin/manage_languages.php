@@ -256,7 +256,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
             $CURRENT[$f] = $DEFAULT[$f];
             if (! $generate_new) {
                 $frm->addrow("MISSING VARIABLE", "$f set to default " . 
-                             htmlentities(urldecode($DEFAULT[$f])));
+                             htmlspecialchars(urldecode($DEFAULT[$f])));
                 $notifies++;
             }
         }
@@ -268,7 +268,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
             $CURRENT['DATA'][$f] = $DEFAULT['DATA'][$f];
             if (! $generate_new) {
                 $frm->addrow("MISSING VARIABLE", "DATA->$f set to default " . 
-                             htmlentities(urldecode($DEFAULT['DATA'][$f])));
+                             htmlspecialchars(urldecode($DEFAULT['DATA'][$f])));
                 $notifies++;
             }
         }
@@ -280,7 +280,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
             $CURRENT['DATA']['LANG']['TIME'][$key] = $val;
             
             if (! $generate_new) {
-                $dflt = htmlentities(urldecode($DEFAULT['DATA']['LANG']['TIME'][$key]));
+                $dflt = htmlspecialchars(urldecode($DEFAULT['DATA']['LANG']['TIME'][$key]));
                 $frm->addrow("MISSING TZINFO", "TZ $key set to default<br/>$dflt");
                 $notifies++;
             }
@@ -335,10 +335,7 @@ function phorum_write_language_file($lang, $CURRENT)
         "\$PHORUM['thous_sep'] = " . urldecode($CURRENT['thous_sep']) . ";\n" .
         "\$PHORUM['dec_sep'] = " . urldecode($CURRENT['dec_sep']) . ";\n" .
         "\n" .
-        "// The character set to use for converting html into safe valid text.\n" .
-        "// Also used in the header template for the xml tag. For a list of\n" .
-        "// supported character sets see: http://www.php.net/htmlentities\n" .
-        "// You may also need to set a meta-tag with a character set in it.\n" .
+        "// The charset to use for displaying special characters.\n" .
         "\$PHORUM['DATA']['CHARSET'] = " . urldecode($CURRENT['DATA']['CHARSET']) . ";\n" .
         "\n" .
         "// The encoding used for outgoing mail messages.\n" .

@@ -412,7 +412,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlentities(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars(strip_tags($PHORUM["DATA"]["HTML_TITLE"]));
 
     // if the Phorum is disabled, display a message.
     if( !$PHORUM["user"]["admin"] ) {

@@ -549,7 +549,7 @@ if ($PHORUM["posting_template"] == 'posting')
             $val = htmlspecialchars(serialize($message[$var]));
             if ($spec[pf_SIGNED]) $signval = serialize($message[$var]);
         } else {
-            $val = htmlentities($message[$var], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+            $val = htmlspecialchars($message[$var]);
             if ($spec[pf_SIGNED]) $signval = $message[$var];
         }
 

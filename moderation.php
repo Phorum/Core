@@ -177,7 +177,7 @@ switch ($mod_step) {
         $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_MOVE;
-        $PHORUM['DATA']["FORM"]["subject"] =htmlentities($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+        $PHORUM['DATA']["FORM"]["subject"] =htmlspecialchars($message["subject"]);
 
         // get all the forums the moderator may move to
         $PHORUM['DATA']["MoveForumsOption"]="";
@@ -422,15 +422,15 @@ switch ($mod_step) {
             phorum_moderator_data_put('merge_t1', $msgthd_id);
             $PHORUM['DATA']["FORM"]["merge_none"] =true;
             $message = phorum_db_get_message($merge_t1, "message_id", true);
-            $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+            $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlspecialchars($message["subject"]);
         }
         // the moderator selects the source thread to merge from
         else {
             $PHORUM['DATA']["FORM"]["merge_t1"] =$merge_t1;
             $message = phorum_db_get_message($merge_t1, "message_id", true);
-            $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlentities($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+            $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlspecialchars($message["subject"]);
             $message = phorum_db_get_message($msgthd_id);
-            $PHORUM['DATA']["FORM"]["thread_subject"] =htmlentities($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+            $PHORUM['DATA']["FORM"]["thread_subject"] =htmlspecialchars($message["subject"]);
         }
         break;
 
@@ -517,7 +517,7 @@ switch ($mod_step) {
            $message =phorum_db_get_message($msgthd_id);
            $PHORUM['DATA']["FORM"]["thread_id"]=$message["thread"];
            $PHORUM['DATA']["FORM"]["message_id"]=$msgthd_id;
-           $PHORUM['DATA']["FORM"]["message_subject"]=htmlentities($message["subject"],  ENT_COMPAT, $PHORUM["DATA"]["CHARSET"]);
+           $PHORUM['DATA']["FORM"]["message_subject"]=htmlspecialchars($message["subject"]);
            $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_SPLIT;
            $template="split_form";
            break;
