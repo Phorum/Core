@@ -113,26 +113,37 @@ function phorum_api_error_set($errno, $error = NULL)
 }
 // }}}
 
-// {{{ Function: phorum_api_error
+// {{{ Function: phorum_api_errno
 /**
- * Retrieve the error data for the last Phorum API function that was called.
+ * Retrieve the error code for the last Phorum API function that was called.
  *
  * @return mixed
- *     If no error is set, then this function will return NULL. 
- *     Else, an array containing two elements is returned. The first
- *     element will be the errno and the second one the error message.
+ *     The error code or NULL if no error was set.
  */
-function phorum_api_error()
+function phorum_api_errno()
 {
     if ($GLOBALS["PHORUM"]["API"]["errno"] === NULL) {
         return NULL;
     } else {
-        return array(
-            $GLOBALS["PHORUM"]["API"]["errno"],
-            $GLOBALS["PHORUM"]["API"]["error"]
-        );
+        return $GLOBALS["PHORUM"]["API"]["errno"];
     }
 }
 // }}}
+
+// {{{ Function: phorum_api_strerror
+/**
+ * Retrieve the error message for the last Phorum API function that was called.
+ *
+ * @return mixed
+ *     The error message or NULL if no error was set.
+ */
+function phorum_api_strerror()
+{
+    if ($GLOBALS["PHORUM"]["API"]["error"] === NULL) {
+        return NULL;
+    } else {
+        return $GLOBALS["PHORUM"]["API"]["error"];
+    }
+}
 
 ?>

@@ -40,8 +40,7 @@ if(count($_POST) && $_POST['name'] != '')
       // Handle restoring a deleted field.
       if (isset($_POST["restore"])) {
         if (phorum_api_custom_profile_field_restore($check["id"]) === FALSE) {
-            $error = phorum_api_error();
-            phorum_admin_error($error[1]);
+            phorum_admin_error(phorum_api_strerror());
         } else {
             phorum_admin_okmsg("The custom profile field " .
                                "\"{$check["name"]}\" has been restored.");
@@ -105,9 +104,9 @@ if(count($_POST) && $_POST['name'] != '')
         ));
 
         if ($field === FALSE) {
-            $error = phorum_api_error();
+            $error = phorum_api_strerror();
             $action = $_POST['curr'] == 'NEW' ? "create" : "update";
-            phorum_admin_error("Failed to $action profile field: ".$error[1]); 
+            phorum_admin_error("Failed to $action profile field: ".$error); 
         } else {
             $action = $_POST['curr'] == 'NEW' ? "created" : "updated";
             phorum_admin_okmsg("Profile field $action");

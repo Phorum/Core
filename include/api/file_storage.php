@@ -25,7 +25,7 @@
  * center) or as a message attachment.
  *
  * By default, the contents of a Phorum file are stored in the Phorum
- * database, but this API does support modules that change this behaviour
+ * database, but this API does support modules that change this behavior
  * (e.g. by storing file contents on a filesystem instead).
  *
  * @package    PhorumAPI
@@ -55,8 +55,10 @@ define("PHORUM_FLAG_SEND",             2);
  */
 define("PHORUM_FLAG_IGNORE_PERMS",     4);
 
-// A mapping of file extensions to their MIME types.
-// Used by function phorum_api_file_get_mimetype().
+/**
+ * A mapping of file extensions to their MIME types.
+ * Used by function {@link phorum_api_file_get_mimetype()}.
+ */
 $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
 (
     "pdf"  => "application/pdf",
@@ -134,15 +136,16 @@ function phorum_api_file_get_mimetype($filename)
  *     "link" field. That field will be used to handle checking for personal
  *     uploaded files in the control center (PHORUM_LINK_USER) or message
  *     attachments (PHORUM_LINK_MESSAGE). Next to that, interesting file
- *     fields to pass to this function are "filesize" (to check size maximums)
+ *     fields to pass to this function are "filesize" (to check maximum size)
  *     and "filename" (to check allowed file type extensions).
  *
  * @return array
  *     If access is allowed, then TRUE will be returned. If access is denied,
- *     then FALSE will be returned and {@link phorum_api_error()} can be used
- *     to retrieve the error which describes why access was denied.
+ *     then FALSE will be returned. The functions {@link phorum_api_strerror()}
+ *     and {@link phorum_api_errno()} can be used to retrieve information
+ *     about the error which occurred.
  *
- * @todo This function has not yet been fully implemented and integrated.
+ * @todo write access checking for attachments.
  */
 function phorum_api_file_check_write_access($file)
 {
@@ -158,20 +161,62 @@ function phorum_api_file_check_write_access($file)
         E_USER_ERROR
     );
 
-    $access = FALSE;
-
-    // Check if the user has permission to upload user files.
+    // Handle write access checks for uploading user files.
     if ($file["link"] == PHORUM_LINK_USER)
     {
         // If file uploads are enabled, then access is granted. Access
         // is always granted to administrator users.
-        $access = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]);
-        if (! $access) return phorum_api_error_set(
-            PHORUM_ERRNO_NOACCESS,
-            "Personal user file uploads are not enabled."
-        );
+        if (!$PHORUM["file_uploads"] && !$PHORUM["user"]["admin"]) {
+            return phorum_api_error_set(
+                PHORUM_ERRNO_NOACCESS,
+                $PHORUM["DATA"]["LANG"]["UploadNotAllowed"]
+            );
+        }
 
-        // TODO
+        // Check if the file doesn't exceed the maximum allowed file size.
+        if (isset($file["filesize"]) && $PHORUM["max_file_size"] > 0 &&
+            $file["filesize"] > $PHORUM["max_file_size"]*1024) {
+            return phorum_api_error_set(
+                PHORUM_ERRNO_NOACCESS,
+                $PHORUM["DATA"]["LANG"]["FileTooLarge"]
+            );
+        }
+
+        // Check if the user won't exceed the file quota when storing the file.
+        if(isset($file["filesize"]) && $PHORUM["file_space_quota"] > 0) {
+            $sz = phorum_db_get_user_filesize_total($PHORUM["user"]["user_id"]);
+            $sz += $file["filesize"];
+            if ($sz > $PHORUM["file_space_quota"]*1024) {
+                return phorum_api_error_set(
+                    PHORUM_ERRNO_NOACCESS,
+                    $PHORUM["DATA"]["LANG"]["FileOverQuota"]
+                );
+            }
+        }
+
+        // Check if the file type is allowed.
+        if (isset($file["filename"]) &&
+            isset($PHORUM["file_types"]) && trim($PHORUM["file_types"]) != '')
+        {
+            // Determine the file extension for the file.
+            $pos = strrpos($file["filename"], ".");
+            if ($pos !== FALSE) {
+                $ext = strtolower(substr($file["filename"], $pos + 1));
+            } else {
+                $ext = strtolower($file["filename"]);
+            }
+
+            // Create an array of allowed file extensions.
+            $allowed_exts = explode(";", strtolower($PHORUM["file_types"]));
+
+            // Check if the extension for the file is an allowed extension.
+            if (!in_array($ext, $allowed_exts)) {
+                return phorum_api_error_set(
+                    PHORUM_ERRNO_NOACCESS,
+                    $PHORUM["DATA"]["LANG"]["FileWrongType"]
+                );
+            }
+        }
     }
 
     return TRUE;
@@ -208,9 +253,9 @@ function phorum_api_file_check_write_access($file)
  *     a new file will be created.
  *
  * @return mixed
- *     On error, this function will return FALSE. The function
- *     {@link phorum_api_error()} can be used to retrieve the error
- *     information.
+ *     On error, this function will return FALSE. The functions
+ *     {@link phorum_api_strerror()} and {@link phorum_api_errno()} can
+ *     be used to retrieve information about the error which occurred.
  *
  *     On success, an array containing the data for the stored file
  *     will be returned. If the function is called with no "file_id"
@@ -390,9 +435,10 @@ function phorum_api_file_store($file)
  *     if the file exists or not.
  *
  * @return mixed
- *     On error, this function will return FALSE. The function
- *     {@link phorum_api_error()} can be used to retrieve the error
- *     information.
+ *     On error, this function will return FALSE.
+ *     The functions {@link phorum_api_strerror()} and
+ *     {@link phorum_api_errno()} can be used to retrieve information about
+ *     the error which occurred.
  *
  *     On success, it returns an array containing descriptive data for
  *     the file. The following fields are available in this array:
@@ -529,13 +575,14 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  * either return the file to the caller or send it directly to the user's
  * browser (based on the $flags parameter). Sending it directly to the
  * browser allows for the implementation of modules that don't have to buffer
- * the full file data before sending it (a.k.a. streaming).
+ * the full file data before sending it (a.k.a. streaming, which provides the
+ * advantage of using less memory for sending files).
  *
  * @param mixed $file
- *    This is either an array containing at least the fields "file_id" 
- *    and "filename" or a numerical file_id value. Note that you can
- *    use the return value of the function
- *    {@link phorum_api_file_check_read_access()} as input for this function.
+ *     This is either an array containing at least the fields "file_id" 
+ *     and "filename" or a numerical file_id value. Note that you can
+ *     use the return value of the function
+ *     {@link phorum_api_file_check_read_access()} as input for this function.
  * 
  * @param integer $flags
  *     These are flags which influence aspects of the function call. It is
@@ -545,9 +592,10 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  *     flag has precedence over the GET flag.
  * 
  * @return mixed
- *     On error, this function will return FALSE. The function
- *     {@link phorum_api_error()} can be used to retrieve the error
- *     information.
+ *     On error, this function will return FALSE.
+ *     The functions {@link phorum_api_strerror()} and
+ *     {@link phorum_api_errno()} can be used to retrieve information about
+ *     the error which occurred.
  *
  *     If the {@link PHORUM_FLAG_SEND} flag is used, then the function will
  *     return NULL.

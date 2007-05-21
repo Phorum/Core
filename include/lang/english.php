@@ -173,7 +173,7 @@
         "ErrRegisterdName"      =>      "The name you entered is already registered by another user. If you are that user, please login.  Otherwise, please use another name.",
         "ErrWrongMailcode"      =>      "You've entered a wrong email-confirmation-code. Try again!",
         "ExactPhrase"           =>      "Exact Phrase",
-
+        "FileAdded"             =>      "The file has been uploaded successfully.",
         "FileForbidden"         =>      "Linking to files in this forum is not allowed from outside the forum.",
         "FileSizeLimits"        =>      "Please do not upload files larger than",
         "FileQuotaLimits"       =>      "The maximum amount of diskspace you may use for storing files is",

@@ -42,8 +42,7 @@ $file = phorum_api_file_check_read_access($file_id);
 // Handle file access errors.
 if ($file === FALSE)
 {
-    $err = phorum_api_error();
-    $PHORUM["DATA"]["ERROR"] = $err[1];
+    $PHORUM["DATA"]["ERROR"] = phorum_api_strerror();
 
     phorum_build_common_urls();
 

@@ -1,3 +1,6 @@
+{IF ERROR}<div class="attention">{ERROR}</div>{/IF}
+{IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
+
 <form action="{URL->ACTION}" method="post" enctype="multipart/form-data">
     {POST_VARS}
     <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
