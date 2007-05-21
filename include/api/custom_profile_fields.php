@@ -99,12 +99,12 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *           then the default setting FALSE will be used.
  *
  * @return array
- *    This function returns the profile field data in an array, containing
- *    the same fields as the {@link $field} function parameter. If a new
- *    field was created, then the "file_id" field will be set to the new
- *    custom profile field id. The fields "length" and "html_disabled" will
- *    also be updated to their defaults if they were set to NULL in
- *    the $field argument. 
+ *     This function returns the profile field data in an array, containing
+ *     the same fields as the {@link $field} function parameter. If a new
+ *     field was created, then the "file_id" field will be set to the new
+ *     custom profile field id. The fields "length" and "html_disabled" will
+ *     also be updated to their defaults if they were set to NULL in
+ *     the $field argument. 
  */
 function phorum_api_custom_profile_field_configure($field)
 {
@@ -242,12 +242,16 @@ function phorum_api_custom_profile_field_configure($field)
  * Retrieve the information for a custom profile field by its name.
  *
  * @param string $name
+ *     The name of the profile field to lookup.
  *
  * @return mixed
- *    If no profile field could be found for the name, then NULL will
- *    be returned. Otherwise the field configuration will be returned.
- *    The field configuration is an array, containing the fields:
- *    id, name, length and html_disabled.
+ *     If no profile field could be found for the name, then NULL will
+ *     be returned. Otherwise the field configuration will be returned.
+ *     The field configuration is an array, containing the fields:
+ *     "id", "name", "length" and "html_disabled". If the field was marked as
+ *     deleted by the {@link phorum_api_custom_profile_field_delete()}
+ *     function, then the field "deleted" will be available and set to a
+ *     true value.
  */
 function phorum_api_custom_profile_field_byname($name)
 {
@@ -311,7 +315,8 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
  *
  * @return bool
  *     TRUE if the restore was successfull or FALSE if there was an error.
- *     The function {@link phorum_api_error()} can be used to retrieve
+ *     The functions {@link phorum_api_strerror()} and
+ *     {@link phorum_api_errno()} can be used to retrieve information about
  *     the error which occurred.
  */
 function phorum_api_custom_profile_field_restore($id)
