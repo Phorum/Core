@@ -6,13 +6,13 @@
     <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     {LANG->Activity}:&nbsp;
     <select name="subdays">
-      <option value="1"{IF SELECTED 1} selected{/IF}>1 {LANG->Day}</option>
-      <option value="2"{IF SELECTED 2} selected{/IF}>2 {LANG->Days}</option>
-      <option value="7"{IF SELECTED 7} selected{/IF}>7 {LANG->Days}</option>
-      <option value="30"{IF SELECTED 30} selected{/IF}>1 {LANG->Month}</option>
-      <option value="180"{IF SELECTED 180} selected{/IF}>6 {LANG->Months}</option>
-      <option value="365"{IF SELECTED 365} selected{/IF}>1 {LANG->Year}</option>
-      <option value="0"{IF SELECTED 0} selected{/IF}>{LANG->AllDates}</option>
+      <option value="1"{IF SELECTED 1} selected="selected"{/IF}>1 {LANG->Day}</option>
+      <option value="2"{IF SELECTED 2} selected="selected"{/IF}>2 {LANG->Days}</option>
+      <option value="7"{IF SELECTED 7} selected="selected"{/IF}>7 {LANG->Days}</option>
+      <option value="30"{IF SELECTED 30} selected="selected"{/IF}>1 {LANG->Month}</option>
+      <option value="180"{IF SELECTED 180} selected="selected"{/IF}>6 {LANG->Months}</option>
+      <option value="365"{IF SELECTED 365} selected="selected"{/IF}>1 {LANG->Year}</option>
+      <option value="0"{IF SELECTED 0} selected="selected"{/IF}>{LANG->AllDates}</option>
     </select>
     <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
   </div>

@@ -69,10 +69,10 @@
             <select name="special">
               <option value=""></option>
               {IF OPTION_ALLOWED->sticky}
-                <option value="sticky"{IF MESSAGE->special "sticky"} selected{/IF}>{LANG->MakeSticky}</option>
+                <option value="sticky"{IF MESSAGE->special "sticky"} selected="selected"{/IF}>{LANG->MakeSticky}</option>
               {/IF}
               {IF OPTION_ALLOWED->announcement}
-                <option value="announcement" {IF MESSAGE->special "announcement"} selected{/IF}>{LANG->MakeAnnouncement}</option>
+                <option value="announcement" {IF MESSAGE->special "announcement"} selected="selected"{/IF}>{LANG->MakeAnnouncement}</option>
               {/IF}
             </select>
           {/IF}
