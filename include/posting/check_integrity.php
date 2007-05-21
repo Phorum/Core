@@ -42,7 +42,6 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
 if (! $error && isset($PHORUM["hooks"]["check_post"]))
     list($message, $error) =
         phorum_hook("check_post", array($message, $error));
-}
 
 // Data integrity checks for all messages.
 if (! $error)
