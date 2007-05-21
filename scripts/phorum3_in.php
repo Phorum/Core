@@ -356,7 +356,7 @@ function phorum_convert_getNextUser($res) {
     if(isset($CONVERT['perms'][$userdata['user_id']])) {
         foreach($CONVERT['perms'][$userdata['user_id']] as $key => $val) {
             echo "Setting {$userdata['user_id']} as moderator for forum $key.{$CONVERT['lbr']}";
-            $userdata['forum_permissions'][$key] = 0 | PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_EDIT | PHORUM_USER_ALLOW_MODERATE_MESSAGES;
+            $userdata['forum_permissions'][$key] = 0 | PHORUM_USER_ALLOW_READ | PHORUM_USER_ALLOW_NEW_TOPIC | PHORUM_USER_ALLOW_REPLY | PHORUM_USER_ALLOW_EDIT | PHORUM_USER_ALLOW_MODERATE_MESSAGES | PHORUM_USER_ALLOW_ATTACH;
         }
     }
     // set the date_added and active to current time
