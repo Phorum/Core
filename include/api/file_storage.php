@@ -130,6 +130,11 @@ function phorum_api_file_get_mimetype($filename)
  * Check if the user has permissions to store a personal
  * file or a message attachment.
  *
+ * Note that the checks for message attachments aren't all checks that are
+ * done by Phorum. The attachment posting script does run some additional
+ * checks on the message level (e.g. to see if the maximum cumulative
+ * attachment size is not exceeded).
+ *
  * @param array $file
  *     This is an array, containing information about the
  *     file that will be uploaded. The array should contain at least the
@@ -144,8 +149,6 @@ function phorum_api_file_get_mimetype($filename)
  *     then FALSE will be returned. The functions {@link phorum_api_strerror()}
  *     and {@link phorum_api_errno()} can be used to retrieve information
  *     about the error which occurred.
- *
- * @todo write access checking for attachments.
  */
 function phorum_api_file_check_write_access($file)
 {
@@ -161,7 +164,10 @@ function phorum_api_file_check_write_access($file)
         E_USER_ERROR
     );
 
+    // ---------------------------------------------------------------------
     // Handle write access checks for uploading user files.
+    // ---------------------------------------------------------------------
+
     if ($file["link"] == PHORUM_LINK_USER)
     {
         // If file uploads are enabled, then access is granted. Access
@@ -214,6 +220,68 @@ function phorum_api_file_check_write_access($file)
                 return phorum_api_error_set(
                     PHORUM_ERRNO_NOACCESS,
                     $PHORUM["DATA"]["LANG"]["FileWrongType"]
+                );
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Handle write access checks for uploading message attachment files.
+    // ---------------------------------------------------------------------
+
+    elseif ($file["link"] == PHORUM_LINK_EDITOR ||
+            $file["link"] == PHORUM_LINK_MESSAGE) {
+
+        // Check if the file doesn't exceed the maximum allowed file size
+        // for the active forum.
+        if (isset($file["filesize"]))
+        {
+            // Find the maximum allowed attachment size. This depends on
+            // both the settings for the current forum and the limits 
+            // that are enforced by the system.
+            require_once('./include/upload_functions.php');
+            $max_upload = phorum_get_system_max_upload();
+            $max_forum = $PHORUM["max_attachment_size"] * 1024;
+            if ($max_forum > 0 && $max_forum < $max_upload)
+                $max_upload = $max_forum;
+
+            // Check if the file doesn't exceed the maximum allowed size.
+            if ($max_upload > 0 && $file["filesize"] > $max_upload) {
+                return phorum_api_error_set(
+                    PHORUM_ERRNO_NOACCESS,
+                    str_replace(
+                        '%size%', phorum_filesize($max_upload),
+                        $PHORUM["DATA"]["LANG"]["AttachFileSize"]
+                    )
+                );
+            }
+        }
+
+        // Check if the file type is allowed for the active forum.
+        if (isset($file["filename"]) &&
+            isset($PHORUM["allow_attachment_types"]) &&
+            trim($PHORUM["allow_attachment_types"]) != '')
+        {
+            // Determine the file extension for the file.
+            $pos = strrpos($file["filename"], ".");
+            if ($pos !== FALSE) {
+                $ext = strtolower(substr($file["filename"], $pos + 1));
+            } else {
+                $ext = strtolower($file["filename"]);
+            }
+
+            // Create an array of allowed file extensions.
+            $allowed_exts = explode(";", strtolower($PHORUM["allow_attachment_types"]));
+
+            // Check if the extension for the file is an allowed extension.
+            if (!in_array($ext, $allowed_exts)) {
+                return phorum_api_error_set(
+                    PHORUM_ERRNO_NOACCESS,
+                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ". 
+                    str_replace(
+                        '%types%', implode(", ", $allowed_exts),
+                        $PHORUM["DATA"]["LANG"]["AttachFileTypes"]
+                    )
                 );
             }
         }

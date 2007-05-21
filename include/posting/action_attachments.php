@@ -24,7 +24,7 @@ require_once("./include/api/file_storage.php");
 
 if ($do_detach)
 {
-    // Find the message to detach.
+    // Find attachments to detach.
     foreach ($message["attachments"] as $id => $info)
     {
         if ($info["file_id"] == $do_detach && $info["keep"])
@@ -54,56 +54,65 @@ if ($do_detach)
 // Attachment(s) uploaded.
 elseif ($do_attach && ! empty($_FILES))
 {
-    // find the maximum allowed attachment size.
+    // Find the maximum allowed attachment size.
     require_once('./include/upload_functions.php');
     $system_max_upload = phorum_get_system_max_upload();
-    if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload[0]/1024;
-    $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload[0]/1024);
+    if ($PHORUM["max_attachment_size"] == 0)
+        $PHORUM["max_attachment_size"] = $system_max_upload[0] / 1024;
+    $PHORUM["max_attachment_size"] = min(
+        $PHORUM["max_attachment_size"],
+        $system_max_upload[0] / 1024
+    );
 
     // The editor template that I use only supports one upload
-    // at a time. This code supports multiple uploads.
+    // at a time. This code does support multiple uploads though.
+    // This can be done by simply adding multiple file upload
+    // fields to the posting form.
     $attached = 0;
     foreach ($_FILES as $file)
     {
-        // Not too many attachments?
+        // Check if the maximum number of attachments isn't exceeded.
         if ($attach_count >= $PHORUM["max_attachments"]) break;
 
+        // Only continue if the tempfile is really an uploaded file?
+        if (! is_uploaded_file($file["tmp_name"])) continue;
+
+        // Handle PHP upload errors.
         // PHP 4.2.0 and later can set an error field for the file
         // upload, indicating a specific error. In Phorum 5.1, we only
         // have an error message for too large uploads. Other error
         // messages will get a generic file upload error.
-        $file_too_large = false;
         if (isset($file["error"]) && $file["error"]) {
             if ($file["error"] == UPLOAD_ERR_INI_SIZE ||
                 $file["error"] == UPLOAD_ERR_FORM_SIZE) {
-                // File too large. Just pass it on to the
-                // following code to handle the error message.
-                $file_too_large = true;
+                // File too large. Tweak the file size to let the 
+                // file storage API return a file too large error.
+                $newfile["filesize"] = $PHORUM["max_attachment_size"] * 2;
             } else {
-                // Make sure that a generic error will be shown.
+                // Tweak the file size for a generic upload error.
                 $file["size"] = 0;
             }
         }
 
-        // Isn't the attachment too large?
-        if ($file_too_large || ($PHORUM["max_attachment_size"] > 0 && $file["size"] > $PHORUM["max_attachment_size"] * 1024)) {
-            $PHORUM["DATA"]["ERROR"] = str_replace(
-                '%size%',
-                phorum_filesize($PHORUM["max_attachment_size"] * 1024),
-                $PHORUM["DATA"]["LANG"]["AttachFileSize"]
-            );
+        // Some problems in uploading result in files which are
+        // zero in size. We asume that people who upload zero byte
+        // files will almost always have problems uploading. We simply
+        // skip 0 byte files here, so after this loop we'll show a
+        // generic upload error if no files were uploaded in the end.
+        if ($file["size"] == 0) continue;
+
+        // Let the file storage API run some upload access checks
+        // (maximum attachment file size and file type).
+        if (!phorum_api_file_check_write_access(array(
+            "link"       => PHORUM_LINK_EDITOR,
+            "filename"   => $file["name"],
+            "filesize"   => $file["size"]
+        ))) {
+            $PHORUM["DATA"]["ERROR"] = phorum_api_strerror();
             break;
         }
 
-        // Some problems in uploading result in files which are
-        // zero in size. We asume that people who upload zero byte
-        // files will almost always have problems uploading.
-        if ($file["size"] == 0) continue;
-
-        // Is the tempfile is an uploaded file?
-        if (! is_uploaded_file($file["tmp_name"])) continue;
-
-        // Isn't the total attachment size too large?
+        // Check if the total cumulative attachment size isn't too large.
         if ($PHORUM["max_totalattachment_size"] > 0 &&
             ($file["size"] + $attach_totalsize) > $PHORUM["max_totalattachment_size"]*1024) {
             $PHORUM["DATA"]["ERROR"] = str_replace(
@@ -114,23 +123,8 @@ elseif ($do_attach && ! empty($_FILES))
             break;
         }
 
-        // Is the type of file acceptable?
-        if(! empty($PHORUM["allow_attachment_types"]))
-        {
-            $ext=substr($file["name"], strrpos($file["name"], ".")+1);
-            $allowed_exts=explode(";", $PHORUM["allow_attachment_types"]);
-            if (! in_array(strtolower($ext), $allowed_exts)) {
-                $PHORUM["DATA"]["ERROR"] =
-                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ".
-                    str_replace('%types%', str_replace(";", ", ", $PHORUM["allow_attachment_types"]), $PHORUM["DATA"]["LANG"]["AttachFileTypes"]);
-                break;
-            }
-        }
-
-        // Read in the file.
+        // Add the file data and user_id to the file info for the hook call.
         $file["data"] = @file_get_contents($file["tmp_name"]);
-
-        // copy the current user_id to the $file array for the hook
         $file["user_id"]=$PHORUM["user"]["user_id"];
 
         // Run the before_attach hook.
@@ -138,11 +132,10 @@ elseif ($do_attach && ! empty($_FILES))
             list($message, $file) =
                 phorum_hook("before_attach", array($message, $file));
 
-        // Store the file. We add it using message_id
-        // 0 (zero). Only when the message gets saved definitely,
-        // the message_id will be updated to link the file to the
-        // forum message. This is mainly done so we can support
-        // attachments for new messages, which do not yet have
+        // Store the file. We add it using message_id 0 (zero). Only when
+        // the message gets saved definitely, the message_id will be updated
+        // to link the file to the forum message. This is mainly done so we
+        // can support attachments for new messages, which do not yet have
         // a message_id assigned.
         $file = phorum_api_file_store(array(
             "filename"   => $file["name"],
