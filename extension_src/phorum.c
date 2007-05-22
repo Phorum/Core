@@ -3,6 +3,7 @@
 #endif
 
 #include "php.h"
+#include "ext/standard/info.h"
 #include "php_phorum.h"
 
 static function_entry phorum_functions[] = {

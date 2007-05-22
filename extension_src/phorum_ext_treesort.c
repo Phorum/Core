@@ -52,7 +52,6 @@ PHP_FUNCTION(phorum_ext_treesort)
     zval           **data;
     HashTable       *nodes_hash;
     HashPosition     node_pointer;
-    long             treepos;
     tree             tree;
     treenode        *top_node;
     treenode        *cur_node;
@@ -348,7 +347,6 @@ PHP_FUNCTION(phorum_ext_treesort)
     while (cur_node != NULL)
     {
         treenode *next = NULL;
-        treenode *free = NULL;
 
         /* If we did not process this node before, then add it 
          * to the resulting sorted tree hashtable.

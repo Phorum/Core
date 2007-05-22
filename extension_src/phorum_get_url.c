@@ -307,14 +307,10 @@ void add_url_arg(url_info **urlp, url_arg *arg, int prepend)
 void
 default_url_build(void *h, void *u, int argc, zval ***argv)
 {
-    url_handler *handler = (url_handler *)h;
     url_info    *url     = (url_info *)u;
+
     url_arg     *arg;
-    zval       **data;
     int          i;
-    char        *http_path;
-    char        *extension;
-    char        *urlstr;
 
     /* Add the forum id to the argument list. */
     if (url->add_forum_id)
@@ -360,7 +356,6 @@ default_url_format(void *u)
 {
     url_info    *url     = (url_info *)u;
     url_arg     *arg;
-    zval       **data;
     int          i;
     char        *http_path;
     char        *extension = NULL;
@@ -564,7 +559,6 @@ char *prepost_url(void *h, void *u, int argc, zval ***argv)
  */
 char *feed_url(void *h, void *u, int argc, zval ***argv)
 {
-    url_handler *handler = (url_handler *)h;
     url_info    *url     = (url_info *)u;
     char        *phorum_page = get_constant_string("phorum_page");
 
@@ -603,9 +597,6 @@ char *feed_url(void *h, void *u, int argc, zval ***argv)
  */
 char *addon_url(void *h, void *u, int argc, zval ***argv)
 {
-    url_handler *handler = (url_handler *)h;
-    url_info    *url     = (url_info *)u;
-
     /* We need at least the module name argument. */
     if (argc < 1) {
         zend_error(
@@ -635,7 +626,6 @@ char *addon_url(void *h, void *u, int argc, zval ***argv)
  */
 char *custom_url(void *h, void *u, int argc, zval ***argv)
 {
-    url_handler *handler = (url_handler *)h;
     url_info    *url     = (url_info *)u;
     int          skip    = 1;
     char        *page; 
