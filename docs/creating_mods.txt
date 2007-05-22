@@ -565,7 +565,6 @@ Table of contents:
 
    When using a single custom field "mod_foo" for this module:
 
-      $user = phorum_user_get($user_id);
       $userdata = array(
           "user_id" => $user_id,
           "mod_foo" => array (
@@ -573,7 +572,7 @@ Table of contents:
               "bardata" => "Some more user data"
           )
       );
-      phorum_user_save($user);
+      phorum_user_save($userdata);
 
 
  2.6 Creating custom URLs

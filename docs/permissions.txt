@@ -42,14 +42,20 @@ Table of contents:
    make the change, save the user. Here is some example code:
    
       // add new topic permissions
-      $PHORUM["user"]["permissions"] = 
-          $PHORUM["user"]["permissions"] | PHORUM_USER_ALLOW_NEW_TOPIC;
-      phorum_user_save($PHORUM["user"]);
-  
+      $permissions = $PHORUM["user"]["permissions"] | PHORUM_USER_ALLOW_NEW_TOPIC;
+      $userdata = array(
+          "user_id" => $PHORUM["user"]["user_id"],
+          "permissions" => $permissions
+      );
+      phorum_user_save($userdata);
+
       // remove new topic permissions
-      $PHORUM["user"]["permissions"] = 
-          $PHORUM["user"]["permissions"] ^ PHORUM_USER_ALLOW_NEW_TOPIC;
-      phorum_user_save($PHORUM["user"]);
+      $permissions = $PHORUM["user"]["permissions"] ^ PHORUM_USER_ALLOW_NEW_TOPIC;
+      $userdata = array(
+          "user_id" => $PHORUM["user"]["user_id"],
+          "permissions" => $permissions
+      );
+      phorum_user_save($userdata);
    
 
 3. Some final notes
