@@ -29,21 +29,17 @@ define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 // our database patch level in format of year-month-day-serial
 define( "PHORUM_SCHEMA_PATCHLEVEL", "2007050901" );
 
+// The required version of the Phorum PHP extension. This version is updated
+// if internal changes of Phorum require the extension library to be upgraded
+// for compatibility. We follow PHP's schema of using the date at which an
+// important internal change  was done as the extension's version number.
+// This version number should match the one in the php_phorum.h header file
+// for the module.
+define( "PHORUM_EXTENSION_VERSION", "20070522" );
+
 define( "DEBUG", 0 );
 
 include_once( "./include/constants.php" );
-
-// Try to load the Phorum PHP extension.
-if (!function_exists('phorum_get_url')) {
-    @dl('phorum.so');
-}
-
-// Setup phorum_get_url(): this function is used for generating all Phorum
-// related URL's. It is loaded conditionally, to make it possible to override
-// it from the phorum PHP extension.
-if (!function_exists('phorum_get_url')) {
-    include_once("./include/phorum_get_url.php");
-}
 
 // setup the PHORUM var
 global $PHORUM;
@@ -181,6 +177,38 @@ if(!phorum_db_check_connection()){
 
 // get the Phorum settings
 phorum_db_load_settings();
+
+// Try to load the Phorum PHP extension, if has been enabled in the admin.
+// As a precaution, never load it from the admin code (so the extension
+// support can be disabled at all time if something unexpected happens).
+if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
+{
+    // Load the extension library.
+    @dl('phorum.so');
+
+    // Check if the version of the PHP extension matches the Phorum installation.
+    if (extension_loaded('phorum')) {
+        $ext_ver = phorum_ext_version();
+        if ($ext_ver != PHORUM_EXTENSION_VERSION) {
+            // The version does not match. Disable the extension support.
+            phorum_db_update_settings(array("php_phorum_extension" => 0));
+            print "<html><head><title>Phorum Extension Error</title></head><body>";
+            print "<h1>Phorum Extension Error</h1>" .
+                  "The Phorum PHP extension was loaded, but its version<br/>" .
+                  "does not match the Phorum version. Therefore, the<br/>" .
+                  "extension has now be disabled. Reload this page to continue.";
+            print "</body></html>";
+            exit(0);
+        }
+    }
+}
+
+// Setup phorum_get_url(): this function is used for generating all Phorum
+// related URL's. It is loaded conditionally, to make it possible to override
+// it from the phorum PHP extension.
+if (!function_exists('phorum_get_url')) {
+    include_once("./include/phorum_get_url.php");
+}
 
 // Defaults for missing settings (these can be needed after upgrading, in
 // case the admin did not yet save a newly added Phorum setting).
@@ -339,7 +367,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // set up the blank user if not logged in
     if ( empty( $PHORUM["user"] ) ) {
-        $PHORUM["user"] = array( "user_id" => 0, "username" => "", "admin" => false, "newinfo" => array() );
+        $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
         $PHORUM["DATA"]["LOGGEDIN"] = false;
     }
 
@@ -430,7 +458,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
         } elseif($PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
             $PHORUM["DATA"]["GLOBAL_ERROR"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
-            $PHORUM["user"] = array( "user_id" => 0, "username" => "", "admin" => false, "newinfo" => array() );
+            $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
             $PHORUM["DATA"]["LOGGEDIN"] = false;
         }
     }
@@ -485,8 +513,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     $PHORUM['DATA']['USER'] = $PHORUM['user'];
     $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"]);
-    $PHORUM['DATA']['USER']["real_name"] = htmlspecialchars($PHORUM['DATA']['USER']["real_name"]);
-    $PHORUM['DATA']['USER']["display_name"] = htmlspecialchars($PHORUM['DATA']['USER']["display_name"]);
+    if (isset($PHORUM['DATA']['USER']['real_name']))
+        $PHORUM['DATA']['USER']["real_name"] = htmlspecialchars($PHORUM['DATA']['USER']["real_name"]);
+    if (isset($PHORUM['DATA']['USER']['display_name']))
+        $PHORUM['DATA']['USER']["display_name"] = htmlspecialchars($PHORUM['DATA']['USER']["display_name"]);
     if(isset($PHORUM['DATA']['USER']["email"])) $PHORUM['DATA']['USER']["email"] = htmlspecialchars($PHORUM['DATA']['USER']["email"]);
     if(isset($PHORUM['DATA']['USER']["signature"])) $PHORUM['DATA']['USER']["signature"] = htmlspecialchars($PHORUM['DATA']['USER']["signature"]);
 
