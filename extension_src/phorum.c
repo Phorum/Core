@@ -6,6 +6,7 @@
 #include "php_phorum.h"
 
 static function_entry phorum_functions[] = {
+    PHP_FE(phorum_ext_version, NULL)
     PHP_FE(phorum_ext_treesort, NULL)
     PHP_FE(phorum_get_url,  NULL)
     {NULL, NULL, NULL}
@@ -39,5 +40,10 @@ PHP_MINFO_FUNCTION(phorum)
     php_info_print_table_row(2, "Extension version", PHP_PHORUM_VERSION);
     php_info_print_table_row(2, "Support web site", "http://www.phorum.org/");
     php_info_print_table_end();
+}
+
+PHP_FUNCTION(phorum_ext_version)
+{
+    RETURN_STRING(PHP_PHORUM_VERSION, 1);
 }
 
