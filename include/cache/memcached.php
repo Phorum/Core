@@ -45,7 +45,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
 		$getkey=$type."_".$key;
 	}
 
-    $ret=$GLOBALS['PHORUM']['memcache_obj']->get($getkey);
+    @$ret=$GLOBALS['PHORUM']['memcache_obj']->get($getkey);
 
     if(is_array($getkey)) {
         // rewriting them as we need to strip out the type :(
@@ -75,7 +75,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
  * depending of the success of the function
  */
 function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
-	$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, array($data,$version), 0, $ttl);
+	@$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, array($data,$version), 0, $ttl);
     return $ret;
 }
 
@@ -85,7 +85,7 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$versio
  */
 function phorum_cache_remove($type,$key) {
 
-    $ret=$GLOBALS['PHORUM']['memcache_obj']->delete( $type."_".$key, 0);
+    @$ret=$GLOBALS['PHORUM']['memcache_obj']->delete( $type."_".$key, 0);
 
     return $ret;
 }
@@ -100,7 +100,7 @@ function phorum_cache_purge($full = false) {
  */
 function phorum_cache_clear() {
 
-    $ret=$GLOBALS['PHORUM']['memcache_obj']->flush();
+    @$ret=$GLOBALS['PHORUM']['memcache_obj']->flush();
 
     return $ret;
 }
