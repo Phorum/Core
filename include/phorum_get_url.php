@@ -15,21 +15,6 @@ function phorum_get_url()
 
     $argv = func_get_args();
 
-    // ------------------------------------------------------------------
-    // Use the Phorum PHP extension if it is available
-    // ------------------------------------------------------------------
-
-    if (function_exists("phorum_ext_get_url")) {
-        $url = call_user_func_array("phorum_ext_get_url", $argv);
-        if ($url !== FALSE) {
-            return $url;
-        }
-    }
-
-    // ------------------------------------------------------------------
-    // PHP extension not available. Revert to the pure PHP solution.
-    // ------------------------------------------------------------------
-
     $url = "";
     $suffix = "";
     $args = "";
