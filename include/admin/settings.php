@@ -272,6 +272,7 @@ $row=$frm->addrow( "Registration Verification", $frm->select_tag( "registration_
 $row=$frm->addrow( "Enable Drop-down User List", $frm->select_tag( "enable_dropdown_userlist", array( "No", "Yes" ), $PHORUM["enable_dropdown_userlist"] ) );
 
 $row = $frm->addrow( "What to use as the display name", $frm->select_tag("display_name_source", array("username" => "User's username", "real_name" => "User's real name"), isset($PHORUM["display_name_source"]) ? $PHORUM["display_name_source"] : "username") );
+$frm->addhelp($row, "What to use as the display name", "You can choose to use either the user's username or the real name (which can be edited by the user from the control center) as the name by which the user is referenced throughout all Phorum pages.<br/><br/>This is not an option that you normally would want to chang on a live system that has been running for a while. One reason is that all stored names will have to be updated in the database (e.g. the posting authors), which can take quite a while on a big forum (it <i>will</i> work though). More impor tant is that you might confuse your users by changing the display names.");
 
 $upload_arr = array(
 
