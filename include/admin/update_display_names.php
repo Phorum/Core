@@ -52,7 +52,7 @@ if ($step == 0)
 else 
 {
     // The number of users to process in a single batch.
-    $batchsize = 500;
+    $batchsize = 100;
 
     require_once('./include/users.php');
 
@@ -113,7 +113,9 @@ else
     <div style="height:20px;width:300px; border:1px solid black">
     <div style="height:20px;width:<?php print $perc ?>%;background-color:green">
     </div></div></td><td style="padding-left:10px">
-      <?php print ($batch+1)*$batchsize . " users of $user_count updated" ?>
+      <?php 
+          $update_count = min(($batch+1)*$batchsize, $user_count);
+          print "$update_count users of $user_count updated" ?>
     </td></tr></table> <?php
 
     $redir = $PHORUM["admin_http_path"] . 
