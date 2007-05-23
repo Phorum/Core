@@ -49,8 +49,8 @@
           <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />
           <input type="hidden" name="old_sub_type[{TOPICS->thread}]" value="{TOPICS->sub_type}" />
           <select name="sub_type[{TOPICS->thread}]">
-            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
-            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
+            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
+            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
           </select>
          </td>
       </tr>
