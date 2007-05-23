@@ -111,7 +111,7 @@ $PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = phorum_get_url(PHORUM_PM_URL, "
 $PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"]);
 // unset($PHORUM["DATA"]["PROFILE"]["signature"]);
 
-$PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = phorum_get_url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0");
+$PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = phorum_get_url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");
 
 $PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
 if (isset($PHORUM["DATA"]["PROFILE"]["real_name"])) {
