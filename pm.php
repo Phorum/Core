@@ -360,12 +360,15 @@ if (!empty($action)) {
             if ($action == "rcpt_add" || $action == "preview" || $action == "post") {
 
                 // Convert adding a recipient by name to adding by user id.
+                // The user field that is being searched on is either
+                // the username or the display_name (depending on the 
+                // display name source configuration in the admin settings).
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_id = phorum_db_user_check_field('username', $to_name);
-                        if ($to_user_id) {
-                            $_POST["to_id"] = $to_user_id;
+                        $to_user_ids = phorum_db_user_check_field($PHORUM["display_name_source"], $to_name, '=', TRUE);
+                        if (count($to_user_ids) == 1) {
+                            $_POST["to_id"] = array_shift($to_user_ids);
                         } else {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
                         }
