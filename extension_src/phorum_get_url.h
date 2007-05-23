@@ -30,6 +30,7 @@ typedef struct url_handler {
 
 static HashTable url_handlers;
 static int get_url_initialized = 0;
+static int get_url_do_custom_url = -1;
 
 url_arg *format_url_arg (char *, ...);
 void     add_url_arg(url_info **, url_arg *, int);
@@ -38,6 +39,7 @@ void     destroy_url_arg(url_arg **);
 void     destroy_url(url_info **);
 
 
+void     initialize_get_url_handlers();
 void     default_url_build (void *, void *, int, zval ***);
 char    *default_url_format (void *);
 
