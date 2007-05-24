@@ -75,29 +75,29 @@ $diff_subject = phorum_diff($origmessage["subject"], $message["subject"]);
 
 
 if(!empty($diff_body) || !empty($diff_subject)) {
-	$dbmessage["meta"]["edit_count"] =	isset($message["meta"]["edit_count"])
-										? $message["meta"]["edit_count"]+1 : 1;
-	$dbmessage["meta"]["edit_date"] = time();
-	$dbmessage["meta"]["edit_username"] = $PHORUM["user"]["display_name"];
-	$dbmessage["meta"]["edit_user_id"] = $PHORUM["user"]["user_id"];
+    $dbmessage["meta"]["edit_count"] = isset($message["meta"]["edit_count"])
+                                     ? $message["meta"]["edit_count"]+1 : 1;
+    $dbmessage["meta"]["edit_date"] = time();
+    $dbmessage["meta"]["edit_username"] = $PHORUM["user"]["display_name"];
+    $dbmessage["meta"]["edit_user_id"] = $PHORUM["user"]["user_id"];
 
-	// perform diff if edit tracking is enabled
-	if(!empty($PHORUM["track_edits"])){
+    // perform diff if edit tracking is enabled
+    if(!empty($PHORUM["track_edits"])){
 
-		if(!empty($diff_body) || !empty($diff_subject)) {
+        if(!empty($diff_body) || !empty($diff_subject)) {
 
-			$edit_data = array(
-			"diff_body" => $diff_body,
-			"diff_subject" => $diff_subject,
-			"time" => $dbmessage["meta"]["edit_date"],
-			"user_id" => $PHORUM["user"]["user_id"],
-			"message_id" => $dbmessage['message_id'],
-			);
+            $edit_data = array(
+            "diff_body" => $diff_body,
+            "diff_subject" => $diff_subject,
+            "time" => $dbmessage["meta"]["edit_date"],
+            "user_id" => $PHORUM["user"]["user_id"],
+            "message_id" => $dbmessage['message_id'],
+            );
 
-			phorum_db_add_message_edit($edit_data);
+            phorum_db_add_message_edit($edit_data);
 
-		}
-	}
+        }
+    }
 
 }
 
