@@ -288,7 +288,7 @@ function phorum_db_update_settings($settings)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "DELETE FROM {$PHORUM['settings_table']}
-                 WHERE  name = '$field'" 
+                 WHERE  name = '$field'"
             );
 
             // Insert new settings record.
@@ -729,7 +729,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
     // The meta field is optional.
     if (isset($message['meta'])) {
-        $insertfields['meta'] = "'{$message['meta']}'";    
+        $insertfields['meta'] = "'{$message['meta']}'";
     }
 
     // When handling a conversion, the message_id can be set.
@@ -780,7 +780,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT DELAYED INTO {$PHORUM['search_table']}
-                    (message_id, forum_id, 
+                    (message_id, forum_id,
                      search_text)
              VALUES ({$message['message_id']}, {$message['forum_id']},
                      '$search_text')"
@@ -1239,7 +1239,7 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
  * @param $days           - The number of days to go back in the database for
  *                          searching (last [x] days) or zero to search within
  *                          all dates.
- * @param $match_forum    - The forum restriction. This can be either 
+ * @param $match_forum    - The forum restriction. This can be either
  *                          the string "ALL" to search in any of the readable
  *                          forums or a comma separated list of forum_ids.
  *
@@ -1338,8 +1338,8 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                 $search = preg_replace('/ [+\-~]*\(.+?\) /', ' ', $search);
                 $paren_terms = $m[1];
             }
-            
-            // Pull out all the double quoted strings, 
+
+            // Pull out all the double quoted strings,
             // e.g. '"iMac DV" or -"iMac DV".
             $quoted_terms = array();
             if (strstr( $search, '"')) {
@@ -1391,8 +1391,8 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                 "CREATE TEMPORARY TABLE $table_name (
                      KEY (message_id)
                  ) ENGINE=HEAP
-                   SELECT message_id 
-                   FROM   {$PHORUM['search_table']} 
+                   SELECT message_id
+                   FROM   {$PHORUM['search_table']}
                    WHERE  MATCH (search_text)
                           AGAINST ('$match_str' IN BOOLEAN MODE)"
             );
@@ -1416,8 +1416,8 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                 DB_RETURN_RES,
                 "CREATE TEMPORARY TABLE $table_name (
                      KEY (message_id)
-                 ) ENGINE=HEAP 
-                   SELECT message_id 
+                 ) ENGINE=HEAP
+                   SELECT message_id
                    FROM   {$PHORUM['search_table']}
                    WHERE  $match_str"
             );
@@ -1429,7 +1429,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     // ----------------------------------------------------------------------
     // Handle search for author.
     // ----------------------------------------------------------------------
-    
+
     if ($author !== '')
     {
         $table_name = $PHORUM['search_table']."_author_".md5(microtime());
@@ -1477,13 +1477,13 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
             foreach ($tables as $tbl) {
                 $joined_tables.= "INNER JOIN $tbl USING (message_id)";
             }
-            
+
             phorum_db_interact(
                 DB_RETURN_RES,
                 "CREATE TEMPORARY TABLE $table (
                    KEY (message_id)
-                 ) ENGINE=HEAP 
-                   SELECT message_id 
+                 ) ENGINE=HEAP
+                   SELECT message_id
                    FROM   $main_table $joined_tables"
             );
         }
@@ -1511,10 +1511,10 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         // Retrieve the found messages.
         $rows = phorum_db_interact(
             DB_RETURN_ASSOCS,
-            "SELECT SQL_CALC_FOUND_ROWS * 
+            "SELECT SQL_CALC_FOUND_ROWS *
              FROM   {$PHORUM['message_table']}
                     INNER JOIN $table USING (message_id)
-             WHERE  status=".PHORUM_STATUS_APPROVED." 
+             WHERE  status=".PHORUM_STATUS_APPROVED."
                     $forum_where
                     $datestamp_where
              ORDER  BY datestamp DESC
@@ -1974,7 +1974,7 @@ function phorum_db_add_forum($forum)
  * Add a message-edit item
  *
  * @param $edit_data     - The edit_data to add. This is an array, which should
- *                     contain the following fields: 
+ *                     contain the following fields:
  * 						diff_body, diff_subject, time, message_id, user_id
  *
  * @return $tracking_id - The tracking_id that was assigned to that edit
@@ -1983,7 +1983,7 @@ function phorum_db_add_message_edit($edit_data)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
- 
+
     foreach ($edit_data as $key => $value) {
         if (is_numeric($value)) {
             $edit_data[$key] = (int)$value;
@@ -2015,7 +2015,7 @@ function phorum_db_add_message_edit($edit_data)
 }
 
 /**
- * Retrieve a list of message-edits for a message 
+ * Retrieve a list of message-edits for a message
  *
  * @param $message_id - The message id for which to retrieve the edits.
  *
@@ -2038,13 +2038,11 @@ function phorum_db_get_message_edits($message_id)
                 diff_subject,
                 track_id
          FROM   {$PHORUM['message_tracking_table']}
-         WHERE  message_id = $message_id 
+         WHERE  message_id = $message_id
          ORDER BY track_id ASC",
         'track_id'
     );
-    
-    print_var($edits);
-    
+
     foreach ($edits as $id => $edit)
     {
         // Unpack the message meta data.
@@ -2057,7 +2055,7 @@ function phorum_db_get_message_edits($message_id)
                                ? array()
                                : unserialize($edit['diff_subject']);
 
-    }    
+    }
 
     return $edits;
 }
@@ -2209,7 +2207,7 @@ function phorum_db_update_forum($forum)
             if ($key == 'forum_path') {
                 $value = serialize($value);
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key = '$value'";                
+                $fields[] = "$key = '$value'";
             } elseif (is_numeric($value) &&
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
@@ -2264,7 +2262,7 @@ function phorum_db_get_groups($group_id=0)
     // Retrieve the group permissions from the database.
     $perms = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT * 
+        "SELECT *
          FROM {$PHORUM['forum_group_xref_table']}
          $group_where"
     );
@@ -2602,13 +2600,13 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
 
     $limit = '';
     if ($length > 0) {
-        $limit = "LIMIT $offset, $length";         
+        $limit = "LIMIT $offset, $length";
     }
-    
+
     return phorum_db_interact(
         DB_RETURN_RES,
-        "SELECT * 
-         FROM   {$PHORUM['user_table']} 
+        "SELECT *
+         FROM   {$PHORUM['user_table']}
          $limit"
     );
 }
@@ -3246,7 +3244,7 @@ function phorum_db_user_save($userdata)
  * that redundant information to match the active display_name field in
  * the user data.
  *
- * @param array $userdata 
+ * @param array $userdata
  *     A userdata array containing at least the fields "user_id" and
  *     "display_name".
  */
@@ -3302,7 +3300,7 @@ function phorum_db_user_display_name_updates($userdata)
                 special_folder != 'outbox'"
     );
     while ($row = phorum_db_fetch_row($res, DB_RETURN_ASSOC)) {
-        $meta = unserialize($row['meta']);         
+        $meta = unserialize($row['meta']);
         $meta['recipients'][$user_id]['display_name'] = $author;
         $meta = phorum_db_interact(DB_RETURN_QUOTED, serialize($meta));
         phorum_db_interact(
@@ -3711,7 +3709,7 @@ function phorum_db_file_get($file_id, $include_file_data = TRUE)
     // Select the file from the database.
     $files = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT $fields 
+        "SELECT $fields
          FROM   {$PHORUM['files_table']}
          WHERE  file_id = $file_id"
     );
@@ -4155,7 +4153,7 @@ function phorum_db_newflag_add_read($message_ids)
             "INSERT INTO {$PHORUM['user_newflags_table']}
                     (user_id, forum_id, message_id)
              VALUES ($user_id, $forum_id, $message_id)",
-            NULL, DB_DUPKEYOK 
+            NULL, DB_DUPKEYOK
         );
     }
 }
@@ -5047,7 +5045,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
     $pm_id = phorum_db_interact(
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['pm_messages_table']}
-                (user_id, author, subject, 
+                (user_id, author, subject,
                  message, datestamp, meta)
          VALUES ($from, '$fromuser', '$subject',
                  '$message', '".time()."', '$meta')"
@@ -5059,7 +5057,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['pm_xref_table']}
-                    (user_id, pm_folder_id, 
+                    (user_id, pm_folder_id,
                      special_folder, pm_message_id,
                      read_flag, reply_flag)
              VALUES ({$xref['user_id']}, {$xref['pm_folder_id']},
@@ -5535,7 +5533,7 @@ function phorum_db_rebuild_user_posts()
          SET posts = 0"
     );
 
-    // Retrieve the post counts for all user_ids in the message table. 
+    // Retrieve the post counts for all user_ids in the message table.
     $postcounts = phorum_db_interact(
         DB_RETURN_ROWS,
         "SELECT user_id, count(*)
@@ -5579,7 +5577,7 @@ function phorum_db_get_custom_field_users($field_id, $field_content, $submatch)
         DB_RETURN_ROWS,
         "SELECT user_id
          FROM   {$GLOBALS['PHORUM']['user_custom_fields_table']}
-         WHERE  type = $field_id AND 
+         WHERE  type = $field_id AND
                 data $compare '$field_content'",
         0 // keyfield 0 is the user_id
     );
@@ -5840,7 +5838,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
  *
  * @return $error - NULL on success or an error message on failure.
  *
- * TODO: it would be nice to have some feedback mechanism through a 
+ * TODO: it would be nice to have some feedback mechanism through a
  * TODO: callback, so a table by table create status can be provided
  * TODO: to the interface which is creating the tables.
  */
@@ -5884,19 +5882,19 @@ function phorum_db_create_tables()
            vroot                    int unsigned   NOT NULL default '0',
            edit_post                tinyint(1)     NOT NULL default '1',
            template_settings        text           NOT NULL default '',
-           forum_path               text           NOT NULL default '',           
+           forum_path               text           NOT NULL default '',
            count_views              tinyint(1)     NOT NULL default '0',
            display_fixed            tinyint(1)     NOT NULL default '0',
            reverse_threading        tinyint(1)     NOT NULL default '0',
            inherit_id               int unsigned       NULL default NULL,
            cache_version            int unsigned   NOT NULL default '0',
-  
+
            PRIMARY KEY (forum_id),
            KEY name (name),
            KEY active (active, parent_id),
            KEY group_id (parent_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['message_table']} (
            message_id               int unsigned   NOT NULL auto_increment,
            forum_id                 int unsigned   NOT NULL default '0',
@@ -5918,10 +5916,10 @@ function phorum_db_create_tables()
            meta                     mediumtext         NULL,
            viewcount                int unsigned   NOT NULL default '0',
            closed                   tinyint(1)     NOT NULL default '0',
-           recent_message_id        int unsigned   NOT NULL default '0',   
+           recent_message_id        int unsigned   NOT NULL default '0',
            recent_user_id           int unsigned   NOT NULL default '0',
            recent_author            varchar(255)   NOT NULL default '',
-  
+
            PRIMARY KEY (message_id),
            KEY thread_message (thread,message_id),
            KEY thread_forum (thread,forum_id),
@@ -5937,34 +5935,34 @@ function phorum_db_create_tables()
            KEY user_id (user_id),
            KEY recent_user_id (recent_user_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['settings_table']} (
            name                     varchar(255)   NOT NULL default '',
            type                     enum('V','S')  NOT NULL default 'V',
            data                     text           NOT NULL,
-  
+
            PRIMARY KEY (name)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['subscribers_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            forum_id                 int unsigned   NOT NULL default '0',
            sub_type                 tinyint(4)     NOT NULL default '0',
            thread                   int unsigned   NOT NULL default '0',
-  
+
            PRIMARY KEY (user_id,forum_id,thread),
            KEY forum_id (forum_id,thread,sub_type)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['user_permissions_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            forum_id                 int unsigned   NOT NULL default '0',
            permission               int unsigned   NOT NULL default '0',
-  
+
            PRIMARY KEY  (user_id,forum_id),
            KEY forum_id (forum_id,permission)
        ) TYPE=MyISAM",
-  
+
       // When creating extra fields, then mind to update the file
       // include/api/custom_profile_fields.php script too (it contains a
       // list of reserved names for custom profile fields).
@@ -6002,7 +6000,7 @@ function phorum_db_create_tables()
            moderator_data           text           NOT NULL default '',
            moderation_email         tinyint(1)     NOT NULL default '1',
            settings_data            mediumtext     NOT NULL default '',
-  
+
            PRIMARY KEY (user_id),
            UNIQUE KEY username (username),
            KEY active (active),
@@ -6013,41 +6011,41 @@ function phorum_db_create_tables()
            KEY date_added (date_added),
            KEY email_temp (email_temp)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['user_newflags_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            forum_id                 int unsigned   NOT NULL default '0',
            message_id               int unsigned   NOT NULL default '0',
-  
+
            PRIMARY KEY  (user_id,forum_id,message_id),
            KEY move (message_id, forum_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['groups_table']} (
            group_id                 int unsigned   NOT NULL auto_increment,
            name                     varchar(255)   NOT NULL default '0',
            open                     tinyint(1)     NOT NULL default '0',
-  
+
            PRIMARY KEY  (group_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['forum_group_xref_table']} (
            forum_id                 int unsigned   NOT NULL default '0',
            group_id                 int unsigned   NOT NULL default '0',
            permission               int unsigned   NOT NULL default '0',
-  
+
            PRIMARY KEY  (forum_id,group_id),
            KEY group_id (group_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['user_group_xref_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            group_id                 int unsigned   NOT NULL default '0',
            status                   tinyint(4)     NOT NULL default '1',
-  
+
            PRIMARY KEY  (user_id,group_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['files_table']} (
            file_id                  int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
@@ -6057,41 +6055,41 @@ function phorum_db_create_tables()
            add_datetime             int unsigned   NOT NULL default '0',
            message_id               int unsigned   NOT NULL default '0',
            link                     varchar(10)    NOT NULL default '',
-  
+
            PRIMARY KEY (file_id),
            KEY add_datetime (add_datetime),
            KEY message_id_link (message_id,link)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['banlist_table']} (
            id                       int unsigned   NOT NULL auto_increment,
            forum_id                 int unsigned   NOT NULL default '0',
            type                     tinyint(4)     NOT NULL default '0',
            pcre                     tinyint(1)     NOT NULL default '0',
            string                   varchar(255)   NOT NULL default '',
-  
+
            PRIMARY KEY (id),
            KEY forum_id (forum_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['search_table']} (
            message_id               int unsigned   NOT NULL default '0',
            forum_id                 int unsigned   NOT NULL default '0',
            search_text              mediumtext     NOT NULL default '',
-  
+
            PRIMARY KEY (message_id),
            KEY forum_id (forum_id),
            FULLTEXT KEY search_text (search_text)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['user_custom_fields_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            type                     int unsigned   NOT NULL default '0',
            data                     text           NOT NULL default '',
-  
+
            PRIMARY KEY (user_id, type)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['pm_messages_table']} (
            pm_message_id            int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
@@ -6100,18 +6098,18 @@ function phorum_db_create_tables()
            message                  text           NOT NULL default '',
            datestamp                int unsigned   NOT NULL default '0',
            meta                     mediumtext     NOT NULL default '',
-  
+
            PRIMARY KEY (pm_message_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['pm_folders_table']} (
            pm_folder_id             int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
            foldername               varchar(20)    NOT NULL default '',
-  
+
            PRIMARY KEY (pm_folder_id)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['pm_xref_table']} (
            pm_xref_id               int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
@@ -6120,22 +6118,22 @@ function phorum_db_create_tables()
            pm_message_id            int unsigned   NOT NULL default '0',
            read_flag                tinyint(1)     NOT NULL default '0',
            reply_flag               tinyint(1)     NOT NULL default '0',
-  
+
            PRIMARY KEY (pm_xref_id),
            KEY xref (user_id,pm_folder_id,pm_message_id),
            KEY read_flag (read_flag)
        ) TYPE=MyISAM",
-  
+
       "CREATE TABLE {$PHORUM['pm_buddies_table']} (
            pm_buddy_id              int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
            buddy_user_id            int unsigned   NOT NULL default '0',
-  
+
            PRIMARY KEY pm_buddy_id (pm_buddy_id),
            UNIQUE KEY userids (user_id, buddy_user_id),
            KEY buddy_user_id (buddy_user_id)
        ) TYPE=MyISAM",
-      
+
        "CREATE TABLE {$PHORUM['message_tracking_table']} (
 			track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 			message_id INT UNSIGNED NOT NULL ,
@@ -6143,7 +6141,7 @@ function phorum_db_create_tables()
 			time INT UNSIGNED NOT NULL ,
 			diff_body TEXT NULL ,
 			diff_subject TEXT NULL ,
-			
+
 			PRIMARY KEY track_id (track_id),
 			KEY message_id ( message_id )
 	   ) TYPE = MYISAM"
@@ -6152,7 +6150,7 @@ function phorum_db_create_tables()
     foreach ($create_table_queries as $sql) {
         $error = phorum_db_interact(DB_RETURN_ERROR, $sql);
         if ($error !== NULL) {
-            return $error; 
+            return $error;
         }
     }
 
