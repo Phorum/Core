@@ -65,7 +65,7 @@ initialize_get_url_handlers()
     register_url_handler(
      "PHORUM_CONTROLCENTER_URL",     &basic_url, "control",    FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_CONTROLCENTER_ACTION_URL", &basic_url, "control", NO_FORUM_ID, GET_VARS);
+     "PHORUM_CONTROLCENTER_ACTION_URL", &basic_url, "control", FORUM_ID,    GET_VARS);
     register_url_handler(
      "PHORUM_PM_URL",                &basic_url, "pm",         FORUM_ID,    GET_VARS);
     register_url_handler(
