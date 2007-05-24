@@ -67,7 +67,7 @@ $PHORUM['pm_messages_table']        = $prefix . '_pm_messages';
 $PHORUM['pm_folders_table']         = $prefix . '_pm_folders';
 $PHORUM['pm_xref_table']            = $prefix . '_pm_xref';
 $PHORUM['pm_buddies_table']         = $prefix . '_pm_buddies';
-$PHORUM['message_tracking_table']	= $prefix . '_messages_edittrack';
+$PHORUM['message_tracking_table']   = $prefix . '_messages_edittrack';
 
 /**
  * Message fields which are always strings, even if they contain numbers only.
@@ -1973,11 +1973,11 @@ function phorum_db_add_forum($forum)
 /**
  * Add a message-edit item
  *
- * @param $edit_data     - The edit_data to add. This is an array, which should
- *                     contain the following fields:
- * 						diff_body, diff_subject, time, message_id, user_id
+ * @param $edit_data     - The edit_data to add. This is an array, which 
+ *                         should contain the following fields:
+ *                         diff_body, diff_subject, time, message_id, user_id
  *
- * @return $tracking_id - The tracking_id that was assigned to that edit
+ * @return $tracking_id  - The tracking_id that was assigned to that edit
  */
 function phorum_db_add_message_edit($edit_data)
 {
@@ -2039,7 +2039,7 @@ function phorum_db_get_message_edits($message_id)
                 track_id
          FROM   {$PHORUM['message_tracking_table']}
          WHERE  message_id = $message_id
-         ORDER BY track_id ASC",
+         ORDER  BY track_id ASC",
         'track_id'
     );
 
@@ -6134,17 +6134,17 @@ function phorum_db_create_tables()
            KEY buddy_user_id (buddy_user_id)
        ) TYPE=MyISAM",
 
-       "CREATE TABLE {$PHORUM['message_tracking_table']} (
-			track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			message_id INT UNSIGNED NOT NULL ,
-			user_id INT UNSIGNED NOT NULL ,
-			time INT UNSIGNED NOT NULL ,
-			diff_body TEXT NULL ,
-			diff_subject TEXT NULL ,
+      "CREATE TABLE {$PHORUM['message_tracking_table']} (
+           track_id                 int unsigned   NOT NULL auto_increment,
+           message_id               int unsigned   NOT NULL default '0',
+           user_id                  int unsigned   NOT NULL default '0',
+           time                     int unsigned   NOT NULL default '0',
+           diff_body                text               NULL ,
+           diff_subject             text               NULL ,
 
-			PRIMARY KEY track_id (track_id),
-			KEY message_id ( message_id )
-	   ) TYPE = MYISAM"
+           PRIMARY KEY track_id (track_id),
+           KEY message_id (message_id)
+       ) TYPE = MYISAM"
     );
 
     foreach ($create_table_queries as $sql) {
