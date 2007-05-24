@@ -68,25 +68,37 @@ if ( $message["parent_id"]==0 ) {
 // Update the editing info in the meta data.
 $dbmessage["meta"]["show_signature"] = $message["show_signature"];
 
-$dbmessage["meta"]["edit_count"] =
-    isset($message["meta"]["edit_count"])
-    ? $message["meta"]["edit_count"]+1 : 1;
-$dbmessage["meta"]["edit_date"] = time();
-$dbmessage["meta"]["edit_username"] = $PHORUM["user"]["username"];
-$dbmessage["meta"]["edit_user_id"] = $PHORUM["user"]["user_id"];
+// we are doing the diffs here to know about changes for edit-counts
+// $origmessage loaded in check_permissions
+$diff_body    = phorum_diff( $origmessage["body"], $message["body"]);
+$diff_subject = phorum_diff($origmessage["subject"], $message["subject"]);
 
-// perform diff if edit tracking is enabled
-if(!empty($PHORUM["track_edits"])){
-    // $origmessage loaded in check_permissions
-    $diff = phorum_diff($origmessage["body"], $message["body"]);
-    if(!empty($diff)){
-        $dbmessage["meta"]["edit_track"][] = array(
-            "diff" => $diff,
-            "time" => $dbmessage["meta"]["edit_date"],
-            "username" => $PHORUM["user"]["username"],
-            "user_id" => $PHORUM["user"]["user_id"]
-        );
-    }
+
+if(!empty($diff_body) || !empty($diff_subject)) {
+	$dbmessage["meta"]["edit_count"] =	isset($message["meta"]["edit_count"])
+										? $message["meta"]["edit_count"]+1 : 1;
+	$dbmessage["meta"]["edit_date"] = time();
+	$dbmessage["meta"]["edit_username"] = $PHORUM["user"]["display_name"];
+	$dbmessage["meta"]["edit_user_id"] = $PHORUM["user"]["user_id"];
+
+	// perform diff if edit tracking is enabled
+	if(!empty($PHORUM["track_edits"])){
+
+		if(!empty($diff_body) || !empty($diff_subject)) {
+
+			$edit_data = array(
+			"diff_body" => $diff_body,
+			"diff_subject" => $diff_subject,
+			"time" => $dbmessage["meta"]["edit_date"],
+			"user_id" => $PHORUM["user"]["user_id"],
+			"message_id" => $dbmessage['message_id'],
+			);
+
+			phorum_db_add_message_edit($edit_data);
+
+		}
+	}
+
 }
 
 

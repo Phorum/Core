@@ -67,6 +67,7 @@ $PHORUM['pm_messages_table']        = $prefix . '_pm_messages';
 $PHORUM['pm_folders_table']         = $prefix . '_pm_folders';
 $PHORUM['pm_xref_table']            = $prefix . '_pm_xref';
 $PHORUM['pm_buddies_table']         = $prefix . '_pm_buddies';
+$PHORUM['message_tracking_table']	= $prefix . '_messages_edittrack';
 
 /**
  * Message fields which are always strings, even if they contain numbers only.
@@ -1965,6 +1966,100 @@ function phorum_db_add_forum($forum)
     );
 
     return $forum_id;
+}
+
+
+
+/**
+ * Add a message-edit item
+ *
+ * @param $edit_data     - The edit_data to add. This is an array, which should
+ *                     contain the following fields: 
+ * 						diff_body, diff_subject, time, message_id, user_id
+ *
+ * @return $tracking_id - The tracking_id that was assigned to that edit
+ */
+function phorum_db_add_message_edit($edit_data)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+ 
+    foreach ($edit_data as $key => $value) {
+        if (is_numeric($value)) {
+            $edit_data[$key] = (int)$value;
+        } elseif (is_array($value)) {
+            $value = serialize($value);
+            $edit_data[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value);
+        } else {
+            $edit_data[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value);
+        }
+    }
+
+    $insertfields = array(
+        'message_id'     => $edit_data['message_id'],
+        'user_id'        => $edit_data['user_id'],
+        'time'           => $edit_data['time'],
+        'diff_body'      => "'" . $edit_data['diff_body'] . "'",
+        'diff_subject'   => "'" . $edit_data['diff_subject'] . "'",
+    );
+
+    // Insert the tracking-entry and get the new tracking_id.
+    $tracking_id = phorum_db_interact(
+        DB_RETURN_NEWID,
+        "INSERT INTO {$PHORUM['message_tracking_table']}
+                (".implode(', ', array_keys($insertfields)).")
+         VALUES (".implode(', ', $insertfields).")"
+    );
+
+    return $tracking_id;
+}
+
+/**
+ * Retrieve a list of message-edits for a message 
+ *
+ * @param $message_id - The message id for which to retrieve the edits.
+ *
+ * @return $edits     - An array of message edits, indexed by track_id.
+ *                      The array elements are arrays containing the fields:
+ *                      user_id, time, diff_body and diff_subject.
+ */
+function phorum_db_get_message_edits($message_id)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    settype($message_id, 'int');
+
+    // Select the message files from the database.
+    $edits = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT user_id,
+                time,
+                diff_body,
+                diff_subject,
+                track_id
+         FROM   {$PHORUM['message_tracking_table']}
+         WHERE  message_id = $message_id 
+         ORDER BY track_id ASC",
+        'track_id'
+    );
+    
+    print_var($edits);
+    
+    foreach ($edits as $id => $edit)
+    {
+        // Unpack the message meta data.
+        $edits[$id]['diff_body'] = empty($edit['diff_body'])
+                               ? array()
+                               : unserialize($edit['diff_body']);
+
+        // Unpack the message meta data.
+        $edits[$id]['diff_subject'] = empty($edit['diff_subject'])
+                               ? array()
+                               : unserialize($edit['diff_subject']);
+
+    }    
+
+    return $edits;
 }
 
 /**
@@ -6040,6 +6135,18 @@ function phorum_db_create_tables()
            UNIQUE KEY userids (user_id, buddy_user_id),
            KEY buddy_user_id (buddy_user_id)
        ) TYPE=MyISAM",
+      
+       "CREATE TABLE {$PHORUM['message_tracking_table']} (
+			track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			message_id INT UNSIGNED NOT NULL ,
+			user_id INT UNSIGNED NOT NULL ,
+			time INT UNSIGNED NOT NULL ,
+			diff_body TEXT NULL ,
+			diff_subject TEXT NULL ,
+			
+			PRIMARY KEY track_id (track_id),
+			KEY message_id ( message_id )
+	   ) TYPE = MYISAM"
     );
 
     foreach ($create_table_queries as $sql) {

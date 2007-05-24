@@ -64,6 +64,10 @@ if(!defined("PHORUM")) return;
 function phorum_diff($a, $b, $min=3, $i=0) {
     $diff = array();
     if($a == "" && $b == "") return $diff;
+
+	$a=str_replace(array("\r\n", "\r"), "\n", $a);
+	$b=str_replace(array("\r\n", "\r"), "\n", $b);
+
     if($a == "") {
         array_push($diff, "$i+".$b);
         return $diff;
@@ -199,6 +203,9 @@ function phorum_patch($text, $diff) {
 * return: Unpatched string
 */
 function phorum_unpatch($text, $diff) {
+
+	$text=str_replace(array("\r\n", "\r"), "\n", $text);
+
     if(!is_array($diff)) {
         $n = 0;
         for($i=0; $i<strlen($diff); $i++) {
@@ -230,6 +237,9 @@ function phorum_unpatch($text, $diff) {
 * return: Unpatched string
 */
 function phorum_unpatch_color($text, $diff) {
+
+    $text=str_replace(array("\r\n", "\r"), "\n", $text);
+
     if(!is_array($diff)) {
         $n = 0;
         for($i=0; $i<strlen($diff); $i++) {

@@ -10,7 +10,6 @@
     <div class="message">
 
         <div class="generic">
-
             {IF CHANGES->original}
                 <h4>{LANG->OriginalMessage}</h4>
                 {LANG->Author}: {CHANGES->username}<br />
@@ -19,8 +18,17 @@
                 {LANG->ChangeBy}: {CHANGES->username}<br />
                 {LANG->ChangeDate}: {CHANGES->date}<br />
             {/IF}
-        </div>
+            
+        <strong>
+            <br />{CHANGES->colored_subject}<br />
+        </strong> 
+        
 
+            
+            
+        </div>
+       
+        
         <div class="message-body">
             {CHANGES->colored_body}
         </div>

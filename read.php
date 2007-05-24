@@ -546,7 +546,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
                 $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
                 $row["body"].="\n\n\n\n$editmessage";
-                if(isset($row["meta"]["edit_track"]) && count($row["meta"]["edit_track"]) && ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_ON || ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_MODERATOR && $PHORUM["DATA"]["MODERATOR"] ) ) ) {
+                if($row['meta']['edit_count'] > 0 && ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_ON || ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_MODERATOR && $PHORUM["DATA"]["MODERATOR"] ) ) ) {
                     $row["URL"]["CHANGES"] = phorum_get_url(PHORUM_CHANGES_URL, $row["message_id"]);
                 }
             }
