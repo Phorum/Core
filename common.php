@@ -556,6 +556,7 @@ function phorum_get_url()
             break;
         case PHORUM_CONTROLCENTER_ACTION_URL:
             $page = "control";
+            $add_forum_id = true;
             break;
         case PHORUM_PM_URL:
             $page = "pm";
