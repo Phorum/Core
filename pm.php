@@ -366,8 +366,11 @@ if (!empty($action)) {
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_ids = phorum_db_user_check_field($PHORUM["display_name_source"], $to_name, '=', TRUE);
-                        if (count($to_user_ids) == 1) {
+                        $to_user_ids = phorum_db_user_check_field(
+                            $PHORUM["display_name_source"],
+                            $to_name, '=', TRUE
+                        );
+                        if (is_array($to_user_ids) && count($to_user_ids)==1) {
                             $_POST["to_id"] = array_shift($to_user_ids);
                         } else {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
