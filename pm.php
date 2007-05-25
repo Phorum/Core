@@ -443,7 +443,7 @@ if (!empty($action)) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMFromMailboxFull"];
                                     } else {
                                         $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
-                                        $error = str_replace('%recipient%', htmlspecialchars($user["username"]), $error);
+                                        $error = str_replace('%recipient%', htmlspecialchars($user["display_name"]), $error);
                                     }
                                 }
                             }
