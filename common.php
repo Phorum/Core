@@ -643,11 +643,9 @@ function phorum_get_template_file( $page )
 /**
  * Wrapper function to handle most common output scenarios
  *
- * @param   array/string    $template    If string, that template is included
- *                                       If array, all the templates are included
- *                                          in the order of the array
- * @return  none
- *
+ * @param   mixed    $template    If string, that template is included
+ *                                If array, all the templates are included
+ *                                in the order of the array
  */
 function phorum_output($templates) {
 
