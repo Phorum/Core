@@ -1,6 +1,8 @@
 <?php
 if(!defined("PHORUM_ADMIN")) return;
 
+$upgrade_queries[] = "alter table {$PHORUM['message_table']} drop key dup_check";
+$upgrade_queries[] = "alter table {$PHORUM['message_table']} add KEY `dup_check` (`forum_id`, author(50), `subject`,`datestamp`)";
 $upgrade_queries[] =
     "ALTER TABLE {$PHORUM['message_table']}
      CHANGE COLUMN author author varchar(255) NOT NULL default '',
