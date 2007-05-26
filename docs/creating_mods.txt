@@ -226,11 +226,11 @@ Table of contents:
    |          		  | this module. Modules with a requirement above the current |
    |          		  | phorum version are automatically disabled when going to   |
    |          		  | the modules page.										  |
-   |         		  |                                                           |   
+   |         		  |                                                           |
    |         		  | Example:                                                  |`
-   |         		  |                                                           |   
+   |         		  |                                                           |
    |         		  | required_version: 5.2.0                                   |
-   |				  | This will require to be the phorum version at least 5.2.0 |      
+   |				  | This will require to be the phorum version at least 5.2.0 |
    +------------------+-----------------------------------------------------------+
 
    It is allowed to use multiple hook lines in your module information,
@@ -247,7 +247,7 @@ Table of contents:
       hook: some_other_hook|phorum_mod_foo_some_other_hook
       hook: yet_another_hook|phorum_mod_foo_some_other_hook
       priority: run some_hook before some_other_module
-      required_version: 5.2.0      
+      required_version: 5.2.0
 
    So what this module info for example does, is telling Phorum that
    when it gets to "some_other_hook", it will have to call the function
@@ -1011,10 +1011,10 @@ Table of contents:
 
    ----------------------------------------------------------------------------
    after_approve
-   
+
    Where  : moderation.php
    When   : Just after approving a message and possibly its replies.
-   Input  : An array containing two elements: the message data and the 
+   Input  : An array containing two elements: the message data and the
             type of approval (either PHORUM_APPROVE_MESSAGE or
             PHORUM_APPROVE_MESSAGE_TREE).
    Return : Same as Input.
@@ -1124,17 +1124,17 @@ Table of contents:
    Where  : moderation.php
    When   : Just before deleting the message(s)
    Input  : an array containing the following 5 parameters
-            $delete_handled  default = false, set it to true to avoid the 
+            $delete_handled  default = false, set it to true to avoid the
                              real delete afterwards
             $msg_ids         array containing all deleted message ids
             $msgthd_id       msg- or thread-id to be deleted
             $message         array of the message retrieved with msgthd_id
-            $delete_mode     mode of deletion, either 
+            $delete_mode     mode of deletion, either
                              PHORUM_DELETE_MESSAGE or PHORUM_DELETE_TREE
    Return : Same as Input; $delete_handled and $msg_ids are used as return
-            data for the hook. 
+            data for the hook.
 
-   The primary use of this hook would be for moving the messages to some 
+   The primary use of this hook would be for moving the messages to some
    archive-area instead of really deleting them.
 
    ----------------------------------------------------------------------------
@@ -1867,7 +1867,7 @@ Table of contents:
 
    This hook can be used for using another search application / layer instead
    of the buildin one.
-   
+
    ----------------------------------------------------------------------------
    search_start
 
@@ -1876,7 +1876,7 @@ Table of contents:
    Input  : Array of input variables
    Return : Same as Input
 
-   This hook can be used for modifying the input variables, e.g. for modifying the 
+   This hook can be used for modifying the input variables, e.g. for modifying the
    default values
 
 
@@ -1897,6 +1897,17 @@ Table of contents:
    system (e.g. like the SMTP module does). The hook should return true if
    Phorum should still send the mails himself. If you do not want to have
    Phorum send the mails also, return false.
+
+   ----------------------------------------------------------------------------
+   shutdown
+
+   Where  : include/common.php
+   When   : The very last thing that happens in any Phorum page
+   Input  : none
+   Return : none
+
+   This hook can be used to do clean up like saving data or logging.  Output
+   is highly discouraged here as this will happen all templates are included.
 
    ----------------------------------------------------------------------------
    user_check_login

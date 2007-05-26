@@ -157,7 +157,7 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
 // Backward compatbility: the "mysqli" layer was merged with the "mysql"
 // layer, but people might still be using "mysqli" as their configured
 // database type.
-if ($PHORUM["DBCONFIG"]["type"] == "mysqli" && 
+if ($PHORUM["DBCONFIG"]["type"] == "mysqli" &&
     !file_exists("./include/db/mysqli.php")) {
     $PHORUM["DBCONFIG"]["type"] = "mysql";
 }
@@ -527,6 +527,16 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
 //////////////////////////////////////////////////////////
 // functions
+
+
+/**
+ * Shutdown function
+ */
+function phorum_shutdown() {
+    if (isset($PHORUM["hooks"]["shutdown"]))
+        phorum_hook( "shutdown" );
+}
+register_shutdown_function("phorum_shutdown");
 
 /**
  * A common function to check that a user is logged in
