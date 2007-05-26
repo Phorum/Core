@@ -133,14 +133,8 @@ foreach( $folders as $folder_key=>$folder_id ) {
 phorum_build_common_urls();
 
 if(!count($PHORUM["DATA"]["FORUMS"])){
-    include phorum_get_template( "header" );
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["NoForums"];
-    include phorum_get_template( "message" );
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template( "footer" );
+    phorum_output("message");
     return;
 }
 
@@ -152,12 +146,6 @@ if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
 if (isset($PHORUM["hooks"]["index"]))
     $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
 
-include phorum_get_template( "header" );
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-include phorum_get_template( "index_new" );
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template( "footer" );
+phorum_output("index_new");
 
 ?>

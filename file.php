@@ -46,9 +46,7 @@ if ($file === FALSE)
 
     phorum_build_common_urls();
 
-    include phorum_get_template("header");
-    include phorum_get_template("message");
-    include phorum_get_template("footer");
+    phorum_output("message");
     exit();
 }
 

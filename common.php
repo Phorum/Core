@@ -449,11 +449,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             phorum_build_common_urls();
 
             $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-            include phorum_get_template("header");
-            phorum_hook("after_header");
-            include phorum_get_template("message");
-            phorum_hook("before_footer");
-            include phorum_get_template("footer");
+            phorum_output("message");
             exit();
 
         } elseif($PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
@@ -577,11 +573,7 @@ function phorum_check_read_common()
 
         phorum_build_common_urls();
 
-        include phorum_get_template( "header" );
-        phorum_hook("after_header");
-        include phorum_get_template( "message" );
-        phorum_hook( "before_footer" );
-        include phorum_get_template( "footer" );
+        phorum_output("message");
 
         $retval = false;
     }
@@ -646,6 +638,42 @@ function phorum_get_template_file( $page )
 
         return array($phpfile, $tplfile);
     }
+}
+
+/**
+ * Wrapper function to handle most common output scenarios
+ *
+ * @param   array/string    $template    If string, that template is included
+ *                                       If array, all the templates are included
+ *                                          in the order of the array
+ * @return  none
+ *
+ */
+function phorum_output($templates) {
+
+    // copy only what we need into the current scope
+    $PHORUM = array("DATA" => $GLOBALS["PHORUM"]["DATA"]);
+
+    if(!is_array($templates)){
+        $templates = array($templates);
+    }
+
+    if (isset($PHORUM["hooks"]["start_output"]))
+        phorum_hook("start_output");
+
+    include phorum_get_template("header");
+
+    if (isset($PHORUM["hooks"]["after_header"]))
+        phorum_hook("after_header");
+
+    foreach($templates as $template){
+        include phorum_get_template($template);
+    }
+
+    if (isset($PHORUM["hooks"]["before_footer"]))
+        phorum_hook("before_footer");
+
+    include phorum_get_template("footer");
 }
 
 /**

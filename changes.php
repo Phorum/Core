@@ -86,7 +86,7 @@ foreach($diffs as $diff_info){
         $this_version["original"] = true;
     } else {
 
-    	$edit_user = phorum_user_get($diff_info['user_id']);
+        $edit_user = phorum_user_get($diff_info['user_id']);
 
         $this_version["username"] = htmlspecialchars($edit_user["display_name"]);
         $this_version["user_id"] = $diff_info["user_id"];
@@ -96,7 +96,7 @@ foreach($diffs as $diff_info){
 
     // only happens in first loop
     if($prev_body == -1) {
-    	$prev_body = $message["body"];
+        $prev_body = $message["body"];
     }
 
     // body diffs
@@ -115,34 +115,34 @@ foreach($diffs as $diff_info){
 
     } elseif(!isset($diff_info['diff_body'])) {
 
-    	$this_version['colored_body'] = nl2br($prev_body);
+        $this_version['colored_body'] = nl2br($prev_body);
 
     } else {
-    	$this_version["colored_body"] = nl2br($prev_body);
+        $this_version["colored_body"] = nl2br($prev_body);
     }
 
     //print "DEBUG<br />".$this_version["colored_body"]."<br />---<br />$prev_body<br />\n";
     // subject diffs
     /*if(!empty($prev_diff_subject)){
-    	$colored_subject = phorum_unpatch_color($prev_subject, $prev_diff_subject);
-    	$colored_subject = htmlspecialchars($colored_subject);
-    	$colored_subject = str_replace(
-    	array("[phorum addition]", "[phorum removal]", "[/phorum addition]", "[/phorum removal]"),
-    	array("<span class=\"addition\">", "<span class=\"removal\">", "</span>", "</span>"),
-    	$colored_subject);
-    	$colored_subject = nl2br($colored_subject);
+        $colored_subject = phorum_unpatch_color($prev_subject, $prev_diff_subject);
+        $colored_subject = htmlspecialchars($colored_subject);
+        $colored_subject = str_replace(
+        array("[phorum addition]", "[phorum removal]", "[/phorum addition]", "[/phorum removal]"),
+        array("<span class=\"addition\">", "<span class=\"removal\">", "</span>", "</span>"),
+        $colored_subject);
+        $colored_subject = nl2br($colored_subject);
 
-    	$message_hist[count($message_hist)-1]["colored_subject"] = $colored_subject;
-    	$prev_subject = phorum_unpatch($prev_subject, $prev_diff_subject);
-    	$this_version["colored_subject"] = $prev_subject;
+        $message_hist[count($message_hist)-1]["colored_subject"] = $colored_subject;
+        $prev_subject = phorum_unpatch($prev_subject, $prev_diff_subject);
+        $this_version["colored_subject"] = $prev_subject;
     } else {
-    	$prev_subject = $message["subject"];
-    	$this_version["colored_subject"] = $message["subject"];
+        $prev_subject = $message["subject"];
+        $this_version["colored_subject"] = $message["subject"];
     }*/
 
     // only happens in first loop
     if($prev_subject == -1) {
-    	$prev_subject = $message["subject"];
+        $prev_subject = $message["subject"];
     }
 
     // subject diffs
@@ -161,14 +161,14 @@ foreach($diffs as $diff_info){
 
     } elseif(!isset($diff_info['diff_subject'])) {
 
-    	$this_version['colored_subject'] = nl2br($prev_subject);
+        $this_version['colored_subject'] = nl2br($prev_subject);
 
     } else {
-    	$this_version["colored_subject"] = nl2br($prev_subject);
+        $this_version["colored_subject"] = nl2br($prev_subject);
     }
 
     // no nl2br for subject
-	//$this_version["colored_subject"] = nl2br($this_version["colored_subject"]);
+    //$this_version["colored_subject"] = nl2br($this_version["colored_subject"]);
 
     $message_hist[] = $this_version;
 
@@ -183,11 +183,7 @@ $PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $mes
 
 $PHORUM["DATA"]["CHANGES"] = $message_hist;
 
-include phorum_get_template("header");
-phorum_hook("after_header");
-include phorum_get_template("changes");
-phorum_hook("before_footer");
-include phorum_get_template("footer");
+phorum_output("changes");
 
 
 ?>

@@ -92,13 +92,7 @@ if(!$forums_shown){
     unset($PHORUM["DATA"]["URL"]["TOP"]);
     $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoForums"];
 
-    include phorum_get_template( "header" );
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook( "after_header" );
-    include phorum_get_template( "message" );
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook( "before_footer" );
-    include phorum_get_template( "footer" );
+    phorum_output("message");
 
 } else {
 
@@ -113,13 +107,7 @@ if(!$forums_shown){
         unset($PHORUM["DATA"]["URL"]["INDEX"]);
     }
 
-    include phorum_get_template( "header" );
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-    include phorum_get_template( "index_classic" );
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template( "footer" );
+    phorum_output("index_classic");
 }
 
 ?>

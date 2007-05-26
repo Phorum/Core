@@ -48,7 +48,7 @@ if(empty($thread)) {
 $message=phorum_db_get_message($thread);
 
 # We stepped away from using "remove" as the URL parameter to stop
-# following a certain thread, because it got blacklisted by several 
+# following a certain thread, because it got blacklisted by several
 # spam filtering programs. We'll still handle the remove parameter
 # though, to keep supporting the URLs that are in the messages
 # that were sent out before this change.
@@ -88,13 +88,7 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 // set all our common URL's
 phorum_build_common_urls();
 
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-include phorum_get_template($template);
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+phorum_output($template);
 
 
 ?>

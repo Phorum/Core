@@ -1,3 +1,6 @@
+{IF REPLY_ON_READ}
+<a name="REPLY"></a>
+{/IF}
 
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}

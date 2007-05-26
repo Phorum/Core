@@ -47,8 +47,8 @@ if (isset($PHORUM["args"]["approve"])) {
              $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
         // The user should still be approved by a moderator.
         } elseif ($user["active"] == PHORUM_USER_PENDING_MOD) {
-        	// TODO: this message should be changed in 5.1 to have a unique message!!!
-        	$PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+            // TODO: this message should be changed in 5.1 to have a unique message!!!
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
         // The user is waiting for email and/or email+moderator confirmation.
         } else {
             // Waiting for both? Then switch to wait for moderator.
@@ -71,13 +71,7 @@ if (isset($PHORUM["args"]["approve"])) {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
     }
 
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-    include phorum_get_template("message");
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    phorum_output("message");
     return;
 
 }
@@ -212,13 +206,7 @@ if (count($_POST)) {
             if (isset($PHORUM["hooks"]["after_register"]))
                 phorum_hook("after_register",$userdata);
 
-            include phorum_get_template("header");
-            if (isset($PHORUM["hooks"]["after_header"]))
-                phorum_hook("after_header");
-            include phorum_get_template("message");
-            if (isset($PHORUM["hooks"]["before_footer"]))
-                phorum_hook("before_footer");
-            include phorum_get_template("footer");
+            phorum_output("message");
             return;
 
         // Adding the user to the database failed.
@@ -256,12 +244,6 @@ $PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
 $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
 
 // Display the registration page.
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-include phorum_get_template("register");
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+phorum_output("register");
 
 ?>

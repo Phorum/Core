@@ -48,13 +48,7 @@ if(!is_array($user) || $user["active"]==0) {
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
     // have to include the header here for the Redirect
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-    include phorum_get_template("message");
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    phorum_output("message");
     return;
 }
 
@@ -129,12 +123,6 @@ $PHORUM["DATA"]["DESCRIPTION"] = "";
 // set all our URL's
 phorum_build_common_urls();
 
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-include phorum_get_template("profile");
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+phorum_output("profile");
 
 ?>

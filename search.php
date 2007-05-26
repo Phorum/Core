@@ -30,7 +30,7 @@ include_once("./include/format_functions.php");
 phorum_build_common_urls();
 
 // A pointer for the portable code that the search page is used.
-$PHORUM["DATA"]["POST_VARS"] = 
+$PHORUM["DATA"]["POST_VARS"] =
     '<input type="hidden" name="phorum_page" value="search">';
 
 $PHORUM["DATA"]["SEARCH"]["noresults"] = false;
@@ -93,13 +93,7 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
         $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToSearch"];
         $PHORUM["DATA"]["URL"]["REDIRECT"]=$search_url;
         $PHORUM["DATA"]["REDIRECT_TIME"]=1;
-        include phorum_get_template("header");
-        if (isset($PHORUM["hooks"]["after_header"]))
-            phorum_hook("after_header");
-        include phorum_get_template("message");
-        if (isset($PHORUM["hooks"]["before_footer"]))
-            phorum_hook("before_footer");
-        include phorum_get_template("footer");
+        phorum_output("message");
         return;
     }
 }
@@ -279,7 +273,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 } else {
     // Set cursor focus to message search entry.
     $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
-    
+
     if (isset($PHORUM["hooks"]["search_start"]))
         $PHORUM['args'] = phorum_hook('search_start',$PHORUM['args']);
 }
@@ -321,12 +315,6 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     $PHORUM["DATA"]["DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["SearchHelp"];
 }
 
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-include phorum_get_template("search");
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+phorum_output("search");
 
 ?>

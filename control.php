@@ -156,18 +156,14 @@ if (isset($template) && !empty($template)) {
 if (isset($error) && !empty($error)) $PHORUM['DATA']['ERROR'] = $error;
 if (isset($okmsg) && !empty($okmsg)) $PHORUM['DATA']['OKMSG'] = $okmsg;
 
-// Display the control panel page.
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
 if ($error_msg) { // Possibly set from the panel include file.
-    include phorum_get_template("message");
+    $template = "message";
 } else {
-    include phorum_get_template("cc_index");
+    $template = "cc_index";
 }
-if (isset($PHORUM["hooks"]["before_footer"])) 
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+
+// Display the control panel page.
+phorum_output($template);
 
 // ============================================================================
 

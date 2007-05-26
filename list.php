@@ -435,7 +435,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
 if (isset($PHORUM["hooks"]["list"]))
     $rows = phorum_hook("list", $rows);
 
-// if we retrieve the body too we need to setup some more variables for 
+// if we retrieve the body too we need to setup some more variables for
 // the messages to make it a little more similar to the view in read.php
 if ($bodies_in_list)
 {
@@ -515,20 +515,14 @@ if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && 
     }
 }
 
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-
 // include the correct template
 if ($PHORUM["threaded_list"]){
-    include phorum_get_template("list_threads");
+    $template = "list_threads";
 }else{
-    include phorum_get_template("list");
+    $template = "list";
 }
 
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+phorum_output($template);
 
 //timing_mark('end');
 //timing_print();

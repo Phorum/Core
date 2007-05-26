@@ -63,17 +63,7 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
     phorum_build_common_urls();
     $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
     // Only show header and footer when not included in another page.
-    if (phorum_page == "post") {
-        include phorum_get_template("header");
-        if (isset($PHORUM["hooks"]["after_header"]))
-            phorum_hook("after_header");
-    }
-    include phorum_get_template("message");
-    if (phorum_page == "post") {
-        if (isset($PHORUM["hooks"]["before_footer"]))
-            phorum_hook("before_footer");
-        include phorum_get_template("footer");
-    }
+    phorum_output("message");
     return;
 }
 
@@ -615,27 +605,17 @@ if ($PHORUM["posting_template"] == 'posting')
     // no message to display to the user and if we're not in a preview.
     // In those cases, it's better to stay at the top of the
     // page, so the user can see it.
-    if (!isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"]) && !$preview) {
+    if (phorum_page=="posting" && !isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"]) && !$preview) {
         $focus = "subject";
         if (!empty($message["subject"])) $focus = "body";
         $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
     }
 }
 
-// Load page header.
-if (! isset($PHORUM["postingargs"]["as_include"])) {
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-}
-
-include phorum_get_template($PHORUM["posting_template"]);
-
-// Load page footer.
-if (! isset($PHORUM["postingargs"]["as_include"])) {
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
+    $templates[] = $PHORUM["posting_template"];
+} else {
+    phorum_output( $PHORUM["posting_template"] );
 }
 
 // ----------------------------------------------------------------------

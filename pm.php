@@ -65,13 +65,7 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
 // If private messages are disabled, just show a simple error message.
 if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-    include phorum_get_template("stdblock");
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    phorum_outut("stdblock");
     return;
 }
 
@@ -172,13 +166,7 @@ if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id))
     // Show an error in case we encountered a ban.
     if (! empty($error)) {
         $PHORUM["DATA"]["ERROR"] = $error;
-        include phorum_get_template("header");
-        if (isset($PHORUM["hooks"]["after_header"]))
-            phorum_hook("after_header");
-        include phorum_get_template("message");
-        if (isset($PHORUM["hooks"]["before_footer"]))
-            phorum_hook("before_footer");
-        include phorum_get_template("footer");
+        phorum_output("message");
         return;
     }
 }
@@ -361,7 +349,7 @@ if (!empty($action)) {
 
                 // Convert adding a recipient by name to adding by user id.
                 // The user field that is being searched on is either
-                // the username or the display_name (depending on the 
+                // the username or the display_name (depending on the
                 // display name source configuration in the admin settings).
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
@@ -971,19 +959,15 @@ $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
 $PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
 
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
 if ($error_msg) {
     $PHORUM["DATA"]["ERROR"] = $error_msg;
     unset($PHORUM["DATA"]["MESSAGE"]);
-    include phorum_get_template("message");
+    $template = "message";
 } else {
-    include phorum_get_template("pm");
+    $template = "pm";
 }
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+
+phorum_output("template");
 
 // ------------------------------------------------------------------------
 // Utility functions

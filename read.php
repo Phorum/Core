@@ -680,19 +680,17 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // include the correct template
 
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
+    $templates = array();
 
     if($PHORUM["threaded_read"] == 1) {
-        include phorum_get_template("read_threads");
+        $templates[] = "read_threads";
     } elseif($PHORUM["threaded_read"] == 2) {
 
-        include phorum_get_template("read_hybrid");
+        $templates[] = "read_hybrid";
 
     } else {
 
-        include phorum_get_template("read");
+        $templates[] = "read";
     }
     if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
         phorum_db_newflag_add_read($read_messages);
@@ -705,14 +703,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // An anchor so clicking on a reply button can let the browser
     // jump to the editor or the closed thread message.
     if(isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
-        print '<a name="REPLY"></a>';
+        $PHORUM["DATA"]["REPLY_ON_READ"] = true;
     }
 
     // Never show the reply box if the message is closed.
     if($thread_is_closed) {
 
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
-        include phorum_get_template("message");
+        $templates[] = "message";
 
     } elseif (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
         // Prepare the arguments for the posting.php script.
@@ -730,9 +728,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         include("./posting.php");
     }
 
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    phorum_output($templates);
 
 
 } elseif($toforum=phorum_check_moved_message($thread)) { // is it a moved thread?
@@ -743,13 +739,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"]);
     // have to include the header here for the Redirect
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-    include phorum_get_template("message");
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    phorum_output("message");
 
 } else { // message not found
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["MessageNotFound"];
@@ -758,13 +748,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"]);
     // have to include the header here for the Redirect
-    include phorum_get_template("header");
-    if (isset($PHORUM["hooks"]["after_header"]))
-        phorum_hook("after_header");
-    include phorum_get_template("message");
-    if (isset($PHORUM["hooks"]["before_footer"]))
-        phorum_hook("before_footer");
-    include phorum_get_template("footer");
+    phorum_output("message");
 }
 
 // find out if the given thread has been moved to another forum

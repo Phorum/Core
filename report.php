@@ -121,12 +121,7 @@ if(is_array($message) && count($message)) {
     $PHORUM["DATA"]["ERROR"] = $PHORUM['DATA']['LANG']['MessageNotFound'];
     $template='message';
 }
-include phorum_get_template("header");
-if (isset($PHORUM["hooks"]["after_header"]))
-    phorum_hook("after_header");
-include phorum_get_template($template);
-if (isset($PHORUM["hooks"]["before_footer"]))
-    phorum_hook("before_footer");
-include phorum_get_template("footer");
+
+phorum_output($template);
 
 ?>
