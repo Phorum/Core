@@ -5971,7 +5971,6 @@ function phorum_db_create_tables()
            username                 varchar(50)    NOT NULL default '',
            real_name                varchar(255)   NOT NULL default '',
            display_name             varchar(255)   NOT NULL default '',
-           profile_link             varchar(255)   NOT NULL default '',
            password                 varchar(50)    NOT NULL default '',
            password_temp            varchar(50)    NOT NULL default '',
            cookie_sessid_lt         varchar(50)    NOT NULL default '',
