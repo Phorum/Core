@@ -15,6 +15,7 @@
 //                                                                            //
 // You should have received a copy of the Phorum License                      //
 // along with this program.                                                   //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // These language strings are set dynamically, so the language
@@ -434,7 +435,11 @@ if (!empty($action)) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMFromMailboxFull"];
                                     } else {
                                         $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
-                                        $error = str_replace('%recipient%', htmlspecialchars($user["display_name"]), $error);
+                                        $recipient =
+                                            (empty($PHORUM["no_display_name_escape"])
+                                             ? htmlspecialchars($user["display_name"])
+                                             : $user["display_name"]);
+                                        $error = str_replace('%recipient%', $recipient, $error);
                                     }
                                 }
                             }
@@ -635,7 +640,10 @@ switch ($page) {
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
-                'display_name' => htmlspecialchars($buddy_user["display_name"]),
+                'display_name' => 
+                    (empty($PHORUM["no_display_name_escape"])
+                     ? htmlspecialchars($buddy_user["display_name"])
+                     : $buddy_user["display_name"]),
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
 
@@ -684,8 +692,16 @@ switch ($page) {
                 $receive_count = 0;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
                     if ($rcpt["read_flag"]) $receive_count++;
-                    $list[$message_id]["recipients"][$rcpt_id]["display_name"] = htmlspecialchars($rcpt["display_name"]);
-                    $list[$message_id]["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                    if (! isset($rcpt["display_name"])) {
+                        $list[$message_id]["recipients"][$rcpt_id]["display_name"]=
+                            $PHORUM["DATA"]["LANG"]["AnonymousUser"];
+                    } else {
+                        $list[$message_id]["recipients"][$rcpt_id]["display_name"]=
+                            (empty($PHORUM["no_display_name_escape"])
+                             ? htmlspecialchars($rcpt["display_name"])
+                             : $rcpt["display_name"]);
+                        $list[$message_id]["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                    }
                 }
                 $list[$message_id]["receive_count"] = $receive_count;
             }
@@ -722,7 +738,10 @@ switch ($page) {
             if($message["recipient_count"] < 10){
                 $message["show_recipient_list"] = true;
                 foreach ($message["recipients"] as $rcpt_id => $rcpt) {
-                    $message["recipients"][$rcpt_id]["display_name"] = htmlspecialchars($rcpt["display_name"]);
+                    $message["recipients"][$rcpt_id]["display_name"] =
+                        (empty($PHORUM["no_display_name_escape"])
+                         ? htmlspecialchars($rcpt["display_name"])
+                         : $rcpt["display_name"]);
                     $message["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
                 }
             } else {
@@ -858,8 +877,17 @@ switch ($page) {
             switch ($key) {
                 case "recipients": {
                     foreach ($val as $id => $data) {
-                        $msg[$key][$id]["display_name"] = htmlspecialchars($data["display_name"]);
+                        $msg[$key][$id]["display_name"] = 
+                          (empty($PHORUM["no_display_name_escape"])
+                           ? htmlspecialchars($data["display_name"])
+                           : $data["display_name"]);
                     }
+                    break;
+                }
+                case "author": {
+                    $msg[$key] =  
+                      (empty($PHORUM["no_display_name_escape"])
+                       ? htmlspecialchars($val) : $val);
                     break;
                 }
                 default: {
@@ -957,17 +985,17 @@ $PHORUM["DATA"]["URL"]["ACTION"]=phorum_get_url( PHORUM_PM_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
 $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
+$PHORUM["DATA"]["PM_TEMPLATE"] = $template;
 $PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
 
 if ($error_msg) {
     $PHORUM["DATA"]["ERROR"] = $error_msg;
     unset($PHORUM["DATA"]["MESSAGE"]);
-    $template = "message";
+    phorum_output("message");
 } else {
-    $template = "pm";
+    phorum_output("pm");
 }
 
-phorum_output("template");
 
 // ------------------------------------------------------------------------
 // Utility functions

@@ -552,19 +552,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             }
         }
 
-
-        if(!empty($row["user_id"])) {
-            $row["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-            // we don't normally put HTML in this code, but this makes it easier on template builders
-            $row["linked_author"] = "<a href=\"".$row["URL"]["PROFILE"]."\">".htmlspecialchars($row["author"])."</a>";
-        } elseif(!empty($row["email"])) {
-            $row["URL"]["EMAIL"] = phorum_html_encode("mailto:$row[email]");
-            // we don't normally put HTML in this code, but this makes it easier on template builders
-            $row["linked_author"] = "<a href=\"".$row["URL"]["EMAIL"]."\">".htmlspecialchars($row["author"])."</a>";
-        } else {
-            $row["linked_author"] = htmlspecialchars($row["author"]);
-        }
-
         // mask host if not a moderator
         if(empty($PHORUM["user"]["admin"]) && (empty($PHORUM["DATA"]["MODERATOR"]) || !PHORUM_MOD_IP_VIEW)){
             if($PHORUM["display_ip_address"]){

@@ -22,12 +22,37 @@ if ( !defined( "PHORUM" ) ) return;
 /**
  * Formats forum messages.
  *
- * @param data - An array containing a messages to be formatted.
+ * @param array $data
+ *     An array containing an array of messages to be formatted.
+ *
+ * @param array $author_specs
+ *     By default, the formatting function will create  author info
+ *     data out of the fields "user_id", "author" and "email".
+ *     This will create $data["URL"]["PROFILE"] if needed (either pointing
+ *     to a user profile for registered users or the email address of 
+ *     anonymous users that left an email address in the forum) and will
+ *     do formatting on the $data["author"] field.
+ *
+ *     By providing extra $author_specs, this formatting can be done on
+ *     more author fields. This argument should be an array, containing
+ *     arrays with five fields: the field that contains a user_id,
+ *     the field for the name of the author and the field for the email
+ *     address (can be NULL if none available), the name of the field
+ *     to store the author name in and the name of the URL field to store
+ *     the profile/email link in. For the default author field like
+ *     describe above, this array would be:
+ *
+ *     array("user_id", "author", "email", "author", "PROFILE");
+ *
  * @return data - The formatted messages.
  */
-function phorum_format_messages ($data)
+function phorum_format_messages ($data, $author_specs = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+
+    // Prepare author specs.
+    if ($author_specs === NULL) $author_specs = array();
+    $author_specs[] = array("user_id","author","email","author","PROFILE"); 
 
     // Prepare the bad-words replacement code.
     $bad_word_check= false;
@@ -104,16 +129,32 @@ function phorum_format_messages ($data)
         if (isset($message["subject"]))
             $data[$key]["subject"] = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $message["subject"]);
 
-        // Some special things we have to do for the escaped author name.
-        // We never should have put HTML in the core. Now we have to
-        // do this hack to get the escaped author name in the linked_author.
-        // DISPLAY_NAME
-        if (isset($message["author"])) {
-            $data[$key]["author"]  = str_replace(array("<",">"), array("&lt;","&gt;"), $message["author"]);
-            $safe_author = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $message["author"]);
-            if ($safe_author != $data[$key]["author"] && isset($data[$key]["linked_author"])) {
-                $data[$key]["linked_author"] = str_replace($data[$key]["author"], $safe_author, $data[$key]["linked_author"]);
-                $data[$key]["author"] = $safe_author;
+        // Do author formatting for all provided author fields.
+        foreach ($author_specs as $spec)
+        {
+            // Use "Anonymous user" as the author name if there's no author
+            // name available for some reason.
+            if (!isset($message[$spec[1]]) || $message[$spec[1]] == '') {
+                $data[$key][$spec[3]] = $PHORUM["DATA"]["LANG"]["AnonymousUser"];
+            }
+            // Author info for registered user.
+            elseif (!empty($message[$spec[0]])) {
+                $url = phorum_get_url(PHORUM_PROFILE_URL, $message[$spec[0]]);
+                $data[$key]["URL"][$spec[4]] = $url;
+                $data[$key][$spec[3]] =
+                    (empty($PHORUM["no_display_name_escape"])
+                     ? htmlspecialchars($message[$spec[1]])
+                     : $message[$spec[1]]);
+            }
+            // For anonymous user which left an email address.
+            elseif ($spec[2] !== NULL && !empty($message[$spec[2]])) {
+                $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]]);
+                $email_url = phorum_html_encode("mailto:".$message[$spec[2]]);
+                $data[$key]["URL"]["PROFILE"] = $email_url;
+            } 
+            // For anonymous user.
+            else {
+                $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]]);
             }
         }
     }

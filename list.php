@@ -231,20 +231,6 @@ if($rows == null) {
                 $rows[$key]['moved']=1;
             }
 
-            if ($row["user_id"]){
-                $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-                $rows[$key]["URL"]["PROFILE"] = $url;
-                $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row['author'])."</a>";
-            } else {
-                $rows[$key]["URL"]["PROFILE"] = "";
-                if(!empty($row['email'])) {
-                    $email_url = phorum_html_encode("mailto:$row[email]");
-                    // we don't normally put HTML in this code, but this makes it easier on template builders
-                    $rows[$key]["linked_author"] = "<a href=\"".$email_url."\">".htmlspecialchars($row["author"])."</a>";
-                } else {
-                    $rows[$key]["linked_author"] = htmlspecialchars($row["author"]);
-                }
-            }
             if($min_id == 0 || $min_id > $row['message_id'])
             $min_id = $row['message_id'];
         }
@@ -314,21 +300,6 @@ if($rows == null) {
                 }
             }
 
-            if ($row["user_id"]){
-                $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-                $rows[$key]["URL"]["PROFILE"] = $url;
-                $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row["author"])."</a>";
-            }else{
-                $rows[$key]["URL"]["PROFILE"] = "";
-                if(!empty($row['email'])) {
-                    $email_url = phorum_html_encode("mailto:$row[email]");
-                    // we don't normally put HTML in this code, but this makes it easier on template builders
-                    $rows[$key]["linked_author"] = "<a href=\"".$email_url."\">".htmlspecialchars($row["author"])."</a>";
-                } else {
-                    $rows[$key]["linked_author"] = htmlspecialchars($row["author"]);
-                }
-            }
-
             $pages=1;
             // thread_count computed above in moderators-section
             if(!$PHORUM["threaded_read"] && $thread_count>$PHORUM["read_length"]){
@@ -364,18 +335,6 @@ if($rows == null) {
                 } else {
                     $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
                 }
-
-                $row['recent_author'] = htmlspecialchars($row['recent_author']);
-                if ($row['recent_user_id']){
-                    $url = phorum_get_url(PHORUM_PROFILE_URL, $row['recent_user_id']);
-                    $rows[$key]["URL"]["PROFILE_LAST_POST"] = $url;
-                    $rows[$key]["last_post_by"] = "<a href=\"$url\">{$row['recent_author']}</a>";
-                }else{
-                    $rows[$key]["URL"]["PROFILE_LAST_POST"] = "";
-                    $rows[$key]["last_post_by"] = $row['recent_author'];
-                }
-            } else {
-                $rows[$key]["last_post_by"] = "";
             }
         }
     }
@@ -490,8 +449,17 @@ if ($bodies_in_list)
     }
 }
 
+// The list page needs additional formatting for the recent author data
+$recent_author_spec = array(
+    "recent_user_id",        // user_id
+    "recent_author",         // author
+    NULL,                    // email (we won't link to email for recent)
+    "recent_author",         // target author field
+    "RECENT_AUTHOR_PROFILE"  // target author profile URL field
+);
+
 // format messages
-$rows = phorum_format_messages($rows);
+$rows = phorum_format_messages($rows, array($recent_author_spec));
 
 //timing_mark('after formatting');
 

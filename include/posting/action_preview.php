@@ -48,6 +48,16 @@ if ($attach_count)
     }
 }
 
+// Fill the author for new postings with the display name
+// for authenticated users, if editing the author
+// field is not allowed.
+if (($mode == "post" || $mode == "reply") &&
+    !$PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] &&
+    $PHORUM["DATA"]["LOGGEDIN"]) {
+    $previewmessage["author"] = $message["author"] =
+        $PHORUM["user"]["display_name"];
+}
+
 // Format the message using the default formatting.
 include_once("./include/format_functions.php");
 $previewmessages = phorum_format_messages(array($previewmessage));
@@ -81,16 +91,6 @@ if ($attach_count)
     unset($previewmessage["attachments"]);
 }
 
-// Fill the author for new postings with the display name
-// for authenticated users, if editing the author
-// field is not allowed.
-if (($mode == "post" || $mode == "reply") &&
-    !$PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] &&
-    $PHORUM["DATA"]["LOGGEDIN"]) {
-    $previewmessage["author"] = $message["author"] =
-        $PHORUM["user"]["display_name"];
-}
-
 // Fill the datestamp for new postings.
 if ($mode != "edit") {
     $previewmessage["datestamp"] = time();
@@ -99,7 +99,6 @@ if ($mode != "edit") {
 // Format datestamp. 
 $previewmessage["raw_datestamp"] = $previewmessage["datestamp"];
 $previewmessage["datestamp"] = phorum_date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
-$previewmessage["author"] = htmlspecialchars($previewmessage["author"]);
    
 $PHORUM["DATA"]["PREVIEW"] = $previewmessage;
     

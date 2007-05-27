@@ -73,20 +73,6 @@ foreach($subscr_array as $id => $data)
     $data["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
     $data["URL"]["NEWPOST"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");
 
-    if(!empty($data["user_id"])) {
-        $data["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $data["user_id"]);
-        // we don't normally put HTML in this code, but this makes it easier on template builders
-        $data["linked_author"] = "<a href=\"".$data["URL"]["PROFILE"]."\">".htmlspecialchars($data["author"])."</a>";
-    } elseif(!empty($data["email"])) {
-        $data["URL"]["EMAIL"] = phorum_html_encode("mailto:$data[email]");
-        // we don't normally put HTML in this code, but this makes it easier on template builders
-        $data["linked_author"] = "<a href=\"".$data["URL"]["EMAIL"]."\">".htmlspecialchars($data["author"])."</a>";
-    } else {
-        $data["linked_author"] = htmlspecialchars($data["author"]);
-    }
-
-    $data["subject"]=htmlspecialchars($data["subject"]);
-
     // Check if there are new messages for the current thread.
     if (! isset($PHORUM['user']['newinfo'][$data["forum_id"]])) {
         $PHORUM['user']['newinfo'][$data["forum_id"]] = null;
@@ -114,6 +100,9 @@ foreach($subscr_array as $id => $data)
 
     $subscr_array_final[] = $data;
 }
+
+require_once("./include/format_functions.php");
+$subscr_array_final = phorum_format_messages($subscr_array_final);
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Subscriptions"];
 

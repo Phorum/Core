@@ -199,8 +199,6 @@ if(!empty($phorum_search) || !empty($phorum_author)){
             }
             $arr["rows"][$key]["raw_datestamp"] = $row["datestamp"];
             $arr["rows"][$key]["datestamp"] = phorum_relative_date($row["datestamp"]);
-            $arr["rows"][$key]["author"] = htmlspecialchars($row["author"]);
-
             $forum_ids[$row["forum_id"]] = $row["forum_id"];
 
             $match_number++;

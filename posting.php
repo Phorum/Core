@@ -579,6 +579,10 @@ if ($PHORUM["posting_template"] == 'posting')
                     $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
                 }
             }
+        } elseif ($var == "author") {
+            if (empty($PHORUM["no_display_name_escape"])) {
+                $message[$var] = htmlspecialchars($val);
+            }
         } else {
             if (is_scalar($val)) {
                 $message[$var] = htmlspecialchars($val);
