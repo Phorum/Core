@@ -833,6 +833,10 @@ switch ($page) {
         // Setup data for previewing a message.
         if ($msg["preview"]) {
             list($preview) = phorum_pm_format(array($msg));
+            foreach ($preview["recipients"] as $id => $rcpt) {
+                $preview["recipients"][$id]["username"] =
+                    htmlspecialchars($rcpt["username"]);
+            }
             $PHORUM["DATA"]["PREVIEW"] = $preview;
         }
 
