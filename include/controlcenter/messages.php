@@ -137,17 +137,10 @@ foreach($mod_forums as $forum => $rest) {
         $PHORUM["forum_id"] = $oldforum;
         $rows[$key]["raw_short_datestamp"] = $row["datestamp"];
         $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
-
-        if ($row["user_id"]) {
-            $url = phorum_get_url(PHORUM_PROFILE_URL, $row["user_id"]);
-            $rows[$key]["URL"]["READ"]["PROFILE"] = $url;
-            $rows[$key]["linked_author"] = "<a href=\"$url\">".htmlspecialchars($row["author"])."</a>";
-        } else {
-            $rows[$key]["profile_url"] = "";
-            $rows[$key]["linked_author"] = htmlspecialchars($row["author"]);
-        }
     }
-    // $PHORUM['DATA']['FORUMS'][$forum]['forum_id']=$forum;
+
+    require_once("./include/format_functions.php");
+    $rows = phorum_format_messages($rows);
     $PHORUM['DATA']['PREPOST'] = array_merge($PHORUM['DATA']['PREPOST'], $rows);
 }
 

@@ -61,7 +61,7 @@
                 {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
                 {IF MESSAGES->pages}&nbsp;<small>&nbsp;({LANG->Pages}:&nbsp;{MESSAGES->pages})</small>{/IF}
             </h4>
-            {LANG->by} {MESSAGES->linked_author}
+            {LANG->by} {IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}
         </td>
 
         {IF VIEWCOUNT_COLUMN}
@@ -79,7 +79,7 @@
         {ELSE}
 
             <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
-            <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}</td>
+            <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->lastpost}<br /><a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {IF MESSAGES->URL->RECENT_AUTHOR_PROFILE}<a href="{MESSAGES->URL->RECENT_AUTHOR_PROFILE}">{/IF}{MESSAGES->recent_author}{IF MESSAGES->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
 
         {/IF}
 

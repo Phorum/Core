@@ -66,12 +66,12 @@
                         <select name="special">
                           <option value=""></option>
                           {IF OPTION_ALLOWED->sticky}
-                            <option value="sticky"{IF MESSAGE->special "sticky"} selected="selected"{/IF}>{LANG->MakeSticky}</option>
+                            <option value="sticky"{IF POSTING->special "sticky"} selected="selected"{/IF}>{LANG->MakeSticky}</option>
                           {/IF}
                         </select><br />
                         <br />
 
-                        <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF MESSAGE->allow_reply} checked="checked"{/IF}> <label for="allow-reply">{LANG->AllowReplies}</label>
+                        <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF}> <label for="allow-reply">{LANG->AllowReplies}</label>
 
                     </div>
 
@@ -83,9 +83,9 @@
                   {LANG->Author}:<br />
                 {/IF}
                 {IF OPTION_ALLOWED->edit_author}
-                    <input type="text" name="author" size="30" value="{MESSAGE->author}" />
+                    <input type="text" name="author" size="30" value="{POSTING->author}" />
                 {ELSE}
-                    <big><strong>{MESSAGE->author}</strong></big><br />
+                    <big><strong>{POSTING->author}</strong></big><br />
                 {/IF}
                 <br/>
 
@@ -94,17 +94,17 @@
                     {IF NOT LOGGEDIN}
 
                         {LANG->YourEmail}:<br />
-                        <input type="text" name="email" size="30" value="{MESSAGE->email}" /><br />
+                        <input type="text" name="email" size="30" value="{POSTING->email}" /><br />
                         <br />
 
                     {/IF}
 
                 {ELSEIF MODE "moderation"}
 
-                    {IF MESSAGE->user_id 0}
+                    {IF POSTING->user_id 0}
 
                         {LANG->Email}:<br />
-                        <input type="text" name="email" size="30" value="{MESSAGE->email}" /><br />
+                        <input type="text" name="email" size="30" value="{POSTING->email}" /><br />
                         <br />
 
                     {/IF}
@@ -112,26 +112,26 @@
                 {/IF}
 
                 {LANG->Subject}:<br />
-                <input type="text" name="subject" id="subject" size="50" value="{MESSAGE->subject}" /><br />
+                <input type="text" name="subject" id="subject" size="50" value="{POSTING->subject}" /><br />
                 <br />
 
                 {HOOK "tpl_editor_after_subject"}
 
-                {IF MESSAGE->user_id}
+                {IF POSTING->user_id}
                     {LANG->Options}:<br />
                     {IF EMAILNOTIFY}
-                        <input type="checkbox" id="email-notify" name="email_notify" value="1" {IF MESSAGE->email_notify} checked="checked"{/IF} /> <label for="email-notify">{LANG->EmailReplies}</label><br />
+                        <input type="checkbox" id="email-notify" name="email_notify" value="1" {IF POSTING->email_notify} checked="checked"{/IF} /> <label for="email-notify">{LANG->EmailReplies}</label><br />
                     {/IF}
-                    <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF MESSAGE->show_signature} checked="checked"{/IF} /> <label for="show-signature">{LANG->AddSig}</label><br />
+                    <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show-signature">{LANG->AddSig}</label><br />
                     <br/>
                 {/IF}
             </small>
 
             {IF ATTACHMENTS}
                 <small>{LANG->Attachments}:</small><br />
-                {IF MESSAGE->attachments}
+                {IF POSTING->attachments}
                     <table id="attachment-list" cellspacing="0">
-                      {VAR LIST MESSAGE->attachments}
+                      {VAR LIST POSTING->attachments}
                       {LOOP LIST}
                         {IF LIST->keep}
                           <tr>
@@ -180,7 +180,7 @@
             <div id="post-body">
               <!-- fieldset is a work around for an MSIE rendering bug -->
               <fieldset>
-                <textarea name="body" id="body" class="body" rows="15" cols="50">{MESSAGE->body}</textarea>
+                <textarea name="body" id="body" class="body" rows="15" cols="50">{POSTING->body}</textarea>
               </fieldset>
             </div>
 
@@ -191,7 +191,7 @@
             {HOOK "tpl_editor_buttons"}
 
             <input type="submit" name="preview" value=" {LANG->Preview} " />
-            <input type="submit" name="finish" value=" {MESSAGE->submitbutton_text} " />
+            <input type="submit" name="finish" value=" {POSTING->submitbutton_text} " />
             <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')" value=" {LANG->Cancel} " />
 
         </div>

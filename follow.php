@@ -77,11 +77,18 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     $template="message";
 } else {
     // we are following a new thread
-    $PHORUM["DATA"]["URL"]["ACTION"]=phorum_get_url(PHORUM_FOLLOW_ACTION_URL);
-    $PHORUM["DATA"]["SUBJECT"]=htmlspecialchars($message["subject"]);
-    $PHORUM["DATA"]["THREAD"]=$thread;
-    $PHORUM["DATA"]["FORUM_ID"]=$PHORUM["forum_id"];
-    $template="follow";
+
+    require_once("include/format_functions.php");
+    $messages = phorum_format_messages(array(1=>$message));
+    $message = $messages[1];
+
+    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_FOLLOW_ACTION_URL);
+    $PHORUM["DATA"]["SUBJECT"]       = $message["subject"];
+    $PHORUM["DATA"]["AUTHOR"]        = $message["author"];
+    $PHORUM["DATA"]["THREAD"]        = $thread;
+    $PHORUM["DATA"]["FORUM_ID"]      = $PHORUM["forum_id"];
+
+    $template = "follow";
 }
 
 

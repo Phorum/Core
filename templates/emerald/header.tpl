@@ -121,7 +121,7 @@ Some Icons courtesy of:
 {ELSEIF TOPIC->subject}
     {! This is a read page }
     <h1>{TOPIC->subject}</h1>
-    <div id="description">{LANG->Postedby} {TOPIC->linked_author}&nbsp;</div>
+    <div id="description">{LANG->Postedby} {IF TOPIC->URL->PROFILE}<a href="{TOPIC->URL->PROFILE}">{/IF}{TOPIC->author}{IF TOPIC->URL->PROFILE}</a>{/IF}&nbsp;</div>
 {ELSEIF NAME}
     {! This is a forum page other than a read page or a folder page }
     <h1>{NAME}</h1>{! replace with path see http://www.phorum.org/cgi-bin/trac.cgi/ticket/213 }

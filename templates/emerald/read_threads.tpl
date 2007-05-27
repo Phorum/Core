@@ -17,7 +17,7 @@
             <tr>
                 <td width="100%">
                     <div class="message-author icon-user">
-                        {MESSAGE->linked_author}
+                        {IF MESSAGE->URL->PROFILE}<a href="{MESSAGE->URL->PROFILE}">{/IF}{MESSAGE->author}{IF MESSAGE->URL->PROFILE}</a>{/IF}
                         {IF LOGGEDIN}
                             {IF MESSAGE->URL->PM}
                                 <small>[ <a href="{MESSAGE->URL->PM}">{LANG->PrivateReply}</a> ]
@@ -169,7 +169,7 @@
                 {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
             </h4>
         </td>
-        <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
+        <td width="10%" class="{altclass}" nowrap="nowrap">{IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}</td>
         {IF VIEWCOUNT_COLUMN}
             <td width="10%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
         {/IF}

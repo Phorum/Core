@@ -9,8 +9,10 @@
     <input type="hidden" name="forum_id" value="{FORUM_ID}" />
     <input type="hidden" name="thread" value="{THREAD}" />
     <div class="information">
-        {LANG->YouWantToFollow}<br />
-        <strong>{SUBJECT}</strong><br /><br />
+        {LANG->YouWantToFollow}<br /><br/>
+        <strong>{SUBJECT}</strong><br />
+        <strong>{LANG->StartedBy} {AUTHOR}</strong><br/><br />
+
         {LANG->FollowExplanation}<br /><br />
         <input type="checkbox" name="send_email" id="send-email" checked="checked" /><label for="send-email">&nbsp;{LANG->FollowWithEmail}</label><br /><br />
         <input type="submit" value="{LANG->Submit}" />

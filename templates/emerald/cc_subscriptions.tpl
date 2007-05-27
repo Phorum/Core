@@ -56,7 +56,7 @@
                         {TOPICS->subject}</a><br />
                         <small>{LANG->Forum}: {TOPICS->forum}</small>
                     </td>
-                    <td width="10%" class="{altclass}" nowrap="nowrap">{TOPICS->linked_author}</td>
+                    <td width="10%" class="{altclass}" nowrap="nowrap">{IF TOPICS->URL->PROFILE}<a href="{TOPICS->URL->PROFILE}">{/IF}{TOPICS->author}{IF TOPICS->URL->PROFILE}</a>{/IF}</td>
                     <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->datestamp}</td>
                     <td width="5%">
                         <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />

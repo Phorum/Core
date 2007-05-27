@@ -70,7 +70,7 @@
             {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
         </h4>
     </td>
-    <td width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->linked_author}</td>
+    <td width="10%" class="{altclass}" nowrap="nowrap">{IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}</td>
     {IF VIEWCOUNT_COLUMN}
         <td align="center" width="10%" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
     {/IF}

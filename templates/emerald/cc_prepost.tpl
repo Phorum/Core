@@ -65,7 +65,7 @@ function phorum_markAllCheckboxes() {
                     <a href="{PREPOST->URL->READ}" target="_blank">{PREPOST->subject}</a><br />
                     <small>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{PREPOST->URL->DELETE}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_MESSAGE}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_TREE}">{LANG->ApproveMessageReplies}</a></small>
                 </td>
-                <td nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
+                <td nowrap="nowrap" width="150">{IF PREPOST->URL->PROFILE}<a href="{PREPOST->author}">{/IF}{PREPOST->author}{IF PREPOST->URL->PROFILE}</a>{/IF}&nbsp;</td>
                 <td nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
                 <td nowrap="nowrap" width="150"><input type="checkbox" name="deleteids[{PREPOST->message_id}]" value="1" /></td>
             </tr>
