@@ -22,6 +22,12 @@ if(!defined("PHORUM")) return;
 // Create an empty message structure.
 $message = array();
 
+// A special form field: if a checkbox with the name "sticky" is checked,
+// then we map that field to an entry for the "special" message field.
+if (isset($_POST["sticky"])) {
+    $_POST["special"] = "sticky";
+}
+
 // Inject form field data into the message structure. No checks
 // are done on the data over here. Here we just take care of
 // putting the data in the right format in the data structure.
