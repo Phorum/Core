@@ -377,9 +377,9 @@ if (!empty($action)) {
                                 }
                             }
                         }
-                    }
-                    if (empty($_POST["to_id"])) {
-                        $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                        if (empty($_POST["to_id"])) {
+                            $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                        }
                     }
                 }
 
