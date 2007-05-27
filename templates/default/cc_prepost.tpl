@@ -70,7 +70,7 @@ function phorum_markAllCheckboxes() {
           <?php echo $PHORUM['TMP']['marker'] ?><a href="{PREPOST->URL->READ}" target="_blank">{PREPOST->subject}</a><br />
           <span class="PhorumListModLink">&nbsp;&nbsp;&nbsp;&nbsp;<a class="PhorumListModLink" href="{PREPOST->URL->DELETE}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->URL->APPROVE_MESSAGE}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a class="PhorumListModLink" href="{PREPOST->URL->APPROVE_TREE}">{LANG->ApproveMessageReplies}</a></span>
         </td>
-        <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->linked_author}&nbsp;</td>
+        <td class="PhorumTableRow" nowrap="nowrap" width="150">{IF PREPOST->URL->PROFILE}<a href="{PREPOST->URL->PROFILE}">{/IF}{PREPOST->author}{IF PREPOST->URL->PROFILE}</a>{/IF}&nbsp;</td>
         <td class="PhorumTableRow" nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
         <td class="PhorumListTableRowSmall" nowrap="nowrap" width="150"><input type="checkbox" name="deleteids[{PREPOST->message_id}]" value="1" /></td>
       </tr>

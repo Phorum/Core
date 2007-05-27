@@ -37,11 +37,11 @@
         <td class="PhorumTableRow{altclass}" align="center">{MESSAGES->viewcount}&nbsp;</td>
       {/IF}
       <td class="PhorumTableRow{altclass}" align="center" nowrap="nowrap">{MESSAGES->thread_count}&nbsp;</td>
-      <td class="PhorumTableRow{altclass}" nowrap="nowrap">{MESSAGES->linked_author}&nbsp;</td>
+      <td class="PhorumTableRow{altclass}" nowrap="nowrap">{IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}&nbsp;</td>
       <td class="PhorumTableRow{altclass} PhorumSmallFont" nowrap="nowrap">
         {MESSAGES->lastpost}&nbsp;<br />
         <span class="PhorumListSubText">
-          <a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {MESSAGES->last_post_by}
+          <a href="{MESSAGES->URL->LAST_POST}">{LANG->LastPostLink}</a> {LANG->by} {IF MESSAGES->URL->RECENT_AUTHOR_PROFILE}<a href="{MESSAGES->URL->RECENT_AUTHOR_PROFILE}">{/IF}{MESSAGES->recent_author}{IF MESSAGES->RECENT_AUTHOR_PROFILE}</a>{/IF}
         </span>
       </td>
     </tr>

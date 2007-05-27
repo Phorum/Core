@@ -19,7 +19,7 @@
         <td class="PhorumTableRow" nowrap="nowrap">
           {IF MESSAGES->recipient_count 1}
             {LOOP MESSAGES->recipients}
-              <a href="{MESSAGES->recipients->URL->TO}">{MESSAGES->recipients->username}</a>&nbsp;
+              <a href="{MESSAGES->recipients->URL->PROFILE}">{MESSAGES->recipients->display_name}</a>&nbsp;
             {/LOOP MESSAGES->recipients}
           {ELSE}
             {MESSAGES->recipient_count}&nbsp;{LANG->Recipients}&nbsp;

@@ -61,7 +61,7 @@
             {LOOP MESSAGE->recipients}
                 <div class="phorum-recipientblock">
                     {MESSAGE->recipients->display_name}
-                    <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->display_name}" />
+                    <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="1" />
                     <input type="image" src="{URL->TEMPLATE}/images/delete.png" name="del_rcpt::{MESSAGE->recipients->user_id}" class="rcpt-delete-img" title="" />
                 </div>
             {/LOOP MESSAGE->recipients}

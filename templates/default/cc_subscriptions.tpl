@@ -40,7 +40,9 @@
           <span class="PhorumListSubText">{LANG->Forum}: {TOPICS->forum}</span>
         </td>
         <td class="PhorumTableRow">
-          {TOPICS->linked_author}
+          {IF TOPICS->URL->PROFILE}<a href="{TOPICS->URL->PROFILE}">{/IF}
+            {TOPICS->author}
+          {IF TOPICS->URL->PROFILE}</a>{/IF}
         </td>
         <td class="PhorumTableRow">
           {TOPICS->datestamp}

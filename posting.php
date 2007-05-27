@@ -348,7 +348,6 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
     }
 }
 
-
 // A hook to allow modules to change the abilities from above.
 if (isset($PHORUM["hooks"]["posting_permissions"]))
     phorum_hook("posting_permission");

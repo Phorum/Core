@@ -1,4 +1,4 @@
-<form id="phorum_listform" action="{ACTION}" method="post">
+<form id="phorum_listform" action="{URL->ACTION}" method="post">
   {POST_VARS}
   <input type="hidden" name="page" value="buddies" />
   <input type="hidden" name="action" value="buddies" />
@@ -20,8 +20,7 @@
       {LOOP BUDDIES}
         <tr>
           <td class="PhorumTableRow"><input type="checkbox" name="checked[]" value="{BUDDIES->user_id}"></td>
-          <td class="PhorumTableRow"><a href="{BUDDIES->URL->PROFILE}"><strong>{BUDDIES->username}</strong></a></td>
-          <td class="PhorumTableRow">{BUDDIES->real_name}</td>
+          <td class="PhorumTableRow"><a href="{BUDDIES->URL->PROFILE}"><strong>{BUDDIES->display_name}</strong></a></td>
           <td class="PhorumTableRow"align="center">{IF BUDDIES->mutual}{LANG->Yes}{ELSE}{LANG->No}{/IF}</td>
           {IF USERTRACK}
             <td class="PhorumTableRow"align="right">{BUDDIES->date_last_active}&nbsp;</td>
@@ -35,7 +34,7 @@
     </div>
     {ELSE}
       <tr>
-        <td colspan="4" style="text-align: center" class="PhorumTableRow">
+        <td colspan="3" style="text-align: center" class="PhorumTableRow">
           <br />
           <i>{LANG->BuddyListIsEmpty}</i><br />
           <br />

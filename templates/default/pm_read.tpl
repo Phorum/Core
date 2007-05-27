@@ -1,4 +1,4 @@
-<form action="{ACTION}" method="post">
+<form action="{URL->ACTION}" method="post">
   {POST_VARS}
   <input type="hidden" name="action" value="list" />
   <input type="hidden" name="folder_id" value="{FOLDER_ID}" />
@@ -6,14 +6,14 @@
   <input type="hidden" name="pm_id" value="{MESSAGE->pm_message_id}" />
   <div class="PhorumStdBlock">
     <div class="PhorumReadBodySubject">{MESSAGE->subject}</div>
-    <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="{MESSAGE->from_profile_url}">{MESSAGE->from_username}</a></strong></div>
+    <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="{MESSAGE->URL->PROFILE}">{MESSAGE->author}</a></strong></div>
     <div class="PhorumReadBodyHead">
       {LANG->To}:
       {VAR ISFIRST true}
       {LOOP MESSAGE->recipients}
         <div style="display:inline; white-space: nowrap">
           {IF NOT ISFIRST} / {/IF}
-          <strong><a href="{MESSAGE->recipients->to_profile_url}">{MESSAGE->recipients->username}</a></strong>
+          <strong><a href="{MESSAGE->recipients->URL->PROFILE}">{MESSAGE->recipients->display_name}</a></strong>
           {IF USERINFO->user_id MESSAGE->from_user_id}
             {IF NOT MESSAGE->recipients->read_flag}({LANG->PMUnread}){/IF}
           {/IF}

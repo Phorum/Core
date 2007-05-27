@@ -43,7 +43,9 @@
         <td class="PhorumTableRow{altclass}" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
       {/IF}
       <td class="PhorumTableRow{altclass}" nowrap="nowrap" width="150">
-        {MESSAGES->linked_author}
+        {IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}
+          {MESSAGES->author}
+        {IF MESSAGES->URL->PROFILE}</a>{/IF}
       </td>
       <td class="PhorumTableRow{altclass} PhorumSmallFont" nowrap="nowrap" width="150">
         {MESSAGES->datestamp}

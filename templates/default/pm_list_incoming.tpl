@@ -21,7 +21,7 @@
           {/IF}
         </td>
         <td class="PhorumTableRow" nowrap="nowrap">
-          <a href="{MESSAGES->URL->FROM}">{MESSAGES->from_username}</a>&nbsp;
+          <a href="{MESSAGES->URL->PROFILE}">{MESSAGES->author}</a>&nbsp;
         </td>
         <td class="PhorumTableRow" nowrap="nowrap" width="1">
           <div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div>

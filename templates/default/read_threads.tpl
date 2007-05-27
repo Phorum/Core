@@ -10,7 +10,12 @@
 {/IF}
 <div class="PhorumStdBlock">
   <div class="PhorumReadBodySubject">{MESSAGE->subject}</div>
-  <div class="PhorumReadBodyHead">{LANG->Postedby}: <strong>{MESSAGE->linked_author}</strong> ({MESSAGE->ip})</div>
+  <div class="PhorumReadBodyHead">{LANG->Postedby}: 
+    <strong>
+      {IF MESSAGE->URL->PROFILE}<a href="{MESSAGE->URL->PROFILE}">{/IF}
+        {MESSAGE->author}
+      {IF MESSAGE->URL->PROFILE}</a>{/IF}
+    </strong> ({MESSAGE->ip})</div>
   <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGE->datestamp}</div><br />
   <div class="PhorumReadBodyText">{MESSAGE->body}</div><br />
   {IF ATTACHMENTS}
@@ -70,7 +75,11 @@
       {IF VIEWCOUNT_COLUMN}
         <td class="PhorumTableRow{altclass}" nowrap="nowrap" align="center" width="80">{MESSAGES->viewcount}</td>
       {/IF}
-      <td class="PhorumTableRow{altclass}" nowrap="nowrap" width="150">{MESSAGES->linked_author}</td>
+      <td class="PhorumTableRow{altclass}" nowrap="nowrap" width="150">
+        {IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}
+          {MESSAGES->author}
+        {IF MESSAGES->URL->PROFILE}</a>{/IF}
+      </td>
       <td class="PhorumTableRow{altclass} PhorumSmallFont" nowrap="nowrap" width="150">{MESSAGES->short_datestamp}</td>
     </tr>
   {/LOOP MESSAGES}

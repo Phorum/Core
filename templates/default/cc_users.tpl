@@ -1,5 +1,5 @@
 <div class="PhorumLargeFont">{LANG->UnapprovedUsers}</div>
-<form action="{ACTION}" method="post">
+<form action="{URL->ACTION}" method="post">
   {POST_VARS}
   <input type="hidden" name="panel" value="users" />
   <input type="hidden" name="forum_id" value="{FORUM_ID}" />

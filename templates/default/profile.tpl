@@ -3,7 +3,7 @@
     <span class="PhorumNavHeading">{LANG->Goto}:</span>&nbsp;{IF URL->INDEX}<a class="PhorumNavLink" href="{URL->INDEX}">{LANG->ForumList}</a>&bull;{/IF}{IF URL->LIST}<a class="PhorumNavLink" href="{URL->LIST}">{LANG->MessageList}</a>&bull;{/IF}<a class="PhorumNavLink" href="{URL->SEARCH}">{LANG->Search}</a>&bull;{INCLUDE "loginout_menu"}
   </div>
   <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">
-    {LANG->UserProfile}&nbsp;:&nbsp;{PROFILE->username}
+    {LANG->UserProfile}&nbsp;:&nbsp;{PROFILE->display_name}
     {IF ENABLE_PM}
       {IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}
     {/IF}

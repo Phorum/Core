@@ -25,7 +25,12 @@
       {ELSE}
         <div class="PhorumReadBodyHead"><strong>{MESSAGES->subject}</strong> <span class="PhorumNewFlag">{MESSAGES->new}</span></div>
       {/IF}
-      <div class="PhorumReadBodyHead">{LANG->Postedby}: <strong>{MESSAGES->linked_author}</strong> ({MESSAGES->ip})</div>
+      <div class="PhorumReadBodyHead">{LANG->Postedby}:
+        <strong>
+          {IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}
+            {MESSAGES->author}
+          {IF MESSAGES->URL->PROFILE}</a>{/IF}
+        </strong> ({MESSAGES->ip})</div>
       <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGES->datestamp}</div><br />
       <div class="PhorumReadBodyText">{MESSAGES->body}</div><br />
       {IF ATTACHMENTS}

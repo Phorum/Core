@@ -2,14 +2,14 @@
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->Preview}</div>
   <div class="PhorumStdBlock" style="text-align: left;">
     <div class="PhorumReadBodySubject">{PREVIEW->subject}</div>
-    <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="#">{PREVIEW->from_username}</a></strong></div>
+    <div class="PhorumReadBodyHead">{LANG->From}: <strong><a href="#">{PREVIEW->author}</a></strong></div>
     <div class="PhorumReadBodyHead">
       {LANG->To}:
       {VAR ISFIRST true}
       {LOOP PREVIEW->recipients}
         <div style="display:inline; white-space: nowrap">
           {IF NOT ISFIRST} / {/IF}
-          <strong><a href="#">{PREVIEW->recipients->username}</a></strong>
+          <strong><a href="#">{PREVIEW->recipients->display_name}</a></strong>
           {VAR ISFIRST false}
         </div>
       {/LOOP PREVIEW->recipients}
@@ -17,7 +17,7 @@
     <div class="PhorumReadBodyText">{PREVIEW->message}</div><br />
   </div><br />
 {/IF}
-<form action="{ACTION}" method="post">
+<form action="{URL->ACTION}" method="post">
   {POST_VARS}
   <input type="hidden" name="action" value="post" />
   <input type="hidden" name="forum_id" value="{FORUM_ID}" />
@@ -26,7 +26,7 @@
     <table class="PhorumFormTable" cellspacing="0" border="0" style="width:99%">
       <tr>
         <td>{LANG->From}:&nbsp;</td>
-        <td>{MESSAGE->from_username}</td>
+        <td>{MESSAGE->author}</td>
       </tr>
       <tr>
         <td valign="top">{LANG->To}:&nbsp;</td>
@@ -38,7 +38,7 @@
                 <select id="userselection" name="to_id" size="1" align="middle">
                   <option value=""> {LANG->PMSelectARecipient}</option>
                   {LOOP USERS}
-                    <option value="{USERS->user_id}" <?php if (isset($_POST['to_id']) && $_POST['to_id'] == $PHORUM['TMP']['USERS']['user_id']) echo 'selected="selected"'?>>{USERS->displayname}</option>
+                    <option value="{USERS->user_id}" <?php if (isset($_POST['to_id']) && $_POST['to_id'] == $PHORUM['TMP']['USERS']['user_id']) echo 'selected="selected"'?>>{USERS->display_name}</option>
                   {/LOOP USERS}
                 </select>
               {ELSE}
@@ -52,8 +52,8 @@
           {! Display the current list of recipients}
           {LOOP MESSAGE->recipients}
             <div class="phorum-recipientblock">
-              {MESSAGE->recipients->username}
-              <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="{MESSAGE->recipients->username}" />
+              {MESSAGE->recipients->display_name}
+              <input type="hidden" name="recipients[{MESSAGE->recipients->user_id}]" value="1" />
               <input type="image" src="{delete_image}" name="del_rcpt::{MESSAGE->recipients->user_id}" style="margin-left: 3px;vertical-align:top">
             </div>
           {/LOOP MESSAGE->recipients}

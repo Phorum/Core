@@ -138,7 +138,7 @@ if (isset($_POST["checked"])) {
 // Get recipients from the form and create a valid list of recipients.
 $recipients = array();
 if (isset($_POST["recipients"]) && is_array($_POST["recipients"])) {
-    foreach ($_POST["recipients"] as $id => $username) {
+    foreach ($_POST["recipients"] as $id => $dummy) {
         $user = phorum_user_get($id, false);
         if ($user && $user["active"] == 1) {
             $recipients[$id] = $user;
@@ -379,6 +379,9 @@ if (!empty($action)) {
                         }
                         if (empty($_POST["to_id"])) {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                        } else {
+                            // Clear the input text field if we did find a matching user.
+                            unset($_POST["to_name"]);
                         }
                     }
                 }
@@ -386,8 +389,7 @@ if (!empty($action)) {
                 // Add a recipient by id.
                 if (isset($_POST["to_id"]) && is_numeric($_POST["to_id"])) {
                     $user = phorum_user_get($_POST["to_id"], false);
-                    if ($user && $user["active"] == 1) {
-                        unset($_POST["to_name"]);
+                    if ($user && $user["active"] == PHORUM_USER_ACTIVE) {
                         $recipients[$user["user_id"]] = $user;
                     } else {
                         $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
@@ -698,29 +700,6 @@ switch ($page) {
 
             // Prepare data for the templates (formatting and XSS prevention).
             $list = phorum_pm_format($list);
-            foreach ($list as $message_id => $message)
-            {
-                $list[$message_id]["URL"]["FROM"] = phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
-                $list[$message_id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$message_id");
-                $list[$message_id]["raw_date"] = $message["datestamp"];
-                $list[$message_id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
-                $list[$message_id]["recipient_count"] = count($message["recipients"]);
-                $receive_count = 0;
-                foreach ($message["recipients"] as $rcpt_id => $rcpt) {
-                    if ($rcpt["read_flag"]) $receive_count++;
-                    if (! isset($rcpt["display_name"])) {
-                        $list[$message_id]["recipients"][$rcpt_id]["display_name"]=
-                            $PHORUM["DATA"]["LANG"]["AnonymousUser"];
-                    } else {
-                        $list[$message_id]["recipients"][$rcpt_id]["display_name"]=
-                            (empty($PHORUM["no_display_name_escape"])
-                             ? htmlspecialchars($rcpt["display_name"])
-                             : $rcpt["display_name"]);
-                        $list[$message_id]["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
-                    }
-                }
-                $list[$message_id]["receive_count"] = $receive_count;
-            }
 
             // Setup template variables.
             $PHORUM["DATA"]["MESSAGECOUNT"] = count($list);
@@ -749,25 +728,8 @@ switch ($page) {
             // Run the message through the default message formatting.
             list($message) = phorum_pm_format(array($message));
 
-            // Setup data for recipients.
-            $message["recipient_count"] = count($message["recipients"]);
-            if($message["recipient_count"] < 10){
-                $message["show_recipient_list"] = true;
-                foreach ($message["recipients"] as $rcpt_id => $rcpt) {
-                    $message["recipients"][$rcpt_id]["display_name"] =
-                        (empty($PHORUM["no_display_name_escape"])
-                         ? htmlspecialchars($rcpt["display_name"])
-                         : $rcpt["display_name"]);
-                    $message["recipients"][$rcpt_id]["URL"]["TO"] = phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
-                }
-            } else {
-                $message["show_recipient_list"] = false;
-            }
-
-            // Setup URL's and format date.
-            $message["URL"]["FROM"]=phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
-            $message["raw_date"]=$message["datestamp"];
-            $message["date"]=phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
+            // We do not want to show a recipient list if there are a lot of recipients.
+            $message["show_recipient_list"] = ($message["recipient_count"] < 10);
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
             $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["PMRead"];
@@ -1020,16 +982,57 @@ if ($error_msg) {
 // Apply the default forum message formatting to a private message.
 function phorum_pm_format($messages)
 {
+    $PHORUM = $GLOBALS["PHORUM"];
+
     include_once("./include/format_functions.php");
 
-    // Reformat message so it looks like a forum message.
+    // Reformat message so it looks like a forum message (so we can run it
+    // through phorum_format_messages) and do some PM specific formatting.
     foreach ($messages as $id => $message)
     {
+        $folder_id = $message['pm_folder_id']
+                   ? $message['pm_folder_id']
+                   : $message['special_folder'];
+
+
         $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
         $messages[$id]["email"] = "";
+
+        $messages[$id]["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
+        $messages[$id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
+        $messages[$id]["raw_date"] = $message["datestamp"];
+        $messages[$id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
+
+        $messages[$id]["recipient_count"] = 0;
+        $messages[$id]["receive_count"] = 0;
+
+        if (isset($message["recipients"]) && is_array($message["recipients"]))
+        {
+            $receive_count = 0;
+
+            foreach ($message["recipients"] as $rcpt_id => $rcpt)
+            {
+                if ($rcpt["read_flag"]) $receive_count++;
+
+                if (! isset($rcpt["display_name"])) {
+                    $messages[$id]["recipients"][$rcpt_id]["display_name"]=
+                        $PHORUM["DATA"]["LANG"]["AnonymousUser"];
+                } else {
+                    $messages[$id]["recipients"][$rcpt_id]["display_name"]=
+                        (empty($PHORUM["no_display_name_escape"])
+                         ? htmlspecialchars($rcpt["display_name"])
+                         : $rcpt["display_name"]);
+                    $messages[$id]["recipients"][$rcpt_id]["URL"]["PROFILE"] =
+                        phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                }
+            }
+
+            $messages[$id]["recipient_count"] = count($message["recipients"]);
+            $messages[$id]["receive_count"] = $receive_count;
+        }
     }
 
-    // Run the messages through the formatting code.
+    // Run the messages through the standard formatting code.
     $messages = phorum_format_messages($messages);
 
     // Reformat message back to a private message.
