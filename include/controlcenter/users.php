@@ -72,6 +72,12 @@ if(empty($users)){
     // get a fresh list to update any changes
     $users=phorum_db_user_get_unapproved();
 
+    // XSS prevention.
+    foreach ($users as $id => $user) {
+        $users[$id]["username"] = htmlspecialchars($user["username"]);
+        $users[$id]["email"] = htmlspecialchars($user["email"]);
+    }
+
     $PHORUM["DATA"]["USERS"]=$users;
 
     $PHORUM["DATA"]["ACTION"]=phorum_get_url( PHORUM_CONTROLCENTER_ACTION_URL );
