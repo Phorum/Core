@@ -348,6 +348,7 @@ if (!empty($action)) {
             // Adding a recipient.
             if ($action == "rcpt_add" || $action == "preview" || $action == "post") {
 
+                // TODO: this should be a central API function.
                 // Convert adding a recipient by name to adding by user id.
                 // The user field that is being searched on is either
                 // the username or the display_name (depending on the
@@ -362,8 +363,23 @@ if (!empty($action)) {
                         if (is_array($to_user_ids) && count($to_user_ids)==1) {
                             $_POST["to_id"] = array_shift($to_user_ids);
                         } else {
-                            $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                            // If no user was found and the display name
+                            // source is not the username field, then do
+                            // another lookup for the username. This is done,
+                            // because Phorum will use the username as the
+                            // displayname if the real name is not entered.
+                            if ($PHORUM["display_name_source"] == 'real_name') {
+                                $to_user_ids = phorum_db_user_check_field(
+                                    "username", $to_name, '=', TRUE
+                                );
+                                if (is_array($to_user_ids) && count($to_user_ids)==1) {
+                                    $_POST["to_id"] = array_shift($to_user_ids);
+                                }
+                            }
                         }
+                    }
+                    if (empty($_POST["to_id"])) {
+                        $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
                     }
                 }
 
