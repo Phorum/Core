@@ -13,10 +13,7 @@
       {IF OKMSG}
         <div class="PhorumOkMsg">{OKMSG}</div>
       {/IF}
-      <?php
-      // don't touch this line
-      include phorum_get_template($template);
-      ?>
+      {INCLUDE PM_TEMPLATE}
     </td>
   </tr>
 </table>

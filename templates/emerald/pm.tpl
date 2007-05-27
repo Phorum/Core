@@ -55,7 +55,7 @@
         <td class="content">
             {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
             {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
-            <?php include phorum_get_template($template); ?>
+            {INCLUDE PM_TEMPLATE}
         </td>
     </tr>
 </table>
