@@ -513,6 +513,8 @@ if (!empty($action)) {
                         }
 
                         $redirect_message = "PMSent";
+                        $page = "list";
+                        $folder_id = "inbox";
                     }
 
                 } else {
