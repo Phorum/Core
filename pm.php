@@ -990,18 +990,25 @@ function phorum_pm_format($messages)
     // through phorum_format_messages) and do some PM specific formatting.
     foreach ($messages as $id => $message)
     {
-        $folder_id = $message['pm_folder_id']
-                   ? $message['pm_folder_id']
-                   : $message['special_folder'];
+        // Read URLs need a folder id, so we only create that URL if
+        // one's available.
+        if (isset($message['pm_folder_id'])) {
+            $folder_id = $message['pm_folder_id']
+                       ? $message['pm_folder_id']
+                       : $message['special_folder'];
+            $messages[$id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
+        }
 
+        // The datestamp is only available for already posted messages.
+        if (isset($message['datestamp'])) {
+            $messages[$id]["raw_date"] = $message["datestamp"];
+            $messages[$id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
+        }
 
         $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
         $messages[$id]["email"] = "";
 
         $messages[$id]["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
-        $messages[$id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
-        $messages[$id]["raw_date"] = $message["datestamp"];
-        $messages[$id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
 
         $messages[$id]["recipient_count"] = 0;
         $messages[$id]["receive_count"] = 0;
@@ -1012,7 +1019,7 @@ function phorum_pm_format($messages)
 
             foreach ($message["recipients"] as $rcpt_id => $rcpt)
             {
-                if ($rcpt["read_flag"]) $receive_count++;
+                if (!empty($rcpt["read_flag"])) $receive_count++;
 
                 if (! isset($rcpt["display_name"])) {
                     $messages[$id]["recipients"][$rcpt_id]["display_name"]=
