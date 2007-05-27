@@ -46,17 +46,11 @@
       <tr>
         <td>{LANG->Special}:&nbsp;</td>
         <td>
-          {IF SHOW_SPECIALOPTIONS}
-            <select name="special">
-              <option value=""></option>
-              {IF OPTION_ALLOWED->sticky}
-                <option value="sticky"{IF POSTING->special "sticky"} selected="selected"{/IF}>{LANG->MakeSticky}</option>
-              {/IF}
-              {IF OPTION_ALLOWED->announcement}
-                <option value="announcement" {IF POSTING->special "announcement"} selected="selected"{/IF}>{LANG->MakeAnnouncement}</option>
-              {/IF}
-            </select>
-          {/IF}
+          {IF SHOW_SPECIALOPTIONS}{IF OPTION_ALLOWED->sticky}
+            <input type="checkbox" name="sticky" id="phorum_sticky" value="1"
+             {IF POSTING->special "sticky"}checked="checked"{/IF} />
+            <label for="phorum_sticky">{LANG->MakeSticky}</label>
+          {/IF}{/IF}
           {IF OPTION_ALLOWED->allow_reply}
             <input type="checkbox" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF}> {LANG->AllowReplies}
           {/IF}

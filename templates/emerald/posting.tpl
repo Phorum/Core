@@ -60,20 +60,21 @@
 
                 {IF SHOW_SPECIALOPTIONS}
 
-                    <div id="post-moderation">
+                  <div id="post-moderation">
 
-                        {LANG->Special}:<br />
-                        <select name="special">
-                          <option value=""></option>
-                          {IF OPTION_ALLOWED->sticky}
-                            <option value="sticky"{IF POSTING->special "sticky"} selected="selected"{/IF}>{LANG->MakeSticky}</option>
-                          {/IF}
-                        </select><br />
-                        <br />
+                    {LANG->Special}:<br />
 
-                        <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF}> <label for="allow-reply">{LANG->AllowReplies}</label>
+                    {IF OPTION_ALLOWED->sticky}
+                    <input type="checkbox" name="sticky"
+                     id="phorum_sticky" value="1"
+                     {IF POSTING->special "sticky"}checked="checked"{/IF} />
+                    <label for="phorum_sticky">{LANG->MakeSticky}</label>
+                    <br />
+                    {/IF}
 
-                    </div>
+                    <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF}> <label for="allow-reply">{LANG->AllowReplies}</label>
+
+                  </div>
 
                 {/IF}
 
