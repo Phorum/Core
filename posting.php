@@ -250,7 +250,6 @@ phorum_build_common_urls();
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_POSTING_URL);
 
 // Keep track of errors.
-$PHORUM["DATA"]["MESSAGE"] = null;
 $PHORUM["DATA"]["ERROR"] = null;
 
 // Do things that are specific for first time or followup requests.
@@ -336,8 +335,8 @@ $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = false;
 if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
     $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
 } else {
-    // Allowed if a moderator edits a message.
-    if ($mode == "edit") {
+    // Allowed if a moderator edits a message for an anonymous user.
+    if ($mode == "edit" && empty($message["user_id"])) {
         if ($PHORUM["DATA"]["MODERATOR"]) {
             $PHORUM["DATA"]["OPTION_ALLOWED"]["edit_author"] = true;
         }
@@ -603,7 +602,7 @@ if ($PHORUM["posting_template"] == 'posting')
         $message = phorum_hook("before_editor", $message);
 
     // Make the message data available to the template engine.
-    $PHORUM["DATA"]["MESSAGE"] = $message;
+    $PHORUM["DATA"]["POSTING"] = $message;
 
     // Set the field to focus. Only set the focus if we have
     // no message to display to the user and if we're not in a preview.
