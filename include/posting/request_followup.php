@@ -22,10 +22,23 @@ if(!defined("PHORUM")) return;
 // Create an empty message structure.
 $message = array();
 
-// A special form field: if a checkbox with the name "sticky" is checked,
+// If a checkbox with the name "sticky" is checked,
 // then we map that field to an entry for the "special" message field.
 if (isset($_POST["sticky"])) {
     $_POST["special"] = "sticky";
+}
+
+// For setting up following threads, either a "subscription" field 
+// (containing one "bookmark" or "message" if a subscription is needed)
+// or the checkboxes "subscription_follow" and "subscription_mail" can
+// be used. If the checkboxes are used, then map them into a 
+// correct subscription value here.
+if (!isset($_POST["subscription"])) {
+    $_POST["subscription"] = "";
+    if (!empty($_POST["subscription_follow"])) {
+        $_POST["subscription"] = empty($_POST["subscription_mail"]) 
+                               ? "bookmark" : "message";
+    }
 }
 
 // Inject form field data into the message structure. No checks

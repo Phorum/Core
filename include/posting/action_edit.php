@@ -178,20 +178,43 @@ if (! $message["parent_id"] &&
 // Update thread info.
 phorum_update_thread_info($message['thread']);
 
-// Update thread subscription or unsubscription.
-if ($message["user_id"])
+// Update thread subscription.
+if (isset($message["subscription"]))
 {
-    if ($message["email_notify"])
-    {
-        phorum_user_subscribe(
-            $message["user_id"], $PHORUM["forum_id"],
-            $message["thread"], PHORUM_SUBSCRIPTION_MESSAGE
-        );
-    } else {
+    $subscribe_type = NULL;
+    switch ($message["subscription"]) {
+        case "bookmark":
+            if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"]) {
+                $subscribe_type = PHORUM_SUBSCRIPTION_BOOKMARK;
+            }
+            break;
+        case "message":
+            if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"]) {
+                $subscribe_type = PHORUM_SUBSCRIPTION_MESSAGE;
+            }
+            break;
+        case "":
+            break;
+        default:
+            trigger_error(
+                "Illegal message subscription type: " .
+                htmlspecialchars($message["subscription"])
+            );
+            break;
+    }
+
+    if ($subscribe_type === NULL) {
         phorum_user_unsubscribe(
             $message["user_id"],
             $message["thread"],
             $message["forum_id"]
+        );
+    } else {
+        phorum_user_subscribe(
+            $message["user_id"],
+            $PHORUM["forum_id"],
+            $message["thread"],
+            $subscribe_type
         );
     }
 }

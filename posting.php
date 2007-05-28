@@ -162,7 +162,7 @@ $PHORUM["post_fields"] = array(
 "parent_id"      => array("integer", true,  true,  false, 0),
 "allow_reply"    => array("boolean", false, true,  false, 1),
 "special"        => array("string",  false, true,  false, ''),
-"email_notify"   => array("boolean", false, false, false, 0),
+"subscription"   => array("string",  false, false, false, 0),
 "show_signature" => array("boolean", false, false, false, 0),
 "attachments"    => array("array",   true,  false, true,  array()),
 "meta"           => array("array",   true,  false, true,  array()),
@@ -315,14 +315,25 @@ $PHORUM["DATA"]["MODERATOR"] =
 // Ability: Do we allow attachments?
 $PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
 
-$PHORUM["DATA"]["EMAILNOTIFY"] =
-(isset($PHORUM['allow_email_notify']) && !empty($PHORUM['allow_email_notify']))? 1 : 0;
-
 // What options does this user have for a message?
 $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
-    "sticky"        => false, // Sticky flag for message sorting
-    "allow_reply"   => false, // Whether replies are allowed in the thread
+    "sticky"        => FALSE, // Sticky flag for message sorting
+    "allow_reply"   => FALSE, // Replies in the thread
+    "subscribe"     => FALSE, // Subscribing to a thread
+    "subscribe_mail"=> FALSE, // Subscribing to a thread mail notify
 );
+
+// Subscribing to threads for new messages by authenticated users or for
+// editing messages posted by authenticated users (in which case the
+// thread subscription for the user that posted the message can be
+// updated).
+if (($mode == "post" && $PHORUM["DATA"]["LOGGEDIN"]) ||
+    ($mode == "edit" && !empty($message["user_id"]))) {
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"] = TRUE;
+    $PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"] =
+        !empty($PHORUM['allow_email_notify']) ? TRUE : FALSE;
+}
+
 // For moderators and administrators.
 if (($PHORUM["DATA"]["MODERATOR"] || $PHORUM["DATA"]["ADMINISTRATOR"]) && $message["parent_id"] == 0) {
     $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = true;
@@ -656,11 +667,23 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                 $form[$key] = ! $db["closed"];
                 break;
 
-            case "email_notify":
+            case "subscription":
                 $type = phorum_db_get_if_subscribed(
                     $db["forum_id"], $db["thread"], $db["user_id"]);
-                $form[$key] = $type !== NULL &&
-                              $type == PHORUM_SUBSCRIPTION_MESSAGE;
+                switch ($type) {
+                    case NULL:
+                        $form[$key] = "";
+                        break;
+                    case PHORUM_SUBSCRIPTION_BOOKMARK:
+                        $form[$key] = "bookmark";
+                        break;
+                    case PHORUM_SUBSCRIPTION_MESSAGE:
+                        $form[$key] = "message";
+                        break;
+                    default:
+                        $form[$key] = "";
+                        break;
+                }
                 break;
 
             case "forum_id":

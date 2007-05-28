@@ -146,11 +146,35 @@ if ($success)
     phorum_update_thread_info($message["thread"]);
 
     // Subscribe user to the thread if requested.
-    if ($message["email_notify"] && $message["user_id"]) {
-        phorum_user_subscribe(
-            $message["user_id"], $PHORUM["forum_id"],
-            $message["thread"], PHORUM_SUBSCRIPTION_MESSAGE
-        );
+    if (!empty($message["subscription"]))
+    {
+        $subscribe_type = NULL;
+        switch ($message["subscription"]) {
+            case "bookmark":
+                if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"]) {
+                    $subscribe_type = PHORUM_SUBSCRIPTION_BOOKMARK;
+                }
+                break;
+            case "message":
+                if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"]) {
+                    $subscribe_type = PHORUM_SUBSCRIPTION_MESSAGE;
+                }
+                break;
+            default:
+                trigger_error(
+                    "Illegal message subscription type: " .
+                    htmlspecialchars($message["subscription"])
+                );
+                break;
+        }
+        if ($subscribe_type !== NULL) {
+            phorum_user_subscribe(
+                $message["user_id"],
+                $PHORUM["forum_id"],
+                $message["thread"],
+                $subscribe_type
+            );
+        }
     }
 
     // Mark own message read.
