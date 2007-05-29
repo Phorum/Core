@@ -20,7 +20,7 @@
 // Check that this file is not loaded directly.
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
-// all other constants in ./include/constants.php
+// the Phorum version
 define( "PHORUM", "5.2-dev" );
 
 // our database schema version in format of year-month-day-serial
@@ -37,23 +37,23 @@ define( "PHORUM_SCHEMA_PATCHLEVEL", "2007052400" );
 // for the module.
 define( "PHORUM_EXTENSION_VERSION", "20070522" );
 
-define( "DEBUG", 0 );
-
+// all other constants in ./include/constants.php
 include_once( "./include/constants.php" );
 
 // setup the PHORUM var
 global $PHORUM;
 $PHORUM = array();
 
-// temp member to hold arrays and such in templates
+// the TMP member holds template {DEFINE ..} definitions and temporary
+// arrays and such in template code
 $PHORUM["TMP"] = array();
 
-// The data member is the data the templates can access
+// the DATA member contains the data that templates can access
 $PHORUM["DATA"] = array();
 $PHORUM["DATA"]["GET_VARS"] = array();
 $PHORUM["DATA"]["POST_VARS"] = "";
 
-// get the forum id if set with a post
+// get the forum id if set with a request parameter
 if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
     $PHORUM["forum_id"] = $_REQUEST["forum_id"];
 }
@@ -75,45 +75,53 @@ if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
 }
 
 // look for and parse the QUERY_STRING
-// this only applies to urls that we create.
-// scrips using urls from forms (search) should use $_GET or $_POST
-if ( !defined( "PHORUM_ADMIN" ) ) {
-    if ( isset( $_SERVER["QUERY_STRING"] ) || isset( $PHORUM["CUSTOM_QUERY_STRING"] ) ) {
-        $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] ) ? $_SERVER["QUERY_STRING"]: $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
+// this only applies to urls that we create using phorum_get_url()
+// scripts using urls from forms (search) should use $_GET or $_POST
+if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($PHORUM["CUSTOM_QUERY_STRING"])))
+{
+    $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
+           ? $_SERVER["QUERY_STRING"]
+           : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
 
-        // ignore stuff past a #
-        if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR );
+    // ignore stuff past a #
+    if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
 
-        // explode it on comma
-        $PHORUM["args"] = explode( ",", $Q_STR );
+    // explode it on comma
+    $PHORUM["args"] = explode( ",", $Q_STR );
 
-        // check for any assigned values
-        if ( strstr( $Q_STR, "=" ) ) {
-            foreach( $PHORUM["args"] as $key => $arg ) {
+    // check for any assigned values
+    if ( strstr( $Q_STR, "=" ) ) {
+        foreach( $PHORUM["args"] as $key => $arg ) {
 
-                // if an arg has an = create an element in args
-                // with left part as key and right part as value
-                if ( strstr( $arg, "=" ) ) {
-                    list( $var, $value ) = explode( "=", $arg );
-                    $PHORUM["args"][$var] = urldecode( $value );
-                    // get rid of the numbered arg, it is useless.
-                    unset( $PHORUM["args"][$key] );
-                }
+            // if an arg has an = create an element in args
+            // with left part as key and right part as value
+            if ( strstr( $arg, "=" ) ) {
+                list( $var, $value ) = explode( "=", $arg, 2 );
+                // get rid of the numbered arg, it is useless.
+                unset( $PHORUM["args"][$key] );
+                // add the named arg
+                // TODO: Why is urldecode() used here? IMO this can be omitted.
+                $PHORUM["args"][$var] = urldecode( $value );
             }
         }
+    }
 
-        // set forum_id if not set already by
-        if ( empty( $PHORUM["forum_id"] ) && isset( $PHORUM["args"][0] ) ) {
-            $PHORUM["forum_id"] = ( int )$PHORUM["args"][0];
-        }
+    // set forum_id if not set already by a forum_id request parameter
+    if ( empty( $PHORUM["forum_id"] ) && isset( $PHORUM["args"][0] ) ) {
+        $PHORUM["forum_id"] = ( int )$PHORUM["args"][0];
     }
 }
 
 // set the forum_id to 0 if not set by now.
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 
-// Get the database settings.
-if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER") ) {
+// Get the database settings. It is possible to override the database
+// settings by defining a global variable $PHORUM_ALT_DBCONFIG which 
+// overrides $PHORUM["DBCONFIG"] (from include/db/config.php). This is
+// only allowed if "PHORUM_WRAPPER" is defined and if the alternative
+// configuration wasn't passed as a request parameter (which could
+// set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
+if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER")) {
     // Backup display_errors setting.
     $orig = ini_get("display_errors");
     @ini_set("display_errors", 0);
@@ -167,7 +175,7 @@ include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
 if(!phorum_db_check_connection()){
     if(isset($PHORUM["DBCONFIG"]["down_page"])){
-        header("Location: ".$PHORUM["DBCONFIG"]["down_page"]);
+        phorum_redirect_by_url($PHORUM["DBCONFIG"]["down_page"]);
         exit();
     } else {
         echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
@@ -227,6 +235,7 @@ if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM
    phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
 }
 
+// determine the caching layer to load
 if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
     $PHORUM['cache_layer'] = 'file';
 } else {
@@ -247,9 +256,9 @@ include_once( "./include/cache/{$PHORUM['cache_layer']}.php" );
 
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
-if (isset($PHORUM["hooks"]["common_pre"]))
-     phorum_hook( "common_pre", "" );
-
+if (isset($PHORUM["hooks"]["common_pre"])) {
+    phorum_hook( "common_pre", "" );
+}
 
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
@@ -281,7 +290,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
                !isset($PHORUM['internal_patchlevel']) ||
                $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
-        echo "<html><head><title>Error</title></head><body>Looks like you have installed a new version. Go to the admin to complete the upgrade!</body></html>";
+        echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br/>Please visit the admin page to complete the upgrade!</body></html>";
         exit();
     }
 
