@@ -127,7 +127,7 @@ function phorum_api_file_get_mimetype($filename)
 
 // {{{ Function: phorum_api_file_check_write_access
 /**
- * Check if the user has permissions to store a personal
+ * Check if the active user has permissions to store a personal
  * file or a message attachment.
  *
  * Note that the checks for message attachments aren't all checks that are
@@ -485,7 +485,7 @@ function phorum_api_file_store($file)
 
 // {{{ Function: phorum_api_file_check_read_access
 /**
- * Check if a file exists and if the user has permission to read the file.
+ * Check if a file exists and if the active user has permission to read it.
  *
  * The function will return either an array containing descriptive data
  * for the file or FALSE, in case access was not granted.
@@ -771,6 +771,98 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         "flags (either use PHORUM_FLAG_GET or PHORUM_FLAG_SEND).",
         E_USER_ERROR
     );
+}
+// }}}
+
+// {{{ Function: phorum_api_file_check_delete_access
+/**
+ * Check if the active user has permission to delete a file.
+ *
+ * @param integer $file_id
+ *     The file_id of the file for which to check the delete access.
+ *
+ * @return boolean
+ *     If the file does not exist (anymore) or the user has rights
+ *     to delete the file, then the function will return TRUE.
+ *     Otherwise it will return FALSE.
+ */
+function phorum_api_file_check_delete_access($file_id)
+{
+    global $PHORUM;
+
+    settype($file_id, "int");
+
+    // Administrator users always have rights to delete files.
+    if ($PHORUM["user"]["admin"]) {
+        return TRUE;
+    }
+
+    // Anonymous users never have rights to delete files.
+    if (empty($PHORUM["user"]["user_id"])) {
+        return FALSE;
+    }
+
+    // For other users, the file information has to be retrieved
+    // to be able to check the delete access.
+    $file = phorum_api_file_check_read_access(
+        $file_id,
+        PHORUM_FLAG_IGNORE_PERMS
+    ); 
+
+    // To prevent permission errors after deleting the same file twice,
+    // we'll return TRUE if we did not find a file (if the file is not found,
+    // then there's no harm in deleting it; the file storage API will
+    // silently ignore deleting non-existant files). If some other error
+    // occurred, then we return FALSE (most likely, the user does not
+    // even have read permission for the file, so delete access would
+    // be out of the question too).
+    if ($file === FALSE) {
+        if (phorum_api_errno() == PHORUM_ERRNO_NOTFOUND) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    // We don't care about deleting temporary files and files that
+    // are linked to the posting editor (during writing a post).
+    // Those are both intermediate states for files, without them
+    // being available on the forum. So for those, we always grant
+    // delete access. 
+    if ($file["link"] == PHORUM_LINK_TEMPFILE ||
+        $file["link"] == PHORUM_LINK_EDITOR) {
+        return TRUE;
+    }
+
+    // If the file is owned by the user, then the user has rights
+    // to delete the file.
+    if (!empty($file["user_id"]) && !empty($PHORUM["user"]["user_id"]) &&
+        $file["user_id"] == $PHORUM["user"]["user_id"]) {
+        return TRUE;
+    }
+
+    // The file is not owned by the user. In that case, the user only has
+    // rights to delete it if it's a file that is linked to a message in
+    // a forum and if the user is moderator for that forum.
+    if ($file["link"] == PHORUM_LINK_MESSAGE)
+    {
+        // Retrieve the message to which the message is linked. 
+        $message = phorum_db_get_message($file["message_id"]); 
+
+        // If the message cannot be found, we do not care if the linked
+        // file is deleted. It's clearly an orphin file.
+        if (! $message) {
+            return TRUE;
+        }
+
+        // Check if the user is moderator for the forum_id of the message.
+        if (phorum_user_moderate_allowed($message["forum_id"])) {
+            return TRUE;
+        }
+    }
+
+    // The default policy for any unhandled case is to deny access.  
+    return FALSE;
 }
 // }}}
 
