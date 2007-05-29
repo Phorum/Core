@@ -297,11 +297,18 @@ $PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["
 
 if ($PHORUM["args"]["match_type"] == "USER_ID")
 {
-    $search_user = phorum_user_get((int)$phorum_search);
-    $search_name = $search_user == NULL ? $PHORUM["DATA"]["LANG"]["AnonymousUser"] : $search_user["username"];
+    $search_user = phorum_user_get((int)$phorum_author);
+    if (!$search_user) {
+        $search_name = $PHORUM["DATA"]["LANG"]["AnonymousUser"];
+    } else {
+        $search_name = $search_user["display_name"];
+        if (empty($PHORUM['no_display_name_escape'])) {
+            $search_name = htmlspecialchars($search_name);
+        }
+    }
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];
     $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];
-    $PHORUM["DATA"]["DESCRIPTION"] = str_replace("%user%", htmlspecialchars($search_name), $PHORUM["DATA"]["LANG"]["SearchAllPostsHelp"]);
+    $PHORUM["DATA"]["DESCRIPTION"] = str_replace("%user%", $search_name, $PHORUM["DATA"]["LANG"]["SearchAllPostsHelp"]);
 } else {
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Search"];
 
