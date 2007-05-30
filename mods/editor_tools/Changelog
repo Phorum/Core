@@ -5,7 +5,7 @@ Changelog:
 
     - Included a French translation by notre-planete.info. Thanks!
 
-7-04-11 v1.1.18
+2007-04-11 v1.1.18
 
     - It's now possible to put the editor tools at a specific spot in the
       editor page, by creating a container element with id="editor-tools".
