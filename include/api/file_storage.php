@@ -135,7 +135,7 @@ function phorum_api_file_get_mimetype($filename)
  * checks on the message level (e.g. to see if the maximum cumulative
  * attachment size is not exceeded).
  *
- * @example file_store.php Store a personal file in the database
+ * @example file_store.php Store a personal file. 
  *
  * @param array $file
  *     This is an array, containing information about the
@@ -301,9 +301,9 @@ function phorum_api_file_check_write_access($file)
 
 // {{{ Function: phorum_api_file_store
 /** 
- * Store or update a file in the database.
+ * Store or update a file.
  *
- * @example file_store.php Store a personal file in the database
+ * @example file_store.php Store a personal file. 
  *
  * @param array $file
  *     An array, containing information for the file.
