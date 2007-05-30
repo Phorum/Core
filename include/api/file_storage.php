@@ -169,7 +169,7 @@ function phorum_api_file_check_write_access($file)
     );
 
     if (empty($file["user_id"])) {
-        $file["user_id"] = $PHORUM["user"]["user_id"]
+        $file["user_id"] = $PHORUM["user"]["user_id"];
     }
 
     // ---------------------------------------------------------------------

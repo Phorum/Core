@@ -7,8 +7,16 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 
 chdir(dirname(__FILE__) . "/..");
 
-system("/bin/rm -R docs/api/*");
-system("phpdoc -d include/api/ -t docs/api -ti \"Phorum API Documentation\" -j on -o HTML:frames:DOM/earthli -dn PhorumAPI");
+$files = array(
+    'include/db/mysql.php',
+    'include/api/base.php',
+    'include/api/custom_profile_fields.php',
+    'include/api/file_storage.php',
+);
+
+system("/bin/rm -R docs/api");
+system("mkdir docs/api");
+system("phpdoc -f ".implode(",",$files)." -t docs/api -ti \"Phorum API Documentation\" -o HTML:frames:DOM/earthli -dn PhorumAPI");
 
 ?>
 

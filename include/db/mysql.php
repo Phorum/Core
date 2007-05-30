@@ -18,8 +18,6 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if (!defined('PHORUM')) return;
-
 /**
  * This script implements a MySQL Phorum database layer.
  *
@@ -32,23 +30,36 @@ if (!defined('PHORUM')) return;
  * all tables for a Phorum install should be prefixed with the
  * table_prefix that will be entered in include/db/config.php.  This
  * will allow multiple Phorum installations to use the same database.
+ *
+ * @todo
+ *     phorum_user_access_allowed() is used in this layer, but the
+ *     include file for that is not included here. Keep it like that
+ *     or add the required include? Or is it functionality that doesn't
+ *     belong here and could better go into the core maybe?
+ *
+ * @package    PhorumDBLayer
+ * @copyright  2007, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-// TODO: phorum_user_access_allowed() is used in this layer, but the
-// TODO: include file for that is not included here. Keep it like that
-// TODO: or add the required include? Or is it functionality that doesn't
-// TODO: belong here and could better go into the core maybe?
+/**
+ * Bail out if we're not loaded from the Phorum code.
+ */
+if (!defined('PHORUM')) return;
 
 // ----------------------------------------------------------------------
 // Definitions
 // ----------------------------------------------------------------------
 
 /**
- * These are the table names that are used for this database system.
+ * The table prefix, which allows for storing multiple Phorum data sets
+ * in one single database.
  */
-
 $prefix = $PHORUM['DBCONFIG']['table_prefix'];
 
+/**
+ * These are the table names that are used for this database system.
+ */
 $PHORUM['message_table']            = $prefix . '_messages';
 $PHORUM['user_newflags_table']      = $prefix . '_user_newflags';
 $PHORUM['subscribers_table']        = $prefix . '_subscribers';
