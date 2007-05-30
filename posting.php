@@ -194,7 +194,17 @@ if (isset($PHORUM["hooks"]["posting_init"]))
 // Is this an initial request?
 $initial = ! isset($_POST["message_id"]);
 
-// Is finish, cancel of preview clicked?
+// If templates use <input type="image" name="foo" ...>, then the name
+// parameter will be sent as "foo_x" and "foo_y" by some browsers (to
+// indicate where the image was clicked). Rewrite that kind of form
+// field data.
+foreach (array("finish", "cancel", "preview") as $field) {
+    if (!isset($_POST[$field]) && isset($_POST[$field.'_x'])) {
+        $_POST[$field] = $_POST[$field.'_x'];
+    }
+}
+
+// Is finish, cancel or preview clicked?
 $finish  = (! $initial && isset($_POST["finish"]));
 $cancel  = (! $initial && isset($_POST["cancel"]));
 $preview = (! $initial && isset($_POST["preview"]));
