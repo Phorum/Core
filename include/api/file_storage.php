@@ -135,6 +135,8 @@ function phorum_api_file_get_mimetype($filename)
  * checks on the message level (e.g. to see if the maximum cumulative
  * attachment size is not exceeded).
  *
+ * @example file_store.php Store a personal file in the database
+ *
  * @param array $file
  *     This is an array, containing information about the
  *     file that will be uploaded. The array should contain at least the
@@ -142,7 +144,9 @@ function phorum_api_file_get_mimetype($filename)
  *     uploaded files in the control center (PHORUM_LINK_USER) or message
  *     attachments (PHORUM_LINK_MESSAGE). Next to that, interesting file
  *     fields to pass to this function are "filesize" (to check maximum size)
- *     and "filename" (to check allowed file type extensions).
+ *     and "filename" (to check allowed file type extensions). A "user_id"
+ *     field can either be provided or the user_id of the active Phorum
+ *     user will be used.
  *
  * @return array
  *     If access is allowed, then TRUE will be returned. If access is denied,
@@ -163,6 +167,10 @@ function phorum_api_file_check_write_access($file)
         "\"link\" field.",
         E_USER_ERROR
     );
+
+    if (empty($file["user_id"])) {
+        $file["user_id"] = $PHORUM["user"]["user_id"]
+    }
 
     // ---------------------------------------------------------------------
     // Handle write access checks for uploading user files.
@@ -295,6 +303,8 @@ function phorum_api_file_check_write_access($file)
 /** 
  * Store or update a file in the database.
  *
+ * @example file_store.php Store a personal file in the database
+ *
  * @param array $file
  *     An array, containing information for the file.
  *     This array has to contain the following fields:
@@ -311,7 +321,8 @@ function phorum_api_file_check_write_access($file)
  *         <li>PHORUM_LINK_TEMPFILE</li>
  *         </ul>
  *     </li>
- *     <li>user_id: The user to link a file to or 0 if it's no user file.</li>
+ *     <li>user_id: The user to link a file to. If none is provided, then
+           the user_id of the active Phorum user will be used.</li>
  *     <li>message_id: The message to link a file to or 0 if it's no
  *         message attachment.</li>
  *     </ul>
@@ -382,8 +393,8 @@ function phorum_api_file_store($file)
         }
 
         // Force the message_id and user_id to 0, depending on the
-        // link type. Also check if the correct object id is set for
-        // the used link type.
+        // link type. Also check if the required id field (user or
+        // message) is set for the used link type.
         switch ($checkfile["link"])
         {
             case PHORUM_LINK_EDITOR:
@@ -392,6 +403,9 @@ function phorum_api_file_store($file)
                 break;
             case PHORUM_LINK_USER: 
                 $checkfile["message_id"] = 0;
+                if (empty($checkfile["user_id"])) {
+                    $checkfile["user_id"] = $PHORUM["user"]["user_id"];
+                }
                 if (empty($checkfile["user_id"])) trigger_error (
                     "phorum_api_file_store(): \$file set the link type to " .
                     "PHORUM_LINK_USER, but the user_id was not set.",
@@ -778,13 +792,13 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 /**
  * Check if the active user has permission to delete a file.
  *
+ * @example file_delete.php Delete a file.
+ *
  * @param integer $file_id
  *     The file_id of the file for which to check the delete access.
  *
  * @return boolean
- *     If the file does not exist (anymore) or the user has rights
- *     to delete the file, then the function will return TRUE.
- *     Otherwise it will return FALSE.
+ *     TRUE if the user has rights to delete the file, FALSE otherwise.
  */
 function phorum_api_file_check_delete_access($file_id)
 {
@@ -835,23 +849,30 @@ function phorum_api_file_check_delete_access($file_id)
     }
 
     // If the file is owned by the user, then the user has rights
-    // to delete the file.
-    if (!empty($file["user_id"]) && !empty($PHORUM["user"]["user_id"]) &&
+    // to delete the file (this would be a personal user file).
+    if (!empty($file["user_id"]) &&
         $file["user_id"] == $PHORUM["user"]["user_id"]) {
         return TRUE;
     }
 
     // The file is not owned by the user. In that case, the user only has
-    // rights to delete it if it's a file that is linked to a message in
-    // a forum and if the user is moderator for that forum.
+    // rights to delete it if it is a file that is linked to a message which
+    // the user posted himself of which was posted in a forum for which 
+    // the user is a moderator.
     if ($file["link"] == PHORUM_LINK_MESSAGE)
     {
-        // Retrieve the message to which the message is linked. 
+        // Retrieve the message to which the file is linked. 
         $message = phorum_db_get_message($file["message_id"]); 
 
         // If the message cannot be found, we do not care if the linked
         // file is deleted. It's clearly an orphin file.
         if (! $message) {
+            return TRUE;
+        }
+
+        // Check if the user posted the message himself.
+        if (!empty($message["user_id"]) &&
+            $message["user_id"] == $PHORUM["user"]["user_id"]) {
             return TRUE;
         }
 
@@ -869,6 +890,8 @@ function phorum_api_file_check_delete_access($file_id)
 // {{{ Function: phorum_api_file_delete
 /**
  * Delete a Phorum file.
+ *
+ * @example file_delete.php Delete a file.
  *
  * @param mixed $file
  *     This is either an array containing at least the field "file_id"
