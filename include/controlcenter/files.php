@@ -70,10 +70,9 @@ if (!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"]))
 elseif (!empty($_POST["delete"]))
 {
     foreach($_POST["delete"] as $file_id){
-        /** 
-         * @todo Add a delete authorization check.
-         */
-        phorum_api_file_delete($file_id);
+        if (phorum_api_file_check_delete_access($file_id)) {
+            phorum_api_file_delete($file_id);
+        }
     }                
 }
 

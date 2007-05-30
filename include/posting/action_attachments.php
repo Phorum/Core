@@ -33,7 +33,9 @@ if ($do_detach)
             // can be deleted immediately. Linked attachments should
             // be kept in the db, in case the users clicks "Cancel".
             if (! $info["linked"]) {
-                phorum_api_file_delete($info["file_id"]);
+                if (phorum_api_file_check_delete_access($info["file_id"])) {
+                    phorum_api_file_delete($info["file_id"]);
+                }
                 unset($message["attachments"][$id]);
             } else {
                 $message["attachments"][$id]["keep"] = false;

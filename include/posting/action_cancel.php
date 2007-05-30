@@ -25,7 +25,9 @@ require_once("./include/api/file_storage.php");
 // Clean up unlinked attachments from the database.
 foreach ($message["attachments"] as $info) {
     if (! $info["linked"]) {
-        phorum_api_file_delete($info["file_id"]);
+        if (phorum_api_file_check_delete_access($info["file_id"])) {
+            phorum_api_file_delete($info["file_id"]);
+        }
     }
 }
 

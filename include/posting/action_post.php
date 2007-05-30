@@ -128,7 +128,9 @@ if ($success)
                 PHORUM_LINK_MESSAGE
             );
         } else {
-            phorum_api_file_delete($info["file_id"]);
+            if (phorum_api_file_check_delete_access($info["file_id"])) {
+                phorum_api_file_delete($info["file_id"]);
+            }
         }
     }
 

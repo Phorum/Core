@@ -93,7 +93,9 @@ if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
                 // Delete the message attachments from the database.
                 $files=phorum_db_get_message_file_list($msgthd_id);
                 foreach($files as $file_id=>$data) {
-                    phorum_api_file_delete($file_id);
+                    if (phorum_api_file_check_delete_access($file_id)) {
+                        phorum_api_file_delete($file_id);
+                    }
                 }
             }
 
