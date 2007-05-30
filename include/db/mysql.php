@@ -1013,7 +1013,10 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  *
  * @return                 - Either a single message or an array of
  *                           messages (indexed by message_id), depending on
- *                           the $value parameter.
+ *                           the $value parameter. If no message is found
+ *                           at all, then either an empty array or NULL
+ *                           is returned (also depending on the $value
+ *                           parameter).
  */
 function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE)
 {
