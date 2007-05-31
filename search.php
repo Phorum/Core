@@ -302,7 +302,7 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
         $search_name = $PHORUM["DATA"]["LANG"]["AnonymousUser"];
     } else {
         $search_name = $search_user["display_name"];
-        if (empty($PHORUM['no_display_name_escape'])) {
+        if (empty($PHORUM['custom_display_name'])) {
             $search_name = htmlspecialchars($search_name);
         }
     }

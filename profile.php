@@ -115,7 +115,7 @@ if (isset($PHORUM["DATA"]["PROFILE"]["real_name"])) {
         htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"]);
 }
 
-if (empty($PHORUM["no_display_name_escape"])) {
+if (empty($PHORUM["custom_display_name"])) {
     $PHORUM["DATA"]["PROFILE"]["display_name"] = 
         htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"]);
 }

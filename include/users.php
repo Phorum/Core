@@ -564,6 +564,32 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
             case "user_template":
             case "moderation_email":
                 break;
+
+            case "display_name":
+                // Determine the display name to use for the user. If
+                // $PHORUM["custom_display_name"] is set, then Phorum expects
+                // that the display name is a HTML formatted display_name
+                // field, which is provided by 3rd party software. Otherwise,
+                // the username or real_name is used (depending on the
+                // $PHORUM["display_name_source"] Phorum setting).
+                if (empty($PHORUM["custom_display_name"])) {
+                    $display_name = $user['username'];
+                    if ($PHORUM['display_name_source'] == 'real_name' &&
+                        trim($user['real_name']) != '') {
+                        $display_name = $user['real_name'];         
+                    }
+                    $user['display_name'] = $display_name;
+                }
+                // If the 3rd party software provided an empty display_name,
+                // then we save the day by using the username (just so users
+                // won't be empty on screen, this should not happen at all
+                // in the first place). We HTML encode the username, because
+                // custom display names are supposed to be safe HTML.
+                elseif (trim($user['display_name']) == '') {
+                    $user['display_name'] = htmlspecialchars($user['username']);
+                }
+                break;
+
             // the phorum built in user module stores md5 passwords.
             case "password":
             case "password_temp":
@@ -617,14 +643,6 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
             $user["user_data"] = $user_data;
         }
     }
-
-    // Determine the display name to use for the user.
-    $display_name = $user['username'];
-    if ($PHORUM['display_name_source'] == 'real_name' &&
-        trim($user['real_name']) != '') {
-        $display_name = $user['real_name'];         
-    }
-    $user['display_name'] = $display_name;
 
     return $user;
 }

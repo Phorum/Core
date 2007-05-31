@@ -454,7 +454,7 @@ if (!empty($action)) {
                                     } else {
                                         $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
                                         $recipient =
-                                            (empty($PHORUM["no_display_name_escape"])
+                                            (empty($PHORUM["custom_display_name"])
                                              ? htmlspecialchars($user["display_name"])
                                              : $user["display_name"]);
                                         $error = str_replace('%recipient%', $recipient, $error);
@@ -661,7 +661,7 @@ switch ($page) {
             $buddy = array(
                 'user_id'     => $id,
                 'display_name' => 
-                    (empty($PHORUM["no_display_name_escape"])
+                    (empty($PHORUM["custom_display_name"])
                      ? htmlspecialchars($buddy_user["display_name"])
                      : $buddy_user["display_name"]),
                 'mutual'      => $buddy_list[$id]["mutual"],
@@ -858,7 +858,7 @@ switch ($page) {
                 case "recipients": {
                     foreach ($val as $id => $data) {
                         $msg[$key][$id]["display_name"] = 
-                          (empty($PHORUM["no_display_name_escape"])
+                          (empty($PHORUM["custom_display_name"])
                            ? htmlspecialchars($data["display_name"])
                            : $data["display_name"]);
                     }
@@ -866,7 +866,7 @@ switch ($page) {
                 }
                 case "author": {
                     $msg[$key] =  
-                      (empty($PHORUM["no_display_name_escape"])
+                      (empty($PHORUM["custom_display_name"])
                        ? htmlspecialchars($val) : $val);
                     break;
                 }
@@ -1028,7 +1028,7 @@ function phorum_pm_format($messages)
                         $PHORUM["DATA"]["LANG"]["AnonymousUser"];
                 } else {
                     $messages[$id]["recipients"][$rcpt_id]["display_name"]=
-                        (empty($PHORUM["no_display_name_escape"])
+                        (empty($PHORUM["custom_display_name"])
                          ? htmlspecialchars($rcpt["display_name"])
                          : $rcpt["display_name"]);
                     $messages[$id]["recipients"][$rcpt_id]["URL"]["PROFILE"] =

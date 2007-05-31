@@ -599,7 +599,7 @@ if ($PHORUM["posting_template"] == 'posting')
                 }
             }
         } elseif ($var == "author") {
-            if (empty($PHORUM["no_display_name_escape"])) {
+            if (empty($PHORUM["custom_display_name"])) {
                 $message[$var] = htmlspecialchars($val);
             }
         } else {

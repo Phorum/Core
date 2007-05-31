@@ -142,7 +142,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
                 $url = phorum_get_url(PHORUM_PROFILE_URL, $message[$spec[0]]);
                 $data[$key]["URL"][$spec[4]] = $url;
                 $data[$key][$spec[3]] =
-                    (empty($PHORUM["no_display_name_escape"])
+                    (empty($PHORUM["custom_display_name"])
                      ? htmlspecialchars($message[$spec[1]])
                      : $message[$spec[1]]);
             }
