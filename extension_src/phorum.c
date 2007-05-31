@@ -37,7 +37,7 @@ ZEND_GET_MODULE(phorum)
 PHP_MINFO_FUNCTION(phorum)
 {
     php_info_print_table_start();
-    php_info_print_table_row(2, "Phorum accelleration support", "enabled");
+    php_info_print_table_row(2, "Phorum acceleration support", "enabled");
     php_info_print_table_row(2, "Extension version", PHP_PHORUM_VERSION);
     php_info_print_table_row(2, "Support web site", "http://www.phorum.org/");
     php_info_print_table_end();
