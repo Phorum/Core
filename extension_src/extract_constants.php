@@ -8,6 +8,7 @@ $dir = dirname(__FILE__);
 
 chdir("$dir/..");
 define('phorum_page', 'extension');
+define('PHORUM_ADMIN', 1);
 include("common.php");
     
 $code = "/* Phorum constants, extracted from Phorum " . PHORUM . " */\n\n"; 
