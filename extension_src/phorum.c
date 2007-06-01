@@ -19,8 +19,8 @@ zend_module_entry phorum_module_entry = {
 #endif
     PHP_PHORUM_EXTNAME,
     phorum_functions,
-    NULL,
-    NULL,
+    PHP_MINIT(phorum),
+    PHP_MSHUTDOWN(phorum),
     NULL,
     NULL,
     PHP_MINFO(phorum),
@@ -33,6 +33,25 @@ zend_module_entry phorum_module_entry = {
 #ifdef COMPILE_DL_PHORUM
 ZEND_GET_MODULE(phorum)
 #endif
+
+static void phorum_init_globals(zend_phorum_globals *phorum_globals TSRMLS_DC)
+{
+    bzero(&phorum_globals->url_handlers, sizeof(HashTable));
+    zend_hash_init(&phorum_globals->url_handlers, 0, NULL, (void *)&destroy_url_handler, 1);
+    initialize_get_url_handlers();
+}
+
+PHP_MINIT_FUNCTION(phorum)
+{
+    ZEND_INIT_MODULE_GLOBALS(phorum, phorum_init_globals, NULL);
+    return SUCCESS;
+}
+
+PHP_MSHUTDOWN_FUNCTION(phorum)
+{
+    zend_hash_destroy(&PHORUMG(url_handlers)); 
+    return SUCCESS;
+}
 
 PHP_MINFO_FUNCTION(phorum)
 {

@@ -192,7 +192,9 @@ phorum_db_load_settings();
 if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
 {
     // Load the extension library.
-    @dl('phorum.so');
+    if (! extension_loaded('phorum')) {
+        @dl('phorum.so');
+    }
 
     // Check if the version of the PHP extension matches the Phorum installation.
     if (extension_loaded('phorum')) {

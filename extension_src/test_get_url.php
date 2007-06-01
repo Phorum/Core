@@ -1,6 +1,6 @@
 <?php
 
-dl("phorum.so");
+//dl("phorum.so");
 
 global $PHORUM;
 
@@ -17,6 +17,8 @@ include(dirname(__FILE__) . "/../include/constants.php");
 
 define('phorum_page', 'read');
 
+for($i=0;$i<1;$i++)
+{
 var_dump(phorum_get_url(PHORUM_BASE_URL));
 var_dump(phorum_get_url(PHORUM_INDEX_URL, 10, "type=ok"));
 var_dump(phorum_get_url(PHORUM_LIST_URL, 1, "cleanup=what"));
@@ -43,5 +45,6 @@ var_dump(phorum_get_url(PHORUM_ADDON_URL, "module=mymodule"));
 var_dump(phorum_get_url(PHORUM_ADDON_URL, "mymodule", "with", "extra", "args"));
 var_dump(phorum_get_url(PHORUM_ADDON_URL, "module=mymodule", "more=args", 1,2,3));
 
+}
 
 ?>

@@ -35,8 +35,12 @@
 // This will prevent common.php from loading the extension library.
 define('PHORUM_ADMIN', 1);
 
-// Try to load the Phorum PHP extension..
-@dl('phorum.so');
+// Try to load the Phorum PHP extension. Wrap this in output buffering,
+// so problems here won't wreck the outputted image code.
+ob_start();
+if (! extension_loaded('phorum')) {
+    @dl('phorum.so');
+}
 
 // Load the common Phorum code.
 define('phorum_page','extension_check');

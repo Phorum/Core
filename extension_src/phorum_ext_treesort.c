@@ -4,7 +4,6 @@
 
 #include "php.h"
 #include "php_phorum.h"
-#include "phorum_ext_treesort.h"
 
 /**
  * This is the C implementation of the Phorum tree sorting functionality.

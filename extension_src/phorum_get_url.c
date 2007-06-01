@@ -4,88 +4,83 @@
 
 #include "php.h"
 #include "php_phorum.h"
-#include "phorum_get_url.h"
-#include "phorum_utils.h"
 
 /**
  * Initialize all available Phorum URL handlers.
  * 
- * This function is called once per request to setup the hashed
- * mapping of URL types to their URL generation handler functions.
+ * This function is called once per request form the MINIT code
+ * to setup the hashed mapping of URL types to their URL generation
+ * handler functions.
  */
 void
 initialize_get_url_handlers()
 {
-    zend_hash_init(&url_handlers, 0, NULL, NULL, 0);
-  
     register_url_handler(
-     "PHORUM_BASE_URL",              &basic_url, "",           NO_FORUM_ID, GET_VARS);
+     PHORUM_BASE_URL,              &basic_url, "",           NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_LIST_URL",              &list_url,  "list",       NO_FORUM_ID, GET_VARS);
+     PHORUM_LIST_URL,              &list_url,  "list",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_READ_URL",              &read_url,  "read",       FORUM_ID,    GET_VARS);
+     PHORUM_READ_URL,              &read_url,  "read",       FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_FOREIGN_READ_URL",      &read_url,  "read",       NO_FORUM_ID, GET_VARS);
+     PHORUM_FOREIGN_READ_URL,      &read_url,  "read",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_CHANGES_URL",           &basic_url, "changes",    FORUM_ID,    GET_VARS);
+     PHORUM_CHANGES_URL,           &basic_url, "changes",    FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_REPLY_URL",             &reply_url, "posting",    FORUM_ID,    GET_VARS);
+     PHORUM_REPLY_URL,             &reply_url, "posting",    FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_POSTING_URL",           &basic_url, "posting",    FORUM_ID,    GET_VARS);
+     PHORUM_POSTING_URL,           &basic_url, "posting",    FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_REDIRECT_URL",          &basic_url, "redirect",   NO_FORUM_ID, GET_VARS);
+     PHORUM_REDIRECT_URL,          &basic_url, "redirect",   NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_SEARCH_URL",            &basic_url, "search",     FORUM_ID,    GET_VARS);
+     PHORUM_SEARCH_URL,            &basic_url, "search",     FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_SEARCH_ACTION_URL",     &basic_url,"search",      NO_FORUM_ID, GET_VARS);
+     PHORUM_SEARCH_ACTION_URL,     &basic_url,"search",      NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_DOWN_URL",              &basic_url, "down",       FORUM_ID,    GET_VARS);
+     PHORUM_DOWN_URL,              &basic_url, "down",       FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_VIOLATION_URL",         &basic_url, "violation",  FORUM_ID,    GET_VARS);
+     PHORUM_VIOLATION_URL,         &basic_url, "violation",  FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_INDEX_URL",             &basic_url, "index",      NO_FORUM_ID, GET_VARS);
+     PHORUM_INDEX_URL,             &basic_url, "index",      NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_LOGIN_URL",             &basic_url, "login",      FORUM_ID,    GET_VARS);
+     PHORUM_LOGIN_URL,             &basic_url, "login",      FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_LOGIN_ACTION_URL",      &basic_url, "login",      NO_FORUM_ID, GET_VARS);
+     PHORUM_LOGIN_ACTION_URL,      &basic_url, "login",      NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_REGISTER_URL",          &basic_url, "register",   FORUM_ID,    GET_VARS);
+     PHORUM_REGISTER_URL,          &basic_url, "register",   FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_REGISTER_ACTION_URL",   &basic_url, "register",   NO_FORUM_ID, GET_VARS);
+     PHORUM_REGISTER_ACTION_URL,   &basic_url, "register",   NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_PROFILE_URL",           &basic_url, "profile",    FORUM_ID,    GET_VARS);
+     PHORUM_PROFILE_URL,           &basic_url, "profile",    FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_SUBSCRIBE_URL",         &basic_url, "subscribe",  FORUM_ID,    GET_VARS);
+     PHORUM_SUBSCRIBE_URL,         &basic_url, "subscribe",  FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_MODERATION_URL",        &basic_url, "moderation", FORUM_ID,    GET_VARS);
+     PHORUM_MODERATION_URL,        &basic_url, "moderation", FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_MODERATION_ACTION_URL", &basic_url, "moderation", NO_FORUM_ID, NO_GET_VARS);
+     PHORUM_MODERATION_ACTION_URL, &basic_url, "moderation", NO_FORUM_ID, NO_GET_VARS);
     register_url_handler(
-     "PHORUM_PREPOST_URL",           &prepost_url, "control",  NO_FORUM_ID, GET_VARS);
+     PHORUM_PREPOST_URL,           &prepost_url, "control",  NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_CONTROLCENTER_URL",     &basic_url, "control",    FORUM_ID,    GET_VARS);
+     PHORUM_CONTROLCENTER_URL,     &basic_url, "control",    FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_CONTROLCENTER_ACTION_URL", &basic_url, "control", FORUM_ID,    GET_VARS);
+     PHORUM_CONTROLCENTER_ACTION_URL, &basic_url, "control", FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_PM_URL",                &basic_url, "pm",         FORUM_ID,    GET_VARS);
+     PHORUM_PM_URL,                &basic_url, "pm",         FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_PM_ACTION_URL",         &basic_url, "pm",         NO_FORUM_ID, GET_VARS);
+     PHORUM_PM_ACTION_URL,         &basic_url, "pm",         NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_FILE_URL",              &basic_url, "file",       FORUM_ID,    GET_VARS);
+     PHORUM_FILE_URL,              &basic_url, "file",       FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_FOLLOW_URL",            &basic_url, "follow",     FORUM_ID,    GET_VARS);
+     PHORUM_FOLLOW_URL,            &basic_url, "follow",     FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_FOLLOW_ACTION_URL",     &basic_url, "follow",     NO_FORUM_ID, GET_VARS);
+     PHORUM_FOLLOW_ACTION_URL,     &basic_url, "follow",     NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_REPORT_URL",            &basic_url, "report",     FORUM_ID,    GET_VARS);
+     PHORUM_REPORT_URL,            &basic_url, "report",     FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_FEED_URL",              &feed_url,  "feed",       NO_FORUM_ID, GET_VARS);
+     PHORUM_FEED_URL,              &feed_url,  "feed",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     "PHORUM_ADDON_URL",             &addon_url, "addon",      FORUM_ID,    GET_VARS);
+     PHORUM_ADDON_URL,             &addon_url, "addon",      FORUM_ID,    GET_VARS);
     register_url_handler(
-     "PHORUM_CUSTOM_URL",            &custom_url,"",           NO_FORUM_ID, GET_VARS);
-
-    get_url_initialized = 1;
+     PHORUM_CUSTOM_URL,            &custom_url,"",           NO_FORUM_ID, GET_VARS);
 }
 
 /**
@@ -102,9 +97,6 @@ PHP_FUNCTION(phorum_get_url)
     char         *urlstr = NULL;
     url_handler **handler;
     url_info     *url = NULL;
-
-    /* Initialize the function map hash. */
-    if (get_url_initialized == 0) initialize_get_url_handlers();
 
     /* Check if we have at least one parameter (the URL type). */
     argc = ZEND_NUM_ARGS();
@@ -134,7 +126,7 @@ PHP_FUNCTION(phorum_get_url)
     type = Z_LVAL_P(*argv[0]);
 
     /* Lookup the url handler to call. */
-    if (zend_hash_index_find(&url_handlers, type, (void **)&handler) == FAILURE) {
+    if (zend_hash_index_find(&PHORUMG(url_handlers), type, (void **)&handler) == FAILURE) {
         zend_error(
             E_WARNING,
             "phorum_get_url(): URL type \"%ld\" unknown", type
@@ -171,25 +163,19 @@ PHP_FUNCTION(phorum_get_url)
 }
 
 /**
- * Register a single Phorum URL type.
+ * Register a Phorum URL handler.
  *
  * This adds the URL type to the internal hash table, which will be used
  * for dispatching phorum_get_url() requests to the appropriate URL
  * formatting function.
  */
 void
-register_url_handler(char *typename, url_handler_func *func, char *page, int add_forum_id, int add_get_vars)
+register_url_handler(long type, url_handler_func *func, char *page, int add_forum_id, int add_get_vars)
 {
-    /* Lookup the value of the Phorum URL constant. These constants are
-     * all defined by Phorum and look like PHORUM_..._URL (e.g.
-     * PHORUM_INDEX_URL or PHORUM_READ_URL). */
-    long type = get_constant_long(typename);
-
     /* Create a new url handler description. */
-    url_handler *handler = (url_handler *)emalloc(sizeof(url_handler));
+    url_handler *handler = (url_handler *)pemalloc(sizeof(url_handler), 1);
     if (!handler) zend_error(E_ERROR, "Out of memory");
     bzero(handler, sizeof(url_handler));
-    handler->typename     = typename;
     handler->type         = type;
     handler->func         = func;
     handler->page         = page; 
@@ -197,8 +183,15 @@ register_url_handler(char *typename, url_handler_func *func, char *page, int add
     handler->add_get_vars = add_get_vars ? 1 : 0;
 
     /* Add the description to the url handlers hash. */
-    if (zend_hash_index_update(&url_handlers, type, (void *)&handler, sizeof(void *), NULL) == SUCCESS) {
+    if (zend_hash_index_update(&PHORUMG(url_handlers), type, (void *)&handler, sizeof(void *), NULL) == SUCCESS) {
     }
+}
+
+/**
+ * Destroy a Phorum URL handler.
+ */
+void destroy_url_handler(url_handler **handler) {
+    pefree(*handler, 1); 
 }
 
 /* ====================================================================== */
@@ -485,8 +478,8 @@ default_url_format(void *u)
      * (used for PHORUM_BASE_URL). */
     if (strlen(url->page))
     {
-        extension = get_constant_string("PHORUM_FILE_EXTENSION");
-        url->url_length += strlen(url->page) + 1 + strlen(extension) + 1;
+        url->url_length += strlen(url->page) + 1 +
+                           strlen(PHORUM_FILE_EXTENSION) + 1;
 
         /* Add arguments (plus "?" and space for a comma between 
          * each argument). */
@@ -511,7 +504,7 @@ default_url_format(void *u)
     if (strlen(url->page)) {
         strcat(urlstr, url->page);
         strcat(urlstr, ".");
-        strcat(urlstr, extension);
+        strcat(urlstr, PHORUM_FILE_EXTENSION);
         if (url->arg_count > 0) { 
             strcat(urlstr, "?");
             i = url->arg_count;
@@ -525,9 +518,6 @@ default_url_format(void *u)
             strcat(urlstr, arg->str);
         }
     }
-
-    /* apparently zend_get_constant() returns allocated memory. */
-    if (extension != NULL) efree(extension);
 
     return urlstr;
 }
@@ -637,7 +627,7 @@ read_url(void *h, void *u, int argc, zval ***argv)
     /* The argv field to look at depends on the type of URL. For
      * PHORUM_READ_URL it is field 1 and for PHORUM_FOREIGN_READ_URL
      * it is field 2.  */
-    idx = strcmp(handler->typename, "PHORUM_READ_URL") == 0 ? 1 : 2;
+    idx = handler->type == PHORUM_READ_URL ? 1 : 2;
     
     /* Create a #msg-<msgid> suffix, if a message id is known. */
     if (argc >= (idx+1)) {

@@ -20,7 +20,6 @@ typedef struct url_info {
 } url_info;
 
 typedef struct url_handler {
-    char             *typename;
     long              type;
     url_handler_func *func;
     char             *page;
@@ -28,16 +27,14 @@ typedef struct url_handler {
     int               add_get_vars;
 } url_handler;
 
-static HashTable url_handlers;
-static int get_url_initialized = 0;
 static int get_url_do_custom_url = -1;
 
 url_arg *format_url_arg (char *, ...);
 void     add_url_arg(url_info **, url_arg *, int);
-void     register_url_handler (char *, url_handler_func *, char *, int, int);
+void     register_url_handler (long, url_handler_func *, char *, int, int);
+void     destroy_url_handler(url_handler **);
 void     destroy_url_arg(url_arg **);
 void     destroy_url(url_info **);
-
 
 void     initialize_get_url_handlers();
 void     default_url_build (void *, void *, int, zval ***);
