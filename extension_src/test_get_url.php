@@ -1,6 +1,8 @@
 <?php
 
-//dl("phorum.so");
+if (! extension_loaded('phorum')) {
+    @dl('phorum.so');
+}
 
 global $PHORUM;
 

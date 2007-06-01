@@ -47,8 +47,9 @@ function phorum_sort_threads($rows)
     // Use the Phorum PHP extension if it is available
     // ------------------------------------------------------------------
 
-    if (function_exists('phorum_ext_treesort'))
-    {
+    if (!empty($PHORUM["php_phorum_extension"]) &&
+        function_exists('phorum_ext_treesort')) {
+
         phorum_ext_treesort(
             $rows, "message_id", "parent_id", 
             $indentmultiplier,

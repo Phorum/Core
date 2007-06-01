@@ -1,6 +1,8 @@
 <?php
 
-dl("phorum.so");
+if (! extension_loaded('phorum')) {
+    @dl('phorum.so');
+}
 
 define("NR_OF_THREADS",  3);
 define("NR_OF_MESSAGES", 5);
