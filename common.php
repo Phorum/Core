@@ -667,7 +667,10 @@ function phorum_get_template_file( $page )
 function phorum_output($templates) {
 
     // copy only what we need into the current scope
-    $PHORUM = array("DATA" => $GLOBALS["PHORUM"]["DATA"]);
+    $PHORUM = array(
+        "DATA"  => $GLOBALS["PHORUM"]["DATA"],
+        "hooks" => $GLOBALS["PHORUM"]["hooks"]
+    );
 
     if(!is_array($templates)){
         $templates = array($templates);
