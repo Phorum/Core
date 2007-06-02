@@ -4699,7 +4699,6 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
                 m.datestamp      AS datestamp,
                 m.meta           AS meta,
                 x.pm_xref_id     AS pm_xref_id,
-                x.user_id        AS user_id,
                 x.pm_folder_id   AS pm_folder_id,
                 x.special_folder AS special_folder,
                 x.pm_message_id  AS pm_message_id,
@@ -5049,7 +5048,6 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
             'read_flag'      => 1,
         );
     }
-
     // Prepare message meta data.
     $meta = phorum_db_interact(DB_RETURN_QUOTED, serialize(array(
         'recipients' => $rcpts
