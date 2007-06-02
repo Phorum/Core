@@ -729,7 +729,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
     if (isset($PHORUM["hooks"]["file_retrieve"])) {
-        $file = phorum_hook("file_retrieve", $file, $flags);
+        list($file,$flags) = phorum_hook("file_retrieve", array($file,$flags));
         if ($file === FALSE) return FALSE;
 
         // If a module sent the file data to the browser, then we are done.
@@ -756,6 +756,9 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     if ($file["mime_type"] === NULL) {
         $file["mime_type"] = phorum_api_file_get_mimetype($file["filename"]);
     }
+
+    // Allow for post processing on the retrieved file.
+    list($file,$flags) = phorum_hook("file_after_retrieve", array($file,$flags));
 
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
