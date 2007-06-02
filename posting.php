@@ -337,7 +337,7 @@ $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
 // editing messages posted by authenticated users (in which case the
 // thread subscription for the user that posted the message can be
 // updated).
-if (($mode == "post" && $PHORUM["DATA"]["LOGGEDIN"]) ||
+if ((($mode == "post" || $mode == "reply") && $PHORUM["DATA"]["LOGGEDIN"]) ||
     ($mode == "edit" && !empty($message["user_id"]))) {
     $PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"] = TRUE;
     $PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"] =
