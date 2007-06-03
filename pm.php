@@ -417,7 +417,7 @@ if (!empty($action)) {
                         // Check if sender and recipients have not yet reached the
                         // maximum number of messages that may be stored on the server.
                         // Administrators may always send PM.
-                        if (!$PHORUM['user']['admin'] && $PHORUM['max_pm_messagecount'])
+                        if (!$PHORUM['user']['admin'] && isset($PHORUM['max_pm_messagecount']) && $PHORUM['max_pm_messagecount'])
                         {
                             // Build a list of users to check.
                             $checkusers = $recipients;
@@ -898,13 +898,13 @@ if ($hide_userselect) {
 
 // Make message count and quota information available in the templates.
 $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = 0;
-if (! $PHORUM['user']['admin']) {
-    $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = $PHORUM['SETTINGS']['max_pm_messagecount'];
-    if ($PHORUM['SETTINGS']['max_pm_messagecount'])
+if (! $PHORUM['user']['admin'] && isset($PHORUM['max_pm_messagecount']) && $PHORUM['max_pm_messagecount']) {
+    $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = $PHORUM['max_pm_messagecount'];
+    if ($PHORUM['max_pm_messagecount'])
     {
         $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS);
         $PHORUM['DATA']['PM_MESSAGECOUNT'] = $current_count['total'];
-        $space_left = $PHORUM['SETTINGS']['max_pm_messagecount'] - $current_count['total'];
+        $space_left = $PHORUM['max_pm_messagecount'] - $current_count['total'];
         if ($space_left < 0) $space_left = 0;
         $PHORUM['DATA']['PM_SPACE_LEFT'] = $space_left;
         $PHORUM['DATA']['LANG']['PMSpaceLeft'] = str_replace('%pm_space_left%', $space_left, $PHORUM['DATA']['LANG']['PMSpaceLeft']);
