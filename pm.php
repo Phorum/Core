@@ -476,13 +476,19 @@ if (!empty($action)) {
                             // Do e-mail notifications on successful sending.
                             } else {
 
+                                // Retrieve the sender name.
+                                $from = phorum_user_get_display_name(
+                                    $user_id,
+                                    $PHORUM['user']['display_name']
+                                );
+
                                 include_once("./include/email_functions.php");
 
                                 $pm_message = array(
                                     'pm_message_id' => $pm_message_id,
                                     'subject'       => $_POST['subject'],
                                     'message'       => $_POST['message'],
-                                    'from_username' => $PHORUM['user']['display_name'],
+                                    'from_username' => $from,
                                     'user_id'       => $user_id,
                                 );
 
@@ -801,7 +807,7 @@ switch ($page) {
                     "display_name" => $message["author"],
                     "user_id"  => $message["user_id"]
                 );
-                $msg = phorum_pm_quoteformat($message["author"], $msg);
+                $msg = phorum_pm_quoteformat($message["author"], $message["user_id"], $msg);
 
                 // Include the other recipient, excecpt the active
                 // user himself, when replying to all.
@@ -827,10 +833,7 @@ switch ($page) {
                     // get url to the message board thread
                     $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
-                    // Find the real username, because some mods rewrite the
-                    // username in the message table. There will be a better
-                    // solution for selecting recipients, but for now this
-                    // will fix some of the problems.
+                    // Get the data for the user that we reply to. 
                     $user = phorum_user_get($message["user_id"], false);
 
                     $msg["subject"] = $message["subject"];
@@ -839,7 +842,7 @@ switch ($page) {
                         'display_name' => $user["display_name"],
                         'user_id'  => $user["user_id"]
                     );
-                    $msg = phorum_pm_quoteformat($user["display_name"], $msg, $origurl);
+                    $msg = phorum_pm_quoteformat($user["display_name"], $user["user_id"], $msg, $origurl);
                 }
 
                 $hide_userselect = 1;
@@ -1055,7 +1058,7 @@ function phorum_pm_format($messages)
 }
 
 // Apply message reply quoting to a private message.
-function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
+function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreplyto = NULL)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -1064,8 +1067,14 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
         $message["subject"] = "Re: ".$message["subject"];
     }
 
+    // Lookup the name that we have to use for the author that we reply to.
+    // The author field could be used directly, but it can contain HTML
+    // formatting code, in case some module uses the custom display name
+    // functionality.
+    $author = phorum_user_get_display_name($orig_author_id, $orig_author);
+
     if (isset($PHORUM["hooks"]["quote"]))
-        $quote = phorum_hook("quote", array($orig_author, $message["message"]));
+        $quote = phorum_hook("quote", array($author, $message["message"], $orig_author_id));
 
     if (empty($quote) || is_array($quote))
     {
@@ -1073,7 +1082,7 @@ function phorum_pm_quoteformat($orig_author, $message, $inreplyto = NULL)
         $quote = phorum_strip_body($message["message"]);
         $quote = str_replace("\n", "\n> ", $quote);
         $quote = wordwrap(trim($quote), 50, "\n> ", true);
-        $quote = "$orig_author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
+        $quote = "$author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
                  str_repeat("-", 55)."\n> {$quote}\n\n\n";
     }
 

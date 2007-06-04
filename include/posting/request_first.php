@@ -66,9 +66,17 @@ if ($mode == "reply" || $mode == "quote")
     // Add a quoted version of the body for quoted reply messages.
     if ($mode == "quote")
     {
+        // Lookup the name that we have to use for the author, if the
+        // author is a registered user. The author field could be used
+        // directly, but it can contain HTML formatting code, in case 
+        // some module uses the custom display name functionality.
+        if (!empty($dbmessage["user_id"])) {
+            $author = phorum_user_get_display_name($dbmessage["user_id"]); 
+        }
+
         $quoted = 0;
         if (isset($PHORUM["hooks"]["quote"])) {
-            $quoted = phorum_hook("quote", array($dbmessage["author"], $dbmessage["body"], $dbmessage["user_id"]));
+            $quoted = phorum_hook("quote", array($author, $dbmessage["body"], $dbmessage["user_id"]));
         }
 
         if (empty($quoted) || is_array($quoted))
@@ -76,7 +84,7 @@ if ($mode == "reply" || $mode == "quote")
             $quoted = phorum_strip_body($dbmessage["body"]);
             $quoted = str_replace("\n", "\n> ", $quoted);
             $quoted = wordwrap(trim($quoted), 50, "\n> ", true);
-            $quoted = "{$dbmessage["author"]} " .
+            $quoted = "$author " .
                       "{$PHORUM["DATA"]["LANG"]["Wrote"]}:\n" .
                       str_repeat("-", 55) . "\n> $quoted\n\n\n";
         }
