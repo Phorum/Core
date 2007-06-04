@@ -31,7 +31,7 @@ define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 define( "PHORUM_SESSION_LONG_TERM" , "phorum_session_v5" );
 define( "PHORUM_SESSION_SHORT_TERM", "phorum_session_st" );
-define( "PHORUM_SESSION_ADMIN", "phorum_admin_session" );
+define( "PHORUM_SESSION_ADMIN",      "phorum_admin_session" );
 
 function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
 {
@@ -426,6 +426,8 @@ function phorum_user_check_login( $username, $password )
             $user_id = $temp_user["user_id"];
         }
     }
+
+    /* TODO API */
 
     // If no module handled the authentication, then let Phorum handle it.
     if( $user_id === NULL )

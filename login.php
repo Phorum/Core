@@ -22,6 +22,10 @@ include_once( "./common.php" );
 include_once( "./include/users.php" );
 include_once( "./include/email_functions.php" );
 
+include_once("./include/api/base.php");
+include_once("./include/api/user.php");
+
+
 // ----------------------------------------------------------------------------
 // Handle logout
 // ----------------------------------------------------------------------------
@@ -182,7 +186,7 @@ if (count($_POST) > 0) {
             $password = trim($_POST["password"]);
 
             // Check if the login credentials are right.
-            if (phorum_user_check_login($username, $password)) {
+            if (phorum_api_user_authenticate($username, $password)) {
 
                 // Destroy the temporary cookie.
                 if(isset($_COOKIE["phorum_tmp_cookie"])){

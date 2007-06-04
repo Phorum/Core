@@ -19,6 +19,9 @@
 
     if(!defined("PHORUM_ADMIN")) return;
 
+    include_once("./include/api/base.php");
+    include_once("./include/api/user.php");
+
     if(!phorum_db_check_connection()){
         echo "A database connection could not be established.  Please edit include/db/config.php.";
         return;
@@ -163,7 +166,7 @@
                     if($_POST["admin_pass"]!=$_POST["admin_pass2"]){
                         echo "The password fields do not match<br />";
                         $step=4;
-                    } elseif(phorum_user_check_login($_POST["admin_user"], $_POST["admin_pass"])){
+                    } elseif(phorum_api_user_authenticate($_POST["admin_user"],$_POST["admin_pass"])){
                         if($PHORUM["user"]["admin"]){
                             echo "Admin user already exists and has permissions<br />";
                         } else {

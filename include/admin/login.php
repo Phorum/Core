@@ -20,8 +20,11 @@
     // don't allow this page to be loaded directly
     if(!defined("PHORUM_ADMIN")) exit();
 
+    include_once("./include/api/base.php");
+    include_once("./include/api/user.php");
+
     if(isset($_POST["username"]) && isset($_POST["password"])){
-        if(phorum_user_check_login($_POST["username"], $_POST["password"])){
+        if(phorum_api_user_authenticate($_POST["username"], $_POST["password"])){
             if($PHORUM["user"]["admin"]){
                 phorum_user_create_session(PHORUM_SESSION_ADMIN);
                 if(!empty($_POST["target"])){
