@@ -74,11 +74,18 @@ $diff_body    = phorum_diff( $origmessage["body"], $message["body"]);
 $diff_subject = phorum_diff($origmessage["subject"], $message["subject"]);
 
 
-if(!empty($diff_body) || !empty($diff_subject)) {
+if(!empty($diff_body) || !empty($diff_subject))
+{
+    // Lookup the name that we have to use for the editing user.
+    // The display_name field could be used directly, but it can
+    // contain HTML formatting code, in case some module uses the
+    // custom display name functionality.
+    $edit_username = phorum_user_get_display_name($PHORUM["user"]["user_id"]);
+
     $dbmessage["meta"]["edit_count"] = isset($message["meta"]["edit_count"])
                                      ? $message["meta"]["edit_count"]+1 : 1;
     $dbmessage["meta"]["edit_date"] = time();
-    $dbmessage["meta"]["edit_username"] = $PHORUM["user"]["display_name"];
+    $dbmessage["meta"]["edit_username"] = $edit_username;
     $dbmessage["meta"]["edit_user_id"] = $PHORUM["user"]["user_id"];
 
     // perform diff if edit tracking is enabled

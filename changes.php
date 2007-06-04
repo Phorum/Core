@@ -80,7 +80,9 @@ $prev_subject = -1;
 foreach($diffs as $diff_info){
 
     if(!isset($diff_info["user_id"])){
-        $this_version["username"] = htmlspecialchars($message["author"]);
+        $this_version["username"] = empty($PHORUM['custom_display_name'])
+                                  ? htmlspecialchars($message["author"])
+                                  : $message["author"];
         $this_version["user_id"] = $message["user_id"];
         $this_version["date"] = phorum_date($PHORUM["long_date_time"], $message["datestamp"]);
         $this_version["original"] = true;
@@ -88,7 +90,9 @@ foreach($diffs as $diff_info){
 
         $edit_user = phorum_user_get($diff_info['user_id']);
 
-        $this_version["username"] = htmlspecialchars($edit_user["display_name"]);
+        $this_version["username"] = empty($PHORUM['custom_display_name'])
+                                  ? htmlspecialchars($edit_user["display_name"])
+                                  : $edit_user["display_name"];
         $this_version["user_id"] = $diff_info["user_id"];
         $this_version["date"] = phorum_date($PHORUM["long_date_time"], $diff_info["time"]);
         $this_version["original"] = false;
