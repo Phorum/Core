@@ -119,13 +119,13 @@ function phorum_api_user_authenticate($username, $password)
     // Then we have to run the Phorum authentication.
     if ($user_id === NULL) 
     {
-        $user_id = phorum_db_user_check_pass($username, md5($password));
+        $user_id = phorum_db_user_check_login($username, md5($password));
 
         // Password check failed? Then try the temporary password (used for
         // the password reminder feature).
         $temporary_matched = FALSE;
         if ($user_id == 0) {
-            $user_id = phorum_db_user_check_pass($username,md5($password),TRUE);
+            $user_id = phorum_db_user_check_login($username,md5($password),TRUE);
             if ($user_id != 0) {
                 $temporary_matched = TRUE;
             }
@@ -145,7 +145,7 @@ function phorum_api_user_authenticate($username, $password)
     // Set the active Phorum user and return the user_id. If the user was
     // not authenticated, then the active user will be set to the anonymous
     // user and FALSE will be returned.
-    return phorum_api_user_set_active_user($authinfo["user_id"]);
+    return phorum_api_user_set_active_user($user_id);
 }
 // }}}
 

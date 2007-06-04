@@ -1913,18 +1913,19 @@ Table of contents:
    user_check_login
 
    Where  : include/users.php
-   When   : Whenever phorum_user_check_login() is called.
+   When   : Whenever phorum_api_user_authenticate() is called.
    Input  : Array containing:
             username    => the username to check
             password    => the password to check
-            user_id     => empty value
+            user_id     => NULL
    Return : Same as input
 
    This hook can be used to check user authentication against an external
    source. If the hook decides that the username and password are okay,
    then it can set the user_id field to the user_id of the authenticated
-   user. If the hook wants to let Phorum use its standard authentication
-   mechanism, then it can set user_id to FALSE.
+   user. If the authentication is rejected, it can set user_id to FALSE.
+   If the hook wants to let Phorum use its own standard authentication
+   mechanism, then it can set user_id to NULL.
 
    Here is an example (not too useful) hook function:
 
@@ -1938,7 +1939,7 @@ Table of contents:
           // For all other users, we let Phorum do the authentication.
           else
           {
-              $login["user_id"] = FALSE;
+              $login["user_id"] = NULL;
           }
 
           return $login;

@@ -407,58 +407,6 @@ function phorum_user_settings_data_save($settings)
     }
 }
 
-function phorum_user_check_login( $username, $password )
-{
-    $ret = false;
-    $temp_check = false;
-
-    // Give modules a chance to handle the user authentication (for example
-    // to authenticate against an external source). The module can return a
-    // user_id if a user is considered to be authenticated.
-    $user_id = NULL;
-    if (isset($PHORUM["hooks"]["user_check_login"])) {
-        $temp_user = phorum_hook("user_check_login", array(
-            "user_id"  => FALSE,
-            "username" => $username,
-            "password" => $password
-        ));
-        if (is_array($temp_user) && $temp_user["user_id"] !== FALSE ) {
-            $user_id = $temp_user["user_id"];
-        }
-    }
-
-    /* TODO API */
-
-    // If no module handled the authentication, then let Phorum handle it.
-    if( $user_id === NULL )
-    {
-        $user_id = phorum_db_user_check_pass( $username, md5( $password ) );
-
-        // regular password failed, try the temp password
-        if ( $user_id == 0 ) {
-            $user_id = phorum_db_user_check_pass( $username, md5( $password ), true );
-            $temp_check = true;
-        }
-
-    }
-
-    if ( $user_id > 0 ) {
-        // if this was a temp password, set the normal pass to the temp password
-        // do this before we get the user so the data is up to date.
-        // leave the temp password alone as setting to empty is bad.
-        if ( $temp_check ) {
-            $tmp_user["user_id"] = $user_id;
-            $tmp_user["password"] = $password;
-            phorum_user_save( $tmp_user );
-        }
-
-        $ret = phorum_user_set_current_user( $user_id );
-    }
-
-
-    return $ret;
-}
-
 function phorum_user_verify( $user_id, $tmp_pass )
 {
     $user_id = phorum_db_user_check_field( array( "user_id", "password_temp" ), array( $user_id, md5( $tmp_pass ) ), array( "=", "=" ) );

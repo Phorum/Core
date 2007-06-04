@@ -967,12 +967,9 @@ function phorum_api_file_exists($file_id) {
  * @param integer
  *     If the {@link PHORUM_FLAG_IGNORE_PERMS} flag is used, then permission
  *     checks are fully bypassed.
- *
- * @return mixed
- *     This function will always return NULL.
  */
 function phorum_api_file_send($file, $flags = 0) {
-    return phorum_api_file_retrieve($file, $flags | PHORUM_FLAG_SEND);
+    phorum_api_file_retrieve($file, $flags | PHORUM_FLAG_SEND);
 }
 // }}}
 

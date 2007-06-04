@@ -2895,7 +2895,7 @@ function phorum_db_user_get_list($type = 0)
 }
 
 /**
- * Check if a user's password is correct.
+ * Check if a user's authentication credentials are correct.
  *
  * @param $username      - The username for the user.
  * @param $password      - The password for the user.
@@ -2906,7 +2906,7 @@ function phorum_db_user_get_list($type = 0)
  * @return $user_id      -  The user_id if the password is correct or
  *                          0 (zero) if the password is wrong.
  */
-function phorum_db_user_check_pass($username, $password, $temp_password=FALSE)
+function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
