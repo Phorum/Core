@@ -107,3 +107,29 @@ get_PHORUM_args(char *key)
     return *P;
 }
 
+/* Lookup a key from the $PHORUM["DATA"] array. */
+zval *
+get_PHORUM_DATA(char *key)
+{
+    HashTable *args = NULL;
+    zval   zkey;
+    zval **P;
+
+    /* Lookup the $PHORUM["DATA"] variable. */
+    zval *A = get_PHORUM("DATA");
+    if (A == NULL) {
+        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[DATA]");
+    }
+    args = Z_ARRVAL_P(A);
+
+    /* Lookup the key in the DATA table. */
+    ZVAL_STRING(&zkey, key, 1);
+    if (zend_hash_find(args, Z_STRVAL(zkey), Z_STRLEN(zkey)+1, (void**)&P) == FAILURE) {
+        convert_to_long(&zkey);
+        if (zend_hash_index_find(args, Z_LVAL(zkey), (void**)&P) == FAILURE) {
+          return NULL;
+        }
+    }
+
+    return *P;
+}

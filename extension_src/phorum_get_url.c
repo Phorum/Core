@@ -339,11 +339,11 @@ default_url_build(void *h, void *u, int argc, zval ***argv)
         add_url_arg(&url, arg, 0);
     }
 
-    /* Add $PHORUM["GET_VARS"] to the argument list (used for URI
-     * authentication). */
+    /* Add $PHORUM["GET_VARS"] to the argument list (used for passing the
+     * URI authentication session id). */
     if (url->add_get_vars)
     {
-        zval *get_vars = get_PHORUM("GET_VARS");
+        zval *get_vars = get_PHORUM_DATA("GET_VARS");
         if (get_vars != NULL && Z_TYPE_P(get_vars) == IS_ARRAY) {
             HashTable    *t;
             HashPosition  p;
