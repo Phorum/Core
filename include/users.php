@@ -148,7 +148,7 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refres
                         phorum_user_save_simple($simple_user);
 
                     // if the cookie is half expired, reset it.
-                    } elseif(time() - $user["sessid_st_timeout"] < $PHORUM["short_session_timeout"]*60/2){
+                    } elseif($user["sessid_st_timeout"] - time() < $PHORUM["short_session_timeout"]*60/2){
                         $sessid=$user['sessid_st'];
                         $timeout = time() + $PHORUM["short_session_timeout"]*60;
                         $simple_user=array('user_id'=>$user['user_id'],'sessid_st'=>$sessid,'sessid_st_timeout'=>$timeout);
