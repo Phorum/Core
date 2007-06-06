@@ -314,7 +314,7 @@ if ($PHORUM["threaded_list"]){
             $pages=ceil($thread_count/$PHORUM["read_length"]);
 
             if($pages<=5){
-                $page_links="";
+                $page_links=array();
                 for($x=1;$x<=$pages;$x++){
                     $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
                     $page_links[]="<a href=\"$url\">$x</a>";
