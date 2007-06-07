@@ -36,9 +36,9 @@
             </td>
           </tr>
         {/IF}
-        <tr>
+        {IF SHOW_EMAIL_HIDE}<tr>
           <td colspan="2"><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</td>
-        </tr>
+        </tr>{/IF}
         {IF PROFILE->show_moderate_options}
           <tr>
             <td colspan="2"><input type="checkbox" name="moderation_email" value="1"{PROFILE->moderation_email_checked} /> {LANG->ReceiveModerationMails}</td>
@@ -46,9 +46,9 @@
         {/IF}
       {/IF}
       {IF PROFILE->PRIVACYSETTINGS}
-        <tr>
+        {IF SHOW_EMAIL_HIDE}<tr>
           <td colspan="2"><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</td>
-        </tr>
+        </tr>{/IF}
         <tr>
           <td colspan="2"><input type="checkbox" name="hide_activity" value="1"{PROFILE->hide_activity_checked} /> {LANG->AllowSeeActivity}</td>
         </tr>

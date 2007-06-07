@@ -76,10 +76,11 @@ $PHORUM["DATA"]["PROFILE"]["forum_id"] = $PHORUM["forum_id"];
 $PHORUM["DATA"]["PROFILE"]["raw_date_added"]=$PHORUM["DATA"]["PROFILE"]["date_added"];
 $PHORUM["DATA"]["PROFILE"]["date_added"]=phorum_date( $PHORUM['short_date'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
 
-if( !empty($PHORUM["user"]["admin"]) ||
+if( (!empty($PHORUM["user"]["admin"]) ||
     (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
     (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ||
-    !$user["hide_email"]){
+    !$user["hide_email"]) &&
+    (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))){
 
     $PHORUM["DATA"]["PROFILE"]["email"]=phorum_html_encode($user["email"]);
 } else {
@@ -111,12 +112,12 @@ $PHORUM["DATA"]["PROFILE"]["username"] =
     htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
 
 if (isset($PHORUM["DATA"]["PROFILE"]["real_name"])) {
-    $PHORUM["DATA"]["PROFILE"]["real_name"] = 
+    $PHORUM["DATA"]["PROFILE"]["real_name"] =
         htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"]);
 }
 
 if (empty($PHORUM["custom_display_name"])) {
-    $PHORUM["DATA"]["PROFILE"]["display_name"] = 
+    $PHORUM["DATA"]["PROFILE"]["display_name"] =
         htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"]);
 }
 

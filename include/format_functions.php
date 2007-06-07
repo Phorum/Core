@@ -29,7 +29,7 @@ if ( !defined( "PHORUM" ) ) return;
  *     By default, the formatting function will create  author info
  *     data out of the fields "user_id", "author" and "email".
  *     This will create $data["URL"]["PROFILE"] if needed (either pointing
- *     to a user profile for registered users or the email address of 
+ *     to a user profile for registered users or the email address of
  *     anonymous users that left an email address in the forum) and will
  *     do formatting on the $data["author"] field.
  *
@@ -52,7 +52,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
 
     // Prepare author specs.
     if ($author_specs === NULL) $author_specs = array();
-    $author_specs[] = array("user_id","author","email","author","PROFILE"); 
+    $author_specs[] = array("user_id","author","email","author","PROFILE");
 
     // Prepare the bad-words replacement code.
     $bad_word_check= false;
@@ -71,7 +71,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
     		phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
     	}
     }
-    
+
     if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
         $replace_vals  = array();
         $replace_words = array();
@@ -147,11 +147,13 @@ function phorum_format_messages ($data, $author_specs = NULL)
                      : $message[$spec[1]]);
             }
             // For anonymous user which left an email address.
-            elseif ($spec[2] !== NULL && !empty($message[$spec[2]])) {
+            elseif ($spec[2] !== NULL && !empty($message[$spec[2]]) &&
+                    (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))) {
+
                 $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]]);
                 $email_url = phorum_html_encode("mailto:".$message[$spec[2]]);
                 $data[$key]["URL"]["PROFILE"] = $email_url;
-            } 
+            }
             // For anonymous user.
             else {
                 $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]]);
@@ -322,7 +324,7 @@ function phorum_strip_body( $body )
     // do badwords check
     // Prepare the bad-words replacement code.
     $bad_word_check= false;
-	
+
     $banlists = NULL;
     if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
     	$cache_key = $PHORUM['forum_id'];
@@ -337,7 +339,7 @@ function phorum_strip_body( $body )
     		phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
     	}
     }
-    
+
     if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
         $replace_vals  = array();
         $replace_words = array();

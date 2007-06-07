@@ -34,14 +34,14 @@
                         {LANG->EmailVerifyEnterCode}: <input type="text" name="email_verify_code" value="" />
                     </dd>
                 {/IF}
-                <dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>
+                {IF SHOW_EMAIL_HIDE}<dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>{/IF}
                 {IF PROFILE->show_moderate_options}
                     <dd><input type="checkbox" name="moderation_email" value="1"{PROFILE->moderation_email_checked} /> {LANG->ReceiveModerationMails}</dt>
                 {/IF}
             {/IF}
 
             {IF PROFILE->PRIVACYSETTINGS}
-                <dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>
+            {IF SHOW_EMAIL_HIDE}<dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>{/IF}
                 <dd><input type="checkbox" name="hide_activity" value="1"{PROFILE->hide_activity_checked} /> {LANG->AllowSeeActivity}</dd>
             {/IF}
 

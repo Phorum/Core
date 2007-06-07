@@ -84,6 +84,8 @@ $PHORUM["DATA"]["USER_MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW
 $PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_user_allow_moderate_group();
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 
+$PHORUM['DATA']['SHOW_EMAIL_HIDE'] = (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))?1:0;
+
 // The form action for the common form.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL);
 
