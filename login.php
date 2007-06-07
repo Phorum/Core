@@ -172,81 +172,80 @@ if (count($_POST) > 0) {
 
         // Check if the phorum_tmp_cookie was set. If not, the user's
         // browser does not support cookies.
-        if($PHORUM["use_cookies"] == PHORUM_REQUIRE_COOKIES && !isset($_COOKIE["phorum_tmp_cookie"])) {
+        if ($PHORUM["use_cookies"] == PHORUM_REQUIRE_COOKIES && !isset($_COOKIE["phorum_tmp_cookie"])) {
 
             $error = $PHORUM["DATA"]["LANG"]["RequireCookies"];
 
         } else {
 
-            if(!isset($_COOKIE["phorum_tmp_cookie"])) {
-                $PHORUM["use_cookies"] = false;
+            // See if the temporary cookie was found. If yes, then the
+            // browser does support cookies. If not, then we disable
+            // the use of cookies.
+            if (!isset($_COOKIE["phorum_tmp_cookie"])) {
+                $PHORUM["use_cookies"] = PHORUM_NO_COOKIES;
             }
-
-            $username = trim($_POST["username"]);
-            $password = trim($_POST["password"]);
 
             // Check if the login credentials are right.
-            if (phorum_api_user_authenticate($username, $password)) {
+            $user_id = phorum_api_user_authenticate(
+                trim($_POST["username"]),
+                trim($_POST["password"]),
+                PHORUM_FORUM_SESSION
+            );
 
-                // Destroy the temporary cookie.
-                if(isset($_COOKIE["phorum_tmp_cookie"])){
-                    setcookie( "phorum_tmp_cookie", "", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
-                }
-
-                // Create an URI session id if cookies are not used..
-                if(!$PHORUM["use_cookies"]) {
-                    $uri_session_id = md5($_POST['username'].microtime().$_POST['password']);
-                    $user = array(
-                        'user_id'  => $PHORUM['user']['user_id'],
-                        'sessid_st'=> $uri_session_id
+            // They are. Setup the active user and start a Phorum session.
+            if ($user_id)
+            {
+                // Destroy the temporary cookie that is used for testing
+                // for cookie compatibility.
+                if (isset($_COOKIE["phorum_tmp_cookie"])) {
+                    setcookie(
+                        "phorum_tmp_cookie", "", 0,
+                        $PHORUM["session_path"], $PHORUM["session_domain"]
                     );
-                    phorum_user_save_simple($user);
-                    phorum_user_create_session(PHORUM_SESSION_LONG_TERM,true,$uri_session_id);
-                // Create cookie session(s).
-                } else {
-                    if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-                        phorum_user_create_session(PHORUM_SESSION_LONG_TERM, false);
+                }
+
+                // Make the authenticated user the active Phorum user
+                // and start a Phorum user session. Because this is a fresh
+                // login, we can enable the short term session and we request
+                // refreshing of the session id(s).
+                if (phorum_api_user_set_active_user($user_id, PHORUM_FORUM_SESSION, PHORUM_FLAG_SESSION_ST) && phorum_api_user_session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
+
+                    // Determine the URL to redirect the user to.
+                    // If redir is a number, it is a URL constant.
+                    if(is_numeric($_POST["redir"])){
+                        $redir = phorum_get_url((int)$_POST["redir"]);
                     }
-                    if($PHORUM["tight_security"]){
-                        phorum_user_create_session(PHORUM_SESSION_SHORT_TERM, true);
+                    // Redirecting to the registration or login page is a
+                    // little weird, so we just go to the list page if we came
+                    // from one of those.
+                    elseif (isset($PHORUM['use_cookies']) && $PHORUM["use_cookies"] && !strstr($_POST["redir"], "register." . PHORUM_FILE_EXTENSION) && !strstr($_POST["redir"], "login." . PHORUM_FILE_EXTENSION)) {
+                        $redir = $_POST["redir"];
+                    // By default, we redirect to the list page.
+                    } else {
+                        $redir = phorum_get_url( PHORUM_LIST_URL );
                     }
+
+                    // The hook "after_login" can be used by module writers to
+                    // set a custom redirect URL.
+                    if (isset($PHORUM["hooks"]["after_login"]))
+                        $redir = phorum_hook("after_login", $redir);
+
+                    phorum_redirect_by_url($redir);
+                    exit();
                 }
-
-                // Determine the URL to redirect the user to.
-                // If redir is a number, it is a URL constant.
-                if(is_numeric($_POST["redir"])){
-                    $redir = phorum_get_url($_POST["redir"]);
-                }
-
-                // Redirecting to the registration or login page is a little weird,
-                // so we just go to the list page if we came from one of those.
-                elseif (isset($PHORUM['use_cookies']) && $PHORUM["use_cookies"] && !strstr($_POST["redir"], "register." . PHORUM_FILE_EXTENSION) && !strstr($_POST["redir"], "login." . PHORUM_FILE_EXTENSION)) {
-                    $redir = $_POST["redir"];
-
-                // By default, we redirect to the list page.
-                } else {
-                    $redir = phorum_get_url( PHORUM_LIST_URL );
-                }
-
-                // The hook "after_login" can be used by module writers to
-                // set a custom redirect URL.
-                if (isset($PHORUM["hooks"]["after_login"]))
-                    $redir = phorum_hook( "after_login", $redir );
-
-                phorum_redirect_by_url($redir);
-                exit();
             }
 
-            // Login failed.
-            else {
-                if (isset($PHORUM["hooks"]["failed_login"]))
-                    phorum_hook("failed_login", array(
-                        "username" => $username,
-                        "password" => $password,
-                        "location" => "forum"
-                    ));
-                $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
-            }
+            // Login failed or session startup failed. For both we show
+            // the invalid login error.
+            $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
+
+            // TODO API: move to user API.
+            if (isset($PHORUM["hooks"]["failed_login"]))
+                phorum_hook("failed_login", array(
+                    "username" => $username,
+                    "password" => $password,
+                    "location" => "forum"
+                ));
         }
     }
 }

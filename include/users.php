@@ -19,6 +19,11 @@
 
 if ( !defined( "PHORUM" ) ) return;
 
+// TODO: for development only. The users.php library should finally be
+// TODO: totally gone.
+include_once("./include/api/base.php");
+include_once("./include/api/user.php");
+
 /**
  * These functions are Phorum's interface to the user data.  If you want
  * to use your own user data, just replace these functions.
@@ -32,182 +37,6 @@ define( "PHORUM_ORIGINAL_USER_CODE", true );
 define( "PHORUM_SESSION_LONG_TERM" , "phorum_session_v5" );
 define( "PHORUM_SESSION_SHORT_TERM", "phorum_session_st" );
 define( "PHORUM_SESSION_ADMIN",      "phorum_admin_session" );
-
-function phorum_user_check_session( $cookie = PHORUM_SESSION_LONG_TERM )
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    // If we do URI based authentication, we will only look at the
-    // PHORUM_SESSION_LONG_TERM session (which is the session key that is
-    // stored in the URI). Here we rewrite requests for
-    // PHORUM_SESSION_SHORT_TERM so we will handle tighter security correctly.
-    if ( isset($PHORUM["use_cookies"]) && ! $PHORUM["use_cookies"] &&
-         $cookie == PHORUM_SESSION_SHORT_TERM) {
-        $cookie = PHORUM_SESSION_LONG_TERM;
-    }
-
-    if ( ( $cookie != PHORUM_SESSION_LONG_TERM || ( isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] > PHORUM_NO_COOKIES ) ) && isset( $_COOKIE[$cookie] ) ) { // REAL cookies ;)
-        $sessid = $_COOKIE[$cookie];
-        $GLOBALS["PHORUM"]["use_cookies"]=true;
-    } elseif ( $PHORUM["use_cookies"] < PHORUM_REQUIRE_COOKIES && isset( $PHORUM["args"][$cookie] ) ) { // in the p5-urls
-        $sessid = $PHORUM["args"][$cookie];
-        $GLOBALS["PHORUM"]["use_cookies"]=false;
-    } elseif ( $PHORUM["use_cookies"] < PHORUM_REQUIRE_COOKIES && isset( $_POST[$cookie] ) ) { // from post-forms
-        $sessid = $_POST[$cookie];
-        $GLOBALS["PHORUM"]["use_cookies"]=false;
-    } elseif ( $PHORUM["use_cookies"] < PHORUM_REQUIRE_COOKIES && isset( $_GET[$cookie] ) ) { // should rarely happen but helps in some cases
-        $sessid = $_GET[$cookie];
-        $GLOBALS["PHORUM"]["use_cookies"]=false;
-    }
-
-    $success = false;
-
-    if ( !empty( $sessid ) && $GLOBALS["PHORUM"]["use_cookies"]) {
-        // this part is for cookie-authentication where we have username and password
-        list( $userid, $md5session ) = explode( ":", $sessid, 2 );
-
-        if(!is_numeric($userid)) {
-            phorum_user_clear_session( $cookie );
-            return false;
-        }
-
-        $user=phorum_user_get($userid, true, true);
-        if (empty($user)) {
-            phorum_user_clear_session( $cookie );
-            return false;
-        }
-
-        if ( ($cookie==PHORUM_SESSION_LONG_TERM && !empty($user['cookie_sessid_lt']) && $user['cookie_sessid_lt'] == $md5session) ||
-             ($cookie==PHORUM_SESSION_SHORT_TERM && !empty($user['sessid_st']) && $user['sessid_st'] == $md5session) ||
-             ($cookie==PHORUM_SESSION_ADMIN && !empty($user['cookie_sessid_lt']) && md5($user['cookie_sessid_lt'].$PHORUM["admin_session_salt"]) == $md5session) ) {
-            if ( $user["active"] ) {
-                // write access is false by default, need to check the st-cookie too
-                $user['write_access']=false;
-
-                $GLOBALS["PHORUM"]["user"] = $user;
-                $success = true;
-
-                phorum_user_create_session( $cookie );
-            } else {
-                phorum_user_clear_session( $cookie );
-            }
-        }
-    } elseif( !empty( $sessid ) && !$GLOBALS["PHORUM"]["use_cookies"]) {
-        // this part is for uri-authentication where we only have a session-id
-        $uri_session_id = urldecode( $sessid );
-        if ( $user_id = phorum_db_user_check_field('sessid_st',$uri_session_id,'=')) {
-            $user = phorum_user_get( $user_id, true, true );
-            if ( $user["active"] ) {
-
-                // write access is enabled for uri-authentication as thats requiring login at every visit
-                $user['write_access']=true;
-
-                $GLOBALS["PHORUM"]["user"] = $user;
-                $success = true;
-                phorum_user_create_session( $cookie, false, $user['sessid_st'] );
-            } else {
-                phorum_user_clear_session( $cookie );
-            }
-        }
-    }
-
-    // track user activity
-    if($success && $PHORUM["track_user_activity"] && $GLOBALS["PHORUM"]["user"]["date_last_active"] < time() - $PHORUM["track_user_activity"] ) {
-        $tmp_user["user_id"] = $GLOBALS["PHORUM"]["user"]["user_id"];
-        $tmp_user["date_last_active"] = time();
-        if(isset($PHORUM['forum_id'])) {
-            $tmp_user["last_active_forum"]= $PHORUM['forum_id'];
-        } else {
-            $tmp_user["last_active_forum"]= 0;
-        }
-        phorum_user_save_simple( $tmp_user);
-        $GLOBALS["PHORUM"]["user"]["date_last_active"] = $tmp_user["date_last_active"];
-    }
-
-    return $success;
-}
-
-function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refresh = false, $uri_session_id = '' )
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    // require that the global user exists
-    if ( !empty( $PHORUM["user"] ) ) {
-        $user = $PHORUM["user"];
-
-        if ( (isset( $PHORUM["use_cookies"] ) && $PHORUM["use_cookies"] > PHORUM_NO_COOKIES) || $cookie == PHORUM_SESSION_ADMIN ) {
-
-            switch($cookie){
-                case PHORUM_SESSION_SHORT_TERM:
-
-                    // creating a new shortterm-session-id if none exists yet or it has timed out
-                    if($refresh || empty($user['sessid_st']) || $user["sessid_st_timeout"]<time()) {
-                        $sessid=md5($user['username'].microtime().$user['password']);
-                        $timeout = time() + $PHORUM["short_session_timeout"]*60;
-                        $simple_user=array('user_id'=>$user['user_id'],'sessid_st'=>$sessid,'sessid_st_timeout'=>$timeout);
-                        phorum_user_save_simple($simple_user);
-
-                    // if the cookie is half expired, reset it.
-                    } elseif(time() - $user["sessid_st_timeout"] < $PHORUM["short_session_timeout"]*60/2){
-                        $sessid=$user['sessid_st'];
-                        $timeout = time() + $PHORUM["short_session_timeout"]*60;
-                        $simple_user=array('user_id'=>$user['user_id'],'sessid_st'=>$sessid,'sessid_st_timeout'=>$timeout);
-                        phorum_user_save_simple($simple_user);
-                    }
-
-                    // if a timeout was set, we need to set a new cookie
-                    if($timeout){
-                        setcookie( $cookie, $user['user_id'].':'.$sessid, $timeout, $PHORUM["session_path"], $PHORUM["session_domain"] );
-                    }
-                    break;
-
-                case PHORUM_SESSION_LONG_TERM:
-                    // creating a new longterm-session-id if none exists yet
-                    if($refresh || empty($user['cookie_sessid_lt'])) {
-                        $sessid=md5($user['username'].microtime().$user['password']);
-                        $simple_user=array('user_id'=>$user['user_id'],'cookie_sessid_lt'=>$sessid);
-                        phorum_user_save_simple($simple_user);
-                    } else {
-                        $sessid=$user['cookie_sessid_lt'];
-                    }
-
-                    if($PHORUM["session_timeout"]==0){
-                        $timeout = 0;
-                    } else {
-                        $timeout = time() + 86400 * $PHORUM["session_timeout"];
-                    }
-
-                    setcookie( $cookie, $user['user_id'].':'.$sessid, $timeout, $PHORUM["session_path"], $PHORUM["session_domain"] );
-
-                    break;
-
-                case PHORUM_SESSION_ADMIN:
-                    // creating a new longterm-session-id if none exists yet
-                    if(empty($user['cookie_sessid_lt'])) {
-                        $sessid=md5($user['username'].microtime().$user['password']);
-                        $simple_user=array('user_id'=>$user['user_id'],'cookie_sessid_lt'=>$sessid);
-                        phorum_user_save_simple($simple_user);
-                    } else {
-                        $sessid=$user['cookie_sessid_lt'];
-                    }
-
-                    setcookie( $cookie, $user['user_id'].':'.md5($sessid.$PHORUM["admin_session_salt"]), 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
-
-                    break;
-
-            }
-
-        } else {
-            $sessid = $uri_session_id;
-            $GLOBALS["PHORUM"]["DATA"]["GET_VARS"][$cookie] = "$cookie=" . urlencode( $sessid );
-            $GLOBALS["PHORUM"]["DATA"]["POST_VARS"] .= "<input type=\"hidden\" name=\"$cookie\" value=\"$sessid\" />";
-        }
-    }
-}
-
-
-
-
 
 function phorum_user_clear_session( $cookie = PHORUM_SESSION_LONG_TERM )
 {
@@ -411,19 +240,6 @@ function phorum_user_verify( $user_id, $tmp_pass )
 {
     $user_id = phorum_db_user_check_field( array( "user_id", "password_temp" ), array( $user_id, md5( $tmp_pass ) ), array( "=", "=" ) );
     return $user_id;
-}
-
-function phorum_user_set_current_user( $user_id )
-{
-    $ret = false;
-
-    $user = phorum_user_get( $user_id );
-    if ( $user["active"] == PHORUM_USER_ACTIVE ) {
-        $GLOBALS["PHORUM"]["user"] = $user;
-        $ret = true;
-    }
-
-    return $ret;
 }
 
 function phorum_user_check_username( $username )

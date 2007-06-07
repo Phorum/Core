@@ -23,17 +23,23 @@
     include_once("./include/api/base.php");
     include_once("./include/api/user.php");
 
-    if(isset($_POST["username"]) && isset($_POST["password"])){
-        if(phorum_api_user_authenticate($_POST["username"], $_POST["password"])){
-            if($PHORUM["user"]["admin"]){
-                phorum_user_create_session(PHORUM_SESSION_ADMIN);
-                if(!empty($_POST["target"])){
-                    phorum_redirect_by_url($_POST['target']);
-                } else {
-                    phorum_redirect_by_url($PHORUM["admin_http_path"]);
-                }
-                exit();
+    if(isset($_POST["username"]) && isset($_POST["password"]))
+    {
+        $user_id = phorum_api_user_authenticate(
+            trim($_POST["username"]),
+            trim($_POST["password"])
+        );
+        if ($user_id &&
+            phorum_api_user_set_active_user(PHORUM_ADMIN_SESSION, $user_id) &&
+            phorum_api_user_session_create(PHORUM_ADMIN_SESSION)) {
+
+            if(!empty($_POST["target"])){
+                phorum_redirect_by_url($_POST['target']);
+            } else {
+                phorum_redirect_by_url($PHORUM["admin_http_path"]);
             }
+            exit();
+
         } else {
             phorum_hook("failed_login", array(
                 "username" => $_POST["username"],

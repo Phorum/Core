@@ -60,8 +60,8 @@
 
     } else {
 
-        // check for a session
-        phorum_user_check_session(PHORUM_SESSION_ADMIN);
+        // Try to restore an admin session.
+        phorum_api_user_session_restore(PHORUM_ADMIN_SESSION);
 
         if(!isset($GLOBALS["PHORUM"]["user"]) || !$GLOBALS["PHORUM"]["user"]["admin"]){
             // if not an admin

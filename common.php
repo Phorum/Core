@@ -27,7 +27,7 @@ define( "PHORUM", "5.2-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2007052400" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2007060700" );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -39,6 +39,11 @@ define( "PHORUM_EXTENSION_VERSION", "20070522" );
 
 // all other constants in ./include/constants.php
 include_once( "./include/constants.php" );
+
+// API code
+include_once("./include/users.php"); // TODO API remove if phased out
+include_once("./include/api/base.php");
+include_once("./include/api/user.php");
 
 // setup the PHORUM var
 global $PHORUM;
@@ -347,18 +352,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     }
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
 
-    // check the user session
-    include_once( "./include/users.php" );
-
-    if ( phorum_user_check_session() ) {
-        $PHORUM["DATA"]["LOGGEDIN"] = true;
-
-        if(!$PHORUM["tight_security"] || phorum_user_check_session( PHORUM_SESSION_SHORT_TERM )){
-            $PHORUM["DATA"]["FULLY_LOGGEDIN"] = true;
-        } else {
-            $PHORUM["DATA"]["FULLY_LOGGEDIN"] = false;
-        }
-
+    // Try to restore a user session.
+    if (phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
+    {
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
             if ( $PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON ) {
@@ -375,13 +371,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             }
         }
     }
-
-    // set up the blank user if not logged in
-    if ( empty( $PHORUM["user"] ) ) {
-        $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
-        $PHORUM["DATA"]["LOGGEDIN"] = false;
-    }
-
 
     // a hook for rewriting vars in common.php after loading the user
     if (isset($PHORUM["hooks"]["common_post_user"]))

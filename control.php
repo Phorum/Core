@@ -25,6 +25,9 @@ phorum_require_login();
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
+include_once("./include/api/base.php");
+include_once("./include/api/user.php");
+
 define("PHORUM_CONTROL_CENTER", 1);
 
 // A user has to be logged in to use his control-center.
@@ -240,11 +243,16 @@ function phorum_controlcenter_user_save($panel)
         $okmsg = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
 
         // Let the userdata be reloaded.
-        phorum_user_set_current_user($userdata["user_id"]);
+        phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, $userdata["user_id"]);
 
-        // If a new password was set, let's create a new session.
+        // If a new password was set, then reset all session id(s), so
+        // other computers or browser will loose any active session that
+        // they are running.
         if (isset($userdata["password"]) && !empty($userdata["password"])) {
-            phorum_user_create_session();
+            phorum_api_user_session_create(
+                PHORUM_FORUM_SESSION,
+                PHORUM_SESSID_RESET_ALL
+            );
         }
 
         // Copy data from the updated user back into the template data.
