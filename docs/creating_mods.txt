@@ -1144,6 +1144,10 @@ Table of contents:
          return $data;
       }
 
+   The error must be safely HTML escaped, so if you use untrusted data in
+   your error, then make sure that it is escaped using htmlspecialchars()
+   to prevent XSS (see also paragraph 3.6: Secure your pages from XSS).
+
    ----------------------------------------------------------------------------
    buddy_add
 
