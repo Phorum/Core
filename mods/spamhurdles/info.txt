@@ -1,5 +1,5 @@
 title: Spam Hurdles
-desc: This module sets up some hurdles for forum spammers. It implements both interactive and non-interactive anti-spam methods to keep away spam bots. On the settings page, you can control exactly what hurdles to enable. 
+desc: This module sets up some hurdles for forum spammers. It implements both interactive and non-interactive anti-spam methods to keep away spam bots. On the settings page, you can control exactly what hurdles to enable.
 version: 1.1.2
 Author: Maurice Makaay <maurice@phorum.org>
 
@@ -7,10 +7,10 @@ hook: lang|
 hook: common|phorum_mod_spamhurdles_common
 hook: before_footer|phorum_mod_spamhurdles_before_footer
 hook: before_editor|phorum_mod_spamhurdles_before_editor
-hook: tpl_editor_before_textarea|phorum_mod_spamhurdles_tpl_editor_before_textarea 
+hook: tpl_editor_before_textarea|phorum_mod_spamhurdles_tpl_editor_before_textarea
 hook: tpl_register_form|phorum_mod_spamhurdles_tpl_register_form
 hook: check_post|phorum_mod_spamhurdles_check_post
-hook: pre_post|phorum_mod_spamhurdles_pre_post
-hook: post_post|phorum_mod_spamhurdles_post_post
+hook: before_post|phorum_mod_spamhurdles_pre_post
+hook: after_post|phorum_mod_spamhurdles_post_post
 hook: before_register|phorum_mod_spamhurdles_before_register
 hook: after_register|phorum_mod_spamhurdles_after_register
