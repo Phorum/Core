@@ -683,6 +683,10 @@ function phorum_output($templates) {
         phorum_hook("before_footer");
 
     include phorum_get_template("footer");
+
+    if (isset($PHORUM["hooks"]["end_output"]))
+        phorum_hook("end_output");
+
 }
 
 /**

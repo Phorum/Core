@@ -1052,6 +1052,17 @@ Table of contents:
    your alternate storage.
 
    ----------------------------------------------------------------------------
+   after_edit
+
+   Where  : include/moderation_functions.php
+   When   : Right after storing an edited message in the database.
+   Input  : Array containing message data (read-only).
+   Return : none
+
+   This hook can be used for sending notifications or for making log entries
+   in the database when editing takes place.
+
+   ----------------------------------------------------------------------------
    after_header
 
    Where  : Every page, except for the admin interface pages
@@ -1090,6 +1101,18 @@ Table of contents:
    logout and for changing the page to which the user will be redirected
    (by returning a different redirection URL). The user data will still
    be availbale in $PHORUM["user"] at this point.
+
+   ----------------------------------------------------------------------------
+   after_post
+
+   Where  : post.php
+   When   : After storing a new message in the database and just
+            before the user is redirected back to the list.
+   Input  : Array containing message data (read-only).
+   Return : none
+
+   This hook can be used for performing actions based on what the message
+   contained.
 
    ----------------------------------------------------------------------------
    after_register
@@ -1412,6 +1435,17 @@ Table of contents:
    It is put before every replacement done in that function so that every data
    which is send to that function can be replaced/changed at will
 
+   ----------------------------------------------------------------------------
+   end_output
+
+   Where  : include/common.php
+   When   : called just after footer template is included
+   Input  : none
+   Return : none
+
+   This hook can be used to do any post output tasks
+   It could also be used to read in any buffered output by using
+   ob_get_contents() if ob_start() was called in a start_output hook function.
 
    ----------------------------------------------------------------------------
    external
@@ -1568,29 +1602,6 @@ Table of contents:
    This hook can be used for performing actions after sending a PM. Before
    PM notification by email was put in the Phorum core, this hook was
    used to send those notifications.
-
-   ----------------------------------------------------------------------------
-   after_edit
-
-   Where  : include/moderation_functions.php
-   When   : Right after storing an edited message in the database.
-   Input  : Array containing message data (read-only).
-   Return : none
-
-   This hook can be used for sending notifications or for making log entries
-   in the database when editing takes place.
-
-   ----------------------------------------------------------------------------
-   after_post
-
-   Where  : post.php
-   When   : After storing a new message in the database and just
-            before the user is redirected back to the list.
-   Input  : Array containing message data (read-only).
-   Return : none
-
-   This hook can be used for performing actions based on what the message
-   contained.
 
    ----------------------------------------------------------------------------
    posting_custom_action
@@ -1908,6 +1919,17 @@ Table of contents:
 
    This hook can be used to do clean up like saving data or logging.  Output
    is highly discouraged here as this will happen all templates are included.
+
+   ----------------------------------------------------------------------------
+   start_output
+
+   Where  : include/common.php
+   When   : called just before header template is included
+   Input  : none
+   Return : none
+
+   This hook can be used to do any last minute things before output starts.
+   It could also be used to buffer output by using ob_start()
 
    ----------------------------------------------------------------------------
    user_check_login
