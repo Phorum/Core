@@ -121,7 +121,7 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($PHORU
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 
 // Get the database settings. It is possible to override the database
-// settings by defining a global variable $PHORUM_ALT_DBCONFIG which 
+// settings by defining a global variable $PHORUM_ALT_DBCONFIG which
 // overrides $PHORUM["DBCONFIG"] (from include/db/config.php). This is
 // only allowed if "PHORUM_WRAPPER" is defined and if the alternative
 // configuration wasn't passed as a request parameter (which could
@@ -406,6 +406,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         include_once( phorum_get_template( "settings" ) );
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
+        $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
+        $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
         ob_end_clean();
     }
 
@@ -592,7 +594,7 @@ function phorum_check_read_common()
  *     main Phorum templates directory must be used.
  *
  * @return array
- *     This function returns an array, containing two elements:   
+ *     This function returns an array, containing two elements:
  *     - The PHP file to include for the template base name.
  *     - The file to use as template input. In case there's no
  *       .tpl file to pre-process, the value will be NULL. In that
@@ -939,9 +941,19 @@ function print_var( $var, $admin_only = FALSE )
 {
     if ($admin_only && ! $GLOBALS["PHORUM"]["user"]["admin"]) return;
 
-    echo "<xmp>";
-    print_r( $var );
-    echo "</xmp>";
+    if(PHP_SAPI=="apache"){
+        echo "<pre>";
+    }
+    echo "\n";
+    echo "type:  ".gettype($var)."\n";
+    echo "value: ";
+    $val = print_r($var, true);
+    echo trim(str_replace("\n", "\n       ", $val));
+    if(PHP_SAPI=="apache"){
+        echo "\n</pre>";
+    }
+    echo "\n";
+
 }
 
 /**

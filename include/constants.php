@@ -233,6 +233,7 @@
     define("PHORUM_BASE_URL", $i++);
     define("PHORUM_ADDON_URL", $i++);
     define("PHORUM_CHANGES_URL", $i++);
+    define("PHORUM_CSS_URL", $i++);
 
     // moderation actions
     $i=1;

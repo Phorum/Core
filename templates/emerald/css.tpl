@@ -2,9 +2,10 @@
 /* overall style */
 
 #phorum {
-    font-family: Arial;
-    max-width: 900px;
-/*    text-align: left; */
+    font-family: {default_font};
+    font-size: {base_font_size};
+    color: {default_font_color};
+    max-width: {max_width};
     margin: auto;
 }
 
@@ -18,37 +19,37 @@ img {
 #phorum table.list {
     width: 100%;
     margin-bottom: 4px;
-    border: 1px solid #4d894d;
+    border: 1px solid {border_color};
     border-bottom: 0;
 }
 
 
 #phorum table.list th  {
     background-repeat: repeat-x;
-    background-image: url('../images/header_background.png');
-    color: White;
-    background-color: #4d894d;
-    font-size: 85%;
+    background-image: url('templates/{template_dir}/images/header_background.png');
+    color: {border_font_color};
+    background-color: {border_color};
+    font-size: {font_small};
     padding: 5px;
 }
 
 #phorum table.list th a {
-    color: White;
+    color: {border_font_color};
 }
 
 #phorum table.list td {
-    background-color: White;
+    background-color: {default_background_color};
     padding: 8px;
-    border-bottom: 1px solid #4d894d;
-    font-size: 85%;
+    border-bottom: 1px solid {border_color};
+    font-size: {font_small};
 }
 
 #phorum table.list td.alt {
-    background-color: #edf2ed;
+    background-color: {alt_background_color};
 }
 
 #phorum table.list td.current {
-    background-color: #f0f7f0;
+    background-color: {highlight_background_color};
 }
 
 #phorum table.list td p {
@@ -60,17 +61,17 @@ img {
 }
 
 #phorum table.list td h4 {
-    font-size: 115%;
+    font-size: {font_large};
     margin: 0;
     font-weight: normal;
 }
 
 #phorum a {
-    color: #355F35;
+    color: {link_color};
 }
 
 #phorum a:hover {
-    color: #709CCC;
+    color: {link_hover_color};
 }
 
 #phorum a.icon {
@@ -82,12 +83,12 @@ img {
 
 #phorum h1 {
     margin: 5px 0 0 0;
-    font-size: 145%;
+    font-size: {font_xx_large};
 }
 
 #phorum h2 {
     margin: 0;
-    font-size: 115%;
+    font-size: {font_large};
     font-weight: normal;
 }
 
@@ -98,15 +99,15 @@ img {
 #phorum hr {
     height: 1px;
     border: 0;
-    border-top: 1px solid #4d894d;
+    border-top: 1px solid {border_color};
 }
 
 /* global styles */
 
 #phorum div.generic {
     padding: 8px;
-    background-color: #edf2ed;
-    border: 1px solid #4d894d;
+    background-color: {alt_background_color};
+    border: 1px solid {border_color};
 }
 
 #phorum div.generic-lower {
@@ -132,25 +133,8 @@ img {
     margin: 0 4px 0 4px;
 }
 
-/*
-#phorum input.styled-text {
-    font-family: Arial;
-    border-color: #EEEFDE;
-}
-
-#phorum input.styled-button {
-    font-family: Arial;
-    font-weight: bold;
-    background-color: #EEEFDE;
-    border-color: #EEEFDE;
-    color: #355F35;
-    padding: 2px 0 2px 0;
-
-}
-*/
-
 #phorum div.nav {
-    font-size: 85%;
+    font-size: {font_small};
     margin: 0 0 5px 0;
 }
 
@@ -167,12 +151,13 @@ img {
 
 #phorum div.notice {
     padding: 8px;
-    background-color: #edf2ed;
-    border: 1px solid #4d894d;
+    background-color: {alt_background_color};
+    border: 1px solid {border_color};
     margin-bottom: 8px;
 }
 
 #phorum div.warning {
+    /* does not use template values on purpose */
     border: 1px solid #A76262;
     background-color: #FFD1D1;
     padding: 8px;
@@ -180,10 +165,10 @@ img {
 }
 
 #phorum div.attachments {
-    background-color: White;
+    background-color: {default_background_color};
     margin-top: 8px;
     padding: 16px;
-    border: 1px solid #4d894d;
+    border: 1px solid {border_color};
 }
 
 #phorum div.attachments a {
@@ -191,7 +176,7 @@ img {
 }
 
 #phorum span.new-flag {
-    color: red;
+    color: {new_color};
 }
 
 #phorum a.message-new {
@@ -203,7 +188,7 @@ img {
 }
 
 #phorum table.menu td.menu {
-    font-size: 85%;
+    font-size: {font_small};
     padding: 0 8px 0 0;
 }
 
@@ -226,7 +211,7 @@ img {
 }
 
 #phorum table.menu td.menu span.new {
-    color: Red;
+    color: {new_color};
 }
 
 #phorum table.menu td.content {
@@ -237,9 +222,9 @@ img {
 #phorum table.menu td.content h2 {
     margin: 0 0 8px 0;
     background-repeat: repeat-x;
-    background-image: url('../images/header_background.png');
-    color: White;
-    background-color: #4d894d;
+    background-image: url('templates/{template_dir}/images/header_background.png');
+    color: {border_font_color};
+    background-color: {border_color};
     padding: 4px;
 }
 
@@ -268,7 +253,7 @@ img {
 }
 
 #phorum textarea.body {
-    font-family: Arial;
+    font-family: {default_font};
     width: 100%;
     border: 0;
 }
@@ -281,9 +266,9 @@ img {
 
 #phorum #logo {
     height: 46px;
-    background-color: #78ad78;
+    background-color: {logo_background_color};
     vertical-align: bottom;
-    background-image: url('../images/top-background.png');
+    background-image: url('templates/{template_dir}/images/top-background.png');
 }
 
 #phorum #logo img {
@@ -303,18 +288,18 @@ img {
 #phorum #description {
     margin: 8px 8px 0 0;
     padding-right: 32px;
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum #breadcrumb {
-    border-bottom: 1px solid #b6b6b6;
+    border-bottom: 1px solid {breadcrumb_border_color};
     border-top: 0;
     padding: 5px;
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum #user-info {
-    font-size: 85%;
+    font-size: {font_small};
     margin: 0 0 4px 0;
     text-align: right;
 }
@@ -339,16 +324,19 @@ img {
 }
 
 #phorum div.attention {
+    /* does not use template values on purpose */
     padding: 24px 8px 24px 64px;
     border: 1px solid #A76262;
-    background-image: url('../images/dialog-warning.png');
+    background-image: url('templates/{template_dir}/images/dialog-warning.png');
     background-color: #FFD1D1;
     background-repeat: no-repeat;
     background-position: 8px 8px;
+    color: Black;
     margin: 8px 0 8px 0;
 }
 
 #phorum div.attention a {
+    /* does not use template values on purpose */
     color: #68312C;
     padding: 2px 2px 2px 21px;
     display: block;
@@ -373,7 +361,7 @@ img {
 }
 
 #phorum #header-search-form a {
-    font-size: 65%;
+    font-size: {font_xx_small};
 }
 
 
@@ -386,60 +374,60 @@ img {
 
 #phorum td.message-user-info {
     float: right;
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum div.message-author {
     background-repeat: no-repeat;
     background-position: 0px 2px;
     padding: 0px 0 0px 21px;
-    font-size: 115%;
+    font-size: {font_large};
     font-weight: bold;
     margin-bottom: 5px;
 }
 
 #phorum div.message-author small {
-    font-size: 65%;
+    font-size: {font_xx_small};
     font-weight: normal;
     margin: 0 0 0 16px;
 }
 
 #phorum div.message-subject {
     font-weight: bold;
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum div.message-body {
     padding: 16px;
     margin: 0 0 16px 0;
-    border: 1px solid #4d894d;
+    border: 1px solid {border_color};
     border-top: 0;
-    background-image: url("../images/message_background.png");
+    background-image: url("templates/{template_dir}/images/message_background.png");
     background-repeat: repeat-x;
 }
 
 #phorum div.message-date {
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum div.message-moderation {
     margin-top: 8px;
-    font-size: 85%;
+    font-size: {font_small};
     border-top: 0;
     padding: 6px;
-    background-color: #edf2ed;
-    border: 1px solid #4d894d;
+    background-color: {alt_background_color};
+    border: 1px solid {border_color};
 }
 
 #phorum div.message-options {
     text-align: right;
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum #thread-options {
     margin: 8px 0 32px 0;
-    background-color: #edf2ed;
-    border: 1px solid #4d894d;
+    background-color: {alt_background_color};
+    border: 1px solid {border_color};
     padding: 8px;
     text-align: center;
 }
@@ -447,11 +435,15 @@ img {
 /* Changes styles */
 
 #phorum span.addition {
+    /* does not use template values on purpose */
     background-color: #CBFFCB;
+    color: black;
 }
 
 #phorum span.removal {
+    /* does not use template values on purpose */
     background-color: #FFCBCB;
+    color: black;
 }
 
 /* Posting styles */
@@ -465,20 +457,20 @@ img {
 }
 
 #phorum #post ul li {
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum #post-body {
-    border: 1px solid #4d894d;
-    background-color: White;
+    border: 1px solid {border_color};
+    background-color: {default_background_color};
     padding: 8px;
 }
 
 #phorum #post-moderation {
-    font-size: 85%;
+    font-size: {font_small};
     float: right;
-    border: 1px solid #4d894d;
-    background-color: #fffdf6;
+    border: 1px solid {border_color};
+    background-color: {post_moderation_background_color};
     padding: 8px;
 }
 
@@ -488,21 +480,21 @@ img {
 }
 
 #phorum div.attach-link {
-    background-image: url('../images/attach.png');
+    background-image: url('templates/{template_dir}/images/attach.png');
     background-repeat: no-repeat;
     background-position: 1px 2px;
     padding: 4px 10px 2px 21px;
-    font-size: 85%;
+    font-size: {font_small};
     font-weight: normal;
 }
 
 #phorum #attachment-list td {
-    font-size: 85%;
+    font-size: {font_small};
     padding: 6px;
 }
 
 #phorum #attachment-list input {
-    font-size: 65%;
+    font-size: {font_xx_small};
 }
 
 
@@ -514,13 +506,13 @@ img {
 
 #phorum div.pm {
     padding: 8px;
-    background-color: #edf2ed;
-    border: 1px solid #4d894d;
+    background-color: {alt_background_color};
+    border: 1px solid {border_color};
     border-bottom: 0;
 }
 
 #phorum div.pm div.message-author {
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum .phorum-gaugetable {
@@ -529,13 +521,13 @@ img {
 }
 
 #phorum .phorum-gauge {
-    border: 1px solid #4d894d;
-    background-color: white;
+    border: 1px solid {border_color};
+    background-color: {default_background_color};
 }
 
 #phorum .phorum-gaugeprefix {
     border: none;
-    background-color: white;
+    background-color: {default_background_color};
     padding-right: 10px;
 }
 
@@ -546,13 +538,13 @@ img {
     background-repeat: no-repeat;
     background-position: 0px 2px;
     padding: 0px 0 0px 21px;
-    font-size: 115%;
+    font-size: {font_large};
     font-weight: bold;
     margin-bottom: 5px;
 }
 
 #phorum #profile div.icon-user small {
-    font-size: 65%;
+    font-size: {font_xx_small};
     font-weight: normal;
     margin: 0 0 0 16px;
 }
@@ -574,26 +566,25 @@ img {
 }
 
 #phorum #search-form form {
-    font-size: 85%;
+    font-size: {font_small};
 }
 
 #phorum div.search {
-    background-color: White;
+    background-color: {default_background_color};
 }
 
 #phorum div.search-result {
-    font-size: 85%;
+    font-size: {font_small};
     margin-bottom: 20px;
 }
 
 #phorum div.search-result h4 {
-    font-size: 125%;
+    font-size: {font_x_large};
     margin: 0;
 }
 
 #phorum div.search-result h4 small {
-    font-size: 75%;
-    color: Gray;
+    font-size: {font_x_small};
 }
 
 #phorum div.search-result blockquote {
@@ -605,7 +596,7 @@ img {
 
 #phorum #footer-plug {
     margin-top: 26px;
-    font-size: 65%;
+    font-size: {font_xx_small};
     text-align: center;
 }
 
@@ -613,144 +604,144 @@ img {
 /* Icon Styles */
 
 .icon-accept {
-    background-image: url('../images/accept.png');
+    background-image: url('templates/{template_dir}/images/accept.png');
 }
 
 .icon-bell {
-    background-image: url('../images/bell.png');
+    background-image: url('templates/{template_dir}/images/bell.png');
 }
 
 .icon-bullet-black {
-    background-image: url('../images/bullet_black.png');
+    background-image: url('templates/{template_dir}/images/bullet_black.png');
 }
 
 .icon-bullet-go {
-    background-image: url('../images/bullet_go.png');
+    background-image: url('templates/{template_dir}/images/bullet_go.png');
 }
 
 .icon-cancel {
-    background-image: url('../images/cancel.png');
+    background-image: url('templates/{template_dir}/images/cancel.png');
 }
 
 .icon-close {
-    background-image: url('../images/lock.png');
+    background-image: url('templates/{template_dir}/images/lock.png');
 }
 
 .icon-comment {
-    background-image: url('../images/comment.png');
+    background-image: url('templates/{template_dir}/images/comment.png');
 }
 
 .icon-comment-add {
-    background-image: url('../images/comment_add.png');
+    background-image: url('templates/{template_dir}/images/comment_add.png');
 }
 
 .icon-comment-edit {
-    background-image: url('../images/comment_edit.png');
+    background-image: url('templates/{template_dir}/images/comment_edit.png');
 }
 
 .icon-comment-delete {
-    background-image: url('../images/comment_delete.png');
+    background-image: url('templates/{template_dir}/images/comment_delete.png');
 }
 
 .icon-delete {
-    background-image: url('../images/delete.png');
+    background-image: url('templates/{template_dir}/images/delete.png');
 }
 
 .icon-exclamation {
-    background-image: url('../images/exclamation.png');
+    background-image: url('templates/{template_dir}/images/exclamation.png');
 }
 
 .icon-feed {
-    background-image: url('../images/feed.png');
+    background-image: url('templates/{template_dir}/images/feed.png');
 }
 
 .icon-flag-red {
-    background-image: url('../images/flag_red.png');
+    background-image: url('templates/{template_dir}/images/flag_red.png');
 }
 
 .icon-folder {
-    background-image: url('../images/folder.png');
+    background-image: url('templates/{template_dir}/images/folder.png');
 }
 
 .icon-group-add {
-    background-image: url('../images/group_add.png');
+    background-image: url('templates/{template_dir}/images/group_add.png');
 }
 
 .icon-key-go {
-    background-image: url('../images/key_go.png');
+    background-image: url('templates/{template_dir}/images/key_go.png');
 }
 
 .icon-list {
-    background-image: url('../images/text_align_justify.png');
+    background-image: url('templates/{template_dir}/images/text_align_justify.png');
 }
 
 .icon-merge {
-    background-image: url('../images/arrow_join.png');
+    background-image: url('templates/{template_dir}/images/arrow_join.png');
 }
 
 .icon-move {
-    background-image: url('../images/page_go.png');
+    background-image: url('templates/{template_dir}/images/page_go.png');
 }
 
 .icon-next {
-    background-image: url('../images/control_next.png');
+    background-image: url('templates/{template_dir}/images/control_next.png');
 }
 
 .icon-note-add {
-    background-image: url('../images/note_add.png');
+    background-image: url('templates/{template_dir}/images/note_add.png');
 }
 
 .icon-open {
-    background-image: url('../images/lock_open.png');
+    background-image: url('templates/{template_dir}/images/lock_open.png');
 }
 
 .icon-page-go {
-    background-image: url('../images/page_go.png');
+    background-image: url('templates/{template_dir}/images/page_go.png');
 }
 
 .icon-prev {
-    background-image: url('../images/control_prev.png');
+    background-image: url('templates/{template_dir}/images/control_prev.png');
 }
 
 .icon-printer {
-    background-image: url('../images/printer.png');
+    background-image: url('templates/{template_dir}/images/printer.png');
 }
 
 .icon-split {
-    background-image: url('../images/arrow_divide.png');
+    background-image: url('templates/{template_dir}/images/arrow_divide.png');
 }
 
 .icon-table-add {
-    background-image: url('../images/table_add.png');
+    background-image: url('templates/{template_dir}/images/table_add.png');
 }
 
 .icon-tag-green {
-    background-image: url('../images/tag_green.png');
+    background-image: url('templates/{template_dir}/images/tag_green.png');
 }
 
 .icon-user {
-    background-image: url('../images/user.png');
+    background-image: url('templates/{template_dir}/images/user.png');
 }
 
 .icon-user-add {
-    background-image: url('../images/user_add.png');
+    background-image: url('templates/{template_dir}/images/user_add.png');
 }
 
 .icon-user-comment {
-    background-image: url('../images/user_comment.png');
+    background-image: url('templates/{template_dir}/images/user_comment.png');
 }
 
 .icon-user-edit {
-    background-image: url('../images/user_edit.png');
+    background-image: url('templates/{template_dir}/images/user_edit.png');
 }
 
 .icon-zoom {
-    background-image: url('../images/zoom.png');
+    background-image: url('templates/{template_dir}/images/zoom.png');
 }
 
 
 .icon-information {
-    background-image: url('../images/information.png');
+    background-image: url('templates/{template_dir}/images/information.png');
 }
 
 
@@ -762,14 +753,14 @@ img {
 /*   BBCode styles  */
 
 #phorum blockquote.bbcode {
-    font-size: 85%;
+    font-size: {font_small};
     margin: 0 0 0 10px;
 }
 
 #phorum blockquote.bbcode div {
     margin: 0;
     padding: 5px;
-    border: 1px solid #808080;
+    border: 1px solid {quote_border_color};
 }
 
 #phorum blockquote.bbcode strong {
@@ -778,12 +769,9 @@ img {
 }
 
 #phorum pre.bbcode {
-    border: 1px solid #C4C6A2;
-    background-color: #FEFFEC;
+    border: 1px solid {pre_border_color};
+    background-color: {pre_background_color};
     padding: 8px;
 }
-
-
-
 
 

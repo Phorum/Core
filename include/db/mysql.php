@@ -1987,7 +1987,7 @@ function phorum_db_add_forum($forum)
 /**
  * Add a message-edit item
  *
- * @param $edit_data     - The edit_data to add. This is an array, which 
+ * @param $edit_data     - The edit_data to add. This is an array, which
  *                         should contain the following fields:
  *                         diff_body, diff_subject, time, message_id, user_id
  *

@@ -150,7 +150,7 @@ function phorum_api_user_authenticate($username, $password)
 
     // No module handled the authentication?
     // Then we have to run the Phorum authentication.
-    if ($user_id === NULL) 
+    if ($user_id === NULL)
     {
         // Check the password.
         $user_id = phorum_db_user_check_login($username, md5($password));
@@ -179,7 +179,7 @@ function phorum_api_user_authenticate($username, $password)
             ));
         }
     }
-    
+
     return $user_id ? $user_id : FALSE;
 }
 // }}}
@@ -196,8 +196,8 @@ function phorum_api_user_authenticate($username, $password)
  * tracking (based on the "track_user_activity" setting) and setup some
  * special (template) variables:
  *
- * The variabe $PHORUM["DATA"]["ADMINISTRATOR"] will be set to TRUE if 
- * the active user is an administrator, FALSE otherwise. 
+ * The variabe $PHORUM["DATA"]["ADMINISTRATOR"] will be set to TRUE if
+ * the active user is an administrator, FALSE otherwise.
  *
  * For type {@link PHORUM_FORUM_SESSION}, the following extra variables
  * will be filled:
@@ -206,7 +206,7 @@ function phorum_api_user_authenticate($username, $password)
  *   TRUE if the user is logged in, FALSE otherwise.
 
  * - $PHORUM["DATA"]["FULLY_LOGGEDIN"]:
- *   TRUE if a short term session is active (by setting the 
+ *   TRUE if a short term session is active (by setting the
  *   {@link PHORUM_FLAG_SESSION_ST} flag for the $flags parameter),
  *   FALSE otherwise.
  *
@@ -251,7 +251,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
                     PHORUM_ERRNO_ERROR,
                     'phorum_api_user_set_active_user(): ' .
                     'user record seems incomplete'
-                ); 
+                );
                 $user = NULL;
             }
         }
@@ -272,7 +272,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
                 'the user is not active'
-            ); 
+            );
             $user = NULL;
         }
 
@@ -283,7 +283,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
                 'the user is '
-            ); 
+            );
             $user = NULL;
         }
     }
@@ -331,11 +331,11 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
     // specifies the user activity update interval in seconds (the lower
     // this setting is, the more often the database will be updated).
     if ($PHORUM['track_user_activity'] &&
-        (empty($user['date_last_active']) || 
+        (empty($user['date_last_active']) ||
          $user['date_last_active'] < time() - $PHORUM['track_user_activity']))
     {
         $date_last_active  = time();
-        $last_active_forum = empty($PHORUM['forum_id']) 
+        $last_active_forum = empty($PHORUM['forum_id'])
                            ? 0 : $PHORUM['forum_id'];
 
         // Update the user data in the database.
@@ -399,7 +399,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
  * - Short term session:
  *   This session has a limited life time and will not survive closing the
  *   browser. If strict security is enabled, then the user will not be able
- *   to use all forum functions, unless there is a short term session active 
+ *   to use all forum functions, unless there is a short term session active
  *   (e.g. posting forum messages and reading/writing private messages are
  *   restricted). This session is tracked using a cookie. If URI authentication
  *   is in use (because of admin config or cookie-less browsers) Phorum will
@@ -441,7 +441,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     $GLOBALS['PHORUM']['API']['error'] = NULL;
 
     // Check if we have a valid session type.
-    if ($type != PHORUM_FORUM_SESSION && 
+    if ($type != PHORUM_FORUM_SESSION &&
         $type != PHORUM_ADMIN_SESSION) trigger_error(
         'phorum_api_user_session_create(): Illegal session type: ' .
         htmlspecialchars($type),
@@ -487,7 +487,7 @@ function phorum_api_user_session_create($type, $reset = 0)
 
     $user = $GLOBALS['PHORUM']['user'];
 
-    // Generate a long term session id. This one is used by all session types. 
+    // Generate a long term session id. This one is used by all session types.
     // Create a new long term session id if no session id is available yet or
     // if a refresh was requested and cookies are disabled (with cookies
     // enabled, we always reuse the existing long term session, so the session
@@ -504,7 +504,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         ));
         $GLOBALS['PHORUM']['user']['sessid_lt'] = $sessid_lt;
     } else {
-        $sessid_lt = $user['sessid_lt']; 
+        $sessid_lt = $user['sessid_lt'];
     }
 
     // For forum sessions, generate a short term session id if tight
@@ -521,12 +521,12 @@ function phorum_api_user_session_create($type, $reset = 0)
                   ? 0 : $user['sessid_st_timeout'] - time();
 
         // Create a new short term session id if ..
-        if (empty($user['sessid_st']) || // .. no session id is available yet 
+        if (empty($user['sessid_st']) || // .. no session id is available yet
             $reset) {                    // .. any type of reset was requested
             $sessid_st = md5($user['username'].microtime().$user['password']);
             $refresh_sessid_st = TRUE;
         } else {
-            // Reuse the existing short term session id 
+            // Reuse the existing short term session id
             $sessid_st = $user['sessid_st'];
 
             // Have the session timeout reset if more than one third of the
@@ -540,7 +540,7 @@ function phorum_api_user_session_create($type, $reset = 0)
 
         // The session data needs updating.
         if ($refresh_sessid_st) {
-            $timeout = time() + $PHORUM['short_session_timeout']*60; 
+            $timeout = time() + $PHORUM['short_session_timeout']*60;
             phorum_user_save_simple(array(
                 'user_id'           => $user['user_id'],
                 'sessid_st'         => $sessid_st,
@@ -549,7 +549,7 @@ function phorum_api_user_session_create($type, $reset = 0)
             $GLOBALS['PHORUM']['user']['sessid_st'] = $sessid_st;
             $GLOBALS['PHORUM']['user']['sessid_st_timeout'] = $timeout;
         }
-    } 
+    }
 
     // For admin sessions, the session id is computed using the long term
     // session id and some random data that was generated at install time.
@@ -595,7 +595,7 @@ function phorum_api_user_session_create($type, $reset = 0)
                 $user['user_id'].':'.$user['sessid_st'],
                 $user['sessid_st_timeout'],
                 $PHORUM['session_path'], $PHORUM['session_domain']
-            ); 
+            );
         }
     }
 
@@ -606,7 +606,7 @@ function phorum_api_user_session_create($type, $reset = 0)
             $user['user_id'].':'.$sessid_admin,
             0, // admin sessions are destroyed as soon as the browser closes
             $PHORUM['session_path'], $PHORUM['session_domain']
-        ); 
+        );
     }
 
     return TRUE;
@@ -723,7 +723,7 @@ function phorum_api_user_session_restore($type)
             continue;
         }
 
-        // The cookie value is formatted as <user id>:<session id>. 
+        // The cookie value is formatted as <user id>:<session id>.
         // Split these into separate parts.
         list($user_id, $sessid) = explode(':', $value, 2);
 
@@ -758,7 +758,7 @@ function phorum_api_user_session_restore($type)
         }
 
         // Check if the session id from the cookie is valid for the user.
-        $valid_session = 
+        $valid_session =
             ($cookie == PHORUM_COOKIE_LONG_TERM  &&
              !empty($session_user['sessid_lt']) &&
              $session_user['sessid_lt'] == $sessid) ||
@@ -773,7 +773,7 @@ function phorum_api_user_session_restore($type)
 
         // Keep track of valid session cookies.
         if ($valid_session) {
-            $check_session[$cookie] = 2; 
+            $check_session[$cookie] = 2;
         }
     }
 

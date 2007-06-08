@@ -5,7 +5,7 @@
  * Important note for the developers:
  * ----------------------------------
  * If anything changes in this file, then beware that the Phorum
- * PHP Extension code needs to be updated as well. Add a TODO marker 
+ * PHP Extension code needs to be updated as well. Add a TODO marker
  * to the updated pieces of code if this update is not done immediately.
  * ----------------------------------
  */
@@ -24,6 +24,14 @@ function phorum_get_url()
     $type = array_shift( $argv );
 
     switch ( $type ) {
+        case PHORUM_BASE_URL:
+            // only to flag phorum_custom_get_url() that base url is requested
+            $page = '';
+            break;
+        case PHORUM_CSS_URL:
+            $page = "css";
+            $add_forum_id = true;
+            break;
         case PHORUM_LIST_URL:
             $page = "list";
             if ( empty( $argv ) ) $add_forum_id = true;
@@ -167,11 +175,6 @@ function phorum_get_url()
             $page = array_shift($argv); // first arg is our page
             $add_forum_id_tmp=array_shift($argv); // second determining if we should add the forum_id
             $add_forum_id = $add_forum_id_tmp?true:false;
-            break;
-
-        case PHORUM_BASE_URL:
-            // only to flag phorum_custom_get_url() that base url is requested
-            $page = '';
             break;
 
         case PHORUM_ADDON_URL:

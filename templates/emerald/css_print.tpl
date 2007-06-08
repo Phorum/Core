@@ -1,8 +1,8 @@
+/* does not use template values on purpose */
 
-#post, #thread-options, .nav, .message-options, .message-moderation {
+#phorum #post, #phorum #thread-options, #phorum .nav, #phorum .message-options, #phorum .message-moderation {
     display: none;
 }
-
 
 #phorum div.generic {
     background-color: #ffffff;
