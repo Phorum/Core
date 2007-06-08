@@ -5,6 +5,8 @@ hook:  start_output|mod_tidy_start
 hook:  end_output|mod_tidy_end
 title: Tidy Output
 desc:  This module removes unneeded white space from Phorum's output saving bandwidth.
+author: Phorum Dev Team
+url: http://www.phorum.org/
 */
 
 

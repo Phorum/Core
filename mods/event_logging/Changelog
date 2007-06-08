@@ -1,0 +1,11 @@
+Changelog:
+----------
+
+2007-05-02 v1.0.1
+
+    - Updated for 5.2 compatibility. The module now uses the new database
+      layer API that was introduced for Phorum 5.2.
+
+2007-04-21 v1.0.0
+
+    - Initial release.

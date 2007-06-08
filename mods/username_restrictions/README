@@ -1,0 +1,54 @@
+Module  : Username Restrictions
+Version : 1.0.0
+Author  : Maurice Makaay
+
+This module implements configurable features for enforcing user name
+restrictions. The module will check the user name at registration time
+and show an error to the user if the new username does not meet the
+restrictions.
+
+Implemented features are:
+
+* Minimum username length;
+* Maximum username length;
+* Configuration of valid characters for usernames;
+* Only allow lower case characters for usernames. 
+
+This module requires Phorum 5.1 or later.
+
+
+Install:
+--------
+
+- Unpack the archive;
+
+- Move the directory "username_restrictions" to the directory "mods"
+  within your Phorum installation;
+
+- Login as administrator in Phorum's administrative interface and
+  go to the "Modules" section;
+
+- Enable the module "Username Restrictions". 
+
+- Edit the settings for the module to setup the restrictions that
+  you want to use for your Phorum installation. 
+
+
+Customization:
+--------------
+
+You can translate the error messages that this module produces by writing a
+language file "mods/username_restrictions/lang/<yourlang>.php".
+In this filename <yourlang> has to be the same name as the main language
+file that you use (i.e. "include/lang/<yourlang>.php"). If you write a
+translation for this module, then please post it in the module's thread
+at phorum.org, so I can include it in the distribution.
+
+If you want to inform your users about username restrictions before they
+submit the registration form, then you can edit the register.tpl template
+file to include the information. Personally, I do not like cluttering the
+registration form with extra info about username restrictions, because the
+module will show a clear and detailed error message in case a user chooses
+an illegal username and most users will probably choose a valid username
+at their first try anyway.
+

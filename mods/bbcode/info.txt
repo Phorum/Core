@@ -2,6 +2,8 @@ hook:  format|phorum_bb_code
 hook:  quote|phorum_bb_code_quote
 title: BB Code Phorum Mod
 desc:  This module converts BB Code into HTML.
+author: Phorum Dev Team
+url: http://www.phorum.org/
 
 # Always run bbcode formatting as the last hook.
 priority: run module after *

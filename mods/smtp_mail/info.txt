@@ -1,3 +1,5 @@
 hook:  send_mail|phorum_smtp_send_messages
 title: Mail-Sending through SMTP-Mod
 desc:  This module allows to send the mail-messages from phorum (i.e. notifies) through an external SMTP-Server without using PHPs internal mail-function
+author: Phorum Dev Team
+url: http://www.phorum.org/

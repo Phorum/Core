@@ -1,0 +1,110 @@
+Module  : Event Logging
+Version : 1.0.1
+Author  : Maurice Makaay <maurice@phorum.org>
+
+This module implements an event logging system for Phorum, which can be used
+for logging various events in the database.
+
+
+Installation instructions:
+--------------------------
+
+- Unpack the archive;
+
+- Move the directory "event_logging" to the directory "mods"
+  within your Phorum installation;
+
+- Login as administrator in Phorum's administrative interface and
+  go to the "Modules" section;
+
+- Enable the module "Event Logging".
+
+- Configure the module through the module's settings page.
+
+
+Viewing the event logs:
+-----------------------
+
+After activating the module, the event log should start logging Phorum
+events. You could force logging some events by logging on and off and by
+posting a message in a forum.
+
+To view the logged events, login as administrator in Phorum's
+administrative interface and go the the "Modules" section. Then open
+the settings page for the "Event Logging" module. On that page, you will
+find a link "View logged events", which can be used to browse through
+the gathered log messages.
+
+For a more specific view, you can use the "Filter logged events" page.
+There you can setup a filter for only showing a subset of the available
+event logs. If you take a look at the logs, you'll notice that some of the
+items in there are clickable. If you click on them, they will be added to
+the filter setup. 
+
+
+Write event logs from other modules:
+------------------------------------
+
+You can write your own event logs from your own module, by adding the
+following code to it:
+
+   if (function_exists('event_logging_writelog')) {
+       event_logging_writelog(array(
+           "message"   => "<This is the message that has to be logged>"
+       ));
+   }
+
+This will create a basic log entry with "debug" as the loglevel, using
+"module" (EVENTLOG_CAT_MODULE) as the category and the module's directory
+name as the source. The function_exists() check is here to not call the
+logging function in case the event logging module is not installed or enabled.
+
+You can override all of the log entry fields by supplying them in the call.
+For example:
+
+   if (function_exists('event_logging_writelog')) {
+       event_logging_writelog(array(
+           "source"    => "mymod",
+           "message"   => "This is my event log message.",
+           "details"   => "This is some additional info for the event.",
+           "loglevel"  => EVENTLOG_LVL_INFO,
+           "category"  => EVENTLOG_CAT_DATABASE
+       ));
+   }
+
+   source    : A text string, identifying your module.
+
+   message   : A short descriptive message for the event.
+
+   detail    : A long message for the event, which can contain
+               more details. You can set this field to NULL if
+               no detailed info is available.
+
+   loglevel  : One of the log level constants:
+
+                 EVENTLOG_LVL_DEBUG
+                 EVENTLOG_LVL_INFO
+                 EVENTLOG_LVL_WARNING
+                 EVENTLOG_LVL_ERROR
+                 EVENTLOG_LVL_ALERT
+
+               Only use errors and alerts for real errors, which
+               need attention by respectively the Phorum or system
+               administrator!
+
+   category  : One of the category constants:
+
+                 EVENTLOG_CAT_APPLICATION
+                 EVENTLOG_CAT_DATABASE
+                 EVENTLOG_CAT_SECURITY
+                 EVENTLOG_CAT_SYSTEM
+                 EVENTLOG_CAT_MODULE
+
+               Normally, you would use the "module" category when
+               logging events from module code. Only use one of
+               the other categories if your event really belongs
+               to them.
+
+For some more detailed information, see also the function documentation
+for event_logging_writelog() in the mods/event_logging/db.php script.
+
