@@ -1,7 +1,6 @@
 <form action="{URL->ACTION}" method="post">
     {POST_VARS}
     <input type="hidden" name="action" value="folders" />
-    <input type="hidden" name="forum_id" value="{FORUM_ID}" />
     <div class="generic">
         <h4>{LANG->PMFolderCreate}</h4>
         <input type="text" name="create_folder_name" value="{CREATE_FOLDER_NAME}" size="20" maxlength="20" />
@@ -12,7 +11,6 @@
     <form action="{URL->ACTION}" method="post">
         {POST_VARS}
         <input type="hidden" name="action" value="folders" />
-        <input type="hidden" name="forum_id" value="{FORUM_ID}" />
         <div class="generic">
             <h4>{LANG->PMFolderRename}</h4>
             <select name="rename_folder_from" style="vertical-align: middle">
@@ -30,7 +28,6 @@
     <form action="{URL->ACTION}" method="post">
         {POST_VARS}
         <input type="hidden" name="action" value="folders" />
-        <input type="hidden" name="forum_id" value="{FORUM_ID}" />
         <div class="generic">
             <h4>{LANG->PMFolderDelete}</h4>
             <p>{LANG->PMFolderDeleteExplain}</p>

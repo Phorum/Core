@@ -2,7 +2,6 @@
   {POST_VARS}
   <input type="hidden" name="page" value="buddies" />
   <input type="hidden" name="action" value="buddies" />
-  <input type="hidden" name="forum_id" value="{FORUM_ID}" />
   <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>
       <th class="PhorumTableHeader" align="left" width="20">

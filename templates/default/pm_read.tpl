@@ -2,7 +2,6 @@
   {POST_VARS}
   <input type="hidden" name="action" value="list" />
   <input type="hidden" name="folder_id" value="{FOLDER_ID}" />
-  <input type="hidden" name="forum_id" value="{FORUM_ID}" />
   <input type="hidden" name="pm_id" value="{MESSAGE->pm_message_id}" />
   <div class="PhorumStdBlock">
     <div class="PhorumReadBodySubject">{MESSAGE->subject}</div>

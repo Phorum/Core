@@ -4,7 +4,6 @@
 <div class="generic">
   <form action="{URL->ACTION}" method="post" style="display: inline;">
     {POST_VARS}
-    <input type="hidden" name="forum_id" value="{REGISTER->forum_id}" />
 
     <h4>{LANG->Register}</h4>
 

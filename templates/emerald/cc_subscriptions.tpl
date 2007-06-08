@@ -19,7 +19,6 @@
     <form action="{URL->ACTION}" method="POST" id="phorum-sub-list">
         {POST_VARS}
         <input type="hidden" name="subdays" value="{SELECTED}" />
-
         <table cellspacing="0" class="list">
             <tr>
                 <th align="left" nowrap="nowrap">

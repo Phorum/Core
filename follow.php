@@ -89,7 +89,6 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     $PHORUM["DATA"]["FORUM_ID"]      = $PHORUM["forum_id"];
 
     $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"thread\" value=\"{$PHORUM["DATA"]["THREAD"]}\" />\n";
-    $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["DATA"]["FORUM_ID"]}\" />\n";
 
     $template = "follow";
 }

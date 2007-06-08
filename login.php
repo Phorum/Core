@@ -268,7 +268,6 @@ $PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg );
 
 
 $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";
-$PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["DATA"]["LOGIN"]["forum_id"]}\" />\n";
 
 // Set the field to set the focus to after loading.
 $PHORUM["DATA"]["FOCUS_TO_ID"] = empty($username) ? "username" : "password";

@@ -12,7 +12,6 @@
   {IF FORM->merge_t1}
     <form method="POST" action="{URL->ACTION}">
       {POST_VARS}
-      <input type="hidden" name="forum_id" value="{FORM->forum_id}" />
       <input type="hidden" name="thread" value="{FORM->thread_id}" />
       <input type="hidden" name="thread1" value="{FORM->merge_t1}" />
       <input type="hidden" name="mod_step" value="{FORM->mod_step}" />
@@ -31,7 +30,6 @@
     <div class="PhorumFloatingText">
       <form method="POST" action="{URL->ACTION}">
         {POST_VARS}
-        <input type="hidden" name="forum_id" value="{FORM->forum_id}" />
         <input type="hidden" name="thread" value="{FORM->thread_id}" />
         <input type="hidden" name="mod_step" value="{FORM->mod_step}" />
         <input type="submit" class="PhorumSubmit" name="move" value="{LANG->MergeThreadCancel}" />

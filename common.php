@@ -521,6 +521,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
+    // used in all forms as it seems
+    $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["DATA"]["PROFILE"]["forum_id"]}\" />\n";
 }
 
 //////////////////////////////////////////////////////////

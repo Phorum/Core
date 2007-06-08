@@ -50,7 +50,6 @@
     <td class="PhorumStdBlock PhorumNarrowBlock" style="padding: 10px;">
       <form action="{URL->ACTION}" method="get" style="display: inline;">
         {POST_VARS}
-        <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
         <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />
         <div style="margin-top: 3px;">
           <select name="match_forum">
@@ -77,7 +76,6 @@
     <td style="width: 10px">&nbsp;</td>
     <td class="PhorumStdBlock PhorumNarrowBlock" style="padding: 10px;">
       <form action="{URL->ACTION}" method="get" style="display: inline;">
-        <input type="hidden" name="forum_id" value="{SEARCH->forum_id}" />
         <input type="hidden" name="match_type" value="AUTHOR" />
         {POST_VARS}
         <input type="text" id="phorum_search_author" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />&nbsp;<input type="submit" value="{LANG->Search}" /><br />

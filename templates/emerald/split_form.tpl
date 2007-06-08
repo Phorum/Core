@@ -2,7 +2,6 @@
     <h4>{LANG->SplitThread}</h4>
     <form method="POST" action="{URL->ACTION}">
         {POST_VARS}
-        <input type="hidden" name="forum_id" value="{FORM->forum_id}" />
         <input type="hidden" name="thread" value="{FORM->thread_id}" />
         <input type="hidden" name="message" value="{FORM->message_id}" />
         <input type="hidden" name="mod_step" value="{FORM->mod_step}" />

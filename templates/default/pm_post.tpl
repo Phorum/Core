@@ -20,7 +20,6 @@
 <form action="{URL->ACTION}" method="post">
   {POST_VARS}
   <input type="hidden" name="action" value="post" />
-  <input type="hidden" name="forum_id" value="{FORUM_ID}" />
   <input type="hidden" name="hide_userselect" value="{HIDE_USERSELECT}" />
   <div class="PhorumStdBlockHeader" style="text-align: left; width:99%">
     <table class="PhorumFormTable" cellspacing="0" border="0" style="width:99%">
