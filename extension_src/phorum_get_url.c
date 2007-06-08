@@ -18,6 +18,8 @@ initialize_get_url_handlers()
     register_url_handler(
      PHORUM_BASE_URL,              &basic_url, "",           NO_FORUM_ID, GET_VARS);
     register_url_handler(
+     PHORUM_CSS_URL,               &basic_url, "css",        FORUM_ID,    GET_VARS);
+    register_url_handler(
      PHORUM_LIST_URL,              &list_url,  "list",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
      PHORUM_READ_URL,              &read_url,  "read",       FORUM_ID,    GET_VARS);
