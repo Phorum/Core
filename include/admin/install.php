@@ -279,18 +279,52 @@ switch ($step){
             // insert the default module settings
             // hooks
 
-            $hooks_initial=array(
-            'format'=>array(
-                    'mods'=>array('smileys','bbcode'),
-                    'funcs'=>array('phorum_mod_smileys','phorum_bb_code')
-                    )
+
+
+            $mods_initial = array (
+                'announcements' => 1,
+                'bbcode' => 1,
+                'editor_tools' => 1,
+                'event_logging' => 0,
+                'html' => 0,
+                'smtp_mail' => 0,
+                'modules_in_use' => 0,
+                'replace' => 0,
+                'smileys' => 1,
+                'spamhurdles' => 0,
+                'mod_tidy' => 0,
+                'username_restrictions' => 0
             );
 
-            $mods_initial=array(
-                'html'   =>0,
-                'replace'=>0,
-                'smileys'=>1,
-                'bbcode' =>1
+            $hooks_initial = array (
+                'after_header' => array (
+                    'mods' =>array ( 0 => 'announcements', 1 => 'editor_tools' ),
+                    'funcs' => array ( 0 => 'phorum_show_announcements', 1 => 'phorum_mod_editor_tools_after_header' )
+                ),
+                'common' => array (
+                    'mods' => array ( 0 => 'announcements', 1 => 'editor_tools' ),
+                    'funcs' => array ( 0 => 'phorum_setup_announcements', 1 => 'phorum_mod_editor_tools_common' )
+                ),
+                'before_editor' => array (
+                    'mods' => array ( 0 => 'editor_tools' ),
+                    'funcs' => array ( 0 => 'phorum_mod_editor_tools_before_editor' )
+                ),
+                'tpl_editor_before_textarea' => array (
+                    'mods' => array ( 0 => 'editor_tools' ),
+                    'funcs' => array ( 0 => 'phorum_mod_editor_tools_tpl_editor_before_textarea' )
+                ),
+                'before_footer' => array (
+                    'mods' => array ( 0 => 'editor_tools' ),
+                    'funcs' => array ( 0 => 'phorum_mod_editor_tools_before_footer' )
+                ),
+                'format' => array (
+                    'mods' => array ( 0 => 'smileys',  1 => 'bbcode' ),
+                    'funcs' => array ( 0 => 'phorum_mod_smileys', 1 => 'phorum_bb_code' )
+                ),
+                'quote' => array (
+                    'mods' => array ( 0 => 'bbcode' ),
+                    'funcs' => array ( 0 => 'phorum_bb_code_quote' )
+                )
             );
 
             // set initial settings
@@ -347,13 +381,41 @@ switch ($step){
             "use_new_folder_style" => 1,
             "default_forum_options" => $default_forum_options,
             "hooks"=> $hooks_initial,
-            "mods" => $mods_initial
+            "mods" => $mods_initial,
+            "mod_announcements" => array('module'=>'modsettings','mod'=>'announcements','forum_id'=>1,'pages'=>array('index'=>'1','list'=>'1'),'number_to_show'=>5,'only_show_unread'=>NULL,'days_to_show'=>0)
 
             );
 
             phorum_db_update_settings($settings);
 
             // posting forum and test-message
+
+            // create an announcements forum
+            $forum=array(
+            "name"=>'Announcements',
+            "active"=>1,
+            "description"=>'Read this forum first to find out the latest information.',
+            "template"=>'emerald',
+            "folder_flag"=>0,
+            "parent_id"=>0,
+            "list_length_flat"=>30,
+            "list_length_threaded"=>15,
+            "read_length"=>20,
+            "moderation"=>0,
+            "threaded_list"=>0,
+            "threaded_read"=>0,
+            "float_to_top"=>0,
+            "display_ip_address"=>0,
+            "allow_email_notify"=>0,
+            "language"=>$default_language,
+            "email_moderators"=>0,
+            "display_order"=>99,
+            "edit_post"=>1,
+            "pub_perms" =>  1,
+            "reg_perms" =>  3
+            );
+
+            phorum_db_add_forum($forum);
 
             // create a test forum
             $forum=array(
