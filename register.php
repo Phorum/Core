@@ -221,7 +221,7 @@ if (count($_POST)) {
         foreach($_POST as $key => $val){
             $PHORUM["DATA"]["REGISTER"][$key] = htmlspecialchars($val);
         }
-        $PHORUM["DATA"]["ERROR"] = htmlspecialchars($error);
+        $PHORUM["DATA"]["ERROR"] = $error;
     }
 
 // No data posted, so this is the first request. Initialize form data.
