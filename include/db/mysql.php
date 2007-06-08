@@ -6017,7 +6017,7 @@ function phorum_db_create_tables()
            KEY active (active),
            KEY userpass (username,password),
            KEY sessid_st (sessid_st),
-           KEY cookie_sessid_lt (cookie_sessid_lt),
+           KEY sessid_lt (sessid_lt),
            KEY activity (date_last_active,hide_activity,last_active_forum),
            KEY date_added (date_added),
            KEY email_temp (email_temp)
