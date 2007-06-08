@@ -251,9 +251,8 @@ if (count($_POST) > 0) {
     }
 }
 
-// No data posted, so this is the first request. Here we set
-// a temporary cookie, so we can check if the user's browser
-// supports cookies.
+// No data posted, so this is the first request. Here we set a temporary
+// cookie, so we can check if the user's browser supports cookies.
 elseif($PHORUM["use_cookies"] > PHORUM_NO_COOKIES) {
     setcookie( "phorum_tmp_cookie", "this will be destroyed once logged in", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
 }

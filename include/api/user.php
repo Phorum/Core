@@ -20,14 +20,9 @@
 /**
  * This script implements the Phorum user API.
  *
- * The user API is used for managing users and user related data.
- *
- * By default, Phorum stores all user data in the Phorum database.
- * This API however, does support modules that change this behavior
- * (e.g. for using user data that is stored in some external database).
- *
- * This API does also implement a custom session system, for remembering
- * authenticated users. See the documentation for the function
+ * The user API is used for managing users and user related data. The API
+ * does also implement the Phorum session system, which is used for
+ * remembering authenticated users. See the documentation for the function
  * {@link phorum_api_user_session_create()} for more information on
  * Phorum user sessions.
  *
@@ -61,10 +56,17 @@ define( 'PHORUM_COOKIE_SHORT_TERM', 'phorum_session_st' );
 define( 'PHORUM_COOKIE_ADMIN',      'phorum_admin_session' );
 
 /**
- * Function call parameter, which tells {@link phorum_api_user_session_create()}
- * that a forum session has to be created for the active user.
+ * Function call parameter, which tells various functions that
+ * a front end forum session has to be handled.
  */
 define('PHORUM_FORUM_SESSION',         1);
+
+/**
+ * Function call parameter, which tells various functions that
+ * an admin back end session has to be handled.
+ */
+define('PHORUM_ADMIN_SESSION',         2);
+
 
 /**
  * Function call flag, which tells {@link phorum_api_user_set_active_user()}
@@ -87,17 +89,13 @@ define('PHORUM_SESSID_RESET_LOGIN',    1);
  */
 define('PHORUM_SESSID_RESET_ALL',      2);
 
-/**
- * Function call parameter, which tells {@link phorum_api_user_session_create()}
- * that an admin session has to be created for the active user.
- */
-define('PHORUM_ADMIN_SESSION',         2);
-
 // }}}
 
 // {{{ Function: phorum_api_user_authenticate()
 /**
  * Check the authentication credentials for a user.
+ *
+ * @example user_login.php Handle a user forum login
  *
  * @param string $username
  *     The username for the user.
@@ -210,6 +208,8 @@ function phorum_api_user_authenticate($username, $password)
  *   {@link PHORUM_FLAG_SESSION_ST} flag for the $flags parameter),
  *   FALSE otherwise.
  *
+ * @example user_login.php Handle a user forum login
+ *
  * @param string $type
  *     The type of session for which to set the active user. This must be
  *     one of {@link PHORUM_FORUM_SESSION} or {@link PHORUM_ADMIN_SESSION}.
@@ -228,7 +228,11 @@ function phorum_api_user_authenticate($username, $password)
  *
  * @return boolean
  *     TRUE if a real user was set as the active user successfully
- *     or FALSE if the anonymous user was set.
+ *     or FALSE if the anonymous user was set (either because that was
+ *     requested or because setting the real user failed). If setting a
+ *     real user as the active user failed, the functions
+ *     {@link phorum_api_strerror()} and {@link phorum_api_errno()} can be
+ *     used to retrieve information about the error which occurred.
  */
 function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 {
@@ -282,7 +286,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
             phorum_api_error_set(
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
-                'the user is '
+                'the user is not an administrator'
             );
             $user = NULL;
         }
@@ -405,6 +409,8 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
  *   is in use (because of admin config or cookie-less browsers) Phorum will
  *   only look at the long term session (even in strict security mode), since
  *   URI authentication can be considered to be short term by nature.
+ *
+ * @example user_login.php Handle a user forum login
  *
  * @param string $type
  *     The type of session to initialize. This must be one of
