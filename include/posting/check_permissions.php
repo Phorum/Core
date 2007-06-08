@@ -53,9 +53,12 @@ if( ($mode == "post" && !phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)
         $redir = urlencode(call_user_func_array('phorum_get_url', $args));
         $url = phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir");
 
-        $PHORUM["DATA"]["URL"]["REDIRECT"] = $url;
-        $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["LogIn"];
-        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
+        $PHORUM["DATA"]["URL"]["CLICKHERE"] = $url;
+        $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
+        $PHORUM["DATA"]["OKMSG"] = '<a name="REPLY"></a>' .
+                                   $PHORUM["DATA"]["LANG"]["NoPost"] . ' ' .
+                                   $PHORUM["DATA"]["LANG"]["PeriodicLogin"];
+        $PHORUM["posting_template"] = "message";
         return;
 
     } else {
