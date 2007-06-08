@@ -19,7 +19,10 @@
 
     if(!defined("PHORUM_ADMIN")) return;
 
-    phorum_user_clear_session("phorum_admin_session");
+    include_once("./include/api/base.php");
+    include_once("./include/api/user.php");
+
+    phorum_api_user_session_destroy(PHORUM_ADMIN_SESSION);
     phorum_redirect_by_url($PHORUM["admin_http_path"]);
     exit();
 

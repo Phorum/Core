@@ -188,7 +188,8 @@ function phorum_api_user_authenticate($username, $password)
  *
  * This function can be used to setup the Phorum data to indicate which
  * user is logged in or to setup the anonymous user. Calling this function
- * is all that is needed to tell Phorum which user is logged in.
+ * is all that is needed to tell Phorum which user is logged in (or to
+ * tell that no user is logged in by setting up the anonymous user).
  *
  * Next to setting up the user data, the function will handle user activity
  * tracking (based on the "track_user_activity" setting) and setup some
@@ -666,14 +667,8 @@ function phorum_api_user_session_restore($type)
         // Lookup the long term cookie.
         $check_session[PHORUM_COOKIE_LONG_TERM] = 1;
 
-        // Lookup the short term cookie if tight security and
-        // cookies are both enabled. With URI authentication,
-        // only the long term cookie is checked and considered
-        // to be equal to short term cookies (since the user has
-        // to login on every session anyway).
-        if (!empty($PHORUM['tight_security']) &&
-            isset($PHORUM['use_cookies']) &&
-            $PHORUM['use_cookies'] > PHORUM_NO_COOKIES) {
+        // Lookup the short term cookie if tight security is enabled.
+        if (!empty($PHORUM['tight_security'])) {
             $check_session[PHORUM_COOKIE_SHORT_TERM] = 1;
         }
     }
@@ -682,18 +677,17 @@ function phorum_api_user_session_restore($type)
         // Lookup the admin cookie.
         $check_session[PHORUM_COOKIE_ADMIN] = 1;
     }
-    else {
-        return phorum_api_error_set(
-            PHORUM_ERRNO_ERROR,
-            'phorum_api_user_session_restore(): Illegal session type: ' .
-            htmlspecialchars($type)
-        );
-    }
+    else trigger_error(
+        'phorum_api_user_session_restore(): Illegal session type: ' .
+        htmlspecialchars($type),
+        E_USER_ERROR
+    );
 
     // ----------------------------------------------------------------------
     // Check the cookie(s).
     // ----------------------------------------------------------------------
 
+    $real_cookie = FALSE;
     $session_user = NULL;
     foreach ($check_session as $cookie => $do_check)
     {
@@ -707,23 +701,20 @@ function phorum_api_user_session_restore($type)
              $PHORUM['use_cookies'] > PHORUM_NO_COOKIES)) &&
               isset($_COOKIE[$cookie]) ) {
             $value = $_COOKIE[$cookie];
-            $GLOBALS['PHORUM']['use_cookies'] = TRUE;
+            $real_cookie = TRUE;
         // Check for URI based authentication.
         } elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
                   isset($PHORUM['args'][$cookie])) {
             $value = urldecode($PHORUM['args'][$cookie]);
-            $GLOBALS['PHORUM']['use_cookies'] = FALSE;
         // Check for session id in form POST data.
         } elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
                   isset($_POST[$cookie])) {
             $value = $_POST[$cookie];
-            $GLOBALS['PHORUM']['use_cookies'] = FALSE;
         // Check for session id in form GET data (should rarely happen, but
         // it helps sometimes).
         } elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
                   isset($_GET[$cookie])) {
             $value = $_GET[$cookie];
-            $GLOBALS['PHORUM']['use_cookies'] = FALSE;
         } else {
             // Cookie not found. Continue with the next one.
             continue;
@@ -737,20 +728,13 @@ function phorum_api_user_session_restore($type)
         if (!is_numeric($user_id)) continue;
 
        // Find the data for the session user by its user_id. If the user
-       // cannot be found, then the anonymous user is setup.
+       // cannot be found, then the session is destroyed and the
+       // anonymous user is setup.
         if ($session_user === NULL) {
             $session_user = phorum_user_get($user_id, TRUE, TRUE);
             if (empty($session_user) ||
                 $session_user['active'] != PHORUM_USER_ACTIVE) {
-
-                // TODO API what about this? Need to fit this in a good spot
-                // TODO API once the clear session code is done.
-                // Finish any session that was going on.
-                phorum_user_clear_session($type);
-
-                // Setup the anonymous Phorum user.
-                phorum_api_user_set_active_user($type, NULL);
-
+                phorum_api_user_session_destroy($type);
                 return FALSE;
             }
         } else {
@@ -781,6 +765,14 @@ function phorum_api_user_session_restore($type)
         if ($valid_session) {
             $check_session[$cookie] = 2;
         }
+    }
+
+    // No real cookie found for a long term session? Then we will ignore short term
+    // sessions (short term sessions are not implemented for URI authentication)
+    // and update the "use_cookies" setting accordingly. 
+    if ($check_session[PHORUM_COOKIE_LONG_TERM] == 2 && ! $real_cookie) {
+        $check_session[PHORUM_COOKIE_SHORT_TERM] = 0;
+        $GLOBALS['PHORUM']['use_cookies'] = PHORUM_NO_COOKIES;
     }
 
     // ----------------------------------------------------------------------
@@ -820,17 +812,11 @@ function phorum_api_user_session_restore($type)
     // Restore the user session.
     // ----------------------------------------------------------------------
 
-    // No session to restore? Then setup the anonymous user.
+    // No session to restore? Then destroy the session
+    // and setup the anonymous user.
     if (! $do_restore_session)
     {
-        // TODO API what about this? Need to fit this in a good spot once
-        // TODO API the clear session code is done.
-        // Finish any session that was going on.
-        phorum_user_clear_session($type);
-
-        // Setup the anonymous Phorum user.
-        phorum_api_user_set_active_user($type, NULL);
-
+        phorum_api_user_session_destroy($type);
         return FALSE;
     }
     // Restore a user's session.
@@ -841,7 +827,7 @@ function phorum_api_user_session_restore($type)
         if ($do_restore_short_term_session) $flags |= PHORUM_FLAG_SESSION_ST;
         phorum_api_user_set_active_user($type, $session_user, $flags);
 
-        // Keep the session alive for the user.
+        // Refresh and keep the session alive for the user.
         phorum_api_user_session_create($type);
 
         return TRUE;
@@ -849,5 +835,65 @@ function phorum_api_user_session_restore($type)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_session_destroy()
+/**
+ * Destroy a Phorum user session.
+ *
+ * This will destroy a Phorum user session and set the active
+ * Phorum user to the anonymous user.
+ *
+ * @param string $type
+ *     The type of session to destroy. This must be one of
+ *     {@link PHORUM_FORUM_SESSION} or {@link PHORUM_ADMIN_SESSION}.
+ *     See the documentation for {@link phorum_api_user_session_create()}
+ *     for more information on Phorum user sessions.
+ */
+function phorum_api_user_session_destroy($type)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // Destroy session cookie(s). We do not care here if use_cookies is
+    // enabled or not. We just want to clean out all that we have here.
+    if ($type == PHORUM_FORUM_SESSION) {
+        setcookie(
+            PHORUM_COOKIE_SHORT_TERM, "", time()-86400,
+            $PHORUM['session_path'], $PHORUM['session_domain']
+        );
+        setcookie(
+            PHORUM_COOKIE_LONG_TERM, "", time()-86400,
+            $PHORUM['session_path'], $PHORUM['session_domain']
+        );
+    } elseif ($type == PHORUM_ADMIN_SESSION) {
+        setcookie(
+            PHORUM_COOKIE_ADMIN, "", time()-86400,
+            $PHORUM['session_path'], $PHORUM['session_domain']
+        );
+    } else trigger_error(
+        'phorum_api_user_session_destroy(): Illegal session type: ' .
+        htmlspecialchars($type),
+        E_USER_ERROR
+    );
+
+    // If cookies are not in use, then the long term session is reset
+    // to a new value. That way we fully invalidate URI authentication
+    // data, so that old URL's won't work anymore. We can only do this
+    // if we have an active Phorum user.
+    if ($PHORUM['use_cookies'] == PHORUM_NO_COOKIES &&
+        $type == PHORUM_FORUM_SESSION &&
+        !empty($PHORUM['user']) && !empty($PHORUM['user']['user_id'])) {
+
+        $user = $PHORUM['user'];
+
+        $sessid_lt = md5($user['username'].microtime().$user['password']);
+        phorum_user_save_simple(array(
+            'user_id'   => $user['user_id'],
+            'sessid_lt' => $sessid_lt,
+        ));
+    }
+
+    // Force Phorum to see the anonymous user from here on.
+    phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
+}
+// }}}
 
 ?>

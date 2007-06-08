@@ -38,11 +38,6 @@ define( "PHORUM_SESSION_LONG_TERM" , "phorum_session_v5" );
 define( "PHORUM_SESSION_SHORT_TERM", "phorum_session_st" );
 define( "PHORUM_SESSION_ADMIN",      "phorum_admin_session" );
 
-function phorum_user_clear_session( $cookie = PHORUM_SESSION_LONG_TERM )
-{
-    setcookie( $cookie, "", time()-86400, $GLOBALS["PHORUM"]["session_path"], $GLOBALS["PHORUM"]["session_domain"] );
-}
-
 /**
  * This function retrieves a user from the database, given the user id.
  * If $user_id is an array of user ids, it will retrieve all of the users
