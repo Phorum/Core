@@ -170,7 +170,7 @@ uasort($modules_info, "module_sort");
 // Process posted form data
 // ----------------------------------------------------------------------
 
-if(count($_POST))
+if(count($_POST) && (!defined("PHORUM_INSTALL") || isset($_POST["do_modules_update"])))
 {
     // Determine the module status (enabled/disabled).
     $mods = array();
@@ -347,7 +347,12 @@ if(count($_POST))
     "mods"  => $PHORUM["mods"]
     );
     if (phorum_db_update_settings($data)) {
-        phorum_admin_okmsg("The module settings were successfully updated.");
+        if(defined("PHORUM_INSTALL")){
+            $step = "done";
+            return;
+        } else {
+            phorum_admin_okmsg("The module settings were successfully updated.");
+        }
     } else {
         phorum_admin_error("Database error while updating settings.");
     }
@@ -359,11 +364,21 @@ if(count($_POST))
 
 include_once "./include/admin/PhorumInputForm.php";
 
-$frm = new PhorumInputForm ("", "post");
 
-$frm->addbreak("Phorum Module Settings");
 
-$frm->hidden("module", "mods");
+if(defined("PHORUM_INSTALL")){
+    $frm = new PhorumInputForm ("", "post", "Continue ->");
+    $frm->addbreak("Optional modules");
+    $frm->hidden("module", "install");
+    $frm->hidden("sanity_checks_done", "1");
+    $frm->hidden("step", "modules");
+    $frm->hidden("do_modules_update", "1");
+    $frm->addmessage("Phorum has a very robust module system.  The following modules are included with the distribution.  You can find more modules at the Phorum web site.  Some modules may have additional configuration options not available during install.  To configure the modules, click the Modules menu item after installation is done.");
+} else {
+    $frm = new PhorumInputForm ("", "post");
+    $frm->addbreak("Phorum Module Settings");
+    $frm->hidden("module", "mods");
+}
 
 $module_changes = false;
 
@@ -375,7 +390,7 @@ foreach ($modules_info as $name => $info)
         $enabled = 0;
     }
 
-    if ($info["settings"])
+    if ($info["settings"] && !defined("PHORUM_INSTALL"))
     {
         /*if ($enabled==0) {
             $settings_link="<br /><a href=\"javascript:alert('You can not edit settings for a module unless it is turned On.');\">Settings</a>";
