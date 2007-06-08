@@ -5,7 +5,7 @@
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->AddToGroup} {GROUP->name}</div>
   <div class="PhorumStdBlock" style="text-align: left;">
     <form method="post" action="{GROUP->url}">
-      <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+    {POST_VARS}
       {IF NEWMEMBERS}
         <select name="adduser">
           <option value="0">&nbsp;</option>
@@ -28,7 +28,7 @@
     <br /><br />
     <form method="post" action="{GROUP->url}">
       <table class="PhorumFormTable" cellspacing="0" border="0">
-        <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+      {POST_VARS}
         <tr>
           <th>{LANG->Username}</th>
           <th>{LANG->MembershipType}</th>

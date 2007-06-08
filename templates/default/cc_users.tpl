@@ -1,8 +1,6 @@
 <div class="PhorumLargeFont">{LANG->UnapprovedUsers}</div>
 <form action="{URL->ACTION}" method="post">
   {POST_VARS}
-  <input type="hidden" name="panel" value="users" />
-  <input type="hidden" name="forum_id" value="{FORUM_ID}" />
   <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>
       <th class="PhorumTableHeader" align="left">&nbsp;</th>

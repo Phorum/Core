@@ -120,6 +120,9 @@ if (!empty($PHORUM["PROFILE_FIELDS"])) {
 $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = isset($PHORUM["forum_id"]) ? $PHORUM['forum_id'] : 0;
 $PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
+// used in nearly all or all cc-panels
+$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["DATA"]["PROFILE"]["forum_id"]}\" />\n";
+$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"{$panel}\" />\n";
 
 // Set the back-URL and -message.
 if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {

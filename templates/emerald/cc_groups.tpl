@@ -6,14 +6,13 @@
     {IF JOINGROUP}
         <form method="post" action="{GROUP->url}">
             {LANG->JoinGroupDescription}
-            <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
             <select name="joingroup">
                 <option value="0">&nbsp;</option>
                 {LOOP JOINGROUP}
                     <option value="{JOINGROUP->group_id}">{JOINGROUP->name}</option>
                 {/LOOP JOINGROUP}
             </select>
-            <input type="submit" value="{LANG->Join}" 
+            <input type="submit" value="{LANG->Join}"
         </form>
     {ELSE}
         {LANG->NoGroupsJoin}
@@ -35,6 +34,6 @@
             {/LOOP Groups}
         </table>
     {ELSE}
-        {LANG->NoGroupMembership}        
+        {LANG->NoGroupMembership}
     {/IF}
 </div>

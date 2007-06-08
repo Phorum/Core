@@ -3,8 +3,6 @@
 
 <form action="{URL->ACTION}" method="post" enctype="multipart/form-data">
     {POST_VARS}
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
     <div class="generic">
         <h4>{LANG->UploadFile}</h4>
         {IF FILE_SIZE_LIMIT}<div>{FILE_SIZE_LIMIT}</div>{/IF}
@@ -18,8 +16,6 @@
 
 <form action="{URL->ACTION}" method="post">
     {POST_VARS}
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
     <table cellspacing="0" class="list">
         <tr>
             <th align="left">{LANG->Delete}</th>

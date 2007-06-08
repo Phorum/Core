@@ -1,7 +1,5 @@
 <form action="{URL->ACTION}" method="POST" enctype="multipart/form-data">
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UploadFile}</div>
-  <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-  <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
   {POST_VARS}
   <div class="PhorumStdBlock PhorumFloatingText" style="text-align: left;">
     {IF FILE_SIZE_LIMIT}{FILE_SIZE_LIMIT}<br />{/IF}
@@ -14,8 +12,6 @@
 </form>
 <form action="{URL->ACTION}" method="POST">
   {POST_VARS}
-  <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-  <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
   <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>
       <th align="left" class="PhorumTableHeader">{LANG->Filename}</th>

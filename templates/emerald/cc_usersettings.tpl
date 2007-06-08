@@ -4,9 +4,6 @@
 
 <form action="{URL->ACTION}" method="POST">
     {POST_VARS}
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-
     <div class="generic">
 
         <dl>

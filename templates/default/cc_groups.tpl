@@ -5,7 +5,7 @@
 <div class="PhorumStdBlock" style="text-align: left;">
   {LANG->JoinGroupDescription}
   <form method="POST" action="{GROUP->url}">
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
+  {POST_VARS}
     <select name="joingroup">
       <option value="0">&nbsp;</option>
       {LOOP JOINGROUP}

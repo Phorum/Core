@@ -5,7 +5,7 @@ function phorum_markAllCheckboxes() {
 	var elems = pageform.getElementsByTagName('input');
 
 	if(phorum_marked_all) {
-		newval = false;	
+		newval = false;
 	} else {
 		newval = true;
 	}
@@ -13,7 +13,7 @@ function phorum_markAllCheckboxes() {
         if(elems[i].type == 'checkbox') {
 	   	   elems[i].checked=newval;
         }
-	 
+
 	}
 	phorum_marked_all = newval;
 }
@@ -21,8 +21,6 @@ function phorum_markAllCheckboxes() {
 
 <form action="{URL->ACTION}" method="POST">
     {POST_VARS}
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     <div class="generic">
         {LANG->ShowOnlyMessages}&nbsp;
         <select name="onlyunapproved">
@@ -48,8 +46,6 @@ function phorum_markAllCheckboxes() {
 {ELSE}
 <form action="{URL->ACTION}" method="POST" id="fprepost">
   {POST_VARS}
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     <table cellspacing="0" class="list">
         {LOOP PREPOST}
             {IF PREPOST->checkvar 1}
@@ -73,9 +69,9 @@ function phorum_markAllCheckboxes() {
 <tr>
 <td colspan="3">&nbsp;</td>
 <td><input type="submit" name="submit" value="{LANG->Delete}" /></td>
-</tr>    
+</tr>
 </table>
 </form>
-    
+
 {/IF}
 

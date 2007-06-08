@@ -2,8 +2,6 @@
   {POST_VARS}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->Subscriptions}</div>
   <div class="PhorumStdBlock PhorumFloatingText" style="text-align: left;">
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     {LANG->Activity}:&nbsp;
     <select name="subdays">
       <option value="1"{IF SELECTED 1} selected="selected"{/IF}>1 {LANG->Day}</option>
@@ -19,8 +17,6 @@
 </form><br />
 <form action="{URL->ACTION}" method="POST">
   {POST_VARS}
-  <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-  <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
   <input type="hidden" name="subdays" value="{SELECTED}" />
   <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>

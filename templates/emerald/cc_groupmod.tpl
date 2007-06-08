@@ -4,9 +4,6 @@
         <h4>{LANG->AddToGroup}</h4>
         <form method="post" action="{URL->ACTION}">
             {POST_VARS}
-            <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-            <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-            <input type="hidden" name="group" value="{GROUP->id}" />
             {IF NEWMEMBERS}
                 <select name="adduser">
                     <option value="0">&nbsp;</option>
@@ -26,9 +23,6 @@
 
         <form action="{URL->ACTION}" method="post">
             {POST_VARS}
-            <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-            <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-            <input type="hidden" name="group" value="{GROUP->id}" />
             {LANG->Filter}:&nbsp;
             <select name="filter">
                 {LOOP FILTER}
@@ -42,10 +36,6 @@
 
         {IF USERS}
             <form method="post" action="{URL->ACTION}">
-                <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-                <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-                <input type="hidden" name="group" value="{GROUP->id}" />
-                <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
                 <table class="list" cellspacing="0" border="0">
                     <tr>
                         <th align="left">{LANG->Member}</th>

@@ -3,8 +3,6 @@
 <form action="{URL->ACTION}" method="POST">
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{HEADING}</div>
   {POST_VARS}
-  <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-  <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
   <div class="PhorumStdBlock" style="text-align: left;">
     <table class="PhorumFormTable" cellspacing="0" border="0">
       {IF PROFILE->USERPROFILE}

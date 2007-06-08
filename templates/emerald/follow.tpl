@@ -6,8 +6,6 @@
 
   <form action="{URL->ACTION}" method="post" style="display: inline;">
     {POST_VARS}
-    <input type="hidden" name="forum_id" value="{FORUM_ID}" />
-    <input type="hidden" name="thread" value="{THREAD}" />
     <div class="information">
         {LANG->YouWantToFollow}<br /><br/>
         <strong>{SUBJECT}</strong><br />

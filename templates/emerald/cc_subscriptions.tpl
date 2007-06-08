@@ -1,7 +1,5 @@
 <form action="{URL->ACTION}" method="POST">
     {POST_VARS}
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     <div class="generic">
         {LANG->Activity}&nbsp;
         <select name="subdays">
@@ -20,8 +18,6 @@
 {IF TOPICS}
     <form action="{URL->ACTION}" method="POST" id="phorum-sub-list">
         {POST_VARS}
-        <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
-        <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
         <input type="hidden" name="subdays" value="{SELECTED}" />
 
         <table cellspacing="0" class="list">

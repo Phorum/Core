@@ -6,8 +6,6 @@
   </div>
   <form action="{URL->ACTION}" method="post" style="display: inline;">
     {POST_VARS}
-    <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />
-    <input type="hidden" name="redir" value="{LOGIN->redir}" />
     <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->LoginTitle}</div>
     <div align="center" class="PhorumStdBlock PhorumNarrowBlock">
       {IF LOGGEDIN}
@@ -38,8 +36,6 @@
   <div align="center" style="margin-top: 30px;">
     <form action="{URL->ACTION}" method="post" style="display: inline;">
       {POST_VARS}
-      <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />
-      <input type="hidden" name="redir" value="{LOGIN->redir}" />
       <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->LostPassword}</div>
       <div class="PhorumStdBlock PhorumNarrowBlock">
         <div class="PhorumFloatingText">{LANG->LostPassInfo}</div>

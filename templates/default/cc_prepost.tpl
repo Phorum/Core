@@ -5,7 +5,7 @@ function phorum_markAllCheckboxes() {
 	var elems = pageform.getElementsByTagName('input');
 
 	if(phorum_marked_all) {
-		newval = false;	
+		newval = false;
 	} else {
 		newval = true;
 	}
@@ -13,7 +13,7 @@ function phorum_markAllCheckboxes() {
         if(elems[i].type == 'checkbox') {
 	   	   elems[i].checked=newval;
         }
-	 
+
 	}
 	phorum_marked_all = newval;
 }
@@ -23,8 +23,6 @@ function phorum_markAllCheckboxes() {
   {POST_VARS}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UnapprovedMessages}</div>
   <div class="PhorumStdBlock PhorumFloatingText" style="text-align: left;">
-    <input type="hidden" name="panel" value="{PROFILE->PANEL}" />
-    <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
     {LANG->ShowOnlyMessages}&nbsp;
     <select name="onlyunapproved">
       <option value="0"{IF SELECTED_2 0} selected="selected"{/IF}>{LANG->AllNotShown}</option>
@@ -78,7 +76,7 @@ function phorum_markAllCheckboxes() {
 <tr>
  	<td class="PhorumListTableRow" colspan="3">&nbsp;</td>
     <td class="PhorumListTableRowSmall"><input type="submit" name="submit" value="{LANG->Delete}" /></td>
-</tr>    
+</tr>
   {/IF}
 </table>
 </form>

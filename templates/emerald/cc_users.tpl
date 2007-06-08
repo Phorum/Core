@@ -1,7 +1,5 @@
 <form action="{ACTION}" method="post">
     {POST_VARS}
-    <input type="hidden" name="panel" value="users" />
-    <input type="hidden" name="forum_id" value="{FORUM_ID}" />
     <table cellspacing="0" class="list">
         <tr>
             <th align="left">&nbsp;</th>

@@ -19,8 +19,6 @@
                 <h4>{LANG->LoginTitle}</h4>
                 <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
-                    <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />
-                    <input type="hidden" name="redir" value="{LOGIN->redir}" />
                     {LANG->Username}:<br />
                     <input type="text" id="username" name="username" size="30" value="{LOGIN->username}" /><br />
                     <br />
@@ -35,14 +33,12 @@
                 <h4>{LANG->LostPassword}</h4>
                 <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
-                    <input type="hidden" name="forum_id" value="{LOGIN->forum_id}" />
-                    <input type="hidden" name="redir" value="{LOGIN->redir}" />
                     {LANG->LostPassInfo}<br />
                     <br />
                     <input type="text" name="lostpass" size="30" value="" /><br />
                     <br />
                     <input type="submit" value="{LANG->Submit}" />
-                </form>            
+                </form>
             </td>
         </tr>
     </table>
