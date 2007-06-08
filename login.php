@@ -195,20 +195,21 @@ if (count($_POST) > 0) {
             // They are. Setup the active user and start a Phorum session.
             if ($user_id)
             {
-                // Destroy the temporary cookie that is used for testing
-                // for cookie compatibility.
-                if (isset($_COOKIE["phorum_tmp_cookie"])) {
-                    setcookie(
-                        "phorum_tmp_cookie", "", 0,
-                        $PHORUM["session_path"], $PHORUM["session_domain"]
-                    );
-                }
 
                 // Make the authenticated user the active Phorum user
                 // and start a Phorum user session. Because this is a fresh
                 // login, we can enable the short term session and we request
                 // refreshing of the session id(s).
-                if (phorum_api_user_set_active_user($user_id, PHORUM_FORUM_SESSION, PHORUM_FLAG_SESSION_ST) && phorum_api_user_session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
+                if (phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, $user_id, PHORUM_FLAG_SESSION_ST) && phorum_api_user_session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
+
+                    // Destroy the temporary cookie that is used for testing
+                    // for cookie compatibility.
+                    if (isset($_COOKIE["phorum_tmp_cookie"])) {
+                        setcookie(
+                            "phorum_tmp_cookie", "", 0,
+                            $PHORUM["session_path"], $PHORUM["session_domain"]
+                        );
+                    }
 
                     // Determine the URL to redirect the user to.
                     // If redir is a number, it is a URL constant.
