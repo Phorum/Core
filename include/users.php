@@ -34,10 +34,6 @@ include_once("./include/api/user.php");
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-define( "PHORUM_SESSION_LONG_TERM" , "phorum_session_v5" );
-define( "PHORUM_SESSION_SHORT_TERM", "phorum_session_st" );
-define( "PHORUM_SESSION_ADMIN",      "phorum_admin_session" );
-
 /**
  * This function retrieves a user from the database, given the user id.
  * If $user_id is an array of user ids, it will retrieve all of the users

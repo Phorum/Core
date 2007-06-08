@@ -19,6 +19,9 @@
 
 if(!defined("PHORUM")) return;
 
+include_once("./include/api/base.php");
+include_once("./include/api/user.php");
+
 function phorum_valid_email($email){
     $PHORUM = $GLOBALS["PHORUM"];
 

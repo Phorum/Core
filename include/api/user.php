@@ -40,20 +40,23 @@ if (!defined('PHORUM')) return;
 
 // {{{ Constant and variable definitions
 /**
- * The name of the session cookie to use for long term authentication.
+ * Used for identifying long term sessions. The value is used as 
+ * the name for the session cookie for long term sessions.
  */
-define( 'PHORUM_COOKIE_LONG_TERM' , 'phorum_session_v5' );
+define( 'PHORUM_SESSION_LONG_TERM' ,   'phorum_session_v5' );
 
 /**
- * The name of the session cookie to use for short term authentication
- * (this is used by the strict authentication scheme).
+ * Used for identifying short term sessions. The value is used as 
+ * the name for the session cookie for short term sessions
+ * (this is used by the tighter authentication scheme).
  */
-define( 'PHORUM_COOKIE_SHORT_TERM', 'phorum_session_st' );
+define( 'PHORUM_SESSION_SHORT_TERM',   'phorum_session_st' );
 
 /**
- * The name of the session cookie for admin interface authentication.
+ * Used for identifying admin sessions. The value is used as 
+ * the name for the session cookie for admin sessions.
  */
-define( 'PHORUM_COOKIE_ADMIN',      'phorum_admin_session' );
+define( 'PHORUM_SESSION_ADMIN',        'phorum_admin_session' );
 
 /**
  * Function call parameter, which tells various functions that
@@ -397,18 +400,18 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
  * - Long term session:
  *   The standard Phorum user session. This session is long lasting and will
  *   survive after closing the browser (unless the long term session timeout
- *   is set to zero). If strict security is not enabled, then this session
+ *   is set to zero). If tighter security is not enabled, then this session
  *   is all a user needs to fully use all forum options. This session is
  *   tracked using either a cookie or URI authentication.
  *
  * - Short term session:
  *   This session has a limited life time and will not survive closing the
- *   browser. If strict security is enabled, then the user will not be able
+ *   browser. If tighter security is enabled, then the user will not be able
  *   to use all forum functions, unless there is a short term session active
  *   (e.g. posting forum messages and reading/writing private messages are
  *   restricted). This session is tracked using a cookie. If URI authentication
  *   is in use (because of admin config or cookie-less browsers) Phorum will
- *   only look at the long term session (even in strict security mode), since
+ *   only look at the long term session (even in tighter security mode), since
  *   URI authentication can be considered to be short term by nature.
  *
  * @example user_login.php Handle a user forum login
@@ -578,27 +581,27 @@ function phorum_api_user_session_create($type, $reset = 0)
             $timeout = empty($PHORUM['session_timeout'])
                      ? 0 : time() + 86400 * $PHORUM['session_timeout'];
             setcookie(
-                PHORUM_COOKIE_LONG_TERM,
+                PHORUM_SESSION_LONG_TERM,
                 $user['user_id'].':'.$sessid_lt,
                 $timeout,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
         } else {
             // Add the session id to the URL building GET variables.
-            $GLOBALS['PHORUM']['DATA']['GET_VARS'][PHORUM_COOKIE_LONG_TERM] =
-                PHORUM_COOKIE_LONG_TERM . "=" .
+            $GLOBALS['PHORUM']['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] =
+                PHORUM_SESSION_LONG_TERM . "=" .
                 urlencode($user['user_id'].':'.$sessid_lt);
 
             // Add the session id to the form POST variables.
             $GLOBALS['PHORUM']['DATA']['POST_VARS'] .=
-                '<input type="hidden" name="'.PHORUM_COOKIE_LONG_TERM.'" ' .
+                '<input type="hidden" name="'.PHORUM_SESSION_LONG_TERM.'" ' .
                 'value="'.$user['user_id'].':'.$sessid.'" />';
         }
 
         // The short term session id is always put in a cookie.
         if ($refresh_sessid_st) {
             setcookie(
-                PHORUM_COOKIE_SHORT_TERM,
+                PHORUM_SESSION_SHORT_TERM,
                 $user['user_id'].':'.$user['sessid_st'],
                 $user['sessid_st_timeout'],
                 $PHORUM['session_path'], $PHORUM['session_domain']
@@ -609,7 +612,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // The admin session id is always put in a cookie.
     elseif ($type == PHORUM_ADMIN_SESSION) {
         setcookie(
-            PHORUM_COOKIE_ADMIN,
+            PHORUM_SESSION_ADMIN,
             $user['user_id'].':'.$sessid_admin,
             0, // admin sessions are destroyed as soon as the browser closes
             $PHORUM['session_path'], $PHORUM['session_domain']
@@ -653,29 +656,29 @@ function phorum_api_user_session_restore($type)
     // The possible values for the items in this array are:
     //
     // 0: this cookie does not have to be checked
-    // 1: a check has to be done for this cookie
+    // 1: a check has to be done or failed for this cookie
     // 2: the check for this cookie was successful
     //
     $check_session = array(
-        PHORUM_COOKIE_LONG_TERM  => 0,
-        PHORUM_COOKIE_SHORT_TERM => 0,
-        PHORUM_COOKIE_ADMIN      => 0
+        PHORUM_SESSION_LONG_TERM  => 0,
+        PHORUM_SESSION_SHORT_TERM => 0,
+        PHORUM_SESSION_ADMIN      => 0
     );
 
     if ($type == PHORUM_FORUM_SESSION)
     {
         // Lookup the long term cookie.
-        $check_session[PHORUM_COOKIE_LONG_TERM] = 1;
+        $check_session[PHORUM_SESSION_LONG_TERM] = 1;
 
         // Lookup the short term cookie if tight security is enabled.
         if (!empty($PHORUM['tight_security'])) {
-            $check_session[PHORUM_COOKIE_SHORT_TERM] = 1;
+            $check_session[PHORUM_SESSION_SHORT_TERM] = 1;
         }
     }
     elseif ($type == PHORUM_ADMIN_SESSION)
     {
         // Lookup the admin cookie.
-        $check_session[PHORUM_COOKIE_ADMIN] = 1;
+        $check_session[PHORUM_SESSION_ADMIN] = 1;
     }
     else trigger_error(
         'phorum_api_user_session_restore(): Illegal session type: ' .
@@ -684,8 +687,29 @@ function phorum_api_user_session_restore($type)
     );
 
     // ----------------------------------------------------------------------
-    // Check the cookie(s).
+    // Check the session cookie(s).
     // ----------------------------------------------------------------------
+
+    // Now we decided what session cookie(s) we want to check, we allow
+    // modules to hook into the session system to do the check for us.
+    // This can for example be used to let Phorum inherit an already
+    // running authenticated session in some external system.
+    //
+    // What the module has to do, is fill the fields from the passed
+    // array with the user_id of the user for which a session is active
+    // or FALSE if there is no session active. One or more of the fields
+    // can be kept at NULL to have them handled by Phorum. This way,
+    // the module could let the front end forum sesson inherit the
+    // session from a different system, but let Phorum fully handle the
+    // admin sessions on it own.
+    $hook_sessions = array(
+        PHORUM_SESSION_LONG_TERM  => NULL,
+        PHORUM_SESSION_SHORT_TERM => NULL,
+        PHORUM_SESSION_ADMIN      => NULL
+    );
+    if (isset($PHORUM['hooks']['user_check_session'])) {
+        $hook_sessions = phorum_hook('user_check_session', $hook_sessions); 
+    }
 
     $real_cookie = FALSE;
     $session_user = NULL;
@@ -693,30 +717,57 @@ function phorum_api_user_session_restore($type)
     {
         if (!$do_check) continue;
 
-        // First, check for a real cookie, which can always be expected for
+        // Check if a module did provide a user_id for the checked session.
+        $user_id_from_hook_session = FALSE;
+        if ($hook_sessions[$cookie] !== NULL) {
+
+            // Continue with the next cookie, if a module specified the
+            // session cookie as invalid.
+            if ($hook_sessions[$cookie] === FALSE) continue; 
+
+            // Pass on the user_id that was set by the module.
+            // We add a fake a session id to the user_id here,
+            // to make the split from below work.
+            $value = $hook_sessions[$cookie] . ':dummy';
+            $user_id_from_hook_session = TRUE;
+
+            // To not let Phorum fall back to URI authentication.
+            $real_cookie = TRUE;
+        }
+
+        // Check for a real cookie, which can always be expected for
         // short term and admin sessions and for long term sessions if
         // cookies are enabled.
-        if (($cookie != PHORUM_SESSION_LONG_TERM ||
+        elseif (($cookie != PHORUM_SESSION_LONG_TERM ||
              (isset($PHORUM['use_cookies']) &&
              $PHORUM['use_cookies'] > PHORUM_NO_COOKIES)) &&
-              isset($_COOKIE[$cookie]) ) {
+              isset($_COOKIE[$cookie])) {
+
             $value = $_COOKIE[$cookie];
             $real_cookie = TRUE;
+        } 
+
         // Check for URI based authentication.
-        } elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
+        elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
                   isset($PHORUM['args'][$cookie])) {
             $value = urldecode($PHORUM['args'][$cookie]);
+        }
+
         // Check for session id in form POST data.
-        } elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
+        elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
                   isset($_POST[$cookie])) {
             $value = $_POST[$cookie];
+        }
+
         // Check for session id in form GET data (should rarely happen, but
         // it helps sometimes).
-        } elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
+        elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
                   isset($_GET[$cookie])) {
             $value = $_GET[$cookie];
-        } else {
-            // Cookie not found. Continue with the next one.
+        }
+
+        // Cookie not found. Continue with the next one.
+        else {
             continue;
         }
 
@@ -749,15 +800,17 @@ function phorum_api_user_session_restore($type)
 
         // Check if the session id from the cookie is valid for the user.
         $valid_session =
-            ($cookie == PHORUM_COOKIE_LONG_TERM  &&
+            $user_id_from_hook_session ||
+
+            ($cookie == PHORUM_SESSION_LONG_TERM  &&
              !empty($session_user['sessid_lt']) &&
              $session_user['sessid_lt'] == $sessid) ||
 
-            ($cookie == PHORUM_COOKIE_SHORT_TERM &&
+            ($cookie == PHORUM_SESSION_SHORT_TERM &&
              !empty($session_user['sessid_st']) &&
              $session_user['sessid_st'] == $sessid) ||
 
-            ($cookie == PHORUM_COOKIE_ADMIN &&
+            ($cookie == PHORUM_SESSION_ADMIN &&
              !empty($session_user['sessid_lt']) &&
              md5($session_user['sessid_lt'].$PHORUM['admin_session_salt']) == $sessid);
 
@@ -767,11 +820,11 @@ function phorum_api_user_session_restore($type)
         }
     }
 
-    // No real cookie found for a long term session? Then we will ignore short term
-    // sessions (short term sessions are not implemented for URI authentication)
-    // and update the "use_cookies" setting accordingly. 
-    if ($check_session[PHORUM_COOKIE_LONG_TERM] == 2 && ! $real_cookie) {
-        $check_session[PHORUM_COOKIE_SHORT_TERM] = 0;
+    // No real cookie found for a long term session? Then we will ignore
+    // short term sessions (short term sessions are not implemented for URI
+    // authentication) and update the "use_cookies" setting accordingly. 
+    if ($check_session[PHORUM_SESSION_LONG_TERM] == 2 && ! $real_cookie) {
+        $check_session[PHORUM_SESSION_SHORT_TERM] = 0;
         $GLOBALS['PHORUM']['use_cookies'] = PHORUM_NO_COOKIES;
     }
 
@@ -785,11 +838,11 @@ function phorum_api_user_session_restore($type)
     if ($type == PHORUM_FORUM_SESSION)
     {
         // Valid long term forum session found.
-        if ($check_session[PHORUM_COOKIE_LONG_TERM] == 2)
+        if ($check_session[PHORUM_SESSION_LONG_TERM] == 2)
         {
             $do_restore_session = TRUE;
 
-            if ($check_session[PHORUM_COOKIE_SHORT_TERM] == 1) {
+            if ($check_session[PHORUM_SESSION_SHORT_TERM] == 1) {
                 // Checked short term session, but no valid session found.
                 $do_restore_short_term_session = FALSE;
             } else {
@@ -803,7 +856,7 @@ function phorum_api_user_session_restore($type)
         // Valid admin session found. Note that the function
         // phorum_api_user_set_active_user() might still reject the user
         // if it's not an admin user (anymore).
-        if ($check_session[PHORUM_COOKIE_ADMIN] == 2) {
+        if ($check_session[PHORUM_SESSION_ADMIN] == 2) {
             $do_restore_session = TRUE;
         }
     }
@@ -856,16 +909,16 @@ function phorum_api_user_session_destroy($type)
     // enabled or not. We just want to clean out all that we have here.
     if ($type == PHORUM_FORUM_SESSION) {
         setcookie(
-            PHORUM_COOKIE_SHORT_TERM, "", time()-86400,
+            PHORUM_SESSION_SHORT_TERM, "", time()-86400,
             $PHORUM['session_path'], $PHORUM['session_domain']
         );
         setcookie(
-            PHORUM_COOKIE_LONG_TERM, "", time()-86400,
+            PHORUM_SESSION_LONG_TERM, "", time()-86400,
             $PHORUM['session_path'], $PHORUM['session_domain']
         );
     } elseif ($type == PHORUM_ADMIN_SESSION) {
         setcookie(
-            PHORUM_COOKIE_ADMIN, "", time()-86400,
+            PHORUM_SESSION_ADMIN, "", time()-86400,
             $PHORUM['session_path'], $PHORUM['session_domain']
         );
     } else trigger_error(

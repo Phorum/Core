@@ -22,6 +22,8 @@ include_once("./common.php");
 include_once("./include/email_functions.php");
 include_once("./include/format_functions.php");
 
+include_once("./include/api/base.php");
+include_once("./include/api/user.php");
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
