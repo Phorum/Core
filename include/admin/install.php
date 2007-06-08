@@ -247,7 +247,7 @@ switch ($step){
             $message="Could not create tables, database said:<blockquote>$err</blockquote>";
             $message.="Your database user will need to have create table permissions.  If you know what the error is (tables already exist, etc.) and want to continue, click the button below.";
         } else {
-            $message="Tables created.  Next we will look at some modules. Press continue when ready.";
+            $message="Tables created.  Next we will create the administrator account. Press continue when ready.";
 
             $default_forum_options=array(
             'forum_id'=>0,

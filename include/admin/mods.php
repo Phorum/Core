@@ -373,7 +373,7 @@ if(defined("PHORUM_INSTALL")){
     $frm->hidden("sanity_checks_done", "1");
     $frm->hidden("step", "modules");
     $frm->hidden("do_modules_update", "1");
-    $frm->addmessage("Phorum has a very robust module system.  The following modules are included with the distribution.  You can find more modules at the Phorum web site.  Some modules may have additional configuration options not available during install.  To configure the modules, click the Modules menu item after installation is done.");
+    $frm->addmessage("Phorum has a very robust module system.  The following modules are included with the distribution.  You can find more modules at the Phorum web site.  Some modules may have additional configuration options, which are not available during install.  To configure the modules, click the Modules menu item after installation is done.");
 } else {
     $frm = new PhorumInputForm ("", "post");
     $frm->addbreak("Phorum Module Settings");
