@@ -179,7 +179,6 @@ if (count($_POST) > 0) {
             // They are. Setup the active user and start a Phorum session.
             if ($user_id)
             {
-
                 // Make the authenticated user the active Phorum user
                 // and start a Phorum user session. Because this is a fresh
                 // login, we can enable the short term session and we request

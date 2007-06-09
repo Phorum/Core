@@ -26,9 +26,15 @@
  * {@link phorum_api_user_session_create()} for more information on
  * Phorum user sessions.
  *
+ * The Phorum user API supports modules which can override Phorum's
+ * authentication and session handling. And example module is provided
+ * with the user API documentation.
+ *
  * @package    PhorumAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
+ *
+ * @example    user_auth_module.php Authentication override module example
  *
  * @todo
  *     Make sure that PHORUM_ORIGINAL_USER_CODE is handled somehow
@@ -112,6 +118,8 @@ define('PHORUM_SESSID_RESET_ALL',      2);
  */
 function phorum_api_user_authenticate($username, $password)
 {
+    $PHORUM = $GLOBALS['PHORUM'];
+
     $user_id = NULL;
 
     // Give modules a chance to handle the user authentication (for example
@@ -120,10 +128,10 @@ function phorum_api_user_authenticate($username, $password)
     // - user_id: the user_id of the authenticated user;
     // - FALSE: authentication credentials are rejected;
     // - NULL: let Phorum handle the authentication.
-    if (isset($PHORUM['hooks']['user_check_login']))
+    if (isset($PHORUM['hooks']['user_authenticate']))
     {
         // Run the hook.
-        $authinfo = phorum_hook('user_check_login', array(
+        $authinfo = phorum_hook('user_authenticate', array(
             'user_id'  => NULL,
             'username' => $username,
             'password' => $password
@@ -446,6 +454,18 @@ function phorum_api_user_session_create($type, $reset = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    // Allow modules to handle creating a session or to simply fully
+    // ignore creating sessions (for example useful if the hook
+    // "user_session_restore" is used to inherit an external session from
+    // some 3rd party application). The hook function gets the session
+    // type as its argument and can return NULL if the Phorum session
+    // create function does not have to be run.
+    if (isset($PHORUM['hooks']['user_session_create'])) {
+        if (phorum_hook('user_session_create', $type) === NULL) {
+            return TRUE;
+        }
+    }
+
     // Reset error storage.
     $GLOBALS['PHORUM']['API']['errno'] = NULL;
     $GLOBALS['PHORUM']['API']['error'] = NULL;
@@ -707,8 +727,8 @@ function phorum_api_user_session_restore($type)
         PHORUM_SESSION_SHORT_TERM => NULL,
         PHORUM_SESSION_ADMIN      => NULL
     );
-    if (isset($PHORUM['hooks']['user_check_session'])) {
-        $hook_sessions = phorum_hook('user_check_session', $hook_sessions); 
+    if (isset($PHORUM['hooks']['user_session_restore'])) {
+        $hook_sessions = phorum_hook('user_session_restore', $hook_sessions); 
     }
 
     $real_cookie = FALSE;
@@ -904,6 +924,18 @@ function phorum_api_user_session_restore($type)
 function phorum_api_user_session_destroy($type)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+
+    // Allow modules to handle destroying a session or to simply fully
+    // ignore destroying sessions (for example useful if the hook
+    // "user_session_restore" is used to inherit an external session from
+    // some 3rd party application). The hook function gets the session
+    // type as its argument and can return NULL if the Phorum session
+    // destroy function does not have to be run.
+    if (isset($PHORUM['hooks']['user_session_destroy'])) {
+        if (phorum_hook('user_session_destroy', $type) === NULL) {
+            return;
+        }
+    }
 
     // Destroy session cookie(s). We do not care here if use_cookies is
     // enabled or not. We just want to clean out all that we have here.
