@@ -41,7 +41,7 @@ if (!defined('PHORUM')) return;
 $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
     'panel', 'name', 'value', 'error',
     'user_id', 'username', 'real_name', 'display_name', 'profile_link',
-    'password', 'password_temp', 'cookie_sessid_lt', 'sessid_st',
+    'password', 'password_temp', 'sessid_lt', 'sessid_st',
     'sessid_st_timeout', 'email', 'email_temp', 'hide_email', 'active',
     'signature', 'threaded_list', 'posts', 'admin', 'threaded_read',
     'date_added', 'date_last_active', 'last_active_forum', 'hide_activity',
