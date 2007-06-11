@@ -31,7 +31,7 @@ define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 /**
  * This function gets a list of all the active users.
- * @return array of users (same format as phorum_user_get)
+ * @return array of users (same format as phorum_api_user_get)
  */
 function phorum_user_get_list($type)
 {
@@ -45,7 +45,7 @@ function phorum_user_save( $user )
 {
     if ( empty( $user["user_id"] ) ) return false;
 
-    $old_user = phorum_user_get( $user['user_id'] );
+    $old_user = phorum_api_user_get( $user['user_id'], TRUE );
     $db_user = phorum_user_prepare_data( $user, $old_user );
 
     $ret = phorum_db_user_save( $db_user );
@@ -64,7 +64,7 @@ function phorum_user_save( $user )
     // Is this the currently logged in user?
     // If so, re-get his stuff from the system.
     if ( isset($GLOBALS["PHORUM"]["user"]) && $GLOBALS["PHORUM"]["user"]["user_id"] == $user["user_id"] ) {
-        $GLOBALS["PHORUM"]["user"] = phorum_user_get( $user["user_id"] );
+        $GLOBALS["PHORUM"]["user"] = phorum_api_user_get( $user["user_id"], TRUE );
     }
 
 
