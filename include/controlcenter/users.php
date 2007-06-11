@@ -33,7 +33,7 @@ if(!empty($_POST["user_ids"])){
     	// initialize it
     	$userdata=array();
     	
-    	$user=phorum_user_get($user_id);
+    	$user=phorum_api_user_get($user_id, TRUE);
 
         if(!isset($_POST["approve"]) && $user['active'] != PHORUM_USER_ACTIVE){
         	

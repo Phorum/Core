@@ -88,7 +88,7 @@ if (count($_POST) > 0) {
 
             // An existing user id was found for the entered email
             // address. Retrieve the user.
-            $user = phorum_user_get($uid);
+            $user = phorum_api_user_get($uid);
 
             $tmp_user=array();
 
@@ -128,7 +128,7 @@ if (count($_POST) > 0) {
                 phorum_user_save($tmp_user);
 
                 // Mail the new password.
-                $user = phorum_user_get( $uid );
+                $user = phorum_api_user_get($uid);
                 $maildata = array();
                 $maildata['mailmessage'] =
                    wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody1"],72).

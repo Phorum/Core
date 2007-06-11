@@ -121,7 +121,7 @@ if (!empty($group_id)){
 
     $groupmembers = phorum_db_get_group_members($group_id);
     $usersingroup = array_keys($groupmembers);
-    $users = phorum_user_get($usersingroup);
+    $users = phorum_api_user_get($usersingroup);
     $memberlist = array();
     foreach ($groupmembers as $userid => $status){
         // if we have a filter, check that the user is in it

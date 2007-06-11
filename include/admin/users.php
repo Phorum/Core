@@ -324,7 +324,7 @@ EOT;
     // display edit form
     if(isset($_REQUEST["user_id"])){
 
-        $user=phorum_user_get($_REQUEST["user_id"]);
+        $user=phorum_api_user_get($_REQUEST["user_id"], TRUE);
 
         if(count($user)){
 

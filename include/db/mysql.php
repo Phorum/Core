@@ -3132,7 +3132,7 @@ function phorum_db_user_save($userdata)
 
     // Pull some non user table fields from the userdata. These can be
     // set in case the $userdata parameter that is used is coming from
-    // phorum_user_get() or phorum_db_user_get().
+    // phorum_api_user_get() or phorum_db_user_get().
     if (isset($userdata['permissions'])) {
         unset($userdata['permissions']);
     }
