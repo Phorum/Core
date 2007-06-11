@@ -569,7 +569,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
 
         if($PHORUM["max_attachments"]>0 && isset($row["meta"]["attachments"])){
-            $PHORUM["DATA"]["ATTACHMENTS"]=true;
             $row["attachments"]=$row["meta"]["attachments"];
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){

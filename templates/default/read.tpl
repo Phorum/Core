@@ -33,13 +33,11 @@
         </strong> ({MESSAGES->ip})</div>
       <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGES->datestamp}</div><br />
       <div class="PhorumReadBodyText">{MESSAGES->body}</div><br />
-      {IF ATTACHMENTS}
-        {IF MESSAGES->attachments}
-          {LANG->Attachments}:
-          {LOOP MESSAGES->attachments}
-            <a href="{MESSAGES->attachments->url}">{MESSAGES->attachments->name} ({MESSAGES->attachments->size})</a>&nbsp;&nbsp;
-          {/LOOP MESSAGES->attachments}
-        {/IF}
+      {IF MESSAGES->attachments}
+        {LANG->Attachments}:
+        {LOOP MESSAGES->attachments}
+          <a href="{MESSAGES->attachments->url}">{MESSAGES->attachments->name} ({MESSAGES->attachments->size})</a>&nbsp;&nbsp;
+        {/LOOP MESSAGES->attachments}
       {/IF}
     </div>
     {IF NOT PRINTVIEW}

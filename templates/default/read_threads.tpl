@@ -18,14 +18,12 @@
     </strong> ({MESSAGE->ip})</div>
   <div class="PhorumReadBodyHead">{LANG->Date}: {MESSAGE->datestamp}</div><br />
   <div class="PhorumReadBodyText">{MESSAGE->body}</div><br />
-  {IF ATTACHMENTS}
-    {IF MESSAGE->attachments}
-      {LANG->Attachments}:
-      {VAR MESSAGE_ATTACHMENTS MESSAGE->attachments}
-      {LOOP MESSAGE_ATTACHMENTS}
-        <a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
-      {/LOOP MESSAGE_ATTACHMENTS}
-    {/IF}
+  {IF MESSAGE->attachments}
+    {LANG->Attachments}:
+    {VAR MESSAGE_ATTACHMENTS MESSAGE->attachments}
+    {LOOP MESSAGE_ATTACHMENTS}
+      <a href="{MESSAGE_ATTACHMENTS->url}">{MESSAGE_ATTACHMENTS->name} ({MESSAGE_ATTACHMENTS->size})</a>&nbsp;&nbsp;
+    {/LOOP MESSAGE_ATTACHMENTS}
   {/IF}
 </div>
 {IF NOT PRINTVIEW}
