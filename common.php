@@ -370,6 +370,13 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 $PHORUM["threaded_read"] = 2;
             }
         }
+        
+        // check if the user has new private messages
+        if (!empty($PHORUM["enable_new_pm_count"]) &&
+            !empty($PHORUM["enable_pm"])) {
+            $PHORUM['user']['new_private_messages'] =
+                phorum_db_pm_checknew($PHORUM['user']['user_id']);
+        }
     }
 
     // a hook for rewriting vars in common.php after loading the user

@@ -19,11 +19,6 @@
 
 if ( !defined( "PHORUM" ) ) return;
 
-// TODO: for development only. The users.php library should finally be
-// TODO: totally gone.
-include_once("./include/api/base.php");
-include_once("./include/api/user.php");
-
 /**
  * These functions are Phorum's interface to the user data.  If you want
  * to use your own user data, just replace these functions.
@@ -42,11 +37,10 @@ define( "PHORUM_ORIGINAL_USER_CODE", true );
  * and group membership. $detailed is true by default and may be omitted.
  * @param user_id - can be a single user id, or an array of user ids.
  * @param detailed - get detailed user information (defaults to true).
- * @param checknewpm - check for new private messages for the user (defaults to false).
  * @return array - either an array representing a single user's information,
  *                 or an array of users
  */
-function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
+function phorum_user_get( $user_id, $detailed = true)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
@@ -109,11 +103,6 @@ function phorum_user_get( $user_id, $detailed = true, $checkpm = false )
                             $user["permissions"][$forum_id] = $perm;
                         }
                     }
-                }
-
-                // check if the user has new private messages
-                if ( ($checkpm || (isset($PHORUM['cache_users']) && $PHORUM['cache_users'])) && $PHORUM["enable_pm"] && $PHORUM["enable_new_pm_count"] ) {
-                    $user["new_private_messages"] = phorum_db_pm_checknew( $uid );
                 }
 
                 // store users in cache if enabled
@@ -189,6 +178,7 @@ function phorum_user_save_simple($user)
     if ( empty( $user["user_id"] ) ) return false;
 
     // clear the cache only if we are not just updating the activity
+    // TODO .. or any dynamic field?
     if(isset($GLOBALS['PHORUM']['cache_users']) && $GLOBALS['PHORUM']['cache_users']) {
         if(!(count($user) == 3 && isset($user['date_last_active'])))
             phorum_cache_remove('user',$user['user_id']);
