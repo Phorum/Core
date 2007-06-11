@@ -38,7 +38,7 @@ if (isset($PHORUM["args"]["approve"])) {
     // Validation code correct.
     if ($user_id) {
 
-        $user = phorum_user_get($user_id);
+        $user = phorum_api_user_get($user_id);
 
         $moduser=array();
 

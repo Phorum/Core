@@ -22,7 +22,6 @@ include_once("./common.php");
 include_once("./include/format_functions.php");
 include_once("./include/diff_patch.php");
 
-
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
 
@@ -88,7 +87,7 @@ foreach($diffs as $diff_info){
         $this_version["original"] = true;
     } else {
 
-        $edit_user = phorum_user_get($diff_info['user_id']);
+        $edit_user = phorum_api_user_get($diff_info['user_id']);
 
         $this_version["username"] = empty($PHORUM['custom_display_name'])
                                   ? htmlspecialchars($edit_user["display_name"])

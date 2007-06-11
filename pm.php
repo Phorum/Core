@@ -139,7 +139,7 @@ if (isset($_POST["checked"])) {
 $recipients = array();
 if (isset($_POST["recipients"]) && is_array($_POST["recipients"])) {
     foreach ($_POST["recipients"] as $id => $dummy) {
-        $user = phorum_user_get($id, false);
+        $user = phorum_api_user_get($id);
         if ($user && $user["active"] == 1) {
             $recipients[$id] = $user;
         }
@@ -388,7 +388,7 @@ if (!empty($action)) {
 
                 // Add a recipient by id.
                 if (isset($_POST["to_id"]) && is_numeric($_POST["to_id"])) {
-                    $user = phorum_user_get($_POST["to_id"], false);
+                    $user = phorum_api_user_get($_POST["to_id"]);
                     if ($user && $user["active"] == PHORUM_USER_ACTIVE) {
                         $recipients[$user["user_id"]] = $user;
                     } else {
@@ -649,7 +649,7 @@ switch ($page) {
         // Retrieve a list of users that are buddies for the current user.
         $buddy_list = phorum_db_pm_buddy_list(NULL, true);
         if (count($buddy_list)) {
-            $buddy_users = phorum_user_get(array_keys($buddy_list), false);
+            $buddy_users = phorum_api_user_get(array_keys($buddy_list));
             if (isset($PHORUM["hooks"]["read_user_info"]))
                 $buddy_users = phorum_hook("read_user_info", $buddy_users);
         } else {
@@ -786,7 +786,7 @@ switch ($page) {
             if (isset($PHORUM["args"]["to_id"])) {
                 foreach (explode(":", $PHORUM["args"]["to_id"]) as $rcpt_id) {
                     settype($rcpt_id, "int");
-                    $user = phorum_user_get($rcpt_id, false);
+                    $user = phorum_api_user_get($rcpt_id);
                     if ($user) {
                         $msg["recipients"][$rcpt_id] = array(
                             "display_name" => $user["display_name"],
@@ -834,7 +834,7 @@ switch ($page) {
                     $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
                     // Get the data for the user that we reply to. 
-                    $user = phorum_user_get($message["user_id"], false);
+                    $user = phorum_api_user_get($message["user_id"]);
 
                     $msg["subject"] = $message["subject"];
                     $msg["message"] = $message["body"];

@@ -297,7 +297,7 @@ $PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["
 
 if ($PHORUM["args"]["match_type"] == "USER_ID")
 {
-    $search_user = phorum_user_get((int)$phorum_author);
+    $search_user = phorum_api_user_get((int)$phorum_author);
     if (!$search_user) {
         $search_name = $PHORUM["DATA"]["LANG"]["AnonymousUser"];
     } else {

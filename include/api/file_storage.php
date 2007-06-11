@@ -29,6 +29,7 @@
  * (e.g. by storing file contents on a filesystem instead).
  *
  * @package    PhorumAPI
+ * @subpackage FileStorageAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

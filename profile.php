@@ -40,7 +40,7 @@ if(empty($PHORUM["args"][1]) || empty($profile_id)){
 
 include_once("./include/users.php");
 
-$user = phorum_user_get($profile_id);
+$user = phorum_api_user_get($profile_id, TRUE);
 
 if(!is_array($user) || $user["active"]==0) {
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["UnknownUser"];

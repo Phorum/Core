@@ -31,6 +31,7 @@
  * with the user API documentation.
  *
  * @package    PhorumAPI
+ * @subpackage UserAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
@@ -106,6 +107,19 @@ define('PHORUM_SESSID_RESET_ALL',      2);
  *
  * @example user_login.php Handle a user forum login
  *
+ * @param string $type
+ *     The type of session for which authentication is run. This must be
+ *     one of {@link PHORUM_FORUM_SESSION} or {@link PHORUM_ADMIN_SESSION}.
+ *
+ *     This parameter is mostly used for logging purposes and for giving
+ *     mods a chance to handle user authentication for only a certain type
+ *     of session. It is not used for denying authentication if for example
+ *     a standard user tries to authenticate for the admin interface. Those
+ *     restrictions are handled in a different part of the user API.
+ *
+ *     See the documentation for {@link phorum_api_user_session_create()}
+ *     for more information on Phorum user sessions.
+ *
  * @param string $username
  *     The username for the user.
  *
@@ -116,7 +130,7 @@ define('PHORUM_SESSID_RESET_ALL',      2);
  *     If the authentication credentials are correct, this function returns
  *     the user_id of the authenticated user. Otherwise, FALSE is returned.
  */
-function phorum_api_user_authenticate($username, $password)
+function phorum_api_user_authenticate($type, $username, $password)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -132,9 +146,10 @@ function phorum_api_user_authenticate($username, $password)
     {
         // Run the hook.
         $authinfo = phorum_hook('user_authenticate', array(
-            'user_id'  => NULL,
+            'type'     => $type,
             'username' => $username,
-            'password' => $password
+            'password' => $password,
+            'user_id'  => NULL
         ));
 
         // Authentication rejected by module.
@@ -273,7 +288,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
         }
         // Retrieve the user by its user_id.
         elseif (is_numeric($user)) {
-            $user = phorum_user_get($user, TRUE, TRUE);
+            $user = phorum_api_user_get($user, TRUE);
         }
         // Bogus $user parameter.
         else trigger_error(
@@ -802,7 +817,7 @@ function phorum_api_user_session_restore($type)
        // cannot be found, then the session is destroyed and the
        // anonymous user is setup.
         if ($session_user === NULL) {
-            $session_user = phorum_user_get($user_id, TRUE, TRUE);
+            $session_user = phorum_api_user_get($user_id, TRUE);
             if (empty($session_user) ||
                 $session_user['active'] != PHORUM_USER_ACTIVE) {
                 phorum_api_user_session_destroy($type);
@@ -813,7 +828,7 @@ function phorum_api_user_session_restore($type)
             // If a different user_id is found, then the cookie
             // that we're currently looking at is ignored. It could
             // be an old cookie for a different user.
-            if ($session_user['user_id'] !== $user_id) {
+            if ($session_user['user_id'] != $user_id) {
                 continue;
             }
         }
@@ -981,4 +996,135 @@ function phorum_api_user_session_destroy($type)
 }
 // }}}
 
-?>
+// {{{ Function: phorum_api_user_get()
+/**
+ * Retrieve data for Phorum users.
+ *
+ * @param mixed $user_id
+ *     Either a single user_id or an array of user_ids.
+ *
+ * @param boolean $detailed
+ *     If this parameter is TRUE, then the user's groups and permissions are
+ *     included in the user data.
+ *
+ * @return mixed
+ *     If the $user_id parameter is a single user_id, then either an array
+ *     containing user data is returned or NULL if the user was not found.
+ *     If the $user_id parameter is an array of user_ids, then an array
+ *     of user data arrays is returned, indexed by the user_id.
+ *     Users for user_ids that are not found are not included in the
+ *     returned array.
+ */
+function phorum_api_user_get($user_id, $detailed = FALSE)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    if ( !is_array( $user_id ) ) {
+        $user_ids = array( $user_id );
+    } else {
+        $user_ids = $user_id;
+    }
+
+    // Prepare the return data array. For each requested user_id,
+    // a slot is prepared in this array.
+    $users = array();
+    foreach ($user_ids as $id) {
+        $users[$id] = NULL; 
+    }
+
+    // First, try to retrieve user data from the user cache, 
+    // if user caching is enabled.
+    if (!empty($PHORUM['cache_users']))
+    { 
+        $cached_users = phorum_cache_get('user',$user_ids);
+        if (is_array($cached_users))
+        {
+            foreach ($cached_users as $id => $user) {
+                $users[$id] = $user; 
+                unset($user_ids[$id]);
+            }
+
+            // We need to retrieve the data for some dynamic fields
+            // from the database.
+            $dynamic_data = phorum_db_user_get_fields(
+                array_keys($cached_users),
+                array('date_last_active','last_active_forum','posts')
+            );
+
+            // Store the results in the users array.
+            foreach ($dynamic_data as $id => $data) {
+                $users[$id] = array_merge($users[$id],$data);
+            }
+        }
+    }
+
+    // Retrieve user data for the users for which no data was
+    // retrieved from the cache.
+    if (count($user_ids))
+    {
+        $db_users = phorum_db_user_get($user_ids, $detailed);
+
+        foreach ($db_users as $id => $user)
+        {
+            // Merge the group and forum permissions into a final
+            // permission value per forum. Forum permissions that are
+            // assigned to a user directly override any group based
+            // permission.
+            if (!$user['admin']) {
+                if (!empty($user['group_permissions'])) {
+                    foreach ($user['group_permissions'] as $fid => $perm) {
+                        if (!isset($user['permissions'][$fid])) {
+                            $user['permissions'][$fid] = $perm;
+                        } else {
+                            $user['permissions'][$fid] |= $perm;
+                        }
+                    }
+                }
+                if (!empty($user['forum_permissions'])) {
+                    foreach ($user['forum_permissions'] as $fid => $perm) {
+                        $user['permissions'][$fid] = $perm;
+                    }
+                }
+            }
+
+            // If detailed information was requested, we store the data in
+            // the cache. For non-detailed information, we do not cache the
+            // data, because there is not much to gain there by caching.
+            if ($detailed && !empty($PHORUM['cache_users'])) {
+                phorum_cache_put('user', $id, $user);
+            }
+
+            // Store the results in the users array.
+            $users[$id] = $user;
+        }
+    }
+
+    // At this point, we allow modules to provide user data. Modules can
+    // update the users array any way they like. It is even possible to
+    // fully provide all user data from some external source, since this
+    // hook can simply fill in the user data for the users that were not
+    // found in the code above.
+    if (isset($PHORUM['hooks']['user_get'])) {
+        $users = phorum_hook('user_get', $users, $detailed);
+    }
+
+    // Return the results.
+    // For an array user id parameter.
+    if (is_array($user_id))
+    {
+        // Remove the NULL users from the array.
+        foreach ($users as $id => $user) {
+            if ($user === NULL) {
+                unset($users[$id]);
+            }
+        }
+
+        return $users;
+    }
+    // For a single user id parameter.
+    else {
+        return $users[$user_id] !== NULL ? $users[$user_id] : NULL;
+    }
+}
+// }}}
+

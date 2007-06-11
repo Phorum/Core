@@ -29,6 +29,7 @@
  * Phorum user API.
  *
  * @package    PhorumAPI
+ * @subpackage CustomProfileFieldAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

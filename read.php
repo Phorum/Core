@@ -421,7 +421,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // fetch_user_ids filled from phorum_db_get_messages
     if(isset($fetch_user_ids) && count($fetch_user_ids)){
-        $user_info=phorum_user_get($fetch_user_ids, false);
+        $user_info=phorum_api_user_get($fetch_user_ids);
         // hook to modify user info
         if (isset($PHORUM["hooks"]["read_user_info"]))
             $user_info = phorum_hook("read_user_info", $user_info);

@@ -25,6 +25,7 @@
  * should be included as well.
  *
  * @package    PhorumAPI
+ * @subpackage BaseAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

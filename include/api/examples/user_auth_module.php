@@ -19,11 +19,15 @@ session_start();
 // and password "bar" as the Phorum user with user_id = 1.
 function test_user_authenticate($data)
 {
-    if ($data['username'] == 'foo' && $data['password'] == 'bar') {
-        $data['user_id'] = 1;
-    } else {
-        $data['user_id'] = FALSE;
+    // Only do this for the forum session. We do not touch the admin session.
+    if ($data['type'] == PHORUM_FORUM_SESSION) {
+        if ($data['username'] == 'foo' && $data['password'] == 'bar') {
+            $data['user_id'] = 1;
+        } else {
+            $data['user_id'] = FALSE;
+        }
     }
+
     return $data;
 }
 

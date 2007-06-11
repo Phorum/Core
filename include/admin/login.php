@@ -26,6 +26,7 @@
     if(isset($_POST["username"]) && isset($_POST["password"]))
     {
         $user_id = phorum_api_user_authenticate(
+            PHORUM_ADMIN_SESSION,
             trim($_POST["username"]),
             trim($_POST["password"])
         );
