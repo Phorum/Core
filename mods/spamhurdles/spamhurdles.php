@@ -408,12 +408,8 @@ function phorum_mod_spamhurdles_tpl_editor_before_textarea()
 
     // Only run the spamhurdle checks when writing a new message.
     // We do not need the checks for editing existing messages.
-    // Phorum 5.1
-    if (isset($PHORUM["DATA"]["POST"]["message_id"])) {
-        if (!empty($PHORUM["DATA"]["POST"]["message_id"])) return;
-    // Phorum 5.2
-    } elseif (isset($PHORUM["DATA"]["MESSAGE"]["message_id"])) {
-        if (!empty($PHORUM["DATA"]["MESSAGE"]["message_id"])) return;
+    if (isset($PHORUM["DATA"]["POSTING"]["message_id"])) {
+        if (!empty($PHORUM["DATA"]["POSTING"]["message_id"])) return;
     } else die("phorum_mod_spamhurdles_tpl_editor_before_textarea(): " .
              "Can't determine whether we're editing a new message");
 

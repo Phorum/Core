@@ -61,63 +61,13 @@ function spamhurdles_db_install()
     return true;
 }
 
-function spamhurdles_db_query($sql, $fetchrow = false)
-{
-    $type = $GLOBALS["PHORUM"]["DBCONFIG"]["type"];
-
-    switch ($type) 
-    {
-      case "mysql":
-        $conn = phorum_db_mysql_connect();
-        $res = mysql_query($sql, $conn);
-        if ($fetchrow) {
-          if ($res && mysql_num_rows($res)) {
-            $res = mysql_fetch_array($res);
-          } else {
-            $res = NULL;
-          }
-        }
-        break;
-
-      case "mysqli":
-        $conn = phorum_db_mysqli_connect();
-        $res = mysqli_query($conn, $sql);
-        if ($fetchrow) {
-          if ($res && mysqli_num_rows($res)) {
-            $res = mysqli_fetch_array($res);
-          } else {
-            $res = NULL;
-          }
-        }
-        break;
-
-      case postgresql:
-        $conn = phorum_db_postgresql_connect();
-        $res = pg_query($conn, $sql);
-        if ($fetchrow) {
-          if ($res && pg_num_rows($res)) {
-            $res = pg_fetch_row($res);
-          } else {
-            $res = NULL;
-          }
-        }
-        break;
-
-      default:
-        die("Spam Hurdles contains no database implementation for database " .
-            "type \"".htmlspecialchars($type)."\" currently.");
-    }
-
-    return $res;
-}
-
 # Retrieve data from the database by key.
 function spamhurdles_db_get($key)
 {
     $sql = "SELECT data,expire_time FROM ".SPAMHURDLES_TABLE. " " .
            "WHERE id = '" . addslashes($key) . "'";
 
-    $record = spamhurdles_db_query($sql, true);
+    $record = phorum_db_interact(DB_RETURN_ROW, $sql);
 
     // If a record was found, then return the data in case the record
     // isn't expired. If the record is expired, then delete it from
@@ -143,7 +93,7 @@ function spamhurdles_db_put($key, $data, $ttl)
            time() . ", " .
            (time() + $ttl) . ')';
 
-    spamhurdles_db_query($sql);
+    phorum_db_interact(DB_RETURN_RES, $sql);
 }
 
 # Remove data from the database.
@@ -152,7 +102,7 @@ function spamhurdles_db_remove($key)
     $sql = "DELETE FROM ".SPAMHURDLES_TABLE. " " .
            "WHERE id='".addslashes($key)."'";
 
-    spamhurdles_db_query($sql);
+    phorum_db_interact(DB_RETURN_RES, $sql);
 }
 
 # Remove expired entries from the database.
@@ -161,7 +111,7 @@ function spamhurdles_db_remove_expired()
     $sql = "DELETE FROM ".SPAMHURDLES_TABLE. " " .
            "WHERE expire_time < " . time();
 
-    spamhurdles_db_query($sql);
+    phorum_db_interact(DB_RETURN_RES, $sql);
 }
 
 ?>
