@@ -630,7 +630,7 @@ function phorum_api_user_session_create($type, $reset = 0)
             // Add the session id to the form POST variables.
             $GLOBALS['PHORUM']['DATA']['POST_VARS'] .=
                 '<input type="hidden" name="'.PHORUM_SESSION_LONG_TERM.'" ' .
-                'value="'.$user['user_id'].':'.$sessid.'" />';
+                'value="'.$user['user_id'].':'.$sessid_lt.'" />';
         }
 
         // The short term session id is always put in a cookie.
