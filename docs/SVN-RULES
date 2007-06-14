@@ -22,7 +22,7 @@ Having said that, here are the organizational rules:
 
    1. Respect other people working on the project.
 
-   2. Discuss any significant changes on the list or forum before committing. 
+   2. Discuss any significant changes on the list or forum before committing.
 
    3. If you "strongly disagree" about something another person did, don't
       start fighting publicly - take it up in private email.
@@ -31,7 +31,7 @@ Having said that, here are the organizational rules:
 
    5. Test your changes before committing them. We mean it. Really.
 
-   6. Brian and/or Thomas have the final say.
+   6. Members of the core dev team have the final say.
 
 The next few rules are more of a technical nature.
 
@@ -63,7 +63,7 @@ Another special prefix is MFB.  If you are commiting something to a branch
 and to trunk, plese put MFB on the front of the trunk commit.  This will
 keep the log line from showing up twice in the changelog.
 
-Example. Say you modified two files, functions.php and mysql.php. 
+Example. Say you modified two files, functions.php and mysql.php.
 In functions.php you added a new formatting-function and in mysql.php you
 fixed a bug in a query.  Don't commit both of these at once. Commit them
 separately and try to make sure your commit messages look something like
@@ -96,6 +96,6 @@ Happy hacking,
 The Phorum Dev Team
 
 
-* large parts of this file were copied from the PHP Dev Team's 
+* large parts of this file were copied from the PHP Dev Team's
 * CVS-RULES file. Thanks guys.
 
