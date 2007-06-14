@@ -946,49 +946,53 @@ function phorum_api_user_session_destroy($type)
     // some 3rd party application). The hook function gets the session
     // type as its argument and can return NULL if the Phorum session
     // destroy function does not have to be run.
+    $do_phorum_destroy_session = TRUE;
     if (isset($PHORUM['hooks']['user_session_destroy'])) {
         if (phorum_hook('user_session_destroy', $type) === NULL) {
-            return;
+            $do_phorum_destroy_session = FALSE;
         }
     }
 
-    // Destroy session cookie(s). We do not care here if use_cookies is
-    // enabled or not. We just want to clean out all that we have here.
-    if ($type == PHORUM_FORUM_SESSION) {
-        setcookie(
-            PHORUM_SESSION_SHORT_TERM, "", time()-86400,
-            $PHORUM['session_path'], $PHORUM['session_domain']
+    if ($do_phorum_destroy_session)
+    {
+        // Destroy session cookie(s). We do not care here if use_cookies is
+        // enabled or not. We just want to clean out all that we have here.
+        if ($type == PHORUM_FORUM_SESSION) {
+            setcookie(
+                PHORUM_SESSION_SHORT_TERM, "", time()-86400,
+                $PHORUM['session_path'], $PHORUM['session_domain']
+            );
+            setcookie(
+                PHORUM_SESSION_LONG_TERM, "", time()-86400,
+                $PHORUM['session_path'], $PHORUM['session_domain']
+            );
+        } elseif ($type == PHORUM_ADMIN_SESSION) {
+            setcookie(
+                PHORUM_SESSION_ADMIN, "", time()-86400,
+                $PHORUM['session_path'], $PHORUM['session_domain']
+            );
+        } else trigger_error(
+            'phorum_api_user_session_destroy(): Illegal session type: ' .
+            htmlspecialchars($type),
+            E_USER_ERROR
         );
-        setcookie(
-            PHORUM_SESSION_LONG_TERM, "", time()-86400,
-            $PHORUM['session_path'], $PHORUM['session_domain']
-        );
-    } elseif ($type == PHORUM_ADMIN_SESSION) {
-        setcookie(
-            PHORUM_SESSION_ADMIN, "", time()-86400,
-            $PHORUM['session_path'], $PHORUM['session_domain']
-        );
-    } else trigger_error(
-        'phorum_api_user_session_destroy(): Illegal session type: ' .
-        htmlspecialchars($type),
-        E_USER_ERROR
-    );
 
-    // If cookies are not in use, then the long term session is reset
-    // to a new value. That way we fully invalidate URI authentication
-    // data, so that old URL's won't work anymore. We can only do this
-    // if we have an active Phorum user.
-    if ($PHORUM['use_cookies'] == PHORUM_NO_COOKIES &&
-        $type == PHORUM_FORUM_SESSION &&
-        !empty($PHORUM['user']) && !empty($PHORUM['user']['user_id'])) {
+        // If cookies are not in use, then the long term session is reset
+        // to a new value. That way we fully invalidate URI authentication
+        // data, so that old URL's won't work anymore. We can only do this
+        // if we have an active Phorum user.
+        if ($PHORUM['use_cookies'] == PHORUM_NO_COOKIES &&
+            $type == PHORUM_FORUM_SESSION &&
+            !empty($PHORUM['user']) && !empty($PHORUM['user']['user_id'])) {
 
-        $user = $PHORUM['user'];
+            $user = $PHORUM['user'];
 
-        $sessid_lt = md5($user['username'].microtime().$user['password']);
-        phorum_user_save_simple(array(
-            'user_id'   => $user['user_id'],
-            'sessid_lt' => $sessid_lt,
-        ));
+            $sessid_lt = md5($user['username'].microtime().$user['password']);
+            phorum_user_save_simple(array(
+                'user_id'   => $user['user_id'],
+                'sessid_lt' => $sessid_lt,
+            ));
+        }
     }
 
     // Force Phorum to see the anonymous user from here on.
@@ -1128,3 +1132,4 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
 }
 // }}}
 
+?>
