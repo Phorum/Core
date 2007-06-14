@@ -370,7 +370,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 $PHORUM["threaded_read"] = 2;
             }
         }
-        
+
         // check if the user has new private messages
         if (!empty($PHORUM["enable_new_pm_count"]) &&
             !empty($PHORUM["enable_pm"])) {
@@ -529,7 +529,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
     // used in all forms as it seems
-    $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["DATA"]["PROFILE"]["forum_id"]}\" />\n";
+    $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["forum_id"]}\" />\n";
 }
 
 //////////////////////////////////////////////////////////
