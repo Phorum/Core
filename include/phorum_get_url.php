@@ -18,6 +18,7 @@ function phorum_get_url()
     $url = "";
     $suffix = "";
     $args = "";
+    $pathinfo = NULL;
     $add_forum_id = false;
     $add_get_vars = true;
 
@@ -144,6 +145,20 @@ function phorum_get_url()
         case PHORUM_FILE_URL:
             $page = "file";
             $add_forum_id = true;
+
+            // If a filename=... parameter is set, then change that parameter to
+            // a URL path, unless this feature is not enabled in the admin setup.
+            if (!empty($PHORUM['file_url_uses_pathinfo'])) {
+                foreach ($argv as $id => $arg) {
+                    if (substr($arg, 0, 9) == 'filename=') {
+                        $safe_file = urldecode(substr($arg, 9));
+                        $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $safe_file);
+                        $safe_file = preg_replace('/_+/', '_', $safe_file);
+                        $pathinfo = "/$safe_file";
+                        unset($argv[$id]);
+                    }
+                }
+            }
             break;
         case PHORUM_FOLLOW_URL:
             $page = "follow";
@@ -212,12 +227,13 @@ function phorum_get_url()
         if ($type == PHORUM_BASE_URL) return $PHORUM["http_path"] . '/';
 
         $url = "$PHORUM[http_path]/$page." . PHORUM_FILE_EXTENSION;
+        if ($pathinfo !== NULL) $url .= $pathinfo;
 
         if ( count( $query_items ) ) $url .= "?" . implode( ",", $query_items );
 
         if ( !empty( $suffix ) ) $url .= $suffix;
     } else {
-        $url = phorum_custom_get_url( $page, $query_items, $suffix );
+        $url = phorum_custom_get_url( $page, $query_items, $suffix, $pathinfo );
     }
 
     return $url;

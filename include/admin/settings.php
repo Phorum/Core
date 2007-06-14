@@ -196,6 +196,9 @@ $frm->addhelp($row, "Secret key for signing data", "On several occasions, data i
 $row=$frm->addrow( "Allow Linking To Uploaded Files", $frm->select_tag( "file_offsite", array( PHORUM_OFFSITE_FORUMONLY => "Only from the forum", PHORUM_OFFSITE_THISSITE => "From this web site", PHORUM_OFFSITE_ANYSITE => "From any web site" ), $PHORUM["file_offsite"] ) );
 $frm->addhelp($row, "Allow Off Site Links", "You may not want to allow other web sites to link to files that users have uploaded to your forums. If not, then set this option to \"Only from the forum\". If you want to use links on other parts of your web site, then use \"From this web site\". If you want to allow other websites to link to your forum file uploads, then select \"From any web site\".<br/><br/>If your needs are more specific than this (e.g. if you want to allow access from a specific group of web sites), you will need to use your web server's security features to accomplish this. Apache users can reference <i>Prevent \"Image Theft\"</i> at http://httpd.apache.org/docs/env.html#examples." );
 
+$row=$frm->addrow( "Put file name in pathinfo for file download URLs", $frm->select_tag("file_url_uses_pathinfo", array( "No", "Yes"), $PHORUM["file_url_uses_pathinfo"]) );
+$frm->addhelp($row, "Use pathinfo for file URLs", "All Phorum file downloads (for user files and forum message attachments) run through the file.php script. As a result, users who right-click a file URL and choose \"Save link as ..\" will end up in their browser with file.php as the default file name. With this option enabled however, Phorum will try to give the browser a real file name instead. This is done by putting the file name in the URL as pathinfo (which makes the download link look like /file.php/downloadfile.ext?1,2,file=3).<br/><br/>The webserver needs to support the use of pathinfo for this feature to work. So if you are unable to download files after enabling this option, your webserver probably lacks pathinfo support and you cannot use this feature.");
+
 $check_img = 'Working extension detected if green: <img src="'.$PHORUM["http_path"].'/extension_check.php" style="border:1px solid black"/>';
 $ext_dir = ini_get('extension_dir');
 $row=$frm->addrow("Phorum PHP extension support", $frm->select_tag("php_phorum_extension", array("Disabled", "Enabled"), $PHORUM["php_phorum_extension"]) . $check_img);
@@ -286,6 +289,7 @@ $upload_arr = array(
     );
 
 $row=$frm->addrow( "File Uploads:", $frm->select_tag( "file_uploads", $upload_arr, $PHORUM["file_uploads"] ) );
+$frm->addhelp($row, "File Uploads", "These settings apply to personal file uploads that user can do in their control center. The users can link to these files by copying and pasting the file URLs. Some modules (like the avatar module) also make use of personal files (for example for storing the images that the user can use as the avatar to show).<br/><br/>These settings do <i>not</i> control uploading of forum message attachments. For changing message attachment settings, you have to edit the settings of the forum for which you want to enable attachments.");
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Types (eg. gif;jpg)", $frm->text_box( "file_types", $PHORUM["file_types"], 30 ) );
 

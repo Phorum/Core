@@ -442,7 +442,7 @@ if ($bodies_in_list)
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
                 $row["attachments"][$key]["name"]=htmlspecialchars($file['name']);
-                $row["attachments"][$key]["url"] = phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}");
+                $row["attachments"][$key]["url"] = phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}", "filename=".urlencode($file['name']));
             }
         }
         $rows[$id] = $row;
