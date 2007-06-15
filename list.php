@@ -272,41 +272,88 @@ if($rows == null) {
             $rows[$key]["thread_count"] = number_format($row['thread_count'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
 
             $pages=1;
-            // thread_count computed above in moderators-section
-            if(!$PHORUM["threaded_read"] && $thread_count>$PHORUM["read_length"]){
 
-                $pages=ceil($thread_count/$PHORUM["read_length"]);
+            if(!$PHORUM["threaded_read"]) {
 
-                if($pages<=5){
-                    $page_links=array();
-                    for($x=1;$x<=$pages;$x++){
-                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
-                        $page_links[]="<a href=\"$url\">$x</a>";
+                // pages for regular users
+                if($thread_count>$PHORUM["read_length"]){
+
+
+                    $pages=ceil($thread_count/$PHORUM["read_length"]);
+
+                    if($pages<=5){
+                        $page_links=array();
+                        for($x=1;$x<=$pages;$x++){
+                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
+                            $page_links[]="<a href=\"$url\">$x</a>";
+                        }
+                        $rows[$key]["pages"]=implode("&nbsp;", $page_links);
+                    } else {
+                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=1");
+                        $rows[$key]["pages"]="<a href=\"$url\">1</a>&nbsp;";
+                        $rows[$key]["pages"].="...&nbsp;";
+                        $pageno=$pages-2;
+                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                        $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                        $pageno=$pages-1;
+                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                        $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                        $pageno=$pages;
+                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                        $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>";
                     }
-                    $rows[$key]["pages"]=implode("&nbsp;", $page_links);
-                } else {
-                    $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=1");
-                    $rows[$key]["pages"]="<a href=\"$url\">1</a>&nbsp;";
-                    $rows[$key]["pages"].="...&nbsp;";
-                    $pageno=$pages-2;
-                    $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
-                    $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
-                    $pageno=$pages-1;
-                    $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
-                    $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
-                    $pageno=$pages;
-                    $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
-                    $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>";
+
                 }
+
+                // pages for moderators
+                if(isset($row["meta"]["message_ids_moderator"])) {
+                    $thread_count=count($row["meta"]["message_ids_moderator"]);
+
+                    if($thread_count>$PHORUM["read_length"]){
+
+                        $pages_mods=ceil($thread_count/$PHORUM["read_length"]);
+
+                        $rows[$key]["pages_moderators_count"] = $pages_mods;
+
+                        if($pages_mods<=5){
+                            $page_links=array();
+                            for($x=1;$x<=$pages_mods;$x++){
+                                $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
+                                $page_links[]="<a href=\"$url\">$x</a>";
+                            }
+                            $rows[$key]["pages_moderators"]=implode("&nbsp;", $page_links);
+                        } else {
+                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=1");
+                            $rows[$key]["pages_moderators"]="<a href=\"$url\">1</a>&nbsp;";
+                            $rows[$key]["pages_moderators"].="...&nbsp;";
+                            $pageno=$pages_mods-2;
+                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                            $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                            $pageno=$pages_mods-1;
+                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                            $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>&nbsp;";
+                            $pageno=$pages_mods;
+                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                            $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>";
+                        }
+
+                    }
+
+                }
+
             }
 
+
             if(isset($row['recent_message_id'])) { // should always be true
+                // building the recent message link
                 if($pages>1){
                     $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
                 } else {
                     $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
                 }
             }
+
+
         }
     }
 
@@ -356,9 +403,19 @@ if($PHORUM['DATA']['LOGGEDIN']) {
                 $rows[$key]["URL"]["MOVE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
             }
             $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
-            // count could be different with hidden or unapproved posts
-            if(!$PHORUM["threaded_read"] && isset($row["meta"]["message_ids_moderator"])) {
-                $thread_count=count($row["meta"]["message_ids_moderator"]);
+
+            // pagelinks for moderators
+            $rows[$key]['pages'] = $row['pages_moderators'];
+
+            // building their last message link too
+            if(isset($row['recent_message_id'])) { // should always be true
+                // building the recent message link
+                $pages = $row['pages_moderators_count'];
+                if($pages>1){
+                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
+                } else {
+                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
+                }
             }
         }
 
