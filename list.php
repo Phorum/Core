@@ -230,9 +230,6 @@ if($rows == null) {
             if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
                 $rows[$key]['moved']=1;
             }
-
-            if($min_id == 0 || $min_id > $row['message_id'])
-            $min_id = $row['message_id'];
         }
         // don't move this up.  We want it to be conditional.
         include_once("./include/thread_sort.php");
@@ -273,32 +270,6 @@ if($rows == null) {
             $thread_count=$row["thread_count"];
 
             $rows[$key]["thread_count"] = number_format($row['thread_count'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-
-            if ($PHORUM["DATA"]["LOGGEDIN"]){
-
-                if($PHORUM["DATA"]["MODERATOR"]){
-                    $rows[$key]["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-                    $rows[$key]["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-                    if($build_move_url) {
-                        $rows[$key]["URL"]["MOVE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
-                    }
-                    $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
-                    // count could be different with hidden or unapproved posts
-                    if(!$PHORUM["threaded_read"] && isset($row["meta"]["message_ids_moderator"])) {
-                        $thread_count=count($row["meta"]["message_ids_moderator"]);
-                    }
-                }
-
-                if(!$rows[$key]['moved'] && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
-                    foreach ($row['meta']['message_ids'] as $cur_id) {
-                        if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id'])
-                        $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
-
-                        if($min_id == 0 || $min_id > $cur_id)
-                        $min_id = $cur_id;
-                    }
-                }
-            }
 
             $pages=1;
             // thread_count computed above in moderators-section
@@ -357,20 +328,25 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         // we only show the information for the thread starter. But we have
         // to go through all the messages in the thread to see if any of
         // them is new.
-        if ((!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
+        if (!$row['moved'] && (!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
             foreach ($row['meta']['message_ids'] as $cur_id) {
                 if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id']) {
                     $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
                 }
+                // for users without min_id
+                if($min_id == 0 || $min_id > $cur_id) $min_id = $cur_id;
             }
         }
         // For other views, we have a line for each message. So here
         // we only have to look at the message itself to decide whether
         // it's new or not.
         else {
-            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
+            if (!$row['moved'] && !isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
                 $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
             }
+
+            // for users without min_id
+            if($min_id == 0 || $min_id > $row['message_id']) $min_id = $row['message_id'];
         }
 
         if($PHORUM["DATA"]["MODERATOR"]){
