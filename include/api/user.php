@@ -371,7 +371,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 
         // Update the user data in the database.
         phorum_user_save_simple(array(
-            'user_id'           => $session_user['user_id'],
+            'user_id'           => $user['user_id'],
             'date_last_active'  => $date_last_active,
             'last_active_forum' => $last_active_forum
         ));
