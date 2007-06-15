@@ -336,11 +336,8 @@ if($rows == null) {
                             $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
                             $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>";
                         }
-
                     }
-
                 }
-
             }
 
 
@@ -405,10 +402,12 @@ if($PHORUM['DATA']['LOGGEDIN']) {
             $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
 
             // pagelinks for moderators
-            $rows[$key]['pages'] = $row['pages_moderators'];
+            if(isset($row['pages_moderators'])) {
+                $rows[$key]['pages'] = $row['pages_moderators'];
+            }
 
             // building their last message link too
-            if(isset($row['recent_message_id'])) { // should always be true
+            if(isset($row['recent_message_id']) && isset($row['pages_moderators_count'])) { // should always be true
                 // building the recent message link
                 $pages = $row['pages_moderators_count'];
                 if($pages>1){
