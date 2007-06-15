@@ -307,11 +307,11 @@ if($rows == null) {
 
                 // pages for moderators
                 if(isset($row["meta"]["message_ids_moderator"])) {
-                    $thread_count=count($row["meta"]["message_ids_moderator"]);
+                    $thread_count_mods=count($row["meta"]["message_ids_moderator"]);
 
-                    if($thread_count>$PHORUM["read_length"]){
+                    if($thread_count_mods != $thread_count && $thread_count_mods > $PHORUM["read_length"]){
 
-                        $pages_mods=ceil($thread_count/$PHORUM["read_length"]);
+                        $pages_mods=ceil($thread_count_mods/$PHORUM["read_length"]);
 
                         $rows[$key]["pages_moderators_count"] = $pages_mods;
 
@@ -404,16 +404,17 @@ if($PHORUM['DATA']['LOGGEDIN']) {
             // pagelinks for moderators
             if(isset($row['pages_moderators'])) {
                 $rows[$key]['pages'] = $row['pages_moderators'];
-            }
 
-            // building their last message link too
-            if(isset($row['recent_message_id']) && isset($row['pages_moderators_count'])) { // should always be true
-                // building the recent message link
-                $pages = $row['pages_moderators_count'];
-                if($pages>1){
-                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
-                } else {
-                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
+
+                // building their last message link too
+                if(isset($row['recent_message_id']) && isset($row['pages_moderators_count'])) { // should always be true
+                    // building the recent message link
+                    $pages = $row['pages_moderators_count'];
+                    if($pages>1){
+                        $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
+                    } else {
+                        $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
+                    }
                 }
             }
         }
