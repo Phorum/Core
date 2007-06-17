@@ -19,8 +19,8 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-include("./include/api/base.php");
-include("./include/api/custom_profile_fields.php");
+include_once("./include/api/base.php");
+include_once("./include/api/custom_profile_fields.php");
 
 // Create or update a custom profile field.
 if(count($_POST) && $_POST['name'] != '')
