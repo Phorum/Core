@@ -131,7 +131,7 @@
             }
 
             if(empty($error)){
-                phorum_user_save($user_data);
+                phorum_api_user_save($user_data);
                 phorum_admin_okmsg("User Saved");
             }
         }

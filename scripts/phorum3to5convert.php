@@ -237,7 +237,7 @@ if($CONVERT['do_users']) {
     $cur_time = time();
     while ($cur_user = phorum_convert_getNextUser($res)) {
         if (isset($cur_user['user_id'])) {
-            phorum_user_add($cur_user, -1);
+            phorum_api_user_save($cur_user, PHORUM_FLAG_RAW_PASSWORD);
             $user_groups=$group_perms[$cur_user['user_id']];
             if(count($user_groups)) { // setting the user's group-memberships
             phorum_db_user_save_groups($cur_user['user_id'],$user_groups);

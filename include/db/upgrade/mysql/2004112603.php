@@ -62,7 +62,7 @@ while($row=mysql_fetch_assoc($res)) {
     }
     
     $userdata['user_data']=$user_data_new;
-    phorum_user_save($userdata);
+    phorum_api_user_save($userdata);
 }
 // remove old column
 //mysql_query("ALTER TABLE {$PHORUM['user_newflags_table']} DROP newflags",$cid);

@@ -237,7 +237,7 @@ function phorum_controlcenter_user_save($panel)
         $error=$userdata['error'];
         unset($userdata['error']);
     // Try to update the userdata in the database.
-    } elseif (!phorum_user_save($userdata)) {
+    } elseif (!phorum_api_user_save($userdata)) {
         // Updating the user failed.
         $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
     } else {
@@ -250,7 +250,7 @@ function phorum_controlcenter_user_save($panel)
         // If a new password was set, then reset all session id(s), so
         // other computers or browser will loose any active session that
         // they are running.
-        if (isset($userdata["password"]) && !empty($userdata["password"])) {
+        if (isset($userdata["password"]) && $userdata["password"] != '') {
             phorum_api_user_session_create(
                 PHORUM_FORUM_SESSION,
                 PHORUM_SESSID_RESET_ALL

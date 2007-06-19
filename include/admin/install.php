@@ -184,10 +184,9 @@ if(count($_POST)){
                 } else {
 
                     // add the user
-                    $user = array( "username"=>$_POST["admin_user"], "password"=>$_POST["admin_pass"], "email"=>$_POST["admin_email"], "active"=>1, "admin"=>1 );
+                    $user = array( "user_id"=>NULL, "username"=>$_POST["admin_user"], "password"=>$_POST["admin_pass"], "email"=>$_POST["admin_email"], "active"=>1, "admin"=>1 );
 
-                    if(!phorum_user_add($user)){
-
+                    if(!phorum_api_user_save($user)){
                         echo "There was an error adding the user.<br />";
                     }
 

@@ -165,6 +165,389 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
 
 // }}}
 
+// {{{ Function: phorum_api_user_save()
+/**
+ * Save data for Phorum users.
+ *
+ * This function can be used for both creating and updating Phorum users.
+ * If no user_id is provided in the user data, a new user will be created.
+ * If a user_id is provided, then the existing user will be updated or a 
+ * new user with that user_id is created.
+ *
+ * @param array $user
+ *     An array containing user data. This array should at least contain
+ *     a field "user_id". This field can be NULL to create a new user
+ *     with an automatically assigned user_id. It can also be set to a
+ *     user_id to either update an existing user or to create a new user
+ *     with the provided user_id.
+ *
+ * @param int $flags
+ *     If the flag {@link PHORUM_FLAG_RAW_PASSWORD} is set, then the
+ *     password fields ("password" and "password_temp") are considered to be
+ *     MD5 encrypted already. So this can be used to feed Phorum existing MD5
+ *     encrypted passwords.
+ *
+ * @param int
+ *     The user_id of the user. For new users, the newly assigned user_id
+ *     will be returned.
+ */
+function phorum_api_user_save($user, $flags = 0)
+{
+    global $PHORUM;
+
+    include_once('./include/api/custom_profile_fields.php');
+
+    // $user must be an array.
+    if (!is_array($user)) trigger_error(
+        'phorum_api_user_save(): $user argument is not an array',
+        E_USER_ERROR
+    );
+
+    // We need at least the user_id field.
+    if (!array_key_exists('user_id', $user)) trigger_error(
+        'phorum_api_user_save(): missing field "user_id" in user data array',
+        E_USER_ERROR
+    );
+    if ($user['user_id'] !== NULL && !is_numeric($user['user_id'])) {
+        trigger_error(
+            'phorum_api_user_save(): field "user_id" not NULL or numerical',
+            E_USER_ERROR
+        );
+    }
+
+    // Check if we are handling an existing or new user.
+    $existing = NULL;
+    if ($user['user_id'] !== NULL) {
+        $existing = phorum_api_user_get($user['user_id'], TRUE);
+    }
+
+    // Create a user data array that is understood by the database layer.
+    // We start out with the existing record, if we have one.
+    $dbuser = $existing === NULL ? array() : $existing;
+
+    // Merge in the fields from the $user argument.
+    foreach ($user as $fld => $val) {
+        $dbuser[$fld] = $val;
+    }
+
+    // Initialize storage for custom profile field data.
+    $user_data = array();
+
+    // Check and format fields.
+    foreach ($dbuser as $fld => $val)
+    {
+        // Make sure that a valid field name is used. We do a strict check
+        // on this (in the spirit of defensive programming).
+        $fldtype = NULL;
+        $custom  = NULL;
+        if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
+            $custom = phorum_api_custom_profile_field_byname($fld); 
+            if ($custom === NULL) {
+                trigger_error(
+                    'phorum_api_user_save(): Illegal field name used in ' .
+                    'user data: ' . htmlspecialchars($fld),
+                    E_USER_ERROR
+                );
+            } else {
+                $fldtype = "custom_profile_field";
+            }
+        } else {
+            $fldtype = $PHORUM['API']['user_fields'][$fld];
+        }
+
+        switch ($fldtype)
+        {
+            // A field that has to be fully ignored.
+            case NULL:
+                break;
+
+            case "int":
+                $dbuser[$fld] = $val === NULL ? NULL : (int) $val;
+                break;
+
+            case "string":
+                $dbuser[$fld] = $val === NULL ? NULL : trim($val);
+                break;
+
+            case "bool":
+                $dbuser[$fld] = $val ? 1 : 0;
+                break;
+
+            case "array":
+                // TODO: maybe check for real arrays here?
+                $dbuser[$fld] = $val;
+                break;
+
+            case "custom_profile_field":
+                // Arrays and NULL values are left untouched.
+                // Other values are truncated to their configured field length.
+                if ($val !== NULL && !is_array($val)) {
+                    $val = substr($val, 0, $custom['length']);
+                }
+                $user_data[$custom['id']] = $val;
+                unset($dbuser[$fld]);
+                break;
+
+            default:
+                trigger_error(
+                    'phorum_api_user_save(): Illegal field type used: ' .
+                    htmlspecialchars($fldtype),
+                    E_USER_ERROR
+                );
+                break;
+        }
+    }
+
+    // Add the custom profile field data to the user data.
+    $dbuser['user_data'] = $user_data;
+
+    // At this point, we should have a couple of mandatory fields available
+    // in our data. Without these fields, the user record is not sane
+    // enough to continue with.
+    // We really need a username, so we can always generate a display name.
+    if (!isset($dbuser['username']) || $dbuser['username'] == '') {
+        trigger_error(
+            'phorum_api_user_save(): the username field for a user record ' .
+            'cannot be empty',
+            E_USER_ERROR
+        );
+    }
+    // Phorum sends out mail messages on several occasions. So we need a
+    // mail address for the user.
+    if (!isset($dbuser['email']) || $dbuser['email'] == '') {
+        trigger_error(
+            'phorum_api_user_save(): the email field for a user record ' .
+            'cannot be empty',
+            E_USER_ERROR
+        );
+    }
+
+    // For new accounts only.
+    if (!$existing)
+    {
+        if (empty($dbuser['date_added']))
+            $dbuser['date_added'] = time();
+
+        if (empty($dbuser['date_last_active']))
+            $dbuser['date_last_active'] = time();
+    }
+
+    // Handle password encryption.
+    foreach (array('password', 'password_temp') as $fld)
+    { 
+        // Sometimes, this function is (accidentally) called with existing
+        // passwords in the data. Prevent duplicate encryption.
+        if ($existing  && strlen($existing[$fld]) == 32 &&
+            $existing[$fld] == $dbuser[$fld]) {
+            continue;
+        }
+
+        // If the password field is empty, we should never store the MD5 sum
+        // of an empty string as a safety precaution. Instead we store a
+        // string which will never work as a password. This could happen in
+        // case of bugs in the code or in case external user auth is used
+        // (in which case Phorum can have empty passwords, since the Phorum
+        // passwords are not used at all).
+        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL || $dbuser[$fld] == '') {
+            $dbuser[$fld] = "*NO PASSWORD SET*";
+            continue;
+        }
+        
+        // Only crypt the password using MD5, if the PHORUM_FLAG_RAW_PASSWORD
+        // flag is not set.
+        if (!($flags & PHORUM_FLAG_RAW_PASSWORD)) {
+            $dbuser[$fld] = md5($dbuser[$fld]);
+        }
+    }
+
+    // Determine the display name to use for the user. If the setting
+    // $PHORUM["custom_display_name"] is enabled (a "secret" setting which
+    // can not be changed through the admin settings, but only through
+    // modules that consciously set it), then Phorum expects that the display
+    // name is a HTML formatted display_name field, which is provided by
+    // 3rd party software. Otherwise, the username or real_name is used
+    // (depending on the $PHORUM["display_name_source"] Phorum setting).
+    if (empty($PHORUM["custom_display_name"])) {
+        $display_name = $dbuser['username'];
+        if ($PHORUM['display_name_source'] == 'real_name' &&
+            isset($dbuser['real_name']) &&
+            trim($dbuser['real_name']) != '') {
+            $display_name = $dbuser['real_name'];
+        }
+        $dbuser['display_name'] = $display_name;
+    }
+    // If the 3rd party software provided no or an empty display_name,
+    // then we save the day by using the username (just so users won't show up
+    // empty on screen, this should not happen at all in the first place).
+    // We HTML encode the username, because custom display names are supposed
+    // to be provided in escaped HTML format.
+    elseif (!isset($dbuser['display_name']) ||
+            trim($dbuser['display_name']) == '') {
+        $dbuser['display_name'] = htmlspecialchars($dbuser['username']);
+    }
+
+    // At this point, we allow modules to handle the data that will be 
+    // saved for the user. This can for example be used to update data
+    // in an external system or even to store a part of the data fully
+    // external (in combination with the user_get hook).
+    if (isset($PHORUM['hooks']['user_save'])) {
+        $dbuser = phorum_hook('user_save', $dbuser);
+    }
+
+    // Add or update the user in the database.
+    if ($existing) { 
+        phorum_db_user_save($dbuser);
+    } else {
+        $dbuser['user_id'] = phorum_db_user_add($dbuser);
+    }
+    
+    // If the display name changed for the user, then we do need to run
+    // updates throughout the Phorum database to make references to this
+    // user to show up correctly.
+    if ($existing && $existing['display_name'] != $dbuser['display_name']) {
+       phorum_db_user_display_name_updates($dbuser);
+    }
+
+    // If user caching is enabled, we invalidate the cache for this user.
+    if (!empty($PHORUM['cache_users'])) {
+        phorum_cache_remove('user', $dbuser['user_id']);
+    }
+
+    // Are we handling the active Phorum user? Then refresh the user data.
+    if (isset($PHORUM["user"]) &&
+        $PHORUM["user"]["user_id"] == $dbuser["user_id"]) {
+        $PHORUM["user"] = phorum_api_user_get($user["user_id"], TRUE);
+    }
+
+    return $dbuser['user_id'];
+}
+// }}}
+
+// {{{ Function: phorum_api_user_get()
+/**
+ * Retrieve data for Phorum users.
+ *
+ * @param mixed $user_id
+ *     Either a single user_id or an array of user_ids.
+ *
+ * @param boolean $detailed
+ *     If this parameter is TRUE, then the user's groups and permissions are
+ *     included in the user data.
+ *
+ * @return mixed
+ *     If the $user_id parameter is a single user_id, then either an array
+ *     containing user data is returned or NULL if the user was not found.
+ *     If the $user_id parameter is an array of user_ids, then an array
+ *     of user data arrays is returned, indexed by the user_id.
+ *     Users for user_ids that are not found are not included in the
+ *     returned array.
+ */
+function phorum_api_user_get($user_id, $detailed = FALSE)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    if (!is_array($user_id)) {
+        $user_ids = array($user_id);
+    } else {
+        $user_ids = $user_id;
+    }
+
+    // Prepare the return data array. For each requested user_id,
+    // a slot is prepared in this array.
+    $users = array();
+    foreach ($user_ids as $id) {
+        $users[$id] = NULL; 
+    }
+
+    // First, try to retrieve user data from the user cache, 
+    // if user caching is enabled.
+    if (!empty($PHORUM['cache_users']))
+    { 
+        $cached_users = phorum_cache_get('user', $user_ids);
+        if (is_array($cached_users))
+        {
+            foreach ($cached_users as $id => $user) {
+                $users[$id] = $user; 
+                unset($user_ids[$id]);
+            }
+
+            // We need to retrieve the data for some dynamic fields
+            // from the database.
+            $dynamic_data = phorum_db_user_get_fields(
+                array_keys($cached_users),
+                array('date_last_active','last_active_forum','posts')
+            );
+
+            // Store the results in the users array.
+            foreach ($dynamic_data as $id => $data) {
+                $users[$id] = array_merge($users[$id],$data);
+            }
+        }
+    }
+
+    // Retrieve user data for the users for which no data was
+    // retrieved from the cache.
+    if (count($user_ids))
+    {
+        $db_users = phorum_db_user_get($user_ids, $detailed);
+
+        foreach ($db_users as $id => $user)
+        {
+            // Merge the group and forum permissions into a final
+            // permission value per forum. Forum permissions that are
+            // assigned to a user directly override any group based
+            // permission.
+            if (!$user['admin']) {
+                if (!empty($user['group_permissions'])) {
+                    foreach ($user['group_permissions'] as $fid => $perm) {
+                        if (!isset($user['permissions'][$fid])) {
+                            $user['permissions'][$fid] = $perm;
+                        } else {
+                            $user['permissions'][$fid] |= $perm;
+                        }
+                    }
+                }
+                if (!empty($user['forum_permissions'])) {
+                    foreach ($user['forum_permissions'] as $fid => $perm) {
+                        $user['permissions'][$fid] = $perm;
+                    }
+                }
+            }
+
+            // If detailed information was requested, we store the data in
+            // the cache. For non-detailed information, we do not cache the
+            // data, because there is not much to gain there by caching.
+            if ($detailed && !empty($PHORUM['cache_users'])) {
+                phorum_cache_put('user', $id, $user);
+            }
+
+            // Store the results in the users array.
+            $users[$id] = $user;
+        }
+    }
+
+    // Remove the users for which we did not find data from the array.
+    foreach ($users as $id => $user) {
+        if ($user === NULL) {
+            unset($users[$id]);
+        }
+    }
+
+    // At this point, we allow modules to provide user data. Modules can
+    // update the users array any way they like.
+    if (isset($PHORUM['hooks']['user_get'])) {
+        $users = phorum_hook('user_get', $users, $detailed);
+    }
+
+    // Return the results.
+    if (is_array($user_id)) {
+        return $users;
+    } else {
+        return $users[$user_id] !== NULL ? $users[$user_id] : NULL;
+    }
+}
+// }}}
+
 // {{{ Function: phorum_api_user_authenticate()
 /**
  * Check the authentication credentials for a user.
@@ -255,13 +638,9 @@ function phorum_api_user_authenticate($type, $username, $password)
 
         // If the temporary password matched, then synchronize the main
         // password with the temporary password. The temporary password
-        // is kept the same (setting it to an empty value would be bad
-        // because it would make the MD5 sum a static value which others
-        // could use to hack the account; it could be handled with more
-        // checks in other places, but this is the most simple and fail
-        // safe solution against this issue).
+        // is kept the same.
         if ($temporary_matched) {
-            phorum_db_user_save(array(
+            phorum_api_user_save(array(
                 'user_id'  => $user_id,
                 'password' => $password
             ));
@@ -1061,375 +1440,6 @@ function phorum_api_user_session_destroy($type)
 
     // Force Phorum to see the anonymous user from here on.
     phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
-}
-// }}}
-
-// {{{ Function: phorum_api_user_save()
-/**
- * Save data for Phorum users.
- *
- * This function can be used for both creating and updating Phorum users.
- * If no user_id is provided in the user data, a new user will be created.
- * If a user_id is provided, then the existing user will be updated or a 
- * new user with that user_id is created.
- *
- * @param array $user
- *     An array containing user data. This array should at least contain
- *     a field "user_id". This field can be NULL to create a new user
- *     with an automatically assigned user_id. It can also be set to a
- *     user_id to either update an existing user or to create a new user
- *     with the provided user_id.
- *
- * @param int $flags
- *     If the flag {@link PHORUM_FLAG_RAW_PASSWORD} is set, then the
- *     password fields ("password" and "password_temp") are considered to be
- *     MD5 encrypted already. So this can be used to feed Phorum existing MD5
- *     encrypted passwords.
- *
- * @param int
- *     The user_id of the user. For new users, the newly assigned user_id
- *     will be returned.
- */
-function phorum_api_user_save($user, $flags = 0)
-{
-    global $PHORUM;
-
-    include_once('./include/api/custom_profile_fields.php');
-
-    // $user must be an array.
-    if (!is_array($user)) trigger_error(
-        'phorum_api_user_save(): $user argument is not an array',
-        E_USER_ERROR
-    );
-
-    // We need at least the user_id field.
-    if (!array_key_exists('user_id', $user)) trigger_error(
-        'phorum_api_user_save(): missing field "user_id" in user data array',
-        E_USER_ERROR
-    );
-    if ($user['user_id'] !== NULL && !is_numeric($user['user_id'])) {
-        trigger_error(
-            'phorum_api_user_save(): field "user_id" not NULL or numerical',
-            E_USER_ERROR
-        );
-    }
-
-    // Check if we are handling an existing or new user.
-    $existing = NULL;
-    if ($user['user_id'] !== NULL) {
-        $existing = phorum_api_user_get($user['user_id'], TRUE);
-    }
-
-    // Create a user data array that is understood by the database layer.
-    // We start out with the existing record, if we have one.
-    $dbuser = $existing === NULL ? array() : $existing;
-
-    // Initialize storage for custom profile fields.
-    if (empty($dbuser['user_data'])) {
-        $dbuser['user_data'] = array();
-    }
-
-    // Now, we merge in the fields from the $user argument.
-    foreach ($user as $fld => $val)
-    {
-        // Make sure that a valid field name is used. We do a strict check
-        // on this (in the spirit of defensive programming).
-        $fldtype = NULL;
-        $custom  = NULL;
-        if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
-            $custom = phorum_api_custom_profile_field_byname($fld); 
-            if ($custom === NULL) {
-                trigger_error(
-                    'phorum_api_user_save(): Illegal field name used in ' .
-                    'user data: ' . htmlspecialchars($fld),
-                    E_USER_ERROR
-                );
-            }
-        } else {
-            $fldtype = $PHORUM['API']['user_fields'][$fld];
-        }
-
-        switch ($fldtype)
-        {
-            case "int":
-                $dbuser[$fld] = $val === NULL ? NULL : (int) $val;
-                break;
-
-            case "string":
-                $dbuser[$fld] = $val === NULL ? NULL : trim($val);
-                break;
-
-            case "bool":
-                $dbuser[$fld] = $val ? 1 : 0;
-                break;
-
-            case "array":
-                // TODO: maybe check for real arrays here?
-                $dbuser[$fld] = $val;
-                break;
-
-            // Handle custom profile fields. If $fldtype is NULL without
-            // handling a custom profile field, then it's a field that
-            // has to be fully ignored.
-            case NULL:
-                if ($custom === NULL) break;
-
-                // Arrays and NULL values are left untouched.
-                // Other values are truncated to their configured field length.
-                if ($val !== NULL && !is_array($val)) {
-                    $val = substr($val, 0, $custom['length']);
-                }
-                $dbuser['user_data'][$custom['id']] = $val;
-                unset($dbuser[$fld]);
-
-                break;
-
-            default:
-                trigger_error(
-                    'phorum_api_user_save(): Illegal field type used: ' .
-                    htmlspecialchars($fldtype),
-                    E_USER_ERROR
-                );
-                break;
-        }
-    }
-
-    // At this point, we should have a couple of mandatory fields available
-    // in our data. Without these fields, the user record is not sane
-    // enough to continue with.
-    // We really need a username, so we can always generate a display name.
-    if (!isset($dbuser['username']) || $dbuser['username'] == '') {
-        trigger_error(
-            'phorum_api_user_save(): the username field for a user record ' .
-            'cannot be empty',
-            E_USER_ERROR
-        );
-    }
-    // Phorum sends out mail messages on several occasions. So we need a
-    // mail address for the user.
-    if (!isset($dbuser['email']) || $dbuser['email'] == '') {
-        trigger_error(
-            'phorum_api_user_save(): the email field for a user record ' .
-            'cannot be empty',
-            E_USER_ERROR
-        );
-    }
-
-    // For new accounts only.
-    if (!$existing)
-    {
-        if (empty($dbuser['date_added']))
-            $dbuser['date_added'] = time();
-
-        if (empty($dbuser['date_last_active']))
-            $dbuser['date_last_active'] = time();
-    }
-
-    // Handle password encryption.
-    foreach (array('password', 'password_temp') as $fld)
-    { 
-        // Sometimes, this function is (accidentally) called with existing
-        // passwords in the data. Prevent duplicate encryption.
-        if ($existing  && strlen($existing[$fld]) == 32 &&
-            $existing[$fld] == $dbuser[$fld]) {
-            continue;
-        }
-
-        // If the password field is empty, we should never store the MD5 sum
-        // of an empty string as a safety precaution. Instead we store a
-        // string which will never work as a password. This could happen in
-        // case of bugs in the code or in case external user auth is used
-        // (in which case Phorum can have empty passwords, since the Phorum
-        // passwords are not used at all).
-        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL || $dbuser[$fld] == '') {
-            $dbuser[$fld] = "*NO PASSWORD SET*";
-            continue;
-        }
-        
-        // Only crypt the password using MD5, if the PHORUM_FLAG_RAW_PASSWORD
-        // flag is not set.
-        if (!($flags & PHORUM_FLAG_RAW_PASSWORD)) {
-            $dbuser[$fld] = md5($dbuser[$fld]);
-        }
-    }
-
-    // Determine the display name to use for the user. If the setting
-    // $PHORUM["custom_display_name"] is enabled (a "secret" setting which
-    // can not be changed through the admin settings, but only through
-    // modules that consciously set it), then Phorum expects that the display
-    // name is a HTML formatted display_name field, which is provided by
-    // 3rd party software. Otherwise, the username or real_name is used
-    // (depending on the $PHORUM["display_name_source"] Phorum setting).
-    if (empty($PHORUM["custom_display_name"])) {
-        $display_name = $dbuser['username'];
-        if ($PHORUM['display_name_source'] == 'real_name' &&
-            isset($dbuser['real_name']) &&
-            trim($dbuser['real_name']) != '') {
-            $display_name = $dbuser['real_name'];
-        }
-        $dbuser['display_name'] = $display_name;
-    }
-    // If the 3rd party software provided no or an empty display_name,
-    // then we save the day by using the username (just so users won't show up
-    // empty on screen, this should not happen at all in the first place).
-    // We HTML encode the username, because custom display names are supposed
-    // to be provided in escaped HTML format.
-    elseif (!isset($dbuser['display_name']) ||
-            trim($dbuser['display_name']) == '') {
-        $dbuser['display_name'] = htmlspecialchars($dbuser['username']);
-    }
-
-    // Add or update the user in the database.
-    if ($existing) { 
-        phorum_db_user_save($dbuser);
-    } else {
-        $dbuser['user_id'] = phorum_db_user_add($dbuser);
-    }
-    
-    // If the display name changed for the user, then we do need to run
-    // updates throughout the Phorum database to make references to this
-    // user to show up correctly.
-    if ($existing && $existing['display_name'] != $dbuser['display_name']) {
-       phorum_db_user_display_name_updates($dbuser);
-    }
-
-    // If user caching is enabled, we invalidate the cache for this user.
-    if (!empty($PHORUM['cache_users'])) {
-        phorum_cache_remove('user', $dbuser['user_id']);
-    }
-
-    // Are we handling the active Phorum user? Then refresh the user data.
-    if (isset($PHORUM["user"]) &&
-        $PHORUM["user"]["user_id"] == $dbuser["user_id"]) {
-        $PHORUM["user"] = phorum_api_user_get($user["user_id"], TRUE);
-    }
-
-    return $dbuser['user_id'];
-}
-// }}}
-
-// {{{ Function: phorum_api_user_get()
-/**
- * Retrieve data for Phorum users.
- *
- * @param mixed $user_id
- *     Either a single user_id or an array of user_ids.
- *
- * @param boolean $detailed
- *     If this parameter is TRUE, then the user's groups and permissions are
- *     included in the user data.
- *
- * @return mixed
- *     If the $user_id parameter is a single user_id, then either an array
- *     containing user data is returned or NULL if the user was not found.
- *     If the $user_id parameter is an array of user_ids, then an array
- *     of user data arrays is returned, indexed by the user_id.
- *     Users for user_ids that are not found are not included in the
- *     returned array.
- */
-function phorum_api_user_get($user_id, $detailed = FALSE)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    if (!is_array($user_id)) {
-        $user_ids = array($user_id);
-    } else {
-        $user_ids = $user_id;
-    }
-
-    // Prepare the return data array. For each requested user_id,
-    // a slot is prepared in this array.
-    $users = array();
-    foreach ($user_ids as $id) {
-        $users[$id] = NULL; 
-    }
-
-    // First, try to retrieve user data from the user cache, 
-    // if user caching is enabled.
-    if (!empty($PHORUM['cache_users']))
-    { 
-        $cached_users = phorum_cache_get('user',$user_ids);
-        if (is_array($cached_users))
-        {
-            foreach ($cached_users as $id => $user) {
-                $users[$id] = $user; 
-                unset($user_ids[$id]);
-            }
-
-            // We need to retrieve the data for some dynamic fields
-            // from the database.
-            $dynamic_data = phorum_db_user_get_fields(
-                array_keys($cached_users),
-                array('date_last_active','last_active_forum','posts')
-            );
-
-            // Store the results in the users array.
-            foreach ($dynamic_data as $id => $data) {
-                $users[$id] = array_merge($users[$id],$data);
-            }
-        }
-    }
-
-    // Retrieve user data for the users for which no data was
-    // retrieved from the cache.
-    if (count($user_ids))
-    {
-        $db_users = phorum_db_user_get($user_ids, $detailed);
-
-        foreach ($db_users as $id => $user)
-        {
-            // Merge the group and forum permissions into a final
-            // permission value per forum. Forum permissions that are
-            // assigned to a user directly override any group based
-            // permission.
-            if (!$user['admin']) {
-                if (!empty($user['group_permissions'])) {
-                    foreach ($user['group_permissions'] as $fid => $perm) {
-                        if (!isset($user['permissions'][$fid])) {
-                            $user['permissions'][$fid] = $perm;
-                        } else {
-                            $user['permissions'][$fid] |= $perm;
-                        }
-                    }
-                }
-                if (!empty($user['forum_permissions'])) {
-                    foreach ($user['forum_permissions'] as $fid => $perm) {
-                        $user['permissions'][$fid] = $perm;
-                    }
-                }
-            }
-
-            // If detailed information was requested, we store the data in
-            // the cache. For non-detailed information, we do not cache the
-            // data, because there is not much to gain there by caching.
-            if ($detailed && !empty($PHORUM['cache_users'])) {
-                phorum_cache_put('user', $id, $user);
-            }
-
-            // Store the results in the users array.
-            $users[$id] = $user;
-        }
-    }
-
-    // Remove the users for which we did not find data from the array.
-    foreach ($users as $id => $user) {
-        if ($user === NULL) {
-            unset($users[$id]);
-        }
-    }
-
-    // At this point, we allow modules to provide user data. Modules can
-    // update the users array any way they like.
-    if (isset($PHORUM['hooks']['user_get'])) {
-        $users = phorum_hook('user_get', $users, $detailed);
-    }
-
-    // Return the results.
-    if (is_array($user_id)) {
-        return $users;
-    } else {
-        return $users[$user_id] !== NULL ? $users[$user_id] : NULL;
-    }
 }
 // }}}
 

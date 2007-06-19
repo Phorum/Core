@@ -97,12 +97,14 @@ if ($ucount > 0) {
         $pass = "xxxxxxxx";
 
         $user = array(
+            "user_id"  => NULL,
             "username" => $name,
             "password" => $pass,
-            "email"    => $email
+            "email"    => $email,
+            "active"   => PHORUM_USER_ACTIVE
         );
 
-        phorum_user_add( $user );
+        phorum_api_user_save($user);
         print ".";
     }
     print "\n";

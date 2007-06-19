@@ -30,13 +30,14 @@ $size = strlen($count_total);
 $count = 0;
 while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
 {
-    // To make sure that the display name has got the right value.
-    phorum_user_save(array("user_id" => $user["user_id"]));
+    // We save an empty user, to make sure that the display name in the
+    // database is up-to-date. This will already run needed updates in
+    // case the display name changed ...
+    phorum_api_user_save(array("user_id" => $user["user_id"]));
 
-    // Load the user from the db for a fresh display name value.
-    $user = phorum_db_user_get($user["user_id"]);
-
-    // To run all updates needed for propagating this user's display name. 
+    // ... but still we run the name updates here, so inconsitencies 
+    // are flattened out.
+    $user = phorum_api_user_get($user["user_id"]);
     phorum_db_user_display_name_updates(array(
         "user_id"      => $user["user_id"],
         "display_name" => $user["display_name"]

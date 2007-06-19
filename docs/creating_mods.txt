@@ -549,7 +549,7 @@ Table of contents:
    this is the preferred way.
 
    For storing data in the custom profile field, you can make use of the
-   phorum_user_save() function. This function needs the user_id of the
+   phorum_api_user_save() function. This function needs the user_id of the
    user and all fields that need to be updated. Below are two pieces of
    code which show how our example module might store data for a user
    (asuming $user_id is the id of the user that must be changed).
@@ -561,7 +561,7 @@ Table of contents:
           "mod_foo_foodata" => "Some user data",
           "mod_foo_bardata" => "Some more user data"
       );
-      phorum_user_save($userdata);
+      phorum_api_user_save($userdata);
 
    When using a single custom field "mod_foo" for this module:
 
@@ -572,7 +572,7 @@ Table of contents:
               "bardata" => "Some more user data"
           )
       );
-      phorum_user_save($userdata);
+      phorum_api_user_save($userdata);
 
 
  2.6 Creating custom URLs

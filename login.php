@@ -103,7 +103,7 @@ if (count($_POST) > 0) {
                 // Generate and store a new email confirmation code.
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = substr(md5(microtime()), 0, 8);
-                phorum_user_save( $tmp_user );
+                phorum_api_user_save($tmp_user);
 
                 // Mail the new confirmation code to the user.
                 $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
@@ -125,7 +125,7 @@ if (count($_POST) > 0) {
                 $newpass = phorum_gen_password();
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = $newpass;
-                phorum_user_save($tmp_user);
+                phorum_api_user_save($tmp_user);
 
                 // Mail the new password.
                 $user = phorum_api_user_get($uid);

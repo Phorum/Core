@@ -63,7 +63,7 @@ if (isset($PHORUM["args"]["approve"])) {
 
             // Save the new user active status.
             $moduser["user_id"] = $user_id;
-            phorum_user_save($moduser);
+            phorum_api_user_save($moduser);
         }
 
     // Validation code incorrect.
@@ -172,9 +172,14 @@ if (count($_POST)) {
             $error = $userdata['error'];
             unset($userdata['error']);
         }
-        // Try to add the user to the database.
-        elseif ($user_id = phorum_user_add($userdata)) {
 
+        if (empty($error)) {
+            // Add the user to the database.
+            $userdata["user_id"] = NULL;
+            $user_id = phorum_api_user_save($userdata);
+        }
+        if (empty($error) && $user_id)
+        {
             // The user was added. Determine what message to show.
             if ($PHORUM["registration_control"] == PHORUM_REGISTER_INSTANT_ACCESS) {
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegThanks"];

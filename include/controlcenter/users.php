@@ -60,7 +60,7 @@ if(!empty($_POST["user_ids"])){
 
         // only save it if something was changed 
         if(isset($userdata['active'])) {
-        	phorum_user_save($userdata);
+            phorum_api_user_save($userdata);
         }
     }
 }
