@@ -103,8 +103,9 @@ function phorum_api_custom_profile_field_configure($field)
 {
     global $PHORUM;
 
-    // The available fields and their defaults.
-    // NULL indicates a mandatory field.
+    // The available fields and their defaults. NULL indicates a mandatory
+    // field. The field "id" can be NULL though, when creating a new
+    // custom profile field.
     $fields = array(
         'id'            => NULL,
         'name'          => NULL,
@@ -336,6 +337,67 @@ function phorum_api_custom_profile_field_restore($id)
     );
 
     return TRUE;
+}
+// }}}
+
+// {{{ Function: phorum_api_custom_profile_field_checkconfig()
+/**
+ * Check and fix the custom profile field configuration.
+ *
+ * This function has mainly been implemented for fixing problems that
+ * are introduced by modules that create custom profile fields on their
+ * own. Besides that, it was also written to upgrade the profile field
+ * configuration, because Phorum 5.2 introduced some new fields in
+ * the config.
+ */
+function phorum_api_custom_profile_field_checkconfig()
+{
+    global $PHORUM;
+
+    // Used to find the real maximum used field id.
+    $max_id = isset($PHORUM['PROFILE_FIELDS']['num_fields'])
+            ? (int) $PHORUM['PROFILE_FIELDS']['num_fields'] : 0;
+
+    foreach ($PHORUM['PROFILE_FIELDS'] as $id => $config)
+    {
+        // Keep track of the highest id that we see.
+        if ($id > $max_id) $max_id = $id;
+
+        // The least that should be in the config, is the name of the
+        // field. If there is no name, then we don't bother at all.
+        if (!isset($config['name']) || $config['name'] == '') continue;
+
+        // 5.2 includes the id in the field configuration. 
+        if (empty($config['id'])) {
+            $PHORUM['PROFILE_FIELDS'][$id]['id'] = $id;
+        }
+
+        // Some default values.
+        if (!array_key_exists('length', $config)) {
+            $PHORUM['PROFILE_FIELDS'][$id]['length'] = 255;
+        }
+        if (!array_key_exists('html_disabled', $config)) {
+            $PHORUM['PROFILE_FIELDS'][$id]['html_disabled'] = TRUE;
+        }
+        if (!array_key_exists('show_in_admin', $config)) {
+            $PHORUM['PROFILE_FIELDS'][$id]['show_in_admin'] = FALSE;
+        }
+
+        // Some typecasting won't hurt.
+        settype($PHORUM['PROFILE_FIELDS'][$id]['id'],            'int');
+        settype($PHORUM['PROFILE_FIELDS'][$id]['name'],          'string');
+        settype($PHORUM['PROFILE_FIELDS'][$id]['length'],        'int');
+        settype($PHORUM['PROFILE_FIELDS'][$id]['html_disabled'], 'bool');
+        settype($PHORUM['PROFILE_FIELDS'][$id]['show_in_admin'], 'bool');
+    }
+
+    // Set the maximum field id that we've seen.
+    $PHORUM['PROFILE_FIELDS']['num_fields'] = $max_id;
+
+    // Save the custom profile field settings to the database.
+    phorum_db_update_settings(array(
+        'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
+    ));
 }
 // }}}
 
