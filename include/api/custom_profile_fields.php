@@ -251,7 +251,7 @@ function phorum_api_custom_profile_field_configure($field)
  *     {@link phorum_api_custom_profile_field_delete()} function, then the
  *     field "deleted" will be available and set to a true value.
  */
-function phorum_api_custom_profile_field_byname($name, $flags)
+function phorum_api_custom_profile_field_byname($name)
 {
     foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'] as $id => $profile_field) {
         if ($id !== 'num_fields' && $profile_field['name'] == $name)
