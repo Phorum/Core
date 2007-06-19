@@ -40,15 +40,7 @@ if (!defined('PHORUM')) return;
 
 // Reserved custom profile field names.
 $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
-    'panel', 'name', 'value', 'error',
-    'user_id', 'username', 'real_name', 'display_name', 'profile_link',
-    'password', 'password_temp', 'sessid_lt', 'sessid_st',
-    'sessid_st_timeout', 'email', 'email_temp', 'hide_email', 'active',
-    'signature', 'threaded_list', 'posts', 'admin', 'threaded_read',
-    'date_added', 'date_last_active', 'last_active_forum', 'hide_activity',
-    'show_signature', 'email_notify', 'pm_email_notify', 'tz_offset',
-    'is_dst', 'user_language', 'user_template', 'moderator_data',
-    'moderation_email', 'settings_data',
+    'panel', 'name', 'value', 'error'
 );
 
 /**
@@ -157,7 +149,10 @@ function phorum_api_custom_profile_field_configure($field)
     }
 
     // Check if the profile field name isn't an internally used name.
-    if (in_array($field['name'], $PHORUM['API']['cpf_reserved'])) {
+    // This is either one of the reserved names or a field that is
+    // already used as a user data field.
+    if (in_array($field['name'], $PHORUM['API']['cpf_reserved']) ||
+        isset($GLOBALS['PHORUM']['API']['user_fields'][$field['name']])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
             "The name \"{$field['name']}\" is reserved for internal use " .

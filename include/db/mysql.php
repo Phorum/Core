@@ -3229,6 +3229,8 @@ function phorum_db_user_save($userdata)
         // Insert new custom profile fields.
         foreach ($custom_profile_data as $key => $val)
         {
+            settype($key, "int");
+
             // Arrays need to be serialized. The serialized data is prefixed
             // with "P_SER:" as a marker for serialization.
             if (is_array($val)) {

@@ -40,14 +40,14 @@ define( "PHORUM_EXTENSION_VERSION", "20070522" );
 // all other constants in ./include/constants.php
 include_once( "./include/constants.php" );
 
+// setup the PHORUM var
+global $PHORUM;
+$PHORUM = array();
+
 // API code
 include_once("./include/users.php"); // TODO API remove if phased out
 include_once("./include/api/base.php");
 include_once("./include/api/user.php");
-
-// setup the PHORUM var
-global $PHORUM;
-$PHORUM = array();
 
 // the TMP member holds template {DEFINE ..} definitions and temporary
 // arrays and such in template code
