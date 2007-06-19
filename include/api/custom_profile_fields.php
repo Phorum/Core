@@ -245,15 +245,22 @@ function phorum_api_custom_profile_field_configure($field)
  *     If no profile field could be found for the name, then NULL will
  *     be returned. Otherwise the field configuration will be returned.
  *     The field configuration is an array, containing the fields:
- *     "id", "name", "length" and "html_disabled". If the field was marked as
- *     deleted by the {@link phorum_api_custom_profile_field_delete()}
- *     function, then the field "deleted" will be available and set to a
- *     true value.
+ *     "id", "name", "length" and "html_disabled".
+ *
+ *     If the field was marked as deleted by the
+ *     {@link phorum_api_custom_profile_field_delete()} function, then the
+ *     field "deleted" will be available and set to a true value.
  */
-function phorum_api_custom_profile_field_byname($name)
+function phorum_api_custom_profile_field_byname($name, $flags)
 {
     foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'] as $id => $profile_field) {
-        if ($id !== 'num_fields' && $profile_field['name'] == $name) {
+        if ($id !== 'num_fields' && $profile_field['name'] == $name)
+        {
+            // Fix custom profile fields that were created the 5.1 way
+            // (most probably by modules that handle configuration of these
+            // fields on their own).
+            if (empty($profile_field['id'])) $profile_field['id'] = $id;
+
             return $profile_field;
         }
     }
