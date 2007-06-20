@@ -111,9 +111,9 @@ if (($mode == "post" || $mode == "reply" || $mode == "quote") && $PHORUM["DATA"]
     if (isset($PHORUM["user"]["email_notify"]) &&
         $PHORUM["user"]["email_notify"] > 0) {
 
-        if($PHORUM["user"]["email_notify"] == PHORUM_SUBSCRIPTION_MESSAGE) {
+        if($PHORUM["user"]["email_notify"] == 2) {
             $message["subscription"] = "message";
-        } elseif($PHORUM["user"]["email_notify"] == PHORUM_SUBSCRIPTION_BOOKMARK) {
+        } elseif($PHORUM["user"]["email_notify"] == 1) {
             $message["subscription"] = "bookmark";
         } else {
             $message["subscription"] = "";

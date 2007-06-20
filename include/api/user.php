@@ -50,20 +50,20 @@ if (!defined('PHORUM')) return;
 
 // {{{ Constant and variable definitions
 /**
- * Used for identifying long term sessions. The value is used as 
+ * Used for identifying long term sessions. The value is used as
  * the name for the session cookie for long term sessions.
  */
 define( 'PHORUM_SESSION_LONG_TERM' ,   'phorum_session_v5' );
 
 /**
- * Used for identifying short term sessions. The value is used as 
+ * Used for identifying short term sessions. The value is used as
  * the name for the session cookie for short term sessions
  * (this is used by the tighter authentication scheme).
  */
 define( 'PHORUM_SESSION_SHORT_TERM',   'phorum_session_st' );
 
 /**
- * Used for identifying admin sessions. The value is used as 
+ * Used for identifying admin sessions. The value is used as
  * the name for the session cookie for admin sessions.
  */
 define( 'PHORUM_SESSION_ADMIN',        'phorum_admin_session' );
@@ -87,7 +87,7 @@ define('PHORUM_ADMIN_SESSION',         2);
  */
 define('PHORUM_FLAG_SESSION_ST',       1);
 
-/** 
+/**
  * Function call flag, which tells {@link phorum_api_user_save()} that the
  * password field should be stored as is. This can be used to feed Phorum
  * MD5 encrypted passwords. Normally, the password field would be MD5
@@ -118,7 +118,7 @@ define('PHORUM_SESSID_RESET_ALL',      2);
 $GLOBALS['PHORUM']['API']['user_fields'] = array
 (
   // Fields that are really in the Phorum users table.
-  'user_id'                 => 'int', 
+  'user_id'                 => 'int',
   'username'                => 'string',
   'real_name'               => 'string',
   'display_name'            => 'string',
@@ -141,7 +141,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
   'threaded_read'           => 'bool',
   'hide_activity'           => 'bool',
   'show_signature'          => 'bool',
-  'email_notify'            => 'bool',
+  'email_notify'            => 'int',
   'pm_email_notify'         => 'bool',
   'tz_offset'               => 'int',
   'is_dst'                  => 'bool',
@@ -155,7 +155,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
    // data, which is not stored in a standard user table field.
    'forum_permissions'      => 'array',
 
-   // Fields that we do not use for saving data (yet?), but which might 
+   // Fields that we do not use for saving data (yet?), but which might
    // be in the user data (e.g. if we store a user data array like it was
    // returned by phorum_api_user_get()).
    'groups'                 => NULL,
@@ -171,7 +171,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
  *
  * This function can be used for both creating and updating Phorum users.
  * If no user_id is provided in the user data, a new user will be created.
- * If a user_id is provided, then the existing user will be updated or a 
+ * If a user_id is provided, then the existing user will be updated or a
  * new user with that user_id is created.
  *
  * @param array $user
@@ -241,7 +241,7 @@ function phorum_api_user_save($user, $flags = 0)
         $fldtype = NULL;
         $custom  = NULL;
         if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
-            $custom = phorum_api_custom_profile_field_byname($fld); 
+            $custom = phorum_api_custom_profile_field_byname($fld);
             if ($custom === NULL) {
                 trigger_error(
                     'phorum_api_user_save(): Illegal field name used in ' .
@@ -334,7 +334,7 @@ function phorum_api_user_save($user, $flags = 0)
 
     // Handle password encryption.
     foreach (array('password', 'password_temp') as $fld)
-    { 
+    {
         // Sometimes, this function is (accidentally) called with existing
         // passwords in the data. Prevent duplicate encryption.
         if ($existing  && strlen($existing[$fld]) == 32 &&
@@ -352,7 +352,7 @@ function phorum_api_user_save($user, $flags = 0)
             $dbuser[$fld] = "*NO PASSWORD SET*";
             continue;
         }
-        
+
         // Only crypt the password using MD5, if the PHORUM_FLAG_RAW_PASSWORD
         // flag is not set.
         if (!($flags & PHORUM_FLAG_RAW_PASSWORD)) {
@@ -386,7 +386,7 @@ function phorum_api_user_save($user, $flags = 0)
         $dbuser['display_name'] = htmlspecialchars($dbuser['username']);
     }
 
-    // At this point, we allow modules to handle the data that will be 
+    // At this point, we allow modules to handle the data that will be
     // saved for the user. This can for example be used to update data
     // in an external system or even to store a part of the data fully
     // external (in combination with the user_get hook).
@@ -395,12 +395,12 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // Add or update the user in the database.
-    if ($existing) { 
+    if ($existing) {
         phorum_db_user_save($dbuser);
     } else {
         $dbuser['user_id'] = phorum_db_user_add($dbuser);
     }
-    
+
     // If the display name changed for the user, then we do need to run
     // updates throughout the Phorum database to make references to this
     // user to show up correctly.
@@ -456,18 +456,18 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
     // a slot is prepared in this array.
     $users = array();
     foreach ($user_ids as $id) {
-        $users[$id] = NULL; 
+        $users[$id] = NULL;
     }
 
-    // First, try to retrieve user data from the user cache, 
+    // First, try to retrieve user data from the user cache,
     // if user caching is enabled.
     if (!empty($PHORUM['cache_users']))
-    { 
+    {
         $cached_users = phorum_cache_get('user', $user_ids);
         if (is_array($cached_users))
         {
             foreach ($cached_users as $id => $user) {
-                $users[$id] = $user; 
+                $users[$id] = $user;
                 unset($user_ids[$id]);
             }
 
@@ -1186,7 +1186,7 @@ function phorum_api_user_session_restore($type)
         PHORUM_SESSION_ADMIN      => NULL
     );
     if (isset($PHORUM['hooks']['user_session_restore'])) {
-        $hook_sessions = phorum_hook('user_session_restore', $hook_sessions); 
+        $hook_sessions = phorum_hook('user_session_restore', $hook_sessions);
     }
 
     $real_cookie = FALSE;
@@ -1201,7 +1201,7 @@ function phorum_api_user_session_restore($type)
 
             // Continue with the next cookie, if a module specified the
             // session cookie as invalid.
-            if ($hook_sessions[$cookie] === FALSE) continue; 
+            if ($hook_sessions[$cookie] === FALSE) continue;
 
             // Pass on the user_id that was set by the module.
             // We add a fake a session id to the user_id here,
@@ -1223,7 +1223,7 @@ function phorum_api_user_session_restore($type)
 
             $value = $_COOKIE[$cookie];
             $real_cookie = TRUE;
-        } 
+        }
 
         // Check for URI based authentication.
         elseif ($PHORUM['use_cookies'] < PHORUM_REQUIRE_COOKIES &&
@@ -1300,7 +1300,7 @@ function phorum_api_user_session_restore($type)
 
     // No real cookie found for a long term session? Then we will ignore
     // short term sessions (short term sessions are not implemented for URI
-    // authentication) and update the "use_cookies" setting accordingly. 
+    // authentication) and update the "use_cookies" setting accordingly.
     if ($check_session[PHORUM_SESSION_LONG_TERM] == 2 && ! $real_cookie) {
         $check_session[PHORUM_SESSION_SHORT_TERM] = 0;
         $GLOBALS['PHORUM']['use_cookies'] = PHORUM_NO_COOKIES;
