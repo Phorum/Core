@@ -97,8 +97,9 @@
                 <dt>{LANG->EnableNotifyDefault}:&nbsp;</dt>
                 <dd>
                     <select name="email_notify">
-                      <option value="0"{IF PROFILE->email_notify 0} selected="selected" {/IF}>{LANG->No}</option>
-                      <option value="1"{IF PROFILE->email_notify 1} selected="selected" {/IF}>{LANG->Yes}</option>
+                      <option value="0"{IF PROFILE->email_notify 0} selected="selected" {/IF}>{LANG->None}</option>
+                      <option value="1"{IF PROFILE->email_notify 1} selected="selected" {/IF}>{LANG->FollowThread}</option>
+                      <option value="2"{IF PROFILE->email_notify 2} selected="selected" {/IF}>{LANG->FollowWithEmailCC}</option>
                     </select>
                 </dd>
 

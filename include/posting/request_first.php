@@ -68,10 +68,10 @@ if ($mode == "reply" || $mode == "quote")
     {
         // Lookup the name that we have to use for the author, if the
         // author is a registered user. The author field could be used
-        // directly, but it can contain HTML formatting code, in case 
+        // directly, but it can contain HTML formatting code, in case
         // some module uses the custom display name functionality.
         if (!empty($dbmessage["user_id"])) {
-            $author = phorum_user_get_display_name($dbmessage["user_id"]); 
+            $author = phorum_user_get_display_name($dbmessage["user_id"]);
         }
 
         $quoted = 0;
@@ -107,9 +107,19 @@ if (($mode == "post" || $mode == "reply" || $mode == "quote") && $PHORUM["DATA"]
         $message["show_signature"] = 1;
     }
 
+    $message['subscription'] = "";
     if (isset($PHORUM["user"]["email_notify"]) &&
-        $PHORUM["user"]["email_notify"]) {
-        $message["email_notify"] = 1;
+        $PHORUM["user"]["email_notify"] > 0) {
+
+        if($PHORUM["user"]["email_notify"] == PHORUM_SUBSCRIPTION_MESSAGE) {
+            $message["subscription"] = "message";
+        } elseif($PHORUM["user"]["email_notify"] == PHORUM_SUBSCRIPTION_BOOKMARK) {
+            $message["subscription"] = "bookmark";
+        } else {
+            $message["subscription"] = "";
+        }
+
+
     }
 }
 
