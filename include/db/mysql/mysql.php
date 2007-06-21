@@ -66,11 +66,6 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 {
     static $conn;
 
-    // Return a quoted parameter.
-    if ($return === DB_RETURN_QUOTED) {
-        return mysql_escape_string($sql);
-    }
-
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
     {
@@ -99,6 +94,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         return $conn;
     }
 
+    // Return a quoted parameter.
+    if ($return === DB_RETURN_QUOTED) {
+        return mysql_real_escape_string($sql, $conn);
+    }
+
     // By now, we really need a SQL query.
     if ($sql === NULL) trigger_error(
         'Internal error: phorum_db_interact(): ' .
@@ -111,7 +111,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     $res = $return === DB_RETURN_ASSOCS ||
            $return === DB_RETURN_ROWS
          ? mysql_unbuffered_query($sql, $conn)
-         : mysql_query($sql);
+         : mysql_query($sql, $conn);
 
     if ($res === FALSE)
     {
