@@ -310,7 +310,7 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
 
     $frm->addbreak("Inherit Forum Settings");
 
-    $forum_list=phorum_get_forum_info(true);
+    $forum_list=phorum_get_forum_info(1);
 
     $forum_list["0"] ="Use Default Forum Settings";
     $forum_list["NULL"] ="None - I want to customize this forum's settings";
