@@ -173,50 +173,52 @@ if (count($_POST)) {
             unset($userdata['error']);
         }
 
-        if (empty($error)) {
+        if (empty($error))
+        {
             // Add the user to the database.
             $userdata["user_id"] = NULL;
             $user_id = phorum_api_user_save($userdata);
-        }
-        if (empty($error) && $user_id)
-        {
-            // The user was added. Determine what message to show.
-            if ($PHORUM["registration_control"] == PHORUM_REGISTER_INSTANT_ACCESS) {
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegThanks"];
-            } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL ||
-                     $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH) {
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
-            } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_MODERATOR) {
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
-            }
 
-            // Send a message to the new user in case email verification is required.
-            if ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH ||
-                $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL) {
-                $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
-                // make the link an anchor tag for AOL users
-                if (preg_match("!aol\.com$!i", $userdata["email"])) {
-                    $verify_url = "<a href=\"$verify_url\">$verify_url</a>";
+            if ($user_id)
+            {
+                // The user was added. Determine what message to show.
+                if ($PHORUM["registration_control"] == PHORUM_REGISTER_INSTANT_ACCESS) {
+                    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegThanks"];
+                } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL ||
+                         $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH) {
+                    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
+                } elseif($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_MODERATOR) {
+                    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
                 }
-                $maildata = array();
-                $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
-                $maildata["mailmessage"] = wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
-                phorum_email_user(array($userdata["email"]), $maildata);
+
+                // Send a message to the new user in case email verification is required.
+                if ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH ||
+                    $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL) {
+                    $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
+                    // make the link an anchor tag for AOL users
+                    if (preg_match("!aol\.com$!i", $userdata["email"])) {
+                        $verify_url = "<a href=\"$verify_url\">$verify_url</a>";
+                    }
+                    $maildata = array();
+                    $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
+                    $maildata["mailmessage"] = wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
+                    phorum_email_user(array($userdata["email"]), $maildata);
+                }
+
+                $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
+                $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
+
+                // Run a hook, so module writers can run tasks after registering.
+                if (isset($PHORUM["hooks"]["after_register"]))
+                    phorum_hook("after_register",$userdata);
+
+                phorum_output("message");
+                return;
+
+            // Adding the user to the database failed.
+            } else {
+                $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
             }
-
-            $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
-            $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
-
-            // Run a hook, so module writers can run tasks after registering.
-            if (isset($PHORUM["hooks"]["after_register"]))
-                phorum_hook("after_register",$userdata);
-
-            phorum_output("message");
-            return;
-
-        // Adding the user to the database failed.
-        } else {
-            $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
         }
     }
 
