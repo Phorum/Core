@@ -71,14 +71,22 @@ function phorum_email_user($addresses, $data)
     	$data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
     }
     
+    // Allow modules to pre-process the mail message.
     if (isset($PHORUM["hooks"]["email_user_start"]))
         list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
 
+    // Clear some variables that meant for use by the email_user_start hook.
+    unset($data['mailmessagetpl']);
+    unset($data['mailsubjecttpl']);
+    unset($data['language']);
+
+    // Extract message body and subject.
     $mailmessage = $data['mailmessage'];
     unset($data['mailmessage']);
     $mailsubject = $data['mailsubject'];
     unset($data['mailsubject']);
 
+    // Replace template variables.
     if(is_array($data) && count($data)) {
         foreach(array_keys($data) as $key){
             if ($data[$key] === NULL || is_array($data[$key])) continue;
@@ -90,6 +98,41 @@ function phorum_email_user($addresses, $data)
     $num_addresses = count($addresses);
     $from_address = $data['from_address'];
 
+    // Compose an RFC compatible Message-ID header.
+    if(isset($data["msgid"]))
+    {
+        # Try to find a useful hostname to use in the Message-ID.
+        $host = "";
+        if (isset($_SERVER["HTTP_HOST"])) {
+            $host = $_SERVER["HTTP_HOST"];
+        } else if (function_exists("posix_uname")) {
+            $sysinfo = @posix_uname();
+            if (!empty($sysinfo["nodename"])) {
+                $host .= $sysinfo["nodename"];
+            }
+            if (!empty($sysinfo["domainname"])) {
+                $host .= $sysinfo["domainname"];
+            }
+        } else if (function_exists("php_uname")) {
+            $host = @php_uname("n");
+        } else if (($envhost = getenv("HOSTNAME")) !== false) {
+            $host = $envhost; 
+        }
+        if (empty($host)) {
+            $host = "webserver";
+        }
+
+        $messageid = "<{$data['msgid']}@$host>";
+        $messageid_header="\nMessage-ID: <$messageid>";
+    } else {
+        $messageid = "";
+        $messageid_header="";
+    }
+
+    // Allow modules to send the mail message. A module can either
+    // remove the recipients for which they did send a mail from the 
+    // addresses list or return 0 (zero) if the mail was sent
+    // to all recipients.
     $send_messages = 1;
     if (isset($PHORUM["hooks"]["send_mail"]))
     {
@@ -98,14 +141,15 @@ function phorum_email_user($addresses, $data)
             'from'       => $from_address,
             'subject'    => $mailsubject,
             'body'       => $mailmessage,
-            'bcc'        => $PHORUM['use_bcc']
+            'bcc'        => $PHORUM['use_bcc'],
+            'messageid'  => $messageid
         );
 
         $send_messages = phorum_hook("send_mail", $hook_data);
     }
 
-    if(isset($data["msgid"])){
-
+    if(isset($data["msgid"]))
+    {
         # Try to find a useful hostname to use in the Message-ID.
         $host = "";
         if (isset($_SERVER["HTTP_HOST"])) {
@@ -152,12 +196,17 @@ function phorum_email_user($addresses, $data)
 function phorum_email_pm_notice($message, $langusers)
 {
     $mail_data = array(
-        "pm_message_id" => $message["pm_message_id"],
-        "author"        => $message["from_username"],
-        "subject"       => $message["subject"],
-        "full_body"     => $message["message"],
-        "plain_body"    => wordwrap(phorum_strip_body($message["message"]),72),
-        "read_url"      => phorum_get_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
+        // Template variables.
+        "pm_message_id"  => $message["pm_message_id"],
+        "author"         => $message["from_username"],
+        "subject"        => $message["subject"],
+        "full_body"      => $message["message"],
+        "plain_body"     => wordwrap(phorum_strip_body($message["message"]),72),
+        "read_url"       => phorum_get_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
+
+        // For email_user_start.
+        "mailmessagetpl" => 'PMNotifyMessage',
+        "mailsubjecttpl" => 'PMNotifySubject'
     );
 
     if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
@@ -170,8 +219,10 @@ function phorum_email_pm_notice($message, $langusers)
         $PHORUM = $GLOBALS["PHORUM"];
 
         if ( file_exists( "./include/lang/$language.php" ) ) {
+            $mail_data['language'] = $language; 
             include( "./include/lang/$language.php" );
         } else {
+            $mail_data['language'] = $PHORUM['language'];
             include("./include/lang/{$PHORUM['language']}.php");
         }
 
@@ -202,6 +253,7 @@ function phorum_email_notice($message)
 
     if (count($mail_users_full)) {
         $mail_data = array(
+            // Template variables.
             "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
@@ -213,7 +265,11 @@ function phorum_email_notice($message)
             "remove_url"  => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
             "noemail_url" => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
             "followed_threads_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
-            "msgid"       => $message["msgid"]
+            "msgid"       => $message["msgid"],
+
+            // For email_user_start.
+            "mailmessagetpl" => 'NewReplyMessage',
+            "mailsubjecttpl" => 'NewReplySubject'
         );
         if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
             // strip any auth info from the read url
@@ -225,8 +281,10 @@ function phorum_email_notice($message)
         // go through the user-languages and send mail with their set lang
         foreach($mail_users_full as $language => $mail_users) {
             if ( file_exists( "./include/lang/$language.php" ) ) {
+                $mail_data['language'] = $language;
                 include( "./include/lang/$language.php" );
             } else {
+                $mail_data['language'] = $PHORUM['language'];
                 include("./include/lang/{$PHORUM['language']}.php");
             }
             $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['NewReplyMessage'];
@@ -246,13 +304,20 @@ function phorum_email_moderators($message)
     if (count($mail_users)) {
         include_once("./include/format_functions.php");
         if($message["status"] > 0) { // just notification of a new message
-            $mailtext = $PHORUM["DATA"]["LANG"]['NewUnModeratedMessage'];
+            $mailsubjecttpl = 'NewUnModeratedSubject';
+            $mailmessagetpl = 'NewUnModeratedMessage';
+
+            // Not a real language string. For consistency, we create the 
+            // fake language string on the fly here.
+            $PHORUM["DATA"]["LANG"]['NewUnModeratedSubject'] =
+                $PHORUM["DATA"]["LANG"]['NewModeratedSubject'];
+
         } else { // posts needing approval
-            $mailtext = $PHORUM["DATA"]["LANG"]['NewModeratedMessage'];
+            $mailsubjecttpl = 'NewModeratedSubject';
+            $mailmessagetpl = 'NewModeratedMessage';
         }
         $mail_data = array(
-            "mailmessage" => $mailtext,
-            "mailsubject" => $PHORUM["DATA"]["LANG"]['NewModeratedSubject'],
+            // Template variables.
             "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
@@ -261,7 +326,14 @@ function phorum_email_moderators($message)
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),
             "approve_url" => phorum_get_url(PHORUM_PREPOST_URL),
-            "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id'])
+            "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
+            "mailmessage" => $PHORUM["DATA"]["LANG"][$mailmessagetpl],
+            "mailsubject" => $PHORUM["DATA"]["LANG"][$mailsubjecttpl],
+
+            // For email_user_start.
+            "mailmessagetpl" => $mailmessagetpl,
+            "mailsubjecttpl" => $mailsubjecttpl,
+            "language"    => $PHORUM['language'],
         );
         if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
             // strip any auth info from the read url
