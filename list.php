@@ -229,6 +229,8 @@ if($rows == null) {
             // recognizing moved threads
             if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
                 $rows[$key]['moved']=1;
+            } else {
+                $rows[$key]['moved']=0;
             }
         }
         // don't move this up.  We want it to be conditional.
@@ -372,7 +374,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         // we only show the information for the thread starter. But we have
         // to go through all the messages in the thread to see if any of
         // them is new.
-        if (!$row['moved'] && (!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
+        if (empty($row['moved']) && (!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
             foreach ($row['meta']['message_ids'] as $cur_id) {
                 if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id']) {
                     $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
@@ -385,7 +387,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         // we only have to look at the message itself to decide whether
         // it's new or not.
         else {
-            if (!$row['moved'] && !isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
+            if (empty($row['moved']) && !isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
                 $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
             }
 
