@@ -384,7 +384,7 @@ function phorum_user_check_login( $username, $password )
         $user_id = $temp_user["user_id"];
     }
 
-    // If no module handled the authentication, then let Phorum handle it.  
+    // If no module handled the authentication, then let Phorum handle it.
     if( $user_id === NULL )
     {
         $user_id = phorum_db_user_check_pass( $username, md5( $password ) );
@@ -526,7 +526,7 @@ function phorum_user_prepare_data( $new_user, $old_user, $use_raw_password = fal
                 // If the new password matches the MD5 encrypted password,
                 // then the old password was sent along with the user data
                 // in phorum_user_save(). Allthough this is not the way in
-                // which it should be (the password fields should only 
+                // which it should be (the password fields should only
                 // contain new clear text passwords), we prevent updates here.
                 else if (isset($old_user[$key]) && $old_user[$key] == $new_user[$key]) {
                     $user[$key] = $val;
@@ -788,17 +788,19 @@ function phorum_user_get_moderator_groups()
 {
     $PHORUM=$GLOBALS["PHORUM"];
     $groups = array();
-    $fullgrouplist = phorum_db_get_groups();
 
     // if its an admin, return all groups as a moderator
     if ($PHORUM["user"]["admin"]){
+        $fullgrouplist = phorum_db_get_groups();
         // the permission here is for a forum, we don't care about that
         foreach ($fullgrouplist as $groupid => $groupperm){
             $groups[$groupid] = $fullgrouplist[$groupid]["name"];
         }
-    }
-    else {
+    } else {
         $grouplist = phorum_user_get_groups($PHORUM["user"]["user_id"]);
+
+        $fullgrouplist = phorum_db_get_groups(array_keys($grouplist));
+
         foreach ($grouplist as $groupid => $perm){
             if ($perm == PHORUM_USER_GROUP_MODERATOR){
                 $groups[$groupid] = $fullgrouplist[$groupid]["name"];

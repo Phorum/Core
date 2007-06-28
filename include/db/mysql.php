@@ -1696,10 +1696,20 @@ function phorum_db_get_groups($group_id=0)
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_mysql_connect();
 
-    settype($group_id, "int");
+    phorum_db_sanitize_mixed($group_id,"int");
 
-    $sql="select * from {$PHORUM['groups_table']}";
-    if($group_id!=0) $sql.=" where group_id=$group_id";
+
+    if(is_array($group_id)) {
+        $group_str=implode(',',$group_id);
+        $where_str=" where group_id IN($group_str)";
+    } elseif($group_id!=0) {
+        $where_str=" where group_id=$group_id";
+    } else {
+        $where_str="";
+    }
+
+    $sql="select * from {$PHORUM['groups_table']}".$where_str;
+
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
@@ -1711,8 +1721,7 @@ function phorum_db_get_groups($group_id=0)
         $groups[$rec["group_id"]]["permissions"]=array();
     }
 
-    $sql="select * from {$PHORUM['forum_group_xref_table']}";
-    if($group_id!=0) $sql.=" where group_id=$group_id";
+    $sql="select * from {$PHORUM['forum_group_xref_table']}".$where_str;
 
     $res = mysql_query($sql, $conn);
     if ($err = mysql_error($conn)) phorum_db_mysql_error("$err: $sql");
