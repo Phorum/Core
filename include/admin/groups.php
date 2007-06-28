@@ -137,6 +137,7 @@
     $forums=phorum_db_get_forums();
 
     if(isset($_GET["edit"])){
+        $_GET['group_id']=(int)$_GET["group_id"];
 
         $group=$groups[$_GET["group_id"]];
 
