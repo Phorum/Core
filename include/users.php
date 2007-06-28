@@ -162,7 +162,7 @@ function phorum_user_get_display_name( $user = NULL, $fallback = NULL )
         $display_name = $user['username'];
         if ($GLOBALS["PHORUM"]['display_name_source'] == 'real_name' &&
             trim($user['real_name']) != '') {
-            $display_name = $user['real_name'];         
+            $display_name = $user['real_name'];
         }
     }
 
@@ -382,17 +382,19 @@ function phorum_user_get_moderator_groups()
 {
     $PHORUM=$GLOBALS["PHORUM"];
     $groups = array();
-    $fullgrouplist = phorum_db_get_groups();
 
     // if its an admin, return all groups as a moderator
     if ($PHORUM["user"]["admin"]){
+        $fullgrouplist = phorum_db_get_groups();
         // the permission here is for a forum, we don't care about that
         foreach ($fullgrouplist as $groupid => $groupperm){
             $groups[$groupid] = $fullgrouplist[$groupid]["name"];
         }
-    }
-    else {
+    } else {
         $grouplist = phorum_user_get_groups($PHORUM["user"]["user_id"]);
+
+        $fullgrouplist = phorum_db_get_groups(array_keys($grouplist));
+
         foreach ($grouplist as $groupid => $perm){
             if ($perm == PHORUM_USER_GROUP_MODERATOR){
                 $groups[$groupid] = $fullgrouplist[$groupid]["name"];

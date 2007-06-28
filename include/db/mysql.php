@@ -2260,9 +2260,19 @@ function phorum_db_get_groups($group_id=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($group_id, 'int');
 
-    $group_where = $group_id == 0 ? '' : "WHERE group_id = $group_id";
+    phorum_db_sanitize_mixed($group_id,"int");
+
+
+    if(is_array($group_id)) {
+        $group_str=implode(',',$group_id);
+        $group_where=" WHERE group_id IN($group_str)";
+    } elseif($group_id!=0) {
+        $group_where=" WHERE group_id=$group_id";
+    } else {
+        $group_where="";
+    }
+
 
     // Retrieve the group(s) from the database.
     $groups = phorum_db_interact(
