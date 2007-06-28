@@ -19,8 +19,8 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-$parent_id = (int)(isset($_GET["parent_id"])) ? $_GET["parent_id"] : 0;
-$parent_parent_id = (int)(isset($_GET["pparent"])) ? $_GET["pparent"] : 0;
+$parent_id = (int)((isset($_GET["parent_id"])) ? $_GET["parent_id"] : 0);
+$parent_parent_id = (int)((isset($_GET["pparent"])) ? $_GET["pparent"] : 0);
 
 $forums=phorum_db_get_forums(0, $parent_id);
 
