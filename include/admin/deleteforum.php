@@ -22,9 +22,9 @@
     if($_GET["confirm"]=="Yes"){
 
         if($_GET["folder_flag"]){
-            
-            $cur_folder_id=$_GET['forum_id'];
-            // handling vroots            
+
+            $cur_folder_id=(int)$_GET['forum_id'];
+            // handling vroots
             $oldfolder_tmp=phorum_db_get_forums($cur_folder_id);
             $oldfolder=array_shift($oldfolder_tmp);
 
@@ -38,7 +38,7 @@
                 phorum_admin_set_vroot($cur_folder_id,0,$cur_folder_id);
             }
             // done with vroots
-            
+
             phorum_db_drop_folder($cur_folder_id);
             $msg="The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.";
         } else {
@@ -60,7 +60,7 @@
         } else {
             $msg="Are you sure you want to delete $forum[name]?  All messages in this forum will be deleted";
         }
-        $msg.="<form action=\"{$PHORUM["admin_http_path"]}\" method=\"get\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"$_GET[forum_id]\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
+        $msg.="<form action=\"{$PHORUM["admin_http_path"]}\" method=\"get\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"{$forum['forum_id']}\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
 
     }
 
