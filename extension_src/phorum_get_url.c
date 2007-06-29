@@ -433,7 +433,11 @@ default_url_format(void *u)
         params[2] = &suffix;
 
         MAKE_STD_ZVAL(pathinfo);
-        ZVAL_STRING(pathinfo, url->pathinfo, 1);
+	if (url->pathinfo != NULL) {
+	    ZVAL_STRING(pathinfo, url->pathinfo, 1);
+        } else {
+	    ZVAL_STRING(pathinfo, "", 1);
+	}
         params[3] = &pathinfo;
 
         /* Call the phorum_custom_get_url() function. */
