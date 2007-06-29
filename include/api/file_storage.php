@@ -345,6 +345,9 @@ function phorum_api_file_check_write_access($file)
  */
 function phorum_api_file_store($file)
 {
+
+    $PHORUM = $GLOBALS["PHORUM"];
+
     // Check if we really got an array argument for $file.
     if (!is_array($file)) trigger_error(
         "phorum_api_file_store(): \$file parameter must be an array.",
