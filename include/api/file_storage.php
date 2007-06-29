@@ -106,7 +106,7 @@ $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
  *     The filename for which to lookup the MIME type.
  *
  * @return string
- *     The MIME type for the given filename. 
+ *     The MIME type for the given filename.
  */
 function phorum_api_file_get_mimetype($filename)
 {
@@ -118,8 +118,8 @@ function phorum_api_file_get_mimetype($filename)
         $extension = strtolower(substr($filename, $dotpos+1));
     }
 
-    $mime_type = isset($types[$extension]) 
-               ? $types[$extension] 
+    $mime_type = isset($types[$extension])
+               ? $types[$extension]
                : "application/octet-stream";
 
     return $mime_type;
@@ -136,7 +136,7 @@ function phorum_api_file_get_mimetype($filename)
  * checks on the message level (e.g. to see if the maximum cumulative
  * attachment size is not exceeded).
  *
- * @example file_store.php Store a personal file. 
+ * @example file_store.php Store a personal file.
  *
  * @param array $file
  *     This is an array, containing information about the
@@ -246,7 +246,7 @@ function phorum_api_file_check_write_access($file)
         if (isset($file["filesize"]))
         {
             // Find the maximum allowed attachment size. This depends on
-            // both the settings for the current forum and the limits 
+            // both the settings for the current forum and the limits
             // that are enforced by the system.
             require_once('./include/upload_functions.php');
             $max_upload = phorum_get_system_max_upload();
@@ -286,7 +286,7 @@ function phorum_api_file_check_write_access($file)
             if (!in_array($ext, $allowed_exts)) {
                 return phorum_api_error_set(
                     PHORUM_ERRNO_NOACCESS,
-                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ". 
+                    $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ".
                     str_replace(
                         '%types%', implode(", ", $allowed_exts),
                         $PHORUM["DATA"]["LANG"]["AttachFileTypes"]
@@ -301,10 +301,10 @@ function phorum_api_file_check_write_access($file)
 // }}}
 
 // {{{ Function: phorum_api_file_store
-/** 
+/**
  * Store or update a file.
  *
- * @example file_store.php Store a personal file. 
+ * @example file_store.php Store a personal file.
  *
  * @param array $file
  *     An array, containing information for the file.
@@ -342,10 +342,10 @@ function phorum_api_file_check_write_access($file)
  *     in the {@link $file} argument (when a new file is stored),
  *     then the new "file_id" and "add_datetime" fields will be
  *     included in the return variable as well.
- */                
+ */
 function phorum_api_file_store($file)
 {
-    // Check if we really got an array argument for $file. 
+    // Check if we really got an array argument for $file.
     if (!is_array($file)) trigger_error(
         "phorum_api_file_store(): \$file parameter must be an array.",
         E_USER_ERROR
@@ -376,7 +376,7 @@ function phorum_api_file_store($file)
                 break;
 
             case "filename":
-                $v = basename($v); 
+                $v = basename($v);
                 $checkfile[$k] = $v;
                 break;
 
@@ -402,7 +402,7 @@ function phorum_api_file_store($file)
                 $checkfile["message_id"] = 0;
                 $checkfile["user_id"] = 0;
                 break;
-            case PHORUM_LINK_USER: 
+            case PHORUM_LINK_USER:
                 $checkfile["message_id"] = 0;
                 if (empty($checkfile["user_id"])) {
                     $checkfile["user_id"] = $PHORUM["user"]["user_id"];
@@ -413,7 +413,7 @@ function phorum_api_file_store($file)
                     E_USER_ERROR
                 );
                 break;
-            case PHORUM_LINK_MESSAGE: 
+            case PHORUM_LINK_MESSAGE:
                 $checkfile["user_id"] = 0;
                 if (empty($checkfile["message_id"])) trigger_error (
                     "phorum_api_file_store(): \$file set the link type to " .
@@ -469,7 +469,7 @@ function phorum_api_file_store($file)
         if ($hook_result === FALSE)
         {
             // Cleanup the skeleton file from the database.
-            phorum_db_file_delete($file["file_id"]); 
+            phorum_db_file_delete($file["file_id"]);
             $file["file_id"] = NULL;
 
             return FALSE;
@@ -489,7 +489,7 @@ function phorum_api_file_store($file)
     if ($file["file_data"] != '') {
         $file["file_data"] = base64_encode($file["file_data"]);
     }
-    
+
     // Update the skeleton file record that we created to match the real
     // file data. This acts like a commit action for the file storage.
     phorum_db_file_save ($file);
@@ -528,12 +528,12 @@ function phorum_api_file_store($file)
  *     <ul>
  *     <li>file_id: The file_id for the requested file.</li>
  *     <li>filename: The name of the file.</li>
- *     <li>filesize: The size of the file in bytes.</li> 
- *     <li>add_datetime: Epoch timestamp describing at what time 
+ *     <li>filesize: The size of the file in bytes.</li>
+ *     <li>add_datetime: Epoch timestamp describing at what time
  *         the file was stored.</li>
  *     <li>message_id: The message to which a message is linked
  *         (in case it is a message attachment).</li>
- *     <li>user_id: The user to which a message is linked 
+ *     <li>user_id: The user to which a message is linked
  *         (in case it is a private user file).</li>
  *     <li>link: A value describing to what type of entity the file is
  *         linked. One of {@link PHORUM_LINK_USER},
@@ -578,7 +578,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // FALSE instead, in which case they should immediately return
     // FALSE themselves.
     if (isset($PHORUM["hooks"]["file_check_read_access"])) {
-        $file = phorum_hook("file_check_read_access", $file, $flags); 
+        $file = phorum_hook("file_check_read_access", $file, $flags);
         if ($file === FALSE) return FALSE;
     }
 
@@ -634,7 +634,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
             );
         }
         // THISSITE: Links to forum files are allowed from anywhere on
-        // the website where Phorum is hosted.  
+        // the website where Phorum is hosted.
         elseif ($PHORUM["file_offsite"] == PHORUM_OFFSITE_THISSITE) {
             if (preg_match($matchhost, $_SERVER["HTTP_REFERER"], $rm) &&
                 preg_match($matchhost, $base, $bm) &&
@@ -662,18 +662,18 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  * advantage of using less memory for sending files).
  *
  * @param mixed $file
- *     This is either an array containing at least the fields "file_id" 
+ *     This is either an array containing at least the fields "file_id"
  *     and "filename" or a numerical file_id value. Note that you can
  *     use the return value of the function
  *     {@link phorum_api_file_check_read_access()} as input for this function.
- * 
+ *
  * @param integer $flags
  *     These are flags which influence aspects of the function call. It is
  *     a bitflag value, so you can OR multiple flags together. Available
  *     flags for this function are: {@link PHORUM_FLAG_IGNORE_PERMS},
  *     {@link PHORUM_FLAG_GET} and {@link PHORUM_FLAG_SEND}. The SEND
  *     flag has precedence over the GET flag.
- * 
+ *
  * @return mixed
  *     On error, this function will return FALSE.
  *     The functions {@link phorum_api_strerror()} and
@@ -707,7 +707,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         $file_id = (int) $file;
         $file = phorum_api_file_check_read_access($file_id, $flags);
 
-        // Return in case of errors. 
+        // Return in case of errors.
         if ($file === FALSE) return FALSE;
     }
 
@@ -726,7 +726,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // phorum_api_error_set() to return an error. Hooks should be aware
     // that their input might not be $file, but FALSE instead, in which
     // case they should immediately return FALSE themselves.
-    $file["result"]    = 0; 
+    $file["result"]    = 0;
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
     if (isset($PHORUM["hooks"]["file_retrieve"])) {
@@ -734,7 +734,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         if ($file === FALSE) return FALSE;
 
         // If a module sent the file data to the browser, then we are done.
-        if ($file["result"] == PHORUM_FLAG_SEND) return NULL; 
+        if ($file["result"] == PHORUM_FLAG_SEND) return NULL;
     }
 
     // If no module handled file retrieval, we will retrieve the
@@ -825,7 +825,7 @@ function phorum_api_file_check_delete_access($file_id)
     $file = phorum_api_file_check_read_access(
         $file_id,
         PHORUM_FLAG_IGNORE_PERMS
-    ); 
+    );
 
     // To prevent permission errors after deleting the same file twice,
     // we'll return TRUE if we did not find a file (if the file is not found,
@@ -846,7 +846,7 @@ function phorum_api_file_check_delete_access($file_id)
     // are linked to the posting editor (during writing a post).
     // Those are both intermediate states for files, without them
     // being available on the forum. So for those, we always grant
-    // delete access. 
+    // delete access.
     if ($file["link"] == PHORUM_LINK_TEMPFILE ||
         $file["link"] == PHORUM_LINK_EDITOR) {
         return TRUE;
@@ -861,12 +861,12 @@ function phorum_api_file_check_delete_access($file_id)
 
     // The file is not owned by the user. In that case, the user only has
     // rights to delete it if it is a file that is linked to a message which
-    // the user posted himself of which was posted in a forum for which 
+    // the user posted himself of which was posted in a forum for which
     // the user is a moderator.
     if ($file["link"] == PHORUM_LINK_MESSAGE)
     {
-        // Retrieve the message to which the file is linked. 
-        $message = phorum_db_get_message($file["message_id"]); 
+        // Retrieve the message to which the file is linked.
+        $message = phorum_db_get_message($file["message_id"]);
 
         // If the message cannot be found, we do not care if the linked
         // file is deleted. It's clearly an orphin file.
@@ -886,7 +886,7 @@ function phorum_api_file_check_delete_access($file_id)
         }
     }
 
-    // The default policy for any unhandled case is to deny access.  
+    // The default policy for any unhandled case is to deny access.
     return FALSE;
 }
 // }}}
@@ -924,7 +924,7 @@ function phorum_api_file_delete($file)
         phorum_hook("file_delete", $file_id);
 
     // Delete the file from the Phorum database.
-    phorum_db_file_delete($file);
+    phorum_db_file_delete($file_id);
 }
 // }}}
 
@@ -938,10 +938,10 @@ function phorum_api_file_delete($file)
  *
  * (this is a simple wrapper function around the
  * {@link phorum_api_file_check_read_access()} function)
- * 
+ *
  * @param integer $file_id
  *     The file_id of the Phorum file to check.
- * 
+ *
  * @return bool
  *     TRUE in case the file exists or FALSE if it doesn't.
  */
@@ -960,7 +960,7 @@ function phorum_api_file_exists($file_id) {
  * {@link phorum_api_file_retrieve()} function)
  *
  * @param mixed
- *    This is either an array containing at least the fields "file_id" 
+ *    This is either an array containing at least the fields "file_id"
  *    and "filename" or a numerical file_id value. Note that you can
  *    use the return value of the function
  *    {@link phorum_api_file_check_read_access()} as input for this function.
@@ -977,12 +977,12 @@ function phorum_api_file_send($file, $flags = 0) {
 // {{{ Function: phorum_api_file_get
 /**
  * Retrieve and return a Phorum file.
- * 
+ *
  * (this is a simple wrapper function around the
  * {@link phorum_api_file_retrieve()} function)
  *
  * @param mixed $file
- *    This is either an array containing at least the fields "file_id" 
+ *    This is either an array containing at least the fields "file_id"
  *    and "filename" or a numerical file_id value. Note that you can
  *    use the return value of the function
  *    {@link phorum_api_file_check_read_access()} as input for this function.
