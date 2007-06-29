@@ -799,11 +799,13 @@ function phorum_user_get_moderator_groups()
     } else {
         $grouplist = phorum_user_get_groups($PHORUM["user"]["user_id"]);
 
-        $fullgrouplist = phorum_db_get_groups(array_keys($grouplist));
+        if(count($grouplist)) {
+            $fullgrouplist = phorum_db_get_groups(array_keys($grouplist));
 
-        foreach ($grouplist as $groupid => $perm){
-            if ($perm == PHORUM_USER_GROUP_MODERATOR){
-                $groups[$groupid] = $fullgrouplist[$groupid]["name"];
+            foreach ($grouplist as $groupid => $perm){
+                if ($perm == PHORUM_USER_GROUP_MODERATOR){
+                    $groups[$groupid] = $fullgrouplist[$groupid]["name"];
+                }
             }
         }
     }
