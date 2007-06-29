@@ -555,8 +555,11 @@ if ($PHORUM["posting_template"] == 'posting')
             $val = $mode;
             if ($spec[pf_SIGNED]) $signval = $mode;
         } elseif ($spec[pf_TYPE] == "array") {
-            $val = htmlspecialchars(serialize($message[$var]));
-            if ($spec[pf_SIGNED]) $signval = serialize($message[$var]);
+            // base64_encode to convert newlines into data that can be
+            // tranferred safely back and forth to the browser, without
+            // getting converted (e.g. \r\n to \n).
+            $val = base64_encode(serialize($message[$var]));
+            if ($spec[pf_SIGNED]) $signval = $val;
         } else {
             $val = htmlspecialchars($message[$var]);
             if ($spec[pf_SIGNED]) $signval = $message[$var];
