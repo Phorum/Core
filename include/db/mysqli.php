@@ -1711,10 +1711,10 @@ function phorum_db_get_groups($group_id=0)
     phorum_db_sanitize_mixed($group_id,"int");
 
 
-    if(is_array($group_id)) {
+    if(is_array($group_id) && count($group_id)) {
         $group_str=implode(',',$group_id);
         $where_str=" where group_id IN($group_str)";
-    } elseif($group_id!=0) {
+    } elseif(!is_array($group_id) && $group_id!=0) {
         $where_str=" where group_id=$group_id";
     } else {
         $where_str="";
