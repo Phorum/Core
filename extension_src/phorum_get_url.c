@@ -70,7 +70,7 @@ initialize_get_url_handlers()
     register_url_handler(
      PHORUM_PM_ACTION_URL,         &basic_url, "pm",         NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     PHORUM_FILE_URL,              &basic_url, "file",       FORUM_ID,    GET_VARS);
+     PHORUM_FILE_URL,              &file_url,  "file",       FORUM_ID,    GET_VARS);
     register_url_handler(
      PHORUM_FOLLOW_URL,            &basic_url, "follow",     FORUM_ID,    GET_VARS);
     register_url_handler(
@@ -222,6 +222,10 @@ void destroy_url(url_info **urlp)
         if (url->suffix != NULL) {
             efree(url->suffix);
             url->suffix = NULL;
+        }
+        if (url->pathinfo != NULL) {
+            efree(url->pathinfo);
+            url->pathinfo = NULL;
         }
         efree(url);
     }
@@ -400,8 +404,8 @@ default_url_format(void *u)
     if (get_url_do_custom_url == 1)
     {
         zval *retval = NULL;
-        zval *func, *page, *query_items, *suffix;
-        zval **params[3];
+        zval *func, *page, *query_items, *suffix, *pathinfo;
+        zval **params[4];
 
         /* Setup the function call parameters. */
 
@@ -427,6 +431,10 @@ default_url_format(void *u)
             ZVAL_STRING(suffix, "", 1);
         }
         params[2] = &suffix;
+
+        MAKE_STD_ZVAL(pathinfo);
+        ZVAL_STRING(pathinfo, url->pathinfo, 1);
+        params[3] = &pathinfo;
 
         /* Call the phorum_custom_get_url() function. */
 
@@ -475,7 +483,7 @@ default_url_format(void *u)
         url->add_slash = 1;
     }
 
-    /* Add the script page name.extension, arguments and suffix.
+    /* Add the script page name.extension, pathinfo, arguments and suffix.
      * If the page name is empty, then none of these are added
      * (used for PHORUM_BASE_URL). */
     if (strlen(url->page))
@@ -487,6 +495,10 @@ default_url_format(void *u)
          * each argument). */
         if (url->arg_count > 0) {
             url->url_length += 1 + url->arg_length + url->arg_count;
+        }
+
+        if (url->pathinfo != NULL) {
+            url->url_length += strlen(url->pathinfo);
         }
 
         /* Add suffix. */
@@ -507,6 +519,9 @@ default_url_format(void *u)
         strcat(urlstr, url->page);
         strcat(urlstr, ".");
         strcat(urlstr, PHORUM_FILE_EXTENSION);
+        if (url->pathinfo != NULL) {
+            strcat(urlstr, url->pathinfo);
+        }
         if (url->arg_count > 0) { 
             strcat(urlstr, "?");
             i = url->arg_count;
@@ -608,6 +623,92 @@ list_url(void *h, void *u, int argc, zval ***argv)
 {
     url_info *url = (url_info *)u;
     if (argc == 0) url->add_forum_id = 1;
+    default_url_build(h, u, argc, argv);
+    return default_url_format(u);
+}
+
+/**
+ * File URL handler.
+ * 
+ * If a filename=... parameter is set, then change that parameter into
+ * pathinfo, unless this feature is not enabled in the Phorum settings.
+ */
+char *
+file_url(void *h, void *u, int argc, zval ***argv)
+{
+    url_info *url                    = (url_info *)u;
+    int       file_url_uses_pathinfo = 0;
+    zval     *z;
+    int       i;
+
+    z = get_PHORUM("file_url_uses_pathinfo");
+    if (z != NULL) {
+        convert_to_long(z);
+        if (Z_LVAL_P(z) > 0) file_url_uses_pathinfo = 1;
+    }
+
+    // If the file_url_uses_pathinfo option is disabled, then the file
+    // URL behaves exactly like the standard URL.
+    if (file_url_uses_pathinfo == 0) {
+        default_url_build(h, u, argc, argv);
+        return default_url_format(u);
+    }
+
+    /* Check if there is a filename parameter in the arguments. */
+    for (i=0; i<argc; i++)
+    {
+        zval **zarg = argv[i];
+        convert_to_string(*zarg);
+
+        if (strlen(Z_STRVAL_PP(zarg)) > 9 &&
+            strncmp(Z_STRVAL_PP(zarg), "filename=", 9) == 0)
+        {
+            int   srcpos, dstpos = 0, len, prev_is_special = 0;
+            char *pathinfo       = NULL;
+            
+            pathinfo = estrdup(Z_STRVAL_PP(zarg) + 8);
+
+            /* Pathinfo starts with a slash. */
+            pathinfo[dstpos++] = '/';
+
+            /* Generate safe pathinfo. */
+            len = strlen(pathinfo);
+            for (srcpos=1; srcpos<len; srcpos++) {
+                if ((pathinfo[srcpos] >= 'a' && pathinfo[srcpos] <= 'z') ||
+                    (pathinfo[srcpos] >= 'A' && pathinfo[srcpos] <= 'Z') ||
+                    (pathinfo[srcpos] >= '0' && pathinfo[srcpos] <= '9') ||
+                    pathinfo[srcpos] == '-' || pathinfo[srcpos] == '.') {
+                    prev_is_special = 0;
+                    pathinfo[dstpos++] = pathinfo[srcpos];
+                    continue;
+                } else {
+                    if (!prev_is_special) {
+                        pathinfo[dstpos++] = '_';
+                    }
+                    prev_is_special = 1;
+                }
+            }
+            pathinfo[dstpos] = '\0';
+
+            /* In case there was more than one filename argument. Should
+             * not really happen, but still, let's keep it in mind. */
+            if (url->pathinfo != NULL) {
+                efree(url->pathinfo);
+            }
+
+            url->pathinfo = pathinfo;
+
+            /* Remove the filename argument. */
+            dstpos = i;
+            srcpos = i + 1;
+            while (srcpos <= argc) {
+                argv[dstpos++] = argv[srcpos++];        
+            }
+            argc --;
+            i--;
+        }
+    }
+
     default_url_build(h, u, argc, argv);
     return default_url_format(u);
 }

@@ -10,6 +10,7 @@ typedef struct url_info {
     url_arg          *arg_first;
     url_arg          *arg_last;
     url_arg          *suffix;
+    char             *pathinfo;
     int               add_forum_id;
     int               add_get_vars;
     int               add_slash;
@@ -43,6 +44,7 @@ char    *default_url_format (void *);
 char    *basic_url   (void *, void *, int, zval ***);
 char    *reply_url   (void *, void *, int, zval ***);
 char    *list_url    (void *, void *, int, zval ***);
+char    *file_url    (void *, void *, int, zval ***);
 char    *read_url    (void *, void *, int, zval ***);
 char    *feed_url    (void *, void *, int, zval ***);
 char    *prepost_url (void *, void *, int, zval ***);

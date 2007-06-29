@@ -111,22 +111,21 @@ get_PHORUM_args(char *key)
 zval *
 get_PHORUM_DATA(char *key)
 {
-    HashTable *args = NULL;
+    HashTable *data = NULL;
     zval   zkey;
     zval **P;
 
-    /* Lookup the $PHORUM["DATA"] variable. */
+    /* Lookup the $PHORUM["DATA"] variable. If there is no such variable,
+     * then return NULL. */
     zval *A = get_PHORUM("DATA");
-    if (A == NULL) {
-        zend_error(E_ERROR, "PHORUM(): Cannot find symbol $PHORUM[DATA]");
-    }
-    args = Z_ARRVAL_P(A);
+    if (A == NULL) return NULL;
+    data = Z_ARRVAL_P(A);
 
     /* Lookup the key in the DATA table. */
     ZVAL_STRING(&zkey, key, 1);
-    if (zend_hash_find(args, Z_STRVAL(zkey), Z_STRLEN(zkey)+1, (void**)&P) == FAILURE) {
+    if (zend_hash_find(data, Z_STRVAL(zkey), Z_STRLEN(zkey)+1, (void**)&P) == FAILURE) {
         convert_to_long(&zkey);
-        if (zend_hash_index_find(args, Z_LVAL(zkey), (void**)&P) == FAILURE) {
+        if (zend_hash_index_find(data, Z_LVAL(zkey), (void**)&P) == FAILURE) {
           return NULL;
         }
     }

@@ -21,6 +21,14 @@ define('phorum_page', 'read');
 
 for($i=0;$i<1;$i++)
 {
+$PHORUM["file_url_uses_pathinfo"] = 0;
+var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=test.jpg"));
+$PHORUM["file_url_uses_pathinfo"] = 1;
+var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=twofileargs.php", "filename=test++funny_chars*flattening.jpg", "last=arg"));
+var_dump(phorum_get_url(PHORUM_FILE_URL, "filename=onefilearg.php", "file=1"));
+var_dump(phorum_get_url(PHORUM_FILE_URL));
+var_dump(phorum_get_url(PHORUM_FILE_URL, "filename=********.gif"));
+
 var_dump(phorum_get_url(PHORUM_BASE_URL));
 var_dump(phorum_get_url(PHORUM_INDEX_URL, 10, "type=ok"));
 var_dump(phorum_get_url(PHORUM_LIST_URL, 1, "cleanup=what"));
