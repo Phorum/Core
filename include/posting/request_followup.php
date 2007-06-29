@@ -50,7 +50,11 @@ foreach ($PHORUM["post_fields"] as $var => $spec)
     	    break;
 
         case "array":
-    	    $message[$var] = isset($_POST[$var]) ? unserialize($_POST[$var]) : array();
+            // Serialized arrays are base64 encoded, to prevent special
+            // character (especially newline) mangling by the browser.
+            $message[$var] = isset($_POST[$var])
+                           ? unserialize(base64_decode($_POST[$var]))
+                           : array();
     	    break;
 
         case "string":
