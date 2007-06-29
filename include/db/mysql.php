@@ -2263,12 +2263,11 @@ function phorum_db_get_groups($group_id=0)
 
     phorum_db_sanitize_mixed($group_id,"int");
 
-
-    if(is_array($group_id)) {
+    if(is_array($group_id) && count($group_id)) {
         $group_str=implode(',',$group_id);
-        $group_where=" WHERE group_id IN($group_str)";
-    } elseif($group_id!=0) {
-        $group_where=" WHERE group_id=$group_id";
+        $group_where=" where group_id IN($group_str)";
+    } elseif(!is_array($group_id) && $group_id!=0) {
+        $group_where=" where group_id=$group_id";
     } else {
         $group_where="";
     }
