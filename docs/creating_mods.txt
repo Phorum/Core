@@ -1941,6 +1941,7 @@ Table of contents:
    Where  : include/users.php
    When   : Whenever phorum_api_user_authenticate() is called.
    Input  : Array containing:
+            type        => either PHORUM_FORUM_SESSION or PHORUM_ADMIN_SESSION
             username    => the username to check
             password    => the password to check
             user_id     => NULL
@@ -1957,6 +1958,9 @@ Table of contents:
 
       function phorum_mod_foo_user_check_login($login)
       {
+          // Skip admin password checking.
+          if ($login["type"] == PHORUM_ADMIN_SESSION) return $login;
+
           // Logging in with john / doe will authenticate the user with
           // user_id 1234.
           if ($login["username"] == "john" && $login["password"] == "doe") {

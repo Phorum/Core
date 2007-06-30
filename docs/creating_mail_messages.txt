@@ -47,9 +47,9 @@ Table of contents:
                      HTML/BBCode tags.
    - %read_url%      The url where this message can be read.
    - %remove_url%    The url to unsubscribe from the followed thread.
-   - %noemail_url%   The url to set the subscription to "no email", so
-                     the thread is only followed from the user's profile.
-   - %followed_threads_url% The url to the controlcenter-page where the
+   - %noemail_url%   The url to set the subscription to "no email", so the
+                     thread is only followed from the user's control center.
+   - %followed_threads_url% The url to the control center page where the
                      user can look at all the followed threads.
 
 
