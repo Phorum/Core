@@ -386,10 +386,31 @@ function phorum_api_user_save($user, $flags = 0)
         $dbuser['display_name'] = htmlspecialchars($dbuser['username']);
     }
 
-    // At this point, we allow modules to handle the data that will be
-    // saved for the user. This can for example be used to update data
-    // in an external system or even to store a part of the data fully
-    // external (in combination with the user_get hook).
+    /**
+     * [hook]
+     *     user_save
+     *
+     * [description]
+     *     This hook can be used to handle the data that is going to be
+     *     stored in the database for a user. Modules can do some last
+     *     minute change on the data or keep some external system in sync
+     *     with the Phorum user data. In combination with the [user_get]
+     *     hook, this hook can also be used to store and retrieve some of
+     *     the Phorum user fields in some external system
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Just before user data is stored in the database.
+     *
+     * [input]
+     *     An array containing user data that will be sent to the database.
+     *
+     * [output]
+     *     The same array as was used for the hook call argument,
+     *     possibly with some updated fields in it.
+     */
     if (isset($PHORUM['hooks']['user_save'])) {
         $dbuser = phorum_hook('user_save', $dbuser);
     }
@@ -533,8 +554,31 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
         }
     }
 
-    // At this point, we allow modules to provide user data. Modules can
-    // update the users array any way they like.
+    /**
+     * [hook]
+     *     user_get
+     *
+     * [description]
+     *     This hook can be used to handle the data that was retrieved
+     *     from the database for a user. Modules can add and modify the
+     *     user data. In combination with the [user_save]
+     *     hook, this hook can also be used to store and retrieve some of
+     *     the Phorum user fields in some external system
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Just after user data has been retrieved from the database.
+     *
+     * [input]
+     *     An array of users. Each item in this array is an array
+     *     containing data for a single user.
+     *
+     * [output]
+     *     The same array as was used for the hook call argument,
+     *     possibly with some updated fields in it.
+     */
     if (isset($PHORUM['hooks']['user_get'])) {
         $users = phorum_hook('user_get', $users, $detailed);
     }
@@ -583,12 +627,44 @@ function phorum_api_user_authenticate($type, $username, $password)
 
     $user_id = NULL;
 
-    // Give modules a chance to handle the user authentication (for example
-    // to authenticate against an external source). The module can change the
-    // user_id field in the authinfo array to one of:
-    // - user_id: the user_id of the authenticated user;
-    // - FALSE: authentication credentials are rejected;
-    // - NULL: let Phorum handle the authentication.
+    /**
+     * [hook]
+     *     user_authenticate
+     *
+     * [description]
+     *     This hooks gives modules a chance to handle the user
+     *     authentication (for example to authenticate against an
+     *     external source like an LDAP server).
+     *
+     * [category]
+     *     User authentication and session handling
+     *
+     * [when]
+     *     Just before Phorum runs its own user authentication.
+     *
+     * [input]
+     *     An array containing the following fields:
+     *
+     *     > type:
+     *       either PHORUM_FORUM_SESSION or PHORUM_ADMIN_SESSION
+     *     > username:
+     *       the username of the user to authenticate
+     *     > password:
+     *       the password of the user to authenticate
+     *     > user_id:
+     *       Always NULL on input. This field implements the
+     *       authentication state.
+     *
+     * [output]
+     *     The same array as was used for the hook call argument,
+     *     possibly with the user_id field updated. This field can
+     *     be set to one of the following values by a module:
+     *
+     *     > NULL: let Phorum handle the authentication
+     *     > FALSE: the authentication credentials are rejected
+     *     > 1234: the numerical user_id of the authenticated user
+     *    
+     */
     if (isset($PHORUM['hooks']['user_authenticate']))
     {
         // Run the hook.
