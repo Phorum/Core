@@ -43,8 +43,10 @@
             $solution_1
         );
 
+        $dummy_file = "$dir/sanity_check_dummy_file";
+
         // Check if we can create files in the cache directory.
-        $fp = @fopen ("$dir/sanity_check_dummy_file", "w");
+        $fp = @fopen ($dummy_file, "w");
         if (! $fp) return array (
             PHORUM_SANITY_CRIT,
             "The system is unable to write files
@@ -69,7 +71,7 @@
         // but that it cannot read it afterwards. Probably due to 
         // specific NTFS file permission settings. So here we have to make 
         // sure that we can open the file that we just wrote.
-        $checkfp = fopen("$dir/sanity_check_dummy_file", "r");
+        $checkfp = fopen($dummy_file, "r");
         if (! $checkfp) return array(
             PHORUM_SANITY_CRIT,
             "The system was able to write a file to your cache directory 
@@ -78,18 +80,21 @@
              caused by the file permissions on your cache directory.",
             $solution_2
         );
+        fclose($checkfp);
 
-        unlink("$dir/sanity_check_dummy_file");
+        unlink($dummy_file);
+
+        $dummy_dir = "$dir/sanity_check_dummy_dir";
 
         // Check if we can create directories in the cache directory.
-        if (! @mkdir("$dir/sanity_check_dummy_dir")) return array(
+        if (! @mkdir($dummy_dir)) return array(
             PHORUM_SANITY_CRIT,
             "The system is unable to create directories
              in your cache directory \"".htmlspecialchars($dir)."\".
              The system error was:<br/><br/>".htmlspecialchars($php_errormsg).".",
             $solution_2
         );
-        rmdir("$dir/sanity_check_dummy_dir");
+        rmdir($dummy_dir);
 
         // All seems OK. Do a final system check where we check
         // the caching system like the Phorum system will do.
