@@ -8,7 +8,7 @@
       <itemizedlist>
         <listitem>A webserver (like Apache or Microsoft IIS);</listitem>
         <listitem>PHP, version 4.3.0 or above;</listitem>
-        <listitem>A MySQL server, version 4 or above.</listitem>
+        <listitem>A MySQL server, version 4.0.18 or above.</listitem>
       </itemizedlist>
       If you do not run your own website, but have hosted your website
       with a hosting provider, then please ask your hosting provider if
@@ -181,6 +181,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
         file to the correct location after editing it locally.
       </para>
       <para>
+      <remark>update with current config.php, which has additional features</remark>
         In the configuration file, you will find the following settings:
         <variablelist>
           <varlistentry>
@@ -188,13 +189,9 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             <listitem>
               <para>
                 This setting determines what database backend is used
-                by Phorum. Backends that are distributed with Phorum are
-                <literal>mysql</literal> and <literal>mysqli</literal>.
-                Which one to use depends on the PHP installation. If PHP
-                has mysqli support, then you can use
-                <literal>mysqli</literal>. If you do not know whether this
-                is the case, then use the default value
-                <literal>mysql</literal> here.
+                by Phorum. Phorum is distributed with the a MySQL backend.
+                If you are using MySQL for the database server, then you
+                can keep the default value <literal>mysql</literal> here.
               </para>
               <para>
                 If you use a third party database backend (e.g. PostgreSQL),
@@ -264,10 +261,10 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
                 same database or if you have multiple Phorum installations
                 that use the same database name, this prefix can be used to
                 prevent table name collisions. E.g. if you set the 
-                prefix to <literal>myprefix_</literal>, then the full name
+                prefix to <literal>myprefix</literal>, then the full name
                 of the users table will be <literal>myprefix_users</literal>.
                 For most installations, you can keep the default value
-                <literal>phorum_</literal>.
+                <literal>phorum</literal>.
               </para>
               <para>
                 <important>
@@ -286,7 +283,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
               </para>
               <para>
                 To be able to use this feature, the MySQL server that
-                you are using must be version 4.0.18 or later and the
+                you are using must be version 4.0.18 or higher and the
                 database user must be allowed to create temporary tables.
                 If these requirements are not met, then you will have to
                 disable this setting by assigning the value
@@ -447,6 +444,7 @@ c:\path\to\phorum\include\templates.php on line 184</screen>
           sending out mail messages.
         </para>
         <para>
+          <remark>TODO: module is bundled with 5.2</remark>
           If you have no access to the php.ini file and the system
           administrator is not willing to update it for you, you will have to
           install the SMTP module for Phorum. You can download this module
