@@ -644,26 +644,28 @@ function phorum_api_user_authenticate($type, $username, $password)
      *
      * [input]
      *     An array containing the following fields:
-     *
-     *     > type:
-     *       either PHORUM_FORUM_SESSION or PHORUM_ADMIN_SESSION
-     *     > username:
-     *       the username of the user to authenticate
-     *     > password:
-     *       the password of the user to authenticate
-     *     > user_id:
-     *       Always NULL on input. This field implements the
-     *       authentication state.
+     *     <ul>
+     *     <li>type:
+     *         either PHORUM_FORUM_SESSION or PHORUM_ADMIN_SESSION;</li>
+     *     <li>username:
+     *         the username of the user to authenticate;</li>
+     *     <li>password:
+     *         the password of the user to authenticate;</li>
+     *     <li>user_id:
+     *         Always NULL on input. This field implements the
+     *         authentication state.</li>
+     *     </ul>
      *
      * [output]
      *     The same array as was used for the hook call argument,
      *     possibly with the user_id field updated. This field can
      *     be set to one of the following values by a module:
      *
-     *     > NULL: let Phorum handle the authentication
-     *     > FALSE: the authentication credentials are rejected
-     *     > 1234: the numerical user_id of the authenticated user
-     *    
+     *     <ul>
+     *     <li>NULL: let Phorum handle the authentication</li>
+     *     <li>FALSE: the authentication credentials are rejected</li>
+     *     <li>1234: the numerical user_id of the authenticated user</li>
+     *     </ul> 
      */
     if (isset($PHORUM['hooks']['user_authenticate']))
     {
@@ -748,7 +750,7 @@ function phorum_api_user_authenticate($type, $username, $password)
  *
  * - $PHORUM["DATA"]["LOGGEDIN"]:
  *   TRUE if the user is logged in, FALSE otherwise.
-
+ *
  * - $PHORUM["DATA"]["FULLY_LOGGEDIN"]:
  *   TRUE if a short term session is active (by setting the
  *   {@link PHORUM_FLAG_SESSION_ST} flag for the $flags parameter),
