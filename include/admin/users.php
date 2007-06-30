@@ -161,15 +161,15 @@
 
             $frm->hidden("module", "users");
 
-            $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", htmlspecialchars($_REQUEST["search"]), 30) . " &bull; <a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Find All Users</a>");
+            $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", $_REQUEST["search"], 30) . " &bull; <a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Find All Users</a>");
 
             $frm->addrow("", "Post count " .
                 $frm->select_tag("posts_op", array("gte" => ">=", "lte" => "<="), $_REQUEST["posts_op"]) .
-                $frm->text_box("posts", htmlspecialchars($_REQUEST["posts"]), 5) .
+                $frm->text_box("posts", empty($_REQUEST["posts"]) ? "" : (int) $_REQUEST["posts"], 5) .
                 " and last active " .
                 // these are flipped because we're going back in time
                 $frm->select_tag("lastactive_op", array("gte" => "<=", "lte" => ">="), $_REQUEST["lastactive_op"]) .
-                $frm->text_box("lastactive", htmlspecialchars($_REQUEST["lastactive"]), 5) . " days ago");
+                $frm->text_box("lastactive", empty($_REQUEST["lastactive"]) ? "" : (int) $_REQUEST["lastactive"], 5) . " days ago");
             $frm->show();
         }
 
@@ -345,7 +345,7 @@ EOT;
             $frm->addrow("Password (Confirmation)", $frm->text_box("password2",""));
 
 
-            $frm->addrow("Signature", $frm->textarea("signature", htmlspecialchars($user["signature"])));
+            $frm->addrow("Signature", $frm->textarea("signature", $user["signature"]));
 
             $frm->addrow("Active", $frm->select_tag("active", array("No", "Yes"), $user["active"]));
 
