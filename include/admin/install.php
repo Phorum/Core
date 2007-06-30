@@ -175,11 +175,11 @@ if(count($_POST)){
             if(!empty($_POST["admin_user"]) && !empty($_POST["admin_pass"]) && !empty($_POST["admin_pass2"]) && !empty($_POST["admin_email"])){
                 if($_POST["admin_pass"]!=$_POST["admin_pass2"]){
                     echo "The password fields do not match<br />";
-                } elseif(phorum_api_user_authenticate($_POST["admin_user"],$_POST["admin_pass"])){
+                } elseif(phorum_api_user_authenticate(PHORUM_ADMIN_SESSION, $_POST["admin_user"],$_POST["admin_pass"])){
                     if($PHORUM["user"]["admin"]){
-                        echo "Admin user already exists and has permissions<br />";
+                        echo "Admin user already exists and has permissions.<br />";
                     } else {
-                        echo "That user already exists but does not have admin permissions<br />";
+                        echo "That user already exists but does not have admin permissions.<br />";
                     }
                 } else {
 

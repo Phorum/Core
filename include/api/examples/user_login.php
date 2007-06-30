@@ -7,7 +7,11 @@ require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
 // Check the username and password.
-$user_id = phorum_api_user_authenticate("username", "password");
+$user_id = phorum_api_user_authenticate(
+    PHORUM_FORUM_SESSION,     // for a standard front end forum session
+    "username",               // the username to check
+    "password"                // the password to check
+);
 if (!$user_id) die("Username or password incorrect!\n");
 
 // Make the authenticated user the active user for Phorum. This is all
