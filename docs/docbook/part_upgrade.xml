@@ -1,0 +1,77 @@
+<chapter>
+  <title>Upgrading instructions</title>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>
+      This section describes the Phorum upgrading process. 
+      We differentiate between three types of upgrades:
+      <itemizedlist>
+        <listitem>
+          <xref linkend="upgrade.minor"/><sbr/>
+          These are upgrades where only the last number in the
+          Phorum version is raised (e.g. 5.2.1 to 5.2.2).
+          These upgrades are mostly for implementing (security)
+          bugfixes and minor enhancements that do not require any
+          template and/or database changes.<sbr/>
+          <sbr/>
+        </listitem>
+        <listitem>
+          <xref linkend="upgrade.major"/><sbr/>
+          These are upgrades where the second number in the Phorum
+          version is raised (e.g. 5.1.10 to 5.2.2). These are upgrades
+          where large new features are implemented. These upgrades
+          will always require database and template changes.<sbr/>
+          <sbr/>
+        </listitem>
+        <listitem>
+          <xref linkend="upgrade.legacy"/><sbr/>
+          These are upgrades where also the first number in the
+          Phorum version is raised (e.g. 3.4.8 to 5.2.2).
+          Now and then, the Phorum team starts with a version of Phorum
+          that is built from the ground up, to implement all the new
+          insights and ideas that are gathered while building the previous
+          version. Since completely new code is generated, the version
+          number is raised in full. These upgrades will always require
+          a full database and site layout conversion, which might implicate
+          a lot of manual work.
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section id="upgrade.minor" xreflabel="Minor upgrades">
+    <title>Minor upgrades</title>
+    <para>
+      When doing a minor upgrade (e.g. 5.2.1 to 5.2.2), the upgrading
+      process will preserve all of your active settings and modules. It
+      will however overwrite hacks to the code and any changes that you
+      have made to the default template in the directory
+      <filename>{phorum dir}/templates/default</filename>.
+    </para>
+    <para>
+      This section will describe the steps for a minor upgrade.
+    </para>
+  </section>
+
+  <section id="upgrade.major" xreflabel="Major upgrades">
+    <title>Major upgrades</title>
+  </section>
+
+  <section id="upgrade.legacy" xreflabel="Legacy upgrades">
+    <title>Legacy upgrades</title>
+  </section>
+
+  <section>
+    <title>Support</title>
+    <para>
+      <remark>TODO: Link to FAQ</remark>
+      If you have questions about installing Phorum which
+      are not answered by this manual, then please visit the website
+      &www.phorum.org; and ask the development team for help in the support
+      forum.
+    </para>
+  </section>
+
+</chapter>
