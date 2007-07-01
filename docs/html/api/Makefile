@@ -12,5 +12,6 @@ clean:
 	/bin/rm -f *.html
 	/bin/rm -fR media
 	/bin/rm -fR docs
+	/bin/rm -fR PhorumAPI
 	/bin/rm -fR __examplesource
 
