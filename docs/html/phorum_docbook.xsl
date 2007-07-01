@@ -5,6 +5,6 @@
   <xsl:param name="toc.section.depth" select="3" />
   <xsl:param name="section.autolabel" select="1" />
   <xsl:param name="section.label.includes.component.label" select="1" />
-  <xsl:param name="html.stylesheet" select="'phorum.css'"/>
+  <xsl:param name="html.stylesheet" select="'../phorum.css'"/>
   <xsl:param name="navig.showtitles" select="0" />
 </xsl:stylesheet>

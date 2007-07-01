@@ -1,9 +1,9 @@
 FILES="include/api/file_storage.php,include/api/custom_profile_fields.php,include/api/base.php,include/api/user.php"
 
 all:
-	(cd ../../..; phpdoc \
+	(cd ../../../..; phpdoc \
 	       -f $(FILES) \
-	       -t docs/html/api \
+	       -t docs/html/developer/api \
 	       -ti "Phorum API Documentation" \
 	       -o HTML:frames:DOM/earthli -dn PhorumAPI)
 	cp index.html.custom index.html

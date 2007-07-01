@@ -1,0 +1,26 @@
+<bookinfo>
+
+  <title>&book_title;</title>
+
+  <authorgroup>
+    <author>
+      <firstname>Maurice</firstname>
+      <surname>Makaay</surname>
+    </author>
+    <author>
+      <firstname>Brian</firstname>
+      <surname>Moon</surname>
+    </author>
+    <author>
+      <firstname>Thomas</firstname>
+      <surname>Seifert</surname>
+    </author>
+  </authorgroup>
+
+  <copyright>
+    <year>2007</year>
+    <holder>Phorum.org</holder>
+  </copyright>
+
+</bookinfo>
+

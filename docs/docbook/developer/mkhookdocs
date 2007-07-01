@@ -6,7 +6,7 @@ print "------------------------------------------------------------------\n";
 print "Gathering hook information from the source code ...\n";
 
 // Find files that might contain documentation for hooks.
-chdir(dirname(__FILE__) . "/../..");
+chdir(dirname(__FILE__) . "/../../..");
 $files = `find . -type f -name '*.php' -exec grep -l "\[hook\]" {} \;`;
 
 // Storage for gathering the documentation.

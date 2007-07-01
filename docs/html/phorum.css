@@ -1,8 +1,9 @@
 body {
     font-family: arial,helvetica,sans-serif;
+    background-color: white;
     color: #345;
     line-height: 1.3em;
-    margin: 0px 0px;
+    margin: 0px;
 }
 
 a:link,a:visited,a:active {
