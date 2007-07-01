@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+  <!ENTITY book_description 'the Phorum FAQ'>
+  <!ENTITY book_title 'Phorum FAQ'>
+
+  <!ENTITY bookinfo SYSTEM "../bookinfo.xml">
+  <!ENTITY part_preface SYSTEM "../part_preface.xml">
+
+  <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
+  <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
+]>
+
+<book lang="en">
+  &bookinfo;
+  &part_preface;
+</book>
