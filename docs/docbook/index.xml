@@ -7,6 +7,7 @@
     <!ENTITY part_upgrade SYSTEM "part_upgrade.xml">
     <!ENTITY part_templates SYSTEM "part_templates.xml">
     <!ENTITY part_hooks SYSTEM "part_hooks.xml">
+    <!ENTITY part_hooks_generated SYSTEM "part_hooks_generated.xml">
 
     <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
     <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
