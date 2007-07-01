@@ -1,0 +1,2 @@
+The documentation in this directory is generated from the docbook xml.
+The Makefile in this directory can be used to regenerate the contents.

@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos  -->
+			<title>Docs for page user.php</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+						<script src="../../media/lib/classTree.js"></script>
+												<script language="javascript" type="text/javascript">
+				var imgPlus = new Image();
+				var imgMinus = new Image();
+				imgPlus.src = "../../media/images/plus.png";
+				imgMinus.src = "../../media/images/minus.png";
+				
+				function showNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgMinus.src;
+					oTable.style.display = "block";
+				}
+				
+				function hideNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgPlus.src;
+					oTable.style.display = "none";
+				}
+				
+				function nodeIsVisible(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+									break;
+							}
+					return (oTable && oTable.style.display == "block");
+				}
+				
+				function toggleNodeVisibility(Node){
+					if (nodeIsVisible(Node)){
+						hideNode(Node);
+					}else{
+						showNode(Node);
+					}
+				}
+			</script>
+					</head>
+		<body>
+			<div class="page-body">			
+<h2 class="file-name"><img src="../../media/images/Page_logo.png" alt="File" style="vertical-align: middle">/user.php</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+											<a href="#sec-constants">Constants</a>
+			|									<a href="#sec-functions">Functions</a>
+			</div>
+	<div class="info-box-body">	
+		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This script implements the Phorum user API.</p>
+<p class="description"><p>The user API is used for managing users and user related data. The API  does also implement the Phorum session system, which is used for  remembering authenticated users. See the documentation for the function  <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a> for more information on  Phorum user sessions.</p><p>The Phorum user API supports modules which can override Phorum's  authentication and session handling. And example module is provided  with the user API documentation.</p></p>
+	<ul class="tags">
+				<li><span class="field">copyright:</span> 2007, Phorum Development Team</li>
+				<li><span class="field">todo:</span> Make sure that PHORUM_ORIGINAL_USER_CODE is handled somehow      in the new API layer (unless it's not needed to handle that      due to superb design of course ;-).</li>
+				<li><span class="field">todo:</span> Document what fields are in a user record.</li>
+				<li><span class="field">example:</span> <a href="../../__examplesource/exsource_m5_trunk_include_api_examples_user_auth_module.php_c1ad581002f1829d49a145a461a29e9c.html">Authentication override module example</a></li>
+				<li><span class="field">license:</span> Phorum</li>
+			</ul>
+		
+			</div>
+</div>
+		
+
+	
+	<a name="sec-constants"></a>	
+	<div class="info-box">
+		<div class="info-box-title">Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+									<span class="disabled">Constants</span>
+			|										<a href="#sec-functions">Functions</a>
+					</div>
+		<div class="info-box-body">	
+			<a name="definePHORUM_ADMIN_SESSION"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_ADMIN_SESSION</span> = 2
+			(line <span class="line-number">81</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function call parameter, which tells various functions that  an admin back end session has to be handled.</p>
+	
+		
+</div>
+<a name="definePHORUM_FLAG_RAW_PASSWORD"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_FLAG_RAW_PASSWORD</span> = 1
+			(line <span class="line-number">97</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function call flag, which tells <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_save">phorum_api_user_save()</a> that the</p>
+<p class="description"><p>password field should be stored as is. This can be used to feed Phorum  MD5 encrypted passwords. Normally, the password field would be MD5  encrypted by the function. This will keep the phorum_api_user_save()  function from double encrypting the password.</p></p>
+	
+		
+</div>
+<a name="definePHORUM_FLAG_SESSION_ST"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_FLAG_SESSION_ST</span> = 1
+			(line <span class="line-number">88</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function call flag, which tells <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_set_active_user">phorum_api_user_set_active_user()</a>  that the short term forum session has to be activated.</p>
+	
+		
+</div>
+<a name="definePHORUM_FORUM_SESSION"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_FORUM_SESSION</span> = 1
+			(line <span class="line-number">75</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function call parameter, which tells various functions that  a front end forum session has to be handled.</p>
+	
+		
+</div>
+<a name="definePHORUM_SESSID_RESET_ALL"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_SESSID_RESET_ALL</span> = 2
+			(line <span class="line-number">112</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function call parameter, which tells <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a>  that all session ids have to be reset to new values. This is for example  appropriate after a user changed the password (so active sessions on  other computers or browsers will be ended).</p>
+	
+		
+</div>
+<a name="definePHORUM_SESSID_RESET_LOGIN"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_SESSID_RESET_LOGIN</span> = 1
+			(line <span class="line-number">104</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function call parameter, which tells <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a>  that session ids have to be reset to new values as far as that is sensible  for a newly logged in user.</p>
+	
+		
+</div>
+<a name="definePHORUM_SESSION_ADMIN"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_SESSION_ADMIN</span> = 'phorum_admin_session'
+			(line <span class="line-number">69</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Used for identifying admin sessions. The value is used as  the name for the session cookie for admin sessions.</p>
+	
+		
+</div>
+<a name="definePHORUM_SESSION_LONG_TERM"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_SESSION_LONG_TERM</span> = 'phorum_session_v5'
+			(line <span class="line-number">56</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Used for identifying long term sessions. The value is used as  the name for the session cookie for long term sessions.</p>
+	
+		
+</div>
+<a name="definePHORUM_SESSION_SHORT_TERM"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Constant.png" />
+		<span class="const-title">
+			<span class="const-name">PHORUM_SESSION_SHORT_TERM</span> = 'phorum_session_st'
+			(line <span class="line-number">63</span>)
+		</span>
+	</div>
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Used for identifying short term sessions. The value is used as  the name for the session cookie for short term sessions  (this is used by the tighter authentication scheme).</p>
+	
+		
+</div>
+		</div>
+	</div>
+	
+	
+	<a name="sec-functions"></a>	
+	<div class="info-box">
+		<div class="info-box-title">Functions</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+													<a href="#sec-constants">Constants</a>
+				|									<span class="disabled">Functions</span>
+		</div>
+		<div class="info-box-body">	
+			<a name="functionphorum_api_user_authenticate" id="functionphorum_api_user_authenticate"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_authenticate</span> (line <span class="line-number">624</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Check the authentication credentials for a user.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> If the authentication credentials are correct, this function returns      the user_id of the authenticated user. Otherwise, FALSE is returned.</li>
+				<li><span class="field">example:</span> <a href="../../__examplesource/exsource__phorum5_trunk_include_api_examples_user_login.php_0a533a75b364a0f5834c0e198e4dc9fa.html">Handle a user forum login</a></li>
+			</ul>
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			phorum_api_user_authenticate
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$username</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$password</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: <p>The type of session for which authentication is run. This must be      one of <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a> or <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_ADMIN_SESSION">PHORUM_ADMIN_SESSION</a>.</p><p>This parameter is mostly used for logging purposes and for giving      mods a chance to handle user authentication for only a certain type      of session. It is not used for denying authentication if for example      a standard user tries to authenticate for the admin interface. Those      restrictions are handled in a different part of the user API.</p><p>See the documentation for <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a>      for more information on Phorum user sessions.</p></span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$username</span><span class="var-description">: The username for the user.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$password</span><span class="var-description">: The password for the user.</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionphorum_api_user_get" id="functionphorum_api_user_get"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_get</span> (line <span class="line-number">466</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieve data for Phorum users.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> If the $user_id parameter is a single user_id, then either an array      containing user data is returned or NULL if the user was not found.      If the $user_id parameter is an array of user_ids, then an array      of user data arrays is returned, indexed by the user_id.      Users for user_ids that are not found are not included in the      returned array.</li>
+			</ul>
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			phorum_api_user_get
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$user_id</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$detailed</span> = <span class="var-default">FALSE</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$user_id</span><span class="var-description">: Either a single user_id or an array of user_ids.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$detailed</span><span class="var-description">: If this parameter is TRUE, then the user's groups and permissions are      included in the user data.</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionphorum_api_user_save" id="functionphorum_api_user_save"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_save</span> (line <span class="line-number">194</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Save data for Phorum users.</p>
+<p class="description"><p>This function can be used for both creating and updating Phorum users.  If no user_id is provided in the user data, a new user will be created.  If a user_id is provided, then the existing user will be updated or a  new user with that user_id is created.</p></p>
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			phorum_api_user_save
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$flags</span> = <span class="var-default">0</span>], <span class="var-type">int</span>&nbsp;<span class="var-name">2</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$user</span><span class="var-description">: An array containing user data. This array should at least contain      a field &quot;user_id&quot;. This field can be NULL to create a new user      with an automatically assigned user_id. It can also be set to a      user_id to either update an existing user or to create a new user      with the provided user_id.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$flags</span><span class="var-description">: If the flag <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FLAG_RAW_PASSWORD">PHORUM_FLAG_RAW_PASSWORD</a> is set, then the      password fields (&quot;password&quot; and &quot;password_temp&quot;) are considered to be      MD5 encrypted already. So this can be used to feed Phorum existing MD5      encrypted passwords.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">2</span><span class="var-description">: The user_id of the user. For new users, the newly assigned user_id      will be returned.</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionphorum_api_user_session_create" id="functionphorum_api_user_session_create"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_session_create</span> (line <span class="line-number">989</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Create a Phorum user session.</p>
+<p class="description"><p>Phorum does not use PHP sessions. Instead, it uses its own session  management system for remembering logged in users. There are  multiple reasons for that, amongst which are:</p><p><ul><li>the lack of session support (on some PHP installs);</li><li>missing out of the box load balancing support (sessions are normally
+   written to local session state files, so multiple machines would not
+   work well together);</li><li>file I/O problems (both performance and file system permissions can
+   be a problem);</li><li>the amount of unneeded overhead that is caused by the PHP session system;</li><li>the fact that Phorum also supports URI based sessions (without cookie).</li></ul>  This function can be used to create or maintain a login session for a  Phorum user. A prerequisite is that an active Phorum user is set through  the <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_set_active_user">phorum_api_user_set_active_user()</a> function, before calling  this function.</p><p>There are two session types available: <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a>  (used for the front end application) and <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_ADMIN_SESSION">PHORUM_ADMIN_SESSION</a>  (used for the administrative back end).</p><p>Admin sessions are used for the administrative back end system. For  security reasons, the back end does not share the front end session,  but uses a fully separate session instead. This session does not  have a timeout restriction, but it does not survive closing the  browser. It is always tracked using a cookie, never using URI  authentication (for security reasons).</p><p>The forum sessions can be split up into long term and short term sessions:</p><p><ul><li>Long term session:
+   The standard Phorum user session. This session is long lasting and will
+   survive after closing the browser (unless the long term session timeout
+   is set to zero). If tighter security is not enabled, then this session
+   is all a user needs to fully use all forum options. This session is
+   tracked using either a cookie or URI authentication.</li></ul> <ul><li>Short term session:
+   This session has a limited life time and will not survive closing the
+   browser. If tighter security is enabled, then the user will not be able
+   to use all forum functions, unless there is a short term session active
+   (e.g. posting forum messages and reading/writing private messages are
+   restricted). This session is tracked using a cookie. If URI authentication
+   is in use (because of admin config or cookie-less browsers) Phorum will
+   only look at the long term session (even in tighter security mode), since
+   URI authentication can be considered to be short term by nature.</li></ul></p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> TRUE in case the session was initialized successfully.      Otherwise, FALSE will be returned. The functions      <a href="../../PhorumAPI/BaseAPI/_base.php.html#functionphorum_api_strerror">phorum_api_strerror()</a> and <a href="../../PhorumAPI/BaseAPI/_base.php.html#functionphorum_api_errno">phorum_api_errno()</a> can be      used to retrieve information about the error which occurred.</li>
+				<li><span class="field">example:</span> <a href="../../__examplesource/exsource__phorum5_trunk_include_api_examples_user_login.php_0a533a75b364a0f5834c0e198e4dc9fa.html">Handle a user forum login</a></li>
+			</ul>
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			phorum_api_user_session_create
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$reset</span> = <span class="var-default">0</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: The type of session to initialize. This must be one of      <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a> or <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_ADMIN_SESSION">PHORUM_ADMIN_SESSION</a>.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$reset</span><span class="var-description">: <p>If it is set to 0 (zero, the default), then existing session_ids      will be reused if possible.</p><p>If this parameter is set to PHORUM_SESSID_RESET_LOGIN, then a new      session id will be generated for short term forum sessions and if      cookies are disabled for some reason, for long term forum sessions      as well (to prevent accidental distribution of URLs with auth info      in them). This is the type of session id reset that is appropriate      after handling a login action.</p><p>If this parameter is set to PHORUM_SESSID_RESET_ALL, then all session      ids will be reset to new values. This is for example      appropriate after a user changed the password (so active sessions on      other computers or browsers will be ended).</p></span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionphorum_api_user_session_destroy" id="functionphorum_api_user_session_destroy"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_session_destroy</span> (line <span class="line-number">1460</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Destroy a Phorum user session.</p>
+<p class="description"><p>This will destroy a Phorum user session and set the active  Phorum user to the anonymous user.</p></p>
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			phorum_api_user_session_destroy
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: The type of session to destroy. This must be one of      <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a> or <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_ADMIN_SESSION">PHORUM_ADMIN_SESSION</a>.      See the documentation for <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a>      for more information on Phorum user sessions.</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionphorum_api_user_session_restore" id="functionphorum_api_user_session_restore"><!-- --></a>
+<div class="oddrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_session_restore</span> (line <span class="line-number">1203</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Restore a Phorum user session.</p>
+<p class="description"><p>This function will check for a valid user session for either the  forum or the admin interface (based on the $type parameter). If a valid  session is found, then the user session will be restored.</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> TRUE in case a valid session is detected, otherwise FALSE.      Note that a <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a> will return TRUE if      a long term session is detected and that the sort term session      might be missing. Code which depends on short term sessions should      investigate the $PHORUM[&quot;DATA&quot;][&quot;FULLY_LOGGEDIN&quot;] variable.</li>
+			</ul>
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			phorum_api_user_session_restore
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: The type of session to check for. This must be one of      <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a> or <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_ADMIN_SESSION">PHORUM_ADMIN_SESSION</a>.      See the documentation for <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a>      for more information on Phorum user sessions.</span>			</li>
+				</ul>
+		
+	
+</div>
+<a name="functionphorum_api_user_set_active_user" id="functionphorum_api_user_set_active_user"><!-- --></a>
+<div class="evenrow">
+	
+	<div>
+		<img src="../../media/images/Function.png" />
+		<span class="method-title">phorum_api_user_set_active_user</span> (line <span class="line-number">785</span>)
+	</div> 
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the active Phorum user.</p>
+<p class="description"><p>This function can be used to setup the Phorum data to indicate which  user is logged in or to setup the anonymous user. Calling this function  is all that is needed to tell Phorum which user is logged in (or to  tell that no user is logged in by setting up the anonymous user).</p><p>Next to setting up the user data, the function will handle user activity  tracking (based on the &quot;track_user_activity&quot; setting) and setup some  special (template) variables:</p><p>The variabe $PHORUM[&quot;DATA&quot;][&quot;ADMINISTRATOR&quot;] will be set to TRUE if  the active user is an administrator, FALSE otherwise.</p><p>For type <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a>, the following extra variables  will be filled:</p><p><ul><li>$PHORUM[&quot;DATA&quot;][&quot;LOGGEDIN&quot;]:
+   TRUE if the user is logged in, FALSE otherwise.</li></ul> <ul><li>$PHORUM[&quot;DATA&quot;][&quot;FULLY_LOGGEDIN&quot;]:
+   TRUE if a short term session is active (by setting the
+   <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FLAG_SESSION_ST">PHORUM_FLAG_SESSION_ST</a> flag for the $flags parameter),
+   FALSE otherwise.</li></ul></p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> TRUE if a real user was set as the active user successfully      or FALSE if the anonymous user was set (either because that was      requested or because setting the real user failed). If setting a      real user as the active user failed, the functions      <a href="../../PhorumAPI/BaseAPI/_base.php.html#functionphorum_api_strerror">phorum_api_strerror()</a> and <a href="../../PhorumAPI/BaseAPI/_base.php.html#functionphorum_api_errno">phorum_api_errno()</a> can be      used to retrieve information about the error which occurred.</li>
+				<li><span class="field">example:</span> <a href="../../__examplesource/exsource__phorum5_trunk_include_api_examples_user_login.php_0a533a75b364a0f5834c0e198e4dc9fa.html">Handle a user forum login</a></li>
+			</ul>
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			phorum_api_user_set_active_user
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$user</span> = <span class="var-default">NULL</span>], [<span class="var-type">integer</span>&nbsp;<span class="var-name">$flags</span> = <span class="var-default">0</span>])
+			</div>
+
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: The type of session for which to set the active user. This must be      one of <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a> or <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_ADMIN_SESSION">PHORUM_ADMIN_SESSION</a>.      See the documentation for <a href="../../PhorumAPI/UserAPI/_user.php.html#functionphorum_api_user_session_create">phorum_api_user_session_create()</a>      for more information on Phorum user sessions.</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$user</span><span class="var-description">: The user_id or the full user data array for the user that has to be      the active user or NULL if the active user has to be set to the      anonymous user (the default).</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$flags</span><span class="var-description">: If the flag <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FLAG_SESSION_ST">PHORUM_FLAG_SESSION_ST</a> is set, then the short      term session will be enabled for <a href="../../PhorumAPI/UserAPI/_user.php.html#definePHORUM_FORUM_SESSION">PHORUM_FORUM_SESSION</a>      based sessions.</span>			</li>
+				</ul>
+		
+	
+</div>
+		</div>
+	</div>
+	
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 01 Jul 2007 13:05:24 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.2</a>
+	</p>
+	</div></body>
+</html>

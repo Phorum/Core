@@ -2,6 +2,10 @@ body {
     font-family: arial,helvetica,sans-serif;
     color: #345;
     line-height: 1.3em;
+    margin: 15px;
+    background-image: url("../images/page-background.png");
+    background-repeat: repeat-x;
+    background-attachment: fixed;
 }
 
 a:link,a:visited,a:active {
@@ -11,14 +15,20 @@ a:hover {
     color: #5C5CA6;
 }
 h1,h2,h3,h4 {
-    color: black;
+    color: #77AB77;
     padding-top: 20px;
 }
 h1 {
-    border: 2px solid black;
-    padding: 5px;
-    background-color: #ded;
-    color: black;
+    padding: 0px;
+    color: #336733;
+}
+
+.chapter {
+    display: block;
+    margin: 15px 0px 10px 0px;
+}
+.chapter a {
+    color: #336733;
 }
 
 .programlisting {
@@ -27,32 +37,16 @@ h1 {
     padding: 10px;
     margin: 5px 40px;
 }
-
-.screen {
-    background-color: #f5f5f5;
-    color: black;
-    border: 1px solid black;
-    padding: 10px;
-    margin: 5px 40px;
-}
-.screen .literal {
-    font-size: inherit;
-    color: darkgreen;
-}
-
 p {
     padding-left: 40px;
 }
-.itemizedlist { 
+
+.itemizedlist {
     margin-left: 30px;
 }
 li p {
     padding: 0px;
 }
-.copyright,.toc {
-    padding-left: 0px;
-}
-
 .toc {
     color: black;
 }
@@ -68,13 +62,12 @@ li p {
 
 .variablelist .term {
     font-weight: bold;
-    padding-left: 40px;
 }
-
 
 h3.author {
     font-size: 14px;
-    padding-top: 0px;
+    padding: 2px;
+    margin: 0px;
 }
 
 .filename {
@@ -89,13 +82,25 @@ h3.author {
     color: darkblue;
 }
 
+.variablelist .term {
+    font-weight: bold;
+    padding-left: 40px;
+}
+
+.note {
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    padding: 10px;
+}
+.note h3 {
+    padding: 0px;
+    margin: 0px;
+    color: black;
+}
+
 .note {
     border: 1px solid #ddd;
     padding: 15px;
-    padding-left: 70px;
-    background-image: url("images/note.png");
-    background-position: 10px 15px;
-    background-repeat: no-repeat;
 }
 .note h3 {
     padding: 0px 0px 10px 0px;
@@ -106,10 +111,6 @@ h3.author {
 .important {
     border: 1px solid #ddd;
     padding: 15px;
-    padding-left: 70px;
-    background-image: url("images/important.gif");
-    background-position: 10px 15px;
-    background-repeat: no-repeat;
 }
 .important h3 {
     padding: 0px 0px 10px 0px;
@@ -120,8 +121,17 @@ h3.author {
     padding: 0px;
     margin: 0px;
 }
-.important .programlisting {
-    margin: 10px 0px 10px 0px;
+
+.screen {
+    background-color: #f5f5f5;
+    color: black;
+    border: 1px solid black;
+    padding: 10px;
+    margin: 5px 40px;
+}
+.screen .literal {
+    font-size: inherit;
+    color: darkgreen;
 }
 
 .remark {
@@ -132,3 +142,9 @@ h3.author {
     margin: 10px 10px 10px 0px;
     display: block; /* Change to "none" in production */
 }
+
+
+    width: expression(document.body.clientWidth > 900 ? "900px" : true);
+    border-left: 1px solid #B6B6B6;
+}
+

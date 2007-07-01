@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Manual navigation</title>
+    <link rel="stylesheet" href="phorum.css" type="text/css" />
+  </head>
+  <body>
+    <div id="top-bar" align="center">
+     <div id="logo">
+       <a href="index.html"><img  src="images/logo.png" width="111" height="26" border="0" alt="PHORUM Documentation" /></a>
+     </div>
+   </div>
+   <div id="menu-bar" align="center">
+     <script type="text/javascript">
+        function loadURL(url) {
+          parent.content.document.location = url;
+          return false;
+        }
+     </script>
+     <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+       <tr>
+         <td onclick="loadURL('manual/');"><a target="content" href="manual/">PHORUM MANUAL</a></td>
+         <td onclick="loadURL('api/');"><a target="content" href="api/">API DEVELOPER DOCUMENTATION</a></td>
+         <td onclick="loadURL('http://www.phorum.org');"><a target="content" href="http://www.phorum.org">PHORUM.ORG</a></td>
+       </tr>
+     </table>
+   </div>
+  </body>
+</html>
