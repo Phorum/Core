@@ -6,8 +6,11 @@ all:
 	       -t docs/html/api \
 	       -ti "Phorum API Documentation" \
 	       -o HTML:frames:DOM/earthli -dn PhorumAPI)
+	cp index.html.custom index.html
 
 clean:
 	/bin/rm -f *.html
 	/bin/rm -fR media
+	/bin/rm -fR docs
+	/bin/rm -fR __examplesource
 

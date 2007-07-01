@@ -3,9 +3,7 @@ body {
     color: #345;
     line-height: 1.3em;
     margin: 15px;
-    background-image: url("../images/page-background.png");
-    background-repeat: repeat-x;
-    background-attachment: fixed;
+    background-color: white;
 }
 
 a:link,a:visited,a:active {
