@@ -1,0 +1,23 @@
+<chapter>
+  <title>Trouble shooting</title>
+
+  <section>
+    <title>
+      Why do I always end up at the top of a page when using the back button?
+    </title>
+    <para>
+      Your PHP setup is probably sending headers along with the reply, telling
+      the browser to not cache the page. Therefore, when going to the previous
+      page, it will be reloaded as if it were a new page. You can tweak the
+      PHP settings to not have PHP sending these headers. Edit the php.ini and
+      set the "session.cache_limiter" directive to have no value at all. So
+      the line in php.ini would end up like this:
+      <programlisting>
+        session.cache_limiter =
+      </programlisting>
+      After editing the php.ini, restart the webserver. From then on, using
+      the back button should work like expected.
+    </para>
+  </section>
+
+</chapter>

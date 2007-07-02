@@ -1,0 +1,79 @@
+<chapter>
+  <title>Features</title>
+
+  <section>
+    <title>
+      Why do you show the number of messages and not the number of replies
+      for a topic on the list page?
+    </title>
+    <para>
+      In short: the people writing the code liked it better. If you want
+      to show the number of replies, you can modify your template by
+      putting this line of code in your lists.tpl template file:
+      <programlisting>
+        &lt;?php $PHORUM['TMP']['MESSAGES']['thread_count']--; ?&gt;
+      </programlisting>
+      Put that line right after the line that says:
+      <programlisting>
+        {LOOP MESSAGES}
+      </programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>
+      Does Phorum have avatars or user rankings like (inset UBB clone)?
+    </title>
+    <para>
+      Not by default. There are modules available to add this functionality.
+      See the module list page for an overview of available modules:
+      &listofmodules;
+    </para>
+  </section>
+
+  <section>
+    <title>
+      Why do unregistered users not have new message indicators?
+    </title>
+    <para>
+      In Phorum 3, the data for the new message indicators was stored inside
+      cookies. That way, both registered and unregistered users could see
+      them. However, because of many cookie problems that plagued Phorum 3,
+      we decided to store all user settings in the database for Phorum 5
+      instead. The down side of this is that users must be registered to
+      show new messages. The up side is that the new indicators really
+      work like they should in Phorum 5: messages that are read stay read
+      when switching browser or computer.
+    </para>
+  </section>
+
+  <section>
+    <title>
+      What are sticky topics?
+    </title> 
+    <para>
+      Sticky topics (a.k.a. "stickies") are topics that stay at the top of
+      the forum they are posted in and do not get bumped down as new topics
+      are posted. Often, sticky topics are used to post a forum FAQ or
+      forum rules, so new users will always find these at the start of the
+      forum topic list.
+    </para>
+  </section>
+
+  <section>
+    <title>
+      Can I post announcements?
+    </title>
+    <para>
+      For announcements, create a forum in which you will post announcement
+      messages. Setup the permissions in such way that only the users who
+      are allowed to create new announcements can post to this forum.
+    </para>
+    <para>
+      After this, go to the Modules page in the admin interface. There, you
+      can enable the "Announcements" module and edit its settings to point
+      it at the new announcement forum.
+    </para>
+  </section>
+
+</chapter>

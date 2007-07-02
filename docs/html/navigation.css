@@ -1,0 +1,86 @@
+body {
+    font-family: arial,helvetica,sans-serif;
+    background-color: white;
+    color: #345;
+    line-height: 1.3em;
+    margin: 0px;
+    padding: 0px;
+}
+
+#top-bar {
+    text-align: left;
+    height: 46px;
+    background-color: #77AB77;
+    background-image: url("images/top-background.png");
+    background-repeat: repeat-x;
+}
+
+#top-bar a {
+    border: 0px;
+}
+
+#top-bar a:hover {
+    background-color: transparent;
+}
+
+#buttons {
+    position: absolute;
+    right: 0;
+    padding: 4px 4px 0 0;
+}
+
+#buttons a {
+    display: block;
+    margin: 0 0 4px 0;
+}
+
+#logo {
+    max-width: 900px;
+    width: expression(document.body.clientWidth > 900 ? "900px" : "auto");
+    text-align: left;
+}
+
+#logo img {
+    margin: 15px 0 0 10px;
+}
+
+#menu-bar{
+    background-color: #DFDFDF;
+    background-image: url("images/menu-background.png");
+    background-repeat: repeat-x;
+    text-align: center;
+}
+
+#menu-bar table {
+    height: 25px;
+    max-width: 900px;
+    width: expression(document.body.clientWidth > 900 ? "900px" : true);
+    border-left: 1px solid #B6B6B6;
+}
+
+#menu-bar td {
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    width: 16%;
+    border-right: 1px solid #B6B6B6;
+    cursor: pointer;
+}
+
+#menu-bar td:hover {
+    background-image: url("images/menu-background-highlight.png");
+    background-repeat: repeat-x;
+    background-color: transparent;
+}
+
+#menu-bar a, #menu-bar a:visited {
+    display: block;
+    color: #606060;
+    text-decoration: none;
+    margin: 4px 0 0 0;
+    border: 0px;
+}
+
+#menu-bar a:hover {
+    background-color: transparent;
+}
