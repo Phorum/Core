@@ -611,7 +611,7 @@ function phorum_check_read_common()
  */
 function phorum_get_template_file( $page )
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check for a module reference in the page name.
     $fullpage = $page;
