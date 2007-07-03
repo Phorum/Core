@@ -679,10 +679,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $templates[] = "read";
     }
     if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
-        phorum_db_newflag_add_read($read_messages);
-        if($PHORUM['cache_newflags']) {
-            phorum_cache_remove('newflags',$newflagkey);
-            phorum_cache_remove('newflags_index',$newflagkey);
+        if(count($read_messages)) {
+            phorum_db_newflag_add_read($read_messages);
+            if($PHORUM['cache_newflags']) {
+                phorum_cache_remove('newflags',$newflagkey);
+                phorum_cache_remove('newflags_index',$newflagkey);
+            }
         }
     }
 
