@@ -490,7 +490,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["HTML_TITLE"].=htmlentities(PHORUM_SEPARATOR, ENT_COMPAT, $PHORUM["DATA"]["CHARSET"] );;
     }
     // No htmlentities() needed. The subject is already escaped.
-    // Strip HTML tags from the HTML title. There might be HTML in 
+    // Strip HTML tags from the HTML title. There might be HTML in
     // here, because of modules adding images and formatting.
     $PHORUM["DATA"]["HTML_TITLE"] .= trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $threadsubject));
 
@@ -505,7 +505,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         include phorum_get_template("read");
     }
     if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
-        phorum_db_newflag_add_read($read_messages);
+        if(count($read_messages)) {
+            phorum_db_newflag_add_read($read_messages);
+        }
     }
 
     // An anchor so clicking on a reply button can let the browser
