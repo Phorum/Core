@@ -148,38 +148,10 @@ function phorum_email_user($addresses, $data)
         $send_messages = phorum_hook("send_mail", $hook_data);
     }
 
-    if(isset($data["msgid"]))
-    {
-        # Try to find a useful hostname to use in the Message-ID.
-        $host = "";
-        if (isset($_SERVER["HTTP_HOST"])) {
-            $host = $_SERVER["HTTP_HOST"];
-        } else if (function_exists("posix_uname")) {
-            $sysinfo = @posix_uname();
-            if (!empty($sysinfo["nodename"])) {
-                $host .= $sysinfo["nodename"];
-            }
-            if (!empty($sysinfo["domainname"])) {
-                $host .= $sysinfo["domainname"];
-            }
-        } else if (function_exists("php_uname")) {
-            $host = @php_uname("n");
-        } else if (($envhost = getenv("HOSTNAME")) !== false) {
-            $host = $envhost; 
-        }
-        if (empty($host)) {
-            $host = "webserver";
-        }
-
-        $msgid="\nMessage-ID: <{$data['msgid']}@$host>";
-    } else {
-        $msgid="";
-    }
-
     if($send_messages != 0 && $num_addresses > 0){
         $phorum_major_version = substr(PHORUM, 0, strpos(PHORUM, '.'));
         $mailer = "Phorum" . $phorum_major_version;
-        $mailheader ="Content-Type: text/plain; charset={$PHORUM["DATA"]["CHARSET"]}\nContent-Transfer-Encoding: {$PHORUM["DATA"]["MAILENCODING"]}\nX-Mailer: $mailer$msgid\n";
+        $mailheader ="Content-Type: text/plain; charset={$PHORUM["DATA"]["CHARSET"]}\nContent-Transfer-Encoding: {$PHORUM["DATA"]["MAILENCODING"]}\nX-Mailer: $mailer$messageid_header\n";
 
         if(isset($PHORUM['use_bcc']) && $PHORUM['use_bcc'] && $num_addresses > 3){
             mail(" ", $mailsubject, $mailmessage, $mailheader."From: $from_address\nBCC: " . implode(",", $addresses));
