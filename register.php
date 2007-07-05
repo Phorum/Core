@@ -206,6 +206,7 @@ if (count($_POST)) {
             $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
 
             // Run a hook, so module writers can run tasks after registering.
+            $userdata["user_id"] = $user_id;
             phorum_hook("after_register",$userdata);
 
             include phorum_get_template("header");
