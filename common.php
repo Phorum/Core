@@ -617,7 +617,7 @@ function phorum_check_read_common()
  */
 function phorum_get_template_file( $page )
 {
-    global $PHORUM;
+    $PHORUM = $GLOBALS["PHORUM"];
 
     // Check for a module reference in the page name.
     $fullpage = $page;
@@ -642,6 +642,14 @@ function phorum_get_template_file( $page )
         $PHORUM["template"] = $PHORUM["default_forum_options"]["template"];
         if ($PHORUM["template"] != "default" && !file_exists("$prefix/{$PHORUM['template']}")) {
             $PHORUM["template"] = "default";
+        }
+
+        // If we're not handling a module template, then we can change the
+        // global template to remember the fallback template and to make
+        // sure that {URL->TEMPLATE} and {TEMPLATE} aren't pointing to a
+        // non-existant template in the end..
+        if ($module === NULL) {
+            $GLOBALS["PHORUM"]["template"] = $PHORUM["template"];
         }
     }
 

@@ -74,7 +74,17 @@ if ( count( $_POST ) ) {
         $_POST['is_dst']=0;   
     }
     
+    $oldtemplate = $PHORUM["user"]["user_template"];
+    
     list($error,$okmsg) = phorum_controlcenter_user_save( $panel );
+
+    // No error and the template changed? The reload the page to
+    // reflect the new template.
+    if (empty($error) && !empty($_POST["user_template"]) &&
+        $oldtemplate != $_POST["user_template"]) {
+        phorum_redirect_by_url($PHORUM['DATA']['URL']['CC6']);
+        exit();
+    }
 } 
 
 if ( isset( $PHORUM["user_time_zone"] ) ) {

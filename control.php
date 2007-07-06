@@ -232,7 +232,7 @@ function phorum_controlcenter_user_save($panel)
     if (isset($PHORUM["hooks"]["cc_save_user"]))
         $userdata = phorum_hook("cc_save_user", $userdata);
 
-    // Set $error, in case the before_register hook did set an error.
+    // Set $error, in case the cc_save_user hook did set an error.
     if (isset($userdata['error'])) {
         $error=$userdata['error'];
         unset($userdata['error']);
