@@ -132,7 +132,7 @@ function phorum_mod_editor_tools_common()
 
     // Give other modules a chance to setup their plugged in
     // editor tools. This is done through a standard hook call.
-    if (isset($PHORUM["hooks"]["editor_tool_plugin"]))
+    if (isset($GLOBALS["PHORUM"]["hooks"]["editor_tool_plugin"]))
         phorum_hook('editor_tool_plugin');
 
     // Keep track that the editor tools have been setup. From here
