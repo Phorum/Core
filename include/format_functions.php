@@ -97,9 +97,8 @@ function phorum_format_messages ($data, $author_specs = NULL)
             // Convert legacy <> urls into bare urls.
             $body = preg_replace("/<((http|https|ftp):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%]+?)>/i", "$1", $body);
 
-            // Escape special HTML characters. The function htmlspecialchars()
-            // does too much, prior to PHP version 4.0.3.
-            $body = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $body);
+            // Escape special HTML characters.
+            $body = htmlspecialchars($body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
             // Replace newlines with $phorum_br temporarily.
             // This way the mods know what Phorum did vs the user.
@@ -125,9 +124,9 @@ function phorum_format_messages ($data, $author_specs = NULL)
 
         // Escape special HTML characters in fields.
         if (isset($message["email"]))
-            $data[$key]["email"] = str_replace(array("<",">"), array("&lt;","&gt;"), $message["email"]);
+            $data[$key]["email"] = htmlspecialchars($data[$key]["email"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         if (isset($message["subject"]))
-            $data[$key]["subject"] = str_replace(array("&","<",">"), array("&amp;","&lt;","&gt;"), $message["subject"]);
+            $data[$key]["subject"] = htmlspecialchars($data[$key]["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
         // Do author formatting for all provided author fields.
         foreach ($author_specs as $spec)
@@ -143,20 +142,20 @@ function phorum_format_messages ($data, $author_specs = NULL)
                 $data[$key]["URL"][$spec[4]] = $url;
                 $data[$key][$spec[3]] =
                     (empty($PHORUM["custom_display_name"])
-                     ? htmlspecialchars($message[$spec[1]])
+                     ? htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                      : $message[$spec[1]]);
             }
             // For anonymous user which left an email address.
             elseif ($spec[2] !== NULL && !empty($message[$spec[2]]) &&
                     (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))) {
 
-                $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]]);
+                $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $email_url = phorum_html_encode("mailto:".$message[$spec[2]]);
                 $data[$key]["URL"]["PROFILE"] = $email_url;
             }
             // For anonymous user.
             else {
-                $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]]);
+                $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             }
         }
     }

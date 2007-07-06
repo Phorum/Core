@@ -35,8 +35,8 @@ if( $PHORUM["track_user_activity"] &&
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }
 
-$PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"]);
-$PHORUM["DATA"]["PROFILE"]["real_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"]);
+$PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+$PHORUM["DATA"]["PROFILE"]["real_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
 if (isset($PHORUM["hooks"]["profile"]))
     $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);

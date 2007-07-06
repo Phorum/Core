@@ -109,14 +109,14 @@ foreach ($avail_hooks["mods"] as $id => $checkmodule) {
 
 if (count($filtered_hooks["mods"]) == 0) trigger_error(
     '<h1>Modscript Error</h1>' .
-    'No addon hook enabled for module "'. htmlspecialchars($module) .'"',
+    'No addon hook enabled for module "'. htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .'"',
     E_USER_ERROR
 );
 
 if (count($filtered_hooks["mods"]) > 1) trigger_error(
     '<h1>Modsript Error</h1>' .
     'More than one addon hook was registered ' .
-    'in the info for module "' . htmlspecialchars($module) . '".<br/>Only ' .
+    'in the info for module "' . htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . '".<br/>Only ' .
     'one addon hook is allowed per module.',
     E_USER_ERROR
 );

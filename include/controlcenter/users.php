@@ -73,8 +73,8 @@ if(empty($users)){
 
     // XSS prevention.
     foreach ($users as $id => $user) {
-        $users[$id]["username"] = htmlspecialchars($user["username"]);
-        $users[$id]["email"] = htmlspecialchars($user["email"]);
+        $users[$id]["username"] = htmlspecialchars($user["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+        $users[$id]["email"] = htmlspecialchars($user["email"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }
 
     $PHORUM["DATA"]["USERS"]=$users;

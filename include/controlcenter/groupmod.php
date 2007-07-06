@@ -140,8 +140,8 @@ if (!empty($group_id)){
         }
 
         $PHORUM["DATA"]["USERS"][$userid] = array("userid" => $userid,
-            "name" => htmlspecialchars($users[$userid]["username"]),
-            "display_name" => htmlspecialchars($users[$userid]["display_name"]),
+            "name" => htmlspecialchars($users[$userid]["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]),
+            "display_name" => htmlspecialchars($users[$userid]["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]),
             "status" => $status,
             "statustext" => $statustext,
             "disabled" => $disabled,
@@ -160,8 +160,8 @@ if (!empty($group_id)){
 
         foreach ($userlist as $userid => $userinfo){
             if (!in_array($userid, $usersingroup)){
-                $userinfo["username"] = htmlspecialchars($userinfo["username"]);
-                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"]);
+                $userinfo["username"] = htmlspecialchars($userinfo["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $PHORUM["DATA"]["NEWMEMBERS"][] = $userinfo;
             }
         }

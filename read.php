@@ -573,7 +573,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
-                $row["attachments"][$key]["name"]=htmlspecialchars($file['name']);
+                $row["attachments"][$key]["name"]=htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $row["attachments"][$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}", "filename=".urlencode($file['name']));
             }
         }
@@ -662,7 +662,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // Strip HTML tags from the HTML title. There might be HTML in
     // here, because of modules adding images and formatting.
     $PHORUM["DATA"]["HTML_TITLE"] = trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $PHORUM["DATA"]["TOPIC"]["subject"]));
-    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($PHORUM["DATA"]["TOPIC"]["body"],0,300))));
+
+    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($PHORUM["DATA"]["TOPIC"]["body"],0,300))), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
     // include the correct template
 
@@ -725,7 +726,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessageTo"];
 
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"]);
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     // have to include the header here for the Redirect
     phorum_output("message");
 
@@ -734,7 +735,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"]);
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     // have to include the header here for the Redirect
     phorum_output("message");
 }

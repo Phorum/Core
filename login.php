@@ -242,14 +242,14 @@ elseif($PHORUM["use_cookies"] > PHORUM_NO_COOKIES) {
 
 // Determine to what URL the user must be redirected after login.
 if (!empty( $PHORUM["args"]["redir"])) {
-    $redir = htmlspecialchars(urldecode($PHORUM["args"]["redir"]));
+    $redir = htmlspecialchars(urldecode($PHORUM["args"]["redir"]), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 } elseif (!empty( $_REQUEST["redir"])) {
-    $redir = htmlspecialchars($_REQUEST["redir"]);
+    $redir = htmlspecialchars($_REQUEST["redir"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 } elseif (!empty( $_SERVER["HTTP_REFERER"])) {
     $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
     $len = strlen($base);
     if (strtolower(substr($_SERVER["HTTP_REFERER"],0,$len)) == $base) {
-        $redir = htmlspecialchars($_SERVER["HTTP_REFERER"]);
+        $redir = htmlspecialchars($_SERVER["HTTP_REFERER"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }
 }
 if (! isset($redir)) {
@@ -261,9 +261,9 @@ $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
 $PHORUM["DATA"]["URL"]["REGISTER"] = phorum_get_url( PHORUM_REGISTER_URL );
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_LOGIN_ACTION_URL );
 $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
-$PHORUM["DATA"]["LOGIN"]["username"] = htmlspecialchars( $username );
-$PHORUM["DATA"]["ERROR"] = htmlspecialchars( $error );
-$PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg );
+$PHORUM["DATA"]["LOGIN"]["username"] = htmlspecialchars( $username, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
+$PHORUM["DATA"]["ERROR"] = htmlspecialchars( $error, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
+$PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
 
 
 $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";

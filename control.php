@@ -101,7 +101,7 @@ unset($user["permissions"]);
 
 // Format the user signature using standard message body formatting
 // or  HTML escape it
-$user["signature"] = htmlspecialchars($user["signature"]);
+$user["signature"] = htmlspecialchars($user["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
 // Fake a message here so we can run the sig through format_message.
 $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));

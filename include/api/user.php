@@ -383,7 +383,7 @@ function phorum_api_user_save($user, $flags = 0)
     // to be provided in escaped HTML format.
     elseif (!isset($dbuser['display_name']) ||
             trim($dbuser['display_name']) == '') {
-        $dbuser['display_name'] = htmlspecialchars($dbuser['username']);
+        $dbuser['display_name'] = htmlspecialchars($dbuser['username'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }
 
     /**

@@ -25,7 +25,7 @@ if(count($_POST)) {
 
 foreach($PHORUM["DATA"]["PROFILE"] as $key => $data) {
     if(!is_array($data)) {
-        $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data);
+        $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }       
 }
 

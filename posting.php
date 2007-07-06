@@ -561,7 +561,7 @@ if ($PHORUM["posting_template"] == 'posting')
             $val = base64_encode(serialize($message[$var]));
             if ($spec[pf_SIGNED]) $signval = $val;
         } else {
-            $val = htmlspecialchars($message[$var]);
+            $val = htmlspecialchars($message[$var], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             if ($spec[pf_SIGNED]) $signval = $message[$var];
         }
 
@@ -573,7 +573,7 @@ if ($PHORUM["posting_template"] == 'posting')
         if ($signval !== NULL) {
             $signature = phorum_generate_data_signature($signval);
             $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
-                       'value="' . htmlspecialchars($signature) . "\" />\n";
+                       'value="' . htmlspecialchars($signature, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . "\" />\n";
         }
     }
     $PHORUM["DATA"]["POST_VARS"] .= $hidden;
@@ -597,17 +597,17 @@ if ($PHORUM["posting_template"] == 'posting')
                         continue;
                     }
 
-                    $message[$var][$nr]["name"] = htmlspecialchars($data["name"]);
+                    $message[$var][$nr]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                     $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
                 }
             }
         } elseif ($var == "author") {
             if (empty($PHORUM["custom_display_name"])) {
-                $message[$var] = htmlspecialchars($val);
+                $message[$var] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             }
         } else {
             if (is_scalar($val)) {
-                $message[$var] = htmlspecialchars($val);
+                $message[$var] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             } else {
                 // Not used in the template, unless proven otherwise.
                 $message[$var] = '[removed from template data]';

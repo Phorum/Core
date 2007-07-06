@@ -80,7 +80,7 @@ foreach($diffs as $diff_info){
 
     if(!isset($diff_info["user_id"])){
         $this_version["username"] = empty($PHORUM['custom_display_name'])
-                                  ? htmlspecialchars($message["author"])
+                                  ? htmlspecialchars($message["author"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                                   : $message["author"];
         $this_version["user_id"] = $message["user_id"];
         $this_version["date"] = phorum_date($PHORUM["long_date_time"], $message["datestamp"]);
@@ -90,7 +90,7 @@ foreach($diffs as $diff_info){
         $edit_user = phorum_api_user_get($diff_info['user_id']);
 
         $this_version["username"] = empty($PHORUM['custom_display_name'])
-                                  ? htmlspecialchars($edit_user["display_name"])
+                                  ? htmlspecialchars($edit_user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                                   : $edit_user["display_name"];
         $this_version["user_id"] = $diff_info["user_id"];
         $this_version["date"] = phorum_date($PHORUM["long_date_time"], $diff_info["time"]);
@@ -108,7 +108,7 @@ foreach($diffs as $diff_info){
         $colored_body = phorum_unpatch_color($prev_body, $diff_info['diff_body']);
         $prev_body = phorum_unpatch($prev_body, $diff_info['diff_body']);
 
-        $colored_body = htmlspecialchars($colored_body);
+        $colored_body = htmlspecialchars($colored_body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         $colored_body = str_replace(
                         array("[phorum addition]", "[phorum removal]", "[/phorum addition]", "[/phorum removal]"),
                         array("<span class=\"addition\">", "<span class=\"removal\">", "</span>", "</span>"),
@@ -128,7 +128,7 @@ foreach($diffs as $diff_info){
     // subject diffs
     /*if(!empty($prev_diff_subject)){
         $colored_subject = phorum_unpatch_color($prev_subject, $prev_diff_subject);
-        $colored_subject = htmlspecialchars($colored_subject);
+        $colored_subject = htmlspecialchars($colored_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         $colored_subject = str_replace(
         array("[phorum addition]", "[phorum removal]", "[/phorum addition]", "[/phorum removal]"),
         array("<span class=\"addition\">", "<span class=\"removal\">", "</span>", "</span>"),
@@ -154,7 +154,7 @@ foreach($diffs as $diff_info){
         $colored_subject = phorum_unpatch_color($prev_subject, $diff_info['diff_subject']);
         $prev_subject = phorum_unpatch($prev_subject, $diff_info['diff_subject']);
 
-        $colored_subject = htmlspecialchars($colored_subject);
+        $colored_subject = htmlspecialchars($colored_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         $colored_subject = str_replace(
                         array("[phorum addition]", "[phorum removal]", "[/phorum addition]", "[/phorum removal]"),
                         array("<span class=\"addition\">", "<span class=\"removal\">", "</span>", "</span>"),
@@ -181,7 +181,7 @@ $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ChangeHistory"];
 // unset default description
 $PHORUM["DATA"]["DESCRIPTION"] = "";
 
-$PHORUM["DATA"]["MESSAGE"]["subject"] = htmlspecialchars($message["subject"]);
+$PHORUM["DATA"]["MESSAGE"]["subject"] = htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 $PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message_id);
 
 $PHORUM["DATA"]["CHANGES"] = $message_hist;

@@ -262,7 +262,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
         }
     }
     // Copy default values beneath DATA to the current language.
-    $datafields = array('CHARSET', 'MAILENCODING', 'LANG_META');
+    $datafields = array('CHARSET', 'HCHARSET', 'MAILENCODING', 'LANG_META');
     foreach ($datafields as $f) {
         if (! isset($CURRENT['DATA'][$f]) || $CURRENT['DATA'][$f] == '') {
             $CURRENT['DATA'][$f] = $DEFAULT['DATA'][$f];
@@ -322,10 +322,9 @@ function phorum_write_language_file($lang, $CURRENT)
         "// Date formatting. Check the PHP-docs for the syntax of these\n" .
         "// entries (http://www.php.net/strftime). One tip: do not use\n" .
         "// %T for showing the time zone, as users can change their time zone.\n" .
-        "\$PHORUM['long_date'] = " . urldecode($CURRENT['long_date']) . ";\n" .
-        "\$PHORUM['long_date_time'] = " . urldecode($CURRENT['long_date_time']) . ";\n" .
-        "\$PHORUM['short_date'] = " . urldecode($CURRENT['short_date']) . ";\n" .
         "\$PHORUM['short_date_time'] = " . urldecode($CURRENT['short_date_time']) . ";\n" .
+        "\$PHORUM['long_date'] = " . urldecode($CURRENT['long_date']) . ";\n" .
+        "\$PHORUM['short_date'] = " . urldecode($CURRENT['short_date']) . ";\n" .
         "\n" .
         "// The locale setting for enabling localized times/dates. Take a look\n" .
         "// at http://www.w3.org/WAI/ER/IG/ert/iso639.htm for the needed string.\n" .
@@ -337,6 +336,17 @@ function phorum_write_language_file($lang, $CURRENT)
         "\n" .
         "// The charset to use for displaying special characters.\n" .
         "\$PHORUM['DATA']['CHARSET'] = " . urldecode($CURRENT['DATA']['CHARSET']) . ";\n" .
+        "\n" .
+        "// The charset to use for htmlspecialchars() calls. PHP does\n" .
+        "// not implement all available charsets, which might result in\n" .
+        "// warning messages if an unsupported charset is used.\n" .
+        "//\n" .
+        "// See http://www.php.net/htmlspecialchars for info on charset\n" .
+        "// compatibility. If the charset that you specified above is\n" .
+        "// compatible with htmlspecialchars(), then you can set this\n" .
+        "// variable to NULL. Otherwise, specify a compatible character\n" .
+        "// set (ISO-8859-1 is usually a good choice for this).\n" .
+        "\$PHORUM['DATA']['HCHARSET'] = " . urldecode($CURRENT['DATA']['HCHARSET']) . ";\n" .
         "\n" .
         "// The encoding used for outgoing mail messages.\n" .
         "\$PHORUM['DATA']['MAILENCODING'] = " . urldecode($CURRENT['DATA']['MAILENCODING']) . ";\n" .

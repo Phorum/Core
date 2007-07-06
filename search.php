@@ -128,8 +128,8 @@ $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
 // setup some stuff based on the url passed
 if(!empty($phorum_search) || !empty($phorum_author)){
 
-    $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search);
-    $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author);
+    $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
     include_once("./include/format_functions.php");
 
@@ -195,7 +195,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
             if(!$raw_body) {
                 $body = phorum_strip_body($arr["rows"][$key]["body"]);
                 $arr["rows"][$key]["short_body"] = substr($body, 0, 400);
-                $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"]);
+                $arr["rows"][$key]["short_body"] = htmlspecialchars($arr["rows"][$key]["short_body"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             }
             $arr["rows"][$key]["raw_datestamp"] = $row["datestamp"];
             $arr["rows"][$key]["datestamp"] = phorum_relative_date($row["datestamp"]);
@@ -303,7 +303,7 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     } else {
         $search_name = $search_user["display_name"];
         if (empty($PHORUM['custom_display_name'])) {
-            $search_name = htmlspecialchars($search_name);
+            $search_name = htmlspecialchars($search_name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         }
     }
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];

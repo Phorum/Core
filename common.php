@@ -438,6 +438,12 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // load the locale from the language file into the template vars
     $PHORUM["DATA"]["LOCALE"] = ( isset( $PHORUM["locale"] ) ) ? $PHORUM["locale"] : "";
 
+    // If there is no HCHARSET (used by the htmlspecialchars() calls), then
+    // use the CHARSET for it instead.
+    if (empty($PHORUM["DATA"]["HCHARSET"])) {
+        $PHORUM["DATA"]["HCHARSET"] = $PHORUM["DATA"]["CHARSET"];
+    }
+
     // just setting this up for upgraded installs where this might not be set up
     if(!isset($PHORUM['cache_newflags'])) {
         $PHORUM['cache_newflags'] = 0;
@@ -449,7 +455,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
-    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars(strip_tags($PHORUM["DATA"]["HTML_TITLE"]));
+    $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
     // if the Phorum is disabled, display a message.
     if( !$PHORUM["user"]["admin"] ) {
@@ -517,13 +523,13 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         phorum_hook( "common", "" );
 
     $PHORUM['DATA']['USER'] = $PHORUM['user'];
-    $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"]);
+    $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     if (isset($PHORUM['DATA']['USER']['real_name']))
-        $PHORUM['DATA']['USER']["real_name"] = htmlspecialchars($PHORUM['DATA']['USER']["real_name"]);
+        $PHORUM['DATA']['USER']["real_name"] = htmlspecialchars($PHORUM['DATA']['USER']["real_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     if (isset($PHORUM['DATA']['USER']['display_name']))
-        $PHORUM['DATA']['USER']["display_name"] = htmlspecialchars($PHORUM['DATA']['USER']["display_name"]);
-    if(isset($PHORUM['DATA']['USER']["email"])) $PHORUM['DATA']['USER']["email"] = htmlspecialchars($PHORUM['DATA']['USER']["email"]);
-    if(isset($PHORUM['DATA']['USER']["signature"])) $PHORUM['DATA']['USER']["signature"] = htmlspecialchars($PHORUM['DATA']['USER']["signature"]);
+        $PHORUM['DATA']['USER']["display_name"] = htmlspecialchars($PHORUM['DATA']['USER']["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    if(isset($PHORUM['DATA']['USER']["email"])) $PHORUM['DATA']['USER']["email"] = htmlspecialchars($PHORUM['DATA']['USER']["email"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    if(isset($PHORUM['DATA']['USER']["signature"])) $PHORUM['DATA']['USER']["signature"] = htmlspecialchars($PHORUM['DATA']['USER']["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
@@ -1083,7 +1089,7 @@ function phorum_database_error($error)
     // In admin scripts, we will always include the
     // error message inside a comment in the page.
     if (defined("PHORUM_ADMIN")) {
-        print "<!-- " .  htmlspecialchars($error) .  " -->";
+        print "<!-- " .  htmlspecialchars($error, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .  " -->";
     }
 
     switch ($logopt)
@@ -1113,11 +1119,11 @@ function phorum_database_error($error)
 
             $htmlbacktrace = $backtrace === NULL
                            ? NULLL
-                           : nl2br(htmlspecialchars($backtrace));
+                           : nl2br(htmlspecialchars($backtrace, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]));
 
             print "Please try again later!" .
                   "<h3>Error:</h3>" .
-                  htmlspecialchars($error) .
+                  htmlspecialchars($error, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .
                   ($backtrace !== NULL
                    ? "<h3>Backtrace:</h3>\n$htmlbacktrace"
                    : "");

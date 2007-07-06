@@ -57,7 +57,7 @@ function phorum_build_forum_list() {
         $forum_picker[] = array(
             "forum_id" => $forum["forum_id"],
             "folder_flag" => $forum["folder_flag"],
-            "name" => htmlspecialchars($forum["name"]),
+            "name" => htmlspecialchars($forum["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ),
             "indent" => ((count($forum["forum_path"])-2)*7)+3,
             "url" => $url,
             "path" => $forum["forum_path"]

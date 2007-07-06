@@ -455,7 +455,7 @@ if (!empty($action)) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
                                         $recipient =
                                             (empty($PHORUM["custom_display_name"])
-                                             ? htmlspecialchars($user["display_name"])
+                                             ? htmlspecialchars($user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                                              : $user["display_name"]);
                                         $error = str_replace('%recipient%', $recipient, $error);
                                     }
@@ -637,8 +637,8 @@ switch ($page) {
     // Manage the PM folders.
     case "folders":
 
-        $PHORUM["DATA"]["CREATE_FOLDER_NAME"] = isset($_POST["create_folder_name"]) ? htmlspecialchars($_POST["create_folder_name"]) : '';
-        $PHORUM["DATA"]["RENAME_FOLDER_NAME"] = isset($_POST["rename_folder_name"]) ? htmlspecialchars($_POST["rename_folder_name"]) : '';
+        $PHORUM["DATA"]["CREATE_FOLDER_NAME"] = isset($_POST["create_folder_name"]) ? htmlspecialchars($_POST["create_folder_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : '';
+        $PHORUM["DATA"]["RENAME_FOLDER_NAME"] = isset($_POST["rename_folder_name"]) ? htmlspecialchars($_POST["rename_folder_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : '';
         $template = "pm_folders";
         break;
 
@@ -668,7 +668,7 @@ switch ($page) {
                 'user_id'     => $id,
                 'display_name' => 
                     (empty($PHORUM["custom_display_name"])
-                     ? htmlspecialchars($buddy_user["display_name"])
+                     ? htmlspecialchars($buddy_user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                      : $buddy_user["display_name"]),
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
@@ -862,7 +862,7 @@ switch ($page) {
                     foreach ($val as $id => $data) {
                         $msg[$key][$id]["display_name"] = 
                           (empty($PHORUM["custom_display_name"])
-                           ? htmlspecialchars($data["display_name"])
+                           ? htmlspecialchars($data["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                            : $data["display_name"]);
                     }
                     break;
@@ -870,11 +870,11 @@ switch ($page) {
                 case "author": {
                     $msg[$key] =  
                       (empty($PHORUM["custom_display_name"])
-                       ? htmlspecialchars($val) : $val);
+                       ? htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : $val);
                     break;
                 }
                 default: {
-                    $msg[$key] = htmlspecialchars($val);
+                    $msg[$key] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                     break;
                 }
             }
@@ -898,7 +898,7 @@ switch ($page) {
             $userlist = phorum_user_get_list(1);
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
-                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"]);
+                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $userinfo["user_id"] = $user_id;
                 $allusers[] = $userinfo;
             }
@@ -947,7 +947,7 @@ foreach($pm_folders as $id => $data)
     $pm_folders[$id]["is_special"] = is_numeric($id) ? 0 : 1;
     $pm_folders[$id]["is_outgoing"] = $id == PHORUM_PM_OUTBOX;
     $pm_folders[$id]["id"] = $id;
-    $pm_folders[$id]["name"] = htmlspecialchars($data["name"]);
+    $pm_folders[$id]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     $pm_folders[$id]["url"] = phorum_get_url(PHORUM_PM_URL, "page=list", "folder_id=$id");
 
     if (!$pm_folders[$id]["is_special"]) {
@@ -1032,7 +1032,7 @@ function phorum_pm_format($messages)
                 } else {
                     $messages[$id]["recipients"][$rcpt_id]["display_name"]=
                         (empty($PHORUM["custom_display_name"])
-                         ? htmlspecialchars($rcpt["display_name"])
+                         ? htmlspecialchars($rcpt["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                          : $rcpt["display_name"]);
                     $messages[$id]["recipients"][$rcpt_id]["URL"]["PROFILE"] =
                         phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
