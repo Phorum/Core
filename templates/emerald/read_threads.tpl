@@ -109,8 +109,10 @@
         </div>
     {/IF}
 
-    {IF USER->user_id}
+    {IF URL->MARKTHREADREAD}
         <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
+    {/IF}
+    {IF TOPIC->URL->FOLLOW}
         <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
     {/IF}
     {IF URL->FEED}

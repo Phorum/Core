@@ -31,7 +31,7 @@
         {ELSE}
                 <td width="55%" ><h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</h3></a>
                     <p>{FORUMS->description}</p>
-                    {IF USER->user_id}<a class="icon icon-tag-green" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
+                    {IF FORUMS->URL->MARK_READ}<a class="icon icon-tag-green" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
                     {IF FORUMS->URL->FEED}<a class="icon icon-feed" href="{FORUMS->URL->FEED}">{FEED}</a>{/IF}
                 </td>
                 <td align="center" width="12%" width="55%" nowrap="nowrap">

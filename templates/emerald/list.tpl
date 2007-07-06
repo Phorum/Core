@@ -2,7 +2,7 @@
     {INCLUDE "paging"}
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
-    {IF USER->user_id}
+    {IF URL->MARK_READ}
         <a class="icon icon-tag-green" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
     {/IF}
     {IF URL->FEED}

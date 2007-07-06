@@ -362,7 +362,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "newer");
     }
 
-    $PHORUM["DATA"]["URL"]["MARKTHREADREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "markthreadread");
+    if ($PHORUM["DATA"]["LOGGEDIN"]) {
+        $PHORUM["DATA"]["URL"]["MARKTHREADREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "markthreadread");
+    }
     if($PHORUM["threaded_read"]) {
         $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, $message_id, "printview");
     } else {
@@ -506,7 +508,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["URL"]["REPLY"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"]);
         $row["URL"]["QUOTE"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"], "quote=1");
         $row["URL"]["REPORT"] = phorum_get_url(PHORUM_REPORT_URL, $row["message_id"]);
-        $row["URL"]["FOLLOW"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
+        if ($PHORUM["DATA"]["LOGGEDIN"]) {
+            $row["URL"]["FOLLOW"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
+        }
 
         // can only send private replies if the author is a registered user
         if ($PHORUM["enable_pm"] && $row["user_id"]) {
