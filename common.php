@@ -931,6 +931,8 @@ function phorum_get_language_info()
         }
     }
 
+    asort($langs, SORT_STRING);
+
     return $langs;
 }
 
