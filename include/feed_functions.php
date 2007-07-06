@@ -17,11 +17,11 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
 
     foreach($messages as $message) {
 
-        $title = $message["subject"];
+        $title = strip_tags($message["subject"]);
         if(empty($PHORUM["args"]["replies"])){
             switch($message["thread_count"]){
                 case 1:
-                    $title.= " (no ".$PHORUM["DATA"]["LANG"]["replies"].")";
+                    $title.= " (".$PHORUM["DATA"]["LANG"]["noreplies"].")";
                     break;
                 case 2:
                     $title.= " (1 ".$PHORUM["DATA"]["LANG"]["reply"].")";
@@ -79,7 +79,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
         if($message["thread_count"]<1) continue;
 
-        $title = $message["subject"];
+        $title = strip_tags($message["subject"]);
         if(empty($PHORUM["args"]["replies"])){
             switch($message["thread_count"]){
                 case 1:
@@ -130,7 +130,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
 
     foreach($messages as $message) {
 
-        $title = $message["subject"];
+        $title = strip_tags($message["subject"]);
 
         if(empty($PHORUM["args"]["replies"])){
 
@@ -177,7 +177,7 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
 
         $item = array(
 
-            "title" => $message["subject"],
+            "title" => strip_tags($message["subject"]),
             "author" => $message["author"],
             "category" => $forums[$message["forum_id"]]["name"],
             "created" => phorum_date($PHORUM['short_date'], $message["datestamp"]),

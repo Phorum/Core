@@ -89,18 +89,17 @@ if(!empty($cache)){
     // set up the feed specifics based on the info we are getting
     if($thread && $PHORUM["forum_id"]){
         $feed_url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $PHORUM["forum_id"], $thread, $thread);
-        $feed_title = $message[$thread]["subject"];
+        $feed_title = strip_tags($message[$thread]["subject"]);
         $feed_description = strip_tags($message[$thread]["body"]);
     } elseif($PHORUM["forum_id"]){
         $feed_url = phorum_get_url(PHORUM_LIST_URL);
-        $feed_title = $PHORUM["DATA"]["TITLE"]." - ".$PHORUM["DATA"]["NAME"];
+        $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]." - ".$PHORUM["DATA"]["NAME"]);
         $feed_description = strip_tags($PHORUM["DATA"]["DESCRIPTION"]);
     } else {
         $feed_url = phorum_get_url(PHORUM_INDEX_URL);
-        $feed_title = $PHORUM["DATA"]["TITLE"];
+        $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]);
         $feed_description = (!empty($PHORUM["description"])) ? $PHORUM["description"] : "";
     }
-
 
     switch($feed_type) {
 
@@ -136,6 +135,6 @@ if(!empty($cache)){
 // output the proper header and the data
 header("Content-type: $content_type;");
 echo $data;
-
+exit(0);
 
 ?>

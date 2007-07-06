@@ -450,6 +450,7 @@
         "Reply"                 =>      "Reply",
         "reply"                 =>      "reply",
         "replies"               =>      "replies",
+        "noreplies"             =>      "no replies",
         "ReportPostEmailBody"   =>      "%reportedby% has reported a message. The reason given was: \n------------------------------------------------------------------------\n%explanation%\n\n<%url%>\n------------------------------------------------------------------------\nForum:   %forumname%\nSubject: %subject%\nAuthor:  %author%\nIP:      %ip%\nDate:    %date%\n\n%body%\n\n------------------------------------------------------------------------\nTo delete this message click here:\n<%delete_url%>\n\nTo hide this message click here:\n<%hide_url%>\n\nTo edit this message click here:\n<%edit_url%>\n\nThe profile for %reportedby% is here:\n<%reporter_url%>",
         "ReportPostEmailSubject"=>      "[%forumname%] Post reported to the moderators",
         "ReportPostExplanation" =>      "You may optionally give an explanation for why this post was reported, which will be sent to the moderators along with the report. This can help the moderator to understand why you reported the post.",
