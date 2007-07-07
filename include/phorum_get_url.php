@@ -180,7 +180,7 @@ function phorum_get_url()
                 case "read":
                     $add_forum_id = true;
                     $thread_id = (int)$PHORUM["args"][1];
-                    array_push($argv, $thread_id);
+                    array_unshift($argv, $thread_id);
                     break;
             }
             $page = "feed";

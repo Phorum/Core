@@ -67,7 +67,10 @@ if(!empty($cache)){
     $thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
 
     // check if we are getting replies
-    $no_replies = (empty($PHORUM["args"]["replies"])) ? true : false;
+    // we get replies if either we are handling a thread or if the
+    // "replies" argument was used in the feed URL
+    $no_replies = (empty($PHORUM["args"]["replies"]) && empty($thread))
+                ? true : false;
 
     // check the feed type
     $feed_type = (empty($PHORUM["args"]["type"])) ? "rss" : $PHORUM["args"]["type"];
@@ -89,8 +92,8 @@ if(!empty($cache)){
     // set up the feed specifics based on the info we are getting
     if($thread && $PHORUM["forum_id"]){
         $feed_url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $PHORUM["forum_id"], $thread, $thread);
-        $feed_title = strip_tags($message[$thread]["subject"]);
-        $feed_description = strip_tags($message[$thread]["body"]);
+        $feed_title = strip_tags($messages[$thread]["subject"]);
+        $feed_description = strip_tags($messages[$thread]["body"]);
     } elseif($PHORUM["forum_id"]){
         $feed_url = phorum_get_url(PHORUM_LIST_URL);
         $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]." - ".$PHORUM["DATA"]["NAME"]);
