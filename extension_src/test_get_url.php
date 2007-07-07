@@ -8,10 +8,7 @@ global $PHORUM;
 
 $PHORUM["forum_id"] = 7;
 $PHORUM["http_path"] = "http://phorum.example.com/forums";
-$PHORUM["args"] = array(
-    "1" => "1234",
-    "2" => "2345"
-);
+$PHORUM["args"][1] = '2222';
 $PHORUM["GET_VARS"] = array("ape=nut");
 
 define('PHORUM', 'dev');
@@ -21,6 +18,7 @@ define('phorum_page', 'read');
 
 for($i=0;$i<1;$i++)
 {
+var_dump(phorum_get_url(PHORUM_FEED_URL, "type=rss", "replies=1"));
 $PHORUM["file_url_uses_pathinfo"] = 0;
 var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=test.jpg"));
 $PHORUM["file_url_uses_pathinfo"] = 1;
@@ -37,7 +35,6 @@ var_dump(phorum_get_url(PHORUM_LIST_URL, 1, 2, 3, "thisisa=value", "someswitch",
 var_dump(phorum_get_url(PHORUM_READ_URL, 10, 12, "markread=1"));
 var_dump(phorum_get_url(PHORUM_FOREIGN_READ_URL, 2, 10, 12, "markread=1"));
 var_dump(phorum_get_url(PHORUM_READ_URL, "test=nomessageid"));
-var_dump(phorum_get_url(PHORUM_FEED_URL, "type=rss"));
 var_dump(phorum_get_url(PHORUM_REGISTER_URL));
 var_dump(phorum_get_url(PHORUM_REGISTER_ACTION_URL));
 

@@ -772,14 +772,11 @@ char *prepost_url(void *h, void *u, int argc, zval ***argv)
  */
 char *feed_url(void *h, void *u, int argc, zval ***argv)
 {
+    url_handler *handler = (url_handler *)h;
     url_info    *url     = (url_info *)u;
     char        *phorum_page = get_constant_string("phorum_page");
 
     default_url_build(h, u, argc, argv);
-
-    if (!strcmp(phorum_page, "list")) {
-        url->add_forum_id = 1; 
-    }
 
     if (!strcmp(phorum_page, "read"))
     {
@@ -793,8 +790,14 @@ char *feed_url(void *h, void *u, int argc, zval ***argv)
                 add_url_arg(&url, newarg, 1);
             }
         }
+    }
 
-        url->add_forum_id = 1; 
+    /* Prepend the forum_id for list and read pages. We cannot handle
+     * this through default_url_build(), because of the argument ordering.
+     */
+    if (!strcmp(phorum_page, "list") || !strcmp(phorum_page, "read")) {
+        url_arg *newarg = format_url_arg("%ld", get_PHORUM_long("forum_id"));
+        add_url_arg(&url, newarg, 1);
     }
 
     /* apparently zend_get_constant() returns allocated memory. */
