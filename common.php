@@ -1072,7 +1072,7 @@ function phorum_database_error($error)
 
     // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).
-    while (ob_get_level()) ob_end_clean();
+    while (@ob_end_clean());
 
     // Give modules a chance to handle or process the database error.
     phorum_hook("database_error", $error);
