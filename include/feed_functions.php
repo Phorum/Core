@@ -42,12 +42,14 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
 
         $category = $forums[$message["forum_id"]]["name"];
 
+        $author = phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT);
+
         $buffer.= "        <item>\n";
         $buffer.= "            <guid>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</guid>\n";
         $buffer.= "            <title>".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</title>\n";
         $buffer.= "            <link>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</link>\n";
         $buffer.= "            <description><![CDATA[".$message["body"]."]]></description>\n";
-        $buffer.= "            <dc:creator>".htmlspecialchars($message["author"], ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</dc:creator>\n";
+        $buffer.= "            <dc:creator>".htmlspecialchars($author, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</dc:creator>\n";
         $buffer.= "            <category>".htmlspecialchars($category, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</category>\n";
         $buffer.= "            <pubDate>".htmlspecialchars($date, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</pubDate>\n";
         $buffer.= "        </item>\n";
@@ -98,6 +100,8 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
         $category = $forums[$message["forum_id"]]["name"];
 
+        $author = phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT);
+
         $buffer.= "    <entry>\n";
         $buffer.= "        <title>".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</title>\n";
         $buffer.= "        <link href=\"".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" />\n";
@@ -106,7 +110,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
         $buffer.= "        <updated>".date("c", $message["modifystamp"])."</updated>\n";
         $buffer.= "        <id>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</id>\n";
         $buffer.= "        <author>\n";
-        $buffer.= "            <name>".htmlspecialchars($message["author"], ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</name>\n";
+        $buffer.= "            <name>".htmlspecialchars($author, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</name>\n";
         $buffer.= "        </author>\n";
         $buffer.= "        <summary type=\"html\"><![CDATA[".$message["body"]."]]></summary>\n";
         $buffer.= "    </entry>\n";
@@ -175,10 +179,12 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
 
     foreach($messages as $message) {
 
+        $author = phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT);
+
         $item = array(
 
             "title" => strip_tags($message["subject"]),
-            "author" => $message["author"],
+            "author" => $author,
             "category" => $forums[$message["forum_id"]]["name"],
             "created" => phorum_date($PHORUM['short_date'], $message["datestamp"]),
             "modified" => phorum_date($PHORUM['short_date'], $message["modifystamp"]),

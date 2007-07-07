@@ -170,7 +170,7 @@ function phorum_email_pm_notice($message, $langusers)
     $mail_data = array(
         // Template variables.
         "pm_message_id"  => $message["pm_message_id"],
-        "author"         => $message["from_username"],
+        "author"         => phorum_api_user_get_display_name($message["user_id"], $message["from_username"], PHORUM_FLAG_PLAINTEXT),
         "subject"        => $message["subject"],
         "full_body"      => $message["message"],
         "plain_body"     => wordwrap(phorum_strip_body($message["message"]),72),
@@ -224,12 +224,13 @@ function phorum_email_notice($message)
     $mail_users_full = phorum_db_get_subscribed_users($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
 
     if (count($mail_users_full)) {
+
         $mail_data = array(
             // Template variables.
             "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
-            "author"      => $message['author'],
+            "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),
@@ -288,12 +289,13 @@ function phorum_email_moderators($message)
             $mailsubjecttpl = 'NewModeratedSubject';
             $mailmessagetpl = 'NewModeratedMessage';
         }
+
         $mail_data = array(
             // Template variables.
             "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
-            "author"      => $message['author'],
+            "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),

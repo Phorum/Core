@@ -476,19 +476,13 @@ if (!empty($action)) {
                             // Do e-mail notifications on successful sending.
                             } else {
 
-                                // Retrieve the sender name.
-                                $from = phorum_user_get_display_name(
-                                    $user_id,
-                                    $PHORUM['user']['display_name']
-                                );
-
                                 include_once("./include/email_functions.php");
 
                                 $pm_message = array(
                                     'pm_message_id' => $pm_message_id,
                                     'subject'       => $_POST['subject'],
                                     'message'       => $_POST['message'],
-                                    'from_username' => $from,
+                                    'from_username' => $PHORUM['user']['display_name'],
                                     'user_id'       => $user_id,
                                 );
 

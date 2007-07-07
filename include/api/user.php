@@ -96,6 +96,21 @@ define('PHORUM_FLAG_SESSION_ST',       1);
  */
 define('PHORUM_FLAG_RAW_PASSWORD',     1);
 
+/** 
+ * Function call flag, which tells {@link phorum_api_user_get_display_name()}
+ * that the returned display names have to be HTML formatted, so they can be
+ * used for showing the name in HTML pages.
+ */
+define('PHORUM_FLAG_HTML',             1);
+
+/** 
+ * Function call flag, which tells {@link phorum_api_user_get_display_name()}
+ * that the returned display names should be stripped down to plain text
+ * format, so they can be used for showing the name in things like mail
+ * messages and message quoting.
+ */
+define('PHORUM_FLAG_PLAINTEXT',        2);
+
 /**
  * Function call parameter, which tells {@link phorum_api_user_session_create()}
  * that session ids have to be reset to new values as far as that is sensible
@@ -362,7 +377,7 @@ function phorum_api_user_save($user, $flags = 0)
 
     // Determine the display name to use for the user. If the setting
     // $PHORUM["custom_display_name"] is enabled (a "secret" setting which
-    // can not be changed through the admin settings, but only through
+    // cannot be changed through the admin settings, but only through
     // modules that consciously set it), then Phorum expects that the display
     // name is a HTML formatted display_name field, which is provided by
     // 3rd party software. Otherwise, the username or real_name is used
@@ -452,8 +467,8 @@ function phorum_api_user_save($user, $flags = 0)
  *     Either a single user_id or an array of user_ids.
  *
  * @param boolean $detailed
- *     If this parameter is TRUE, then the user's groups and permissions are
- *     included in the user data.
+ *     If this parameter is TRUE (default is FALSE), then the user's
+ *     groups and permissions are included in the user data.
  *
  * @return mixed
  *     If the $user_id parameter is a single user_id, then either an array
@@ -1520,5 +1535,106 @@ function phorum_api_user_session_destroy($type)
     phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
 }
 // }}}
+
+// {{{ Function: phorum_api_user_get_display_name()
+/**
+ * Retrieve the display name to use for one or more users.
+ *
+ * The name to use depends on the "display_name_source" setting. This
+ * one points to either the username or the real_name field of the
+ * user. If the display_name is requested for an unknown user, then
+ * a fallback name will be used.
+ *
+ * @param mixed $user_id
+ *     Either a single user_id, an array of user_ids or NULL to use the
+ *     user_id of the active Phorum user.
+ *
+ * @param mixed $fallback
+ *     The fallback display name to use in case the user is unknown or NULL
+ *     to use the "AnonymousUser" language string.
+ *
+ * @param mixed $flags
+ *     One of {@link PHORUM_FLAG_HTML} (the default) or
+ *     {@link PHORUM_FLAG_PLAINTEXT}. These determine what output format
+ *     is used for the display names.
+ *
+ * @return mixed
+ *     If the $user_id parameter was NULL or a single user_id, then this
+ *     function will return a single display name. If it was an array,
+ *     then this function will return an array of display names, indexed
+ *     by user_id.
+ */
+function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $flags = PHORUM_FLAG_HTML)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    if ($fallback === NULL) {
+        $fallback = $PHORUM['DATA']['LANG']['AnonymousUser'];
+    }
+
+    // Use the user_id for the active user.
+    if ($user_id === NULL) {
+        $user_id = $PHORUM['user']['user_id'];
+    }
+
+    // From here on, we need an array of user_ids to lookup.
+    $user_ids = is_array($user_id) ? $user_id : array((int)$user_id);
+
+    // Lookup the users.
+    $users = phorum_api_user_get($user_ids, FALSE);
+
+    // Determine the display names.
+    $display_names = array();
+    foreach ($user_ids as $id)
+    {
+        $display_name = empty($users[$id])
+                      ? $fallback
+                      : $users[$id]['display_name'];
+
+        // Generate HTML based display names.
+        if ($flags == PHORUM_FLAG_HTML)
+        {
+            // If the setting $PHORUM["custom_display_name"] is enabled,
+            // then Phorum expects that the display name is a HTML
+            // formatted display_name field, which is provided by
+            // 3rd party software. So those do not have to be HTML escaped.
+            // Other names do have to be escaped.
+            if (empty($users[$id]) || !empty($PHORUM["custom_display_name"]))
+            {
+                $display_name = htmlspecialchars($user['display_name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            }
+        }
+        // Generate a plain text version of the display name. This is the
+        // display name as it can be found in the database. Only for 
+        // custom_display_name cases, we need to strip HTML code.
+        elseif ($flags == PHORUM_FLAG_PLAINTEXT)
+        {
+            // Strip tags from the name. These might be in the
+            // name if the custom_display_name feature is enabled. 
+            if (!empty($PHORUM["custom_display_name"]))
+            {
+                $display_name=trim(strip_tags($display_name));    
+
+                // If the name was 100% HTML, then fallback to the default
+                // display_name that Phorum would use.
+                if ($display_name == '') {
+                    $display_name = $user['username'];
+                    if ($PHORUM['display_name_source'] == 'real_name' &&
+                        trim($user['real_name']) != '') {
+                        $display_name = $user['real_name'];
+                    }
+                }
+            }
+        }
+
+        $display_names[$id] = $display_name;
+    }
+
+    if (is_array($user_id)) {
+        return $display_names;
+    } else {
+        return $display_names[$user_id];
+    }
+}
 
 ?>
