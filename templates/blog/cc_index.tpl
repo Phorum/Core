@@ -55,12 +55,16 @@
 <input type="hidden" name="forum_id" value="{PROFILE->forum_id}" />
 <table class="PhorumFormTable" cellspacing="0" border="0">
 <tr>
-    <td nowrap="nowrap">{LANG->Password}:&nbsp;</td>
-    <td><input type="password" name="password" size="30" value="" /></td>
+    <td nowrap="nowrap">{LANG->OriginalPassword}*:&nbsp;</td>
+    <td><input type="password" name="password_old" size="30" value="" /></td>
+</tr>
+<tr>
+    <td nowrap="nowrap">{LANG->NewPassword}*:&nbsp;</td>
+    <td><input type="password" name="password_new" size="30" value="" /></td>
 </tr>
 <tr>
     <td nowrap="nowrap">&nbsp;</td>
-    <td><input type="password" name="password2" size="30" value="" /> ({LANG->again})</td>
+    <td><input type="password" name="password_new2" size="30" value="" /> ({LANG->again})</td>
 </tr>
 </table>
 *{LANG->Required}<br /><br />

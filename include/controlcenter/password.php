@@ -20,16 +20,34 @@
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 if(count($_POST)) {
-    if((isset($_POST["password"]) && !empty($_POST["password"]) && $_POST["password"] != $_POST["password2"]) || !isset($_POST["password"]) || empty($_POST['password'])) {
-            $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
+
+    $old_password = trim($_POST["password_old"]);
+    $new_password = trim($_POST['password_new']);
+
+    // attempt to authenticate the user
+    if(empty($old_password) || !phorum_api_user_authenticate(
+                                PHORUM_FORUM_SESSION,
+                                $PHORUM['user']['username'],
+                                $old_password) ) {
+
+        $error = $PHORUM["DATA"]["LANG"]["ErrOriginalPassword"];
+
+    } elseif(empty($new_password) || empty($_POST['password_new2']) ||
+            $_POST['password_new'] !== $_POST['password_new2']) {
+
+        $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
+
     } else {
-            $_POST['password_temp']=$_POST['password'];
-            list($error,$okmsg) = phorum_controlcenter_user_save($panel);
+
+        // everything's good, save
+        $_POST['password_temp'] = $_POST['password'] = $new_password;
+        list($error,$okmsg) = phorum_controlcenter_user_save($panel);
+
     }
 }
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ChangePassword"];
 $PHORUM['DATA']['PROFILE']['CHANGEPASSWORD'] = 1;
 $template = "cc_usersettings";
-        
+
 ?>

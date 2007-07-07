@@ -172,7 +172,8 @@
         "ErrEmail"              =>      "The email address you entered does not appear to be a valid email address.  Please try again.",
         "ErrEmailExists"        =>      "The email address you entered is already listed with another user.",
         "ErrUsername"           =>      "Please fill in the username field.",
-        "ErrPassword"           =>      "Either the password field is empty or the passwords do not match.  Please try again.",
+        "ErrPassword"           =>      "Either the new password field is empty or the passwords do not match.  Please try again.",
+        "ErrOriginalPassword"   =>      "The original password you entered does not match the one on record",
         "ErrUserAddUpdate"      =>      "User not added/updated.  Unknown error.",
         "ErrRequired"           =>      "Please fill in all required fields.",
         "ErrBannedContent"      =>      'A word you have used in your post has been banned from use. Please use a different word or contact the forum administrators.',
@@ -324,6 +325,7 @@
         "NewReplySubject"       =>      "[%forumname%] New reply: %subject%",
         "NewTopic"              =>      "New Topic",
         "NewerMessages"         =>      "Newer Messages",
+        "NewPassword"           =>      "New Password",
         "NewerThread"           =>      "Newer Topic",
         "newflag"               =>      "new",
         "NextMessage"           =>      "Next Message",
@@ -352,6 +354,7 @@
         "of"                    =>      "of",  // as in: 1 - 5 of 458
         "Options"               =>      "Options",
         "OriginalMessage"       =>      "Original Message",
+        "OriginalPassword"      =>      "Original Password",
 
         "Page"                  =>      "Page",
         "Pages"                 =>      "Pages",

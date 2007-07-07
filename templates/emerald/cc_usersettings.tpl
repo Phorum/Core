@@ -121,11 +121,13 @@
             {/IF}
 
             {IF PROFILE->CHANGEPASSWORD}
-                <dt>{LANG->Password}:&nbsp;*&nbsp;</dt>
-                <dd><input type="password" name="password" size="30" value="" /></dd>
-
-                <dt>&nbsp;</dt>
-                <dd><input type="password" name="password2" size="30" value="" /> ({LANG->again})</dd>
+                <dt>{LANG->OriginalPassword}:&nbsp;*&nbsp;</dt>
+                <dd>
+                    <input type="password" name="password_old" size="30" value="" />
+                </dd>
+                <dt>{LANG->NewPassword}:&nbsp;*&nbsp;</dt>
+                <dd><input type="password" name="password_new" size="30" value="" /></dd>
+                <dd><input type="password" name="password_new2" size="30" value="" /> ({LANG->again})</dd>
             {/IF}
 
             {HOOK "tpl_cc_usersettings" PROFILE}
