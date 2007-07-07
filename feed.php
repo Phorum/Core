@@ -65,15 +65,13 @@ if(!empty($cache)){
 
     // check if this is a thread subscription
     $thread = (isset($PHORUM["args"][1])) ? (int)$PHORUM["args"][1] : 0;
+    if ($thread) $PHORUM["args"]["replies"] = 1;
 
     // check if we are getting replies
-    // we get replies if either we are handling a thread or if the
-    // "replies" argument was used in the feed URL
-    $no_replies = (empty($PHORUM["args"]["replies"]) && empty($thread))
-                ? true : false;
+    $no_replies = empty($PHORUM["args"]["replies"]) ? true : false;
 
     // check the feed type
-    $feed_type = (empty($PHORUM["args"]["type"])) ? "rss" : $PHORUM["args"]["type"];
+    $feed_type = empty($PHORUM["args"]["type"]) ? "rss" : $PHORUM["args"]["type"];
 
     // generate list of forum ids to grab data for
     $forum_ids = array_keys($forums);
