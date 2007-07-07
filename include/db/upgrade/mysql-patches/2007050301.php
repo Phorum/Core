@@ -24,8 +24,8 @@ if (!empty($ids)) {
 }
 
 // Now we can delete the existing real_name field.
-include('./include/api/base.php');
-include('./include/api/custom_profile_fields.php');
+include_once './include/api/base.php';
+include_once './include/api/custom_profile_fields.php';
 phorum_api_custom_profile_field_delete($real_name_field_id, TRUE);
 
 ?>
