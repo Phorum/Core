@@ -82,6 +82,13 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             phorum_database_error('Failed to connect to the database.');
             exit;
         }
+
+        // putting this here for testing mainly
+        // All of Phorum should work in strict mode
+        if(!empty($PHORUM["DBCONFIG"]["strict_mode"])){
+            mysqli_query($conn, "SET SESSION sql_mode='STRICT_ALL_TABLES'");
+        }
+
     }
 
     // Return a quoted parameter.
@@ -102,7 +109,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     // Execute the SQL query.
     // For queries where we are going to retrieve multiple rows, we
-    // use an unuffered query result. 
+    // use an unuffered query result.
     if ($return === DB_RETURN_ASSOCS || $return === DB_RETURN_ROWS) {
          $res = FALSE;
          if (mysqli_real_query($conn, $sql) !== FALSE) {
@@ -152,7 +159,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             $err = mysqli_error($conn);
 
             // RETURN: error message or NULL
-            if ($return === DB_RETURN_ERROR) return $err;     
+            if ($return === DB_RETURN_ERROR) return $err;
 
             // Trigger an error.
             phorum_database_error("$err ($errno): $sql");
@@ -266,8 +273,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
 /**
  * Return a single row from a query result. This function can be used
- * if a lot of rows have to be processed one by one, in which case the 
- * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the 
+ * if a lot of rows have to be processed one by one, in which case the
+ * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the
  * {@link phorum_db_interact()} function might consume lots of memory.
  *
  * @param resource $res

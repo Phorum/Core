@@ -3089,11 +3089,11 @@ function phorum_db_user_add($userdata)
     // We can set the user_id. If not, then we'll create a new user_id.
     if (isset($userdata['user_id'])) {
         $user_id = (int)$userdata['user_id'];
-        $fields = 'user_id, username';
-        $values = "$user_id, '$username'";
+        $fields = 'user_id, username, signature, moderator_data, settings_data';
+        $values = "$user_id, '$username', '', '', ''";
     } else {
-        $fields = 'username';
-        $values = "'$username'";
+        $fields = 'username, signature, moderator_data, settings_data';
+        $values = "'$username', '', '', ''";
     }
 
     // Insert a bare bone user in the database.
@@ -5875,7 +5875,7 @@ function phorum_db_create_tables()
            forum_id                 int unsigned   NOT NULL auto_increment,
            name                     varchar(50)    NOT NULL default '',
            active                   tinyint(1)     NOT NULL default '0',
-           description              text           NOT NULL default '',
+           description              text           NOT NULL,
            template                 varchar(50)    NOT NULL default '',
            folder_flag              tinyint(1)     NOT NULL default '0',
            parent_id                int unsigned   NOT NULL default '0',
@@ -5904,8 +5904,8 @@ function phorum_db_create_tables()
            read_length              int unsigned   NOT NULL default '0',
            vroot                    int unsigned   NOT NULL default '0',
            edit_post                tinyint(1)     NOT NULL default '1',
-           template_settings        text           NOT NULL default '',
-           forum_path               text           NOT NULL default '',
+           template_settings        text           NOT NULL,
+           forum_path               text           NOT NULL,
            count_views              tinyint(1)     NOT NULL default '0',
            display_fixed            tinyint(1)     NOT NULL default '0',
            reverse_threading        tinyint(1)     NOT NULL default '0',
@@ -5916,7 +5916,7 @@ function phorum_db_create_tables()
            KEY name (name),
            KEY active (active, parent_id),
            KEY group_id (parent_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['message_table']} (
            message_id               int unsigned   NOT NULL auto_increment,
@@ -5951,13 +5951,13 @@ function phorum_db_create_tables()
            KEY list_page_float (forum_id,parent_id,modifystamp),
            KEY list_page_flat (forum_id,parent_id,thread),
            KEY post_count (forum_id,status,parent_id),
-           KEY dup_check (forum_id,author,subject,datestamp),
+           KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
            KEY next_prev_thread (forum_id,status,thread),
            KEY user_id (user_id),
            KEY recent_user_id (recent_user_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['settings_table']} (
            name                     varchar(255)   NOT NULL default '',
@@ -5965,7 +5965,7 @@ function phorum_db_create_tables()
            data                     text           NOT NULL,
 
            PRIMARY KEY (name)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['subscribers_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -5975,7 +5975,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (user_id,forum_id,thread),
            KEY forum_id (forum_id,thread,sub_type)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['user_permissions_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -5984,7 +5984,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY  (user_id,forum_id),
            KEY forum_id (forum_id,permission)
-       ) TYPE=MyISAM",
+       )",
 
       // When creating extra fields, then mind to update the file
       // include/api/custom_profile_fields.php script too (it contains a
@@ -6003,7 +6003,7 @@ function phorum_db_create_tables()
            email_temp               varchar(110)   NOT NULL default '',
            hide_email               tinyint(1)     NOT NULL default '0',
            active                   tinyint(1)     NOT NULL default '0',
-           signature                text           NOT NULL default '',
+           signature                text           NOT NULL,
            threaded_list            tinyint(1)     NOT NULL default '0',
            posts                    int(10)        NOT NULL default '0',
            admin                    tinyint(1)     NOT NULL default '0',
@@ -6019,9 +6019,9 @@ function phorum_db_create_tables()
            is_dst                   tinyint(1)     NOT NULL default '0',
            user_language            varchar(100)   NOT NULL default '',
            user_template            varchar(100)   NOT NULL default '',
-           moderator_data           text           NOT NULL default '',
+           moderator_data           text           NOT NULL,
            moderation_email         tinyint(1)     NOT NULL default '1',
-           settings_data            mediumtext     NOT NULL default '',
+           settings_data            mediumtext     NOT NULL,
 
            PRIMARY KEY (user_id),
            UNIQUE KEY username (username),
@@ -6032,7 +6032,7 @@ function phorum_db_create_tables()
            KEY activity (date_last_active,hide_activity,last_active_forum),
            KEY date_added (date_added),
            KEY email_temp (email_temp)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['user_newflags_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -6041,7 +6041,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY  (user_id,forum_id,message_id),
            KEY move (message_id, forum_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['groups_table']} (
            group_id                 int unsigned   NOT NULL auto_increment,
@@ -6049,7 +6049,7 @@ function phorum_db_create_tables()
            open                     tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY  (group_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['forum_group_xref_table']} (
            forum_id                 int unsigned   NOT NULL default '0',
@@ -6058,7 +6058,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY  (forum_id,group_id),
            KEY group_id (group_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['user_group_xref_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -6066,14 +6066,14 @@ function phorum_db_create_tables()
            status                   tinyint(4)     NOT NULL default '1',
 
            PRIMARY KEY  (user_id,group_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['files_table']} (
            file_id                  int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
            filename                 varchar(255)   NOT NULL default '',
            filesize                 int unsigned   NOT NULL default '0',
-           file_data                mediumtext     NOT NULL default '',
+           file_data                mediumtext     NOT NULL,
            add_datetime             int unsigned   NOT NULL default '0',
            message_id               int unsigned   NOT NULL default '0',
            link                     varchar(10)    NOT NULL default '',
@@ -6081,7 +6081,7 @@ function phorum_db_create_tables()
            PRIMARY KEY (file_id),
            KEY add_datetime (add_datetime),
            KEY message_id_link (message_id,link)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['banlist_table']} (
            id                       int unsigned   NOT NULL auto_increment,
@@ -6092,12 +6092,12 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (id),
            KEY forum_id (forum_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['search_table']} (
            message_id               int unsigned   NOT NULL default '0',
            forum_id                 int unsigned   NOT NULL default '0',
-           search_text              mediumtext     NOT NULL default '',
+           search_text              mediumtext     NOT NULL,
 
            PRIMARY KEY (message_id),
            KEY forum_id (forum_id),
@@ -6107,22 +6107,22 @@ function phorum_db_create_tables()
       "CREATE TABLE {$PHORUM['user_custom_fields_table']} (
            user_id                  int unsigned   NOT NULL default '0',
            type                     int unsigned   NOT NULL default '0',
-           data                     text           NOT NULL default '',
+           data                     text           NOT NULL,
 
            PRIMARY KEY (user_id, type)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['pm_messages_table']} (
            pm_message_id            int unsigned   NOT NULL auto_increment,
            user_id                  int unsigned   NOT NULL default '0',
            author                   varchar(255)   NOT NULL default '',
            subject                  varchar(100)   NOT NULL default '',
-           message                  text           NOT NULL default '',
+           message                  text           NOT NULL,
            datestamp                int unsigned   NOT NULL default '0',
-           meta                     mediumtext     NOT NULL default '',
+           meta                     mediumtext     NOT NULL,
 
            PRIMARY KEY (pm_message_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['pm_folders_table']} (
            pm_folder_id             int unsigned   NOT NULL auto_increment,
@@ -6130,7 +6130,7 @@ function phorum_db_create_tables()
            foldername               varchar(20)    NOT NULL default '',
 
            PRIMARY KEY (pm_folder_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['pm_xref_table']} (
            pm_xref_id               int unsigned   NOT NULL auto_increment,
@@ -6144,7 +6144,7 @@ function phorum_db_create_tables()
            PRIMARY KEY (pm_xref_id),
            KEY xref (user_id,pm_folder_id,pm_message_id),
            KEY read_flag (read_flag)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['pm_buddies_table']} (
            pm_buddy_id              int unsigned   NOT NULL auto_increment,
@@ -6154,7 +6154,7 @@ function phorum_db_create_tables()
            PRIMARY KEY pm_buddy_id (pm_buddy_id),
            UNIQUE KEY userids (user_id, buddy_user_id),
            KEY buddy_user_id (buddy_user_id)
-       ) TYPE=MyISAM",
+       )",
 
       "CREATE TABLE {$PHORUM['message_tracking_table']} (
            track_id                 int unsigned   NOT NULL auto_increment,
@@ -6166,7 +6166,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY track_id (track_id),
            KEY message_id (message_id)
-       ) TYPE = MYISAM"
+       )"
     );
 
     foreach ($create_table_queries as $sql) {
