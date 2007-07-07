@@ -48,7 +48,7 @@ if(empty($forums) || !phorum_check_read_common()) {
 // only do this with caching enabled
 $cache_key = $_SERVER["REQUEST_URI"].",".$PHORUM["user"]["user_id"];
 if(isset($PHORUM['cache_rss']) && !empty($PHORUM['cache_rss'])) {
-  $cache = phorum_cache_get("feed", $_SERVER["REQUEST_URI"]);
+  $cache = phorum_cache_get("feed", $cache_key);
 }
 
 if(!empty($cache)){
