@@ -33,7 +33,7 @@ include_once "./include/admin/PhorumInputForm.php";
 
 // Get some form variables.
 $action = isset($_POST['action']) ? $_POST['action'] : 'start';
-$language = isset($_POST['language']) ? $_POST['language'] : $PHORUM["SETTINGS"]["default_forum_options"]["language"];
+$language = isset($_POST['language']) ? $_POST['language'] : $PHORUM["default_forum_options"]["language"];
 $filename = isset($_POST['filename']) ? trim($_POST['filename']) : '';
 $displayname = isset($_POST['displayname']) ? trim($_POST['displayname']) : '';
 

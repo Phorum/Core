@@ -14,9 +14,7 @@
         function testPhorumSettingsLoad() {
             global $PHORUM;
             phorum_db_load_settings();
-            
-            $this->assertTrue(is_array($PHORUM['SETTINGS']));
-            $this->assertTrue(!empty($PHORUM['SETTINGS']));
+            $this->assertTrue(!empty($PHORUM['internal_version']));
         }
         
         function testPhorumDbForum() {

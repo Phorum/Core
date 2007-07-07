@@ -1166,7 +1166,6 @@ function phorum_db_load_settings(){
             }
 
             $PHORUM[$rec['name']]=$val;
-            $PHORUM['SETTINGS'][$rec['name']]=$val;
         }
     }
 }

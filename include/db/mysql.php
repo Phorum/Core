@@ -232,7 +232,7 @@ function phorum_db_run_queries($queries)
 }
 
 /**
- * Load all Phorum key/value pair settings in $PHORUM and $PHORUM['SETTINGS'].
+ * Load all Phorum key/value pair settings in $PHORUM.
  * The settings are read from the settings table. In this settings
  * table, a type is provided for each setting. The supported types are:
  *
@@ -260,7 +260,7 @@ function phorum_db_load_settings()
              ? $setting[1]
              : unserialize($setting[1]);
 
-        $PHORUM[$setting[0]] = $PHORUM['SETTINGS'][$setting[0]] = $val;
+        $PHORUM[$setting[0]] = $val;
     }
 }
 

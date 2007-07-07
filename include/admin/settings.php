@@ -229,7 +229,7 @@ $frm->addhelp($row, "Time Zone Offset", "If you and/or your users are in a diffe
 
 $frm->addbreak( "Cookie/Session Settings" );
 
-$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "Use no cookies", "Allow cookies", "Require cookies" ), $PHORUM["SETTINGS"]["use_cookies"] ) );
+$row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "Use no cookies", "Allow cookies", "Require cookies" ), $PHORUM["use_cookies"] ) );
 $frm->addhelp($row, "Use Cookies", "Phorum can track logged in users by using cookies or session information on URLs.<br/><br/><b>Use no cookies</b>: The session information will always be included on the URL.<br/><br/><b>Allow cookies</b>: The session information will be stored in cookies, if the user's browser supports it. Otherwise the information is included on the URL.<br/><br/><b>Require cookies</b>: Session information is only stored in cookies. If the user's browser does not support cookies, the user will not be able to login.");
 
 $row=$frm->addrow( "Main Session Timeout (days)", $frm->text_box( "session_timeout", $PHORUM["session_timeout"], 10 ) );
