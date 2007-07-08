@@ -32,6 +32,7 @@ $postcounts = phorum_db_interact(
     DB_RETURN_ROWS,
     "SELECT user_id, count(*) 
      FROM   {$PHORUM["message_table"]}
+     WHERE  user_id != 0
      GROUP  BY user_id"
 );
 
@@ -41,7 +42,7 @@ $count_total = count($postcounts);
 $size = strlen($count_total);
 $count = 0;
 foreach ($postcounts as $row) {
-    phorum_user_save_simple(array(
+    phorum_api_user_save_raw(array(
         "user_id" => $row[0],
         "posts"   => $row[1]
     ));

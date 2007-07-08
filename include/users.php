@@ -29,27 +29,6 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-/**
- * This function quickly updates real columns without any further checks
- * it just stores the data as fast as possible
- *
- */
-function phorum_user_save_simple($user)
-{
-    if ( empty( $user["user_id"] ) ) return false;
-
-    // clear the cache only if we are not just updating the activity
-    // TODO .. or any dynamic field?
-    if(isset($GLOBALS['PHORUM']['cache_users']) && $GLOBALS['PHORUM']['cache_users']) {
-        if(!(count($user) == 3 && isset($user['date_last_active'])))
-            phorum_cache_remove('user',$user['user_id']);
-    }
-
-    $ret = phorum_db_user_save( $user );
-
-    return $ret;
-}
-
 function phorum_user_settings_data_save($settings)
 {
     // shouldn't happen

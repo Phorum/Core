@@ -220,7 +220,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
  *     MD5 encrypted already. So this can be used to feed Phorum existing MD5
  *     encrypted passwords.
  *
- * @param int
+ * @return int
  *     The user_id of the user. For new users, the newly assigned user_id
  *     will be returned.
  */
@@ -429,7 +429,7 @@ function phorum_api_user_save($user, $flags = 0)
      *     minute change on the data or keep some external system in sync
      *     with the Phorum user data. In combination with the [user_get]
      *     hook, this hook can also be used to store and retrieve some of
-     *     the Phorum user fields in some external system
+     *     the Phorum user fields using some external system.
      *
      * [category]
      *     User data handling
@@ -476,6 +476,54 @@ function phorum_api_user_save($user, $flags = 0)
     return $dbuser['user_id'];
 }
 // }}}
+
+// {{{ Function: phorum_api_user_save_raw()
+/**
+ * This function quickly updates the Phorum users table, using all fields in
+ * the user data as real user table fields.
+ *
+ * This is the quickest way to update the user table. Care has to be taken
+ * by the calling function though, to provide the information exactly as the
+ * Phorum users table expects it. Only use this function if speed is really
+ * an issue.
+ *
+ * @param array $user
+ *     An array containing user data. This array should at least contain
+ *     a field "user_id", pointing to the user_id of an existing user to
+ *     update. Besides "user_id", this array can contain other fields,
+ *     which should all be valid fields from the users table.
+ */
+// }}}
+function phorum_api_user_save_raw($user)
+{
+    if (empty($user["user_id"])) trigger_error(
+        'phorum_api_user_save_raw(): the user_id field cannot be empty',
+        E_USER_ERROR
+    );
+
+    // This hook is documented in phorum_api_user_save().
+    if (isset($PHORUM['hooks']['user_save'])) {
+        $user = phorum_hook('user_save', $user);
+    }
+
+    // Store the data in the database.
+    phorum_db_user_save($user);
+
+    // Invalidate the cache for the user, unless we are only updating
+    // user activity tracking fields.
+    if (!empty($GLOBALS['PHORUM']['cache_users']))
+    {
+        // Count the number of activity tracking fields in the data.
+        $count = 1; // count user_id as an activity tracking field
+        if (array_key_exists('date_last_active',  $user)) $count ++;
+        if (array_key_exists('last_active_forum', $user)) $count ++;
+
+        // Invalidate the cache, if there are non-activity tracking fields.
+        if ($count != count($user)) {
+            phorum_cache_remove('user', $user['user_id']);
+        }
+    }
+}
 
 // {{{ Function: phorum_api_user_get()
 /**
@@ -924,7 +972,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
                            ? 0 : $PHORUM['forum_id'];
 
         // Update the user data in the database.
-        phorum_user_save_simple(array(
+        phorum_api_user_save_raw(array(
             'user_id'           => $user['user_id'],
             'date_last_active'  => $date_last_active,
             'last_active_forum' => $last_active_forum
@@ -1097,7 +1145,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         $reset == PHORUM_SESSID_RESET_ALL;
     if ($refresh_sessid_lt) {
         $sessid_lt = md5($user['username'].microtime().$user['password']);
-        phorum_user_save_simple(array(
+        phorum_api_user_save_raw(array(
             'user_id'   => $user['user_id'],
             'sessid_lt' => $sessid_lt,
         ));
@@ -1140,7 +1188,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         // The session data needs updating.
         if ($refresh_sessid_st) {
             $timeout = time() + $PHORUM['short_session_timeout']*60;
-            phorum_user_save_simple(array(
+            phorum_api_user_save_raw(array(
                 'user_id'           => $user['user_id'],
                 'sessid_st'         => $sessid_st,
                 'sessid_st_timeout' => $timeout
@@ -1542,7 +1590,7 @@ function phorum_api_user_session_destroy($type)
             $user = $PHORUM['user'];
 
             $sessid_lt = md5($user['username'].microtime().$user['password']);
-            phorum_user_save_simple(array(
+            phorum_api_user_save_raw(array(
                 'user_id'   => $user['user_id'],
                 'sessid_lt' => $sessid_lt,
             ));

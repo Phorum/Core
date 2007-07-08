@@ -65,7 +65,7 @@ function phorum_moderator_data_save($moderator_data)
     // Clear value in case no data is left in $moderator_data.
     $value = count($moderator_data) ? serialize($moderator_data) : '';
     
-    phorum_user_save_simple(array(
+    phorum_api_user_save_raw(array(
         "user_id" => $PHORUM['user']['user_id'],
         "moderator_data" => $value,
     ));
