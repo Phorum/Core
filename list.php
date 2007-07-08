@@ -236,7 +236,7 @@ if($rows == null) {
 
         $rows = phorum_sort_threads($rows);
 
-    }else{
+    } else {
 
         // loop through and read all the data in.
         foreach($rows as $key => $row){
@@ -247,6 +247,7 @@ if($rows == null) {
             $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
             $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
             $rows[$key]["URL"]["NEWPOST"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
+            $rows[$key]["threadstart"] = true;
 
             $rows[$key]["new"] = "";
 
@@ -366,6 +367,15 @@ if($PHORUM["count_views"] == 2) { // viewcount as column
 //timing_mark('after preparation');
 
 if($PHORUM['DATA']['LOGGEDIN']) {
+
+    // used later if user is moderator
+    if($PHORUM["DATA"]["MODERATOR"]){
+        $delete_url_template        = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, '%message_id%');
+        $delete_thread_url_template = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%');
+        $move_thread_url_template   = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%');
+        $merge_thread_url_template  = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%');
+    }
+
     // the stuff needed by user
     foreach($rows as $key => $row){
         // Newflag for collapsed flat view or for sticky threads. For these,
@@ -394,12 +404,16 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         }
 
         if($PHORUM["DATA"]["MODERATOR"]){
-            $rows[$key]["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-            $rows[$key]["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-            if($build_move_url) {
-                $rows[$key]["URL"]["MOVE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $row["message_id"]);
+
+            if($rows[$key]["threadstart"]) {
+                $rows[$key]["URL"]["DELETE_THREAD"]  = str_replace('%message_id%',$row['message_id'],$delete_thread_url_template);
+                if($build_move_url) {
+                    $rows[$key]["URL"]["MOVE"]       = str_replace('%message_id%',$row['message_id'],$move_thread_url_template);
+                }
+                $rows[$key]["URL"]["MERGE"]          = str_replace('%message_id%',$row['message_id'],$merge_thread_url_template);;
+            } else {
+                $rows[$key]["URL"]["DELETE_MESSAGE"] = str_replace('%message_id%',$row['message_id'],$delete_url_template);
             }
-            $rows[$key]["URL"]["MERGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $row["message_id"]);
 
             // pagelinks for moderators
             if(isset($row['pages_moderators'])) {
