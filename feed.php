@@ -136,6 +136,9 @@ if(!empty($cache)){
 // output the proper header and the data
 header("Content-type: $content_type;");
 echo $data;
+
+// Exit here explicitly for not giving back control to portable and
+// embedded Phorum setups.
 exit(0);
 
 ?>

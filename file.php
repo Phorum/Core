@@ -53,4 +53,8 @@ if ($file === FALSE)
 // Access is allowed. Send the file to the browser.
 phorum_api_file_send($file);
 
+// Exit here explicitly for not giving back control to portable and
+// embedded Phorum setups.
+exit(0);
+
 ?>
