@@ -7,6 +7,7 @@
 
   <!ENTITY bookinfo SYSTEM "../bookinfo.xml">
   <!ENTITY part_preface SYSTEM "../part_preface.xml">
+  <!ENTITY part_faq_modules SYSTEM "part_faq_modules.xml">
   <!ENTITY part_faq_features SYSTEM "part_faq_features.xml">
   <!ENTITY part_faq_troubleshooting SYSTEM "part_faq_troubleshooting.xml">
 
@@ -18,6 +19,7 @@
 <book lang="en">
   &bookinfo;
   &part_preface;
-  &part_faq_features;
+  &part_faq_modules;
   &part_faq_troubleshooting;
+  &part_faq_features;
 </book>
