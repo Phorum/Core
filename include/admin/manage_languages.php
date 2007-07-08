@@ -322,6 +322,7 @@ function phorum_write_language_file($lang, $CURRENT)
         "// Date formatting. Check the PHP-docs for the syntax of these\n" .
         "// entries (http://www.php.net/strftime). One tip: do not use\n" .
         "// %T for showing the time zone, as users can change their time zone.\n" .
+        "\$PHORUM['long_date_time'] = " . urldecode($CURRENT['long_date_time']) . ";\n" .
         "\$PHORUM['short_date_time'] = " . urldecode($CURRENT['short_date_time']) . ";\n" .
         "\$PHORUM['long_date'] = " . urldecode($CURRENT['long_date']) . ";\n" .
         "\$PHORUM['short_date'] = " . urldecode($CURRENT['short_date']) . ";\n" .
