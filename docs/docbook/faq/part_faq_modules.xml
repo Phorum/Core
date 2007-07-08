@@ -1,0 +1,35 @@
+<chapter>
+  <title>Modules</title>
+
+  <section>
+    <title>
+      How do I install a module?
+    </title>
+    <para>
+
+      Hmm.. link to administrator manual would be okay here.
+
+      All modules are installed inside the subdirectory "mods" of your
+      Phorum installation directory. There are two types of modules:
+      single file and multi file modules.
+
+      <itemizedlist>
+      <listitem>
+          Single file modules
+        <para>
+          blah blah
+        </para>
+      </listitem>
+      <listitem>
+          Multi file modules
+        <para>
+          blah blah
+        </para>
+      </listitem>
+      </itemizedlist>
+
+      
+    </para>
+  </section>
+
+</chapter>
