@@ -30,18 +30,6 @@ if ( !defined( "PHORUM" ) ) return;
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 /**
- * This function gets a list of all the active users.
- * @return array of users (same format as phorum_api_user_get)
- */
-function phorum_user_get_list($type)
-{
-    $list = phorum_db_user_get_list($type);
-    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"]))
-        $list = phorum_hook("user_list", $list);
-    return $list;
-}
-
-/**
  * This function quickly updates real columns without any further checks
  * it just stores the data as fast as possible
  *

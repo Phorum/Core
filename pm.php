@@ -889,7 +889,7 @@ switch ($page) {
         if ($PHORUM["DATA"]["SHOW_USERSELECTION"] && $PHORUM["enable_dropdown_userlist"])
         {
             $allusers = array();
-            $userlist = phorum_user_get_list(1);
+            $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
                 $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);

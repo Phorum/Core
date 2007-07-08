@@ -127,6 +127,24 @@ define('PHORUM_SESSID_RESET_LOGIN',    1);
 define('PHORUM_SESSID_RESET_ALL',      2);
 
 /**
+ * Function call parameter, which tells {@link phorum_api_user_get_list()}
+ * that all users have to be returned.
+ */
+define('PHORUM_GET_ALL',               0);
+
+/**
+ * Function call parameter, which tells {@link phorum_api_user_get_list()}
+ * that all active users have to be returned.
+ */
+define('PHORUM_GET_ACTIVE',            1);
+
+/**
+ * Function call parameter, which tells {@link phorum_api_user_get_list()}
+ * that all inactive users have to be returned.
+ */
+define('PHORUM_GET_INACTIVE',          2);
+
+/**
  * This array describes user data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  */
@@ -1636,5 +1654,64 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
         return $display_names[$user_id];
     }
 }
+// }}}
+
+// {{{ Function: phorum_api_user_list()
+/**
+ * Retrieve a list of Phorum users.
+ *
+ * @param int $flags
+ *     One of:
+ *     - {@link PHORUM_GET_ALL}: retrieve a list of all users (the default)
+ *     - {@link PHORUM_GET_ACTIVE}: retrieve a list of all active users
+ *     - {@link PHORUM_GET_INACTIVE}: retrieve a list of all inactive users
+ *
+ * @return array
+ *     An array of users, indexed by user_id. Each element in the array
+ *     is an array, containing the fields "user_id", "username" and
+ *     "display_name".
+ */
+function phorum_api_user_list($type = PHORUM_GET_ALL)
+{
+    // Retrieve a list of users from the database.
+    $list = phorum_db_user_get_list($type);
+
+    /**
+     * [hook]
+     *     user_list
+     *
+     * [description]
+     *     
+     *     This hook can be used for reformatting the list of users that
+     *     is returned by the phorum_api_user_list() function. Reformatting
+     *     could mean things like changing the sort order or modifying the
+     *     fields in the user arrays.
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Each time the phorum_api_user_list() function is called. The core
+     *     Phorum code calls the function for creating user drop down lists
+     *     (if those are enabled in the Phorum general settings) for the
+     *     group moderation interface in the control center and for sending
+     *     private messages.
+     *
+     * [input]
+     *     An array of user info arrays. Each user info array contains the
+     *     fields "user_id", "username" and "display_name". The hook function
+     *     is allowed to update the "username" and "display_name" fields.
+     *
+     * [output]
+     *     The same array as was used for the hook call argument,
+     *     possibly with some updated fields in it.
+     */
+    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"])) {
+        $list = phorum_hook("user_list", $list);
+    }
+
+    return $list;
+}
+// }}}
 
 ?>

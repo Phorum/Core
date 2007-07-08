@@ -155,7 +155,7 @@ if (!empty($group_id)){
 
     // if the option to build a dropdown list is enabled, build the list of members that could be added
     if ($PHORUM["enable_dropdown_userlist"]){
-        $userlist = phorum_user_get_list(1);
+        $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
         $PHORUM["DATA"]["NEWMEMBERS"] = array();
 
         foreach ($userlist as $userid => $userinfo){

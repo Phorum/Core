@@ -111,7 +111,7 @@ if ($ucount > 0) {
 }
 
 // Retrieve users which we can use to post with.
-$users = phorum_user_get_list(0);
+$users = phorum_api_user_list(PHORUM_GET_ACTIVE);
 $user_ids = array_keys($users);
 if (!count($user_ids)) 
     die ("No users found that can be used for posting.\n");
