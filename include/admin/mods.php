@@ -24,8 +24,9 @@ if (!defined("PHORUM_ADMIN")) return;
 // module admin will transparently rewrite old hook names to the
 // new ones.
 $deprecated_module_hooks = array(
-"pre_post" => "before_post",
-"pre_edit" => "before_edit",
+"pre_post"  => "before_post",
+"pre_edit"  => "before_edit",
+"post_post" => "after_post",
 );
 
 // ----------------------------------------------------------------------
