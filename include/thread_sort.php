@@ -89,25 +89,25 @@ function phorum_sort_threads($rows)
                     wordwrap($order[$curr_id]["subject"], $cut_len, " ", TRUE);
             }
         }
-        array_unshift($stack, $curr_id);
+        array_push($stack, $curr_id);
         $data = $tmp_rows[$curr_id];
         if(isset($data["children"])){
             if(count($data["children"])){
                 $curr_id = array_shift($tmp_rows[$curr_id]["children"]);
             } else {
                 unset($tmp_rows[$curr_id]);
-                array_shift($stack);
-                $curr_id = array_shift($stack);
+                array_pop($stack);
+                $curr_id = array_pop($stack);
             }
         } else {
             unset($tmp_rows[$curr_id]);
-            array_shift($stack);
+            array_pop($stack);
             if(count($tmp_rows[$data["parent_id"]]["children"])){
                 $curr_id = array_shift($tmp_rows[$data["parent_id"]]["children"]);
             } else {
                 unset($tmp_rows[$data["parent_id"]]);
-                array_shift($stack);
-                $curr_id = array_shift($stack);
+                array_pop($stack);
+                $curr_id = array_pop($stack);
             }
         }
 
