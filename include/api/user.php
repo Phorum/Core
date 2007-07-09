@@ -200,7 +200,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
 
 // {{{ Function: phorum_api_user_save()
 /**
- * Save data for Phorum users.
+ * Create or update Phorum users.
  *
  * This function can be used for both creating and updating Phorum users.
  * If no user_id is provided in the user data, a new user will be created.
@@ -493,7 +493,6 @@ function phorum_api_user_save($user, $flags = 0)
  *     update. Besides "user_id", this array can contain other fields,
  *     which should all be valid fields from the users table.
  */
-// }}}
 function phorum_api_user_save_raw($user)
 {
     if (empty($user["user_id"])) trigger_error(
@@ -524,6 +523,86 @@ function phorum_api_user_save_raw($user)
         }
     }
 }
+// }}}
+
+// {{{ Function: phorum_api_user_save_settings()
+/**
+ * Create or update user settings for the active Phorum user.
+ *
+ * This function can be used to store arbitrairy settings for the active
+ * Phorum user in the database. The main goal for this function is to store
+ * user settings which are not available as a Phorum user table field in
+ * the database. These are settings which do not really belong to the Phorum
+ * core, but which are for example used for remembering some kind of state
+ * in a user interface (templates). Since each user interface might require
+ * different settings, a dynamic settings storage like this is required.
+ *
+ * If you are writing modules that need to store data for a user, then please
+ * do not use this function. Instead, use custom profile fields. The data
+ * that is stored using this function can be best looked at as if it were
+ * session data.
+ *
+ * @param array $settings
+ *     An array of setting name => value pairs to store as user
+ *     settings in the database.
+ */
+function phorum_api_user_save_settings($settings)
+{
+    global $PHORUM;
+
+    // Get the active user's user_id.
+    if (empty($PHORUM['user']['user_id'])) return;
+    $user_id = $PHORUM['user']['user_id'];
+
+    // The settings data must always be an array. 
+    if (empty($PHORUM['user']['settings_data'])) {
+        $PHORUM['user']['settings_data'] = array(); 
+    }
+
+    // Merge the setting with the existing settings.
+    foreach ($settings as $name => $value) {
+        if ($value === NULL) {
+            unset($PHORUM['user']['settings_data'][$name]);
+        } else {
+            $PHORUM['user']['settings_data'][$name] = $value;
+        }
+    }
+
+    // Save the settings in the database.
+    phorum_db_user_save(array(
+        "user_id"       => $user_id,
+        "settings_data" => $PHORUM["user"]["settings_data"]
+    ));
+}
+// }}}
+
+// {{{ Function: phorum_api_user_get_setting()
+/**
+ * This function can be used to retrieve the value for a user setting
+ * that was stored by the {@link phorum_api_user_save_settings()} function
+ * for the active Phorum user.
+ *
+ * @param string $name
+ *     The name of the setting for which to retrieve the setting value.
+ *
+ * @return mixed
+ *     The value of the setting or NULL if it is not available.
+ */
+function phorum_api_user_get_setting($name)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // No settings available at all?
+    if (empty($PHORUM['user']['settings_data'])) return NULL;
+
+    // The setting is available.
+    if (array_key_exists($name, $PHORUM['user']['settings_data'])) {
+        return $PHORUM['user']['settings_data'][$name];
+    } else {
+        return NULL;
+    }
+}
+// }}}
 
 // {{{ Function: phorum_api_user_get()
 /**

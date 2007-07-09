@@ -41,15 +41,16 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
     $subdays = $_POST['subdays'];
 } elseif(isset($PHORUM['args']['subdays']) && !empty($PHORUM["args"]['subdays']) && is_numeric($PHORUM["args"]['subdays'])) {
     $subdays = $PHORUM['args']['subdays'];
-} elseif(isset($PHORUM["user"]["settings_data"]["cc_subscriptions_subdays"])) {
-    $subdays = $PHORUM["user"]["settings_data"]["cc_subscriptions_subdays"];
 } else {
+    $subdays = phorum_api_user_get_setting('cc_subscriptions_subdays');
+}
+if ($subdays === NULL) {
     $subdays = 2;
 }
 $PHORUM['DATA']['SELECTED'] = $subdays;
 
 // Store current selection for the user.
-phorum_user_settings_data_save(array("cc_subscriptions_subdays" => $subdays));
+phorum_api_user_save_settings(array("cc_subscriptions_subdays" => $subdays));
 
 // reading all forums for the current vroot
 $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);

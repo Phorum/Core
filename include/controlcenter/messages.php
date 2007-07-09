@@ -32,9 +32,10 @@ if (isset($_POST['moddays']) && is_numeric($_POST['moddays'])) {
     $moddays = (int)$_POST['moddays'];
 } elseif(isset($PHORUM['args']['moddays']) && !empty($PHORUM["args"]['moddays']) && is_numeric($PHORUM["args"]['moddays'])) {
     $moddays = (int)$PHORUM['args']['moddays'];
-} elseif(isset($PHORUM["user"]["settings_data"]["cc_messages_moddays"])) {
-    $moddays = $PHORUM["user"]["settings_data"]["cc_messages_moddays"];
 } else {
+    $moddays=phorum_api_user_get_setting("cc_messages_moddays");
+}
+if ($moddays === NULL) {
     $moddays = 2;
 }
 
@@ -43,17 +44,18 @@ if (isset($_POST['onlyunapproved']) && is_numeric($_POST['onlyunapproved'])) {
     $showwaiting = (int)$_POST['onlyunapproved'];
 } elseif(isset($PHORUM['args']['onlyunapproved']) && !empty($PHORUM["args"]['onlyunapproved']) && is_numeric($PHORUM["args"]['onlyunapproved'])) {
     $showwaiting = (int)$PHORUM['args']['onlyunapproved'];
-} elseif(isset($PHORUM["user"]["settings_data"]["cc_messages_onlyunapproved"])) {
-    $showwaiting = $PHORUM["user"]["settings_data"]["cc_messages_onlyunapproved"];
 } else {
+    $showwaiting = phorum_api_user_get_setting('cc_messages_onlyunapproved');
+}
+if (empty($showwaiting)) {
     $showwaiting = 0;
 }
 $PHORUM['DATA']['SELECTED'] = $moddays;
 $PHORUM['DATA']['SELECTED_2'] = $showwaiting?true:false;
 
 // Store current selection for the user.
-phorum_user_settings_data_save(array(
-    "cc_messages_moddays" => $moddays,
+phorum_api_user_save_settings(array(
+    "cc_messages_moddays"        => $moddays,
     "cc_messages_onlyunapproved" => $showwaiting
 ));
 

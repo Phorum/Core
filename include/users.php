@@ -29,34 +29,6 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-function phorum_user_settings_data_save($settings)
-{
-    // shouldn't happen
-    if (empty($GLOBALS["PHORUM"]["user"]["user_id"])) return;
-
-    $changed_settings = array();
-    foreach ($settings as $key => $val)
-    {
-        if (!isset($GLOBALS["PHORUM"]["user"]["settings_data"][$key]) ||
-            $GLOBALS["PHORUM"]["user"]["settings_data"][$key] !== $val) {
-            $GLOBALS["PHORUM"]["user"]["settings_data"][$key] = $val;
-            $changed_settings[$key] = $val;
-        }
-    }
-    if (count($changed_settings)) {
-        foreach ($changed_settings as $key => $val) {
-            $GLOBALS["PHORUM"]["user"]["settings_data"][$key] = $val;
-        }
-        phorum_db_user_save(array(
-            "user_id"       => $GLOBALS["PHORUM"]["user"]["user_id"],
-            "settings_data" => $GLOBALS["PHORUM"]["user"]["settings_data"]
-        ));
-        if(isset($GLOBALS['PHORUM']['cache_users']) && $GLOBALS['PHORUM']['cache_users']) {
-            phorum_cache_remove('user',$GLOBALS["PHORUM"]["user"]['user_id']);
-        }
-    }
-}
-
 function phorum_user_verify( $user_id, $tmp_pass )
 {
     $user_id = phorum_db_user_check_field( array( "user_id", "password_temp" ), array( $user_id, md5( $tmp_pass ) ), array( "=", "=" ) );
