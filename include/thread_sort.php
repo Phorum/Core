@@ -51,7 +51,7 @@ function phorum_sort_threads($rows)
         function_exists('phorum_ext_treesort')) {
 
         phorum_ext_treesort(
-            $rows, "message_id", "parent_id", 
+            $rows, "message_id", "parent_id",
             $indentmultiplier,
             "subject", $cut_min, $cut_max, $cut_indentfactor
         );
@@ -62,10 +62,41 @@ function phorum_sort_threads($rows)
     // ------------------------------------------------------------------
     // PHP extension not available. Revert to the pure PHP solution.
     // ------------------------------------------------------------------
-   
+
+    $missing_parents = array();
+
     foreach($rows as $row){
-        $tmp_rows[$row["message_id"]]["parent_id"]=$row["parent_id"];
-        $tmp_rows[$row["parent_id"]]["children"][]=$row["message_id"];
+
+        // add row for this message with its parent
+        $tmp_rows[$row["message_id"]]["parent_id"] = $row["parent_id"];
+
+        // check if this row was thought to be missing and undo that
+        if(isset($missing_parents[$row["message_id"]])){
+            unset($missing_parents[$row["message_id"]]);
+        }
+
+        // if this row's parent is not yet set, mark it missing
+        // when it is encountered, it will be removed
+        if($row["parent_id"]!=0 && empty($tmp_rows[$row["parent_id"]])){
+            $missing_parents[] = $row["parent_id"];
+        }
+
+        // add this row to the parents child list
+        $tmp_rows[$row["parent_id"]]["children"][] = $row["message_id"];
+    }
+
+    // ------------------------------------------------------------------
+    // If there are missing parent, promote their children to the top
+    // This should be the exception for broken data
+    // ------------------------------------------------------------------
+    if(!empty($missing_parents)){
+        foreach($missing_parents as $parent_id){
+            foreach($tmp_rows[$parent_id]["children"] as $child){
+                $tmp_rows[$child]["parent_id"] = 0;
+                $tmp_rows[0]["children"][] = $child;
+            }
+            unset($tmp_rows[$parent_id]);
+        }
     }
 
     $order = array();
