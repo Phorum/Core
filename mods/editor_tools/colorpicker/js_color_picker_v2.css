@@ -73,11 +73,11 @@
 		
 	}
 	.colorPickerTab_inactive span{
-		background-image:url('images/tab_left_inactive.gif');
+		background-image:url(images/tab_left_inactive.gif);
 	}
 	
 	.colorPickerTab_active span{
-		background-image:url('images/tab_left_active.gif');
+		background-image:url(images/tab_left_active.gif);
 
 	}
 	.colorPickerTab_inactive span, .colorPickerTab_active span{
