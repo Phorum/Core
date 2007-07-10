@@ -517,7 +517,7 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) {
     $PHORUM["DATA"]["URL"]["MARK_READ"] = phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "markread");
 }
 if($PHORUM["DATA"]["MODERATOR"]) {
-   $PHORUM["DATA"]["URL"]["UNAPPROVED"] = phorum_get_url(PHORUM_PREPOST_URL);
+   $PHORUM["DATA"]["URL"]["UNAPPROVED"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=messages");
 }
 
 // updating new-info for first visit (last message on first page is first new)

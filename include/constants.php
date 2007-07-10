@@ -224,7 +224,6 @@
     define("PHORUM_GROUP_MODERATION_URL", $i++);
     define("PHORUM_FOLLOW_URL", $i++);
     define("PHORUM_FOLLOW_ACTION_URL", $i++);
-    define("PHORUM_PREPOST_URL", $i++);
     define("PHORUM_REPORT_URL", $i++);
     define("PHORUM_FEED_URL", $i++);
     define("PHORUM_CUSTOM_URL", $i++);

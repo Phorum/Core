@@ -114,11 +114,6 @@ function phorum_get_url()
             $page = "moderation";
             $add_get_vars = false;
             break;
-        case PHORUM_PREPOST_URL:
-            $page = "control";
-            $argv[] = "panel=messages";
-            $add_forum_id = true;
-            break;
         case PHORUM_CONTROLCENTER_URL:
             $page = "control";
             $add_forum_id = true;
