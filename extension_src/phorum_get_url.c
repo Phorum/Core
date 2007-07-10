@@ -76,7 +76,7 @@ initialize_get_url_handlers()
     register_url_handler(
      PHORUM_FEED_URL,              &basic_url, "feed",       NO_FORUM_ID, GET_VARS);
     register_url_handler(
-     PHORUM_ADDON_URL,             &addon_url, "addon",      FORUM_ID,    GET_VARS);
+     PHORUM_ADDON_URL,             &basic_url, "addon",      FORUM_ID,    GET_VARS);
     register_url_handler(
      PHORUM_CUSTOM_URL,            &custom_url,"",           NO_FORUM_ID, GET_VARS);
 }
@@ -741,37 +741,6 @@ read_url(void *h, void *u, int argc, zval ***argv)
             url_arg *anchor = format_url_arg("#msg-%s", Z_STRVAL_PP(zarg));
             url->suffix = anchor;
         }
-    }
-
-    return basic_url(h, u, argc, argv);
-}
-
-/**
- * Addon URL handler.
- *
- * argv[0] = The module name for which to call the addon script.
- *           If this argument does not start with "module=", then
- *           that string is prepended to the argument.
- */
-char *addon_url(void *h, void *u, int argc, zval ***argv)
-{
-    /* We need at least the module name argument. */
-    if (argc < 1) {
-        zend_error(
-            E_WARNING,
-            "phorum_get_url(PHORUM_ADDON_URL, ..) takes at least "
-            "two arguments."
-        );
-        return NULL;
-    }
-
-    /* Make sure that the first argument starts with "module=". */
-    if (strncmp(Z_STRVAL_PP(argv[0]), "module=", 7) != 0) {
-        url_arg *arg = format_url_arg("module=%s", Z_STRVAL_PP(argv[0]));
-        efree(Z_STRVAL_PP(argv[0]));
-        Z_STRVAL_PP(argv[0]) = arg->str;
-        Z_STRLEN_PP(argv[0]) = arg->length;
-        efree(arg);
     }
 
     return basic_url(h, u, argc, argv);
