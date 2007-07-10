@@ -19,11 +19,7 @@
                     <td width="100%">
                         <div class="message-author icon-user">
                             {IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}
-                            {IF LOGGEDIN}
-                                {IF MESSAGES->URL->PM}
-                                    <small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>
-                                {/IF}
-                            {/IF}
+                            {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
                         <strong>{MESSAGES->subject} <span class="new">{MESSAGES->new}</span></strong><br />
