@@ -58,8 +58,6 @@ initialize_get_url_handlers()
     register_url_handler(
      PHORUM_MODERATION_ACTION_URL, &basic_url, "moderation", NO_FORUM_ID, NO_GET_VARS);
     register_url_handler(
-     PHORUM_PREPOST_URL,           &prepost_url, "control",  NO_FORUM_ID, GET_VARS);
-    register_url_handler(
      PHORUM_CONTROLCENTER_URL,     &basic_url, "control",    FORUM_ID,    GET_VARS);
     register_url_handler(
      PHORUM_CONTROLCENTER_ACTION_URL, &basic_url, "control", FORUM_ID,    GET_VARS);
@@ -747,20 +745,6 @@ read_url(void *h, void *u, int argc, zval ***argv)
 
     return basic_url(h, u, argc, argv);
 }
-
-/**
- * Prepost URL handler.
- *
- * panel=messages is added as an url argument.
- */
-char *prepost_url(void *h, void *u, int argc, zval ***argv)
-{
-    url_info *url = (url_info *)u;
-    url_arg  *arg = format_url_arg("panel=messages");
-    add_url_arg(&url, arg, 0);
-    return basic_url(h, u, argc, argv);
-}
-
 
 /**
  * Addon URL handler.
