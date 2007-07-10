@@ -12,33 +12,41 @@
 
 // Standard pages and their options
 
+/**
+ * Descriptions of standard Phorum page URL types and their options.
+ * The keys in this array describe the type of Phorum URL.
+ * The values are arrays, containing the following three elements: 
+ * - The name of the Phorum page to link to;
+ * - A constan, telling whether the forum_id has to be added to the URL;
+ * - A boolean, telling whether the GET vars have to be added to the URL.
+ */
 $PHORUM["url_patterns"] = array(
-    PHORUM_BASE_URL                 => array("", PHORUM_URL_NO_FORUM_ID, true),
-    PHORUM_CHANGES_URL              => array("changes", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_CONTROLCENTER_ACTION_URL => array("control", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_CONTROLCENTER_URL        => array("control", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_CSS_URL                  => array("css", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_FEED_URL                 => array("feed", PHORUM_URL_NO_FORUM_ID, true),
-    PHORUM_FOLLOW_ACTION_URL        => array("follow", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_FOLLOW_URL               => array("follow", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_INDEX_URL                => array("index", PHORUM_URL_NO_FORUM_ID, true),
-    PHORUM_LIST_URL                 => array("list", PHORUM_URL_COND_FORUM_ID, true),
-    PHORUM_LOGIN_ACTION_URL         => array("login", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_LOGIN_URL                => array("login", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_MODERATION_ACTION_URL    => array("moderation", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_MODERATION_URL           => array("moderation", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_PM_ACTION_URL            => array("pm", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_PM_URL                   => array("pm", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_POSTING_URL              => array("posting", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_POSTING_ACTION_URL       => array("posting", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_PROFILE_URL              => array("profile", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_REDIRECT_URL             => array("redirect", PHORUM_URL_NO_FORUM_ID, true),
-    PHORUM_REGISTER_ACTION_URL      => array("register", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_REGISTER_URL             => array("register", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_REPORT_URL               => array("report", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_SEARCH_ACTION_URL        => array("search", PHORUM_URL_NO_FORUM_ID, false),
-    PHORUM_SEARCH_URL               => array("search", PHORUM_URL_ADD_FORUM_ID, true),
-    PHORUM_SUBSCRIBE_URL            => array("subscribe", PHORUM_URL_ADD_FORUM_ID, true),
+    PHORUM_BASE_URL                 => array("",           PHORUM_URL_NO_FORUM_ID,   true),
+    PHORUM_CHANGES_URL              => array("changes",    PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_CONTROLCENTER_ACTION_URL => array("control",    PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_CONTROLCENTER_URL        => array("control",    PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_CSS_URL                  => array("css",        PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_FEED_URL                 => array("feed",       PHORUM_URL_NO_FORUM_ID,   true),
+    PHORUM_FOLLOW_ACTION_URL        => array("follow",     PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_FOLLOW_URL               => array("follow",     PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_INDEX_URL                => array("index",      PHORUM_URL_NO_FORUM_ID,   true),
+    PHORUM_LIST_URL                 => array("list",       PHORUM_URL_COND_FORUM_ID, true),
+    PHORUM_LOGIN_ACTION_URL         => array("login",      PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_LOGIN_URL                => array("login",      PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_MODERATION_ACTION_URL    => array("moderation", PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_MODERATION_URL           => array("moderation", PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_PM_ACTION_URL            => array("pm",         PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_PM_URL                   => array("pm",         PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_POSTING_URL              => array("posting",    PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_POSTING_ACTION_URL       => array("posting",    PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_PROFILE_URL              => array("profile",    PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_REDIRECT_URL             => array("redirect",   PHORUM_URL_NO_FORUM_ID,   true),
+    PHORUM_REGISTER_ACTION_URL      => array("register",   PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_REGISTER_URL             => array("register",   PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_REPORT_URL               => array("report",     PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_SEARCH_ACTION_URL        => array("search",     PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_SEARCH_URL               => array("search",     PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_SUBSCRIBE_URL            => array("subscribe",  PHORUM_URL_ADD_FORUM_ID,  true),
 );
 
 
