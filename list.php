@@ -142,11 +142,13 @@ if($page - floor($pages_shown/2) <= 0  || $page < $pages_shown){
 
 $pageno=1;
 
+$list_page_url_template = phorum_get_url(PHORUM_LIST_URL, '%forum_id%', 'page=%page_num%');
+
 for($x=0;$x<$pages_shown && $x<$pages;$x++){
     $pageno=$x+$page_start;
     $PHORUM["DATA"]["PAGES"][] = array(
     "pageno"=>$pageno,
-    "url"=>phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "page=$pageno")
+    "url"=>str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$pageno),$list_page_url_template),
     );
 }
 
@@ -155,20 +157,20 @@ $PHORUM["DATA"]["CURRENTPAGE"]=$page;
 $PHORUM["DATA"]["TOTALPAGES"]=$pages;
 
 if($page_start>1){
-    $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "page=1");
+    $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],'1'),$list_page_url_template);
 }
 
 if($pageno<$pages){
-    $PHORUM["DATA"]["URL"]["LASTPAGE"]=phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "page=$pages");
+    $PHORUM["DATA"]["URL"]["LASTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$pages),$list_page_url_template);
 }
 
 if($pages>$page){
     $nextpage=$page+1;
-    $PHORUM["DATA"]["URL"]["NEXTPAGE"]=phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "page=$nextpage");
+    $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$nextpage),$list_page_url_template);
 }
 if($page>1){
     $prevpage=$page-1;
-    $PHORUM["DATA"]["URL"]["PREVPAGE"]=phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "page=$prevpage");
+    $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$prevpage),$list_page_url_template);
 }
 
 $min_id=0;
@@ -201,6 +203,9 @@ if($rows == null) {
 
     if ($PHORUM["threaded_list"]){
 
+        // prepare needed url-templates
+        $read_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
+
         // loop through and read all the data in.
         foreach($rows as $key => $row){
 
@@ -215,7 +220,9 @@ if($rows == null) {
             $rows[$key]["raw_datestamp"] = $row["datestamp"];
             $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
 
-            $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
+            $rows[$key]["URL"]["READ"] = str_replace(array('%thread_id%','%message_id%'),
+                                                     array($row['thread'],$row['message_id']),
+                                                     $read_url_template);
 
             if($row["message_id"] == $row["thread"]){
                 $rows[$key]["threadstart"] = true;
@@ -238,15 +245,23 @@ if($rows == null) {
 
     } else {
 
+        $read_url_template        = phorum_get_url(PHORUM_READ_URL, '%thread_id%');
+        $newpost_url_template     = phorum_get_url(PHORUM_READ_URL, '%thread_id%','gotonewpost');
+        $read_page_url_template   = phorum_get_url(PHORUM_READ_URL, '%thread_id%','page=%page_num%');
+        $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id','page=%page_num%');
+        $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id');
+
         // loop through and read all the data in.
         foreach($rows as $key => $row){
 
-            $rows[$key]["raw_lastpost"] = $row["modifystamp"];
-            $rows[$key]["lastpost"] = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
-            $rows[$key]["raw_datestamp"] = $row["datestamp"];
-            $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
-            $rows[$key]["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"]);
-            $rows[$key]["URL"]["NEWPOST"] = phorum_get_url(PHORUM_READ_URL, $row["thread"],"gotonewpost");
+            $rows[$key]["raw_lastpost"]   = $row["modifystamp"];
+            $rows[$key]["raw_datestamp"]  = $row["datestamp"];
+
+            $rows[$key]["lastpost"]       = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
+            $rows[$key]["datestamp"]      = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+
+            $rows[$key]["URL"]["READ"]    = str_replace('%thread_id%',$row['thread'],$read_url_template);
+            $rows[$key]["URL"]["NEWPOST"] = str_replace('%thread_id%',$row['thread'],$newpost_url_template);
             $rows[$key]["threadstart"] = true;
 
             $rows[$key]["new"] = "";
@@ -285,22 +300,22 @@ if($rows == null) {
                     if($pages<=5){
                         $page_links=array();
                         for($x=1;$x<=$pages;$x++){
-                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
+                            $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$x),$read_page_url_template);
                             $page_links[]="<a href=\"$url\">$x</a>";
                         }
                         $rows[$key]["pages"]=implode("&nbsp;", $page_links);
                     } else {
-                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=1");
+                        $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],'1'),$read_page_url_template);
                         $rows[$key]["pages"]="<a href=\"$url\">1</a>&nbsp;";
                         $rows[$key]["pages"].="...&nbsp;";
                         $pageno=$pages-2;
-                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                        $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$pageno),$read_page_url_template);
                         $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
                         $pageno=$pages-1;
-                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                        $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$pageno),$read_page_url_template);
                         $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>&nbsp;";
                         $pageno=$pages;
-                        $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                        $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$pageno),$read_page_url_template);
                         $rows[$key]["pages"].="<a href=\"$url\">$pageno</a>";
                     }
 
@@ -319,22 +334,22 @@ if($rows == null) {
                         if($pages_mods<=5){
                             $page_links=array();
                             for($x=1;$x<=$pages_mods;$x++){
-                                $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$x");
+                                $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$x),$read_page_url_template);
                                 $page_links[]="<a href=\"$url\">$x</a>";
                             }
                             $rows[$key]["pages_moderators"]=implode("&nbsp;", $page_links);
                         } else {
-                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=1");
+                            $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],'1'),$read_page_url_template);
                             $rows[$key]["pages_moderators"]="<a href=\"$url\">1</a>&nbsp;";
                             $rows[$key]["pages_moderators"].="...&nbsp;";
                             $pageno=$pages_mods-2;
-                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                            $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$pageno),$read_page_url_template);
                             $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>&nbsp;";
                             $pageno=$pages_mods-1;
-                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                            $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$pageno),$read_page_url_template);
                             $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>&nbsp;";
                             $pageno=$pages_mods;
-                            $url=phorum_get_url(PHORUM_READ_URL, $row["thread"], "page=$pageno");
+                            $url = str_replace(array('%thread_id%','%page_num%'),array($row['thread'],$pageno),$read_page_url_template);
                             $rows[$key]["pages_moderators"].="<a href=\"$url\">$pageno</a>";
                         }
                     }
@@ -345,9 +360,13 @@ if($rows == null) {
             if(isset($row['recent_message_id'])) { // should always be true
                 // building the recent message link
                 if($pages>1){
-                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
+                    $rows[$key]["URL"]["LAST_POST"] = str_replace(array('%thread_id%','%message_id%','%page_num%'),
+                                                                  array($row['thread'],$row['recent_message_id'],$pages),
+                                                                  $recent_page_url_template);
                 } else {
-                    $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
+                    $rows[$key]["URL"]["LAST_POST"] = str_replace(array('%thread_id%','%message_id%'),
+                                                                  array($row['thread'],$row['recent_message_id']),
+                                                                  $recent_url_template);
                 }
             }
 
@@ -374,6 +393,10 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         $delete_thread_url_template = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%');
         $move_thread_url_template   = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%');
         $merge_thread_url_template  = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%');
+        if(isset($row['pages_moderators'])) {
+            $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id','page=%page_num%');
+            $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id');
+        }
     }
 
     // the stuff needed by user
@@ -425,9 +448,13 @@ if($PHORUM['DATA']['LOGGEDIN']) {
                     // building the recent message link
                     $pages = $row['pages_moderators_count'];
                     if($pages>1){
-                        $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id'], "page=$pages");
+                        $rows[$key]["URL"]["LAST_POST"] = str_replace(array('%thread_id%','%message_id%','%page_num%'),
+                                                                      array($row['thread'],$row['recent_message_id'],$pages),
+                                                                      $recent_page_url_template);
                     } else {
-                        $rows[$key]["URL"]["LAST_POST"]=phorum_get_url(PHORUM_READ_URL, $row["thread"], $row['recent_message_id']);
+                        $rows[$key]["URL"]["LAST_POST"] = str_replace(array('%thread_id%','%message_id%'),
+                                                                      array($row['thread'],$row['recent_message_id']),
+                                                                      $recent_url_template);
                     }
                 }
             }
@@ -445,6 +472,10 @@ if (isset($PHORUM["hooks"]["list"]))
 // the messages to make it a little more similar to the view in read.php
 if ($bodies_in_list)
 {
+
+    if($PHORUM["max_attachments"]>0) {
+        $attachment_url_template = phorum_get_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
+    }
     foreach ($rows as $id => $row) {
 
         // is the message unapproved?
@@ -489,7 +520,7 @@ if ($bodies_in_list)
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
                 $row["attachments"][$key]["name"]=htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                $row["attachments"][$key]["url"] = phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}", "filename=".urlencode($file['name']));
+                $row["attachments"][$key]["url"] =str_replace(array('%file_id%','%file_name%'),array($file['file_id'],urlencode($file['name'])),$attachment_url_template);
             }
         }
         $rows[$id] = $row;

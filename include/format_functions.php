@@ -85,6 +85,9 @@ function phorum_format_messages ($data, $author_specs = NULL)
     // A special <br> tag to keep track of breaks that are added by phorum.
     $phorum_br = '<phorum break>';
 
+    // prepare url-templates used later on
+    $profile_url_template = phorum_get_url(PHORUM_PROFILE_URL, '%spec_data%');
+
     // Apply Phorum's formatting rules to all messages.
     foreach( $data as $key => $message )
     {
@@ -138,7 +141,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
             }
             // Author info for registered user.
             elseif (!empty($message[$spec[0]])) {
-                $url = phorum_get_url(PHORUM_PROFILE_URL, $message[$spec[0]]);
+                $url = str_replace('%spec_data%',$message[$spec[0]],$profile_url_template);
                 $data[$key]["URL"][$spec[4]] = $url;
                 $data[$key][$spec[3]] =
                     (empty($PHORUM["custom_display_name"])
