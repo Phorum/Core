@@ -191,47 +191,45 @@
     define("PHORUM_MASTER_STATUS_ADMIN_ONLY", "admin-only");
     define("PHORUM_MASTER_STATUS_DISABLED", "disabled");
 
+    // URL identifiers
+    define("PHORUM_LIST_URL", 1);
+    define("PHORUM_READ_URL", 2);
+    define("PHORUM_FOREIGN_READ_URL", 3);
+    define("PHORUM_REPLY_URL", 4);
+    define("PHORUM_POSTING_URL", 5);
+    define("PHORUM_REDIRECT_URL", 6);
+    define("PHORUM_SEARCH_URL", 7);
+    define("PHORUM_SEARCH_ACTION_URL", 8);
+    define("PHORUM_USER_URL", 9);
+    define("PHORUM_INDEX_URL", 10);
+    define("PHORUM_LOGIN_URL", 11);
+    define("PHORUM_LOGIN_ACTION_URL", 12);
+    define("PHORUM_REGISTER_URL", 13);
+    define("PHORUM_REGISTER_ACTION_URL", 14);
+    define("PHORUM_PROFILE_URL", 15);
+    define("PHORUM_SUBSCRIBE_URL", 16);
+    define("PHORUM_MODERATION_URL", 17);
+    define("PHORUM_MODERATION_ACTION_URL", 18);
+    define("PHORUM_CONTROLCENTER_URL", 19);
+    define("PHORUM_CONTROLCENTER_ACTION_URL", 20);
+    define("PHORUM_PM_URL", 21);
+    define("PHORUM_PM_ACTION_URL", 22);
+    define("PHORUM_FILE_URL", 23);
+    define("PHORUM_GROUP_MODERATION_URL", 24);
+    define("PHORUM_FOLLOW_URL", 25);
+    define("PHORUM_FOLLOW_ACTION_URL", 26);
+    define("PHORUM_REPORT_URL", 27);
+    define("PHORUM_FEED_URL", 28);
+    define("PHORUM_CUSTOM_URL", 29);
+    define("PHORUM_BASE_URL", 30);
+    define("PHORUM_ADDON_URL", 31);
+    define("PHORUM_CHANGES_URL", 32);
+    define("PHORUM_CSS_URL", 33);
+    define("PHORUM_POSTING_ACTION_URL", 34);
 
     // constants below here do not have to have a constant value,
     // as long as each is unique.  They are used for enumeration.
     // Add to them as you wish knowing that.
-
-    // URL identifiers
-    $i=1;
-    define("PHORUM_LIST_URL", $i++);
-    define("PHORUM_READ_URL", $i++);
-    define("PHORUM_FOREIGN_READ_URL", $i++);
-    define("PHORUM_REPLY_URL", $i++);
-    define("PHORUM_POSTING_URL", $i++);
-    define("PHORUM_REDIRECT_URL", $i++);
-    define("PHORUM_SEARCH_URL", $i++);
-    define("PHORUM_SEARCH_ACTION_URL", $i++);
-    define("PHORUM_USER_URL", $i++);
-    define("PHORUM_INDEX_URL", $i++);
-    define("PHORUM_LOGIN_URL", $i++);
-    define("PHORUM_LOGIN_ACTION_URL", $i++);
-    define("PHORUM_REGISTER_URL", $i++);
-    define("PHORUM_REGISTER_ACTION_URL", $i++);
-    define("PHORUM_PROFILE_URL", $i++);
-    define("PHORUM_SUBSCRIBE_URL", $i++);
-    define("PHORUM_MODERATION_URL", $i++);
-    define("PHORUM_MODERATION_ACTION_URL", $i++);
-    define("PHORUM_CONTROLCENTER_URL", $i++);
-    define("PHORUM_CONTROLCENTER_ACTION_URL", $i++);
-    define("PHORUM_PM_URL", $i++);
-    define("PHORUM_PM_ACTION_URL", $i++);
-    define("PHORUM_FILE_URL", $i++);
-    define("PHORUM_GROUP_MODERATION_URL", $i++);
-    define("PHORUM_FOLLOW_URL", $i++);
-    define("PHORUM_FOLLOW_ACTION_URL", $i++);
-    define("PHORUM_REPORT_URL", $i++);
-    define("PHORUM_FEED_URL", $i++);
-    define("PHORUM_CUSTOM_URL", $i++);
-    define("PHORUM_BASE_URL", $i++);
-    define("PHORUM_ADDON_URL", $i++);
-    define("PHORUM_CHANGES_URL", $i++);
-    define("PHORUM_CSS_URL", $i++);
-    define("PHORUM_POSTING_ACTION_URL", $i++);
 
     // URL forum_id option
     $i=1;
