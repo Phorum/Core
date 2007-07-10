@@ -10,8 +10,6 @@
  * ----------------------------------
  */
 
-// Standard pages and their options
-
 /**
  * Descriptions of standard Phorum page URL types and their options.
  * The keys in this array describe the type of Phorum URL.
