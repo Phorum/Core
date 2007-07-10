@@ -536,16 +536,15 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["URL"]["QUOTE"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template_quote);
         $row["URL"]["REPORT"] = str_replace('%message_id%',$row['message_id'],$report_url_template);
 
+        $row["URL"]["PM"] = false;
         if ($PHORUM["DATA"]["LOGGEDIN"]) {
             $row["URL"]["FOLLOW"] = str_replace('%thread_id%',$row['thread'],$follow_url_template);
+            // can only send private replies if the author is a registered user
+            if ($PHORUM["enable_pm"] && $row["user_id"]) {
+                $row["URL"]["PM"] = str_replace('%message_id%',$row['message_id'],$pm_url_template);
+            }
         }
 
-        // can only send private replies if the author is a registered user
-        if ($PHORUM["enable_pm"] && $row["user_id"]) {
-            $row["URL"]["PM"] = str_replace('%message_id%',$row['message_id'],$pm_url_template);
-        } else {
-            $row["URL"]["PM"] = false;
-        }
 
         // check if its the first message in the thread
         if($row["message_id"] == $row["thread"]) {
