@@ -83,7 +83,7 @@ function phorum_get_url()
                     // (reply in this case). Currently, the thread id is in argv[0],
                     // but we don't need that one for posting.php. So we simply
                     // replace argv[0] with the correct argument.
-                    $argv = array("reply");
+                    $argv[0] = "reply";
                 }
                 $add_get_vars = true;
                 $add_forum_id = true;
