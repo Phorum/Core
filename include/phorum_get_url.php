@@ -81,14 +81,6 @@ function phorum_get_url()
             $page = "search";
             $add_get_vars = true;
             break;
-        case PHORUM_DOWN_URL: // TODO: still in use?
-            $page = "down";
-            $add_forum_id = true;
-            break;
-        case PHORUM_VIOLATION_URL: // TODO: still in use?
-            $page = "violation";
-            $add_forum_id = true;
-            break;
         case PHORUM_INDEX_URL:
             $page = "index";
             break;

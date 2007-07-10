@@ -206,8 +206,6 @@
     define("PHORUM_REDIRECT_URL", $i++);
     define("PHORUM_SEARCH_URL", $i++);
     define("PHORUM_SEARCH_ACTION_URL", $i++);
-    define("PHORUM_DOWN_URL", $i++);
-    define("PHORUM_VIOLATION_URL", $i++);
     define("PHORUM_USER_URL", $i++);
     define("PHORUM_INDEX_URL", $i++);
     define("PHORUM_LOGIN_URL", $i++);
