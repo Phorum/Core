@@ -536,6 +536,18 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
     // used in all forms as it seems
     $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["forum_id"]}\" />\n";
+
+    if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
+        if($PHORUM["default_feed"]=="rss"){
+            $PHORUM["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["RSS"];
+            $PHORUM["DATA"]["FEED_CONTENT_TYPE"] = "application/rss+xml";
+        } else {
+            $PHORUM["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["ATOM"];
+            $PHORUM["DATA"]["FEED_CONTENT_TYPE"] = "application/atom+xml";
+        }
+    }
+
+
 }
 
 //////////////////////////////////////////////////////////
@@ -775,20 +787,6 @@ function phorum_build_common_urls()
 
     // those are general urls, needed nearly everywhere
     $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
-
-    // RSS-Url only makes sense on a couple of pages
-    if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']
-        && (phorum_page=="index" || phorum_page=="list" || phorum_page=="read")){
-        if($PHORUM["default_feed"]=="rss"){
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=rss" );
-            $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["RSS"];
-            $GLOBALS["PHORUM"]["DATA"]["FEED_CONTENT_TYPE"] = "application/rss+xml";
-        } else {
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, "type=atom" );
-            $GLOBALS["PHORUM"]["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["ATOM"];
-            $GLOBALS["PHORUM"]["DATA"]["FEED_CONTENT_TYPE"] = "application/atom+xml";
-        }
-    }
 
     $index_id=-1;
     // in a folder

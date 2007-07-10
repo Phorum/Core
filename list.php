@@ -520,6 +520,12 @@ if($PHORUM["DATA"]["MODERATOR"]) {
    $PHORUM["DATA"]["URL"]["UNAPPROVED"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=messages");
 }
 
+// add feed url
+if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["forum_id"], "type=".$PHORUM["default_feed"] );
+}
+
+
 // updating new-info for first visit (last message on first page is first new)
 if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
     // setting it as min-id

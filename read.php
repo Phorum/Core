@@ -669,6 +669,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($PHORUM["DATA"]["TOPIC"]["body"],0,300))), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
+    // add feed url
+    if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["forum_id"], $thread, "type=".$PHORUM["default_feed"] );
+    }
+
     // include the correct template
 
     $templates = array();

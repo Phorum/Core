@@ -58,6 +58,12 @@ if(!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"]==0){
     exit();
 }
 
+// add feed url
+if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["vroot"], "type=".$PHORUM["default_feed"] );
+}
+
+
 if ( isset( $PHORUM["forum_id"] ) ) {
     $parent_id = (int)$PHORUM["forum_id"];
 } else {

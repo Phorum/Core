@@ -160,16 +160,6 @@ function phorum_get_url()
             $add_forum_id = true;
             break;
         case PHORUM_FEED_URL:
-            switch(phorum_page){
-                case "list":
-                    $add_forum_id = true;
-                    break;
-                case "read":
-                    $add_forum_id = true;
-                    $thread_id = (int)$PHORUM["args"][1];
-                    array_unshift($argv, $thread_id);
-                    break;
-            }
             $page = "feed";
             break;
         // this is for adding own generic urls
