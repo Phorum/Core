@@ -2751,7 +2751,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
             if (!isset($users[$perm[0]])) continue;
 
             // Add the group_id to the user data.
-            $users[$perm[0]]['groups'][$perm[1]] = $perm[$perm[1]];
+            $users[$perm[0]]['groups'][$perm[1]] = $perm[1];
 
             // Are we handling a group permissions record?
             if (!empty($perm[2]))
