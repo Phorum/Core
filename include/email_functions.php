@@ -123,7 +123,7 @@ function phorum_email_user($addresses, $data)
         }
 
         $messageid = "<{$data['msgid']}@$host>";
-        $messageid_header="\nMessage-ID: <$messageid>";
+        $messageid_header="\nMessage-ID: $messageid";
     } else {
         $messageid = "";
         $messageid_header="";
