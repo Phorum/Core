@@ -248,8 +248,8 @@ if($rows == null) {
         $read_url_template        = phorum_get_url(PHORUM_READ_URL, '%thread_id%');
         $newpost_url_template     = phorum_get_url(PHORUM_READ_URL, '%thread_id%','gotonewpost');
         $read_page_url_template   = phorum_get_url(PHORUM_READ_URL, '%thread_id%','page=%page_num%');
-        $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id','page=%page_num%');
-        $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id');
+        $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%','page=%page_num%');
+        $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
 
         // loop through and read all the data in.
         foreach($rows as $key => $row){
@@ -360,13 +360,17 @@ if($rows == null) {
             if(isset($row['recent_message_id'])) { // should always be true
                 // building the recent message link
                 if($pages>1){
-                    $rows[$key]["URL"]["LAST_POST"] = str_replace(array('%thread_id%','%message_id%','%page_num%'),
-                                                                  array($row['thread'],$row['recent_message_id'],$pages),
-                                                                  $recent_page_url_template);
+                    $rows[$key]["URL"]["LAST_POST"] = str_replace(
+                       array('%thread_id%','%message_id%','%page_num%'),
+                       array($row['thread'],$row['recent_message_id'],$pages),
+                       $recent_page_url_template
+                    );
                 } else {
-                    $rows[$key]["URL"]["LAST_POST"] = str_replace(array('%thread_id%','%message_id%'),
-                                                                  array($row['thread'],$row['recent_message_id']),
-                                                                  $recent_url_template);
+                    $rows[$key]["URL"]["LAST_POST"] = str_replace(
+                        array('%thread_id%','%message_id%'),
+                        array($row['thread'],$row['recent_message_id']),
+                        $recent_url_template
+                    );
                 }
             }
 
@@ -394,8 +398,8 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         $move_thread_url_template   = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%');
         $merge_thread_url_template  = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%');
         if(isset($row['pages_moderators'])) {
-            $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id','page=%page_num%');
-            $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id');
+            $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%','page=%page_num%');
+            $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
         }
     }
 
