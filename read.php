@@ -335,6 +335,32 @@ if($page>1 && !isset($data[$thread])){
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
+    // setup the url-templates needed later
+    $read_url_template_thread = phorum_get_url(PHORUM_READ_URL, '%thread_id%');
+    $read_url_template_both   = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
+    $read_page_url_template   = phorum_get_url(PHORUM_READ_URL, '%thread_id%','page=%page_num%');
+    $edit_url_template        = phorum_get_url(PHORUM_POSTING_URL, '%action_id%', '%message_id%');
+    $reply_url_template       = phorum_get_url(PHORUM_REPLY_URL, '%thread_id%', '%message_id%');
+    $reply_url_template_quote = phorum_get_url(PHORUM_REPLY_URL, '%thread_id%', '%message_id%','quote=1');
+    $report_url_template      = phorum_get_url(PHORUM_REPORT_URL, '%message_id%');
+    if($PHORUM["track_edits"]) {
+        $changes_url_template = phorum_get_url(PHORUM_CHANGES_URL, '%message_id%');
+    }
+    if($PHORUM['DATA']['LOGGEDIN']) {
+        $follow_url_template  = phorum_get_url(PHORUM_FOLLOW_URL, '%thread_id%');
+        if ($PHORUM["enable_pm"]) {
+            $pm_url_template = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=%message_id%");
+        }
+    }
+
+    if($PHORUM["DATA"]["MODERATOR"]) {
+            $edit_url_template          = phorum_get_url(PHORUM_POSTING_URL, "moderation", '%message_id%');
+            $moderation_url_template    = phorum_get_url(PHORUM_MODERATION_URL, '%action_id%', '%message_id%');
+    }
+    if($PHORUM["max_attachments"]>0) {
+        $attachment_url_template = phorum_get_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
+    }
+
     $fetch_user_ids = null;
     if (isset($data['users'])) {
         $fetch_user_ids = $data['users'];
@@ -396,7 +422,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $pageno=$x+$page_start;
             $PHORUM["DATA"]["PAGES"][] = array(
             "pageno"=>$pageno,
-            "url"=>phorum_get_url(PHORUM_READ_URL, $thread, "page=$pageno")
+            'url'=>str_replace(array('%thread_id%','%page_num%'),array($thread,$pageno),$read_page_url_template),
             );
         }
 
@@ -404,20 +430,20 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["TOTALPAGES"]=$pages;
 
         if($page_start>1){
-            $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=phorum_get_url(PHORUM_READ_URL, $thread, "page=1");
+            $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,'1'),$read_page_url_template);
         }
 
         if($pageno<$pages){
-            $PHORUM["DATA"]["URL"]["LASTPAGE"]=phorum_get_url(PHORUM_READ_URL, $thread, "page=$pages");
+            $PHORUM["DATA"]["URL"]["LASTPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,$pages),$read_page_url_template);
         }
 
         if($pages>$page){
             $nextpage=$page+1;
-            $PHORUM["DATA"]["URL"]["NEXTPAGE"]=phorum_get_url(PHORUM_READ_URL, $thread, "page=$nextpage");
+            $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,$nextpage),$read_page_url_template);
         }
         if($page>1){
             $prevpage=$page-1;
-            $PHORUM["DATA"]["URL"]["PREVPAGE"]=phorum_get_url(PHORUM_READ_URL, $thread, "page=$prevpage");
+            $PHORUM["DATA"]["URL"]["PREVPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,$prevpage),$read_page_url_template);
         }
     }
 
@@ -432,11 +458,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // URLS which are common for the thread
     if($PHORUM["DATA"]["MODERATOR"]) {
         if($build_move_url) {
-                $URLS["move_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, $thread);
+                $URLS["move_url"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_MOVE_THREAD,$thread),$moderation_url_template);
         }
-        $URLS["merge_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, $thread);
-        $URLS["close_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_CLOSE_THREAD, $thread);
-        $URLS["reopen_url"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_REOPEN_THREAD, $thread);
+        $URLS["merge_url"]  = str_replace(array('%action_id%','%message_id%'),array(PHORUM_MERGE_THREAD,$thread),$moderation_url_template);
+        $URLS["close_url"]  = str_replace(array('%action_id%','%message_id%'),array(PHORUM_CLOSE_THREAD,$thread),$moderation_url_template);
+        $URLS["reopen_url"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_REOPEN_THREAD,$thread),$moderation_url_template);
     }
 
     // main loop for template setup
@@ -472,14 +498,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         // all stuff that makes only sense for moderators or admin
         if($PHORUM["DATA"]["MODERATOR"]) {
 
-            $row["URL"]["DELETE_MESSAGE"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $row["message_id"]);
-            $row["URL"]["DELETE_THREAD"] = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"]);
-            $row["URL"]["EDIT"]=phorum_get_url(PHORUM_POSTING_URL, "moderation", $row["message_id"]);
-            $row["URL"]["SPLIT"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_SPLIT_THREAD, $row["message_id"]);
+            $row["URL"]["DELETE_MESSAGE"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_DELETE_MESSAGE, $row["message_id"]),$moderation_url_template);
+            $row["URL"]["DELETE_THREAD"]  = str_replace(array('%action_id%','%message_id%'),array(PHORUM_DELETE_TREE, $row["message_id"]),$moderation_url_template);
+            $row["URL"]["EDIT"]           = str_replace(array('%action_id%','%message_id%'),array("moderation", $row["message_id"]),$edit_url_template);
+            $row["URL"]["SPLIT"]          = str_replace(array('%action_id%','%message_id%'),array(PHORUM_SPLIT_THREAD, $row["message_id"]),$moderation_url_template);
             if($row['is_unapproved']) {
-              $row["URL"]["APPROVE"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"]);
+              $row["URL"]["APPROVE"]      = str_replace(array('%action_id%','%message_id%'),array(PHORUM_APPROVE_MESSAGE, $row["message_id"]),$moderation_url_template);
             } else {
-              $row["URL"]["HIDE"]=phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $row["message_id"]);
+              $row["URL"]["HIDE"]         = str_replace(array('%action_id%','%message_id%'),array(PHORUM_HIDE_POST, $row["message_id"]),$moderation_url_template);
             }
             if($build_move_url) {
                 $row["URL"]["MOVE"] = $URLS["move_url"];
@@ -495,7 +521,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             !$thread_is_closed &&($PHORUM["user_edit_timelimit"] == 0 || $row["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())) {
             $row["edit"]=1;
             if(!$PHORUM["DATA"]["MODERATOR"]) {
-                $row["URL"]["EDIT"]=phorum_get_url(PHORUM_POSTING_URL, "edit", $row["message_id"]);
+                $row["URL"]["EDIT"] = str_replace(array('%action_id%','%message_id%'),array("edit", $row["message_id"]),$edit_url_template);
             }
         }
 
@@ -504,17 +530,19 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
         $row["raw_datestamp"] = $row["datestamp"];
         $row["datestamp"] = phorum_date($PHORUM["long_date_time"], $row["datestamp"]);
-        $row["URL"]["READ"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
-        $row["URL"]["REPLY"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"]);
-        $row["URL"]["QUOTE"] = phorum_get_url(PHORUM_REPLY_URL, $row["thread"], $row["message_id"], "quote=1");
-        $row["URL"]["REPORT"] = phorum_get_url(PHORUM_REPORT_URL, $row["message_id"]);
+
+        $row["URL"]["READ"]   = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$read_url_template_both);
+        $row["URL"]["REPLY"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template);
+        $row["URL"]["QUOTE"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template_quote);
+        $row["URL"]["REPORT"] = str_replace('%message_id%',$row['message_id'],$report_url_template);
+
         if ($PHORUM["DATA"]["LOGGEDIN"]) {
-            $row["URL"]["FOLLOW"] = phorum_get_url(PHORUM_FOLLOW_URL, $row["thread"]);
+            $row["URL"]["FOLLOW"] = str_replace('%thread_id%',$row['thread'],$follow_url_template);
         }
 
         // can only send private replies if the author is a registered user
         if ($PHORUM["enable_pm"] && $row["user_id"]) {
-            $row["URL"]["PM"] = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=".$row["message_id"]);
+            $row["URL"]["PM"] = str_replace('%message_id%',$row['message_id'],$pm_url_template);
         } else {
             $row["URL"]["PM"] = false;
         }
@@ -551,7 +579,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
                 $row["body"].="\n\n\n\n$editmessage";
                 if($row['meta']['edit_count'] > 0 && ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_ON || ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_MODERATOR && $PHORUM["DATA"]["MODERATOR"] ) ) ) {
-                    $row["URL"]["CHANGES"] = phorum_get_url(PHORUM_CHANGES_URL, $row["message_id"]);
+                    $row["URL"]["CHANGES"] = str_replace('%message_id%',$row['message_id'],$changes_url_template);
                 }
             }
         }
@@ -576,9 +604,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $row["attachments"]=$row["meta"]["attachments"];
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
-                $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
-                $row["attachments"][$key]["name"]=htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                $row["attachments"][$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file={$file['file_id']}", "filename=".urlencode($file['name']));
+                $row["attachments"][$key]["size"] = phorum_filesize($file["size"]);
+                $row["attachments"][$key]["name"] = htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $row["attachments"][$key]["url"]  = str_replace(array('%file_id%','%file_name%'),array($file['file_id'],urlencode($file['name'])),$attachment_url_template);
             }
         }
 
@@ -626,8 +654,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             if(empty($last_key)) {
                 $messages[$key]["URL"]["PREV"] = $PHORUM["DATA"]["URL"]["OLDERTHREAD"];
             } else{
-                $messages[$key]["URL"]["PREV"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $last_key);
-                $messages[$last_key]["URL"]["NEXT"] = phorum_get_url(PHORUM_READ_URL, $row["thread"], $row["message_id"]);
+                $messages[$key]["URL"]["PREV"]      = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $last_key),$read_url_template_both);
+                $messages[$last_key]["URL"]["NEXT"] = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$read_url_template_both);
             }
 
             $last_key = $key;
