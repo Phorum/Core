@@ -231,6 +231,13 @@
     define("PHORUM_ADDON_URL", $i++);
     define("PHORUM_CHANGES_URL", $i++);
     define("PHORUM_CSS_URL", $i++);
+    define("PHORUM_POSTING_ACTION_URL", $i++);
+
+    // URL forum_id option
+    $i=1;
+    define("PHORUM_URL_NO_FORUM_ID", $i++);
+    define("PHORUM_URL_ADD_FORUM_ID", $i++);
+    define("PHORUM_URL_COND_FORUM_ID", $i++);
 
     // moderation actions
     $i=1;

@@ -257,7 +257,7 @@ $do_attach = count($_FILES) ? true : false;
 
 // Set all our URL's
 phorum_build_common_urls();
-$PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_POSTING_URL);
+$PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_POSTING_ACTION_URL);
 
 // Keep track of errors.
 $PHORUM["DATA"]["ERROR"] = null;
