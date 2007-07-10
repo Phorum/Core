@@ -177,7 +177,11 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     if ($loglevel == EVENTLOG_LVL_ALERT)
     {
         // Flush any buffered output so far.
-        while (ob_get_level()) ob_end_clean();
+        for(;;) {
+            $status = ob_get_status();
+            if (!$status || !$status['del']) break;
+            ob_end_clean();
+        }
 
         // Notify the user and exit.
         print "An error occurred in the application.<br/>" .

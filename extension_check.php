@@ -46,7 +46,12 @@ if (! extension_loaded('phorum')) {
 define('phorum_page','extension_check');
 include_once( "./common.php" );
 
-while (ob_get_level()) ob_end_clean();
+// Flush any output so far.
+for(;;) {
+    $status = ob_get_status();
+    if (!$status || !$status['del']) break;
+    ob_end_clean();
+}
 
 // Check if the extension version matches this Phorum version.
 if (function_exists('phorum_ext_version')) {
