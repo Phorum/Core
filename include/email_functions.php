@@ -68,9 +68,9 @@ function phorum_email_user($addresses, $data)
     $PHORUM = $GLOBALS['PHORUM'];
 
     if(!isset($data['from_address'])) {
-    	$data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
+        $data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
     }
-    
+
     // Allow modules to pre-process the mail message.
     if (isset($PHORUM["hooks"]["email_user_start"]))
         list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
@@ -116,7 +116,7 @@ function phorum_email_user($addresses, $data)
         } else if (function_exists("php_uname")) {
             $host = @php_uname("n");
         } else if (($envhost = getenv("HOSTNAME")) !== false) {
-            $host = $envhost; 
+            $host = $envhost;
         }
         if (empty($host)) {
             $host = "webserver";
@@ -130,7 +130,7 @@ function phorum_email_user($addresses, $data)
     }
 
     // Allow modules to send the mail message. A module can either
-    // remove the recipients for which they did send a mail from the 
+    // remove the recipients for which they did send a mail from the
     // addresses list or return 0 (zero) if the mail was sent
     // to all recipients.
     $send_messages = 1;
@@ -191,7 +191,7 @@ function phorum_email_pm_notice($message, $langusers)
         $PHORUM = $GLOBALS["PHORUM"];
 
         if ( file_exists( "./include/lang/$language.php" ) ) {
-            $mail_data['language'] = $language; 
+            $mail_data['language'] = $language;
             include( "./include/lang/$language.php" );
         } else {
             $mail_data['language'] = $PHORUM['language'];
@@ -280,7 +280,7 @@ function phorum_email_moderators($message)
             $mailsubjecttpl = 'NewUnModeratedSubject';
             $mailmessagetpl = 'NewUnModeratedMessage';
 
-            // Not a real language string. For consistency, we create the 
+            // Not a real language string. For consistency, we create the
             // fake language string on the fly here.
             $PHORUM["DATA"]["LANG"]['NewUnModeratedSubject'] =
                 $PHORUM["DATA"]["LANG"]['NewModeratedSubject'];
@@ -299,7 +299,7 @@ function phorum_email_moderators($message)
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),
-            "approve_url" => phorum_get_url(PHORUM_PREPOST_URL),
+            "approve_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=messages"),
             "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
             "mailmessage" => $PHORUM["DATA"]["LANG"][$mailmessagetpl],
             "mailsubject" => $PHORUM["DATA"]["LANG"][$mailsubjecttpl],
