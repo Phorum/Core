@@ -159,14 +159,24 @@ function phorum_get_url()
                 $query_string.= implode(",", $PHORUM["DATA"]["GET_VARS"] ).",";
             }
 
-            //if ($pathinfo !== NULL) $url .= $pathinfo;
-
-            if ($query_string){
-                $url.= "?" . substr($query_string, 0, -1 ); // trim off ending ,
+            if($query_string){
+                $query_string = substr($query_string, 0, -1 );  // trim off ending ,
             }
 
-            if ( !empty( $suffix ) ) $url .= $suffix;
+            if ( function_exists( "phorum_custom_get_url" ) ) {
 
+                $url = phorum_custom_get_url( $name, explode(",",$query_string), $suffix, $pathinfo );
+
+            } else {
+
+                if ($pathinfo !== null) $url .= $pathinfo;
+
+                if ($query_string){
+                    $url.= "?" . $query_string;
+                }
+
+                if ( !empty( $suffix ) ) $url .= $suffix;
+            }
         }
 
     } else {
