@@ -1735,7 +1735,6 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
         $display_name = empty($users[$id])
                       ? $fallback
                       : $users[$id]['display_name'];
-
         // Generate HTML based display names.
         if ($flags == PHORUM_FLAG_HTML)
         {
@@ -1744,9 +1743,9 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
             // formatted display_name field, which is provided by
             // 3rd party software. So those do not have to be HTML escaped.
             // Other names do have to be escaped.
-            if (empty($users[$id]) || !empty($PHORUM["custom_display_name"]))
+            if (empty($users[$id]) || empty($PHORUM["custom_display_name"]))
             {
-                $display_name = htmlspecialchars($user['display_name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             }
         }
         // Generate a plain text version of the display name. This is the

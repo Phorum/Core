@@ -80,6 +80,7 @@ if(!empty($cache)){
     $messages = phorum_db_get_recent_messages(30, $forum_ids, $thread, $no_replies);
 
     // remove users from messages array
+    $users = $messages["users"];
     unset($messages["users"]);
 
     // run read hooks to get everything formatted
@@ -101,6 +102,9 @@ if(!empty($cache)){
         $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]);
         $feed_description = (!empty($PHORUM["description"])) ? $PHORUM["description"] : "";
     }
+
+    // Put the users back in the messages array for the feed functions.
+    $messages["users"] = $users;
 
     switch($feed_type) {
 

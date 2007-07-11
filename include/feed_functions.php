@@ -15,6 +15,12 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
     $buffer.= "        <lastBuildDate>".htmlspecialchars(date("r"), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
     $buffer.= "        <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</generator>\n";
 
+    // Lookup the plain text usernames for the authenticated authors.
+    $users = $messages['users'];
+    unset($messages['users']);
+    unset($users[0]);
+    $users = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+
     foreach($messages as $message) {
 
         $title = strip_tags($message["subject"]);
@@ -42,8 +48,8 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
 
         $category = $forums[$message["forum_id"]]["name"];
 
-        $author = phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT);
-
+        $author = isset($users[$message['user_id']]) && $users[$message['user_id']] != '' ? $users[$message['user_id']] : $message['author'];
+ 
         $buffer.= "        <item>\n";
         $buffer.= "            <guid>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</guid>\n";
         $buffer.= "            <title>".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</title>\n";
@@ -77,6 +83,12 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
     $buffer.= "    <updated>".htmlspecialchars(date("c"), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</updated>\n";
     $buffer.= "    <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</generator>\n";
 
+    // Lookup the plain text usernames for the authenticated authors.
+    $users = $messages['users'];
+    unset($messages['users']);
+    unset($users[0]);
+    $users = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+
     foreach($messages as $message) {
 
         if($message["thread_count"]<1) continue;
@@ -100,7 +112,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
         $category = $forums[$message["forum_id"]]["name"];
 
-        $author = phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT);
+        $author = isset($users[$message['user_id']]) && $users[$message['user_id']] != '' ? $users[$message['user_id']] : $message['author'];
 
         $buffer.= "    <entry>\n";
         $buffer.= "        <title>".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</title>\n";
@@ -177,9 +189,15 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
     $feed["description"] = $feed_description;
     $feed["modified"] = phorum_date($PHORUM['short_date'], time());
 
+    // Lookup the plain text usernames for the authenticated authors.
+    $users = $messages['users'];
+    unset($messages['users']);
+    unset($users[0]);
+    $users = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+
     foreach($messages as $message) {
 
-        $author = phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT);
+        $author = isset($users[$message['user_id']]) && $users[$message['user_id']] != '' ? $users[$message['user_id']] : $message['author'];
 
         $item = array(
 
