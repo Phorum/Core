@@ -348,41 +348,17 @@ if (!empty($action)) {
             // Adding a recipient.
             if ($action == "rcpt_add" || $action == "preview" || $action == "post") {
 
-                // TODO: this should be a central API function.
                 // Convert adding a recipient by name to adding by user id.
-                // The user field that is being searched on is either
-                // the username or the display_name (depending on the
-                // display name source configuration in the admin settings).
-                // If we have a central function then cc groupmod can use
-                // it too.
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_ids = phorum_api_user_search(
-                            $PHORUM["display_name_source"],
-                            $to_name, '=', TRUE
+                        $to_user_id = phorum_api_user_search_display_name(
+                            $to_name, FALSE
                         );
-                        if (is_array($to_user_ids) && count($to_user_ids)==1) {
-                            $_POST["to_id"] = array_shift($to_user_ids);
-                        } else {
-                            // If no user was found and the display name
-                            // source is not the username field, then do
-                            // another lookup for the username. This is done,
-                            // because Phorum will use the username as the
-                            // displayname if the real name is not entered.
-                            if ($PHORUM["display_name_source"] == 'real_name') {
-                                $to_user_ids = phorum_api_user_search(
-                                    "username", $to_name, '=', TRUE
-                                );
-                                if (is_array($to_user_ids) && count($to_user_ids)==1) {
-                                    $_POST["to_id"] = array_shift($to_user_ids);
-                                }
-                            }
-                        }
-                        if (empty($_POST["to_id"])) {
+                        if (empty($to_user_id)) {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
                         } else {
-                            // Clear the input text field if we did find a matching user.
+                            $_POST["to_id"] = $to_user_id;
                             unset($_POST["to_name"]);
                         }
                     }

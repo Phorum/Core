@@ -152,38 +152,37 @@ function phorum_get_url()
             $url.= $name.".".PHORUM_FILE_EXTENSION;
         }
 
-        if($add_get_vars){
+        if($add_forum_id==PHORUM_URL_ADD_FORUM_ID){
+            $query_string = $PHORUM["forum_id"].",";
+        }
 
-            if($add_forum_id==PHORUM_URL_ADD_FORUM_ID){
-                $query_string = $PHORUM["forum_id"].",";
-            }
+        if ( count( $argv ) > 0 ) {
+            $query_string.= implode(",", $argv ).",";
+        }
 
-            if ( count( $argv ) > 0 ) {
-                $query_string.= implode(",", $argv ).",";
-            }
-
+        if($add_get_vars) {
             if ( !empty( $PHORUM["DATA"]["GET_VARS"] ) && $add_get_vars ) {
                 $query_string.= implode(",", $PHORUM["DATA"]["GET_VARS"] ).",";
             }
+        }
 
-            if($query_string){
-                $query_string = substr($query_string, 0, -1 );  // trim off ending ,
+        if($query_string){
+            $query_string = substr($query_string, 0, -1 );  // trim off ending ,
+        }
+
+        if ( function_exists( "phorum_custom_get_url" ) ) {
+
+            $url = phorum_custom_get_url( $name, explode(",",$query_string), $suffix, $pathinfo );
+
+        } else {
+
+            if ($pathinfo !== null) $url .= $pathinfo;
+
+            if ($query_string){
+                $url.= "?" . $query_string;
             }
 
-            if ( function_exists( "phorum_custom_get_url" ) ) {
-
-                $url = phorum_custom_get_url( $name, explode(",",$query_string), $suffix, $pathinfo );
-
-            } else {
-
-                if ($pathinfo !== null) $url .= $pathinfo;
-
-                if ($query_string){
-                    $url.= "?" . $query_string;
-                }
-
-                if ( !empty( $suffix ) ) $url .= $suffix;
-            }
+            if ( !empty( $suffix ) ) $url .= $suffix;
         }
 
     } else {

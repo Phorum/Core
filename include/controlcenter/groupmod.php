@@ -57,14 +57,25 @@ if (!$perm) {
 if (!empty($group_id)){
     // if adding a new user to the group
     if (isset($_REQUEST["adduser"])){
-        $userid = phorum_api_user_search("username", $_REQUEST["adduser"]);
-        // load the users groups, add the new group, then save again
-        $groups = phorum_user_get_groups($userid);
-        // make sure the user isn't already a member of the group
-        if (!isset($groups[$group_id])){
-            $groups[$group_id] = PHORUM_USER_GROUP_APPROVED;
-            phorum_user_save_groups($userid, $groups);
-            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
+
+        // Find the user_id for the user to add.
+        $userid = 0;
+        $name = trim($_REQUEST["adduser"]);
+        if ($name != '') {
+            $userid = phorum_api_user_search_display_name($name, FALSE);
+        }
+
+        if ($userid) {
+            // load the users groups, add the new group, then save again
+            $groups = phorum_user_get_groups($userid);
+            // make sure the user isn't already a member of the group
+            if (!isset($groups[$group_id])){
+                $groups[$group_id] = PHORUM_USER_GROUP_APPROVED;
+                phorum_user_save_groups($userid, $groups);
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
+            }
+        } else {
+            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["UserNotFoundGroup"];
         }
     }
 

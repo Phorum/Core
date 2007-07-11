@@ -576,34 +576,6 @@ function phorum_api_user_save_settings($settings)
 }
 // }}}
 
-// {{{ Function: phorum_api_user_get_setting()
-/**
- * This function can be used to retrieve the value for a user setting
- * that was stored by the {@link phorum_api_user_save_settings()} function
- * for the active Phorum user.
- *
- * @param string $name
- *     The name of the setting for which to retrieve the setting value.
- *
- * @return mixed
- *     The value of the setting or NULL if it is not available.
- */
-function phorum_api_user_get_setting($name)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    // No settings available at all?
-    if (empty($PHORUM['user']['settings_data'])) return NULL;
-
-    // The setting is available.
-    if (array_key_exists($name, $PHORUM['user']['settings_data'])) {
-        return $PHORUM['user']['settings_data'][$name];
-    } else {
-        return NULL;
-    }
-}
-// }}}
-
 // {{{ Function: phorum_api_user_get()
 /**
  * Retrieve data for Phorum users.
@@ -748,6 +720,34 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
         return $users;
     } else {
         return isset($users[$user_id]) ? $users[$user_id] : NULL;
+    }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_get_setting()
+/**
+ * This function can be used to retrieve the value for a user setting
+ * that was stored by the {@link phorum_api_user_save_settings()} function
+ * for the active Phorum user.
+ *
+ * @param string $name
+ *     The name of the setting for which to retrieve the setting value.
+ *
+ * @return mixed
+ *     The value of the setting or NULL if it is not available.
+ */
+function phorum_api_user_get_setting($name)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // No settings available at all?
+    if (empty($PHORUM['user']['settings_data'])) return NULL;
+
+    // The setting is available.
+    if (array_key_exists($name, $PHORUM['user']['settings_data'])) {
+        return $PHORUM['user']['settings_data'][$name];
+    } else {
+        return NULL;
     }
 }
 // }}}
@@ -1681,6 +1681,105 @@ function phorum_api_user_session_destroy($type)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_list()
+/**
+ * Retrieve a list of Phorum users.
+ *
+ * @param int $flags
+ *     One of:
+ *     - {@link PHORUM_GET_ALL}: retrieve a list of all users (the default)
+ *     - {@link PHORUM_GET_ACTIVE}: retrieve a list of all active users
+ *     - {@link PHORUM_GET_INACTIVE}: retrieve a list of all inactive users
+ *
+ * @return array
+ *     An array of users, indexed by user_id. Each element in the array
+ *     is an array, containing the fields "user_id", "username" and
+ *     "display_name".
+ */
+function phorum_api_user_list($type = PHORUM_GET_ALL)
+{
+    // Retrieve a list of users from the database.
+    $list = phorum_db_user_get_list($type);
+
+    /**
+     * [hook]
+     *     user_list
+     *
+     * [description]
+     *     
+     *     This hook can be used for reformatting the list of users that
+     *     is returned by the phorum_api_user_list() function. Reformatting
+     *     could mean things like changing the sort order or modifying the
+     *     fields in the user arrays.
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Each time the phorum_api_user_list() function is called. The core
+     *     Phorum code calls the function for creating user drop down lists
+     *     (if those are enabled in the Phorum general settings) for the
+     *     group moderation interface in the control center and for sending
+     *     private messages.
+     *
+     * [input]
+     *     An array of user info arrays. Each user info array contains the
+     *     fields "user_id", "username" and "display_name". The hook function
+     *     is allowed to update the "username" and "display_name" fields.
+     *
+     * [output]
+     *     The same array as was used for the hook call argument,
+     *     possibly with some updated fields in it.
+     */
+    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"])) {
+        $list = phorum_hook("user_list", $list);
+    }
+
+    return $list;
+}
+// }}}
+
+// {{{ Function: phorum_api_user_search()
+/**
+ * Search for users, based on simple search conditions, which act on
+ * fields in the user table.
+ *
+ * The parameters $field, $value and $operator (which are used for defining
+ * the search condition) can be arrays or single values. If arrays are used,
+ * then all three parameter arrays must contain the same number of elements
+ * and the key values in the arrays must be the same.
+ * 
+ * @param mixed $field
+ *     The user table field / fields to search on.
+ *
+ * @param mixed $value
+ *     The value / values to search for.
+ *
+ * @param mixed $operator
+ *     The operator / operators to use. Valid operators are
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *     "*" operator is for executing a "LIKE" match query.
+ *
+ * @param boolean $return_array
+ *     If this parameter has a true value, then an array of all matching
+ *     user_ids will be returned. Else, a single user_id will be returned.
+ *
+ * @param string $type
+ *     The type of search to perform. This can be one of:
+ *     - AND  match against all fields
+ *     - OR   match against any of the fields
+ *
+ * @return mixed
+ *     An array of matching user_ids or a single user_id (based on the
+ *     $return_array parameter). If no user_ids can be found at all,
+ *     then 0 (zero) will be returned.
+ */
+function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND')
+{
+    return phorum_db_user_check_field($field, $value, $operator, $return_array, $type);
+}
+// }}}
+
 // {{{ Function: phorum_api_user_get_display_name()
 /**
  * Retrieve the display name to use for one or more users.
@@ -1782,102 +1881,65 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
 }
 // }}}
 
-// {{{ Function: phorum_api_user_list()
+// {{{ Function: phorum_api_user_search_display_name()
 /**
- * Retrieve a list of Phorum users.
+ * Search user(s) for a given display name.
  *
- * @param int $flags
- *     One of:
- *     - {@link PHORUM_GET_ALL}: retrieve a list of all users (the default)
- *     - {@link PHORUM_GET_ACTIVE}: retrieve a list of all active users
- *     - {@link PHORUM_GET_INACTIVE}: retrieve a list of all inactive users
- *
- * @return array
- *     An array of users, indexed by user_id. Each element in the array
- *     is an array, containing the fields "user_id", "username" and
- *     "display_name".
- */
-function phorum_api_user_list($type = PHORUM_GET_ALL)
-{
-    // Retrieve a list of users from the database.
-    $list = phorum_db_user_get_list($type);
-
-    /**
-     * [hook]
-     *     user_list
-     *
-     * [description]
-     *     
-     *     This hook can be used for reformatting the list of users that
-     *     is returned by the phorum_api_user_list() function. Reformatting
-     *     could mean things like changing the sort order or modifying the
-     *     fields in the user arrays.
-     *
-     * [category]
-     *     User data handling
-     *
-     * [when]
-     *     Each time the phorum_api_user_list() function is called. The core
-     *     Phorum code calls the function for creating user drop down lists
-     *     (if those are enabled in the Phorum general settings) for the
-     *     group moderation interface in the control center and for sending
-     *     private messages.
-     *
-     * [input]
-     *     An array of user info arrays. Each user info array contains the
-     *     fields "user_id", "username" and "display_name". The hook function
-     *     is allowed to update the "username" and "display_name" fields.
-     *
-     * [output]
-     *     The same array as was used for the hook call argument,
-     *     possibly with some updated fields in it.
-     */
-    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"])) {
-        $list = phorum_hook("user_list", $list);
-    }
-
-    return $list;
-}
-// }}}
-
-// {{{ Function: phorum_api_user_search()
-/**
- * Search for users, based on simple search conditions, which act on
- * fields in the user table.
- *
- * The parameters $field, $value and $operator (which are used for defining
- * the search condition) can be arrays or single values. If arrays are used,
- * then all three parameter arrays must contain the same number of elements
- * and the key values in the arrays must be the same.
- * 
- * @param mixed $field
- *     The user table field / fields to search on.
- *
- * @param mixed $value
- *     The value / values to search for.
- *
- * @param mixed $operator
- *     The operator / operators to use. Valid operators are
- *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *     "*" operator is for executing a "LIKE" match query.
+ * @param string $name
+ *     The display name to search for.
  *
  * @param boolean $return_array
- *     If this parameter has a true value, then an array of all matching
- *     user_ids will be returned. Else, a single user_id will be returned.
- *
- * @param string $type
- *     The type of search to perform. This can be one of:
- *     - AND  match against all fields
- *     - OR   match against any of the fields
+ *     If TRUE, then the function will return all users that match
+ *     the display name. If FALSE, the function will try to find an
+ *     exact match for a single user.
  *
  * @return mixed
- *     An array of matching user_ids or a single user_id (based on the
- *     $return_array parameter). If no user_ids can be found at all,
- *     then 0 (zero) will be returned.
+ *     If the $return_array parameter has a true value, then an array
+ *     will be returned, containing the user_ids of all matching users.
+ *     Otherwise, either a user_id (exact user match found) or NULL
+ *     (no user found) is returned.
  */
-function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND')
+function phorum_api_user_search_display_name($name, $return_array = FALSE)
 {
-    return phorum_db_user_check_field($field, $value, $operator, $return_array, $type);
+    $PHORUM = $GLOBALS["PHORUM"];
+    $field = $PHORUM["display_name_source"];
+
+    // For collecting matching users.
+    $user_ids = array();
+
+    // Exact or partial match.
+    $oper = $return_array ? '*' : '=';
+
+    // Find users by the display name source field.
+    $more_user_ids = phorum_api_user_search($field, $name, $oper, TRUE);
+    if (!empty($more_user_ids)) {
+        $user_ids = $more_user_ids;
+    }
+
+    // For users who have an empty display_name field, the username
+    // will be used as the display name. So in case the display name
+    // source field is the display_name field, we have to search for
+    // some more users.
+    if ($field == 'real_name') {
+        $more_user_ids = phorum_api_user_search(
+            array('username', 'display_name'),
+            array($name,      ''),
+            array($oper,      '='),
+            TRUE
+        );
+        if (!empty($more_user_ids)) {
+            $user_ids = array_merge($user_ids, $more_user_ids);
+        }
+    }
+
+    if ($return_array) {
+        return $user_ids;
+    } elseif (count($user_ids) == 1) {
+        $user_id = array_shift($user_ids); 
+        return $user_id;
+    } else {
+        return NULL;
+    }
 }
 // }}}
 

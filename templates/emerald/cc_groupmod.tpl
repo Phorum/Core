@@ -1,3 +1,6 @@
+{IF ERROR}<div class="attention">{ERROR}</div>{/IF}
+{IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
+
 {IF GROUP->name}
     <h2>{LANG->Moderating} {GROUP->name}</h2>
     <div class="generic">
@@ -36,6 +39,7 @@
 
         {IF USERS}
             <form method="post" action="{URL->ACTION}">
+                {POST_VARS}
                 <table class="list" cellspacing="0" border="0">
                     <tr>
                         <th align="left">{LANG->Member}</th>

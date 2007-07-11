@@ -546,6 +546,7 @@ to write Phorum modules and on how to use the external and scheduled hooks.\n\n"
         "UserAddedToGroup"      =>      "The user has been added to the group.",
         "Username"              =>      "Username",
         "UserNotFound"          =>      "The user you want to send a message to could not be found.  Please check the name and try again.",
+        "UserNotFoundGroup"     =>      "The user you want to add to the group could not be found. Please check the name and try again.",
         "UserPermissions"       =>      "User Permissions",
         "UserProfile"           =>      "User Profile",
         "UserSummary"           =>      "My Control Panel",
