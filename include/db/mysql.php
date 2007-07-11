@@ -21,10 +21,10 @@
 /**
  * This script implements a MySQL Phorum database layer.
  *
- * The other Phorum code does not care how the messages are stored.
- * The only requirement is that they are returned from these functions
- * in the right way.  This means each database can use as many or as
- * few tables as it likes.  It can store the fields anyway it wants.
+ * The other Phorum code does not care how data is stored.
+ * The only requirement is that it is returned from these functions
+ * in the right way. This means each database can use as many or as
+ * few tables as it likes. It can store the fields anyway it wants.
  *
  * The only thing to worry about is the table_prefix for the tables.
  * all tables for a Phorum install should be prefixed with the
@@ -42,23 +42,21 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-/**
- * Bail out if we're not loaded from the Phorum code.
- */
+// Bail out if we're not loaded from the Phorum code.
 if (!defined('PHORUM')) return;
 
 // ----------------------------------------------------------------------
 // Definitions
 // ----------------------------------------------------------------------
 
-/**
- * The table prefix, which allows for storing multiple Phorum data sets
- * in one single database.
- */
+// {{{ Constant and variable definitions
+
+// The table prefix, which allows for storing multiple Phorum data sets
+// in one single database.
 $prefix = $PHORUM['DBCONFIG']['table_prefix'];
 
 /**
- * These are the table names that are used for this database system.
+ * These are the table names that are used by this database system.
  */
 $PHORUM['message_table']            = $prefix . '_messages';
 $PHORUM['user_newflags_table']      = $prefix . '_user_newflags';
@@ -92,18 +90,73 @@ $PHORUM['string_fields_message'] = array('author', 'subject', 'body', 'email');
 $PHORUM['string_fields_forum'] = array('name', 'description', 'template');
 
 /**
- * Constants for the phorum_db_interact() function call $return parameter.
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return a database connection handle.
  */
 define('DB_RETURN_CONN',     0);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return a SQL quoted value.
+ */
 define('DB_RETURN_QUOTED',   1);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return the query statement handle for a SQL query.
+ */
 define('DB_RETURN_RES',      2);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return a single database row for a SQL query.
+ */
 define('DB_RETURN_ROW',      3);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return an array of rows for a SQL query.
+ */
 define('DB_RETURN_ROWS',     4);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return a single database row for a SQL query
+ * as an associative array
+ */
 define('DB_RETURN_ASSOC',    5);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return an array of rows for a SQL query
+ * as associative arrays.
+ */
 define('DB_RETURN_ASSOCS',   6);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return a single value for a SQL query.
+ */
 define('DB_RETURN_VALUE',    7);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return the number of selected rows for a SQL query.
+ */
 define('DB_RETURN_ROWCOUNT', 8);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return the new auto_increment id value for
+ * an insert SQL query.
+ */
 define('DB_RETURN_NEWID',    9);
+
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function return an error for a SQL query or NULL if there
+ * was no error.
+ */
 define('DB_RETURN_ERROR',   10);
 
 /**
@@ -116,30 +169,38 @@ define('DB_DUPKEYNAMEOK',    8);
 define('DB_DUPKEYOK',       16);
 define('DB_TABLEEXISTSOK',  32);
 
+// }}}
 
 // ----------------------------------------------------------------------
 // Utility functions (not directly part of the Phorum db API)
 // ----------------------------------------------------------------------
 
 /**
- * @deprecated
- * A wrapper function for connecting to the database. This function should
- * not be used from the db layer code. Instead the phorum_db_interact()
- * function should be used in combination with the DB_RETURN_CONN return type.
- * This function is only implemented for module writers that use this function
- * in their code.
+ * A wrapper function for connecting to the database.
+ *
+ * This function should not be used from the db layer code. Instead the
+ * phorum_db_interact() function should be used in combination with the
+ * DB_RETURN_CONN return type. This function is only implemented for
+ * module writers that use this function in their code.
  *
  * @return $conn - A database connection resource handle.
+ * @deprecated
  */
 function phorum_db_mysql_connect() {
     return phorum_db_interact(DB_RETURN_CONN);
 }
 
 /**
- * This function will sanitize a mixed variable of data based on type.
+ * This function will sanitize a mixed variable based on a given type
+ * for safe use in SQL queries.
  *
- * @param $var  - The variable to be sanitized. Passed by reference.
- * @param $type - Either "int" or "string".
+ * @param mixed $var
+ *     The variable to be sanitized. Passed by reference, so the original
+ *     variable will be updated. It can be either a single variable or an
+ *     array containing multiple variables.
+ *
+ * @param string $type
+ *     Either "int" or "string" (the default).
  */
 function phorum_db_sanitize_mixed(&$var, $type)
 {
@@ -161,12 +222,14 @@ function phorum_db_sanitize_mixed(&$var, $type)
 }
 
 /**
- * Checks that a value to be used as a field name contains only characters
- * that would appear in a field name.
+ * Check if a value that will be used as a field name in a SQL query
+ * contains only characters that would appear in a field name.
  *
- * @param $field_name - The field name to be checked.
- * @return $valid     - Whether the field name is valid or not (TRUE or FALSE).
+ * @param string $field_name
+ *     The field name to check.
  *
+ * @return boolean
+ *     Whether the field name is valid or not (TRUE or FALSE).
  */
 function phorum_db_validate_field($field_name)
 {
@@ -180,15 +243,17 @@ function phorum_db_validate_field($field_name)
 // ----------------------------------------------------------------------
 
 /**
- * TODO: we can save a function call by directly calling
- * TODO: phorum_db_interact(). I'm also not sure if we need
- * TODO: to do this check from common.php. We could take care
- * TODO: of this in the db layer error handling too. Have to
- * TODO: think about this ...
+ * @todo 
+ *     we can save a function call by directly calling
+ *     phorum_db_interact(). I'm also not sure if we need
+ *     to do this check from common.php. We could take care
+ *     of this in the db layer error handling too. Have to
+ *     think about this ...
  *
  * Checks if a database connection can be made.
  *
  * @return boolean
+ *     TRUE if a connection can be made, FALSE otherwise.
  */
 function phorum_db_check_connection()
 {
@@ -202,9 +267,12 @@ function phorum_db_check_connection()
 /**
  * Execute an array of queries.
  *
- * @param $queries - An array of SQL queries to execute.
+ * @param array $queries
+ *     An array of SQL queries to execute.
  *
- * @return $error  - NULL on success or an error message on failure.
+ * @return mixed
+ *     NULL if all queries were executed successfully or an error
+ *     message on failure.
  */
 function phorum_db_run_queries($queries)
 {
@@ -232,13 +300,15 @@ function phorum_db_run_queries($queries)
 }
 
 /**
- * Load all Phorum key/value pair settings in $PHORUM.
- * The settings are read from the settings table. In this settings
- * table, a type is provided for each setting. The supported types are:
+ * Load the Phorum settings in the $PHORUM array.
  *
- * V = Value       the value of this field is used as is
- * S = Serialized  the value of this field is a serialzed PHP variable,
- *                 which will be unserialized before storing it in $PHORUM
+ * These settings are key/value pairs that are read from the settings
+ * table. In the settings table, a data type is provided for each setting.
+ * The supported types are:
+ *
+ * - V = Value: the value of this field is used as is.
+ * - S = Serialized: the value of this field is a serialzed PHP variable,
+ *       which will be unserialized before storing it in $PHORUM
  */
 function phorum_db_load_settings()
 {
@@ -267,15 +337,15 @@ function phorum_db_load_settings()
 /**
  * Store or update Phorum settings.
  *
- * @param $settings - An array containing key/value pairs that have to
- *                    be stored in the settings table. Values can be either
- *                    scalars or arrays. This function will automatically
- *                    serialize the arrays before storing them.
+ * @param array $settings
+ *     An array containing key/value pairs that have to be stored in the
+ *     settings table. Values can be either scalars or arrays. This
+ *     function will automatically serialize the arrays before storing them.
  *
- * @return $success - True if all settings were stored successfully. This
- *                    function will always return TRUE, so we could
- *                    do without a return value. The return value is
- *                    here for backward compatibility.
+ * @return boolean
+ *     TRUE if all settings were stored successfully. This function will
+ *     always return TRUE, so we could do without a return value. The
+ *     return value is here for backward compatibility.
  */
 function phorum_db_update_settings($settings)
 {
@@ -329,11 +399,14 @@ function phorum_db_update_settings($settings)
  *
  * NOTE: ALL dates must be returned as Unix timestamps
  *
- * @param $page           - The index of the page to return, starting with 0.
- * @param $include_bodies - Determines whether the message bodies
- *                          have to be included in the return data or not.
+ * @param integer $page
+ *     The index of the page to return, starting with 0.
  *
- * @return $messages      - An array of recent messages, indexed by message id.
+ * @param boolean $include_bodies
+ *     Whether to include the message bodies in the return data or not.
+ *
+ * @return array
+ *     An array of messages, indexed by message id.
  */
 function phorum_db_get_thread_list($page, $include_bodies=FALSE)
 {
@@ -471,15 +544,23 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
  *
  * The original version of this function came from Jim Winstead of mysql.com
  *
- * @param $count        - Limit the number of returned messages to this number.
- * @param $forum_id     - A forum_id or array of forum_ids.
- * @param $thread       - A thread id.
- * @param $threads_only - If set to TRUE, only the top message from each
- *                        thread is returned.
+ * @param integer $count
+ *     Limit the number of returned messages to this number.
  *
- * @return $messages    - An array of recent messages, indexed by message_id.
- *                        One special key "users" is set too. This one
- *                        contains an array of all involved user_ids.
+ * @param integer $forum_id
+ *     A forum_id, an array of forum_ids or 0 (zero) to retrieve messages
+ *     from any forum.
+ *
+ * @param integer $thread
+ *     A thread id or 0 (zero) to retrieve messages from any thread.
+ *
+ * @param boolean $threads_only
+ *     If set to TRUE, only the top message from each thread is returned.
+ *
+ * @return array
+ *     An array of recent messages, indexed by message_id. One special key
+ *     "users" is set too. This one contains an array of all involved
+ *     user_ids.
  */
 function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = FALSE)
 {
@@ -6229,7 +6310,7 @@ function phorum_db_sanitychecks()
          running MySQL server",
         "This probably means that you are running a really old MySQL
          server, which does not support \"SELECT @@global.version\"
-         as an SQL command. If you are not running a MySQL server
+         as a SQL command. If you are not running a MySQL server
          with version 4.0.18 or higher, then please upgrade your
          MySQL server. Else, contact the Phorum developers to see
          where this warning is coming from"
