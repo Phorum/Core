@@ -353,10 +353,12 @@ if (!empty($action)) {
                 // The user field that is being searched on is either
                 // the username or the display_name (depending on the
                 // display name source configuration in the admin settings).
+                // If we have a central function then cc groupmod can use
+                // it too.
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_ids = phorum_db_user_check_field(
+                        $to_user_ids = phorum_api_user_search(
                             $PHORUM["display_name_source"],
                             $to_name, '=', TRUE
                         );
@@ -369,7 +371,7 @@ if (!empty($action)) {
                             // because Phorum will use the username as the
                             // displayname if the real name is not entered.
                             if ($PHORUM["display_name_source"] == 'real_name') {
-                                $to_user_ids = phorum_db_user_check_field(
+                                $to_user_ids = phorum_api_user_search(
                                     "username", $to_name, '=', TRUE
                                 );
                                 if (is_array($to_user_ids) && count($to_user_ids)==1) {

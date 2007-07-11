@@ -57,7 +57,7 @@ if (!$perm) {
 if (!empty($group_id)){
     // if adding a new user to the group
     if (isset($_REQUEST["adduser"])){
-        $userid = phorum_db_user_check_field("username", $_REQUEST["adduser"]);
+        $userid = phorum_api_user_search("username", $_REQUEST["adduser"]);
         // load the users groups, add the new group, then save again
         $groups = phorum_user_get_groups($userid);
         // make sure the user isn't already a member of the group

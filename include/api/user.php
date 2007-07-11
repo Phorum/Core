@@ -1840,4 +1840,45 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_search()
+/**
+ * Search for users, based on simple search conditions, which act on
+ * fields in the user table.
+ *
+ * The parameters $field, $value and $operator (which are used for defining
+ * the search condition) can be arrays or single values. If arrays are used,
+ * then all three parameter arrays must contain the same number of elements
+ * and the key values in the arrays must be the same.
+ * 
+ * @param mixed $field
+ *     The user table field / fields to search on.
+ *
+ * @param mixed $value
+ *     The value / values to search for.
+ *
+ * @param mixed $operator
+ *     The operator / operators to use. Valid operators are
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *     "*" operator is for executing a "LIKE" match query.
+ *
+ * @param boolean $return_array
+ *     If this parameter has a true value, then an array of all matching
+ *     user_ids will be returned. Else, a single user_id will be returned.
+ *
+ * @param string $type
+ *     The type of search to perform. This can be one of:
+ *     - AND  match against all fields
+ *     - OR   match against any of the fields
+ *
+ * @return mixed
+ *     An array of matching user_ids or a single user_id (based on the
+ *     $return_array parameter). If no user_ids can be found at all,
+ *     then 0 (zero) will be returned.
+ */
+function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND')
+{
+    return phorum_db_user_check_field($field, $value, $operator, $return_array, $type);
+}
+// }}}
+
 ?>

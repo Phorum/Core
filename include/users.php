@@ -46,14 +46,6 @@ function phorum_user_check_email( $email )
 }
 
 /**
-* (generic) function for checking a user-field in the database
-*/
-function phorum_user_check_field( $field_name, $field_value)
-{
-    return phorum_db_user_check_field( $field_name , $field_value );
-}
-
-/**
  * Retrieve the display name for a user.
  *
  * The name to use depends on the "display_name_source" setting. This
