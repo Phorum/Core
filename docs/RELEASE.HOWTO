@@ -1,0 +1,71 @@
+PHORUM RELEASE HOWTO
+====================
+
+This document describes the steps that are needed to do a new Phorum release.
+It is mainly a reminder for the Phorum Development team, to not forget any
+steps in the process.
+
+----------------------------------------------------------------------
+
+* Do a last quick basic check to see if there are no abvious problems
+  in the release (try if the installation works, create a forum,
+  post a message, post a reply, post a PM).
+
+
+* Copy the branch that has to be released to tags/<version>, where
+  <version> is the release version, in which dots are replaced by
+  underscores. In the rest of this document, we'll use release version
+  5.1.23 as an example. So to create the tag, you would need:
+
+    $ svn cp branches/phorum_5_1 tags/phorum_5_1_23
+
+
+* Edit common.php to update the "PHORUM" define statement to point
+  to the new tag's version (use the dotted version number for this,
+  e.g. "5.1.23").
+
+    $ vi tags/phorum_5_1_23/common.php
+
+
+* Remove unwanted files from the tag's tree:
+
+    $ rm tags/phorum_5_1_23/tags/include/db/postgresql.php
+    $ rm tags/phorum_5_1_23/docs/RELEASE.HOWTO
+
+
+* Finally, check in the prepared tag tree:
+
+    $ svn ci -m "# Copied for release." tags/phorum_5_1_23
+
+
+* Go to the www scripts directory. From that directory, run the packaging
+  script, with the dotted Phorum release version as its argument, for example:
+
+    $ ./getphorum5 5.1.23
+
+  This will generate the Changelog for the release, build the Phorum
+  download packages in zip, tar.gz and tar.bz2 format and add the new
+  release to Trac.
+
+
+* Copy the zip, tar.gz and tar.bz2 packages to the phorum/downloads
+  directory of the phorum.org web site.
+
+
+* Edit phorum/version.php on the web site to use the new version.
+
+
+* Post an announcement in the forums.
+
+
+* Post a news item for the front page.
+
+
+* Sit back, relax and enjoy the warm fuzzy feeling of having done
+  a new awesome release.
+
+
+* If no serious bugs are reported after a few days, send out an
+  announcement to the mailinglist.
+
+
