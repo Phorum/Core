@@ -78,7 +78,7 @@ function phorum_sort_threads($rows)
         // if this row's parent is not yet set, mark it missing
         // when it is encountered, it will be removed
         if($row["parent_id"]!=0 && empty($tmp_rows[$row["parent_id"]])){
-            $missing_parents[] = $row["parent_id"];
+            $missing_parents[$row["parent_id"]] = $row["parent_id"];
         }
 
         // add this row to the parents child list
