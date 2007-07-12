@@ -152,7 +152,9 @@ if (!empty($group_id)){
 
         $PHORUM["DATA"]["USERS"][$userid] = array("userid" => $userid,
             "name" => htmlspecialchars($users[$userid]["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]),
-            "display_name" => htmlspecialchars($users[$userid]["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]),
+            "display_name" => (empty($PHORUM["custom_display_name"])
+                            ? htmlspecialchars($users[$userid]["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
+                            : $users[$userid]["display_name"]),
             "status" => $status,
             "statustext" => $statustext,
             "disabled" => $disabled,

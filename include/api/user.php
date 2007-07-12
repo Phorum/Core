@@ -1902,39 +1902,16 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
 function phorum_api_user_search_display_name($name, $return_array = FALSE)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $field = $PHORUM["display_name_source"];
 
-    // For collecting matching users.
-    $user_ids = array();
-
-    // Exact or partial match.
+    // Exact or partial match?
     $oper = $return_array ? '*' : '=';
 
-    // Find users by the display name source field.
-    $more_user_ids = phorum_api_user_search($field, $name, $oper, TRUE);
-    if (!empty($more_user_ids)) {
-        $user_ids = $more_user_ids;
-    }
-
-    // For users who have an empty display_name field, the username
-    // will be used as the display name. So in case the display name
-    // source field is the display_name field, we have to search for
-    // some more users.
-    if ($field == 'real_name') {
-        $more_user_ids = phorum_api_user_search(
-            array('username', 'display_name'),
-            array($name,      ''),
-            array($oper,      '='),
-            TRUE
-        );
-        if (!empty($more_user_ids)) {
-            $user_ids = array_merge($user_ids, $more_user_ids);
-        }
-    }
+    // Find users by the display name field.
+    $user_ids = phorum_api_user_search('display_name', $name, $oper, TRUE);
 
     if ($return_array) {
-        return $user_ids;
-    } elseif (count($user_ids) == 1) {
+        return empty($user_ids) ? array() : $user_ids;
+    } elseif (!empty($user_ids) && count($user_ids) == 1) {
         $user_id = array_shift($user_ids); 
         return $user_id;
     } else {
