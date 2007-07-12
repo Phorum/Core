@@ -199,13 +199,12 @@ PHP_FUNCTION(phorum_ext_treesort)
             if (zend_hash_index_find(id_to_node, new_node->parent_id, (void **)&hash_node) == SUCCESS) {
                 cur_node = *hash_node;
             } else {
-                zend_error(
-                    E_WARNING,
-                    "Phorum sort threads: "
-                    "No parent found for tree node (id %ld)\n", new_node->id
-                );
-                RETVAL_FALSE;
-                goto error;
+                // No parent found for tree node. This means the data
+                // in the database has lost its integrity somehow.
+                // We'll simply link this message to the top node of the
+                // tree. Move it up to the first available parent would
+                // be nicer, but it makes things more complicated.
+                cur_node = top_node;
             }
         }
 
