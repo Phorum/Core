@@ -397,6 +397,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         $delete_thread_url_template = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%');
         $move_thread_url_template   = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%');
         $merge_thread_url_template  = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%');
+        $mark_thread_read_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%', "markthreadread", "list");
         if(isset($row['pages_moderators'])) {
             $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%','page=%page_num%');
             $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
@@ -409,10 +410,14 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         // we only show the information for the thread starter. But we have
         // to go through all the messages in the thread to see if any of
         // them is new.
-        if (empty($row['moved']) && (!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) && isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
+        if (empty($row['moved']) && (!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) &&
+            isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
+
             foreach ($row['meta']['message_ids'] as $cur_id) {
                 if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id']) {
                     $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
+                    $rows[$key]["URL"]["MARKTHREADREAD"] = str_replace('%thread_id%',$row['thread'],$mark_thread_read_url_template);
+                    break;
                 }
                 // for users without min_id
                 if($min_id == 0 || $min_id > $cur_id) $min_id = $cur_id;
@@ -424,6 +429,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         else {
             if (empty($row['moved']) && !isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
                 $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
+                $rows[$key]["URL"]["MARKTHREADREAD"] = str_replace('%thread_id%',$row['thread'],$mark_thread_read_url_template);
             }
 
             // for users without min_id

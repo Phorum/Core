@@ -133,6 +133,11 @@ if(empty($PHORUM["args"][1])) {
                         unset($mids);
                     }
                 }
+                // could be called from list too
+                if($PHORUM["args"][3] == "list") {
+                    $dest_url = phorum_get_url(PHORUM_LIST_URL);
+                    phorum_redirect_by_url($dest_url);
+                }
                 break;
             case "gotonewpost":
                 // thread needs to be in $thread for the redirection
