@@ -3686,10 +3686,10 @@ function phorum_db_user_delete($user_id)
     // TODO: then ignore the private messages which are not yet fully posted.
     $pms = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT pm_message_id
+        "SELECT {$PHORUM['pm_messages_table']}.pm_message_id
          FROM   {$PHORUM['pm_messages_table']}
                 LEFT JOIN {$PHORUM['pm_xref_table']}
-                USING (pm_message_id)
+                ON {$PHORUM['pm_xref_table']}.pm_message_id = {$PHORUM['pm_messages_table']}.pm_message_id
          WHERE pm_xref_id IS NULL",
          0 // keyfield 0 is the pm_message_id
     );
