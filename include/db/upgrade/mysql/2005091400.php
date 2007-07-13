@@ -8,9 +8,9 @@ $upgrade_queries[]= "CREATE TABLE {$PHORUM["pm_messages_table"]} (
     from_user_id int(10) unsigned NOT NULL default '0',
     from_username varchar(50) NOT NULL default '',
     subject varchar(100) NOT NULL default '',
-    message text NOT NULL default '',
+    message text NOT NULL,
     datestamp int(10) unsigned NOT NULL default '0',
-    meta mediumtext NOT NULL default '',
+    meta mediumtext NOT NULL,
     PRIMARY KEY (pm_message_id)
 ) TYPE=MyISAM";
 
