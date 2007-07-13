@@ -243,7 +243,7 @@ function phorum_db_validate_field($field_name)
 // ----------------------------------------------------------------------
 
 /**
- * @todo 
+ * @todo
  *     we can save a function call by directly calling
  *     phorum_db_interact(). I'm also not sure if we need
  *     to do this check from common.php. We could take care
@@ -3042,7 +3042,7 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  *                        the $return_array parameter. If no user_ids can
  *                        be found at all, then 0 (zero) will be returned.
  */
-function phorum_db_user_check_field($field, $value, $operator='=', $return_array=FALSE, $type = 'AND')
+function phorum_db_user_check_field($field, $value, $operator='=', $return_array=FALSE, $type = 'AND',$offset=0,$limit=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -3052,6 +3052,9 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
     if (!is_array($field))    $field    = array($field);
     if (!is_array($value))    $value    = array($value);
     if (!is_array($operator)) $operator = array($operator);
+
+    $offset = (int)$offset;
+    $limit  = (int)$limit;
 
     // Basic check to see if all condition arrays contain the
     // same number of elements.
@@ -3084,9 +3087,15 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
         }
     }
 
+    if(!empty($limit)) {
+
+        $limit = "LIMIT $offset,$limit";
+
+    } else {
     // If we do not need to return an array, the we can limit the
     // query results to only one record.
-    $limit = $return_array ? '' : 'LIMIT 1';
+        $limit = $return_array ? '' : 'LIMIT 1';
+    }
 
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
@@ -3125,7 +3134,7 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
  *
  * @return $users - An array of users.
  */
-function phorum_db_search_users($search)
+function phorum_db_search_users($search,$offset=0,$limit=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -3134,7 +3143,7 @@ function phorum_db_search_users($search)
         array('username', 'email'),
         array($search,    $search),
         array('*',        '*'),
-        TRUE, 'OR'
+        TRUE, 'OR',$offset,$limit
     );
 
     // No results found? Then return an empty array.

@@ -195,7 +195,21 @@
         $url_safe_search.="&lastactive=".urlencode($_REQUEST["lastactive"]);
         $url_safe_search.="&lastactive_op=".urlencode($_REQUEST["lastactive_op"]);
 
-        $users=phorum_db_search_users($_REQUEST["search"]);
+        settype($_REQUEST["start"], "integer");
+
+        $display=5;
+
+        $search_start = (int)$_REQUEST['start'];
+
+        // Find a list of matching user_ids.
+        $all_user_ids = phorum_db_user_check_field(
+            array('username', 'email'),
+            array($_REQUEST["search"], $_REQUEST["search"]),
+            array('*',        '*'),
+            TRUE, 'OR'
+        );
+
+        $users=phorum_db_search_users($_REQUEST["search"],$search_start,$display);
 
         if (isset($_REQUEST["posts"]) && $_REQUEST["posts"] != "" && $_REQUEST["posts"] >= 0) {
             $cmpfn = phorum_admin_gen_compare($_REQUEST["posts_op"]);
@@ -208,7 +222,7 @@
             $users = phorum_admin_filter_arr($users, "date_last_active", $time, $cmpfn);
         }
 
-        $total=count($users);
+        $total=count($all_user_ids);
 
         // count active
         $total_active=0;
@@ -220,12 +234,6 @@
           }
         }
 
-
-        settype($_REQUEST["start"], "integer");
-
-        $display=30;
-
-        $users=array_slice($users, $_REQUEST["start"], $display);
 
         if(count($users)) {
 
