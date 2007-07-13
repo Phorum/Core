@@ -197,7 +197,7 @@
 
         settype($_REQUEST["start"], "integer");
 
-        $display=5;
+        $display=30;
 
         $search_start = (int)$_REQUEST['start'];
 
