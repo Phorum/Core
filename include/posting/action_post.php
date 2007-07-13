@@ -170,7 +170,7 @@ if ($success)
                 break;
         }
         if ($subscribe_type !== NULL) {
-            phorum_user_subscribe(
+            phorum_api_user_subscribe(
                 $message["user_id"],
                 $PHORUM["forum_id"],
                 $message["thread"],

@@ -31,7 +31,7 @@ if(isset($_POST["sub_type"])){
     foreach($_POST["sub_type"] as $thread=>$type){
         if($type!=$_POST["old_sub_type"][$thread]){
             phorum_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
-            phorum_user_subscribe( $PHORUM['user']['user_id'], $_POST["thread_forum_id"][$thread], $thread, $type );
+            phorum_api_user_subscribe( $PHORUM['user']['user_id'], $_POST["thread_forum_id"][$thread], $thread, $type );
         }
     }
 }

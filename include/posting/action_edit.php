@@ -215,7 +215,7 @@ if (isset($message["subscription"]))
             $message["forum_id"]
         );
     } else {
-        phorum_user_subscribe(
+        phorum_api_user_subscribe(
             $message["user_id"],
             $PHORUM["forum_id"],
             $message["thread"],

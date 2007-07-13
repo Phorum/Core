@@ -26,15 +26,9 @@ if ( !defined( "PHORUM" ) ) return;
  * The functions do use Phorum's database layer.  Of course, it is not
  * required.
  */
+
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
-
-function phorum_user_subscribe( $user_id, $forum_id, $thread, $type )
-{
-    $list=phorum_user_access_list( PHORUM_USER_ALLOW_READ );
-    if(!in_array($forum_id, $list)) return;
-    return phorum_db_user_subscribe( $user_id, $forum_id, $thread, $type );
-}
 
 function phorum_user_unsubscribe( $user_id, $thread, $forum_id=0 )
 {

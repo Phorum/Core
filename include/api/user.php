@@ -1920,4 +1920,40 @@ function phorum_api_user_search_display_name($name, $return_array = FALSE)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_subscribe()
+/**
+ * Subscribe a user to a forum or thread.
+ *
+ * Remark: Currently, there is no active support for subscription type
+ * PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
+ *
+ * @param integer $user_id
+ *     The id of the user to create the subscription for.
+ *
+ * @param integer $forum_id
+ *     The if of the forum to subscribe to.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe to.
+ *
+ * @param integer $type
+ *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
+ *       Send a mail message for every new message.
+ *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
+ *       Make new messages visible from the followed threads interface.
+ *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
+ *       Periodically, send a mail message containing a list of new messages.
+ */
+function phorum_api_user_subscribe($user_id, $forum_id, $thread, $type)
+{
+    // Check if the user is allowed to read the forum.
+    $access_list = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    if (!in_array($forum_id, $access_list)) return;
+
+    // Setup the subscription.
+    phorum_db_user_subscribe($user_id, $forum_id, $thread, $type);
+}
+// }}}
+
 ?>

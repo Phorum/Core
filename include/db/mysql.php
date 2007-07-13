@@ -3469,25 +3469,28 @@ function phorum_db_user_save_groups($user_id, $groups)
 }
 
 /**
- * Subscribe a user to a forum/thread.
+ * Subscribe a user to a forum or thread.
  *
- * Remark: currently, there's no active support for subscription type
+ * Remark: Currently, there is no active support for subscription type
  * PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
  *
- * @param $user_id  - The id of the user to create a suscription for.
- * @param $forum_id - The id of the forum to subscribe to
- * @param $thread   - The id of the thread to subscribe to.
- * @param $type     - The type of subscription. Available types are:
- *                    PHORUM_SUBSCRIPTION_MESSAGE
- *                        Subscribe to the thread and retrieve a mail message
- *                        for every new message in the thread.
- *                    PHORUM_SUBSCRIPTION_DIGEST
- *                        Subscribe to the thread and have it included
- *                        in periodic mail digests of new messages
- *                        on the forum(s).
- *                    PHORUM_SUBSCRIPTION_BOOKMARK
- *                        Subscribe to the thread so it's available on the
- *                        followed threads page.
+ * @param integer $user_id
+ *     The id of the user to create the subscription for.
+ *
+ * @param integer $forum_id
+ *     The if of the forum to subscribe to.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe to.
+ *
+ * @param integer $type
+ *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
+ *       Send a mail message for every new message.
+ *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
+ *       Make new messages visible from the followed threads interface.
+ *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
+ *       Periodically, send a mail message containing a list of new messages.
  *
  * @return $success - True if the subscription was stored successfully.
  */
