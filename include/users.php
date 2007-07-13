@@ -29,77 +29,6 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-function phorum_user_verify( $user_id, $tmp_pass )
-{
-    $user_id = phorum_db_user_check_field( array( "user_id", "password_temp" ), array( $user_id, md5( $tmp_pass ) ), array( "=", "=" ) );
-    return $user_id;
-}
-
-function phorum_user_check_username( $username )
-{
-    return phorum_db_user_check_field( "username", $username );
-}
-
-function phorum_user_check_email( $email )
-{
-    return phorum_db_user_check_field( "email", $email );
-}
-
-/**
- * Retrieve the display name for a user.
- *
- * The name to use depends on the "display_name_source" setting. This
- * one points to either the username or the real_name field of the
- * user. If the display_name is requested for an unknown user, then
- * a fallback name will be used.
- *
- * Note: this function does not take the custom_display_name functionality
- *       into account. In its final state it should. For now, this function
- *       was written to provide a safe name to display in PM notifies and
- *       message quotes.
- *
- * @param mixed $user
- *     Either a full user record, the user_id for a user or NULL to
- *     use the user_id of the active Phorum user.
- *
- * @param mixed $fallback
- *     The fallback name to use in case the user is unknown or NULL
- *     to use the "AnonymousUser" language string.
- *
- * @return string $display_name
- *     The display name to use for the user.
- */
-function phorum_user_get_display_name( $user = NULL, $fallback = NULL )
-{
-    if ($fallback === NULL) {
-        $fallback = $GLOBALS['PHORUM']['DATA']['LANG']['AnonymousUser'];
-    }
-
-    // Use the user_id for the active user.
-    if ($user === NULL) {
-        $user = $GLOBALS['PHORUM']['user']['user_id'];
-    }
-
-    // Lookup the user for a given user_id.
-    if (!is_array($user)) {
-        settype($user, "int");
-        $user = phorum_db_user_get($user);
-    }
-
-    // Determine the display name.
-    if (empty($user)) {
-        $display_name = $fallback;
-    } else {
-        $display_name = $user['username'];
-        if ($GLOBALS["PHORUM"]['display_name_source'] == 'real_name' &&
-            trim($user['real_name']) != '') {
-            $display_name = $user['real_name'];
-        }
-    }
-
-    return $display_name;
-}
-
 function phorum_user_subscribe( $user_id, $forum_id, $thread, $type )
 {
     $list=phorum_user_access_list( PHORUM_USER_ALLOW_READ );
@@ -413,6 +342,5 @@ function phorum_user_check_custom_field($field_name,$field_content,$match=0) {
 
     return $retval;
 }
-
 
 ?>

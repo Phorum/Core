@@ -1039,11 +1039,8 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
         $message["subject"] = "Re: ".$message["subject"];
     }
 
-    // Lookup the name that we have to use for the author that we reply to.
-    // The author field could be used directly, but it can contain HTML
-    // formatting code, in case some module uses the custom display name
-    // functionality.
-    $author = phorum_user_get_display_name($orig_author_id, $orig_author);
+    // Lookup the plain text name that we have to use for the author that we reply to.
+    $author = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
 
     if (isset($PHORUM["hooks"]["quote"]))
         $quote = phorum_hook("quote", array($author, $message["message"], $orig_author_id));

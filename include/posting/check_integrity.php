@@ -30,10 +30,10 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
 {
     if (empty($message["author"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrAuthor"];
-    } elseif ((!defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') || (defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') && PHORUM_ENFORCE_UNREGISTERED_NAMES == true)) && phorum_user_check_username($message["author"])) {
+    } elseif ((!defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') || (defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') && PHORUM_ENFORCE_UNREGISTERED_NAMES == true)) && phorum_api_user_search(array("username","display_name"),array($message["author"],$message["author"]), array("=","="), FALSE, "OR")) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
     } elseif (!empty($message["email"]) &&
-              phorum_user_check_email($message["email"])) {
+              phorum_api_user_search("email", $message["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
 }

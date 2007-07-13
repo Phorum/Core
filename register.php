@@ -33,7 +33,11 @@ if (isset($PHORUM["args"]["approve"])) {
     // Extract registration validation code and user_id.
     $tmp_pass=substr($PHORUM["args"]["approve"], 0, 8);
     $user_id = (int)substr($PHORUM["args"]["approve"], 8);
-    $user_id = phorum_user_verify($user_id, $tmp_pass);
+    $user_id = phorum_api_user_search(
+        array("user_id", "password_temp"),
+        array($user_id,  $tmp_pass),
+        array("=",       "=")
+    );
 
     // Validation code correct.
     if ($user_id) {
@@ -102,9 +106,9 @@ if (count($_POST)) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }
     // Check if the username and email address don't already exist.
-    elseif(phorum_user_check_username($_POST["username"])) {
+    elseif(phorum_api_user_search("username", $_POST["username"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
-    } elseif (phorum_user_check_email($_POST["email"])){
+    } elseif (phorum_api_user_search("email", $_POST["email"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
 
