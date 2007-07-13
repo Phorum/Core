@@ -397,12 +397,12 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         $delete_thread_url_template = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%');
         $move_thread_url_template   = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%');
         $merge_thread_url_template  = phorum_get_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%');
-        $mark_thread_read_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%', "markthreadread", "list");
         if(isset($row['pages_moderators'])) {
             $recent_page_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%','page=%page_num%');
             $recent_url_template      = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
         }
     }
+    $mark_thread_read_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%', "markthreadread", "list");
 
     // the stuff needed by user
     foreach($rows as $key => $row){
