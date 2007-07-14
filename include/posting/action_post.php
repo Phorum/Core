@@ -172,8 +172,8 @@ if ($success)
         if ($subscribe_type !== NULL) {
             phorum_api_user_subscribe(
                 $message["user_id"],
-                $PHORUM["forum_id"],
                 $message["thread"],
+                $PHORUM["forum_id"],
                 $subscribe_type
             );
         }

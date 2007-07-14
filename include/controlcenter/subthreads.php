@@ -22,7 +22,7 @@ if(!defined("PHORUM_CONTROL_CENTER")) return;
 // remove threads fromlist
 if(isset($_POST["delthreads"])){
     foreach($_POST["delthreads"] as $thread){
-        phorum_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
+        phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
     }
 }
 
@@ -30,8 +30,8 @@ if(isset($_POST["delthreads"])){
 if(isset($_POST["sub_type"])){
     foreach($_POST["sub_type"] as $thread=>$type){
         if($type!=$_POST["old_sub_type"][$thread]){
-            phorum_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
-            phorum_api_user_subscribe( $PHORUM['user']['user_id'], $_POST["thread_forum_id"][$thread], $thread, $type );
+            phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
+            phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $_POST["thread_forum_id"][$thread], $type );
         }
     }
 }

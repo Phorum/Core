@@ -30,15 +30,6 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-function phorum_user_unsubscribe( $user_id, $thread, $forum_id=0 )
-{
-    if($forum_id){
-        return phorum_db_user_unsubscribe( $user_id, $thread, $forum_id );
-    } else {
-        return phorum_db_user_unsubscribe( $user_id, $thread );
-    }
-}
-
 /**
  * This function returns true if the current user is allowed to moderate $forum_id or the user given through user_data
  */

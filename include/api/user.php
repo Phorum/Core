@@ -1922,19 +1922,19 @@ function phorum_api_user_search_display_name($name, $return_array = FALSE)
 
 // {{{ Function: phorum_api_user_subscribe()
 /**
- * Subscribe a user to a forum or thread.
+ * Subscribe a user to a thread.
  *
- * Remark: Currently, there is no active support for subscription type
- * PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
+ * Remark: Currently, there is no active support for subscribing to forums
+ * of for subscription type PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
  *
  * @param integer $user_id
  *     The id of the user to create the subscription for.
  *
- * @param integer $forum_id
- *     The if of the forum to subscribe to.
- *
  * @param integer $thread
  *     The id of the thread to describe to.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the thread to subscribe to resides.
  *
  * @param integer $type
  *     The type of subscription. Available types are:
@@ -1945,14 +1945,35 @@ function phorum_api_user_search_display_name($name, $return_array = FALSE)
  *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
  *       Periodically, send a mail message containing a list of new messages.
  */
-function phorum_api_user_subscribe($user_id, $forum_id, $thread, $type)
+function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
 {
     // Check if the user is allowed to read the forum.
     $access_list = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
     if (!in_array($forum_id, $access_list)) return;
 
     // Setup the subscription.
-    phorum_db_user_subscribe($user_id, $forum_id, $thread, $type);
+    phorum_db_user_subscribe($user_id, $thread, $forum_id, $type);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_unsubscribe()
+/**
+ * Unsubscribe a user from a thread.
+ *
+ * @param integer $user_id
+ *     The id of the user to remove the subscription for.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe from.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the thread to unsubscribe from resides.
+ *     This parameter can be 0 (zero) to simply unsubscribe by thread id alone.
+ */
+function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
+{
+    // Remove the subscription.
+    phorum_db_user_unsubscribe($user_id, $thread, $forum_id); 
 }
 // }}}
 

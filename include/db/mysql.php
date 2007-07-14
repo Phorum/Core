@@ -3477,11 +3477,11 @@ function phorum_db_user_save_groups($user_id, $groups)
  * @param integer $user_id
  *     The id of the user to create the subscription for.
  *
- * @param integer $forum_id
- *     The if of the forum to subscribe to.
- *
  * @param integer $thread
  *     The id of the thread to describe to.
+ *
+ * @param integer $forum_id
+ *     The if of the forum to subscribe to.
  *
  * @param integer $type
  *     The type of subscription. Available types are:
@@ -3494,7 +3494,7 @@ function phorum_db_user_save_groups($user_id, $groups)
  *
  * @return $success - True if the subscription was stored successfully.
  */
-function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
+function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 

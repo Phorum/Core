@@ -209,7 +209,7 @@ if (isset($message["subscription"]))
     }
 
     if ($subscribe_type === NULL) {
-        phorum_user_unsubscribe(
+        phorum_api_user_unsubscribe(
             $message["user_id"],
             $message["thread"],
             $message["forum_id"]
@@ -217,8 +217,8 @@ if (isset($message["subscription"]))
     } else {
         phorum_api_user_subscribe(
             $message["user_id"],
-            $PHORUM["forum_id"],
             $message["thread"],
+            $PHORUM["forum_id"],
             $subscribe_type
         );
     }

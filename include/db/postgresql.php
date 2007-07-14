@@ -2285,7 +2285,7 @@ function phorum_db_user_save_groups($user_id, $groups)
  * This function executes a query to subscribe a user to a forum/thread.
  */
 
-function phorum_db_user_subscribe($user_id, $forum_id, $thread, $type)
+function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
