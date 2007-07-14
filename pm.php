@@ -1040,7 +1040,12 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
     }
 
     // Lookup the plain text name that we have to use for the author that we reply to.
-    $author = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+    $author = phorum_api_user_get_display_name($orig_author_id, '', PHORUM_FLAG_PLAINTEXT);
+
+    // TODO we'll have to handle anonymous users in the PM box. Those are
+    // TODO users which sent a PM to somebody, but signed out afterwards.
+    // TODO Currently, there's no graceful handling for that I think
+    // TODO (maybe it's handled already, but that would only be by accident).
 
     if (isset($PHORUM["hooks"]["quote"]))
         $quote = phorum_hook("quote", array($author, $message["message"], $orig_author_id));
