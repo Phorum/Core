@@ -31,51 +31,6 @@ if ( !defined( "PHORUM" ) ) return;
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 /**
- * This function returns true if the current user is allowed to moderate $forum_id or the user given through user_data
- */
-
-function phorum_user_moderate_allowed( $forum_id = 0, $user_data = 0 )
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    if ( $user_data == 0 ) {
-        $user_data = $PHORUM["user"];
-    }
-    // if this is an admin, stop now
-    if ( $user_data["admin"] ) return true;
-
-    // they have no special permissions, return
-    if(!isset($user_data["permissions"])){
-        return false;
-    }
-
-    // this sets up a check for moderation at any level
-    if ( $forum_id==PHORUM_MODERATE_ALLOWED_ANYWHERE ){
-        $perms = $user_data["permissions"];
-    } else {
-        // else we check only one forum
-        // if no forum_id passed, check current forum
-        if ( $forum_id==0 ){
-            $forum_id = $PHORUM["forum_id"];
-        }
-        if(isset($user_data["permissions"][$forum_id])){
-            $perms[$forum_id] = $user_data["permissions"][$forum_id];
-        } else {
-            return false;
-        }
-    }
-
-    // check the users permission array
-    foreach($perms as $forum_id => $perm) {
-        if ( $perm & PHORUM_USER_ALLOW_MODERATE_MESSAGES ) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-/**
  * calls the db-function for listing all the moderators for a forum
  * This returns an array of moderators, key as their userid, value as their email address.
  */

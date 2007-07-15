@@ -121,7 +121,6 @@
     define("PHORUM_USER_ALLOW_MODERATE_MESSAGES", 64);
     define("PHORUM_USER_ALLOW_MODERATE_USERS", 128);
     define("PHORUM_USER_ALLOW_FORUM_PROPERTIES", 256);
-    define("PHORUM_MODERATE_ALLOWED_ANYWHERE", -1);
 
     // group moderation actions
     define("PHORUM_USER_GROUP_REMOVE", -128);

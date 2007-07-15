@@ -187,8 +187,8 @@ switch ($mod_step) {
 
         foreach($forums as $id=>$forum){
             if ($id == $PHORUM["forum_id"]) continue;
-            // add  && phorum_user_moderate_allowed($id) if the mod should only be able
-            // to move to forums he also moderates
+            // add  && phorum_api_user_check_moderate_access($id) if the
+            // mod should only be able to move to forums he also moderates
             if($forum["folder_flag"]==0){
                  // it makes no sense to move to the forum we are in already
                  if($forum['forum_id'] != $PHORUM['forum_id']) {

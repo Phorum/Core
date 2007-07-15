@@ -96,14 +96,14 @@ define('PHORUM_FLAG_SESSION_ST',       1);
  */
 define('PHORUM_FLAG_RAW_PASSWORD',     1);
 
-/** 
+/**
  * Function call flag, which tells {@link phorum_api_user_get_display_name()}
  * that the returned display names have to be HTML formatted, so they can be
  * used for showing the name in HTML pages.
  */
 define('PHORUM_FLAG_HTML',             1);
 
-/** 
+/**
  * Function call flag, which tells {@link phorum_api_user_get_display_name()}
  * that the returned display names should be stripped down to plain text
  * format, so they can be used for showing the name in things like mail
@@ -143,6 +143,13 @@ define('PHORUM_GET_ACTIVE',            1);
  * that all inactive users have to be returned.
  */
 define('PHORUM_GET_INACTIVE',          2);
+
+/**
+ * Function call parameter, which tells
+ * {@link phorum_api_user_check_moderate_access()} to check for moderate
+ * access for a user in any of the available forums.
+ */
+define("PHORUM_MODERATE_ACCESS_ANYWHERE", -1);
 
 /**
  * This array describes user data fields. It is mainly used internally
@@ -554,9 +561,9 @@ function phorum_api_user_save_settings($settings)
     if (empty($PHORUM['user']['user_id'])) return;
     $user_id = $PHORUM['user']['user_id'];
 
-    // The settings data must always be an array. 
+    // The settings data must always be an array.
     if (empty($PHORUM['user']['settings_data'])) {
-        $PHORUM['user']['settings_data'] = array(); 
+        $PHORUM['user']['settings_data'] = array();
     }
 
     // Merge the setting with the existing settings.
@@ -825,7 +832,7 @@ function phorum_api_user_authenticate($type, $username, $password)
      *     <li>NULL: let Phorum handle the authentication</li>
      *     <li>FALSE: the authentication credentials are rejected</li>
      *     <li>1234: the numerical user_id of the authenticated user</li>
-     *     </ul> 
+     *     </ul>
      */
     if (isset($PHORUM['hooks']['user_authenticate']))
     {
@@ -1706,7 +1713,7 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *     user_list
      *
      * [description]
-     *     
+     *
      *     This hook can be used for reformatting the list of users that
      *     is returned by the phorum_api_user_list() function. Reformatting
      *     could mean things like changing the sort order or modifying the
@@ -1748,7 +1755,7 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
  * the search condition) can be arrays or single values. If arrays are used,
  * then all three parameter arrays must contain the same number of elements
  * and the key values in the arrays must be the same.
- * 
+ *
  * @param mixed $field
  *     The user table field / fields to search on.
  *
@@ -1848,15 +1855,15 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
             }
         }
         // Generate a plain text version of the display name. This is the
-        // display name as it can be found in the database. Only for 
+        // display name as it can be found in the database. Only for
         // custom_display_name cases, we need to strip HTML code.
         elseif ($flags == PHORUM_FLAG_PLAINTEXT)
         {
             // Strip tags from the name. These might be in the
-            // name if the custom_display_name feature is enabled. 
+            // name if the custom_display_name feature is enabled.
             if (!empty($PHORUM["custom_display_name"]))
             {
-                $display_name=trim(strip_tags($display_name));    
+                $display_name=trim(strip_tags($display_name));
 
                 // If the name was 100% HTML, then fallback to the default
                 // display_name that Phorum would use.
@@ -1912,7 +1919,7 @@ function phorum_api_user_search_display_name($name, $return_array = FALSE)
     if ($return_array) {
         return empty($user_ids) ? array() : $user_ids;
     } elseif (!empty($user_ids) && count($user_ids) == 1) {
-        $user_id = array_shift($user_ids); 
+        $user_id = array_shift($user_ids);
         return $user_id;
     } else {
         return NULL;
@@ -1973,7 +1980,66 @@ function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
 function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
 {
     // Remove the subscription.
-    phorum_db_user_unsubscribe($user_id, $thread, $forum_id); 
+    phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_check_moderate_access()
+/**
+ * Check if a user has moderate permission for a forum.
+ *
+ * @param integer $forum_id
+ *     The id of the forum for which to check moderate access or
+ *     0 (zero, the default) to use the active forum. If set to
+ *     {@link PHORUM_MODERATE_ACCESS_ANYWHERE}, then the function
+ *     will check if the user has moderate permission in any of
+ *     the available forums.
+ *
+ * @param mixed $user
+ *     A user data array for the user for which to check moderate
+ *     access or 0 (zero, the default) to use the active user.
+ *
+ * @return boolean
+ *     TRUE if the user has moderate access, FALSE otherwise.
+ */
+function phorum_api_user_check_moderate_access($forum_id = 0, $user = 0)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
+    if (empty($user)) $user = $PHORUM['user'];
+
+    // Administrators always have moderate permission.
+    if (!empty($user["admin"])) return TRUE;
+
+    // If the user has no special permissions at all, we're done quickly.
+    if (empty($user_data["permissions"])) {
+        return FALSE;
+    }
+
+    // Setup a check for moderation access in any forum.
+    if ($forum_id == PHORUM_MODERATE_ACCESS_ANYWHERE){
+        $perms = $user_data["permissions"];
+    }
+    // Setup a check for moderation access in a single forum.
+    else {
+        if (isset($user_data["permissions"][$forum_id])) {
+            $perms = array($forum_id] => $user_data["permissions"][$forum_id]);
+        } else {
+            // The user has no special permissions for the forum at all.
+            return FALSE;
+        }
+    }
+
+    // Check access.
+    foreach ($perms as $forum_id => $perm) {
+        if ($perm & PHORUM_USER_ALLOW_MODERATE_MESSAGES) {
+            return TRUE;
+        }
+    }
+
+    // No moderation access found.
+    return FALSE;
 }
 // }}}
 

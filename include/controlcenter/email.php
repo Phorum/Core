@@ -47,7 +47,7 @@ if ( count( $_POST ) ) {
         // flip this due to db vs. UI wording.
         $_POST["hide_email"] = ( isset($_POST["hide_email"]) ) ? 0 : 1;
 
-        $_POST['moderation_email'] = ( isset($_POST['moderation_email']) && phorum_user_moderate_allowed(PHORUM_MODERATE_ALLOWED_ANYWHERE) ) ? 1 : 0;
+        $_POST['moderation_email'] = ( isset($_POST['moderation_email']) && phorum_api_user_check_moderate_access(PHORUM_MODERATE_ACCESS_ANYWHERE) ) ? 1 : 0;
 
         // Remember this for the template.
         if (isset($PHORUM['DATA']['PROFILE']['email_temp_part'])) {
@@ -94,7 +94,7 @@ if ( !empty( $PHORUM['DATA']['PROFILE']["hide_email"] ) ) {
     $PHORUM["DATA"]["PROFILE"]["hide_email_checked"] = " checked=\"checked\"";
 }
 
-if(phorum_user_moderate_allowed(PHORUM_MODERATE_ALLOWED_ANYWHERE)){
+if(phorum_api_user_check_moderate_access(PHORUM_MODERATE_ACCESS_ANYWHERE)){
     $PHORUM["DATA"]["PROFILE"]["show_moderate_options"] = true;
 
     if ( !empty( $PHORUM['DATA']['PROFILE']["moderation_email"] ) ) {

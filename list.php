@@ -100,7 +100,8 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
     $forums=phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
     $modforums=0;
     foreach ($forums as $id=>$forum) {
-        if ($forum["folder_flag"]==0 && phorum_user_moderate_allowed($id)) {
+        if ($forum["folder_flag"]==0 &&
+            phorum_api_user_check_moderate_access($id)) {
             $modforums++;
             if ($modforums > 1) {
                 $build_move_url = true;
