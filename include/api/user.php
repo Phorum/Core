@@ -2009,6 +2009,9 @@ function phorum_api_user_check_moderate_access($forum_id = 0, $user = 0)
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
     if (empty($user)) $user = $PHORUM['user'];
 
+    // Inactive users have no permissions at all.
+    if (empty($user["active"])) return FALSE;
+
     // Administrators always have moderate permission.
     if (!empty($user["admin"])) return TRUE;
 
