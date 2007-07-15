@@ -31,25 +31,6 @@ if ( !defined( "PHORUM" ) ) return;
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 /**
- * calls the db-function for listing all the moderators for a forum
- * This returns an array of moderators, key as their userid, value as their email address.
- */
-function phorum_user_get_moderators( $forum_id , $ignore_user_perms = false, $for_email = false)
-{
-    $gotmods=false;
-    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-        $mods=phorum_cache_get('user','moderators-'.$forum_id.'-'.$ignore_user_perms);
-        if($mods != null) {
-            $gotmods=true;
-        }
-    }
-    if(!$gotmods) {
-        $mods=phorum_db_user_get_moderators( $forum_id , $ignore_user_perms, $for_email);
-    }
-    return $mods;
-}
-
-/**
  * phorum_user_access_allowed()
  *
  * @param  int $permission Use the PHORUM_ALLOW_* constants

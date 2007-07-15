@@ -2046,4 +2046,35 @@ function phorum_api_user_check_moderate_access($forum_id = 0, $user = 0)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_list_moderators()
+/**
+ * Retrieve a list of moderators.
+ *
+ * @param integer $forum_id
+ *     The id of the forum for which to retrieve a list of moderators or
+ *     0 (zero, the default) to use the active forum.
+ *
+ * @param boolean $exclude_admin
+ *     If TRUE, then the admin users are kept out of the list. The default
+ *     is to include admin users.
+ *
+ * @param boolean $for_mail
+ *     If TRUE, then a list of moderators is created for sending moderator
+ *     mail messages. Moderators which have disabled the moderation_email
+ *     option will be excluded from the list in this case. The default
+ *     is to include all moderators.
+ *
+ * @return array
+ *     An array of moderator users, indexed by user_id.
+ */
+function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, $for_mail = FALSE)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
+
+    return phorum_db_user_get_moderators($forum_id, $exclude_admin, $for_email);
+}
+// }}}
+
 ?>
