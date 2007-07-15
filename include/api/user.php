@@ -2024,7 +2024,7 @@ function phorum_api_user_check_moderate_access($forum_id = 0, $user = 0)
     // Setup a check for moderation access in a single forum.
     else {
         if (isset($user_data["permissions"][$forum_id])) {
-            $perms = array($forum_id] => $user_data["permissions"][$forum_id]);
+            $perms = array($forum_id => $user_data["permissions"][$forum_id]);
         } else {
             // The user has no special permissions for the forum at all.
             return FALSE;
