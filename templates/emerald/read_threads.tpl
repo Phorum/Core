@@ -19,7 +19,6 @@
                     <div class="message-author icon-user">
                         {IF MESSAGE->URL->PROFILE}<a href="{MESSAGE->URL->PROFILE}">{/IF}{MESSAGE->author}{IF MESSAGE->URL->PROFILE}</a>{/IF}
                         {IF MESSAGE->URL->PM}<small>[ <a href="{MESSAGE->URL->PM}">{LANG->PrivateReply}</a> ]{/IF}
-                        {/IF}
                     </div>
                     <div class="message-date">{MESSAGE->datestamp}</div>
                 </td>
