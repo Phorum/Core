@@ -438,7 +438,7 @@ function event_logging_getlogs($page = 1, $pagelength = 20, $filter = NULL)
                    {$PHORUM["forums_table"]}.name              AS forum
             FROM   {$PHORUM["event_logging_table"]}
                    LEFT JOIN {$PHORUM["user_table"]}
-                   ON {$PHORUM["user_table"]}.user_id) = {$PHORUM["event_logging_table"]}.user_id
+                   ON {$PHORUM["user_table"]}.user_id = {$PHORUM["event_logging_table"]}.user_id
                    LEFT JOIN {$PHORUM["forums_table"]}
                    ON {$PHORUM["forums_table"]}.forum_id = {$PHORUM["event_logging_table"]}.forum_id
             $where
