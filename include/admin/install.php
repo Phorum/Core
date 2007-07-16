@@ -405,7 +405,7 @@ switch ($step){
             "threaded_read"=>0,
             "float_to_top"=>0,
             "display_ip_address"=>0,
-            "allow_email_notify"=>0,
+            "allow_email_notify"=>1,
             "language"=>$default_language,
             "email_moderators"=>0,
             "display_order"=>99,
