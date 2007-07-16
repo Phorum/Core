@@ -7,6 +7,7 @@
 */
 
 if(!defined("PHORUM")) return;
+define('SWIFT_DIRECTORY','./mods/smtp_mail/swiftmailer');
 
 function phorum_smtp_send_messages ($data)
 {
@@ -21,66 +22,77 @@ function phorum_smtp_send_messages ($data)
     $settings  = $PHORUM['smtp_mail'];
     $settings['auth'] = empty($settings['auth'])?false:true;
 
-	if($num_addresses > 0){
+    if($num_addresses > 0){
 
-	    // include the phpmailer-class
-	    include_once('./mods/smtp_mail/phpmailer/class.phpmailer.php');
+        try {
 
-	    $mail = new PHPMailer();
-	    // set the plugin-dir so it finds its other classes
-	    $mail->PluginDir="./mods/smtp_mail/phpmailer/";
+            // include the swiftmailer-class
 
-	    $mail->IsSMTP(); // telling the class to use SMTP
-	    $mail->Host = $settings['host']; // SMTP server
-	    $mail->Port = $settings['port'];
+            require_once SWIFT_DIRECTORY."/Swift.php";
+            require_once SWIFT_DIRECTORY."/Swift/Connection/SMTP.php";
 
-	    if($settings['auth']) {
-	        $mail->SMTPAuth = true;
-	        $mail->Username = $settings['username'];
-	        $mail->Password = $settings['password'];
-	    }
-	    $mail->From = $PHORUM["system_email_from_address"];
-	    $mail->FromName = $PHORUM["system_email_from_name"];
-        $mail->CharSet = $PHORUM["DATA"]["CHARSET"];
-        $mail->Encoding = $PHORUM["DATA"]["MAILENCODING"];
-        $mail->SetLanguage("en",'./mods/smtp_mail/phpmailer/language/');
-
-	    $mail->Subject = $subject;
-	    $mail->Body = $message;
-
-
-		if(isset($PHORUM['use_bcc']) && $PHORUM['use_bcc'] && $num_addresses > 3){
-		    foreach($addresses as $address) {
-		        $mail->AddBCC($address);
-		    }
-
-            // send the actual message
-            if(!$mail->Send()) {
-                echo "Error while sending mails in bcc-mode... ";
-                echo "Error was: ".$mail->ErrorInfo;
+            // set the connection type
+            if($settings['conn'] == 'plain') {
+                $conn_type = Swift_Connection_SMTP::ENC_OFF;
+            } elseif($settings['conn'] == 'ssl') {
+                $conn_type = Swift_Connection_SMTP::ENC_SSL;
+            } elseif($settings['conn'] == 'tls') {
+                $conn_type = Swift_Connection_SMTP::ENC_TLS;
+            } else {
+                $conn_type = Swift_Connection_SMTP::AUTO_DETECT;
             }
-            // remove the bccs for safety
-            $mail->ClearBCCs();
 
-		} else {
-			foreach($addresses as $address) {
+            if(!isset($settings['host']) || empty($settings['host'])) {
+                $settings['host'] = 'localhost';
+            }
 
-			    // add the recipient
-                $mail->AddAddress($address);
+            if(!isset($settings['port']) || empty($settings['port'])) {
+                $settings['port'] = '25';
+            }
 
-                // send the message
-                if(!$mail->Send()) {
-                    echo "Error while sending mails in one-at-a-time mode ... ";
-                    echo "Error was: ".$mail->ErrorInfo;
-                }
+            // setup the connection with hostname and port
+            $smtp =& new Swift_Connection_SMTP($settings['host'], $settings['port'],$conn_type);
 
-                // remove the address from above for the next round
-                $mail->ClearAddresses();
-			}
-		}
-	}
+            // smtp-authentication
+            if($settings['auth'] && !empty($settings['username'])) {
+                $smtp->setUsername($settings['username']);
+                $smtp->setpassword($settings['password']);
+            }
 
-	unset($mail);
+            // construct the swift-mailer
+            $swift =& new Swift($smtp);
+
+            // construct the message
+            $message =& new Swift_Message($subject, $message, $type="text/plain", $PHORUM["DATA"]["MAILENCODING"], $PHORUM["DATA"]["CHARSET"]);
+
+            $recipients =& new Swift_RecipientList();
+
+            if(isset($settings['bcc']) && $settings['bcc'] && $num_addresses > 3){
+
+                $recipients->addTo("undisclosed-recipients:;");
+                $recipients->addBcc($addresses);
+
+            } else {
+
+                $recipients->addTo($addresses);
+
+            }
+
+            $swift->batchSend($message,$recipients,new Swift_Address($PHORUM["system_email_from_address"], $PHORUM["system_email_from_name"]));
+
+        } catch (Swift_Connection_Exception $e) {
+            echo "There was a problem communicating with SMTP: " . $e->getMessage();
+            exit();
+        } catch (Swift_Message_MimeException $e) {
+            echo "There was an unexpected problem building the email:" . $e->getMessage();
+            exit();
+        }
+    }
+
+	unset($recipients);
+	unset($message);
+	unset($swift);
+	unset($smtp);
 
     // make sure that the internal mail-facility doesn't kick in
     return 0;

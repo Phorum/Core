@@ -1,0 +1,35 @@
+Swift Mailer is an advanced Mailing Library for PHP.
+
+At each release two versions are packaged up.  One is for PHP5 and the other for PHP4.
+Make sure you have downloaded the correct version.
+
+For installation instructions take a look at the INSTALL file.  If you have used version 2
+of Swift Mailer in the past you should note that these instructions have since been changed.
+
+    <Cheeky>
+    An enormous amount of time and effort has been devoted to the development of this release
+    for public use.  Swift is released free of charge but if you feel that this library is worth
+    it and has helped you in any way you may wish to consider giving a donation by PayPal:
+    
+    PayPal to: chris@w3style.co.uk
+    
+    Donations help to contribute towards my hosting costs and anything on-top is just a bonus
+    which makes me feel all warm and fuzzy inside ;)  Currently I'll put donations towards
+    spending money I'll use in Australia when I go travelling in September 2007.
+    </Cheeky>
+
+For those who are familiar with version 2 you should take a look at the CHANGES file since
+version 3 is a complete re-write of version 2 and implements a completely new API.  For the
+most part EasySwift provides a wrapper which gives the API of version 2.
+
+Because I moderate at http://forums.devnetwork.net/ I am lucky enough to have a forum just for
+Swift Mailer.  If you have any queries then feel free to either drop me and email or ask on the
+forum: http://forums.devnetwork.net/viewforum.php?f=52
+
+I hope you like this fresh new release of Swift Mailer!
+
+Chris Corbyn <chris@w3style.co.uk>
+
+Oh, and by the way if anybody knows of any PHP Developer positions available near
+Melbourne, Australia drop me an email at the address above.  I have a work permit and will be
+in Australia post-September 2007, looking for work post-December 2007 :)

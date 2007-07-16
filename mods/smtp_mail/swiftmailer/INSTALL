@@ -1,0 +1,32 @@
+Installation Instructions:
+---------------------------
+
+Installing Swift Mailer is exremely easy, as with most PHP Libraries.
+
+All the code you need to be able to run swift is contained in the "lib" directory.
+Upload this directory (I suggest you rename it to "swift" or something) to your web server.
+DO NOT play around with the layout of the directory inside "lib" since refactoring has
+resulted in many files which (mostly) need to stay where they are.
+
+Make sure you put the directory in a location which PHP can access.  This may not necessarily
+be in the htdocs root.
+
+Once uploaded, you should proceed to read the documentation at the swiftmailer.org website.
+The documentation in the "docs" directory bundled with Swift is simply rudimentaray API
+documentation created by PHPDocumentor.
+
+You are safe to remove everything except the "lib" directory.  You may be interested in running
+the tests in the "tests" directory before you get going ;)  Remember to edit
+"tests/TestConfiguration.php" if you plan on running the tests.  You'll also need a copy of
+SimpleTest by Marcus Baker (see sourceforge).
+
+Getting Help:
+-------------
+
+Swift Mailer now has it's own forum at DevNetwork:
+
+http://forums.devnetwork.net/
+
+I moderate at DevNetwork under the username "d11wtq" so post a query on there or e-mail me at
+
+Chris Corbyn <chris@w3style.co.uk>
