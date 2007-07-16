@@ -265,7 +265,7 @@ switch ($step){
             'list_length_threaded'=>15,
             'read_length'=>30,
             'display_ip_address'=>0,
-            'allow_email_notify'=>0,
+            'allow_email_notify'=>1,
             'check_duplicate'=>1,
             'count_views'=>2,
             'max_attachments'=>0,
