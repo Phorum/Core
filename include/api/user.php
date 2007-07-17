@@ -159,6 +159,42 @@ define("PHORUM_ACCESS_LIST", -1);
 define("PHORUM_ACCESS_ANYWHERE", -2);
 
 /**
+ * Permission flag which allows users to read forum messages.
+ */
+define("PHORUM_USER_ALLOW_READ", 1);
+
+/**
+ * Permission flag which allows users to reply to forum messages.
+ */
+define("PHORUM_USER_ALLOW_REPLY", 2);
+
+/**
+ * Permission flag which allows users to edit their own forum messages.
+ */
+define("PHORUM_USER_ALLOW_EDIT", 4);
+
+/**
+ * Permission flag which allows users to start new forum topics.
+ */
+define("PHORUM_USER_ALLOW_NEW_TOPIC", 8);
+
+/**
+ * Permission flag which allows users to attach files to their forum messages.
+ */
+define("PHORUM_USER_ALLOW_ATTACH", 32);
+
+/**
+ * Permission flag which allows users to edit other users' messages.
+ */
+define("PHORUM_USER_ALLOW_MODERATE_MESSAGES", 64);
+
+/**
+ * Permission flag which allows users to moderate user signup
+ * requests within the vroot.
+ */
+define("PHORUM_USER_ALLOW_MODERATE_USERS", 128);
+
+/**
  * This array describes user data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  */
@@ -2014,7 +2050,6 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  *     - {@link PHORUM_USER_ALLOW_ATTACH}
  *     - {@link PHORUM_USER_ALLOW_MODERATE_MESSAGES}
  *     - {@link PHORUM_USER_ALLOW_MODERATE_USERS}
- *     - {@link PHORUM_USER_ALLOW_FORUM_PROPERTIES}
  *
  * @param mixed $forum_id
  *     Specifies the forum(s) to look at. Available options are:
@@ -2038,8 +2073,6 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  *     then an array will be returned, containing all forum_ids for which
  *     permission was granted (both keys and values are forum_ids in this
  *     array).
- *
- * @todo Move permission constants from constants.php to the user API.
  */
 function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 {

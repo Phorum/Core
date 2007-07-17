@@ -112,16 +112,6 @@
     define("PHORUM_USER_INACTIVE", 0);
     define("PHORUM_USER_ACTIVE", 1);
 
-    // user permissions
-    define("PHORUM_USER_ALLOW_READ", 1);
-    define("PHORUM_USER_ALLOW_REPLY", 2);
-    define("PHORUM_USER_ALLOW_EDIT", 4);
-    define("PHORUM_USER_ALLOW_NEW_TOPIC", 8);
-    define("PHORUM_USER_ALLOW_ATTACH", 32);
-    define("PHORUM_USER_ALLOW_MODERATE_MESSAGES", 64);
-    define("PHORUM_USER_ALLOW_MODERATE_USERS", 128);
-    define("PHORUM_USER_ALLOW_FORUM_PROPERTIES", 256);
-
     // group moderation actions
     define("PHORUM_USER_GROUP_REMOVE", -128);
     define("PHORUM_USER_GROUP_SUSPENDED", -1);
