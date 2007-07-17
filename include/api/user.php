@@ -2046,33 +2046,31 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Prepare the array of forum ids to check.
-    $forum_ids = array();
+    $forum_access = array();
     $forums = NULL;
     $single_forum_id = NULL;
     // An array of forum ids.
     if (is_array($forum_id)) {
-        foreach ($forum_id as $id) $forum_ids[$id] = FALSE;
+        foreach ($forum_id as $id) $forum_access[$id] = FALSE;
     // Forum id 0 (zero).
     } elseif (empty($forum_id)) {
         $single_forum_id = $PHORUM['forum_id'];
-        $forum_ids[$PHORUM['forum_id']] = FALSE;
+        $forum_access[$PHORUM['forum_id']] = FALSE;
         $forums = array(
             $PHORUM['forum_id'] => array(
                 'reg_perms' => $PHORUM['reg_perms'],
                 'pub_perms' => $PHORUM['pub_perms']
             )
         );
-    // Checking access for any of the available forums.
-    } elseif ($forum_id == PHORUM_ACCESS_ANYWHERE) {
+    // Retrieve a forum access list or access-rights-in-any-forum.
+    } elseif ($forum_id == PHORUM_ACCESS_LIST ||
+              $forum_id == PHORUM_ACCESS_ANYWHERE) {
         $forums = phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
-    // Access list requested.
-    } elseif ($forum_id == PHORUM_ACCESS_LIST) {
-        $forums = phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
-        foreach ($forums as $id => $data) $forum_ids[$id] = FALSE;
+        foreach ($forums as $id => $data) $forum_access[$id] = FALSE;
     // A single forum id.
     } else {
         $single_forum_id = $forum_id;
-        $forum_ids[$forum_id] = FALSE;
+        $forum_access[$forum_id] = FALSE;
     }
 
     // Prepare the user to check the access for.
@@ -2089,15 +2087,15 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     {
         if ($forum_id == PHORUM_ACCESS_ANYWHERE) return TRUE;
 
-        foreach ($forum_ids as $id => $data) {
-            $forum_ids[$id] = TRUE;
+        foreach ($forum_access as $id => $data) {
+            $forum_access[$id] = TRUE;
         }
     }
     // For other users, we have to do a full permission lookup.
     else
     {
         // Check the access rights for each forum.
-        foreach ($forum_ids as $id => $data)
+        foreach ($forum_access as $id => $data)
         {
             $perm = NULL;
 
@@ -2111,7 +2109,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
                 // Fetch data for the forums, unless we already have that
                 // data available.
                 if ($forums === NULL) {
-                    $forums = phorum_db_get_forums(array_keys($forum_ids));
+                    $forums = phorum_db_get_forums(array_keys($forum_access));
                 }
 
                 $key = empty($user['user_id']) ? 'pub_perms' : 'reg_perms';
@@ -2126,7 +2124,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
                 if ($forum_id == PHORUM_ACCESS_ANYWHERE) {
                     return TRUE;
                 } else {
-                    $forum_ids[$id] = TRUE;
+                    $forum_access[$id] = TRUE;
                 }
             }
         }
@@ -2137,12 +2135,12 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     // Return the results.
     if ($single_forum_id !== NULL) {
         // Return either TRUE or FALSE.
-        return empty($forum_ids[$single_forum_id]) ? FALSE : TRUE;
+        return empty($forum_access[$single_forum_id]) ? FALSE : TRUE;
     } else {
         // Return an array of forums for which permission is granted.
         // Both the keys and values are the forum ids.
         $return = array();
-        foreach ($forum_ids as $id => $has_permission) {
+        foreach ($forum_access as $id => $has_permission) {
             if ($has_permission) $return[$id] = $id;
         }
         return $return;
