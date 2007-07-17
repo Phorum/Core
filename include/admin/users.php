@@ -57,6 +57,7 @@
                         }
 
                         $user_data["forum_permissions"][$_POST["new_forum"]]=$permission;
+                        unset($user_data["new_forum"]);
                     }
 
                     if(isset($_POST["delforum"])){
@@ -64,6 +65,7 @@
                             unset($user_data["forum_permissions"][$fid]);
                             unset($_POST["forums"][$fid]);
                         }
+                        unset($user_data["delforum"]);
                     }
 
                     if(isset($_POST["forums"])){
@@ -95,6 +97,7 @@
                     if($_POST["new_group"]){
                         // set the new group permission to approved
                         $groupdata[$_POST["new_group"]] = PHORUM_USER_GROUP_APPROVED;
+                        unset($user_data['new_group']);
                     }
 
                     if(isset($_POST["group_perm"])){
@@ -104,6 +107,7 @@
                                 $groupdata[$group_id] = $perm;
                             }
                         }
+                        unset($user_data['group_perm']);
                     }
 
                     phorum_user_save_groups($_POST["user_id"], $groupdata);
