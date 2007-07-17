@@ -60,25 +60,17 @@ if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
     }
 }
 
-$PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Find out how many forums this user can moderate.
 // If the user can moderate more than one forum, then
 // present the move message moderation link.
 if ($PHORUM["DATA"]["MODERATOR"]) {
-    $build_move_url=false;
-    $forums=phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
-    $modforums=0;
-    foreach ($forums as $id=>$forum) {
-        if ($forum["folder_flag"]==0 &&
-            phorum_api_user_check_moderate_access($id)) {
-            $modforums++;
-            if ($modforums > 1) {
-                $build_move_url = true;
-                break;
-            }
-        }
-    }
+    $modforums = phorum_api_user_check_access(
+        PHORUM_USER_ALLOW_MODERATE_MESSAGES,
+        PHORUM_ACCESS_ANYWHERE
+    );
+    $build_move_url = $modforums >= 2;
 }
 
 // setup some stuff based on the url passed
@@ -523,7 +515,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // allow editing only if logged in, allowed for forum, the thread is open,
         // its the same user, and its within the time restriction
-        if($PHORUM["user"]["user_id"]==$row["user_id"] && phorum_user_access_allowed(PHORUM_USER_ALLOW_EDIT) &&
+        if($PHORUM["user"]["user_id"]==$row["user_id"] && phorum_api_user_check_access(PHORUM_USER_ALLOW_EDIT) &&
             !$thread_is_closed &&($PHORUM["user_edit_timelimit"] == 0 || $row["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())) {
             $row["edit"]=1;
             if(!$PHORUM["DATA"]["MODERATOR"]) {

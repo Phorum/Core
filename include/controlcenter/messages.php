@@ -63,20 +63,23 @@ phorum_api_user_save_settings(array(
 $numunapproved = 0;
 $oldforum = $PHORUM['forum_id'];
 
-$mod_forums = phorum_user_access_list(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$mod_forums = phorum_api_user_check_access(
+    PHORUM_USER_ALLOW_MODERATE_MESSAGES,
+    PHORUM_ACCESS_ANYWHERE
+);
 $gotforums = (count($mod_forums) > 0);
 
 
 if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
-	//print_var($_POST['deleteids']);
-	$deleteids = $_POST['deleteids'];
-	foreach($deleteids as $did => $did_var) {
-	    $deleteids[$did] = (int)$did_var;
-	}
-	$delete_messages = phorum_db_get_message(array_keys($deleteids),'message_id',true);
-	//print_var($delete_messages);
-	foreach($deleteids as $msgthd_id => $doit) {
-		
+    //print_var($_POST['deleteids']);
+    $deleteids = $_POST['deleteids'];
+    foreach($deleteids as $did => $did_var) {
+        $deleteids[$did] = (int)$did_var;
+    }
+    $delete_messages = phorum_db_get_message(array_keys($deleteids),'message_id',true);
+    //print_var($delete_messages);
+    foreach($deleteids as $msgthd_id => $doit) {
+
         // A hook to allow modules to implement extra or different
         // delete functionality.
         if($doit && isset($mod_forums[$delete_messages[$msgthd_id]['forum_id']])) {
@@ -105,8 +108,8 @@ if($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids'])) {
             if (isset($PHORUM["hooks"]["delete"]))
                 phorum_hook("delete", array($msgthd_id));
         }
-		
-	}
+
+    }
 }
 
 $PHORUM['DATA']['PREPOST'] = array();

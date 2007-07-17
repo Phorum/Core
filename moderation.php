@@ -27,13 +27,13 @@ if(!phorum_check_read_common()) {
   return;
 }
 
-$PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 $msgthd_id = (isset($_POST["thread"])) ? (int)$_POST["thread"] : (int)$PHORUM['args'][2];
 
 $mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM['args'][1];
 
-if(empty($msgthd_id) || !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
    phorum_return_to_list();
 }
 
@@ -187,7 +187,15 @@ switch ($mod_step) {
 
         foreach($forums as $id=>$forum){
             if ($id == $PHORUM["forum_id"]) continue;
-            // add  && phorum_api_user_check_moderate_access($id) if the
+            // TODO: this does not match the check at the start of the read
+            // TODO: and list scripts, where we check if this user has perms
+            // TODO: for moderation of two or more forums, before we
+            // TODO: enable the move feature. We should either check
+            // TODO: for 2 or more moderated forums and check that moving
+            // TODO: is only done between moderated forums or check for
+            // TODO: 1 or more moderated forums and allow moving between
+            // TODO: any two forums. Now we have a mix of those two.
+            // add  && phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, $id) if the
             // mod should only be able to move to forums he also moderates
             if($forum["folder_flag"]==0){
                  // it makes no sense to move to the forum we are in already

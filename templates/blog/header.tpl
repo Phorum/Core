@@ -37,7 +37,7 @@ Search:<br />
 
 <ul>
 {IF LOGGEDIN true}
-<?php if (phorum_user_access_allowed(PHORUM_USER_ALLOW_NEW_TOPIC)) { ?>
+<?php if (phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) { ?>
 <li><a href="{URL->POST}">New Post</a></li>
 <?php } ?>
 <li><a href="{URL->REGISTERPROFILE}">My Profile</a></li>

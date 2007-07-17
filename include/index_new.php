@@ -73,7 +73,7 @@ foreach( $folders as $folder_key=>$folder_id ) {
         if($forum["folder_flag"]) {
             $forum["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
         } else {
-            if($PHORUM["hide_forums"] && !phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
+            if($PHORUM["hide_forums"] && !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
                 unset($folder_forums[$folder_id][$key]);
                 continue;
             }

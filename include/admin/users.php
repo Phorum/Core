@@ -78,6 +78,7 @@
 
                             $user_data["forum_permissions"][$forum_id]=$permission;
                         }
+                        unset($user_data["forums"]);
                     }
 
                     if(empty($user_data["forum_permissions"])) $user_data["forum_permissions"]=array();

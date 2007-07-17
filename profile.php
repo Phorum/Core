@@ -77,8 +77,8 @@ $PHORUM["DATA"]["PROFILE"]["raw_date_added"]=$PHORUM["DATA"]["PROFILE"]["date_ad
 $PHORUM["DATA"]["PROFILE"]["date_added"]=phorum_date( $PHORUM['short_date'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
 
 if( (!empty($PHORUM["user"]["admin"]) ||
-    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
-    (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ||
+    (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
+    (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ||
     !$user["hide_email"]) &&
     (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))){
 
@@ -89,8 +89,8 @@ if( (!empty($PHORUM["user"]["admin"]) ||
 
 if( $PHORUM["track_user_activity"] &&
     (!empty($PHORUM["user"]["admin"]) ||
-     (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) ||
-     (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS)) ||
+     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) ||
+     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS)) ||
      !$user["hide_activity"])){
 
     $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];

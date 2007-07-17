@@ -32,7 +32,7 @@
  * will allow multiple Phorum installations to use the same database.
  *
  * @todo
- *     phorum_user_access_allowed() is used in this layer, but the
+ *     phorum_api_user_check_access() is used in this layer, but the
  *     include file for that is not included here. Keep it like that
  *     or add the required include? Or is it functionality that doesn't
  *     belong here and could better go into the core maybe?
@@ -586,13 +586,18 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
             USE     INDEX ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
+    // TODO: this can be compressed a lot with the new
+    // TODO: phorum_api_user_check_access() code.
+    //
     // We have to check what forums the active Phorum user can read first.
     // Even if $thread is passed, we have to make sure that the user
     // can read the containing forum.
     // First case: any forum.
     if ($forum_id <= 0)
     {
-        $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+        $allowed_forums = phorum_api_user_check_access(
+            PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+        );
 
         // If the user is not allowed to see any forum,
         // then return the emtpy $messages;
@@ -601,13 +606,11 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     // Second case: a specified array of forum_ids.
     elseif (is_array($forum_id))
     {
-        // Check access for each forum separately.
-        foreach ($forum_id as $id) {
-            if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $id)) {
-                $allowed_forums[] = $id;
-            }
-        }
-
+        // Check for which forums the user really has read permission.
+        $allowed_forums = phorum_api_user_check_access(
+            PHORUM_USER_ALLOW_READ,
+            $forum_id
+        );
         // If the user is not allowed to see any forum,
         // then return the emtpy $messages;
         if (empty($allowed_forums)) return $messages;
@@ -617,7 +620,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     {
         // A quick one-step way for returning if the user does not have
         // read access for the forum_id. This is the quickest route.
-        if (!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $forum_id)) {
+        if (!phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
             return $messages;
         }
     }
@@ -1195,7 +1198,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
     // Determine if not approved messages should be displayed.
     $approvedval = '';
     if (!$ignore_mod_perms &&
-        !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+        !phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval = 'AND status ='.PHORUM_STATUS_APPROVED;
     }
 
@@ -1295,7 +1298,7 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
     }
 
     $approvedval = '';
-    if (!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+    if (!phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval='AND status ='.PHORUM_STATUS_APPROVED;
     }
 
@@ -1368,7 +1371,9 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     if ($search == '' && $author == '') return $return;
 
     // Check what forums the active Phorum user can read.
-    $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    $allowed_forums = phorum_api_user_check_access(
+        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+    );
 
     // If the user is not allowed to search any forum or the current
     // active forum, then return the emtpy search results array.
@@ -1667,7 +1672,7 @@ function phorum_db_get_neighbour_thread($key, $direction)
     // If the active Phorum user is not a moderator for the forum, then
     // the neighbour message should be approved.
     $approvedval = '';
-    if (!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+    if (!phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval = 'AND status = '.PHORUM_STATUS_APPROVED;
     }
 

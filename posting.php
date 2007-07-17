@@ -313,17 +313,17 @@ if ($initial || $finish || $preview) {
 // Is the forum running in a moderated state?
 $PHORUM["DATA"]["MODERATED"] =
     $PHORUM["moderation"] == PHORUM_MODERATE_ON &&
-    !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+    !phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Does the user have administrator permissions?
 $PHORUM["DATA"]["ADMINISTRATOR"] = $PHORUM["user"]["admin"];
 
 // Does the user have moderator permissions?
 $PHORUM["DATA"]["MODERATOR"] =
-    phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+    phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Ability: Do we allow attachments?
-$PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_user_access_allowed(PHORUM_USER_ALLOW_ATTACH);
+$PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_api_user_check_access(PHORUM_USER_ALLOW_ATTACH);
 
 // What options does this user have for a message?
 $PHORUM["DATA"]["OPTION_ALLOWED"] = array(

@@ -888,7 +888,7 @@ function phorum_api_file_check_delete_access($file_id)
         }
 
         // Check if the user is moderator for the forum_id of the message.
-        if (phorum_api_user_check_moderate_access($message["forum_id"])) {
+        if (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, $message["forum_id"])) {
             return TRUE;
         }
     }

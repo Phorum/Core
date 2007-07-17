@@ -638,7 +638,7 @@ switch ($page) {
         foreach ($buddy_users as $id => $buddy_user) {
             $buddy = array(
                 'user_id'     => $id,
-                'display_name' => 
+                'display_name' =>
                     (empty($PHORUM["custom_display_name"])
                      ? htmlspecialchars($buddy_user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                      : $buddy_user["display_name"]),
@@ -800,12 +800,12 @@ switch ($page) {
 
                 $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
 
-                if (phorum_user_access_allowed(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
+                if (phorum_api_user_check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
 
                     // get url to the message board thread
                     $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
-                    // Get the data for the user that we reply to. 
+                    // Get the data for the user that we reply to.
                     $user = phorum_api_user_get($message["user_id"]);
 
                     $msg["subject"] = $message["subject"];
@@ -832,7 +832,7 @@ switch ($page) {
             switch ($key) {
                 case "recipients": {
                     foreach ($val as $id => $data) {
-                        $msg[$key][$id]["display_name"] = 
+                        $msg[$key][$id]["display_name"] =
                           (empty($PHORUM["custom_display_name"])
                            ? htmlspecialchars($data["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                            : $data["display_name"]);
@@ -840,7 +840,7 @@ switch ($page) {
                     break;
                 }
                 case "author": {
-                    $msg[$key] =  
+                    $msg[$key] =
                       (empty($PHORUM["custom_display_name"])
                        ? htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : $val);
                     break;

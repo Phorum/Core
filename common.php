@@ -496,12 +496,14 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         if ( in_array(phorum_page, $show_notify_for_pages) ) {
 
             if ( $PHORUM["enable_moderator_notifications"] ) {
-                $forummodlist = phorum_user_access_list( PHORUM_USER_ALLOW_MODERATE_MESSAGES );
+                $forummodlist = phorum_api_user_check_access(
+                    PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANYWHERE
+                );
                 if ( count( $forummodlist ) > 0 ) {
                     $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( phorum_db_get_unapproved_list( $forummodlist, true, 0, true) > 0 );
                     $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
                 }
-                if ( phorum_user_access_allowed( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
+                if ( phorum_api_user_check_access( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
                     $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
                     $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
                 }
@@ -586,7 +588,7 @@ function phorum_check_read_common()
 
     $retval = true;
 
-    if ( $PHORUM["forum_id"] > 0 && !$PHORUM["folder_flag"] && !phorum_user_access_allowed( PHORUM_USER_ALLOW_READ ) ) {
+    if ( $PHORUM["forum_id"] > 0 && !$PHORUM["folder_flag"] && !phorum_api_user_check_access( PHORUM_USER_ALLOW_READ ) ) {
         if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
             // if they are logged in and not allowed, they don't have rights
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];

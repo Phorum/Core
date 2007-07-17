@@ -5,7 +5,9 @@ function phorum_build_forum_list() {
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Check what forums the current user can read.
-    $allowed_forums = phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    $allowed_forums = phorum_api_user_check_access(
+        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+    );
 
     $forum_picker = array();
 

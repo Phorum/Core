@@ -23,10 +23,10 @@ $template = "cc_start";
 $PHORUM['DATA']['UserPerms'] = phorum_readable_permissions();
 $PHORUM['DATA']['PROFILE']['raw_date_added'] = $PHORUM['DATA']['PROFILE']['date_added'];
 $PHORUM['DATA']['PROFILE']['date_added'] = phorum_date( $PHORUM['short_date'], $PHORUM['DATA']['PROFILE']['date_added']);
-if( $PHORUM["track_user_activity"] && 
-    (!empty($PHORUM["user"]["admin"]) ||
-     (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) ||
-     (phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_USERS)) ||
+if( $PHORUM["track_user_activity"] &&
+    (!empty($PHORUM["user"]["admin"])                                  ||
+     phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) ||
+     phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS)    ||
      !$user["hide_activity"])){
 
     $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];

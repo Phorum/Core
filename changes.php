@@ -53,7 +53,7 @@ if(empty($message)){
     exit();
 }
 
-$PHORUM["DATA"]["MODERATOR"] = phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 $edit_tracks = phorum_db_get_message_edits($message_id);
 

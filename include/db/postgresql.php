@@ -266,14 +266,17 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     // even if $thread is passed, we have to make sure
     // the user can read the forum
     if($forum_id <= 0) {
-        $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+        $allowed_forums=phorum_api_user_check_access(
+            PHORUM_USER_ALLOW_READ,
+            PHORUM_ACCESS_ANYWHERE
+        );
 
         // if they are not allowed to see any forums, return the emtpy $arr;
         if(empty($allowed_forums))
             return $arr;
     } else {
         // only single forum, *much* fast this way
-        if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_READ,$forum_id)) {
+        if(!phorum_api_user_check_access(PHORUM_USER_ALLOW_READ,$forum_id)) {
             return $arr;
         }
     }
@@ -789,7 +792,7 @@ function phorum_db_get_messages($thread,$page=0,$ignore_mod_perms=0)
 
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!$ignore_mod_perms && !phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+    if(!$ignore_mod_perms && !phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
     }
 
@@ -861,7 +864,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
         $forum_id_check = "(forum_id = {$PHORUM['forum_id']} OR forum_id={$PHORUM['vroot']}) AND";
     }
 
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+    if(!phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
     }
 
@@ -894,7 +897,9 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
     $conn = phorum_db_postgresql_connect();
 
     // have to check what forums they can read first.
-    $allowed_forums=phorum_user_access_list(PHORUM_USER_ALLOW_READ);
+    $allowed_forums=phorum_api_user_check_access(
+        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+    );
     // if they are not allowed to search any forums, return the emtpy $arr;
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;
 
@@ -1077,7 +1082,7 @@ function phorum_db_get_newer_thread($key){
 
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
+    if(!phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
         $approvedval="AND {$PHORUM['message_table']}.status =".PHORUM_STATUS_APPROVED;
     } else {
         $approvedval="AND {$PHORUM['message_table']}.parent_id = 0";
@@ -1105,7 +1110,7 @@ function phorum_db_get_older_thread($key){
     $keyfield = ($PHORUM["float_to_top"]) ? "modifystamp" : "thread";
     // are we really allowed to show this thread/message?
     $approvedval = "";
-    if(!phorum_user_access_allowed(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
+    if(!phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && $PHORUM["moderation"] == PHORUM_MODERATE_ON) {
         $approvedval="AND {$PHORUM['message_table']}.status=".PHORUM_STATUS_APPROVED;
     } else {
         $approvedval="AND {$PHORUM['message_table']}.parent_id = 0";

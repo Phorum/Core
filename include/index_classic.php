@@ -33,7 +33,7 @@ foreach( $forums as $forum ) {
 
     } else {
 
-        if($PHORUM["hide_forums"] && !phorum_user_access_allowed(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
+        if($PHORUM["hide_forums"] && !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
             continue;
         }
 
