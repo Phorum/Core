@@ -1885,6 +1885,7 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
         $display_name = empty($users[$id])
                       ? $fallback
                       : $users[$id]['display_name'];
+
         // Generate HTML based display names.
         if ($flags == PHORUM_FLAG_HTML)
         {
@@ -1905,18 +1906,24 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
         {
             // Strip tags from the name. These might be in the
             // name if the custom_display_name feature is enabled.
+            // So for custom display names we strip the HTML from the 
+            // display name that we found above.
             if (!empty($PHORUM["custom_display_name"]))
             {
-                $display_name=trim(strip_tags($display_name));
+                $display_name = trim(strip_tags($display_name));
 
                 // If the name was 100% HTML code (so empty after stripping),
                 // then fallback to the default display_name that Phorum
-                // would use.
+                // would use without the custom display name feature.
                 if ($display_name == '') {
-                    $display_name = $users[$id]['username'];
-                    if ($PHORUM['display_name_source'] == 'real_name' &&
-                        trim($users[$id]['real_name']) != '') {
-                        $display_name = $users[$id]['real_name'];
+                    if (empty($users[$id])) {
+                        $display_name = $fallback;
+                    } else {
+                        $display_name = $users[$id]['username'];
+                        if ($PHORUM['display_name_source'] == 'real_name' &&
+                            trim($users[$id]['real_name']) != '') {
+                            $display_name = $users[$id]['real_name'];
+                        }
                     }
                 }
             }
