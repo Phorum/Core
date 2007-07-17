@@ -16,13 +16,16 @@ img {
     border: none;
 }
 
+#phorum div.generic table th {
+    text-align: left;
+}
+
 #phorum table.list {
     width: 100%;
     margin-bottom: 4px;
     border: 1px solid {border_color};
     border-bottom: 0;
 }
-
 
 #phorum table.list th  {
     background-repeat: repeat-x;
@@ -103,6 +106,9 @@ img {
 }
 
 /* global styles */
+
+#phorum div.generic table {
+}
 
 #phorum div.generic {
     padding: 8px;
