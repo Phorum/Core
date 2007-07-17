@@ -14,9 +14,11 @@
 
 {IF PRINTVIEW}
     <meta name="robots" content="NOINDEX,NOFOLLOW">
+    <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="screen,print" />
+{ELSE}
+    <link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {/IF}
-<link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
-<link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {IF URL->FEED}
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
 {/IF}
