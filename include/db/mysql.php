@@ -586,49 +586,28 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
             USE     INDEX ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
-    // TODO: this can be compressed a lot with the new
-    // TODO: phorum_api_user_check_access() code.
-    //
     // We have to check what forums the active Phorum user can read first.
     // Even if $thread is passed, we have to make sure that the user
-    // can read the containing forum.
-    // First case: any forum.
-    if ($forum_id <= 0)
-    {
-        $allowed_forums = phorum_api_user_check_access(
-            PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
-        );
+    // can read the containing forum. Here we push the $forum_id argument
+    // into an argument for phorum_api_user_check_access(), to make
+    // that function always return an array of accessible forum_ids.
+    if ($forum_id <= 0) {
+        $forum_id = PHORUM_ACCESS_ANYWHERE;
+    } elseif(!is_array($forum_id)) {
+        $forum_id = array($forum_id => $forum_id);
+    }
+    $allowed_forums = phorum_api_user_check_access(
+        PHORUM_USER_ALLOW_READ, $forum_id
+    );
 
-        // If the user is not allowed to see any forum,
-        // then return the emtpy $messages;
-        if (empty($allowed_forums)) return $messages;
-    }
-    // Second case: a specified array of forum_ids.
-    elseif (is_array($forum_id))
-    {
-        // Check for which forums the user really has read permission.
-        $allowed_forums = phorum_api_user_check_access(
-            PHORUM_USER_ALLOW_READ,
-            $forum_id
-        );
-        // If the user is not allowed to see any forum,
-        // then return the emtpy $messages;
-        if (empty($allowed_forums)) return $messages;
-    }
-    // Third case: a single specified forum_id.
-    else
-    {
-        // A quick one-step way for returning if the user does not have
-        // read access for the forum_id. This is the quickest route.
-        if (!phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
-            return $messages;
-        }
-    }
+    // If the user is not allowed to see any forum,
+    // then return the emtpy $messages;
+    if (empty($allowed_forums)) return $messages;
 
-    if (count($allowed_forums)) {
-        $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
-    } else {
+    if (count($allowed_forums) == 1) {
         $sql .= " AND forum_id = $forum_id";
+    } else {
+        $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
     }
 
     if ($thread) {
