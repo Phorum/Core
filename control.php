@@ -82,8 +82,8 @@ $PHORUM['DATA']['URL']['CC16'] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel
 $PHORUM["DATA"]["MYFILES"] = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]);
 
 // Determine if the user is a moderator.
-$PHORUM["DATA"]["MESSAGE_MODERATOR"] = (count(phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANYWHERE)) > 0);
-$PHORUM["DATA"]["USER_MODERATOR"] = (count(phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANYWHERE)) > 0);
+$PHORUM["DATA"]["MESSAGE_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANYWHERE);
+$PHORUM["DATA"]["USER_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANYWHERE);
 $PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_user_allow_moderate_group();
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 

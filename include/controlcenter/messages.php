@@ -65,7 +65,7 @@ $oldforum = $PHORUM['forum_id'];
 
 $mod_forums = phorum_api_user_check_access(
     PHORUM_USER_ALLOW_MODERATE_MESSAGES,
-    PHORUM_ACCESS_ANYWHERE
+    PHORUM_ACCESS_LIST
 );
 $gotforums = (count($mod_forums) > 0);
 

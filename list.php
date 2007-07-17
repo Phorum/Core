@@ -98,7 +98,7 @@ $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MO
 if ($PHORUM["DATA"]["MODERATOR"]) {
     $modforums = phorum_api_user_check_access(
         PHORUM_USER_ALLOW_MODERATE_MESSAGES,
-        PHORUM_ACCESS_ANYWHERE
+        PHORUM_ACCESS_LIST
     );
     $build_move_url = $modforums >= 2;
 }

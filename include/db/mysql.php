@@ -592,7 +592,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     // into an argument for phorum_api_user_check_access(), to make
     // that function always return an array of accessible forum_ids.
     if ($forum_id <= 0) {
-        $forum_id = PHORUM_ACCESS_ANYWHERE;
+        $forum_id = PHORUM_ACCESS_LIST;
     } elseif(!is_array($forum_id)) {
         $forum_id = array($forum_id => $forum_id);
     }
@@ -605,7 +605,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if (empty($allowed_forums)) return $messages;
 
     if (count($allowed_forums) == 1) {
-        $sql .= " AND forum_id = $forum_id";
+        $sql .= " AND forum_id = " . array_shift($forum_id);
     } else {
         $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
     }
@@ -1351,7 +1351,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
 
     // Check what forums the active Phorum user can read.
     $allowed_forums = phorum_api_user_check_access(
-        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
     );
 
     // If the user is not allowed to search any forum or the current

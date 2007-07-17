@@ -124,7 +124,7 @@ if(!phorum_search_check_valid_vars()) {
 
 // Check what forums the current user can read.
 $allowed_forums = phorum_api_user_check_access(
-    PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+    PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
 );
 
 // setup some stuff based on the url passed

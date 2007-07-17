@@ -497,7 +497,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
             if ( $PHORUM["enable_moderator_notifications"] ) {
                 $forummodlist = phorum_api_user_check_access(
-                    PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANYWHERE
+                    PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_LIST
                 );
                 if ( count( $forummodlist ) > 0 ) {
                     $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( phorum_db_get_unapproved_list( $forummodlist, true, 0, true) > 0 );

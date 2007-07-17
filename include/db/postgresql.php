@@ -268,7 +268,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if($forum_id <= 0) {
         $allowed_forums=phorum_api_user_check_access(
             PHORUM_USER_ALLOW_READ,
-            PHORUM_ACCESS_ANYWHERE
+            PHORUM_ACCESS_LIST
         );
 
         // if they are not allowed to see any forums, return the emtpy $arr;
@@ -898,7 +898,7 @@ function phorum_db_search($search, $offset, $length, $match_type, $match_date, $
 
     // have to check what forums they can read first.
     $allowed_forums=phorum_api_user_check_access(
-        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_ANYWHERE
+        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
     );
     // if they are not allowed to search any forums, return the emtpy $arr;
     if(empty($allowed_forums) || ($PHORUM['forum_id']>0 && !in_array($PHORUM['forum_id'], $allowed_forums)) ) return $arr;

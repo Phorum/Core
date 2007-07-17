@@ -146,9 +146,17 @@ define('PHORUM_GET_INACTIVE',          2);
 
 /**
  * Function call parameter, which tells {@link phorum_api_user_check_access()}
- * to check for permission access for a user in any of the available forums.
+ * to return an array of forum_ids for which a user is granted access for
+ * a specified permission.
  */
-define("PHORUM_ACCESS_ANYWHERE", -1);
+define("PHORUM_ACCESS_LIST", -1);
+
+/**
+ * Function call parameter, which tells {@link phorum_api_user_check_access()}
+ * to return TRUE if a user is granted access for a specified permission in
+ * any of the available forums.
+ */
+define("PHORUM_ACCESS_ANYWHERE", -2);
 
 /**
  * This array describes user data fields. It is mainly used internally
@@ -1869,10 +1877,10 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
                 // then fallback to the default display_name that Phorum
                 // would use.
                 if ($display_name == '') {
-                    $display_name = $user['username'];
+                    $display_name = $users[$id]['username'];
                     if ($PHORUM['display_name_source'] == 'real_name' &&
-                        trim($user['real_name']) != '') {
-                        $display_name = $user['real_name'];
+                        trim($users[$id]['real_name']) != '') {
+                        $display_name = $users[$id]['real_name'];
                     }
                 }
             }
@@ -2011,21 +2019,25 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  * @param mixed $forum_id
  *     Specifies the forum(s) to look at. Available options are:
  *     - The id of the forum for which to check the access
- *     - 0 (zero, the default) to use the active forum
+ *     - 0 (zero, the default) to check access for the active forum
  *     - An array of forum_ids to check
- *     - PHORUM_ACCESS_ANYWHERE to check all available forums
+ *     - {@link PHORUM_ACCESS_ANYWHERE} to check if the user has access rights
+ *       for any of the available forums
+ *     - {@link PHORUM_ACCESS_LIST} to return a list of forum_ids for which the
+ *       user has access rights
  *
  * @param mixed $user
  *     A user data array for the user for which to check moderate
  *     access or 0 (zero, the default) to use the active Phorum user.
  *
  * @return mixed
- *     If a single forum_id or 0 (zero) was used as the $forum_id
- *     argument, then this function will return either TRUE (permission
- *     granted) or FALSE. If an array or {@link PHORUM_ACCESS_ANYWHERE}
- *     was used as the $forum_id argument, then an array will be returned,
- *     containing all forum_ids for which permission was granted (both keys
- *     and values are forum_ids in this array).
+ *     If a single forum_id, 0 (zero) or {@link PHORUM_ACCESS_ANYWHERE}
+ *     was used as the $forum_id argument, then this function will return
+ *     either TRUE (access granted) or FALSE. If an array or
+ *     {@link PHORUM_ACCESS_LIST} was used as the $forum_id argument,
+ *     then an array will be returned, containing all forum_ids for which
+ *     permission was granted (both keys and values are forum_ids in this
+ *     array).
  *
  * @todo Move permission constants from constants.php to the user API.
  */
@@ -2050,8 +2062,11 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
                 'pub_perms' => $PHORUM['pub_perms']
             )
         );
-    // Access for any of the available forums.
+    // Checking access for any of the available forums.
     } elseif ($forum_id == PHORUM_ACCESS_ANYWHERE) {
+        $forums = phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
+    // Access list requested.
+    } elseif ($forum_id == PHORUM_ACCESS_LIST) {
         $forums = phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
         foreach ($forums as $id => $data) $forum_ids[$id] = FALSE;
     // A single forum id.
@@ -2064,12 +2079,16 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     if (empty($user)) $user = $PHORUM['user'];
 
     // Inactive users have no permissions at all.
-    if (!empty($user["user_id"]) && empty($user["active"])) {
-        // NOOP
+    if (!empty($user["user_id"]) && empty($user["active"]))
+    {
+        // No further code required. We'll just keep all forum
+        // permissions set to FALSE here.
     }
     // Administrators always have permission.
     elseif (!empty($user["admin"]))
     {
+        if ($forum_id == PHORUM_ACCESS_ANYWHERE) return TRUE;
+
         foreach ($forum_ids as $id => $data) {
             $forum_ids[$id] = TRUE;
         }
@@ -2077,7 +2096,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     // For other users, we have to do a full permission lookup.
     else
     {
-        // Determine the access rights for each forum.
+        // Check the access rights for each forum.
         foreach ($forum_ids as $id => $data)
         {
             $perm = NULL;
@@ -2102,11 +2121,18 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
             }
 
             // Check if the user has the requested permission for the forum.
-            if (!empty($perm) && ($perm & $permission) == $permission) {
-                $forum_ids[$id] = TRUE;
+            if (!empty($perm) && ($perm & $permission) == $permission)
+            {
+                if ($forum_id == PHORUM_ACCESS_ANYWHERE) {
+                    return TRUE;
+                } else {
+                    $forum_ids[$id] = TRUE;
+                }
             }
         }
     }
+
+    if ($forum_id == PHORUM_ACCESS_ANYWHERE) return FALSE;
 
     // Return the results.
     if ($single_forum_id !== NULL) {
