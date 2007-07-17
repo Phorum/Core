@@ -83,10 +83,7 @@ $PHORUM["DATA"]["MYFILES"] = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"
 
 // Determine if the user is a moderator.
 $PHORUM["DATA"]["MESSAGE_MODERATOR"] = (count(phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANYWHERE)) > 0);
-// TODO Why do we only check for user moderate permission in the active forum
-// TODO here? Why not imply in the full vroot, like above with moderate
-// TODO messages?
-$PHORUM["DATA"]["USER_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS);
+$PHORUM["DATA"]["USER_MODERATOR"] = (count(phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANYWHERE)) > 0);
 $PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_user_allow_moderate_group();
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 
