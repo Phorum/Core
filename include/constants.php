@@ -113,7 +113,6 @@
     define("PHORUM_USER_ACTIVE", 1);
 
     // group moderation actions
-    define("PHORUM_USER_GROUP_REMOVE", -128);
     define("PHORUM_USER_GROUP_SUSPENDED", -1);
     define("PHORUM_USER_GROUP_UNAPPROVED", 0);
     define("PHORUM_USER_GROUP_APPROVED", 1);

@@ -507,7 +507,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                     $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
                     $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
                 }
-                if ( phorum_user_allow_moderate_group() ) {
+                if ( phorum_api_user_check_group_access(PHORUM_USER_ALLOW_GROUP_MODERATE, PHORUM_ACCESS_ANY) ) {
                     $groups = phorum_user_get_moderator_groups();
                     if ( count( $groups ) > 0 ) {
                         $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );

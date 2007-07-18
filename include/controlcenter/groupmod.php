@@ -41,8 +41,10 @@ if(isset($PHORUM['args']['filter'])){
 
 
 
+// TODO: Hmm.. I'm not fully understanding this code. Have to look
+// TODO: at the reason for this else some day (mmakaay).
 if (!empty($group_id)){
-    $perm = phorum_user_allow_moderate_group($group_id);
+    $perm = phorum_api_user_check_group_access(PHORUM_USER_ALLOW_GROUP_MODERATE, $group_id);
 }
 else{
     $perm = $PHORUM["DATA"]["GROUP_MODERATOR"];
@@ -88,7 +90,7 @@ if (!empty($group_id)){
             if ($status != PHORUM_USER_GROUP_MODERATOR){
                 $groups[$group_id] = $status;
             }
-            if ($status == PHORUM_USER_GROUP_REMOVE){
+            if ($status == "remove"){
                 unset($groups[$group_id]);
             }
             phorum_user_save_groups($userid, $groups);
@@ -125,7 +127,7 @@ if (!empty($group_id)){
         "id" => PHORUM_USER_GROUP_UNAPPROVED);
 
     $PHORUM["DATA"]["STATUS_OPTIONS"] = array();
-    $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_REMOVE, "name" => "&lt; " . $PHORUM["DATA"]["LANG"]["RemoveFromGroup"] . " &gt;");
+    $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => "remove", "name" => "&lt; " . $PHORUM["DATA"]["LANG"]["RemoveFromGroup"] . " &gt;");
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_APPROVED, "name" => $PHORUM["DATA"]["LANG"]["Approved"]);
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_UNAPPROVED, "name" => $PHORUM["DATA"]["LANG"]["Unapproved"]);
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_SUSPENDED, "name" => $PHORUM["DATA"]["LANG"]["Suspended"]);

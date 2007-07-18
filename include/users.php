@@ -31,29 +31,6 @@ if ( !defined( "PHORUM" ) ) return;
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 /**
- * phorum_user_allow_moderate_group()
- *
- * Return true if the current user is allowed to moderate
- * a given group, or any group if no group is given.
- *
- * @param int - a group id to check (default, all)
- * @return bool
- */
-function phorum_user_allow_moderate_group($group_id = 0)
-{
-    $groups = phorum_user_get_moderator_groups();
-    if ($group_id == 0 && count($groups) > 0){
-        return true;
-    }
-    elseif (isset($groups[$group_id])){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-/**
  * phorum_user_get_moderator_groups()
  *
  * This function will return a list of the groups the current user

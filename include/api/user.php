@@ -146,53 +146,89 @@ define('PHORUM_GET_INACTIVE',          2);
 
 /**
  * Function call parameter, which tells {@link phorum_api_user_check_access()}
- * to return an array of forum_ids for which a user is granted access for
- * a specified permission.
+ * and {@link phorum_api_user_check_groupmod_access()} to return an array
+ * of respectively forums or groups for which a user is granted access.
  */
-define("PHORUM_ACCESS_LIST", -1);
+define('PHORUM_ACCESS_LIST', -1);
 
 /**
  * Function call parameter, which tells {@link phorum_api_user_check_access()}
- * to return TRUE if a user is granted access for a specified permission in
- * any of the available forums.
+ * and {@link phorum_api_user_check_groupmod_access()} to check if the user
+ * is granted access for respectively any forum or group.
  */
-define("PHORUM_ACCESS_ANYWHERE", -2);
+define('PHORUM_ACCESS_ANY', -2);
 
 /**
  * Permission flag which allows users to read forum messages.
  */
-define("PHORUM_USER_ALLOW_READ", 1);
+define('PHORUM_USER_ALLOW_READ', 1);
 
 /**
  * Permission flag which allows users to reply to forum messages.
  */
-define("PHORUM_USER_ALLOW_REPLY", 2);
+define('PHORUM_USER_ALLOW_REPLY', 2);
 
 /**
  * Permission flag which allows users to edit their own forum messages.
  */
-define("PHORUM_USER_ALLOW_EDIT", 4);
+define('PHORUM_USER_ALLOW_EDIT', 4);
 
 /**
  * Permission flag which allows users to start new forum topics.
  */
-define("PHORUM_USER_ALLOW_NEW_TOPIC", 8);
+define('PHORUM_USER_ALLOW_NEW_TOPIC', 8);
 
 /**
  * Permission flag which allows users to attach files to their forum messages.
  */
-define("PHORUM_USER_ALLOW_ATTACH", 32);
+define('PHORUM_USER_ALLOW_ATTACH', 32);
 
 /**
  * Permission flag which allows users to edit other users' messages.
  */
-define("PHORUM_USER_ALLOW_MODERATE_MESSAGES", 64);
+define('PHORUM_USER_ALLOW_MODERATE_MESSAGES', 64);
 
 /**
  * Permission flag which allows users to moderate user signup
  * requests within the vroot.
  */
-define("PHORUM_USER_ALLOW_MODERATE_USERS", 128);
+define('PHORUM_USER_ALLOW_MODERATE_USERS', 128);
+
+/**
+ * Group permission flag for users which are suspended by a group moderator.
+ */
+define('PHORUM_USER_GROUP_SUSPENDED', -1);
+
+/**
+ * Group permission flag for users which are not yet approved by
+ * a group moderator.
+ */
+define('PHORUM_USER_GROUP_UNAPPROVED', 0);
+
+/**
+ * Group permission flag for users which are active approved group members.
+ */
+define('PHORUM_USER_GROUP_APPROVED', 1);
+
+/**
+ * Group permission flag for users which are group moderator.
+ */
+define('PHORUM_USER_GROUP_MODERATOR', 2);
+
+/**
+ * Permission flag which tells {@link phorum_api_user_check_group_access()}
+ * to check if a user is an approved group user
+ * ({@link PHORUM_USER_GROUP_APPROVED} or group moderator
+ * ({@link PHORUM_USER_GROUP_MODERATOR}).
+ */
+define('PHORUM_USER_ALLOW_GROUP', 1);
+
+/**
+ * Permission flag which tells {@link phorum_api_user_check_group_access()}
+ * to check if a user is a group moderator
+ * ({@link PHORUM_USER_GROUP_MODERATOR}).
+ */
+define('PHORUM_USER_ALLOW_GROUP_MODERATE', 2);
 
 /**
  * This array describes user data fields. It is mainly used internally
@@ -336,7 +372,7 @@ function phorum_api_user_save($user, $flags = 0)
                     E_USER_ERROR
                 );
             } else {
-                $fldtype = "custom_profile_field";
+                $fldtype = 'custom_profile_field';
             }
         } else {
             $fldtype = $PHORUM['API']['user_fields'][$fld];
@@ -348,24 +384,24 @@ function phorum_api_user_save($user, $flags = 0)
             case NULL:
                 break;
 
-            case "int":
+            case 'int':
                 $dbuser[$fld] = $val === NULL ? NULL : (int) $val;
                 break;
 
-            case "string":
+            case 'string':
                 $dbuser[$fld] = $val === NULL ? NULL : trim($val);
                 break;
 
-            case "bool":
+            case 'bool':
                 $dbuser[$fld] = $val ? 1 : 0;
                 break;
 
-            case "array":
+            case 'array':
                 // TODO: maybe check for real arrays here?
                 $dbuser[$fld] = $val;
                 break;
 
-            case "custom_profile_field":
+            case 'custom_profile_field':
                 // Arrays and NULL values are left untouched.
                 // Other values are truncated to their configured field length.
                 if ($val !== NULL && !is_array($val)) {
@@ -436,7 +472,7 @@ function phorum_api_user_save($user, $flags = 0)
         // (in which case Phorum can have empty passwords, since the Phorum
         // passwords are not used at all).
         if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL || $dbuser[$fld] == '') {
-            $dbuser[$fld] = "*NO PASSWORD SET*";
+            $dbuser[$fld] = '*NO PASSWORD SET*';
             continue;
         }
 
@@ -454,7 +490,7 @@ function phorum_api_user_save($user, $flags = 0)
     // name is a HTML formatted display_name field, which is provided by
     // 3rd party software. Otherwise, the username or real_name is used
     // (depending on the $PHORUM["display_name_source"] Phorum setting).
-    if (empty($PHORUM["custom_display_name"])) {
+    if (empty($PHORUM['custom_display_name'])) {
         $display_name = $dbuser['username'];
         if ($PHORUM['display_name_source'] == 'real_name' &&
             isset($dbuser['real_name']) &&
@@ -470,7 +506,7 @@ function phorum_api_user_save($user, $flags = 0)
     // to be provided in escaped HTML format.
     elseif (!isset($dbuser['display_name']) ||
             trim($dbuser['display_name']) == '') {
-        $dbuser['display_name'] = htmlspecialchars($dbuser['username'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+        $dbuser['display_name'] = htmlspecialchars($dbuser['username'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
     }
 
     /**
@@ -522,9 +558,9 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // Are we handling the active Phorum user? Then refresh the user data.
-    if (isset($PHORUM["user"]) &&
-        $PHORUM["user"]["user_id"] == $dbuser["user_id"]) {
-        $PHORUM["user"] = phorum_api_user_get($user["user_id"], TRUE);
+    if (isset($PHORUM['user']) &&
+        $PHORUM['user']['user_id'] == $dbuser['user_id']) {
+        $PHORUM['user'] = phorum_api_user_get($user['user_id'], TRUE);
     }
 
     return $dbuser['user_id'];
@@ -549,7 +585,7 @@ function phorum_api_user_save($user, $flags = 0)
  */
 function phorum_api_user_save_raw($user)
 {
-    if (empty($user["user_id"])) trigger_error(
+    if (empty($user['user_id'])) trigger_error(
         'phorum_api_user_save_raw(): the user_id field cannot be empty',
         E_USER_ERROR
     );
@@ -624,8 +660,8 @@ function phorum_api_user_save_settings($settings)
 
     // Save the settings in the database.
     phorum_db_user_save(array(
-        "user_id"       => $user_id,
-        "settings_data" => $PHORUM["user"]["settings_data"]
+        'user_id'       => $user_id,
+        'settings_data' => $PHORUM['user']['settings_data']
     ));
 }
 // }}}
@@ -836,7 +872,7 @@ function phorum_api_user_get_setting($name)
  */
 function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $flags = PHORUM_FLAG_HTML)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     if ($fallback === NULL) {
         $fallback = $PHORUM['DATA']['LANG']['AnonymousUser'];
@@ -869,9 +905,9 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
             // formatted display_name field, which is provided by
             // 3rd party software. So those do not have to be HTML escaped.
             // Other names do have to be escaped.
-            if (empty($users[$id]) || empty($PHORUM["custom_display_name"]))
+            if (empty($users[$id]) || empty($PHORUM['custom_display_name']))
             {
-                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
             }
         }
         // Generate a plain text version of the display name. This is the
@@ -881,9 +917,9 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
         {
             // Strip tags from the name. These might be in the
             // name if the custom_display_name feature is enabled.
-            // So for custom display names we strip the HTML from the 
+            // So for custom display names we strip the HTML from the
             // display name that we found above.
-            if (!empty($PHORUM["custom_display_name"]))
+            if (!empty($PHORUM['custom_display_name']))
             {
                 $display_name = trim(strip_tags($display_name));
 
@@ -976,7 +1012,7 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
  */
 function phorum_api_user_search_display_name($name, $return_array = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Exact or partial match?
     $oper = $return_array ? '*' : '=';
@@ -1109,8 +1145,8 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *     The same array as was used for the hook call argument,
      *     possibly with some updated fields in it.
      */
-    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"])) {
-        $list = phorum_hook("user_list", $list);
+    if (isset($GLOBALS['PHORUM']['hooks']['user_list'])) {
+        $list = phorum_hook('user_list', $list);
     }
 
     return $list;
@@ -1675,7 +1711,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         } else {
             // Add the session id to the URL building GET variables.
             $GLOBALS['PHORUM']['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] =
-                PHORUM_SESSION_LONG_TERM . "=" .
+                PHORUM_SESSION_LONG_TERM . '=' .
                 urlencode($user['user_id'].':'.$sessid_lt);
 
             // Add the session id to the form POST variables.
@@ -2010,16 +2046,16 @@ function phorum_api_user_session_destroy($type)
         // enabled or not. We just want to clean out all that we have here.
         if ($type == PHORUM_FORUM_SESSION) {
             setcookie(
-                PHORUM_SESSION_SHORT_TERM, "", time()-86400,
+                PHORUM_SESSION_SHORT_TERM, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
             setcookie(
-                PHORUM_SESSION_LONG_TERM, "", time()-86400,
+                PHORUM_SESSION_LONG_TERM, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
         } elseif ($type == PHORUM_ADMIN_SESSION) {
             setcookie(
-                PHORUM_SESSION_ADMIN, "", time()-86400,
+                PHORUM_SESSION_ADMIN, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
         } else trigger_error(
@@ -2075,19 +2111,19 @@ function phorum_api_user_session_destroy($type)
  *     - The id of the forum for which to check the access
  *     - 0 (zero, the default) to check access for the active forum
  *     - An array of forum_ids to check
- *     - {@link PHORUM_ACCESS_ANYWHERE} to check if the user has access rights
+ *     - {@link PHORUM_ACCESS_ANY} to check if the user has access rights
  *       for any of the available forums
  *     - {@link PHORUM_ACCESS_LIST} to return a list of forum_ids for which the
  *       user has access rights
  *
  * @param mixed $user
- *     A user data array for the user for which to check moderate
- *     access or 0 (zero, the default) to use the active Phorum user.
+ *     A user data array for the user for which to check access
+ *     rights or 0 (zero, the default) to use the active Phorum user.
  *
  * @return mixed
- *     If a single forum_id, 0 (zero) or {@link PHORUM_ACCESS_ANYWHERE}
+ *     If a single forum_id, 0 (zero) or {@link PHORUM_ACCESS_ANY}
  *     was used as the $forum_id argument, then this function will return
- *     either TRUE (access granted) or FALSE. If an array or
+ *     either TRUE (access granted) or FALSE. If an array of forum_ids or
  *     {@link PHORUM_ACCESS_LIST} was used as the $forum_id argument,
  *     then an array will be returned, containing all forum_ids for which
  *     permission was granted (both keys and values are forum_ids in this
@@ -2095,7 +2131,7 @@ function phorum_api_user_session_destroy($type)
  */
 function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Prepare the array of forum ids to check.
     $forum_access = array();
@@ -2116,7 +2152,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
         );
     // Retrieve a forum access list or access-rights-in-any-forum.
     } elseif ($forum_id == PHORUM_ACCESS_LIST ||
-              $forum_id == PHORUM_ACCESS_ANYWHERE) {
+              $forum_id == PHORUM_ACCESS_ANY) {
         $forums = phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
         foreach ($forums as $id => $data) $forum_access[$id] = FALSE;
     // A single forum id.
@@ -2129,15 +2165,15 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     if (empty($user)) $user = $PHORUM['user'];
 
     // Inactive users have no permissions at all.
-    if (!empty($user["user_id"]) && empty($user["active"]))
+    if (!empty($user['user_id']) && empty($user['active']))
     {
         // No further code required. We'll just keep all forum
         // permissions set to FALSE here.
     }
     // Administrators always have permission.
-    elseif (!empty($user["admin"]))
+    elseif (!empty($user['user_id']) && !empty($user['admin']))
     {
-        if ($forum_id == PHORUM_ACCESS_ANYWHERE) return TRUE;
+        if ($forum_id == PHORUM_ACCESS_ANY) return TRUE;
 
         foreach ($forum_access as $id => $data) {
             $forum_access[$id] = TRUE;
@@ -2153,8 +2189,8 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 
             // Authenticated user with specific access rights.
             if (!empty($user['user_id']) &&
-                isset($user["permissions"][$id])) {
-                $perm = $user["permissions"][$id];
+                isset($user['permissions'][$id])) {
+                $perm = $user['permissions'][$id];
             }
             // User for which to use the forum permissions.
             else {
@@ -2173,7 +2209,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
             // Check if the user has the requested permission for the forum.
             if (!empty($perm) && ($perm & $permission) == $permission)
             {
-                if ($forum_id == PHORUM_ACCESS_ANYWHERE) {
+                if ($forum_id == PHORUM_ACCESS_ANY) {
                     return TRUE;
                 } else {
                     $forum_access[$id] = TRUE;
@@ -2182,7 +2218,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
         }
     }
 
-    if ($forum_id == PHORUM_ACCESS_ANYWHERE) return FALSE;
+    if ($forum_id == PHORUM_ACCESS_ANY) return FALSE;
 
     // Return the results.
     if ($single_forum_id !== NULL) {
@@ -2194,6 +2230,123 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
         $return = array();
         foreach ($forum_access as $id => $has_permission) {
             if ($has_permission) $return[$id] = $id;
+        }
+        return $return;
+    }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_check_group_access()
+/**
+ * @param integer $permission
+ *     The permission to check for. The available options are:
+ *     - {@link PHORUM_USER_ALLOW_GROUP}
+ *     - {@link PHORUM_USER_ALLOW_GROUP_MODERATE}
+ *
+ * @param mixed $group_id
+ *     Specifies the group(s) to look at. Available options are:
+ *     - The id of the group for which to check the access.
+ *     - An array of group_ids to check.
+ *     - {@link PHORUM_ACCESS_ANY} to check if the user has access rights
+ *       for any of the available groups.
+ *     - {@link PHORUM_ACCESS_LIST} to return a list of group_ids for which the
+ *       user has access rights.
+ *
+ * @param mixed $user
+ *     A user data array for the user for which to check access
+ *     rights or 0 (zero, the default) to use the active Phorum user.
+ *
+ * @return mixed
+ *     The return value depends on the $group_id argument that was used:
+ *     - Single group_id or {@link PHORUM_ACCESS_ANY}:
+ *       return either TRUE (access granted) or FALSE (access denied).
+ *     - An array of group_ids or {@link PHORUM_ACCESS_LIST}:
+ *       return an array, containing all group_ids for which permission was
+ *       granted. The keys in this array are group_ids and the values are
+ *       group permission values.
+ */
+function phorum_api_user_check_group_access($permission, $group_id = 0, $user = 0)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // Prepare the user to check the access for.
+    if (empty($user)) $user = $PHORUM['user'];
+
+    // Retrieve all the groups for the current user. Admins get all groups.
+    if (!empty($user['user_id']) && !empty($user['admin'])) {
+        $groups = phorum_db_get_groups();
+    } else {
+        $groups = phorum_db_user_get_groups($user['user_id']);
+    }
+
+    // Prepare the array of group_ids to check.
+    $group_access = array();
+    $single_group_id = NULL;
+    // An array of group ids.
+    if (is_array($group_id)) {
+        foreach ($group_id as $id) $group_access[$id] = FALSE;
+    // Retrieve a group access list or access-rights-in-any-group.
+    } elseif ($group_id == PHORUM_ACCESS_LIST ||
+              $group_id == PHORUM_ACCESS_ANY) {
+        foreach ($groups as $id => $data) $group_access[$id] = FALSE;
+    // A single group id.
+    } else {
+        $single_group_id = $group_id;
+        $group_access[$group_id] = FALSE;
+    }
+
+    // Inactive users have no permissions at all.
+    if (!empty($user['user_id']) && empty($user['active']))
+    {
+        // No further code required. We'll just keep all group
+        // permissions set to FALSE here.
+    }
+    // Administrators always have full permission.
+    elseif (!empty($user['user_id']) && !empty($user['admin']))
+    {
+        if ($group_id == PHORUM_ACCESS_ANY) return TRUE;
+
+        foreach ($group_access as $id => $data) {
+            $group_access[$id] = PHORUM_USER_GROUP_MODERATOR;
+        }
+    }
+    // For other users, we have to do a full permission lookup.
+    else
+    {
+        foreach ($group_access as $id => $data)
+        {
+            if (!isset($groups[$id])) continue;
+
+            // Group access is allowed for approved members and moderators.
+            if ($permission == PHORUM_USER_ALLOW_GROUP &&
+                ($groups[$id] == PHORUM_USER_GROUP_APPROVED ||
+                 $groups[$id] == PHORUM_USER_GROUP_MODERATOR)) {
+                $group_access[$id] = $groups[$id];
+                continue;
+            }
+
+            // Moderate access is allowed for group moderators.
+            if ($permission == PHORUM_USER_ALLOW_GROUP_MODERATE &&
+                $groups[$id] == PHORUM_USER_GROUP_MODERATOR) {
+                $group_access[$id] = $groups[$id];
+                continue;
+            }
+        }
+    }
+
+    if ($group_id == PHORUM_ACCESS_ANY) return FALSE;
+
+    // Return the results.
+    if ($single_group_id !== NULL) {
+        // Return either TRUE or FALSE.
+        return empty($group_access[$single_group_id]) ? FALSE : TRUE;
+    } else {
+        // Return an array of groups for which permission is granted.
+        // The keys are group_ids and the values the user's permissions
+        // for the groups.
+        $return = array();
+        foreach ($group_access as $id => $permission) {
+            if ($permission !== FALSE) $return[$id] = $permission;
         }
         return $return;
     }
@@ -2223,7 +2376,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
  */
 function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, $for_mail = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS['PHORUM'];
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
 

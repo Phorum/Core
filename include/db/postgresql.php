@@ -1668,7 +1668,7 @@ function phorum_db_get_groups($group_id=0)
 * @return array - users (key is userid, value is group membership status)
 */
 
-function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMOVE)
+function phorum_db_get_group_members($group_id, $status = -128)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     $conn = phorum_db_postgresql_connect();
@@ -1682,7 +1682,7 @@ function phorum_db_get_group_members($group_id, $status = PHORUM_USER_GROUP_REMO
     // this join is only here so that the list of users comes out sorted
     // if phorum_db_user_get() sorts results itself, this join can go away
     $sql="select {$PHORUM['user_group_xref_table']}.user_id, {$PHORUM['user_group_xref_table']}.status from {$PHORUM['user_table']}, {$PHORUM['user_group_xref_table']} where {$PHORUM['user_table']}.user_id = {$PHORUM['user_group_xref_table']}.user_id and group_id in ($group_id)";
-    if ($status != PHORUM_USER_GROUP_REMOVE) $sql.=" and {$PHORUM['user_group_xref_table']}.status = $status";
+    if ($status != -128) $sql.=" and {$PHORUM['user_group_xref_table']}.status = $status";
     $sql .=" order by username asc";
 
     $res = pg_query($conn, $sql);
