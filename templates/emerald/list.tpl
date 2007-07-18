@@ -75,7 +75,8 @@
         {/IF}
 
         {IF MESSAGES->moved}
-            <td colspan="2" width="30%" align="center" class="{altclass}" nowrap="nowrap">{LANG->MovedSubject}</td>
+            <td width="30%" class="{altclass}">&nbsp;</td>
+            <td width="30%" align="left" class="{altclass}" nowrap="nowrap">{LANG->MovedSubject}</td>
         {ELSE}
 
             <td width="12%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->thread_count}</td>
@@ -84,9 +85,9 @@
         {/IF}
 
         {IF MODERATOR true}
-            <td width="1%" class="{altclass}" nowrap="nowrap">
+            <td width="1%" align="right" class="{altclass}" nowrap="nowrap">
                 {IF MESSAGES->moved}
-                    &nbsp;
+                    <a title="{LANG->Delete}" href="javascript:if(window.confirm('{LANG->ConfirmDelete}')) window.location='{MESSAGES->URL->DELETE_THREAD}';"><img src="{URL->TEMPLATE}/images/delete.png" width="16" height="16" alt="{LANG->DeleteThread}" border="0" /></a>
                 {ELSE}
                     {IF MESSAGES->URL->MOVE}
                         <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->TEMPLATE}/images/page_go.png" width="16" height="16" alt="{LANG->MoveThread}" border="0" /></a>
