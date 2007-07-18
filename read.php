@@ -70,7 +70,7 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
         PHORUM_USER_ALLOW_MODERATE_MESSAGES,
         PHORUM_ACCESS_LIST
     );
-    $build_move_url = $modforums >= 2;
+    $build_move_url = count($modforums) >= 2;
 }
 
 // setup some stuff based on the url passed
