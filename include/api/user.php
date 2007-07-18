@@ -248,6 +248,10 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
 
 // }}}
 
+// ----------------------------------------------------------------------
+// Storing and retrieving user data.
+// ----------------------------------------------------------------------
+
 // {{{ Function: phorum_api_user_save()
 /**
  * Create or update Phorum users.
@@ -801,6 +805,321 @@ function phorum_api_user_get_setting($name)
     }
 }
 // }}}
+
+// {{{ Function: phorum_api_user_get_display_name()
+/**
+ * Retrieve the display name to use for one or more users.
+ *
+ * The name to use depends on the "display_name_source" setting. This
+ * one points to either the username or the real_name field of the
+ * user. If the display_name is requested for an unknown user, then
+ * a fallback name will be used.
+ *
+ * @param mixed $user_id
+ *     Either a single user_id, an array of user_ids or NULL to use the
+ *     user_id of the active Phorum user.
+ *
+ * @param mixed $fallback
+ *     The fallback display name to use in case the user is unknown or NULL
+ *     to use the "AnonymousUser" language string.
+ *
+ * @param mixed $flags
+ *     One of {@link PHORUM_FLAG_HTML} (the default) or
+ *     {@link PHORUM_FLAG_PLAINTEXT}. These determine what output format
+ *     is used for the display names.
+ *
+ * @return mixed
+ *     If the $user_id parameter was NULL or a single user_id, then this
+ *     function will return a single display name. If it was an array,
+ *     then this function will return an array of display names, indexed
+ *     by user_id.
+ */
+function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $flags = PHORUM_FLAG_HTML)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    if ($fallback === NULL) {
+        $fallback = $PHORUM['DATA']['LANG']['AnonymousUser'];
+    }
+
+    // Use the user_id for the active user.
+    if ($user_id === NULL) {
+        $user_id = $PHORUM['user']['user_id'];
+    }
+
+    // From here on, we need an array of user_ids to lookup.
+    $user_ids = is_array($user_id) ? $user_id : array((int)$user_id);
+
+    // Lookup the users.
+    $users = phorum_api_user_get($user_ids, FALSE);
+
+    // Determine the display names.
+    $display_names = array();
+    foreach ($user_ids as $id)
+    {
+        $display_name = empty($users[$id])
+                      ? $fallback
+                      : $users[$id]['display_name'];
+
+        // Generate HTML based display names.
+        if ($flags == PHORUM_FLAG_HTML)
+        {
+            // If the setting $PHORUM["custom_display_name"] is enabled,
+            // then Phorum expects that the display name is a HTML
+            // formatted display_name field, which is provided by
+            // 3rd party software. So those do not have to be HTML escaped.
+            // Other names do have to be escaped.
+            if (empty($users[$id]) || empty($PHORUM["custom_display_name"]))
+            {
+                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            }
+        }
+        // Generate a plain text version of the display name. This is the
+        // display name as it can be found in the database. Only for
+        // custom_display_name cases, we need to strip HTML code.
+        elseif ($flags == PHORUM_FLAG_PLAINTEXT)
+        {
+            // Strip tags from the name. These might be in the
+            // name if the custom_display_name feature is enabled.
+            // So for custom display names we strip the HTML from the 
+            // display name that we found above.
+            if (!empty($PHORUM["custom_display_name"]))
+            {
+                $display_name = trim(strip_tags($display_name));
+
+                // If the name was 100% HTML code (so empty after stripping),
+                // then fallback to the default display_name that Phorum
+                // would use without the custom display name feature.
+                if ($display_name == '') {
+                    if (empty($users[$id])) {
+                        $display_name = $fallback;
+                    } else {
+                        $display_name = $users[$id]['username'];
+                        if ($PHORUM['display_name_source'] == 'real_name' &&
+                            trim($users[$id]['real_name']) != '') {
+                            $display_name = $users[$id]['real_name'];
+                        }
+                    }
+                }
+            }
+        }
+
+        $display_names[$id] = $display_name;
+    }
+
+    if (is_array($user_id)) {
+        return $display_names;
+    } else {
+        return $display_names[$user_id];
+    }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_search()
+/**
+ * Search for users, based on simple search conditions, which act on
+ * fields in the user table.
+ *
+ * The parameters $field, $value and $operator (which are used for defining
+ * the search condition) can be arrays or single values. If arrays are used,
+ * then all three parameter arrays must contain the same number of elements
+ * and the key values in the arrays must be the same.
+ *
+ * @param mixed $field
+ *     The user table field / fields to search on.
+ *
+ * @param mixed $value
+ *     The value / values to search for.
+ *
+ * @param mixed $operator
+ *     The operator / operators to use. Valid operators are
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *     "*" operator is for executing a "LIKE" match query.
+ *
+ * @param boolean $return_array
+ *     If this parameter has a true value, then an array of all matching
+ *     user_ids will be returned. Else, a single user_id will be returned.
+ *
+ * @param string $type
+ *     The type of search to perform. This can be one of:
+ *     - AND  match against all fields
+ *     - OR   match against any of the fields
+ *
+ * @return mixed
+ *     An array of matching user_ids or a single user_id (based on the
+ *     $return_array parameter). If no user_ids can be found at all,
+ *     then 0 (zero) will be returned.
+ */
+function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND')
+{
+    return phorum_db_user_check_field($field, $value, $operator, $return_array, $type);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_search_display_name()
+/**
+ * Search user(s) for a given display name.
+ *
+ * @param string $name
+ *     The display name to search for.
+ *
+ * @param boolean $return_array
+ *     If TRUE, then the function will return all users that match
+ *     the display name. If FALSE, the function will try to find an
+ *     exact match for a single user.
+ *
+ * @return mixed
+ *     If the $return_array parameter has a true value, then an array
+ *     will be returned, containing the user_ids of all matching users.
+ *     Otherwise, either a user_id (exact user match found) or NULL
+ *     (no user found) is returned.
+ */
+function phorum_api_user_search_display_name($name, $return_array = FALSE)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    // Exact or partial match?
+    $oper = $return_array ? '*' : '=';
+
+    // Find users by the display name field.
+    $user_ids = phorum_api_user_search('display_name', $name, $oper, TRUE);
+
+    if ($return_array) {
+        return empty($user_ids) ? array() : $user_ids;
+    } elseif (!empty($user_ids) && count($user_ids) == 1) {
+        $user_id = array_shift($user_ids);
+        return $user_id;
+    } else {
+        return NULL;
+    }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_subscribe()
+/**
+ * Subscribe a user to a thread.
+ *
+ * Remark: Currently, there is no active support for subscribing to forums
+ * of for subscription type PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
+ *
+ * @param integer $user_id
+ *     The id of the user to create the subscription for.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe to.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the thread to subscribe to resides.
+ *
+ * @param integer $type
+ *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
+ *       Send a mail message for every new message.
+ *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
+ *       Make new messages visible from the followed threads interface.
+ *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
+ *       Periodically, send a mail message containing a list of new messages.
+ *
+ * @todo Do we really need the forum_id for subscribing to a thread in
+ *       phorum_api_user_subscribe()? We could as well only use the thread
+ *       and load the data for it from the db to find the forum_id. We can
+ *       keep forum_id in there, but IMO only for subscribing to a full forum
+ *       (not a core option).
+ */
+function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
+{
+    // Check if the user is allowed to read the forum.
+    if (! phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
+        return;
+    }
+
+    // Setup the subscription.
+    phorum_db_user_subscribe($user_id, $thread, $forum_id, $type);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_unsubscribe()
+/**
+ * Unsubscribe a user from a thread.
+ *
+ * @param integer $user_id
+ *     The id of the user to remove the subscription for.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe from.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the thread to unsubscribe from resides.
+ *     This parameter can be 0 (zero) to simply unsubscribe by thread id alone.
+ */
+function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
+{
+    // Remove the subscription.
+    phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_list()
+/**
+ * Retrieve a list of Phorum users.
+ *
+ * @param int $flags
+ *     One of:
+ *     - {@link PHORUM_GET_ALL}: retrieve a list of all users (the default)
+ *     - {@link PHORUM_GET_ACTIVE}: retrieve a list of all active users
+ *     - {@link PHORUM_GET_INACTIVE}: retrieve a list of all inactive users
+ *
+ * @return array
+ *     An array of users, indexed by user_id. Each element in the array
+ *     is an array, containing the fields "user_id", "username" and
+ *     "display_name".
+ */
+function phorum_api_user_list($type = PHORUM_GET_ALL)
+{
+    // Retrieve a list of users from the database.
+    $list = phorum_db_user_get_list($type);
+
+    /**
+     * [hook]
+     *     user_list
+     *
+     * [description]
+     *
+     *     This hook can be used for reformatting the list of users that
+     *     is returned by the phorum_api_user_list() function. Reformatting
+     *     could mean things like changing the sort order or modifying the
+     *     fields in the user arrays.
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Each time the phorum_api_user_list() function is called. The core
+     *     Phorum code calls the function for creating user drop down lists
+     *     (if those are enabled in the Phorum general settings) for the
+     *     group moderation interface in the control center and for sending
+     *     private messages.
+     *
+     * [input]
+     *     An array of user info arrays. Each user info array contains the
+     *     fields "user_id", "username" and "display_name". The hook function
+     *     is allowed to update the "username" and "display_name" fields.
+     *
+     * [output]
+     *     The same array as was used for the hook call argument,
+     *     possibly with some updated fields in it.
+     */
+    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"])) {
+        $list = phorum_hook("user_list", $list);
+    }
+
+    return $list;
+}
+// }}}
+
+// ----------------------------------------------------------------------
+// Authentication and session management.
+// ----------------------------------------------------------------------
 
 // {{{ Function: phorum_api_user_authenticate()
 /**
@@ -1732,316 +2051,9 @@ function phorum_api_user_session_destroy($type)
 }
 // }}}
 
-// {{{ Function: phorum_api_user_list()
-/**
- * Retrieve a list of Phorum users.
- *
- * @param int $flags
- *     One of:
- *     - {@link PHORUM_GET_ALL}: retrieve a list of all users (the default)
- *     - {@link PHORUM_GET_ACTIVE}: retrieve a list of all active users
- *     - {@link PHORUM_GET_INACTIVE}: retrieve a list of all inactive users
- *
- * @return array
- *     An array of users, indexed by user_id. Each element in the array
- *     is an array, containing the fields "user_id", "username" and
- *     "display_name".
- */
-function phorum_api_user_list($type = PHORUM_GET_ALL)
-{
-    // Retrieve a list of users from the database.
-    $list = phorum_db_user_get_list($type);
-
-    /**
-     * [hook]
-     *     user_list
-     *
-     * [description]
-     *
-     *     This hook can be used for reformatting the list of users that
-     *     is returned by the phorum_api_user_list() function. Reformatting
-     *     could mean things like changing the sort order or modifying the
-     *     fields in the user arrays.
-     *
-     * [category]
-     *     User data handling
-     *
-     * [when]
-     *     Each time the phorum_api_user_list() function is called. The core
-     *     Phorum code calls the function for creating user drop down lists
-     *     (if those are enabled in the Phorum general settings) for the
-     *     group moderation interface in the control center and for sending
-     *     private messages.
-     *
-     * [input]
-     *     An array of user info arrays. Each user info array contains the
-     *     fields "user_id", "username" and "display_name". The hook function
-     *     is allowed to update the "username" and "display_name" fields.
-     *
-     * [output]
-     *     The same array as was used for the hook call argument,
-     *     possibly with some updated fields in it.
-     */
-    if (isset($GLOBALS["PHORUM"]["hooks"]["user_list"])) {
-        $list = phorum_hook("user_list", $list);
-    }
-
-    return $list;
-}
-// }}}
-
-// {{{ Function: phorum_api_user_search()
-/**
- * Search for users, based on simple search conditions, which act on
- * fields in the user table.
- *
- * The parameters $field, $value and $operator (which are used for defining
- * the search condition) can be arrays or single values. If arrays are used,
- * then all three parameter arrays must contain the same number of elements
- * and the key values in the arrays must be the same.
- *
- * @param mixed $field
- *     The user table field / fields to search on.
- *
- * @param mixed $value
- *     The value / values to search for.
- *
- * @param mixed $operator
- *     The operator / operators to use. Valid operators are
- *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *     "*" operator is for executing a "LIKE" match query.
- *
- * @param boolean $return_array
- *     If this parameter has a true value, then an array of all matching
- *     user_ids will be returned. Else, a single user_id will be returned.
- *
- * @param string $type
- *     The type of search to perform. This can be one of:
- *     - AND  match against all fields
- *     - OR   match against any of the fields
- *
- * @return mixed
- *     An array of matching user_ids or a single user_id (based on the
- *     $return_array parameter). If no user_ids can be found at all,
- *     then 0 (zero) will be returned.
- */
-function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND')
-{
-    return phorum_db_user_check_field($field, $value, $operator, $return_array, $type);
-}
-// }}}
-
-// {{{ Function: phorum_api_user_get_display_name()
-/**
- * Retrieve the display name to use for one or more users.
- *
- * The name to use depends on the "display_name_source" setting. This
- * one points to either the username or the real_name field of the
- * user. If the display_name is requested for an unknown user, then
- * a fallback name will be used.
- *
- * @param mixed $user_id
- *     Either a single user_id, an array of user_ids or NULL to use the
- *     user_id of the active Phorum user.
- *
- * @param mixed $fallback
- *     The fallback display name to use in case the user is unknown or NULL
- *     to use the "AnonymousUser" language string.
- *
- * @param mixed $flags
- *     One of {@link PHORUM_FLAG_HTML} (the default) or
- *     {@link PHORUM_FLAG_PLAINTEXT}. These determine what output format
- *     is used for the display names.
- *
- * @return mixed
- *     If the $user_id parameter was NULL or a single user_id, then this
- *     function will return a single display name. If it was an array,
- *     then this function will return an array of display names, indexed
- *     by user_id.
- */
-function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $flags = PHORUM_FLAG_HTML)
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    if ($fallback === NULL) {
-        $fallback = $PHORUM['DATA']['LANG']['AnonymousUser'];
-    }
-
-    // Use the user_id for the active user.
-    if ($user_id === NULL) {
-        $user_id = $PHORUM['user']['user_id'];
-    }
-
-    // From here on, we need an array of user_ids to lookup.
-    $user_ids = is_array($user_id) ? $user_id : array((int)$user_id);
-
-    // Lookup the users.
-    $users = phorum_api_user_get($user_ids, FALSE);
-
-    // Determine the display names.
-    $display_names = array();
-    foreach ($user_ids as $id)
-    {
-        $display_name = empty($users[$id])
-                      ? $fallback
-                      : $users[$id]['display_name'];
-
-        // Generate HTML based display names.
-        if ($flags == PHORUM_FLAG_HTML)
-        {
-            // If the setting $PHORUM["custom_display_name"] is enabled,
-            // then Phorum expects that the display name is a HTML
-            // formatted display_name field, which is provided by
-            // 3rd party software. So those do not have to be HTML escaped.
-            // Other names do have to be escaped.
-            if (empty($users[$id]) || empty($PHORUM["custom_display_name"]))
-            {
-                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-            }
-        }
-        // Generate a plain text version of the display name. This is the
-        // display name as it can be found in the database. Only for
-        // custom_display_name cases, we need to strip HTML code.
-        elseif ($flags == PHORUM_FLAG_PLAINTEXT)
-        {
-            // Strip tags from the name. These might be in the
-            // name if the custom_display_name feature is enabled.
-            // So for custom display names we strip the HTML from the 
-            // display name that we found above.
-            if (!empty($PHORUM["custom_display_name"]))
-            {
-                $display_name = trim(strip_tags($display_name));
-
-                // If the name was 100% HTML code (so empty after stripping),
-                // then fallback to the default display_name that Phorum
-                // would use without the custom display name feature.
-                if ($display_name == '') {
-                    if (empty($users[$id])) {
-                        $display_name = $fallback;
-                    } else {
-                        $display_name = $users[$id]['username'];
-                        if ($PHORUM['display_name_source'] == 'real_name' &&
-                            trim($users[$id]['real_name']) != '') {
-                            $display_name = $users[$id]['real_name'];
-                        }
-                    }
-                }
-            }
-        }
-
-        $display_names[$id] = $display_name;
-    }
-
-    if (is_array($user_id)) {
-        return $display_names;
-    } else {
-        return $display_names[$user_id];
-    }
-}
-// }}}
-
-// {{{ Function: phorum_api_user_search_display_name()
-/**
- * Search user(s) for a given display name.
- *
- * @param string $name
- *     The display name to search for.
- *
- * @param boolean $return_array
- *     If TRUE, then the function will return all users that match
- *     the display name. If FALSE, the function will try to find an
- *     exact match for a single user.
- *
- * @return mixed
- *     If the $return_array parameter has a true value, then an array
- *     will be returned, containing the user_ids of all matching users.
- *     Otherwise, either a user_id (exact user match found) or NULL
- *     (no user found) is returned.
- */
-function phorum_api_user_search_display_name($name, $return_array = FALSE)
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    // Exact or partial match?
-    $oper = $return_array ? '*' : '=';
-
-    // Find users by the display name field.
-    $user_ids = phorum_api_user_search('display_name', $name, $oper, TRUE);
-
-    if ($return_array) {
-        return empty($user_ids) ? array() : $user_ids;
-    } elseif (!empty($user_ids) && count($user_ids) == 1) {
-        $user_id = array_shift($user_ids);
-        return $user_id;
-    } else {
-        return NULL;
-    }
-}
-// }}}
-
-// {{{ Function: phorum_api_user_subscribe()
-/**
- * Subscribe a user to a thread.
- *
- * Remark: Currently, there is no active support for subscribing to forums
- * of for subscription type PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
- *
- * @param integer $user_id
- *     The id of the user to create the subscription for.
- *
- * @param integer $thread
- *     The id of the thread to describe to.
- *
- * @param integer $forum_id
- *     The id of the forum in which the thread to subscribe to resides.
- *
- * @param integer $type
- *     The type of subscription. Available types are:
- *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
- *       Send a mail message for every new message.
- *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
- *       Make new messages visible from the followed threads interface.
- *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
- *       Periodically, send a mail message containing a list of new messages.
- *
- * @todo Do we really need the forum_id for subscribing to a thread in
- *       phorum_api_user_subscribe()? We could as well only use the thread
- *       and load the data for it from the db to find the forum_id. We can
- *       keep forum_id in there, but IMO only for subscribing to a full forum
- *       (not a core option).
- */
-function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
-{
-    // Check if the user is allowed to read the forum.
-    if (! phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
-        return;
-    }
-
-    // Setup the subscription.
-    phorum_db_user_subscribe($user_id, $thread, $forum_id, $type);
-}
-// }}}
-
-// {{{ Function: phorum_api_user_unsubscribe()
-/**
- * Unsubscribe a user from a thread.
- *
- * @param integer $user_id
- *     The id of the user to remove the subscription for.
- *
- * @param integer $thread
- *     The id of the thread to describe from.
- *
- * @param integer $forum_id
- *     The id of the forum in which the thread to unsubscribe from resides.
- *     This parameter can be 0 (zero) to simply unsubscribe by thread id alone.
- */
-function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
-{
-    // Remove the subscription.
-    phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
-}
-// }}}
+// ----------------------------------------------------------------------
+// Authorization management.
+// ----------------------------------------------------------------------
 
 // {{{ Function: phorum_api_user_check_access()
 /**
