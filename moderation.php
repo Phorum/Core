@@ -259,6 +259,13 @@ switch ($mod_step) {
             }
             if (isset($PHORUM["hooks"]["move_thread"]))
                 phorum_hook("move_thread", $msgthd_id);
+
+            foreach ($message['meta']['message_ids'] as $message_id) {
+                $invalidate_message_cache[] = array(
+                    "message_id" => $message_id,
+                    "forum_id"   => $message['forum_id']
+                );
+            }
         }
         break;
 
