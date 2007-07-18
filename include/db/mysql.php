@@ -853,7 +853,7 @@ function phorum_db_get_message_index($thread=0,$message_id=0) {
     $PHORUM = $GLOBALS["PHORUM"];
 
     // check for valid values
-    if(empty($message_id) || empty($message_id)) {
+    if(empty($thread) || empty($message_id)) {
         return 0;
     }
 
