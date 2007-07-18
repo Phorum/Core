@@ -23,6 +23,8 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
    return;
 }
 
+$noprompt = (isset($argv[1]) && $argv[1] == '-a');
+
 define("phorum_page", "console_upgrade");
 define("PHORUM_ADMIN", 1);
 
@@ -71,8 +73,10 @@ foreach ($upgrades as $upgrade)
 {
     $index++;
 
-    echo "Press ENTER to run upgrade $index of $total or CTRL+C to stop > ";
-    fgets(STDIN);
+    if (!$noprompt) {
+        echo "Press ENTER to run upgrade $index of $total or CTRL+C to stop > ";
+        fgets(STDIN);
+    }
 
     // Run the upgrade.
     $message = phorum_dbupgrade_run($upgrade);
