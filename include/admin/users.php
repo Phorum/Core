@@ -103,7 +103,7 @@
                     if(isset($_POST["group_perm"])){
                         foreach($_POST["group_perm"] as $group_id=>$perm){
                             // as long as we aren't removing them from the group, accept other values
-                            if ($perm != PHORUM_USER_GROUP_REMOVE){
+                            if ($perm != "remove"){
                                 $groupdata[$group_id] = $perm;
                             }
                         }
@@ -111,6 +111,9 @@
                     }
 
                     phorum_user_save_groups($_POST["user_id"], $groupdata);
+
+                    unset($user_data["new_group"]);
+
                     break;
             }
 
@@ -480,7 +483,8 @@ EOT;
                 $frm->addrow("Add A Group", $frm->select_tag("new_group", $arr));
 
             if(is_array($usergroups)){
-                $group_options = array(PHORUM_USER_GROUP_REMOVE => "< Remove User From Group >",
+                $group_options = array(
+                        "remove" => "< Remove User From Group >",
                         PHORUM_USER_GROUP_SUSPENDED => "Suspended",
                         PHORUM_USER_GROUP_UNAPPROVED => "Unapproved",
                         PHORUM_USER_GROUP_APPROVED => "Approved",
