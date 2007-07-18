@@ -3786,8 +3786,7 @@ function phorum_db_get_message_file_list($message_id)
          FROM   {$PHORUM['files_table']}
          WHERE  message_id = $message_id AND
                 link       = '".PHORUM_LINK_MESSAGE."'",
-        'file_id',
-        DB_GLOBALQUERY
+        'file_id'
     );
 
     return $files;
@@ -5947,8 +5946,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
          WHERE  message.thread  = thread.message_id AND
                 ($where)
          ORDER BY message_id ASC",
-        'message_id',
-        DB_GLOBALQUERY
+        'message_id'
     );
 
     return $messages;
