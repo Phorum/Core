@@ -46,7 +46,7 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
         exit(1);
     }
 } else {
-    fprintf(STDERR, 
+    fprintf(STDERR,
         "Unable to find Phorum file \"common.php\".\n" .
         "Please check the \$PHORUM_DIRECTORY in " . basename(__FILE__) ."\n");
     exit(1);
@@ -76,6 +76,8 @@ foreach ($upgrades as $upgrade)
     if (!$noprompt) {
         echo "Press ENTER to run upgrade $index of $total or CTRL+C to stop > ";
         fgets(STDIN);
+    } else {
+        echo "Running upgrade $index of $total > ";
     }
 
     // Run the upgrade.
