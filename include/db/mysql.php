@@ -168,6 +168,7 @@ define('DB_DUPFIELDNAMEOK',  4);
 define('DB_DUPKEYNAMEOK',    8);
 define('DB_DUPKEYOK',       16);
 define('DB_TABLEEXISTSOK',  32);
+define('DB_GLOBALQUERY',    64);
 
 // }}}
 
@@ -290,7 +291,7 @@ function phorum_db_run_queries($queries)
         $error = phorum_db_interact(
             DB_RETURN_ERROR,
             $sql, NULL,
-            DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK | DB_TABLEEXISTSOK
+            DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK | DB_TABLEEXISTSOK | DB_GLOBALQUERY
         );
 
         if ($error !== NULL) break;
@@ -3369,7 +3370,9 @@ function phorum_db_user_display_name_updates($userdata)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
          SET    author = '$author'
-         WHERE  user_id = $user_id"
+         WHERE  user_id = $user_id",
+        NULL,
+        DB_GLOBALQUERY
     );
 
     // Update recent forum reply authors.
@@ -3377,7 +3380,9 @@ function phorum_db_user_display_name_updates($userdata)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
          SET    recent_author = '$author'
-         WHERE  recent_user_id = $user_id"
+         WHERE  recent_user_id = $user_id",
+        NULL,
+        DB_GLOBALQUERY
     );
 
     // Update PM author data.
@@ -3653,7 +3658,9 @@ function phorum_db_user_delete($user_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM $table
-             WHERE user_id = $user_id"
+             WHERE user_id = $user_id",
+            NULL,
+            DB_GLOBALQUERY
         );
     }
 
@@ -3714,7 +3721,9 @@ function phorum_db_user_delete($user_id)
          SET    user_id = 0,
                 email   = '',
                 author  = $author
-         WHERE  user_id = $user_id"
+         WHERE  user_id = $user_id",
+        NULL,
+        DB_GLOBALQUERY
     );
 
     return TRUE;
@@ -3777,7 +3786,8 @@ function phorum_db_get_message_file_list($message_id)
          FROM   {$PHORUM['files_table']}
          WHERE  message_id = $message_id AND
                 link       = '".PHORUM_LINK_MESSAGE."'",
-        'file_id'
+        'file_id',
+        DB_GLOBALQUERY
     );
 
     return $files;
@@ -4031,7 +4041,9 @@ function phorum_db_file_purge_stale_files($live_run = FALSE)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['files_table']}
-             WHERE  $orphin_editor_where"
+             WHERE  $orphin_editor_where",
+            NULL,
+            DB_GLOBALQUERY
         );
 
         return TRUE;
@@ -4049,7 +4061,9 @@ function phorum_db_file_purge_stale_files($live_run = FALSE)
                     add_datetime,
                     'Orphin editor file' AS reason
              FROM   {$PHORUM['files_table']}
-             WHERE  $orphin_editor_where"
+             WHERE  $orphin_editor_where",
+            NULL,
+            DB_GLOBALQUERY
         );
 
         return $purge_files;
@@ -5604,7 +5618,9 @@ function phorum_db_rebuild_search_data()
     // Delete all records from the search table.
     phorum_db_interact(
         DB_RETURN_RES,
-        "TRUNCATE TABLE {$PHORUM['search_table']}"
+        "TRUNCATE TABLE {$PHORUM['search_table']}",
+        NULL,
+        DB_GLOBALQUERY
     );
 
     // Rebuild all search data from scratch.
@@ -5615,7 +5631,9 @@ function phorum_db_rebuild_search_data()
          SELECT message_id,
                 concat(author, ' | ', subject, ' | ', body),
                 forum_id
-         FROM   {$PHORUM['message_table']}"
+         FROM   {$PHORUM['message_table']}",
+         NULL,
+         DB_GLOBALQUERY
     );
 }
 
@@ -5630,7 +5648,9 @@ function phorum_db_rebuild_user_posts()
     phorum_db_interact(
         DB_RETURN_RES,
         "UPDATE {$PHORUM['user_table']}
-         SET posts = 0"
+         SET posts = 0",
+         NULL,
+         DB_GLOBALQUERY
     );
 
     // Retrieve the post counts for all user_ids in the message table.
@@ -5638,7 +5658,9 @@ function phorum_db_rebuild_user_posts()
         DB_RETURN_ROWS,
         "SELECT user_id, count(*)
          FROM   {$PHORUM['message_table']}
-         GROUP  BY user_id"
+         GROUP  BY user_id",
+         NULL,
+         DB_GLOBALQUERY
     );
 
     // Set the post counts for the users to their correct values.
@@ -5925,7 +5947,8 @@ function phorum_db_metaquery_messagesearch($metaquery)
          WHERE  message.thread  = thread.message_id AND
                 ($where)
          ORDER BY message_id ASC",
-        'message_id'
+        'message_id',
+        DB_GLOBALQUERY
     );
 
     return $messages;
