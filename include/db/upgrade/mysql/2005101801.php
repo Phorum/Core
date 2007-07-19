@@ -1,10 +1,5 @@
 <?php
 if(!defined("PHORUM_ADMIN")) return;
 
-// Refresh all forum statistics for making bringing thread_count up to date.
-$forums = phorum_db_get_forums();
-foreach ($forums as $forum) {
-    $GLOBALS["PHORUM"]["forum_id"] = $forum["forum_id"];
-    phorum_db_update_forum_stats(true);
-}
+/* keep it empty here for sanity - its content is now in 2007071900 */
 ?>
