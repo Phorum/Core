@@ -5,7 +5,7 @@ all:
 	       -f $(FILES) \
 	       -t docs/html/api \
 	       -ti "Phorum API Documentation" \
-	       -o HTML:frames:DOM/earthli -dn PhorumAPI)
+	       -o HTML:frames:phphtmllib -dn PhorumAPI)
 	cp index.html.custom index.html
 
 clean:

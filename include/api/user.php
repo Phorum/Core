@@ -1,5 +1,6 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
+
 //                                                                            //
 //   Copyright (C) 2007  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
@@ -89,10 +90,10 @@ define('PHORUM_FLAG_SESSION_ST',       1);
 
 /**
  * Function call flag, which tells {@link phorum_api_user_save()} that the
- * password field should be stored as is. This can be used to feed Phorum
- * MD5 encrypted passwords. Normally, the password field would be MD5
- * encrypted by the function. This will keep the phorum_api_user_save()
- * function from double encrypting the password.
+ * password field should be stored as is.
+ * This can be used to feed Phorum MD5 encrypted passwords. Normally,
+ * the password field would be MD5 encrypted by the function. This will
+ * keep the phorum_api_user_save() function from double encrypting the password.
  */
 define('PHORUM_FLAG_RAW_PASSWORD',     1);
 
@@ -146,14 +147,14 @@ define('PHORUM_GET_INACTIVE',          2);
 
 /**
  * Function call parameter, which tells {@link phorum_api_user_check_access()}
- * and {@link phorum_api_user_check_groupmod_access()} to return an array
+ * and {@link phorum_api_user_check_group_access()} to return an array
  * of respectively forums or groups for which a user is granted access.
  */
 define('PHORUM_ACCESS_LIST', -1);
 
 /**
  * Function call parameter, which tells {@link phorum_api_user_check_access()}
- * and {@link phorum_api_user_check_groupmod_access()} to check if the user
+ * and {@link phorum_api_user_check_group_access()} to check if the user
  * is granted access for respectively any forum or group.
  */
 define('PHORUM_ACCESS_ANY', -2);
@@ -2277,7 +2278,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
  *       the group status for the user, i.e. one of the PHORUM_USER_GROUP_*
  *       constants).
  */
-function phorum_api_user_check_group_access($permission, $group_id = 0, $user = 0)
+function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 

@@ -5,7 +5,7 @@ all:
 	       -f $(FILES) \
 	       -t docs/html/db \
 	       -ti "Phorum DB Layer Documentation" \
-	       -o HTML:frames:DOM/earthli -dn PhorumDBLayer)
+	       -o HTML:frames:phphtmllib -dn PhorumDBLayer)
 	cp index.html.custom index.html
 
 clean:

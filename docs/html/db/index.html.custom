@@ -9,7 +9,7 @@
   <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
 </head>
 
-	<FRAMESET cols='30%,*'>
+	<FRAMESET cols='325,*'>
 		<FRAME src='li_PhorumDBLayer.html' name='left_bottom' frameborder="1" bordercolor="#999999">
 		<FRAME src='blank.html' name='right' frameborder="1" bordercolor="#999999">
 	</FRAMESET>
