@@ -2112,13 +2112,15 @@ function phorum_api_user_session_destroy($type)
  *     - A single user_id.
  *
  * @return mixed
- *     If a single forum_id, 0 (zero) or {@link PHORUM_ACCESS_ANY}
- *     was used as the $forum_id argument, then this function will return
- *     either TRUE (access granted) or FALSE. If an array of forum_ids or
- *     {@link PHORUM_ACCESS_LIST} was used as the $forum_id argument,
- *     then an array will be returned, containing all forum_ids for which
- *     permission was granted (both keys and values are forum_ids in this
- *     array).
+ *     The return value depends on the $forum_id argument that was used:
+ *
+ *     - Single forum_id , 0 (zero) or {@link PHORUM_ACCESS_ANY}:
+ *       return either TRUE (access granted) or FALSE (access denied).
+ *
+ *     - An array of forum_ids or {@link PHORUM_ACCESS_LIST}:
+ *       return an array, containing all forum_ids for which
+ *       permission was granted (both keys and values are forum_ids
+ *       in this array).
  */
 function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 {
