@@ -215,7 +215,7 @@ phorum_db_update_settings(array("conversion_offsets"=>$offsets));
 if($CONVERT['do_groups'] && count($CONVERT['groups'])) { // here we set the group-permissions
     echo "Writing group-permissions ... {$CONVERT['lbr']}";
     foreach($CONVERT['groups'] as $groupid => $groupdata) {
-        phorum_db_save_group($groupdata);
+        phorum_db_update_group($groupdata);
     }
 }
 
