@@ -49,7 +49,7 @@ Some Icons courtesy of:
 {LANG->Welcome}, {USER->username} <small>(<a href="{URL->LOGINOUT}">{LANG->LogOut}</a>)</small>
 <a class="icon icon-user-edit" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>
 {IF USER->new_private_messages}
-<strong><a class="icon icon-user-comment" href="{URL->PM}">{LANG->NewPrivateMessages}</a></strong>
+<a class="icon icon-user-comment" href="{URL->PM}"><strong>{LANG->NewPrivateMessages}</strong></a>
 {ELSE}
 <a class="icon icon-user-comment" href="{URL->PM}">{LANG->PrivateMessages}</a>
 {/IF}
