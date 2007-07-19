@@ -31,60 +31,6 @@ if ( !defined( "PHORUM" ) ) return;
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
 /**
- * phorum_user_get_moderator_groups()
- *
- * This function will return a list of the groups the current user
- * is allowed to moderate. For admins, this will return all the groups.
- *
- * The array is of the form array[group_id] = groupname.
- * @return array
- */
-function phorum_user_get_moderator_groups()
-{
-    $PHORUM=$GLOBALS["PHORUM"];
-    $groups = array();
-
-    // if its an admin, return all groups as a moderator
-    if ($PHORUM["user"]["admin"]){
-        $fullgrouplist = phorum_db_get_groups();
-        // the permission here is for a forum, we don't care about that
-        foreach ($fullgrouplist as $groupid => $groupperm){
-            $groups[$groupid] = $fullgrouplist[$groupid]["name"];
-        }
-    } else {
-        $grouplist = phorum_user_get_groups($PHORUM["user"]["user_id"]);
-
-        if(count($grouplist)) {
-            $fullgrouplist = phorum_db_get_groups(array_keys($grouplist));
-
-            foreach ($grouplist as $groupid => $perm){
-                if ($perm == PHORUM_USER_GROUP_MODERATOR){
-                    $groups[$groupid] = $fullgrouplist[$groupid]["name"];
-                }
-            }
-        }
-    }
-    return $groups;
-}
-
-/**
- * phorum_user_get_groups()
- *
- * This function will return a list of groups the user
- * is a member of, as well as the users permissions.
- *
- * The returned list has the group id as the key, and
- * the permission as the value. Permissions are the
- * PHORUM_USER_GROUP constants.
- * @param int - the users user_id
- * @return array
- */
-function phorum_user_get_groups($user_id)
-{
-    return phorum_db_user_get_groups($user_id);
-}
-
-/**
  * phorum_user_save_groups()
  *
  * This function saves a users group permissions. The data

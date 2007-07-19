@@ -20,21 +20,31 @@
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 // if we have a request to join a group, try and do it
-if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0){
+if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0)
+{
     // get the group, and the group list of the user trying to join
+    $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
+    // Turn the array into a group_id => permission array.
+    // API TODO: would be nice if save groups would not need this.
+    foreach ($usergroups as $id => $group) {
+        $usergroups[$id] = $group['user_status'];
+    }
+
+    // Get all available groups.
     $group = phorum_db_get_groups($_POST["joingroup"]);
-    $usergroup = phorum_user_get_groups($PHORUM["user"]["user_id"]);
-    
-    // the user can't already be a member of the group, and the group must allow join requests
-    if (!isset($usergroup[$_POST["joingroup"]])){
+
+    // The user can't already be a member of the group,
+    // and the group must allow join requests.
+    if (!isset($usergroups[$_POST["joingroup"]]))
+    {
         if ($group[$_POST["joingroup"]]["open"] == PHORUM_GROUP_OPEN){
-            $usergroup[$_POST["joingroup"]] = PHORUM_USER_GROUP_APPROVED;
-            phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroup);
+            $usergroups[$_POST["joingroup"]] = PHORUM_USER_GROUP_APPROVED;
+            phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroups);
             $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['GroupJoinSuccess'];
         }
         elseif ($group[$_POST["joingroup"]]["open"] == PHORUM_GROUP_REQUIRE_APPROVAL){
-            $usergroup[$_POST["joingroup"]] = PHORUM_USER_GROUP_UNAPPROVED;
-            phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroup);
+            $usergroups[$_POST["joingroup"]] = PHORUM_USER_GROUP_UNAPPROVED;
+            phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroups);
             $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['GroupJoinSuccessModerated'];
         }
         else
@@ -60,30 +70,29 @@ function phorum_readable_groups()
 {
     $PHORUM=$GLOBALS['PHORUM'];
     $readablegroups = array();
-    $groups = phorum_user_get_groups($PHORUM["user"]["user_id"]);
-   // print_r(array_keys($groups));
-   // print_r(array_values($groups));
-    foreach($groups as $groupid => $perm){
-        $group = phorum_db_get_groups($groupid);
-        switch ($perm){
+
+    $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
+
+    foreach($groups as $groupid => $group){
+        switch ($group['user_status']){
             case PHORUM_USER_GROUP_SUSPENDED:
-                $readablegroups[] = array('groupname' => $group[$groupid]["name"], 'perm' => $PHORUM['DATA']['LANG']['Suspended']);
+                $readablegroups[] = array('groupname' => $group["name"], 'perm' => $PHORUM['DATA']['LANG']['Suspended']);
                 break;
             case PHORUM_USER_GROUP_UNAPPROVED:
-                $readablegroups[] = array('groupname' => $group[$groupid]["name"], 'perm' => $PHORUM['DATA']['LANG']['Unapproved']);
+                $readablegroups[] = array('groupname' => $group["name"], 'perm' => $PHORUM['DATA']['LANG']['Unapproved']);
                 break;
 
             case PHORUM_USER_GROUP_APPROVED:
-                $readablegroups[] = array('groupname' => $group[$groupid]["name"], 'perm' => $PHORUM['DATA']['LANG']['Approved']);
+                $readablegroups[] = array('groupname' => $group["name"], 'perm' => $PHORUM['DATA']['LANG']['Approved']);
                 break;
 
             case PHORUM_USER_GROUP_MODERATOR:
-                $readablegroups[] = array('groupname' => $group[$groupid]["name"], 'perm' => $PHORUM['DATA']['LANG']['PermGroupModerator']);
+                $readablegroups[] = array('groupname' => $group["name"], 'perm' => $PHORUM['DATA']['LANG']['PermGroupModerator']);
                 break;
 
               // something weird happened
             default:
-                $readablegroups[] = array('groupname' => $group[$groupid]["name"], 'perm' => '?');
+                $readablegroups[] = array('groupname' => $group["name"], 'perm' => '?');
                 break;
         }
     }
@@ -95,7 +104,7 @@ function phorum_joinable_groups()
     $PHORUM = $GLOBALS["PHORUM"];
     $joinablegroups = array();
     $groups = phorum_db_get_groups();
-    $memberof = phorum_user_get_groups($PHORUM["user"]["user_id"]);
+    $memberof = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
     foreach ($groups as $group){
         if (!isset($memberof[$group["group_id"]])){
             if ($group["open"] == PHORUM_GROUP_OPEN){

@@ -471,7 +471,7 @@ EOT;
             }
 
             $groups= phorum_db_get_groups();
-            $usergroups = phorum_user_get_groups($_REQUEST["user_id"]);
+            $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $_REQUEST["user_id"]);
 
             $arr=array("Add A Group...");
             foreach($groups as $group_id=>$group){
@@ -489,7 +489,8 @@ EOT;
                         PHORUM_USER_GROUP_UNAPPROVED => "Unapproved",
                         PHORUM_USER_GROUP_APPROVED => "Approved",
                         PHORUM_USER_GROUP_MODERATOR => "Group Moderator");
-                foreach($usergroups as $group_id => $group_perm){
+                foreach($usergroups as $group_id => $group){
+                    $group_perm = $group['user_status'];
                     $group_info = phorum_db_get_groups($group_id);
                     $frm->hidden("groups[$group_id]", "$group_id");
                     $frm->addrow($group_info[$group_id]["name"], $frm->select_tag("group_perm[$group_id]", $group_options, $group_perm, $extra_opts));

@@ -39,13 +39,13 @@ if(isset($PHORUM['args']['filter'])){
     $filter = "";
 }
 
-
-
-// TODO: Hmm.. I'm not fully understanding this code. Have to look
-// TODO: at the reason for this else some day (mmakaay).
-if (!empty($group_id)){
-    $perm = phorum_api_user_check_group_access(PHORUM_USER_ALLOW_GROUP_MODERATE, $group_id);
+// If a specific group is requested, check if the user has moderation
+// access for that group.
+if (!empty($group_id)) {
+    $perm = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, $group_id);
 }
+// Otherwise, we are just interested if the user is a group moderator or not.
+// The GROUP_MODERATOR variable is set from control.php.
 else{
     $perm = $PHORUM["DATA"]["GROUP_MODERATOR"];
 }
@@ -69,7 +69,12 @@ if (!empty($group_id)){
 
         if ($userid) {
             // load the users groups, add the new group, then save again
-            $groups = phorum_user_get_groups($userid);
+            $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $userid);
+            // Turn the array into a group_id => permission array.
+            // API TODO: would be nice if save groups would not need this.
+            foreach ($groups as $id => $group) {
+                $groups[$id] = $group['user_status'];
+            }
             // make sure the user isn't already a member of the group
             if (!isset($groups[$group_id])){
                 $groups[$group_id] = PHORUM_USER_GROUP_APPROVED;
@@ -84,8 +89,13 @@ if (!empty($group_id)){
     // if changing the existing members of the group
     if (isset($_REQUEST["status"])){
         foreach ($_REQUEST["status"] as $userid => $status){
-            // load the users groups, make the change, then save again
-            $groups = phorum_user_get_groups($userid);
+            // load the user's groups, make the change, then save again
+            $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $userid);
+            // Turn the array into a group_id => permission array.
+            // API TODO: would be nice if save groups would not need this.
+            foreach ($groups as $id => $group) {
+                $groups[$id] = $group['user_status'];
+            }
             // we can't set someone to be a moderator from here
             if ($status != PHORUM_USER_GROUP_MODERATOR){
                 $groups[$group_id] = $status;
@@ -187,20 +197,24 @@ if (!empty($group_id)){
 // if they aren't doing anything, show them a list of groups they can moderate
 else{
     $PHORUM["DATA"]["GROUPS"] = array();
-    $groups = phorum_user_get_moderator_groups();
+    $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
+    // Turn the groups into a group id => group name mapping.
+    foreach ($groups as $id => $group) $groups[$id] = $group['name'];
+
     // put these things in order so the user can read them
     asort($groups);
     foreach ($groups as $groupid => $groupname){
         // get the group members who are unapproved, so we can count them
         $members = phorum_db_get_group_members($groupid, PHORUM_USER_GROUP_UNAPPROVED);
-        $PHORUM["DATA"]["GROUPS"][] = array("id" => $groupid,
+        $PHORUM["DATA"]["GROUPS"][] = array(
+            "id" => $groupid,
             "name" => $groupname,
             "unapproved" => count($members),
             "URL" => array(
                 "VIEW" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
                 "UNAPPROVED" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
-                )
-            );
+            )
+        );
     }
 }
 

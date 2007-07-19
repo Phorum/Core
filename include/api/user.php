@@ -216,21 +216,6 @@ define('PHORUM_USER_GROUP_APPROVED', 1);
 define('PHORUM_USER_GROUP_MODERATOR', 2);
 
 /**
- * Permission flag which tells {@link phorum_api_user_check_group_access()}
- * to check if a user is an approved group user
- * ({@link PHORUM_USER_GROUP_APPROVED} or group moderator
- * ({@link PHORUM_USER_GROUP_MODERATOR}).
- */
-define('PHORUM_USER_ALLOW_GROUP', 1);
-
-/**
- * Permission flag which tells {@link phorum_api_user_check_group_access()}
- * to check if a user is a group moderator
- * ({@link PHORUM_USER_GROUP_MODERATOR}).
- */
-define('PHORUM_USER_ALLOW_GROUP_MODERATE', 2);
-
-/**
  * This array describes user data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  */
@@ -696,11 +681,15 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
     }
 
     // Prepare the return data array. For each requested user_id,
-    // a slot is prepared in this array.
+    // a slot is prepared in this array. Also, turn the user id array
+    // into an array which has the user_id as both the key and value.
     $users = array();
+    $new_user_ids = array();
     foreach ($user_ids as $id) {
         $users[$id] = NULL;
+        $new_user_ids[$id] = $id;
     }
+    $user_ids = $new_user_ids;
 
     // First, try to retrieve user data from the user cache,
     // if user caching is enabled.
@@ -2117,8 +2106,10 @@ function phorum_api_user_session_destroy($type)
  *       user has access rights
  *
  * @param mixed $user
- *     A user data array for the user for which to check access
- *     rights or 0 (zero, the default) to use the active Phorum user.
+ *     Specifies the user to look at. Available options are:
+ *     - 0 (zero, the default) to look at the active Phorum user.
+ *     - A full user data array.
+ *     - A single user_id.
  *
  * @return mixed
  *     If a single forum_id, 0 (zero) or {@link PHORUM_ACCESS_ANY}
@@ -2162,11 +2153,17 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     }
 
     // Prepare the user to check the access for.
-    if (empty($user)) $user = $PHORUM['user'];
+    if (empty($user)) {
+        $user = $PHORUM['user'];
+    } elseif (!is_array($user)) {
+        $user = phorum_api_user_get($user);
+    }
 
     // Inactive users have no permissions at all.
     if (!empty($user['user_id']) && empty($user['active']))
     {
+        if ($forum_id == PHORUM_ACCESS_ANY) return FALSE;
+
         // No further code required. We'll just keep all forum
         // permissions set to FALSE here.
     }
@@ -2218,6 +2215,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
         }
     }
 
+    // If we reach this code, then we did not find any forum for the user.
     if ($forum_id == PHORUM_ACCESS_ANY) return FALSE;
 
     // Return the results.
@@ -2239,9 +2237,13 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 // {{{ Function: phorum_api_user_check_group_access()
 /**
  * @param integer $permission
- *     The permission to check for. The available options are:
- *     - {@link PHORUM_USER_ALLOW_GROUP}
- *     - {@link PHORUM_USER_ALLOW_GROUP_MODERATE}
+ *     The permission level to check for. The function will check if the
+ *     user has equal or higher permissions for the group(s). The available
+ *     permission levels in low-to-high level order are:
+ *     - {@link PHORUM_USER_GROUP_SUSPENDED}
+ *     - {@link PHORUM_USER_GROUP_UNAPPROVED}
+ *     - {@link PHORUM_USER_GROUP_APPROVED}
+ *     - {@link PHORUM_USER_GROUP_MODERATOR}
  *
  * @param mixed $group_id
  *     Specifies the group(s) to look at. Available options are:
@@ -2253,30 +2255,45 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
  *       user has access rights.
  *
  * @param mixed $user
- *     A user data array for the user for which to check access
- *     rights or 0 (zero, the default) to use the active Phorum user.
+ *     Specifies the user to look at. Available options are:
+ *     - 0 (zero, the default) to look at the active Phorum user.
+ *     - A full user data array.
+ *     - A single user_id.
  *
  * @return mixed
  *     The return value depends on the $group_id argument that was used:
+ *
  *     - Single group_id or {@link PHORUM_ACCESS_ANY}:
  *       return either TRUE (access granted) or FALSE (access denied).
+ *
  *     - An array of group_ids or {@link PHORUM_ACCESS_LIST}:
- *       return an array, containing all group_ids for which permission was
+ *       return an array, containing all groups for which permission was
  *       granted. The keys in this array are group_ids and the values are
- *       group permission values.
+ *       group info arrays. These arrays contain the fields "group_id",
+ *       "name", "open", "permissions" (which contains an array of
+ *       forum permissions, indexed by forum_id), "user_status" (which contains
+ *       the group status for the user, i.e. one of the PHORUM_USER_GROUP_*
+ *       constants).
  */
 function phorum_api_user_check_group_access($permission, $group_id = 0, $user = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
     // Prepare the user to check the access for.
-    if (empty($user)) $user = $PHORUM['user'];
+    if (empty($user)) {
+        $user = $PHORUM['user'];
+    } elseif (!is_array($user)) {
+        $user = phorum_api_user_get($user);
+    }
 
     // Retrieve all the groups for the current user. Admins get all groups.
     if (!empty($user['user_id']) && !empty($user['admin'])) {
         $groups = phorum_db_get_groups();
     } else {
-        $groups = phorum_db_user_get_groups($user['user_id']);
+        $usergroups = phorum_db_user_get_groups($user['user_id']);
+        $groups = empty($usergroups)
+                ? array()
+                : phorum_db_get_groups(array_keys($usergroups));
     }
 
     // Prepare the array of group_ids to check.
@@ -2295,19 +2312,25 @@ function phorum_api_user_check_group_access($permission, $group_id = 0, $user = 
         $group_access[$group_id] = FALSE;
     }
 
-    // Inactive users have no permissions at all.
+    // Inactive users have no group permissions at all.
     if (!empty($user['user_id']) && empty($user['active']))
     {
+        if ($group_id == PHORUM_ACCESS_ANY) return FALSE;
+
         // No further code required. We'll just keep all group
         // permissions set to FALSE here.
     }
-    // Administrators always have full permission.
+    // Administrators always have full group permission. This will include
+    // restrictive access groups for the administrator as well. That is no
+    // problem, because the admin status for the user will override any
+    // group permission restriction.
     elseif (!empty($user['user_id']) && !empty($user['admin']))
     {
         if ($group_id == PHORUM_ACCESS_ANY) return TRUE;
 
         foreach ($group_access as $id => $data) {
-            $group_access[$id] = PHORUM_USER_GROUP_MODERATOR;
+            $group_access[$id] = $groups[$id];
+            $group_access[$id]['user_status'] = PHORUM_USER_GROUP_MODERATOR;
         }
     }
     // For other users, we have to do a full permission lookup.
@@ -2317,23 +2340,18 @@ function phorum_api_user_check_group_access($permission, $group_id = 0, $user = 
         {
             if (!isset($groups[$id])) continue;
 
-            // Group access is allowed for approved members and moderators.
-            if ($permission == PHORUM_USER_ALLOW_GROUP &&
-                ($groups[$id] == PHORUM_USER_GROUP_APPROVED ||
-                 $groups[$id] == PHORUM_USER_GROUP_MODERATOR)) {
-                $group_access[$id] = $groups[$id];
-                continue;
-            }
+            if ($usergroups[$id] >= $permission)
+            {
+                if ($group_id == PHORUM_ACCESS_ANY) return TRUE;
 
-            // Moderate access is allowed for group moderators.
-            if ($permission == PHORUM_USER_ALLOW_GROUP_MODERATE &&
-                $groups[$id] == PHORUM_USER_GROUP_MODERATOR) {
                 $group_access[$id] = $groups[$id];
+                $group_access[$id]['user_status'] = $usergroups[$id];
                 continue;
             }
         }
     }
 
+    // If we reach this code, then we did not find any group for the user.
     if ($group_id == PHORUM_ACCESS_ANY) return FALSE;
 
     // Return the results.
@@ -2345,8 +2363,8 @@ function phorum_api_user_check_group_access($permission, $group_id = 0, $user = 
         // The keys are group_ids and the values the user's permissions
         // for the groups.
         $return = array();
-        foreach ($group_access as $id => $permission) {
-            if ($permission !== FALSE) $return[$id] = $permission;
+        foreach ($group_access as $id => $group) {
+            if ($group !== FALSE) $return[$id] = $group;
         }
         return $return;
     }
