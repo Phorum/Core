@@ -6,6 +6,7 @@
     {IF JOINGROUP}
         <form method="post" action="{GROUP->url}">
             {LANG->JoinGroupDescription}
+            <br/><br/>
             <select name="joingroup">
                 <option value="0">&nbsp;</option>
                 {LOOP JOINGROUP}
