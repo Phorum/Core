@@ -2515,11 +2515,11 @@ function phorum_db_update_group($group)
     // See what group fields we have to update.
     $fields = array();
     if (isset($group['name'])) {
-        $fields = 'name = ' .
-                  phorum_db_interact(DB_RETURN_QUOTED, $phorum['name']);
+        $fields[] = "name = '" .
+                    phorum_db_interact(DB_RETURN_QUOTED, $group['name']) ."'";
     }
     if (isset($group['open'])) {
-        $fields = 'open = ' . (int)$group['open'];
+        $fields[] = 'open = ' . (int)$group['open'];
     }
 
     // Update group fields.
