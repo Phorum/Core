@@ -31,7 +31,7 @@ phorum_build_common_urls();
 if (isset($PHORUM["args"]["approve"])) {
 
     // Extract registration validation code and user_id.
-    $tmp_pass=substr($PHORUM["args"]["approve"], 0, 8);
+    $tmp_pass=md5(substr($PHORUM["args"]["approve"], 0, 8));
     $user_id = (int)substr($PHORUM["args"]["approve"], 8);
     $user_id = phorum_api_user_search(
         array("user_id", "password_temp"),
