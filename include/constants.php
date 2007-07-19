@@ -112,12 +112,6 @@
     define("PHORUM_USER_INACTIVE", 0);
     define("PHORUM_USER_ACTIVE", 1);
 
-    // group moderation actions
-    define("PHORUM_USER_GROUP_SUSPENDED", -1);
-    define("PHORUM_USER_GROUP_UNAPPROVED", 0);
-    define("PHORUM_USER_GROUP_APPROVED", 1);
-    define("PHORUM_USER_GROUP_MODERATOR", 2);
-
     // more group moderation stuff
     define("PHORUM_GROUP_CLOSED", 0);
     define("PHORUM_GROUP_OPEN", 1);
