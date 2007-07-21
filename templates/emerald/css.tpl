@@ -358,7 +358,7 @@ img {
     padding: 8px 8px 8px 32px;
     background-repeat: no-repeat;
     background-position: 8px 12px;
-    margin: 0 16px 8px 0;
+    margin: 0 16px 0 0;
 }
 
 
