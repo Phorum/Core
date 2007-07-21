@@ -12,7 +12,7 @@
                         {/IF}
                     </th>
                 {ELSE}
-                    <th align="left" class="icon-folder">
+                    <th align="left">
                         <img src="{URL->TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
                         <a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>
                     </th>
@@ -26,7 +26,7 @@
         {IF FORUMS->folder_flag}
           <td colspan="4">
                         <img src="{URL->TEMPLATE}/images/folder.png" width="16" height="16" border="0" alt="&bull;" />
-            			<a href="{FORUMS->URL->INDEX}">{FORUMS->name}</a><p>{FORUMS->description}</p>
+                        <a href="{FORUMS->URL->INDEX}">{FORUMS->name}</a><p>{FORUMS->description}</p>
           </td>
         {ELSE}
                 <td width="55%" ><h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</h3></a>
