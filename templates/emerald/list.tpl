@@ -33,7 +33,11 @@
     {/IF}
 
     {IF MESSAGES->sort PHORUM_SORT_STICKY}
-        {VAR icon "bell"}
+        {IF MESSAGES->new}
+            {VAR icon "flag_red"}
+        {ELSE}
+            {VAR icon "bell"}
+        {/IF}
         {VAR title LANG->Sticky}
     {ELSEIF MESSAGES->moved}
         {VAR icon "page_go"}

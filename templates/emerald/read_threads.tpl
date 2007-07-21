@@ -139,7 +139,11 @@
         {VAR icon "bullet_go"}
     {ELSEIF MESSAGES->parent_id 0}
         {IF MESSAGES->sort PHORUM_SORT_STICKY}
-            {VAR icon "bell"}
+            {IF MESSAGES->new}
+                {VAR icon "flag_red"}
+            {ELSE}
+                {VAR icon "bell"}
+            {/IF}
         {ELSEIF MESSAGES->moved}
             {VAR icon "page_go"}
         {ELSEIF MESSAGES->new}
