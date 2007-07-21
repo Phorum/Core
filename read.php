@@ -107,10 +107,10 @@ if(empty($PHORUM["args"][1])) {
                 $message_ids=$thread_message['meta']['message_ids'];
 
                 foreach($message_ids as $mkey => $mid) {
-                	// if already read, remove it from message-array
-                	if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id']) {
-                		unset($message_ids[$mkey]);
-                	}
+                    // if already read, remove it from message-array
+                    if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id']) {
+                        unset($message_ids[$mkey]);
+                    }
 
                 }
 
@@ -467,7 +467,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $messages = phorum_hook("read", $messages);
 
     // increment viewcount if enabled
-    if($PHORUM['count_views']) {
+    if($PHORUM['count_views'] && (empty($PHORUM["status"]) || $PHORUM["status"]=="normal")) {
         phorum_db_viewcount_inc($message_id);
     }
 
