@@ -21,7 +21,7 @@
 {! -- Fonts -- }
 
 {VAR default_font "Arial"}
-{VAR base_font_size "12pt"} {! -- Need this for IE -- }
+{VAR base_font_size "medium"} {! -- Need this for IE -- }
 
 {VAR font_xx_large "145%"}
 {VAR font_x_large  "125%"}
