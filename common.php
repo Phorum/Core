@@ -968,7 +968,7 @@ function print_var( $var, $admin_only = FALSE )
 {
     if ($admin_only && ! $GLOBALS["PHORUM"]["user"]["admin"]) return;
 
-    if(PHP_SAPI=="apache"){
+    if(PHP_SAPI!="cli"){
         echo "<pre>";
     }
     echo "\n";
@@ -976,7 +976,7 @@ function print_var( $var, $admin_only = FALSE )
     echo "value: ";
     $val = print_r($var, true);
     echo trim(str_replace("\n", "\n       ", $val));
-    if(PHP_SAPI=="apache"){
+    if(PHP_SAPI!="cli"){
         echo "\n</pre>";
     }
     echo "\n";
