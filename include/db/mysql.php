@@ -2015,6 +2015,11 @@ function phorum_db_add_forum($forum)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    // check for fields that must be set for mysql strict mode
+    if(empty($forum["description"])) $forum["description"] = "";
+    if(empty($forum["forum_path"])) $forum["forum_path"] = "";
+    if(empty($forum["template_settings"])) $forum["template_settings"] = "";
+
     $insertfields = array();
     foreach ($forum as $key => $value)
     {
@@ -2037,6 +2042,7 @@ function phorum_db_add_forum($forum)
             }
         }
     }
+
 
     $forum_id = phorum_db_interact(
         DB_RETURN_NEWID,

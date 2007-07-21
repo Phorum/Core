@@ -120,7 +120,7 @@ if(count($_POST)){
         if($_POST['parent_id'] > 0) {
             $parent_folder=phorum_db_get_forums($_POST['parent_id']);
             if($parent_folder[$_POST['parent_id']]['vroot'] > 0) {
-                $_POST['vroot']=$parent_folder[$_POST['parent_id']]['vroot'];
+                $_POST['vroot'] = (int)$parent_folder[$_POST['parent_id']]['vroot'];
             }
         } else {
             $_POST['vroot']=0;
@@ -152,13 +152,13 @@ if(count($_POST)){
 
                 // slave settings
                 $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
-                $forum_settings_inherit["forum_id"] =$_POST["forum_id"];
-                $forum_settings_inherit["name"] =$_POST["name"];
-                $forum_settings_inherit["description"] =$_POST["description"];
-                $forum_settings_inherit["active"] =$_POST["active"];
-                $forum_settings_inherit["vroot"] =$_POST["vroot"];
-                $forum_settings_inherit["parent_id"] =$_POST["parent_id"];
-                $forum_settings_inherit["inherit_id"] =$_POST["inherit_id"];
+                $forum_settings_inherit["forum_id"] = (int)$_POST["forum_id"];
+                $forum_settings_inherit["name"] = $_POST["name"];
+                $forum_settings_inherit["description"] = $_POST["description"];
+                $forum_settings_inherit["active"] = (int)$_POST["active"];
+                $forum_settings_inherit["vroot"] = (int)$_POST["vroot"];
+                $forum_settings_inherit["parent_id"] = (int)$_POST["parent_id"];
+                $forum_settings_inherit["inherit_id"] = $_POST["inherit_id"];
 
                 // don't inherit this settings
                 unset($forum_settings_inherit["message_count"]);
