@@ -110,7 +110,7 @@
                         unset($user_data['group_perm']);
                     }
 
-                    phorum_user_save_groups($_POST["user_id"], $groupdata);
+                    phorum_api_user_save_groups($_POST["user_id"], $groupdata);
 
                     unset($user_data["new_group"]);
 

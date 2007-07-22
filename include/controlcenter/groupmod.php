@@ -70,15 +70,10 @@ if (!empty($group_id)){
         if ($userid) {
             // load the users groups, add the new group, then save again
             $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $userid);
-            // Turn the array into a group_id => permission array.
-            // API TODO: would be nice if save groups would not need this.
-            foreach ($groups as $id => $group) {
-                $groups[$id] = $group['user_status'];
-            }
             // make sure the user isn't already a member of the group
             if (!isset($groups[$group_id])){
                 $groups[$group_id] = PHORUM_USER_GROUP_APPROVED;
-                phorum_user_save_groups($userid, $groups);
+                phorum_api_user_save_groups($userid, $groups);
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
             }
         } else {
@@ -91,11 +86,6 @@ if (!empty($group_id)){
         foreach ($_REQUEST["status"] as $userid => $status){
             // load the user's groups, make the change, then save again
             $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $userid);
-            // Turn the array into a group_id => permission array.
-            // API TODO: would be nice if save groups would not need this.
-            foreach ($groups as $id => $group) {
-                $groups[$id] = $group['user_status'];
-            }
             // we can't set someone to be a moderator from here
             if ($status != PHORUM_USER_GROUP_MODERATOR){
                 $groups[$group_id] = $status;
@@ -103,7 +93,7 @@ if (!empty($group_id)){
             if ($status == "remove"){
                 unset($groups[$group_id]);
             }
-            phorum_user_save_groups($userid, $groups);
+            phorum_api_user_save_groups($userid, $groups);
         }
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ChangesSaved"];
     }

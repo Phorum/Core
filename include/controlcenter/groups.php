@@ -24,11 +24,6 @@ if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0)
 {
     // get the group, and the group list of the user trying to join
     $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
-    // Turn the array into a group_id => permission array.
-    // API TODO: would be nice if save groups would not need this.
-    foreach ($usergroups as $id => $group) {
-        $usergroups[$id] = $group['user_status'];
-    }
 
     // Get all available groups.
     $group = phorum_db_get_groups($_POST["joingroup"]);
@@ -39,12 +34,12 @@ if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0)
     {
         if ($group[$_POST["joingroup"]]["open"] == PHORUM_GROUP_OPEN){
             $usergroups[$_POST["joingroup"]] = PHORUM_USER_GROUP_APPROVED;
-            phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroups);
+            phorum_api_user_save_groups($PHORUM["user"]["user_id"], $usergroups);
             $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['GroupJoinSuccess'];
         }
         elseif ($group[$_POST["joingroup"]]["open"] == PHORUM_GROUP_REQUIRE_APPROVAL){
             $usergroups[$_POST["joingroup"]] = PHORUM_USER_GROUP_UNAPPROVED;
-            phorum_user_save_groups($PHORUM["user"]["user_id"], $usergroups);
+            phorum_api_user_save_groups($PHORUM["user"]["user_id"], $usergroups);
             $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['GroupJoinSuccessModerated'];
         }
         else

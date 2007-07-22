@@ -30,23 +30,6 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-/**
- * phorum_user_save_groups()
- *
- * This function saves a users group permissions. The data
- * to save should be an array of the form array[group_id] = permission
- * @param int - the users user_id
- * @param array - group permissions to save
- * @return bool - true if successful
- */
-function phorum_user_save_groups($user_id, $groups)
-{
-    if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {
-        phorum_cache_remove('user',$user_id);
-    }
-    return phorum_db_user_save_groups($user_id, $groups);
-}
-
 function phorum_user_addpost($user_id)
 {
     return phorum_db_user_addpost($user_id);
