@@ -36,7 +36,7 @@ if(isset($PHORUM['args']['filter'])){
     $filter = $_POST["filter"];
 
 } else {
-    $filter = "";
+    $filter = "all";
 }
 
 // If a specific group is requested, check if the user has moderation
@@ -106,26 +106,25 @@ if (!empty($group_id)){
 
     $PHORUM["DATA"]["FILTER"] = array();
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowAll"],
-        "enable" => (empty($filter)),
+        "enable" => $filter == "all",
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id),
-        "id" => 0);
+        "id" => "all");
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowApproved"],
-        "enable" => (!empty($filter) && $filter == PHORUM_USER_GROUP_APPROVED),
+        "enable" => $filter == PHORUM_USER_GROUP_APPROVED,
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_APPROVED),
         "id" => PHORUM_USER_GROUP_APPROVED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowGroupModerator"],
-        "enable" => (!empty($filter) && $filter == PHORUM_USER_GROUP_MODERATOR),
+        "enable" => $filter == PHORUM_USER_GROUP_MODERATOR,
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_MODERATOR),
         "id" => PHORUM_USER_GROUP_MODERATOR);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowSuspended"],
-        "enable" => (!empty($filter) && $filter == PHORUM_USER_GROUP_SUSPENDED),
+        "enable" => $filter == PHORUM_USER_GROUP_SUSPENDED,
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_SUSPENDED),
         "id" => PHORUM_USER_GROUP_SUSPENDED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowUnapproved"],
-        "enable" => (!empty($filter) && $filter == PHORUM_USER_GROUP_UNAPPROVED),
+        "enable" => $filter != "all" && $filter == PHORUM_USER_GROUP_UNAPPROVED,
         "url" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
         "id" => PHORUM_USER_GROUP_UNAPPROVED);
-
     $PHORUM["DATA"]["STATUS_OPTIONS"] = array();
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => "remove", "name" => "&lt; " . $PHORUM["DATA"]["LANG"]["RemoveFromGroup"] . " &gt;");
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_APPROVED, "name" => $PHORUM["DATA"]["LANG"]["Approved"]);
@@ -138,7 +137,7 @@ if (!empty($group_id)){
     $memberlist = array();
     foreach ($groupmembers as $userid => $status){
         // if we have a filter, check that the user is in it
-        if (!empty($filter)){
+        if ($filter != "all"){
             if ($filter != $status){
                 continue;
             }
