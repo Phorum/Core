@@ -32,7 +32,7 @@
             $count=count($_POST['deleteIds']);
             if($count > 0) {
                 foreach($_POST['deleteIds'] as $id => $deluid) {
-                    phorum_user_delete($deluid);
+                    phorum_api_user_delete($deluid);
                 }
                 phorum_admin_okmsg("$count User(s) deleted.");
             }

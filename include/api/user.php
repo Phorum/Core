@@ -271,7 +271,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
 // }}}
 
 // ----------------------------------------------------------------------
-// Storing and retrieving user data.
+// Handling user data.
 // ----------------------------------------------------------------------
 
 // {{{ Function: phorum_api_user_save()
@@ -517,8 +517,8 @@ function phorum_api_user_save($user, $flags = 0)
      *     An array containing user data that will be sent to the database.
      *
      * [output]
-     *     The same array as was used for the hook call argument,
-     *     possibly with some updated fields in it.
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly with some updated fields in it.
      */
     if (isset($PHORUM['hooks']['user_save'])) {
         $dbuser = phorum_hook('user_save', $dbuser);
@@ -788,8 +788,8 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
      *     containing data for a single user.
      *
      * [output]
-     *     The same array as was used for the hook call argument,
-     *     possibly with some updated fields in it.
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly with some updated fields in it.
      */
     if (isset($PHORUM['hooks']['user_get'])) {
         $users = phorum_hook('user_get', $users, $detailed);
@@ -1163,6 +1163,53 @@ function phorum_api_user_increment_posts($user_id = NULL)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_delete()
+/**
+ * Delete a Phorum user.
+ *
+ * @param integer $user_id
+ *     The user_id of the user that has to be deleted.
+ */
+function phorum_api_user_delete($user_id)
+{
+    settype($user_id, "int");
+
+    /**
+     * [hook]
+     *     user_delete
+     *
+     * [description]
+     *     Modules can use this hook to run some additional user cleanup 
+     *     tasks or or to keep some external system in sync with the Phorum
+     *     user data.
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Just before a user is deleted.
+     *
+     * [input]
+     *     The user_id of the user that will be deleted.
+     *
+     * [output]
+     *     The same user_id as the one that was used for the hook
+     *     call argument. 
+     */
+    if (isset($PHORUM['hooks']['user_delete'])) {
+        phorum_hook('user_delete', $user_id);
+    }
+
+    // If user caching is enabled, we remove the user from the cache.
+    if (!empty($GLOBALS["PHORUM"]['cache_users'])) {
+        phorum_cache_remove('user',$user_id);
+    }
+
+    // Remove the user from the database.
+    phorum_db_user_delete($user_id);
+}
+// }}}
+
 // ----------------------------------------------------------------------
 // Authentication and session management.
 // ----------------------------------------------------------------------
@@ -1232,9 +1279,9 @@ function phorum_api_user_authenticate($type, $username, $password)
      *     </ul>
      *
      * [output]
-     *     The same array as was used for the hook call argument,
-     *     possibly with the user_id field updated. This field can
-     *     be set to one of the following values by a module:
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly with the user_id field updated. This field
+     *     can be set to one of the following values by a module:
      *
      *     <ul>
      *     <li>NULL: let Phorum handle the authentication</li>
