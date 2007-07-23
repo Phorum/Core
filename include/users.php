@@ -30,11 +30,6 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-function phorum_user_addpost($user_id)
-{
-    return phorum_db_user_addpost($user_id);
-}
-
 function phorum_user_delete($user_id)
 {
     if(isset($GLOBALS["PHORUM"]['cache_users']) && $GLOBALS["PHORUM"]['cache_users']) {

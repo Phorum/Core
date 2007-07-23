@@ -3552,11 +3552,10 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 /**
  * Increment the posts counter for a user.
  *
- * @param $user_id  - The user_id for which to increment the posts counter.
- *
- * @return $success - TRUE if the posts counter was updated successfully.
+ * @param integer $user_id
+ *     The user_id for which to increment the posts counter.
  */
-function phorum_db_user_addpost($user_id)
+function phorum_db_user_increment_posts($user_id)
 {
     settype($user_id, 'int');
 
@@ -3568,8 +3567,6 @@ function phorum_db_user_addpost($user_id)
              WHERE  user_id = $user_id"
         );
     }
-
-    return TRUE;
 }
 
 /**

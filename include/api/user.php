@@ -652,49 +652,6 @@ function phorum_api_user_save_settings($settings)
 }
 // }}}
 
-// {{{ Function: phorum_api_user_save_groups()
-/**
- * Save the groups and group permissions for a user.
- *
- * @param integer $user_id
- *     The user_id of the user for which to store the group permissions.
- *
- * @param array $groups
- *     An array of groups and their permissions. The keys in this array are
- *     group ids. The values are either group permission values or arrays
- *     containing at least the key "user_status" (which has the group
- *     permission as its value) in them. The group permission value must be
- *     one of the PHORUM_USER_GROUP_* constants.
- */
-function phorum_api_user_save_groups($user_id, $groups)
-{
-    if (!empty($GLOBALS["PHORUM"]['cache_users'])) {
-        phorum_cache_remove('user', $user_id);
-    }
-
-    $dbgroups = array();
-    foreach ($groups as $id => $perm)
-    {
-        if (is_array($perm) && isset($perm['user_status'])) {
-            $perm = $perm['user_status'];
-        }
-
-        if ($perm != PHORUM_USER_GROUP_SUSPENDED  &&
-            $perm != PHORUM_USER_GROUP_UNAPPROVED &&
-            $perm != PHORUM_USER_GROUP_APPROVED   &&
-            $perm != PHORUM_USER_GROUP_MODERATOR) trigger_error(
-            'phorum_api_user_save_groups(): Illegal group permission for ' .
-            'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
-            E_USER_ERROR
-        );
-
-        $dbgroups[$id] = $perm;
-    }
-
-    return phorum_db_user_save_groups($user_id, $dbgroups);
-}
-// }}}
-
 // {{{ Function: phorum_api_user_get()
 /**
  * Retrieve data for Phorum users.
@@ -1183,6 +1140,26 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
     }
 
     return $list;
+}
+// }}}
+
+// {{{ Function: phorum_api_user_increment_posts()
+/**
+ * Increment the posts counter for a user.
+ *
+ * @param mixed $user_id
+ *     The user_id for which to increment the posts counter
+ *     or NULL (the default) to increment the posts counter for the
+ *     active Phorum user.
+ */
+function phorum_api_user_increment_posts($user_id = NULL)
+{
+    if (empty($user_id)) {
+        $user_id = $GLOBALS["PHORUM"]["user"]["user_id"];
+    }
+    settype($user_id, "int");
+
+    phorum_db_user_increment_posts($user_id);
 }
 // }}}
 
@@ -2123,6 +2100,49 @@ function phorum_api_user_session_destroy($type)
 // ----------------------------------------------------------------------
 // Authorization management.
 // ----------------------------------------------------------------------
+
+// {{{ Function: phorum_api_user_save_groups()
+/**
+ * Save the groups and group permissions for a user.
+ *
+ * @param integer $user_id
+ *     The user_id of the user for which to store the group permissions.
+ *
+ * @param array $groups
+ *     An array of groups and their permissions. The keys in this array are
+ *     group ids. The values are either group permission values or arrays
+ *     containing at least the key "user_status" (which has the group
+ *     permission as its value) in them. The group permission value must be
+ *     one of the PHORUM_USER_GROUP_* constants.
+ */
+function phorum_api_user_save_groups($user_id, $groups)
+{
+    if (!empty($GLOBALS["PHORUM"]['cache_users'])) {
+        phorum_cache_remove('user', $user_id);
+    }
+
+    $dbgroups = array();
+    foreach ($groups as $id => $perm)
+    {
+        if (is_array($perm) && isset($perm['user_status'])) {
+            $perm = $perm['user_status'];
+        }
+
+        if ($perm != PHORUM_USER_GROUP_SUSPENDED  &&
+            $perm != PHORUM_USER_GROUP_UNAPPROVED &&
+            $perm != PHORUM_USER_GROUP_APPROVED   &&
+            $perm != PHORUM_USER_GROUP_MODERATOR) trigger_error(
+            'phorum_api_user_save_groups(): Illegal group permission for ' .
+            'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
+            E_USER_ERROR
+        );
+
+        $dbgroups[$id] = $perm;
+    }
+
+    return phorum_db_user_save_groups($user_id, $dbgroups);
+}
+// }}}
 
 // {{{ Function: phorum_api_user_check_access()
 /**

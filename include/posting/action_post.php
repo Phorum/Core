@@ -179,13 +179,16 @@ if ($success)
         }
     }
 
-    // Mark own message read.
-    if ($PHORUM["DATA"]["LOGGEDIN"]) {
+    if ($PHORUM["DATA"]["LOGGEDIN"])
+    {
+        // Mark own message read.
         phorum_db_newflag_add_read(array(0=>array(
             "id"    => $message["message_id"],
             "forum" => $message["forum_id"],
         )));
-        phorum_user_addpost($PHORUM["user"]["user_id"]);
+
+        // Increase the user's post count.
+        phorum_api_user_increment_posts();
     }
 
     // Actions for messages which are approved.
