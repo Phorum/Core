@@ -167,7 +167,7 @@
         return;
     }
 
-    print "<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Show all users</a>";
+    print "<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Show all users</a><br/>";
 
     if(!isset($_GET["edit"]) && !isset($_POST['section'])){
 
