@@ -161,6 +161,36 @@ define('PHORUM_ACCESS_LIST', -1);
 define('PHORUM_ACCESS_ANY', -2);
 
 /**
+ * User status, indicating that the user has not yet confirmed the registration
+ * by email and that a user moderator will have to approve the registration
+ * as well.
+ */
+define("PHORUM_USER_PENDING_BOTH", -3);
+
+/**
+ * User status, indicating that the user has not yet confirmed the registration
+ * by email.
+ */
+define("PHORUM_USER_PENDING_EMAIL", -2);
+
+/**
+ * User status, indicating that the registration has not yet been approved
+ * by a user moderator.
+ */
+define("PHORUM_USER_PENDING_MOD", -1);
+
+/**
+ * User status, indicating that the user has been deactivated.
+ */
+define("PHORUM_USER_INACTIVE", 0);
+
+/**
+ * User status, indicating that the registration has been completed and that
+ * the user can access the forums.
+ */
+define("PHORUM_USER_ACTIVE", 1);
+
+/**
  * Permission flag which allows users to read forum messages.
  */
 define('PHORUM_USER_ALLOW_READ', 1);

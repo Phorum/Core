@@ -105,13 +105,6 @@
     define("PHORUM_REGISTER_VERIFY_MODERATOR", 2);
     define("PHORUM_REGISTER_VERIFY_BOTH", 3);
 
-    // user statuses
-    define("PHORUM_USER_PENDING_BOTH", -3);
-    define("PHORUM_USER_PENDING_EMAIL", -2);
-    define("PHORUM_USER_PENDING_MOD", -1);
-    define("PHORUM_USER_INACTIVE", 0);
-    define("PHORUM_USER_ACTIVE", 1);
-
     // more group moderation stuff
     define("PHORUM_GROUP_CLOSED", 0);
     define("PHORUM_GROUP_OPEN", 1);
