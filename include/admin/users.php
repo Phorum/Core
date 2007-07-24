@@ -270,20 +270,20 @@
         }
 
         // Find a list of all matching user_ids.
-        $all_user_ids = phorum_db_user_search(
+        $all_user_ids = phorum_api_user_search(
             $search_fields, $search_values, $search_operators,
             TRUE, 'AND'
         );
 
         // Find a list of matching user_ids to display on the current page.
-        $user_ids = phorum_db_user_search(
+        $user_ids = phorum_api_user_search(
             $search_fields, $search_values, $search_operators,
             TRUE, 'AND', '+username',
             $search_start, $display
         );
 
         // Retrieve the user data for the users on the current page.
-        $users = phorum_db_user_get($user_ids, FALSE);
+        $users = phorum_api_user_get($user_ids, FALSE);
 
         $total = count($all_user_ids);
 
@@ -367,9 +367,9 @@ EOT;
     }
 
     // display edit form
-    if(isset($_REQUEST["user_id"])){
-
-        $user=phorum_api_user_get($_REQUEST["user_id"], TRUE);
+    if (isset($_REQUEST["user_id"]))
+    {
+        $user = phorum_api_user_get($_REQUEST["user_id"], TRUE);
 
         if(count($user)){
 
