@@ -310,7 +310,9 @@
             <table border="0" cellspacing="1" cellpadding="0"
                    class="PhorumAdminTable" width="100%">
             <tr>
-                <td colspan="4">Showing $display users at a time
+                <td colspan="4">
+                    Showing $display users at a time
+                    of $total users in total.
                 <td colspan="2" align="right">$nav</td>
             </tr>
             <tr>
