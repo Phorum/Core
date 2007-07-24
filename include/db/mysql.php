@@ -3028,24 +3028,25 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  * @param $type         - The type of search to perform. This can be one of:
  *                        AND  match against all fields
  *                        OR   match against any of the fields
+ * @param $offset       - The result page offset starting with 0.
+ * @param $length       - The result page length (nr. of results per page).
  *
  * @return $users       - An array of user_ids or a single user_id, based on
  *                        the $return_array parameter. If no user_ids can
  *                        be found at all, then 0 (zero) will be returned.
  */
-function phorum_db_user_check_field($field, $value, $operator='=', $return_array=FALSE, $type = 'AND',$offset=0,$limit=0)
+function phorum_db_user_check_field($field, $value, $operator='=', $return_array=FALSE, $type = 'AND',$offset=0,$length=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
     settype($return_array, 'bool');
+    settype($offset, 'int');
+    settype($length, 'int');
 
     // Convert all search condition parameters to arrays.
     if (!is_array($field))    $field    = array($field);
     if (!is_array($value))    $value    = array($value);
     if (!is_array($operator)) $operator = array($operator);
-
-    $offset = (int)$offset;
-    $limit  = (int)$limit;
 
     // Basic check to see if all condition arrays contain the
     // same number of elements.
@@ -3078,13 +3079,11 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
         }
     }
 
-    if(!empty($limit)) {
-
-        $limit = "LIMIT $offset,$limit";
-
+    if(!empty($length)) {
+        $limit = "LIMIT $offset,$length";
     } else {
-    // If we do not need to return an array, the we can limit the
-    // query results to only one record.
+        // If we do not need to return an array, the we can limit the
+        // query results to only one record.
         $limit = $return_array ? '' : 'LIMIT 1';
     }
 
@@ -3115,10 +3114,11 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
 /**
  * Retrieve users whose username or email match the search string.
  *
- * TODO: This function is now fully implemented by calling other db layer
- * TODO: functions, so it could be considered deprecated. It's only used
- * TODO: by include/admin/users.php in the core, so modifying the core
- * TODO: would be pretty simple.
+ * @todo
+ *     This function is now fully implemented by calling other db layer
+ *     functions, so it could be considered deprecated. It's only used
+ *     by include/admin/users.php in the core, so modifying the core
+ *     would be pretty simple.
  *
  * @param $search - The string to search on. If empty, all users
  *                  will be returned.
