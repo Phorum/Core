@@ -352,8 +352,8 @@ if (!empty($action)) {
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_id = phorum_api_user_search_display_name(
-                            $to_name, FALSE
+                        $to_user_id = phorum_api_user_search(
+                            'display_name', $to_name, '=', FALSE
                         );
                         if (empty($to_user_id)) {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];

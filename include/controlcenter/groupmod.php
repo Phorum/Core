@@ -64,7 +64,9 @@ if (!empty($group_id)){
         $userid = 0;
         $name = trim($_REQUEST["adduser"]);
         if ($name != '') {
-            $userid = phorum_api_user_search_display_name($name, FALSE);
+            $userid = phorum_api_user_search(
+                'display_name', $name, '=', FALSE
+            );
         }
 
         if ($userid) {

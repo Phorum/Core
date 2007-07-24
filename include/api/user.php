@@ -1026,47 +1026,6 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
 }
 // }}}
 
-// {{{ Function: phorum_api_user_search_display_name()
-/**
- * Search user(s) for a given display name.
- *
- * @param string $name
- *     The display name to search for.
- *
- * @param boolean $return_array
- *     If TRUE, then the function will return all users that match
- *     the display name. If FALSE, the function will try to find an
- *     exact match for a single user.
- *
- * @return mixed
- *     If the $return_array parameter has a true value, then an array
- *     will be returned, containing the user_ids of all matching users.
- *     Otherwise, either a user_id (exact user match found) or NULL
- *     (no user found) is returned.
- *
- * @todo replace with phorum_api_user_search() in full.
- */
-function phorum_api_user_search_display_name($name, $return_array = FALSE)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    // Exact or partial match?
-    $oper = $return_array ? '*' : '=';
-
-    // Find users by the display name field.
-    $user_ids = phorum_api_user_search('display_name', $name, $oper, TRUE);
-
-    if ($return_array) {
-        return empty($user_ids) ? array() : $user_ids;
-    } elseif (!empty($user_ids) && count($user_ids) == 1) {
-        $user_id = array_shift($user_ids);
-        return $user_id;
-    } else {
-        return NULL;
-    }
-}
-// }}}
-
 // {{{ Function: phorum_api_user_subscribe()
 /**
  * Subscribe a user to a thread.
