@@ -2384,37 +2384,6 @@ function phorum_db_user_get_groups($user_id)
 }
 
 /**
- * This function executes a query to select data about a user including
- * his permission data and returns that in an array.
- * If $search is empty, all users should be returned.
- */
-
-function phorum_db_search_users($search)
-{
-    $PHORUM = $GLOBALS["PHORUM"];
-
-    $conn = phorum_db_postgresql_connect();
-
-    $users = array();
-
-    $search = trim($search);
-
-    $sql = "select user_id, username, email, active, posts, date_last_active from {$PHORUM['user_table']} where username like '%$search%' or email like '%$search%'order by username";
-
-    $res = pg_query($conn, $sql);
-    if ($err = pg_last_error()) phorum_db_pg_last_error("$err: $sql");
-
-    if (pg_num_rows($res)){
-        while ($user = pg_fetch_assoc($res)){
-            $users[$user["user_id"]] = $user;
-        }
-    }
-
-    return $users;
-}
-
-
-/**
  * This function gets the users that await approval
  */
 

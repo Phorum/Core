@@ -1,6 +1,5 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
-
 //                                                                            //
 //   Copyright (C) 2007  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
@@ -44,6 +43,8 @@
  *     due to superb design of course ;-).
  *
  * @todo Document what fields are in a user record.
+ *
+ * @todo Create in line docs for all hook calls.
  *
  */
 
@@ -952,15 +953,15 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  * and the key values in the arrays must be the same.
  *
  * @param mixed $field
- *     The user table field / fields to search on.
+ *     The user table field (string) or fields (array) to search on.
  *
  * @param mixed $value
- *     The value / values to search for.
+ *     The value (string) or values (array) to search for.
  *
  * @param mixed $operator
- *     The operator / operators to use. Valid operators are
+ *     The operator (string) or operators (array) to use. Valid operators are
  *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *     "*" operator is for executing a "LIKE" match query.
+ *     "*" operator is for executing a "LIKE '%value%'" matching query.
  *
  * @param boolean $return_array
  *     If this parameter has a true value, then an array of all matching
@@ -971,14 +972,27 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  *     - AND  match against all fields
  *     - OR   match against any of the fields
  *
+ * @param mixed $sort
+ *     The field (string) or fields (array) to sort the results by. For 
+ *     ascending sort, "fieldname" or "+fieldname" can be used. For 
+ *     descending sort, "-fieldname" can be used. By default, the results
+ *     will be sorted by user_id.
+ *
+ * @param integer $offset
+ *     The result page offset starting with 0.
+ *
+ * @param integer $length
+ *     The result page length (nr. of results per page)
+ *     or 0 (zero, the default) to return all results.
+ *
  * @return mixed
  *     An array of matching user_ids or a single user_id (based on the
  *     $return_array parameter). If no user_ids can be found at all,
  *     then 0 (zero) will be returned.
  */
-function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND')
+function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $sort = NULL, $offset = 0, $length = 0)
 {
-    return phorum_db_user_check_field($field, $value, $operator, $return_array, $type);
+    return phorum_db_user_search($field, $value, $operator, $return_array, $type, $sort, $offset, $length);
 }
 // }}}
 
@@ -999,6 +1013,8 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
  *     will be returned, containing the user_ids of all matching users.
  *     Otherwise, either a user_id (exact user match found) or NULL
  *     (no user found) is returned.
+ *
+ * @todo replace with phorum_api_user_search() in full.
  */
 function phorum_api_user_search_display_name($name, $return_array = FALSE)
 {

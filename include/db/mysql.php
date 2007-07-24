@@ -2709,22 +2709,22 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
 /**
  * Retrieve one or more users.
  *
- * @param $user_id  - The user_id or an array of user_ids for which to
- *                    retrieve the user data.
- * @param $detailed - If this parameter has a true value, then the user's
- *                    permissions and groups are included in the return data.
- * @param $sortkey  - The user table field to sort the records by.
- * @param $sortdir  - The direction for sorting. This parameter must be either
- *                    "ASC" (ascending sort) or "DESC" (descending sort).
+ * @param mixed $user_id
+ *     The user_id or an array of user_ids for which to
+ *     retrieve the user data.
  *
- * @return $return  - If $user_id is a single user_id, then either a
- *                    single user or NULL (in case the user_id was not found
- *                    in the database) is returned.
- *                    If $user_id is an array of user_ids, then an array of
- *                    users is returned, indexed by user_id. For user_ids that
- *                    cannot be found, there will be no array element at all.
+ * @param boolean $detailed
+ *     If this parameter has a true value, then the user's
+ *     permissions and groups are included in the return data.
+ *
+ * @return mixed
+ *     If $user_id is a single user_id, then either a single user or NULL
+ *     (in case the user_id was not found in the database) is returned.
+ *     If $user_id is an array of user_ids, then an array of users is
+ *     returned, indexed by user_id. For user_ids that cannot be found,
+ *     there will be no array element at all.
  */
-function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir=NULL)
+function phorum_db_user_get($user_id, $detailed = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -2740,33 +2740,12 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         $user_where = "user_id = $user_id";
     }
 
-    $orderby = '';
-    if ($sortkey !== NULL)
-    {
-        if (!phorum_db_validate_field($sortkey)) trigger_error(
-            'phorum_db_user_get(): Illegal sortkey parameter',
-            E_USER_ERROR
-        );
-        $orderby = 'ORDER BY ' . $sortkey;
-
-        if ($sortdir !== NULL) {
-            $sortdir = strtoupper($sortdir);
-            if ($sortdir != 'ASC' && $sortdir != 'DESC') trigger_error(
-                'phorum_db_user_get(): Illegal sortdir parameter (must be ' .
-                'either "ASC" or "DESC")',
-                E_USER_ERROR
-            );
-            $orderby .= ' ' . $sortdir;
-        }
-    }
-
     // Retrieve the requested user(s) from the database.
     $users = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT *
          FROM   {$PHORUM['user_table']}
-         WHERE  $user_where
-         $orderby",
+         WHERE  $user_where",
         'user_id'
     );
 
@@ -2799,7 +2778,8 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $sortkey=NULL, $sortdir
         }
 
         // Retrieve forum group permissions and groups for the requested users.
-        // TODO: why "status >= ..." and not "status = ..." ?
+        // "status >= ..." is used to retrieve both approved group users
+        // and group moderators.
         $group_permissions = phorum_db_interact(
             DB_RETURN_ROWS,
             "SELECT user_id,
@@ -3017,25 +2997,45 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  * then all three parameter arrays must contain the same number of elements
  * and the key values in the arrays must be the same.
  *
- * @param $field        - The user table field / fields to search on.
- * @param $value        - The value / values to search for.
- * @param $operator     - The operator / operators to use. Valid operators are
- *                        "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *                        "*" operator is for executing a "LIKE" match query.
- * @param $return_array - If this parameter has a true value, then an array
- *                        of all matching user_ids will be returned. Else, a
- *                        single user_id will be returned.
- * @param $type         - The type of search to perform. This can be one of:
- *                        AND  match against all fields
- *                        OR   match against any of the fields
- * @param $offset       - The result page offset starting with 0.
- * @param $length       - The result page length (nr. of results per page).
+ * @param mixed $field
+ *     The user table field (string) or fields (array) to search on.
  *
- * @return $users       - An array of user_ids or a single user_id, based on
- *                        the $return_array parameter. If no user_ids can
- *                        be found at all, then 0 (zero) will be returned.
+ * @param mixed $value
+ *     The value (string) or values (array) to search for.
+ *
+ * @param mixed $operator
+ *     The operator (string) or operators (array) to use. Valid operators are
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *     "*" operator is for executing a "LIKE '%value%'" matching query.
+ *
+ * @param boolean $return_array
+ *     If this parameter has a true value, then an array of all matching
+ *     user_ids will be returned. Else, a single user_id will be returned.
+ *
+ * @param string $type
+ *     The type of search to perform. This can be one of:
+ *     - AND  match against all fields
+ *     - OR   match against any of the fields
+ *
+ * @param mixed $sort
+ *     The field (string) or fields (array) to sort the results by. For
+ *     ascending sort, "fieldname" or "+fieldname" can be used. For
+ *     descending sort, "-fieldname" can be used. By default, the results
+ *     will be sorted by user_id.
+ *
+ * @param integer $offset
+ *     The result page offset starting with 0.
+ *
+ * @param integer $length
+ *     The result page length (nr. of results per page)
+ *     or 0 (zero, the default) to return all results.
+ *
+ * @return mixed
+ *     An array of matching user_ids or a single user_id (based on the
+ *     $return_array parameter). If no user_ids can be found at all,
+ *     then 0 (zero) will be returned.
  */
-function phorum_db_user_check_field($field, $value, $operator='=', $return_array=FALSE, $type = 'AND',$offset=0,$length=0)
+function phorum_db_user_search($field, $value, $operator='=', $return_array=FALSE, $type='AND', $sort=NULL, $offset=0, $length=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -3047,26 +3047,28 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
     if (!is_array($field))    $field    = array($field);
     if (!is_array($value))    $value    = array($value);
     if (!is_array($operator)) $operator = array($operator);
+    if (!is_array($sort) && $sort!==NULL) $sort = array($sort);
 
     // Basic check to see if all condition arrays contain the
     // same number of elements.
     if (count($field) != count($value) ||
         count($field) != count($operator)) trigger_error(
-        'phorum_db_user_check_field(): array parameters $field, $value, ' .
+        'phorum_db_user_search(): array parameters $field, $value, ' .
         'and $operator do not contain the same number of elements',
         E_USER_ERROR
     );
 
     $type = strtoupper($type);
     if ($type != 'AND' && $type != 'OR') trigger_error(
-        'phorum_db_user_check_field(): Illegal search type parameter (must ' .
+        'phorum_db_user_search(): Illegal search type parameter (must ' .
         'be either AND" or "OR")',
         E_USER_ERROR
     );
 
     $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*');
 
-    // Construct the required "WHERE" clauses.
+    // Construct the required "WHERE" clause.
+    $clauses = array();
     foreach ($field as $key => $name) {
         if (in_array($operator[$key], $valid_operators) &&
             phorum_db_validate_field($name)) {
@@ -3078,9 +3080,42 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
             }
         }
     }
+    if (!empty($clauses)) {
+        $where = 'WHERE ' . implode(" $type ", $clauses);
+    } else {
+        $where = '';
+    }
 
-    if(!empty($length)) {
-        $limit = "LIMIT $offset,$length";
+    // Construct the required "ORDER BY" clause.
+    if (!empty($sort)) {
+        foreach ($sort as $id => $spec) {
+            if (substr($spec, 0, 1) == '+') {
+                $fld = substr($spec, 1);
+                $dir = 'ASC';
+            } elseif (substr($spec, 0, 1) == '-') {
+                $fld = substr($spec, 1);
+                $dir = 'DESC';
+            } else {
+                $fld = $spec;
+                $dir = 'ASC';
+            }
+
+            if (!phorum_db_validate_field($fld)) trigger_error(
+                'phorum_db_user_search(): Illegal sort field: ' .
+                htmlspecialchars($spec),
+                E_USER_ERROR
+            );
+
+            $sort[$id] = "$fld $dir";
+        }
+        $order = 'ORDER BY ' . implode(', ', $sort);
+    } else {
+        $order = '';
+    }
+
+    // Construct the required "LIMIT" clause.
+    if (!empty($length)) {
+        $limit = "LIMIT $offset, $length";
     } else {
         // If we do not need to return an array, the we can limit the
         // query results to only one record.
@@ -3092,8 +3127,7 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
         DB_RETURN_ROWS,
         "SELECT user_id
          FROM   {$PHORUM['user_table']}
-         WHERE ".implode(" $type ", $clauses)."
-         $limit",
+         $where $order $limit",
         0 // keyfield 0 is the user_id
     );
 
@@ -3109,41 +3143,6 @@ function phorum_db_user_check_field($field, $value, $operator='=', $return_array
     // Return a single user_id.
     list ($user_id, $dummy) = each($user_ids);
     return $user_id;
-}
-
-/**
- * Retrieve users whose username or email match the search string.
- *
- * @todo
- *     This function is now fully implemented by calling other db layer
- *     functions, so it could be considered deprecated. It's only used
- *     by include/admin/users.php in the core, so modifying the core
- *     would be pretty simple.
- *
- * @param $search - The string to search on. If empty, all users
- *                  will be returned.
- *
- * @return $users - An array of users.
- */
-function phorum_db_search_users($search,$offset=0,$limit=0)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    // Find a list of matching user_ids.
-    $user_ids = phorum_db_user_check_field(
-        array('username', 'email'),
-        array($search,    $search),
-        array('*',        '*'),
-        TRUE, 'OR',$offset,$limit
-    );
-
-    // No results found? Then return an empty array.
-    if (count($user_ids) == 0) return array();
-
-    // Retrieve the data for the users.
-    $users = phorum_db_user_get($user_ids, FALSE, 'username');
-
-    return $users;
 }
 
 /**

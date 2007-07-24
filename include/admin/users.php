@@ -21,6 +21,14 @@
 
     include('./include/format_functions.php');
 
+    $user_status_map = array(
+        'any'                     => 'Any user status',
+        PHORUM_USER_PENDING_BOTH  => 'Pending user + moderator confirmation',
+        PHORUM_USER_PENDING_EMAIL => 'Pending user confirmation',
+        PHORUM_USER_PENDING_MOD   => 'Pending moderator confirmation',
+        PHORUM_USER_INACTIVE      => 'Deactivated',
+        PHORUM_USER_ACTIVE        => 'Active',
+    );
 
     $error="";
 
@@ -159,25 +167,31 @@
         return;
     }
 
+    print "<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Show all users</a>";
+
     if(!isset($_GET["edit"]) && !isset($_POST['section'])){
 
         if(empty($_REQUEST["user_id"])){
 
             $frm = new PhorumInputForm ("", "get", "Search");
 
-            $frm->addbreak("Phorum User Admin");
+            $frm->addbreak("User Search");
 
             $frm->hidden("module", "users");
 
-            $frm->addrow("Search", "Username or email contains: " . $frm->text_box("search", $_REQUEST["search"], 30) . " &bull; <a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Find All Users</a>");
-
-            $frm->addrow("", "Post count " .
-                $frm->select_tag("posts_op", array("gte" => ">=", "lte" => "<="), $_REQUEST["posts_op"]) .
-                $frm->text_box("posts", empty($_REQUEST["posts"]) ? "" : (int) $_REQUEST["posts"], 5) .
-                " and last active " .
-                // these are flipped because we're going back in time
-                $frm->select_tag("lastactive_op", array("gte" => "<=", "lte" => ">="), $_REQUEST["lastactive_op"]) .
-                $frm->text_box("lastactive", empty($_REQUEST["lastactive"]) ? "" : (int) $_REQUEST["lastactive"], 5) . " days ago");
+            $frm->addrow("Username contains", $frm->text_box("search_username", $_REQUEST["search_username"], 30));
+            if ($PHORUM['display_name_source'] != 'username') {
+                $frm->addrow("Display name contains", $frm->text_box("search_display_name", $_REQUEST["search_display_name"], 30));
+            }
+            $frm->addrow("Email contains", $frm->text_box("search_email", $_REQUEST["search_email"], 30));
+            $frm->addrow("User status", $frm->select_tag("search_status", $user_status_map, $_REQUEST['search_status']));
+            $frm->addrow("Number of forum posts ",
+                $frm->text_box("posts", empty($_REQUEST["posts"]) ? "" : (int) $_REQUEST["posts"], 5) . " " .
+                $frm->select_tag("posts_op", array("gte" => "messages or more", "lte" => "messages or less"), $_REQUEST["posts_op"]));
+            $frm->addrow("Last user activity",
+                $frm->select_tag("lastactive_op", array("lte" => "Longer ago than", "gte" => "Within the last"), $_REQUEST["lastactive_op"]) . " " .
+                $frm->text_box("lastactive", empty($_REQUEST["lastactive"]) ? "" : (int) $_REQUEST["lastactive"], 5) . " days"
+                );
             $frm->show();
         }
 
@@ -209,42 +223,72 @@
 
         $search_start = (int)$_REQUEST['start'];
 
-        // Find a list of matching user_ids.
-        $all_user_ids = phorum_db_user_check_field(
-            array('username', 'email'),
-            array($_REQUEST["search"], $_REQUEST["search"]),
-            array('*',        '*'),
-            TRUE, 'OR'
+        // Build the fields to search on.
+        $search_fields = array();
+        $search_values = array();
+        $search_operators = array();
+        if (isset($_REQUEST['search_username'])) {
+            $search = trim($_REQUEST['search_username']);
+            if ($search != '') {
+                $search_fields[] = 'username';
+                $search_values[] = $search;
+                $search_operators[] = '*';
+            }
+        }
+        if (isset($_REQUEST['search_display_name'])) {
+            $search = trim($_REQUEST['search_display_name']);
+            if ($search != '') {
+                $search_fields[] = 'display_name';
+                $search_values[] = $search;
+                $search_operators[] = '*';
+            }
+        }
+        if (isset($_REQUEST['search_email'])) {
+            $search = trim($_REQUEST['search_email']);
+            if ($search != '') {
+                $search_fields[] = 'email';
+                $search_values[] = $search;
+                $search_operators[] = '*';
+            }
+        }
+        if (!empty($_REQUEST["posts"]) && $_REQUEST["posts"] >= 0) {
+            $search_fields[] = 'posts';
+            $search_values[] = (int) $_REQUEST['posts'];
+            $search_operators[] = $_REQUEST['posts_op'] == 'gte' ? '>=' : '<=';
+        }
+        if (!empty($_REQUEST["lastactive"]) && $_REQUEST["lastactive"] >= 0) {
+            $time = time() - ($_REQUEST["lastactive"] * 86400);
+            $search_fields[] = 'date_last_active';
+            $search_values[] = $time;
+            $search_operators[] = $_REQUEST['lastactive_op'] == 'gte' ? '>=' : '<=';
+        }
+        if (isset($_REQUEST['search_status']) && 
+            $_REQUEST['search_status'] != 'any') {
+            $search_fields[] = 'active';
+            $search_values[] = (int) $_REQUEST['search_status']; 
+            $search_operators[] = '=';
+        }
+
+        // Find a list of all matching user_ids.
+        $all_user_ids = phorum_db_user_search(
+            $search_fields, $search_values, $search_operators,
+            TRUE, 'AND'
         );
 
-        $users=phorum_db_search_users($_REQUEST["search"],$search_start,$display);
+        // Find a list of matching user_ids to display on the current page.
+        $user_ids = phorum_db_user_search(
+            $search_fields, $search_values, $search_operators,
+            TRUE, 'AND', '+username',
+            $search_start, $display
+        );
 
-        if (isset($_REQUEST["posts"]) && $_REQUEST["posts"] != "" && $_REQUEST["posts"] >= 0) {
-            $cmpfn = phorum_admin_gen_compare($_REQUEST["posts_op"]);
-            $users = phorum_admin_filter_arr($users, "posts", $_REQUEST["posts"], $cmpfn);
-        }
+        // Retrieve the user data for the users on the current page.
+        $users = phorum_db_user_get($user_ids, FALSE);
 
-        if(isset($_REQUEST["lastactive"]) && $_REQUEST["lastactive"] != "" && $_REQUEST["lastactive"] >= 0) {
-            $time = time() - ($_REQUEST["lastactive"] * 86400);
-            $cmpfn = phorum_admin_gen_compare($_REQUEST["lastactive_op"]);
-            $users = phorum_admin_filter_arr($users, "date_last_active", $time, $cmpfn);
-        }
+        $total = count($all_user_ids);
 
-        $total=count($all_user_ids);
-
-        // count active
-        $total_active=0;
-        $total_poster=0;
-        foreach($users as $user){
-          if ($user['active']==1) {
-            $total_active++;
-            if (intval($user['posts'])) $total_poster++;
-          }
-        }
-
-
-        if(count($users)) {
-
+        if (count($users))
+        {
             $nav="";
 
             if($_REQUEST["start"]>0){
@@ -266,12 +310,11 @@
             <table border="0" cellspacing="1" cellpadding="0"
                    class="PhorumAdminTable" width="100%">
             <tr>
-                <td>$total users found ($total_active active, $total_poster posting)</td>
-                <td colspan="3">Showing $display users at a time
+                <td colspan="4">Showing $display users at a time
                 <td colspan="2" align="right">$nav</td>
             </tr>
             <tr>
-                <td class="PhorumAdminTableHead">User</td>
+                <td class="PhorumAdminTableHead">Display Name</td>
                 <td class="PhorumAdminTableHead">Email</td>
                 <td class="PhorumAdminTableHead">Status</td>
                 <td class="PhorumAdminTableHead">Posts</td>
@@ -280,32 +323,18 @@
             </tr>
 EOT;
 
-            foreach($users as $user){
+            foreach($user_ids as $user_id)
+            {
+                $user = $users[$user_id];
 
-                switch($user['active']){
-
-                    case PHORUM_USER_ACTIVE:
-                        $status = "Active";
-                        break;
-
-                    case PHORUM_USER_PENDING_EMAIL:
-                    case PHORUM_USER_PENDING_BOTH:
-                        $status = "Pending Confirmation";
-                        break;
-
-                    case PHORUM_USER_PENDING_MOD:
-                        $status = "Pending Moderator Approval";
-
-                    default:
-                        $status = "Deactivated";
-                }
+                $status = $user_status_map[$user['active']];
 
                 $posts = intval($user['posts']);
 
                 $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
 
                 echo "<tr>\n";
-                echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=users&user_id={$user['user_id']}&edit=1\">".htmlspecialchars($user['username'])."</a></td>\n";
+                echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=users&user_id={$user['user_id']}&edit=1\">".(empty($PHORUM['custom_display_name']) ? htmlspecialchars($user['display_name']) : $user['display_name'])."</a></td>\n";
                 echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
                 echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
                 echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";
