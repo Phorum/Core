@@ -2685,6 +2685,9 @@ function phorum_db_user_count()
 
 /**
  * @todo document function.
+ *
+ * @todo This function might be as well replaced with user search and get
+ *       functionality from the user API.
  */
 function phorum_db_user_get_all($offset = 0, $length = 0)
 {
@@ -3605,6 +3608,9 @@ function phorum_db_user_get_groups($user_id)
  * @return $users - An array or users, indexed by user_id, that await approval.
  *                  The elements of the array are arrays containing the fields:
  *                  user_id, username and email.
+ *
+ * @todo This function might be as well replaced with user search and get
+ *       functionality from the user API.
  */
 function phorum_db_user_get_unapproved()
 {
