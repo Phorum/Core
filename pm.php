@@ -352,13 +352,13 @@ if (!empty($action)) {
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_id = phorum_api_user_search(
-                            'display_name', $to_name, '=', FALSE
+                        $to_user_ids = phorum_api_user_search(
+                            'display_name', $to_name, '=', TRUE
                         );
-                        if (empty($to_user_id)) {
+                        if (empty($to_user_ids) || count($to_user_ids) > 1) {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
                         } else {
-                            $_POST["to_id"] = $to_user_id;
+                            $_POST["to_id"] = array_shift($to_user_ids);
                             unset($_POST["to_name"]);
                         }
                     }
