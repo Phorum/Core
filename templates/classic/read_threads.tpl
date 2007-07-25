@@ -36,7 +36,7 @@
     <div style="float: right;">
       <span class="PhorumNavHeading">{LANG->Navigate}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->URL->PREV}">{LANG->PreviousMessage}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->NEXT}">{LANG->NextMessage}</a>
     </div>
-    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->URL->REPLY}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->QUOTE}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGE->URL->PM}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->PM}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>{IF MESSAGES->URL->REPORT}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->REPORT}">{LANG->Report}</a>{/IF}{/IF}{IF MESSAGE->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>{/IF}
+    <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{MESSAGE->URL->REPLY}">{LANG->Reply}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->QUOTE}">{LANG->QuoteMessage}</a>{IF LOGGEDIN}{IF MESSAGE->URL->PM}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->PM}">{LANG->PrivateReply}</a>{/IF}&bull;<a class="PhorumNavLink" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>{IF MESSAGE->URL->REPORT}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->REPORT}">{LANG->Report}</a>{/IF}{/IF}{IF MESSAGE->edit 1}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>{/IF}
   </div>
 {/IF}
 <br /><br />
