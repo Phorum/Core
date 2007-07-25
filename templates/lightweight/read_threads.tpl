@@ -59,7 +59,7 @@
             {/IF}
             &raquo; <a class="icon" href="{MESSAGE->URL->REPLY}">{LANG->Reply}</a>
             &raquo; <a class="icon" href="{MESSAGE->URL->QUOTE}">{LANG->QuoteMessage}</a>
-            &raquo; <a class="icon" href="{MESSAGE->URL->REPORT}">{LANG->Report}</a>
+            {IF MESSAGES->URL->REPORT}&raquo; <a class="icon" href="{MESSAGE->URL->REPORT}">{LANG->Report}</a>{/IF}
         </div>
 
         {IF MESSAGE->attachments}

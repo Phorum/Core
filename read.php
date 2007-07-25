@@ -340,7 +340,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $edit_url_template        = phorum_get_url(PHORUM_POSTING_URL, '%action_id%', '%message_id%');
     $reply_url_template       = phorum_get_url(PHORUM_REPLY_URL, '%thread_id%', '%message_id%');
     $reply_url_template_quote = phorum_get_url(PHORUM_REPLY_URL, '%thread_id%', '%message_id%','quote=1');
-    $report_url_template      = phorum_get_url(PHORUM_REPORT_URL, '%message_id%');
     if($PHORUM["track_edits"]) {
         $changes_url_template = phorum_get_url(PHORUM_CHANGES_URL, '%message_id%');
     }
@@ -349,6 +348,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         if ($PHORUM["enable_pm"]) {
             $pm_url_template = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=%message_id%");
         }
+        $report_url_template = phorum_get_url(PHORUM_REPORT_URL, '%message_id%');
     }
 
     if($PHORUM["DATA"]["MODERATOR"]) {
@@ -532,7 +532,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["URL"]["READ"]   = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$read_url_template_both);
         $row["URL"]["REPLY"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template);
         $row["URL"]["QUOTE"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template_quote);
-        $row["URL"]["REPORT"] = str_replace('%message_id%',$row['message_id'],$report_url_template);
 
         $row["URL"]["PM"] = false;
         if ($PHORUM["DATA"]["LOGGEDIN"]) {
@@ -541,6 +540,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             if ($PHORUM["enable_pm"] && $row["user_id"]) {
                 $row["URL"]["PM"] = str_replace('%message_id%',$row['message_id'],$pm_url_template);
             }
+            $row["URL"]["REPORT"] = str_replace('%message_id%',$row['message_id'],$report_url_template);
         }
 
 

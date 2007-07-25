@@ -1104,6 +1104,10 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  *     An array of users, indexed by user_id. Each element in the array
  *     is an array, containing the fields "user_id", "username" and
  *     "display_name".
+ *
+ * @todo Do we really need phorum_api_user_list() or could we use the
+ *       phorum_api_user_search() functionality in combination with
+ *       phorum_api_user_get() instead?
  */
 function phorum_api_user_list($type = PHORUM_GET_ALL)
 {

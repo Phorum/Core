@@ -59,7 +59,7 @@
             {/IF}
             <a class="icon icon-comment-add" href="{MESSAGE->URL->REPLY}">{LANG->Reply}</a>
             <a class="icon icon-comment-add" href="{MESSAGE->URL->QUOTE}">{LANG->QuoteMessage}</a>
-            <a class="icon icon-exclamation" href="{MESSAGE->URL->REPORT}">{LANG->Report}</a>
+            {IF MESSAGES->URL->REPORT}<a class="icon icon-exclamation" href="{MESSAGE->URL->REPORT}">{LANG->Report}</a>{/IF}
         </div>
 
         {IF MESSAGE->attachments}
