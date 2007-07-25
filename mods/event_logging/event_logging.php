@@ -159,6 +159,15 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     // Determine the source of the event.
     list ($source, $from_module) = event_logging_find_source(0, $file);
 
+    // Because of the way in which the admin interface is programmed,
+    // there are a lot of notices coming from that code. We ignore
+    // those by default.
+    if ($source == 'admin' && !$from_module && $loglevel == EVENTLOG_LVL_DEBUG) {
+        if ($PHORUM["mod_event_logging"]["do_log_php_notice_ignore_in_admin"]) {
+            return FALSE;
+        }
+    }
+
     // Log the event.
     if ($loglevel !== NULL) {
         event_logging_writelog(array(

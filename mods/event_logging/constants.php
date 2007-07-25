@@ -64,6 +64,7 @@ $GLOBALS["PHORUM"]["DATA"]["MOD_EVENT_LOGGING"]["EVENT_TYPES"] = array(
         "mod_approve"    => "A moderator approves messages(s)",
     "Software events (especially interesting for developers)" => NULL,
         "php_notice"     => "A PHP notice is triggered",
+        "php_notice_ignore_in_admin" => "Ignore PHP notices that are triggered from the admin interface",
         "php_warning"    => "A PHP warning is triggered",
         "php_error"      => "A PHP error is triggered",
         "database_error" => "A database error occurred",
