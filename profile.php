@@ -38,8 +38,6 @@ if(empty($PHORUM["args"][1]) || empty($profile_id)){
     exit();
 }
 
-include_once("./include/users.php");
-
 $user = phorum_api_user_get($profile_id, TRUE);
 
 if(!is_array($user) || $user["active"]==0) {

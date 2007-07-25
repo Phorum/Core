@@ -54,8 +54,6 @@ else
     // The number of users to process in a single batch.
     $batchsize = 100;
 
-    require_once('./include/users.php');
-
     // Quickly show an empty update progress screen.
     if ($step == 1) {
         $batch = -1;

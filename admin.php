@@ -27,7 +27,6 @@
     error_reporting  (E_ERROR | E_WARNING | E_PARSE);
 
     include_once "./common.php";
-    include_once "./include/users.php";
     include_once "./include/admin_functions.php";
 
     // determine absolute URI for the admin

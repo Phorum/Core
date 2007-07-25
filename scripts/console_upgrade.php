@@ -54,7 +54,6 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 
 // include required files
 include_once './common.php';
-include_once './include/users.php';
 include_once './include/version_functions.php';
 
 // Open the database connection.

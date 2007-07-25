@@ -20,7 +20,6 @@ define('phorum_page', 'rebuild_postcount');
 
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
-require_once './include/users.php';
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);

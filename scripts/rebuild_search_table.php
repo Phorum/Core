@@ -18,7 +18,6 @@ define("PHORUM_ADMIN", 1);
 
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
-require_once './include/users.php';
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);

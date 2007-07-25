@@ -19,7 +19,6 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-include_once "./include/users.php";
 include_once "./include/format_functions.php";
 
 $error="";

@@ -65,7 +65,6 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 
 // include required files
 include_once './common.php';
-include_once './include/users.php';
 include_once ("./include/thread_info.php");
 
 print "\nHow many users do you want to create?\n";

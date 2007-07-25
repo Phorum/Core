@@ -160,7 +160,6 @@
 
     include_once "./include/admin/PhorumInputForm.php";
     include_once "./include/profile_functions.php";
-    include_once "./include/users.php";
 
     if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
         echo "Phorum User Admin only works with the Phorum User System.";

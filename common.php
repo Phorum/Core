@@ -45,7 +45,6 @@ global $PHORUM;
 $PHORUM = array();
 
 // API code
-include_once("./include/users.php"); // TODO API remove if phased out
 include_once("./include/api/base.php");
 include_once("./include/api/user.php");
 

@@ -19,7 +19,6 @@
 define('phorum_page','register');
 
 include_once("./common.php");
-include_once("./include/users.php");
 include_once("./include/profile_functions.php");
 include_once("./include/email_functions.php");
 

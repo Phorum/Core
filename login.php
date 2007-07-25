@@ -19,12 +19,7 @@
 define('phorum_page','login');
 
 include_once( "./common.php" );
-include_once( "./include/users.php" );
 include_once( "./include/email_functions.php" );
-
-include_once("./include/api/base.php");
-include_once("./include/api/user.php");
-
 
 // ----------------------------------------------------------------------------
 // Handle logout
