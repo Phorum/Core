@@ -184,12 +184,12 @@
                 $frm->addrow("Display name contains", $frm->text_box("search_display_name", $_REQUEST["search_display_name"], 30));
             }
             $frm->addrow("Email contains", $frm->text_box("search_email", $_REQUEST["search_email"], 30));
-            $frm->addrow("User status", $frm->select_tag("search_status", $user_status_map, $_REQUEST['search_status']));
+            $frm->addrow("User status and type", $frm->select_tag("search_status", $user_status_map, $_REQUEST['search_status']) . " " . $frm->select_tag("search_type", array('any' => 'Any type of user', 'user' => 'Regular users', 'admin' => 'Administrators'), $_REQUEST['search_type']));
             $frm->addrow("Number of forum posts ",
                 $frm->text_box("posts", empty($_REQUEST["posts"]) ? "" : (int) $_REQUEST["posts"], 5) . " " .
                 $frm->select_tag("posts_op", array("gte" => "messages or more", "lte" => "messages or less"), $_REQUEST["posts_op"]));
             $frm->addrow("Last user activity",
-                $frm->select_tag("lastactive_op", array("lte" => "Longer ago than", "gte" => "Within the last"), $_REQUEST["lastactive_op"]) . " " .
+                $frm->select_tag("lastactive_op", array("lt" => "Longer ago than", "gte" => "Within the last"), $_REQUEST["lastactive_op"]) . " " .
                 $frm->text_box("lastactive", empty($_REQUEST["lastactive"]) ? "" : (int) $_REQUEST["lastactive"], 5) . " days"
                 );
             $frm->show();
@@ -251,6 +251,17 @@
                 $search_operators[] = '*';
             }
         }
+        if (isset($_REQUEST['search_type'])) {
+            if ($_REQUEST['search_type'] == 'user') {
+                $search_fields[] = 'admin';
+                $search_values[] = 0;
+                $search_operators[] = '=';
+            } elseif ($_REQUEST['search_type'] == 'admin') {
+                $search_fields[] = 'admin';
+                $search_values[] = 1;
+                $search_operators[] = '=';
+            }
+        }
         if (!empty($_REQUEST["posts"]) && $_REQUEST["posts"] >= 0) {
             $search_fields[] = 'posts';
             $search_values[] = (int) $_REQUEST['posts'];
@@ -260,7 +271,7 @@
             $time = time() - ($_REQUEST["lastactive"] * 86400);
             $search_fields[] = 'date_last_active';
             $search_values[] = $time;
-            $search_operators[] = $_REQUEST['lastactive_op'] == 'gte' ? '>=' : '<=';
+            $search_operators[] = $_REQUEST['lastactive_op'] == 'gte' ? '>=' : '<';
         }
         if (isset($_REQUEST['search_status']) && 
             $_REQUEST['search_status'] != 'any') {
