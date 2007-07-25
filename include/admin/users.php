@@ -186,7 +186,7 @@
             $frm->addrow("Email contains", $frm->text_box("search_email", $_REQUEST["search_email"], 30));
             $frm->addrow("User status and type", $frm->select_tag("search_status", $user_status_map, $_REQUEST['search_status']) . " " . $frm->select_tag("search_type", array('any' => 'Any type of user', 'user' => 'Regular users', 'admin' => 'Administrators'), $_REQUEST['search_type']));
             $frm->addrow("Number of forum posts ",
-                $frm->text_box("posts", empty($_REQUEST["posts"]) ? "" : (int) $_REQUEST["posts"], 5) . " " .
+                $frm->text_box("posts", isset($_REQUEST["posts"]) && trim($_REQUEST["posts"]) != '' ? (int) $_REQUEST["posts"] : "", 5) . " " .
                 $frm->select_tag("posts_op", array("gte" => "messages or more", "lte" => "messages or less"), $_REQUEST["posts_op"]));
             $frm->addrow("Last user activity",
                 $frm->select_tag("lastactive_op", array("lt" => "Longer ago than", "gte" => "Within the last"), $_REQUEST["lastactive_op"]) . " " .
@@ -262,7 +262,7 @@
                 $search_operators[] = '=';
             }
         }
-        if (!empty($_REQUEST["posts"]) && $_REQUEST["posts"] >= 0) {
+        if (isset($_REQUEST["posts"]) && trim($_REQUEST["posts"]) != '' && $_REQUEST["posts"] >= 0) {
             $search_fields[] = 'posts';
             $search_values[] = (int) $_REQUEST['posts'];
             $search_operators[] = $_REQUEST['posts_op'] == 'gte' ? '>=' : '<=';
