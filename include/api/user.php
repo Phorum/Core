@@ -52,6 +52,14 @@ if (!defined('PHORUM')) return;
 
 // {{{ Constant and variable definitions
 /**
+ * If a user API is written as a replacement for the standard Phorum user API,
+ * where the replacement API is incompatible with the standard API, then this
+ * define should be set to FALSE. That will disable the user management
+ * functions in the admin interface.
+ */
+define("PHORUM_ORIGINAL_USER_CODE", TRUE);
+
+/**
  * Used for identifying long term sessions. The value is used as
  * the name for the session cookie for long term sessions.
  */
@@ -1023,6 +1031,54 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
 function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $sort = NULL, $offset = 0, $length = 0)
 {
     return phorum_db_user_search($field, $value, $operator, $return_array, $type, $sort, $offset, $length);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_search_custom_profile_field()
+/**
+ * Search for users, based on a simple search condition,
+ * which can be used to search on custom profile fields.
+ *
+ * The parameters $field_id, $value and $operator (which are used for defining
+ * the search condition) can be arrays or single values. If arrays are used,
+ * then all three parameter arrays must contain the same number of elements
+ * and the key values in the arrays must be the same.
+ *
+ * @param mixed $field_id
+ *     The custom profile field id (integer) or ids (array) to search on.
+ *
+ * @param mixed $value
+ *     The value (string) or values (array) to search for.
+ *
+ * @param mixed $operator
+ *     The operator (string) or operators (array) to use. Valid operators are
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *     "*" operator is for executing a "LIKE '%value%'" matching query.
+ *
+ * @param boolean $return_array
+ *     If this parameter has a true value, then an array of all matching
+ *     user_ids will be returned. Else, a single user_id will be returned.
+ *
+ * @param string $type
+ *     The type of search to perform. This can be one of:
+ *     - AND  match against all fields
+ *     - OR   match against any of the fields
+ *
+ * @param integer $offset
+ *     The result page offset starting with 0.
+ *
+ * @param integer $length
+ *     The result page length (nr. of results per page)
+ *     or 0 (zero, the default) to return all results.
+ *
+ * @return mixed
+ *     An array of matching user_ids or a single user_id (based on the
+ *     $return_array parameter). If no user_ids can be found at all,
+ *     then 0 (zero) will be returned.
+ */
+function phorum_api_user_search_custom_profile_field($field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
+{
+    return phorum_db_user_search_custom_profile_field($field_id, $value, $operator, $return_array, $type, $offset, $length);
 }
 // }}}
 

@@ -30,34 +30,4 @@ if ( !defined( "PHORUM" ) ) return;
 // if you write your own user layer, set this to false
 define( "PHORUM_ORIGINAL_USER_CODE", true );
 
-/**
- * phorum_user_check_custom_field()
- *
- * This function takes a custom-fields name and content
- * as arguments and returns an array of the user_ids found
- * or NULL if no users are found
- *
- * optional match-parameter
- * 0 - exact match
- * 1 - like-clause
- */
-
-function phorum_user_check_custom_field($field_name,$field_content,$match=0) {
-
-    $type=-1;
-    foreach($GLOBALS['PHORUM']['PROFILE_FIELDS'] as $ctype => $cdata) {
-        if($ctype !== 'num_fields' && empty($cdata['deleted']) && $cdata['name'] == $field_name) {
-            $type=$ctype;
-            break;
-        }
-    }
-    if($type > -1) {
-        $retval=phorum_db_get_custom_field_users($type,$field_content,$match);
-    } else {
-        $retval=NULL;
-    }
-
-    return $retval;
-}
-
 ?>
