@@ -39,8 +39,6 @@ var editor_tools_lang = new Array();
 // Some variables for storing objects that we need globally.
 var editor_tools_textarea_obj = null;
 var editor_tools_subject_obj = null;
-var editor_tools_smiley_picker_obj = null;
-var editor_tools_subjectsmiley_picker_obj = null;
 var editor_tools_help_picker_obj = null;
 
 // A variable for storing the current selection range of the 
@@ -72,24 +70,6 @@ var editor_tools = new Array();
 //
 // This array will be filled from PHP-generated javascript.
 var editor_tools_help_chapters = new Array();
-
-// Smileys for the smiley picker.
-// *_s = search strings (smileys)
-// *_r = replace strings (image urls)
-// These will be filled from PHP-generated javascript.
-var editor_tools_smileys = new Array();
-var editor_tools_smileys_r = new Array();
-var editor_tools_smileys_a = new Array();
-var editor_tools_subjectsmileys = new Array();
-var editor_tools_subjectsmileys_r = new Array();
-var editor_tools_subjectsmileys_a = new Array();
-
-// The width and offset to the left of the smiley picker popup menus.
-// These will be filled from PHP-generated javascript.
-var editor_tools_smileys_popupwidth;
-var editor_tools_smileys_popupoffset;
-var editor_tools_subjectsmileys_popupwidth;
-var editor_tools_subjectsmileys_popupoffset;
 
 // The dimensions of the help window.
 var editor_tools_help_width = '400px';

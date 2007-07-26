@@ -84,6 +84,7 @@ examples on how to do this.
           $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= ob_get_contents();
           ob_end_clean();
    
+          // Register a tool button.
           editor_tools_register_tool(
               'foo',                         // Tool id
               'Foo module tool',             // Tool description
@@ -92,6 +93,14 @@ examples on how to do this.
               40,                            // Tool icon width
               18                             // Tool icon height
           );
+
+          // Register translation strings. These will be available in the
+          // javascript code through the editor_tools_translate() function,
+          // e.g. editor_tools_translate('key1') will return 'translation 1'.
+          editor_tools_register_translations(array(
+              'key1' => 'translation 1',
+              'key2' => 'translation 2'
+          ));
       }
 
    Beware that you do not use icons that are higher than 20px. If you do so,

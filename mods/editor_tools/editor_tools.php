@@ -113,6 +113,7 @@ function phorum_mod_editor_tools_common()
         "TOOLS"             => $tools,
         "JSLIBS"            => array(),
         "HELP_CHAPTERS"     => $help_chapters,
+        "TRANSLATIONS"      => $langstr,
     );
 
     // Give other modules a chance to setup their plugged in
@@ -234,7 +235,7 @@ function phorum_mod_editor_tools_before_footer()
     print '<script type="text/javascript">';
 
     // Make language strings available for the javascript code.
-    foreach ($PHORUM["DATA"]["LANG"]["mod_editor_tools"] as $key => $val) {
+    foreach ($PHORUM["MOD_EDITOR_TOOLS"]["TRANSLATIONS"] as $key => $val) {
         print "editor_tools_lang['" . addslashes($key) . "'] " .
               " = '" . addslashes($val) . "';\n";
     }
@@ -338,34 +339,40 @@ function phorum_mod_editor_tools_before_footer()
  * can be used to override the functionality of existing editor tool
  * buttons.
  *
- * @param $tool_id - A unique identifier to use for the tool.
- * @param $description - The description of the tool (this will be
- *                used as the title popup for the image button).
- *                NULL is allowed as the value. In that case,
- *                the $tool_id will be looked up in the editor tools
- *                module's language file. If it's available, the
- *                translation string is used as the description. If
- *                not, the $tool_id will be used directly.
- * @param $icon - The path to the icon image that has to be used for
- *                the button. This path is relative to the Phorum
- *                web directory.
- *                NULL is allowed as the value. In that case,
- *                the icon will be <module icon path>/<$tool_id>.gif.
- * @param $jsaction - The javascript code to execute when a user
- *                clicks on the editor tool button.
- *                NULL is allowed as the value. In that case,
- *                the javascript function editor_tools_handle_<$tool_id>()
- *                will be used.
- * @param $iconwidth - The width of the icon. If this parameter is omitted
- *                or is NULL, then the default value 21 will be used instead.
- * @param $iconheight - The height of the icon. If this parameter is omitted
- *                or is NULL, then the default value 20 will be used instead.
+ * @param string $tool_id
+ *     A unique identifier to use for the tool.
+ *
+ * @param mixed $description
+ *     The description of the tool (this will be used as the title popup
+ *     for the image button). NULL is allowed as the value. In that case,
+ *     the $tool_id will be looked up in the editor tools module's language
+ *     file. If it's available, the translation string is used as the
+ *     description. If not, the $tool_id will be used directly.
+ *
+ * @param mixed $icon
+ *     The path to the icon image that has to be used for the button.
+ *     This path is relative to the Phorum web directory. NULL is allowed
+ *     as the value. In that case, the icon will be
+ *     <module icon path>/<$tool_id>.gif.
+ *
+ * @param mixed $jsaction
+ *     The javascript code to execute when a user clicks on the editor
+ *     tool button. NULL is allowed as the value. In that case, the
+ *     javascript function editor_tools_handle_<$tool_id>() will be used.
+ *
+ * @param mixed $iconwidth
+ *     The width of the icon. If this parameter is omitted or is NULL,
+ *     then the default value 21 will be used instead.
+ *
+ * @param mixed $iconheight
+ *     The height of the icon. If this parameter is omitted or is NULL,
+ *     then the default value 20 will be used instead.
  */
 function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $iwidth=NULL, $iheight=NULL)
 {
     if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
-        "tool ".htmlspecialchars($toold_id)." is registered " .
+        "tool ".htmlspecialchars($toold_id)." was registered " .
         "after the editor_tools were started up. Tools must " .
         "be registered within or before the \"editor_tool_plugin\" hook.",
         E_USER_ERROR
@@ -385,14 +392,15 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $i
  * tools. The library file will be loaded before the editor tools
  * javascript code is written to the page.
  *
- * @param $jslib - The path to the javascript library to load.
- *                 This path is relative to the Phorum web directory.
+ * @param string $jslib
+ *     The path to the javascript library to load. This path is relative
+ *     to the Phorum web directory.
  */
 function editor_tools_register_jslib($jslib)
 {
     if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
-        "javascript library ".htmlspecialchars($jslib)." is registered " .
+        "javascript library ".htmlspecialchars($jslib)." was registered " .
         "after the editor_tools were started up. Libraries must " .
         "be registered within or before the \"editor_tool_plugin\" hook.",
         E_USER_ERROR
@@ -405,15 +413,18 @@ function editor_tools_register_jslib($jslib)
  * Register a help chapter that has to be linked to the editor tools
  * help button.
  *
- * @param $title - The title for the help chapter. This will be used
- *                 as the text for the link to the help page.
- * @param $url - The URL for the help page to display. 
+ * @param string $title
+ *     The title for the help chapter. This will be used as the text for
+ *     the link to the help page.
+ *
+ * @param string $url
+ *     The URL for the help page to display. 
  */
 function editor_tools_register_help($title, $url)
 {
     if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
-        "help chapter ".htmlspecialchars($title)." is registered " .
+        "help chapter ".htmlspecialchars($title)." was registered " .
         "after the editor_tools were started up. Help chapters must " .
         "be registered within or before the \"editor_tool_plugin\" hook.",
         E_USER_ERROR
@@ -423,12 +434,36 @@ function editor_tools_register_help($title, $url)
 }
 
 /**
+ * Register translation strings that should be made available to the
+ * javascript function editor_tools_translate().
+ *
+ * @param array $translations
+ *     An array of key / value pairs, containing translations.
+ */
+function editor_tools_register_translations($translations)
+{
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+        "Internal error for the editor_tools module: " .
+        "translation strings were registered after the editor_tools were " .
+        "started up. Translation strings must be registered within or " .
+        "before the \"editor_tool_plugin\" hook.",
+        E_USER_ERROR
+    );
+
+    foreach ($translations as $key => $val) {
+        $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TRANSLATIONS"][$key] = $val;
+    }
+}
+
+/**
  * Returns the info for a single tool or NULL if that tool has
  * not been registered.
  *
- * @param $tool_id - The tool id to lookup.
- * @return $toolinfo - The tool's info array or NULL if the tool
- *                     is not available.
+ * @param string $tool_id
+ *     The tool id to lookup.
+ *
+ * @return mixed $toolinfo
+ *     The tool's info array or NULL if the tool is not available.
  */
 function editor_tools_get_tool($tool_id)
 {
