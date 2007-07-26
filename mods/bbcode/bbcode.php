@@ -308,6 +308,9 @@ function phorum_mod_bbcode_editor_tool_plugin()
             phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode')
         );
     }
+
+    // Make language strings available for the editor tools javascript code.
+    editor_tools_register_translations($lang);
 }
 
 // The addon hook is used for displaying a help info screen.

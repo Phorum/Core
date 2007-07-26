@@ -34,13 +34,5 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Help titles.
     'bbcode help'  => 'BBcode n povØda',
-
-    # Color picker text and sizes of text.
-    'rgb'  => 'RGB',
-    'named'  => 'N zvy barev',
-    'slides'  => 'VìbØr',
-    'rgb_size'  => '40',
-    'named_size'  => '85',
-    'slides_size'  => '70',
 );
 ?>

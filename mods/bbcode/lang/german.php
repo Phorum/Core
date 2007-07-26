@@ -19,6 +19,7 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Dialogs and errors.
     'enter url'     => 'Bitte geben Sie die Adresse ein, zu der Sie einen Link erstellen wollen.',
+    'enter email'   => 'Bitte geben Sie die E-Mail Adresse ein, zu der Sie einen Link erstellen wollen.',
     'enter url description' => 'Bitte geben Sie eine Beschreibung fuer den Link an.',
     'invalid url'   => 'Diese Adresse ist ungueltig. Es sollte mit http://, https://, ftp:// oder mailto: beginnen.',
     'enter image url' => 'Bitte geben Sie die Adresse fuer das einzufuegende Bild an.',
@@ -34,13 +35,5 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Help titles.
     'bbcode help'  => 'BBcode Hilfe',
-
-    # Color picker tab's text and tabs sizes.
-    'rgb'  => 'RGB',
-    'named'  => 'Named colors',
-    'slides'  => 'Slides',
-    'rgb_size'  => '40',
-    'named_size'  => '90',
-    'slides_size'  => '70',
 );
 ?>

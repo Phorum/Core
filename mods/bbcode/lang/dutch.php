@@ -20,6 +20,7 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Dialogs and errors.
     'enter size'    => 'Voer de tekstgrootte in.',
+    'enter email'   => 'Voer het emailadres in.',
     'enter url'     => 'Voer de URL in om naartoe te linken.',
     'enter url description' => 'Geef een omschrijving voor de link.',
     'invalid url'   => 'De URL is ongeldig. Deze moet starten met http://, https://, ftp:// of mailto:',
@@ -36,13 +37,5 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Help titles.
     'bbcode help'  => 'BBcode help',
-
-    # Color picker tab's text and tabs sizes.
-    'rgb'  => 'RGB',
-    'named'  => 'Kleurnamen',
-    'slides'  => 'Schuiven',
-    'rgb_size'  => '40',
-    'named_size'  => '80',
-    'slides_size'  => '68',
 );
 ?>

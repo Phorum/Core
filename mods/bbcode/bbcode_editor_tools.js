@@ -115,8 +115,18 @@ function editor_tools_handle_code() {
 // Tool: [email]...[/email] (email address link)
 // ----------------------------------------------------------------------
 
-function editor_tools_handle_email() {
-    editor_tools_add_tags('[email]', '[/email]');
+function editor_tools_handle_email()
+{
+    var email = prompt(editor_tools_translate("enter email"), '');
+    if (email == null) return;
+    email = editor_tools_strip_whitespace(email);
+
+    if (email == '') {
+        editor_tools_add_tags('[email]', '[/email]');
+    } else {
+        editor_tools_add_tags('[email]' + email + '[/email]', '');
+    }
+
     editor_tools_focus_textarea();
 }
 
