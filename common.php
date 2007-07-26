@@ -394,14 +394,19 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     }
 
     // get the language file
-    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
+    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) &&
+            isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
         $PHORUM['language'] = $PHORUM['user']['user_language'];
 
     if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
         $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
 
     // set the user-selected template
-    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) && isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template'])) {
+    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) &&
+            isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template']) &&
+            (!isset( $PHORUM["user_template"] )  || !empty($PHORUM['user_template']))
+         ) {
+
         $PHORUM['template'] = $PHORUM['user']['user_template'];
     }
 
