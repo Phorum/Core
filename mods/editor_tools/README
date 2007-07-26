@@ -1,18 +1,30 @@
-Module  : Phorum Editor Tools
-Version : 1.1.21
+Module  : Editor Tools
+Version : 1.2.0
 Author  : Maurice Makaay <maurice@makaay.nl>
 
-This module will add a buttonbar to the Phorum message editor, which can be
-used by visitors to easily apply BBcode and smileys to their postings.
+This module will add a tool bar to the Phorum message editor, which can be
+used by visitors to easily add things like BBcode tags and smileys to
+their postings.
+
+This module is mainly a framework, which implements easy to use javascript
+functions and a simple API (see below) for adding buttons and help pages
+to the tool bar. So on its own, the module does not do much. Other modules
+will have to be enabled to add functional buttons to the tool bar. Phorum
+is shipped with two modules that can do this: the BBcode and the smileys
+module. Please take a look at the settings screens for those modules to
+enable the tool bar buttons that you want to use.
 
 
 Install:
 --------
 
-- Unpack the archive;
 
-- Move the directory "editor_tools" to the directory "mods"
-  within your Phorum installation;
+Install:
+--------
+
+- Unpack the archive and move the directory "editor_tools" to the directory
+  "mods" within your Phorum installation (unless this module was packaged
+  with your Phorum release);
 
 - Login as administrator in Phorum's administrative interface and
   go to the "Modules" section;
@@ -21,26 +33,22 @@ Install:
 
 - Enable the "BBcode" and/or "Smileys" module (Editor Tools will
   only show tools for the enabled modules, so if you do not enable
-  any of these two, no tools will be displayed at all).
+  any of these two, no tools will be displayed at all). Edit the
+  settings for the BBcode and Smileys module to configure which
+  tool buttons you want to enable.
 
 
 Language support:
 -----------------
 
 This module supports multiple languages. If you want to translate the module
-to a new language, you'll have to do the following:
+to a new language, you'll have to copy lang/english.php to lang/yourlang.php 
+(yourlang.php must have the same name as Phorum's main language file that
+you use). After this, translate the strings in lang/yourlang.php.
 
-1) copy lang/english.php to lang/yourlang.php (yourlang.php must have the
-   same name as Phorum's main language file that you use).
-   After this, translate the strings in lang/yourlang.php.
-
-2) Copy the directory help/english to help/yourlang. After that, translate
-   the text in the files within that directory.
-
-If you have created a translation for this module, please post a zip file
-containing lang/yourlang.php and help/yourlang in the module thread at
-phorum.org, so the translation can be added to the module package.
-See: http://www.phorum.org/phorum5/read.php?16,114352
+If you have created a translation for this module, please post a copy of
+lang/yourlang.php in the module forum at http://www.phorum.org/phorum5, so
+we can add the translation to the package.
 
 
 How to plugin into the editor tools from another module:
@@ -62,7 +70,10 @@ examples on how to do this.
    on the editor tool button to the page and register the extra editor
    tool so it will be display. Example code:
 
-      function phorum_mod_foo_editor_tool_plugin() {
+      function phorum_mod_foo_editor_tool_plugin()
+      {
+          // Add some javascript code to Phorum's <head> section.
+          ob_start();
           ?>
           <script type="text/javascript">
           function mod_foo_editor_tool_action() {
@@ -70,15 +81,17 @@ examples on how to do this.
           }
           </script>
           <?php
+          $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= ob_get_contents();
+          ob_end_clean();
    
-           editor_tools_register_tool(
-               'foo',                         // Tool id
-               'Foo module tool',             // Tool description
-               './mods/mod_foo/icon.gif',     // Tool button icon
-               'mod_foo_editor_tool_action()' // Javascript action on click
-               40,                            // Tool icon width
-               18,                            // Tool icon height
-           );
+          editor_tools_register_tool(
+              'foo',                         // Tool id
+              'Foo module tool',             // Tool description
+              './mods/mod_foo/icon.gif',     // Tool button icon
+              'mod_foo_editor_tool_action()' // Javascript action on click
+              40,                            // Tool icon width
+              18                             // Tool icon height
+          );
       }
 
    Beware that you do not use icons that are higher than 20px. If you do so,

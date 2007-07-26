@@ -1,0 +1,26 @@
+Changelog:
+----------
+
+- Rewrite for Phorum 5.2. Changes are:
+  - Added Phorum copyright notices;
+  - Cleaned up the settings screen by moving explanations to help balloons;
+  - Added settings for configuring the BBcode tags that are allowed, so
+    admins can disable unwanted tags;
+  - Added support for adding Editor Tools module buttons, directly from
+    the bbcode module (so the Editor Tools module can be stripped down
+    to only be the core of the tool bar functionality, while modules can
+    add buttons to it);
+  - Fixed a quote bug. Before, [quote wrong quote[/quote] would render
+    as an unclosed <blockquote><div>;
+  - Fixed detection of mail addresses for cases where the email address
+    is at the end of a line.
+  - Got rid of the 5 char random marker that was used in URL detection.
+    5 random chars from a hex md5 sum is too dangerous (it could
+    return a part of a URL and that could explain some sporadic bug reports
+    that I got from my users about URLs not always working correctly).
+  - The terms "bb code", "bb_code" and "bbcode" were all in use. Reduced
+    that to only use "bbcode".
+
+- Checkboxes added for "links in window" and "anti-spam tags"
+  by Adam Sheik (www.cantonese.sheik.co.uk).
+

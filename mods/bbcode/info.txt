@@ -1,10 +1,19 @@
-hook:  format|phorum_bb_code
-hook:  quote|phorum_bb_code_quote
-title: BB Code Phorum Mod
-desc:  This module converts BB Code into HTML.
+title: BBcode
+desc:  This module allows users to add BBcode (Bulletin Board Code) tags to their postings. BBcode tags are a safe way of adding markup (bold, italic, images, links, etc.).
 author: Phorum Dev Team
 url: http://www.phorum.org/
+
+hook: lang|
+hook: format|phorum_mod_bbcode_format
+hook: quote|phorum_mod_bbcode_quote
+hook: editor_tool_plugin|phorum_mod_bbcode_editor_tool_plugin
+hook: addon|phorum_mod_bbcode_addon
 
 # Always run bbcode formatting as the last hook.
 priority: run module after *
 priority: run hook format after *
+
+# The bbcode tool button are the most standard ones. We want to have
+# those added to the tool bar as the first buttons.
+priority: run hook editor_tool_plugin before *
+

@@ -9,7 +9,9 @@
     BBcode is een afkorting voor Bulletin Board code. Dit is een 
     opmaaktaal die kan worden gebruikt door forumgebruikers voor 
     het opmaken van hun berichten. Deze pagina beschrijft welke
-    BBcode gebruikt kan worden op dit forum.
+    BBcode gebruikt kan worden op dit forum. Het kan zijn dat de
+    beheerder van dit forum niet alle codes heeft geactiveerd, dus
+    het kan voorkomen dat sommige codes niet werken.
 
     <h3>Vetgedrukte tekst: [b]...[/b]<br/>
         Onderstreepte tekst: [u]...[/u]<br/>

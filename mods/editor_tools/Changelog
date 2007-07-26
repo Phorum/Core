@@ -1,6 +1,15 @@
 Changelog:
 ----------
 
+2007-07-26 v1.2.0
+
+    - Removed BBcode and smiley specific code from the module and moved
+      that to respectively the BBcode and smileys modules. This allows
+      the Editor Tools module to only be a framework that other modules
+      can use to add tool bar buttons (this was the intentional design
+      that I had in mind, but this could not be done because the module
+      had to be compatible with Phorum 5.1 as well).
+
 2007-07-09 v1.1.21
 
     - Fixed a minor CSS bug in the color picker code.

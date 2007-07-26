@@ -8,11 +8,6 @@ if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"])) {
     $GLOBALS["PHORUM"]["mod_editor_tools"] = array();
 }
 
-// By default, we will display the bbcode tools.
-if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_bbcode"])) {
-    $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_bbcode"] = 1;
-}
-
 // By default, we will display the smiley tool.
 if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"])) {
     $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"] = 1;
@@ -47,21 +42,6 @@ if (! isset($GLOBALS["PHORUM"]["mod_editor_tools"]["subjectsmiley_popup_width"])
 // group the tool belongs. The other parameters are the same as
 // what the API call editor_tools_register_tool() expects.
 $GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] = array (
-    array("bbcode",  array('bold',        NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('underline',   NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('italic',      NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('strike',      NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('subscript',   NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('superscript', NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('color',       NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('size',        NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('center',      NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('image',       NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('url',         NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('email',       NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('code',        NULL, NULL, NULL, NULL, NULL)),
-    array("bbcode",  array('quote',       NULL, NULL, NULL, 20,   NULL)),
-    array("bbcode",  array('hr',          NULL, NULL, NULL, NULL, NULL)),
     array("smiley",  array('smiley',      NULL, NULL, NULL, NULL, NULL)),
     array("help",    array('help',        NULL, NULL, NULL, NULL, NULL)),
     array('subjectsmiley', array('subjectsmiley', NULL, NULL, NULL, NULL, NULL)),

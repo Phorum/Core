@@ -1,51 +1,11 @@
 <?php
 $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     # Button descriptions.
-    'bold'          => 'Bold',
-    'italic'        => 'Kurz°va',
-    'underline'     => 'PodtrßenÇ',
-    'strike'        => 'P˝eÁkrtnout',
-    'subscript'     => 'Doln° index',
-    'superscript'   => 'Horn° index',
-    'color'         => 'Barva p°sma',
-    'size'          => 'Velikost p°sma',
-    'center'        => 'Vycentrovat text',
-    'url'           => 'Vloßit odkaz',
-    'email'         => 'Vloßit emailovou adresu',
-    'image'         => 'Vloßit odkaz obr†zku',
     'smiley'        => 'Vloßit smajl°ka',
     'subjectsmiley' => 'Vloßit smajl°ka do p˝edmÿtu',
-    'hr'            => 'Vloßit horizont†ln° ü†ru',
-    'code'          => 'Neform†tovanÏ text',
-    'quote'         => 'Vloßit citaci',
-    'help'          => 'N†povÿda',
-
-    # Dialogs and errors.
-    'enter url'     => 'Pros°m, vloßte adresu odkazu.',
-    'enter url description' => 'Pros°m vloßte popis odkazu.',
-    'invalid url'   => 'Odkaz je chybnÏ. Mÿl by zaü°nat s http://, https://, ftp:// nebo mailto:',
-    'enter image url' => 'Pros°m vloßte odkaz na obr†zek, kterÏ chcete p˝idat.',
-    'invalid image url' => 'ChybnÏ odkaz obr†zku. Mÿl by zaü°nat s http://, https:// or ftp://',
-    'enter who you quote' => 'Pros°m, vloßte jmÇno osoby, kter† m† bÏt v uvozovk†ch. MÖßete takÇ nechat pr†zdnÇ.',
-
-    # For the size picker.
-    'x-large'      => 'Extra velkÇ',
-    'large'        => 'VelkÇ',
-    'medium'       => 'St˝edn°',
-    'small'        => 'MalÇ',
-    'x-small'      => 'Extra malÇ',
 
     # Help titles.
-    'bbcode help'  => 'BBcode n†povÿda',
     'smileys help' => 'Smajl°ky n†povÿda',
-
-    # Color picker text and sizes of text.
-    'rgb'  => 'RGB',
-    'named'  => 'N†zvy barev',
-    'slides'  => 'VÏbÿr',
-    'rgb_size'  => '40',
-    'named_size'  => '85',
-    'slides_size'  => '70',
 
     # For the non javascript help pages.
     'help'         => 'Informace n†povÿdy:',

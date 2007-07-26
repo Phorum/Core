@@ -6,17 +6,6 @@
     // save settings
     if(count($_POST))
     {
-        if ($PHORUM["mod_editor_tools"]["enable_bbcode"]) {
-            $PHORUM["mod_editor_tools"]["disable_bbcode_tool"] = array();
-            foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo) {
-                $tool = $toolinfo[1][0];
-                if (! isset($_POST[enable_bbcode_tool][$tool])) {
-                    $PHORUM["mod_editor_tools"]["disable_bbcode_tool"][$tool] = 1;
-                }
-            }
-        }
-
-        $PHORUM["mod_editor_tools"]["enable_bbcode"] = $_POST["enable_bbcode"] ? 1 : 0;
         $PHORUM["mod_editor_tools"]["enable_smileys"] = $_POST["enable_smileys"] ? 1 : 0;
         $PHORUM["mod_editor_tools"]["enable_subjectsmileys"] = $_POST["enable_subjectsmileys"] ? 1 : 0;
         $PHORUM["mod_editor_tools"]["enable_help"] = $_POST["enable_help"] ? 1 : 0;
@@ -39,18 +28,6 @@
     $frm->hidden("mod", "editor_tools");
 
     $frm->addbreak("Edit settings for the Editor Tools module");
-
-    $frm->addrow("Enable BBcode tools for the message body", $frm->checkbox("enable_bbcode", "1", "", $PHORUM["mod_editor_tools"]["enable_bbcode"]));
-
-    // Add options for bbcode tools, so people can disable them.
-    if ($PHORUM["mod_editor_tools"]["enable_bbcode"]) {
-        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo) {
-            if ($toolinfo[0] != 'bbcode') continue;
-            $tool = $toolinfo[1][0];
-            $checked = $PHORUM["mod_editor_tools"]["disable_bbcode_tool"][$tool] ? 0 : 1;
-            $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable bbcode tool $tool", $frm->checkbox("enable_bbcode_tool[$tool]", 1, '', $checked));
-        }
-    }
 
     $frm->addrow("Enable Smiley tool for the message body", $frm->checkbox("enable_smileys", "1", "", $PHORUM["mod_editor_tools"]["enable_smileys"]));
     if ($PHORUM["mod_editor_tools"]["enable_smileys"]) {

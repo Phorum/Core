@@ -8,7 +8,9 @@
 
     BBcode is short for Bulletin Board code. It is a markup language
     that can be used by forum users to format their messages. This help
-    page describes what BBcode can be used on this forum.
+    page describes what BBcode can be used on this forum. Note that the
+    administrator might not have enable all tags, so some of them might
+    not be working.
 
     <h3>Bold text: [b]...[/b]<br/>
         Underlined text: [u]...[/u]<br/>

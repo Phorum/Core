@@ -14,6 +14,7 @@
 //                                                                           //
 // You should have received a copy of the Phorum License                     //
 // along with this program.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 if(!defined("PHORUM")) return;
@@ -81,22 +82,6 @@ function phorum_mod_editor_tools_common()
 
     $tools = array();
     $help_chapters = array();
-
-    // Add the tools and help page for supporting the bbcode module.
-    if (isset($GLOBALS["PHORUM"]["mods"]["bbcode"]) &&
-        $GLOBALS["PHORUM"]["mods"]["bbcode"] &&
-        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_bbcode"]) {
-        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo) {
-            if ($toolinfo[0] != 'bbcode') continue;
-            if (isset($GLOBALS["PHORUM"]["mod_editor_tools"]["disable_bbcode_tool"][$toolinfo[1][0]])) continue;
-            $tools[$toolinfo[1][0]] = $toolinfo[1];
-        }
-
-        $help_chapters[] = array(
-            $langstr["bbcode help"],
-            phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_help=bbcode')
-        );
-    }
 
     // Add a tool and help page for supporting the smileys module.
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&

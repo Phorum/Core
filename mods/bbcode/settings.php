@@ -1,47 +1,97 @@
 <?php
-    // this Settings file was hacked together from the example module
-    // kindly created by Chris Eaton (tridus@hiredgoons.ca)
-    // Update history:
-    // Checkboxes added for "links in window" and "anti-spam tags" by Adam Sheik (www.cantonese.sheik.co.uk)
 
-    if(!defined("PHORUM_ADMIN")) return;
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+// Copyright (C) 2007  Phorum Development Team                               //
+// http://www.phorum.org                                                     //
+//                                                                           //
+// This program is free software. You can redistribute it and/or modify      //
+// it under the terms of either the current Phorum License (viewable at      //
+// phorum.org) or the Phorum License that was distributed with this file     //
+//                                                                           //
+// This program is distributed in the hope that it will be useful,           //
+// but WITHOUT ANY WARRANTY, without even the implied warranty of            //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                      //
+//                                                                           //
+// You should have received a copy of the Phorum License                     //
+// along with this program.                                                  //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
 
-    // save settings
-    if(count($_POST)){
-        $PHORUM["mod_bb_code"]["links_in_new_window"]=$_POST["links_in_new_window"] ? 1 : 0;
-        $PHORUM["mod_bb_code"]["rel_no_follow"]=$_POST["rel_no_follow"] ? 1 : 0;
-        $PHORUM["mod_bb_code"]["quote_hook"]=$_POST["quote_hook"] ? 1 : 0;
-        $PHORUM["mod_bb_code"]["show_full_urls"]=$_POST["show_full_urls"] ? 1 : 0;
+if(!defined("PHORUM_ADMIN")) return;
 
-        if(!phorum_db_update_settings(array("mod_bb_code"=>$PHORUM["mod_bb_code"]))){
-            $error="Database error while updating settings.";
-        }
-        else {
-            echo "Settings Updated<br />";
+// Load default settings and tag descriptions.
+require_once("./mods/bbcode/defaults.php");
+
+// Available options for the bbcode tag dropdown menus.
+$options_without_editor_tools = array(
+    0            => 'Disabled',
+    1            => 'Enabled',
+);
+$options_with_editor_tools = $options_without_editor_tools;
+$options_with_editor_tools[2] = 'Enabled + editor tools button';
+
+// Save settings.
+if (count($_POST))
+{
+    $nr_of_enabled_tags = 0;
+
+    $PHORUM["mod_bbcode"] = array(
+      "links_in_new_window" => empty($_POST["links_in_new_window"]) ?0:1,
+      "rel_no_follow"       => empty($_POST["rel_no_follow"])       ?0:1,
+      "quote_hook"          => empty($_POST["quote_hook"])          ?0:1,
+      "show_full_urls"      => empty($_POST["show_full_urls"])      ?0:1,
+    );
+
+    foreach ($GLOBALS["bbcode_features"] as $id => $feature) {
+        if (isset($_POST["enabled"][$id])) {
+            $value = (int) $_POST["enabled"][$id];
+            $PHORUM["mod_bbcode"]["enabled"][$id] = $value;
+            if ($value == 2) $nr_of_enabled_tags ++;
         }
     }
 
-    include_once "./include/admin/PhorumInputForm.php";
-    $frm =& new PhorumInputForm ("", "post", "Save");
-    $frm->hidden("module", "modsettings");
-    $frm->hidden("mod", "bbcode"); // this is the directory name that the Settings file lives in
+    phorum_db_update_settings(array(
+        "mod_bbcode" => $PHORUM["mod_bbcode"]
+    ));
 
-    if (!empty($error)){
-        echo "$error<br />";
+    phorum_admin_okmsg("Settings updated.");
+
+    if ($nr_of_enabled_tags > 0 && empty($PHORUM['mods']['editor_tools'])) {
+        phorum_admin_error("<b>Notice:</b> You have configured one or more BBcode tags to add a button to the editor tool bar. However, you have not enabled the Editor Tools module. If you want to use the tool buttons, then remember to activate the Editor Tools module.");
     }
-    $frm->addbreak("Edit settings for the BBCode module");
-    $frm->addmessage("When users post links on your forum, you can choose whether they open in a new window.");
-    $frm->addrow("Open links in new window: ", $frm->checkbox("links_in_new_window", "1", "", $PHORUM["mod_bb_code"]["links_in_new_window"]));
-    $frm->addmessage("URLs will be shown in their whole length and not shortened like [ ... ].");
-    $frm->addrow("Show full urls: ", $frm->checkbox("show_full_urls", "1", "", $PHORUM["mod_bb_code"]["show_full_urls"]));
-    $frm->addmessage("Enable <a href=\"http://en.wikipedia.org/wiki/Blog_spam\" target=\"_blank\">
-        Google's new anti-spam protocol</a> for links posted on your forums.
-        <br/>
-        Note, this doesn't stop spam links being posted, but it does mean that
-        spammers don't get credit from Google from that link.");
-    $frm->addrow("Use 'rel=nofollow' anti-spam tag: ", $frm->checkbox("rel_no_follow", "1", "", $PHORUM["mod_bb_code"]["rel_no_follow"]));
-    $frm->addmessage("As of Phorum 5.1, there is the option to have quoted text altered by modules.  Since it only makes sense to have one module modifying the quoted text, you can disable this one part of this module.");
+}
 
-    $frm->addrow("Enable quote hook", $frm->checkbox("quote_hook", "1", "", $PHORUM["mod_bb_code"]["quote_hook"]));
-    $frm->show();
+include_once "./include/admin/PhorumInputForm.php";
+$frm = new PhorumInputForm ("", "post", "Save settings");
+$frm->hidden("module", "modsettings");
+$frm->hidden("mod", "bbcode");
+
+$frm->addbreak("General settings for the BBcode module");
+
+$row = $frm->addrow("Open links in new window", $frm->checkbox("links_in_new_window", "1", "", $PHORUM["mod_bbcode"]["links_in_new_window"]) . ' Yes');
+$frm->addhelp($row, "Open links in new window", "When users post links on your forum, you can choose whether to open these in a new window or not.");
+
+$row = $frm->addrow("Show full URLs", $frm->checkbox("show_full_urls", "1", "", $PHORUM["mod_bbcode"]["show_full_urls"]) . ' Yes');
+$frm->addhelp($row, "Show full URLs", "By default, URLs are truncated by phorum to show only [www.example.com]. This is done to prevent very long URLs from cluttering and distrurbing the web site layout. By enabling this feature, you can suppress the truncation, so full URLs are shown.");
+
+$row = $frm->addrow("Add 'rel=nofollow' to links that are posted in your forum", $frm->checkbox("rel_no_follow", "1", "", $PHORUM["mod_bbcode"]["rel_no_follow"]) . ' Yes');
+$frm->addhelp($row, "Add 'rel=nofollow' to links", 'You can enable Google\'s rel="nofollow" tag for links that are posted in your forums. This tag is used to discourage spamming links to web sites in forums (which can be done to influence search engines by implying that the site is a popular one, because of all the links).<br/><br/>Note that this does not stop spam links from being posted, but it does mean that spammers do not get any credit from Google for that link.');
+
+$row = $frm->addrow("Enable BBcode quoting using the [quote] tag", $frm->checkbox("quote_hook", "1", "", $PHORUM["mod_bbcode"]["quote_hook"]) . ' Yes');
+$frm->addhelp($row, "Enable BBcode [quote]", "If this feature is enabled, then quoting of messages is not done using the standard Phorum method (which resembles email message quoting), but using the BBcode module's quoting method instead. This means that the quoted text is placed within a [quote Author]...[/quote] bbcode block.<br/><br/>Two of the advantages of using this quote method is that the quoted message can be styles though CSS code and that no word wrapping is applied to the text.");
+
+$row = $frm->addbreak("Activation of BBcode tags");
+$frm->addhelp($row, "Activation of BBcode tags", "Using the options below, you can configure which BBcode tags you want to make available to your users.<br/><br/>For most of the tags, you can additionally enable the editor tools button. If you have enabled the Editor Tools module, then doing so will add a button to the editor tool bar for that tag.");
+
+foreach ($GLOBALS["bbcode_features"] as $id => $feature)
+{
+    $options = $feature[1]
+             ? $options_with_editor_tools
+             : $options_without_editor_tools;
+
+    $frm->addrow($feature[0], $frm->select_tag("enabled[$id]", $options, $PHORUM["mod_bbcode"]["enabled"][$id]), "top");
+}
+
+$frm->show();
 ?>
