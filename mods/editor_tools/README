@@ -18,10 +18,6 @@ enable the tool bar buttons that you want to use.
 Install:
 --------
 
-
-Install:
---------
-
 - Unpack the archive and move the directory "editor_tools" to the directory
   "mods" within your Phorum installation (unless this module was packaged
   with your Phorum release);

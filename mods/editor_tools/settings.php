@@ -1,9 +1,10 @@
 <?php
     if(!defined("PHORUM_ADMIN")) return;
 
+    // Apply default settings.
     require_once("./mods/editor_tools/defaults.php");
 
-    // save settings
+    // Save the settings to the database.
     if(count($_POST))
     {
         $PHORUM["mod_editor_tools"] = array(
@@ -17,8 +18,9 @@
         phorum_admin_okmsg("The settings were successfully saved.");
     }
 
+    // Build the settings form.
     include_once "./include/admin/PhorumInputForm.php";
-    $frm =& new PhorumInputForm ("", "post", "Save");
+    $frm = new PhorumInputForm ("", "post", "Save");
     $frm->hidden("module", "modsettings");
     $frm->hidden("mod", "editor_tools");
 
