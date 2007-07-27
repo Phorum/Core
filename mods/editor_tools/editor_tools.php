@@ -45,7 +45,7 @@ require_once("./mods/editor_tools/defaults.php");
  */
 function phorum_mod_editor_tools_common()
 {
-    $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
+    $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
 
     // Add the core editor tools javascript and CSS code to the page.
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
@@ -59,7 +59,7 @@ function phorum_mod_editor_tools_common()
         "TOOLS"             => array(),
         "JSLIBS"            => array(),
         "HELP_CHAPTERS"     => array(),
-        "TRANSLATIONS"      => $langstr,
+        "TRANSLATIONS"      => $lang,
     );
 
     // Add a help tool. We add it as the first tool, so we can
@@ -285,7 +285,7 @@ function phorum_mod_editor_tools_before_footer()
  *     The height of the icon. If this parameter is omitted or is NULL,
  *     then the default value 20 will be used instead.
  */
-function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $iwidth=NULL, $iheight=NULL, $target=NULL)
+function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsaction=NULL, $iwidth=NULL, $iheight=NULL, $target=NULL)
 {
     if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .

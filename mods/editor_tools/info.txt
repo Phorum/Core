@@ -10,5 +10,3 @@ hook: before_editor|phorum_mod_editor_tools_before_editor
 hook: after_header|phorum_mod_editor_tools_after_header
 hook: tpl_editor_before_textarea|phorum_mod_editor_tools_tpl_editor_before_textarea
 hook: before_footer|phorum_mod_editor_tools_before_footer
-hook: addon|phorum_mod_editor_tools_addon
-
