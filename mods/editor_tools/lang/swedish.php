@@ -1,12 +1,7 @@
 ﻿<?php
 $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     # Button descriptions.
-    'smiley'        => 'Infoga smiley',
-    'subjectsmiley' => 'Infoga smiley till rubriken',
-    'help'         => 'Hjälp information:',
-
-    # Help titles.
-    'smileys help' => 'Smileys  hjälp',
+    'help'         => 'Hjälp information',
 
     # Color picker tab's text and tabs sizes.
     'rgb'  => 'RGB',

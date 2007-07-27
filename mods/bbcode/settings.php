@@ -55,7 +55,7 @@ if (count($_POST))
         "mod_bbcode" => $PHORUM["mod_bbcode"]
     ));
 
-    phorum_admin_okmsg("Settings updated.");
+    phorum_admin_okmsg("The settings were successfully saved.");
 
     if ($nr_of_enabled_tags > 0 && empty($PHORUM['mods']['editor_tools'])) {
         phorum_admin_error("<b>Notice:</b> You have configured one or more BBcode tags to add a button to the editor tool bar. However, you have not enabled the Editor Tools module. If you want to use the tool buttons, then remember to activate the Editor Tools module.");

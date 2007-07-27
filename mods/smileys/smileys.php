@@ -60,9 +60,73 @@ function phorum_mod_smileys_format($data)
 function phorum_mod_smileys_editor_tool_plugin()
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    $lang = $PHORUM["DATA"]["LANG"]["mod_smileys"];
 
     // Register the javascript library for supporting smiley tool buttons.
-    editor_tools_register_jslib('./mods/smileys/smileys_editor_tools.js');
+    editor_tools_register_jslib(
+        phorum_get_url(PHORUM_ADDON_URL, 'module=smileys', 'action=javascript')
+    );
+
+    // Register the smiley tool button for the message body.
+    if (!empty($PHORUM['mod_smileys']['smileys_tool_enabled']))
+    {
+        editor_tools_register_tool(
+            'smiley',                              // Tool id
+            $lang['smiley'],                       // Tool description
+            "./mods/smileys/icon.gif",             // Tool button icon
+            "editor_tools_handle_smiley()",        // Javascript click action
+            NULL,                                  // Tool icon width
+            NULL,                                  // Tool icon height
+            'body'                                 // Tool target
+        );
+    }
+
+    // Register the smiley tool button for the message subject.
+    if (!empty($PHORUM['mod_smileys']['subjectsmileys_tool_enabled']))
+    {
+        editor_tools_register_tool(
+            'subjectsmiley',                       // Tool id
+            $lang['subjectsmiley'],                // Tool description
+            "./mods/smileys/icon.gif",             // Tool button icon
+            "editor_tools_handle_subjectsmiley()", // Javascript click action
+            NULL,                                  // Tool icon width
+            NULL,                                  // Tool icon height
+            'subject'                              // Tool target
+        );
+    }
+
+    // Register the smileys help page.
+    editor_tools_register_help(
+        'smileys help',
+        phorum_get_url(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
+    );
+}
+
+// The addon hook is used for displaying a help info screen and for
+// supplying the javascript library.
+function phorum_mod_smileys_addon()
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    if (empty($PHORUM["args"]["action"])) return;
+
+    // Include the smileys help page.
+    if ($PHORUM["args"]["action"] == 'help')
+    {
+        $lang = $GLOBALS['PHORUM']['language'];
+        if (!file_exists('./mods/smileys/help/$lang/smileys.php')) {
+            $lang = 'english';
+        }
+        include("./mods/smileys/help/$lang/smileys.php");
+        return;
+    }
+
+    // Include the javascript library for the smileys editor tools.
+    if ($PHORUM["args"]["action"] == 'javascript') {
+
+        include("./mods/smileys/smileys_editor_tools.js.php");
+        return;
+    }
 }
 
 ?>

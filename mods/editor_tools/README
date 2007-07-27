@@ -72,8 +72,7 @@ examples on how to do this.
 
       function phorum_mod_foo_editor_tool_plugin()
       {
-          // Add some javascript code to Phorum's <head> section.
-          ob_start();
+          // Add javascript code to handle a click on the tool button.
           ?>
           <script type="text/javascript">
           function mod_foo_editor_tool_action() {
@@ -81,8 +80,6 @@ examples on how to do this.
           }
           </script>
           <?php
-          $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= ob_get_contents();
-          ob_end_clean();
    
           // Register a tool button.
           editor_tools_register_tool(
@@ -113,13 +110,13 @@ examples on how to do this.
    hook directly, but you can also let the editor_tools module handle this
    by using the following call in the hook function:
 
-      editor_tools_register_jslib('path/to/your/javascript/library.js');
+      editor_tools_register_jslib('relative/path/to/your/library.js');
 
    Beware that this path is relative to the Phorum installation directory.
    So if you would like to load foo.js from the mod_foo directory, you
    would use the following:
 
-      editor_tools_register_jslib('./mods/mod_foo/foo.js');
+      editor_tools_register_jslib('mods/mod_foo/foo.js');
 
 5) If you want to link a help page to the help button in the editor tools,
    you can add one from the editor_tool_plugin using the following call

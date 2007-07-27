@@ -33,6 +33,7 @@ define('TOOL_ICON',        2);
 define('TOOL_JSACTION',    3);
 define('TOOL_IWIDTH',      4);
 define('TOOL_IHEIGHT',     5);
+define('TOOL_TARGET',      6);
 
 // Load default settings.
 require_once("./mods/editor_tools/defaults.php");
@@ -40,84 +41,34 @@ require_once("./mods/editor_tools/defaults.php");
 /**
  * Adds the javascript and CSS for the editor tools to the page header.
  * Sets up internal datastructures for the editor tools module.
+ * Allows other modules to register their editor tool buttons.
  */
 function phorum_mod_editor_tools_common()
 {
-    $lang = $GLOBALS["PHORUM"]["language"];
     $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
 
     // Load the colorpicker javascript library and exit.
     // This is done this way, so the paths inside the color picker
     // library can be made absolute using Phorum's http_path.
+    // TODO: make addon script
     if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_cpjs"])) {
         include("./mods/editor_tools/colorpicker/js_color_picker_v2.js.php");
         exit;
     }
 
-    // Show a help page and exit.
-    // TODO: make addon script?
-    if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_help"])) {
-        $helpid = basename($GLOBALS["PHORUM"]["args"]["editor_tools_help"]);
-        foreach (array($lang, 'english') as $lang) {
-            $helpfile = "./mods/editor_tools/help/$lang/{$helpid}.php";
-            if (file_exists($helpfile)) {
-                include($helpfile);
-                exit;
-            }
-        }
-            
-        trigger_error(
-            "Illegal help page id: " . htmlspecialchars($helpid),
-            E_USER_ERROR
-        );
-    }
-
+    // Add the core editor tools javascript and CSS code to the page.
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
       '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>' .
       '<link rel="stylesheet" type="text/css" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.css"></link>' .
       '<link rel="stylesheet" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
 
-    // Decide what tools we want to show. Later on we might replace
-    // this by code to be able to configure this from the module
-    // settings page.
-
-    $tools = array();
-    $help_chapters = array();
-
-    // Add a tool and help page for supporting the smileys module.
-    /*
-    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
-        $GLOBALS["PHORUM"]["mods"]["smileys"] &&
-        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"]) {
-        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
-            if ($toolinfo[0] == 'smiley')
-                $tools[$toolinfo[1][0]] = $toolinfo[1];
-
-        $help_chapters[] = array(
-            $langstr["smileys help"],
-            phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_help=smileys')
-        );
-    }
-    */
-
-    // Add the subject smileys editor tool.
-    /*
-    if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
-        $GLOBALS["PHORUM"]["mods"]["smileys"] &&
-        $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subjectsmileys"]) {
-        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
-            if ($toolinfo[0] == 'subjectsmiley')
-                $tools[$toolinfo[1][0]] = $toolinfo[1];
-    }
-    */
-
-    // Store our information for later use.
+    // Initialize the tool data array.
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (
         "DO_TOOLS"          => false,
         "STARTED"           => false,
-        "TOOLS"             => $tools,
+        "TOOLS"             => array(),
         "JSLIBS"            => array(),
-        "HELP_CHAPTERS"     => $help_chapters,
+        "HELP_CHAPTERS"     => array(),
         "TRANSLATIONS"      => $langstr,
     );
 
@@ -128,7 +79,7 @@ function phorum_mod_editor_tools_common()
 
     // Keep track that the editor tools have been setup. From here
     // on, the API calls for registering tools, javascript libraries
-    // and help chapters are no longer allowed.
+    // help chapters and language strings are no longer allowed.
     $PHORUM["MOD_EDITOR_TOOLS"]["STARTED"] = true;
 }
 
@@ -144,14 +95,14 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
 
     if (!count($help)) return;
 
-    print '<noscript><br/><br/><font size="-1">';
+    print '<nonscript><br/><br/><font size="-1">';
     print $lang['help'] . "<br/><ul>";
     foreach ($help as $helpinfo) {
       print "<li><a href=\"" . htmlspecialchars($helpinfo[1]) . "\" " .
             "target=\"editor_tools_help\">" .
             htmlspecialchars($helpinfo[0]) . "</a><br/>";
     }
-    print '</ul><br/></font></noscript>';
+    print '</ul><br/></font></nonscript>';
 }
 
 /**
@@ -226,13 +177,20 @@ function phorum_mod_editor_tools_before_footer()
             $toolinfo[TOOL_IHEIGHT] = 20;
         }
 
+        // Default for the target to use.
+        if (empty($toolinfo[TOOL_TARGET]) ||
+            ($toolinfo[TOOL_TARGET] != 'subject' &&
+             $toolinfo[TOOL_TARGET] != 'body')) {
+            $toolinfo[TOOL_TARGET] = 'body';
+        }
+
         $tools[$id] = $toolinfo;
     }
 
     // Add javascript libraries for the color picker.
     if (editor_tools_get_tool('color')) {
         $cpjs= phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], 'editor_tools_cpjs=1');
-        $jslibs[] = './mods/editor_tools/colorpicker/color_functions.js';
+        $jslibs[] = 'mods/editor_tools/colorpicker/color_functions.js';
         $jslibs[] = $cpjs;
     }
 
@@ -248,14 +206,6 @@ function phorum_mod_editor_tools_before_footer()
     // Make default icon height available for the javascript code.
     print 'editor_tools_default_iconheight = ' . MOD_EDITOR_TOOLS_DEFAULT_IHEIGHT . ";\n";
 
-    // Make the icon popup sizes available for the javascript code.
-    /*
-    print "editor_tools_smileys_popupwidth = '" . $PHORUM["mod_editor_tools"]["smiley_popup_width"] . "px';\n" .
-          'editor_tools_smileys_popupoffset = ' . $PHORUM["mod_editor_tools"]["smiley_popup_offset"] . ";\n" . 
-          "editor_tools_subjectsmileys_popupwidth = '" . $PHORUM["mod_editor_tools"]["subjectsmiley_popup_width"] . "px';\n" .
-          'editor_tools_subjectsmileys_popupoffset = ' . $PHORUM["mod_editor_tools"]["subjectsmiley_popup_offset"] . ";\n";
-     */
-
     // Add help chapters.
     $idx = 0;
     foreach ($help as $helpinfo) {
@@ -270,7 +220,7 @@ function phorum_mod_editor_tools_before_footer()
     $idx = 0;
     foreach ($tools as $toolinfo)
     {
-        list ($tool, $description, $icon, $jsfunction, $iw, $ih) = $toolinfo;
+        list ($tool, $desc, $icon, $jsfunction, $iw, $ih, $target) = $toolinfo;
 
         // Turn relative URL icon paths into a full URL, to make this
         // module work correctly in an embedded environment.
@@ -280,36 +230,12 @@ function phorum_mod_editor_tools_before_footer()
 
         print "editor_tools[$idx] = new Array(" .
               "'" . addslashes($tool) . "', " .
-              "'" . addslashes($description) . "', " .
+              "'" . addslashes($desc) . "', " .
               "'" . addslashes($icon) . "', " .
               "'" . addslashes($jsfunction) . "', " .
-              (int)$iw . ", " . (int)$ih . ");\n";
+              (int)$iw . ", " . (int)$ih . ", '" . $target . "');\n";
         $idx ++;
     }
-
-    // Add available smileys for the smiley picker.
-    /*
-    if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
-        $prefix = $PHORUM["http_path"] . "/" . $PHORUM["mod_smileys"]["prefix"];
-	$bsi = 0;
-	$ssi = 0; 
-        foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
-            if (! $smiley["active"] || $smiley["is_alias"]) continue;
-            if ($smiley["uses"] == 0 || $smiley["uses"] == 2) {
-              print "editor_tools_smileys[$bsi] = '" . addslashes($smiley["search"]) . "';\n";
-	      print "editor_tools_smileys_r[$bsi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
-	      print "editor_tools_smileys_a[$bsi] = '" . addslashes($smiley["alt"]) . "';\n";
-	      $bsi ++;
-	    }
-            if ($smiley["uses"] == 1 || $smiley["uses"] == 2) {
-              print "editor_tools_subjectsmileys[$ssi] = '" . addslashes($smiley["search"]) . "';\n";
-	      print "editor_tools_subjectsmileys_r[$ssi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
-	      print "editor_tools_subjectsmileys_a[$ssi] = '" . addslashes($smiley["alt"]) . "';\n";
-	      $ssi ++;
-	    }
-        }
-    }
-    */
 
     print "</script>\n";
 
@@ -378,7 +304,7 @@ function phorum_mod_editor_tools_before_footer()
  *     The height of the icon. If this parameter is omitted or is NULL,
  *     then the default value 20 will be used instead.
  */
-function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $iwidth=NULL, $iheight=NULL)
+function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $iwidth=NULL, $iheight=NULL, $target=NULL)
 {
     if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
@@ -393,7 +319,8 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $i
         $description,
         $icon,
         $jsaction,
-        $iwidth, $iheight
+        $iwidth, $iheight,
+        $target
     );
 }
 

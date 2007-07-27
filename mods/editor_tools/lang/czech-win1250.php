@@ -1,12 +1,7 @@
 <?php
 $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     # Button descriptions.
-    'smiley'        => 'Vložit smajlíka',
-    'subjectsmiley' => 'Vložit smajlíka do pøedmìtu',
-    'help'         => 'Informace nápovìdy:',
-
-    # Help titles.
-    'smileys help' => 'Smajlíky nápovìda',
+    'help'         => 'Informace nápovìdy',
 
     # Color picker text and sizes of text.
     'rgb'  => 'RGB',

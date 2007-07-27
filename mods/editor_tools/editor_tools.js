@@ -243,6 +243,7 @@ function editor_tools_construct()
         var jsaction    = toolinfo[3];
         var iwidth      = toolinfo[4];
         var iheight     = toolinfo[5];
+        var target      = toolinfo[6];
 
         // Do not use the color picker on MSIE 5. I tested this on a
         // Macintosh OS9 system and the color picker about hung MSIE.
@@ -274,15 +275,19 @@ function editor_tools_construct()
         }
         a_obj.appendChild(img_obj);
 
-        // A special tool: subjectsmiley. This one is added to the
-        // subject field instead of the textarea.
-        // Find the subject text field. If we can't find one,
-        // simply continue with the rest of the code.
-        if (tool == 'subjectsmiley' && subjectfield_obj) {
-            img_obj.style.verticalAlign = 'top';
-            var parent = subjectfield_obj.parentNode;
-            var sibling = subjectfield_obj.nextSibling;
-            parent.insertBefore(a_obj, sibling);
+        // Add the button to the page.
+        // target = subject is a feature that was added for supporting
+        // the subjectsmiley tool. This one is added to the subject field
+        // instead of the textarea. 
+        if (target == 'subject') {
+            // Find the subject text field. If we can't find one,
+            // then simply ignore this tool.
+            if (subjectfield_obj) {
+                img_obj.style.verticalAlign = 'top';
+                var parent = subjectfield_obj.parentNode;
+                var sibling = subjectfield_obj.nextSibling;
+                parent.insertBefore(a_obj, sibling);
+            }
         } else {
             div_obj.appendChild(a_obj);
         }

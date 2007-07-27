@@ -1,12 +1,7 @@
 <?php
 $PHORUM["DATA"]["LANG"]["mod_editor_tools"] = array(
     # Button descriptions.
-    'smiley'        => 'Liitä hymiö',
-    'subjectsmiley' => 'Liitä hymiö otsikkoon',
-    'help'         => 'Ohjeita:',
-
-    # Help titles.
-    'smileys help' => 'Hymiö-ohje',
+    'help'         => 'Ohjeita',
 
     # Color picker tab's text and tabs sizes.
     'rgb'  => 'RGB',

@@ -31,7 +31,8 @@ $okmsg = "";
 $smiley_id = isset($_POST["smiley_id"]) ?  $_POST["smiley_id"] : "NEW";
 
 // ACTION: Changing the mod_smileys settings.
-if (empty($error) && $action == "edit_settings") {
+if (empty($error) && $action == "edit_settings")
+{
     $_POST["prefix"] = trim($_POST["prefix"]);
     // Is the field filled in?
     if (empty($_POST["prefix"])) {
@@ -56,8 +57,38 @@ if (empty($error) && $action == "edit_settings") {
         }
 
         $PHORUM["mod_smileys"]["prefix"] = $_POST["prefix"];
+    }
 
-        $okmsg = "The smiley settings have been saved successfully";
+    if ($PHORUM['mod_smileys']['smileys_tool_enabled']) {
+        $PHORUM['mod_smileys']['smiley_popup_width'] = 
+            (int) $_POST['smiley_popup_width'];
+        $PHORUM['mod_smileys']['smiley_popup_offset'] = 
+            (int) $_POST['smiley_popup_offset'];
+    }
+    $PHORUM['mod_smileys']['smileys_tool_enabled'] = 
+        empty($_POST['smileys_tool_enabled']) ? 0 : 1;
+
+    if ($PHORUM['mod_smileys']['subjectsmileys_tool_enabled']) {
+        $PHORUM['mod_smileys']['subjectsmiley_popup_width'] = 
+            (int) $_POST['subjectsmiley_popup_width'];
+        $PHORUM['mod_smileys']['subjectsmiley_popup_offset'] = 
+            (int) $_POST['subjectsmiley_popup_offset'];
+    }
+    $PHORUM['mod_smileys']['subjectsmileys_tool_enabled'] = 
+        empty($_POST['subjectsmileys_tool_enabled']) ? 0 : 1;
+
+    if (empty($error))
+    {
+        if (($PHORUM['mod_smileys']['smileys_tool_enabled'] ||
+             $PHORUM['mod_smileys']['subjectsmileys_tool_enabled']) &&
+            empty($PHORUM['mods']['editor_tools'])) {
+                phorum_admin_error("<b>Notice:</b> You have configured the smileys module to add one or more smiley buttons to the editor tool bar. However, you have not enabled the Editor Tools module. If you want to use the tool buttons, then remember to activate the Editor Tools module.");
+        }
+    }
+
+    if (empty($error))
+    {
+        $okmsg = "The settings were successfully saved.";
         $do_db_update = true;
     }
 }
@@ -221,13 +252,42 @@ if ($smiley_id == "NEW")
     $frm->hidden("mod", "smileys");
     $frm->hidden("action", "edit_settings");
     $frm->addbreak("Smiley Settings");
-    $row = $frm->addrow("Smiley Prefix Path", $frm->text_box("prefix", $PHORUM["mod_smileys"]["prefix"], 50));
+    $row = $frm->addrow("Smiley Prefix Path", $frm->text_box("prefix", $PHORUM["mod_smileys"]["prefix"], 30));
     $frm->addhelp($row,
         "Set the smiley image prefix path",
         "This option can be used to set the path to the directory where
          you have stored your smileys. This path must be relative to the
          directory in which you installed the Phorum software. Absolute
          paths cannot be used here.");
+
+    $row = $frm->addrow("Enable body smiley button in the editor tools", $frm->checkbox("smileys_tool_enabled", "1", "", $PHORUM["mod_smileys"]["smileys_tool_enabled"]) . ' Yes');
+    $frm->addhelp($row, 
+        "Body smiley tool button",
+        "If you enable this option, then a smiley button will be added to
+         the editor tools tool bar, which can be used to easily add smileys
+         to the message body. You also have to enable the Editor Tools
+         module to make use of this feature.");
+
+    if (!empty($PHORUM["mod_smileys"]["smileys_tool_enabled"]))
+    {
+        $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The width to use for the smileys popup", $frm->text_box("smiley_popup_width", $PHORUM["mod_smileys"]["smiley_popup_width"], 5) . ' pixels');
+        $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How far to shift the smileys popup to the left", $frm->text_box("smiley_popup_offset", $PHORUM["mod_smileys"]["smiley_popup_offset"], 5) . ' pixels');
+    }
+
+    $row = $frm->addrow("Enable subject smiley button in the editor tools", $frm->checkbox("subjectsmileys_tool_enabled", "1", "", $PHORUM["mod_smileys"]["subjectsmileys_tool_enabled"]) . ' Yes');
+    $frm->addhelp($row,
+        "Subject smiley tool button",
+        "If you enable this option, then a smiley button will be added
+         next to the subject text input, which can be used to easily add
+         smileys to the message subject. You also have to enable the
+         Editor Tools module to make use of this feature.");
+
+    if (!empty($PHORUM["mod_smileys"]["subjectsmileys_tool_enabled"]))
+    {
+        $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The width to use for the subject smileys popup", $frm->text_box("subjectsmiley_popup_width", $PHORUM["mod_smileys"]["subjectsmiley_popup_width"], 5) . ' pixels');
+        $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How far to shift the subject smileys popup to the left", $frm->text_box("subjectsmiley_popup_offset", $PHORUM["mod_smileys"]["subjectsmiley_popup_offset"], 5) . ' pixels');
+    }
+
     $frm->show();
 }
 

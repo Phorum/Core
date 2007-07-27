@@ -263,7 +263,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
     $lang   = $PHORUM['DATA']['LANG']['mod_bbcode'];
 
     // Register the javascript library for supporting bbcode tool buttons.
-    editor_tools_register_jslib('./mods/bbcode/bbcode_editor_tools.js');
+    editor_tools_register_jslib('mods/bbcode/bbcode_editor_tools.js');
 
     $nr_of_enabled_tags = 0;
 
@@ -291,9 +291,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
             $id,                           // Tool id
             $description,                  // Tool description
             "./mods/bbcode/icons/$id.gif", // Tool button icon
-            "editor_tools_handle_$id()",   // Javascript action on click
-            NULL,                          // Tool icon width
-            NULL                           // Tool icon height
+            "editor_tools_handle_$id()"    // Javascript action on click
         );
     }
 

@@ -1,3 +1,4 @@
+<?php header("Content-Type: text/javascript") ?>
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
 // Copyright (C) 2007  Phorum Development Team                               //
@@ -24,7 +25,6 @@ var editor_tools_subjectsmiley_picker_obj = null;
 // Smileys for the smiley picker.
 // *_s = search strings (smileys)
 // *_r = replace strings (image urls)
-// These will be filled from PHP-generated javascript.
 var editor_tools_smileys = new Array();
 var editor_tools_smileys_r = new Array();
 var editor_tools_smileys_a = new Array();
@@ -32,12 +32,42 @@ var editor_tools_subjectsmileys = new Array();
 var editor_tools_subjectsmileys_r = new Array();
 var editor_tools_subjectsmileys_a = new Array();
 
-// The width and offset to the left of the smiley picker popup menus.
-// These will be filled from PHP-generated javascript.
-var editor_tools_smileys_popupwidth;
-var editor_tools_smileys_popupoffset;
-var editor_tools_subjectsmileys_popupwidth;
-var editor_tools_subjectsmileys_popupoffset;
+// The width and offset to the left for the smiley picker popup menus.
+// These values can be tweaked from the smiley module settings page.
+var editor_tools_smileys_popupwidth = '<?php print (int) $PHORUM['mod_smileys']['smiley_popup_width'] ?>px';
+var editor_tools_smileys_popupoffset = <?php print (int) $PHORUM['mod_smileys']['smiley_popup_offset'] ?>;
+var editor_tools_subjectsmileys_popupwidth = '<?php print (int) $PHORUM['mod_smileys']['subjectsmiley_popup_width'] ?>px';
+var editor_tools_subjectsmileys_popupoffset = <?php print (int) $PHORUM['mod_smileys']['subjectsmiley_popup_offset'] ?>;
+
+// The available smileys.
+<?php
+$prefix = $PHORUM["http_path"] . "/" . $PHORUM["mod_smileys"]["prefix"];
+$bsi = 0;
+$ssi = 0;
+foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley)
+{
+    // Skip inactive and duplicate smileys.
+    if (! $smiley["active"] || $smiley["is_alias"]) continue;
+
+    // Smileys that can be used in the body.
+    if ($smiley["uses"] == 0 || $smiley["uses"] == 2)
+    {
+      print "editor_tools_smileys[$bsi] = '" . addslashes($smiley["search"]) . "';\n";
+      print "editor_tools_smileys_r[$bsi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+      print "editor_tools_smileys_a[$bsi] = '" . addslashes($smiley["alt"]) . "';\n";
+      $bsi ++;
+    }
+
+    // Smileys that can be used in the subject.
+    if ($smiley["uses"] == 1 || $smiley["uses"] == 2)
+    {
+      print "editor_tools_subjectsmileys[$ssi] = '" . addslashes($smiley["search"]) . "';\n";
+      print "editor_tools_subjectsmileys_r[$ssi] = '" . addslashes($prefix . $smiley["smiley"]) . "';\n";
+      print "editor_tools_subjectsmileys_a[$ssi] = '" . addslashes($smiley["alt"]) . "';\n";
+      $ssi ++;
+    }
+}
+?>
 
 // ----------------------------------------------------------------------
 // Tool: smiley
