@@ -13,7 +13,7 @@
 <html>
   <head>
     <title>Smiley Hilfe</title>
-    <link rel="stylesheet" type="text/css" href="../help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/smileys/help/help.css"/>
   </head>
   <body>
     <h2>Smiley Hilfe</h2>
@@ -30,7 +30,7 @@
       <th class="PhorumAdminTableHead">Bild</th>
       <th class="PhorumAdminTableHead">Wo</th>
     </tr>
-    <?php include("./mods/editor_tools/help/render_smileys_list.php") ?>
+    <?php include("./mods/smileys/help/render_smileys_list.php") ?>
     </table>
 
     <br/><br/><br/>

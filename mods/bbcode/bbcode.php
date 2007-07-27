@@ -319,6 +319,7 @@ function phorum_mod_bbcode_addon()
         $lang = 'english';
     }
     include("./mods/bbcode/help/$lang/bbcode.php");
+    exit(0);
 }
 
 ?>

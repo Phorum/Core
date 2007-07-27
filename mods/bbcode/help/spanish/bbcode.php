@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>Ayuda BBCode</title>
-    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/help.css"/>
   </head>
   <body>
     <h2>Información BBcode</h2>
@@ -103,7 +103,7 @@
     [email]someuser@somesite.com[/email]
     </tt></br></br>
     Aparecerá como:<br/><br/> 
-    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/><br/>
+    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/thumbsup.gif" border="0"/><br/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Visit Phorum.org!</a><br/>
     <a href="mailto:someuser@somesite.com">someuser@somesite.com</a>

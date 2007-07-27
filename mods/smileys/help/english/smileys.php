@@ -9,7 +9,7 @@
 <html>
   <head>
     <title>Smiley help</title>
-    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/smileys/help/help.css"/>
   </head>
   <body>
     <h2>Smiley help information</h2>
@@ -29,7 +29,7 @@
       <th class="PhorumAdminTableHead">Description</th>
       <th class="PhorumAdminTableHead">Where</th>
     </tr>
-    <?php include("./mods/editor_tools/help/render_smileys_list.php") ?>
+    <?php include("./mods/smileys/help/render_smileys_list.php") ?>
     </table>
 
     <br/><br/><br/>

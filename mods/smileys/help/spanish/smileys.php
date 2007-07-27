@@ -9,7 +9,7 @@
 <html>
   <head>
     <title>Ayuda Smileys</title>
-    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/smileys/help/help.css"/>
   </head>
   <body>
     <h2>Ayuda para usar los smileys</h2>
@@ -30,7 +30,7 @@
       <th class="PhorumAdminTableHead">Descripción</th>
       <th class="PhorumAdminTableHead">Dónde</th>
     </tr>
-    <?php include("./mods/editor_tools/help/render_smileys_list.php") ?>
+    <?php include("./mods/smileys/help/render_smileys_list.php") ?>
     </table>
 
     <br/><br/><br/>

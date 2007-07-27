@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>BBcode hulp</title>
-    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/help.css"/>
   </head>
   <body>
     <h2>BBcode hulp informatie</h2>
@@ -104,7 +104,7 @@
     [email]iemand@ergens.com[/email]
     </tt></br></br>
     Dit zal worden getoond als:</br></br>
-    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/help/thumbsup.gif" border="0"/><br/>
+    <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/thumbsup.gif" border="0"/><br/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Visit Phorum.org!</a><br/>
     <a href="mailto:iemand@ergens.com">iemand@ergens.com</a>

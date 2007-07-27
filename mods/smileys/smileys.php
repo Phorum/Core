@@ -108,7 +108,10 @@ function phorum_mod_smileys_addon()
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    if (empty($PHORUM["args"]["action"])) return;
+    if (empty($PHORUM["args"]["action"])) trigger_error(
+        'Missing "action" argument for smileys module addon call',
+        E_USER_ERROR
+    );
 
     // Include the smileys help page.
     if ($PHORUM["args"]["action"] == 'help')
@@ -118,15 +121,22 @@ function phorum_mod_smileys_addon()
             $lang = 'english';
         }
         include("./mods/smileys/help/$lang/smileys.php");
-        return;
+        exit(0);
     }
 
     // Include the javascript library for the smileys editor tools.
     if ($PHORUM["args"]["action"] == 'javascript') {
 
         include("./mods/smileys/smileys_editor_tools.js.php");
-        return;
+        exit(0);
     }
+
+    trigger_error(
+        'Illegal "action" argument ' .
+        '"' . htmlspecialchars($PHORUM['args']['action']) . '"' .
+        'for smileys module addon call',
+        E_USER_ERROR
+    );
 }
 
 ?>
