@@ -47,20 +47,10 @@ function phorum_mod_editor_tools_common()
 {
     $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
 
-    // Load the colorpicker javascript library and exit.
-    // This is done this way, so the paths inside the color picker
-    // library can be made absolute using Phorum's http_path.
-    // TODO: make addon script
-    if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_cpjs"])) {
-        include("./mods/editor_tools/colorpicker/js_color_picker_v2.js.php");
-        exit;
-    }
-
     // Add the core editor tools javascript and CSS code to the page.
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
-      '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>' .
-      '<link rel="stylesheet" type="text/css" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.css"></link>' .
-      '<link rel="stylesheet" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/colorpicker/js_color_picker_v2.css"/>';
+      '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>'."\n" .
+      '<link rel="stylesheet" type="text/css" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.css"></link>'."\n";
 
     // Initialize the tool data array.
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (
@@ -71,6 +61,12 @@ function phorum_mod_editor_tools_common()
         "HELP_CHAPTERS"     => array(),
         "TRANSLATIONS"      => $langstr,
     );
+
+    // Add a help tool. We add it as the first tool, so we can
+    // shift it nicely to the right side of the page using CSS float.
+    if ($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"]) {
+        editor_tools_register_tool('help', $lang['help']);
+    }
 
     // Give other modules a chance to setup their plugged in
     // editor tools. This is done through a standard hook call.
@@ -129,12 +125,13 @@ function phorum_mod_editor_tools_before_footer()
 
     $do_tools = false;
     
-    // A way to flag that the editor tools must be run.
+    // Detect if we are handling a message editor.
     if (isset($PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"]) && $PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"]) $do_tools = true;
 
     // Detect if we are handling a PM editor.
     if (isset($PHORUM["DATA"]["PM_PAGE"]) && $PHORUM["DATA"]["PM_PAGE"] == 'send') $do_tools = true;
 
+    // No editor? Then we can return.
     if (! $do_tools) return;
 
     $tools  = $PHORUM["MOD_EDITOR_TOOLS"]["TOOLS"];
@@ -142,30 +139,23 @@ function phorum_mod_editor_tools_before_footer()
     $help   = $PHORUM["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"];
     $lang   = $PHORUM["DATA"]["LANG"]["mod_editor_tools"];
 
-    // Add a help tool. We add it as the first tool, so we can
-    // shift it nicely to the right side of the page using CSS float.
-    if ($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"]) {
-        foreach ($GLOBALS["PHORUM"]["mod_editor_tools"]["tools"] as $toolinfo)
-            if ($toolinfo[0] == 'help') array_unshift($tools, $toolinfo[1]);
-    }
-
     // Fill in default values for the tools.
     foreach ($tools as $id => $toolinfo)
     {
         $tool_id = $toolinfo[TOOL_ID];
 
         // Default for description is the mod_editor_tools language string.
-        if ($toolinfo[TOOL_DESCRIPTION] == NULL) {
-            $toolinfo[TOOL_DESCRIPTION] = isset($lang[$tool_id]) ? $lang[$tool_id] : $tool_id;
+        if ($toolinfo[TOOL_DESCRIPTION] === NULL) {
+            $toolinfo[TOOL_DESCRIPTION] = $tool_id;
         }
 
         // Default for the icon to use.
-        if ($toolinfo[TOOL_ICON] == NULL) {
+        if ($toolinfo[TOOL_ICON] === NULL) {
             $toolinfo[TOOL_ICON] = MOD_EDITOR_TOOLS_ICONS . "/{$tool_id}.gif";
         }
 
         // Default for the javascript action to use.
-        if ($toolinfo[TOOL_JSACTION] == NULL) {
+        if ($toolinfo[TOOL_JSACTION] === NULL) {
             $toolinfo[TOOL_JSACTION] = "editor_tools_handle_{$tool_id}()";
         }
 
@@ -187,14 +177,7 @@ function phorum_mod_editor_tools_before_footer()
         $tools[$id] = $toolinfo;
     }
 
-    // Add javascript libraries for the color picker.
-    if (editor_tools_get_tool('color')) {
-        $cpjs= phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], 'editor_tools_cpjs=1');
-        $jslibs[] = 'mods/editor_tools/colorpicker/color_functions.js';
-        $jslibs[] = $cpjs;
-    }
-
-    // Construct the javascript code for constructing the editor tools.
+    // Construct the javascript code for setting up the editor tools.
     print '<script type="text/javascript">';
 
     // Make language strings available for the javascript code.
@@ -223,7 +206,7 @@ function phorum_mod_editor_tools_before_footer()
         list ($tool, $desc, $icon, $jsfunction, $iw, $ih, $target) = $toolinfo;
 
         // Turn relative URL icon paths into a full URL, to make this
-        // module work correctly in an embedded environment.
+        // module work correctly in portable or embedded environment.
         if (! preg_match('|^\w+://|', $icon) && substr($icon, 0, 1) != '/') {
             $icon = $GLOBALS["PHORUM"]["http_path"] . "/$icon";
         }
@@ -254,8 +237,6 @@ function phorum_mod_editor_tools_before_footer()
 
     // Construct and display the editor tools panel.
     print '<script type="text/javascript">editor_tools_construct();</script>';
-
-
 }
 
 // ----------------------------------------------------------------------
@@ -329,9 +310,10 @@ function editor_tools_register_tool($tool_id, $description, $icon, $jsaction, $i
  * tools. The library file will be loaded before the editor tools
  * javascript code is written to the page.
  *
- * @param string $jslib
+ * @param mixed $jslib
  *     The path to the javascript library to load. This path is relative
- *     to the Phorum web directory.
+ *     to the Phorum web directory. This argument can also be an array
+ *     of paths.
  */
 function editor_tools_register_jslib($jslib)
 {
@@ -343,7 +325,13 @@ function editor_tools_register_jslib($jslib)
         E_USER_ERROR
     );
 
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $jslib;
+    if (is_array($jslib)) {
+        foreach($jslib as $path) {
+            $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $path;
+        }
+    } else {
+        $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $jslib;
+    }
 }
 
 /**
@@ -390,27 +378,6 @@ function editor_tools_register_translations($translations)
     foreach ($translations as $key => $val) {
         $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TRANSLATIONS"][$key] = $val;
     }
-}
-
-/**
- * Returns the info for a single tool or NULL if that tool has
- * not been registered.
- *
- * @param string $tool_id
- *     The tool id to lookup.
- *
- * @return mixed $toolinfo
- *     The tool's info array or NULL if the tool is not available.
- */
-function editor_tools_get_tool($tool_id)
-{
-    $tools = $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"];
-    foreach ($tools as $id => $toolinfo) {
-        if ($toolinfo[0] == $tool_id) {
-            return $toolinfo;
-        }
-    }
-    return NULL;
 }
 
 ?>

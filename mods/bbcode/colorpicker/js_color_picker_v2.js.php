@@ -21,7 +21,7 @@ header("Content-type: text/javascript");
 	var navigatorVersion = navigator.appVersion.replace(/.*MSIE (\d\.\d).*/g,'$1')/1;
 
     /* Changed for Phorum editor tools */
-	var form_widget_amount_slider_handle = '<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/colorpicker/images/slider_handle.gif';
+	var form_widget_amount_slider_handle = '<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/colorpicker/images/slider_handle.gif';
 	var slider_handle_image_obj = false;
 	var sliderObjectArray = new Array();
 	var slider_counter = 0;
@@ -238,7 +238,7 @@ header("Content-type: text/javascript");
 					thisObj.style.zIndex = 50;
 					var img = thisObj.getElementsByTagName('IMG')[0];
                     /* Changed for Phorum editor tools */
-					img.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/colorpicker/images/tab_right_active.gif"
+					img.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/colorpicker/images/tab_right_active.gif"
 					img.src = img.src.replace(/inactive/,'active');							
 					contentDiv.style.display='block';
 					activeColorDiv = contentDiv;
@@ -246,7 +246,7 @@ header("Content-type: text/javascript");
 					subDiv.className = 'colorPickerTab_inactive';	
 					var img = subDiv.getElementsByTagName('IMG')[0];
                     /* Changed for Phorum editor tools */
-					img.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/colorpicker/images/tab_right_inactive.gif";
+					img.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/colorpicker/images/tab_right_inactive.gif";
 					if(activeColorDiv)
 						subDiv.style.zIndex = initZIndex - counter;
 					else
@@ -295,7 +295,7 @@ header("Content-type: text/javascript");
 			tabDiv.appendChild(tabSpan);
 			var tabImg = document.createElement('IMG');
             /* Changed for Phorum editor tools */
-			tabImg.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/editor_tools/colorpicker/images/tab_right_" + suffix + ".gif";
+			tabImg.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/colorpicker/images/tab_right_" + suffix + ".gif";
 			tabDiv.appendChild(tabImg);
 			div.appendChild(tabDiv);
 			if(navigatorVersion<6 && MSIE){	/* Lower IE version fix */

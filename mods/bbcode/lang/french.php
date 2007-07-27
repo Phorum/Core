@@ -34,5 +34,13 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Help titles.
     'bbcode help'  => 'Aide sur le BBcode',
+
+    # Color picker tab names and sizes.
+    'rgb'          => 'RGB',
+    'named'        => 'Coul. définies',
+    'slides'       => 'Personnaliser',
+    'rgb_size'     => '40',
+    'named_size'   => '90',
+    'slides_size'  => '70',
 );
 ?>

@@ -1,11 +1,14 @@
 title: Editor tools
 desc: This module will add a tool bar to the Phorum message editor, which can be used by visitors to easily add things like BBcode tags and smileys to their postings.
+author: Phorum Dev Team
+url: http://www.phorum.org/
+version: 1.2.0
+
 hook: lang|
 hook: common|phorum_mod_editor_tools_common
 hook: before_editor|phorum_mod_editor_tools_before_editor
 hook: after_header|phorum_mod_editor_tools_after_header
 hook: tpl_editor_before_textarea|phorum_mod_editor_tools_tpl_editor_before_textarea
 hook: before_footer|phorum_mod_editor_tools_before_footer
-author: Phorum Dev Team
-url: http://www.phorum.org/
-version: 1.2.0
+hook: addon|phorum_mod_editor_tools_addon
+

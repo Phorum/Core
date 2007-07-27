@@ -293,6 +293,18 @@ function phorum_mod_bbcode_editor_tool_plugin()
             "./mods/bbcode/icons/$id.gif", // Tool button icon
             "editor_tools_handle_$id()"    // Javascript action on click
         );
+
+        // For the "color" tool, we need to load the color picker
+        // javascript libraries and the colorpicker CSS stylesheet.
+        if ($id == 'color') {
+            editor_tools_register_jslib(array(
+                'mods/bbcode/colorpicker/color_functions.js',
+                phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode','action=js'),
+            ));
+
+            $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= '<link rel="stylesheet" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/bbcode/colorpicker/js_color_picker_v2.css"/>'."\n";
+        }
+
     }
 
     // Register the bbcode help page, unless no tags were enabled at all.
@@ -303,7 +315,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
 
         editor_tools_register_help(
             $description,
-            phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode')
+            phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
         );
     }
 
@@ -314,12 +326,36 @@ function phorum_mod_bbcode_editor_tool_plugin()
 // The addon hook is used for displaying a help info screen.
 function phorum_mod_bbcode_addon()
 {
-    $lang     = $GLOBALS['PHORUM']['language'];
-    if (!file_exists('./mods/bbcode/help/$lang/bbcode.php')) {
-        $lang = 'english';
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    if (empty($PHORUM["args"]["action"])) trigger_error(
+        'Missing "action" argument for bbcode module addon call',
+        E_USER_ERROR
+    );
+
+    if ($PHORUM["args"]["action"] == 'help')
+    {
+        $lang = $GLOBALS['PHORUM']['language'];
+        if (!file_exists('./mods/bbcode/help/$lang/bbcode.php')) {
+            $lang = 'english';
+        }
+        include("./mods/bbcode/help/$lang/bbcode.php");
+        exit(0);
     }
-    include("./mods/bbcode/help/$lang/bbcode.php");
-    exit(0);
+
+    if ($PHORUM["args"]["action"] == 'js')
+    {
+        $langstr = $PHORUM['DATA']['LANG']['mod_bbcode'];
+        include("./mods/bbcode/colorpicker/js_color_picker_v2.js.php");
+        exit(0);
+    }
+
+    trigger_error(
+        'Illegal "action" argument ' .
+        '"' . htmlspecialchars($PHORUM['args']['action']) . '"' .
+        'for bbcode module addon call',
+        E_USER_ERROR
+    );
 }
 
 ?>
