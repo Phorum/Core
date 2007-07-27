@@ -55,6 +55,7 @@ function phorum_mod_editor_tools_common()
     }
 
     // Show a help page and exit.
+    // TODO: make addon script?
     if (isset($GLOBALS["PHORUM"]["args"]["editor_tools_help"])) {
         $helpid = basename($GLOBALS["PHORUM"]["args"]["editor_tools_help"]);
         foreach (array($lang, 'english') as $lang) {
@@ -84,6 +85,7 @@ function phorum_mod_editor_tools_common()
     $help_chapters = array();
 
     // Add a tool and help page for supporting the smileys module.
+    /*
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
         $GLOBALS["PHORUM"]["mods"]["smileys"] &&
         $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_smileys"]) {
@@ -96,8 +98,10 @@ function phorum_mod_editor_tools_common()
             phorum_get_url(PHORUM_INDEX_URL, 'editor_tools_help=smileys')
         );
     }
+    */
 
     // Add the subject smileys editor tool.
+    /*
     if (isset($GLOBALS["PHORUM"]["mods"]["smileys"]) &&
         $GLOBALS["PHORUM"]["mods"]["smileys"] &&
         $GLOBALS["PHORUM"]["mod_editor_tools"]["enable_subjectsmileys"]) {
@@ -105,6 +109,7 @@ function phorum_mod_editor_tools_common()
             if ($toolinfo[0] == 'subjectsmiley')
                 $tools[$toolinfo[1][0]] = $toolinfo[1];
     }
+    */
 
     // Store our information for later use.
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (
@@ -244,10 +249,12 @@ function phorum_mod_editor_tools_before_footer()
     print 'editor_tools_default_iconheight = ' . MOD_EDITOR_TOOLS_DEFAULT_IHEIGHT . ";\n";
 
     // Make the icon popup sizes available for the javascript code.
+    /*
     print "editor_tools_smileys_popupwidth = '" . $PHORUM["mod_editor_tools"]["smiley_popup_width"] . "px';\n" .
           'editor_tools_smileys_popupoffset = ' . $PHORUM["mod_editor_tools"]["smiley_popup_offset"] . ";\n" . 
           "editor_tools_subjectsmileys_popupwidth = '" . $PHORUM["mod_editor_tools"]["subjectsmiley_popup_width"] . "px';\n" .
           'editor_tools_subjectsmileys_popupoffset = ' . $PHORUM["mod_editor_tools"]["subjectsmiley_popup_offset"] . ";\n";
+     */
 
     // Add help chapters.
     $idx = 0;
@@ -281,6 +288,7 @@ function phorum_mod_editor_tools_before_footer()
     }
 
     // Add available smileys for the smiley picker.
+    /*
     if (isset($PHORUM["mods"]["smileys"]) && $PHORUM["mods"]["smileys"]) {
         $prefix = $PHORUM["http_path"] . "/" . $PHORUM["mod_smileys"]["prefix"];
 	$bsi = 0;
@@ -301,6 +309,8 @@ function phorum_mod_editor_tools_before_footer()
 	    }
         }
     }
+    */
+
     print "</script>\n";
 
     // Load all dynamic javascript libraries.

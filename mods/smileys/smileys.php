@@ -56,4 +56,13 @@ function phorum_mod_smileys_format($data)
     return $data;
 }
 
+// Add a smiley tool button to the Editor Tools module's tool bar.
+function phorum_mod_smileys_editor_tool_plugin()
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // Register the javascript library for supporting smiley tool buttons.
+    editor_tools_register_jslib('./mods/smileys/smileys_editor_tools.js');
+}
+
 ?>

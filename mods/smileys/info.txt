@@ -1,6 +1,9 @@
-hook:  after_header|phorum_mod_smileys_after_header
-hook:  format|phorum_mod_smileys_format
-title: Smiley Replacement Mod
-desc:  This module allows admins to define smiley replacements in messages.
+title: Smileys
+desc:  This module allows users to add graphical smileys to their messages.
 author: Phorum Dev Team
 url: http://www.phorum.org/
+
+hook: after_header|phorum_mod_smileys_after_header
+hook: format|phorum_mod_smileys_format
+hook: editor_tool_plugin|phorum_mod_smileys_editor_tool_plugin
+
