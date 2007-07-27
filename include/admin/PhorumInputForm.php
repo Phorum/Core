@@ -132,7 +132,11 @@ class PhorumInputForm {
             $tvalign = $cvalign = $valign;
         }
 
-        $this->_rows[] = array( "title" => $title,
+        // Each row needs a unique index.
+        static $rowidx = 0;
+        $rowidx++;
+
+        $this->_rows[$rowidx] = array( "title" => $title,
             "contents" => $contents,
             "title_valign" => $tvalign,
             "content_valign" => $cvalign,
@@ -140,9 +144,7 @@ class PhorumInputForm {
             "content_align" => $calign
             );
 
-        end( $this->_rows );
-
-        return key( $this->_rows );
+        return $rowidx;
     }
 
     function addhelp( $row, $title, $text )
