@@ -415,10 +415,19 @@ foreach ($modules_info as $name => $info)
     if(isset($info["release_date"])){
         $text.="<div class=\"small\">Released ".$info["release_date"]."</div>";
     }
-    if(isset($info["url"])){
-        $text.="<div class=\"small\">For more information, visit <a href=\"".$info["url"]."\">".$info["url"]."</a></div>";
-    }
 
+    $moreinfo = array();
+    if(isset($info["url"])){
+        $moreinfo[] = "<a href=\"".$info["url"]."\">web site</a>";
+    }
+    foreach(array('README','INSTALL','Changelog') as $file) {
+        if(file_exists("./mods/$name/$file")){
+            $moreinfo[] = "<a target=\"_blank\" href=\"".$PHORUM["http_path"]."/mods/$name/$file\">$file</a>";
+        }
+    }
+    if (!empty($moreinfo)) {
+        $text.="More info: <small>" . implode(" &bull; ", $moreinfo) . "</small>";
+    }
 
     if(!$info['version_disabled']) {
         $frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $enabled).$settings_link);
