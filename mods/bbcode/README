@@ -5,13 +5,16 @@ This module allows users to add BBcode (Bulletin Board Code) tags to their
 postings. BBcode tags are a safe way of adding markup (bold, italic, images,
 links, etc.).
 
-                                                                               Install:
+
+Install:
 --------
-                                                                               - Unpack the archive and move the directory "bbcode" to the directory
+
+- Unpack the archive and move the directory "bbcode" to the directory
   "mods" within your Phorum installation (unless this module was packaged
   with your Phorum release);
 
-- Login as administrator in Phorum's administrative interface and                go to the "Modules" section;
+- Login as administrator in Phorum's administrative interface and
+  go to the "Modules" section;
 
 - Enable the module "BBcode".
 
