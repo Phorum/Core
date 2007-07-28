@@ -9,3 +9,8 @@ Deny from all
     Allow from all
 </Files>
 
+<Files ~ "(Changelog|README|INSTALL)">
+    Order allow,deny
+    Allow from all
+</Files>
+
