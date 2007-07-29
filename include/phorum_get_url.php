@@ -85,11 +85,12 @@ function phorum_get_url()
                     $suffix = "#REPLY";
                 } else {
                     $name = "posting";
-                    // For reply on a separate page, we call posting.php on its own.
-                    // In that case argv[0] is the editor mode we want to use
-                    // (reply in this case). Currently, the thread id is in argv[0],
-                    // but we don't need that one for posting.php. So we simply
-                    // replace argv[0] with the correct argument.
+                    // For reply on a separate page, we call posting.php on
+                    // its own. In that case argv[0] is the editor mode we
+                    // want to use (reply in this case). Currently, the thread
+                    // id is in argv[0], but we don't need that one for
+                    // posting.php. So we simply replace argv[0] with the
+                    // correct argument.
                     $argv[0] = "reply";
                 }
                 $add_get_vars = true;
@@ -108,14 +109,19 @@ function phorum_get_url()
                 $name = "file";
                 $add_forum_id = true;
 
-                // If a filename=... parameter is set, then change that parameter to
-                // a URL path, unless this feature is not enabled in the admin setup.
+                // If a filename=... parameter is set, then change that
+                // parameter to a URL path, unless this feature is not
+                // enabled in the admin setup.
                 if (!empty($PHORUM['file_url_uses_pathinfo'])) {
                     foreach ($argv as $id => $arg) {
                         if (substr($arg, 0, 9) == 'filename=') {
                             $safe_file = urldecode(substr($arg, 9));
-                            $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $safe_file);
-                            $safe_file = preg_replace('/_+/', '_', $safe_file);
+                            // %file_name% is sometimes used for creating URL
+                            // templates, so we should not mangle that one.
+                            if ($safe_file != '%file_name%') {
+                                $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $safe_file);
+                                $safe_file = preg_replace('/_+/', '_', $safe_file);
+                            }
                             $pathinfo = "/$safe_file";
                             unset($argv[$id]);
                         }
@@ -125,8 +131,10 @@ function phorum_get_url()
 
             // this is for adding own generic urls
             case PHORUM_CUSTOM_URL:
-                $name = array_shift($argv); // first arg is our page
-                $add_forum_id = (bool) array_shift($argv); // second determining if we should add the forum_id
+                // first arg is our page
+                $name = array_shift($argv);
+                // second arg determines if we should add the forum_id
+                $add_forum_id = (bool) array_shift($argv);
                 break;
 
         }

@@ -603,7 +603,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"] = phorum_filesize($file["size"]);
                 $row["attachments"][$key]["name"] = htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                $row["attachments"][$key]["url"]  = str_replace(array('%file_id%','%file_name%'),array($file['file_id'],urlencode($file['name'])),$attachment_url_template);
+                $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $file['name']);
+                $safe_file = preg_replace('/_+/', '_', $safe_file);         
+                $row["attachments"][$key]["url"]  = str_replace(array('%file_id%','%file_name%'),array($file['file_id'],$safe_file),$attachment_url_template);
             }
         }
 
