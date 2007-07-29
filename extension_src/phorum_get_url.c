@@ -671,24 +671,28 @@ file_url(void *h, void *u, int argc, zval ***argv)
             /* Pathinfo starts with a slash. */
             pathinfo[dstpos++] = '/';
 
-            /* Generate safe pathinfo. */
-            len = strlen(pathinfo);
-            for (srcpos=1; srcpos<len; srcpos++) {
-                if ((pathinfo[srcpos] >= 'a' && pathinfo[srcpos] <= 'z') ||
-                    (pathinfo[srcpos] >= 'A' && pathinfo[srcpos] <= 'Z') ||
-                    (pathinfo[srcpos] >= '0' && pathinfo[srcpos] <= '9') ||
-                    pathinfo[srcpos] == '-' || pathinfo[srcpos] == '.') {
-                    prev_is_special = 0;
-                    pathinfo[dstpos++] = pathinfo[srcpos];
-                    continue;
-                } else {
-                    if (!prev_is_special) {
-                        pathinfo[dstpos++] = '_';
+            /* Generate safe pathinfo, unless the filename is "%file_name%".
+             * We should not mangle that one, because it is used as a
+             * replacable string inside file URL templates. */
+            if (strcmp(pathinfo, "/%file_name%")) {
+                len = strlen(pathinfo);
+                for (srcpos=1; srcpos<len; srcpos++) {
+                    if ((pathinfo[srcpos] >= 'a' && pathinfo[srcpos] <= 'z') ||
+                        (pathinfo[srcpos] >= 'A' && pathinfo[srcpos] <= 'Z') ||
+                        (pathinfo[srcpos] >= '0' && pathinfo[srcpos] <= '9') ||
+                        pathinfo[srcpos] == '-' || pathinfo[srcpos] == '.') {
+                        prev_is_special = 0;
+                        pathinfo[dstpos++] = pathinfo[srcpos];
+                        continue;
+                    } else {
+                        if (!prev_is_special) {
+                            pathinfo[dstpos++] = '_';
+                        }
+                        prev_is_special = 1;
                     }
-                    prev_is_special = 1;
                 }
+                pathinfo[dstpos] = '\0';
             }
-            pathinfo[dstpos] = '\0';
 
             /* In case there was more than one filename argument. Should
              * not really happen, but still, let's keep it in mind. */

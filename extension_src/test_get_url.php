@@ -25,6 +25,7 @@ define('phorum_page', 'read');
 
 for($i=0;$i<1;$i++)
 {
+var_dump(phorum_get_url(PHORUM_FILE_URL, "file=123", "filename=%file_name%"));
 var_dump(phorum_get_url(PHORUM_FEED_URL, "type=rss", "replies=1"));
 $PHORUM["file_url_uses_pathinfo"] = 0;
 var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=test.jpg"));
