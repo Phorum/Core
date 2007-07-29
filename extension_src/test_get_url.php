@@ -4,6 +4,13 @@ if (! extension_loaded('phorum')) {
     @dl('phorum.so');
 }
 
+# For testing custom get url support, uncomment this code.
+#function phorum_custom_get_url()
+#{
+#    print_r(func_get_args());
+#    return "CUSTOM URL\n";
+#}
+
 global $PHORUM;
 
 $PHORUM["forum_id"] = 7;
