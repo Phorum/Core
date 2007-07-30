@@ -1229,127 +1229,6 @@ function phorum_api_user_delete($user_id)
 // }}}
 
 // ----------------------------------------------------------------------
-// Subscription management.
-// ----------------------------------------------------------------------
-
-// {{{ Function: phorum_api_user_subscribe()
-/**
- * Subscribe a user to a thread.
- *
- * Remark: Currently, there is no active support for subscribing to forums
- * using subscription type PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
- *
- * @param integer $user_id
- *     The id of the user to create the subscription for.
- *
- * @param integer $thread
- *     The id of the thread to describe to.
- *
- * @param integer $forum_id
- *     The id of the forum in which the thread to subscribe to resides.
- *
- * @param integer $type
- *     The type of subscription. Available types are:
- *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
- *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
- *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
- */
-function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
-{
-    // Check if the user is allowed to read the forum.
-    if (! phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
-        return;
-    }
-
-    // Setup the subscription.
-    phorum_db_user_subscribe($user_id, $thread, $forum_id, $type);
-}
-// }}}
-
-// {{{ Function: phorum_api_user_unsubscribe()
-/**
- * Unsubscribe a user from a thread.
- *
- * @param integer $user_id
- *     The id of the user to remove the subscription for.
- *
- * @param integer $thread
- *     The id of the thread to describe from.
- *
- * @param integer $forum_id
- *     The id of the forum in which the thread to unsubscribe from resides.
- *     This parameter can be 0 (zero) to simply unsubscribe by thread id alone.
- */
-function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
-{
-    // Remove the subscription.
-    phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
-}
-// }}}
-
-// {{{ Function: phorum_api_user_list_subscriptions()
-/**
- * Retrieve a list of threads to which a user is subscribed. The list can be
- * limited to those threads which did receive contributions recently.
- *
- * @param integer $user_id
- *     The id of the user for which to retrieve the subscribed threads.
- *
- * @param integer $days
- *     If set to 0 (zero), then all subscriptions will be returned. If set to
- *     a different value, then only threads which have received contributions
- *     within the last $days days will be included in the list.
- *
- * @param integer $forum_ids
- *     If this parameter is NULL, then subscriptions from all forums will
- *     be included. This parameter can also be an array of forum_ids, in
- *     which case the search will be limited to the forums in this array.
- *
- * @return array $threads
- *     An array of matching threads, indexed by thread id. One special key
- *     "forum_ids" is set too. This one contains an array of all involved
- *     forum_ids.
- */
-function phorum_api_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
-{
-    return phorum_db_user_list_subscriptions($user_id, $days, $forum_ids);
-}
-// }}}
-
-// {{{ Function: phorum_api_user_list_subscribers()
-/**
- * Retrieve the email addresses of the users that are subscribed to a
- * forum/thread, grouped by the preferred language for these users.
- *
- * @param integer $forum_id
- *     The forum_id to check on.
- *
- * @param integer $thread
- *     The thread id to check on.
- *
- * @param integer $type
- *     The type of subscription to check on. See the documentation for the
- *     function {@link phorum_api_user_subscribe()} for available
- *     subscription types.
- *
- * @param boolean $ignore_active_user
- *     If this parameter is set to FALSE (it is TRUE by default), then the
- *     active Phorum user will be excluded from the list.
- *
- * @return array $addresses
- *     An array containing the subscriber email addresses. The keys in the
- *     result array are language names. The values are arrays. Each array
- *     contains a list of email addresses of users which are using the
- *     language from the key field.
- */
-
-function phorum_api_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user = TRUE)
-{
-    return phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user);
-}
-// }}}
-
-// ----------------------------------------------------------------------
 // Authentication and session management.
 // ----------------------------------------------------------------------
 
@@ -2651,6 +2530,128 @@ function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
 
     return phorum_db_user_get_moderators($forum_id, $exclude_admin, $for_email);
+}
+// }}}
+
+// ----------------------------------------------------------------------
+// Subscription management.
+// ----------------------------------------------------------------------
+
+// {{{ Function: phorum_api_user_subscribe()
+/**
+ * Subscribe a user to a thread.
+ *
+ * Remark: Currently, there is no active support for subscribing to forums
+ * using subscription type PHORUM_SUBSCRIPTION_DIGEST in the Phorum core.
+ *
+ * @param integer $user_id
+ *     The id of the user to create the subscription for.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe to.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the thread to subscribe to resides.
+ *
+ * @param integer $type
+ *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
+ *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
+ *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
+ */
+function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
+{
+    // Check if the user is allowed to read the forum.
+    if (! phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
+        return;
+    }
+
+    // Setup the subscription.
+    phorum_db_user_subscribe($user_id, $thread, $forum_id, $type);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_unsubscribe()
+/**
+ * Unsubscribe a user from a thread.
+ *
+ * @param integer $user_id
+ *     The id of the user to remove the subscription for.
+ *
+ * @param integer $thread
+ *     The id of the thread to describe from.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the thread to unsubscribe from resides.
+ *     This parameter can be 0 (zero) to simply unsubscribe by thread id alone.
+ */
+function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
+{
+    // Remove the subscription.
+    phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_list_subscriptions()
+/**
+ * Retrieve a list of threads to which a user is subscribed. The list can be
+ * limited to those threads which did receive contributions recently.
+ *
+ * @param integer $user_id
+ *     The id of the user for which to retrieve the subscribed threads.
+ *
+ * @param integer $days
+ *     If set to 0 (zero), then all subscriptions will be returned. If set to
+ *     a different value, then only threads which have received contributions
+ *     within the last $days days will be included in the list.
+ *
+ * @param integer $forum_ids
+ *     If this parameter is NULL, then subscriptions from all forums will
+ *     be included. This parameter can also be an array of forum_ids, in
+ *     which case the search will be limited to the forums in this array.
+ *
+ * @return array $threads
+ *     An array of matching threads, indexed by thread id. One special key
+ *     "forum_ids" is set too. This one contains an array of all involved
+ *     forum_ids.
+ */
+function phorum_api_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
+{
+    return phorum_db_user_list_subscriptions($user_id, $days, $forum_ids);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_list_subscribers()
+/**
+ * Retrieve the email addresses of the users that are subscribed to a
+ * forum/thread, grouped by the preferred language for these users.
+ *
+ * @param integer $forum_id
+ *     The forum_id to check on.
+ *
+ * @param integer $thread
+ *     The thread id to check on.
+ *
+ * @param integer $type
+ *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
+ *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
+ *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
+ *
+ * @param boolean $ignore_active_user
+ *     If this parameter is set to FALSE (it is TRUE by default), then the
+ *     active Phorum user will be excluded from the list.
+ *
+ * @return array $addresses
+ *     An array containing the subscriber email addresses. The keys in the
+ *     result array are language names. The values are arrays. Each array
+ *     contains a list of email addresses of users which are using the
+ *     language from the key field.
+ */
+
+function phorum_api_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user = TRUE)
+{
+    return phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user);
 }
 // }}}
 
