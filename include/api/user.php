@@ -251,6 +251,28 @@ define('PHORUM_USER_GROUP_APPROVED', 1);
 define('PHORUM_USER_GROUP_MODERATOR', 2);
 
 /**
+ * Subscription type, which tells Phorum to send out a mail message for
+ * every new forum or thread that a user is subscribed to.
+ */
+define("PHORUM_SUBSCRIPTION_MESSAGE", 0);
+
+/**
+ * Subscription type, which tells Phorum to periodially send a mail message,
+ * containing a list of new messages in forums or threads that a user is
+ * subscribed to. There is currently no support for this type of subscription
+ * in the Phorum core code.
+ */
+define("PHORUM_SUBSCRIPTION_DIGEST", 1);
+
+/**
+ * Subscription type, which tells Phorum to make the forums or threads that 
+ * a user is subscribed to accessible from the followed threads interface in
+ * the control center. No mail is sent for new messages, but the user can
+ * check for new messages using that interface.
+ */
+define("PHORUM_SUBSCRIPTION_BOOKMARK", 2);
+
+/**
  * This array describes user data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  */
@@ -1229,11 +1251,8 @@ function phorum_api_user_delete($user_id)
  * @param integer $type
  *     The type of subscription. Available types are:
  *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
- *       Send a mail message for every new message.
  *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
- *       Make new messages visible from the followed threads interface.
  *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
- *       Periodically, send a mail message containing a list of new messages.
  */
 function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
 {
@@ -1310,7 +1329,7 @@ function phorum_api_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
  *
  * @param integer $type
  *     The type of subscription to check on. See the documentation for the
- *     function {@link phorum_db_user_subscribe()} for available
+ *     function {@link phorum_api_user_subscribe()} for available
  *     subscription types.
  *
  * @param boolean $ignore_active_user

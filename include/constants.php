@@ -94,11 +94,6 @@
     define("PHORUM_EDIT_TRACK_ON", 1);
     define("PHORUM_EDIT_TRACK_MODERATOR", 2);
 
-    // subscription types
-    define("PHORUM_SUBSCRIPTION_MESSAGE", 0);
-    define("PHORUM_SUBSCRIPTION_DIGEST", 1);
-    define("PHORUM_SUBSCRIPTION_BOOKMARK", 2);
-
     // registration settings
     define("PHORUM_REGISTER_INSTANT_ACCESS", 0);
     define("PHORUM_REGISTER_VERIFY_EMAIL", 1);
