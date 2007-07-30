@@ -353,7 +353,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
           <listitem>
             Customize the looks of Phorum to your needs by creating a 
             custom template. Instructions for this can be found in
-            <xref linkend="templates"/>.
+            the templates section of the developer manual.
             <sbr/><sbr/>
           </listitem>
           <listitem>
