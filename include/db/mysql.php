@@ -4361,24 +4361,28 @@ function phorum_db_newflag_update_forum($message_ids)
  * Retrieve the email addresses of the users that are subscribed to a
  * forum/thread, grouped by the preferred language for these users.
  *
- * @param $forum_id           - The forum_id to check on.
- * @param $thread             - The thread id to check on.
- * @param $type               - The type of subscription to check on. See
- *                              the documentation for the function
- *                              phorum_db_user_subscribe() for available
- *                              subscription types.
- * @param $ignore_active_user - If this parameter is set to FALSE
- *                              (it is TRUE by default), then the active
- *                              Phorum user will be excluded from the list.
+ * @param integer $forum_id
+ *     The forum_id to check on.
  *
- * @return $addresses         - An array containing the subscriber email
- *                              addresses. The keys in the result arrays
- *                              are language names. The values are arrays
- *                              which each contain a list of email addresses
- *                              of users which are using the language from
- *                              the key.
+ * @param integer $thread
+ *     The thread id to check on.
+ *
+ * @param integer $type
+ *     The type of subscription to check on. See the documentation for the
+ *     function {@link phorum_db_user_subscribe()} for available
+ *     subscription types.
+ *
+ * @param boolean $ignore_active_user
+ *     If this parameter is set to FALSE (it is TRUE by default), then the
+ *     active Phorum user will be excluded from the list.
+ *
+ * @return array $addresses
+ *     An array containing the subscriber email addresses. The keys in the
+ *     result array are language names. The values are arrays. Each array
+ *     contains a list of email addresses of users which are using the
+ *     language from the key field.
  */
-function phorum_db_get_subscribed_users($forum_id, $thread, $type, $ignore_active_user=TRUE)
+function phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user=TRUE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -4429,22 +4433,25 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type, $ignore_activ
  * Retrieve a list of threads to which a user is subscribed. The list can be
  * limited to those threads which did receive contributions recently.
  *
- * @param $user_id   - The id of the user for which to retrieve the
- *                     subscribed threads.
- * @param $days      - If set to 0 (zero), then all subscriptions will
- *                     be returned. If set to a different value, then
- *                     only threads which have received contributions within
- *                     the last $days days will be included in the list.
- * @param $forum_ids - If this parameter is NULL, then subscriptions from
- *                     all forums will be included. This parameter can also
- *                     be an array of forum_ids, in which case the search
- *                     will be limited to the forums in this array.
+ * @param integer $user_id
+ *     The id of the user for which to retrieve the subscribed threads.
  *
- * @return $threads - An array of matching threads, indexed by thread id.
- *                    One special key "forum_ids" is set too. This one
- *                    contains an array of all involved forum_ids.
+ * @param integer $days
+ *     If set to 0 (zero), then all subscriptions will be returned. If set to
+ *     a different value, then only threads which have received contributions
+ *     within the last $days days will be included in the list.
+ *
+ * @param integer $forum_ids
+ *     If this parameter is NULL, then subscriptions from all forums will
+ *     be included. This parameter can also be an array of forum_ids, in
+ *     which case the search will be limited to the forums in this array.
+ *
+ * @return array $threads
+ *     An array of matching threads, indexed by thread id. One special key
+ *     "forum_ids" is set too. This one contains an array of all involved
+ *     forum_ids.
  */
-function phorum_db_get_message_subscriptions($user_id, $days=2, $forum_ids=NULL)
+function phorum_db_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 

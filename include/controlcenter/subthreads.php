@@ -58,7 +58,7 @@ $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
 // reading all subscriptions to messages in the current vroot.
 $forum_ids = array($PHORUM["vroot"]);
 foreach ($forums as $forum) { $forum_ids[] = $forum["forum_id"]; }
-$subscr_array = phorum_db_get_message_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
+$subscr_array = phorum_api_user_list_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
 
 // storage for newflags
 $PHORUM['user']['newinfo'] = array();

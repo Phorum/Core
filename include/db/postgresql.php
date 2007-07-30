@@ -2991,7 +2991,7 @@ function phorum_db_newflag_update_forum($message_ids) {
  * subscribed to a forum/thread.
  */
 
-function phorum_db_get_subscribed_users($forum_id, $thread, $type){
+function phorum_db_user_list_subscribers($forum_id, $thread, $type){
     $PHORUM = $GLOBALS["PHORUM"];
 
     settype($forum_id, "int");
@@ -3027,7 +3027,7 @@ function phorum_db_get_subscribed_users($forum_id, $thread, $type){
  * together with the forum-id and subjects of the threads
  */
 
-function phorum_db_get_message_subscriptions($user_id,$days=2,$forum_ids=null){
+function phorum_db_user_list_subscriptions($user_id,$days=2,$forum_ids=null){
     $PHORUM = $GLOBALS["PHORUM"];
 
     $conn = phorum_db_postgresql_connect();

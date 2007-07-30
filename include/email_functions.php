@@ -221,7 +221,7 @@ function phorum_email_notice($message)
 
     include_once("./include/format_functions.php");
 
-    $mail_users_full = phorum_db_get_subscribed_users($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
+    $mail_users_full = phorum_api_user_list_subscribers($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
 
     if (count($mail_users_full)) {
 
