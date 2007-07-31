@@ -2566,17 +2566,22 @@ function phorum_db_get_group_members($group_id, $status = NULL)
 }
 // }}}
 
+// {{{ Function: phorum_db_add_group()
 /**
  * Add a group. This will merely create the group in the database. For
  * changing settings for the group, the function phorum_db_update_group()
  * has to be used.
  *
- * @param $group_name - The name to assign to the group.
- * @param $group_id   - The group id to assign to the group or 0 (zero) to
- *                      assign a new group id. Assigning a specific group
- *                      id is and should only be used by conversion scripts.
+ * @param string $group_name
+ *     The name to assign to the group.
  *
- * @return $group_id  - The group id of the newly created group.
+ * @param integer $group_id
+ *     The group id to assign to the group or 0 (zero) to assign a new
+ *     group id. Assigning a specific group id is and should only be
+ *     used by conversion scripts.
+ *
+ * @return integer
+ *     The group id of the newly created group.
  */
 function phorum_db_add_group($group_name, $group_id=0)
 {
@@ -2597,37 +2602,38 @@ function phorum_db_add_group($group_name, $group_id=0)
 
     return $group_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_update_group()
 /**
  * Update the settings for a group.
  *
- * @param $group    - The group to update. This is an array, which should
- *                    contain at least the field "group_id" to indicate what
- *                    group to update. Next to that, one or more of the
- *                    following fields can be used:
- *                    name         The name for the group.
- *                    open         This field determines how new members are
- *                                 added to the group. Options are:
- *                                 PHORUM_GROUP_CLOSED
- *                                     Only the administrator can add users
- *                                     to this group.
- *                                 PHORUM_GROUP_OPEN
- *                                     The group is open for membership
- *                                     requests by users and membership is
- *                                     assigned on request immediately.
- *                                 PHORUM_GROUP_REQUIRE_APPROVAL
- *                                     The group is open for membership
- *                                     requests by users, but membership has
- *                                     to be approved by an administrator or
- *                                     a user moderator for the group.
- *                    permissions  An array containing forum permissions
- *                                 for the group (key = forum_id and
- *                                 value = permission value).
+ * @param array $group
+ *     The group to update. This is an array, which should contain at least
+ *     the field "group_id" to indicate what group to update. Next to that,
+ *     one or more of the following fields can be used:
+ *     - name:
+ *       The name for the group.
+ *     - open:
+ *       This field determines how new members are added to the group.
+ *       Available options are:
+ *       - PHORUM_GROUP_CLOSED:
+ *         Only the administrator can add users to this group.
+ *       - PHORUM_GROUP_OPEN:
+ *         The group is open for membership requests by users and
+ *         membership is assigned on request immediately.
+ *       - PHORUM_GROUP_REQUIRE_APPROVAL:
+ *         The group is open for membership requests by users,
+ *         but membership has to be approved by an administrator or
+ *         a user moderator for the group.
+ *     - permissions:
+ *       An array containing forum permissions for the group
+ *       (key = forum_id and value = permission value).
  *
- * @return $success - True if all settings were stored successfully. This
- *                    function will always return TRUE, so we could
- *                    do without a return value. The return value is
- *                    here for backward compatibility.
+ * @return boolean
+ *     True if all settings were stored successfully. This function will
+ *     always return TRUE, so we could do without a return value.
+ *     The return value is here for backward compatibility.
  */
 function phorum_db_update_group($group)
 {
@@ -2689,11 +2695,14 @@ function phorum_db_update_group($group)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_delete_group()
 /**
  * Delete a group.
  *
- * @param $group_id - The id of the group to delete.
+ * @param integer $group_id
+ *     The id of the group to delete.
  */
 function phorum_db_delete_group($group_id)
 {
@@ -2717,21 +2726,28 @@ function phorum_db_delete_group($group_id)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get_moderators()
 /**
  * Retrieve a list of moderators for a particular forum.
  *
- * @param $forum_id      - The forum for which to retrieve the moderators.
- * @param $exclude_admin - If this parameter has a true value, then the
- *                         admin users are kept out of the list.
- * @param $for_email     - If this parameter has a true value, then a list
- *                         of moderators is created for sending moderator
- *                         mail messages. Moderators which have disabled the
- *                         moderation_email option will be excluded from
- *                         the list in this case.
+ * @param integer $forum_id
+ *     The forum for which to retrieve the moderators.
  *
- * @return $moderators   - An array of moderators. The keys are user_ids
- *                         and the values are email addresses.
+ * @param boolean $exclude_admin
+ *     If this parameter has a true value, then the admin users are kept
+ *     out of the list.
+ *
+ * @param boolean $for_email
+ *     If this parameter has a true value, then a list of moderators is
+ *     created for sending moderator mail messages. Moderators which
+ *     have disabled the moderation_email option will be excluded from
+ *     the list in this case.
+ *
+ * @return array
+ *     An array of moderators. The keys are user_ids and
+ *     the values are email addresses.
  */
 function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_email=FALSE)
 {
@@ -2792,9 +2808,14 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
 
     return $moderators;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_count()
 /**
- * @todo document function.
+ * Count the total number of users in the Phorum system.
+ *
+ * @return integer
+ *     The number of users.
  */
 function phorum_db_user_count()
 {
@@ -2806,12 +2827,24 @@ function phorum_db_user_count()
          FROM   {$PHORUM['user_table']}"
     );
 }
+// }}} 
 
+// {{{ Function: phorum_db_user_get_all()
 /**
- * @todo document function.
+ * Retrieve all users from the database.
+ *
+ * This function returns a query resource handle. This handle can be used
+ * to retrieve the users from the database one-by-one, by calling the
+ * phorum_db_fetch_row() function.
+ *
+ * @return resource
+ *     A query resource handle is returned. This handle can be used
+ *     to retrieve the users from the database one-by-one, by
+ *     calling the phorum_db_fetch_row() function.
  *
  * @todo This function might be as well replaced with user search and get
- *       functionality from the user API.
+ *       functionality from the user API, if search is extended with an
+ *       option to return a resource handle.
  */
 function phorum_db_user_get_all($offset = 0, $length = 0)
 {
@@ -2832,7 +2865,9 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
          $limit"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get()
 /**
  * Retrieve one or more users.
  *
@@ -2997,18 +3032,23 @@ function phorum_db_user_get($user_id, $detailed = FALSE)
         return isset($users[$user_id]) ? $users[$user_id] : NULL;
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get_fields()
 /**
  * Retrieve the data for a couple of user table fields for one or more users.
  *
- * @param $user_id  - The user_id or an array of user_ids for which to
- *                    retrieve the field data.
- * @param $fields   - The field or an array of fields for which to
- *                    retrieve the data.
+ * @param mixed $user_id
+ *     The user_id or an array of user_ids for which to retrieve
+ *     the field data.
  *
- * @return $users   - An array of users (no matter what type of variable
- *                    $user_id is), indexed by user_id. For user_ids that
- *                    cannot be found, there will be no array element at all.
+ * @param mixed $fields
+ *     The field or an array of fields for which to retrieve the data.
+ *
+ * @return array $users
+ *     An array of users (no matter what type of variable $user_id is),
+ *     indexed by user_id. For user_ids that cannot be found, there
+ *     will be no array element at all.
  */
 function phorum_db_user_get_fields($user_id, $fields)
 {
@@ -3045,18 +3085,24 @@ function phorum_db_user_get_fields($user_id, $fields)
 
     return $users;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get_list()
 /**
  * Retrieve a list of all users for a given type.
  *
- * @param $type   - The type of users to retrieve:
- *                  0 = all users
- *                  1 = all active users
- *                  2 = all inactive users
+ * @param integer $type
+ *     The type of users to retrieve. Available options are:
+ *     - 0 = all users
+ *     - 1 = all active users
+ *     - 2 = all inactive users
  *
- * @return $users - An array of users, indexed by user_id. The values
- *                  are arrays containing the fields "user_id", "username" and
- *                  "display_name".
+ * @return array $users
+ *     An array of users, indexed by user_id. The values are arrays
+ *     containing the fields "user_id", "username" and "display_name".
+ *
+ * @todo This function might be as well replaced with user search and get
+ *       functionality from the user API,
  */
 function phorum_db_user_get_list($type = 0)
 {
@@ -3081,18 +3127,25 @@ function phorum_db_user_get_list($type = 0)
 
     return $users;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_check_login()
 /**
  * Check if a user's authentication credentials are correct.
  *
- * @param $username      - The username for the user.
- * @param $password      - The password for the user.
- * @param $temp_password - If this parameter has a true value, the
- *                         password_temp field will be checked instead of
- *                         the password field.
+ * @param string $username
+ *     The username for the user.
  *
- * @return $user_id      -  The user_id if the password is correct or
- *                          0 (zero) if the password is wrong.
+ * @param string $password
+ *     The password for the user.
+ *
+ * @param boolean $temp_password
+ *     If this parameter has a true value, the password_temp field will
+ *     be checked instead of the password field.
+ *
+ * @return integer $user_id
+ *     The user_id if the password is correct or 0 (zero)
+ *     if the password is wrong.
  */
 function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
 {
@@ -3114,7 +3167,9 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
 
     return $user_id ? $user_id : 0;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_search()
 /**
  * Search for users, based on a simple search condition,
  * which can be used to search on any field in the user table.
@@ -3271,16 +3326,20 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
     list ($user_id, $dummy) = each($user_ids);
     return $user_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_add()
 /**
  * Add a user.
  *
- * @param $userdata - An array containing the fields to insert into the
- *                    user table. This array should contain at least
- *                    a "username" field. See phorum_db_user_save() for
- *                    some more info on the other data in this array.
+ * @param array $userdata
+ *     An array containing the fields to insert into the user table.
+ *     This array should contain at least a "username" field. See
+ *     phorum_db_user_save() for some more info on the other data
+ *     in this array.
  *
- * @return $user_id - The user_id that was assigned to the new user.
+ * @return integer $user_id
+ *     The user_id that was assigned to the new user.
  */
 function phorum_db_user_add($userdata)
 {
@@ -3317,30 +3376,29 @@ function phorum_db_user_add($userdata)
 
     return $user_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_save()
 /**
  * Update a user.
  *
- * @param $userdata - An array containing the fields to update in the
- *                    user table. The array should contain at least
- *                    the user_id field to identify the user for which
- *                    to update the data.
- *                    The array can contain two special fields:
- *                    forum_permissions  This field can contain an array
- *                                       with forum permissions for the user.
- *                                       The keys are forum_ids and the
- *                                       values are permission values.
- *                    user_data          This field can contain an array
- *                                       of key/value pairs which will be
- *                                       inserted in the database as custom
- *                                       profile fields. The keys are profile
- *                                       type ids (as defined by
- *                                       $PHORUM["PROFILE_FIELDS"]).
+ * @param array $userdata
+ *     An array containing the fields to update in the user table.
+ *     The array should contain at least the user_id field to identify
+ *     the user for which to update the data. The array can contain two
+ *     special fields: 
+ *     - forum_permissions:
+ *       This field can contain an array with forum permissions for the user.
+ *       The keys are forum_ids and the values are permission values.
+ *     - user_data:
+ *       This field can contain an array of key/value pairs which will be
+ *       inserted in the database as custom profile fields. The keys are
+ *       profile type ids (as defined by $PHORUM["PROFILE_FIELDS"]).
  *
- * @return $success - True if all settings were stored successfully. This
- *                    function will always return TRUE, so we could
- *                    do without a return value. The return value is
- *                    here for backward compatibility.
+ * @return boolean
+ *     True if all settings were stored successfully. This function will
+ *     always return TRUE, so we could do without a return value.
+ *     The return value is here for backward compatibility.
  */
 function phorum_db_user_save($userdata)
 {
@@ -3466,7 +3524,9 @@ function phorum_db_user_save($userdata)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_display_name_updates()
 /**
  * Run the updates that are needed after changing the display_name for a user.
  *
@@ -3547,19 +3607,23 @@ function phorum_db_user_display_name_updates($userdata)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_user_save_groups()
 /**
- * Save the groups memberships for a user.
+ * Save the group memberships for a user.
  *
- * @param $user_id  - The user_id for which to save the group memberships.
- * @param $groups   - The group memberships to save. This is an array in
- *                    which the keys are group_ids and the values are group
- *                    statuses.
+ * @param integer $user_id
+ *     The user_id for which to save the group memberships.
  *
- * @return $success - True if all settings were stored successfully. This
- *                    function will always return TRUE, so we could
- *                    do without a return value. The return value is
- *                    here for backward compatibility.
+ * @param array $groups
+ *     The group memberships to save. This is an array in which the keys
+ *     are group_ids and the values are group statuses.
+ *
+ * @return boolean
+ *     True if all settings were stored successfully. This function will
+ *     always return TRUE, so we could do without a return value.
+ *     The return value is here for backward compatibility.
  */
 function phorum_db_user_save_groups($user_id, $groups)
 {
@@ -3588,7 +3652,9 @@ function phorum_db_user_save_groups($user_id, $groups)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_subscribe()
 /**
  * Subscribe a user to a forum or thread.
  *
@@ -3613,7 +3679,8 @@ function phorum_db_user_save_groups($user_id, $groups)
  *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
  *       Periodically, send a mail message containing a list of new messages.
  *
- * @return $success - True if the subscription was stored successfully.
+ * @return boolean
+ *     True if the subscription was stored successfully.
  */
 function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
 {
@@ -3643,16 +3710,24 @@ function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_unsubscribe()
 /**
  * Unsubscribe a user from a forum/thread.
  *
- * @param $user_id  - The id of the user to remove a suscription for.
- * @param $thread   - The id of the thread to unsubscribe from.
- * @param $forum_id - The id of the forum to unsubscribe from (or 0 (zero)
- *                    to simply unsubscribe by the thread id alone).
+ * @param integer $user_id
+ *     The id of the user to remove a suscription for.
  *
- * @return $success - True if the subscription was stored successfully.
+ * @param integer $thread
+ *     The id of the thread to unsubscribe from.
+ *
+ * @param integer $forum_id
+ *     The id of the forum to unsubscribe from (or 0 (zero)
+ *     to simply unsubscribe by the thread id alone).
+ *
+ * @return boolean
+ *     True if the subscription was stored successfully.
  */
 function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 {
@@ -3674,7 +3749,9 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_increment_posts()
 /**
  * Increment the posts counter for a user.
  *
@@ -3694,14 +3771,18 @@ function phorum_db_user_increment_posts($user_id)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get_groups()
 /**
  * Retrieve a list of group memberships and their statuses for a user.
  *
- * @param $user_id - The user id for which to retrieve the groups.
+ * @param integer $user_id
+ *     The user id for which to retrieve the groups.
  *
- * @return $groups - An array of groups for the user. The keys are
- *                   group_ids and the values are the membership statuses.
+ * @return array
+ *     An array of groups for the user. The keys are group_ids and the
+ *     values are the membership statuses.
  */
 function phorum_db_user_get_groups($user_id)
 {
@@ -3725,13 +3806,16 @@ function phorum_db_user_get_groups($user_id)
 
     return $groups;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get_unapproved()
 /**
  * Retrieve the users that await signup approval.
  *
- * @return $users - An array or users, indexed by user_id, that await approval.
- *                  The elements of the array are arrays containing the fields:
- *                  user_id, username and email.
+ * @return $users
+ *     An array or users, indexed by user_id, that await approval.
+ *     The elements of the array are arrays containing the fields:
+ *     user_id, username and email.
  *
  * @todo This function might be as well replaced with user search and get
  *       functionality from the user API.
@@ -3754,7 +3838,9 @@ function phorum_db_user_get_unapproved()
 
     return $users;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_delete
 /**
  * Delete a user completely. Messages that were posted by the user in the
  * forums, will be changed into anonymous messages (user_id = 0). If the
@@ -3762,9 +3848,11 @@ function phorum_db_user_get_unapproved()
  * author name of all postings will be set to {LANG->AnonymousUser}. If
  * it is set to a false value, then the original author name will be kept.
  *
- * @param $user_id  - The id of the user to delete.
+ * @param integer $user_id
+ *     The id of the user to delete.
  *
- * @return $success - True if the user was deleted successfully.
+ * @return boolean
+ *     True if the user was deleted successfully.
  */
 function phorum_db_user_delete($user_id)
 {
@@ -3860,15 +3948,19 @@ function phorum_db_user_delete($user_id)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_user_file_list()
 /**
  * Retrieve a list of personal files for a user.
  *
- * @param $user_id - The user id for which to retrieve the file list.
+ * @param integer $user_id
+ *     The user id for which to retrieve the file list.
  *
- * @return $files  - An array of personal user files, indexed by file_id.
- *                   The array elements are arrays containing the fields:
- *                   file_id, filename, filesize and add_datetime.
+ * @return array
+ *     An array of personal user files, indexed by file_id.
+ *     The array elements are arrays containing the fields:
+ *     file_id, filename, filesize and add_datetime.
  */
 function phorum_db_get_user_file_list($user_id)
 {
@@ -3892,15 +3984,19 @@ function phorum_db_get_user_file_list($user_id)
 
     return $files;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_message_file_list()
 /**
  * Retrieve a list of files for a message (a.k.a. attachments).
  *
- * @param $message_id - The message id for which to retrieve the file list.
+ * @param integer $message_id
+ *     The message id for which to retrieve the file list.
  *
- * @return $files     - An array of message files, indexed by file_id.
- *                      The array elements are arrays containing the fields:
- *                      file_id, filename, filesize and add_datetime.
+ * @return array
+ *     An array of message files, indexed by file_id.
+ *     The array elements are arrays containing the fields:
+ *     file_id, filename, filesize and add_datetime.
  */
 function phorum_db_get_message_file_list($message_id)
 {
@@ -3923,21 +4019,23 @@ function phorum_db_get_message_file_list($message_id)
 
     return $files;
 }
+// }}}
 
+// {{{ Function: phorum_db_file_get()
 /**
  * Retrieve a file.
  *
- * @param $file_id - The file id to retrieve from the database.
- * @param $include_file_data - If this parameter is set to a false value
- *                   (TRUE is the default), the file data will not be
- *                   included in the return data.
+ * @param integer $file_id
+ *     The file id to retrieve from the database.
  *
- * @return $file   - An array, containing the data for all file table fields.
- *                   If the file id cannot be found in the database, an empty
- *                   array will be returned instead.
- *                   TODO: Maybe it'd be nicer if we'd return NULL here,
- *                   TODO: but we should look at how calls to this function
- *                   TODO: are handled throughout the code for that.
+ * @param boolean $include_file_data
+ *     If this parameter is set to a false value (TRUE is the default),
+ *     the file data will not be included in the return data.
+ *
+ * @return array
+ *     An array, containing the data for all file table fields.
+ *     If the file id cannot be found in the database, an empty
+ *     array will be returned instead.
  */
 function phorum_db_file_get($file_id, $include_file_data = TRUE)
 {
@@ -3963,49 +4061,59 @@ function phorum_db_file_get($file_id, $include_file_data = TRUE)
         return $files[0];
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_file_save()
 /**
  * Add or updates a file.
  *
- * @param $user_id    - The id of the user for which to add the file.
- *                      If this file is linked to a message by an anonymous
- *                      user, then this value can be 0 (zero).
- * @param $filename   - The name of the file.
- * @param $filesize   - The size of the file in bytes.
- * @param $file_data  - The file contents. This should be data which is
- *                      safe to store in a TEXT field in the database. The
- *                      calling application has to take care of this.
- *                      The database layer will simply store and retrieve
- *                      the file data as provided by the caller.
- * @param $message_id - The message_id to link the file to. If this file
- *                      is not linked to a posted message (the link type
- *                      PHORUM_LINK_MESSAGE) then this value can be 0 (zero).
- * @param $link       - A file can be linked to a number of different
- *                      types of objects. The available link types are:
- *                      PHORUM_LINK_USER
- *                          The file is linked to a user. This means that the
- *                          file is available from within the files section
- *                          in the user's Control Center.
- *                      PHORUM_LINK_MESSAGE
- *                          The file is linked to a message. This means that
- *                          the file is available as an attachment on a
- *                          posted forum message.
- *                      PHORUM_LINK_EDITOR
- *                          The file is linked to the editor. This means that
- *                          the file was uploaded as part of editing a
- *                          forum message. This message was not yet posted.
- *                          As soon as the message is posted for final, the
- *                          link type for the message will be updated to
- *                          PHORUM_LINK_MESSAGE.
- *                      Note: these are the official link types. Calling
- *                      functions are allowed to provide different custom link
- *                      types if they need to.
- * @param $file_id    - If the $file_id is set, then this will be used for
- *                      updating the existing file data for the given $file_id.
+ * @param integer $user_id
+ *     The id of the user for which to add the file.
+ *     If this file is linked to a message by an anonymous
+ *     user, then this value can be 0 (zero).
  *
- * @return $file_id   - The file_id that was assigned to the new file or
- *                      the file_id of the existing file if the $file_id
- *                      parameter was used.
+ * @param string $filename
+ *     The name of the file.
+ *
+ * @param integer $filesize
+ *     The size of the file in bytes.
+ *
+ * @param string $file_data
+ *     The file contents. This should be data which is safe to store in a
+ *     TEXT field in the database. The calling application has to take
+ *     care of this. The database layer will simply store and retrieve
+ *     the file data as provided by the caller. 
+ *
+ * @param integer $message_id
+ *     The message_id to link the file to. If this file is not linked to 
+ *     a posted message (the link type PHORUM_LINK_MESSAGE) then this value
+ *     can be 0 (zero).
+ *
+ * @param string $link
+ *     A file can be linked to a number of different types of objects.
+ *     The available link types are:
+ *     - PHORUM_LINK_USER: 
+ *       The file is linked to a user. This means that the file is
+ *       available from within the files section in the user's Control Center.
+ *     - PHORUM_LINK_MESSAGE:
+ *       The file is linked to a message. This means that the file is
+ *       available as an attachment on a posted forum message.
+ *     - PHORUM_LINK_EDITOR
+ *       The file is linked to the editor. This means that the file was
+ *       uploaded as part of editing a forum message. This message was
+ *       not yet posted. As soon as the message is posted for final, the
+ *       link type for the message will be updated to
+ *       PHORUM_LINK_MESSAGE.
+ *       Note: these are the official link types. Calling functions are
+ *       allowed to provide different custom link types if they need to.
+ *
+ * @param integer $file_id
+ *     If the $file_id is set, then this will be used for updating the
+ *     existing file data for the given $file_id.
+ *
+ * @return integer 
+ *     The file_id that was assigned to the new file or the file_id of
+ *     the existing file if the $file_id parameter was used.
  */
 function phorum_db_file_save($file)
 {
@@ -4059,13 +4167,19 @@ function phorum_db_file_save($file)
 
     return $file_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_file_delete()
 /**
  * Delete a file.
  *
- * @param $file_id - The id of the file to delete.
+ * @param integer $file_id
+ *     The id of the file to delete.
  *
- * @return $success - True if the file was deleted successfully.
+ * @return boolean
+ *     True if the file was deleted successfully. This function will
+ *     always return TRUE, so we could do without a return value.
+ *     The return value is here for backward compatibility.
  */
 function phorum_db_file_delete($file_id)
 {
@@ -4081,17 +4195,26 @@ function phorum_db_file_delete($file_id)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_file_link()
 /**
  * Update the message to which a file is linked and/or the link type.
  *
- * @param $file_id    - The id of the file to update.
- * @param $message_id - The id of the message to link the file to.
- * @param $link       - A file can be linked to a number of different
- *                      types of objects. See phorum_db_file_save() for
- *                      the possible link types.
+ * @param integer $file_id
+ *     The id of the file to update.
  *
- * @return $success   - True if the file was updated successfully.
+ * @param integer $message_id
+ *     The id of the message to link the file to.
+ *
+ * @param string $link
+ *     A file can be linked to a number of different types of objects.
+ *     See phorum_db_file_save() for the possible link types.
+ *
+ * @return boolean
+ *     True if the file link was updated successfully. This function will
+ *     always return TRUE, so we could do without a return value.
+ *     The return value is here for backward compatibility.
  */
 function phorum_db_file_link($file_id, $message_id, $link = NULL)
 {
@@ -4114,13 +4237,17 @@ function phorum_db_file_link($file_id, $message_id, $link = NULL)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_user_filesize_total()
 /**
  * Retrieve the total size for all personal files for a user.
  *
- * @param $user_id - The user to compute the total size for.
+ * @param integer $user_id
+ *     The user to compute the total size for.
  *
- * @return $size   - The total size in bytes.
+ * @return integer
+ *     The total size in bytes.
  */
 function phorum_db_get_user_filesize_total($user_id)
 {
@@ -4139,18 +4266,22 @@ function phorum_db_get_user_filesize_total($user_id)
 
     return $size;
 }
+// }}}
 
+// {{{ Function: phorum_db_file_purge_stale_files()
 /**
  * Clean up stale files from the database. Stale files are files that
  * are not linked to anything. These can for example be caused by users
  * that are writing a message with attachments, but never post it.
  *
- * @param $live_run - If set to FALSE (default), the function will return
- *                    a list of files that will be purged. If set to TRUE,
- *                    files will be purged for real.
- * @return $return  - If $live_run is set to a true value, TRUE will be
- *                    returned. Else an array of files that would be deleted
- *                    (indexed by file_id) will be returned.
+ * @param boolean $live_run
+ *     If set to FALSE (default), the function will return a list of files
+ *     that will be purged. If set to TRUE, files will be purged for real.
+ *
+ * @return mixed
+ *     If $live_run is set to a true value, TRUE will be returned.
+ *     Else an array of files that would be deleted (indexed by
+ *     file_id) will be returned.
  */
 function phorum_db_file_purge_stale_files($live_run = FALSE)
 {
@@ -4200,12 +4331,14 @@ function phorum_db_file_purge_stale_files($live_run = FALSE)
         return $purge_files;
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_allread()
 /**
  * Mark all messages for a forum read for the active Phorum user.
  *
- * @param $forum_id - The forum to mark read or 0 (zero) to mark
- *                    the current forum read.
+ * @param integer $forum_id
+ *     The forum to mark read or 0 (zero) to mark the current forum read.
  */
 function phorum_db_newflag_allread($forum_id=0)
 {
@@ -4235,19 +4368,21 @@ function phorum_db_newflag_allread($forum_id=0)
         ));
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_get_flags()
 /**
  * Retrieve the read messages for a forum for the active Phorum user.
  *
- * @param $forum_id   - The forum to retrieve the read messages for or
- *                      0 (zero) to retrieve them for the current forum.
+ * @param integer $forum_id
+ *     The forum to retrieve the read messages for or 0 (zero) to
+ *     retrieve them for the current forum.
  *
- * @return $read_msgs - An array containing the message_ids that have been
- *                      read for the forum (key and value are both the
- *                      message_id). Also an element for the key "min_id",
- *                      which holds the minimum read message_id. All
- *                      message_ids lower than the min_id are also considered
- *                      to be read.
+ * @return array
+ *     An array containing the message_ids that have been read for the
+ *     forum (key and value are both the message_id). Also an element
+ *     for the key "min_id", which holds the minimum read message_id. All
+ *     message_ids lower than the min_id are also considered to be read.
  */
 function phorum_db_newflag_get_flags($forum_id=NULL)
 {
@@ -4278,17 +4413,20 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
 
     return $read_msgs;
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_get_unread_count()
 /**
  * Retrieve the number of new threads and messages for a forum for the
  * active Phorum user.
  *
- * @param $forum_id    - The forum to retrieve the new counts for or
- *                       0 (zero) to retrieve them for the current forum.
+ * @param integer $forum_id
+ *     The forum to retrieve the new counts for or
+ *     0 (zero) to retrieve them for the current forum.
  *
- * @return $counts     - An array containing two elements. The first element
- *                       is the number of new messages. The second one is
- *                       the number of new threads.
+ * @return array
+ *     An array containing two elements. The first element is the number
+ *     of new messages. The second one is the number of new threads.
  */
 function phorum_db_newflag_get_unread_count($forum_id=NULL)
 {
@@ -4349,19 +4487,20 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
 
     return $counts;
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_add_read()
 /**
  * Mark a message as read for the active Phorum user.
  *
- * @param $message_ids - The message_id of the message to mark read in the
- *                       active forum or an array description of messages
- *                       to mark read. Elements in this array can be:
- *                       - Simple message_id values, for marking messages
- *                         read in the active forum.
- *                       - An array containing two fields: "forum" containing
- *                         a forum_id and "id" containing a message_id. This
- *                         notation can be used to mark messages read in
- *                         other forums than te active one.
+ * @param mixed $message_ids
+ *     The message_id of the message to mark read in the active forum or an
+ *     array description of messages to mark read. Elements in this array
+ *     can be:
+ *     - Simple message_id values, to mark messages read in the active forum.
+ *     - An array containing two fields: "forum" containing a forum_id and
+ *       "id" containing a message_id. This notation can be used to mark
+ *       messages read in other forums than te active one.
  */
 function phorum_db_newflag_add_read($message_ids)
 {
@@ -4404,15 +4543,19 @@ function phorum_db_newflag_add_read($message_ids)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_get_count()
 /**
  * Retrieve the total number of newflags for a forum for the active
  * Phorum user.
  *
- * @param $forum_id    - The forum to retrieve the count for or
- *                       0 (zero) to retrieve it for the current forum.
+ * @param integer $forum_id
+ *     The forum to retrieve the count for or 0 (zero) to retrieve it
+ *     for the current forum.
  *
- * @return $count      - The total number of newflags.
+ * @return integer
+ *     The total number of newflags.
  */
 function phorum_db_newflag_get_count($forum_id=0)
 {
@@ -4431,14 +4574,18 @@ function phorum_db_newflag_get_count($forum_id=0)
 
     return $count;
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_delete()
 /**
 * Remove newflags for a forum for the active Phorum user.
 *
-* @param $numdelete - The number of newflags to delete or 0 (zero) to
-*                     delete them all.
-* @param $forum_id  - The forum for which to delete the newflags or
-*                     0 (zero) to delete them for the current forum.
+* @param integer $numdelete
+*     The number of newflags to delete or 0 (zero) to delete them all.
+*
+* @param integer $forum_id
+*     The forum for which to delete the newflags or 0 (zero) to
+*     delete them for the current forum.
 */
 function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
 {
@@ -4459,12 +4606,15 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
          $limit"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_newflag_update_forum()
 /**
  * Update the forum_id for the newflags. The newsflags are updated by setting
  * their forum_ids to the forum_ids of the referenced message table records.
  *
- * @param $message_ids - An array of message_ids which should be updated.
+ * @param array $message_ids
+ *     An array of message_ids which should be updated.
  */
 function phorum_db_newflag_update_forum($message_ids)
 {
@@ -4480,7 +4630,9 @@ function phorum_db_newflag_update_forum($message_ids)
                 flags.message_id IN ($ids_str)"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_user_list_subscribers()
 /**
  * Retrieve the email addresses of the users that are subscribed to a
  * forum/thread, grouped by the preferred language for these users.
@@ -4552,7 +4704,9 @@ function phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_acti
 
     return $addresses;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_list_subscriptions()
 /**
  * Retrieve a list of threads to which a user is subscribed. The list can be
  * limited to those threads which did receive contributions recently.
@@ -4633,26 +4787,34 @@ function phorum_db_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
 
     return $threads;
 }
+// }}}
 
+// {{{ Function: phorum_db_user_get_subscription()
 /**
- * Find out if a user is subscribed to a thread.
+ * Retrieve the subscription of a user for a thread.
  *
- * @param $forum_id - The forum_id to check on.
- * @param $thread   - The thread id to check on.
- * @param $user_id  - The user_id to check on.
+ * @param integer $user_id
+ *     The user_id to retrieve the subscription for.
  *
- * @return $type    - The type of subscription if there is a subscription
- *                    available or NULL in case no subscription was found.
- *                    For a list of available subscription types see the
- *                    documentation for function phorum_db_user_subscribe().
+ * @param integer $forum_id
+ *     The forum_id to retrieve the subscription for.
+ *
+ * @param integer $thread
+ *     The thread id to retrieve the subscription for.
+ *
+ * @return integer
+ *     The type of subscription if there is a subscription available or
+ *     NULL in case no subscription was found. For a list of available
+ *     subscription types see the documentation for function
+ *     phorum_db_user_subscribe().
  */
-function phorum_db_get_if_subscribed($forum_id, $thread, $user_id)
+function phorum_db_user_get_subscription($user_id, $forum_id, $thread)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    settype($user_id, 'int');
     settype($forum_id, 'int');
     settype($thread, 'int');
-    settype($user_id, 'int');
     settype($type, 'int');
 
     $type = phorum_db_interact(
@@ -4666,19 +4828,22 @@ function phorum_db_get_if_subscribed($forum_id, $thread, $user_id)
 
     return $type;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_banlists()
 /**
  * Retrieve the ban lists for the active forum.
  *
- * @param $ordered   - If this parameter has a true value (default is FALSE),
- *                     then the results will be ordered by ban type and string.
+ * @param boolean $ordered
+ *     If this parameter has a true value (default is FALSE),
+ *     then the results will be ordered by ban type and string.
  *
- * @return $banlists - An array of active bans, indexed by the type of ban.
- *                     For available ban types, see the documentation for
- *                     the function phorum_db_mod_banlists().
- *                     Each value for a ban type is an array of bans.
- *                     Each ban in those arrays is an array containing the
- *                     fields: prce, string and forum_id.
+ * @return array
+ *     An array of active bans, indexed by the type of ban. For available
+ *     ban types, see the documentation for the function
+ *     phorum_db_mod_banlists(). Each value for a ban type is an array of
+ *     bans. Each ban in those arrays is an array containing the fields:
+ *     prce, string and forum_id.
  */
 function phorum_db_get_banlists($ordered=FALSE)
 {
@@ -4721,16 +4886,19 @@ function phorum_db_get_banlists($ordered=FALSE)
 
     return $banlists;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_banitem
 /**
  * Retrieve a single ban item from the ban lists.
  *
- * @param $banid - The id of the ban item to retrieve.
+ * @param integer $banid
+ *     The id of the ban item to retrieve.
  *
- * @return $ban  - A ban item array, containing the fields:
- *                 pcre, string, forum_id, type. If no ban can
- *                 be found for the $banid, then an empty array
- *                 is returned instead.
+ * @return array
+ *     A ban item array, containing the fields: pcre, string, forum_id,
+ *     type. If no ban can be found for the $banid, then an empty array
+ *     is returned instead.
  */
 function phorum_db_get_banitem($banid)
 {
@@ -4758,11 +4926,14 @@ function phorum_db_get_banitem($banid)
 
     return $ban;
 }
+// }}}
 
+// {{{ Function: phorum_db_del_banitem
 /**
  * Delete a single ban item from the ban lists.
  *
- * @param $banid - The id of the ban item to delete.
+ * @param integer $banid
+ *     The id of the ban item to delete.
  */
 function phorum_db_del_banitem($banid)
 {
@@ -4776,28 +4947,38 @@ function phorum_db_del_banitem($banid)
          WHERE  id = $banid"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_mod_banlists()
 /**
  * Add or modify a single ban list item.
  *
- * @param $type     - The type of ban list item. Available ban types are:
-                      PHORUM_BAD_IPS         Match IP address or hostname.
-                      PHORUM_BAD_NAMES       Mach name or username.
-                      PHORUM_BAD_EMAILS      Match the email address.
-                      PHORUM_BAD_USERID      Match the user_id.
-                      PHORUM_BAD_SPAM_WORDS  Match for spam words.
- * @param $pcre     - Whether the ban string has to be handled as a standard
- *                    match string or as a pcre (Perl Compatible Regular
- *                    Expression).
- * @param $string   - The ban string for performing the match.
- * @param $forum_id - The forum_id to link the ban to. This can be a real
- *                    forum_id, a vroot id or 0 (zero) to indicate a
- *                    GLOBAL ban item.
- * @param $banid    - This parameter can be set to the id of a ban item
- *                    to let the function update an existing ban. If set
- *                    to 0 (zero), a new ban item will be created.
+ * @param $type
+ *     The type of ban list item. Available ban types are:
+ *     - PHORUM_BAD_IPS:        Match IP address or hostname.
+ *     - PHORUM_BAD_NAMES:      Mach name or username.
+ *     - PHORUM_BAD_EMAILS:     Match the email address.
+ *     - PHORUM_BAD_USERID:     Match the user_id.
+ *     - PHORUM_BAD_SPAM_WORDS: Match for spam words.
  *
- * @return $success - True if the ban item was created or updated successfully.
+ * @param boolean $pcre
+ *      Whether the ban string has to be handled as a standard match
+ *      string or as a pcre (Perl Compatible Regular Expression).
+ *
+ * @param string $string
+ *     The ban string for performing the match.
+ *
+ * @param integer $forum_id
+ *     The forum_id to link the ban to. This can be a real forum_id, a
+ *     vroot id or 0 (zero) to indicate a GLOBAL ban item.
+ *
+ * @param integer $banid
+ *     This parameter can be set to the id of a ban item to let the
+ *     function update an existing ban. If set to 0 (zero), a new ban
+ *     item will be created.
+ *
+ * @return boolean
+ *     True if the ban item was created or updated successfully.
  */
 function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
 {
@@ -4836,21 +5017,27 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_list()
 /**
  * Retrieve all private messages for a user in a folder.
  *
- * @param $folder    - The folder to use. Either a special folder
- *                     (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX) or the
- *                     id of a custom user folder.
- * @param $user_id   - The user to retrieve messages for or NULL
- *                     to use the active Phorum user (default).
- * @param $reverse   - If set to a true value (default), sorting
- *                     of messages is done in reverse (newest first).
+ * @param mixed $folder
+ *     The folder to use. Either a special folder (PHORUM_PM_INBOX or
+ *     PHORUM_PM_OUTBOX) or the id of a custom user folder.
  *
- * @return $messages - An array of private messages for the folder.
+ * @param integer $user_id
+ *     The user to retrieve messages for or NULL to use the active
+ *     Phorum user (default).
+ *
+ * @param boolean $reverse
+ *     If set to a true value (default), sorting of messages is done
+ *     in reverse (newest first).
+ *
+ * @return array
+ *     An array of private messages for the folder.
  */
-
 function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
@@ -4895,18 +5082,26 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
 
     return $messages;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_get()
 /**
  * Retrieve a private message from the database.
  *
- * @param $pm_id    - The id for the private message to retrieve.
- * @param $folder   - The folder to retrieve the message from or
- *                    NULL if the folder does not matter.
- * @param $user_id  - The user to retrieve the message for or NULL
- *                    to use the active Phorum user (default).
+ * @param integer $pm_id
+ *     The id for the private message to retrieve.
  *
- * @return $message - Return the private message on success or NULL
- *                    if the message could not be found.
+ * @param mixed $folder 
+ *     The folder to retrieve the message from or NULL if the folder
+ *     does not matter.
+ *
+ * @param integer $user_id
+ *     The user to retrieve the message for or NULL to use the active
+ *     Phorum user (default).
+ *
+ * @return array
+ *     Return the private message on success or NULL if the message
+ *     could not be found.
  */
 function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
 {
@@ -4965,15 +5160,21 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
 
     return $message;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_create_folder()
 /**
  * Create a new private messages folder for a user.
  *
- * @param $foldername    - The name of the folder to create.
- * @param $user_id       - The id of the user to create the folder for or
- *                         NULL to use the active Phorum user (default).
+ * @param string $foldername
+ *     The name of the folder to create.
  *
- * @return $pm_folder_id - The id that was assigned to the new folder.
+ * @param mixed $user_id
+ *     The id of the user to create the folder for or NULL to use the
+ *     active Phorum user (default).
+ *
+ * @return integer $pm_folder_id
+ *     The id that was assigned to the new folder.
  */
 function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 {
@@ -4992,14 +5193,21 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 
     return $pm_folder_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_rename_folder()
 /**
  * Rename a private message folder for a user.
  *
- * @param $folder_id - The id of the folder to rename.
- * @param $newname   - The new name for the folder.
- * @param $user_id   - The user to rename the folder for or
- *                     NULL to use the active Phorum user (default).
+ * @param integer $folder_id
+ *     The id of the folder to rename.
+ *
+ * @param string $newname
+ *     The new name for the folder.
+ *
+ * @param mixed $user_id
+ *     The user to rename the folder for or NULL to use the active
+ *     Phorum user (default).
  */
 function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
 {
@@ -5018,14 +5226,19 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
                 user_id = $user_id"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_delete_folder()
 /**
  * Delete a private message folder for a user. Along with the folder,
  * all contained messages are deleted as well.
  *
- * @param $folder_id - The id of the folder to delete.
- * @param $user_id   - The user to delete the folder for or
- *                     NULL to use the active Phorum user (default).
+ * @param integer $folder_id
+ *     The id of the folder to delete.
+ *
+ * @param mixed $user_id
+ *     The user to delete the folder for or NULL to use the active
+ *     Phorum user (default).
  */
 function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
 {
@@ -5049,21 +5262,26 @@ function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
                user_id      = $user_id"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_getfolders()
 /**
  * Retrieve a list of private message folders for a user.
  *
- * @param $user_id  - The user to retrieve folders for or NULL to use the
- *                    active Phorum user (default).
- * @param $count    - If this parameter is set to a true value, the number
- *                    of messages for each folder is included in the return
- *                    data. By default, this is not done.
+ * @param mixed $user_id
+ *     The user to retrieve folders for or NULL to use the active
+ *     Phorum user (default).
  *
- * @return $folders - An array of private message folders, indexed by
- *                    the folder id. The values are arrays, containing
- *                    the fields "id" and "name". If $count is enabled,
- *                    the  keys "total" and "new" will be added to the
- *                    forum info.
+ * @param boolean $count
+ *     If this parameter is set to a true value, the number of messages
+ *     for each folder is included in the return data. By default,
+ *     this is not done.
+ *
+ * @return array
+ *     An array of private message folders, indexed by the folder id.
+ *     The values are arrays, containing the fields "id" and "name".
+ *     If $count is enabled, the  keys "total" and "new" will be added
+ *     to the forum info.
  */
 function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
 {
@@ -5145,19 +5363,24 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
 
     return $folders;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_messagecount
 /**
  * Compute the total number of private messages a user has and return
  * both the total number of messages and the number of unread messages.
  *
- * @param $folder  - The id of the folder to use. Either a special folder
- *                   (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX), the id of a user's
- *                   custom folder or PHORUM_PM_ALLFOLDERS for looking at
- *                   all folders.
- * @param $user_id - The user to retrieve messages for or NULL
- *                   to use the active Phorum user (default).
+ * @param mixed $folder
+ *     The id of the folder to use. Either a special folder
+ *     (PHORUM_PM_INBOX or PHORUM_PM_OUTBOX), the id of a user's custom
+ *     folder or PHORUM_PM_ALLFOLDERS for looking at all folders.
  *
- * @return $count  - An array containing the elements "total" and "new".
+ * @param mixed $user_id
+ *     The user to retrieve messages for or NULL to use the
+ *     active Phorum user (default).
+ *
+ * @return array
+ *     An array containing the elements "total" and "new".
  */
 function phorum_db_pm_messagecount($folder, $user_id = NULL)
 {
@@ -5194,15 +5417,19 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
 
     return $count;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_checknew()
 /**
  * Check if the user has any new private messages. This is useful in case
  * you only want to know whether the user has new messages or not and when
  * you are not interested in the exact amount of new messages.
  *
- * @param $user_id - The user to check for or NULL to use the active
- *                   Phorum user (default).
- * @return $new    - TRUE in case there are new messages, FALSE otherwise.
+ * @param mixed $user_id
+ *     The user to check for or NULL to use the active Phorum user (default).
+ *
+ * @return boolean
+ *     TRUE in case there are new messages, FALSE otherwise.
  */
 function phorum_db_pm_checknew($user_id = NULL)
 {
@@ -5221,21 +5448,32 @@ function phorum_db_pm_checknew($user_id = NULL)
 
     return (bool)$new;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_send
 /**
  * Send a private message.
  *
- * @param $subject  - The subject for the private message.
- * @param $message  - The message text for the private message.
- * @param $to       - A single user_id or an array of user_ids for
- *                    specifying the recipient(s).
- * @param $from     - The id of the sending user or NULL to use the
- *                    active Phorum user (default).
- * @param $keepcopy - If set to a true value, a copy of the mail will
- *                    be kept in the outbox of the user. Default
- *                    value is FALSE.
+ * @param string $subject
+ *     The subject for the private message.
  *
- * @return $pm_id   - The id that was assigned to the new message.
+ * @param string $message
+ *     The message text for the private message.
+ *
+ * @param mixed $to
+ *     A single user_id or an array of user_ids for specifying the
+ *     recipient(s).
+ *
+ * @param mixed $from
+ *     The id of the sending user or NULL to use the active Phorum user
+ *     (default).
+ *
+ * @param $keepcopy
+ *     If set to a true value, a copy of the mail will be kept in the
+ *     outbox of the user. Default value is FALSE.
+ *
+ * @return integer
+ *     The id that was assigned to the new message.
  */
 function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
 {
@@ -5320,16 +5558,25 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
 
     return $pm_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_setflag()
 /**
  * Update a flag for a private message.
  *
- * @param $pm_id   - The id of the message to update.
- * @param $flag    - The flag to update. Possible flags are:
- *                   PHORUM_PM_READ_FLAG and PHORUM_PM_REPLY_FLAG.
- * @param $value   - The value for the flag (either TRUE or FALSE).
- * @param $user_id - The user to set a flag for or NULL to use the
- *                   active Phorum user (default).
+ * @param integer $pm_id
+ *     The id of the message to update.
+ *
+ * @param integer $flag
+ *     The flag to update. Possible flags are: PHORUM_PM_READ_FLAG and
+ *     PHORUM_PM_REPLY_FLAG.
+ *
+ * @param boolean $value
+ *     The value for the flag (either TRUE or FALSE).
+ *
+ * @param $user_id
+ *     The user to set a flag for or NULL to use the active Phorum
+ *     user (default).
  */
 function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 {
@@ -5363,6 +5610,7 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
         phorum_db_pm_update_message_info($pm_id);
     }
 }
+// }}}
 
 /**
  * Delete a private message from a folder.
