@@ -50,6 +50,8 @@ function phorum_update_thread_info($thread)
 
         $message_ids=array_keys($filtered_messages);
 
+        sort($message_ids);
+
         $parent_message=$filtered_messages[$thread];
 
         if (isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {

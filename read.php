@@ -258,8 +258,11 @@ if($PHORUM['cache_messages']) {
         // we expect this message_index to be ordered by message-id already!
 
         // in this case we need the reversed order
-        if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
+        if($PHORUM['threaded_read'] &&
+           isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
+
             $message_index=array_reverse($message_index);
+
         }
 
         $start=$PHORUM["read_length"]*($page-1);
@@ -604,7 +607,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $row["attachments"][$key]["size"] = phorum_filesize($file["size"]);
                 $row["attachments"][$key]["name"] = htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $file['name']);
-                $safe_file = preg_replace('/_+/', '_', $safe_file);         
+                $safe_file = preg_replace('/_+/', '_', $safe_file);
                 $row["attachments"][$key]["url"]  = str_replace(array('%file_id%','%file_name%'),array($file['file_id'],$safe_file),$attachment_url_template);
             }
         }
