@@ -21,7 +21,10 @@
                         <div class="message-author icon-user">
                             {PREVIEW->author}
                         </div>
-                        <div class="message-date">{PREVIEW->datestamp}</div>
+                        <small>
+                        <strong>{PREVIEW->subject}</strong><br />
+                        {PREVIEW->datestamp}
+                        </small>
                     </td>
                     <td class="message-user-info" nowrap="nowrap">
                     </td>
@@ -131,18 +134,18 @@
                             <img src="{URL->TEMPLATE}/images/tree-L.gif" border="0"/>
                             <input type="checkbox" id="subscription-mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription-mail">{LANG->EmailReplies}</label>
                           </div>
-  
+
                           <script type="text/javascript">
                           // <![CDATA[
                           function phorum_subscription_displaystate() {
                             if (document.getElementById) {
-                              var f = document.getElementById('subscription-follow'); 
+                              var f = document.getElementById('subscription-follow');
                               var d = document.getElementById('subscription-mail-div');
                               var e = document.getElementById('subscription-mail');
                               d.style.display  = f.checked ? 'block' : 'none';
                             }
                           }
-  
+
                           // Setup initial display state for subscription options.
                           phorum_subscription_displaystate();
                           // ]]>
