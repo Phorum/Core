@@ -13,7 +13,7 @@
 /**
  * Descriptions of standard Phorum page URL types and their options.
  * The keys in this array describe the type of Phorum URL.
- * The values are arrays, containing the following three elements: 
+ * The values are arrays, containing the following three elements:
  * - The name of the Phorum page to link to;
  * - A constan, telling whether the forum_id has to be added to the URL;
  * - A boolean, telling whether the GET vars have to be added to the URL.
@@ -75,7 +75,9 @@ function phorum_get_url()
                 $name = "read";
                 $add_forum_id = true;
                 $add_get_vars = true;
-                if ( !empty( $argv[1] ) && is_numeric( $argv[1] ) ) $suffix = "#msg-$argv[1]";
+                if ( !empty( $argv[1] ) &&
+                    (is_numeric( $argv[1] ) || $argv[1] == '%message_id%') )
+                        $suffix = "#msg-$argv[1]";
                 break;
 
 
