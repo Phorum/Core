@@ -176,6 +176,7 @@ define('DB_GLOBALQUERY',    64);
 // Utility functions (not directly part of the Phorum db API)
 // ----------------------------------------------------------------------
 
+// {{{ Function: phorum_db_mysql_connect()
 /**
  * A wrapper function for connecting to the database.
  *
@@ -190,7 +191,9 @@ define('DB_GLOBALQUERY',    64);
 function phorum_db_mysql_connect() {
     return phorum_db_interact(DB_RETURN_CONN);
 }
+// }}}
 
+// {{{ Function: phorum_db_sanitize_mixed()
 /**
  * This function will sanitize a mixed variable based on a given type
  * for safe use in SQL queries.
@@ -221,7 +224,9 @@ function phorum_db_sanitize_mixed(&$var, $type)
         }
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_validate_field()
 /**
  * Check if a value that will be used as a field name in a SQL query
  * contains only characters that would appear in a field name.
@@ -237,12 +242,14 @@ function phorum_db_validate_field($field_name)
     $valid = preg_match('!^[a-zA-Z0-9_]+$!', $field_name);
     return (bool)$valid;
 }
+// }}}
 
 
 // ----------------------------------------------------------------------
 // API functions
 // ----------------------------------------------------------------------
 
+// {{{ Function: phorum_db_check_connection()
 /**
  * @todo
  *     we can save a function call by directly calling
@@ -264,7 +271,9 @@ function phorum_db_check_connection()
         DB_NOCONNECTOK
     ) ? TRUE : FALSE;
 }
+// }}}
 
+// {{{ Function: phorum_db_run_queries()
 /**
  * Execute an array of queries.
  *
@@ -299,7 +308,9 @@ function phorum_db_run_queries($queries)
 
     return $error;
 }
+// }}}
 
+// {{{ Function: phorum_db_load_settings()
 /**
  * Load the Phorum settings in the $PHORUM array.
  *
@@ -334,7 +345,9 @@ function phorum_db_load_settings()
         $PHORUM[$setting[0]] = $val;
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_update_settings()
 /**
  * Store or update Phorum settings.
  *
@@ -389,8 +402,9 @@ function phorum_db_update_settings($settings)
 
     return TRUE;
 }
+// }}}
 
-
+// {{{ Function: phorum_db_get_thread_list()
 /**
  * Retrieve a list of visible messages for a given page offset.
  *
@@ -536,7 +550,9 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
 
     return $messages;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_recent_messages
 /**
  * Retrieve a list of recent messages for all forums for which the user has
  * read permission, for a particular forum, for a list of forums or for a
@@ -648,7 +664,9 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
     return $messages;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_unapproved_list()
 /**
  * Retrieve a list of messages which have not yet been approved by a moderator.
  *
@@ -662,7 +680,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
  *                        messages which were hidden by a moderator.
  * @param $moddays      - Limit the search to the last $moddays number of days.
  *
- * @return $messages    - An array of messages, indexed by message id.
+ * @return              - An array of messages, indexed by message id.
  */
 function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $moddays=0, $countonly = FALSE)
 {
@@ -721,7 +739,9 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
 
     return $messages;
 }
+// }}}
 
+// {{{ Function: phorum_db_post_message()
 /**
  * Store a new message in the database.
  *
@@ -733,19 +753,21 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  * If the "thread" index is set to zero, a new thread will be started and the
  * "thread" index will be filled with the new thread id upon return.
  *
- * @param $message     - The message to post. This is an array, which should
- *                       contain the following fields:
- *                       forum_id, thread, parent_id, author, subject, email,
- *                       ip, user_id, moderator_post, status, sort, msgid,
- *                       body, closed. Additionally, the following optional
- *                       fields can be set: meta, modifystamp, viewcount.
- * @param $convert     - True in case the message is being inserted by
- *                       a database conversion script. This will let you set
- *                       the datestamp and message_id of the message from the
- *                       $message data. Also, the duplicate message check will
- *                       be fully skipped.
+ * @param array $message
+ *     The message to post. This is an array, which should contain the
+ *     following fields: forum_id, thread, parent_id, author, subject, email,
+ *     ip, user_id, moderator_post, status, sort, msgid, body, closed.
+ *     Additionally, the following optional fields can be set: meta,
+ *     modifystamp, viewcount.
  *
- * @return $message_id - The message_id that was assigned to the new message.
+ * @param boolean $convert
+ *     True in case the message is being inserted by a database conversion
+ *     script. This will let you set the datestamp and message_id of the
+ *     message from the $message data. Also, the duplicate message check
+ *     will be fully skipped.
+ *
+ * @return integer
+ *     The message_id that was assigned to the new message.
  */
 function phorum_db_post_message(&$message, $convert=FALSE)
 {
@@ -864,7 +886,9 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
     return $message_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_update_message()
 /**
  * Update a message in the database.
  *
@@ -934,17 +958,20 @@ function phorum_db_update_message($message_id, $message)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_delete_message()
 /**
  * Delete a message or a message tree from the database.
  *
- * @param $message_id - The message_id of the message which should be deleted.
- * @param $mode       - The mode of deletion. This is one of:
- *                      PHORUM_DELETE_MESSAGE  Delete a message and reconnect
- *                                             its reply messages to the
- *                                             parent of the deleted message.
- *                      PHORUM_DELETE_TREE     Delete a message and all its
- *                                             reply messages.
+ * @param integer $message_id
+ *     The message_id of the message which should be deleted.
+ *
+ * @param integer $mode
+ *     The mode of deletion. This is one of:
+ *     - PHORUM_DELETE_MESSAGE: Delete a message and reconnect
+ *       its reply messages to the parent of the deleted message.
+ *     - PHORUM_DELETE_TREE: Delete a message and all its reply messages.
  */
 function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 {
@@ -1032,15 +1059,21 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 
     return $mids;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_messagetree()
 /**
  * Build a tree of all child (reply) messages below a message_id.
  *
- * @param $message_id - The message_id for which to build the message tree.
- * @param $forum_id   - The forum_id for the message.
+ * @param integer $message_id
+ *     The message_id for which to build the message tree.
  *
- * @return $tree      - A string containing a comma separated list
- *                      of child message_ids for the message_id.
+ * @param integer $forum_id
+ *     The forum_id for the message.
+ *
+ * @return string
+ *     A string containing a comma separated list of child message_ids
+ *     for the given message_id.
  */
 function phorum_db_get_messagetree($message_id, $forum_id)
 {
@@ -1066,7 +1099,9 @@ function phorum_db_get_messagetree($message_id, $forum_id)
 
     return $tree;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_message()
 /**
  * Retrieve message(s) from the messages table by comparing value(s)
  * for a specified field in that table.
@@ -1076,22 +1111,23 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  * first matching message in the table. If an array of values is provided,
  * the function will return all matching messages in an array.
  *
- * @param $value           - The value that you want to search on in the
- *                           messages table. This can be either a single
- *                           value or an array of values.
- * @param $field           - The message field (database column) to search on.
- * @param $ignore_forum_id - By default, this function will only search for
- *                           messages within the active forum (as defined
- *                           by $PHORUM["forum_id"). By setting this
- *                           parameter to a true value, the function will
- *                           search in any forum.
+ * @param mixed $value
+ *     The value that you want to search on in the messages table.
+ *     This can be either a single value or an array of values.
  *
- * @return                 - Either a single message or an array of
- *                           messages (indexed by message_id), depending on
- *                           the $value parameter. If no message is found
- *                           at all, then either an empty array or NULL
- *                           is returned (also depending on the $value
- *                           parameter).
+ * @param string $field
+ *     The message field (database column) to search on.
+ *
+ * @param boolean $ignore_forum_id
+ *     By default, this function will only search for messages within the
+ *     active forum (as defined by $PHORUM["forum_id"). By setting this
+ *     parameter to a true value, the function will search in any forum.
+ *
+ * @return mixed
+ *     Either a single message or an array of messages (indexed by
+ *     message_id), depending on the $value parameter. If no message is
+ *     found at all, then either an empty array or NULL is returned
+ *     (also depending on the $value parameter).
  */
 function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE)
 {
@@ -1145,21 +1181,27 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 
     return $return;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_messages()
 /**
  * Retrieve messages from a specific thread.
  *
- * @param $thread           - The id of the thread.
- * @param $page             - A page offset (based on the configured
- *                            read_length) starting with 1. All messages
- *                            are returned in case $page is 0.
- * @param $ignore_mod_perms - If this parameter is set to a true value, then
- *                            the function will return hidden messages, even
- *                            if the active Phorum user is not a moderator.
+ * @param integer $thread
+ *     The id of the thread.
  *
- * @return $messages        - An array of messages, indexed by message_id.
- *                            One special key "users" is set too. This one
- *                            contains an array of all involved user_ids.
+ * @param integer $page
+ *     A page offset (based on the configured read_length) starting with 1.
+ *     All messages are returned in case $page is 0.
+ *
+ * @param boolean $ignore_mod_perms
+ *     If this parameter is set to a true value, then the function will
+ *     return hidden messages, even if the active Phorum user is not
+ *     a moderator.
+ *
+ * @return array
+ *     An array of messages, indexed by message_id. One special key "users"
+ *     is set too. This one contains an array of all involved user_ids.
  */
 function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
 {
@@ -1251,14 +1293,21 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
 
     return $messages;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_message_index()
 /**
- * Retrieve the index of a message in a thread.
+ * Retrieve the index of a message (the offset from the thread starter
+ * message) within a thread.
  *
- * @param $thread     - The thread id.
- * @param $message_id - The message id.
+ * @param integer $thread
+ *     The thread id.
  *
- * @return $index     - The index of the message, starting with 0.
+ * @param integer $message_id
+ *     The message id for which to determine the index.
+ *
+ * @return integer
+ *     The index of the message, starting with 0.
  */
 function phorum_db_get_message_index($thread=0, $message_id=0)
 {
@@ -1295,37 +1344,50 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
 
     return $index;
 }
+// }}}
 
+// {{{ Function: phorum_db_search()
 /**
  * Search the database using the provided search criteria and return
  * an array containing the total count of matches and the visible
  * messages based on the page $offset and $length.
  *
- * @param $search         - The query to search on in messages and subjects.
- * @param $author         - The query to search on in the message authors or
- *                          a numerical user_id if searching for all messages
- *                          for a certain user_id.
- * @param $return_threads - Whether to return the results as threads (TRUE)
- *                          or messages (FALSE).
- * @param $offset         - The result page offset starting with 0.
- * @param $length         - The result page length (nr. of results per page).
- * @param $match_type     - The type of search. This can be one of:
- *                          ALL      search on all of the words (uses $search)
- *                          ANY      search on any of the words (uses $search)
- *                          PHRASE   search for an exact phrase (uses $search)
- *                          USER_ID  search for an author id (uses $author)
- * @param $days           - The number of days to go back in the database for
- *                          searching (last [x] days) or zero to search within
- *                          all dates.
- * @param $match_forum    - The forum restriction. This can be either
- *                          the string "ALL" to search in any of the readable
- *                          forums or a comma separated list of forum_ids.
+ * @param string $search
+ *     The query to search on in messages and subjects.
  *
- * @return $return        - An array containing two fields: "count" contains
- *                          the total number of matching messages and
- *                          "rows" contains the messages that are visible,
- *                          based on the page $offset and page $length.
- *                          The messages are indexed by message_id.
+ * @param mixed $author
+ *     The query to search on in the message authors or a numerical user_id
+ *     if searching for all messages for a certain user_id.
+ *
+ * @param boolean $return_threads
+ *     Whether to return the results as threads (TRUE) or messages (FALSE).
+ *
+ * @param integer $offset
+ *     The result page offset starting with 0.
+ *
+ * @param integer $length
+ *     The result page length (nr. of results per page).
+ *
+ * @param string $match_type
+ *     The type of search. This can be one of:
+ *     - ALL:     search on all of the words (uses $search)
+ *     - ANY:     search on any of the words (uses $search)
+ *     - PHRASE:  search for an exact phrase (uses $search)
+ *     - USER_ID: search for an author id (uses $author)
+ *
+ * @param integer $days
+ *     The number of days to go back in the database for searching
+ *     (last [x] days) or zero to search within all dates.
+ *
+ * @param string $match_forum
+ *     The forum restriction. This can be either the string "ALL" to search
+ *     in any of the readable forums or a comma separated list of forum_ids.
+ *
+ * @return array
+ *     An array containing two fields:
+ *     - "count" contains the total number of matching messages.
+ *     - "rows" contains the messages that are visible, based on the page
+ *       $offset and page $length. The messages are indexed by message_id.
  */
 function phorum_db_search($search, $author, $return_threads, $offset, $length, $match_type, $days, $match_forum)
 {
@@ -1613,7 +1675,9 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
 
     return $return;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_neighbour_thread()
 /**
  * Retrieve the closest neighbour thread. What "neighbour" is, depends on the
  * float to top setting. If float to top is enabled, then the
@@ -1621,14 +1685,17 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
  * message was posted to a thread). Otherwise, the thread id is used
  * (so the time at which a thread was started).
  *
- * @param $key       - The key value of the message for which the neighbour
- *                     must be returned. The key value is either the
- *                     modifystamp (if float to top is enabled) or the
- *                     thread id.
- * @param $direction - Either "older" or "newer".
+ * @param integer $key
+ *     The key value of the message for which the neighbour must be returned.
+ *     The key value is either the modifystamp (if float to top is enabled)
+ *     or the thread id.
  *
- * @return $thread   - The thread id for the requested neigbour thread or
- *                     0 (zero) if there's no neighbour available.
+ * @param string $direction
+ *     Either "older" or "newer".
+ *
+ * @return integer
+ *     The thread id for the requested neigbour thread or 0 (zero) if there
+ *     is no neighbour available.
  */
 function phorum_db_get_neighbour_thread($key, $direction)
 {
@@ -1671,26 +1738,35 @@ function phorum_db_get_neighbour_thread($key, $direction)
 
     return $thread;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_forums()
 /**
  * Retrieve a list of forums. The forums which are returned can be filtered
  * through the function parameters. Note that only one parameter is
  * effective at a time.
  *
- * @param $forum_ids   - A single forum_id or an array of forum_ids for which
- *                       to retrieve the forum data. If this parameter is
- *                       0 (zero), then the $parent_id parameter will be
- *                       checked.
- * @param $parent_id   - Retrieve the forum data for all forums that have
- *                       their parent_id set to $parent_id. If this parameter
- *                       is NULL, then the $vroot parameter will be checked.
- * @param $vroot       - Retrieve the forum data for all forums that are in
- *                       the given $vroot. If this parameter is NULL, then the
- *                       $inherit_id parameter will be checked.
- * @param $inherit_id  - Retrieve the forum data for all forums that inherit
- *                       their settings from the forum with id $inherit_id.
+ * @param mixed $forum_ids
+ *     A single forum_id or an array of forum_ids for which to retrieve the
+ *     forum data. If this parameter is 0 (zero), then the $parent_id
+ *     parameter will be checked.
  *
- * @return $forums     - An array of forums, indexed by forum_id.
+ * @param mixed $parent_id
+ *     Retrieve the forum data for all forums that have their parent_id set
+ *     to $parent_id. If this parameter is NULL, then the $vroot parameter
+ *     will be checked.
+ *
+ * @param mixed $vroot
+ *     Retrieve the forum data for all forums that are in the given $vroot.
+ *     If this parameter is NULL, then the $inherit_id parameter will be
+ *     checked.
+ *
+ * @param mixed $inherit_id
+ *     Retrieve the forum data for all forums that inherit their settings
+ *     from the forum with id $inherit_id.
+ *
+ * @return array
+ *     An array of forums, indexed by forum_id.
  */
 function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
 {
@@ -1735,7 +1811,9 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
 
     return $forums;
 }
+// }}}
 
+// {{{ Function: phorum_db_update_forum_stats()
 /**
  * Update the forums stats. This function will update the thread count,
  * message count, sticky message count and last post timestamp for a forum.
@@ -1747,16 +1825,25 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
  * will be raised by one. This will flag the cache system that cached
  * data for the forum has to be refreshed.
  *
- * @param $refresh             - If TRUE, the all stats will be filled from
- *                               scratch by querying the database.
- * @param $msg_count_change    - Delta for the message count or zero to
- *                               query the value from the database.
- * @param $timestamp           - The post time of the last message or zero to
- *                               query the value from the database.
- * @param $thread_count_change - Delta for the thread count or zero to
- *                               query the value from the database.
- * @param $sticky_count_change - Delta for the sticky message count or zero to
- *                               query the value from the database.
+ * @param boolean $refresh
+ *     If TRUE, the all stats will be filled from scratch by querying
+ *     the database.
+ *
+ * @param integer $msg_count_change
+ *     Delta for the message count or zero to query the value
+ *     from the database.
+ *
+ * @param integer $timestamp
+ *     The post time of the last message or zero to query the value from
+ *     the database.
+ *
+ * @param integer $thread_count_change
+ *     Delta for the thread count or zero to query the value
+ *     from the database.
+
+ * @param integer $sticky_count_change
+ *     Delta for the sticky message count or zero to query the value
+ *     from the database.
  */
 function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $timestamp=0, $thread_count_change=0, $sticky_count_change=0)
 {
@@ -1839,12 +1926,17 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
          WHERE  forum_id = {$PHORUM['forum_id']}"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_move_thread()
 /**
  * Move a thread to another forum.
  *
- * @param $thread_id - The id of the thread that has to be moved.
- * @param $toforum   - The id of the destination forum.
+ * @param integer $thread_id
+ *     The id of the thread that has to be moved.
+ *
+ * @param integer
+ *     The id of the destination forum.
  */
 function phorum_db_move_thread($thread_id, $toforum)
 {
@@ -1954,11 +2046,14 @@ function phorum_db_move_thread($thread_id, $toforum)
         }
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_close_thread()
 /**
  * Close a thread for posting.
  *
- * @param $thread_id - The id of the thread that has to be closed.
+ * @param integer
+ *     The id of the thread that has to be closed.
  */
 function phorum_db_close_thread($thread_id)
 {
@@ -1975,11 +2070,14 @@ function phorum_db_close_thread($thread_id)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_reopen_thread()
 /**
  * (Re)open a thread for posting.
  *
- * @param $thread_id - The id of the thread that has to be opened.
+ * @param integer
+ *     The id of the thread that has to be opened.
  */
 function phorum_db_reopen_thread($thread_id)
 {
@@ -1996,20 +2094,22 @@ function phorum_db_reopen_thread($thread_id)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_add_forum()
 /**
  * Create a forum.
  *
- * @param $forum     - The forum to create. This is an array, which should
- *                     contain the following fields: name, active, description,
- *                     template, folder_flag, parent_id, list_length_flat,
- *                     list_length_threaded, read_length, moderation,
- *                     threaded_list, threaded_read, float_to_top,
- *                     display_ip_address, allow_email_notify, language,
- *                     email_moderators, display_order, edit_post, pub_perms,
- *                     reg_perms.
+ * @param array $forum
+ *     The forum to create. This is an array, which should contain the
+ *     following fields: name, active, description, template, folder_flag,
+ *     parent_id, list_length_flat, list_length_threaded, read_length,
+ *     moderation, threaded_list, threaded_read, float_to_top,
+ *     display_ip_address, allow_email_notify, language, email_moderators,
+ *     display_order, edit_post, pub_perms, reg_perms.
  *
- * @return $forum_id - The forum_id that was assigned to the new forum.
+ * @return integer
+ *     The forum_id that was assigned to the new forum.
  */
 function phorum_db_add_forum($forum)
 {
@@ -2053,17 +2153,18 @@ function phorum_db_add_forum($forum)
 
     return $forum_id;
 }
+// }}}
 
-
-
+// {{{ Function: phorum_db_add_message_edit()
 /**
  * Add a message-edit item
  *
- * @param $edit_data     - The edit_data to add. This is an array, which
- *                         should contain the following fields:
- *                         diff_body, diff_subject, time, message_id, user_id
+ * @param array $edit_data
+ *     The edit_data to add. This is an array, which should contain the
+ *     following fields: diff_body, diff_subject, time, message_id and user_id.
  *
- * @return $tracking_id  - The tracking_id that was assigned to that edit
+ * @return integer
+ *     The tracking_id that was assigned to that edit
  */
 function phorum_db_add_message_edit($edit_data)
 {
@@ -2099,15 +2200,19 @@ function phorum_db_add_message_edit($edit_data)
 
     return $tracking_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_message_edits()
 /**
  * Retrieve a list of message-edits for a message
  *
- * @param $message_id - The message id for which to retrieve the edits.
+ * @param integer $message_id
+ *     The message id for which to retrieve the edits.
  *
- * @return $edits     - An array of message edits, indexed by track_id.
- *                      The array elements are arrays containing the fields:
- *                      user_id, time, diff_body and diff_subject.
+ * @return array
+ *     An array of message edits, indexed by track_id. The array elements
+ *     are arrays containing the fields: user_id, time, diff_body
+ *     and diff_subject.
  */
 function phorum_db_get_message_edits($message_id)
 {
@@ -2145,11 +2250,14 @@ function phorum_db_get_message_edits($message_id)
 
     return $edits;
 }
+// }}}
 
+// {{{ Function: phorum_db_drop_forum()
 /**
  * Drop a forum and all of its messages.
  *
- * @param $forum_id - The id of the forum to drop.
+ * @param integer $forum_id
+ *     The id of the forum to drop.
  */
 function phorum_db_drop_forum($forum_id)
 {
@@ -2204,13 +2312,16 @@ function phorum_db_drop_forum($forum_id)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_drop_folder()
 /**
  * Drop a forum folder. If the folder contains child forums or folders,
  * then the parent_id for those will be updated to point to the parent
  * of the folder that is being dropped.
  *
- * @param $forum_id - The id of the folder to drop.
+ * @param integer $forum_id
+ *     The id of the folder to drop.
  */
 function phorum_db_drop_folder($forum_id)
 {
@@ -2247,22 +2358,24 @@ function phorum_db_drop_folder($forum_id)
          WHERE  forum_id = $forum_id"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_update_forum()
 /**
  * Update the settings for one or more forums.
  *
- * @param $forum    - The forum to update. This is an array, which should
- *                    contain at least the field "forum_id" to indicate what
- *                    forum to update. Next to that, one or more of the other
- *                    fields from phorum_db_add_forum() can be used to
- *                    describe changed values. The "forum_id" field can also
- *                    contain an array of forum_ids. By using that, the
- *                    settings can be updated for all the forum_ids at once.
+ * @param array $forum
+ *     The forum to update. This is an array, which should contain at least
+ *     the field "forum_id" to indicate what forum to update. Next to that,
+ *     one or more of the other fields from phorum_db_add_forum() can be
+ *     used to describe changed values. The "forum_id" field can also
+ *     contain an array of forum_ids. By using that, the settings can be
+ *     updated for all the forum_ids at once.
  *
- * @return $success - True if all settings were stored successfully. This
- *                    function will always return TRUE, so we could
- *                    do without a return value. The return value is
- *                    here for backward compatibility.
+ * @return boolean
+ *     True if all settings were stored successfully. This function will
+ *     always return TRUE, so we could do without a return value. The
+ *     return value is here for backward compatibility.
  */
 function phorum_db_update_forum($forum)
 {
@@ -2319,14 +2432,19 @@ function phorum_db_update_forum($forum)
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_groups()
 /**
  * Retrieve all groups or one specific group.
  *
- * @param $group_id - The id of the group to retrieve. If this parameter is
- *                    0 (zero), then all groups will be returned.
+ * @param mixed $group_id
+ *     A single group id or an array of group ids for which to retrieve
+ *     the group data. If this parameter is 0 (zero), then all groups will
+ *     be returned.
  *
- * @return $group   - An array of groups, indexed by group_id.
+ * @return array
+ *     An array of groups, indexed by group_id.
  */
 function phorum_db_get_groups($group_id=0)
 {
@@ -2375,7 +2493,9 @@ function phorum_db_get_groups($group_id=0)
 
     return $groups;
 }
+// }}}
 
+// {{{ Function: phorum_db_get_group_members()
 /**
  * Retrieve a list of members for a group or for a list of groups.
  *
@@ -2387,20 +2507,23 @@ function phorum_db_get_groups($group_id=0)
  * unapproved group members in any of the forums for which the active user
  * can moderate the group members.
  *
- * @param $group_id - A single group_id or an array of group_ids, for which
- *                    to retrieve the members.
- * @param $status   - A specific member status to look for. Defaults to all.
- *                    Possible statuses are:
- *                    PHORUM_USER_GROUP_SUSPENDED   (temporarily) deactivated
- *                    PHORUM_USER_GROUP_UNAPPROVED  on hold, not yet approved
- *                    PHORUM_USER_GROUP_APPROVED    active in the group
- *                    PHORUM_USER_GROUP_MODERATOR   active + member moderator
+ * @param mixed $group_id
+ *     A single group_id or an array of group_ids, for which to retrieve
+ *     the members.
  *
- * @return $members - An array containing members for the specified group(s).
- *                    The array contains a simple mapping from user_id to
- *                    group permission. Note that the permission is only
- *                    useful in case a single group was requested (see
- *                    the function description).
+ * @param integer $status
+ *     A specific member status to look for. Defaults to all.
+ *     Possible statuses are:
+ *     - PHORUM_USER_GROUP_SUSPENDED:  (temporarily) deactivated
+ *     - PHORUM_USER_GROUP_UNAPPROVED: on hold, not yet approved
+ *     - PHORUM_USER_GROUP_APPROVED:   active in the group
+ *     - PHORUM_USER_GROUP_MODERATOR:  active + member moderator
+ *
+ * @return array $members
+ *     An array containing members for the specified group(s). The array
+ *     contains a simple mapping from user_id to group permission. Note
+ *     that the permission is only useful in case a single group was
+ *     requested (see the function description).
  */
 function phorum_db_get_group_members($group_id, $status = NULL)
 {
@@ -2441,6 +2564,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
 
     return $members;
 }
+// }}}
 
 /**
  * Add a group. This will merely create the group in the database. For
