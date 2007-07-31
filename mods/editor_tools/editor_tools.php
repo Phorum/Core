@@ -106,10 +106,6 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
  */
 function phorum_mod_editor_tools_before_editor($data)
 {
-    // Workaround for a bug where before_editor was called,
-    // even if no editor was displayed.
-    if (isset($GLOBALS["PHORUM"]["DATA"]["MESSAGE"])) return $data;
-
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["DO_TOOLS"] = true;
     return $data;
 }
