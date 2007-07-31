@@ -456,7 +456,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
     // The groups of messages which we want to fetch from the database.
     // stickies : sticky messages (only on the first page)
     // threads  : thread starter messages (always)
-    // replies  : thread reply messages (only in threaded read mode)
+    // replies  : thread reply messages (only in threaded list mode)
     $groups = array();
     if ($page == 0) $groups[] = 'stickies';
     $groups[] = 'threads';
@@ -513,8 +513,8 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
                 if (! count($replymsgids)) break;
 
                 $sortorder = "sort, $sortfield DESC, message_id";
-                if (isset($PHORUM['reverse_threading']) &&
-                    $PHORUM['reverse_threading'])
+
+                if (!empty($PHORUM['reverse_threading']))
                     $sortorder.=' DESC';
 
                 $sql = "SELECT $messagefields
@@ -1238,7 +1238,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
     } else {
        // Handle reverse threading. This is only done if $page is 0.
        // In that case, the messages for threaded read are retrieved.
-       if (isset($PHORUM['reverse_threading']) && $PHORUM['reverse_threading'])
+       if (!empty($PHORUM['reverse_threading'])) 
            $sql.=' DESC';
     }
 
