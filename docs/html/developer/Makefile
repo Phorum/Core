@@ -1,5 +1,5 @@
 XSLTPROC=xsltproc
-XSLTPROCOPTS=
+XSLTPROCOPTS=--novalid
 
 all:
 	$(XSLTPROC) $(XSLTPROCOPTS) \
