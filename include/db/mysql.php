@@ -5612,13 +5612,19 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 }
 // }}}
 
+// {{{ Function: phorum_db_pm_delete()
 /**
  * Delete a private message from a folder.
  *
- * @param $pm_id   - The id of the private message to delete
- * @param $folder  - The folder from which to delete the message
- * @param $user_id - The id of the user to delete the message for or NULL
- *                   to use the active Phorum user (default).
+ * @param integer $pm_id
+ *     The id of the private message to delete
+ *
+ * @param mixed $folder
+ *     The folder from which to delete the message
+ *
+ * @param integer $user_id
+ *     The id of the user to delete the message for
+ *     or NULL to use the active Phorum user (default).
  */
 function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
 {
@@ -5650,15 +5656,24 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
     // Update message counters.
     phorum_db_pm_update_message_info($pm_id);
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_move()
 /**
  * Move a private message to a different folder.
  *
- * @param $pm_id   - The id of the private message to move.
- * @param $from    - The folder to move the message from.
- * @param $to      - The folder to move the message to.
- * @param $user_id - The id or the user to move the message for or NULL
- *                   to use the active Phorum user (default).
+ * @param integer $pm_id
+ *     The id of the private message to move.
+ *
+ * @param mixed $from
+ *     The folder to move the message from.
+ *
+ * @param mixed $to
+ *     The folder to move the message to.
+ *
+ * @param mixed $user_id
+ *     The id or the user to move the message for
+ *     or NULL to use the active Phorum user (default).
  */
 function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
 {
@@ -5701,7 +5716,9 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
                 $folder_where"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_update_message_info()
 /**
  * Update the meta information for a message.
  *
@@ -5709,8 +5726,8 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
  * from the xrefs table. If we find that no xrefs are available for the
  * message anymore, the message will be deleted from the database.
  *
- * @param $pm_id - The id of the private message for which to update
- *                 the meta information.
+ * @param integer $pm_id
+ *     The id of the private message for which to update the meta information.
  */
 function phorum_db_pm_update_message_info($pm_id)
 {
@@ -5769,18 +5786,22 @@ function phorum_db_pm_update_message_info($pm_id)
          WHERE  pm_message_id = $pm_id"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_is_buddy()
 /**
  * Check if a user is buddy of another user.
  *
- * @param $buddy_user_id - The user_id for which to check if the
- *                         user is a buddy.
- * @param $user_id       - The user_id for which the buddy list must be checked
- *                         or NULL to use the active Phorum user (default).
+ * @param integer $buddy_user_id
+ *     The user_id for which to check if the user is a buddy.
  *
- * @return $is_buddy     - If the user is a buddy, then the pm_buddy_id
- *                         for the buddy will be returned. If not, then
- *                         NULL will be returned.
+ * @param mixed $user_id
+ *     The user_id for which the buddy list must be checked
+ *     or NULL to use the active Phorum user (default).
+ *
+ * @return mixed
+ *     If the user is a buddy, then the pm_buddy_id for the buddy will be
+ *     returned. If not, then NULL will be returned.
  */
 function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
 {
@@ -5801,18 +5822,23 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
 
     return $pm_buddy_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_buddy_add()
 /**
  * Add a buddy for a user.
  *
- * @param $buddy_user_id - The user_id that has to be added as a buddy.
- * @param $user_id       - The user_id the buddy has to be added for or
- *                         NULL to use the active Phorum user (default).
+ * @param integer $buddy_user_id
+ *     The user_id that has to be added as a buddy.
  *
- * @return $pm_buddy_id  - The id that was assigned to the new buddy
- *                         or the existing id if the buddy already existed.
- *                         If no user can be found for the $buddy_user_id,
- *                         then NULL will be returned.
+ * @param mixed $user_id
+ *     The user_id the buddy has to be added for
+ *     or NULL to use the active Phorum user (default).
+ *
+ * @return mixed
+ *     The id that was assigned to the new buddy or the existing id if
+ *     the buddy already existed. If no user can be found for the
+ *     $buddy_user_id parameter, then NULL will be returned.
  */
 function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 {
@@ -5842,13 +5868,18 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 
     return $pm_buddy_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_buddy_delete()
 /**
  * Delete a buddy for a user.
  *
- * @param $buddy_user_id - The user_id that has to be deleted as a buddy.
- * @param $user_id       - The user_id the buddy has to be delete for or
- *                         NULL to use the active Phorum user (default).
+ * @param integer $buddy_user_id
+ *     The user_id that has to be deleted as a buddy.
+ *
+ * @param mixed $user_id
+ *     The user_id the buddy has to be delete for
+ *     or NULL to use the active Phorum user (default).
  */
 function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
 {
@@ -5866,15 +5897,24 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
                user_id       = $user_id"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_pm_buddy_list()
 /**
  * Retrieve a list of buddies for a user.
  *
- * @param $user_id     - The user_id for which to retrieve the buddies
- *                       or NULL to user the active Phorum user (default).
- * @param $find_mutual - Whether to find mutual buddies or not (default not).
+ * @param mixed $user_id
+ *     The user_id for which to retrieve the buddies or NULL to user the
+ *     active Phorum user (default).
  *
- * @return $buddies    - An array of buddies.
+ * @param boolean $find_mutual
+ *     Whether to find mutual buddies or not (default FALSE).
+ *
+ * @return array
+ *     An array of buddies. The keys in this array are user_ids. The values
+ *     are arrays, which contain the field "user_id" and possibly the
+ *     boolean field "mutual" if the $find_mutual parameter was set to
+ *     a true value.
  */
 function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
 {
@@ -5920,12 +5960,17 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
 
     return $buddies;
 }
+// }}}
 
+// {{{ Function: phorum_db_split_thread()
 /**
  * Split a thread.
  *
- * @param $message_id - The id of the message at which to split a thread.
- * @param $forum_id   - The id of the forum in which the message can be found.
+ * @param integer $message_id
+ *     The id of the message at which to split a thread.
+ *
+ * @param integer $forum_id
+ *     The id of the forum in which the message can be found.
  */
 function phorum_db_split_thread($message_id, $forum_id)
 {
@@ -5957,11 +6002,15 @@ function phorum_db_split_thread($message_id, $forum_id)
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_get_max_messageid()
 /**
  * Retrieve the maximum message_id in the database.
  *
- * @return $max_id - The maximum available message_id.
+ * @return integer $max_id
+ *     The maximum available message_id or 0 (zero)
+ *     if no message was found at all.
  */
 function phorum_db_get_max_messageid()
 {
@@ -5975,12 +6024,14 @@ function phorum_db_get_max_messageid()
 
     return $maxid === NULL ? 0 : $maxid;
 }
+// }}}
 
+// {{{ Function: phorum_db_viewcount_inc()
 /**
  * Increment the viewcount field for a post.
  *
- * @param $message_id - The id of the message for which to increment
- *                      the viewcount.
+ * @param integer $message_id
+ *     The id of the message for which to increment the viewcount.
  */
 function phorum_db_viewcount_inc($message_id)
 {
@@ -5993,7 +6044,9 @@ function phorum_db_viewcount_inc($message_id)
          WHERE  message_id = $message_id"
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_rebuild_search_data()
 /**
  * Rebuild the search table data from scratch.
  */
@@ -6022,7 +6075,9 @@ function phorum_db_rebuild_search_data()
          DB_GLOBALQUERY
     );
 }
+// }}}
 
+// {{{ Function: phorum_db_rebuild_user_posts()
 /**
  * Rebuild the user post counts from scratch.
  */
@@ -6059,7 +6114,9 @@ function phorum_db_rebuild_user_posts()
         );
     }
 }
+// }}}
 
+// {{{ Function: phorum_db_user_search_custom_profile_field()
 /**
  * Search for users, based on a simple search condition,
  * which can be used to search on custom profile fields.
@@ -6184,7 +6241,9 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     list ($user_id, $dummy) = each($user_ids);
     return $user_id;
 }
+// }}}
 
+// {{{ Function: phorum_db_metaquery_compile()
 /**
  * Translates a message searching meta query into a real SQL WHERE
  * statement for this database backend. The meta query can be used to
@@ -6244,13 +6303,14 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  * ... WHERE field1 LIKE '%test data%'
  *     AND (field2 = 'whatever' OR field2 = 'something else')
  *
- * @param $metaquery - A meta query description array.
+ * @param array $metaquery
+ *     A meta query description array.
  *
- * @return $return - An array containing two elements. The first element
- *                   is either TRUE or FALSE, based on the success state
- *                   of the function call (FALSE means that there was an
- *                   error). The second argument contains either a
- *                   WHERE statement or an error message.
+ * @return array
+ *     An array containing two elements. The first element is either
+ *     TRUE or FALSE, based on the success state of the function call
+ *     (FALSE means that there was an error). The second argument contains
+ *     either a WHERE statement or an error message.
  */
 function phorum_db_metaquery_compile($metaquery)
 {
@@ -6367,7 +6427,9 @@ function phorum_db_metaquery_compile($metaquery)
 
     return array(TRUE, $where);
 }
+// }}}
 
+// {{{ Function: phorum_db_metaquery_messagesearch()
 /**
  * Run a search on the messages, using a metaquery. See the documentation
  * for the phorum_db_metaquery_compile() function for more info on the
@@ -6382,9 +6444,12 @@ function phorum_db_metaquery_compile($metaquery)
  * The primary goal for this function is to provide a backend for the
  * message pruning interface.
  *
- * @param $metaquery - A metaquery array.
+ * @param array $metaquery
+ *     A metaquery array. See {@link phorum_db_metaquery_compile()} for
+ *     more information about the metaquery syntax.
  *
- * @return $messages - An array of message records.
+ * @return array
+ *     An array of message records.
  */
 function phorum_db_metaquery_messagesearch($metaquery)
 {
@@ -6424,17 +6489,23 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     return $messages;
 }
+// }}}
 
+// {{{ Function: phorum_db_create_tables()
 /**
- * Create the tables that needed in the database. This function will
+ * Create the tables that are needed in the database. This function will
  * only be called at install time. After installation, changes in the
  * database schema will be handled by the database upgrade system.
  *
- * @return $error - NULL on success or an error message on failure.
+ * @return mixed
+ *     NULL on success or an error message on failure.
  *
- * TODO: it would be nice to have some feedback mechanism through a
- * TODO: callback, so a table by table create status can be provided
- * TODO: to the interface which is creating the tables.
+ * @todo It might be nice to have some feedback mechanism through a
+ *       callback. Using that, table create status can be provided
+ *       to the interface which is creating the tables. This is especially
+ *       useful in case the create process fails at some point, in which
+ *       case you currently have no good feedback about the create
+ *       table progress.
  */
 function phorum_db_create_tables()
 {
@@ -6749,16 +6820,19 @@ function phorum_db_create_tables()
 
     return NULL;
 }
+// }}}
 
+// {{{ Function: phorum_db_maxpacketsize()
 /**
- * This function is used by the sanity checking system in the
- * admin interface to determine how much data can be transferred
- * in one query. This is used to detect problems with uploads that
- * are larger than the database server can handle.
- * The function returns the size in bytes. For database implementations
- * which do not have this kind of limit, NULL can be returned.
+ * This function is used by the sanity checking system in the admin
+ * interface to determine how much data can be transferred in one query.
+ * This is used to detect problems with uploads that are larger than the
+ * database server can handle. The function returns the size in bytes.
+ * For database implementations which do not have this kind of limit,
+ * NULL can be returned.
  *
- * @return $maxsize - The maximum packet size in bytes.
+ * @return integer
+ *     The maximum packet size in bytes.
  */
 function phorum_db_maxpacketsize()
 {
@@ -6769,7 +6843,9 @@ function phorum_db_maxpacketsize()
 
     return $maxsize;
 }
+// }}}
 
+// {{{ Function: phorum_db_sanitychecks()
 /**
  * This function is used by the sanity checking system to let the
  * database layer do sanity checks of its own. This function can
@@ -6783,7 +6859,8 @@ function phorum_db_maxpacketsize()
  * constants, because this function should only be called from the
  * sanity checking system.
  *
- * @return A return value as expected by the sanity checking system.
+ * @return array
+ *     A return value as expected by Phorum's sanity checking system.
  */
 function phorum_db_sanitychecks()
 {
@@ -6851,6 +6928,7 @@ function phorum_db_sanitychecks()
     // All checks are okay.
     return array (PHORUM_SANITY_OK, NULL);
 }
+// }}}
 
 // ----------------------------------------------------------------------
 // Load specific code for the required PHP database module.
