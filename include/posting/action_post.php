@@ -138,7 +138,7 @@ if ($success)
     // format (otherwise it's a bit messed up in the
     // post-function). Do merge back data which is not
     // stored in the database, but which we might need later on.
-    $message = phorum_db_get_message($message["message_id"]);
+    $message = phorum_db_get_message($message["message_id"],'message_id',false,true);
     foreach ($message_copy as $key => $val) {
         if (! isset($message[$key])) {
             $message[$key] = $val;

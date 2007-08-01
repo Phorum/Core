@@ -169,6 +169,7 @@ define('DB_DUPKEYNAMEOK',    8);
 define('DB_DUPKEYOK',       16);
 define('DB_TABLEEXISTSOK',  32);
 define('DB_GLOBALQUERY',    64);
+define('DB_MASTERQUERY',   128);
 /**#@-*/
 
 // }}}
@@ -190,7 +191,7 @@ define('DB_GLOBALQUERY',    64);
  * @deprecated
  */
 function phorum_db_mysql_connect() {
-    return phorum_db_interact(DB_RETURN_CONN);
+    return phorum_db_interact(DB_RETURN_CONN,null,null,DB_MASTERQUERY);
 }
 // }}}
 
@@ -269,7 +270,7 @@ function phorum_db_check_connection()
     return phorum_db_interact(
         DB_RETURN_CONN,
         NULL, NULL,
-        DB_NOCONNECTOK
+        DB_NOCONNECTOK | DB_MASTERQUERY
     ) ? TRUE : FALSE;
 }
 // }}}
@@ -301,7 +302,8 @@ function phorum_db_run_queries($queries)
         $error = phorum_db_interact(
             DB_RETURN_ERROR,
             $sql, NULL,
-            DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK | DB_TABLEEXISTSOK | DB_GLOBALQUERY
+            DB_DUPFIELDNAMEOK | DB_DUPKEYNAMEOK | DB_TABLEEXISTSOK |
+            DB_GLOBALQUERY | DB_MASTERQUERY
         );
 
         if ($error !== NULL) break;
@@ -384,7 +386,9 @@ function phorum_db_update_settings($settings)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "DELETE FROM {$PHORUM['settings_table']}
-                 WHERE  name = '$field'"
+                 WHERE  name = '$field'",
+                null,
+                DB_MASTERQUERY
             );
 
             // Insert new settings record.
@@ -392,7 +396,9 @@ function phorum_db_update_settings($settings)
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['settings_table']}
                         (data, type, name)
-                 VALUES ('$value', '$type', '$field')"
+                 VALUES ('$value', '$type', '$field')",
+                 null,
+                 DB_MASTERQUERY
             );
         }
     }
@@ -848,7 +854,9 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['message_table']}
                 (".implode(', ', array_keys($insertfields)).")
-         VALUES (".implode(', ', $insertfields).")"
+         VALUES (".implode(', ', $insertfields).")",
+         null,
+         DB_MASTERQUERY
     );
 
     $message['message_id'] = $message_id;
@@ -861,7 +869,9 @@ function phorum_db_post_message(&$message, $convert=FALSE)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
              SET    thread     = $message_id
-             WHERE  message_id = $message_id"
+             WHERE  message_id = $message_id",
+             null,
+             DB_MASTERQUERY
         );
 
         $message['thread'] = $message_id;
@@ -881,7 +891,9 @@ function phorum_db_post_message(&$message, $convert=FALSE)
                     (message_id, forum_id,
                      search_text)
              VALUES ({$message['message_id']}, {$message['forum_id']},
-                     '$search_text')"
+                     '$search_text')",
+              null,
+              DB_MASTERQUERY
         );
     }
 
@@ -938,7 +950,9 @@ function phorum_db_update_message($message_id, $message)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
         SET " . implode(', ', $fields) . "
-        WHERE message_id = $message_id"
+        WHERE message_id = $message_id",
+        null,
+        DB_MASTERQUERY
     );
 
     // Full text searching updates.
@@ -955,7 +969,9 @@ function phorum_db_update_message($message_id, $message)
             "REPLACE DELAYED INTO {$PHORUM['search_table']}
              SET     message_id  = {$message_id},
                      forum_id    = {$message['forum_id']},
-                     search_text = '$search_text'"
+                     search_text = '$search_text'",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -1009,7 +1025,9 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['message_table']}
          SET    status=".PHORUM_STATUS_HOLD."
-         WHERE  $where"
+         WHERE  $where",
+         null,
+         DB_MASTERQUERY
     );
 
     $thread = $msg['thread'];
@@ -1024,7 +1042,9 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
             "UPDATE {$PHORUM['message_table']}
              SET    parent_id = {$msg['parent_id']}
              WHERE  forum_id  = {$msg['forum_id']} AND
-                    parent_id = {$msg['message_id']}"
+                    parent_id = {$msg['message_id']}",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -1032,14 +1052,18 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['message_table']}
-         WHERE $where"
+         WHERE $where",
+         null,
+         DB_MASTERQUERY
     );
 
     // Full text searching updates.
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['search_table']}
-         WHERE $where"
+         WHERE $where",
+         null,
+         DB_MASTERQUERY
     );
 
     // It kind of sucks to have this here, but it is the best way
@@ -1052,7 +1076,9 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['subscribers_table']}
-         WHERE forum_id > 0 AND thread = $thread"
+         WHERE forum_id > 0 AND thread = $thread",
+         null,
+         DB_MASTERQUERY
     );
 
     // This function will be slow with a lot of messages.
@@ -1124,13 +1150,17 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  *     active forum (as defined by $PHORUM["forum_id"). By setting this
  *     parameter to a true value, the function will search in any forum.
  *
+ * @param boolean $write_server
+ *     This value can be set to true to specify that the message should be retrieved
+ *     from the master (aka write-server) in case replication is used
+ *
  * @return mixed
  *     Either a single message or an array of messages (indexed by
  *     message_id), depending on the $value parameter. If no message is
  *     found at all, then either an empty array or NULL is returned
  *     (also depending on the $value parameter).
  */
-function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE)
+function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE, $write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1158,12 +1188,20 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 
     $return = $multiple ? array() : NULL;
 
+    if($write_server) {
+        $flags = DB_MASTERQUERY;
+    } else {
+        $flags = 0;
+    }
+
     $messages = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT *
          FROM   {$PHORUM['message_table']}
          WHERE  $forum_id_check $checkvar
-         $limit"
+         $limit",
+        null,
+        $flags
     );
 
     foreach ($messages as $message)
@@ -1239,7 +1277,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
     } else {
        // Handle reverse threading. This is only done if $page is 0.
        // In that case, the messages for threaded read are retrieved.
-       if (!empty($PHORUM['reverse_threading'])) 
+       if (!empty($PHORUM['reverse_threading']))
            $sql.=' DESC';
     }
 
@@ -1924,7 +1962,9 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
                 message_count  = $message_count,
                 sticky_count   = $sticky_count,
                 last_post_time = $last_post_time
-         WHERE  forum_id = {$PHORUM['forum_id']}"
+         WHERE  forum_id = {$PHORUM['forum_id']}",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -1960,7 +2000,9 @@ function phorum_db_move_thread($thread_id, $toforum)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
              SET    forum_id = $toforum
-             WHERE  thread   = $thread_id"
+             WHERE  thread   = $thread_id",
+             null,
+             DB_MASTERQUERY
         );
 
         // Update the stats for the source forum.
@@ -1980,7 +2022,7 @@ function phorum_db_move_thread($thread_id, $toforum)
          *       are used as the source for deciding what flags
          *       to delete or move for all other users. This results
          *       in strange newflag problems.
-         *       
+         *
          *       This main issue here is that the newflags should be
          *       handled separately for each user; no updates should be
          *       based on the newflags for the active user. The current
@@ -2022,7 +2064,9 @@ function phorum_db_move_thread($thread_id, $toforum)
                 DB_RETURN_RES,
                 "UPDATE {$PHORUM['subscribers_table']}
                  SET    forum_id = $toforum
-                 WHERE  thread IN ($ids_str)"
+                 WHERE  thread IN ($ids_str)",
+                 null,
+                 DB_MASTERQUERY
             );
         }
 
@@ -2032,7 +2076,9 @@ function phorum_db_move_thread($thread_id, $toforum)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "DELETE FROM {$PHORUM['user_newflags_table']}
-                 WHERE  message_id IN($ids_str)"
+                 WHERE  message_id IN($ids_str)",
+                 null,
+                 DB_MASTERQUERY
             );
         }
 
@@ -2043,7 +2089,9 @@ function phorum_db_move_thread($thread_id, $toforum)
                 DB_RETURN_RES,
                 "UPDATE {$PHORUM['search_table']}
                  SET    forum_id = $toforum
-                 WHERE  message_id in ($ids_str)"
+                 WHERE  message_id in ($ids_str)",
+                 null,
+                 DB_MASTERQUERY
             );
         }
     }
@@ -2068,7 +2116,9 @@ function phorum_db_close_thread($thread_id)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
              SET    closed = 1
-             WHERE  thread = $thread_id"
+             WHERE  thread = $thread_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -2092,7 +2142,9 @@ function phorum_db_reopen_thread($thread_id)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['message_table']}
              SET    closed = 0
-             WHERE  thread = $thread_id"
+             WHERE  thread = $thread_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -2131,7 +2183,7 @@ function phorum_db_add_forum($forum)
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
                 $insertfields[$key] = $value;
-            /** 
+            /**
              * @todo Wouldn't it be better to have this one set to a real
              *       NULL value from the script that calls this function?
              *       If for some reason somebody wants to use the string
@@ -2152,7 +2204,9 @@ function phorum_db_add_forum($forum)
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['forums_table']}
                 (".implode(', ', array_keys($insertfields)).")
-         VALUES (".implode(', ', $insertfields).")"
+         VALUES (".implode(', ', $insertfields).")",
+         null,
+         DB_MASTERQUERY
     );
 
     return $forum_id;
@@ -2199,7 +2253,9 @@ function phorum_db_add_message_edit($edit_data)
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['message_tracking_table']}
                 (".implode(', ', array_keys($insertfields)).")
-         VALUES (".implode(', ', $insertfields).")"
+         VALUES (".implode(', ', $insertfields).")",
+         null,
+         DB_MASTERQUERY
     );
 
     return $tracking_id;
@@ -2286,7 +2342,9 @@ function phorum_db_drop_forum($forum_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM $table
-             WHERE forum_id = $forum_id"
+             WHERE forum_id = $forum_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -2312,7 +2370,9 @@ function phorum_db_drop_forum($forum_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['files_table']}
-             WHERE  file_id IN (".implode(",", array_keys($files)).")"
+             WHERE  file_id IN (".implode(",", array_keys($files)).")",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -2352,14 +2412,18 @@ function phorum_db_drop_folder($forum_id)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['forums_table']}
          SET    parent_id = $new_parent_id
-         WHERE  parent_id = $forum_id"
+         WHERE  parent_id = $forum_id",
+         null,
+         DB_MASTERQUERY
     );
 
     // Now, drop the folder.
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['forums_table']}
-         WHERE  forum_id = $forum_id"
+         WHERE  forum_id = $forum_id",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -2430,7 +2494,9 @@ function phorum_db_update_forum($forum)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['forums_table']}
              SET "  .implode(', ', $fields) . "
-             WHERE  $forumwhere"
+             WHERE  $forumwhere",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -2601,7 +2667,9 @@ function phorum_db_add_group($group_name, $group_id=0)
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['groups_table']}
                 ($fields)
-         VALUES ($values)"
+         VALUES ($values)",
+         null,
+         DB_MASTERQUERY
     );
 
     return $group_id;
@@ -2668,7 +2736,9 @@ function phorum_db_update_group($group)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['groups_table']}
              SET ". implode(', ', $fields) . "
-             WHERE  $group_where"
+             WHERE  $group_where",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -2679,7 +2749,9 @@ function phorum_db_update_group($group)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['forum_group_xref_table']}
-             WHERE  $group_where"
+             WHERE  $group_where",
+             null,
+             DB_MASTERQUERY
         );
 
         // Second, all new permissions are inserted.
@@ -2692,7 +2764,9 @@ function phorum_db_update_group($group)
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['forum_group_xref_table']}
                         (group_id, permission, forum_id)
-                 VALUES ({$group['group_id']}, $permission, $forum_id)"
+                 VALUES ({$group['group_id']}, $permission, $forum_id)",
+                 null,
+                 DB_MASTERQUERY
             );
         }
     }
@@ -2726,7 +2800,9 @@ function phorum_db_delete_group($group_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM $table
-             WHERE group_id = $forum_id"
+             WHERE group_id = $forum_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -2831,7 +2907,7 @@ function phorum_db_user_count()
          FROM   {$PHORUM['user_table']}"
     );
 }
-// }}} 
+// }}}
 
 // {{{ Function: phorum_db_user_get_all()
 /**
@@ -3371,7 +3447,9 @@ function phorum_db_user_add($userdata)
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['user_table']}
                 ($fields)
-         VALUES ($values)"
+         VALUES ($values)",
+         null,
+         DB_MASTERQUERY
     );
 
     // Set the rest of the data using the phorum_db_user_save() function.
@@ -3390,7 +3468,7 @@ function phorum_db_user_add($userdata)
  *     An array containing the fields to update in the user table.
  *     The array should contain at least the user_id field to identify
  *     the user for which to update the data. The array can contain two
- *     special fields: 
+ *     special fields:
  *     - forum_permissions:
  *       This field can contain an array with forum permissions for the user.
  *       The keys are forum_ids and the values are permission values.
@@ -3469,7 +3547,9 @@ function phorum_db_user_save($userdata)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['user_table']}
              SET    ".implode(', ', $values)."
-             WHERE  user_id = $user_id"
+             WHERE  user_id = $user_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -3480,7 +3560,9 @@ function phorum_db_user_save($userdata)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['user_permissions_table']}
-             WHERE  user_id = $user_id"
+             WHERE  user_id = $user_id",
+             null,
+             DB_MASTERQUERY
         );
 
         // Add new forum permissions.
@@ -3489,7 +3571,9 @@ function phorum_db_user_save($userdata)
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_permissions_table']}
                         (user_id, forum_id, permission)
-                 VALUES ($user_id, $forum_id, $permission)"
+                 VALUES ($user_id, $forum_id, $permission)",
+                 null,
+                 DB_MASTERQUERY
             );
         }
     }
@@ -3501,7 +3585,9 @@ function phorum_db_user_save($userdata)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['user_custom_fields_table']}
-             WHERE  user_id = $user_id"
+             WHERE  user_id = $user_id",
+             null,
+             DB_MASTERQUERY
         );
 
         // Insert new custom profile fields.
@@ -3521,7 +3607,9 @@ function phorum_db_user_save($userdata)
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_custom_fields_table']}
                         (user_id, type, data)
-                 VALUES ($user_id, $key, '$val')"
+                 VALUES ($user_id, $key, '$val')",
+                 null,
+                 DB_MASTERQUERY
             );
         }
     }
@@ -3568,7 +3656,7 @@ function phorum_db_user_display_name_updates($userdata)
          SET    author = '$author'
          WHERE  user_id = $user_id",
         NULL,
-        DB_GLOBALQUERY
+        DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
     // Update recent forum reply authors.
@@ -3578,7 +3666,7 @@ function phorum_db_user_display_name_updates($userdata)
          SET    recent_author = '$author'
          WHERE  recent_user_id = $user_id",
         NULL,
-        DB_GLOBALQUERY
+        DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
     // Update PM author data.
@@ -3586,7 +3674,9 @@ function phorum_db_user_display_name_updates($userdata)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['pm_messages_table']}
          SET    author = '$author'
-         WHERE  user_id = $user_id"
+         WHERE  user_id = $user_id",
+         null,
+         DB_MASTERQUERY
     );
 
     // Update PM recipient data.
@@ -3597,7 +3687,9 @@ function phorum_db_user_display_name_updates($userdata)
                 {$PHORUM['pm_xref_table']} AS x
          WHERE  m.pm_message_id = x.pm_message_id AND
                 x.user_id = $user_id AND
-                special_folder != 'outbox'"
+                special_folder != 'outbox'",
+         null,
+         DB_MASTERQUERY
     );
     while ($row = phorum_db_fetch_row($res, DB_RETURN_ASSOC)) {
         $meta = unserialize($row['meta']);
@@ -3607,7 +3699,9 @@ function phorum_db_user_display_name_updates($userdata)
             DB_RETURN_RES,
             "UPDATE {$PHORUM['pm_messages_table']}
              SET    meta='$meta'
-             WHERE  pm_message_id = {$row['pm_message_id']}"
+             WHERE  pm_message_id = {$row['pm_message_id']}",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -3639,7 +3733,9 @@ function phorum_db_user_save_groups($user_id, $groups)
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['user_group_xref_table']}
-         WHERE  user_id = $user_id"
+         WHERE  user_id = $user_id",
+         null,
+         DB_MASTERQUERY
     );
 
     // Insert new group memberships.
@@ -3650,7 +3746,9 @@ function phorum_db_user_save_groups($user_id, $groups)
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['user_group_xref_table']}
                     (user_id, group_id, status)
-             VALUES ($user_id, $group_id, $group_status)"
+             VALUES ($user_id, $group_id, $group_status)",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -3701,7 +3799,9 @@ function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
         "DELETE FROM {$PHORUM['subscribers_table']}
          WHERE  user_id  = $user_id AND
                 forum_id = $forum_id AND
-                thread   = $thread"
+                thread   = $thread",
+         null,
+         DB_MASTERQUERY
     );
 
     // Insert a new subscription record.
@@ -3709,7 +3809,9 @@ function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
         DB_RETURN_RES,
         "INSERT INTO {$PHORUM['subscribers_table']}
                 (user_id, forum_id, thread, sub_type)
-         VALUES ($user_id, $forum_id, $thread, $type)"
+         VALUES ($user_id, $forum_id, $thread, $type)",
+         null,
+         DB_MASTERQUERY
     );
 
     return TRUE;
@@ -3748,7 +3850,9 @@ function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
         "DELETE FROM {$PHORUM['subscribers_table']}
          WHERE  user_id = $user_id AND
                 thread  = $thread
-                $forum_where"
+                $forum_where",
+         null,
+         DB_MASTERQUERY
     );
 
     return TRUE;
@@ -3771,7 +3875,9 @@ function phorum_db_user_increment_posts($user_id)
             DB_RETURN_RES,
             "UPDATE {$GLOBALS['PHORUM']['user_table']}
              SET    posts = posts + 1
-             WHERE  user_id = $user_id"
+             WHERE  user_id = $user_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -3884,7 +3990,7 @@ function phorum_db_user_delete($user_id)
             "DELETE FROM $table
              WHERE user_id = $user_id",
             NULL,
-            DB_GLOBALQUERY
+            DB_GLOBALQUERY | DB_MASTERQUERY
         );
     }
 
@@ -3911,14 +4017,17 @@ function phorum_db_user_delete($user_id)
                 LEFT JOIN {$PHORUM['pm_xref_table']}
                 ON {$PHORUM['pm_xref_table']}.pm_message_id = {$PHORUM['pm_messages_table']}.pm_message_id
          WHERE pm_xref_id IS NULL",
-         0 // keyfield 0 is the pm_message_id
+         0, // keyfield 0 is the pm_message_id
+         DB_MASTERQUERY
     );
     // Delete all orphan private messages.
     if (!empty($pms)) {
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['pm_messages_table']}
-             WHERE  pm_message_id IN (".implode(', ', array_keys($pms)).")"
+             WHERE  pm_message_id IN (".implode(', ', array_keys($pms)).")",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -3928,7 +4037,9 @@ function phorum_db_user_delete($user_id)
         "DELETE FROM {$PHORUM['files_table']}
          WHERE  user_id    = $user_id AND
                 message_id = 0 AND
-                link       = '".PHORUM_LINK_USER."'"
+                link       = '".PHORUM_LINK_USER."'",
+         null,
+         DB_MASTERQUERY
     );
 
     // Change the forum postings into anonymous postings.
@@ -3949,7 +4060,7 @@ function phorum_db_user_delete($user_id)
                 author  = $author
          WHERE  user_id = $user_id",
         NULL,
-        DB_GLOBALQUERY
+        DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
     return TRUE;
@@ -4088,17 +4199,17 @@ function phorum_db_file_get($file_id, $include_file_data = TRUE)
  *     The file contents. This should be data which is safe to store in a
  *     TEXT field in the database. The calling application has to take
  *     care of this. The database layer will simply store and retrieve
- *     the file data as provided by the caller. 
+ *     the file data as provided by the caller.
  *
  * @param integer $message_id
- *     The message_id to link the file to. If this file is not linked to 
+ *     The message_id to link the file to. If this file is not linked to
  *     a posted message (the link type PHORUM_LINK_MESSAGE) then this value
  *     can be 0 (zero).
  *
  * @param string $link
  *     A file can be linked to a number of different types of objects.
  *     The available link types are:
- *     - PHORUM_LINK_USER: 
+ *     - PHORUM_LINK_USER:
  *       The file is linked to a user. This means that the file is
  *       available from within the files section in the user's Control Center.
  *     - PHORUM_LINK_MESSAGE:
@@ -4117,7 +4228,7 @@ function phorum_db_file_get($file_id, $include_file_data = TRUE)
  *     If the $file_id is set, then this will be used for updating the
  *     existing file data for the given $file_id.
  *
- * @return integer 
+ * @return integer
  *     The file_id that was assigned to the new file or the file_id of
  *     the existing file if the $file_id parameter was used.
  */
@@ -4153,7 +4264,9 @@ function phorum_db_file_save($file)
                     (user_id, message_id, link,
                      filename, filesize, file_data, add_datetime)
              VALUES ($user_id, $message_id, '$link',
-                     '$filename', $filesize, '$file_data', ".time().")"
+                     '$filename', $filesize, '$file_data', ".time().")",
+             null,
+             DB_MASTERQUERY
         );
     }
     // Update an existing file record.
@@ -4167,7 +4280,9 @@ function phorum_db_file_save($file)
                     filename     = '$filename',
                     filesize     = $filesize,
                     file_data    = '$file_data'
-             WHERE  file_id      = $file_id"
+             WHERE  file_id      = $file_id",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -4196,7 +4311,9 @@ function phorum_db_file_delete($file_id)
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['files_table']}
-         WHERE  file_id = $file_id"
+         WHERE  file_id = $file_id",
+         null,
+         DB_MASTERQUERY
     );
 
     return TRUE;
@@ -4238,7 +4355,9 @@ function phorum_db_file_link($file_id, $message_id, $link = NULL)
         "UPDATE {$PHORUM['files_table']}
          SET    message_id = $message_id,
                 link       = '$link'
-         WHERE  file_id    = $file_id"
+         WHERE  file_id    = $file_id",
+         null,
+         DB_MASTERQUERY
     );
 
     return TRUE;
@@ -4311,7 +4430,7 @@ function phorum_db_file_purge_stale_files($live_run = FALSE)
             "DELETE FROM {$PHORUM['files_table']}
              WHERE  $orphin_editor_where",
             NULL,
-            DB_GLOBALQUERY
+            DB_GLOBALQUERY | DB_MASTERQUERY
         );
 
         return TRUE;
@@ -4545,7 +4664,7 @@ function phorum_db_newflag_add_read($message_ids)
             "INSERT INTO {$PHORUM['user_newflags_table']}
                     (user_id, forum_id, message_id)
              VALUES ($user_id, $forum_id, $message_id)",
-            NULL, DB_DUPKEYOK
+            NULL, DB_DUPKEYOK | DB_MASTERQUERY
         );
     }
 }
@@ -4609,7 +4728,9 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
         "DELETE FROM {$PHORUM['user_newflags_table']}
          WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                 forum_id = {$forum_id}
-         $limit"
+         $limit",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -4633,7 +4754,9 @@ function phorum_db_newflag_update_forum($message_ids)
                        {$GLOBALS['PHORUM']['message_table']} AS msg
          SET    flags.forum_id   = msg.forum_id
          WHERE  flags.message_id = msg.message_id AND
-                flags.message_id IN ($ids_str)"
+                flags.message_id IN ($ids_str)",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -4950,7 +5073,9 @@ function phorum_db_del_banitem($banid)
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['banlist_table']}
-         WHERE  id = $banid"
+         WHERE  id = $banid",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -5008,7 +5133,9 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
                     type     = $type,
                     pcre     = $pcre,
                     string   = '$string'
-             WHERE  id = $banid"
+             WHERE  id = $banid",
+             null,
+             DB_MASTERQUERY
         );
     }
     // Create a new ban item.
@@ -5017,7 +5144,9 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['banlist_table']}
                     (forum_id,type,pcre,string)
-             VALUES ($forum_id, $type, $pcre, '$string')"
+             VALUES ($forum_id, $type, $pcre, '$string')",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -5097,7 +5226,7 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
  * @param integer $pm_id
  *     The id for the private message to retrieve.
  *
- * @param mixed $folder 
+ * @param mixed $folder
  *     The folder to retrieve the message from or NULL if the folder
  *     does not matter.
  *
@@ -5194,7 +5323,9 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
         DB_RETURN_NEWID,
         "INSERT INTO {$PHORUM['pm_folders_table']}
                 (user_id, foldername)
-         VALUES ($user_id, '$foldername')"
+         VALUES ($user_id, '$foldername')",
+         null,
+         DB_MASTERQUERY
     );
 
     return $pm_folder_id;
@@ -5229,7 +5360,9 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
         "UPDATE {$PHORUM['pm_folders_table']}
          SET    foldername = '$newname'
          WHERE  pm_folder_id = $folder_id AND
-                user_id = $user_id"
+                user_id = $user_id",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -5265,7 +5398,9 @@ function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['pm_folders_table']}
          WHERE pm_folder_id = $folder_id AND
-               user_id      = $user_id"
+               user_id      = $user_id",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -5544,7 +5679,9 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
                 (user_id, author, subject,
                  message, datestamp, meta)
          VALUES ($from, '$fromuser', '$subject',
-                 '$message', '".time()."', '$meta')"
+                 '$message', '".time()."', '$meta')",
+         null,
+         DB_MASTERQUERY
     );
 
     // Put the message in the recipient inboxes.
@@ -5558,7 +5695,9 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
                      read_flag, reply_flag)
              VALUES ({$xref['user_id']}, {$xref['pm_folder_id']},
                      '{$xref['special_folder']}', $pm_id,
-                     {$xref['read_flag']}, 0)"
+                     {$xref['read_flag']}, 0)",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -5608,7 +5747,9 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
         "UPDATE {$PHORUM['pm_xref_table']}
          SET    $flag = $value
          WHERE  pm_message_id = $pm_id AND
-                user_id       = $user_id"
+                user_id       = $user_id",
+         null,
+         DB_MASTERQUERY
     );
 
     // Update message counters.
@@ -5656,7 +5797,9 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
         "DELETE FROM {$PHORUM['pm_xref_table']}
          WHERE user_id       = $user_id AND
                pm_message_id = $pm_id AND
-               $folder_where"
+               $folder_where",
+         null,
+         DB_MASTERQUERY
     );
 
     // Update message counters.
@@ -5719,7 +5862,9 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
                 special_folder = $special_folder
          WHERE  user_id        = $user_id AND
                 pm_message_id  = $pm_id AND
-                $folder_where"
+                $folder_where",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -5746,7 +5891,9 @@ function phorum_db_pm_update_message_info($pm_id)
         DB_RETURN_ASSOC,
         "SELECT meta
          FROM   {$PHORUM['pm_messages_table']}
-         WHERE  pm_message_id = $pm_id"
+         WHERE  pm_message_id = $pm_id",
+         null,
+         DB_MASTERQUERY
     );
 
     # Return immediately if no message was found.
@@ -5757,7 +5904,9 @@ function phorum_db_pm_update_message_info($pm_id)
         DB_RETURN_ROWS,
         "SELECT user_id, read_flag
          FROM   {$PHORUM['pm_xref_table']}
-         WHERE  pm_message_id = $pm_id"
+         WHERE  pm_message_id = $pm_id",
+         null,
+         DB_MASTERQUERY
     );
 
     // No xrefs left? Then the message can be fully deleted.
@@ -5765,7 +5914,9 @@ function phorum_db_pm_update_message_info($pm_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM {$PHORUM['pm_messages_table']}
-             WHERE  pm_message_id = $pm_id"
+             WHERE  pm_message_id = $pm_id",
+             null,
+             DB_MASTERQUERY
         );
         return;
     }
@@ -5789,7 +5940,9 @@ function phorum_db_pm_update_message_info($pm_id)
         DB_RETURN_RES,
         "UPDATE {$PHORUM['pm_messages_table']}
          SET    meta = '$meta'
-         WHERE  pm_message_id = $pm_id"
+         WHERE  pm_message_id = $pm_id",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -5868,7 +6021,9 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
             DB_RETURN_NEWID,
             "INSERT INTO {$PHORUM['pm_buddies_table']}
                     (user_id, buddy_user_id)
-             VALUES ($user_id, $buddy_user_id)"
+             VALUES ($user_id, $buddy_user_id)",
+             null,
+             DB_MASTERQUERY
         );
     }
 
@@ -5900,7 +6055,9 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['pm_buddies_table']}
          WHERE buddy_user_id = $buddy_user_id AND
-               user_id       = $user_id"
+               user_id       = $user_id",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -5996,7 +6153,9 @@ function phorum_db_split_thread($message_id, $forum_id)
             "UPDATE {$GLOBALS['PHORUM']['message_table']}
              SET    thread     = $message_id,
                     parent_id  = 0
-             WHERE  message_id = $message_id"
+             WHERE  message_id = $message_id",
+             null,
+             DB_MASTERQUERY
         );
 
         // Link the messages below the split message to the split off thread.
@@ -6004,7 +6163,9 @@ function phorum_db_split_thread($message_id, $forum_id)
             DB_RETURN_RES,
             "UPDATE {$GLOBALS['PHORUM']['message_table']}
              SET    thread = $message_id
-             WHERE  message_id IN ($tree)"
+             WHERE  message_id IN ($tree)",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -6047,7 +6208,9 @@ function phorum_db_viewcount_inc($message_id)
         DB_RETURN_RES,
         "UPDATE {$GLOBALS['PHORUM']['message_table']}
          SET    viewcount = viewcount + 1
-         WHERE  message_id = $message_id"
+         WHERE  message_id = $message_id",
+         null,
+         DB_MASTERQUERY
     );
 }
 // }}}
@@ -6065,7 +6228,7 @@ function phorum_db_rebuild_search_data()
         DB_RETURN_RES,
         "TRUNCATE TABLE {$PHORUM['search_table']}",
         NULL,
-        DB_GLOBALQUERY
+        DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
     // Rebuild all search data from scratch.
@@ -6078,7 +6241,7 @@ function phorum_db_rebuild_search_data()
                 forum_id
          FROM   {$PHORUM['message_table']}",
          NULL,
-         DB_GLOBALQUERY
+         DB_GLOBALQUERY | DB_MASTERQUERY
     );
 }
 // }}}
@@ -6097,7 +6260,7 @@ function phorum_db_rebuild_user_posts()
         "UPDATE {$PHORUM['user_table']}
          SET posts = 0",
          NULL,
-         DB_GLOBALQUERY
+         DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
     // Retrieve the post counts for all user_ids in the message table.
@@ -6107,7 +6270,7 @@ function phorum_db_rebuild_user_posts()
          FROM   {$PHORUM['message_table']}
          GROUP  BY user_id",
          NULL,
-         DB_GLOBALQUERY
+         DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
     // Set the post counts for the users to their correct values.
@@ -6116,7 +6279,9 @@ function phorum_db_rebuild_user_posts()
             DB_RETURN_RES,
             "UPDATE {$PHORUM['user_table']}
              SET    posts   = {$postcount[1]}
-             WHERE  user_id = {$postcount[0]}"
+             WHERE  user_id = {$postcount[0]}",
+             null,
+             DB_MASTERQUERY
         );
     }
 }
@@ -6822,7 +6987,11 @@ function phorum_db_create_tables()
     );
 
     foreach ($create_table_queries as $sql) {
-        $error = phorum_db_interact(DB_RETURN_ERROR, $sql);
+        $error = phorum_db_interact(
+                        DB_RETURN_ERROR,
+                        $sql,
+                        null,
+                        DB_MASTERQUERY);
         if ($error !== NULL) {
             return $error;
         }
@@ -6848,7 +7017,9 @@ function phorum_db_maxpacketsize()
 {
     $maxsize = phorum_db_interact(
         DB_RETURN_VALUE,
-        'SELECT @@global.max_allowed_packet'
+        'SELECT @@global.max_allowed_packet',
+        null,
+        DB_MASTERQUERY
     );
 
     return $maxsize;
@@ -6879,7 +7050,9 @@ function phorum_db_sanitychecks()
     // Retrieve the MySQL server version.
     $version = phorum_db_interact(
         DB_RETURN_VALUE,
-        'SELECT @@global.version'
+        'SELECT @@global.version',
+        null,
+        DB_MASTERQUERY
     );
     if (!$version) return array(
         PHORUM_SANITY_WARN,
