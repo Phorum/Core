@@ -681,7 +681,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                 break;
 
             case "subscription":
-                $type = phorum_db_get_if_subscribed(
+                $type = phorum_api_user_get_subscription(
                     $db["forum_id"], $db["thread"], $db["user_id"]);
                 switch ($type) {
                     case NULL:

@@ -1498,7 +1498,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
             'real_name' => '',
             'admin'     => false,
             'newinfo'   => array(),
-            'tz_offset'=>-99
+            'tz_offset' => -99
         );
 
         return FALSE;
@@ -2590,6 +2590,32 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
 {
     // Remove the subscription.
     phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_user_get_subscription()
+/**
+ * Retrieve the type of a single subscription.
+ *
+ * @param integer $user_id
+ *     The id of the user to retrieve a subscription for.
+ *
+ * @param integer $thread
+ *     The id of the thread to retrieve a subscription for.
+ *
+ * @param integer $forum_id
+ *     The id of the forum to retrieve a subscription for.
+ *
+ * @return mixed
+ *     The type of subscription if there is a subscription available or
+ *     NULL in case no subscription was found. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
+ *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
+ *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
+ */
+function phorum_api_user_get_subscription($user_id, $thread, $forum_id)
+{
+    return phorum_db_user_get_subscription($user_id, $thread, $forum_id);
 }
 // }}}
 
