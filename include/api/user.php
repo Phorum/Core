@@ -2613,9 +2613,9 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
  *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
  */
-function phorum_api_user_get_subscription($user_id, $thread, $forum_id)
+function phorum_api_user_get_subscription($user_id, $forum_id, $thread)
 {
-    return phorum_db_user_get_subscription($user_id, $thread, $forum_id);
+    return phorum_db_user_get_subscription($user_id, $forum_id, $thread);
 }
 // }}}
 

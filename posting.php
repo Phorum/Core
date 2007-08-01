@@ -682,7 +682,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 
             case "subscription":
                 $type = phorum_api_user_get_subscription(
-                    $db["forum_id"], $db["thread"], $db["user_id"]);
+                    $db["user_id"], $db["forum_id"], $db["thread"]);
                 switch ($type) {
                     case NULL:
                         $form[$key] = "";
