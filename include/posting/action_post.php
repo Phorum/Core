@@ -147,36 +147,42 @@ if ($success)
 
     phorum_update_thread_info($message["thread"]);
 
-    // Subscribe user to the thread if requested.
-    if (!empty($message["subscription"]))
-    {
-        $subscribe_type = NULL;
-        switch ($message["subscription"]) {
-            case "bookmark":
-                if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"]) {
-                    $subscribe_type = PHORUM_SUBSCRIPTION_BOOKMARK;
-                }
-                break;
-            case "message":
-                if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"]) {
-                    $subscribe_type = PHORUM_SUBSCRIPTION_MESSAGE;
-                }
-                break;
-            default:
-                trigger_error(
-                    "Illegal message subscription type: " .
-                    htmlspecialchars($message["subscription"])
-                );
-                break;
-        }
-        if ($subscribe_type !== NULL) {
-            phorum_api_user_subscribe(
-                $message["user_id"],
-                $message["thread"],
-                $PHORUM["forum_id"],
-                $subscribe_type
+    // Subscribe user to the thread if requested. When replying, this
+    // can also be used to unsubscribe a user from a thread.
+    $subscribe_type = NULL;
+    switch ($message["subscription"]) {
+        case NULL:
+            break;
+        case "bookmark":
+            if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"]) {
+                $subscribe_type = PHORUM_SUBSCRIPTION_BOOKMARK;
+            }
+            break;
+        case "message":
+            if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"]) {
+                $subscribe_type = PHORUM_SUBSCRIPTION_MESSAGE;
+            }
+            break;
+        default:
+            trigger_error(
+                "Illegal message subscription type: " .
+                htmlspecialchars($message["subscription"])
             );
-        }
+            break;
+    }
+
+    if ($subscribe_type !== NULL) {
+        phorum_api_user_subscribe(
+            $message["user_id"],
+            $message["thread"],
+            $PHORUM["forum_id"],
+            $subscribe_type
+        );
+    } elseif ($mode == 'reply') {
+        phorum_api_user_unsubscribe(
+            $message["user_id"],
+            $message["thread"]
+        );
     }
 
     if ($PHORUM["DATA"]["LOGGEDIN"])
