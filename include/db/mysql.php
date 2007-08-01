@@ -159,8 +159,8 @@ define('DB_RETURN_NEWID',    9);
  */
 define('DB_RETURN_ERROR',   10);
 
-/**
- * Constants for the phorum_db_interact() function call $flags parameter.
+/**#@+
+ * Constant for the phorum_db_interact() function call $flags parameter.
  */
 define('DB_NOCONNECTOK',     1);
 define('DB_MISSINGTABLEOK',  2);
@@ -169,6 +169,7 @@ define('DB_DUPKEYNAMEOK',    8);
 define('DB_DUPKEYOK',       16);
 define('DB_TABLEEXISTSOK',  32);
 define('DB_GLOBALQUERY',    64);
+/**#@-*/
 
 // }}}
 
@@ -1973,20 +1974,21 @@ function phorum_db_move_thread($thread_id, $toforum)
 
         // Move the newflags and search data to the destination forum.
 
-        // TODO: in the following code, there are some flaws. The
-        // TODO: newflags for the user that is moving the message
-        // TODO: are used as the source for deciding what flags
-        // TODO: to delete or move for all other users. This results
-        // TODO: in strange newflag problems.
-        // TODO:
-        // TODO: This main issue here is that the newflags should be
-        // TODO: handled separately for each user; no updates should be
-        // TODO: based on the newflags for the active user. The current
-        // TODO: algorithm will only make sure that the newflags will look
-        // TODO: correct for that specific user. The problem is that we
-        // TODO: do not yet have an idea on how to handle this with
-        // TODO: enough performance.
-
+        /**
+         * @todo In the move thread code, there are some flaws. The
+         *       newflags for the user that is moving the message
+         *       are used as the source for deciding what flags
+         *       to delete or move for all other users. This results
+         *       in strange newflag problems.
+         *       
+         *       This main issue here is that the newflags should be
+         *       handled separately for each user; no updates should be
+         *       based on the newflags for the active user. The current
+         *       algorithm will only make sure that the newflags will look
+         *       correct for that specific user. The problem is that we
+         *       do not yet have an idea on how to handle this with
+         *       enough performance.
+         */
         // First, gather information for doing the updates.
         $new_newflags = phorum_db_newflag_get_flags($toforum);
         $message_ids  = array();
@@ -2129,11 +2131,13 @@ function phorum_db_add_forum($forum)
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
                 $insertfields[$key] = $value;
-            // TODO: Wouldn't it be better to have this one set to a real
-            // TODO: NULL value from the script that calls this function?
-            // TODO: If for some reason somebody wants to use the string
-            // TODO: 'NULL' for a value (a geek setting up a Phorum
-            // TODO: probably ;-), then strange things will happen.
+            /** 
+             * @todo Wouldn't it be better to have this one set to a real
+             *       NULL value from the script that calls this function?
+             *       If for some reason somebody wants to use the string
+             *       'NULL' for a value (a geek setting up a Phorum
+             *       probably ;-), then strange things will happen.
+             */
             } elseif ($value == 'NULL') {
                 $insertfields[$key] = $value;
             } else {
@@ -3890,14 +3894,16 @@ function phorum_db_user_delete($user_id)
     // Collect all orphin private messages from the database. This might
     // catch some more orphin messages than the ones for the deleted user
     // alone.
-    // TODO: We do have a race condition here (if a new PM is inserted and
-    // TODO: this cleanup is run just before the new PM xrefs are inserted).
-    // TODO: Some locking might be useful to keep things straight, but I
-    // TODO: don't think we've got a really big risk here. We could add
-    // TODO: an extra field to the pm messages which indicates the posting
-    // TODO: status. That field could be changed to some ready state after
-    // TODO: posting the PM and linking all xrefs. The query below can
-    // TODO: then ignore the private messages which are not yet fully posted.
+    /**
+     * @todo We do have a race condition here (if a new PM is inserted and
+     *       this cleanup is run just before the new PM xrefs are inserted).
+     *       Some locking might be useful to keep things straight, but I
+     *       don't think we've got a really big risk here. We could add
+     *       an extra field to the pm messages which indicates the posting
+     *       status. That field could be changed to some ready state after
+     *       posting the PM and linking all xrefs. The query below can
+     *       then ignore the private messages which are not yet fully posted.
+     */
     $pms = phorum_db_interact(
         DB_RETURN_ROWS,
         "SELECT {$PHORUM['pm_messages_table']}.pm_message_id
@@ -6256,20 +6262,20 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  * - AND/OR specifications using "AND" and "OR".
  *
  * The query conditions are arrays, containing the following elements:
- *
- * - condition
- *
+ * <ul>
+ * <li>condition<br>
+ *   <br>
  *   A description of a condition. The syntax for this is:
- *   <field name to query> <operator> <match specification>
- *
+ *   <field name to query> <operator> <match specification><br>
+ *   <br>
  *   The <field name to query> is a field in the message query that
- *   we are running in this function.
- *
+ *   we are running in this function.<br>
+ *   <br>
  *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
  *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
  *   query has to be done, then that is setup through the
- *   <match specification> (see below).
- *
+ *   <match specification> (see below).<br>
+ *   <br>
  *   The <match specification> tells us with what the field should be
  *   matched. The string "QUERY" inside the specification is preserved to
  *   specify at which spot in the query the "query" element from the
@@ -6277,15 +6283,16 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  *   the specification, then a match is made on the exact value in the
  *   specification. To perform "LIKE" searches (case insensitive wildcard
  *   searches), you can use the "*" wildcard character in the specification
- *   to do so.
- *
- * - query
- *
+ *   to do so.<br><br>
+ * </li>
+ * <li>query<br>
+ *   <br>
  *   The data to use in the query, in case the condition element has a
  *   <match specification> that uses "QUERY" in it.
- *
+ * </li>
+ * </ul>
  * Example:
- *
+ * <code>
  * $metaquery = array(
  *     array(
  *         "condition"  =>  "field1 = *QUERY*",
@@ -6298,10 +6305,13 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  *     array("condition"  => "field2 = something else"),
  *     ")"
  * );
+ * </code>
  *
  * For MySQL, this would be turned into the MySQL WHERE statement:
+ * <code>
  * ... WHERE field1 LIKE '%test data%'
  *     AND (field2 = 'whatever' OR field2 = 'something else')
+ * </code>
  *
  * @param array $metaquery
  *     A meta query description array.
