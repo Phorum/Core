@@ -265,7 +265,7 @@ define("PHORUM_SUBSCRIPTION_MESSAGE", 0);
 define("PHORUM_SUBSCRIPTION_DIGEST", 1);
 
 /**
- * Subscription type, which tells Phorum to make the forums or threads that 
+ * Subscription type, which tells Phorum to make the forums or threads that
  * a user is subscribed to accessible from the followed threads interface in
  * the control center. No mail is sent for new messages, but the user can
  * check for new messages using that interface.
@@ -1497,7 +1497,8 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
             'username'  => '',
             'real_name' => '',
             'admin'     => false,
-            'newinfo'   => array()
+            'newinfo'   => array(),
+            'tz_offset'=>-99
         );
 
         return FALSE;

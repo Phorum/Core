@@ -171,7 +171,10 @@ $min_id=0;
 $rows = NULL;
 $bodies_in_list = isset($PHORUM['TMP']['bodies_in_list']) && $PHORUM['TMP']['bodies_in_list'];
 if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies'])) {
-    $cache_key=$PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-".$PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"]."-".$PHORUM["count_views"]."-".($bodies_in_list?"1":"0")."-".$PHORUM['float_to_top'];
+    $cache_key = $PHORUM['forum_id']."-".$PHORUM['cache_version']."-".$page."-";
+    $cache_key.= $PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"];
+    $cache_key.= "-".$PHORUM["count_views"]."-".($bodies_in_list?"1":"0")."-".$PHORUM['float_to_top'];
+    $cache_key.= "-".$PHORUM['user']['tz_offset'];
     $rows = phorum_cache_get('message_list',$cache_key);
 }
 
