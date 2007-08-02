@@ -142,9 +142,9 @@
             you changed this during install): 
             <screen>
               <literal>
-                DELETE FROM phorum_search; 
-                DELETE FROM phorum_messages; 
-                DELETE FROM phorum_forums; 
+                DELETE FROM phorum_search; <sbr/>
+                DELETE FROM phorum_messages;<sbr/> 
+                DELETE FROM phorum_forums;
               </literal>
             </screen>
             I could do this from this script as well, but I would find
@@ -156,9 +156,7 @@
 
           <listitem>If you have shell access to your webserver, run this script using the shell from
             the command line. This is the preferred way of running the upgrade:
-            <screen>
-            shell&gt; <literal>php phorum3to5convert.php</literal>
-            </screen>
+            <screen>shell&gt; <literal>php phorum3to5convert.php</literal></screen>
           </listitem>
           <listitem>If you do not have shell access, call the upgrade script from your browser:
             <screen><literal> &lt;phorum5-url&gt;/phorum3to5convert.php </literal></screen>
