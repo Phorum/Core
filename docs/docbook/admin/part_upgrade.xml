@@ -116,10 +116,9 @@
         convert your old forum to Phorum5. Everything, but permission levels, is converted. </para>
       <para>
         <emphasis role="bold">Instructions from phorum3to5convert.php</emphasis>
-        <sbr/> 
-        This script will
-        convert the data from a Phorum 3 database to a Phorum 5 database. <emphasis role="bold">It does not change any of
-        the old phorum3-tables. The data is only copied over to the new Phorum 5 tables. </emphasis></para>
+        <sbr/> This script will convert the data from a Phorum 3 database to a Phorum 5 database.
+          <emphasis role="bold">It does not change any of the old phorum3-tables. The data is only
+          copied over to the new Phorum 5 tables. </emphasis></para>
       <para> Instructions: <itemizedlist>
 
           <listitem>Be sure your Phorum 3 is running a 3.4.x version. If you are running an older
@@ -127,8 +126,8 @@
 
           <listitem>Copy or move this script one directory up, to the main Phorum 5 directory.</listitem>
 
-          <listitem>Edit the $CONVERT variables in the beginning of phorum3to5convert.php to match the settings of your phorum3
-            installation (set there in the admin).</listitem>
+          <listitem>Edit the $CONVERT variables in the beginning of phorum3to5convert.php to match
+            the settings of your phorum3 installation (set there in the admin).</listitem>
 
           <listitem>Install Phorum 5 as usual. For speed and reliability, preferably use the same
             database as the database where Phorum 3 lives. Because Phorum 5 uses a table prefix
@@ -139,14 +138,11 @@
             You can do this either by dropping all forums from the Phorum 5 admin interface or by
             issuing the appropriate SQL queries from the MySQL prompt or from a database tool like
             "phpmyadmin". The queries to execute are (replace "phorum" with your own table_prefix if
-            you changed this during install): 
-            <screen>
-              <literal>DELETE FROM phorum_search; <sbr/>
+            you changed this during install):
+            <screen><literal>DELETE FROM phorum_search; <sbr/>
                 DELETE FROM phorum_messages;<sbr/> 
-                DELETE FROM phorum_forums;</literal>
-            </screen>
-            I could do this from this script as well, but I would find
-            that a little bit rude ;-))</listitem>
+                DELETE FROM phorum_forums;</literal></screen>
+            I could do this from this script as well, but I would find that a little bit rude ;-))</listitem>
 
           <listitem>Turn off unneeded modules for the conversion. All modules hooking into
             common.php or some other general hook will be run while doing the conversion which will
@@ -156,8 +152,7 @@
             the command line. This is the preferred way of running the upgrade:
             <screen>shell&gt; <literal>php phorum3to5convert.php</literal></screen>
           </listitem>
-          <listitem>If you do not have shell access, call the upgrade script from your browser:
-            <screen><literal> &lt;phorum5-url&gt;/phorum3to5convert.php </literal></screen>
+          <listitem>If you do not have shell access, call the upgrade script from your browser: <screen><literal> &lt;phorum5-url&gt;/phorum3to5convert.php </literal></screen>
             <emphasis role="bold"> *** THIS STEP MAY TAKE A WHILE ***</emphasis>
           </listitem>
           <listitem>Take a look at the Phorum 5 forums to see if everything was converted correctly.</listitem>
