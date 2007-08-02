@@ -7,15 +7,15 @@
     <para> This section describes the Phorum upgrading process. We differentiate between three types
       of upgrades: <itemizedlist>
         <listitem>
-          <xref linkend="upgrade.minorbugfix"/><sbr/> These are upgrades where only the last number in
-          the Phorum version is raised (e.g. 5.2.1 to 5.2.2). These upgrades are mostly for
+          <xref linkend="upgrade.minorbugfix"/><sbr/> These are upgrades where only the last number
+          in the Phorum version is raised (e.g. 5.2.1 to 5.2.2). These upgrades are mostly for
           implementing (security) bugfixes and minor enhancements that do not require any template
           and/or database changes.<sbr/>
           <sbr/>
         </listitem>
         <listitem>
-          <xref linkend="upgrade.minorbugfix"/><sbr/> These are upgrades where the second number in the
-          Phorum version is raised (e.g. 5.1.10 to 5.2.2). These are upgrades where large new
+          <xref linkend="upgrade.minorbugfix"/><sbr/> These are upgrades where the second number in
+          the Phorum version is raised (e.g. 5.1.10 to 5.2.2). These are upgrades where large new
           features are implemented. These upgrades will always require database and template changes.<sbr/>
           <sbr/>
         </listitem>
@@ -35,82 +35,65 @@
     <title>Minor and Bugfix upgrades</title>
     <section id="upgrade.minorbugfix.database">
       <title>Upgrading the database</title>
-      <section id="upgrade.minorbugfix.database.preparations"> 
-      <title>Upgrade preparations</title>
-      <para>The upgrading process will preserve all of your active
-      settings and modules, but will overwrite hacks and any changes made to the default template
-        (in the directory {phorum dir}/templates/default). Other templates will be kept intact.</para>
-      <para>
-      Here are the steps for upgrading:
-        <itemizedlist>
-      <listitem>Backup your existing Phorum5 installation. Before doing an
-      upgrade, it is always wise to make a good backup of your running system. Make a backup your
-        Phorum install directory and the database in which your Phorum tables are stored</listitem> 
-          <listitem>Download a  newer Phorum5 package</listitem>
-          <listitem> Extract the files and put them on top of the current installation</listitem>
-          <listitem>Keep the database settings from {phorum dir}/include/db/config.php the same</listitem>
-        </itemizedlist>
-      </para>
-    </section>
+      <section id="upgrade.minorbugfix.database.preparations">
+        <title>Upgrade preparations</title>
+        <para>The upgrading process will preserve all of your active settings and modules, but will
+          overwrite hacks and any changes made to the default template (in the directory {phorum
+          dir}/templates/default). Other templates will be kept intact.</para>
+        <para> Here are the steps for upgrading: <itemizedlist>
+            <listitem>Backup your existing Phorum5 installation. Before doing an upgrade, it is
+              always wise to make a good backup of your running system. Make a backup your Phorum
+              install directory and the database in which your Phorum tables are stored</listitem>
+            <listitem>Download a newer Phorum5 package</listitem>
+            <listitem> Extract the files and put them on top of the current installation</listitem>
+            <listitem>Keep the database settings from {phorum dir}/include/db/config.php the
+            same</listitem>
+          </itemizedlist>
+        </para>
+      </section>
       <para> Now you can choose whether you want to upgrade from a webbrowser or from a console. </para>
       <section id="upgrade.minorbugfix.database.webbrowser">
-       <title>From a webbrowser</title>
+        <title>From a webbrowser</title>
 
-    <para> 
-      Open your forum using your webbrowser. In case a database upgrade 
-      is needed, you will be prompted to go to the admin page. In that case 
-      open the {phorum url}/admin.php page, which will guide you through 
-      the upgrade.
-    </para>
-     </section>
+        <para> Open your forum using your webbrowser. In case a database upgrade is needed, you will
+          be prompted to go to the admin page. In that case open the {phorum url}/admin.php page,
+          which will guide you through the upgrade. </para>
+      </section>
       <section id="upgrade.minorbugfix.database.console">
         <title>From a system console</title>
-      
-      <para>
-      In the scripts directory of your Phorum installation, you will find
-      the script "console_upgrade.php". Go to the scripts directory and
-      execute the script from there. On most systems, you can do this using
-      the following command:
-      
-        <screen>
-          shell&gt; <literal> php console_upgrade.php</literal></screen>
-      
-      If you want to run this script from a different locations, then edit
-      the script and update the $PHORUM_DIRECTORY variable to match the
-      location of your Phorum installation.</para>
+
+        <para> In the scripts directory of your Phorum installation, you will find the script
+          "console_upgrade.php". Go to the scripts directory and execute the script from there. On
+          most systems, you can do this using the following command:
+          <screen>
+          shell&gt; <literal> php console_upgrade.php</literal></screen> If
+          you want to run this script from a different locations, then edit the script and update
+          the $PHORUM_DIRECTORY variable to match the location of your Phorum installation.</para>
       </section>
     </section>
     <section id="upgrade.minorbugfix.templateshacks">
       <title>Upgrading templates and hacks</title>
-      <para>
-      For minor upgrades, the Phorum team has the policy that templates
-      should not change. For example, if you are upgrading version 5.1.1
-      to 5.1.2, you can simply keep the old templates.
+      <para> For minor upgrades, the Phorum team has the policy that templates should not change.
+        For example, if you are upgrading version 5.1.1 to 5.1.2, you can simply keep the old
+        templates. </para>
+
+      <para> Template functionality might change between major Phorum releases. For example,
+        templates that were made for Phorum 5.0.x are not compatible with the templates for Phorum
+        5.1.x. So to upgrade these, you'll have to build new templates, based on the new default
+        template that is included in the distribution. Simply copying the old template will most
+        probably result in errors and missing functionality. </para>
+      <para> If you are doing a minor upgrade and you have to preserve changes that were made to the
+        default template (which is not the recommended way of customizing Phorum, see
+        creating_templates.txt), you can follow one of the following options: <itemizedlist>
+          <listitem>Extract the new Phorum distribution to its own directory and reapply your
+            changes before putting it over the existing installation</listitem>
+
+          <listitem>Create a backup of your existing installation. Install the new distribution on
+            top of the old one and reapply the changes to the new version while it is
+          "live"</listitem>
+        </itemizedlist>
       </para>
-      
-      <para>
-      Template functionality might change between major Phorum releases.
-      For example, templates that were made for Phorum 5.0.x are not
-      compatible with the templates for Phorum 5.1.x. So to upgrade these,
-      you'll have to build new templates, based on the new default template
-      that is included in the distribution. Simply copying the old template
-      will most probably result in errors and missing functionality.
-      </para>
-      <para>
-      If you are doing a minor upgrade and you have to preserve changes that
-      were made to the default template (which is not the recommended way
-      of customizing Phorum, see creating_templates.txt), you can follow one
-      of the following options:
-      <itemizedlist>
-      <listitem>Extract the new Phorum distribution to its own directory and reapply 
-        your changes before putting it over the existing installation</listitem>
-      
-        <listitem>Create a backup of your existing installation. Install the new
-      distribution on top of the old one and reapply the changes to 
-        the new version while it is "live"</listitem>
-      </itemizedlist>
-      </para>
-      </section>
+    </section>
   </section>
 
   <section id="upgrade.major" xreflabel="Major upgrades">
@@ -129,9 +112,63 @@
     <section id="upgrade.major.convert">
       <title>Convert the old forum data</title>
       <para> In the scripts directory of your Phorum5 distribution, you will find a script named
-        phorum3to5convert.php. Instructions for using this script can be found at the top of this
-        script itself. The script will convert your old forum to Phorum5. Everything, but permission
-        levels, is converted. </para>
+        phorum3to5convert.php. Instructions for using this script are given below. The script will
+        convert your old forum to Phorum5. Everything, but permission levels, is converted. </para>
+      <para>
+        <emphasis role="bold">Instructions from phorum3to5convert.php</emphasis>
+        <sbr/> 
+        This script will
+        convert the data from a Phorum 3 database to a Phorum 5 database. <emphasis role="bold">It does not change any of
+        the old phorum3-tables. The data is only copied over to the new Phorum 5 tables. </emphasis></para>
+      <para> Instructions: <itemizedlist>
+
+          <listitem>Be sure your Phorum 3 is running a 3.4.x version. If you are running an older
+            version of Phorum 3, first upgrade to 3.4.x.</listitem>
+
+          <listitem>Copy or move this script one directory up, to the main Phorum 5 directory.</listitem>
+
+          <listitem>Edit the $CONVERT variables in the beginning of phorum3to5convert.php to match the settings of your phorum3
+            installation (set there in the admin).</listitem>
+
+          <listitem>Install Phorum 5 as usual. For speed and reliability, preferably use the same
+            database as the database where Phorum 3 lives. Because Phorum 5 uses a table prefix
+            (typically "phorum_"), the tables for Phorum 3 and Phorum 5 can safely live next to each
+            other in the same database.</listitem>
+
+          <listitem>Empty the phorum_messages and phorum_forums tables of the Phorum 5 installation.
+            You can do this either by dropping all forums from the Phorum 5 admin interface or by
+            issuing the appropriate SQL queries from the MySQL prompt or from a database tool like
+            "phpmyadmin". The queries to execute are (replace "phorum" with your own table_prefix if
+            you changed this during install): 
+            <screen>
+              <literal>
+                DELETE FROM phorum_search; 
+                DELETE FROM phorum_messages; 
+                DELETE FROM phorum_forums; 
+              </literal>
+            </screen>
+            I could do this from this script as well, but I would find
+            that a little bit rude ;-))</listitem>
+
+          <listitem>Turn off unneeded modules for the conversion. All modules hooking into
+            common.php or some other general hook will be run while doing the conversion which will
+            lead to at least a slowdown, unexpected side effects and some strange output.</listitem>
+
+          <listitem>If you have shell access to your webserver, run this script using the shell from
+            the command line. This is the preferred way of running the upgrade:
+            <screen>
+            shell&gt; <literal>php phorum3to5convert.php</literal>
+            </screen>
+          </listitem>
+          <listitem>If you do not have shell access, call the upgrade script from your browser:
+            <screen><literal> &lt;phorum5-url&gt;/phorum3to5convert.php </literal></screen>
+            <emphasis role="bold"> *** THIS STEP MAY TAKE A WHILE ***</emphasis>
+          </listitem>
+          <listitem>Take a look at the Phorum 5 forums to see if everything was converted correctly.</listitem>
+
+          <listitem>Delete the upgrade script phorum3to5convert.php. </listitem>
+        </itemizedlist>
+      </para>
     </section>
     <section id="upgrade.major.convert">
       <title>Update the posted message counters for the users</title>
