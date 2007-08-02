@@ -7,14 +7,14 @@
     <para> This section describes the Phorum upgrading process. We differentiate between three types
       of upgrades: <itemizedlist>
         <listitem>
-          <xref linkend="upgrade.bugfix"/><sbr/> These are upgrades where only the last number in
+          <xref linkend="upgrade.minorbugfix"/><sbr/> These are upgrades where only the last number in
           the Phorum version is raised (e.g. 5.2.1 to 5.2.2). These upgrades are mostly for
           implementing (security) bugfixes and minor enhancements that do not require any template
           and/or database changes.<sbr/>
           <sbr/>
         </listitem>
         <listitem>
-          <xref linkend="upgrade.minor"/><sbr/> These are upgrades where the second number in the
+          <xref linkend="upgrade.minorbugfix"/><sbr/> These are upgrades where the second number in the
           Phorum version is raised (e.g. 5.1.10 to 5.2.2). These are upgrades where large new
           features are implemented. These upgrades will always require database and template changes.<sbr/>
           <sbr/>
@@ -31,20 +31,11 @@
     </para>
   </section>
 
-  <section id="upgrade.bugfix" xreflabel="Bug fix upgrades">
-    <title>Bug fix upgrades</title>
-    <para> When doing a bug fix upgrade (e.g. 5.2.1 to 5.2.2), the upgrading process will preserve
-      all of your active settings and modules. It will however overwrite hacks to the code and any
-      changes that you have made to the default template in the directory <filename>{phorum
-        dir}/templates/default</filename>. </para>
-    <para> This section will describe the steps for a bug fix upgrade. </para>
-  </section>
-
-  <section id="upgrade.minor" xreflabel="Minor upgrades">
-    <title>Minor upgrades</title>
-    <section id="upgrade.minor.database">
+  <section id="upgrade.minorbugfix" xreflabel="Minor and Bugfix upgrades">
+    <title>Minor and Bugfix upgrades</title>
+    <section id="upgrade.minorbugfix.database">
       <title>Upgrading the database</title>
-    <section id="upgrade.minor.database.preparations"> 
+      <section id="upgrade.minorbugfix.database.preparations"> 
       <title>Upgrade preparations</title>
       <para>The upgrading process will preserve all of your active
       settings and modules, but will overwrite hacks and any changes made to the default template
@@ -62,7 +53,7 @@
       </para>
     </section>
       <para> Now you can choose whether you want to upgrade from a webbrowser or from a console. </para>
-     <section id="upgrade.minor.database.webbrowser">
+      <section id="upgrade.minorbugfix.database.webbrowser">
        <title>From a webbrowser</title>
 
     <para> 
@@ -72,7 +63,7 @@
       the upgrade.
     </para>
      </section>
-      <section id="upgrade.minor.database.console">
+      <section id="upgrade.minorbugfix.database.console">
         <title>From a system console</title>
       
       <para>
@@ -89,7 +80,7 @@
       location of your Phorum installation.</para>
       </section>
     </section>
-    <section id="upgrade.minor.templateshacks">
+    <section id="upgrade.minorbugfix.templateshacks">
       <title>Upgrading templates and hacks</title>
       <para>
       For minor upgrades, the Phorum team has the policy that templates
