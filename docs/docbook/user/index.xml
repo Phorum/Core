@@ -12,11 +12,10 @@
   <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
 ]>
 
-<book lang="en">
-  <article>
+<book lang="en"> &bookinfo; &part_preface; <article>
     <para>
       <emphasis role="bold">As you can see this book is still empty. If you want to help with
         filling in the large gaps just send an email to <ulink url="mailto:documentation@phorum.org"
           >documentation@phorum.org</ulink> with your text or ideas.</emphasis>
     </para>
-  </article> &bookinfo; &part_preface; </book>
+</article></book>
