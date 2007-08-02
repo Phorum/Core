@@ -163,7 +163,7 @@ if($pages>$page){
 }
 if($page>1){
     $prevpage=$page-1;
-    $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$prevpage),$list_page_url_template);
+    $PHORUM["DATA"]["URL"]["PREVPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$prevpage),$list_page_url_template);
 }
 
 $min_id=0;
