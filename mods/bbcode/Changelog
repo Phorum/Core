@@ -14,10 +14,8 @@ Changelog:
     as an unclosed <blockquote><div>;
   - Fixed detection of mail addresses for cases where the email address
     is at the end of a line.
-  - Got rid of the 5 char random marker that was used in URL detection.
-    5 random chars from a hex md5 sum is too dangerous (it could
-    return a part of a URL and that could explain some sporadic bug reports
-    that I got from my users about URLs not always working correctly).
+  - Improved the 4 char random marker that was used in URL detection.
+    4 random chars from a hex md5 sum might be too short.
   - The terms "bb code", "bb_code" and "bbcode" were all in use. Reduced
     that to only use "bbcode".
 

@@ -167,7 +167,7 @@ function phorum_mod_bbcode_format($data)
         if (!empty($enabled['url']))
         {
             // A magic marker, to tag our URL conversion.
-            $marker = "###BBCODE MAGIC MARKER###";
+            $marker = 'BBCODEMARKER'.substr(md5(microtime()), 0, 8);
 
             $body = preg_replace("/([^='\"(\[url\]|\[img\])])((http|https|ftp):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%#]+)/i", "$1:$marker:$2:/$marker:", " $body");
             if (preg_match_all("!:$marker:(.+?):/$marker:!i", $body, $match))
@@ -180,8 +180,9 @@ function phorum_mod_bbcode_format($data)
                     if (preg_match("|[^a-z0-9=&/\+_]+$|i", $url, $match))
                     {
                         $extra = $match[0];
-                        $url = substr($url, 0, -1 * strlen($extra));
-                        $body = str_replace("$url:/$marker:", "$url:/$marker:$extra", $body);
+                        $true_url = substr($url, 0, -1 * (strlen($match[0])));
+                        $body = str_replace("$url:/$marker:", "$true_url:/$marker:$extra", $body);
+                        $url = $true_url;
                     }
 
                     // Generate bbcode tag.
