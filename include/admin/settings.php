@@ -274,6 +274,8 @@ $row=$frm->addrow( "Registration Verification", $frm->select_tag( "registration_
 
 $row=$frm->addrow( "Enable Drop-down User List", $frm->select_tag( "enable_dropdown_userlist", array( "No", "Yes" ), $PHORUM["enable_dropdown_userlist"] ) );
 
+$frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phorum will display a drop-down list of users instead of an empty text box on pages where you can select a user. Two examples of such pages are when sending a private message, and when adding users to a group in the group moderation page. This option should be disabled if you have a large number of users, as a list of thousands of users will slow performance dramatically." );
+
 $row = $frm->addrow( "What to use as the display name", $frm->select_tag("display_name_source", array("username" => "User's username", "real_name" => "User's real name"), isset($PHORUM["display_name_source"]) ? $PHORUM["display_name_source"] : "username") );
 $frm->addhelp($row, "What to use as the display name", "You can choose to use either the user's username or the real name (which can be edited by the user from the control center) as the name by which the user is referenced throughout all Phorum pages.<br/><br/>This is not an option that you normally would want to chang on a live system that has been running for a while. One reason is that all stored names will have to be updated in the database (e.g. the posting authors), which can take quite a while on a big forum (it <i>will</i> work though). More impor tant is that you might confuse your users by changing the display names.");
 
@@ -301,8 +303,6 @@ $row=$frm->addrow( "Private Messaging:", $frm->select_tag( "enable_pm", array( "
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Check For New Private Messages", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
 $frm->addhelp($row, "Check For Private Messages", "By setting this to Yes, Phorum will check if a user has new private messages, and display an indicator. On a Phorum with a lot of users and private messages, this may hurt performance. This option has no effect if Private Messaging is disabled." );
-
-$frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phorum will display a drop-down list of users instead of an empty text box on pages where you can select a user. Two examples of such pages are when sending a private message, and when adding users to a group in the group moderation page. This option should be disabled if you have a large number of users, as a list of thousands of users will slow performance dramatically." );
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max number of stored messages", $frm->text_box( "max_pm_messagecount", $PHORUM["max_pm_messagecount"], 30 ) );
 $frm->addhelp($row, "Max number of stored messages", "This is the maximum number of private messages that a user may store on the server. The number of private messages is the total of all messages in all PM folders together. Setting this value to zero will allow for unlimited messages.");
