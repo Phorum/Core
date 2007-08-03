@@ -948,6 +948,16 @@ function phorum_get_language_info()
 
 function phorum_redirect_by_url( $redir_url )
 {
+    // Some browsers strip the anchor from the URL in case we redirect
+    // from a POSTed page :-/. So here we wrap the redirect,
+    // to work around that problem.
+    if (count($_POST) && strstr($redir_url, "#")) {
+        $redir_url = phorum_get_url(
+            PHORUM_REDIRECT_URL,
+            'phorum_redirect_to=' . urlencode($redir_url)
+        );
+    }
+
     // check for response splitting and valid http(s) URLs
     if(preg_match("/\s/", $redir_url) || !preg_match("!^https?://!i", $redir_url)){
         $redir_url = phorum_get_url(PHORUM_INDEX_URL);

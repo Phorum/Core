@@ -247,10 +247,6 @@ if ($success)
                         $message["message_id"]
                     );
                 }
-
-                // wrap redirect because of an MSIE bug.
-                // See the comments in redirect.php why we need this hack.
-                $redir_url = phorum_get_url(PHORUM_REDIRECT_URL, 'phorum_redirect_to=' . urlencode($redir_url));
             }
 
         // This starter message: Jump to the thread starter message or to
