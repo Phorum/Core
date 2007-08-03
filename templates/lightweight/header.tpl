@@ -40,10 +40,12 @@
         {IF USER->user_id}
             {LANG->Welcome}, {USER->username} <small>(<a href="{URL->LOGINOUT}">{LANG->LogOut}</a>)</small>&nbsp;&nbsp;
             &raquo; <a class="icon" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>&nbsp;
+            {IF ENABLE_PM}
             {IF USER->new_private_messages}
                 &raquo; <strong><a class="icon" href="{URL->PM}">{LANG->NewPrivateMessages}</a></strong>
             {ELSE}
                 &raquo; <a class="icon" href="{URL->PM}">{LANG->PrivateMessages}</a>
+            {/IF}
             {/IF}
         {ELSE}
             {LANG->Welcome}!

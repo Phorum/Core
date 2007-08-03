@@ -66,7 +66,7 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
 // If private messages are disabled, just show a simple error message.
 if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];
-    phorum_outut("stdblock");
+    phorum_output("stdblock");
     return;
 }
 
