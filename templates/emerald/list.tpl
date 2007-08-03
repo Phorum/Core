@@ -58,7 +58,7 @@
 
     <tr>
 
-        <td width="1%" class="{altclass}"><a href="{MESSAGES->URL->READ}" title="{title}"><img src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" /></a></td>
+        <td width="1%" class="{altclass}"><a href="{IF MESSAGES->new}{MESSAGES->URL->NEWPOST}{ELSE}{MESSAGES->URL->READ}{/IF}" title="{title}"><img src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" /></a></td>
         <td width="59%" class="{altclass}">
             <h4>
                 <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
