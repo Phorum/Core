@@ -125,7 +125,7 @@ function phorum_mod_bbcode_format($data)
     }
 
     // Add 'img' support.
-    if (!empty($enabled['img'])) {
+    if (!empty($enabled['image'])) {
         $search[]  = "/\[img\]((http|https|ftp):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%# ]+?)\[\/img\]/is";
         $replace[] = "<img src=\"$1\" class=\"bbcode\" alt=\"$1\" />";
     }
@@ -158,7 +158,7 @@ function phorum_mod_bbcode_format($data)
 
     foreach ($data as $message_id => $message)
     {
-        // No formatting needed if the message does not contain a body. 
+        // No formatting needed if the message does not contain a body.
         if (!isset($message['body'])) continue;
 
         $body = $message["body"];
