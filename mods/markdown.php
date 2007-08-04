@@ -158,6 +158,13 @@ function phorum_Markdown ($data)
             $data[$key]["body"] = Markdown($message["body"]);
         }
     }
+
+    // Make HTML safe. Markdown does not handle stripping evil code.
+    // We call the html mod's formatting code directly here, so we
+    // do not have to worry about module ordering.
+    require_once('./mods/html/html.php');
+    $data = phorum_html($data);
+
     return ($data);
 }
 
