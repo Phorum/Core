@@ -33,7 +33,7 @@ $message["closed"] = $message["allow_reply"] ? 0 : 1;
 // Determine and set the user's IP address.
 $user_ip = $_SERVER["REMOTE_ADDR"];
 if ($PHORUM["dns_lookup"]) {
-    $resolved = @gethostbyaddr($_SERVER["REMOTE_ADDR"]); 
+    $resolved = @gethostbyaddr($_SERVER["REMOTE_ADDR"]);
     if (!empty($resolved)) {
         $user_ip = $resolved;
     }
@@ -148,6 +148,11 @@ if ($success)
 
     phorum_update_thread_info($message["thread"]);
 
+    // Run mods for after db is set but before other actions occur.
+    if (isset($PHORUM["hooks"]["after_message_save"]))
+        $message = phorum_hook("after_message_save", $message);
+
+
     // Subscribe user to the thread if requested.
     if ($message["email_notify"] && $message["user_id"]) {
         phorum_user_subscribe(
@@ -187,7 +192,7 @@ if ($success)
     if ($PHORUM["redirect_after_post"] == "read")
     {
         $not_viewable =
-            $message["status"] != PHORUM_STATUS_APPROVED && 
+            $message["status"] != PHORUM_STATUS_APPROVED &&
             !$PHORUM["DATA"]["MODERATOR"];
 
         // To the end of the thread for reply messages.
@@ -219,7 +224,7 @@ if ($success)
 
         // This is a thread starter message.
         } else {
-            $redir_url = $not_viewable 
+            $redir_url = $not_viewable
                        ? phorum_get_url(PHORUM_LIST_URL)
                        : phorum_get_url(PHORUM_READ_URL, $message["thread"]);
         }
