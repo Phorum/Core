@@ -147,6 +147,11 @@ if ($success)
 
     phorum_update_thread_info($message["thread"]);
 
+    // Run mods for after db is set but before other actions occur.
+    if (isset($PHORUM["hooks"]["after_message_save"]))
+        $message = phorum_hook("after_message_save", $message);
+
+
     // Subscribe user to the thread if requested. When replying, this
     // can also be used to unsubscribe a user from a thread.
     $subscribe_type = NULL;

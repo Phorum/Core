@@ -1103,16 +1103,28 @@ Table of contents:
    be availbale in $PHORUM["user"] at this point.
 
    ----------------------------------------------------------------------------
+   after_message_save
+
+   Where  : action_post.php
+   When   : After storing a new message and all database updates are done.
+   Input  : Array containing message data (read-only).
+   Return : Same as Input
+
+   This hook can be used for performing actions based on what the message
+   contained or altering it before it is emailed to the subscribed users.
+   It is also useful for adding or removing subscriptions.
+
+   ----------------------------------------------------------------------------
    after_post
 
-   Where  : post.php
-   When   : After storing a new message in the database and just
-            before the user is redirected back to the list.
+   Where  : action_post.php
+   When   : After all posting work is done and just before the user is
+            redirected back to the list.
    Input  : Array containing message data (read-only).
    Return : none
 
    This hook can be used for performing actions based on what the message
-   contained.
+   contained.  It is specifically useful for altering the redirect behavior.
 
    ----------------------------------------------------------------------------
    after_register
