@@ -76,6 +76,7 @@
 
     }
 
+    $module = phorum_hook( "admin_pre", $module );
     ob_start();
     if($module!="help") include_once "./include/admin/header.php";
     @include_once "./include/admin/$module.php";
