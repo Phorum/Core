@@ -10,8 +10,9 @@ url: http://www.phorum.org/
 */
 
 
-function mod_tidy_start(){
+function mod_tidy_start($data){
     ob_start();
+    return $data;
 }
 
 function mod_tidy_end(){
