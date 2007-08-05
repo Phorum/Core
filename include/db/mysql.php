@@ -2995,7 +2995,7 @@ function phorum_db_newflag_check($forum_ids)
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
     $sql = "select forum_id, max(message_id) as message_id
-            from phorum_user_newflags
+            from {$PHORUM['user_newflags_table']}
             where user_id=".$PHORUM["user"]["user_id"]." and
             forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
@@ -3020,7 +3020,7 @@ function phorum_db_newflag_check($forum_ids)
         } else {
 
             // check for new messages
-            $sql = "select message_id from phorum_messages
+            $sql = "select message_id from {$PHORUM['message_table']}
                     where forum_id=".$forum_id." and
                     message_id>".$list[$forum_id]["message_id"]." and
                     status=".PHORUM_STATUS_APPROVED." limit 1";
