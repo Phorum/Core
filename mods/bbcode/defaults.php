@@ -110,7 +110,8 @@ $GLOBALS["bbcode_features"] = array
 );
 
 
-if (! is_array($GLOBALS["PHORUM"]["mod_bbcode"])) {
+if (! isset($GLOBALS["PHORUM"]["mod_bbcode"]) ||
+    ! is_array($GLOBALS["PHORUM"]["mod_bbcode"])) {
     $GLOBALS["PHORUM"]["mod_bbcode"] = array();
 }
 
@@ -130,7 +131,8 @@ if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["show_full_urls"])) {
     $GLOBALS["PHORUM"]["mod_bbcode"]["show_full_urls"] = 0;
 }
     
-if (!is_array($GLOBALS["PHORUM"]["mod_bbcode"]["enabled"])) {
+if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["enabled"]) ||
+    !is_array($GLOBALS["PHORUM"]["mod_bbcode"]["enabled"])) {
     $GLOBALS["PHORUM"]["mod_bbcode"]["enabled"] = array();
 }
 
