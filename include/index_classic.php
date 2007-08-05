@@ -25,6 +25,12 @@ $PHORUM["DATA"]["FORUMS"] = array();
 
 $forums_shown=false;
 
+$new_checks = array();
+
+if($PHORUM["show_new_on_index"]==2){
+    $new_checks = phorum_db_newflag_check(array_keys($forums));
+}
+
 foreach( $forums as $forum ) {
 
     if ( $forum["folder_flag"] ) {
@@ -60,21 +66,27 @@ foreach( $forums as $forum ) {
             $forum["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $forum["forum_id"], "type=".$PHORUM["default_feed"] );
         }
 
-        if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
-            $newflagcounts = null;
-            if($PHORUM['cache_newflags']) {
-                $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
-                $newflagcounts = phorum_cache_get('newflags_index',$newflagkey);
-            }
-
-            if($newflagcounts == null) {
-                $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+        if($PHORUM["DATA"]["LOGGEDIN"]){
+            if($PHORUM["show_new_on_index"]==1){
+                $newflagcounts = null;
                 if($PHORUM['cache_newflags']) {
-                    phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400);
+                    $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
+                    $newflagcounts = phorum_cache_get('newflags_index',$newflagkey);
                 }
-            }
 
-            list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
+                if($newflagcounts == null) {
+                    $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+                    if($PHORUM['cache_newflags']) {
+                        phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400);
+                    }
+                }
+
+                list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
+
+            } elseif($PHORUM["show_new_on_index"]==2){
+
+                $forum["new_message_check"] = $new_checks[$forum["forum_id"]];
+            }
         }
     }
 

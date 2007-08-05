@@ -19,6 +19,7 @@
 
 if(!defined("PHORUM")) return;
 
+// get vroot or create a fake one for forum_id=0
 if($PHORUM["forum_id"]==0){
 
     $forums[0] = array(
@@ -31,22 +32,28 @@ if($PHORUM["forum_id"]==0){
     $forums = phorum_db_get_forums( $PHORUM["forum_id"] );
 }
 
+// init some data
+$PHORUM["DATA"]["FORUMS"] = array();
+$forums_shown=false;
+$forums_to_check = array();
+
+// get all the children forums/folders for the current forum_id
 if($PHORUM["vroot"]==$PHORUM["forum_id"]){
     $more_forums = phorum_db_get_forums( 0, $PHORUM["forum_id"] );
     foreach($more_forums as $forum_id => $forum){
         if(empty($forums[$forum_id])){
             $forums[$forum_id]=$forum;
+            if($PHORUM["show_new_on_index"]==2 && $forum["folder_flag"]==0){
+                $forums_to_check[] = $forum_id;
+            }
         }
     }
     $folders[$PHORUM["forum_id"]]=$PHORUM["forum_id"];
 }
 
-$PHORUM["DATA"]["FORUMS"] = array();
 
-$forums_shown=false;
 
-// create the top level folder
-
+// loop the childern and get their children.
 foreach( $forums as $key=>$forum ) {
     if($forum["folder_flag"] && $forum["vroot"]==$PHORUM["vroot"]){
         $folders[$key]=$forum["forum_id"];
@@ -57,9 +64,16 @@ foreach( $forums as $key=>$forum ) {
         foreach($sub_forums as $sub_forum){
             if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=0)){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
+                if($PHORUM["show_new_on_index"]==2 && $sub_forum["folder_flag"]==0){
+                    $forums_to_check[] = $sub_forum["forum_id"];
+                }
             }
         }
     }
+}
+
+if($PHORUM["show_new_on_index"]==2 && !empty($forums_to_check)){
+    $new_checks = phorum_db_newflag_check($forums_to_check);
 }
 
 foreach( $folders as $folder_key=>$folder_id ) {
@@ -100,24 +114,38 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
         $forum["level"] = 1;
 
-        if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
+        if($PHORUM["DATA"]["LOGGEDIN"]){
 
-            $newflagcounts = null;
-            if($PHORUM['cache_newflags']) {
-                $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
-                $newflagcounts = phorum_cache_get('newflags_index',$newflagkey,$forum['cache_version']);
-            }
 
-            if($newflagcounts == null) {
-                $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+            if($PHORUM["show_new_on_index"]==1){
+
+                $newflagcounts = null;
                 if($PHORUM['cache_newflags']) {
-                    phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400,$forum['cache_version']);
+                    $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
+                    $newflagcounts = phorum_cache_get('newflags_index',$newflagkey,$forum['cache_version']);
                 }
+
+                if($newflagcounts == null) {
+                    $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+                    if($PHORUM['cache_newflags']) {
+                        phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400,$forum['cache_version']);
+                    }
+                }
+
+                list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
+                $forum["new_messages"] = number_format($forum["new_messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+                $forum["new_threads"] = number_format($forum["new_threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+
+            } elseif($PHORUM["show_new_on_index"]==2){
+
+                if(!empty($new_checks[$forum["forum_id"]])){
+                    $forum["new_message_check"] = true;
+                } else {
+                    $forum["new_message_check"] = false;
+                }
+
             }
 
-            list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
-            $forum["new_messages"] = number_format($forum["new_messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-            $forum["new_threads"] = number_format($forum["new_threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
         }
 
         $shown_sub_forums[] = $forum;
@@ -130,6 +158,7 @@ foreach( $folders as $folder_key=>$folder_id ) {
     }
 
 }
+
 
 // set all our URL's
 phorum_build_common_urls();

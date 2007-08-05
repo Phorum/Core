@@ -4540,6 +4540,59 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
 }
 // }}}
 
+
+// {{{ Function: phorum_db_newflag_check()
+/**
+ * Checks if there are new messages in the forums given in forum_ids
+ *
+ * @param array $forum_ids
+ *     The forums to check for new messages
+ *
+ * @return array
+ *     An array containing forum_ids as the key and a boolean for
+ *     the values.
+ */
+function phorum_db_newflag_check($forum_ids)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    phorum_db_sanitize_mixed($forum_ids, 'int');
+
+    $sql = "select forum_id, max(message_id) as message_id
+            from phorum_user_newflags
+            where user_id=".$PHORUM["user"]["user_id"]." and
+            forum_id in (".implode(",", $forum_ids).")
+            group by forum_id";
+
+    $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+
+    $new_checks = array();
+
+    foreach($forum_ids as $forum_id){
+
+        if(empty($list[$forum_id])){
+
+            $new_checks[$forum_id] = false;
+
+        } else {
+
+            // check for new messages
+            $sql = "select message_id from phorum_messages
+                    where forum_id=".$forum_id." and
+                    message_id>".$list[$forum_id]["message_id"]." and
+                    status=".PHORUM_STATUS_APPROVED." limit 1";
+
+            $row = phorum_db_interact(DB_RETURN_ROW, $sql);
+
+            $new_checks[$forum_id] = (bool)$row[0];
+
+        }
+    }
+
+    return $new_checks;
+
+}
+
 // {{{ Function: phorum_db_newflag_get_unread_count()
 /**
  * Retrieve the number of new threads and messages for a forum for the

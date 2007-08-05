@@ -317,6 +317,7 @@
         "NeedsAttention"        =>      "The following items need attention",
         "New"                   =>      "New",
         "NewMessage"            =>      "New Message",
+        "NewMessages"            =>     "updated!",
         "NewModeratedMessage"   =>      "There has been a new message sent to a forum which you are moderating.\nThe message has the subject %subject%\nand it can be reviewed and approved through the following URL\n%approve_url%\n\n",
         "NewModeratedSubject"   =>      "New message in moderated forum",
         "NewUnModeratedMessage" =>      "There has been a new message sent to a forum which you are moderating.\nThe message has been posted by %author% with the subject %subject%\nand it can be read through the following URL\n%read_url%\n\n",

@@ -69,6 +69,12 @@ img {
     font-weight: normal;
 }
 
+#phorum table.list td span.new-indicator {
+    color: {new_color};
+    font-size: 80%;
+    font-weight: normal;
+}
+
 #phorum a {
     color: {link_color};
 }
@@ -267,6 +273,8 @@ img {
 #phorum table.form-table {
     width: 100%;
 }
+
+
 
 /* header styles */
 
