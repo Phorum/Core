@@ -62,7 +62,6 @@ phorum_build_common_urls();
 $template = "login";
 $error = "";
 $okmsg = "";
-$username = "";
 
 // Handle posted form data.
 if (count($_POST) > 0) {
@@ -221,8 +220,8 @@ if (count($_POST) > 0) {
             // TODO API: move to user API.
             if (isset($PHORUM["hooks"]["failed_login"]))
                 phorum_hook("failed_login", array(
-                    "username" => $username,
-                    "password" => $password,
+                    "username" => $_POST["username"],
+                    "password" => $_POST["password"],
                     "location" => "forum"
                 ));
         }
@@ -256,7 +255,7 @@ $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
 $PHORUM["DATA"]["URL"]["REGISTER"] = phorum_get_url( PHORUM_REGISTER_URL );
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_LOGIN_ACTION_URL );
 $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
-$PHORUM["DATA"]["LOGIN"]["username"] = htmlspecialchars( $username, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
+$PHORUM["DATA"]["LOGIN"]["username"] = htmlspecialchars( $_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
 $PHORUM["DATA"]["ERROR"] = htmlspecialchars( $error, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
 $PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
 
@@ -264,7 +263,7 @@ $PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg, ENT_COMPAT, $PHORUM["DATA"]
 $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";
 
 // Set the field to set the focus to after loading.
-$PHORUM["DATA"]["FOCUS_TO_ID"] = empty($username) ? "username" : "password";
+$PHORUM["DATA"]["FOCUS_TO_ID"] = empty($_POST["username"]) ? "username" : "password";
 
 // Display the page.
 phorum_output($template);
