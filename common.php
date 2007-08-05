@@ -707,7 +707,7 @@ function phorum_output($templates) {
     }
 
     if (isset($PHORUM["hooks"]["start_output"]))
-        phorum_hook("start_output");
+        $PHORUM['DATA'] = phorum_hook("start_output", $PHORUM['DATA']);
 
     include phorum_get_template("header");
 
