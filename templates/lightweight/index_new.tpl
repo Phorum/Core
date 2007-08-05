@@ -26,7 +26,8 @@
                 <a href="{FORUMS->URL->INDEX}">{FORUMS->name}</a><p>{FORUMS->description}</p>
               </td>
             {ELSE}
-                <td width="55%" ><h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</h3></a>
+                <td width="55%">
+                    <h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>{IF FORUMS->new_message_check}&nbsp;&nbsp;<span class="new-indicator">({LANG->NewMessages})</span>{/IF}</h3>
                     <p>{FORUMS->description}</p>
                     {IF FORUMS->URL->MARK_READ}&raquo; <a class="icon" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>{/IF}
                     {IF FORUMS->URL->FEED}&raquo; <a class="icon" href="{FORUMS->URL->FEED}">{FEED}</a>{/IF}
