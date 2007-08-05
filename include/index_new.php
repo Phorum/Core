@@ -31,21 +31,23 @@ if($PHORUM["forum_id"]==0){
     $forums = phorum_db_get_forums( $PHORUM["forum_id"] );
 }
 
+$PHORUM["DATA"]["FORUMS"] = array();
+$forums_shown=false;
+$forums_to_check = array();
+
 if($PHORUM["vroot"]==$PHORUM["forum_id"]){
     $more_forums = phorum_db_get_forums( 0, $PHORUM["forum_id"] );
     foreach($more_forums as $forum_id => $forum){
         if(empty($forums[$forum_id])){
             $forums[$forum_id]=$forum;
+            if($PHORUM["show_new_on_index"]==2 && $forum["folder_flag"]==0){
+                $forums_to_check[] = $forum_id;
+            }
         }
     }
     $folders[$PHORUM["forum_id"]]=$PHORUM["forum_id"];
 }
 
-$PHORUM["DATA"]["FORUMS"] = array();
-
-$forums_shown=false;
-
-// create the top level folder
 
 foreach( $forums as $key=>$forum ) {
     if($forum["folder_flag"] && $forum["vroot"]==$PHORUM["vroot"]){
@@ -56,11 +58,18 @@ foreach( $forums as $key=>$forum ) {
         foreach($sub_forums as $sub_forum){
             if(!$sub_forum["folder_flag"]){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
+                if($PHORUM["show_new_on_index"]==2 && $sub_forum["folder_flag"]==0){
+                    $forums_to_check[] = $sub_forum["forum_id"];
+                }
             }
         }
     }
 }
 
+
+if($PHORUM["show_new_on_index"]==2 && !empty($forums_to_check)){
+    $new_checks = phorum_db_newflag_check($forums_to_check);
+}
 
 foreach( $folders as $folder_key=>$folder_id ) {
 
@@ -88,8 +97,21 @@ foreach( $folders as $folder_key=>$folder_id ) {
             $forum["last_post"] = "&nbsp;";
         }
 
-        if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
-            list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+        if($PHORUM["DATA"]["LOGGEDIN"]){
+
+            if($PHORUM["show_new_on_index"]==1){
+
+                list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
+
+            } elseif($PHORUM["show_new_on_index"]==2){
+
+                if(!empty($new_checks[$forum["forum_id"]])){
+                    $forum["new_message_check"] = true;
+                } else {
+                    $forum["new_message_check"] = false;
+                }
+            }
+
         }
 
         $shown_sub_forums[] = $forum;
