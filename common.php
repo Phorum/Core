@@ -688,26 +688,28 @@ function phorum_get_template_file( $page )
 }
 
 /**
- * Wrapper function to handle most common output scenarios
+ * Wrapper function to handle most common output scenarios.
  *
- * @param   mixed    $template    If string, that template is included
- *                                If array, all the templates are included
- *                                in the order of the array
+ * @param mixed $template
+ *     If string, that template is included.
+ *     If array, all the templates are included in the order of the array.
  */
 function phorum_output($templates) {
-
-    // copy only what we need into the current scope
-    $PHORUM = array(
-        "DATA"  => $GLOBALS["PHORUM"]["DATA"],
-        "hooks" => $GLOBALS["PHORUM"]["hooks"]
-    );
 
     if(!is_array($templates)){
         $templates = array($templates);
     }
 
     if (isset($PHORUM["hooks"]["start_output"]))
-        $PHORUM['DATA'] = phorum_hook("start_output", $PHORUM['DATA']);
+        phorum_hook("start_output");
+
+    // Copy only what we need into the current scope. We do this at
+    // this point and not earlier, so the start_output hook can be
+    // used for changing values in the $PHORUM data.
+    $PHORUM = array(
+        "DATA"  => $GLOBALS["PHORUM"]["DATA"],
+        "hooks" => $GLOBALS["PHORUM"]["hooks"]
+    );
 
     include phorum_get_template("header");
 
@@ -725,7 +727,6 @@ function phorum_output($templates) {
 
     if (isset($PHORUM["hooks"]["end_output"]))
         phorum_hook("end_output");
-
 }
 
 /**
