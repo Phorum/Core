@@ -5,6 +5,7 @@ all:
 	(cd developer; make)
 	(cd api; make)
 	(cd faq; make)
+	(cd db; make)
 
 clean:
 	(cd user; make clean)
@@ -12,4 +13,5 @@ clean:
 	(cd developer; make clean)
 	(cd api; make clean)
 	(cd faq; make clean)
-	
+	(cd db; make clean)
+
