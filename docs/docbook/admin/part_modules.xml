@@ -1,0 +1,44 @@
+<chapter id="modules.main">
+  <title>Phorum Modules</title>
+
+  <section id="modules.intro">
+    <title>Introduction</title>
+    <para>
+      Modules are (often) small extensions to Phorum-functionality without sacrificing performance of the Phorum-core.
+      You can install them if needed for using their functionalities.<sbr/>
+      Take a look at the <ulink url="http://www.phorum.org/development/wiki/ListOfModules">Modules-List</ulink> to see the currently available modules.
+    </para>
+  </section>
+  <section id="modules.installation">
+    <title>How do I install a module?</title>
+    <para>
+      All modules are installed inside the subdirectory "mods" of your
+      Phorum installation directory. There are two types of modules:
+      single file and multi file modules.
+      <itemizedlist>
+        <listitem>
+          Single file modules
+          <para>
+            Single file modules consist of a single php-file containing also the description and hook-names.
+            These kind of modules can't have a settings-page.<sbr/>
+            You install a single file module by simply dropping its php-file into the mods directory and enabling it in the administration pages.
+          </para>
+        </listitem>
+        <listitem>
+          Multi file modules
+          <para>
+            Multi file modules consist of at least a directory with a php-file named the same as the directory and an info.txt-file.
+            Additionally for a settings-page there needs to be a settings.php. Beside these standard-files there can be all kind of
+            files and directories used for the module's functions.<sbr/>
+            You install a multi-file module by copying the whole directory (preserving its directory structure) into the mods-directory
+            and enabling it in the admin.
+          </para>
+        </listitem>
+      </itemizedlist>
+      
+      
+    </para>
+  </section>
+  
+
+</chapter>
