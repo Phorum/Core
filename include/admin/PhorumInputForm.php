@@ -30,6 +30,12 @@ class PhorumInputForm {
     var $_submit;
     var $_help;
 
+    // Each row needs a unique index, so help texts can be linked to them.
+    // If there are multiple forms on the screen, then the rowindex
+    // should still be unique overall. Therefore, we use a static class
+    // var for this.
+    static $rowidx = 0;
+
     function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
         $this->_action = ( empty( $action ) ) ? $_SERVER["PHP_SELF"] : $action;
@@ -132,19 +138,16 @@ class PhorumInputForm {
             $tvalign = $cvalign = $valign;
         }
 
-        // Each row needs a unique index.
-        static $rowidx = 0;
-        $rowidx++;
-
-        $this->_rows[$rowidx] = array( "title" => $title,
+        $this->_rows[++$this->rowidx] = array(
+            "title" => $title,
             "contents" => $contents,
             "title_valign" => $tvalign,
             "content_valign" => $cvalign,
             "title_align" => $talign,
             "content_align" => $calign
-            );
+        );
 
-        return $rowidx;
+        return $this->rowidx;
     }
 
     function addhelp( $row, $title, $text )
@@ -175,24 +178,23 @@ class PhorumInputForm {
             $type = 'subbreak';
         }
 
-        $this->_rows[] = array( $type => $break );
-        end( $this->_rows );
-        return key( $this->_rows );
+        $this->_rows[++$this->rowidx] = array( $type => $break );
+        return $this->rowidx;
     }
 
     function addsubbreak( $break = "&nbsp;" )
     {
         $this->_add_module_header();
-        $this->_rows[] = array( "subbreak" => $break );
-        end( $this->_rows );
-        return key( $this->_rows );
+        $this->_rows[++$this->rowidx] = array( "subbreak" => $break );
+        return $this->rowidx;
     }
 
     function addmessage( $message )
     {
         $this->_add_module_header();
 
-        $this->_rows[] = array( "message" => $message );
+        $this->_rows[++$this->rowidx] = array( "message" => $message );
+        return $this->rowidx;
     }
 
     function show()
