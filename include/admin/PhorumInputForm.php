@@ -19,6 +19,11 @@
 
 if ( !defined( "PHORUM_ADMIN" ) ) return;
 
+// Each row needs a unique index (globally over all forms on a page),
+// so help texts can be linked correctly to them.
+// This static variable will be used as the counter for this.
+static $rowidx = 0;
+
 class PhorumInputForm {
     var $_rows;
     var $_hiddens;
@@ -29,12 +34,6 @@ class PhorumInputForm {
     var $_events;
     var $_submit;
     var $_help;
-
-    // Each row needs a unique index, so help texts can be linked to them.
-    // If there are multiple forms on the screen, then the rowindex
-    // should still be unique overall. Therefore, we use a static class
-    // var for this.
-    static $rowidx = 0;
 
     function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
@@ -138,7 +137,8 @@ class PhorumInputForm {
             $tvalign = $cvalign = $valign;
         }
 
-        $this->_rows[++$this->rowidx] = array(
+        global $rowidx;
+        $this->_rows[++$rowidx] = array(
             "title" => $title,
             "contents" => $contents,
             "title_valign" => $tvalign,
@@ -147,7 +147,7 @@ class PhorumInputForm {
             "content_align" => $calign
         );
 
-        return $this->rowidx;
+        return $rowidx;
     }
 
     function addhelp( $row, $title, $text )
@@ -178,23 +178,26 @@ class PhorumInputForm {
             $type = 'subbreak';
         }
 
-        $this->_rows[++$this->rowidx] = array( $type => $break );
-        return $this->rowidx;
+        global $rowidx;
+        $this->_rows[++$rowidx] = array( $type => $break );
+        return $rowidx;
     }
 
     function addsubbreak( $break = "&nbsp;" )
     {
         $this->_add_module_header();
-        $this->_rows[++$this->rowidx] = array( "subbreak" => $break );
-        return $this->rowidx;
+        global $rowidx;
+        $this->_rows[++$rowidx] = array( "subbreak" => $break );
+        return $rowidx;
     }
 
     function addmessage( $message )
     {
         $this->_add_module_header();
 
-        $this->_rows[++$this->rowidx] = array( "message" => $message );
-        return $this->rowidx;
+        global $rowidx;
+        $this->_rows[++$rowidx] = array( "message" => $message );
+        return $rowidx;
     }
 
     function show()
