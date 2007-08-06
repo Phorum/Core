@@ -700,7 +700,7 @@ function phorum_output($templates) {
         $templates = array($templates);
     }
 
-    if (isset($PHORUM["hooks"]["start_output"]))
+    if (isset($GLOBALS["PHORUM"]["hooks"]["start_output"]))
         phorum_hook("start_output");
 
     // Copy only what we need into the current scope. We do this at
