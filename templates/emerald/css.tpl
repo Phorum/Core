@@ -2,7 +2,7 @@
 /* overall style */
 
 body {
-    background-color: {body_color};
+    background-color: {body_background_color};
 }
 
 #phorum {

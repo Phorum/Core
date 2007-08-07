@@ -36,7 +36,7 @@
 
 
 {! -- colors -- }
-{VAR body_color "White"}
+{VAR body_background_color "White"}
 {VAR default_font_color "Black"}
 {VAR default_background_color "White"}
 {VAR alt_background_color "#edf2ed"} {! -- should compliment default_background_color -- }
