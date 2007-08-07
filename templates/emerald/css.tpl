@@ -33,7 +33,7 @@ img {
 
 #phorum table.list th  {
     background-repeat: repeat-x;
-    background-image: url('templates/{template_dir}/images/header_background.png');
+    background-image: url('templates/{TEMPLATE}/images/header_background.png');
     color: {border_font_color};
     background-color: {border_color};
     font-size: {font_small};
@@ -238,7 +238,7 @@ img {
 #phorum table.menu td.content h2 {
     margin: 0 0 8px 0;
     background-repeat: repeat-x;
-    background-image: url('templates/{template_dir}/images/header_background.png');
+    background-image: url('templates/{TEMPLATE}/images/header_background.png');
     color: {border_font_color};
     background-color: {border_color};
     padding: 4px;
@@ -286,7 +286,7 @@ img {
     height: 46px;
     background-color: {logo_background_color};
     vertical-align: bottom;
-    background-image: url('templates/{template_dir}/images/top-background.png');
+    background-image: url('templates/{TEMPLATE}/images/top-background.png');
 }
 
 #phorum #logo img {
@@ -345,7 +345,7 @@ img {
     /* does not use template values on purpose */
     padding: 24px 8px 24px 64px;
     border: 1px solid #A76262;
-    background-image: url('templates/{template_dir}/images/dialog-warning.png');
+    background-image: url('templates/{TEMPLATE}/images/dialog-warning.png');
     background-color: #FFD1D1;
     background-repeat: no-repeat;
     background-position: 8px 8px;
@@ -420,7 +420,7 @@ img {
     margin: 0 0 16px 0;
     border: 1px solid {border_color};
     border-top: 0;
-    background-image: url("templates/{template_dir}/images/message_background.png");
+    background-image: url("templates/{TEMPLATE}/images/message_background.png");
     background-repeat: repeat-x;
 }
 
@@ -498,7 +498,7 @@ img {
 }
 
 #phorum div.attach-link {
-    background-image: url('templates/{template_dir}/images/attach.png');
+    background-image: url('templates/{TEMPLATE}/images/attach.png');
     background-repeat: no-repeat;
     background-position: 1px 2px;
     padding: 4px 10px 2px 21px;
@@ -622,144 +622,144 @@ img {
 /* Icon Styles */
 
 .icon-accept {
-    background-image: url('templates/{template_dir}/images/accept.png');
+    background-image: url('templates/{TEMPLATE}/images/accept.png');
 }
 
 .icon-bell {
-    background-image: url('templates/{template_dir}/images/bell.png');
+    background-image: url('templates/{TEMPLATE}/images/bell.png');
 }
 
 .icon-bullet-black {
-    background-image: url('templates/{template_dir}/images/bullet_black.png');
+    background-image: url('templates/{TEMPLATE}/images/bullet_black.png');
 }
 
 .icon-bullet-go {
-    background-image: url('templates/{template_dir}/images/bullet_go.png');
+    background-image: url('templates/{TEMPLATE}/images/bullet_go.png');
 }
 
 .icon-cancel {
-    background-image: url('templates/{template_dir}/images/cancel.png');
+    background-image: url('templates/{TEMPLATE}/images/cancel.png');
 }
 
 .icon-close {
-    background-image: url('templates/{template_dir}/images/lock.png');
+    background-image: url('templates/{TEMPLATE}/images/lock.png');
 }
 
 .icon-comment {
-    background-image: url('templates/{template_dir}/images/comment.png');
+    background-image: url('templates/{TEMPLATE}/images/comment.png');
 }
 
 .icon-comment-add {
-    background-image: url('templates/{template_dir}/images/comment_add.png');
+    background-image: url('templates/{TEMPLATE}/images/comment_add.png');
 }
 
 .icon-comment-edit {
-    background-image: url('templates/{template_dir}/images/comment_edit.png');
+    background-image: url('templates/{TEMPLATE}/images/comment_edit.png');
 }
 
 .icon-comment-delete {
-    background-image: url('templates/{template_dir}/images/comment_delete.png');
+    background-image: url('templates/{TEMPLATE}/images/comment_delete.png');
 }
 
 .icon-delete {
-    background-image: url('templates/{template_dir}/images/delete.png');
+    background-image: url('templates/{TEMPLATE}/images/delete.png');
 }
 
 .icon-exclamation {
-    background-image: url('templates/{template_dir}/images/exclamation.png');
+    background-image: url('templates/{TEMPLATE}/images/exclamation.png');
 }
 
 .icon-feed {
-    background-image: url('templates/{template_dir}/images/feed.png');
+    background-image: url('templates/{TEMPLATE}/images/feed.png');
 }
 
 .icon-flag-red {
-    background-image: url('templates/{template_dir}/images/flag_red.png');
+    background-image: url('templates/{TEMPLATE}/images/flag_red.png');
 }
 
 .icon-folder {
-    background-image: url('templates/{template_dir}/images/folder.png');
+    background-image: url('templates/{TEMPLATE}/images/folder.png');
 }
 
 .icon-group-add {
-    background-image: url('templates/{template_dir}/images/group_add.png');
+    background-image: url('templates/{TEMPLATE}/images/group_add.png');
 }
 
 .icon-key-go {
-    background-image: url('templates/{template_dir}/images/key_go.png');
+    background-image: url('templates/{TEMPLATE}/images/key_go.png');
 }
 
 .icon-list {
-    background-image: url('templates/{template_dir}/images/text_align_justify.png');
+    background-image: url('templates/{TEMPLATE}/images/text_align_justify.png');
 }
 
 .icon-merge {
-    background-image: url('templates/{template_dir}/images/arrow_join.png');
+    background-image: url('templates/{TEMPLATE}/images/arrow_join.png');
 }
 
 .icon-move {
-    background-image: url('templates/{template_dir}/images/page_go.png');
+    background-image: url('templates/{TEMPLATE}/images/page_go.png');
 }
 
 .icon-next {
-    background-image: url('templates/{template_dir}/images/control_next.png');
+    background-image: url('templates/{TEMPLATE}/images/control_next.png');
 }
 
 .icon-note-add {
-    background-image: url('templates/{template_dir}/images/note_add.png');
+    background-image: url('templates/{TEMPLATE}/images/note_add.png');
 }
 
 .icon-open {
-    background-image: url('templates/{template_dir}/images/lock_open.png');
+    background-image: url('templates/{TEMPLATE}/images/lock_open.png');
 }
 
 .icon-page-go {
-    background-image: url('templates/{template_dir}/images/page_go.png');
+    background-image: url('templates/{TEMPLATE}/images/page_go.png');
 }
 
 .icon-prev {
-    background-image: url('templates/{template_dir}/images/control_prev.png');
+    background-image: url('templates/{TEMPLATE}/images/control_prev.png');
 }
 
 .icon-printer {
-    background-image: url('templates/{template_dir}/images/printer.png');
+    background-image: url('templates/{TEMPLATE}/images/printer.png');
 }
 
 .icon-split {
-    background-image: url('templates/{template_dir}/images/arrow_divide.png');
+    background-image: url('templates/{TEMPLATE}/images/arrow_divide.png');
 }
 
 .icon-table-add {
-    background-image: url('templates/{template_dir}/images/table_add.png');
+    background-image: url('templates/{TEMPLATE}/images/table_add.png');
 }
 
 .icon-tag-green {
-    background-image: url('templates/{template_dir}/images/tag_green.png');
+    background-image: url('templates/{TEMPLATE}/images/tag_green.png');
 }
 
 .icon-user {
-    background-image: url('templates/{template_dir}/images/user.png');
+    background-image: url('templates/{TEMPLATE}/images/user.png');
 }
 
 .icon-user-add {
-    background-image: url('templates/{template_dir}/images/user_add.png');
+    background-image: url('templates/{TEMPLATE}/images/user_add.png');
 }
 
 .icon-user-comment {
-    background-image: url('templates/{template_dir}/images/user_comment.png');
+    background-image: url('templates/{TEMPLATE}/images/user_comment.png');
 }
 
 .icon-user-edit {
-    background-image: url('templates/{template_dir}/images/user_edit.png');
+    background-image: url('templates/{TEMPLATE}/images/user_edit.png');
 }
 
 .icon-zoom {
-    background-image: url('templates/{template_dir}/images/zoom.png');
+    background-image: url('templates/{TEMPLATE}/images/zoom.png');
 }
 
 
 .icon-information {
-    background-image: url('templates/{template_dir}/images/information.png');
+    background-image: url('templates/{TEMPLATE}/images/information.png');
 }
 
 

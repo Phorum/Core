@@ -15,9 +15,6 @@
 {! -- This is the image for the gauge bar to show how full the PM box is -- }
 {VAR gauge_image "templates/emerald/images/gauge.gif"}
 
-{VAR template_dir "emerald"}
-
-
 {! -- Fonts -- }
 
 {VAR default_font "Arial"}
