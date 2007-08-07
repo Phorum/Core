@@ -1,6 +1,10 @@
 
 /* overall style */
 
+body {
+    background-color: {body_color};
+}
+
 #phorum {
     font-family: {default_font};
     font-size: {base_font_size};
