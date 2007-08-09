@@ -96,6 +96,7 @@ Some Icons courtesy of:
 <div id="top-right">
     <div id="search-area" class="icon-zoom">
         <form id="header-search-form" action="{URL->SEARCH}" method="get">
+            {POST_VARS}
             <input type="hidden" name="phorum_page" value="search" />
             <input type="hidden" name="match_forum" value="ALL" />
             <input type="hidden" name="match_dates" value="365" />
