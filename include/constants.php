@@ -26,8 +26,10 @@
 
     define("PHORUM_FILE_EXTENSION", "php");
 
-    // number of messages remembered as new
-    define("PHORUM_MAX_NEW_INFO", 1000);
+    // The maximum number of messages that Phorum will remember as being
+    // read, per forum per user. Phorum will trim off older read flags
+    // if this limit is hit.
+    define("PHORUM_MAX_READ_COUNT_PER_FORUM", 1000);
 
     // can moderators view email addresses
     define("PHORUM_MOD_EMAIL_VIEW", true);

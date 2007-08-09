@@ -2894,8 +2894,8 @@ function phorum_db_newflag_add_read($message_ids) {
     }
     // deleting messages which are too much
     $num_end=$num_newflags+count($message_ids);
-    if($num_end > PHORUM_MAX_NEW_INFO) {
-        phorum_db_newflag_delete($num_end - PHORUM_MAX_NEW_INFO);
+    if($num_end > PHORUM_MAX_READ_COUNT_PER_FORUM) {
+        phorum_db_newflag_delete($num_end - PHORUM_MAX_READ_COUNT_PER_FORUM);
     }
     // building the query
     $values=array();

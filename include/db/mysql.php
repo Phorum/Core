@@ -4694,8 +4694,8 @@ function phorum_db_newflag_add_read($message_ids)
     // Delete newflags which would exceed the maximum number of
     // newflags that are allowed in the database per user.
     $num_end = $num_newflags + count($message_ids);
-    if ($num_end > PHORUM_MAX_NEW_INFO) {
-        phorum_db_newflag_delete($num_end - PHORUM_MAX_NEW_INFO);
+    if ($num_end > PHORUM_MAX_READ_COUNT_PER_FORUM) {
+        phorum_db_newflag_delete($num_end - PHORUM_MAX_READ_COUNT_PER_FORUM);
     }
 
     // Insert newflags.
