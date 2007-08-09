@@ -33,7 +33,7 @@ img {
 
 #phorum table.list th  {
     background-repeat: repeat-x;
-    background-image: url('templates/{TEMPLATE}/images/header_background.png');
+    background-image: url('{header_background_image}');
     color: {border_font_color};
     background-color: {border_color};
     font-size: {font_small};
@@ -238,7 +238,7 @@ img {
 #phorum table.menu td.content h2 {
     margin: 0 0 8px 0;
     background-repeat: repeat-x;
-    background-image: url('templates/{TEMPLATE}/images/header_background.png');
+    background-image: url('{header_background_image}');
     color: {border_font_color};
     background-color: {border_color};
     padding: 4px;
@@ -286,7 +286,7 @@ img {
     height: 46px;
     background-color: {logo_background_color};
     vertical-align: bottom;
-    background-image: url('templates/{TEMPLATE}/images/top-background.png');
+    background-image: url('{top_background_image}');
 }
 
 #phorum #logo img {
@@ -420,7 +420,7 @@ img {
     margin: 0 0 16px 0;
     border: 1px solid {border_color};
     border-top: 0;
-    background-image: url("templates/{TEMPLATE}/images/message_background.png");
+    background-image: url('{message_background_image}');
     background-repeat: repeat-x;
 }
 
