@@ -23,7 +23,7 @@ function phorum_custom_get_url ($page, $query_items, $suffix, $pathinfo)
     $PHORUM=$GLOBALS["PHORUM"];
 
     $url = "$PHORUM[http_path]/phorum.php";
-    if ($pathinfo !== NULL) $url .= $pathinfo
+    if ($pathinfo !== NULL) $url .= $pathinfo;
     $url .= "?$page";
 
     if(count($query_items)) $url.=",".implode(",", $query_items);
