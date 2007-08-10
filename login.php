@@ -255,7 +255,7 @@ $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
 $PHORUM["DATA"]["URL"]["REGISTER"] = phorum_get_url( PHORUM_REGISTER_URL );
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_LOGIN_ACTION_URL );
 $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
-$PHORUM["DATA"]["LOGIN"]["username"] = htmlspecialchars( $_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
+$PHORUM["DATA"]["LOGIN"]["username"] = (!empty($_POST["username"])) ? htmlspecialchars( $_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ) : "";
 $PHORUM["DATA"]["ERROR"] = htmlspecialchars( $error, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
 $PHORUM["DATA"]["OKMSG"] = htmlspecialchars( $okmsg, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] );
 
