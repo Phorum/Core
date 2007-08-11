@@ -5,7 +5,7 @@
 <?php echo '<?' ?>xml version="1.0" <?php echo '?>' ?>
 {/IF}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
-<html lang="{LOCALE}">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{LOCALE}" lang="{LOCALE}">
 <head>
 
 <title>{HTML_TITLE}</title>
@@ -14,9 +14,11 @@
 
 {IF PRINTVIEW}
     <meta name="robots" content="NOINDEX,NOFOLLOW">
+    <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="screen,print" />
+{ELSE}
+    <link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {/IF}
-<link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
-<link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {IF URL->FEED}
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
 {/IF}
@@ -25,7 +27,7 @@
 {/IF}
 
 {IF DESCRIPTION}
-    <meta name="description" content="{DESCRIPTION}">
+    <meta name="description" content="{DESCRIPTION}" />
 {/IF}
 
 {HEAD_TAGS}
@@ -88,6 +90,7 @@
 <div id="top-right">
     <div id="search-area" class="icon-zoom">
         <form id="header-search-form" action="{URL->SEARCH}" method="get">
+            {POST_VARS}
             <input type="hidden" name="phorum_page" value="search" />
             <input type="hidden" name="match_forum" value="ALL" />
             <input type="hidden" name="match_dates" value="365" />
