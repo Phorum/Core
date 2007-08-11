@@ -5,7 +5,7 @@
 <?php echo '<?' ?>xml version="1.0" <?php echo '?>' ?>
 {/IF}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
-<html lang="{LOCALE}">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{LOCALE}" lang="{LOCALE}">
 <head>
 
 <title>{HTML_TITLE}</title>
@@ -27,7 +27,7 @@
 {/IF}
 
 {IF DESCRIPTION}
-    <meta name="description" content="{DESCRIPTION}">
+    <meta name="description" content="{DESCRIPTION}" />
 {/IF}
 
 {HEAD_TAGS}
