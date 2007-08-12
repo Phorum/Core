@@ -60,7 +60,12 @@ foreach( $forums as $key=>$forum ) {
         $forums[$key]["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
         $forums[$key]["level"] = 0;
 
-        $sub_forums = phorum_db_get_forums( 0, $forum["forum_id"] );
+        if(isset($more_forums) && $forum["forum_id"] == $PHORUM["forum_id"]) {
+            $sub_forums = $more_forums;
+        } else {
+            $sub_forums = phorum_db_get_forums( 0, $forum["forum_id"] );
+        }
+
         foreach($sub_forums as $sub_forum){
             if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=0)){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
