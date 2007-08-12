@@ -87,19 +87,16 @@ if(!empty($diff_body) || !empty($diff_subject))
     // perform diff if edit tracking is enabled
     if(!empty($PHORUM["track_edits"])){
 
-        if(!empty($diff_body) || !empty($diff_subject)) {
-
-            $edit_data = array(
+        $edit_data = array(
             "diff_body" => $diff_body,
             "diff_subject" => $diff_subject,
             "time" => $dbmessage["meta"]["edit_date"],
             "user_id" => $PHORUM["user"]["user_id"],
             "message_id" => $dbmessage['message_id'],
-            );
+        );
 
-            phorum_db_add_message_edit($edit_data);
+        phorum_db_add_message_edit($edit_data);
 
-        }
     }
 
 }
