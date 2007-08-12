@@ -91,14 +91,14 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
 
     if (!count($help)) return;
 
-    print '<noscript><br/><br/><font size="-1">';
+    print '<noscript><br/><br/><div style="font-size: small;">';
     print $lang['help'] . "<br/><ul>";
     foreach ($help as $helpinfo) {
       print "<li><a href=\"" . htmlspecialchars($helpinfo[1]) . "\" " .
             "target=\"editor_tools_help\">" .
-            htmlspecialchars($helpinfo[0]) . "</a><br/>";
+            htmlspecialchars($helpinfo[0]) . "</a><br/></li>";
     }
-    print '</ul><br/></font></noscript>';
+    print '</ul><br/></div></noscript>';
 }
 
 /**
