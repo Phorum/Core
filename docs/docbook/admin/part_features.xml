@@ -65,7 +65,7 @@
     <section id="features.announcements.intro">
       <title>What are announcements?</title>
       <para>
-        Announcements are important messages shown to all users and on all (or specified) pages which should stand out over the regular posts.<sb/>
+        Announcements are important messages shown to all users and on all (or specified) pages which should stand out over the regular posts.<sbr/>
       Since Phorum-5.2 announcements are handled as a module which is distributed with Phorum. See <xref linkend="features.modules"/> for generic module instructions.
       The module allows for better separation of posts and announcements and also some additional features like hiding announcements after a given time and it opens
       the way for other future announcements modules which offer even more functionalities.
