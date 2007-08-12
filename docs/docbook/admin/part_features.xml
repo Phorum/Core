@@ -20,7 +20,6 @@
        </para>
        </section>
   </section>
-
   <section id="features.modules">
     <title>Phorum Modules</title>
     
@@ -60,6 +59,37 @@
         </itemizedlist>
       </para>
     </section>
+  </section>
+  <section id="features.announcements">
+    <title>Announcements (Module)</title>
+    <section id="features.announcements.intro">
+      <title>What are announcements?</title>
+      <para>
+        Announcements are important messages shown to all users and on all (or specified) pages which should stand out over the regular posts.<sb/>
+      Since Phorum-5.2 announcements are handled as a module which is distributed with Phorum. See <xref linkend="features.modules"/> for generic module instructions.
+      The module allows for better separation of posts and announcements and also some additional features like hiding announcements after a given time and it opens
+      the way for other future announcements modules which offer even more functionalities.
+      </para>
+    </section>
+    <section id="features.announcements.howto">
+      <title>How do I use announcements?</title>
+      <para>
+        The announcement-module works with a separate announcements-forum whose messages are shown above the message-list as specified.
+        Therefore follow this description to enable announcements for your Phorum:
+        <itemizedlist>
+          <listitem>Create a separate announcement-forum. The name doesn't matter, just try to remember it.</listitem>
+          <listitem>Go to the Admin -> Modules panel and click on the "Settings" link of the announcements-module.</listitem>
+          <listitem>Select the pages where announcements should be visible on (index, list and/or read)</listitem>
+          <listitem>Select if only unread announcements should be shown to the user<sbr/><emphasis role="bold">Note: Only announcements the user has clicked on to read the message are counted as read.</emphasis></listitem>
+          <listitem>Enter the number of announcements that should be shown.<sbr/><emphasis role="bold">Attention: This number of announcements is all that is retrieved before doing the additional checks like for date and being new to the user.</emphasis></listitem>
+          <listitem>Enter the maximum number of days an announcement should be visible for.<sbr/><emphasis role="bold">Note: The post-date is being used to calculate that. Edits are not taken into account.</emphasis></listitem>          
+          <listitem>Select the announcement forum where the messages should be taken from</listitem>
+          <listitem>Optional: If you have vroots then these will be listed and you have the chance to select different announcement forums for them.</listitem>
+        </itemizedlist>
+        
+      </para>
+      </section>
+      
   </section>
   
   
