@@ -60,7 +60,7 @@ foreach( $forums as $forum ) {
         if($PHORUM["DATA"]["LOGGEDIN"]){
             if($PHORUM["show_new_on_index"]==1){
                 list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
-            } elseif($PHORUM["show_new_on_index"]==2){ {
+            } elseif($PHORUM["show_new_on_index"]==2){
                 $forum["new_message_check"] = $new_checks[$forum["forum_id"]];
             }
         }
