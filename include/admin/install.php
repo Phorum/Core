@@ -38,7 +38,6 @@ if(empty($_POST["step"])){
 // Setup some default options (we need to do this at this point,
 // because the sanity checks need them).
 $default_cache_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp";
-$default_language = "english";
 
 // Run sanity checks prior to installing Phorum. Here we do some
 // checks to see if the environment is setup correctly for running
@@ -46,7 +45,7 @@ $default_language = "english";
 if ($step == 0 && !isset($_POST["sanity_checks_done"]))
 {
     // Setup some fake environment data for the checks.
-    $GLOBALS["PHORUM"]["default_forum_options"]["language"] = $default_language;
+    $GLOBALS["PHORUM"]["default_forum_options"]["language"] = PHORUM_DEFAULT_LANGUAGE;
     $GLOBALS["PHORUM"]["cache"] = $default_cache_dir;
     $GLOBALS["PHORUM"]["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
 
@@ -255,8 +254,8 @@ switch ($step){
             'pub_perms'=>1,
             'reg_perms'=>15,
             'display_fixed'=>0,
-            'template'=>'emerald',
-            'language'=>$default_language,
+            'template'=>PHORUM_DEFAULT_TEMPLATE,
+            'language'=>PHORUM_DEFAULT_LANGUAGE,
             'threaded_list'=>0,
             'threaded_read'=>0,
             'reverse_threading'=>0,
@@ -394,7 +393,7 @@ switch ($step){
             "name"=>'Announcements',
             "active"=>1,
             "description"=>'Read this forum first to find out the latest information.',
-            "template"=>'emerald',
+            "template"=>PHORUM_DEFAULT_TEMPLATE,
             "folder_flag"=>0,
             "parent_id"=>0,
             "list_length_flat"=>30,
@@ -406,7 +405,7 @@ switch ($step){
             "float_to_top"=>0,
             "display_ip_address"=>0,
             "allow_email_notify"=>1,
-            "language"=>$default_language,
+            "language"=>PHORUM_DEFAULT_LANGUAGE,
             "email_moderators"=>0,
             "display_order"=>99,
             "edit_post"=>1,
@@ -423,7 +422,7 @@ switch ($step){
             "name"=>'Test Forum',
             "active"=>1,
             "description"=>'This is a test forum.  Feel free to delete it or edit after installation.',
-            "template"=>'emerald',
+            "template"=>PHORUM_DEFAULT_TEMPLATE,
             "folder_flag"=>0,
             "parent_id"=>0,
             "list_length_flat"=>30,
@@ -435,7 +434,7 @@ switch ($step){
             "float_to_top"=>1,
             "display_ip_address"=>0,
             "allow_email_notify"=>1,
-            "language"=>$default_language,
+            "language"=>PHORUM_DEFAULT_LANGUAGE,
             "email_moderators"=>0,
             "display_order"=>0,
             "edit_post"=>1,

@@ -6739,6 +6739,8 @@ function phorum_db_create_tables()
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    $lang = PHORUM_DEFAULT_LANGUAGE;
+
     $create_table_queries = array(
 
       "CREATE TABLE {$PHORUM['forums_table']} (
@@ -6764,7 +6766,7 @@ function phorum_db_create_tables()
            reg_perms                int unsigned   NOT NULL default '0',
            display_ip_address       tinyint(1)     NOT NULL default '1',
            allow_email_notify       tinyint(1)     NOT NULL default '1',
-           language                 varchar(100)   NOT NULL default 'english',
+           language                 varchar(100)   NOT NULL default '$lang',
            email_moderators         tinyint(1)     NOT NULL default '0',
            message_count            int unsigned   NOT NULL default '0',
            sticky_count             int unsigned   NOT NULL default '0',

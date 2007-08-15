@@ -653,11 +653,11 @@ function phorum_get_template_file( $page )
 
     // If no user template is set or if the template file cannot be found,
     // fallback to the configured default template. If that one can also
-    // not be found, then fallback to the template named "default".
+    // not be found, then fallback to the default template.
     if (empty($PHORUM["template"]) || !file_exists("$prefix/{$PHORUM['template']}")) {
         $PHORUM["template"] = $PHORUM["default_forum_options"]["template"];
-        if ($PHORUM["template"] != "default" && !file_exists("$prefix/{$PHORUM['template']}")) {
-            $PHORUM["template"] = "default";
+        if ($PHORUM["template"] != PHORUM_DEFAULT_TEMPLATE && !file_exists("$prefix/{$PHORUM['template']}")) {
+            $PHORUM["template"] = PHORUM_DEFAULT_TEMPLATE;
         }
 
         // If we're not handling a module template, then we can change the

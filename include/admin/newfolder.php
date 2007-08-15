@@ -227,7 +227,7 @@
         $folders=$folder_data;
         $vroot=0;
         $active=1;
-        $template="emerald";
+        $template=PHORUM_DEFAULT_TEMPLATE;
     }
 
     $frm->hidden("folder_flag", "1");

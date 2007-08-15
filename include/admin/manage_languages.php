@@ -141,7 +141,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
     $fullfile = $basename . '-' . PHORUM . '.php';  
            
     // Get our default language file.   
-    $DEFAULT = phorum_get_language('english');
+    $DEFAULT = phorum_get_language(PHORUM_DEFAULT_LANGUAGE);
 
     // Get the languagefile to update, unless generating a new language.
     $CURRENT = array();

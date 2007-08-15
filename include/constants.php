@@ -59,6 +59,12 @@
     // the replace string for masking bad words.
     define('PHORUM_BADWORD_REPLACE', '@#$%&');
 
+    // phorum's default template
+    define('PHORUM_DEFAULT_TEMPLATE', 'emerald');
+
+    // phorum's default language
+    define('PHORUM_DEFAULT_LANGUAGE', 'english');
+
     /////////////////////////////////////////
     //                                     //
     //     DO NOT EDIT BELOW THIS AREA     //
