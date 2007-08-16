@@ -23,14 +23,22 @@ if(count($_POST)) {
     list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 }
 
+// need their names for the later check
+$profile_field_names=array();
+if(is_array($PHORUM["PROFILE_FIELDS"])) {
+    foreach ($PHORUM["PROFILE_FIELDS"] as $id => $fieldinfo) {
+        $profile_field_names[$fieldinfo['name']]=$fieldinfo['name'];
+    }
+}
+
 foreach($PHORUM["DATA"]["PROFILE"] as $key => $data) {
-    if(!is_array($data)) {
-        $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    }       
+       if(!is_array($data) && !isset($profile_field_names[$key])) {
+            $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data);
+       }
 }
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditUserinfo"];
 $PHORUM['DATA']['PROFILE']['USERPROFILE'] = 1;
 $template = "cc_usersettings";
-        
+
 ?>
