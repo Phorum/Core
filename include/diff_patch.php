@@ -254,7 +254,7 @@ function phorum_unpatch_color($text, $diff) {
                 $pre = substr($text, 0, $n);
                 $post = substr($text, $n);
                 $colored_text = substr($diff, $i+1);
-                return $pre."[phorum addition]".$colored_text."[phorum addition]".substr($post, strlen($diff)-$i-1);
+                return $pre."[phorum addition]".$colored_text."[/phorum addition]".substr($post, strlen($diff)-$i-1);
             }
         }
         return $text;
