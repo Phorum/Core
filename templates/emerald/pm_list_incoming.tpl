@@ -26,7 +26,7 @@
                 <td>
                     <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>
                     {IF NOT MESSAGES->read_flag}
-                        <img src="{URL->TEMPLATE}/images/flag_red.png" width="16" height="16" border="0" alt="NEW!" />
+                        <img src="{URL->TEMPLATE}/images/flag_red.png" class="icon1616" alt="NEW!" />
                     {/IF}
                 </td>
                 <td nowrap="nowrap"><a href="{MESSAGES->URL->PROFILE}">{MESSAGES->author}</a>&nbsp;</td>

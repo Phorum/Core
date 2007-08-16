@@ -47,7 +47,7 @@
 
                     <td width="65%" class="message-subject {altclass}">
                         <a href="{TOPICS->URL->READ}">
-                        {IF TOPICS->new}<img src="{URL->TEMPLATE}/images/flag_red.png" width="16" height="16" border="0" alt="{LANG->New}" title="{LANG->New}"/>{/IF}
+                        {IF TOPICS->new}<img src="{URL->TEMPLATE}/images/flag_red.png" class="icon1616" alt="{LANG->New}" title="{LANG->New}"/>{/IF}
                         {TOPICS->subject}</a><br />
                         <small>{LANG->Forum}: {TOPICS->forum}</small>
                     </td>

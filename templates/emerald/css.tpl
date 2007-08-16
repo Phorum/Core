@@ -762,6 +762,11 @@ img {
     background-image: url('templates/{TEMPLATE}/images/information.png');
 }
 
+.icon1616 {
+    width: 16px;
+    height: 16px;
+    border: 0;
+}
 
 
 
