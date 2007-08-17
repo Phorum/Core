@@ -13,7 +13,7 @@
 {DEFINE show_notify_for_pages "index,list,cc"}
 
 {! -- This is the image for the gauge bar to show how full the PM box is -- }
-{VAR gauge_image "templates/{TEMPLATE}/images/gauge.gif"}
+{VAR gauge_image "templates/emerald/images/gauge.gif"}
 
 {! -- Fonts -- }
 
@@ -51,7 +51,7 @@
 {VAR post_moderation_background_color "#fffdf6"}
 
 {! -- Background Images -- }
-{VAR header_background_image "templates/{TEMPLATE}/images/header_background.png"}
-{VAR top_background_image "templates/{TEMPLATE}/images/top_background.png"}
-{VAR message_background_image "templates/{TEMPLATE}/images/message_background.png"}
+{VAR header_background_image "templates/emerald/images/header_background.png"}
+{VAR top_background_image "templates/emerald/images/top_background.png"}
+{VAR message_background_image "templates/emerald/images/message_background.png"}
 
