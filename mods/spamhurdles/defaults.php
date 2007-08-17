@@ -1,7 +1,7 @@
 <?php
 // These are the default settings for the Spam Hurdles module.
 
-if (! isset($GLOBALS["PHORUM"]["mod_spamhurdles"])) 
+if (! isset($GLOBALS["PHORUM"]["mod_spamhurdles"]))
     $GLOBALS["PHORUM"]["mod_spamhurdles"] = array();
 
 if (! isset($GLOBALS["PHORUM"]["mod_spamhurdles"]["blockaction"]))
@@ -35,7 +35,7 @@ if (! isset($GLOBALS["PHORUM"]["mod_spamhurdles"]["flite_location"])) {
     // Try to determine automatically if flite is installed.
     $search = array("/bin", "/usr/bin", "/usr/local/bin",
                     "/usr/local/flite/bin", "/opt/flite/bin");
-    $flite_location = "";                      
+    $flite_location = "";
     foreach ($search as $path) {
         if (file_exists("$path/flite")) {
             $flite_location = "$path/flite";

@@ -1,10 +1,21 @@
 Changelog:
 ----------
 
+v1.1.3
+
+    - Implemented new CAPTCHA type: reCAPTCHA.
+      See http://www.recaptcha.net/ for more info.
+
+    - Checking of the captcha answer is now done from the captcha objects
+      (new method check_answer()). Before, we had a generic piece of code
+      in the spamhurdles.php module script.
+      This is done to be able to implement the non-standard answer check
+      that is needed for reCAPTCHA.
+
 v1.1.2
 
     - Fixed some problems in the Postgres database layer code.
-      I do not run a postgresql installation, so I could not test 
+      I do not run a postgresql installation, so I could not test
       the db layer myself. Thanks to Rick (user eeek on phorum.org)
       for finding and fixing the problems.
 
@@ -26,20 +37,20 @@ v1.1.0
 
     - Added new check: Check if an HTML commented form field is submitted
 
-      If this option is enabled, then an extra form field is added 
-      to the posting form. However, this form field is embedded within 
-      an HTML comment block. Because of that, normal web browsers will 
-      fully ignore this extra field. On the other hand, some badly written 
-      spam bots will recognize the code as a form field. If such a spam 
-      bot posts a message including this extra form field, the message 
+      If this option is enabled, then an extra form field is added
+      to the posting form. However, this form field is embedded within
+      an HTML comment block. Because of that, normal web browsers will
+      fully ignore this extra field. On the other hand, some badly written
+      spam bots will recognize the code as a form field. If such a spam
+      bot posts a message including this extra form field, the message
       will be blocked.
 
       (thanks to Jerome Combaz for suggesting this check)
-      
+
 
     - The storage system for server side storage of data for the module
       was changed to use the database instead of the Phorum cache layer.
-      The main reason for this was because some users on busy sites ran 
+      The main reason for this was because some users on busy sites ran
       into problems because of the large number of cache files that
       was generated in the cache directory.
       Installation of the required database table should be handled
@@ -78,18 +89,18 @@ v1.0.8
 
     - Added protection against upgraded Phorum installs that have
       and old post.php script lying around (the new posting script
-      is called posting.php). The old post.php script is not 
+      is called posting.php). The old post.php script is not
       protected against spam and might be abused by spammers.
       Thanks to Martin for his cooperation in tracking down
       this problem.
 
 v1.0.7
 
-    - Fixed an error condition that could occur for the cache 
+    - Fixed an error condition that could occur for the cache
       management on the settings screen (cleaning cache before
       a spam_hurdles cache directory is created).
 
-    - Fixed an error which could cause skipping of the 
+    - Fixed an error which could cause skipping of the
       CAPTCHA checks. Thanks to Thomas for helping me tracking
       down this problem.
 
@@ -102,7 +113,7 @@ v1.0.7
 
     - Disabled all Spam Hurdles for editing posts. Before fixing
       this, the duplicate message posting check was run and caused
-      a spam error when editing a message. Thanks to Netwalker 
+      a spam error when editing a message. Thanks to Netwalker
       for discovering and reporting the problem.
 
 2006-08-31 v1.0.4
@@ -116,7 +127,7 @@ v1.0.7
       This problem was seen on Phorum 5.1 with the Phorum 5.1 Editor
       Tools module (the simple smiley panel one) enabled.
 
-    - On the register page, the captcha code was re-generated on 
+    - On the register page, the captcha code was re-generated on
       every click. Now the code stays the same during the
       registration process.
 
@@ -132,18 +143,18 @@ v1.0.7
     - Changed the JavaScript code for disabling the post button when
       the blockquickpost option is active. Now it checks if it can
       actually find the post button, so it won't spawn javascript
-      errors if for some reason the form does not look like I 
+      errors if for some reason the form does not look like I
       expected there.
 
     - Since the Phorum cache will grow when spam hurdles are created,
       an option was added to do automatic cleanup of hurdles that are
-      no longer in use. A cookie is set, to remember the last 
-      key that was in use. If another key is used in the module, 
+      no longer in use. A cookie is set, to remember the last
+      key that was in use. If another key is used in the module,
       then the key in the cookie can be cleaned up automatically.
       This will remove most of the stale data in the Phorum cache.
 
     - Added cache management to the module's settings screen, so the
-      cache data that is generated by this module can be purged 
+      cache data that is generated by this module can be purged
       easily once in a while.
 
     - Added a Dutch language file to the distribution.
@@ -159,12 +170,12 @@ v1.0.7
       and re-enable the module to let Phorum see the new hooks that
       are needed for this feature.
 
-    - Fixed a bug, which allowed spammers to bypass the checks by 
-      posting final formdata without any key in it, directly to the script. 
+    - Fixed a bug, which allowed spammers to bypass the checks by
+      posting final formdata without any key in it, directly to the script.
 
     - Whether to show a CAPTCHA on signup and posting pages was not
       determined correctly, based on the module config. The CAPTCHA would
-      always show on both pages if at least the posting CAPTCHA was enabled. 
+      always show on both pages if at least the posting CAPTCHA was enabled.
 
     - Generated spamhurdles information does now contain information about
       the type of form that it was generated for. This is used to prevent

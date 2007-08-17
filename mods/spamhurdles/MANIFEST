@@ -10,6 +10,12 @@ captcha/class.captcha_image.php
 captcha/spoken_captcha.php
 captcha/class.captcha_maptcha.php
 captcha/class.captcha_asciiart.php
+captcha/class.captcha_recaptcha.php
+captcha/recaptcha-php-1.9/example-captcha.php
+captcha/recaptcha-php-1.9/example-mailhide.php
+captcha/recaptcha-php-1.9/LICENSE
+captcha/recaptcha-php-1.9/README
+captcha/recaptcha-php-1.9/recaptchalib.php
 info.txt
 spamhurdles.php
 settings.php
@@ -33,4 +39,3 @@ lib/iscramble.php
 lib/pixel.gif
 lib/audio.gif
 spamhurdles.css
-TODO

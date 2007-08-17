@@ -29,7 +29,7 @@ function phorum_mod_spamhurdles_common()
 
     // See if the old post.php script is called. This one is sometimes
     // left behind on systems after upgrading, but it should no longer
-    // be used for posting. Since this script is not protected against 
+    // be used for posting. Since this script is not protected against
     // spamming, we fully deny access to it here.
     if (strstr($_SERVER["PHP_SELF"], "post.php")) {
         die("Illegal access to post.php. That script is the message posting " .
@@ -65,7 +65,7 @@ function phorum_mod_spamhurdles_common()
            $PHORUM["SPAMHURDLES_KEY_STATUS"] = KEY_AVAIL;
        } else {
            // Early bail out option for expired or already used keys,
-           if (phorum_page == "post" && 
+           if (phorum_page == "post" &&
                do_spamhurdle("blockmultipost") &&
                $conf["blockaction"] == "blockerror") {
                spamhurdle_blockerror();
@@ -107,10 +107,10 @@ function phorum_mod_spamhurdles_common()
         $oldkey = $_COOKIE["mod_spamhurdles_key"];
         if (isset($key) && $oldkey !== $key) {
             phorum_mod_spamhurdles_cleanup_key($oldkey);
-            setcookie("mod_spamhurdles_key", "", time()-86400); 
+            setcookie("mod_spamhurdles_key", "", time()-86400);
         }
     }
-    
+
     // Add the spamhurdles stylesheet to the page.
     $PHORUM["DATA"]["HEAD_TAGS"] .= '<link rel="stylesheet" type="text/css" href="' . $PHORUM["http_path"] . '/mods/spamhurdles/spamhurdles.css"/>';
 }
@@ -149,7 +149,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
     }
 
     // Generate a CAPTCHA, if required.
-    if (!isset($PHORUM["SPAMHURDLES"]["captcha"]) && 
+    if (!isset($PHORUM["SPAMHURDLES"]["captcha"]) &&
         (($type == "posting" && do_spamhurdle("posting_captcha")) ||
         ($type == "register" && do_spamhurdle("register_captcha")) ||
         ($type == "external_captcha")) ) {
@@ -165,7 +165,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
 
     // Only for posting messages:
     // Generate a signkey for the MD5 javascript signing check.
-    if (! isset($PHORUM["SPAMHURDLES"]["signkey"]) && 
+    if (! isset($PHORUM["SPAMHURDLES"]["signkey"]) &&
         do_spamhurdle("jsmd5check") &&
         $type == "posting") {
 
@@ -195,7 +195,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
             $PHORUM["SPAMHURDLES"]["key"],
             $PHORUM["SPAMHURDLES"],
             $conf["key_max_ttl"]
-        ); 
+        );
     }
 
     return $PHORUM["SPAMHURDLES"];
@@ -207,7 +207,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
 // types are:
 // - posting           Posting a message
 // - register          Registering a new account
-// - external_capthca  A special option to allow other pages to 
+// - external_capthca  A special option to allow other pages to
 //                     use the captcha functionality of this module
 function phorum_mod_spamhurdles_build_form($type)
 {
@@ -222,8 +222,8 @@ function phorum_mod_spamhurdles_build_form($type)
 
     // Add the spamhurdles key to the form.
     ?>
-    <input type="hidden" 
-           name="spamhurdles_key" 
+    <input type="hidden"
+           name="spamhurdles_key"
            id="spamhurdles_key_field"
            value="<?php print $key ?>" /> <?php
 
@@ -257,7 +257,7 @@ function phorum_mod_spamhurdles_build_form($type)
         ob_start(); ?>
 
         <img style="display:none"
-             src="<?php print $PHORUM["http_path"] ?>/mods/spamhurdles/lib/pixel.gif" 
+             src="<?php print $PHORUM["http_path"] ?>/mods/spamhurdles/lib/pixel.gif"
              alt="<?php print $spamhurdles["signkey"] ?>"
              id="spamhurdles_img" />
 
@@ -318,13 +318,13 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
     // this probably means, somebody is trying to post data directly to
     // the form or is trying to repost using an already expired/used key.
     if (! isset($PHORUM["SPAMHURDLES"]["key"])) {
-        // If we did not enable multipost blocking, then initialize 
+        // If we did not enable multipost blocking, then initialize
         // spamhurdles data and let the other checks do their work.
         // They will automatically fail if they are enabled.
         if (($spamhurdles == NULL || $spamhurdles["prev_key_expired"]) &&
             do_spamhurdle("blockmultipost")) {
             $do_block = true;
-        // Initialize spamhurdles information for all other cases. 
+        // Initialize spamhurdles information for all other cases.
         // If other checks are enabled, they will take over.
         } else {
             $PHORUM["SPAMHURDLES"] = phorum_mod_spamhurdles_init($type);
@@ -333,11 +333,11 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
     }
 
     // If the type of form in the spamhurdles data does not match the
-    // real form type, then the key that was used for form type 1 is used 
+    // real form type, then the key that was used for form type 1 is used
     // in form type 2. This is defenitely data tampering. No friendly
     // warning messages here.
     if (!$do_block && $PHORUM["SPAMHURDLES"]["form_type"] !== $type) {
-        spamhurdle_blockerror(); 
+        spamhurdle_blockerror();
     }
 
     // Check if the minimum TTL is honoured for the message posting form.
@@ -364,23 +364,21 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
 
     // Check if the captcha is filled in right.
     if (!$do_block && isset($spamhurdles["captcha"])) {
-        $fn = $spamhurdles["captcha"]["input_fieldname"];
-        $fieldvalue = isset($_POST[$fn]) ? strtoupper(trim($_POST[$fn])) : "";
-        if ($fieldvalue != strtoupper($spamhurdles["captcha"]["answer"])) {
-            return isset($spamhurdles["captcha"]["error"])
-              ? $spamhurdles["captcha"]["error"]
-              : $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["CaptchaWrongCode"];
-        }
-    } 
+        $class = $spamhurdles["captcha_class"];
+        require_once("./mods/spamhurdles/captcha/class.{$class}.php");
+        $captcha = new $class();
+        $error = $captcha->check_answer($spamhurdles["captcha"]);
+        if ($error) return $error;
+    }
 
-    // Handle default blocking case. Which method of blocking to use for 
+    // Handle default blocking case. Which method of blocking to use for
     // message posting, can be configured from the module settings page.
     if ($do_block) {
         if ($type == "posting" && $conf["blockaction"] == "unapprove") {
             phorum_mod_spamhurdles_init($type, array("unapprove" => 1));
             return $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["PostingUnapproveError"];
         } else {
-            spamhurdle_blockerror(); 
+            spamhurdle_blockerror();
         }
     }
 
@@ -427,7 +425,7 @@ function phorum_mod_spamhurdles_check_post($args)
     if (!empty($args[1])) return $args;
 
     // Our checks are only needed when finishing a post.
-    if (! isset($_POST["finish"])) return $args; 
+    if (! isset($_POST["finish"])) return $args;
 
     // Only run the checks if we're editing a new message.
     if (! empty($args[0]["message_id"])) return $args;
@@ -503,7 +501,7 @@ function phorum_mod_spamhurdles_before_footer()
     $conf = $PHORUM["mod_spamhurdles"];
 
     // If we block quick posts, then disable the submit button temporarily
-    // to prevent the user from posting his message to early. This only 
+    // to prevent the user from posting his message to early. This only
     // applies to the message posting form.
     if ($type == "posting" && do_spamhurdle("blockquickpost"))
     {
@@ -617,7 +615,7 @@ function do_spamhurdle($hurdle)
 
     // Other hurdles use a user type specification.
     switch ($conf[$hurdle]) {
-        case "anonymous": 
+        case "anonymous":
             return $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ? false : true;
         case "all":
             return true;
@@ -625,7 +623,7 @@ function do_spamhurdle($hurdle)
             return false;
         default:
             die("Unknown hurdle config value for hurdle " .
-                htmlspecialchars($hurdle) . 
+                htmlspecialchars($hurdle) .
                 ": " . htmlspecialchars($conf[$hurdle]));
     }
 }

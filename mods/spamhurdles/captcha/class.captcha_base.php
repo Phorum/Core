@@ -4,7 +4,7 @@
 define("CAPTCHA_CODE_LENGTH", 5);
 
 // The default set of characters to create random strings with.
-define("CAPTCHA_RANDOMCHARS", 
+define("CAPTCHA_RANDOMCHARS",
     "0123456789" .
     "abcdefghijklmnopqrstuvwxyz",
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -12,29 +12,30 @@ define("CAPTCHA_RANDOMCHARS",
 
 class captcha_base
 {
-    /** 
+    // {{{ Method: generate_captcha()
+    /**
      * Generates a CAPTCHA. This is the main method of the class,
      * which will be called by Phorum for creating a CAPTCHA.
      * It will generally not be overridden by descending classes.
      *
      * It will return an array containing the following fields:
      *
-     * answer
+     * - answer:
      *   The answer for the CAPTCHA, to compare against user's answer.
-     * error
+     * - error:
      *   The error string to display to the user, in case the CAPTCHA
      *   was answered wrong.
-     * input_fieldname
+     * - input_fieldname:
      *   The name of the input field where the users enters the answer.
-     * spoken_text
+     * - spoken_text:
      *   The text to feed to the speech engine, in case the CAPTCHA
      *   is turned into spoken text for vision impaired people.
-     * html_form
+     * - html_form:
      *   The main HTML form code for the CAPTCHA.
-     * html_after_form
+     * - html_after_form:
      *   Extra HTML code, that has to be run after the form (at the end
      *   of the page). This can for example be used for executing javascript
-     *   code that would delay page loading when it would be run directly 
+     *   code that would delay page loading when it would be run directly
      *   within the form.
      */
     function generate_captcha()
@@ -58,7 +59,7 @@ class captcha_base
             $say = $this->generate_spoken_captcha_text($question);
             if ($say !== NULL) {
                 $spoken_text = $say;
-                $spoken_html = 
+                $spoken_html =
                     '<div id="spamhurdles_spoken_captcha"><a href="{SPOKENURL}">' .
                     $strings["spoken_captcha_linktext"] .
                     '</a></div>';
@@ -71,7 +72,7 @@ class captcha_base
 
         // Generate the full CAPTCHA HTML code.
         $fldlen = strlen($answer);
-        $html_form = 
+        $html_form =
             '<div id="spamhurdles_captcha">' .
             '<div id="spamhurdles_captcha_title">'.$strings["title"].'</div>' .
             '<div id="spamhurdles_captcha_explain">'.$strings["explain"].'</div>' .
@@ -95,7 +96,9 @@ class captcha_base
             "error"           => $strings["wrong_answer_error"]
         );
     }
+    // }}}
 
+    // {{{ Method: generate_capcha_html()
     /**
      * Generate the HTML for displaying the captcha question. This method
      * has to return an array, containing two elements:
@@ -106,23 +109,29 @@ class captcha_base
      * html_after_form
      *   Extra HTML code, that has to be run after the form (at the end
      *   of the page). This can for example be used for executing javascript
-     *   code that would delay page loading when it would be run directly 
+     *   code that would delay page loading when it would be run directly
      *   within the form.
      *
-     * @param $question - The text representation of the question to display.
-     * @return $result - An array containing the html form and after form code.
+     * @param string $question
+     *     The text representation of the question to display.
+     *
+     * @return array
+     *     An array containing the html form and after form code.
      */
     function generate_captcha_html($question)
     {
         die("generate_captcha_html() method not implemented for " .
             "CAPTCHA class " . htmlspecialchars(get_class($this)));
     }
+    // }}}
 
+    // {{{ Method: generate_question_and_answer()
     /**
      * Generates a question and an answer for the CAPTCHA. These are
      * plain text representations of a question and answer.
      *
-     * @return $result - An array containing the question and answer strings.
+     * @return array
+     *     An array containing the question and answer strings.
      */
     function generate_question_and_answer()
     {
@@ -134,7 +143,9 @@ class captcha_base
 
         return array($code, $code);
     }
+    // }}}
 
+    // {{{ Method: generate_text_strings()
     /**
      * Generates the text strings to use in the CAPTCHA. The method has
      * to return an array, containing the following key fields:
@@ -150,7 +161,8 @@ class captcha_base
      * wrong_answer_error
      *   THe message to display in case the user answers the CAPTCHA wrong.
      *
-     * @return $strings - An array containing the required text strings.
+     * @return array
+     *     An array containing the required text strings.
      */
     function generate_text_strings()
     {
@@ -163,20 +175,25 @@ class captcha_base
             'wrong_answer_error'      => $lang["CaptchaWrongCode"],
         );
     }
+    // }}}
 
+    // {{{ Method: generate_spoken_captcha_text()
     /**
      * Converts the question into a string that has to be fed to
      * the speech engine, to create a spoken CAPTCHA for vision
      * impaired users. It also returns the text to use on the
      * HTML link to the spoken CAPTCHA.
      *
-     * This default implementation will simply spell out the 
+     * This default implementation will simply spell out the
      * question.
      *
-     * @param $question - The CAPTCHA question.
-     * @return $return - An array containing the text to feed to
-     *        the speech engine and the text to use on the link
-     *        to listen to the CAPTCHA.
+     * @param string $question
+     *     The CAPTCHA question.
+     *
+     * @return array
+     *     An array containing the text to feed to
+     *     the speech engine and the text to use on the link
+     *     to listen to the CAPTCHA.
      */
     function generate_spoken_captcha_text($question)
     {
@@ -200,7 +217,7 @@ class captcha_base
             '4' => 'the number 4',  '5' => 'the number 5',
             '6' => 'the number 6',  '7' => 'the number 7',
             '8' => 'the number 8',  '9' => 'the number 9',
-            ' ' => 'a whitespace', 
+            ' ' => 'a whitespace',
         );
 
 
@@ -217,7 +234,9 @@ class captcha_base
 
         return $say;
     }
+    // }}}
 
+    // {{{ Method: generate_image()
     /**
      * Generates an image to show when the imagecaptcha=... parameter
      * is set in the Phorum URL. This method is called from outside
@@ -227,14 +246,21 @@ class captcha_base
         die("generate_image() method not implemented for " .
             "CAPTCHA class " . htmlspecialchars(get_class($this)));
     }
+    // }}}
 
-    /** 
+    // {{{ Method: generate_random_string()
+    /**
      * Utility method for generating random strings.
      *
-     * @param $length - The length of the random string to create.
-     * @param $chars - A string containing the characters to choose from or
-     *                 NULL to use the default random characters.
-     * @return $string - The random string.
+     * @param integer $length
+     *     The length of the random string to create.
+     *
+     * @param string $chars
+     *     A string containing the characters to choose from or
+     *     NULL to use the default random characters.
+     *
+     * @return string
+     *     The random string.
      */
     function generate_random_string($length, $chars = NULL)
     {
@@ -245,4 +271,36 @@ class captcha_base
         }
         return $string;
     }
+    // }}}
+
+    // {{{ Method: check_answer()
+    /**
+     * This method will check if an entered captcha code is valid.
+     *
+     * @param array $info
+     *     An array, containing CAPTCHA information. This is the array
+     *     that was generated by {@link generate_captcha()}.
+     *
+     * @return mixed
+     *     An error string in case of problems.
+     *     NULL if the code is valid.
+     */
+    function check_answer($info)
+    {
+        $PHORUM = $GLOBALS["PHORUM"];
+
+        // Retrieve the posted answer.
+        $fn = $info["input_fieldname"];
+        $fieldvalue = isset($_POST[$fn]) ? strtoupper(trim($_POST[$fn])) : "";
+
+        // Check the answer.
+        if ($fieldvalue != strtoupper($info["answer"])) {
+            return isset($spamhurdles["captcha"]["error"])
+              ? $spamhurdles["captcha"]["error"]
+              : $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["CaptchaWrongCode"];
+        }
+        return NULL;
+    }
 }
+
+?>

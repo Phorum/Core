@@ -17,7 +17,9 @@
             "captcha_type"      => $_POST["captcha_type"],
             "spoken_captcha"    => isset($_POST["spoken_captcha"]) ? 1 : 0,
             "flite_location"    => $_POST["flite_location"],
-            "commentfieldcheck" => $_POST["commentfieldcheck"], 
+            "commentfieldcheck" => $_POST["commentfieldcheck"],
+            "recaptcha_pubkey"  => $_POST["recaptcha_pubkey"],
+            "recaptcha_prvkey"  => $_POST["recaptcha_prvkey"],
 
             // meta field that is true if any of the hurdles is enabled.
             "anyhurdle"         => $_POST["blockmultipost"]    !== "none" ||
@@ -46,7 +48,7 @@
     include_once "./include/admin/PhorumInputForm.php";
     $frm = new PhorumInputForm ("", "post", "Save");
     $frm->hidden("module", "modsettings");
-    $frm->hidden("mod", "spamhurdles"); 
+    $frm->hidden("mod", "spamhurdles");
 
     $frm->addbreak("Non interactive spam blocking methods for posting messages");
 
@@ -89,9 +91,10 @@
         'asciiart'   => 'Code, drawn using ASCII art',
         'plaintext'  => 'Code, plain text format',
         'maptcha'    => 'Solve a simple math question',
+        'recaptcha'  => 'Code, using the reCAPTCHA service',
 #        'quiz'       => 'Solve a quiz question',
     );
-    $row = $frm->addrow("Which type of CAPTCHA?", $frm->select_tag("captcha_type", $captchaspec, $PHORUM["mod_spamhurdles"]["captcha_type"]));
+    $row = $frm->addrow("Which type of CAPTCHA?", $frm->select_tag("captcha_type", $captchaspec, $PHORUM["mod_spamhurdles"]["captcha_type"], "id=\"captcha_select\" onchange=\"handle_captcha_select()\""));
     $frm->addhelp($row, "Type of CAPTCHA", "This module supports a wide range of CAPTCHA types. See the README that was bundled with this module for detailed information on these types and for deciding which one you want to use for your site.");
 
     $row = $frm->addrow("Enable spoken CAPTCHA? You will need the program \"Flite\" for this.", $frm->checkbox("spoken_captcha", 1, "", $PHORUM["mod_spamhurdles"]["spoken_captcha"]));
@@ -102,6 +105,34 @@
     }
     $row = $frm->addrow("What is full path of the \"flite\" executable? (e.g. /usr/bin/flite)$warn", $frm->text_box("flite_location", $PHORUM["mod_spamhurdles"]["flite_location"], 30));
 
-    $frm->show();
+    $frm->addmessage(
+     "<div id=\"settings_recaptcha\" class=\"input-form-td\"
+           style=\"margin:0; padding:10px; border: 1px solid navy\">
+      For using reCAPTCHA, you need a (free) public and private key.
+      Please signup at <a href=\"http://recaptcha.net\" target=\"_new\">the
+      reCAPTCHA</a> web site and enter the public and private key for your
+      web site's domain in the fields below.<br/><br/>
+      <table><tr><td>public key</td><td>" . $frm->text_box("recaptcha_pubkey", $PHORUM["mod_spamhurdles"]["recaptcha_pubkey"], 40) . "</td></tr>" .
+      "<tr><td>private key</td><td>" . $frm->text_box("recaptcha_prvkey", $PHORUM["mod_spamhurdles"]["recaptcha_prvkey"], 40) . "</td></tr></table>
+      </div>"
+    );
 
+    $frm->show();
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+function handle_captcha_select()
+{
+    if (! document.getElementById) return;
+    sel = document.getElementById("captcha_select");
+    set = document.getElementById("settings_recaptcha");
+    captcha_id = sel.options[sel.selectedIndex].value;
+
+    set.style.display = (captcha_id == 'recaptcha' ? 'block' : 'none');
+}
+//]]>
+
+handle_captcha_select();
+</script>
+
