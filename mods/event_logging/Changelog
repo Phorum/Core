@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2007-08-17 v1.0.3
+
+    - Made the module settings screen behave in case the module is
+      not activated.
+
 2007-07-25 v1.0.2
 
     - Added an option to ignore logging of PHP notices for the admin
