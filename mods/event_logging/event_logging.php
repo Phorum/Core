@@ -37,10 +37,10 @@ function phorum_mod_event_logging_common_pre()
 /**
  * This routine is used for automatically determining the source for an
  * event that has to be logged. It can determine the source by using either
- * a trace back depth level for examining the call stack or by using 
+ * a trace back depth level for examining the call stack or by using
  * the name of a file for which the event happened.
  *
- * The depth level is used to find the caller file by looking at a 
+ * The depth level is used to find the caller file by looking at a
  * debug_backtrace() array at the given level. The level might not be the
  * same for all requests, because some logged events will take multiple
  * steps before hitting the log writing functions (for example the database
@@ -105,7 +105,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Prepare the event log data.
-    $loglevel = NULL; 
+    $loglevel = NULL;
     $type     = NULL;
     switch ($errno)
     {
@@ -148,7 +148,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     // Add request info to the details.
     $details .= "Request info:\n\n";
     foreach (array(
-        "HTTP_HOST", "HTTP_REFERER", 
+        "HTTP_HOST", "HTTP_REFERER",
         "REQUEST_URI", "REQUEST_PATH", "QUERY_STRING"
     ) as $k) {
         if (isset($_SERVER[$k]) and trim($_SERVER[$k]) != '') {
@@ -173,7 +173,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
         event_logging_writelog(array(
             "message"   => "$type: $errstr",
             "loglevel"  => $loglevel,
-            "category"  => $from_module 
+            "category"  => $from_module
                            ? EVENTLOG_CAT_MODULE
                            : EVENTLOG_CAT_APPLICATION,
             "source"    => $source,
@@ -195,7 +195,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
         // Notify the user and exit.
         print "An error occurred in the application.<br/>" .
               "The error was logged to the Phorum event log.<br/>";
-        exit(1); 
+        exit(1);
     }
 
     // Let the normal error handler take over from here
@@ -222,7 +222,7 @@ function phorum_mod_event_logging_after_register($data)
         "loglevel"  => EVENTLOG_LVL_INFO,
         "category"  => EVENTLOG_CAT_SECURITY
     ));
-    
+
     return $data;
 }
 
@@ -237,7 +237,7 @@ function phorum_mod_event_logging_failed_login($data)
         "message"   => "$location login failure for user " .
                        '"' . $data["username"] . '".',
         "details"   => "The user tried to login using the password " .
-                       '"' . $data["password"] . '".', 
+                       '"' . $data["password"] . '".',
         "loglevel"  => EVENTLOG_LVL_WARNING,
         "category"  => EVENTLOG_CAT_SECURITY
     ));
@@ -252,7 +252,7 @@ function phorum_mod_event_logging_after_login($data)
 
     if (isset($GLOBALS["PHORUM"]["user"]["username"])) {
         $username = $GLOBALS["PHORUM"]["user"]["username"];
-        
+
         event_logging_writelog(array(
             "source"    => "forum login",
             "message"   => "User $username logged in.",
@@ -260,7 +260,7 @@ function phorum_mod_event_logging_after_login($data)
             "category"  => EVENTLOG_CAT_SECURITY
         ));
     }
- 
+
     return $data;
 }
 
@@ -271,7 +271,7 @@ function phorum_mod_event_logging_before_logout()
 
     if (isset($GLOBALS["PHORUM"]["user"]["username"])) {
         $username = $GLOBALS["PHORUM"]["user"]["username"];
-        
+
         event_logging_writelog(array(
             "source"    => "forum login",
             "message"   => "User $username logged out.",
@@ -295,7 +295,7 @@ function phorum_mod_event_logging_after_post($data)
         "message_id" => $data["message_id"],
         "loglevel"   => EVENTLOG_LVL_INFO,
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -333,7 +333,7 @@ function phorum_mod_event_logging_after_edit($data)
         "message_id" => $data["message_id"],
         "loglevel"   => EVENTLOG_LVL_INFO,
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -354,11 +354,11 @@ function phorum_mod_event_logging_database_error($error)
     // Log the event.
     event_logging_writelog(array(
         "message"   => "Database error: $error",
-        "details"   => ($backtrace === NULL 
+        "details"   => ($backtrace === NULL
                         ? NULL : "\nBack trace:\n\n$backtrace"),
         "loglevel"  => EVENTLOG_LVL_ALERT,
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -385,7 +385,7 @@ function phorum_mod_event_logging_before_delete($data)
         "details"   => "Message contents:\n----\n{$message["body"]}\n----\n",
         "loglevel"  => EVENTLOG_LVL_INFO,
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -418,7 +418,7 @@ function phorum_mod_event_logging_report($data)
         "thread_id"  => $thread_id,
         "forum_id"   => $forum_id,
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -450,7 +450,7 @@ function phorum_mod_event_logging_move_thread($message_id)
         "thread_id"  => $dbmsg["thread"],
         "forum_id"   => $dbmsg["forum_id"],
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -475,7 +475,7 @@ function phorum_mod_event_logging_close_thread($message_id)
         "thread_id"  => $dbmsg["thread"],
         "forum_id"   => $dbmsg["forum_id"],
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -500,7 +500,7 @@ function phorum_mod_event_logging_reopen_thread($message_id)
         "thread_id"  => $dbmsg["thread"],
         "forum_id"   => $dbmsg["forum_id"],
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -527,7 +527,7 @@ function phorum_mod_event_logging_hide_thread($message_id)
         "thread_id"  => $dbmsg["thread"],
         "forum_id"   => $dbmsg["forum_id"],
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
@@ -552,7 +552,7 @@ function phorum_mod_event_logging_after_approve($data)
         "thread_id"  => $data[0]["thread"],
         "forum_id"   => $data[0]["forum_id"],
         "source"     => $source,
-        "category"   => $from_module 
+        "category"   => $from_module
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
