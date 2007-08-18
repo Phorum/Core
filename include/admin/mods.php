@@ -43,9 +43,14 @@ $d = dir("./mods");
 while (false !== ($entry = $d->read()))
 {
     // Some entries which we skip by default.
+    // ATTIC    : a directory that I (maurice) sometimes use for storing
+    //            deprecated modules or for moving stuff temporarily out
+    //            of the way.
+    // _vti_cnf : a directory that is created by Microsoft Frontpage for
+    //            storing settings (blame Azumandias for this one).
     if ($entry == '.' || $entry == '..' ||
-    $entry == '.svn' || $entry == 'ATTIC' ||
-    $entry == '.htaccess' || $entry == '_vti_cnf') continue;
+    $entry == '.svn' || $entry == '.htaccess' ||
+    $entry == 'ATTIC' || $entry == '_vti_cnf') continue;
 
     // Read in the module information.
     $lines = array();
