@@ -45,7 +45,7 @@ while (false !== ($entry = $d->read()))
     // Some entries which we skip by default.
     if ($entry == '.' || $entry == '..' ||
     $entry == '.svn' || $entry == 'ATTIC' ||
-    $entry == '.htaccess') continue;
+    $entry == '.htaccess' || $entry == '_vti_cnf') continue;
 
     // Read in the module information.
     $lines = array();
