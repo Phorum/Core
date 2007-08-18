@@ -37,7 +37,7 @@ if ( count( $_POST ) ) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRequired"];
     } elseif (!phorum_valid_email( $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
-    } elseif ($PHORUM['user']['email'] != $_POST["email"] && phorum_user_check_email($_POST["email"])) {
+    } elseif ($PHORUM['user']['email'] != $_POST["email"] && phorum_api_user_search("email", $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmailExists"];
     } elseif (!phorum_check_ban_lists($_POST["email"], PHORUM_BAD_EMAILS)) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
