@@ -310,7 +310,6 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     }
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];
     $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];
-    $PHORUM["DATA"]["DESCRIPTION"] = str_replace("%user%", $search_name, $PHORUM["DATA"]["LANG"]["SearchAllPostsHelp"]);
 } else {
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Search"];
 
@@ -318,8 +317,6 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     if(!empty($phorum_search)){
         $PHORUM["DATA"]["HTML_TITLE"] .= " - ".$phorum_search;
     }
-
-    $PHORUM["DATA"]["DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["SearchHelp"];
 }
 
 phorum_output("search");
