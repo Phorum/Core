@@ -71,13 +71,13 @@ function phorum_mod_bbcode_format($data)
     }
 
     // Add 'sub' support.
-    if (!empty($enabled['sub'])) {
+    if (!empty($enabled['subscript'])) {
         $search[]  = "/\[sub\](.+?)\[\/sub\]/is";
         $replace[] = "<sub class=\"bbcode\">$1</sub>";
     }
 
     // Add 'sup' support.
-    if (!empty($enabled['sup'])) {
+    if (!empty($enabled['superscript'])) {
         $search[]  = "/\[sup\](.+?)\[\/sup\]/is";
         $replace[] = "<sup class=\"bbcode\">$1</sup>";
     }
