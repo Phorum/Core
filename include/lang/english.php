@@ -413,6 +413,7 @@
         "PMSpaceFull"           =>      "The storage space for your private messages is full.",
         "PMToMailboxFull"       =>      "The message could not be sent.<br/>The mail storage space for user '%recipient%' is full.",
         "Post"                  =>      "Post message",
+        "PostPM"                =>      "Send PM",
         "Posted"                =>      "Posted",
         "Postedby"              =>      "Posted by",   // as in: Posted by user on 01-01-01 01:01pm
         "PostErrorOccured"      =>      "An error occured while trying to post this message.",

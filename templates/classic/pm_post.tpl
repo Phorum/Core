@@ -71,7 +71,7 @@
     <textarea id="message" name="message" rows="20" cols="50" style="width: 98%">{MESSAGE->message}</textarea>
     <div style="margin-top: 3px; width:99%" align="right">
       <input name="preview" type="submit" class="PhorumSubmit" value=" {LANG->Preview} " />
-      <input type="submit" class="PhorumSubmit" value=" {LANG->Post} " />
+      <input type="submit" class="PhorumSubmit" value=" {LANG->PostPM} " />
     </div>
   </div>
 </form>

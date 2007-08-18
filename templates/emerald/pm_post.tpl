@@ -89,7 +89,7 @@
         {HOOK "tpl_editor_buttons"}
 
       <input name="preview" type="submit" value=" {LANG->Preview} " />
-      <input type="submit" value=" {LANG->Post} " />
+      <input type="submit" value=" {LANG->PostPM} " />
 
     </div>
 
