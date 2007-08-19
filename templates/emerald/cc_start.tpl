@@ -18,9 +18,7 @@
         <dd>{PROFILE->signature_formatted}</dd>
     </dl>
 </div>
-{IF PROFILE->admin}{VAR SHOWPERMS 1}{/IF}
-{IF UserPerms}{VAR SHOWPERMS 1}{/IF}
-{IF SHOWPERMS}
+{IF PROFILE->admin OR UserPerms}
     <div class="generic">
     <h4>{LANG->UserPermissions}</h4>
     <table cellspacing="0" border="0">
