@@ -131,7 +131,7 @@ if(!empty($phorum_search)){
 
         $match_number = $start + 1;
 
-        $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
+        $forums = phorum_db_get_forums(0, -1, $PHORUM["vroot"]);
 
         // For announcements, we will put the current forum_id in the record.
         // Else the message cannot be read (Phorum will redirect the user
