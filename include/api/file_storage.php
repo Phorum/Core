@@ -345,7 +345,6 @@ function phorum_api_file_check_write_access($file)
  */
 function phorum_api_file_store($file)
 {
-
     $PHORUM = $GLOBALS["PHORUM"];
 
     // Check if we really got an array argument for $file.
@@ -357,6 +356,7 @@ function phorum_api_file_store($file)
     // Check and preprocess the data from the $file argument.
     // First we create a new empty file structure to fill.
     $checkfile = array(
+        "file_id"     => NULL,
         "user_id"     => NULL,
         "filename"    => NULL,
         "filesize"    => NULL,
@@ -371,6 +371,7 @@ function phorum_api_file_store($file)
     {
         switch ($k)
         {
+            case "file_id":
             case "user_id":
             case "message_id":
             case "filesize":
@@ -429,6 +430,7 @@ function phorum_api_file_store($file)
 
     // See if all required values are set.
     foreach ($checkfile as $k => $v) {
+        if ($k == 'file_id') continue; // is NULL for new files.
         if ($v === NULL) trigger_error(
             "phorum_api_file_store(): \$file parameter misses the " .
             '"' . htmlspecialchars($k) . '" field.',
@@ -439,20 +441,25 @@ function phorum_api_file_store($file)
     // All data was checked, so now we can continue with the checked data.
     $file = $checkfile;
 
-    // Insert a skeleton file record in the database. We do this, to
-    // get hold of a new file_id. That file_id can be passed on to
-    // the hook below, so alternative storage systems know directly
-    // for what file_id they will have to store data, without having
-    // to store the full data in the database already.
-    $file_id = phorum_db_file_save(array(
-        "filename"   => $file["filename"],
-        "filesize"   => 0,
-        "file_data"  => "",
-        "user_id"    => 0,
-        "message_id" => 0,
-        "link"       => PHORUM_LINK_TEMPFILE
-    ));
-    $file["file_id"] = $file_id;
+    // New files need a file_id.
+    $created_skeleton_file = FALSE;
+    if (empty($file["file_id"])) {
+      // Insert a skeleton file record in the database. We do this, to
+      // get hold of a new file_id. That file_id can be passed on to
+      // the hook below, so alternative storage systems know directly
+      // for what file_id they will have to store data, without having
+      // to store the full data in the database already.
+      $file_id = phorum_db_file_save(array(
+          "filename"   => $file["filename"],
+          "filesize"   => 0,
+          "file_data"  => "",
+          "user_id"    => 0,
+          "message_id" => 0,
+          "link"       => PHORUM_LINK_TEMPFILE
+      ));
+      $file["file_id"] = $file_id;
+      $created_skeleton_file = TRUE;
+    }
 
     // Allow modules to handle file data storage. If a module implements
     // a different data storage method, it can store the file data in its
@@ -472,8 +479,10 @@ function phorum_api_file_store($file)
         if ($hook_result === FALSE)
         {
             // Cleanup the skeleton file from the database.
-            phorum_db_file_delete($file["file_id"]);
-            $file["file_id"] = NULL;
+            if ($created_skeleton_file) {
+                phorum_db_file_delete($file["file_id"]);
+                $file["file_id"] = NULL;
+            }
 
             return FALSE;
         }
@@ -493,8 +502,8 @@ function phorum_api_file_store($file)
         $file["file_data"] = base64_encode($file["file_data"]);
     }
 
-    // Update the skeleton file record that we created to match the real
-    // file data. This acts like a commit action for the file storage.
+    // Update the (skeleton) file record to match the real file data.
+    // This acts like a commit action for the file storage.
     phorum_db_file_save ($file);
 
     return $file;

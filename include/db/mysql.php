@@ -4184,6 +4184,9 @@ function phorum_db_file_get($file_id, $include_file_data = TRUE)
 /**
  * Add or updates a file.
  *
+ * @todo Update docs, because it now is based on separate parameters,
+ *       while the function itself requires an array now.
+ *
  * @param integer $user_id
  *     The id of the user for which to add the file.
  *     If this file is linked to a message by an anonymous
