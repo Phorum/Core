@@ -78,7 +78,7 @@ if (count($_POST) > 0) {
         }
 
         // Is the email address available in the database?
-        elseif ($uid = phorum_user_check_email($_POST["lostpass"])) {
+        elseif ($uid = phorum_api_user_search("email", $_POST["lostpass"])) {
 
             // An existing user id was found for the entered email
             // address. Retrieve the user.
