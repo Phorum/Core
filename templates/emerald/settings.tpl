@@ -49,6 +49,14 @@
 {VAR logo_background_color "#78ad78"}
 {VAR breadcrumb_border_color "#b6b6b6"}
 {VAR post_moderation_background_color "#fffdf6"}
+{VAR information_border_color "#62a762"}
+{VAR information_background_color "#e6ffe6"}
+{VAR warning_border_color "#A76262"}
+{VAR warning_background_color "#FFD1D1"}
+{VAR span_addition_background_color "#CBFFCB"}
+{VAR span_addition_font_color "#000000"}
+{VAR span_removal_background_color "#FFCBCB"}
+{VAR span_removal_font_color "#000000"}
 
 {! -- Background Images -- }
 {VAR header_background_image "templates/emerald/images/header_background.png"}

@@ -160,8 +160,8 @@ img {
 
 #phorum div.information {
     padding: 8px;
-    border: 1px solid #62a762;
-    background-color: #e6ffe6;
+    border: 1px solid {information_border_color};
+    background-color: {information_background_color};
     margin-bottom: 8px;
 }
 
@@ -173,9 +173,8 @@ img {
 }
 
 #phorum div.warning {
-    /* does not use template values on purpose */
-    border: 1px solid #A76262;
-    background-color: #FFD1D1;
+    border: 1px solid {warning_border_color};
+    background-color: {warning_background_color};
     padding: 8px;
     margin-bottom: 8px;
 }
@@ -453,15 +452,13 @@ img {
 /* Changes styles */
 
 #phorum span.addition {
-    /* does not use template values on purpose */
-    background-color: #CBFFCB;
-    color: black;
+    background-color: {span_addition_background_color};
+    color: {span_addition_font_color};
 }
 
 #phorum span.removal {
-    /* does not use template values on purpose */
-    background-color: #FFCBCB;
-    color: black;
+    background-color: {span_removal_background_color};
+    color: {span_removal_font_color};
 }
 
 /* Posting styles */
