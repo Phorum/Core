@@ -26,6 +26,7 @@
                 <ul>
                     <li><a {IF PROFILE->PANEL "forum"}class="current" {/IF}href="{URL->CC6}">{LANG->EditBoardsettings}</a></li>
                     <li><a {IF PROFILE->PANEL "password"}class="current" {/IF}href="{URL->CC7}">{LANG->ChangePassword}</a></li>
+                    {HOOK "tpl_cc_menu_options_hook"}
                 </ul>
 
                 {IF MYFILES}
@@ -47,8 +48,10 @@
                         {IF GROUP_MODERATOR}
                             <li><a {IF PROFILE->PANEL "groupmod"}class="current" {/IF}href="{URL->CC15}">{LANG->GroupMembership}</a></li>
                         {/IF}
+                        {HOOK "tpl_cc_menu_moderator_hook"}
                     </ul>
                 {/IF}
+
             </div>
         </td>
 
