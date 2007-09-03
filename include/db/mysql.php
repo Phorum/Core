@@ -382,24 +382,30 @@ function phorum_db_update_settings($settings)
             $field = phorum_db_interact(DB_RETURN_QUOTED, $field);
             $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
 
-            // Delete existing settings record.
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "DELETE FROM {$PHORUM['settings_table']}
-                 WHERE  name = '$field'",
-                null,
-                DB_MASTERQUERY
-            );
-
-            // Insert new settings record.
-            phorum_db_interact(
+            // Try to insert a new settings record.
+            $res = phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['settings_table']}
                         (data, type, name)
                  VALUES ('$value', '$type', '$field')",
                  null,
-                 DB_MASTERQUERY
+                 DB_DUPKEYOK | DB_MASTERQUERY
             );
+            // If no result was returned, then the query failed. This probably
+            // means that we already have the settings record in the database.
+            // So instead of inserting a record, we need to update one here.
+            if (!$res) {
+              phorum_db_interact(
+                  DB_RETURN_RES,
+                  "UPDATE {$PHORUM['settings_table']}
+                   SET    data = '$value',
+                          type = '$type'
+                   WHERE  name = '$field'",
+                  null,
+                  DB_MASTERQUERY
+              );
+            }
+
         }
     }
     else trigger_error(
@@ -3805,13 +3811,16 @@ function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
     );
 
     // Insert a new subscription record.
+    // DB_DUPKEYOK is used to prevent errors in case of race conditions
+    // (if some other process runs the same function and inserts a new
+    // record, right before this process inserts one).
     phorum_db_interact(
         DB_RETURN_RES,
         "INSERT INTO {$PHORUM['subscribers_table']}
                 (user_id, forum_id, thread, sub_type)
          VALUES ($user_id, $forum_id, $thread, $type)",
          null,
-         DB_MASTERQUERY
+         DB_DUPKEYOK | DB_MASTERQUERY
     );
 
     return TRUE;
