@@ -17,6 +17,24 @@ Table of contents:
 12. Why do I always end up at the top of a page when using the back button?
 
 
+1. Why did you switch from number of replies to number of posts in the list?
+-------------------------------------------------------------------------------
+	In short, the people writing the code liked it better.  You can modify
+	your template by putting this line inside your list.tpl file.
+	
+		 <?php $PHORUM['TMP']['ROWS']['thread_count']--; ?>
+		 
+	Just put that right after the line that says:
+		
+		{LOOP ROWS}
+
+		
+2. Does Phorum have avatars or user rankings like (insert UBB clone)?
+-------------------------------------------------------------------------------
+
+    Not by default. There are modules available to add this functionality.
+
+
 3. How do I install a module?
 -------------------------------------------------------------------------------
 
@@ -38,6 +56,15 @@ Table of contents:
     You can also extract the file on your home computer and upoad them to the
     server using FTP. In that case you should just upload the entire module
     directory into /phorum5/mods
+
+
+4. Why don't non-registered users have new indicators or any options?
+-------------------------------------------------------------------------------
+
+    Because of many cookie problems that plagued Phorum 3, we have decided
+    to store all user settings in the database for Phorum 5.  The down side
+    of this is that users must be registered to use these features.  The up
+    side is that the new indicator really works like it should in Phorum 5.
 
 
 5. Why doesn't the default template use {insert latest greatest W3C concept}?
@@ -125,4 +152,37 @@ Table of contents:
     This applys to PHP4 only.  We may reconsider once PHP5 is widespread.
 
 
+10. What are Sticky posts?
+-------------------------------------------------------------------------------
+
+    Sticky posts stay at the top of the forum they are posted in and do not
+    get bumped down as new topics are posted.
+
+
+11. Can I post announcements?
+-------------------------------------------------------------------------------
+
+    For announcements, create a forum in which you will post announcement
+    messages. Setup the permissions, so only the users who are allowed to
+    create new announcements can post to this forum.
+
+    After this, enable the Announcements module and edit the settings
+    for that module. In the settings, point the module at the new
+    announcement forum.
+
+
+12. Why do I always end up at the top of a page when using the back button?
+-------------------------------------------------------------------------------
+
+    Your PHP setup is probably sending headers along with the reply, telling
+    the browser to not cache the page. Therefore, when going to the previous
+    page, it will be reloaded as if it were a new page. You can tweak the
+    PHP settings to not have PHP sending these headers. Edit the php.ini and
+    set the "session.cache_limiter" directive to have no value at all. So
+    the line in php.ini would end up like this:
+
+    session.cache_limiter =
+
+    After editing the php.ini, restart the webserver. From then on, using
+    the back button should work like expected.
 
