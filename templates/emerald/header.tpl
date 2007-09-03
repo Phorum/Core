@@ -44,9 +44,6 @@ Some Icons courtesy of:
 <div id="phorum">
 {IF NOT PRINTVIEW}
 <div id="user-info">
-<span style="float:left">
-<a href="{URL->MOD_GOOGLE_MAPS_USERMAP}">User map</a>
-</span>
 {IF USER->user_id}
 
 {LANG->Welcome}, {USER->username} <small>(<a href="{URL->LOGINOUT}">{LANG->LogOut}</a>)</small>
