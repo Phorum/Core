@@ -136,12 +136,71 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BackToForumList'];
 }
 
-// Load the include file for the current panel.
+// Load the code for the current panel.
 $panel = basename($panel);
-if (file_exists("./include/controlcenter/$panel.php")) {
-    include "./include/controlcenter/$panel.php";
-} else {
-    include "./include/controlcenter/summary.php";
+/**
+ * [hook]
+ *     cc_panel
+ *
+ * [description]
+ *     This hook can be used to implement an extra control center panel
+ *     or to override an existing panel if you like.
+ *
+ * [category]
+ *     Control center
+ *
+ * [when]
+ *     Right before loading a standard panel's include file.
+ *
+ * [input]
+ *     An array containing the following fields:
+ *     <ul>
+ *     <li>panel:
+ *         the name of the panel that has to be loaded. The module will
+ *         have to check this field to see if it should handle the
+ *         panel or not.
+ *     <li>template:
+ *         the name of the template that has to be loaded. This field should
+ *         be filled by the module if it wants to load a specific template.
+ *     <li>handled:
+ *         if a module does handle the panel, then it can set this field
+ *         to a true value, to prevent Phorum from running the standard
+ *         panel code.
+ *     <li>error:
+ *         modules can fill this field with an error message to show.
+ *     <li>okmsg:
+ *         modules can fill this field with an ok message to show.
+ *     </ul>
+ *
+ * [output]
+ *     The same array as the one that was used for the hook call
+ *     argument, possibly with the "template", "handled", "error" and
+ *     "okmsg" fields updated in it.
+ */
+$hook_info = array(
+    'panel'    => $panel,
+    'template' => NULL,
+    'handled'  => FALSE,
+    'error'    => NULL,
+    'okmsg'    => NULL
+);
+if (isset($PHORUM['hooks']['cc_panel'])) {
+    $hook_info = phorum_hook('cc_panel', $hook_info);
+}
+
+// Retrieve template, error and okmsg info from the module info.
+if ($hook_info['template'] !== NULL) { $template = $hook_info['template']; }
+if ($hook_info['okmsg'] !== NULL)    { $okmsg    = $hook_info['okmsg']; }
+if ($hook_info['error'] !== NULL)    { $error    = $hook_info['error']; }
+
+// If no module did handle the control center panel, then try to load
+// a standard control center panel file.
+if (!$hook_info['handled']) {
+    if (file_exists("./include/controlcenter/$panel.php")) {
+        include "./include/controlcenter/$panel.php";
+    } else {
+        include "./include/controlcenter/summary.php";
+    }
 }
 
 if(empty($PHORUM["DATA"]["HEADING"])){

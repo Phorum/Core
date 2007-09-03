@@ -140,6 +140,11 @@ while (false !== ($entry = $d->read()))
 }
 $d->close();
 
+// Sort the modules by their title, so they show up in an easy
+// to use way for the user in the admin interface.
+function module_sort($a, $b) { return strcmp($a["title"], $b["title"]); }
+uasort($modules_info, "module_sort");
+
 // Show module warnings to the admin in a non intrusive way. In a lot
 // of cases, the admin won't be the one to fix the problems, therefore
 // we do not want to display too much noise about warnings here.
@@ -167,11 +172,6 @@ if ($deprecate_warn != '') {
     </div>
     <?php
 }
-
-// Sort the modules by their title, so they show up in an easy
-// to use way for the user in the admin interface.
-function module_sort($a, $b) { return strcmp($a["title"], $b["title"]); }
-uasort($modules_info, "module_sort");
 
 // ----------------------------------------------------------------------
 // Process posted form data
