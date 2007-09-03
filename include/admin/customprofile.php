@@ -15,6 +15,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 if(!defined("PHORUM_ADMIN")) return;
@@ -28,15 +29,15 @@ if(count($_POST) && $_POST['name'] != '')
     $_POST['curr'] = $_POST['curr'] == 'NEW' ? 'NEW' : (int)$_POST['curr'];
     $_POST['name'] = trim($_POST['name']);
     $_POST['length'] = (int)$_POST['length'];
-    $_POST['html_disabled'] = isset($_POST['html_disabled']) ? 1 : 0;
-    $_POST['show_in_admin'] = isset($_POST['show_in_admin']) ? 1 : 0;
+    $_POST['html_disabled'] = !empty($_POST['html_disabled']) ? 1 : 0;
+    $_POST['show_in_admin'] = !empty($_POST['show_in_admin']) ? 1 : 0;
 
     // Check if there is a deleted field with the same name.
     // If this is the case, then we want to give the admin a chance
     // to restore the deleted field.
     $check = phorum_api_custom_profile_field_byname($_POST['name']);
     if ($check !== FALSE && !empty($check["deleted"]))
-    { 
+    {
       // Handle restoring a deleted field.
       if (isset($_POST["restore"])) {
         if (phorum_api_custom_profile_field_restore($check["id"]) === FALSE) {
@@ -61,26 +62,26 @@ if(count($_POST) && $_POST['name'] != '')
       else
       { ?>
         <div class="PhorumInfoMessage">
-          <strong>Restored deleted field?</strong><br/></br>
+          <strong>Restore deleted field?</strong><br/></br>
           A previously deleted custom profile field with the same name
           "<?php print htmlspecialchars($_POST['name']) ?>"
-          was found.<br/<br/>
+          was found.<br /><br />
           If you accidentally deleted that old field, then
-          you can choose to restore the old field configuration and
+          you can choose to restore the old field's configuration and
           data. You can also create a totally new field and ignore
           the deleted field. What do you want to do?<br/><br/>
           <form action="<?php print $PHORUM["admin_http_path"] ?>" method="post">
-            <input type="hidden" name="module" 
+            <input type="hidden" name="module"
                 value="<?php print $module; ?>" />
-            <input type="hidden" name="curr" 
+            <input type="hidden" name="curr"
                 value="<?php print htmlspecialchars($_POST['curr']) ?>" />
-            <input type="hidden" name="name" 
+            <input type="hidden" name="name"
                 value="<?php print htmlspecialchars($_POST['name']) ?>" />
-            <input type="hidden" name="length" 
+            <input type="hidden" name="length"
                 value="<?php print htmlspecialchars($_POST['length']) ?>" />
-            <input type="hidden" name="html_disabled" 
+            <input type="hidden" name="html_disabled"
                 value="<?php print htmlspecialchars($_POST['html_disabled']) ?>" />
-            <input type="hidden" name="show_in_admin" 
+            <input type="hidden" name="show_in_admin"
                 value="<?php print htmlspecialchars($_POST['show_in_admin']) ?>" />
             <input type="submit" name="restore" value="Restore deleted field" />
             <input type="submit" name="create" value="Create new field" />
@@ -92,21 +93,22 @@ if(count($_POST) && $_POST['name'] != '')
     }
 
     // $_POST could have been emptied in the previous code.
-    if(count($_POST))
+    if (count($_POST))
     {
         // Create or update the custom profile field.
-        $field = phorum_api_custom_profile_field_configure(array (
+        $field = array(
             'id'            => $_POST['curr'] == 'NEW' ? NULL : $_POST['curr'],
             'name'          => $_POST['name'],
             'length'        => $_POST['length'],
             'html_disabled' => $_POST['html_disabled'],
             'show_in_admin' => $_POST['show_in_admin'],
-        ));
+        );
+        $field = phorum_api_custom_profile_field_configure($field);
 
         if ($field === FALSE) {
             $error = phorum_api_strerror();
             $action = $_POST['curr'] == 'NEW' ? "create" : "update";
-            phorum_admin_error("Failed to $action profile field: ".$error); 
+            phorum_admin_error("Failed to $action profile field: ".$error);
         } else {
             $action = $_POST['curr'] == 'NEW' ? "created" : "updated";
             phorum_admin_okmsg("Profile field $action");
@@ -114,7 +116,7 @@ if(count($_POST) && $_POST['name'] != '')
     }
 }
 
-// Confirm deleting a profile field. 
+// Confirm deleting a profile field.
 if (isset($_GET["curr"]) && isset($_GET["delete"]))
 { ?>
   <div class="PhorumInfoMessage">
@@ -157,7 +159,7 @@ if ($field === NULL) {
     $name          = $field['name'];
     $length        = $field['length'];
     $html_disabled = $field['html_disabled'];
-    $show_in_admin = isset($field['show_in_admin']) 
+    $show_in_admin = isset($field['show_in_admin'])
                    ? $field['show_in_admin'] : 0;
     $title         = "Edit Profile Field";
     $submit        = "Update";
@@ -183,19 +185,19 @@ $frm->addhelp($row, "Disable HTML", "
     in this field. When displaying the custom field's data,
     Phorum will automatically replace special HTML characters
     with their safe HTML counter parts.<br/>
-    <br/> 
+    <br/>
     There are two possible reasons for disabling it:<br/>
     <ol>
       <li>You need HTML in this field and run a module which formats
           the field data into safe html (before storing it to the database
           or before displaying it on screen).
-      <li>You run a module that needs to store an array in the field. 
+      <li>You run a module that needs to store an array in the field.
     </ol>
     So in practice, you only disable this option if module documentation tells
     you to do so or if you are writing a module which needs this. If you don't
     understand what's going on here, then don't disable the option.<br/>
-    <br/>    
-    To learn about the security risks involved, search for \"XSS\" and 
+    <br/>
+    To learn about the security risks involved, search for \"XSS\" and
     \"cross site scripting\" on the internet.");
 
 $row = $frm->addrow("Show in user admin", $frm->checkbox("show_in_admin",1,"Yes",$show_in_admin));
@@ -206,7 +208,7 @@ $frm->show();
 // If we are not in edit mode, we show the list of available profile fields.
 if ($curr == "NEW")
 {
-    print "Creating a custom profile field here merely allows for the use 
+    print "Creating a custom profile field here merely allows for the use
            of the field. If you want to use it as an extra info field for
            your users, you will need to edit the register, control center
            and profile templates to actually allow users to enter data in
@@ -224,7 +226,7 @@ if ($curr == "NEW")
 
     if ($active_fields > 0)
     { ?>
-        <table border="0" cellspacing="1" cellpadding="0" 
+        <table border="0" cellspacing="1" cellpadding="0"
                class="PhorumAdminTable" width="100%">
         <tr>
           <td class="PhorumAdminTableHead">Field</td>
