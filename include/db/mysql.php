@@ -6942,7 +6942,8 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (file_id),
            KEY add_datetime (add_datetime),
-           KEY message_id_link (message_id,link)
+           KEY message_id_link (message_id,link),
+           KEY user_id_link (user_id,link)
        )",
 
       "CREATE TABLE {$PHORUM['banlist_table']} (
