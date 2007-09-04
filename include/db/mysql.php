@@ -4531,7 +4531,6 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
 }
 // }}}
 
-
 // {{{ Function: phorum_db_newflag_check()
 /**
  * Checks if there are new messages in the forums given in forum_ids
@@ -4581,8 +4580,8 @@ function phorum_db_newflag_check($forum_ids)
     }
 
     return $new_checks;
-
 }
+// }}}
 
 // {{{ Function: phorum_db_newflag_get_unread_count()
 /**
@@ -6984,7 +6983,8 @@ function phorum_db_create_tables()
            datestamp                int unsigned   NOT NULL default '0',
            meta                     mediumtext     NOT NULL,
 
-           PRIMARY KEY (pm_message_id)
+           PRIMARY KEY (pm_message_id),
+           KEY user_id (user_id)
        )",
 
       "CREATE TABLE {$PHORUM['pm_folders_table']} (
