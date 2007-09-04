@@ -1220,11 +1220,18 @@ function phorum_api_user_delete($user_id)
 
     // If user caching is enabled, we remove the user from the cache.
     if (!empty($GLOBALS["PHORUM"]['cache_users'])) {
-        phorum_cache_remove('user',$user_id);
+        phorum_cache_remove('user', $user_id);
     }
 
-    // Remove the user from the database.
+    // Remove the user and user related data from the database.
     phorum_db_user_delete($user_id);
+
+    // Delete the personal user files for this user.
+    require_once('./include/api/file_storage.php');
+    $files = phorum_api_file_list(PHORUM_LINK_USER, $user_id, 0);
+    foreach ($files as $file_id => $file) {
+        phorum_api_file_delete($file_id);
+    }
 }
 // }}}
 

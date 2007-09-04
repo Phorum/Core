@@ -4009,16 +4009,6 @@ function phorum_db_user_delete($user_id)
     // Collect all orphin private messages from the database. This might
     // catch some more orphin messages than the ones for the deleted user
     // alone.
-    /**
-     * @todo We do have a race condition here (if a new PM is inserted and
-     *       this cleanup is run just before the new PM xrefs are inserted).
-     *       Some locking might be useful to keep things straight, but I
-     *       don't think we've got a really big risk here. We could add
-     *       an extra field to the pm messages which indicates the posting
-     *       status. That field could be changed to some ready state after
-     *       posting the PM and linking all xrefs. The query below can
-     *       then ignore the private messages which are not yet fully posted.
-     */
     $pms = phorum_db_interact(
         DB_RETURN_ROWS,
         "SELECT {$PHORUM['pm_messages_table']}.pm_message_id
@@ -4039,17 +4029,6 @@ function phorum_db_user_delete($user_id)
              DB_MASTERQUERY
         );
     }
-
-    // Delete personal files that are linked to this user.
-    phorum_db_interact(
-        DB_RETURN_RES,
-        "DELETE FROM {$PHORUM['files_table']}
-         WHERE  user_id    = $user_id AND
-                message_id = 0 AND
-                link       = '".PHORUM_LINK_USER."'",
-         null,
-         DB_MASTERQUERY
-    );
 
     // Change the forum postings into anonymous postings.
     // If PHORUM_DELETE_CHANGE_AUTHOR is set, then the author field is
