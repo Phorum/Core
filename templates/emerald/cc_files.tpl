@@ -31,6 +31,16 @@
                 <td width="40%">{FILES->dateadded}</td>
             </tr>
         {/LOOP FILES}
+
+        <tr>
+            <td colspan="4" align="right" class="alt">
+                <small>
+                    {LANG->TotalFiles}: {TOTAL_FILES}&nbsp;&nbsp;{LANG->TotalFileSize}: {TOTAL_FILE_SIZE}
+                </small>
+            </td>
+        </tr>
+
+
     </table>
-    <input type="submit" value="{LANG->Delete}" />&nbsp;&nbsp;&nbsp;{LANG->TotalFiles}: {TOTAL_FILES}&nbsp;&nbsp;{LANG->TotalFileSize}: {TOTAL_FILE_SIZE}
+    <input type="submit" value="{LANG->Delete}" />
 </form>
