@@ -4427,14 +4427,9 @@ function phorum_db_list_stale_files()
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // WHERE statement for selecting  files that are linked to
-    // the editor and were added a while ago. These are from
-    // posts that were abandoned before posting.
-    $orphin_editor_where =
-        "link = '".PHORUM_LINK_EDITOR."' " .
-        "AND add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME);
-
     // Select orphin editor files.
+    // These are files that are linked to the editor and that were added
+    // a while ago. These are from posts that were abandoned before posting.
     $stale_files = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT file_id,
@@ -4443,7 +4438,9 @@ function phorum_db_list_stale_files()
                 add_datetime,
                 'Attachments, left behind by unposted messages' AS reason
          FROM   {$PHORUM['files_table']}
-         WHERE  $orphin_editor_where",
+         WHERE  link = '".PHORUM_LINK_EDITOR."' 
+                AND
+                add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME),
         'file_id',
         DB_GLOBALQUERY
     );
