@@ -4126,7 +4126,8 @@ function phorum_db_get_file_list($link_type = NULL, $user_id = NULL, $message_id
                 filesize,
                 add_datetime
          FROM   {$PHORUM['files_table']}
-         $where",
+         $where
+         ORDER  BY file_id",
         'file_id'
     );
 }
