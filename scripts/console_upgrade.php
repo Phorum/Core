@@ -68,12 +68,13 @@ if(!phorum_db_check_connection()){
 $upgrades = phorum_dbupgrade_getupgrades();
 $total = count($upgrades);
 $index = 0;
-foreach ($upgrades as $upgrade)
+foreach ($upgrades as $id => $upgrade)
 {
     $index++;
 
     if (!$noprompt) {
-        echo "Press ENTER to run upgrade $index of $total or CTRL+C to stop > ";
+        echo "Next upgrade: $id ($index of $total)\n";
+        echo "Press ENTER to run this upgrade or CTRL+C to stop > ";
         fgets(STDIN);
     } else {
         echo "Running upgrade $index of $total > ";
