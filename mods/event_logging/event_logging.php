@@ -8,6 +8,8 @@
 // Direct access to this file is not allowed.
 if (! defined("PHORUM")) return;
 
+$GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"] = 0;
+
 require_once("./mods/event_logging/db.php");
 
 require_once("./mods/event_logging/defaults.php");
@@ -104,6 +106,12 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // Prevention against recursive logging calls.
+    if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"])) {
+        return;
+    }
+    $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"]++;
+
     // Prepare the event log data.
     $loglevel = NULL;
     $type     = NULL;
@@ -136,7 +144,10 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 
     // Nothing to do? Then return and let PHP handle the problem
     // (works for PHP5, I don't know what PHP4 does here).
-    if ($loglevel === NULL) return FALSE;
+    if ($loglevel === NULL) {
+        $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"]--;
+        return FALSE;
+    }
 
     // Create detailed info.
     $details = "$type generated at $file:$line\n";
@@ -164,6 +175,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     // those by default.
     if ($source == 'admin' && !$from_module && $loglevel == EVENTLOG_LVL_DEBUG) {
         if ($PHORUM["mod_event_logging"]["do_log_php_notice_ignore_in_admin"]) {
+            $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"]--;
             return FALSE;
         }
     }
@@ -200,6 +212,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 
     // Let the normal error handler take over from here
     // (works for PHP5, I don't know what PHP4 does here).
+    $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"]--;
     return FALSE;
 }
 
@@ -346,6 +359,12 @@ function phorum_mod_event_logging_database_error($error)
     if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_database_error"])
         return $error;
 
+    // Prevention against recursive logging calls.
+    if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"])) {
+        return;
+    }
+    $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"]++;
+
     // Construct a back trace.
     $backtrace = phorum_generate_backtrace(3);
 
@@ -362,6 +381,8 @@ function phorum_mod_event_logging_database_error($error)
                         ? EVENTLOG_CAT_MODULE
                         : EVENTLOG_CAT_APPLICATION
     ));
+
+    $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"]--;
 
     return $error;
 }
