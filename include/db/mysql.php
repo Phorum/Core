@@ -4076,6 +4076,62 @@ function phorum_db_user_delete($user_id)
 }
 // }}}
 
+// {{{ Function: phorum_db_get_file_list()
+/**
+ * Retrieve a list of files from the database.
+ *
+ * @param string $link_type
+ *     The type of link to retrieve from the database. Normally this is one
+ *     of the Phorum built-in link types, but it can also be a custom
+ *     link type (e.g. if a module uses the file storage on its own).
+ *     This parameter can be NULL to retrieve any link type.
+ *
+ * @param integer $user_id
+ *     The user_id to retrieve files for or NULL to retrieve files for
+ *     any user_id.
+ *
+ * @param integer $message_id
+ *     The message_id to retrieve files for or NULL to retrieve files for
+ *     any message_id.
+ *
+ * @return array
+ *     An array of files, indexed by file_id.
+ *     The array elements are arrays containing the fields:
+ *     file_id, filename, filesize and add_datetime.
+ */
+function phorum_db_get_file_list($link_type = NULL, $user_id = NULL, $message_id = NULL)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+
+    $where = '';
+    $clauses = array();
+    if ($link_type !== NULL) {
+        $qtype = phorum_db_interact(DB_RETURN_QUOTED, $link_type);
+        $clauses[] = "link = '$qtype'";
+    }
+    if ($user_id !== NULL) {
+        $clauses[] = 'user_id = ' . (int) $user_id;
+    }
+    if ($message_id !== NULL) {
+        $clauses[] = 'message_id = ' . (int) $message_id;
+    }
+    if (count($clauses)) {
+        $where = 'WHERE ' . implode(' AND ', $clauses);
+    }
+
+    return phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT file_id,
+                filename,
+                filesize,
+                add_datetime
+         FROM   {$PHORUM['files_table']}
+         $where",
+        'file_id'
+    );
+}
+// }}}
+
 // {{{ Function: phorum_db_get_user_file_list()
 /**
  * Retrieve a list of personal files for a user.
@@ -4090,25 +4146,7 @@ function phorum_db_user_delete($user_id)
  */
 function phorum_db_get_user_file_list($user_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    settype($user_id, 'int');
-
-    // Select the personal user files from the database.
-    $files = phorum_db_interact(
-        DB_RETURN_ASSOCS,
-        "SELECT file_id,
-                filename,
-                filesize,
-                add_datetime
-         FROM   {$PHORUM['files_table']}
-         WHERE  user_id    = $user_id AND
-                message_id = 0 AND
-                link       = '".PHORUM_LINK_USER."'",
-        'file_id'
-    );
-
-    return $files;
+    return phorum_db_get_file_list(PHORUM_LINK_USER, $user_id, 0);
 }
 // }}}
 
@@ -4126,24 +4164,7 @@ function phorum_db_get_user_file_list($user_id)
  */
 function phorum_db_get_message_file_list($message_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    settype($message_id, 'int');
-
-    // Select the message files from the database.
-    $files = phorum_db_interact(
-        DB_RETURN_ASSOCS,
-        "SELECT file_id,
-                filename,
-                filesize,
-                add_datetime
-         FROM   {$PHORUM['files_table']}
-         WHERE  message_id = $message_id AND
-                link       = '".PHORUM_LINK_MESSAGE."'",
-        'file_id'
-    );
-
-    return $files;
+    return phorum_db_get_file_list(PHORUM_LINK_MESSAGE, NULL, $message_id);
 }
 // }}}
 

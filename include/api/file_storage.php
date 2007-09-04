@@ -425,6 +425,14 @@ function phorum_api_file_store($file)
                     E_USER_ERROR
                 );
                 break;
+            default:
+                if (empty($checkfile["message_id"])) {
+                    $checkfile["message_id"] = 0;
+                }
+                if (empty($checkfile["user_id"])) {
+                    $checkfile["user_id"] = 0;
+                }
+                break;
         }
     }
 
@@ -941,6 +949,35 @@ function phorum_api_file_delete($file)
 
     // Delete the file from the Phorum database.
     phorum_db_file_delete($file_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_file_list()
+/**
+ * Retrieve a list of files.
+ *
+ * @param string $link_type
+ *     The type of link to retrieve from the database. Normally this is one
+ *     of the Phorum built-in link types, but it can also be a custom
+ *     link type (e.g. if a module uses the file storage on its own).
+ *     This parameter can be NULL to retrieve any link type.
+ *
+ * @param integer $user_id
+ *     The user_id to retrieve files for or NULL to retrieve files for
+ *     any user_id.
+ *
+ * @param integer $message_id
+ *     The message_id to retrieve files for or NULL to retrieve files for
+ *     any message_id.
+ *
+ * @return array
+ *     An array of files, indexed by file_id.
+ *     The array elements are arrays containing the fields:
+ *     file_id, filename, filesize and add_datetime.
+ */
+function phorum_api_file_list($link_type = NULL, $user_id = NULL, $message_id = NULL)
+{
+    return phorum_db_get_file_list($link_type, $user_id, $message_id);
 }
 // }}}
 
