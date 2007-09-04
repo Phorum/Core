@@ -981,6 +981,82 @@ function phorum_api_file_list($link_type = NULL, $user_id = NULL, $message_id = 
 }
 // }}}
 
+// {{{ Function: phorum_api_file_purge_stale()
+/**
+ * This function is used for purging stale files from the Phorum system.
+ *
+ * @param boolean $do_purge
+ *     If this parameter is set to a false value (the default), then no
+ *     actual purging will take place. The function will only return an
+ *     array of stale files. If the parameter is set to a true value,
+ *     then the stale files will be purged for real.
+ *
+ * @return array
+ *     An array of stale Phorum files, indexed by file_id. Every item in
+ *     this array is an array on its own, containing the fields:
+ *     - file_id: the file id of the stale file
+ *     - filename: the name of the stale file
+ *     - filesize: the size of the file in bytes
+ *     - add_datetime: the time (epoch) at which the file was added
+ *     - reason: the reason why it's a stale file
+ *     This array will be returned, regardless of the $do_purge parameter.
+ */
+function phorum_api_file_purge_stale($do_purge)
+{
+    $stale_files = phorum_db_list_stale_files();
+
+    /**
+     * [hook]
+     *     file_purge_stale
+     *
+     * [description]
+     *     This hook can be used to feed the file storage API function
+     *     phorum_api_file_purge_stale() extra stale files. This can be
+     *     useful for modules that handle their own files, using a
+     *     custom link type.
+     *
+     * [category]
+     *     File storage
+     *
+     * [when]
+     *     Right after Phorum created its own list of stale files.
+     *
+     * [input]
+     *     An array containing stale files, indexed by file_id. Each item
+     *     in this array is an array on its own, containing the following
+     *     fields:
+     *     <ul>
+     *     <li>file_id:
+     *         the file id of the stale file
+     *     <li>filename:
+     *         the name of the stale file
+     *     <li>filesize:
+     *         the size of the file in bytes
+     *     <li>add_datetime:
+     *         the time (epoch) at which the file was added
+     *     <li>reason:
+     *         the reason why it's a stale file
+     *     </ul>
+     *
+     * [output]
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly extended with extra files that are
+     *     considered to be stale.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['file_purge_stale']))
+        $stale_files = phorum_hook('file_purge_stale', $stale_files);
+    
+    // Delete the files if requested.
+    if ($do_purge) {
+        foreach ($stale_files as $file) {
+            phorum_api_file_delete($file['file_id']);
+        }
+    }
+
+    return $stale_files;
+}
+// }}}
+
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
 // ------------------------------------------------------------------------

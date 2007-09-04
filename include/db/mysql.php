@@ -4406,26 +4406,26 @@ function phorum_db_get_user_filesize_total($user_id)
 }
 // }}}
 
-// {{{ Function: phorum_db_file_purge_stale_files()
+// {{{ Function: phorum_db_list_stale_files()
 /**
- * Clean up stale files from the database. Stale files are files that
- * are not linked to anything. These can for example be caused by users
- * that are writing a message with attachments, but never post it.
+ * Retrieve a list of stale files from the database.
  *
- * @param boolean $live_run
- *     If set to FALSE (default), the function will return a list of files
- *     that will be purged. If set to TRUE, files will be purged for real.
+ * Stale files are files that are not linked to anything anymore.'
+ * These can for example be caused by users that are writing a message
+ * with attachments, but never post it.
  *
- * @return mixed
- *     If $live_run is set to a true value, TRUE will be returned.
- *     Else an array of files that would be deleted (indexed by
- *     file_id) will be returned.
+ * @return array
+ *     An array of stale Phorum files, indexed by file_id. Every item in
+ *     this array is an array on its own, containing the fields:
+ *     - file_id: the file id of the stale file
+ *     - filename: the name of the stale file
+ *     - filesize: the size of the file
+ *     - add_datetime: the time at which the file was added
+ *     - reason: the reason why it's a stale file
  */
-function phorum_db_file_purge_stale_files($live_run = FALSE)
+function phorum_db_list_stale_files()
 {
     $PHORUM = $GLOBALS['PHORUM'];
-
-    settype($live_run, 'bool');
 
     // WHERE statement for selecting  files that are linked to
     // the editor and were added a while ago. These are from
@@ -4434,40 +4434,21 @@ function phorum_db_file_purge_stale_files($live_run = FALSE)
         "link = '".PHORUM_LINK_EDITOR."' " .
         "AND add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME);
 
-    // Purge files.
-    if ($live_run) {
+    // Select orphin editor files.
+    $stale_files = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT file_id,
+                filename,
+                filesize,
+                add_datetime,
+                'Attachments, left behind by unposted messages' AS reason
+         FROM   {$PHORUM['files_table']}
+         WHERE  $orphin_editor_where",
+        'file_id',
+        DB_GLOBALQUERY
+    );
 
-        // Delete orphin editor files.
-        phorum_db_interact(
-            DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['files_table']}
-             WHERE  $orphin_editor_where",
-            NULL,
-            DB_GLOBALQUERY | DB_MASTERQUERY
-        );
-
-        return TRUE;
-    }
-
-    // Only select a list of files that can be purged.
-    else
-    {
-        // Select orphin editor files.
-        $purge_files = phorum_db_interact(
-            DB_RETURN_ASSOCS,
-            "SELECT file_id,
-                    filename,
-                    filesize,
-                    add_datetime,
-                    'Orphin editor file' AS reason
-             FROM   {$PHORUM['files_table']}
-             WHERE  $orphin_editor_where",
-            NULL,
-            DB_GLOBALQUERY
-        );
-
-        return $purge_files;
-    }
+    return $stale_files;
 }
 // }}}
 
