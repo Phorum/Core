@@ -1049,7 +1049,7 @@ function phorum_api_file_purge_stale($do_purge)
     // Delete the files if requested.
     if ($do_purge) {
         foreach ($stale_files as $file) {
-            phorum_api_file_delete($file['file_id']);
+            phorum_api_file_delete($file);
         }
     }
 
