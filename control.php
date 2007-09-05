@@ -158,18 +158,19 @@ $panel = basename($panel);
  *     <li>panel:
  *         the name of the panel that has to be loaded. The module will
  *         have to check this field to see if it should handle the
- *         panel or not.
+ *         panel or not.</li>
  *     <li>template:
  *         the name of the template that has to be loaded. This field should
- *         be filled by the module if it wants to load a specific template.
+ *         be filled by the module if it wants to load a specific
+ *         template.</li>
  *     <li>handled:
  *         if a module does handle the panel, then it can set this field
  *         to a true value, to prevent Phorum from running the standard
- *         panel code.
+ *         panel code.</li>
  *     <li>error:
- *         modules can fill this field with an error message to show.
+ *         modules can fill this field with an error message to show.</li>
  *     <li>okmsg:
- *         modules can fill this field with an ok message to show.
+ *         modules can fill this field with an ok message to show.</li>
  *     </ul>
  *
  * [output]

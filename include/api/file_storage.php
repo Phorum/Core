@@ -1027,15 +1027,15 @@ function phorum_api_file_purge_stale($do_purge)
      *     fields:
      *     <ul>
      *     <li>file_id:
-     *         the file id of the stale file
+     *         the file id of the stale file</li>
      *     <li>filename:
-     *         the name of the stale file
+     *         the name of the stale file</li>
      *     <li>filesize:
-     *         the size of the file in bytes
+     *         the size of the file in bytes</li>
      *     <li>add_datetime:
-     *         the time (epoch) at which the file was added
+     *         the time (epoch) at which the file was added</li>
      *     <li>reason:
-     *         the reason why it's a stale file
+     *         the reason why it's a stale file</li>
      *     </ul>
      *
      * [output]

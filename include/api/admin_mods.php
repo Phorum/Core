@@ -57,8 +57,8 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
  * @return array
  *     An array, containing the following fields:
  *     - modules:
- *       An array of available modules (indexed by name) and their
- *       info.txt data.
+ *       An array of available modules. The keys are module names and the
+ *       values are arrays, containing detailed module information.
  *     - priorities:
  *       An array containing scheduling priority rules.
  *     - deprecated:
