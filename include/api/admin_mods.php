@@ -248,6 +248,13 @@ function phorum_api_admin_mods_disable($module)
 // }}}
 
 // {{{ Function: phorum_api_admin_mods_save()
+/**
+ * Store the module information in the database.
+ *
+ * This function will sort out all module and hook priorities for the
+ * enabled modules and write the result data ($PHORUM["mods"] and
+ * $PHORUM["hooks"]) to the database.
+ */
 function phorum_api_admin_mods_save()
 {
     global $PHORUM;
