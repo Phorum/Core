@@ -1214,12 +1214,12 @@ function phorum_api_user_delete($user_id)
      *     The same user_id as the one that was used for the hook
      *     call argument.
      */
-    if (isset($PHORUM['hooks']['user_delete'])) {
+    if (isset($GLOBALS['PHORUM']['hooks']['user_delete'])) {
         phorum_hook('user_delete', $user_id);
     }
 
     // If user caching is enabled, we remove the user from the cache.
-    if (!empty($GLOBALS["PHORUM"]['cache_users'])) {
+    if (!empty($GLOBALS['PHORUM']['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
 
