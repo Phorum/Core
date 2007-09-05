@@ -337,7 +337,7 @@ function phorum_mod_bbcode_addon()
     if ($PHORUM["args"]["action"] == 'help')
     {
         $lang = $GLOBALS['PHORUM']['language'];
-        if (!file_exists('./mods/bbcode/help/$lang/bbcode.php')) {
+        if (!file_exists("./mods/bbcode/help/$lang/bbcode.php")) {
             $lang = 'english';
         }
         include("./mods/bbcode/help/$lang/bbcode.php");

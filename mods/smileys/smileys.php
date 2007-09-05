@@ -117,7 +117,7 @@ function phorum_mod_smileys_addon()
     if ($PHORUM["args"]["action"] == 'help')
     {
         $lang = $GLOBALS['PHORUM']['language'];
-        if (!file_exists('./mods/smileys/help/$lang/smileys.php')) {
+        if (!file_exists("./mods/smileys/help/$lang/smileys.php")) {
             $lang = 'english';
         }
         include("./mods/smileys/help/$lang/smileys.php");
