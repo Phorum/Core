@@ -389,6 +389,14 @@ function phorum_api_file_store($file)
                 $checkfile[$k] = $v;
                 break;
 
+            case "add_datetime":
+            case "result":
+            case "mime_type":
+                // These are some dynamic fields which might be pressent
+                // in the data, when storing file data that was returned
+                // by the file retrieve function. We simply skip these here.
+                break;
+
             default:
                 trigger_error(
                     "phorum_api_file_store(): \$file parameter contains " .
