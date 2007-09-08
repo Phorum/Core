@@ -100,7 +100,7 @@ Some Icons courtesy of:
             <input type="hidden" name="phorum_page" value="search" />
             <input type="hidden" name="match_forum" value="ALL" />
             <input type="hidden" name="match_dates" value="365" />
-            <input type="hidden" name="match_threads" value="1" />
+            <input type="hidden" name="match_threads" value="0" />
             <input type="hidden" name="match_type" value="ALL" />
             <input type="text" name="search" size="20" value="" class="styled-text" /><input type="submit" value="{LANG->Search}" class="styled-button" /><br />
             <a href="{URL->SEARCH}">{LANG->Advanced}</a>
