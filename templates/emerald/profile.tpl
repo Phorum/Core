@@ -9,7 +9,7 @@
 
     <div class="generic">
 
-         <div class="icon-user">
+        <div class="icon-user">
             {PROFILE->display_name}
             <small>
               {IF LOGGEDIN}
@@ -23,9 +23,9 @@
               {/IF}
               [ <a href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a> ]
             </small>
-         </div>
+        </div>
 
-         <dl>
+        <dl>
 
             <dt>{LANG->Email}:</dt>
             <dd>{PROFILE->email}</dd>

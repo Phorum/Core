@@ -24,7 +24,7 @@
                             {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
-                        <strong>{MESSAGES->subject} <span class="new">{MESSAGES->new}</span></strong><br />
+                        <strong>{MESSAGES->subject} {IF MESSAGES->new}<span class="new-flag">{MESSAGES->new}</span>{/IF}</strong><br />
                         {MESSAGES->datestamp}
                         </small>
                     </td>
