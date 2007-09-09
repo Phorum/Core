@@ -33,8 +33,9 @@
         if(!isset($_POST['html_disabled']))
             $_POST['html_disabled']=0;
 
-        if($_POST['curr'] == 'NEW') {
-            // checking names of existing fields
+        if($_POST['curr'] === 'NEW')
+        {
+            // checking names of existing fields and find current max id.
             foreach($PHORUM['PROFILE_FIELDS'] as $id => $profile_field) {
                 if($id !== 'num_fields' && $profile_field['name'] == $_POST['string']) {
                     $exists_already = true;
@@ -50,15 +51,18 @@
         } elseif($exists_already) {
             $error="A custom profile-field with that name exists. Please use a different name for your new custom profile-field.";
         } else {
-            if(!isset($PHORUM['PROFILE_FIELDS']["num_fields"])) {
-                if(count($PHORUM['PROFILE_FIELDS'])) {
-                    $PHORUM['PROFILE_FIELDS']["num_fields"]=count($PHORUM['PROFILE_FIELDS']);
-                } else {
-                    $PHORUM['PROFILE_FIELDS']["num_fields"]=0;
-                }
-            }
 
-            if($_POST["curr"]!="NEW"){ // editing an existing field
+            // Find the current maximum field id: num_fields is more an
+            // index than the number of custom profile fields.
+            $max_id = isset($PHORUM['PROFILE_FIELDS']['num_fields'])
+                    ? $PHORUM['PROFILE_FIELDS']['num_fields'] : 0;
+            foreach ($PHORUM['PROFILE_FIELDS'] as $id => $profile_field) {
+                if($id === 'num_fields') continue;
+                if ($max_id < $id) $max_id = $id;
+            }
+            $PHORUM['PROFILE_FIELDS']['num_fields'] = $max_id;
+
+            if($_POST["curr"]!=="NEW"){ // editing an existing field
                 $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['name']=$_POST["string"];
                 $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['length']=$_POST['length'];
                 $PHORUM["PROFILE_FIELDS"][$_POST["curr"]]['html_disabled']=$_POST['html_disabled'];
@@ -95,7 +99,7 @@
     }
 
 
-    if($curr!="NEW"){
+    if($curr!=="NEW"){
         $string=$PHORUM["PROFILE_FIELDS"][$curr]['name'];
         $length=$PHORUM["PROFILE_FIELDS"][$curr]['length'];
         $html_disabled=$PHORUM["PROFILE_FIELDS"][$curr]['html_disabled'];
@@ -113,9 +117,7 @@
         phorum_admin_error($error);
     }
 
-    if($_GET["curr"] && $_GET["delete"]){
-
-        ?>
+    if(isset($_GET["curr"]) && $_GET["delete"]){ ?>
 
         <div class="PhorumInfoMessage">
             Are you sure you want to delete this entry?
@@ -134,7 +136,7 @@
 
         include_once "./include/admin/PhorumInputForm.php";
 
-        $frm =& new PhorumInputForm ("", "post", $submit);
+        $frm = new PhorumInputForm ("", "post", $submit);
 
         $frm->hidden("module", "customprofile");
 
