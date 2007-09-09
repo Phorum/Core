@@ -2840,7 +2840,7 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
     $PHORUM = $GLOBALS['PHORUM'];
 
     settype($forum_id, 'int');
-    settype($ignore_user_perms, 'bool');
+    settype($exclude_admin, 'bool');
     settype($for_email, 'bool');
 
     // Exclude admins from the list, if requested.
