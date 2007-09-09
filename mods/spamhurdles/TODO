@@ -24,3 +24,6 @@ Features:
   settings screen.
 
 - Storage of cache data in the db, not files.
+
+- Keep track of already solved CAPTCHAs when using preview.
+
