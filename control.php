@@ -99,14 +99,14 @@ unset($user["password"]);
 unset($user["password_temp"]);
 unset($user["permissions"]);
 
-// Format the user signature using standard message body formatting
-// or  HTML escape it
-$user["signature"] = htmlspecialchars($user["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-
 // Fake a message here so we can run the sig through format_message.
 $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
 $fake_messages = phorum_format_messages( $fake_messages );
 $user["signature_formatted"] = $fake_messages[0]["body"];
+
+// Format the user signature using standard message body formatting
+// or  HTML escape it
+$user["signature"] = htmlspecialchars($user["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
 // Initialize any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"])) {
