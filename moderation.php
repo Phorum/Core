@@ -252,6 +252,7 @@ switch ($mod_step) {
                 $newmessage = $message;
                 $newmessage['body']=" -- moved topic -- ";
                 $newmessage['meta']=array('moved' => 1);
+                $newmessage['moved']=1;
                 $newmessage['sort']=PHORUM_SORT_DEFAULT;
                 unset($newmessage['message_id']);
 

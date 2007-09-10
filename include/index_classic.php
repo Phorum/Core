@@ -27,8 +27,12 @@ $forums_shown=false;
 
 $new_checks = array();
 
-if($PHORUM["show_new_on_index"]==2){
-    $new_checks = phorum_db_newflag_check(array_keys($forums));
+if($PHORUM["DATA"]["LOGGEDIN"] && !empty($forums)){
+    if($PHORUM["show_new_on_index"]==2){
+        $new_checks = phorum_db_newflag_check(array_keys($forums));
+    } elseif($PHORUM["show_new_on_index"]==1){
+        $new_counts = phorum_db_newflag_count(array_keys($forums));
+    }
 }
 
 foreach( $forums as $forum ) {
@@ -68,20 +72,9 @@ foreach( $forums as $forum ) {
 
         if($PHORUM["DATA"]["LOGGEDIN"]){
             if($PHORUM["show_new_on_index"]==1){
-                $newflagcounts = null;
-                if($PHORUM['cache_newflags']) {
-                    $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
-                    $newflagcounts = phorum_cache_get('newflags_index',$newflagkey);
-                }
 
-                if($newflagcounts == null) {
-                    $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
-                    if($PHORUM['cache_newflags']) {
-                        phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400);
-                    }
-                }
-
-                list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
+                $forum["new_messages"] = number_format($new_counts[$forum["forum_id"]]["messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+                $forum["new_threads"] = number_format($new_counts[$forum["forum_id"]]["threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
 
             } elseif($PHORUM["show_new_on_index"]==2){
 

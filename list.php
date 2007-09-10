@@ -227,12 +227,7 @@ if($rows == null) {
             }
 
             $rows[$key]["new"] = "";
-            // recognizing moved threads
-            if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
-                $rows[$key]['moved']=1;
-            } else {
-                $rows[$key]['moved']=0;
-            }
+
         }
         // don't move this up.  We want it to be conditional.
         include_once("./include/thread_sort.php");
@@ -269,13 +264,6 @@ if($rows == null) {
                 } else { // viewcount added to the subject
                     $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} " . $PHORUM['DATA']['LANG']['Views_Subject'] . ")";
                 }
-            }
-
-            // recognizing moved threads
-            if(isset($row['meta']['moved']) && $row['meta']['moved'] == 1) {
-                $rows[$key]['moved']=1;
-            } else {
-                $rows[$key]['moved']=0;
             }
 
             // default thread-count

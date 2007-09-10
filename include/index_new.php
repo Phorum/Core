@@ -43,7 +43,7 @@ if($PHORUM["vroot"]==$PHORUM["forum_id"]){
     foreach($more_forums as $forum_id => $forum){
         if(empty($forums[$forum_id])){
             $forums[$forum_id]=$forum;
-            if($PHORUM["show_new_on_index"]==2 && $forum["folder_flag"]==0){
+            if($PHORUM["show_new_on_index"]!=0 && $forum["folder_flag"]==0){
                 $forums_to_check[] = $forum_id;
             }
         }
@@ -69,7 +69,7 @@ foreach( $forums as $key=>$forum ) {
         foreach($sub_forums as $sub_forum){
             if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=0)){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
-                if($PHORUM["show_new_on_index"]==2 && $sub_forum["folder_flag"]==0){
+                if($PHORUM["show_new_on_index"]!=0 && $sub_forum["folder_flag"]==0){
                     $forums_to_check[] = $sub_forum["forum_id"];
                 }
             }
@@ -77,8 +77,12 @@ foreach( $forums as $key=>$forum ) {
     }
 }
 
-if($PHORUM["show_new_on_index"]==2 && !empty($forums_to_check)){
-    $new_checks = phorum_db_newflag_check($forums_to_check);
+if($PHORUM["DATA"]["LOGGEDIN"] && !empty($forums_to_check)){
+    if($PHORUM["show_new_on_index"]==2){
+        $new_checks = phorum_db_newflag_check($forums_to_check);
+    } elseif($PHORUM["show_new_on_index"]==1){
+        $new_counts = phorum_db_newflag_count($forums_to_check);
+    }
 }
 
 foreach( $folders as $folder_key=>$folder_id ) {
@@ -121,25 +125,10 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
         if($PHORUM["DATA"]["LOGGEDIN"]){
 
-
             if($PHORUM["show_new_on_index"]==1){
 
-                $newflagcounts = null;
-                if($PHORUM['cache_newflags']) {
-                    $newflagkey    = $forum["forum_id"]."-".$PHORUM['user']['user_id'];
-                    $newflagcounts = phorum_cache_get('newflags_index',$newflagkey,$forum['cache_version']);
-                }
-
-                if($newflagcounts == null) {
-                    $newflagcounts = phorum_db_newflag_get_unread_count($forum["forum_id"]);
-                    if($PHORUM['cache_newflags']) {
-                        phorum_cache_put('newflags_index',$newflagkey,$newflagcounts,86400,$forum['cache_version']);
-                    }
-                }
-
-                list($forum["new_messages"], $forum["new_threads"]) = $newflagcounts;
-                $forum["new_messages"] = number_format($forum["new_messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-                $forum["new_threads"] = number_format($forum["new_threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+                $forum["new_messages"] = number_format($new_counts[$forum["forum_id"]]["messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+                $forum["new_threads"] = number_format($new_counts[$forum["forum_id"]]["threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
 
             } elseif($PHORUM["show_new_on_index"]==2){
 

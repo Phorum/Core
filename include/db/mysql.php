@@ -608,7 +608,7 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
     if ($thread) {
         $use_key = 'thread_message';
     } else {
-        $use_key = 'post_count';
+        $use_key = 'new_threads';
     }
 
     $sql = "SELECT  *
@@ -1060,6 +1060,24 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         "DELETE FROM {$PHORUM['message_table']}
          WHERE $where",
          NULL,
+         DB_MASTERQUERY
+    );
+
+    // Delete the read flags.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['user_newflags_table']}
+         WHERE $where",
+         null,
+         DB_MASTERQUERY
+    );
+
+    // Delete the edit tracking.
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['message_track_table']}
+         WHERE $where",
+         null,
          DB_MASTERQUERY
     );
 
@@ -4546,9 +4564,11 @@ function phorum_db_newflag_check($forum_ids)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    $start = microtime(true);
+
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
-    $sql = "select forum_id, max(message_id) as message_id
+    $sql = "select forum_id, min(message_id) as message_id
             from {$PHORUM['user_newflags_table']}
             where user_id=".$PHORUM["user"]["user_id"]." and
             forum_id in (".implode(",", $forum_ids).")
@@ -4556,32 +4576,141 @@ function phorum_db_newflag_check($forum_ids)
 
     $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
 
+    $sql = "select forum_id, count(*) as count
+            from {$PHORUM['user_newflags_table']}
+            where user_id=".$PHORUM["user"]["user_id"]." and
+            forum_id in (".implode(",", $forum_ids).")
+            group by forum_id";
+
+    $counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+
     $new_checks = array();
 
     foreach($forum_ids as $forum_id){
 
-        if(empty($list[$forum_id])){
+        if(empty($list[$forum_id]) || empty($counts[$forum_id])){
 
             $new_checks[$forum_id] = FALSE;
 
         } else {
 
             // check for new messages
-            $sql = "select message_id from {$PHORUM['message_table']}
+            $sql = "select count(*) as count from {$PHORUM['message_table']}
                     where forum_id=".$forum_id." and
-                    message_id>".$list[$forum_id]["message_id"]." and
-                    status=".PHORUM_STATUS_APPROVED." limit 1";
+                    message_id>=".$list[$forum_id]["message_id"]." and
+                    status=".PHORUM_STATUS_APPROVED." and
+                    moved=0";
 
-            $row = phorum_db_interact(DB_RETURN_ROW, $sql);
+            list($count) = phorum_db_interact(DB_RETURN_ROW, $sql);
 
-            $new_checks[$forum_id] = (bool)$row[0];
+            $new_checks[$forum_id] = ($count > $counts[$forum_id]["count"]);
 
         }
     }
 
+    echo microtime(true) - $start;
     return $new_checks;
 }
 // }}}
+
+
+// {{{ Function: phorum_db_newflag_count()
+/**
+ * Gets a count of new messages and threads for the forum ids given
+ *
+ * @param array $forum_ids
+ *     The forums to check for new messages.
+ *
+ * @return array
+ *     An array containing forum_ids as the key and a two element array
+ *     for each entry with messages and threads counts.
+ */
+function phorum_db_newflag_count($forum_ids)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    phorum_db_sanitize_mixed($forum_ids, 'int');
+
+    $sql = "select forum_id, min(message_id) as message_id
+            from {$PHORUM['user_newflags_table']}
+            where user_id=".$PHORUM["user"]["user_id"]." and
+            forum_id in (".implode(",", $forum_ids).")
+            group by forum_id";
+
+    $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+
+    $sql = "select forum_id, count(*) as count
+            from {$PHORUM['user_newflags_table']}
+            where user_id=".$PHORUM["user"]["user_id"]." and
+            forum_id in (".implode(",", $forum_ids).")
+            group by forum_id";
+
+    $message_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+
+
+    $sql = "select forum_id, count(*) as count
+            from {$PHORUM['user_newflags_table']}
+            inner join {$PHORUM['message_table']} using (message_id, forum_id)
+            where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
+            parent_id=0 and
+            forum_id in (".implode(",", $forum_ids).")
+            group by forum_id";
+
+    $thread_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+
+    $new_checks = array();
+
+    foreach($forum_ids as $forum_id){
+
+        if(empty($list[$forum_id])){
+
+            $new_checks[$forum_id] = array("messages"=>0, "threads"=>0);
+
+        } else {
+
+            if(empty($message_counts[$forum_id])){
+
+                $new_checks[$forum_id]["messages"] = 0;
+
+            } else {
+
+                // check for new messages
+                $sql = "select count(*) as count from {$PHORUM['message_table']}
+                        where forum_id=".$forum_id." and
+                        message_id>=".$list[$forum_id]["message_id"]." and
+                        status=".PHORUM_STATUS_APPROVED." and
+                        moved=0";
+
+                list($count) = phorum_db_interact(DB_RETURN_ROW, $sql);
+
+                $new_checks[$forum_id]["messages"] = max(0, $count - $message_counts[$forum_id]["count"]);
+            }
+
+            if(empty($thread_counts[$forum_id])){
+
+                $new_checks[$forum_id]["threads"] = 0;
+
+            } else {
+
+                // check for new threads
+                $sql = "select count(*) as count from {$PHORUM['message_table']}
+                        where forum_id=".$forum_id." and
+                        message_id>=".$list[$forum_id]["message_id"]." and
+                        parent_id=0 and
+                        status=".PHORUM_STATUS_APPROVED." and
+                        moved=0";
+
+                list($count) = phorum_db_interact(DB_RETURN_ROW, $sql);
+
+                $new_checks[$forum_id]["threads"] = max(0, $count - $thread_counts[$forum_id]["count"]);
+            }
+        }
+    }
+
+    return $new_checks;
+
+}
+
 
 // {{{ Function: phorum_db_newflag_get_unread_count()
 /**
@@ -6812,7 +6941,8 @@ function phorum_db_create_tables()
            KEY status_forum (status,forum_id),
            KEY list_page_float (forum_id,parent_id,modifystamp),
            KEY list_page_flat (forum_id,parent_id,thread),
-           KEY post_count (forum_id,status,parent_id),
+           KEY new_count (forum_id,status,moved,message_id),
+           KEY new_threads (forum_id,status,parent_id,moved,message_id)
            KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
