@@ -211,7 +211,14 @@ function phorum_user_create_session( $cookie = PHORUM_SESSION_LONG_TERM, $refres
 
 function phorum_user_clear_session( $cookie = PHORUM_SESSION_LONG_TERM )
 {
+    $PHORUM = $GLOBALS["PHORUM"];
     setcookie( $cookie, "", time()-86400, $GLOBALS["PHORUM"]["session_path"], $GLOBALS["PHORUM"]["session_domain"] );
+    if($cookie==PHORUM_SESSION_SHORT_TERM){
+        $simple_user=array('user_id'=>$user['user_id'],'sessid_st'=>"");
+    } else {
+        $simple_user=array('user_id'=>$user['user_id'],'cookie_sessid_lt'=>"");
+    }
+    phorum_user_save_simple($simple_user);
 }
 
 /**
