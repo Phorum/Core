@@ -62,7 +62,7 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
  *     - priorities:
  *       An array containing scheduling priority rules.
  *     - deprecated:
- *       An array of warnings about deprected module hooks or an empty
+ *       An array of warnings about deprecated module hooks or an empty
  *       array if there are no deprecation warnings.
  */
 function phorum_api_admin_mods_list()
@@ -125,9 +125,9 @@ function phorum_api_admin_mods_list()
                 $parts = explode(":", trim($line), 2);
                 if ($parts[0]=="hook"){
                     list ($hook,$function) = explode('|', trim($parts[1]));
-                    if (isset($PHORUM['API']['mods_deprected_hooks'][$hook])) {
-                        $deprecated[] = "Mod " . htmlspecialchars($entry) . ": rename \"" . htmlspecialchars($hook) . "\"; to \"" . htmlspecialchars($PHORUM['API']['mods_deprected_hooks'][$hook]) . "\"";
-                        $hook = $PHORUM['API']['mods_deprected_hooks'][$hook];
+                    if (isset($PHORUM['API']['mods_deprecated_hooks'][$hook])) {
+                        $deprecated[] = "Mod " . htmlspecialchars($entry) . ": rename \"" . htmlspecialchars($hook) . "\"; to \"" . htmlspecialchars($PHORUM['API']['mods_deprecated_hooks'][$hook]) . "\"";
+                        $hook = $PHORUM['API']['mods_deprecated_hooks'][$hook];
                         $parts[1] = "$hook|$function";
                     }
                     $info["hooks"][]=trim($parts[1]);
