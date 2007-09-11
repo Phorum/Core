@@ -669,7 +669,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $messages = phorum_hook("read", $messages);
 
     // increment viewcount if enabled
-    if($PHORUM['count_views'] && $PHORUM["status"]==PHORUM_MASTER_STATUS_NORMAL) {
+    if($PHORUM['count_views'] &&
+      (!isset($PHORUM['status']) || $PHORUM["status"]==PHORUM_MASTER_STATUS_NORMAL)) {
         phorum_db_viewcount_inc($message_id);
     }
 
