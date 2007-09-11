@@ -445,7 +445,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
     // The messagefields that we want to fetch from the database.
     $messagefields =
        'author, datestamp, email, message_id, forum_id, meta,
-        moderator_post, modifystamp, parent_id, msgid, sort,
+        moderator_post, modifystamp, parent_id, msgid, sort, moved,
         status, subject, thread, thread_count, user_id, viewcount,
         closed, ip, recent_message_id, recent_user_id, recent_author';
 
@@ -834,12 +834,18 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         'sort'           => $message['sort'],
         'msgid'          => "'" . $message['msgid'] . "'",
         'body'           => "'" . $message['body'] . "'",
-        'closed'         => $message['closed']
+        'closed'         => $message['closed'],
+        'moved'          => 0
     );
 
     // The meta field is optional.
     if (isset($message['meta'])) {
         $insertfields['meta'] = "'{$message['meta']}'";
+    }
+
+    // The moved field is optional.
+    if (!empty($message['moved'])) {
+        $insertfields['moved'] = 1;
     }
 
     // When handling a conversion, the message_id can be set.
