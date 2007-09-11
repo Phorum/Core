@@ -1068,7 +1068,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['user_newflags_table']}
          WHERE $where",
-         null,
+         NULL,
          DB_MASTERQUERY
     );
 
@@ -1077,7 +1077,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['message_tracking_table']}
          WHERE $where",
-         null,
+         NULL,
          DB_MASTERQUERY
     );
 
