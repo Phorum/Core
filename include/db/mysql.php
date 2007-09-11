@@ -6937,6 +6937,7 @@ function phorum_db_create_tables()
            recent_message_id        int unsigned   NOT NULL default '0',
            recent_user_id           int unsigned   NOT NULL default '0',
            recent_author            varchar(255)   NOT NULL default '',
+           moved                    tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY (message_id),
            KEY thread_message (thread,message_id),
