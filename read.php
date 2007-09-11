@@ -211,7 +211,8 @@ if(!$PHORUM["threaded_read"]) {
  thats the caching part
  */
 
-if($PHORUM['cache_messages']) {
+if($PHORUM['cache_messages'] &&
+   (!$PHORUM['count_views'] || !$PHORUM["threaded_read"])) {
 
     $data=array();
     $data['users']=array();
