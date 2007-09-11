@@ -232,7 +232,7 @@ function phorum_controlcenter_user_save($panel)
 
         // If a new password was set, let's create a new session.
         if (isset($userdata["password"]) && !empty($userdata["password"])) {
-            phorum_user_create_session();
+            phorum_user_create_session(PHORUM_SESSION_LONG_TERM, TRUE);
         }
 
         // Copy data from the updated user back into the template data.
