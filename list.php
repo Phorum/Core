@@ -364,8 +364,9 @@ if($rows == null) {
         }
     }
 
-
-    if($PHORUM['cache_messages'] && (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies'])) {
+    if($PHORUM['cache_messages'] &&
+       (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies']) &&
+       !$PHORUM['count_views']) {
         phorum_cache_put('message_list',$cache_key,$rows);
     }
 }
