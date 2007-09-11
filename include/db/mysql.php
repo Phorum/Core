@@ -4462,7 +4462,7 @@ function phorum_db_list_stale_files()
                 add_datetime,
                 'Attachments, left behind by unposted messages' AS reason
          FROM   {$PHORUM['files_table']}
-         WHERE  link = '".PHORUM_LINK_EDITOR."' 
+         WHERE  link = '".PHORUM_LINK_EDITOR."'
                 AND
                 add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME),
         'file_id',
@@ -6947,7 +6947,7 @@ function phorum_db_create_tables()
            KEY list_page_float (forum_id,parent_id,modifystamp),
            KEY list_page_flat (forum_id,parent_id,thread),
            KEY new_count (forum_id,status,moved,message_id),
-           KEY new_threads (forum_id,status,parent_id,moved,message_id)
+           KEY new_threads (forum_id,status,parent_id,moved,message_id),
            KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
