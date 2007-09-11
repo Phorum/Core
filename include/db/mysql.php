@@ -1069,7 +1069,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // Delete the edit tracking.
     phorum_db_interact(
         DB_RETURN_RES,
-        "DELETE FROM {$PHORUM['message_track_table']}
+        "DELETE FROM {$PHORUM['message_tracking_table']}
          WHERE $where",
          null,
          DB_MASTERQUERY
