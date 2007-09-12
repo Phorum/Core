@@ -31,9 +31,9 @@ if (isset($_COOKIE["phorum_upgrade_available"])) {
 } else {
     require_once('./include/version_functions.php');
     $releases = phorum_find_upgrades();
-    if (isset($releases["stable"]) && $releases["stable"]["upgrade"]) {
+    if (isset($releases["stable"]) && !empty($releases["stable"]["upgrade"])) {
         $upgrade_available = $releases["stable"]["version"];
-    } elseif (isset($releases["development"]) && $releases["development"]["upgrade"]) {
+    } elseif (isset($releases["development"]) && !empty($releases["development"]["upgrade"])) {
         $upgrade_available = $releases["development"]["version"];
     } else {
         $upgrade_available = 0;
