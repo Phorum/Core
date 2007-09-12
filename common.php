@@ -554,6 +554,20 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
 }
 
+////////////////////////////////////////////////////////////
+// only do this stuff if we are in the admin
+
+else {
+
+    // The admin interface is not localized, but we might need language
+    // strings at some point after all, for example if we reset the
+    // author name in messages for deleted users to "anonymous".
+    $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
+    if (file_exists("./include/lang/$PHORUM[language].php")) {
+        include_once("./include/lang/$PHORUM[language].php");
+    }
+}
+
 //////////////////////////////////////////////////////////
 // functions
 
