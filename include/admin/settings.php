@@ -169,8 +169,8 @@ $row=$frm->addrow( "Use Cookies", $frm->select_tag( "use_cookies", array( "No", 
 $row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
 $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
 
-$row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_on_index", array( "No", "Yes", "No count, just indicator" ), $PHORUM["show_new_on_index"] ) );
-$frm->addhelp($row, "Show New Count in Forum List", "This feature will show registered users how many new messages and threads there are in each forum on the forum list page.  If you have a large number of posts, a large number of forums, a large number of users or some combination of the three, this setting could cause some performance issues.  If you see performance issues, try setting it \"No count, indicator only\" or \"No\"" );
+$row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_on_index", array( "No", "Yes" ), $PHORUM["show_new_on_index"] ) );
+$frm->addhelp($row, "Show New Count in Forum List", "This feature will show registered users how many new messages and threads there are in each forum on the forum list page.  If you have a large number of posts, a large number of forums, a large number of users or some combination of the three, this setting could cause some performance issues." );
 
 $row=$frm->addrow( "Folder/Forum display style", $frm->select_tag( "use_new_folder_style", array( "Classic", "New" ), $PHORUM["use_new_folder_style"] ) );
 $frm->addhelp($row, "Folder/Forum display style", "Since version 3, Phorum has included folders.  Until version 5.1, forums inside folders did not show until you clicked on the folder.  In 5.1, the list of forums in a folder can now be shown under that folder in the forum list.  This allows admins to organize a large list of forums all on one page." );

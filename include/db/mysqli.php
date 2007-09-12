@@ -2986,67 +2986,6 @@ function phorum_db_newflag_get_flags($forum_id=0)
     return $read_msgs;
 }
 
-/**
- * Checks if there are new messages in the forums given in forum_ids
- *
- * @param array $forum_ids
- *     The forums to check for new messages
- *
- * @return array
- *     An array containing forum_ids as the key and a boolean for
- *     the values.
- */
-function phorum_db_newflag_check($forum_ids)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    phorum_db_sanitize_mixed($forum_ids, 'int');
-
-    $sql = "select forum_id, max(message_id) as message_id
-            from {$PHORUM['user_newflags_table']}
-            where user_id=".$PHORUM["user"]["user_id"]." and
-            forum_id in (".implode(",", $forum_ids).")
-            group by forum_id";
-
-    $conn = phorum_db_mysql_connect();
-    $res = mysqli_query($conn, $sql);
-
-    if ($err = mysqli_error($conn)) phorum_db_mysql_error("$err: $sql");
-
-    while($rec = mysqli_fetch_assoc($res)){
-        $list[$rec["forum_id"]] = $rec;
-    }
-
-    $new_checks = array();
-
-    foreach($forum_ids as $forum_id){
-
-        if(empty($list[$forum_id])){
-
-            $new_checks[$forum_id] = false;
-
-        } else {
-
-            // check for new messages
-            $sql = "select message_id from {$PHORUM['message_table']}
-                    where forum_id=".$forum_id." and
-                    message_id>".$list[$forum_id]["message_id"]." and
-                    status=".PHORUM_STATUS_APPROVED." limit 1";
-
-            $res = mysqli_query($conn, $sql);
-            if ($err = mysqli_error($conn)) phorum_db_mysql_error("$err: $sql");
-
-            list($check) = mysqli_fetch_row($res);
-            $new_checks[$forum_id] = (bool)$check;
-
-        }
-    }
-
-    return $new_checks;
-
-}
-
-
 
 /**
 * This function returns the count of unread messages the current user and forum

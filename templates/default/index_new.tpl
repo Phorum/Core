@@ -17,7 +17,6 @@
     {ELSE}
       <tr class="forum">
         <td class="forum-name">
-
           <a href="{FORUMS->url}">{FORUMS->name}</a><p>{FORUMS->description}</p>
           <small>
             {IF LOGGEDIN true}
@@ -42,7 +41,7 @@
             (<span class="PhorumNewFlag">{FORUMS->new_messages} {LANG->newflag}</span>)
           {/IF}
         </td>
-        <td class="forum-last-post" nowrap="nowrap">{FORUMS->last_post}{IF FORUMS->new_message_check}&nbsp;&nbsp;<small>(<span class="PhorumNewFlag">{LANG->newflag}</span>)</small>{/IF}</td>
+        <td class="forum-last-post" nowrap="nowrap">{FORUMS->last_post}</td>
       </tr>
     {/IF}
   {/LOOP FORUMS}

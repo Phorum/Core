@@ -16,7 +16,7 @@
       {IF FORUMS->folder_flag}
         <div class="PhorumColumnFloatXLarge">{LANG->ForumFolder}</div>
       {ELSE}
-        <div class="PhorumColumnFloatLarge">{FORUMS->last_post}&nbsp;{IF FORUMS->new_message_check}<small>(<span class="PhorumNewFlag">{LANG->newflag}</span>)</small>{/IF}</div>
+        <div class="PhorumColumnFloatLarge">{FORUMS->last_post}&nbsp;</div>
         <div class="PhorumColumnFloatSmall">{FORUMS->message_count}{IF FORUMS->new_messages} (<span class="PhorumNewFlag">{FORUMS->new_messages} {LANG->newflag}</span>){/IF}</div>
         <div class="PhorumColumnFloatSmall">{FORUMS->thread_count}{IF FORUMS->new_threads} (<span class="PhorumNewFlag">{FORUMS->new_threads} {LANG->newflag}</span>){/IF}</div>
       {/IF}

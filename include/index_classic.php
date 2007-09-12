@@ -25,12 +25,6 @@ $PHORUM["DATA"]["FORUMS"] = array();
 
 $forums_shown=false;
 
-$new_checks = array();
-
-if($PHORUM["show_new_on_index"]==2){
-    $new_checks = phorum_db_newflag_check(array_keys($forums));
-}
-
 foreach( $forums as $forum ) {
 
     if ( $forum["folder_flag"] ) {
@@ -49,27 +43,23 @@ foreach( $forums as $forum ) {
         if ( $parent_id==0 && count( $forums ) < 2 ) {
             phorum_redirect_by_url($forum['url']);
             exit();
-        }
+        } 
 
         if ( $forum["message_count"] > 0 ) {
             $forum["last_post"] = phorum_date( $PHORUM["long_date"], $forum["last_post_time"] );
         } else {
             $forum["last_post"] = "&nbsp;";
-        }
+        } 
 
-        if($PHORUM["DATA"]["LOGGEDIN"]){
-            if($PHORUM["show_new_on_index"]==1){
-                list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
-            } elseif($PHORUM["show_new_on_index"]==2){
-                $forum["new_message_check"] = $new_checks[$forum["forum_id"]];
-            }
+        if($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM["show_new_on_index"]){
+            list($forum["new_messages"], $forum["new_threads"]) = phorum_db_newflag_get_unread_count($forum["forum_id"]);
         }
-    }
+    } 
 
     $forums_shown=true;
 
     $PHORUM["DATA"]["FORUMS"][] = $forum;
-}
+} 
 
 if(!$forums_shown){
     // we did not show any forums here, show an error-message
@@ -77,25 +67,25 @@ if(!$forums_shown){
     phorum_build_common_urls();
     unset($PHORUM["DATA"]["URL"]["TOP"]);
     $PHORUM["DATA"]["MESSAGE"] = $PHORUM["DATA"]["LANG"]["NoForums"];
-
+    
     include phorum_get_template( "header" );
     phorum_hook( "after_header" );
     include phorum_get_template( "message" );
     phorum_hook( "before_footer" );
     include phorum_get_template( "footer" );
-
+    
 } else {
-
+    
     $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
-
+    
     // set all our URL's
     phorum_build_common_urls();
-
+    
     // should we show the top-link?
-    if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-        unset($PHORUM["DATA"]["URL"]["INDEX"]);
+    if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) { 
+        unset($PHORUM["DATA"]["URL"]["INDEX"]);    
     }
-
+    
     include phorum_get_template( "header" );
     phorum_hook("after_header");
     include phorum_get_template( "index_classic" );
