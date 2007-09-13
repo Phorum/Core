@@ -83,7 +83,19 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
         }
     }
 
-    $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($_GET["search"]), "author=" . urlencode($_GET["author"]), "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($match_forum), "match_threads=" . urlencode($_GET['match_threads']));
+    if(empty($_GET['author'])) {
+        $url_author = "";
+    } else {
+        $url_author = urlencode($_GET["author"]);
+    }
+
+    if(empty($_GET['search'])) {
+        $url_search = "";
+    } else {
+        $url_search = urlencode($_GET["search"]);
+    }
+
+    $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . $url_search, "author=" . $url_author, "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($match_forum), "match_threads=" . urlencode($_GET['match_threads']));
 
     if (isset($PHORUM["skip_intermediate_search_page"]) && $PHORUM["skip_intermediate_search_page"]) {
         phorum_redirect_by_url($search_url);
