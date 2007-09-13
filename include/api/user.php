@@ -1976,6 +1976,9 @@ function phorum_api_user_session_restore($type)
             continue;
         }
 
+        // Cookie incorrectly formatted. Continue with the next one.
+        if (strstr($value, ':') === FALSE) continue;
+
         // The cookie value is formatted as <user id>:<session id>.
         // Split these into separate parts.
         list($user_id, $sessid) = explode(':', $value, 2);
