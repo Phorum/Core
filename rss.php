@@ -83,7 +83,7 @@ if(empty($data)){
             "pub_date" => date("r",$row["datestamp"]),
             "url" => phorum_get_url(PHORUM_FOREIGN_READ_URL, $forum_id, $row["thread"], $row["message_id"]),
             "headline" => $row["subject"],
-            "description" => strip_tags($row["body"]),
+            "description" => $row["body"],
             "author" => $row["author"],
             "category" => $forums[$row["forum_id"]]["name"]
         );
@@ -157,14 +157,14 @@ function create_rss_feed($channel, $items)
     $data.="    <category>".htmlspecialchars(strip_tags($channel["name"]))."</category>\n";
     $data.="    <generator>Phorum ".PHORUM."</generator>\n";
 
-    $data.="    <ttl>600</ttl>\n";
+    $data.="    <ttl>60</ttl>\n";
 
     foreach($items as $item){
         $data.="    <item>\n";
         $data.="      <title>".htmlspecialchars($item["headline"])."</title>\n";
         $data.="      <link>$item[url]</link>\n";
         $data.="      <author>".htmlspecialchars($item["author"])."</author>\n";
-        $data.="      <description><![CDATA[".htmlspecialchars($item["description"])."]]></description>\n";
+        $data.="      <description><![CDATA[".nl2br(htmlspecialchars($item["description"]))."]]></description>\n";
         $data.="      <category>".htmlspecialchars(strip_tags($item["category"]))."</category>\n";
         $data.="      <guid isPermaLink=\"true\">".htmlspecialchars($item["url"])."</guid>\n";
         $data.="      <pubDate>$item[pub_date]</pubDate>\n";
