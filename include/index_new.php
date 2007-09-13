@@ -53,7 +53,7 @@ if($PHORUM["vroot"]==$PHORUM["forum_id"]){
 
 
 
-// loop the childern and get their children.
+// loop the children and get their children.
 foreach( $forums as $key=>$forum ) {
     if($forum["folder_flag"] && $forum["vroot"]==$PHORUM["vroot"]){
         $folders[$key]=$forum["forum_id"];
@@ -119,28 +119,28 @@ foreach( $folders as $folder_key=>$folder_id ) {
 
             $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
             $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-        }
 
-        $forum["level"] = 1;
+            if($PHORUM["DATA"]["LOGGEDIN"]) {
 
-        if($PHORUM["DATA"]["LOGGEDIN"]){
+                if($PHORUM["show_new_on_index"]==1){
 
-            if($PHORUM["show_new_on_index"]==1){
+                    $forum["new_messages"] = number_format($new_counts[$forum["forum_id"]]["messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+                    $forum["new_threads"] = number_format($new_counts[$forum["forum_id"]]["threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
 
-                $forum["new_messages"] = number_format($new_counts[$forum["forum_id"]]["messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-                $forum["new_threads"] = number_format($new_counts[$forum["forum_id"]]["threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+                } elseif($PHORUM["show_new_on_index"]==2){
 
-            } elseif($PHORUM["show_new_on_index"]==2){
+                    if(!empty($new_checks[$forum["forum_id"]])){
+                        $forum["new_message_check"] = true;
+                    } else {
+                        $forum["new_message_check"] = false;
+                    }
 
-                if(!empty($new_checks[$forum["forum_id"]])){
-                    $forum["new_message_check"] = true;
-                } else {
-                    $forum["new_message_check"] = false;
                 }
 
             }
-
         }
+
+        $forum["level"] = 1;
 
         $shown_sub_forums[] = $forum;
 
