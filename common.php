@@ -942,6 +942,9 @@ function phorum_get_template_info()
 // returns the available languages as an array
 function phorum_get_language_info()
 {
+    // to make some language-files happy which are using $PHORUM-variables
+    $PHORUM = $GLOBALS['PHORUM'];
+
     $langs = array();
 
     $d = dir( "./include/lang" );
