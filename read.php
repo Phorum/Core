@@ -230,6 +230,19 @@ if($PHORUM['cache_messages'] &&
     if($message_index == null) {
         // nothing in the cache, get it from the database and store it in the cache
         $data[$thread] = phorum_db_get_message($thread,"message_id");
+
+        // Check if we really have requested the thread.
+        // If not, then we redirect back to the message list.
+        if (!empty($data[$thread]['parent_id'])) {
+            $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["MessageNotFound"];
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
+            $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
+
+            $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            phorum_output("message");
+            return;
+        }
+
         $data['users'][] = $data[$thread]['user_id'];
 
         if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
