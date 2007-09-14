@@ -705,6 +705,11 @@ function phorum_api_user_save_settings($settings)
         'user_id'       => $user_id,
         'settings_data' => $PHORUM['user']['settings_data']
     ));
+
+    // If user caching is enabled, we remove the user from the cache.
+    if (!empty($GLOBALS['PHORUM']['cache_users'])) {
+        phorum_cache_remove('user', $user_id);
+    }
 }
 // }}}
 
