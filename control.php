@@ -205,7 +205,7 @@ if (!$hook_info['handled']) {
 }
 
 if(empty($PHORUM["DATA"]["HEADING"])){
-    $PHORUM["DATA"]["HEADING"] = "MyProfile";
+    $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["MyProfile"];
 }
 
 // unset default description
