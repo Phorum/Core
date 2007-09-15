@@ -19,7 +19,7 @@
 
     if(!defined("PHORUM_ADMIN")) return;
 
-    $mod=$_REQUEST["mod"];
+    $mod = basename($_REQUEST["mod"]);
 
     if(file_exists("./mods/$mod/settings.php")){
         if (!isset($PHORUM["mods"][$mod]) || !$PHORUM["mods"][$mod]) {

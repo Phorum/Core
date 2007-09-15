@@ -212,6 +212,7 @@ function phorum_dbupgrade_getupgrades()
     $core_type = isset($PHORUM['DBCONFIG']['core_type'])
                ? $PHORUM['DBCONFIG']['core_type']
                : $PHORUM['DBCONFIG']['type'];
+    $core_type = basename($core_type);
 
     // Go over both the patches and schema upgrades and find all
     // upgrades that have not yet been processed.
@@ -219,7 +220,7 @@ function phorum_dbupgrade_getupgrades()
     foreach (array('patch', 'schema') as $type)
     {
         $upgradepath =
-            "./include/db/upgrade/{$core_type}" .
+            "./include/db/upgrade/$core_type" .
             ($type == 'patch' ? '-patches' : '');
 
         $versionvar = $type == 'patch' 

@@ -293,9 +293,11 @@
         );
 
         // Retrieve the user data for the users on the current page.
-        $users = phorum_api_user_get($user_ids, FALSE);
+        $users = empty($user_ids)
+               ? array()
+               : phorum_api_user_get($user_ids, FALSE);
 
-        $total = count($all_user_ids);
+        $total = empty($all_user_ids) ? 0 : count($all_user_ids);
 
         if (count($users))
         {

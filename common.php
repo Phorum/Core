@@ -175,6 +175,7 @@ if ($PHORUM["DBCONFIG"]["type"] == "mysqli" &&
 }
 
 // Load the database layer.
+$PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
 include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
 if(!phorum_db_check_connection()){
@@ -258,7 +259,8 @@ if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
 
 // load the caching-layer - you can specify a different one in the settings
 // one caching layer *needs* to be loaded
-include_once( "./include/cache/{$PHORUM['cache_layer']}.php" );
+$PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
+include_once( "./include/cache/$PHORUM[cache_layer].php" );
 
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
@@ -422,14 +424,16 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         ob_end_clean();
     }
 
-
+    $PHORUM['language'] = basename($PHORUM['language']);
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
     // load languages for localized modules
     if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
-        foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod ) {
+        foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod )
+        {
             // load mods for this hook
+            $mod = basename($mod);
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
                 include_once "./mods/$mod/lang/$PHORUM[language].php";
             }
@@ -562,7 +566,7 @@ else {
     // The admin interface is not localized, but we might need language
     // strings at some point after all, for example if we reset the
     // author name in messages for deleted users to "anonymous".
-    $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
+    $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"]);
     if (file_exists("./include/lang/$PHORUM[language].php")) {
         include_once("./include/lang/$PHORUM[language].php");
     }
@@ -867,6 +871,7 @@ function phorum_hook( $hook )
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
             // load mods for this hook
+            $mod = basename($mod);
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
                 include_once "./mods/$mod/$mod.php";
             } elseif ( file_exists( "./mods/$mod.php" ) ) {

@@ -7306,7 +7306,7 @@ function phorum_db_sanitychecks()
 
 $ext = NULL;
 if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
-   $ext = $PHORUM['DBCONFIG']['mysql_php_extension'];
+   $ext = basename($PHORUM['DBCONFIG']['mysql_php_extension']);
 } elseif (function_exists('mysqli_connect')) {
    $ext = "mysqli";
 } elseif (function_exists('mysql_connect')) {

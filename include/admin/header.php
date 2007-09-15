@@ -21,7 +21,7 @@
 
     // load the default Phorum language
     if(isset($PHORUM["default_forum_options"]["language"])){
-        $lang = $PHORUM["default_forum_options"]["language"];
+        $lang = basename($PHORUM["default_forum_options"]["language"]);
         include_once( "./include/lang/{$lang}.php" );
     }
 
