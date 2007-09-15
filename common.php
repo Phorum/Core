@@ -143,6 +143,7 @@ if ( empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]
 }
 
 // Load the database layer.
+$PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
 include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 
 if(!phorum_db_check_connection()){
@@ -345,6 +346,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
         $PHORUM["language"] = $PHORUM["default_language"];
 
+    $PHORUM['language'] = basename($PHORUM['language']);
+
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
         include_once( "./include/lang/$PHORUM[language].php" );
     }
@@ -353,6 +356,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
         foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod ) {
             // load mods for this hook
+            $mod = basename($mod);
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
                 include_once "./mods/$mod/lang/$PHORUM[language].php";
             }
@@ -787,6 +791,7 @@ function phorum_hook( $hook )
 
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
             // load mods for this hook
+            $mod = basename($mod);
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
                 include_once "./mods/$mod/$mod.php";
             } elseif ( file_exists( "./mods/$mod.php" ) ) {

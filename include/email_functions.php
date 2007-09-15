@@ -137,6 +137,8 @@ function phorum_email_pm_notice($message, $langusers)
     {
         $PHORUM = $GLOBALS["PHORUM"];
 
+        $language = basename($language);
+
         if ( file_exists( "./include/lang/$language.php" ) ) {
             include( "./include/lang/$language.php" );
         } else {
@@ -191,7 +193,10 @@ function phorum_email_notice($message)
             $mail_data["followed_threads_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["followed_threads_url"]);
         }
         // go through the user-languages and send mail with their set lang
-        foreach($mail_users_full as $language => $mail_users) {
+        foreach($mail_users_full as $language => $mail_users)
+        {
+            $language = basename($language);
+
             if ( file_exists( "./include/lang/$language.php" ) ) {
                 include( "./include/lang/$language.php" );
             } else {
