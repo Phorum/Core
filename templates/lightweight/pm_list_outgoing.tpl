@@ -29,7 +29,7 @@
                 <td width="15%" nowrap="nowrap">
                     {IF MESSAGES->recipient_count 1}
                         {LOOP MESSAGES->recipients}
-                            <a href="{MESSAGES->recipients->URL->TO}">{MESSAGES->recipients->display_name}</a>&nbsp;
+                            <a href="{MESSAGES->recipients->URL->PROFILE}">{MESSAGES->recipients->display_name}</a>&nbsp;
                         {/LOOP MESSAGES->recipients}
                     {ELSE}
                         {MESSAGES->recipient_count}&nbsp;{LANG->Recipients}&nbsp;
