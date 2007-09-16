@@ -4652,7 +4652,7 @@ function phorum_db_newflag_count($forum_ids)
     $message_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
 
 
-    $sql = "select forum_id, count(*) as count
+    $sql = "select {$PHORUM['user_newflags_table']}.forum_id, count(*) as count
             from {$PHORUM['user_newflags_table']}
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
