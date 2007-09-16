@@ -35,19 +35,24 @@
     {IF MESSAGES->sort PHORUM_SORT_STICKY}
         {IF MESSAGES->new}
             {VAR icon "flag_red"}
+	    {VAR alt LANG->NewMessage}
         {ELSE}
             {VAR icon "bell"}
+	    {VAR alt LANG->Sticky}
         {/IF}
         {VAR title LANG->Sticky}
     {ELSEIF MESSAGES->moved}
         {VAR icon "page_go"}
         {VAR title LANG->MovedSubject}
+        {VAR alt LANG->MovedSubject}
     {ELSEIF MESSAGES->new}
         {VAR icon "flag_red"}
         {VAR title LANG->NewMessage}
+	{VAR alt LANG->NewMessage}
     {ELSE}
         {VAR icon "comment"}
         {VAR title ""}
+	{VAR alt ""}
     {/IF}
 
     {IF MESSAGES->new}
@@ -58,7 +63,7 @@
 
     <tr>
 
-        <td width="1%" class="{altclass}"><a href="{IF MESSAGES->new}{MESSAGES->URL->NEWPOST}{ELSE}{MESSAGES->URL->READ}{/IF}" title="{title}"><img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" /></a></td>
+        <td width="1%" class="{altclass}"><a href="{IF MESSAGES->new}{MESSAGES->URL->NEWPOST}{ELSE}{MESSAGES->URL->READ}{/IF}" title="{title}"><img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" /></a></td>
         <td width="59%" class="{altclass}">
             <h4>
                 <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>

@@ -36,20 +36,26 @@
     {IF MESSAGES->parent_id 0}
         {IF MESSAGES->sort PHORUM_SORT_STICKY}
             {IF MESSAGES->new}
-                {VAR icon "flag_red"}
+               {VAR icon "flag_red"}
+               {VAR alt LANG->NewMessage}
             {ELSE}
-                {VAR icon "bell"}
+               {VAR icon "bell"}
+               {VAR alt LANG->Sticky}
             {/IF}
+
             {VAR title LANG->Sticky}
         {ELSEIF MESSAGES->moved}
             {VAR icon "page_go"}
             {VAR title LANG->MovedSubject}
+            {VAR alt LANG->MovedSubject}
         {ELSEIF MESSAGES->new}
             {VAR icon "flag_red"}
             {VAR title LANG->NewMessage}
+            {VAR alt LANG->NewMessage}
         {ELSE}
             {VAR icon "comment"}
             {VAR title ""}
+            {VAR alt ""}
         {/IF}
     {ELSEIF MESSAGES->new}
         {VAR icon "flag_red"}
@@ -68,7 +74,7 @@
     <tr>
     <td width="65%" class="{altclass}">
         <h4 style="padding-left: {MESSAGES->indent_cnt}px">
-            <img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" />
+            <img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" title="{title}" />
             <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
             {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" class="icon1616" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
             {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
