@@ -86,13 +86,22 @@ if(!empty($cache)){
     // run read hooks to get everything formatted
     if (isset($PHORUM["hooks"]["read"]))
         $messages = phorum_hook("read", $messages);
+
     $messages = phorum_format_messages($messages);
 
     // set up the feed specifics based on the info we are getting
     if($thread && $PHORUM["forum_id"]){
+
+        // could happen with long threads
+        if(!isset($messages[$thread])) {
+            $thread_start = phorum_db_get_message($thread);
+        } else {
+            $thread_start = $messages[$thread];
+        }
+
         $feed_url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $PHORUM["forum_id"], $thread, $thread);
-        $feed_title = strip_tags($messages[$thread]["subject"]);
-        $feed_description = strip_tags($messages[$thread]["body"]);
+        $feed_title = strip_tags($thread_start["subject"]);
+        $feed_description = strip_tags($thread_start["body"]);
     } elseif($PHORUM["forum_id"]){
         $feed_url = phorum_get_url(PHORUM_LIST_URL);
         $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]." - ".$PHORUM["DATA"]["NAME"]);
