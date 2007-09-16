@@ -127,7 +127,7 @@ if(empty($PHORUM["args"][1])) {
                     }
                 }
                 // could be called from list too
-                if($PHORUM["args"][3] == "list") {
+                if(isset($PHORUM["args"][3]) && $PHORUM["args"][3] == "list") {
                     $dest_url = phorum_get_url(PHORUM_LIST_URL);
                     phorum_redirect_by_url($dest_url);
                 }
