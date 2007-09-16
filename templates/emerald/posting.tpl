@@ -75,7 +75,7 @@
                     <br />
                     {/IF}
 
-                    <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF}> <label for="allow-reply">{LANG->AllowReplies}</label>
+                    <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF} /> <label for="allow-reply">{LANG->AllowReplies}</label>
 
                   </div>
 
