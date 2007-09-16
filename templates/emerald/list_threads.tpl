@@ -81,7 +81,9 @@
     <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
     {IF MODERATOR true}
         <td width="1%" class="{altclass}" nowrap="nowrap">
-            {IF NOT MESSAGES->moved}
+            {IF MESSAGES->moved}
+                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';"><img src="{URL->TEMPLATE}/images/delete.png" class="icon1616" alt="{LANG->DeleteThread}" /></a>
+            {ELSE}
                 {IF MESSAGES->threadstart true}
                     {IF MESSAGES->URL->MOVE}
                         <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}"><img src="{URL->TEMPLATE}/images/page_go.png" class="icon1616" alt="{LANG->MoveThread}" /></a>
