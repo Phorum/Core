@@ -2830,7 +2830,7 @@ function phorum_db_delete_group($group_id)
         phorum_db_interact(
             DB_RETURN_RES,
             "DELETE FROM $table
-             WHERE group_id = $forum_id",
+             WHERE group_id = $group_id",
              NULL,
              DB_MASTERQUERY
         );
