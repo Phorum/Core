@@ -8,7 +8,7 @@ if (empty($field) || !empty($field['deleted'])) return;
 
 // If we do, then copy all available real_names to the new real_name
 // field in the user table.
-$ids = phorum_api_user_search_custom_profile_field($field['id'], '%', TRUE);
+$ids = phorum_api_user_search_custom_profile_field($field['id'],'','*',TRUE);
 if (!empty($ids)) {
     foreach ($ids as $id) {
         $user = phorum_api_user_get($id);
