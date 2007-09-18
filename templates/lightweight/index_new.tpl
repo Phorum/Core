@@ -32,7 +32,7 @@
                     {IF FORUMS->URL->MARK_READ}&raquo; <a class="icon" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>{/IF}
                     {IF FORUMS->URL->FEED}&raquo; <a class="icon" href="{FORUMS->URL->FEED}">{FEED}</a>{/IF}
                 </td>
-                <td align="center" width="12%" width="55%" nowrap="nowrap">
+                <td align="center" width="12%" nowrap="nowrap">
                     {FORUMS->thread_count}
                     {IF FORUMS->new_threads}
                         (<span class="new-flag">{FORUMS->new_threads} {LANG->newflag}</span>)
