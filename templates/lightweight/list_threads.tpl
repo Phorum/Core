@@ -72,7 +72,7 @@
     {IF MODERATOR true}
         <td width="1%" class="{altclass}" nowrap="nowrap">
             {IF MESSAGES->moved}
-                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
+                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_MESSAGE}';">{LANG->DeleteThread}</a>
             {ELSE}
                 {IF MESSAGES->threadstart true}
                     &raquo; <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a><br />
