@@ -190,7 +190,6 @@
                 "admin_session_salt" => microtime(),
                 "cache_users" => "0",
                 "cache_rss" => "0",
-                "register_email_confirm" => "0",
                 "default_template" => "default",
                 "default_language" => "english",
                 "use_cookies" => "1",
