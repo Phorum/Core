@@ -4657,7 +4657,7 @@ function phorum_db_newflag_count($forum_ids)
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
             parent_id=0 and
-            forum_id in (".implode(",", $forum_ids).")
+            {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
 
     $thread_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
