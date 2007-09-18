@@ -35,10 +35,10 @@
     {IF MESSAGES->sort PHORUM_SORT_STICKY}
         {IF MESSAGES->new}
             {VAR icon "flag_red"}
-	    {VAR alt LANG->NewMessage}
+	        {VAR alt LANG->NewMessage}
         {ELSE}
             {VAR icon "bell"}
-	    {VAR alt LANG->Sticky}
+	        {VAR alt LANG->Sticky}
         {/IF}
         {VAR title LANG->Sticky}
     {ELSEIF MESSAGES->moved}
@@ -48,11 +48,11 @@
     {ELSEIF MESSAGES->new}
         {VAR icon "flag_red"}
         {VAR title LANG->NewMessage}
-	{VAR alt LANG->NewMessage}
+	    {VAR alt LANG->NewMessage}
     {ELSE}
         {VAR icon "comment"}
         {VAR title ""}
-	{VAR alt ""}
+	    {VAR alt ""}
     {/IF}
 
     {IF MESSAGES->new}
