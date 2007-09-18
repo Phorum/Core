@@ -37,7 +37,7 @@
 
         <small>
 
-            To:<br />
+            {LANG->To}:<br />
             {! Show user selection}
             {IF SHOW_USERSELECTION}
                 <div class="phorum-pmuserselection">
