@@ -241,7 +241,7 @@ function phorum_db_get_thread_list($offset, $include_bodies=false)
  *
  * The original version of this function came from Jim Winstead of mysql.com
  */
-function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = 0)
+function phorum_db_get_recent_messages($count, $offset = 0, $forum_id = 0, $thread = 0, $threads_only = 0)
 {
     $PHORUM = $GLOBALS["PHORUM"];
     settype($count, "int");
@@ -300,6 +300,9 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
 
     if($count){
         $sql.= " LIMIT $count";
+        if ($offset > 0) {
+            $sql .= " OFFSET $offset";
+        }
     }
 
     $res = pg_query($conn, $sql);

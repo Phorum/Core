@@ -574,8 +574,12 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
  *
  * The original version of this function came from Jim Winstead of mysql.com
  *
- * @param integer $count
+ * @param integer $length
  *     Limit the number of returned messages to this number.
+ *
+ * @param integer $offset
+ *     When using the $length parameter to limit the number of returned
+ *     messages, this parameter can be used to specify the retrieval offset.
  *
  * @param integer $forum_id
  *     A forum_id, an array of forum_ids or 0 (zero) to retrieve messages
@@ -592,11 +596,12 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
  *     "users" is set too. This one contains an array of all involved
  *     user_ids.
  */
-function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $threads_only = FALSE)
+function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thread = 0, $threads_only = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($count, 'int');
+    settype($length, 'int');
+    settype($offset, 'int');
     settype($thread, 'int');
     settype($threads_only, 'bool');
     phorum_db_sanitize_mixed($forum_id, 'int');
@@ -650,8 +655,12 @@ function phorum_db_get_recent_messages($count, $forum_id = 0, $thread = 0, $thre
         $sql .= ' ORDER BY message_id DESC';
     }
 
-    if ($count) {
-        $sql .= " LIMIT $count";
+    if ($length) {
+        if ($offset > 0) {
+            $sql .= " LIMIT $offset, $length";
+        } else {
+            $sql .= " LIMIT $length";
+        }
     }
 
     // Retrieve matching messages from the database.

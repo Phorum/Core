@@ -77,7 +77,7 @@ if(!empty($cache)){
     $forum_ids = array_keys($forums);
 
     // get messages
-    $messages = phorum_db_get_recent_messages(30, $forum_ids, $thread, $no_replies);
+    $messages = phorum_db_get_recent_messages(30, 0, $forum_ids, $thread, $no_replies);
 
     // remove users from messages array
     $users = $messages["users"];

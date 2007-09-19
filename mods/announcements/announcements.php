@@ -42,7 +42,7 @@ function phorum_show_announcements ()
     if( !empty($announcement_forumid) && !empty($PHORUM["mod_announcements"]["pages"][phorum_page]) ) {
 
         // Retrieve the last number of posts from the announcement forum.
-        $messages = phorum_db_get_recent_messages($PHORUM["mod_announcements"]["number_to_show"], $announcement_forumid, 0, true);
+        $messages = phorum_db_get_recent_messages($PHORUM["mod_announcements"]["number_to_show"], 0, $announcement_forumid, 0, true);
         unset($messages["users"]);
 
         // No announcements to show? Then we are done.
