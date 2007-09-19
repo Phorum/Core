@@ -33,21 +33,21 @@
 // 1) Create a module, which contains a function that has to be 
 //    called for running the addon code. For example:
 //    
-//    function phorum_mod_yourmod_youraddonfunction() {
+//    function phorum_mod_foo_youraddonfunction() {
 //      # Code for implementing the addon goes here.
 //      # This can of course also be an include of a script
-//      # to run, using include("./mods/yourmod/yourscript.php").
+//      # to run, using include("./mods/foo/yourscript.php").
 //      # ...
 //    }
 // 
 // 2) In the module information, register an addon hook for the function:
 //
-//    hook: addon|phorum_mod_yourmod_youraddonfunction
+//    hook: addon|phorum_mod_foo_youraddonfunction
 //
 // 3) Call the addon code through the addon.php script (where 1 in the
 //    URL indicates the current forum id):
 //
-//    http://your.phorum.site/addon.php?1,module=yourmod
+//    http://your.phorum.site/addon.php?1,module=foo
 //
 //
 // LINKING TO AN ADDON SCRIPT:
@@ -56,7 +56,7 @@
 // If you want to link to the addon script, then always use the 
 // phorum_get_url() function for generating the URL to link to.
 //
-//    $url = phorum_get_url(PHORUM_ADDON_URL, "yourmod");
+//   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo");
 //
 //
 // IMPLEMENTING MULTIPLE ADDON ACTIONS:
@@ -66,13 +66,13 @@
 // implement multiple addon script actions, then handle this by means
 // of extra custom parameters for the addon.php URL, for example:
 //
-//    http://your.phorum.site/addon.php?1,module=yourmod,action=myaction
+//    http://your.phorum.site/addon.php?1,module=foo,action=bar
 //
 // Using this, your addon function can check $PHORUM["args"]["action"]
 // to see what action to perform. Generating an URL for this example
 // would look like this:
 //
-//    $url = phorum_get_url(PHORUM_ADDON_URL, "yourmod", "action=myaction");
+//   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo", "action=bar");
 // 
 
 define('phorum_page','addon');
@@ -87,13 +87,24 @@ if (! isset($PHORUM["hooks"]["addon"])) trigger_error(
     E_USER_ERROR
 );
 
-// Parse the module=<module> argument.
-if (! isset($PHORUM["args"]["module"])) trigger_error(
+// Find the module argument. This one can be in the Phorum args,
+// $_POST or $_GET (in that order).
+$module = NULL;
+if (isset($PHORUM['args']['module'])) {
+    $module = $PHORUM['args']['module'];
+} elseif (isset($_POST['module'])) {
+    $module = $_POST['module'];
+} elseif (isset($_GET['module'])) {
+    $module = $_GET['module'];
+}
+
+if ($module === NULL) trigger_error(
     '<h1>Modscript Error</h1><br/>' .
     'Missing "module" argument.',
     E_USER_ERROR
 );
-$module = basename($PHORUM["args"]["module"]);
+
+$module = basename($module);
 
 // Check if the mod is enabled and does implement the addon hook.
 // Filter the list of hooks, so we only keep the one for the
