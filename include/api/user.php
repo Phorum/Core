@@ -2545,7 +2545,7 @@ function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, 
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
 
-    return phorum_db_user_get_moderators($forum_id, $exclude_admin, $for_email);
+    return phorum_db_user_get_moderators($forum_id, $exclude_admin, $for_mail);
 }
 // }}}
 
