@@ -138,7 +138,9 @@ if(empty($PHORUM["args"][1])) {
                 $thread_message=phorum_db_get_message($thread,'message_id');
                 $message_ids=$thread_message['meta']['message_ids'];
 
+                $last_id = 0;
                 foreach($message_ids as $mkey => $mid) {
+                    if ($last_id < $mid) $last_id = $mid;
                     // if already read, remove it from message-array
                     if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id']) {
                         unset($message_ids[$mkey]);
@@ -146,26 +148,24 @@ if(empty($PHORUM["args"][1])) {
 
                 }
 
-                // it could happen that they are all read
-                if(count($message_ids)) {
-                    asort($message_ids,SORT_NUMERIC); // make sure they are sorted
-
-
-                    $new_message=array_shift($message_ids); // get the first element
-
-                    if($PHORUM['threaded_read'] == 0) { // get new page
-                        $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
-                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
-                    } else { // for threaded
-                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
-                    }
+                // it could happen that they are all read. In that case,
+                // we jump to the last message in the thread.
+                if (!count($message_ids)) {
+                    $new_message = $last_id;
                 } else {
-                    // lets go back to the index if they are all read
-                    $dest_url=phorum_get_url(PHORUM_LIST_URL);
+                    // Find the lowest unread message id.
+                    asort($message_ids,SORT_NUMERIC);
+                    $new_message = array_shift($message_ids);
+                }
+
+                if($PHORUM['threaded_read'] == 0) { // get new page
+                    $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                } else { // for threaded
+                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
                 }
 
                 break;
-
 
         }
 
