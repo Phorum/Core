@@ -56,11 +56,14 @@ function phorum_build_forum_list() {
         } else {
             $url = phorum_get_url(PHORUM_LIST_URL, $forum["forum_id"]);
         }
+
+        $forum['forum_path'] = unserialize($forum['forum_path']);
+
         $forum_picker[] = array(
             "forum_id" => $forum["forum_id"],
             "folder_flag" => $forum["folder_flag"],
             "name" => htmlspecialchars($forum["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ),
-            "indent" => ((count($forum["forum_path"])-2)*7)+3,
+            "indent" => (count($forum["forum_path"])-2),
             "url" => $url,
             "path" => $forum["forum_path"]
         );

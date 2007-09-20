@@ -72,7 +72,7 @@
                 <option value="ALL" {IF SEARCH->match_forum "ALL"}selected="selected"{/IF}>{LANG->MatchAllForums}</option>
                 {LOOP SEARCH->forum_list}
                     {IF SEARCH->forum_list->folder_flag}
-                        <optgroup style="padding-left: {SEARCH->forum_list->indent}px" label="{SEARCH->forum_list->name}" />
+                        <optgroup style="padding-left: {SEARCH->forum_list->indent}px" label="{SEARCH->forum_list->name}"></optgroup>
                     {ELSE}
                         <option style="padding-left: {SEARCH->forum_list->indent}px" value="{SEARCH->forum_list->forum_id}" {IF SEARCH->forum_list->selected}selected="selected"{/IF}>{SEARCH->forum_list->name}</option>
                     {/IF}
