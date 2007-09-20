@@ -59,7 +59,7 @@ function phorum_build_forum_list() {
 
         $forum['forum_path'] = unserialize($forum['forum_path']);
 
-        $forum_picker[] = array(
+        $forum_picker[$forum["forum_id"]] = array(
             "forum_id" => $forum["forum_id"],
             "folder_flag" => $forum["folder_flag"],
             "name" => htmlspecialchars($forum["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ),
