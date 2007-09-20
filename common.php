@@ -725,8 +725,9 @@ function phorum_output($templates) {
     // this point and not earlier, so the start_output hook can be
     // used for changing values in the $PHORUM data.
     $PHORUM = array(
-        "DATA"  => $GLOBALS["PHORUM"]["DATA"],
-        "hooks" => $GLOBALS["PHORUM"]["hooks"]
+        "DATA"   => $GLOBALS["PHORUM"]["DATA"],
+        "locale" => $GLOBALS["PHORUM"]["locale"],
+        "hooks"  => $GLOBALS["PHORUM"]["hooks"]
     );
 
     include phorum_get_template("header");
