@@ -50,11 +50,11 @@ function phorum_cache_get($type,$key,$version=NULL) {
 
                 // timeout?
                 if($retval[0] < time()) {
-                    unlink($path);
+                    @unlink($path);
                 // version expired?
                 } elseif ($version != NULL && 
                           (!isset($retval[2]) || $retval[2] != $version)) {
-                    unlink($path);
+                    @unlink($path);
                 } else {
                     $ret[$realkey]=$retval[1];	
                 }
@@ -77,12 +77,12 @@ function phorum_cache_get($type,$key,$version=NULL) {
             // timeout?
             if($retval[0] < time()) {
                 $ret = NULL;
-                unlink($path);
+                @unlink($path);
             // version expired?
             } elseif ($version != NULL && 
                       (!isset($retval[2]) || $retval[2]<$version)) {
                 $ret = NULL;
-                unlink($path);
+                @unlink($path);
             } else {
                 $ret = $retval[1];
             }
@@ -122,7 +122,7 @@ function phorum_cache_remove($type,$key) {
     $ret  =true;
     $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
     if(file_exists($path)) {
-        $ret=unlink($path);   
+        $ret=@unlink($path);   
     }
     
     return $ret;
@@ -170,7 +170,7 @@ function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
             $total += strlen($contents);
             $data = unserialize($contents);
             if ( $full || ($data[0] < time()) ) {
-                unlink("$dir/$subdir/$entry");
+                @unlink("$dir/$subdir/$entry");
                 $did_purge = true;
                 $purged += strlen($contents);
             }
@@ -223,7 +223,7 @@ function phorum_cache_rmdir( $path ) {
 		$dir = opendir( $path ) ;
 		while ( $entry = readdir( $dir ) ) {
 			if ( is_file( $path . "/" . $entry ) ) {
-				unlink($path."/".$entry);
+				@unlink($path."/".$entry);
 			} elseif ( is_dir( $path . "/" . $entry ) && $entry != '.' && $entry != '..' ) {
 				array_unshift($dirs, $path . "/" . $entry)  ;
 				$stack[]=$path . "/" . $entry  ;
@@ -232,7 +232,7 @@ function phorum_cache_rmdir( $path ) {
 		closedir( $dir ) ;
 	}
 	foreach($dirs as $dir){
-		rmdir($dir);
+		@rmdir($dir);
 	}
 	return;
 }
