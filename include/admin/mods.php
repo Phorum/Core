@@ -59,6 +59,14 @@ if(count($_POST) && (!defined("PHORUM_INSTALL") || isset($_POST["do_modules_upda
 // Retrieve a list of available modules.
 $list = phorum_api_admin_mods_list();
 
+// Show module problems to the admin. These are serious issues, which we
+// do not want to stow away like the deprecated hooks reporting below.
+if (count($list['problems'])) {
+    foreach ($list['problems'] as $problem) {
+        phorum_admin_error($problem);
+    }
+}
+
 // Show module warnings to the admin in a non intrusive way. In a lot
 // of cases, the admin won't be the one to fix the problems, therefore
 // we do not want to display too much noise about warnings here.

@@ -64,6 +64,9 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
  *     - deprecated:
  *       An array of warnings about deprecated module hooks or an empty
  *       array if there are no deprecation warnings.
+ *     - problems:
+ *       An array of (HTML formatted) errors and warnings regarding module
+ *       problems.
  */
 function phorum_api_admin_mods_list()
 {
@@ -72,6 +75,7 @@ function phorum_api_admin_mods_list()
     $modules    = array();
     $priorities = array();
     $deprecated = array();
+    $problems   = array();
 
     include_once('./include/version_functions.php');
 
@@ -109,10 +113,10 @@ function phorum_api_admin_mods_list()
 
         // Check if we found module information.
         if (!count($lines)) {
-            phorum_admin_error(
-            "Warning: possible module " .
-            "\"" . htmlspecialchars($entry) . "\" found, but no " .
-            "module information is available for that module.");
+            $problems[] =
+                "Warning: possible module " .
+                "\"" . htmlspecialchars($entry) . "\" found, but no " .
+                "module information is available for that module.";
             continue;
         }
 
@@ -138,11 +142,11 @@ function phorum_api_admin_mods_list()
                     } elseif (preg_match('/^run\s+module\s+(before|after)\s(.+)$/i', $prio, $m)) {
                         $priorities['module'][$entry][] = $m;
                     } else {
-                        phorum_admin_error(
-                        "Priority configuration error for module " .
-                        htmlspecialchars($entry) . "<br/>" .
-                        "Cannot parse priority " .
-                        "\"" . htmlspecialchars($prio) . "\"<br/>");
+                        $problems[] =
+                            "Priority configuration error for module " .
+                            htmlspecialchars($entry) . "<br/>" .
+                            "Cannot parse priority " .
+                            "\"" . htmlspecialchars($prio) . "\"<br/>";
                     }
                 } elseif ($parts[0]=="required_version" ||
                           $parts[0]=="require_version") {
@@ -191,7 +195,8 @@ function phorum_api_admin_mods_list()
     return array(
       'modules'    => $modules,
       'priorities' => $priorities,
-      'deprecated' => $deprecated
+      'deprecated' => $deprecated,
+      'problems'   => $problems
     );
 }
 // }}}
