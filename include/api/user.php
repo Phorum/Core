@@ -2227,7 +2227,7 @@ function phorum_api_user_save_groups($user_id, $groups)
 
 // {{{ Function: phorum_api_user_check_access()
 /**
- * Check if a user has certain access right for a single forum.
+ * Check if a user has certain access right for forum(s).
  *
  * @param integer $permission
  *     The permission to check for. Multiple permissions can be OR-ed
@@ -2326,9 +2326,21 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     // For other users, we have to do a full permission lookup.
     else
     {
+        // Fetch data for the forums, unless we already have that
+        // data available.
+        if ($forums === NULL) {
+            $forums = phorum_db_get_forums(array_keys($forum_access));
+        }
+
         // Check the access rights for each forum.
         foreach ($forum_access as $id => $data)
         {
+            // Access to folders is always granted. 
+            if (!empty($forums[$id]['folder_flag'])) {
+                $forum_access[$id] = TRUE;
+                continue;
+            }
+
             $perm = NULL;
 
             // Authenticated user with specific access rights.
@@ -2338,12 +2350,6 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
             }
             // User for which to use the forum permissions.
             else {
-                // Fetch data for the forums, unless we already have that
-                // data available.
-                if ($forums === NULL) {
-                    $forums = phorum_db_get_forums(array_keys($forum_access));
-                }
-
                 $key = empty($user['user_id']) ? 'pub_perms' : 'reg_perms';
                 if (isset($forums[$id][$key])) {
                     $perm = $forums[$id][$key];

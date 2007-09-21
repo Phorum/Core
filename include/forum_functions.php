@@ -59,11 +59,14 @@ function phorum_build_forum_list() {
 
         $forum['forum_path'] = unserialize($forum['forum_path']);
 
+        $indent = count($forum["forum_path"]) - 2;
+
         $forum_picker[$forum["forum_id"]] = array(
             "forum_id" => $forum["forum_id"],
             "folder_flag" => $forum["folder_flag"],
             "name" => htmlspecialchars($forum["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ),
-            "indent" => (count($forum["forum_path"])-2),
+            "indent" => $indent,
+            "indent_spaces" => str_repeat("&nbsp;", $indent),
             "url" => $url,
             "path" => $forum["forum_path"]
         );
