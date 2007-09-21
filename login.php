@@ -89,7 +89,7 @@ if (count($_POST) > 0) {
             // User registration not yet approved by a moderator.
             if($user["active"] == PHORUM_USER_PENDING_MOD) {
                 $template = "message";
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+                $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
             // User registration still need email verification.
             } elseif ($user["active"] == PHORUM_USER_PENDING_EMAIL ||
                       $user["active"] == PHORUM_USER_PENDING_BOTH) {
@@ -108,7 +108,7 @@ if (count($_POST) > 0) {
                    wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"],72);
                 phorum_email_user(array($user["email"]), $maildata);
 
-                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
+                $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
                 $template="message";
 
             // The user is active.
