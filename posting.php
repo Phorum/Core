@@ -73,10 +73,9 @@ if(!isset($PHORUM["forum_id"])){
     phorum_redirect_by_url($dest_url);
     exit();
 }
-
 // Somehow we got to a folder in posting.php. Take the
 // user back to the folder.
-if($PHORUM["folder_flag"] && $PHORUM["forum_id"]!=0){
+if($PHORUM["folder_flag"]) {
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
