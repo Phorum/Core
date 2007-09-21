@@ -2441,7 +2441,7 @@ function phorum_db_drop_folder($forum_id)
          WHERE  forum_id = $forum_id AND
                 folder_flag = 1"
     );
-    if ($new_parent_id) trigger_error(
+    if ($new_parent_id === NULL) trigger_error(
         "phorum_db_drop_folder(): id $forum_id not found or not a folder",
         E_USER_ERROR
     );
