@@ -127,7 +127,7 @@ if($PHORUM['cache_layer'] == 'apc') {
     }
 }
 
-$row=$frm->addrow( "Select the cache layer to use:", $frm->select_tag( "cache_layer", array( "file" => 'file-system based', "memcached" => 'memcached based', "apc" => 'APC based'), $PHORUM["cache_layer"] )." $layer_check" );
+$row=$frm->addrow( "Select the cache layer to use:", $frm->select_tag( "cache_layer", array( "file" => 'file system based', "memcached" => 'memcached based', "apc" => 'APC based'), $PHORUM["cache_layer"] )." $layer_check" );
 
 // calling mods
 $frm=phorum_hook("admin_cache", $frm);
