@@ -792,12 +792,12 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
     {
-        // Get rid of any buffered output so far.
-        phorum_ob_clean();
-
         // Avoid using any output compression or handling on the sent data.
         ini_set("zlib.output_compression", "0");
         ini_set("output_handler", "");
+
+        // Get rid of any buffered output so far.
+        phorum_ob_clean();
 
         header("Content-Type: " . $file["mime_type"]);
         header("Content-Disposition: filename=\"{$file["filename"]}\"");
