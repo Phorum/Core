@@ -47,11 +47,7 @@ define('phorum_page','extension_check');
 include_once( "./common.php" );
 
 // Flush any output so far.
-for(;;) {
-    $status = ob_get_status();
-    if (!$status || !$status['del']) break;
-    ob_end_clean();
-}
+phorum_ob_clean();
 
 // Check if the extension version matches this Phorum version.
 if (function_exists('phorum_ext_version')) {

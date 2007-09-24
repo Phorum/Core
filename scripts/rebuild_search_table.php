@@ -19,6 +19,9 @@ define("PHORUM_ADMIN", 1);
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
 
+// Make sure that the output is not buffered.
+phorum_ob_clean();
+
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
     ini_set("memory_limit","64M");

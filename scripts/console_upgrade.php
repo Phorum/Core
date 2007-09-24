@@ -28,11 +28,6 @@ $noprompt = (isset($argv[1]) && $argv[1] == '-a');
 define("phorum_page", "console_upgrade");
 define("PHORUM_ADMIN", 1);
 
-echo "\n";
-echo "Phorum console based database upgrade\n";
-echo "-------------------------------------\n";
-echo "\n";
-
 // I guess the phorum-directory is one level up. if you move the script to
 // somewhere else you'll need to change that.
 $PHORUM_DIRECTORY = dirname(__FILE__) . "/../";
@@ -55,6 +50,14 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 // include required files
 include_once './common.php';
 include_once './include/version_functions.php';
+
+// Make sure that the output is not buffered.
+phorum_ob_clean();
+
+echo "\n";
+echo "Phorum console based database upgrade\n";
+echo "-------------------------------------\n";
+echo "\n";
 
 // Open the database connection.
 if(!phorum_db_check_connection()){

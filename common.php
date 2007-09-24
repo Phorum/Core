@@ -1096,6 +1096,15 @@ function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}")
     return $backtrace;
 }
 
+function phorum_ob_clean()
+{
+    // Clear out all output that PHP buffered up to now.
+    for(;;) {
+        $status = ob_get_status();
+        if (!$status || !$status['del']) break;
+        ob_end_clean();
+    }
+}
 
 /**
  * Database error handling function.
@@ -1108,11 +1117,7 @@ function phorum_database_error($error)
 
     // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).
-    for(;;) {
-        $status = ob_get_status();
-        if (!$status || !$status['del']) break;
-        ob_end_clean();
-    }
+    phorum_ob_clean();
 
     // Give modules a chance to handle or process the database error.
     phorum_hook("database_error", $error);

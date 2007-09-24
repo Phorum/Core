@@ -26,24 +26,6 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 define("phorum_page", "stresstest");
 define("PHORUM_ADMIN", 1);
 
-print "\n";
-print "Phorum stress testing tool\n";
-print "--------------------------\n";
-print "\n";
-print "This tool can be used for easily creating lots of users and messages.\n";
-print "It is only meant for developers to do large data volume stress tests.\n";
-print "Do not run this on a live production Phorum installation, or you\n";
-print "will end up with a lot of bogus data in your forums.\n";
-print "\n";
-print "Are you sure you want to continue? (type \"yes\")\n";
-print "> ";
-
-$yes = trim(fgets(STDIN));
-if ($yes != 'yes') {
-    print "\nAborting ...\n\n";
-    exit();
-}
-
 // I guess the phorum-directory is one level up. if you move the script to
 // somewhere else you'll need to change that.
 $PHORUM_DIRECTORY = dirname(__FILE__) . "/../";
@@ -66,6 +48,27 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 // include required files
 include_once './common.php';
 include_once ("./include/thread_info.php");
+
+// Make sure that the output is not buffered.
+phorum_ob_clean();
+
+print "\n";
+print "Phorum stress testing tool\n";
+print "--------------------------\n";
+print "\n";
+print "This tool can be used for easily creating lots of users and messages.\n";
+print "It is only meant for developers to do large data volume stress tests.\n";
+print "Do not run this on a live production Phorum installation, or you\n";
+print "will end up with a lot of bogus data in your forums.\n";
+print "\n";
+print "Are you sure you want to continue? (type \"yes\")\n";
+print "> ";
+
+$yes = trim(fgets(STDIN));
+if ($yes != 'yes') {
+    print "\nAborting ...\n\n";
+    exit();
+}
 
 print "\nHow many users do you want to create?\n";
 print "> "; $ucount = (int)trim(fgets(STDIN));

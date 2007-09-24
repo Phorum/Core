@@ -793,11 +793,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     if ($flags & PHORUM_FLAG_SEND)
     {
         // Get rid of any buffered output so far.
-        for(;;) {
-            $status = ob_get_status();
-            if (!$status || !$status['del']) break;
-            ob_end_clean();
-        }
+        phorum_ob_clean();
 
         // Avoid using any output compression or handling on the sent data.
         ini_set("zlib.output_compression", "0");

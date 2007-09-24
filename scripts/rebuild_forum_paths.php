@@ -14,6 +14,9 @@ chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
 include_once( "./include/admin_functions.php" );
 
+// Make sure that the output is not buffered.
+phorum_ob_clean();
+
 print "\nRebuilding forum path info ...\n";
 
 $forums = phorum_admin_build_path_array();
