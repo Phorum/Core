@@ -152,8 +152,12 @@ function event_logging_writelog($loginfo)
     // Handle messages that exceed the maximum message length.
     if ($loginfo["message"] !== NULL && strlen($loginfo["message"]) > 255) {
         if (!isset($loginfo["details"])) $loginfo["details"] = '';
-        $loginfo["details"] .= "\nFull message:\n{$loginfo["message"]}\n";
+        $loginfo["details"] = "Message:\n\n{$loginfo["message"]}\n\n" .
+                              $loginfo["details"];
         $loginfo["message"] = substr($loginfo["message"], 0, 100) . "... (see event details for the full message)\n";
+    } elseif (isset($loginfo["details"])) {
+        $loginfo["details"] = "Message:\n\n{$loginfo["message"]}\n\n" .
+                              $loginfo["details"];
     }
 
     // Add the fields from the $loginfo argument.

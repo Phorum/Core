@@ -369,7 +369,6 @@ foreach ($logs as $loginfo)
 
             ($details !== NULL
              ? '<br/><b>Additional details:</b><br/><br/>' .
-               '<i>Log message: ' . htmlspecialchars($message) . '</i><br/><br/>' .
                nl2br(htmlspecialchars($details)) . '<br/>' 
              : '') . 
             '<br/>

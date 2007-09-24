@@ -154,7 +154,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 
     // Construct a back trace and add it to the details info.
     $backtrace = phorum_generate_backtrace(1);
-    $details .= $backtrace === NULL ? "" : "Back trace:\n\n$backtrace\n";
+    $details .= $backtrace === NULL ? "" : "\nBack trace:\n\n$backtrace\n";
 
     // Add request info to the details.
     $details .= "Request info:\n\n";
