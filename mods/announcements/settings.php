@@ -27,18 +27,15 @@ if(count($_POST)){
     $PHORUM["mod_announcements"]["number_to_show"] = (int)$_POST["number_to_show"];
     $PHORUM["mod_announcements"]["days_to_show"] = (int)$_POST["days_to_show"];
 
-    if(empty($error)){
-        if(!phorum_db_update_settings(array("mod_announcements"=>$PHORUM["mod_announcements"]))){
-            $error="Database error while updating settings.";
-        } else {
-            echo "Announcements Settings Updated<br />";
-        }
-    }
+    phorum_db_update_settings(array(
+        "mod_announcements" => $PHORUM["mod_announcements"]
+    ));
+    phorum_admin_okmsg("Announcement settings updated");
 }
 
 include_once "./include/admin/PhorumInputForm.php";
 
-$frm =& new PhorumInputForm ("", "post", "Save");
+$frm = new PhorumInputForm ("", "post", "Save");
 
 $frm->hidden("module", "modsettings");
 
