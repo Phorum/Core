@@ -37,9 +37,8 @@
                     {LANG->Delete}
                 </th>
                 <th align="left">{LANG->Subject}</th>
-                <th align="left" nowrap="nowrap">{LANG->Author}</th>
                 <th align="left" nowrap="nowrap">{LANG->LastPost}</th>
-                {IF ALLOW_EMAIL_NOTIFY}
+                {IF ALLOW_EMAIL_NOTIFY_COUNT}
                   <th align="left" nowrap="nowrap">{LANG->Email}</th>
                 {/IF}
             </tr>
@@ -53,16 +52,19 @@
                         {TOPICS->subject}</a><br />
                         <small>{LANG->Forum}: {TOPICS->forum}</small>
                     </td>
-                    <td width="10%" class="{altclass}" nowrap="nowrap">{IF TOPICS->URL->PROFILE}<a href="{TOPICS->URL->PROFILE}">{/IF}{TOPICS->author}{IF TOPICS->URL->PROFILE}</a>{/IF}</td>
-                    <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->datestamp}</td>
-                    {IF ALLOW_EMAIL_NOTIFY}
+                    <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->datestamp}<br/><a href="{TOPICS->URL->NEWPOST}">{LANG->LastPost}</a> {LANG->by} {IF TOPICS->URL->RECENT_AUTHOR_PROFILE}<a href="{TOPICS->URL->RECENT_AUTHOR_PROFILE}">{/IF}{TOPICS->recent_author}{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
+                    {IF ALLOW_EMAIL_NOTIFY_COUNT}
                     <td width="5%">
+                      {IF TOPICS->ALLOW_EMAIL_NOTIFY}
                         <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />
                         <input type="hidden" name="old_sub_type[{TOPICS->thread}]" value="{TOPICS->sub_type}" />
                         <select name="sub_type[{TOPICS->thread}]">
                             <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
                             <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
                         </select>
+                      {ELSE}
+                        {LANG->No} 
+                      {/IF}
                     </td>
                     {/IF}
                 </tr>

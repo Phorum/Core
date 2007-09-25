@@ -428,7 +428,8 @@ $frm->addbreak("Posting Settings");
 
 $frm->addrow("Check for Duplicates", $frm->select_tag("check_duplicate", array("No", "Yes"), $check_duplicate, $disabled_form_input));
 
-$frm->addrow("Allow Email Notification", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
+$row = $frm->addrow("Allow Email Notification", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
+$frm->addhelp($row, "Allow Email Notification", "This option determines if it is possible for users to use email notification when following threads within this forum.<br/><br/>This does not only apply to enabling email notification at post time, but it also applies to clicking on \"Follow this thread\" from the message read page and to managing subscriptions from the user control center.");
 
 $frm->addbreak("Attachment Settings");
 

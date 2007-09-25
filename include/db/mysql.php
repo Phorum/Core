@@ -4626,7 +4626,6 @@ function phorum_db_newflag_check($forum_ids)
 }
 // }}}
 
-
 // {{{ Function: phorum_db_newflag_count()
 /**
  * Gets a count of new messages and threads for the forum ids given
@@ -4723,7 +4722,7 @@ function phorum_db_newflag_count($forum_ids)
     return $new_checks;
 
 }
-
+// }}}
 
 // {{{ Function: phorum_db_newflag_get_unread_count()
 /**
@@ -5063,15 +5062,17 @@ function phorum_db_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
     // latest message in the thread was posted within the provided time limit.
     $threads = phorum_db_interact(
         DB_RETURN_ASSOCS,
-        "SELECT s.thread      AS thread,
-                s.forum_id    AS forum_id,
-                s.sub_type    AS sub_type,
-                m.subject     AS subject,
-                m.modifystamp AS modifystamp,
-                m.author      AS author,
-                m.user_id     AS user_id,
-                m.email       AS email,
-                m.meta        AS meta
+        "SELECT s.thread         AS thread,
+                s.forum_id       AS forum_id,
+                s.sub_type       AS sub_type,
+                m.subject        AS subject,
+                m.modifystamp    AS modifystamp,
+                m.author         AS author,
+                m.user_id        AS user_id,
+                m.email          AS email,
+                m.recent_author  AS recent_author,
+                m.recent_user_id AS recent_user_id,
+                m.meta           AS meta
          FROM   {$PHORUM['subscribers_table']} AS s,
                 {$PHORUM['message_table']} AS m
          WHERE  s.user_id    = $user_id AND

@@ -71,6 +71,10 @@ foreach($subscr_array as $id => $data)
     $data['forum'] = $forums[$data['forum_id']]['name'];
     $data['raw_datestamp'] = $data["modifystamp"];
     $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
+
+    $data['raw_lastpost'] = $data['modifystamp'];
+    $data['lastpost'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
+
     $data["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
     $data["URL"]["NEWPOST"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");
 
@@ -103,11 +107,32 @@ foreach($subscr_array as $id => $data)
 }
 
 require_once("./include/format_functions.php");
-$subscr_array_final = phorum_format_messages($subscr_array_final);
+
+// Additional formatting for the recent author data.
+$recent_author_spec = array(
+    "recent_user_id",        // user_id
+    "recent_author",         // author
+    NULL,                    // email (we won't link to email for recent)
+    "recent_author",         // target author field
+    "RECENT_AUTHOR_PROFILE"  // target author profile URL field
+);
+
+$subscr_array_final = phorum_format_messages($subscr_array_final, array($recent_author_spec));
+
+$count = 0;
+foreach ($subscr_array_final as $id => $message) {
+    if (isset($forums[$message['forum_id']])) {
+        $forum = $forums[$message['forum_id']];
+        $subscr_array_final[$id]['ALLOW_EMAIL_NOTIFY'] =
+            !empty($forum['allow_email_notify']);
+        if ($subscr_array_final[$id]['ALLOW_EMAIL_NOTIFY']) {
+            $count ++;
+        }
+    }
+}
+$PHORUM["DATA"]["ALLOW_EMAIL_NOTIFY_COUNT"] = $count;
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Subscriptions"];
-
-$PHORUM["DATA"]["ALLOW_EMAIL_NOTIFY"] = !empty($PHORUM["allow_email_notify"]);
 
 $PHORUM['DATA']['TOPICS'] = $subscr_array_final;
 
