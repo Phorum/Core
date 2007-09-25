@@ -23,7 +23,7 @@
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
 {/IF}
 {IF URL->REDIRECT}
-    <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}1{/IF}; url={URL->REDIRECT}" />
+    <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
 {/IF}
 
 {IF DESCRIPTION}
@@ -60,6 +60,13 @@ Some Icons courtesy of:
 <a class="icon icon-key-go" href="{URL->LOGINOUT}">{LANG->LogIn}</a>
 <a class="icon icon-user-add" href="{URL->REGISTERPROFILE}">{LANG->Register}</a>
 {/IF}
+
+{IF URL->RECENT_MESSAGES}
+  <a href="{URL->RECENT_MESSAGES}">
+    {LANG->mod_recent_messages->RecentMessages}
+  </a>
+{/IF}
+
 </div>
 
 <div id="logo">
