@@ -13,7 +13,7 @@
 
         {LANG->FollowExplanation}
 
-        {IF NOT ALLOW_EMAIL_NOTIFY}
+        {IF ALLOW_EMAIL_NOTIFY}
           <br />
           {LANG->FollowExplanationMail}
           <br />

@@ -61,12 +61,6 @@ Some Icons courtesy of:
 <a class="icon icon-user-add" href="{URL->REGISTERPROFILE}">{LANG->Register}</a>
 {/IF}
 
-{IF URL->RECENT_MESSAGES}
-  <a href="{URL->RECENT_MESSAGES}">
-    {LANG->mod_recent_messages->RecentMessages}
-  </a>
-{/IF}
-
 </div>
 
 <div id="logo">
