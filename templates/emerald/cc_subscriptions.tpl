@@ -39,7 +39,9 @@
                 <th align="left">{LANG->Subject}</th>
                 <th align="left" nowrap="nowrap">{LANG->Author}</th>
                 <th align="left" nowrap="nowrap">{LANG->LastPost}</th>
-                <th align="left" nowrap="nowrap">{LANG->Email}</th>
+                {IF ALLOW_EMAIL_NOTIFY}
+                  <th align="left" nowrap="nowrap">{LANG->Email}</th>
+                {/IF}
             </tr>
             {LOOP TOPICS}
                 <tr>
@@ -53,6 +55,7 @@
                     </td>
                     <td width="10%" class="{altclass}" nowrap="nowrap">{IF TOPICS->URL->PROFILE}<a href="{TOPICS->URL->PROFILE}">{/IF}{TOPICS->author}{IF TOPICS->URL->PROFILE}</a>{/IF}</td>
                     <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->datestamp}</td>
+                    {IF ALLOW_EMAIL_NOTIFY}
                     <td width="5%">
                         <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />
                         <input type="hidden" name="old_sub_type[{TOPICS->thread}]" value="{TOPICS->sub_type}" />
@@ -61,6 +64,7 @@
                             <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
                         </select>
                     </td>
+                    {/IF}
                 </tr>
             {/LOOP TOPICS}
         </table>

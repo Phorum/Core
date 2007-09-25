@@ -107,7 +107,10 @@ $subscr_array_final = phorum_format_messages($subscr_array_final);
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Subscriptions"];
 
+$PHORUM["DATA"]["ALLOW_EMAIL_NOTIFY"] = !empty($PHORUM["allow_email_notify"]);
+
 $PHORUM['DATA']['TOPICS'] = $subscr_array_final;
+
 $template = "cc_subscriptions";
 
 ?>

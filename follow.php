@@ -69,7 +69,7 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     $template="message";
 } elseif(!empty($_POST)) {
     // the user has submitted the form
-    $type = (isset($_POST["send_email"])) ? PHORUM_SUBSCRIPTION_MESSAGE : PHORUM_SUBSCRIPTION_BOOKMARK;
+    $type = (!empty($PHORUM["allow_email_notify"]) && isset($_POST["send_email"])) ? PHORUM_SUBSCRIPTION_MESSAGE : PHORUM_SUBSCRIPTION_BOOKMARK;
     phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], $type );
     $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
@@ -87,6 +87,8 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     $PHORUM["DATA"]["AUTHOR"]        = $message["author"];
     $PHORUM["DATA"]["THREAD"]        = $thread;
     $PHORUM["DATA"]["FORUM_ID"]      = $PHORUM["forum_id"];
+
+    $PHORUM["DATA"]["ALLOW_EMAIL_NOTIFY"] = !empty($PHORUM["allow_email_notify"]);
 
     $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"thread\" value=\"{$PHORUM["DATA"]["THREAD"]}\" />\n";
 

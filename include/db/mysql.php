@@ -642,7 +642,10 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     if (count($allowed_forums) == 1) {
         $sql .= " AND forum_id = " . array_shift($forum_id);
     } else {
-        $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
+// paticik.com hack: do not use forum_id IN (...), because that will
+// force the select query into filesort mode. Since all forums are
+// readable on paticik, we force a select from all here.
+//        $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
     }
 
     if ($thread) {
@@ -650,7 +653,7 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     }
 
     if ($threads_only) {
-        $sql .= ' AND parent_id = 0 ORDER BY thread DESC';
+        $sql .= ' AND parent_id = 0 ORDER BY message_id DESC';
     } else {
         $sql .= ' ORDER BY message_id DESC';
     }
@@ -1514,7 +1517,14 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         }
     }
     if (count($search_forums)){
-        $forum_where = "AND forum_id in (".implode(",", $search_forums).")";
+// paticik.com hack: do not use forum_id IN (...), because that will
+// force the select query into filesort mode. Since all forums are
+// readable on paticik, we force a select from all here.
+        if (count($search_forums) == 1) {
+          $forum_where = "AND forum_id IN (".implode(",", $search_forums).")";
+        } else {
+          $forum_where = '';
+        }
     } else {
         // Hack attempt or error. Return empty search results.
         return $return;
