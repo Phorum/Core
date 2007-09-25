@@ -1101,7 +1101,9 @@ function phorum_ob_clean()
     // Clear out all output that PHP buffered up to now.
     for(;;) {
         $status = ob_get_status();
-        if (!$status || !$status['del']) break;
+        if (!$status ||
+            $status['name'] == 'ob_gzhandler' ||
+            !$status['del']) break;
         ob_end_clean();
     }
 }
