@@ -23,7 +23,7 @@
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
 {/IF}
 {IF URL->REDIRECT}
-    <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
+    <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}1{/IF}; url={URL->REDIRECT}" />
 {/IF}
 
 {IF DESCRIPTION}
