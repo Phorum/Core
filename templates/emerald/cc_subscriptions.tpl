@@ -52,7 +52,7 @@
                         {TOPICS->subject}</a><br />
                         <small>{LANG->Forum}: {TOPICS->forum}</small>
                     </td>
-                    <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->lastpost}<br/><a href="{TOPICS->URL->NEWPOST}">{LANG->LastPost}</a> {LANG->by} {IF TOPICS->URL->RECENT_AUTHOR_PROFILE}<a href="{TOPICS->URL->RECENT_AUTHOR_PROFILE}">{/IF}{TOPICS->recent_author}{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
+                    <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->lastpost}<br/>{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}<a href="{TOPICS->URL->RECENT_AUTHOR_PROFILE}">{/IF}{TOPICS->recent_author}{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
                     {IF ALLOW_EMAIL_NOTIFY_COUNT}
                     <td width="5%">
                       {IF TOPICS->ALLOW_EMAIL_NOTIFY}
