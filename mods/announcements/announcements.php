@@ -34,16 +34,12 @@ function phorum_setup_announcements ()
     }
 
     // If we got here, then we know that we are going to show announcements.
-    // Include the style sheet information for this module in the page
-    // header if the CSS template isn't empty.
+    // Include the <head> data for this module in the page.
     ob_start();
-    include phorum_get_template("announcements::css");
-    $css = trim(ob_get_contents());
+    include phorum_get_template("announcements::head_data");
+    $head_data = trim(ob_get_contents());
     ob_end_clean();
-    if ($css != '') {
-        $PHORUM["DATA"]["HEAD_TAGS"] .=
-	    "<style type=\"text/css\" media=\"screen\">$css</style>";
-    }
+    $PHORUM["DATA"]["HEAD_TAGS"] .= $head_data;
 }
 
 function phorum_show_announcements ()
