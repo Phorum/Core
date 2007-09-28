@@ -65,6 +65,7 @@ function phorum_build_forum_list() {
             "forum_id" => $forum["forum_id"],
             "folder_flag" => $forum["folder_flag"],
             "name" => $forum["name"],
+            "stripped_name" => strip_tags($forum["name"]),
             "indent" => $indent,
             "indent_spaces" => str_repeat("&nbsp;", $indent),
             "url" => $url,
