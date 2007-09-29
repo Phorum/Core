@@ -103,6 +103,24 @@ function editor_tools_handle_superscript() {
 }
 
 // ----------------------------------------------------------------------
+// Tool: [small]...[/small] (small font)
+// ----------------------------------------------------------------------
+
+function editor_tools_handle_small() {
+    editor_tools_add_tags('[small]', '[/small]');
+    editor_tools_focus_textarea();
+}
+
+// ----------------------------------------------------------------------
+// Tool: [large]...[/large] (large font)
+// ----------------------------------------------------------------------
+
+function editor_tools_handle_large() {
+    editor_tools_add_tags('[large]', '[/large]');
+    editor_tools_focus_textarea();
+}
+
+// ----------------------------------------------------------------------
 // Tool: [code]...[/code] (formatted code)
 // ----------------------------------------------------------------------
 

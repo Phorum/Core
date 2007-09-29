@@ -201,8 +201,8 @@ function phorum_mod_bbcode_format($data)
         // "[" character in the body by now.
         if (strstr($body, "["))
         {
-            // Diddle with white space around quote and code tags.
-            $body = preg_replace("/\s*(\[\/*(code|quote)\])\s*/", "$1", $body);
+            // Fiddle with white space around quote and code tags.
+            $body = preg_replace("/\s*(\[\/?(code|quote)\])\s*/", "$1", $body);
 
             // Run the regular expression replacements for the standard tags.
             $body = preg_replace($search, $replace, $body);

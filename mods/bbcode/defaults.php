@@ -60,11 +60,11 @@ $GLOBALS["bbcode_features"] = array
     ),
     'small' => array(
         '[small]small text[/small]',
-        FALSE, 1
+        TRUE, 1
     ),
     'large' => array(
         '[large]large text[/large]',
-        FALSE, 1
+        TRUE, 1
     ),
     'code' => array(
         '[code]<br/>' .
@@ -130,7 +130,7 @@ if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["quote_hook"])) {
 if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["show_full_urls"])) {
     $GLOBALS["PHORUM"]["mod_bbcode"]["show_full_urls"] = 0;
 }
-    
+
 if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["enabled"]) ||
     !is_array($GLOBALS["PHORUM"]["mod_bbcode"]["enabled"])) {
     $GLOBALS["PHORUM"]["mod_bbcode"]["enabled"] = array();
