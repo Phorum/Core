@@ -452,7 +452,7 @@ if (!empty($action)) {
                                 $error = $PHORUM["DATA"]["LANG"]["PMNotSent"];
 
                             // Do e-mail notifications on successful sending.
-                            } else {
+                            } elseif (!empty($PHORUM['allow_pm_email_notify'])) {
 
                                 include_once("./include/email_functions.php");
 

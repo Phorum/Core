@@ -163,6 +163,20 @@ $row=$frm->addrow( "Phorum Title", $frm->text_box( "title", $PHORUM["title"], 50
 $row=$frm->addrow( "Phorum Description", $frm->textarea( "description", $PHORUM["description"], 30, 5, "style='width: 100%'" ) );
 
 $row=$frm->addrow( "DNS Lookups", $frm->select_tag( "dns_lookup", array( "No", "Yes" ), $PHORUM["dns_lookup"] ) );
+$frm->addhelp($row, "DNS Lookups",
+    "DNS is the system that (amongsts other things) is responsible for
+     translating host names into IP addresses and vice versa.
+     If DNS lookups are enabled, phorum will use DNS lookups for:
+     <ul>
+     <li>logging the hostname from which a message was posted, instead of
+         the plain IP address;</li>
+     <li>being able to create IP ban items based on host and domain names;</li>
+     <li>checking the email address that is for user registrations.</li>
+     </ul>
+     If Phorum keeps reporting illegal email addresses during signup or
+     if you are suffering from massive delays during posting messages,
+     then there might be DNS problems on your server. In that case, disable
+     DNS lookups as a work around.");
 
 $row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
 $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
@@ -210,10 +224,32 @@ $frm->addbreak( "HTML Settings" );
 $row=$frm->addrow( "Phorum HTML Title", $frm->text_box( "html_title", $PHORUM["html_title"], 50 ) );
 
 $row=$frm->addrow( "Phorum Head Tags", $frm->textarea( "head_tags", $PHORUM["head_tags"], 30, 5, "style='width: 100%'" ) );
+$frm->addhelp($row, "Phorum Head Tags", "This option can be used to provide additional HTML code that will be added to the &lt;head&gt; section of the pages. This could for example be used for adding meta keywords:<br/>
+<pre style=\"font-size: x-small\">&lt;meta name=\"KEYWORDS\" content=\"...\"\ /&gt;</pre>");
 
 $row=$frm->addrow( "Show and allow feed links", $frm->select_tag( "use_rss", array( "No", "Yes" ), $PHORUM["use_rss"] ) );
+$frm->addhelp($row, "Show and allow feed links",
+    "A feed is a standardized format for providing information about new
+     content on a web site. Various programs can be used to process and
+     read feed information (e.g. specialized \"feed readers\", Firefox,
+     Google's on line feed reader, Thunderbird mail).<br />
+     <br />
+     If you enable this feature, then your visitors will be able to
+     subscribe to feeds for your forums.<br />
+     <br />
+     Note that feed readers will automatically poll for feed updates using
+     a client side defined time interval, so with a lot of active feed
+     subscriptions, the number of requests to your web server will rise.
+     Phorum uses server side caching of the feed data to keep the
+     server load that is required for supporting feeds to a minimum.");
 
 $row=$frm->addrow( "Default feed type", $frm->select_tag( "default_feed", array( "rss"=>"RSS", "atom"=>"Atom" ), $PHORUM["default_feed"] ) );
+$frm->addhelp($row, "Default feed type",
+    "There are multiple standards for providing content feeds.
+     Phorum supports RSS and ATOM, which are the most widely spread XML
+     based feed formats.<br />
+     <br />
+     If you are unsure what to use, then select \"RSS\".");
 
 $frm->addbreak( "File/Path Settings" );
 
@@ -243,7 +279,7 @@ $row=$frm->addrow( "Session Domain", $frm->text_box( "session_domain", $PHORUM["
 $frm->addhelp($row, "Session Domain", "Most likely, you can leave this blank.  If you know you need to use a different domain (like you use forums.example.com, you may want to just use example.com as the domain), you may enter it here." );
 
 $row=$frm->addrow( "Track User Usage", $frm->select_tag( "track_user_activity", array( 0=>"Never", 86400=>"Once per day", 3600=>"Once per hour", 600=>"Once per 5 minutes", 1=>"Constantly" ), $PHORUM["track_user_activity"] ) );
-$frm->addhelp($row, "Track User Usage", "When set the last time a user accessed the Phorum will be recorded as often as you have decided upon.  This will require constant updates to your database.  If you have a busy forum on weak equipment, this may be bad thing to set to low." );
+$frm->addhelp($row, "Track User Usage", "When set, the last time a user accessed the Phorum will be recorded as often as you have decided upon.  This will require constant updates to your database.  If you have a busy forum on weak equipment, it may be bad to use a short update interval." );
 
 $frm->addbreak( "Tighter Security" );
 
@@ -258,6 +294,13 @@ $frm->addbreak( "User Settings" );
 $row=$frm->addrow( "Allow Time Zone Selection", $frm->select_tag( "user_time_zone", array( "No", "Yes" ), $PHORUM["user_time_zone"] ) );
 
 $row=$frm->addrow( "Allow Template Selection", $frm->select_tag( "user_template", array( "No", "Yes" ), $PHORUM["user_template"] ) );
+$frm->addhelp($row, "Allow Template Selection",
+    "If enabled, the user will find an option in his control center to
+     select the template to use.<br />
+     <br />
+     Note: The user selected template will only be used for forums,
+     which do not have \"Fixed Display-Settings\" enabled in the
+     forum settings.");
 
 $reg_con_arr = array(
 
@@ -278,7 +321,7 @@ $row=$frm->addrow( "Enable Drop-down User List", $frm->select_tag( "enable_dropd
 $frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phorum will display a drop-down list of users instead of an empty text box on pages where you can select a user. Two examples of such pages are when sending a private message, and when adding users to a group in the group moderation page. This option should be disabled if you have a large number of users, as a list of thousands of users will slow performance dramatically." );
 
 $row = $frm->addrow( "What to use as the display name", $frm->select_tag("display_name_source", array("username" => "User's username", "real_name" => "User's real name"), isset($PHORUM["display_name_source"]) ? $PHORUM["display_name_source"] : "username") );
-$frm->addhelp($row, "What to use as the display name", "You can choose to use either the user's username or the real name (which can be edited by the user from the control center) as the name by which the user is referenced throughout all Phorum pages.<br/><br/>This is not an option that you normally would want to chang on a live system that has been running for a while. One reason is that all stored names will have to be updated in the database (e.g. the posting authors), which can take quite a while on a big forum (it <i>will</i> work though). More impor tant is that you might confuse your users by changing the display names.");
+$frm->addhelp($row, "What to use as the display name", "You can choose to use either the user's username or the real name (which can be edited by the user from the control center) as the name by which the user is referenced throughout all Phorum pages.<br/><br/>This is not an option that you normally would want to change on a live system that has been running for a while. One reason is that all stored names will have to be updated in the database (e.g. the posting authors), which can take quite a while on a big forum (it <i>will</i> work though). More impor tant is that you might confuse your users by changing the display names.");
 
 $row=$frm->addrow( "Hide Email-Addresses", $frm->select_tag( "hide_email_addr", array( "No", "Yes" ), $PHORUM["hide_email_addr"] ) );
 $frm->addhelp($row, "Hide E-Mail-Addresses", "You can choose to use whether all email-addresses should be hidden. This includes the email-addresses of anonymous users and registered users in their profile. The separate option to hide the email-address in the controlcenter will be hidden too.");
@@ -300,13 +343,20 @@ $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max File Size (KB)", $frm->text_box( "max_
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Space Quota (KB)", $frm->text_box( "file_space_quota", $PHORUM["file_space_quota"], 30 ) );
 
-$row=$frm->addrow( "Private Messaging:", $frm->select_tag( "enable_pm", array( "Off", "On" ), $PHORUM["enable_pm"] ) );
+$row=$frm->addrow( "Private Messaging (PM):", $frm->select_tag( "enable_pm", array( "Off", "On" ), $PHORUM["enable_pm"] ) );
 
-$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Check For New Private Messages", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
+$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Check For New PM", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
 $frm->addhelp($row, "Check For Private Messages", "By setting this to Yes, Phorum will check if a user has new private messages, and display an indicator. On a Phorum with a lot of users and private messages, this may hurt performance. This option has no effect if Private Messaging is disabled." );
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max number of stored messages", $frm->text_box( "max_pm_messagecount", $PHORUM["max_pm_messagecount"], 30 ) );
 $frm->addhelp($row, "Max number of stored messages", "This is the maximum number of private messages that a user may store on the server. The number of private messages is the total of all messages in all PM folders together. Setting this value to zero will allow for unlimited messages.");
+
+$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Allow notification of new PM by email", $frm->select_tag("allow_pm_email_notify", array("No", "Yes"), $PHORUM["allow_pm_email_notify"]) );
+$frm->addhelp($row, "Allow notification of new PM by email",
+    "If this option is enabled, Phorum will send a notification email to
+     users that receive a new private message. The user will find an option
+     in their control center which can be used to disable the notification
+     email.");
 
 $frm->addbreak( "System Email Settings" );
 
@@ -317,7 +367,7 @@ $row=$frm->addrow( "System Emails From Address", $frm->text_box( "system_email_f
 $row=$frm->addrow( "Use BCC in sending mails:", $frm->select_tag( "use_bcc", array( "No", "Yes" ), $PHORUM["use_bcc"] ) );
 
 $row=$frm->addrow( "Ignore Admin for moderator-emails:", $frm->select_tag( "email_ignore_admin", array( "No", "Yes" ), $PHORUM["email_ignore_admin"] ) );
-$frm->addhelp($row, "&nbsp;&nbsp;&nbsp;Ignore Admin for moderator-emails", "If you select yes for this option, then the moderator-notifications and report-message emails will not be sent to the admininistrator, only to moderators" );
+$frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for this option, then the moderator-notifications and report-message emails will not be sent to the admininistrator, only to moderators" );
 
 // calling mods
 $frm=phorum_hook("admin_general", $frm);

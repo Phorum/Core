@@ -16,6 +16,12 @@
 
             <table border="0" cellspacing="0">
                 <tr>
+                   <td style="padding-right:10px">
+                     {IF MESSAGES->mod_user_avatar}
+                       <img src="{MESSAGES->mod_user_avatar}" alt=" " />
+                     {/IF}
+                   </td>
+
                     <td width="100%">
                         <div class="message-author icon-user">
                             {IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}

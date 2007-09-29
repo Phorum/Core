@@ -100,7 +100,7 @@ input, textarea, select, td
 
 .PhorumAdminMenu
 {
-    width: 150px;
+    width: 160px;
     border: 1px solid Navy;
     font-size: 13px;
     margin-bottom: 3px;
@@ -110,7 +110,7 @@ input, textarea, select, td
 
 .PhorumAdminMenuTitle
 {
-    width: 150px;
+    width: 160px;
     border: 1px solid Navy;
     background-color: Navy;
     color:  white;

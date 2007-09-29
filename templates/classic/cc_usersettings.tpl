@@ -129,6 +129,8 @@
             </select>
           </td>
         </tr>
+
+        {IF SHOW_PM_EMAIL_NOTIFY}
         <tr>
           <td nowrap="nowrap">{LANG->PMNotifyEnableSetting}:&nbsp;</td>
           <td>
@@ -138,6 +140,7 @@
             </select>
           </td>
         </tr>
+        {/IF}
       {/IF}
       {IF PROFILE->CHANGEPASSWORD}
         <tr>

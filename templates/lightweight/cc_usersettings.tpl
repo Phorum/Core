@@ -111,6 +111,7 @@
                     </select>
                 </dd>
 
+                {IF SHOW_PM_EMAIL_NOTIFY}
                 <dt>{LANG->PMNotifyEnableSetting}:&nbsp;</dt>
                 <dd>
                     <select name="pm_email_notify">
@@ -118,6 +119,7 @@
                         <option value="1"{IF PROFILE->pm_email_notify 1} selected="selected" {/IF}>{LANG->Yes}</option>
                     </select>
                 </dd>
+                {/IF}
             {/IF}
 
             {IF PROFILE->CHANGEPASSWORD}

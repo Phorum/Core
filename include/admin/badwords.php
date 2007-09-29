@@ -38,6 +38,7 @@
     }
 
     if(count($_POST) && $_POST["string"]!=""){
+
         if($_POST["curr"]!="NEW"){
             $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,$_POST['curr']);
         } else {
@@ -114,9 +115,26 @@
         $frm->hidden("curr", "$curr");
 
         $row = $frm->addbreak($title);
-        $frm->addhelp($row, "Censor List", "This feature can be used to mask bad words in forum messages with \"".PHORUM_BADWORD_REPLACE."\". All bad words will automatically be replaced by that string.<br/><br/>If you want to use a different string (e.g. \"CENSORED\" or \"*****\", then change the definition of the constant \"PHORUM_BADWORD_REPLACE\" in the Phorum file include/constants.php.");
+        if ($curr == 'NEW') $frm->addmessage(
+            "This feature can be used to mask bad words in forum messages
+             with \"".PHORUM_BADWORD_REPLACE."\". All bad words will
+             automatically be replaced by that string. If you want to use
+             a different string (e.g. \"CENSORED\" or \"*****\"), then you
+             can change the definition of the constant
+             \"PHORUM_BADWORD_REPLACE\" in the Phorum file
+             include/constants.php."
+        );
 
-        $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
+        $row = $frm->addrow("Bad Word", $frm->text_box("string", $string, 50));
+        $frm->addhelp($row, "Bad Word",
+            "The word that you want to mask in forum messages.
+             Rules that apply to the matching are:
+             <ul>
+               <li><b>Only the full word</b> is matched, so \"foo\" would
+                   not mask (part of) \"foobar\";</li>
+               <li>The match is <b>case insensitive</b>, so \"foo\" would also
+                   mask \"FoO\".</li>
+             </ul>");
 
         $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
 

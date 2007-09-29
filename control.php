@@ -87,7 +87,13 @@ $PHORUM["DATA"]["USER_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALL
 $PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_ANY);
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 
-$PHORUM['DATA']['SHOW_EMAIL_HIDE'] = (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))?1:0;
+// If global email hiding is not enabled, then give the user a chance
+// to choose for hiding himself.
+$PHORUM['DATA']['SHOW_EMAIL_HIDE'] = empty($PHORUM['hide_email_addr']) ? 1 : 0;
+
+// If pm email notifications are enabled, then give the user a chance
+// to disable it.
+$PHORUM['DATA']['SHOW_PM_EMAIL_NOTIFY'] = !empty($PHORUM["allow_pm_email_notify"]);
 
 // The form action for the common form.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL);

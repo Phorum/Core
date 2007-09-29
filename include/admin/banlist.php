@@ -34,15 +34,17 @@
         if($_POST["curr"]!="NEW"){
             $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST["curr"]);
             if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
-            	// we need to increase the version in that case to invalidate them all
-				// TODO: I think I have to work out a way to make the same work with vroots
-            	if($_POST['forum_id'] == 0) {
-            		$PHORUM['banlist_version'] = $PHORUM['banlist_version'] + 1;
-            		phorum_db_update_settings(array('banlist_version'=>$PHORUM['banlist_version']));
-            	} else {
-            		// remove the one for that forum
-					phorum_cache_remove('banlist',$_POST['forum_id']);
-            	}
+                // we need to increase the version in that case to
+                // invalidate them all in the cache.
+                // TODO: I think I have to work out a way to make the same
+                // work with vroots
+                if($_POST['forum_id'] == 0) {
+                    $PHORUM['banlist_version'] = $PHORUM['banlist_version'] + 1;
+                    phorum_db_update_settings(array('banlist_version'=>$PHORUM['banlist_version']));
+                } else {
+                    // remove the one for that forum
+                    phorum_cache_remove('banlist',$_POST['forum_id']);
+                }
             }
         } else {
             $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],0);
@@ -110,11 +112,25 @@
 
         $frm->addbreak($title);
 
+        if ($curr == "NEW") $frm->addmessage(
+            "Ban items can be used to deny new user registrations and
+             posting of (private) messages, based on various criteria.
+             If a ban item applies to a user action, then this action
+             will be fully blocked by Phorum. This can for example be used
+             to block user registrations and postings from certain IP
+             addresses or to prevent certain words from being used in
+             forum messages.<br />
+             <br />
+             If you want to fully ban a user, then it's best to
+             set \"Active\" to \"No\" for the user in the
+             \"Edit Users\" interface."
+        );
+
         $frm->addrow("String To Match", $frm->text_box("string", $string, 50));
 
         $row = $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
         $frm->addhelp($row, "Field To Match", "
-            Below, you will find an overview of what 
+            Below, you will find an overview of what
             ban items are used by what Phorum actions:<br/>
             <br/>
             <b>User registration</b>:<br/>
@@ -142,19 +158,20 @@
             \"IP Address/Hostname\" checks the sender's IP
         ");
 
-        $row = $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre));
+        $row = $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre) .  "<div style=\"font-size:x-small\">If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression.<br/>See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information about PCRE.</div>");
+
         $frm->addhelp($row, "Compare As", "
             This setting can be used to specify the matching method
             that has to be used for the ban item. There are two options:<br/>
             <br/>
             <ul>
               <li><b>String</b><br/>
-                  The exact string from the \"String To Match\" field 
+                  The exact string from the \"String To Match\" field
                   will be used for matching. Wildcards are not available
                   for the String field type.<br/><br/></li>
 
               <li><b>PCRE</b><br/>
-                  The \"String To Match\" field will be treated as 
+                  The \"String To Match\" field will be treated as
                   a <a href=\"http://www.php.net/pcre\">Perl Compatible
                   Regular Expression</a>.</li>
             </ul>
@@ -163,8 +180,6 @@
         $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
 
         $frm->show();
-
-        echo "If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression. See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information.";
 
         if($curr=="NEW"){
 

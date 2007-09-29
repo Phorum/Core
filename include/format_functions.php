@@ -59,17 +59,16 @@ function phorum_format_messages ($data, $author_specs = NULL)
 
     $banlists = NULL;
     if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
-    	$cache_key = $PHORUM['forum_id'];
-    	$banlists=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+        $cache_key = $PHORUM['forum_id'];
+        $banlists=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
     }
     // not found or no caching enabled
     if($banlists === NULL ) {
-    	$banlists = phorum_db_get_banlists();
+        $banlists = phorum_db_get_banlists();
 
-    	if(isset($PHORUM['cache_banlists']) &&
-    	$PHORUM['cache_banlists']) {
-    		phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
-    	}
+        if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
+            phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
+        }
     }
 
     if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
@@ -229,7 +228,7 @@ function phorum_date( $picture, $ts )
 function phorum_relative_date($time)
 {
 
-	$PHORUM = $GLOBALS["PHORUM"];
+    $PHORUM = $GLOBALS["PHORUM"];
 
     $today = strtotime(date('M j, Y'));
 
@@ -251,23 +250,23 @@ function phorum_relative_date($time)
 
     if (abs($reldays) < 30) {
 
-		// less than a month
+        // less than a month
 
         $reldays = floor($reldays);
 
-		if($reldays==1){
-			$return = $PHORUM["DATA"]["LANG"]["relative_one_day"];
-		} else {
-			$return = abs($reldays)." ".$PHORUM["DATA"]["LANG"]["relative_days"];
-		}
+        if($reldays==1){
+            $return = $PHORUM["DATA"]["LANG"]["relative_one_day"];
+        } else {
+            $return = abs($reldays)." ".$PHORUM["DATA"]["LANG"]["relative_days"];
+        }
 
-      	$return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
+        $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
 
-		return $return;
+        return $return;
 
     } elseif (abs($reldays) < 60) {
 
-		// weeks ago
+        // weeks ago
 
         $relweeks = floor(abs($reldays/7));
 
@@ -275,11 +274,11 @@ function phorum_relative_date($time)
 
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
 
-		return $return;
+        return $return;
 
     } elseif (abs($reldays) < 365) {
 
-		// months ago
+        // months ago
 
         $relmonths = floor(abs($reldays/30));
 
@@ -287,25 +286,25 @@ function phorum_relative_date($time)
 
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
 
-		return $return;
+        return $return;
 
     } else {
 
-		// years ago
+        // years ago
 
         $relyears = floor(abs($reldays/365));
 
         if($relyears==1){
-			$return = $PHORUM["DATA"]["LANG"]["relative_one_year"];
+            $return = $PHORUM["DATA"]["LANG"]["relative_one_year"];
         } else {
             $return = $relyears." ".$PHORUM["DATA"]["LANG"]["relative_years"];
         }
 
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
 
-		return $return;
+        return $return;
 
-	}
+    }
 
 }
 
@@ -329,17 +328,17 @@ function phorum_strip_body( $body )
 
     $banlists = NULL;
     if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
-    	$cache_key = $PHORUM['forum_id'];
-    	$banlists=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+        $cache_key = $PHORUM['forum_id'];
+        $banlists=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
     }
     // not found or no caching enabled
     if($banlists === NULL ) {
-    	$banlists = phorum_db_get_banlists();
+        $banlists = phorum_db_get_banlists();
 
-    	if(isset($PHORUM['cache_banlists']) &&
-    	$PHORUM['cache_banlists']) {
-    		phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
-    	}
+        if(isset($PHORUM['cache_banlists']) &&
+        $PHORUM['cache_banlists']) {
+            phorum_cache_put('banlist',$cache_key,$banlists,7200,$PHORUM['banlist_version']);
+        }
     }
 
     if (isset($banlists[PHORUM_BAD_WORDS]) && is_array($banlists[PHORUM_BAD_WORDS])) {
@@ -353,7 +352,7 @@ function phorum_strip_body( $body )
     }
 
     if ($bad_word_check) {
-		$stripped = preg_replace($replace_words, $replace_vals, $stripped);
+        $stripped = preg_replace($replace_words, $replace_vals, $stripped);
     }
     return $stripped;
 }
