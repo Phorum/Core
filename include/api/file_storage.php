@@ -931,6 +931,8 @@ function phorum_api_file_check_delete_access($file_id)
  */
 function phorum_api_file_delete($file)
 {
+    $PHORUM = $GLOBALS["PHORUM"];
+
     // Find the file_id parameter to use.
     if (is_array($file)) {
         if (!isset($file["file_id"])) trigger_error(
