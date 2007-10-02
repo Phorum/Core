@@ -81,7 +81,7 @@ switch ($mod_step) {
             // Delete the message attachments from the database.
             $files=phorum_db_get_message_file_list($msgthd_id);
             foreach($files as $file_id=>$data) {
-                phorum_db_file_delete($file_id);
+                phorum_api_file_delete($file_id);
             }
         }
 
@@ -121,7 +121,7 @@ switch ($mod_step) {
             foreach($msg_ids as $id){
                 $files=phorum_db_get_message_file_list($id);
                 foreach($files as $file_id=>$data){
-                    phorum_db_file_delete($file_id);
+                    phorum_api_file_delete($file_id);
                 }
             }
 
