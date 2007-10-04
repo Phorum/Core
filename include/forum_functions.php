@@ -63,6 +63,7 @@ function phorum_build_forum_list() {
 
         $forum_picker[$forum["forum_id"]] = array(
             "forum_id" => $forum["forum_id"],
+            "parent_id" => $forum["parent_id"],
             "folder_flag" => $forum["folder_flag"],
             "name" => $forum["name"],
             "stripped_name" => strip_tags($forum["name"]),
