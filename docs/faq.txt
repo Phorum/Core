@@ -19,14 +19,14 @@ Table of contents:
 
 1. Why did you switch from number of replies to number of posts in the list?
 -------------------------------------------------------------------------------
-	In short, the people writing the code liked it better.  You can modify
-	your template by putting this line inside your list.tpl file.
+    In short, the people writing the code liked it better.  You can modify
+    your template by putting this line inside your list.tpl file.
 	
-		 <?php $PHORUM['TMP']['ROWS']['thread_count']--; ?>
-		 
-	Just put that right after the line that says:
+       {MESSAGES->reply_count}
+
+    Just put that in place of
 		
-		{LOOP ROWS}
+       {MESSAGES->thread_count}
 
 		
 2. Does Phorum have avatars or user rankings like (insert UBB clone)?

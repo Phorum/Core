@@ -271,6 +271,7 @@ if($rows == null) {
             // default thread-count
             $thread_count=$row["thread_count"];
 
+            $rows[$key]["reply_count"] = number_format($row['thread_count']-1, 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
             $rows[$key]["thread_count"] = number_format($row['thread_count'], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
 
             $pages=1;
