@@ -349,11 +349,12 @@ function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
     if (popup_obj._anchor == 'r')
     {
         // Determine the screen width.
+        var scrwidth = null;
         if (document.documentElement.clientWidth) {
             // Firefox screen width.
             scrwidth = document.documentElement.clientWidth;
         } else {
-            var scrwidth = document.body.clientWidth;
+            scrwidth = document.body.clientWidth;
             // -16 for scrollbar that is counted in in some browsers.
             if (document.getElementById && !document.all) {
                 scrwidth -= 16;
