@@ -684,7 +684,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // increment viewcount if enabled
     if($PHORUM['count_views'] &&
-      (!isset($PHORUM['status']) || $PHORUM["status"]==PHORUM_MASTER_STATUS_NORMAL)) {
+      (!isset($PHORUM['status']) || $PHORUM["status"]!=PHORUM_MASTER_STATUS_READ_ONLY)) {
         // increment viewcount per thread if enabled
         $inc_thread_id = NULL;
         if (!empty($PHORUM['count_views_per_thread'])) {
