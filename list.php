@@ -260,11 +260,16 @@ if($rows == null) {
             $rows[$key]["new"] = "";
 
             if($PHORUM["count_views"]) {  // show viewcount if enabled
+
+                $viewcount = $PHORUM["count_views_per_thread"]
+                           ? $row['threadviewcount']
+                           : $row['viewcount'];
+
                 if($PHORUM["count_views"] == 2) { // viewcount as column
                     $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
-                    $rows[$key]["viewcount"]=$row['viewcount'];
+                    $rows[$key]["viewcount"] = number_format($viewcount, 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
                 } else { // viewcount added to the subject
-                    $rows[$key]["subject"]=$row["subject"]." ({$row['viewcount']} " . $PHORUM['DATA']['LANG']['Views_Subject'] . ")";
+                    $rows[$key]["subject"] = $row["subject"]." ($viewcount " . $PHORUM['DATA']['LANG']['Views_Subject'] . ")";
                 }
             }
 

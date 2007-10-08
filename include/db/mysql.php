@@ -445,8 +445,8 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
     // The messagefields that we want to fetch from the database.
     $messagefields =
        'author, datestamp, email, message_id, forum_id, meta,
-        moderator_post, modifystamp, parent_id, msgid, sort, moved,
-        status, subject, thread, thread_count, user_id, viewcount,
+        moderator_post, modifystamp, parent_id, msgid, sort, moved, status,
+        subject, thread, thread_count, user_id, viewcount, threadviewcount,
         closed, ip, recent_message_id, recent_user_id, recent_author';
 
     // Include the message bodies in the thread list if requested.
@@ -780,7 +780,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  *     following fields: forum_id, thread, parent_id, author, subject, email,
  *     ip, user_id, moderator_post, status, sort, msgid, body, closed.
  *     Additionally, the following optional fields can be set: meta,
- *     modifystamp, viewcount.
+ *     modifystamp, viewcount, threadviewcount.
  *
  * @param boolean $convert
  *     True in case the message is being inserted by a database conversion
@@ -868,6 +868,10 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
     if (isset($message['viewcount'])) {
         $insertfields['viewcount'] = $message['viewcount'];
+    }
+
+    if (isset($message['threadviewcount'])) {
+        $insertfields['threadviewcount'] = $message['threadviewcount'];
     }
 
     // Insert the message and get the new message_id.
@@ -6389,21 +6393,45 @@ function phorum_db_get_max_messageid()
 }
 // }}}
 
-// {{{ Function: phorum_db_viewcount_inc()
+// {{{ Function: phorum_db_increment_viewcount()
 /**
  * Increment the viewcount field for a post.
  *
  * @param integer $message_id
  *     The id of the message for which to increment the viewcount.
+ *
+ * @param boolean $thread_id
+ *     If this parameter is set to a thread_id, then the threadviewcount
+ *     for that thread will be incremented as well.
  */
-function phorum_db_viewcount_inc($message_id)
+function phorum_db_increment_viewcount($message_id, $thread_id = NULL)
 {
     settype($message_id, 'int');
+    if ($thread_id !== NULL) settype($thread_id, 'int');
+
+    // Check if the message is the thread starter, in which case we can
+    // handle the increment with only one SQL query later on in this function.
+    $tvc = '';
+    if ($thread_id !== NULL) {
+        if ($thread_id == $message_id) {
+            $tvc = ',threadviewcount = threadviewcount + 1';
+        } else {
+            phorum_db_interact(
+                DB_RETURN_RES,
+                "UPDATE {$GLOBALS['PHORUM']['message_table']}
+                 SET    threadviewcount = threadviewcount + 1
+                 WHERE  message_id = $thread_id",
+                 NULL,
+                 DB_MASTERQUERY
+            );
+        }
+    }
 
     phorum_db_interact(
         DB_RETURN_RES,
         "UPDATE {$GLOBALS['PHORUM']['message_table']}
          SET    viewcount = viewcount + 1
+                $tvc
          WHERE  message_id = $message_id",
          NULL,
          DB_MASTERQUERY
@@ -6922,6 +6950,7 @@ function phorum_db_create_tables()
            template_settings        text           NOT NULL,
            forum_path               text           NOT NULL,
            count_views              tinyint(1)     NOT NULL default '0',
+           count_views_per_thread   tinyint(1)     NOT NULL default '0',
            display_fixed            tinyint(1)     NOT NULL default '0',
            reverse_threading        tinyint(1)     NOT NULL default '0',
            inherit_id               int unsigned       NULL default NULL,
@@ -6953,6 +6982,7 @@ function phorum_db_create_tables()
            datestamp                int unsigned   NOT NULL default '0',
            meta                     mediumtext         NULL,
            viewcount                int unsigned   NOT NULL default '0',
+           threadviewcount          int unsigned   NOT NULL default '0',
            closed                   tinyint(1)     NOT NULL default '0',
            recent_message_id        int unsigned   NOT NULL default '0',
            recent_user_id           int unsigned   NOT NULL default '0',

@@ -427,6 +427,24 @@ $frm->addrow("Display IP Addresses <small>(note: admins always see it)</small>",
 
 $frm->addrow("Count views", $frm->select_tag("count_views", array(0 => "No", 1 => "Yes, show views added to subject", 2 => "Yes, show views as extra column"), $count_views, $disabled_form_input));
 
+$row = $frm->addrow("Count views per thread for non-threaded list views", $frm->select_tag("count_views_per_thread", array(0 => "No", 1 => "Yes"), $count_views_per_thread, $disabled_form_input));
+$frm->addhelp($row, "Count views per thread for non-threaded list",
+    "By default, Phorum only counts views per message. While this is okay
+     for a forum that runs in threaded view (since there you will always
+     show only one message at a time), it might not work well for forums
+     that run in a non-threaded view (there only one message will get
+     its view count updated, although multiple messages might show).
+     Additionally, if the list view is flat and the read view is threaded, the
+     view count on the list view will only show how often the first message
+     in the thread was viewed.<br/>
+     <br/>
+     With this option enabled, a separate view counter will be updated
+     for the full thread when viewing any of the read pages for that thread.
+     For non-threaded list views, this counter will then be used as the view
+     count for the thread. Note that this does require an extra SQL query
+     to update the separate counter, so on very busy servers you might not
+     want to enable this option.");
+
 $frm->addbreak("Posting Settings");
 
 $frm->addrow("Check for Duplicates", $frm->select_tag("check_duplicate", array("No", "Yes"), $check_duplicate, $disabled_form_input));

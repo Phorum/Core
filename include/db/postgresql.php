@@ -4132,7 +4132,7 @@ function phorum_db_get_max_messageid() {
  * This function increments the viewcount for a post
  */
 
-function phorum_db_viewcount_inc($message_id) {
+function phorum_db_increment_viewcount($message_id) {
     if($message_id < 1 || !is_numeric($message_id)) {
         return false;
     }
