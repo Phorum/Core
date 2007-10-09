@@ -21,7 +21,8 @@
 if(!defined("PHORUM")) return;
 
 /**
- * This is the callback-function for removing hidden messages from an array of messages
+ * This is the callback-function for removing hidden messages from
+ * an array of messages
  */
 
 function phorum_remove_hidden($val)
@@ -32,7 +33,6 @@ function phorum_remove_hidden($val)
 /**
  * This function sets the stats for a thread like count, timestamp, etc.
  */
-
 function phorum_update_thread_info($thread)
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -40,6 +40,14 @@ function phorum_update_thread_info($thread)
     $messages=phorum_db_get_messages($thread,0,1);
     //these are not needed here
     unset($messages['users']);
+
+    // Compute the threadviewcount, based on the individual message views.
+    // This can be useful for updating the view counters after enabling
+    // the view_count_per_thread option.
+    $threadviewcount = 0;
+    foreach ($messages as $id => $message) {
+        $threadviewcount += $message['viewcount'];    
+    }
 
     // remove hidden/unapproved messages from the array
     $filtered_messages=array_filter($messages, "phorum_remove_hidden");
@@ -62,12 +70,14 @@ function phorum_update_thread_info($thread)
         }
 
         // prep the message to save
-        $message["thread_count"]=$thread_count;
-        $message["modifystamp"]=$recent_message["datestamp"];
+        $message = array();
+        $message["thread_count"]      = $thread_count;
+        $message["threadviewcount"]   = $threadviewcount;
+        $message["modifystamp"]       = $recent_message["datestamp"];
         $message["recent_message_id"] = $recent_message["message_id"];
-        $message["recent_user_id"] = $recent_message["user_id"];
-        $message["recent_author"] = $recent_message["author"];
-        $message["meta"]=$parent_message["meta"];
+        $message["recent_user_id"]    = $recent_message["user_id"];
+        $message["recent_author"]     = $recent_message["author"];
+        $message["meta"]              = $parent_message["meta"];
 
         // For cleaning up pre-5.2 recent post data.
         unset($message["meta"]["recent_post"]);
@@ -89,7 +99,6 @@ function phorum_update_thread_info($thread)
         }
 
         phorum_db_update_message($thread, $message);
-
     }
 
 }
