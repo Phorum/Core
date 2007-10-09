@@ -12,6 +12,7 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 }
 
 define('phorum_page', 'rebuild_thread_info');
+define('PHORUM_ADMIN', 1);
 
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
