@@ -4016,6 +4016,19 @@ function phorum_db_user_delete($user_id)
 
     settype($user_id, 'int');
 
+    // Retrieve a list of private mesage xrefs for this user. After we delete
+    // the pm xrefs for this user in the code afterwards, we might have
+    // created orphin PM messages (messages with no xrefs linked to them),
+    // so we'll have to check for that later on.
+    $pmxrefs = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT pm_message_id
+         FROM   {$PHORUM['pm_xref_table']}
+         WHERE  user_id = $user_id",
+        NULL,
+        DB_MASTERQUERY
+    );
+
     // These are tables that hold user related data.
     $tables = array (
         $PHORUM['user_table'],
@@ -4040,31 +4053,13 @@ function phorum_db_user_delete($user_id)
         );
     }
 
-    // By deleting the private message xrefs for this user, we might now
-    // have orphin private messages lying around (in case there were only
-    // links to a private message from the xref entries for this user).
-    // Collect all orphin private messages from the database. This might
-    // catch some more orphin messages than the ones for the deleted user
-    // alone.
-    $pms = phorum_db_interact(
-        DB_RETURN_ROWS,
-        "SELECT {$PHORUM['pm_messages_table']}.pm_message_id
-         FROM   {$PHORUM['pm_messages_table']}
-                LEFT JOIN {$PHORUM['pm_xref_table']}
-                ON {$PHORUM['pm_xref_table']}.pm_message_id = {$PHORUM['pm_messages_table']}.pm_message_id
-         WHERE pm_xref_id IS NULL",
-         0, // keyfield 0 is the pm_message_id
-         DB_MASTERQUERY
-    );
-    // Delete all orphan private messages.
-    if (!empty($pms)) {
-        phorum_db_interact(
-            DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['pm_messages_table']}
-             WHERE  pm_message_id IN (".implode(', ', array_keys($pms)).")",
-             NULL,
-             DB_MASTERQUERY
-        );
+    // See if we created any orphin private messages. We do this in
+    // a loop using the standard phorum_db_pm_update_message_info()
+    // function and not a single SQL statement with something like
+    // pm_message_id IN (...) in it, because MySQL won't use an index
+    // for that, making the full lookup very slow on large PM tables.
+    foreach ($pmxrefs as $row) {
+        phorum_db_pm_update_message_info($row[0]);
     }
 
     // Change the forum postings into anonymous postings.
