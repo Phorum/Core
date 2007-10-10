@@ -469,17 +469,23 @@
         "RSS"                   =>      "RSS",
 
         "SaveChanges"           =>      "Save Changes",
-        "ScriptUsage"           =>      "\nUsage: php script.php [--module=<module_name> | --scheduled] [options]
+        "ScriptUsage"           =>      "\nUsage: php script.php [--module=<module_name>] [--scheduled] [options]
 
-   --module=<module_name>  Run the 'external' hook in the specified module.
-   --scheduled             Run the 'scheduled' hooks in all available modules.
-   [options]               When running a specific module, these options
-                           are passed to the module. Consult the module
-                           documentation for information on what options
-                           it has. When using --scheduled, these are ignored.
+   --module=<module_name>  Run the \"external\" hook in the specified module,
+                           unless --scheduled is specified as well, in which
+                           case this parameter will be used to restrict the
+                           module(s) for which to run the \"scheduled\" hook.
+   --scheduled             Run the \"scheduled\" hooks in all available modules.
+                           If one or more modules are configured using
+                           --module / -m, then the \"scheduled\" hook will
+                           only run for the specified module(s).
 
-Read docs/creating_mods.txt in your distribution for information on how
-to write Phorum modules and on how to use the external and scheduled hooks.\n\n",
+   -m <module_name>        Alias for --module=<module_name>
+   -s                      Alias for --scheduled
+
+   [options]               When running the \"external\" hook for a module,
+                           then these options are passed to the hook function.
+                           When using --scheduled, these are ignored.\n\n",
         "SearchAuthors"         =>      "Search Authors",
         "SearchResults"         =>      "Search Results",
         "Search"                =>      "Search",
