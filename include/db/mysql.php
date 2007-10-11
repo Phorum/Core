@@ -610,10 +610,22 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     $allowed_forums = array();
 
     // We need to differentiate on which key to use.
-    if ($thread) {
-        $use_key = 'thread_message';
+    if ($forum_id) {
+        if ($threads_only) {
+            $use_key = 'new_threads';
+	} else {
+	    $use_key = 'new_count';
+	}
     } else {
-        $use_key = 'new_threads';
+        if ($thread) {
+            $use_key = 'thread_message';
+        } else {
+            if ($threads_only) {
+                $use_key = 'recent_threads';
+            } else {
+                $use_key = 'PRIMARY';
+            }
+        }
     }
 
     $sql = "SELECT  *
@@ -649,8 +661,11 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
         $sql.=" AND thread = $thread";
     }
 
+    // Do not include moved messages.
+    $sql .= " AND moved = 0";
+
     if ($threads_only) {
-        $sql .= ' AND parent_id = 0 ORDER BY thread DESC';
+        $sql .= ' AND parent_id = 0 ORDER BY message_id DESC';
     } else {
         $sql .= ' ORDER BY message_id DESC';
     }
@@ -4563,6 +4578,7 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
 }
 // }}}
 
+
 // {{{ Function: phorum_db_newflag_check()
 /**
  * Checks if there are new messages in the forums given in forum_ids
@@ -4624,6 +4640,7 @@ function phorum_db_newflag_check($forum_ids)
 
 }
 // }}}
+
 
 // {{{ Function: phorum_db_newflag_count()
 /**
