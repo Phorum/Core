@@ -1,6 +1,19 @@
 Changelog:
 ----------
 
+v1.1.4
+
+    - Added a patch to the database layer as provided by Adam Donnison
+      of mysql.com. This patch makes sure that the DB_MASTERQUERY flag
+      is used when needed, so the module will work correctly when using
+      it within a replicated database setup.
+      Adam also suggested a change to allow calling spamhurdles_db_put()
+      twice for the same data, without raising a duplicate key error.
+      This feature was implemented, only a little differently than suggested,
+      because the code was MySQL specific, while the database layer is
+      written with generic SQL in mind.
+      Thanks a lot Adam!
+
 v1.1.3
 
     - Implemented new CAPTCHA type: reCAPTCHA.

@@ -125,7 +125,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
     $conf = $PHORUM["mod_spamhurdles"];
 
     // Keep track if we want to save new spamhurdles info to the database.
-    $store = false;
+    $store = FALSE;
 
     // Generate a spamhurdles key for the posting if this wasn't done yet.
     if (! isset($PHORUM["SPAMHURDLES"]["key"]))
@@ -134,7 +134,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
         // up an already existing key is ehh... about zero, but since
         // it's not hard to check for duplicates, a check is run for
         // that very special occasion.
-        while (true) {
+        while (TRUE) {
             $key = phorum_mod_spamhurdles_keygen();
             if (! spamhurdles_db_get($key)) break;
         }
@@ -143,9 +143,9 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
             "create_time"      => time(),
             "key"              => $key,
             "form_type"        => $type,
-            "prev_key_expired" => false,
+            "prev_key_expired" => FALSE,
         );
-        $store = true;
+        $store = TRUE;
     }
 
     // Generate a CAPTCHA, if required.
@@ -160,7 +160,7 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
         $captcha = $captcha->generate_captcha();
         $PHORUM["SPAMHURDLES"]["captcha_class"] = $class;
         $PHORUM["SPAMHURDLES"]["captcha"] = $captcha;
-        $store = true;
+        $store = TRUE;
     }
 
     // Only for posting messages:
@@ -171,14 +171,14 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
 
         $signkey = phorum_mod_spamhurdles_keygen();
         $PHORUM["SPAMHURDLES"]["signkey"] = $signkey;
-        $store = true;
+        $store = TRUE;
     }
 
     // If we encountered an expired key, then keep track of this
     // in the new spamhurdles data.
     if ($PHORUM["SPAMHURDLES_KEY_STATUS"] == KEY_EXPIRED) {
-        $PHORUM["SPAMHURDLES"]["prev_key_expired"] = true;
-        $store = true;
+        $PHORUM["SPAMHURDLES"]["prev_key_expired"] = TRUE;
+        $store = TRUE;
     }
 
     // Add fields that were passed in the $extrafields argument.
@@ -186,11 +186,16 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
         foreach ($extrafields as $k => $v) {
             $PHORUM["SPAMHURDLES"][$k] = $v;
         }
-        $store = true;
+        $store = TRUE;
     }
 
     // Store new spamhurdles information in the database.
     if ($store) {
+        spamhurdles_db_put(
+            $PHORUM["SPAMHURDLES"]["key"],
+            $PHORUM["SPAMHURDLES"],
+            $conf["key_max_ttl"]
+        );
         spamhurdles_db_put(
             $PHORUM["SPAMHURDLES"]["key"],
             $PHORUM["SPAMHURDLES"],
@@ -267,7 +272,7 @@ function phorum_mod_spamhurdles_build_form($type)
         <?php
         $html = ob_get_contents();
         ob_end_clean();
-        print iScramble($html, false, false, '');
+        print iScramble($html, FALSE, FALSE, '');
     }
 
     // Show a CAPTCHA if one was generated earlier on.
@@ -312,7 +317,7 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
     $PHORUM = $GLOBALS["PHORUM"];
     $spamhurdles = $PHORUM["SPAMHURDLES"];
     $conf = $PHORUM["mod_spamhurdles"];
-    $do_block = false;
+    $do_block = FALSE;
 
     // We should have spamhurdles information at all time. If not, then
     // this probably means, somebody is trying to post data directly to
@@ -323,7 +328,7 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
         // They will automatically fail if they are enabled.
         if (($spamhurdles == NULL || $spamhurdles["prev_key_expired"]) &&
             do_spamhurdle("blockmultipost")) {
-            $do_block = true;
+            $do_block = TRUE;
         // Initialize spamhurdles information for all other cases.
         // If other checks are enabled, they will take over.
         } else {
@@ -343,13 +348,13 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
     // Check if the minimum TTL is honoured for the message posting form.
     if (!$do_block && $type == "posting" && do_spamhurdle("blockquickpost")) {
         $delay = $conf["key_min_ttl"] - (time() - $spamhurdles["create_time"]);
-        if ($delay > 0) $do_block = true;
+        if ($delay > 0) $do_block = TRUE;
     }
 
     // Check if a HTML commented form field was submitted.
     if (!$do_block && do_spamhurdle("commentfieldcheck")) {
         if (array_key_exists("commentname", $_POST)) {
-            $do_block = true;
+            $do_block = TRUE;
         }
     }
 
@@ -358,7 +363,7 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
         $sig = md5($spamhurdles["key"] . $spamhurdles["signkey"]);
         if (!isset($_POST["spamhurdles_signature"]) ||
             $_POST["spamhurdles_signature"] != $sig) {
-            $do_block = true;
+            $do_block = TRUE;
         }
     }
 
@@ -577,7 +582,7 @@ function phorum_mod_spamhurdles_before_footer()
         <?php
         $html = ob_get_contents();
         ob_end_clean();
-        print iScramble($html, false, false, '');
+        print iScramble($html, FALSE, FALSE, '');
     }
 
     // Show a CAPTCHA if we have generated one before.
@@ -610,17 +615,17 @@ function do_spamhurdle($hurdle)
 
     // Registration CAPTCHA is a simple checkbox.
     if ($hurdle == "register_captcha") {
-        return $conf[$hurdle] ? true : false;
+        return $conf[$hurdle] ? TRUE : FALSE;
     }
 
     // Other hurdles use a user type specification.
     switch ($conf[$hurdle]) {
         case "anonymous":
-            return $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ? false : true;
+            return $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ? FALSE : TRUE;
         case "all":
-            return true;
+            return TRUE;
         case "none":
-            return false;
+            return FALSE;
         default:
             die("Unknown hurdle config value for hurdle " .
                 htmlspecialchars($hurdle) .

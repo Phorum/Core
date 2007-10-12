@@ -1,6 +1,5 @@
-Bugs:
-
-- Edit does not work
+Once 5.2 goes stable, we can remove 5.1 specific code / documentation and
+make this module fully 5.2-only.
 
 Possible checks to add:
 
