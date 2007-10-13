@@ -340,7 +340,14 @@ function phorum_convert_getNextUser($res) {
     unset($userdata['combined_token']);
     unset($userdata['max_group_permission_level']);
     unset($userdata['permission_level']);
-
+    unset($userdata['image']);
+    unset($userdata['webpage']);
+    unset($userdata['icq']);
+    unset($userdata['aol']);
+    unset($userdata['yahoo']);
+    unset($userdata['msn']);
+    unset($userdata['jabber']);
+    
     $userdata['user_id']=$userdata['id'];
     unset($userdata['id']);
 
