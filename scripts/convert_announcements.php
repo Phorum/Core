@@ -72,7 +72,7 @@ foreach($vroots as $vroot){
     $PHORUM["mod_announcements"]["vroot"][$vroot] = $forum_id;
 
     // update messages to the new forum_id
-    $sql = "update {$PHORUM['message_table']} set forum_id=$forum_id where forum_id=$vroot";
+    $sql = "update {$PHORUM['message_table']} set forum_id=$forum_id, sort=2 where forum_id=$vroot";
     phorum_db_interact(DB_RETURN_RES, $sql);
 
     // update the new forums stats
