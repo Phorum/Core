@@ -95,9 +95,56 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
         $url_search = urlencode($_GET["search"]);
     }
 
-    $search_url = @phorum_get_url(PHORUM_SEARCH_URL, "search=" . $url_search, "author=" . $url_author, "page=1", "match_type=" . urlencode($_GET['match_type']), "match_dates=" . urlencode($_GET['match_dates']), "match_forum=" . urlencode($match_forum), "match_threads=" . urlencode($_GET['match_threads']));
+    $url_parameters = array(
+        PHORUM_SEARCH_URL,
+        "search=" . $url_search,
+        "author=" . $url_author,
+        "page=1",
+        "match_type=" . urlencode($_GET['match_type']),
+        "match_dates=" . urlencode($_GET['match_dates']),
+        "match_forum=" . urlencode($match_forum),
+        "match_threads=" . urlencode($_GET['match_threads'])
+    );
 
-    if (isset($PHORUM["skip_intermediate_search_page"]) && $PHORUM["skip_intermediate_search_page"]) {
+    /**
+     * [hook]
+     *     search_redirect
+     *
+     * [description]
+     *     Phorum does not jump to the search results page directly after
+     *     posting the search form. Instead, it will first do a redirect
+     *     to a secondary URL. This system is used, so Phorum can show an
+     *     intermediate "Please wait while searching" page before doing the
+     *     redirect. This is useful in case searching is taking a while, in
+     *     which case users might otherwise repeatedly start hitting the
+     *     search button when results don't show up immediately.<br/>
+     *     <br/>
+     *     This hook can be used to modify the parameters that are used
+     *     for building the redirect URL. This can be useful in case a
+     *     search page is implemented that uses more fields than the standard
+     *     search page.
+     *
+     * [category]
+     *     Message search
+     *
+     * [when]
+     *     Right before the primary search redirect (for showing the
+     *     "Please wait while searching" intermediate page) is done.
+     *
+     * [input]
+     *     An array of phorum_get_url() parameters that will be used for
+     *     building the redirect URL.
+     *
+     * [output]
+     *     The possibly updated array of parameters.
+     */
+    if (isset($PHORUM["hooks"]["search_redirect"])) {
+        $url_parameters = phorum_hook("search_redirect", $url_parameters);
+    }
+
+    $search_url = call_user_func_array('phorum_get_url', $url_parameters);
+
+    if (!empty($PHORUM["skip_intermediate_search_page"])) {
         phorum_redirect_by_url($search_url);
         exit(0);
     } else {
@@ -336,6 +383,37 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     }
 }
 
-phorum_output("search");
+/**
+ * [hook]
+ *     search_output
+ *
+ * [description]
+ *     This hook can be used to override the standard output for the
+ *     search page. This can be useful for search modules that implement
+ *     a different search backend which does not support the same options
+ *     as Phorum's standard search backend.
+ *
+ * [category]
+ *     Message search
+ *
+ * [when]
+ *     At the end of the search script, just before it loads the
+ *     output template.
+ *
+ * [input]
+ *     The name of the template to use for displaying the search page,
+ *     which is "search" by default.
+ *
+ * [output]
+ *     The possibly updated template name to load or NULL if the module
+ *     handled the output on its own already.
+ */
+$template = 'search';
+if (isset($PHORUM["hooks"]["search_output"])) {
+    $template = phorum_hook("search_output", $template);
+    if ($template === NULL) return;
+}
+
+phorum_output($template);
 
 ?>
