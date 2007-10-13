@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include './include/thread_info.php';
 
@@ -18,7 +18,7 @@ $res = phorum_db_interact(
 
 // Update the thread info for each thread.
 while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
-    $PHORUM["forum_id"] = $row[1];
+    $GLOBALS["PHORUM"]["forum_id"] = $row[1];
     phorum_update_thread_info($row[0]);
 }
 
