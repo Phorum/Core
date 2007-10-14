@@ -3832,6 +3832,8 @@ function phorum_db_user_save_groups($user_id, $groups)
  *
  * @param integer $type
  *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_NONE}
+ *       Explicitly note that the user has no subscription at all.
  *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
  *       Send a mail message for every new message.
  *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}

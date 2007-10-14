@@ -196,6 +196,9 @@ if (isset($message["subscription"]))
             }
             break;
         case "":
+            if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe_mail"]) {
+                $subscribe_type = PHORUM_SUBSCRIPTION_NONE;
+            }
             break;
         default:
             trigger_error(

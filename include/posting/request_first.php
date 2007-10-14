@@ -131,7 +131,7 @@ if ($mode == "reply" && $PHORUM["DATA"]["LOGGEDIN"])
 {
     $type = phorum_api_user_get_subscription(
         $PHORUM["user"]["user_id"], $message["forum_id"], $message["thread"]);
-        
+
     switch ($type) {
         case NULL:
             if($PHORUM["user"]["email_notify"] == 2) {
@@ -148,6 +148,7 @@ if ($mode == "reply" && $PHORUM["DATA"]["LOGGEDIN"])
         case PHORUM_SUBSCRIPTION_MESSAGE:
             $message["subscription"] = "message";
             break;
+        case PHORUM_SUBSCRIPTION_NONE:
         default:
             $message["subscription"] = "";
             break;

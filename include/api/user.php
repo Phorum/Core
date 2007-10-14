@@ -251,6 +251,12 @@ define('PHORUM_USER_GROUP_APPROVED', 1);
 define('PHORUM_USER_GROUP_MODERATOR', 2);
 
 /**
+ * Subscription type, which tells Phorum explicitly that the user
+ * does not have a subscription of any kind for the forum or thread.
+ */
+define("PHORUM_SUBSCRIPTION_NONE", -1);
+
+/**
  * Subscription type, which tells Phorum to send out a mail message for
  * every new forum or thread that a user is subscribed to.
  */
@@ -2577,6 +2583,7 @@ function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, 
  *
  * @param integer $type
  *     The type of subscription. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_NONE}
  *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
  *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
  *     - {@link PHORUM_SUBSCRIPTION_DIGEST}
@@ -2630,6 +2637,7 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  * @return mixed
  *     The type of subscription if there is a subscription available or
  *     NULL in case no subscription was found. Available types are:
+ *     - {@link PHORUM_SUBSCRIPTION_NONE}
  *     - {@link PHORUM_SUBSCRIPTION_MESSAGE}
  *     - {@link PHORUM_SUBSCRIPTION_BOOKMARK}
  *     - {@link PHORUM_SUBSCRIPTION_DIGEST}

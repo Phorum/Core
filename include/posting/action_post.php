@@ -157,6 +157,9 @@ if ($success)
     $subscribe_type = NULL;
     switch ($message["subscription"]) {
         case NULL:
+            if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"]) {
+                $subscribe_type = PHORUM_SUBSCRIPTION_NONE;
+            }
             break;
         case "bookmark":
             if ($PHORUM["DATA"]["OPTION_ALLOWED"]["subscribe"]) {
