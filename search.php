@@ -31,7 +31,7 @@ phorum_build_common_urls();
 
 // A pointer for the portable code that the search page is used.
 $PHORUM["DATA"]["POST_VARS"] .=
-    '<input type="hidden" name="phorum_page" value="search">';
+    '<input type="hidden" name="phorum_page" value="search" />';
 
 $PHORUM["DATA"]["SEARCH"]["noresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["showresults"] = false;
