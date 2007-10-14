@@ -131,9 +131,16 @@ if ($mode == "reply" && $PHORUM["DATA"]["LOGGEDIN"])
 {
     $type = phorum_api_user_get_subscription(
         $PHORUM["user"]["user_id"], $message["forum_id"], $message["thread"]);
+        
     switch ($type) {
         case NULL:
-            $message["subscription"] = "";
+            if($PHORUM["user"]["email_notify"] == 2) {
+                $message["subscription"] = "message";
+            } elseif($PHORUM["user"]["email_notify"] == 1) {
+                $message["subscription"] = "bookmark";
+            } else {
+                $message["subscription"] = "";
+            }
             break;
         case PHORUM_SUBSCRIPTION_BOOKMARK:
             $message["subscription"] = "bookmark";
