@@ -377,7 +377,7 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
 } else {
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Search"];
 
-    $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["html_title"].PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["Search"];
+    $PHORUM["DATA"]["HTML_TITLE"].= PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["Search"];
     if(!empty($phorum_search)){
         $PHORUM["DATA"]["HTML_TITLE"] .= " - ".$phorum_search;
     }
