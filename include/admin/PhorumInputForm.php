@@ -24,6 +24,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) return;
 // This static variable will be used as the counter for this.
 static $rowidx = 0;
 
+// Each checkbox needs a unique index for being able to link a <label> to it.
+// This static variable will be used as the counter for this.
+static $checkidx = 0;
+
 class PhorumInputForm {
     var $_rows;
     var $_hiddens;
@@ -412,7 +416,11 @@ class PhorumInputForm {
 
         $value = htmlspecialchars( $value );
 
-        $data = "<nobr><input type=\"checkbox\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;$caption</nobr>";
+        global $checkidx;
+        $checkidx++;
+
+        $id = "admin_checkbox_$checkidx";
+        $data = "<nobr><input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;<label for=\"$id\">$caption</label></nobr>";
 
         return $data;
     }
