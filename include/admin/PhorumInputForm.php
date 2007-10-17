@@ -205,10 +205,7 @@ class PhorumInputForm {
         if(count($this->_help)){
             echo "<script type=\"text/javascript\">\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
-                $title = str_replace('"', "&quot;", $data[0]);
-                $text = str_replace('"', '&quot;', $data[1]);
-                $text = str_replace("\n", "\\n", $text);
-                echo "help[$key] = [\"$title\", \"$text\"];\n";
+                echo "help[$key] = [\"$data[0]\", \"$data[1]\"];\n";
             }
             echo "</script>\n";
         }
