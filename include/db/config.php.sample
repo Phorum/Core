@@ -28,13 +28,19 @@ $PHORUM['DBCONFIG']=array(
     // Specific options for the "mysql" database layer type.
     // -----------------------------------------------------------------
 
-    // Use which MySQL PHP extension? Either NULL, "mysql" or "mysqli".
-    // If NULL, Phorum will autodetect the extension to use.
+    // Use which MySQL PHP extension? Either NULL, "mysql", "mysqli" or
+    // "mysqli_replication" for master/slave setups
+    // If NULL, Phorum will autodetect the extension to use. 
     'mysql_php_extension' =>  NULL,
 
     // Full text searching? 1=enabled, 0=disabled 
     // (always disable this option for MySQL versions prior to 4.0.18!)
     'mysql_use_ft'  =>  '1'
+    
+    // for master/slave setup if mysql_php_extension is set to mysqli_replication
+    // you need to specify the slave-servers to use.
+    // if you don't do this all queries will go to the master-server anyway
+    'slaves'=> array()
 );
 
 /* 
@@ -92,6 +98,8 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
              "extension=mysql.so" for this to work).
   "mysqli" : Use the mysqli extension (php.ini needs a line like
             "extension=mysqli.so" for this to work).
+  "mysqli_replication" : Use the mysqli extension and enable master/slave
+            functionality (see below with "slaves")
 
 * mysql_use_ft (MySQL-only option):
 
@@ -99,6 +107,37 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
   algorithm for searching postings. If enabled, searching for postings
   will be much faster. You will have to disable this feature in case you
   are running a database version prior to MySQL 4.0.18.
-*/
 
+
+* slaves (mysqli_replication-only option):
+  
+  This array can hold a number of slave-servers to use in master/slave mode.
+  All write queries will go to the default server above, which is the master-
+  server in this setup and read-load will be split randomly over the slave-
+  servers specified in this array. If you want your master-server to get read-
+  load as well you need to specify it here too.
+  Some read-queries will go to the master-server anyway in case they are 
+  vulnerable to replication-lag.
+  
+  Example:
+    'slaves'=>array(
+        array(    // Database connection 1.
+        'name'          =>  'phorum5',
+        'server'        =>  '192.168.1.5',
+        'user'          =>  'phorum5',
+        'password'      =>  'phorum5'),
+        array(    // Database connection 2.
+        'name'          =>  'phorum5',
+        'server'        =>  '192.168.1.6',
+        'user'          =>  'phorum5',
+        'password'      =>  'phorum5'),
+        array(    // Database connection 3.
+        'name'          =>  'phorum5',
+        'server'        =>  '192.168.1.7',
+        'user'          =>  'phorum5',
+        'password'      =>  'phorum5')
+    )
+
+    );   
+*/
 ?>
