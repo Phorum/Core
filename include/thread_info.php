@@ -37,7 +37,7 @@ function phorum_update_thread_info($thread)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $messages=phorum_db_get_messages($thread,0,1);
+    $messages=phorum_db_get_messages($thread,0,1,1);
     //these are not needed here
     unset($messages['users']);
 
@@ -46,7 +46,7 @@ function phorum_update_thread_info($thread)
     // the view_count_per_thread option.
     $threadviewcount = 0;
     foreach ($messages as $id => $message) {
-        $threadviewcount += $message['viewcount'];    
+        $threadviewcount += $message['viewcount'];
     }
 
     // remove hidden/unapproved messages from the array

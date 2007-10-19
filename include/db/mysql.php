@@ -613,9 +613,9 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     if ($forum_id) {
         if ($threads_only) {
             $use_key = 'new_threads';
-	} else {
-	    $use_key = 'new_count';
-	}
+        } else {
+            $use_key = 'new_count';
+        }
     } else {
         if ($thread) {
             $use_key = 'thread_message';
@@ -1296,11 +1296,15 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
  *     return hidden messages, even if the active Phorum user is not
  *     a moderator.
  *
+ * @param boolean $write_server
+ *     This value can be set to true to specify that the message should be retrieved
+ *     from the master (aka write-server) in case replication is used
+ *
  * @return array
  *     An array of messages, indexed by message_id. One special key "users"
  *     is set too. This one contains an array of all involved user_ids.
  */
-function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
+function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1339,7 +1343,13 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
            $sql.=' DESC';
     }
 
-    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
+    if($write_server) {
+        $flags = DB_MASTERQUERY;
+    } else {
+        $flags = 0;
+    }
+
+    $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id', $flags);
     $involved_users = array();
 
     foreach ($messages as $id => $message)
@@ -1366,7 +1376,9 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE)
              FROM   {$PHORUM['message_table']}
              WHERE  $forum_id_check
                     message_id = $thread
-                    $approvedval"
+                    $approvedval",
+            NULL,
+            $flags
         );
 
         if ($starter)
