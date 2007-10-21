@@ -665,16 +665,21 @@ function phorum_get_template_file( $page )
 
     if ($module === NULL) {
         $prefix = "./templates";
+        // The postfix is used for checking if the template directory
+        // contains at least the mandatory info.php file. Otherwise, it
+        // could be an incomplete or empty template.
+        $postfix = "/info.php";
     } else {
         $prefix = "./mods/" . basename($module) . "/templates";
+        $postfix = "";
     }
 
     // If no user template is set or if the template file cannot be found,
     // fallback to the configured default template. If that one can also
     // not be found, then fallback to the default template.
-    if (empty($PHORUM["template"]) || !file_exists("$prefix/{$PHORUM['template']}/info.php")) {
+    if (empty($PHORUM["template"]) || !file_exists("$prefix/{$PHORUM['template']}$postfix")) {
         $PHORUM["template"] = $PHORUM["default_forum_options"]["template"];
-        if ($PHORUM["template"] != PHORUM_DEFAULT_TEMPLATE && !file_exists("$prefix/{$PHORUM['template']}/info.php")) {
+        if ($PHORUM["template"] != PHORUM_DEFAULT_TEMPLATE && !file_exists("$prefix/{$PHORUM['template']}$postfix")) {
             $PHORUM["template"] = PHORUM_DEFAULT_TEMPLATE;
         }
 
