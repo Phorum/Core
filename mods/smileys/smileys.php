@@ -43,6 +43,12 @@ function phorum_mod_smileys_format($data)
     $replace = $PHORUM["mod_smileys"]["replacements"];
     foreach ($data as $key => $message)
     {
+        // Check for disabled formatting.
+        if (!empty($PHORUM["mod_smileys"]["allow_disable_per_post"]) &&
+            !empty($message['meta']['disable_smileys'])) {
+            continue;
+        }
+
         // Do subject replacements.
         if (isset($replace["subject"]) && isset($message["subject"])) {
             $data[$key]['subject'] = str_replace ($replace["subject"][0] , $replace["subject"][1], $message['subject'] );
@@ -138,5 +144,40 @@ function phorum_mod_smileys_addon()
         E_USER_ERROR
     );
 }
+
+// Add the "Disable smileys" option to the template. Note that the template
+// should contain the code {HOOK "tpl_editor_disable_smileys"} at an
+// appropriate place for this to work.
+function phorum_mod_smileys_tpl_editor_disable_smileys()
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+    if (empty($PHORUM["mod_smileys"]["allow_disable_per_post"]))
+        return;
+
+    include(phorum_get_template('smileys::disable_option'));
+}
+
+// Process "Disable smileys" option from the message form.
+function phorum_mod_smileys_posting_custom_action($message)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+    if (empty($PHORUM["mod_smileys"]["allow_disable_per_post"])) {
+        unset($message['meta']['disable_smileys']);
+        return $message;
+    }
+
+    if (count($_POST)) {
+        if (empty($_POST['disable_smileys'])) {
+            unset($message['meta']['disable_smileys']);
+        } else {
+            $message['meta']['disable_smileys'] = 1;
+        }
+    }
+
+    return $message;
+}
+
+
+
 
 ?>

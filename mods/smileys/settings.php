@@ -43,14 +43,14 @@ if (empty($error) && $action == "edit_settings")
                  "installation directory";
     // Is the specified prefix a directory?
     } elseif (!is_dir($_POST["prefix"])) {
-        $error = "The smiley prefix path " . 
+        $error = "The smiley prefix path " .
                  '"' . htmlspecialchars($_POST["prefix"]) . '" ' .
                  " does not exist";
     }
 
     // All is okay. Set the prefix path in the config.
     if (empty($error))
-    { 
+    {
         // Make sure the prefix path ends with a "/".
         if (substr($_POST["prefix"], -1, 1) != '/') {
             $_POST["prefix"] .= "/";
@@ -60,22 +60,25 @@ if (empty($error) && $action == "edit_settings")
     }
 
     if ($PHORUM['mod_smileys']['smileys_tool_enabled']) {
-        $PHORUM['mod_smileys']['smiley_popup_width'] = 
+        $PHORUM['mod_smileys']['smiley_popup_width'] =
             (int) $_POST['smiley_popup_width'];
-        $PHORUM['mod_smileys']['smiley_popup_offset'] = 
+        $PHORUM['mod_smileys']['smiley_popup_offset'] =
             (int) $_POST['smiley_popup_offset'];
     }
-    $PHORUM['mod_smileys']['smileys_tool_enabled'] = 
+    $PHORUM['mod_smileys']['smileys_tool_enabled'] =
         empty($_POST['smileys_tool_enabled']) ? 0 : 1;
 
     if ($PHORUM['mod_smileys']['subjectsmileys_tool_enabled']) {
-        $PHORUM['mod_smileys']['subjectsmiley_popup_width'] = 
+        $PHORUM['mod_smileys']['subjectsmiley_popup_width'] =
             (int) $_POST['subjectsmiley_popup_width'];
-        $PHORUM['mod_smileys']['subjectsmiley_popup_offset'] = 
+        $PHORUM['mod_smileys']['subjectsmiley_popup_offset'] =
             (int) $_POST['subjectsmiley_popup_offset'];
     }
-    $PHORUM['mod_smileys']['subjectsmileys_tool_enabled'] = 
+    $PHORUM['mod_smileys']['subjectsmileys_tool_enabled'] =
         empty($_POST['subjectsmileys_tool_enabled']) ? 0 : 1;
+
+    $PHORUM['mod_smileys']['allow_disable_per_post'] =
+        empty($_POST['allow_disable_per_post']) ? 0 : 1;
 
     if (empty($error))
     {
@@ -144,7 +147,7 @@ if (empty($error) && $action == "edit_smiley")
 }
 
 // GET based actions.
-if (empty($error) && isset($_GET["smiley_id"])) 
+if (empty($error) && isset($_GET["smiley_id"]))
 {
     // ACTION: Deleting a smiley from the list.
     if (isset($_GET["delete"])) {
@@ -229,7 +232,7 @@ if (! count($available_smileys)) {
         "<strong>Warning:</strong><br/>" .
         "No smiley images were found in your current smiley prefix " .
         "path. Please place some smileys in the directory " .
-        htmlspecialchars($PHORUM["mod_smileys"]["prefix"]) . 
+        htmlspecialchars($PHORUM["mod_smileys"]["prefix"]) .
         " or change your prefix path to point to a directory " .
         "containing smiley images.");
 } elseif ($inactive_smileys) {
@@ -241,7 +244,7 @@ if (! count($available_smileys)) {
         "images in the directory \"" .
         htmlspecialchars($PHORUM["mod_smileys"]["prefix"]) . "\". After " .
         "placing new smiley images, click \"Save settings\" to update " .
-        "the smiley settings."); 
+        "the smiley settings.");
 }
 
 // Create the smiley settings form.
@@ -261,7 +264,7 @@ if ($smiley_id == "NEW")
          paths cannot be used here.");
 
     $row = $frm->addrow("Enable body smiley button in the editor tools", $frm->checkbox("smileys_tool_enabled", "1", "", $PHORUM["mod_smileys"]["smileys_tool_enabled"]) . ' Yes');
-    $frm->addhelp($row, 
+    $frm->addhelp($row,
         "Body smiley tool button",
         "If you enable this option, then a smiley button will be added to
          the editor tools tool bar, which can be used to easily add smileys
@@ -287,6 +290,9 @@ if ($smiley_id == "NEW")
         $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The width to use for the subject smileys popup", $frm->text_box("subjectsmiley_popup_width", $PHORUM["mod_smileys"]["subjectsmiley_popup_width"], 5) . ' pixels');
         $frm->addrow("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How far to shift the subject smileys popup to the left", $frm->text_box("subjectsmiley_popup_offset", $PHORUM["mod_smileys"]["subjectsmiley_popup_offset"], 5) . ' pixels');
     }
+
+    $row = $frm->addrow("Enable posting option \"disable smileys\"", $frm->checkbox("allow_disable_per_post", "1", "Yes", $PHORUM["mod_smileys"]["allow_disable_per_post"]));
+    $frm->addhelp($row, "Enable posting option \"disable smileys\"", "If this feature is enabled, then your users can get an extra option in the posting editor for disabling the smileys handling for the posted message. This can be useful if the user wants to post a text that contains strings that unintentionally match smileys.<br/><br/>To make this option visible, you will have to add the code <b>{HOOK \"tpl_editor_disable_smileys\"}</b> to the posting.tpl template file at an appropriate spot.");
 
     $frm->show();
 }
