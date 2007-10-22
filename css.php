@@ -15,9 +15,10 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-define('phorum_page','css');
 
+define('phorum_page','css');
 include_once("./common.php");
 
 if(isset($PHORUM["args"]["1"])){
@@ -26,9 +27,30 @@ if(isset($PHORUM["args"]["1"])){
     exit();
 }
 
+// Find the modification time for the css file and the settings file.
+list ($css_php, $css_tpl) = phorum_get_template_file($css);
+list ($settings_php, $settings_tpl) = phorum_get_template_file('settings');
+$css_t = filemtime($css_tpl);
+$settings_t = filemtime($settings_tpl);
+$last_modified = $css_t > $settings_t ? $css_t : $settings_t;
+
+// Check if a If-Modified-Since header is in the request. If yes, then
+// check if the CSS code has changed, based on the filemtime() data from
+// above. If nothing changed, then we can return a 304 header, to tell the
+// browser to use the cached data.
+if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+    $header = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+    $if_modified_since = strtotime($header);
+
+    if ($if_modified_since >= $last_modified) {
+        header("HTTP/1.0 304 Not Modified");
+        exit();
+    }
+}
+
 header("Content-Type: text/css");
+header("Last-Modified: " . date("r", $last_modified));
 
-include phorum_get_template($css);
-
+include(phorum_get_template($css));
 
 ?>
