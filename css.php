@@ -21,10 +21,12 @@
 define('phorum_page','css');
 include_once("./common.php");
 
+// Argument 1 should be the name of the css template to load.
 if(isset($PHORUM["args"]["1"])){
     $css = basename((string)$PHORUM["args"]["1"]);
 } else {
-    exit();
+    trigger_error("Missing argument", E_USER_ERROR);
+    exit(1);
 }
 
 // Find the modification time for the css file and the settings file.
@@ -44,13 +46,18 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 
     if ($if_modified_since >= $last_modified) {
         header("HTTP/1.0 304 Not Modified");
-        exit();
+        exit(0);
     }
 }
 
+// Send the RSS to the browser.
 header("Content-Type: text/css");
 header("Last-Modified: " . date("r", $last_modified));
 
 include(phorum_get_template($css));
+
+// Exit here explicitly for not giving back control to portable and
+// embedded Phorum setups.
+exit(0);
 
 ?>
