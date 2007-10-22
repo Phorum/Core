@@ -42,5 +42,8 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'rgb_size'     => '40',
     'named_size'   => '85',
     'slides_size'  => '70',
+
+    # Text for the bbcode disable option in the posting editor.
+    'disable'      => 'Disable BBcode for this message'
 );
 ?>

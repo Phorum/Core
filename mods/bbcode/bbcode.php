@@ -161,6 +161,12 @@ function phorum_mod_bbcode_format($data)
         // No formatting needed if the message does not contain a body.
         if (!isset($message['body'])) continue;
 
+        // Check for disabled formatting.
+        if (!empty($PHORUM["mod_bbcode"]["allow_disable_per_post"]) &&
+            !empty($message['meta']['disable_bbcode'])) {
+            continue;
+        }
+
         $body = $message["body"];
 
         // Convert bare URLs into bbcode tags, unless [url] is disabled.
@@ -255,6 +261,38 @@ function phorum_mod_bbcode_quote ($data)
     } else {
         return $data;
     }
+}
+
+// Add the "Disable BBcode" option to the template. Note that the template
+// should contain the code {HOOK "tpl_editor_disable_bbcode"} at an
+// appropriate place for this to work.
+function phorum_mod_bbcode_tpl_editor_disable_bbcode()
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+    if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"]))
+        return;
+
+    include(phorum_get_template('bbcode::disable_option'));
+}
+
+// Process "Disable BBcode" option from the message form.
+function phorum_mod_bbcode_posting_custom_action($message)
+{
+    $PHORUM = $GLOBALS["PHORUM"];
+    if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"])) {
+        unset($message['meta']['disable_bbcode']);
+        return $message;
+    }
+
+    if (count($_POST)) {
+        if (empty($_POST['disable_bbcode'])) {
+            unset($message['meta']['disable_bbcode']);
+        } else {
+            $message['meta']['disable_bbcode'] = 1;
+        }
+    }
+
+    return $message;
 }
 
 // Add tool buttons to the Editor Tools module's tool bar.

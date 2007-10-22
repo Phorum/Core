@@ -8,6 +8,8 @@ hook: format|phorum_mod_bbcode_format
 hook: quote|phorum_mod_bbcode_quote
 hook: editor_tool_plugin|phorum_mod_bbcode_editor_tool_plugin
 hook: addon|phorum_mod_bbcode_addon
+hook: tpl_editor_disable_bbcode|phorum_mod_bbcode_tpl_editor_disable_bbcode
+hook: posting_custom_action|phorum_mod_bbcode_posting_custom_action
 
 # Always run bbcode formatting as the last hook.
 priority: run module after *
