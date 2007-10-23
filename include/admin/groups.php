@@ -132,7 +132,7 @@
     }
 
     include_once "./include/admin/PhorumInputForm.php";
-    $groups=phorum_db_get_groups();
+    $groups=phorum_db_get_groups(0, TRUE);
 
     $forums=phorum_db_get_forums();
 

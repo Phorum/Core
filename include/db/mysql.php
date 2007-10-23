@@ -2583,10 +2583,14 @@ function phorum_db_update_forum($forum)
  *     the group data. If this parameter is 0 (zero), then all groups will
  *     be returned.
  *
+ * @param boolean $sorted
+ *     If this parameter has a true value, then the list of groups will
+ *     be sorted by the group name field.
+ *
  * @return array
  *     An array of groups, indexed by group_id.
  */
-function phorum_db_get_groups($group_id=0)
+function phorum_db_get_groups($group_id = 0, $sorted = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -2631,7 +2635,16 @@ function phorum_db_get_groups($group_id=0)
             = $perm['permission'];
     }
 
+    // Sort the list by group name.
+    if ($sorted) {
+        uasort($groups, 'phorum_db_sort_groups');
+    }
+
     return $groups;
+}
+
+function phorum_db_sort_groups($a,$b) {
+    return strcasecmp($a["name"], $b["name"]);
 }
 // }}}
 

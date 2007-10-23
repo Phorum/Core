@@ -2447,12 +2447,12 @@ function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
 
     // Retrieve all the groups for the current user. Admins get all groups.
     if (!empty($user['user_id']) && !empty($user['admin'])) {
-        $groups = phorum_db_get_groups();
+        $groups = phorum_db_get_groups(0, TRUE);
     } else {
         $usergroups = phorum_db_user_get_groups($user['user_id']);
         $groups = empty($usergroups)
                 ? array()
-                : phorum_db_get_groups(array_keys($usergroups));
+                : phorum_db_get_groups(array_keys($usergroups), TRUE);
     }
 
     // Prepare the array of group_ids to check.

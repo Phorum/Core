@@ -513,7 +513,7 @@ EOT;
                 $row=$frm->addbreak("Edit Groups");
             }
 
-            $groups= phorum_db_get_groups();
+            $groups= phorum_db_get_groups(0, TRUE);
             $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $_REQUEST["user_id"]);
 
             $arr=array("Add A Group...");
