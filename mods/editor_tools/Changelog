@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2007-10-23 v1.2.1
+
+    - Added Turkish language file. 
+      Thanks to Serdar of paticik.com.
+
 2007-07-26 v1.2.0
 
     - Removed BBcode and smiley specific code from the module and moved
