@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+v1.1.5
+
+    - Added Turkish language file. 
+      Thanks to Serdar of paticik.com.
+
 v1.1.4
 
     - Added a patch to the database layer as provided by Adam Donnison
