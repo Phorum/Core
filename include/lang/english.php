@@ -48,6 +48,7 @@
         "AccountSummaryTitle"   =>      "My Settings",
         "Action"                =>      "Action",
         "Activity"              =>      "Show topics with activity in the last",
+        "ActivityPost"          =>      "", // needed for some languages
         "Add"                   =>      "Add",
         "AddSig"                =>      "Add my signature to this message",
         "AddSigDefault"         =>      "&quot;Add my signature to this message&quot; checked by default",
