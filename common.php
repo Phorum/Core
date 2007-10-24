@@ -472,8 +472,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             phorum_build_common_urls();
 
             $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-            phorum_output("message");
-            exit();
+            if (phorum_page != 'login') {
+                phorum_output("message");
+                exit();
+            }
 
         } elseif($PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
             $PHORUM["DATA"]["GLOBAL_ERROR"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
