@@ -23,7 +23,7 @@ phorum_ob_clean();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
-    ini_set("memory_limit","64M");
+    ini_set("memory_limit","128M");
 }
 
 print "\nRebuilding thread info meta data ...\n";
