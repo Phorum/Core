@@ -1513,7 +1513,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     settype($days, 'int');
 
     // For spreading search results over multiple pages.
-    $start = $offset * $PHORUM['list_length'];
+    $start = $offset * $length;
 
     // Initialize the return data.
     $return = array('count' => 0, 'rows' => array());
@@ -1562,6 +1562,39 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     // We make use of temporary tables for storing intermediate search
     // results. These tables are stored in $tables during processing.
     $tables = array();
+
+    // ----------------------------------------------------------------------
+    // Handle search for user_id only.
+    // ----------------------------------------------------------------------
+
+    if ($search == '' && $author !== '' && $match_type = 'USER_ID')
+    {
+        $user_id = (int) $author;
+        if (empty($user_id)) return $return;
+
+        // Seach for messages.
+        $sql = "SELECT SQL_CALC_FOUND_ROWS *
+                FROM   {$PHORUM['message_table']}
+                USE    KEY(user_message)
+                WHERE  user_id = $user_id AND
+                       status=".PHORUM_STATUS_APPROVED." AND
+                       moved=0
+                       $forum_where
+                ORDER  BY message_id DESC
+                LIMIT  $start, $length";
+        $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql);
+
+        // Retrieve the number of found messages.
+        $count = phorum_db_interact(
+            DB_RETURN_VALUE,
+            "SELECT found_rows()"
+        );
+
+        // Fill the return data.
+        $return = array("count" => $count, "rows"  => $rows);
+
+        return $return;
+    }
 
     // ----------------------------------------------------------------------
     // Handle search for message and subject.
