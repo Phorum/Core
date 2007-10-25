@@ -472,7 +472,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             phorum_build_common_urls();
 
             $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
+	    $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
+	    $PHORUM["DATA"]["LOGGEDIN"] = false;
+
             if (phorum_page != 'login') {
+
                 phorum_output("message");
                 exit();
             }
