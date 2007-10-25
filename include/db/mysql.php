@@ -918,8 +918,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     }
 
     // Full text searching updates.
-    if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
-        $PHORUM['DBCONFIG']['mysql_use_ft'])
+    if (!empty($PHORUM['DBCONFIG']['mysql_use_ft']))
     {
         $search_text = $message['author']  .' | '.
                        $message['subject'] .' | '.
@@ -996,7 +995,8 @@ function phorum_db_update_message($message_id, $message)
     );
 
     // Full text searching updates.
-    if (isset($message['author']) &&
+    if (!empty($PHORUM['DBCONFIG']['mysql_use_ft']) &&
+        isset($message['author']) &&
         isset($message['subject']) &&
         isset($message['body'])) {
 
