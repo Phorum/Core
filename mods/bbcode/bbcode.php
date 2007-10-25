@@ -97,7 +97,7 @@ function phorum_mod_bbcode_format($data)
     // Add 'small' support.
     if (!empty($enabled['small'])) {
         $search[]  = "/\[small\](.+?)\[\/small\]/is";
-        $replace[] = "<span style=\"font-size: small\">$1</span>";
+        $replace[] = "<small>$1</small>";
     }
 
     // Add 'large' support.
