@@ -612,7 +612,11 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     // We need to differentiate on which key to use.
     if ($forum_id) {
         if ($threads_only) {
-            $use_key = 'new_threads';
+            if ($thread) {
+                $use_key = 'thread_message';
+            } else {
+                $use_key = 'new_threads';
+            }
         } else {
             $use_key = 'new_count';
         }
