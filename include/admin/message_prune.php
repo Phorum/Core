@@ -84,7 +84,7 @@ $ruledefs = array
             "approved"
                               => "message.status = ".PHORUM_STATUS_APPROVED,
             "waiting for approval (on hold)"
-                              => "message.status = ".PHORUM_STATUS_HOLD, 
+                              => "message.status = ".PHORUM_STATUS_HOLD,
             "disapproved by moderator"
                               => "message.status = ".PHORUM_STATUS_HIDDEN,
             "hidden (on hold or disapproved)"
@@ -208,25 +208,25 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
     $msgs = phorum_db_get_message($msgids, "message_id", true);
     $deleted_messages = array();
 
-    foreach ($msgs as $msg) 
+    foreach ($msgs as $msg)
     {
         $PHORUM["forum_id"] = $msg["forum_id"];
 
-        $delmode = $msg["parent_id"] == 0 
+        $delmode = $msg["parent_id"] == 0
                  ? PHORUM_DELETE_TREE
                  : PHORUM_DELETE_MESSAGE;
 
         // A hook to allow modules to implement extra or different
         // delete functionality.
         list($handled, $delids, $msgid, $msg, $delmode) = phorum_hook(
-            "before_delete", 
+            "before_delete",
             array(false, 0, $msg["message_id"], $msg, $delmode)
         );
 
         // If the "before_delete" hook did not handle the delete action,
         // then we have to handle it here ourselves.
         if (! $handled)
-        { 
+        {
             // Delete the message or thread.
             $delids = phorum_db_delete_message($msg["message_id"], $delmode);
 
@@ -248,7 +248,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
                 $moved = phorum_db_get_messages($msg["message_id"]);
                 $PHORUM["forum_id"] = $forum_id;
                 foreach ($moved as $id => $data) {
-                    if (isset($data["meta"]["moved"])) {
+                    if (!empty($data["moved"])) {
                         phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
                     }
                 }
@@ -299,27 +299,27 @@ if (isset($_POST["filterdesc"]))
                 $field = rawurldecode($m[1]);
                 $match = rawurldecode($m[2]);
                 $query = rawurldecode($m[3]);
-                if (isset($ruledefs[$field]) && 
+                if (isset($ruledefs[$field]) &&
                     isset($ruledefs[$field]["matches"][$match]))
                 {
                     $condition = $ruledefs[$field]["matches"][$match];
 
                     // Use a custom function for filling the metaquery.
                     if (substr($condition, 0, 9) == "function:"){
-                        $func = substr($condition, 9);  
-                        if (!function_exists($func)) { 
-                            trigger_error( 
+                        $func = substr($condition, 9);
+                        if (!function_exists($func)) {
+                            trigger_error(
                                 "Internal error: filter function \"" .
                                 htmlspecialchars($func) . "\" from the match ".
                                 "specification for \"" .
                                 htmlspecialchars($field) . "/" .
-                                htmlspecialchars($match) . 
+                                htmlspecialchars($match) .
                                 "\" does not exist.", E_USER_ERROR);
                         } else {
-                            $meta = call_user_func($func,$meta,$field,$match,$query); 
+                            $meta = call_user_func($func,$meta,$field,$match,$query);
                         }
                     }
-                    // Standard metaquery addition. 
+                    // Standard metaquery addition.
                     else {
                         $meta[] = array(
                             "condition" => $condition,
@@ -348,7 +348,7 @@ if (isset($_POST["filterdesc"]))
         );
     }
 
-    // Let the database layer turn the metaquery into a real query 
+    // Let the database layer turn the metaquery into a real query
     // and run it against the database.
     $messages = phorum_db_metaquery_messagesearch($meta);
     if ($messages === NULL) {
@@ -375,21 +375,21 @@ function prepare_filter_date($meta, $field, $match, $query)
     if (preg_match('/^(\d\d\d\d)\D(\d\d?)\D(\d\d?)$/', $query, $m)) {
         $dy = $m[1]; $dm = $m[2]; $dd = $m[3];
         if ($dm >= 1 && $dm <= 31 && $dm >= 1 && $dm <= 12) {
-            // Okay, we've got a possibly valid date. Determine the 
+            // Okay, we've got a possibly valid date. Determine the
             // start and end of this date.
 
             // First see what our timezone offset is for the logged in user.
             $offset = $PHORUM['tz_offset'];
-            if ($PHORUM['user_time_zone'] && 
-                isset($PHORUM['user']['tz_offset']) && 
+            if ($PHORUM['user_time_zone'] &&
+                isset($PHORUM['user']['tz_offset']) &&
                 $PHORUM['user']['tz_offset'] != -99) {
                 $offset = $PHORUM['user']['tz_offset'];
             }
             $offset *= 3600;
 
             // Compute the start and end epoch time for the date.
-            $start_of_day = gmmktime(0,  0,  0,  $dm, $dd, $dy) + $offset; 
-            $end_of_day   = gmmktime(23, 59, 59, $dm, $dd, $dy) + $offset; 
+            $start_of_day = gmmktime(0,  0,  0,  $dm, $dd, $dy) + $offset;
+            $end_of_day   = gmmktime(23, 59, 59, $dm, $dd, $dy) + $offset;
         }
     }
 
@@ -463,15 +463,15 @@ function prepare_filter_date($meta, $field, $match, $query)
 var ruledefs = {
 <?php
 $count = count($ruledefs);
-foreach($ruledefs as $filter => $def) { 
+foreach($ruledefs as $filter => $def) {
     $count--;
     print "  '$filter':{\n" .
           "    'label':'{$def["label"]}',\n" .
-          "    'queryfield':" . 
+          "    'queryfield':" .
                (isset($def["queryfield"])?"'{$def["queryfield"]}'":"null") .
                ",\n" .
           "    'matches':{\n";
-    $mcount = count($def["matches"]); 
+    $mcount = count($def["matches"]);
     $idx = 0;
     foreach ($def["matches"] as $k => $v) {
         print "      '$idx':'".addslashes($k)."'" . (--$mcount?",\n":"\n");
@@ -498,7 +498,7 @@ foreach($ruledefs as $filter => $def) {
 <?php if (!count($_POST)) { ?>
   <strong>ATTENTION!</strong><br/>
   <div style="color:darkred">
-    This script can delete A LOT of messages at once. So be careful 
+    This script can delete A LOT of messages at once. So be careful
     which messages you select for deleting. Use it at your own risk.
     If you do not feel comfortable with this, please make a good
     database backup before deleting any messages.
@@ -512,18 +512,18 @@ foreach($ruledefs as $filter => $def) {
   will be deleted during this step.<br/>
   <br/>
 <?php } ?>
-  <form id="filterform" method="post" 
+  <form id="filterform" method="post"
         action="<?php print $PHORUM["admin_http_path"] ?>"
         onsubmit="filter.getFilterDescription()">
   <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
   <input type="hidden" name="filterdesc" id="filterdesc" value="" />
   <div style="margin-bottom: 5px">
-    <input id="filtermode_and" type="radio" 
+    <input id="filtermode_and" type="radio"
            <?php if ($filtermode=='and') { ?>checked="checked"<?php } ?>
            name="filtermode" value="and">
       <label for="filtermode_and">Match all of the following</label>
     </input>
-    <input id="filtermode_or" type="radio" 
+    <input id="filtermode_or" type="radio"
            <?php if ($filtermode=='or') { ?>checked="checked"<?php } ?>
            name="filtermode" value="or">
       <label for="filtermode_or">Match any of the following</label>
@@ -617,13 +617,13 @@ function PhorumFilterRule(conf)
             var o = document.createElement('option');
             o.value = ruledefs[this.field].matches[id];
             o.innerHTML = o.value;
-            if (o.value == this.match) o.selected = true; 
+            if (o.value == this.match) o.selected = true;
             this.match_input.appendChild(o);
         }
 
         // Clean up the current query_input if we do not need a query
         // input or if we have to create a different type of query input.
-        if (this.query_input_type == null || 
+        if (this.query_input_type == null ||
             (ruledefs[this.field].queryfield != null &&
              ruledefs[this.field].queryfield != this.query_input_type)) {
             if (this.query_input && this.query_input.calendar) {
@@ -769,7 +769,7 @@ function PhorumFilterRule(conf)
         this.container.style.borderBottom = '1px dashed #ccc';
 
     // The field on which to match.
-    this.field_input = document.createElement('select'); 
+    this.field_input = document.createElement('select');
         this.field_input.ruleobj = this;
         this.field_input.onchange = function() {
             this.ruleobj.onSelectFieldChange();
@@ -784,7 +784,7 @@ function PhorumFilterRule(conf)
 
     // Button for adding a filter.
     this.add_button = document.createElement('img');
-        this.add_button.src = '<?php print $PHORUM["http_path"] ?>/images/add.png';  
+        this.add_button.src = '<?php print $PHORUM["http_path"] ?>/images/add.png';
         this.add_button.style.cursor = 'pointer';
         this.add_button.ruleobj = this;
         this.add_button.onclick = function() {
@@ -793,7 +793,7 @@ function PhorumFilterRule(conf)
 
     // Button for deleting a filter.
     this.del_button = document.createElement('img');
-        this.del_button.src = '<?php print $PHORUM["http_path"] ?>/images/delete.png';  
+        this.del_button.src = '<?php print $PHORUM["http_path"] ?>/images/delete.png';
         this.del_button.style.cursor = 'pointer';
         this.del_button.ruleobj = this;
         this.del_button.onclick = function() {
@@ -827,7 +827,7 @@ function PhorumFilterRule(conf)
         var o = document.createElement('option');
         o.innerHTML = ruledefs[id]["label"];
         o.value     = id;
-        if (o.value == this.field) o.selected = true; 
+        if (o.value == this.field) o.selected = true;
         this.field_input.appendChild(o);
     }
 
@@ -895,15 +895,15 @@ function PhorumFilter(conf)
         // Determine the glue symbol to use.
         // & for AND matches, | for OR matches
         var glue = document.getElementById('filtermode_or').checked?'|':'&';
-       
-        // Walk over all available filters and create a 
+
+        // Walk over all available filters and create a
         // textual filter config line for them.
         for (var i = 0 ; i < this.index; i++) {
             if (this.rules[i] == null) continue;
             var rule = this.rules[i];
             if (filterdesc != '') filterdesc += glue;
-            filterdesc += escape(rule.field) + "," + 
-                          escape(rule.match) + "," + 
+            filterdesc += escape(rule.field) + "," +
+                          escape(rule.match) + "," +
                           escape(rule.query);
         }
 
@@ -941,7 +941,7 @@ if (count($filters)) {
 // ----------------------------------------------------------------------
 
 if (isset($messages) && is_array($messages))
-{ 
+{
   if (count($messages)) { ?>
     <script type="text/javascript">
     //<![CDATA[
@@ -983,15 +983,15 @@ if (isset($messages) && is_array($messages))
             'Delete the ' + count + ' selected message(s) ' +
             '/ thread(s) from the database?'
         );
-    } 
+    }
 
     //]]>
     </script>
 
-    <form id="selectform" method="post" 
+    <form id="selectform" method="post"
           action="<?php print $PHORUM["admin_http_path"] ?>">
     <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
-    <input type="hidden" name="filterdesc" id="filterdesc" value="<?php 
+    <input type="hidden" name="filterdesc" id="filterdesc" value="<?php
         // Remember the filter description if one is available
         // (should be at this point).
         if (isset($_POST["filterdesc"])) {
@@ -1012,7 +1012,7 @@ if (isset($messages) && is_array($messages))
       of them and click on "Delete selected". If you need more info about a
       certain item, then click on the subject for expanding the view.<br/>
       <br/>
-      The icon and color tell you if are handling a 
+      The icon and color tell you if are handling a
       <span style="color:#009">message</span>
       (<img align="top" src="<?php print $PHORUM["http_path"] ?>/images/comment.png"/>)
       or a <span style="color:#c30">thread</span>
@@ -1047,10 +1047,10 @@ if (isset($messages) && is_array($messages))
               <?php print htmlspecialchars($data["author"]) ?>
               <?php print phorum_date("%Y/%m/%d", $data["datestamp"]) ?>
             </span>
-            <img align="top" 
-                 title="<?php print $alt ?>" alt="<?php print $alt ?>" 
+            <img align="top"
+                 title="<?php print $alt ?>" alt="<?php print $alt ?>"
                  src="<?php print $PHORUM["http_path"]."/images/".$icon ?>"/>
-              <a style="text-decoration: none" href="#" 
+              <a style="text-decoration: none" href="#"
                  onclick="return toggle_msginfo(<?php print $id ?>)">
                 <span style="color:<?php print $color?>">
                     <?php print htmlspecialchars($data["subject"]) ?>
@@ -1058,11 +1058,11 @@ if (isset($messages) && is_array($messages))
               </a>
             <div class="message_prune_msginfo" id="msginfo_<?php print $id ?>">
               <?php
-              if ($data["user_id"]) { 
+              if ($data["user_id"]) {
                   print "Posted by authenticated user \"".
                         htmlspecialchars($data["user_username"]) .
                         "\" (user_id ".$data["user_id"].")<br/>";
-              } 
+              }
               print "Date and time: " . phorum_date("%Y/%m/%d %H:%M:%S", $data["datestamp"]) . "<br/>";
               // Might not be available (for announcements).
               // I won't put a lot of stuff in here for handling announcements,
@@ -1070,7 +1070,7 @@ if (isset($messages) && is_array($messages))
               if (isset($forum_info[$data["forum_id"]])) {
                   print "Forum: ".  $forum_info[$data["forum_id"]] . "<br/>";
               }
-              if ($data["parent_id"] == 0) { 
+              if ($data["parent_id"] == 0) {
                   print "Messages in this thread: {$data["thread_count"]}<br/>";
                   if ($data["thread_count"] > 1) {
                       print "Thread's last post: " .
@@ -1103,8 +1103,8 @@ if (isset($messages) && is_array($messages))
     <div class="input-form-td-message">
     Your current filter does not match any message in your database.
     </div>
-    
-    <?php 
+
+    <?php
   }
 }
 ?>

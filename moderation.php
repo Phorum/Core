@@ -134,7 +134,7 @@ switch ($mod_step) {
             $moved = phorum_db_get_messages($msgthd_id);
             $PHORUM["forum_id"] = $forum_id;
             foreach ($moved as $id => $data) {
-                if (isset($data["meta"]["moved"])) {
+                if (!empty($data["moved"])) {
                     phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
                 }
             }
