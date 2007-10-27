@@ -297,7 +297,8 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         }
 
         $PHORUM["DATA"]["CURRENTPAGE"] = $page;
-           $PHORUM["DATA"]["TOTALPAGES"] = $pages;
+        $PHORUM["DATA"]["TOTALPAGES"] = $pages;
+        $PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=%page_num%", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
 
         if ($page_start > 1){
             $PHORUM["DATA"]["URL"]["FIRSTPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=1", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));

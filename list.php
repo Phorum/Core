@@ -148,6 +148,8 @@ for($x=0;$x<$pages_shown && $x<$pages;$x++){
 
 $PHORUM["DATA"]["CURRENTPAGE"]=$page;
 $PHORUM["DATA"]["TOTALPAGES"]=$pages;
+$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]=str_replace('%forum_id%',$PHORUM["forum_id"],$list_page_url_template);
+
 
 if($page_start>1){
     $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],'1'),$list_page_url_template);

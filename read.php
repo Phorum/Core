@@ -443,6 +443,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         $PHORUM["DATA"]["CURRENTPAGE"]=$page;
         $PHORUM["DATA"]["TOTALPAGES"]=$pages;
+        $PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]=str_replace('%thread_id%',$thread,$read_page_url_template);
 
         if($page_start>1){
             $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,'1'),$read_page_url_template);
