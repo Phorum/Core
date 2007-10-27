@@ -609,25 +609,23 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     $allowed_forums = array();
 
     // We need to differentiate on which key to use.
-    if ($forum_id) {
+    if ($thread) {
+        $use_key = 'thread_message';
+    }
+    elseif ($forum_id)
+    {
         if ($threads_only) {
-            if ($thread) {
-                $use_key = 'thread_message';
-            } else {
-                $use_key = 'new_threads';
-            }
+            $use_key = 'new_threads';
         } else {
             $use_key = 'new_count';
         }
-    } else {
-        if ($thread) {
-            $use_key = 'thread_message';
+    }
+    else
+    {
+        if ($threads_only) {
+            $use_key = 'recent_threads';
         } else {
-            if ($threads_only) {
-                $use_key = 'recent_threads';
-            } else {
-                $use_key = 'PRIMARY';
-            }
+            $use_key = 'PRIMARY';
         }
     }
 
