@@ -34,8 +34,12 @@
         'feed.'.PHORUM_FILE_EXTENSION,
         'file.'.PHORUM_FILE_EXTENSION,
         'follow.'.PHORUM_FILE_EXTENSION,
+        'images/add.png',
         'images/alert.gif',
         'images/button.png',
+        'images/comment.png',
+        'images/comments.png',
+        'images/delete.png',
         'images/close.gif',
         'images/qmark.gif',
         'images/trans.gif',
@@ -117,6 +121,11 @@
         'include/thread_sort.php',
         'include/upload_functions.php',
         'include/version_functions.php',
+        'include/api/admin_mods.php',
+        'include/api/custom_profile_fields.php',
+        'include/api/file_storage.php',
+        'include/api/base.php',
+        'include/api/user.php',
         'index.'.PHORUM_FILE_EXTENSION,
         'list.'.PHORUM_FILE_EXTENSION,
         'login.'.PHORUM_FILE_EXTENSION,
@@ -128,7 +137,9 @@
         'redirect.'.PHORUM_FILE_EXTENSION,
         'register.'.PHORUM_FILE_EXTENSION,
         'report.'.PHORUM_FILE_EXTENSION,
+        'css.'.PHORUM_FILE_EXTENSION,
         'rss.'.PHORUM_FILE_EXTENSION,
+        'feed.'.PHORUM_FILE_EXTENSION,
         'search.'.PHORUM_FILE_EXTENSION,
         'versioncheck.php',
     );
@@ -136,14 +147,14 @@
     // A list of database layer files that ship with Phorum.
     $GLOBALS["PHORUM"]["distro_dblayers"] = array(
         "mysql.php",
-        "mysqli.php",
         # "postgresql.php", needs Porting to Phorum 5.2
     );
 
     // A list of templates that ship with Phorum.
     $GLOBALS["PHORUM"]["distro_templates"] = array(
-        "default",
-        "default2",
+        "emerald",
+        "classic",
+        "lightweight"
     );
 
     // A list of language files that ship with Phorum.
@@ -183,7 +194,7 @@
 
         if (count($errors)) return array(
             PHORUM_SANITY_CRIT,
-            "Not all files that are required for running Phorum seem to 
+            "Not all files that are required for running Phorum seem to
              be installed correctly on your server. Below is a list of
              problems:<br/><ul><li>" .
              implode("</li>\n<li>", $errors) .
@@ -192,11 +203,11 @@
              probably not uploaded at all. If there's an additional
              \"<b>case mismatch</b>\" notice, then it could be that your
              FTP upload client mangled the case of the uploaded file's
-             filename. If a file is marked \"<b>unreadable</b>\" then 
+             filename. If a file is marked \"<b>unreadable</b>\" then
              the file is not readable by the webserver. Make sure that
              the webserver has permission for reading the file, by
              using chmod to mode \"644\" (readable and writable for the
-             user, readable for the group and others). Never use 
+             user, readable for the group and others). Never use
              mod \"777\" for Phorum!"
         );
 
@@ -207,7 +218,7 @@
         $dir = @opendir("include/db");
         if (! $dir) return array(
             PHORUM_SANITY_CRIT,
-            "Phorum is unable to open the directory \"include/db/\". This 
+            "Phorum is unable to open the directory \"include/db/\". This
              directory contains the database layers for connecting
              Phorum to a database.",
             "Check that you have uploaded the directory \"include/db/\"
@@ -231,8 +242,8 @@
              connect Phorum to a database.",
             "Upload at least one database layer file to this directory.
              Which database layer to upload, depends on the database that
-             you want to connect to. Phorum is distributed with the 
-             database layers: " . implode(", ", $PHORUM["distro_dblayers"])
+             you want to connect to. Phorum is distributed with the
+             database layer(s): " . implode(", ", $PHORUM["distro_dblayers"])
         );
 
         // ------------------------------------------------------------------
@@ -242,7 +253,7 @@
         $dir = @opendir("templates/");
         if (! $dir) return array(
             PHORUM_SANITY_CRIT,
-            "Phorum is unable to open the directory \"templates/\". This 
+            "Phorum is unable to open the directory \"templates/\". This
              directory contains the Phorum templates.",
             "Check that you have uploaded the directory \"templates/\"
              and that it is readable for the webserver by using chmod
@@ -263,7 +274,7 @@
              directory \"templates/\".",
             "Upload at least one template directory to this directory.
              Which template(s) to upload, depends on the template(s) that
-             you want to use. Phorum is distributed with the 
+             you want to use. Phorum is distributed with the
              template(s): " . implode(", ", $PHORUM["distro_templates"])
         );
 
@@ -274,7 +285,7 @@
         $dir = @opendir("include/lang/");
         if (! $dir) return array(
             PHORUM_SANITY_CRIT,
-            "Phorum is unable to open the directory \"include/lang/\". This 
+            "Phorum is unable to open the directory \"include/lang/\". This
              directory contains the language files for Phorum.",
             "Check that you have uploaded the directory \"include/lang/\"
              and that it is readable for the webserver by using chmod
@@ -295,7 +306,7 @@
              directory \"include/lang/\".",
             "Upload at least one language file to this directory.
              Which language file(s) to upload, depends on the language(s) that
-             you want to use. Phorum is distributed with the 
+             you want to use. Phorum is distributed with the
              language file(s): " . implode(", ", $PHORUM["distro_languages"])
         );
 

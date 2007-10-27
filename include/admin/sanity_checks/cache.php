@@ -23,7 +23,8 @@
 
     $phorum_check = "Phorum cache";
 
-    function phorum_check_cache(){
+    function phorum_check_cache($is_install = FALSE)
+    {
         $PHORUM = $GLOBALS["PHORUM"];
         $dir = $PHORUM["cache"];
 
@@ -36,7 +37,7 @@
 
         // Check if the cache directory exists.
         if (! file_exists($dir) || ! is_dir($dir)) return array(
-            PHORUM_SANITY_CRIT,
+            $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
             "The system is unable to find the cache
              directory \"".htmlspecialchars($dir)."\" on
              your system.", 
@@ -48,7 +49,7 @@
         // Check if we can create files in the cache directory.
         $fp = @fopen ($dummy_file, "w");
         if (! $fp) return array (
-            PHORUM_SANITY_CRIT,
+            $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
             "The system is unable to write files
              to your cache directory \"".htmlspecialchars($dir)."\".
              The system error was:<br/><br/>".
@@ -56,7 +57,7 @@
             $solution_2
         );
         if (! fclose($fp)) return array (
-            PHORUM_SANITY_CRIT,
+            $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
             "The system is able to write a file to your cache
              directory \"".htmlspecialchars($dir)."\",
              however closing the file failed.",
@@ -73,7 +74,7 @@
         // sure that we can open the file that we just wrote.
         $checkfp = fopen($dummy_file, "r");
         if (! $checkfp) return array(
-            PHORUM_SANITY_CRIT,
+            $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
             "The system was able to write a file to your cache directory 
              \"".htmlspecialchars($dir)."\", but afterwards the created
              file could not be read by the webserver. This is probably 
@@ -88,7 +89,7 @@
 
         // Check if we can create directories in the cache directory.
         if (! @mkdir($dummy_dir)) return array(
-            PHORUM_SANITY_CRIT,
+            $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
             "The system is unable to create directories
              in your cache directory \"".htmlspecialchars($dir)."\".
              The system error was:<br/><br/>".htmlspecialchars($php_errormsg).".",
