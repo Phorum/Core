@@ -51,12 +51,12 @@ class PhorumInputForm {
     }
 
     /**
-     * This method can be used for adding javascript events to the 
+     * This method can be used for adding javascript events to the
      * form element.
      *
      * @param $event - The javascript event, e.g. "submit" or "onsubmit"
      *                 (both notations are honoured).
-     * @param $code - The javascript code to add to the event. Do not 
+     * @param $code - The javascript code to add to the event. Do not
      *                 call "return" directly from code that you're adding,
      *                 unless you're sure that you don't want any other
      *                 javascript code to run for the event.
@@ -98,7 +98,7 @@ class PhorumInputForm {
     /**
      * This method will check if a form row has been added from module code.
      * If this is the case, it will force feed an addbreak() which tells for
-     * which module the form row has been added. This is done to make 
+     * which module the form row has been added. This is done to make
      * absolutely clear by what part of Phorum a certain setting was
      * put in the admin page. This method is only called internally by
      * the methods which add rows to a form.
@@ -172,12 +172,12 @@ class PhorumInputForm {
 
         // If a module is calling addbreak() from outside the
         // modsettings module, then replace the addbreak by
-        // addsubbreak() to make it visually clear that the 
+        // addsubbreak() to make it visually clear that the
         // options below the break do not belong to the Phorum
         // admin core.
         $type = 'break';
         if ($this->_module !== NULL &&
-            isset($_REQUEST["module"]) && 
+            isset($_REQUEST["module"]) &&
             $_REQUEST["module"] != "modsettings") {
             $type = 'subbreak';
         }
@@ -269,7 +269,7 @@ class PhorumInputForm {
         echo "<tr class=\"input-form-tr\">\n";
         echo "  <td class=\"input-form-td-break\" align=\"center\" colspan=\"2\">";
         if (!empty($this->_submit)) {
-          echo "<input type=\"submit\" value=\"$this->_submit\" class=\"input-form-submit\">";
+          echo "<input type=\"submit\" name=\"submit\" id=\"submit\" value=\"$this->_submit\" class=\"input-form-submit\">";
         }
         echo "</td>\n";
         echo "</tr>\n";

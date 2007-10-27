@@ -46,6 +46,8 @@ switch ($step) {
     case 0:
 
         $frm = new PhorumInputForm ("", "post", "Continue -&gt;");
+        $frm->add_formevent("onsubmit", "this.submit.disabled=true; return true;");
+
         $frm->addbreak("Phorum Upgrade");
         $frm->addmessage("
             This wizard will upgrade Phorum on your server.<br/>
@@ -85,7 +87,7 @@ switch ($step) {
             '<table><tr><td>' .
             '<div style="height:20px;width:300px; border:1px solid black">' .
             '<div style="height:20px;width:'.$w.'%; background-color:green">' .
-            '</div></div></td><td style="padding-left:10px">' . 
+            '</div></div></td><td style="padding-left:10px">' .
             'upgrade ' . $index . " of " . $count .
             '</td></tr></table>'
         );
