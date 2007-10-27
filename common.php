@@ -298,6 +298,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
                !isset($PHORUM['internal_patchlevel']) ||
                $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
+        if(isset($PHORUM["DBCONFIG"]["upgrade_page"])){
+            phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
+            exit();
+        }
         echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br/>Please visit the admin page to complete the upgrade!</body></html>";
         exit();
     }

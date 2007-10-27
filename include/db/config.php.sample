@@ -24,6 +24,7 @@ $PHORUM['DBCONFIG']=array(
     'table_prefix'  =>  'phorum',
 
     // 'down_page'     => 'http://www.example.com/phorum/down.html',
+    // 'upgrade_page'  => 'http://www.example.com/phorum/upgrade.html',
 
     // Specific options for the "mysql" database layer type.
     // -----------------------------------------------------------------
@@ -88,6 +89,11 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 
   An optional URL for redirecting the user when database is down.
   If you want to use this field, remove the "//" in front of it.
+
+* upgrade_page:
+
+  An optional URL for redirecting the user when the database has to be
+  upgraded. If you want to use this field, remove the "//" in front of it.
 
 * mysql_php_extension (MySQL-only option):
 
