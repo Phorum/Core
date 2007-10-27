@@ -27,7 +27,7 @@ define( "PHORUM", "5.2-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2007102500" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2007102600" );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -472,8 +472,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             phorum_build_common_urls();
 
             $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-	    $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
-	    $PHORUM["DATA"]["LOGGEDIN"] = false;
+        $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
+        $PHORUM["DATA"]["LOGGEDIN"] = false;
 
             if (phorum_page != 'login') {
 
