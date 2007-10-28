@@ -606,33 +606,6 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     phorum_db_sanitize_mixed($forum_id, 'int');
 
     $messages = array();
-    $allowed_forums = array();
-
-    // We need to differentiate on which key to use.
-    if ($thread) {
-        $use_key = 'thread_message';
-    }
-    elseif ($forum_id)
-    {
-        if ($threads_only) {
-            $use_key = 'new_threads';
-        } else {
-            $use_key = 'new_count';
-        }
-    }
-    else
-    {
-        if ($threads_only) {
-            $use_key = 'recent_threads';
-        } else {
-            $use_key = 'PRIMARY';
-        }
-    }
-
-    $sql = "SELECT  *
-            FROM    {$PHORUM['message_table']}
-            USE     INDEX ($use_key)
-            WHERE   status=".PHORUM_STATUS_APPROVED;
 
     // We have to check what forums the active Phorum user can read first.
     // Even if $thread is passed, we have to make sure that the user
@@ -651,6 +624,36 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     // If the user is not allowed to see any forum,
     // then return the emtpy $messages;
     if (empty($allowed_forums)) return $messages;
+
+    // We need to differentiate on which key to use.
+    // If selecting on a specific thread, then the best index
+    // to use would be the thread_message index.
+    if ($thread) {
+        $use_key = 'thread_message';
+    }
+    // Indexes to use if we query exactly one forum.
+    elseif (count($allowed_forums) == 1)
+    {
+        if ($threads_only) {
+            $use_key = 'new_threads';
+        } else {
+            $use_key = 'new_count';
+        }
+    }
+    // Indexes to use if we query more than one forum.
+    else
+    {
+        if ($threads_only) {
+            $use_key = 'recent_threads';
+        } else {
+            $use_key = 'PRIMARY';
+        }
+    }
+
+    $sql = "SELECT  *
+            FROM    {$PHORUM['message_table']}
+            USE     INDEX ($use_key)
+            WHERE   status=".PHORUM_STATUS_APPROVED;
 
     if (count($allowed_forums) == 1) {
         $sql .= " AND forum_id = " . array_shift($forum_id);
