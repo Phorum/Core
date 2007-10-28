@@ -630,7 +630,7 @@ if ($PHORUM["posting_template"] == 'posting')
     // no message to display to the user and if we're not in a preview.
     // In those cases, it's better to stay at the top of the
     // page, so the user can see it.
-    if (phorum_page=="posting" && !isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"]) && !$preview) {
+    if (phorum_page=="post" && !isset($PHORUM["DATA"]["OKMSG"]) && !isset($PHORUM["DATA"]["ERROR"]) && !$preview) {
         $focus = "subject";
         if (!empty($message["subject"])) $focus = "body";
         $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus;
