@@ -58,9 +58,19 @@ if(!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"]==0){
     exit();
 }
 
-// add feed url
-if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["vroot"], "type=".$PHORUM["default_feed"] );
+// add feed urls
+if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
+{
+    $PHORUM['DATA']['FEEDS'] = array(
+        array(
+            'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
+            'TITLE' => $PHORUM['DATA']['FEED'] . ' ('. strtolower($PHORUM['DATA']['LANG']['Threads']) . ')'
+        ),
+        array(
+            "URL" => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
+            "TITLE" => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
+        )
+    );
 }
 
 

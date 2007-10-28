@@ -557,10 +557,19 @@ if($PHORUM["DATA"]["MODERATOR"]) {
 }
 
 // add feed url
-if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["forum_id"], "type=".$PHORUM["default_feed"] );
+if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
+{
+    $PHORUM['DATA']['FEEDS'] = array(
+        array(
+            'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['forum_id'], 'type='.$PHORUM['default_feed']),
+            'TITLE' => $PHORUM['DATA']['FEED'] . ' ('. strtolower($PHORUM['DATA']['LANG']['Threads']) . ')'
+        ),
+        array(
+            "URL" => phorum_get_url(PHORUM_FEED_URL, $PHORUM['forum_id'], 'replies=1', 'type='.$PHORUM['default_feed']),
+            "TITLE" => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
+        )
+    );
 }
-
 
 // updating new-info for first visit (last message on first page is first new)
 if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){

@@ -726,6 +726,16 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["forum_id"], $thread, "type=".$PHORUM["default_feed"] );
     }
 
+    // add feed url
+    if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
+    {
+        $PHORUM['DATA']['FEEDS'] = array(array(
+            'TITLE' => $PHORUM['DATA']['FEED'],
+            'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM["forum_id"], $thread, "type=".$PHORUM["default_feed"])
+        ));
+    }
+
+
     // include the correct template
 
     $templates = array();

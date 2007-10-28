@@ -19,8 +19,10 @@
     <link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
     <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {/IF}
-{IF URL->FEED}
-    <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEED}" href="{URL->FEED}" />
+{IF FEEDS}
+  {LOOP FEEDS}
+    <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEEDS->TITLE}" href="{FEEDS->URL}" />
+  {/LOOP FEEDS}
 {/IF}
 {IF URL->REDIRECT}
     <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
