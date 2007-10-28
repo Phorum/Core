@@ -68,7 +68,7 @@ if(!empty($cache)){
     if ($thread) $PHORUM["args"]["replies"] = 1;
 
     // check if we are getting replies
-    $no_replies = empty($PHORUM["args"]["replies"]) ? true : false;
+    $replies = empty($PHORUM["args"]["replies"]) ? false : true;
 
     // check the feed type
     $feed_type = empty($PHORUM["args"]["type"]) ? "rss" : $PHORUM["args"]["type"];
@@ -77,7 +77,7 @@ if(!empty($cache)){
     $forum_ids = array_keys($forums);
 
     // get messages
-    $messages = phorum_db_get_recent_messages(30, 0, $forum_ids, $thread, $no_replies);
+    $messages = phorum_db_get_recent_messages(30, 0, $forum_ids, $thread, $replies ? LIST_RECENT_MESSAGES : LIST_RECENT_THREADS);
 
     // remove users from messages array
     $users = $messages["users"];

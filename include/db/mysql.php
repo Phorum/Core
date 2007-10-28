@@ -172,6 +172,15 @@ define('DB_GLOBALQUERY',    64);
 define('DB_MASTERQUERY',   128);
 /**#@-*/
 
+/**#@+
+ * Constant for the phorum_db_get_recent_messages() function call
+ * $list_type parameter.
+ */
+define('LIST_RECENT_MESSAGES',   0);
+define('LIST_RECENT_THREADS',    1);
+define('LIST_UPDATED_THREADS',   2);
+/**#@-*/
+
 // }}}
 
 // ----------------------------------------------------------------------
@@ -587,32 +596,49 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
  * @param integer $thread
  *     A thread id or 0 (zero) to retrieve messages from any thread.
  *
- * @param boolean $threads_only
- *     If set to TRUE, only the top message from each thread is returned.
+ * @param integer $list_type
+ *     This parameter determines the type of list that has to be returned.
+ *     Options for this parameter are:
+ *     - LIST_RECENT_MESSAGES: return a list of recent messages
+ *     - LIST_RECENT_THREADS: return a list of recent threads
+ *     - LIST_UPDATED_THREADS: return a list of recently updated threads
  *
  * @return array
  *     An array of recent messages, indexed by message_id. One special key
  *     "users" is set too. This one contains an array of all involved
  *     user_ids.
  */
-function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thread = 0, $threads_only = FALSE)
+function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thread = 0, $list_type = LIST_RECENT_MESSAGES)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    settype($length, 'int');
-    settype($offset, 'int');
-    settype($thread, 'int');
-    settype($threads_only, 'bool');
+    settype($length,    'int');
+    settype($offset,    'int');
+    settype($thread,    'int');
+    settype($list_type, 'int');
     phorum_db_sanitize_mixed($forum_id, 'int');
 
-    $messages = array();
+    // In case -1 is used as "any" value by the caller.
+    if ($forum_id < 0) $forum_id = 0;
+    if ($thread   < 0) $thread   = 0;
+
+    // Parameter checking.
+    if ($list_type < 0 || $list_type > 3) trigger_error(
+        "phorum_db_get_recent_messages(): illegal \$list_type parameter used",
+        E_USER_ERROR
+    );
+    if ($list_type != LIST_RECENT_MESSAGES && $thread) trigger_error(
+        "phorum_db_get_recent_messages(): \$thread parameter can only be " .
+        "used with \$list_type = LIST_RECENT_MESSAGES",
+        E_USER_ERROR
+    );
 
     // We have to check what forums the active Phorum user can read first.
-    // Even if $thread is passed, we have to make sure that the user
-    // can read the containing forum. Here we push the $forum_id argument
-    // into an argument for phorum_api_user_check_access(), to make
-    // that function always return an array of accessible forum_ids.
-    if ($forum_id <= 0) {
+    // Even if a $thread is passed, we have to make sure that the user
+    // can read the containing forum. Here we convert the $forum_id argument
+    // into an argument that is usable for phorum_api_user_check_access(),
+    // in such way that it will always return an array of accessible forum_ids.
+    if ($forum_id == 0) {
         $forum_id = PHORUM_ACCESS_LIST;
     } elseif(!is_array($forum_id)) {
         $forum_id = array($forum_id => $forum_id);
@@ -622,8 +648,8 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     );
 
     // If the user is not allowed to see any forum,
-    // then return the emtpy $messages;
-    if (empty($allowed_forums)) return $messages;
+    // then return an empty array.
+    if (empty($allowed_forums)) return array();
 
     // We need to differentiate on which key to use.
     // If selecting on a specific thread, then the best index
@@ -634,22 +660,35 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     // Indexes to use if we query exactly one forum.
     elseif (count($allowed_forums) == 1)
     {
-        if ($threads_only) {
-            $use_key = 'new_threads';
-        } else {
-            $use_key = 'new_count';
+        switch($list_type) {
+            case LIST_RECENT_MESSAGES:
+                $use_key = 'new_count';
+                break;
+            case LIST_RECENT_THREADS:
+                $use_key = 'new_threads';
+                break;
+            case LIST_UPDATED_THREADS:
+                $use_key = 'list_page_float';
+                break;
         }
     }
     // Indexes to use if we query more than one forum.
     else
     {
-        if ($threads_only) {
-            $use_key = 'recent_threads';
-        } else {
-            $use_key = 'PRIMARY';
+        switch($list_type) {
+            case LIST_RECENT_MESSAGES:
+                $use_key = 'PRIMARY';
+                break;
+            case LIST_RECENT_THREADS:
+                $use_key = 'recent_threads';
+                break;
+            case LIST_UPDATED_THREADS:
+                $use_key = 'updated_threads';
+                break;
         }
     }
 
+    // Build the SQL query.
     $sql = "SELECT  *
             FROM    {$PHORUM['message_table']}
             USE     INDEX ($use_key)
@@ -665,11 +704,15 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
         $sql.=" AND thread = $thread";
     }
 
-    // Do not include moved messages.
     $sql .= " AND moved = 0";
 
-    if ($threads_only) {
-        $sql .= ' AND parent_id = 0 ORDER BY message_id DESC';
+    if ($list_type == LIST_RECENT_THREADS ||
+        $list_type == LIST_UPDATED_THREADS) {
+        $sql .= ' AND parent_id = 0';
+    }
+
+    if ($list_type == LIST_UPDATED_THREADS) {
+        $sql .= ' ORDER BY modifystamp DESC';
     } else {
         $sql .= ' ORDER BY message_id DESC';
     }
@@ -681,6 +724,8 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
             $sql .= " LIMIT $length";
         }
     }
+
+    print $sql;
 
     // Retrieve matching messages from the database.
     $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
