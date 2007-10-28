@@ -30,6 +30,19 @@
         PHORUM_USER_ACTIVE        => 'Active',
     );
 
+    // A utility list of field names that are used for searching.
+    $user_search_fields = array(
+        'search_username',
+        'search_email',
+        'search_type',
+        'search_status',
+        'posts',
+        'posts_op',
+        'lastactive',
+        'lastactive_op'
+    );
+
+
     $error="";
 
     if(count($_POST)){
@@ -137,6 +150,7 @@
             unset($user_data["section"]);
             unset($user_data["password1"]);
             unset($user_data["password2"]);
+            unset($user_data["submit"]);
 
             if (empty($error)){
                 $user_data = phorum_hook("admin_users_form_save", $user_data);
@@ -145,7 +159,6 @@
                     unset($user_data["error"]);
                 }
             }
-
             if(empty($error)){
                 phorum_api_user_save($user_data);
                 phorum_admin_okmsg("User Saved");
@@ -166,7 +179,7 @@
         return;
     }
 
-    print "<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=\">Show all users</a><br/>";
+    print "<a href=\"{$PHORUM["admin_http_path"]}?module=users\">Show all users</a><br/>";
 
     if(!isset($_GET["edit"]) && !isset($_POST['section'])){
 
@@ -208,13 +221,11 @@
         </script>
 <?php
 
-        $search=$_REQUEST["search"];
-
-        $url_safe_search=urlencode($_REQUEST["search"]);
-        $url_safe_search.="&posts=".urlencode($_REQUEST["posts"]);
-        $url_safe_search.="&posts_op=".urlencode($_REQUEST["posts_op"]);
-        $url_safe_search.="&lastactive=".urlencode($_REQUEST["lastactive"]);
-        $url_safe_search.="&lastactive_op=".urlencode($_REQUEST["lastactive_op"]);
+        // Build the search parameters query string items.
+        $url_safe_search = '';
+        foreach ($user_search_fields as $field) {
+            $url_safe_search .= "&$field=" . urlencode($_REQUEST[$field]);
+        }
 
         settype($_REQUEST["start"], "integer");
 
@@ -305,14 +316,14 @@
 
             if($_REQUEST["start"]>0){
                 $old_start=$_REQUEST["start"]-$display;
-                $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=$url_safe_search&start=$old_start\">Previous Page</a>";
+                $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users$url_safe_search&start=$old_start\">Previous Page</a>";
             }
 
             $nav.="&nbsp;&nbsp;";
 
             if($_REQUEST["start"]+$display<$total){
                 $new_start=$_REQUEST["start"]+$display;
-                $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users&search=$url_safe_search&start=$new_start\">Next Page</a>";
+                $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users$url_safe_search&start=$new_start\">Next Page</a>";
             }
 
             echo <<<EOT
@@ -348,7 +359,7 @@ EOT;
                 $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
 
                 echo "<tr>\n";
-                echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=users&user_id={$user['user_id']}&edit=1\">".(empty($PHORUM['custom_display_name']) ? htmlspecialchars($user['display_name']) : $user['display_name'])."</a></td>\n";
+                echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=users&user_id={$user['user_id']}$url_safe_search&edit=1\">".(empty($PHORUM['custom_display_name']) ? htmlspecialchars($user['display_name']) : $user['display_name'])."</a></td>\n";
                 echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
                 echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
                 echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";
