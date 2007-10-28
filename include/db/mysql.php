@@ -612,6 +612,11 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    // Backward compatibility for the old $threads_only parameter.
+    if (is_bool($list_type)) {
+        $list_type = $list_type ? LIST_RECENT_THREADS : LIST_RECENT_MESSAGES;
+    }
+
     settype($length,    'int');
     settype($offset,    'int');
     settype($thread,    'int');
@@ -724,8 +729,6 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
             $sql .= " LIMIT $length";
         }
     }
-
-    print $sql;
 
     // Retrieve matching messages from the database.
     $messages = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
