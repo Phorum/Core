@@ -269,7 +269,7 @@ class PhorumInputForm {
         echo "<tr class=\"input-form-tr\">\n";
         echo "  <td class=\"input-form-td-break\" align=\"center\" colspan=\"2\">";
         if (!empty($this->_submit)) {
-          echo "<input type=\"submit\" name=\"submit\" id=\"submit\" value=\"$this->_submit\" class=\"input-form-submit\">";
+          echo "<input type=\"submit\" value=\"$this->_submit\" class=\"input-form-submit\">";
         }
         echo "</td>\n";
         echo "</tr>\n";

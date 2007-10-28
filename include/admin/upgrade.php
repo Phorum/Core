@@ -46,7 +46,6 @@ switch ($step) {
     case 0:
 
         $frm = new PhorumInputForm ("", "post", "Continue -&gt;");
-        $frm->add_formevent("onsubmit", "this.submit.disabled=true; return true;");
 
         $frm->addbreak("Phorum Upgrade");
         $frm->addmessage("
