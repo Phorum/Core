@@ -85,7 +85,7 @@ function phorum_check_bans($bans)
 
     // Load the ban lists.
     if (! isset($GLOBALS["PHORUM"]["banlists"])) {
-    	if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
+    	if(!empty($PHORUM['cache_banlists']) && !empty($PHORUM['banlist_version'])) {
     		$cache_key = $PHORUM['forum_id'];
         	$GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
         	if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
