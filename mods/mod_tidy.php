@@ -1,23 +1,35 @@
 <?php
 
 /* phorum module info
-hook:  start_output|mod_tidy_start
-hook:  end_output|mod_tidy_end
+hook:  common|mod_tidy_start
 title: Tidy Output
 desc:  This module removes unneeded white space from Phorum's output saving bandwidth.
-author: Phorum Dev Team
-url: http://www.phorum.org/
 */
 
 
 function mod_tidy_start(){
-    ob_start();
+    ob_start("mod_tidy_end");
 }
 
-function mod_tidy_end(){
+function mod_tidy_end($buffer){
 
-    $buffer = ob_get_contents();
-    ob_end_clean();
+    $preserved_tags = array();
+
+    if(preg_match_all("!(<pre.*?>).+?(</pre.*?>)!ms", $buffer, $matches)){
+        foreach($matches[0] as $match){
+            $hash = md5($match);
+            $preserved_tags[$hash] = $match;
+            $buffer = str_replace($match, "<".$hash.">", $buffer);
+        }
+    }
+
+    if(preg_match_all("!(<xmp.*?>).+?(</xmp.*?>)!ms", $buffer, $matches)){
+        foreach($matches[0] as $match){
+            $hash = md5($match);
+            $preserved_tags[$hash] = $match;
+            $buffer = str_replace($match, "<".$hash.">", $buffer);
+        }
+    }
 
     if($buffer){
         $buffer = preg_replace("!\n[ \t]+!", "\n", $buffer);
@@ -27,7 +39,13 @@ function mod_tidy_end(){
         $buffer = trim($buffer);
     }
 
-    echo $buffer;
+    if(!empty($preserved_tags)){
+        foreach($preserved_tags as $hash=>$tag){
+            $buffer = str_replace("<".$hash.">", $tag, $buffer);
+        }
+    }
+
+    return $buffer;
 }
 
 ?>
