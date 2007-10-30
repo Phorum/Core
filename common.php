@@ -110,6 +110,15 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($PHORU
         }
     }
 
+    // Handle path info based URLs for the file script.
+    if (phorum_page == 'file' &&
+        !empty($_SERVER['PATH_INFO']) &&
+        preg_match('!^/(\d+)/(\d+)/!', $_SERVER['PATH_INFO'], $m))
+    {
+        $PHORUM['args']['file'] = $m[2];
+        $PHORUM['forum_id'] = $m[1];
+    }
+
     // set forum_id if not set already by a forum_id request parameter
     if ( empty( $PHORUM["forum_id"] ) && isset( $PHORUM["args"][0] ) ) {
         $PHORUM["forum_id"] = ( int )$PHORUM["args"][0];

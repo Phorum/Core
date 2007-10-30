@@ -114,19 +114,35 @@ function phorum_get_url()
                 // If a filename=... parameter is set, then change that
                 // parameter to a URL path, unless this feature is not
                 // enabled in the admin setup.
-                if (!empty($PHORUM['file_url_uses_pathinfo'])) {
+                $unset = array();
+                if (!empty($PHORUM['file_url_uses_pathinfo']))
+                {
+                    $file_id  = NULL;
+                    $filename = NULL;
                     foreach ($argv as $id => $arg) {
-                        if (substr($arg, 0, 9) == 'filename=') {
-                            $safe_file = urldecode(substr($arg, 9));
+                        if (substr($arg, 0, 5) == 'file=') {
+                            $file_id = substr($arg, 5);
+                            // %file_id% is sometimes used for creating URL
+                            // templates, so we should not mangle that one.
+                            if ($file_id != '%file_id%') {
+                                settype($file_id, 'int');
+                            }
+                            $unset[] = $id;
+                        } elseif (substr($arg, 0, 9) == 'filename=') {
+                            $filename = urldecode(substr($arg, 9));
                             // %file_name% is sometimes used for creating URL
                             // templates, so we should not mangle that one.
-                            if ($safe_file != '%file_name%') {
-                                $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $safe_file);
-                                $safe_file = preg_replace('/_+/', '_', $safe_file);
+                            if ($filename != '%file_name%') {
+                                $filename = preg_replace('/[^\w\_\-\.]/', '_', $filename);
+                                $filename = preg_replace('/_+/', '_', $filename);
                             }
-                            $pathinfo = "/$safe_file";
-                            unset($argv[$id]);
+                            $unset[] = $id;
                         }
+                    }
+                    if ($file_id !== NULL && $filename !== NULL) {
+                        foreach ($unset as $id) unset($argv[$id]);
+                        $add_forum_id = false;
+                        $pathinfo = "/{$PHORUM['forum_id']}/$file_id/$filename";
                     }
                 }
                 break;
