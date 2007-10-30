@@ -17,7 +17,7 @@ function phorum_smtp_send_messages ($data)
     $addresses = $data['addresses'];
     $subject   = $data['subject'];
     $message   = $data['body'];
-  	$num_addresses = count($addresses);
+    $num_addresses = count($addresses);
 
     $settings  = $PHORUM['smtp_mail'];
     $settings['auth'] = empty($settings['auth'])?false:true;
@@ -51,7 +51,7 @@ function phorum_smtp_send_messages ($data)
             }
 
             // setup the connection with hostname and port
-            $smtp =& new Swift_Connection_SMTP($settings['host'], $settings['port'],$conn_type);
+            $smtp = new Swift_Connection_SMTP($settings['host'], $settings['port'],$conn_type);
 
             // smtp-authentication
             if($settings['auth'] && !empty($settings['username'])) {
@@ -60,12 +60,12 @@ function phorum_smtp_send_messages ($data)
             }
 
             // construct the swift-mailer
-            $swift =& new Swift($smtp);
+            $swift = new Swift($smtp);
 
             // construct the message
-            $message =& new Swift_Message($subject, $message, $type="text/plain", $PHORUM["DATA"]["MAILENCODING"], $PHORUM["DATA"]["CHARSET"]);
+            $message = new Swift_Message($subject, $message, $type="text/plain", $PHORUM["DATA"]["MAILENCODING"], $PHORUM["DATA"]["CHARSET"]);
 
-            $recipients =& new Swift_RecipientList();
+            $recipients = new Swift_RecipientList();
 
             if(isset($settings['bcc']) && $settings['bcc'] && $num_addresses > 3){
 
@@ -89,10 +89,10 @@ function phorum_smtp_send_messages ($data)
         }
     }
 
-	unset($recipients);
-	unset($message);
-	unset($swift);
-	unset($smtp);
+    unset($recipients);
+    unset($message);
+    unset($swift);
+    unset($smtp);
 
     // make sure that the internal mail-facility doesn't kick in
     return 0;
