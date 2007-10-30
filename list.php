@@ -569,6 +569,9 @@ if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
             "TITLE" => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
         )
     );
+    
+    $PHORUM["DATA"]["URL"]["FEED"] = phorum_get_url(PHORUM_FEED_URL, $PHORUM['forum_id'], 'replies=1', 'type='.$PHORUM['default_feed']);
+    
 }
 
 // updating new-info for first visit (last message on first page is first new)
