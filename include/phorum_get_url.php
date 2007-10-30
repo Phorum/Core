@@ -197,8 +197,9 @@ function phorum_get_url()
         }
 
         if ( function_exists( "phorum_custom_get_url" ) ) {
-
-            $url = phorum_custom_get_url( $name, explode(",",$query_string), $suffix, $pathinfo );
+            $query_items = $query_string == ''
+                         ? array() : explode(',', $query_string);
+            $url = phorum_custom_get_url( $name, $query_items, $suffix, $pathinfo );
 
         } else {
 
