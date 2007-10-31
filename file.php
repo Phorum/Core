@@ -47,8 +47,9 @@ if ($file === FALSE)
     phorum_build_common_urls();
 
     phorum_output("message");
-    exit();
+    return;
 }
+
 
 // Access is allowed. Send the file to the browser.
 phorum_api_file_send($file);
