@@ -214,18 +214,18 @@ if(!empty($phorum_search) || !empty($phorum_author)){
     // setup the needed data for an alternate search backend
     // needs to get fed by posted messages
     $search_request_data = array(
-    'search' => $phorum_search,
-    'author' => $phorum_author,
-    'offset' => $start,
-    'length' => $PHORUM["list_length"],
-    'match_type'  => $PHORUM["args"]["match_type"],
-    'match_dates' => $PHORUM["args"]["match_dates"],
-    'match_forum' => $PHORUM["args"]["match_forum"],
-    'match_threads' => $PHORUM["args"]["match_threads"],
-    'results' => array(),
-    'raw_body' => 0,
-    'totals' => 0,
-    'continue' => 1
+        'search' => $phorum_search,
+        'author' => $phorum_author,
+        'offset' => $start,
+        'length' => $PHORUM["list_length"],
+        'match_type'  => $PHORUM["args"]["match_type"],
+        'match_dates' => $PHORUM["args"]["match_dates"],
+        'match_forum' => $PHORUM["args"]["match_forum"],
+        'match_threads' => $PHORUM["args"]["match_threads"],
+        'results' => array(),
+        'raw_body' => 0,
+        'totals' => 0,
+        'continue' => 1
     );
 
     if (isset($PHORUM["hooks"]["search_action"]))
@@ -246,6 +246,9 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         $match_number = $start + 1;
 
         $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
+
+        if (!$raw_body)
+            $arr["rows"] = phorum_format_messages($arr["rows"]);
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
@@ -317,12 +320,9 @@ if(!empty($phorum_search) || !empty($phorum_author)){
             $PHORUM["DATA"]["URL"]["PREVPAGE"] = phorum_get_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$prevpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
         }
 
-
-
         if (isset($PHORUM["hooks"]["search"]))
             $arr["rows"] = phorum_hook("search", $arr["rows"]);
 
-        $arr["rows"] = phorum_format_messages($arr["rows"]);
         $PHORUM["DATA"]["MATCHES"] = $arr["rows"];
 
     }else{
