@@ -1261,8 +1261,9 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  *     parameter to a true value, the function will search in any forum.
  *
  * @param boolean $write_server
- *     This value can be set to true to specify that the message should be retrieved
- *     from the master (aka write-server) in case replication is used
+ *     This value can be set to true to specify that the message should be
+ *     retrieved from the master (aka write-server) in case replication
+ *     is used.
  *
  * @return mixed
  *     Either a single message or an array of messages (indexed by
@@ -1270,7 +1271,7 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  *     found at all, then either an empty array or NULL is returned
  *     (also depending on the $value parameter).
  */
-function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE, $write_server = FALSE)
+function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE, $write_server=FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -3127,6 +3128,11 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
  *     If this parameter has a true value, then the user's
  *     permissions and groups are included in the return data.
  *
+ * @param boolean $write_server
+ *     This value can be set to true to specify that the user should be
+ *     retrieved from the master (aka write-server) in case replication
+ *     is used
+ *
  * @return mixed
  *     If $user_id is a single user_id, then either a single user or NULL
  *     (in case the user_id was not found in the database) is returned.
@@ -3134,7 +3140,7 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
  *     returned, indexed by user_id. For user_ids that cannot be found,
  *     there will be no array element at all.
  */
-function phorum_db_user_get($user_id, $detailed = FALSE)
+function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -3150,13 +3156,20 @@ function phorum_db_user_get($user_id, $detailed = FALSE)
         $user_where = "user_id = $user_id";
     }
 
+    if($write_server) {
+        $flags = DB_MASTERQUERY;
+    } else {
+        $flags = 0;
+    }
+
     // Retrieve the requested user(s) from the database.
     $users = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT *
          FROM   {$PHORUM['user_table']}
          WHERE  $user_where",
-        'user_id'
+        'user_id',
+        $flags
     );
 
     // No users found?
@@ -3179,7 +3192,9 @@ function phorum_db_user_get($user_id, $detailed = FALSE)
                     forum_id,
                     permission
              FROM   {$PHORUM['user_permissions_table']}
-             WHERE  $user_where"
+             WHERE  $user_where",
+            NULL,
+            $flags
         );
 
         // Add forum user permissions to the users.
@@ -3200,7 +3215,9 @@ function phorum_db_user_get($user_id, $detailed = FALSE)
                     LEFT JOIN {$PHORUM['forum_group_xref_table']}
                     USING (group_id)
              WHERE  $user_where AND
-                    status >= ".PHORUM_USER_GROUP_APPROVED
+                    status >= ".PHORUM_USER_GROUP_APPROVED,
+            NULL,
+            $flags
         );
 
         // Add groups and forum group permissions to the users.
@@ -3237,7 +3254,9 @@ function phorum_db_user_get($user_id, $detailed = FALSE)
         DB_RETURN_ASSOCS,
         "SELECT *
          FROM   {$PHORUM['user_custom_fields_table']}
-         WHERE  $user_where"
+         WHERE  $user_where",
+        NULL,
+        $flags
     );
 
     // Add custom user profile fields to the users.

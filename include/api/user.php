@@ -608,7 +608,7 @@ function phorum_api_user_save($user, $flags = 0)
     // Are we handling the active Phorum user? Then refresh the user data.
     if (isset($PHORUM['user']) &&
         $PHORUM['user']['user_id'] == $dbuser['user_id']) {
-        $PHORUM['user'] = phorum_api_user_get($user['user_id'], TRUE);
+        $PHORUM['user'] = phorum_api_user_get($user['user_id'], TRUE, TRUE);
     }
 
     return $dbuser['user_id'];
@@ -730,6 +730,14 @@ function phorum_api_user_save_settings($settings)
  *     If this parameter is TRUE (default is FALSE), then the user's
  *     groups and permissions are included in the user data.
  *
+ * @param boolean $use_write_server
+ *     This parameter is for internal use only. It is used to flag that
+ *     the database layer has to run the query against the master database
+ *     server (known as the "write server"; only applicable if the database
+ *     system is setup as a replicated master/slave environment). When you
+ *     are using this API call in your own code, then you most probably do
+ *     not need to use this parameter.
+ *
  * @return mixed
  *     If the $user_id parameter is a single user_id, then either an array
  *     containing user data is returned or NULL if the user was not found.
@@ -738,7 +746,7 @@ function phorum_api_user_save_settings($settings)
  *     Users for user_ids that are not found are not included in the
  *     returned array.
  */
-function phorum_api_user_get($user_id, $detailed = FALSE)
+function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -789,7 +797,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE)
     // retrieved from the cache.
     if (count($user_ids))
     {
-        $db_users = phorum_db_user_get($user_ids, $detailed);
+        $db_users = phorum_db_user_get($user_ids, $detailed, $use_write_server);
 
         foreach ($db_users as $id => $user)
         {
