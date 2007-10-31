@@ -83,25 +83,26 @@ function phorum_check_bans($bans)
     // $PHORUM["DATA"]["LANG"]["ErrBannedUser"]
     // $PHORUM["DATA"]["LANG"]["ErrBannedIP"]
 
+    $cache_key = $PHORUM['forum_id'];
+
     // Load the ban lists.
     if (! isset($GLOBALS["PHORUM"]["banlists"])) {
-    	if(!empty($PHORUM['cache_banlists']) && !empty($PHORUM['banlist_version'])) {
-    		$cache_key = $PHORUM['forum_id'];
-        	$GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
-        	if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
-        		unset($GLOBALS["PHORUM"]["banlists"]);
-        	}
-    	}
-    	// not found or no caching enabled
-    	if(! isset($GLOBALS["PHORUM"]["banlists"]) ) {
-    		$GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
-    		
-    		if(isset($GLOBALS["PHORUM"]["banlists"]) &&
-    		   isset($PHORUM['cache_banlists']) && 
-    		   $PHORUM['cache_banlists']) {
-    			 phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
-    		}
-    	}
+        if(!empty($PHORUM['cache_banlists']) && !empty($PHORUM['banlist_version'])) {
+            $GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+            if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
+                unset($GLOBALS["PHORUM"]["banlists"]);
+            }
+        }
+        // not found or no caching enabled
+        if(! isset($GLOBALS["PHORUM"]["banlists"]) ) {
+            $GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
+
+            if(isset($GLOBALS["PHORUM"]["banlists"]) &&
+                    isset($PHORUM['cache_banlists']) &&
+                    $PHORUM['cache_banlists']) {
+                phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
+            }
+        }
     }
     if(! isset($GLOBALS['PHORUM']['banlists'])) return NULL;
 
@@ -153,26 +154,29 @@ function phorum_check_bans($bans)
  */
 function phorum_check_ban_lists($value, $type)
 {
-	$PHORUM=$GLOBALS['PHORUM'];
+    $PHORUM=$GLOBALS['PHORUM'];
+
     // Load the ban lists.
-	if (! isset($GLOBALS["PHORUM"]["banlists"])) {
-    	if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
-    		$cache_key = $PHORUM['forum_id'];
-        	$GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
-        	if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
-        		unset($GLOBALS["PHORUM"]["banlists"]);
-        	}
-    	}
-    	// not found or no caching enabled
-    	if(! isset($GLOBALS["PHORUM"]["banlists"]) ) {
-    		$GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
-    		
-    		if(isset($GLOBALS["PHORUM"]["banlists"]) &&
-    		   isset($PHORUM['cache_banlists']) && 
-    		   $PHORUM['cache_banlists']) {
-    			 phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
-    		}
-    	}
+    if (! isset($GLOBALS["PHORUM"]["banlists"]))
+    {
+        $cache_key = $PHORUM['forum_id'];
+
+        if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
+            $GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+            if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
+                unset($GLOBALS["PHORUM"]["banlists"]);
+            }
+        }
+        // not found or no caching enabled
+        if(! isset($GLOBALS["PHORUM"]["banlists"]) ) {
+            $GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
+
+            if(isset($GLOBALS["PHORUM"]["banlists"]) &&
+                    isset($PHORUM['cache_banlists']) &&
+                    $PHORUM['cache_banlists']) {
+                phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
+            }
+        }
     }
     if(! isset($GLOBALS['PHORUM']['banlists'])) return true;
 
