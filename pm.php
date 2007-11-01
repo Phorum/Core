@@ -982,7 +982,7 @@ function phorum_pm_format($messages)
             $messages[$id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
         }
 
-        if (!is_array($message['meta'])) {
+        if (isset($message['meta']) && !is_array($message['meta'])) {
             $messages[$id]['meta'] = unserialize($message['meta']);
         }
 
