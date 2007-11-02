@@ -66,7 +66,7 @@ if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
 // this only applies to urls that we create.
 // scrips using urls from forms (search) should use $_GET or $_POST
 if ( !defined( "PHORUM_ADMIN" ) ) {
-    if ( isset( $_SERVER["QUERY_STRING"] ) || isset( $PHORUM["CUSTOM_QUERY_STRING"] ) ) {
+    if ( isset( $_SERVER["QUERY_STRING"] ) || isset( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] ) ) {
         $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] ) ? $_SERVER["QUERY_STRING"]: $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
 
         // ignore stuff past a #
