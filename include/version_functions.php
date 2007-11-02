@@ -65,7 +65,7 @@ function phorum_parse_version($version)
  * @param version2 - The second version number
  * @return 1 if version1 is higher than version2, 0 if equal, -1 if lower
  */
- function phorum_compare_version($version1, $version2)
+function phorum_compare_version($version1, $version2)
 {
     // Compare segment by segment which version is higher.
     // Segments 1, 2 and 3 are always numbers. Segment 4 can be

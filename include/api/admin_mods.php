@@ -154,11 +154,17 @@ function phorum_api_admin_mods_list()
                     $phorum_ver = PHORUM;
 
                     $info['required_version'] = $required_ver;
+                    list ($currel, $cur) = phorum_parse_version($phorum_ver);
+                    list ($reqrel, $req) = phorum_parse_version($required_ver);
 
-                    list ($release, $cur) = phorum_parse_version($phorum_ver);
-                    list ($release, $req) = phorum_parse_version($required_ver);
-
-                    if (phorum_compare_version($cur, $req) == -1) {
+                    // If an admin is using a development or snapshot release,
+                    // the we asume that he knows what he's doing.
+                    if ($currel == 'snapshot' ||
+                        $currel == 'development') {
+                        // noop
+                    }
+                    // Otherwise, do a real version comparison.
+                    elseif (phorum_compare_version($cur, $req) == -1) {
                         $info['version_disabled'] = true;
                     }
 
