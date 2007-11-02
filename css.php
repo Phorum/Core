@@ -104,7 +104,7 @@ if(isset($PHORUM["args"]["1"])){
  *             be better to add the CSS code differently (e.g. through a
  *             custom CSS generating script or by adding the CSS code to
  *             the $PHORUM['DATA']['HEAD_DATA'] variable. Also, do not use
- *             this to only add CSS code for certain phorum pages. Since
+ *             this to only add CSS code to certain phorum pages. Since
  *             the resulting CSS data is cached, it is no problem if you
  *             add the CSS data for your module to the CSS code for
  *             every page.
@@ -136,7 +136,6 @@ $settings_t = @filemtime($settings_tpl);
 // Generate the cache key. While adding cache keys for the module
 // registrations, we also check the validity of the registration data.
 $cache_key = $PHORUM['template'] .'|'.
-             $PHORUM['forum_id'] .'|'.
              $css_t              .'|'.
              $settings_t;
 foreach ($module_registrations as $id => $r)
