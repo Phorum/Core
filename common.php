@@ -81,7 +81,7 @@ if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
 // look for and parse the QUERY_STRING
 // this only applies to urls that we create using phorum_get_url()
 // scripts using urls from forms (search) should use $_GET or $_POST
-if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($PHORUM["CUSTOM_QUERY_STRING"])))
+if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"])))
 {
     $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
            ? $_SERVER["QUERY_STRING"]
