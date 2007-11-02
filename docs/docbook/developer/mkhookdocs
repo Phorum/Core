@@ -90,12 +90,20 @@ function format_part($part)
         '&lt;ul&gt;',
         '&lt;li&gt;',
         '&lt;/li&gt;',
-        '&lt;/ul&gt;'
+        '&lt;/ul&gt;',
+        '&lt;b&gt;',
+        '&lt;/b&gt;',
+        '&lt;br&gt;',
+        '&lt;br/&gt;'
     ), array(
         '<itemizedlist>',
         '<listitem>',
         '</listitem>',
-        '</itemizedlist>'
+        '</itemizedlist>',
+        '<emphasis role="bold">',
+        '</emphasis>',
+        '<sbr/>',
+        '<sbr/>'
     ), $part);
 
     return $part;

@@ -8,6 +8,7 @@ hook: after_header|phorum_mod_smileys_after_header
 hook: format|phorum_mod_smileys_format
 hook: editor_tool_plugin|phorum_mod_smileys_editor_tool_plugin
 hook: addon|phorum_mod_smileys_addon
+hook: css_register|phorum_mod_smileys_css_register
 
 hook: tpl_editor_disable_smileys|phorum_mod_smileys_tpl_editor_disable_smileys
 hook: posting_custom_action|phorum_mod_smileys_posting_custom_action

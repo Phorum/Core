@@ -15,3 +15,4 @@ hook: before_post|phorum_mod_spamhurdles_pre_post
 hook: after_post|phorum_mod_spamhurdles_post_post
 hook: before_register|phorum_mod_spamhurdles_before_register
 hook: after_register|phorum_mod_spamhurdles_after_register
+hook: css_register|phorum_mod_spamhurdles_css_register

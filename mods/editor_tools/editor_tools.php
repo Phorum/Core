@@ -39,6 +39,21 @@ define('TOOL_TARGET',      6);
 require_once("./mods/editor_tools/defaults.php");
 
 /**
+ * Register the additional CSS code for this module.
+ */
+function phorum_mod_editor_tools_css_register($data)
+{
+    if ($data['css'] != 'css') return $data;
+
+    $data['register'][] = array(
+        "module" => "editor_tools",
+        "where"  => "after",
+        "source" => "file(mods/editor_tools/editor_tools.css)"
+    );
+    return $data;
+}
+
+/**
  * Adds the javascript and CSS for the editor tools to the page header.
  * Sets up internal datastructures for the editor tools module.
  * Allows other modules to register their editor tool buttons.
@@ -49,8 +64,7 @@ function phorum_mod_editor_tools_common()
 
     // Add the core editor tools javascript and CSS code to the page.
     $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
-      '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>'."\n" .
-      '<link rel="stylesheet" type="text/css" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.css"></link>'."\n";
+      '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>'."\n";
 
     // Initialize the tool data array.
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (

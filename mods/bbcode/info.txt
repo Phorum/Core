@@ -4,6 +4,7 @@ author: Phorum Dev Team
 url: http://www.phorum.org/
 
 hook: lang|
+hook: css_register|phorum_mod_bbcode_css_register
 hook: format|phorum_mod_bbcode_format
 hook: quote|phorum_mod_bbcode_quote
 hook: editor_tool_plugin|phorum_mod_bbcode_editor_tool_plugin

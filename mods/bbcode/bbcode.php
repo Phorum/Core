@@ -334,14 +334,12 @@ function phorum_mod_bbcode_editor_tool_plugin()
         );
 
         // For the "color" tool, we need to load the color picker
-        // javascript libraries and the colorpicker CSS stylesheet.
+        // javascript libraries.
         if ($id == 'color') {
             editor_tools_register_jslib(array(
                 'mods/bbcode/colorpicker/color_functions.js',
                 phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode','action=js'),
             ));
-
-            $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .= '<link rel="stylesheet" href="'.$GLOBALS["PHORUM"]["http_path"].'/mods/bbcode/colorpicker/js_color_picker_v2.css"/>'."\n";
         }
 
     }
@@ -360,6 +358,21 @@ function phorum_mod_bbcode_editor_tool_plugin()
 
     // Make language strings available for the editor tools javascript code.
     editor_tools_register_translations($lang);
+}
+
+// Register the additional CSS code for this module.
+function phorum_mod_bbcode_css_register($data)
+{
+    // We only want to add data to the standard screen stylesheet.
+    if ($data['css'] != 'css') return $data;
+
+    // For the "color" tool, we need to load the color picker CSS stylesheet.
+    $data['register'][] = array(
+        "module" => "bbcode",
+        "where"  => "after",
+        "source" => "file(mods/bbcode/colorpicker/js_color_picker_v2.css)"
+    );
+    return $data;
 }
 
 // The addon hook is used for displaying a help info screen.

@@ -13,6 +13,19 @@ define("KEY_EXPIRED", 1);
 // collection is run on the database, to clear out expired items.
 define("SPAMHURDLES_GARBAGE_COLLECTION_RATE", 1);
 
+// Register the additional CSS code for this module.
+function phorum_mod_spamhurdles_css_register($data)
+{
+    if ($data['css'] != 'css') return $data;
+
+    $data['register'][] = array(
+        "module" => "spamhurdles",
+        "where"  => "after",
+        "source" => "file(mods/spamhurdles/spamhurdles.css)"
+    );
+    return $data;
+}
+
 function phorum_mod_spamhurdles_common()
 {
     global $PHORUM;
@@ -110,9 +123,6 @@ function phorum_mod_spamhurdles_common()
             setcookie("mod_spamhurdles_key", "", time()-86400);
         }
     }
-
-    // Add the spamhurdles stylesheet to the page.
-    $PHORUM["DATA"]["HEAD_TAGS"] .= '<link rel="stylesheet" type="text/css" href="' . $PHORUM["http_path"] . '/mods/spamhurdles/spamhurdles.css"/>';
 }
 
 // Generic function for initializing spam hurdles for a form.
