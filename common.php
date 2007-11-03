@@ -200,6 +200,21 @@ if(!phorum_db_check_connection()){
 // get the Phorum settings
 phorum_db_load_settings();
 
+// For command line scripts, disable caching.
+// The command line user is often different from the web server
+// user, possibly causing permission problems on the cache.
+if (defined('PHORUM_SCRIPT'))
+{
+    $PHORUM['cache_banlists']   = 0;
+    $PHORUM['cache_css']        = 0;
+    $PHORUM['cache_javascript'] = 0;
+    $PHORUM['cache_layer']      = 0;
+    $PHORUM['cache_messages']   = 0;
+    $PHORUM['cache_newflags']   = 0;
+    $PHORUM['cache_rss']        = 0;
+    $PHORUM['cache_users']      = 0;
+}
+
 // Try to load the Phorum PHP extension, if has been enabled in the admin.
 // As a precaution, never load it from the admin code (so the extension
 // support can be disabled at all time if something unexpected happens).
