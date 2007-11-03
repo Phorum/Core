@@ -480,7 +480,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // if the Phorum is disabled, display a message.
     if( !$PHORUM["user"]["admin"] ) {
-        if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_ADMIN_ONLY ){
+        if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_ADMIN_ONLY && phorum_page != 'css' && phorum_page != 'javascript'){
             // set all our URL's
             phorum_build_common_urls();
 
