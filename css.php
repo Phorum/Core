@@ -21,7 +21,7 @@ define('phorum_page','css');
 include_once("./common.php");
 
 // Set to FALSE to disable CSS compression.
-define('PHORUM_COMPRESS_CSS', TRUE);
+define('PHORUM_COMPRESS_CSS', FALSE);
 
 // Argument 1 should be the name of the css template to load.
 if(isset($PHORUM["args"]["1"])){
@@ -215,10 +215,11 @@ foreach ($module_registrations as $id => $r)
 $cache_key = md5($cache_key . __FILE__);
 
 // Generate the cache file name.
-$cache_file = $PHORUM['cache'] . "/css-" . md5($cache_key . __FILE__);
+$cache_file = "{$PHORUM['cache']}/tpl-{$PHORUM['template']}-css-$css-" .
+              md5($cache_key . __FILE__);
 
-// Create the cache file if it does not exist.
-if (!file_exists($cache_file))
+// Create the cache file if it does not exist or if caching is disabled.
+if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
 {
     ob_start();
     include(phorum_get_template($css));
@@ -265,8 +266,18 @@ if (!file_exists($cache_file))
         );
     }
 
-    include_once "./include/templates.php";
-    phorum_write_file($cache_file, $content);
+    if (!empty($PHORUM['cache_css'])) {
+        include_once "./include/templates.php";
+        phorum_write_file($cache_file, $content);
+    }
+
+    // Send the RSS to the browser.
+    header("Content-Type: text/css");
+    print $content;
+
+    // Exit here explicitly for not giving back control to portable and
+    // embedded Phorum setups.
+    exit(0);
 }
 
 // Find the modification time for the cache file.

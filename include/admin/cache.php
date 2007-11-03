@@ -15,6 +15,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 if ( !defined( "PHORUM_ADMIN" ) ) return;
@@ -51,15 +52,14 @@ if ( count( $_POST ) ) {
                 }
 
                 break;
+
             case "cache_rss":
-
             case "cache_users":
-
             case "cache_messages":
-            	
-			case "cache_banlists":            	
-
+            case "cache_banlists":
             case "cache_newflags":
+            case "cache_css":
+
                 if ( empty( $value ) ) {
                     $new_settings[$field] = 0;
                 } else {
@@ -100,9 +100,35 @@ $frm = &new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "cache" );
 $frm->addbreak( "Phorum Cache Settings" );
 $row=$frm->addrow( "Cache Directory", $frm->text_box( "cache", $PHORUM["cache"], 30 ) );
-$frm->addhelp($row, "Cache Directory", "Phorum caches its templates for faster use later. Additionally, some data can be stored in the cache, to take some load of the database and web server. This setting determines the directory where Phorum will build its cache. Most users will be fine using their server's temp directory. If your server uses PHP Safe Mode, you will need to create a directory under your Phorum directory and make it writable by the web server (you can use the directory ./cache which was included in the Phorum distribution for this purpose)." );
+$frm->addhelp($row, "Cache Directory",
+    "Caching is used to take some load off the database and web server.
+     The cache directory is used for caching preprocessed Phorum templates
+     and for caching data in case \"file system based\" is selected as
+     the cache layer below.<br/>
+     <br/>
+     For most installations, it will be fine to the default temp directory
+     for the server (/tmp on UNIX systems and C:\\Windows\\Temp for Windows
+     system).<br/>
+     <br/>
+     If your server has PHP Safe Mode enabled, you will need to create a
+     directory under your Phorum directory and make it writable by the web
+     server (you can use the directory \"./cache\" which was included in the
+     Phorum distribution for this purpose)."
+);
 
-$frm->addbreak("Which data to cache");
+$frm->addbreak("Which template data to cache (uses cache directory)");
+
+$row=$frm->addrow( "Enable Caching stylesheet data (CSS):", $frm->select_tag( "cache_css", array( "No", "Yes" ), $PHORUM["cache_css"] ) );
+$frm->addhelp($row, "Cache stylesheet",
+    "Phorum uses a system where modules can add data to the main stylesheet
+     for the pages. By enabling this feature, Phorum can cache the dynamically
+     generated data and improve caching of the stylesheet data in the browsers
+     of your visitors. Enabling this feature is highly recommended. Only
+     disable it if you are having problems with it."
+);
+
+$frm->addbreak("Which data to cache (uses selected cache layer)");
+
 $row=$frm->addrow( "Enable Caching Userdata:", $frm->select_tag( "cache_users", array( "No", "Yes" ), $PHORUM["cache_users"] ) );
 $row=$frm->addrow( "Enable Caching Newflags:", $frm->select_tag( "cache_newflags", array( "No", "Yes" ), $PHORUM["cache_newflags"] ) );
 $row=$frm->addrow( "Enable Caching Messages:", $frm->select_tag( "cache_messages", array( "No", "Yes" ), $PHORUM["cache_messages"] ) );
