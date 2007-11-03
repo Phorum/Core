@@ -19,6 +19,9 @@
     <link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
     <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {/IF}
+{IF URL->JAVASCRIPT}
+    <script type="text/javascript" src="{URL->JAVASCRIPT}"></script>
+{/IF}
 {IF FEEDS}
   {LOOP FEEDS}
     <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEEDS->TITLE}" href="{FEEDS->URL}" />

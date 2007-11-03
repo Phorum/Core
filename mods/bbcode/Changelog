@@ -2,6 +2,7 @@ Changelog:
 ----------
 
 - Rewrite for Phorum 5.2. Changes are:
+  - Make use of the javascript_register hook (requires Phorum 5.2.2 or newer);
   - Added Phorum copyright notices;
   - Cleaned up the settings screen by moving explanations to help balloons;
   - Added settings for configuring the BBcode tags that are allowed, so

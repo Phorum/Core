@@ -15,6 +15,29 @@ function phorum_mod_smileys_css_register($data)
     return $data;
 }
 
+// Register the additional JavaScript code for this module.
+function phorum_mod_smileys_javascript_register($data)
+{
+    // We only need javascript for Editor Tools support.
+    $PHORUM = $GLOBALS['PHORUM'];
+    if (empty($PHORUM['mod_smileys']['smileys_tool_enabled']) &&
+        empty($PHORUM['mod_smileys']['subjectsmileys_tool_enabled']))
+        return $data;
+
+    // The generated javascript depends on the settings, so we use
+    // a specific cache_key for this module.
+    $cache_key = (isset($GLOBALS['PHORUM']['mod_smileys']['cache_key'])
+               ? $GLOBALS['PHORUM']['mod_smileys']['cache_key'] : 0) .
+               '-' . @filemtime("mods/smileys/smileys_editor_tools.js.php");
+
+    $data[] = array(
+        "module"    => "smileys",
+        "source"    => "file(mods/smileys/smileys_editor_tools.js.php)",
+        "cache_key" => $cache_key
+    );
+    return $data;
+}
+
 function phorum_mod_smileys_after_header()
 {
     $PHORUM = $GLOBALS["PHORUM"];
@@ -66,11 +89,6 @@ function phorum_mod_smileys_editor_tool_plugin()
     $PHORUM = $GLOBALS['PHORUM'];
     $lang = $PHORUM["DATA"]["LANG"]["mod_smileys"];
 
-    // Register the javascript library for supporting smiley tool buttons.
-    editor_tools_register_jslib(
-        phorum_get_url(PHORUM_ADDON_URL, 'module=smileys', 'action=javascript')
-    );
-
     // Register the smiley tool button for the message body.
     if (!empty($PHORUM['mod_smileys']['smileys_tool_enabled']))
     {
@@ -106,8 +124,7 @@ function phorum_mod_smileys_editor_tool_plugin()
     );
 }
 
-// The addon hook is used for displaying a help info screen and for
-// supplying the javascript library.
+// The addon hook is used for displaying a help info screen.
 function phorum_mod_smileys_addon()
 {
     $PHORUM = $GLOBALS['PHORUM'];
@@ -125,13 +142,6 @@ function phorum_mod_smileys_addon()
             $lang = 'english';
         }
         include("./mods/smileys/help/$lang/smileys.php");
-        exit(0);
-    }
-
-    // Include the javascript library for the smileys editor tools.
-    if ($PHORUM["args"]["action"] == 'javascript') {
-
-        include("./mods/smileys/smileys_editor_tools.js.php");
         exit(0);
     }
 

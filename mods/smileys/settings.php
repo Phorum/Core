@@ -171,6 +171,10 @@ if (empty($error) && isset($_GET["smiley_id"]))
 // Store these changes in the database.
 if (empty($error) && $do_db_update)
 {
+    $PHORUM['mod_smileys']['cache_key'] =
+        isset($PHORUM['mod_smileys']['cache_key'])
+        ? $PHORUM['mod_smileys']['cache_key'] + 1 : 0;
+
     list($modinfo, $message) = phorum_mod_smileys_store($PHORUM["mod_smileys"]);
     if ($modinfo == NULL) {
         $error = $message;

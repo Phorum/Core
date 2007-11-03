@@ -266,15 +266,20 @@ header("Content-type: text/javascript");
 	}
 	
 	function createColorPickerTopRow(inputObj){
-	        var tabs = ['<?php print $langstr["rgb"] ?>','<?php print $langstr["named"] ?>','<?php print $langstr["slides"] ?>'];
-	        var tabWidths = [<?php print $langstr["rgb_size"] ?>,<?php print $langstr["named_size"] ?>,<?php print $langstr["slides_size"] ?>];
+    /* Changed for Phorum editor tools */
+    var tabs = [editor_tools_lang['rgb'],editor_tools_lang['named'],editor_tools_lang['slides']];
+    var tabWidths = [
+        parseInt(editor_tools_lang['rgb_size']),
+        parseInt(editor_tools_lang['named_size']),
+        parseInt(editor_tools_lang['slides_size'])
+    ];
 
 		var div = document.createElement('DIV');
 		div.className='colorPicker_topRow';
 	
 		inputObj.appendChild(div);	
 		var currentWidth = 0;
-		for(var no=0;no<tabs.length;no++){			
+		for(var no=0;no<tabs.length;no++){
 			
 			var tabDiv = document.createElement('DIV');
 			tabDiv.onselectstart = cancelColorPickerEvent;
@@ -305,7 +310,6 @@ header("Content-type: text/javascript");
 				tabDiv.style.cursor = 'hand';	
 			}			
 			currentWidth = currentWidth + tabWidths[no];
-		
 		}
 		
 		var closeButton = document.createElement('DIV');
@@ -569,8 +573,8 @@ header("Content-type: text/javascript");
 			createAllColorDiv(contentDiv);
 			createStatusBar(color_picker_div);			
 
-            /* Changed for Phorum editor tools */
-            editor_tools_register_popup_object(color_picker_div);
+      /* Changed for Phorum editor tools */
+      editor_tools_register_popup_object(color_picker_div);
 		}		
 
         /* Changed for Phorum editor tools */

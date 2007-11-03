@@ -20,6 +20,9 @@
     {IF URL->RSS}
       <link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="{URL->RSS}" />
     {/IF}
+    {IF URL->JAVASCRIPT}
+        <script type="text/javascript" src="{URL->JAVASCRIPT}"></script>
+    {/IF}
     {IF URL->REDIRECT}
       <meta http-equiv="refresh" content="{IF REDIRECT_TIME}{REDIRECT_TIME}{ELSE}5{/IF}; url={URL->REDIRECT}" />
     {/IF}

@@ -59,6 +59,7 @@ if ( count( $_POST ) ) {
             case "cache_banlists":
             case "cache_newflags":
             case "cache_css":
+            case "cache_javascript":
 
                 if ( empty( $value ) ) {
                     $new_settings[$field] = 0;
@@ -123,6 +124,15 @@ $frm->addhelp($row, "Cache stylesheet",
     "Phorum uses a system where modules can add data to the main stylesheet
      for the pages. By enabling this feature, Phorum can cache the dynamically
      generated data and improve caching of the stylesheet data in the browsers
+     of your visitors. Enabling this feature is highly recommended. Only
+     disable it if you are having problems with it."
+);
+
+$row=$frm->addrow( "Enable Caching JavaScript code:", $frm->select_tag( "cache_javascript", array( "No", "Yes" ), $PHORUM["cache_javascript"] ) );
+$frm->addhelp($row, "Cache JavaScript",
+    "Phorum uses a system where modules can provide JavaScript code for the
+     pages. By enabling this feature, Phorum can cache the dynamically
+     generated data and improve caching of the JavaScript data in the browsers
      of your visitors. Enabling this feature is highly recommended. Only
      disable it if you are having problems with it."
 );

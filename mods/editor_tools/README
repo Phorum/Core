@@ -1,5 +1,5 @@
 Module  : Editor Tools
-Version : 1.2.1
+Version : 1.2.2
 Author  : Maurice Makaay <maurice@makaay.nl>
 
 This module will add a tool bar to the Phorum message editor, which can be

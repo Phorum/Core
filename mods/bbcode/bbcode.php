@@ -301,9 +301,6 @@ function phorum_mod_bbcode_editor_tool_plugin()
     $PHORUM = $GLOBALS['PHORUM'];
     $lang   = $PHORUM['DATA']['LANG']['mod_bbcode'];
 
-    // Register the javascript library for supporting bbcode tool buttons.
-    editor_tools_register_jslib('mods/bbcode/bbcode_editor_tools.js');
-
     $nr_of_enabled_tags = 0;
 
     // Register the tool buttons.
@@ -332,16 +329,6 @@ function phorum_mod_bbcode_editor_tool_plugin()
             "./mods/bbcode/icons/$id.gif", // Tool button icon
             "editor_tools_handle_$id()"    // Javascript action on click
         );
-
-        // For the "color" tool, we need to load the color picker
-        // javascript libraries.
-        if ($id == 'color') {
-            editor_tools_register_jslib(array(
-                'mods/bbcode/colorpicker/color_functions.js',
-                phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode','action=js'),
-            ));
-        }
-
     }
 
     // Register the bbcode help page, unless no tags were enabled at all.
@@ -375,6 +362,30 @@ function phorum_mod_bbcode_css_register($data)
     return $data;
 }
 
+// Register the additional JavaScript code for this module.
+function phorum_mod_bbcode_javascript_register($data)
+{
+    $data[] = array(
+        "module" => "bbcode",
+        "source" => "file(mods/bbcode/bbcode_editor_tools.js)"
+    );
+
+    // If the color tool is not enabled, we are done.
+    if (empty($GLOBALS['bbcode_features']['color'])) return $data;
+
+    // Add libraries for the color tool.
+    $data[] = array(
+        "module" => "bbcode",
+        "source" => "file(mods/bbcode/colorpicker/js_color_picker_v2.js.php)"
+    );
+    $data[] = array(
+        "module" => "bbcode",
+        "source" => "file(mods/bbcode/colorpicker/color_functions.js)"
+    );
+
+    return $data;
+}
+
 // The addon hook is used for displaying a help info screen.
 function phorum_mod_bbcode_addon()
 {
@@ -392,13 +403,6 @@ function phorum_mod_bbcode_addon()
             $lang = 'english';
         }
         include("./mods/bbcode/help/$lang/bbcode.php");
-        exit(0);
-    }
-
-    if ($PHORUM["args"]["action"] == 'js')
-    {
-        $langstr = $PHORUM['DATA']['LANG']['mod_bbcode'];
-        include("./mods/bbcode/colorpicker/js_color_picker_v2.js.php");
         exit(0);
     }
 

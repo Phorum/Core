@@ -74,14 +74,17 @@ if(isset($PHORUM["args"]["1"])){
  *             Specifies the source of the CSS data. This can be one of:
  *             <ul>
  *             <li><b>file(<path to filename>)</b><br>
- *                 for including a static CSS file. The path should be
- *                 relative to the Phorum install directory,
- *                 e.g. "file(mods/foobar/baz.css)"</li>
+ *                 For including a static CSS file. The path should be
+ *                 absolute or relative to the Phorum install directory,
+ *                 e.g. "file(mods/foobar/baz.css)". Because this file
+ *                 is loaded using a PHP include() call, it is possible to
+ *                 include PHP code in this file. Mind that this code
+ *                 is stored interpreted in the cache.</li>
  *             <li><b>template(<template name>)</b><br>
- *                 for including a Phorum template,
+ *                 For including a Phorum template,
  *                 e.g. "template(foobar::baz)"</li>
  *             <li><b>function(<function name>)</b><br>
- *                 for calling a function to retrieve the CSS code,
+ *                 For calling a function to retrieve the CSS code,
  *                 e.g. "function(mod_foobar_get_css)"</li>
  *             </ul>
  *         </li>
@@ -236,7 +239,10 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
         switch ($r['type'])
         {
             case "file":
-                $add .= @file_get_contents($r['source']);
+                ob_start();
+                include($r['source']);
+                $add .= ob_get_contents();
+                ob_end_clean();
                 break;
 
             case "template":

@@ -24,6 +24,7 @@ $PHORUM["url_patterns"] = array(
     PHORUM_CONTROLCENTER_ACTION_URL => array("control",    PHORUM_URL_NO_FORUM_ID,   false),
     PHORUM_CONTROLCENTER_URL        => array("control",    PHORUM_URL_ADD_FORUM_ID,  true),
     PHORUM_CSS_URL                  => array("css",        PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_JAVASCRIPT_URL           => array("javascript", PHORUM_URL_ADD_FORUM_ID,  true),
     PHORUM_FEED_URL                 => array("feed",       PHORUM_URL_NO_FORUM_ID,   true),
     PHORUM_FOLLOW_ACTION_URL        => array("follow",     PHORUM_URL_NO_FORUM_ID,   false),
     PHORUM_FOLLOW_URL               => array("follow",     PHORUM_URL_ADD_FORUM_ID,  true),

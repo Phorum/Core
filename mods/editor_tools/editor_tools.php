@@ -54,6 +54,18 @@ function phorum_mod_editor_tools_css_register($data)
 }
 
 /**
+ * Register the additional JavaScript for this module.
+ */
+function phorum_mod_editor_tools_javascript_register($data)
+{
+    $data[] = array(
+        "module" => "editor_tools",
+        "source" => "file(mods/editor_tools/editor_tools.js)"
+    );
+    return $data;
+}
+
+/**
  * Adds the javascript and CSS for the editor tools to the page header.
  * Sets up internal datastructures for the editor tools module.
  * Allows other modules to register their editor tool buttons.
@@ -61,10 +73,6 @@ function phorum_mod_editor_tools_css_register($data)
 function phorum_mod_editor_tools_common()
 {
     $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
-
-    // Add the core editor tools javascript and CSS code to the page.
-    $GLOBALS["PHORUM"]["DATA"]["HEAD_TAGS"] .=
-      '<script type="text/javascript" src="'.$GLOBALS["PHORUM"]["http_path"].'/mods/editor_tools/editor_tools.js"></script>'."\n";
 
     // Initialize the tool data array.
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (

@@ -86,17 +86,17 @@ function editor_tools_handle_smiley()
         editor_tools_smiley_picker_obj.style.width = editor_tools_smileys_popupwidth;
 
         // Populate the new popup.
-        for (var i = 0; i < editor_tools_smileys.length; i++) 
+        for (var i = 0; i < editor_tools_smileys.length; i++)
         {
-	    var s = editor_tools_smileys[i];
-	    var r = editor_tools_smileys_r[i];
-	    var a = editor_tools_smileys_a[i];
+            var s = editor_tools_smileys[i];
+            var r = editor_tools_smileys_r[i];
+            var a = editor_tools_smileys_a[i];
             var a_obj = document.createElement('a');
             a_obj.href = 'javascript:editor_tools_handle_smiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;
-	    img_obj.title = a;
-	    img_obj.alt = a;
+            img_obj.title = a;
+            img_obj.alt = a;
             a_obj.appendChild(img_obj);
 
             content_obj.appendChild(a_obj);
@@ -135,18 +135,18 @@ function editor_tools_handle_subjectsmiley()
         var content_obj = popup[1];
 
         // Populate the new popup.
-        for (var i = 0; i < editor_tools_subjectsmileys.length; i++) 
+        for (var i = 0; i < editor_tools_subjectsmileys.length; i++)
         {
-	    var s = editor_tools_subjectsmileys[i];
-	    var r = editor_tools_subjectsmileys_r[i];
-	    var a = editor_tools_subjectsmileys_a[i];
+            var s = editor_tools_subjectsmileys[i];
+            var r = editor_tools_subjectsmileys_r[i];
+            var a = editor_tools_subjectsmileys_a[i];
 
             var a_obj = document.createElement('a');
             a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;
             img_obj.alt = a;
-	    img_obj.title = a;
+            img_obj.title = a;
             a_obj.appendChild(img_obj);
             content_obj.appendChild(a_obj);
         }
@@ -188,18 +188,18 @@ function editor_tools_handle_subjectsmiley()
         var content_obj = popup[1];
 
         // Populate the new popup.
-        for (var i = 0; i < editor_tools_subjectsmileys.length; i++) 
+        for (var i = 0; i < editor_tools_subjectsmileys.length; i++)
         {
-	    var s = editor_tools_subjectsmileys[i];
-	    var r = editor_tools_subjectsmileys_r[i];
-	    var a = editor_tools_subjectsmileys_a[i];
+            var s = editor_tools_subjectsmileys[i];
+            var r = editor_tools_subjectsmileys_r[i];
+            var a = editor_tools_subjectsmileys_a[i];
 
             var a_obj = document.createElement('a');
             a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("'+s+'")';
             var img_obj = document.createElement('img');
             img_obj.src = r;
             img_obj.alt = a;
-	    img_obj.title = a;
+            img_obj.title = a;
             a_obj.appendChild(img_obj);
             content_obj.appendChild(a_obj);
         }
