@@ -431,6 +431,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         ob_start();
         include_once( phorum_get_template( "settings" ) );
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
+        $PHORUM["DATA"]["HTTP_PATH"] = $PHORUM['http_path'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
         $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
