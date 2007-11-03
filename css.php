@@ -21,7 +21,7 @@ define('phorum_page','css');
 include_once("./common.php");
 
 // Set to FALSE to disable CSS compression.
-define('PHORUM_COMPRESS_CSS', FALSE);
+define('PHORUM_COMPRESS_CSS', TRUE);
 
 // Argument 1 should be the name of the css template to load.
 if(isset($PHORUM["args"]["1"])){
