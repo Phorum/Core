@@ -462,7 +462,7 @@ function phorum_api_admin_mods_save()
  * A small utility function which can be used to sort modules by name
  * using the uasort() command.
  */
-function module_sort($a, $b) { return strcmp($a["title"], $b["title"]); }
+function module_sort($a, $b) { return strcasecmp($a["title"], $b["title"]); }
 // }}}
 
 ?>
