@@ -843,6 +843,7 @@ function phorum_build_common_urls()
     $PHORUM=$GLOBALS['PHORUM'];
 
     $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_get_url( PHORUM_BASE_URL );
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["HTTP_PATH"] = $PHORUM['http_path'];
 
     $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL );
 
