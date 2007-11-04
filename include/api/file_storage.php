@@ -57,6 +57,14 @@ define("PHORUM_FLAG_SEND",             2);
 define("PHORUM_FLAG_IGNORE_PERMS",     4);
 
 /**
+ * Function call flag, which tells {@link phorum_api_file_retrieve()}
+ * to force a download by the browser by sending an application/octet-stream
+ * Content-Type header. This flag will only have effect if the
+ * {@link PHORUM_FLAG_SEND} flag is set as well.
+ */
+define("PHORUM_FLAG_FORCE_DOWNLOAD",   8);
+
+/**
  * A mapping of file extensions to their MIME types.
  * Used by function {@link phorum_api_file_get_mimetype()}.
  */
@@ -699,8 +707,9 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  *     These are flags which influence aspects of the function call. It is
  *     a bitflag value, so you can OR multiple flags together. Available
  *     flags for this function are: {@link PHORUM_FLAG_IGNORE_PERMS},
- *     {@link PHORUM_FLAG_GET} and {@link PHORUM_FLAG_SEND}. The SEND
- *     flag has precedence over the GET flag.
+ *     {@link PHORUM_FLAG_GET}, {@link PHORUM_FLAG_SEND} and
+ *     {@link PHORUM_FLAG_FORCE_DOWNLOAD}. The SEND flag has precedence
+ *     over the GET flag.
  *
  * @return mixed
  *     On error, this function will return FALSE.
@@ -799,7 +808,11 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         // Get rid of any buffered output so far.
         phorum_ob_clean();
 
-        header("Content-Type: " . $file["mime_type"]);
+        if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
+            header("Content-Type: application/octet-stream");
+        } else {
+            header("Content-Type: " . $file["mime_type"]);
+        }
         header("Content-Disposition: filename=\"{$file["filename"]}\"");
         print $file["file_data"];
 
@@ -1102,7 +1115,10 @@ function phorum_api_file_exists($file_id) {
  *
  * @param integer
  *     If the {@link PHORUM_FLAG_IGNORE_PERMS} flag is used, then permission
- *     checks are fully bypassed.
+ *     checks are fully bypassed. If {@link PHORUM_FLAG_FORCE_DOWNLOAD} is
+ *     used, then a download by the browser is forced (instead of opening
+ *     the file in an appliction that the browser finds appropriate for
+ *     the file type).
  */
 function phorum_api_file_send($file, $flags = 0) {
     phorum_api_file_retrieve($file, $flags | PHORUM_FLAG_SEND);

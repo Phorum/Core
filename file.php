@@ -52,7 +52,9 @@ if ($file === FALSE)
 
 
 // Access is allowed. Send the file to the browser.
-phorum_api_file_send($file);
+$flags = empty($PHORUM['args']['download'])
+       ? 0 : PHORUM_FLAG_FORCE_DOWNLOAD;
+phorum_api_file_send($file, $flags);
 
 // Exit here explicitly for not giving back control to portable and
 // embedded Phorum setups.

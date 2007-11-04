@@ -91,6 +91,8 @@
         "Attachments"           =>      "Attachments",
         "AttachmentsMissing"    =>      "You failed to attach any files, please try again.",
         "AttachNotAllowed"      =>      "Sorry, you cannot attach files to this message.",
+        "AttachOpen"            =>      "open",
+        "AttachDownload"        =>      "download",
         "Author"                =>      "Author",
 
         "BacktoForum"           =>      "Back to Forum",

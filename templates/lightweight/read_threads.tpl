@@ -64,10 +64,12 @@
 
         {IF MESSAGE->attachments}
             <div class="attachments">
-                {LANG->Attachments}:
-                {LOOP MESSAGE->attachments}
-                    <a href="{MESSAGE->attachments->url}">{MESSAGE->attachments->name} ({MESSAGE->attachments->size})</a>&nbsp;&nbsp;
-                {/LOOP MESSAGE->attachments}
+                {LANG->Attachments}:<br/>
+                {LOOP MESSAGES->attachments}
+                    <a href="{MESSAGES->attachments->url}">{LANG->AttachOpen}</a> | <a href="{MESSAGES->attachments->download_url}">{LANG->AttachDownload}</a> -
+                    {MESSAGES->attachments->name}
+                    ({MESSAGES->attachments->size})</a><br/>
+                {/LOOP MESSAGES->attachments}
             </div>
         {/IF}
 

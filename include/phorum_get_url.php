@@ -120,6 +120,8 @@ function phorum_get_url()
                 {
                     $file_id  = NULL;
                     $filename = NULL;
+                    $download = '';
+
                     foreach ($argv as $id => $arg) {
                         if (substr($arg, 0, 5) == 'file=') {
                             $file_id = substr($arg, 5);
@@ -138,12 +140,15 @@ function phorum_get_url()
                                 $filename = preg_replace('/_+/', '_', $filename);
                             }
                             $unset[] = $id;
+                        } elseif (substr($arg, 0, 9) == 'download=') {
+                            $download = 'download/';
+                            $unset[] = $id;
                         }
                     }
                     if ($file_id !== NULL && $filename !== NULL) {
                         foreach ($unset as $id) unset($argv[$id]);
                         $add_forum_id = false;
-                        $pathinfo = "/{$PHORUM['forum_id']}/$file_id/$filename";
+                        $pathinfo = "/$download{$PHORUM['forum_id']}/$file_id/$filename";
                     }
                 }
                 break;

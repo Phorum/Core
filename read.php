@@ -374,6 +374,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
     if($PHORUM["max_attachments"]>0) {
         $attachment_url_template = phorum_get_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
+        $attachment_download_url_template = phorum_get_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%', 'download=1');
     }
 
     $fetch_user_ids = null;
@@ -624,6 +625,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
                 $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $file['name']);
                 $safe_file = preg_replace('/_+/', '_', $safe_file);
                 $row["attachments"][$key]["url"]  = str_replace(array('%file_id%','%file_name%'),array($file['file_id'],$safe_file),$attachment_url_template);
+                $row["attachments"][$key]["download_url"]  = str_replace(array('%file_id%','%file_name%'),array($file['file_id'],$safe_file),$attachment_download_url_template);
             }
         }
 

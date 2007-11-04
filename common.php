@@ -91,7 +91,7 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBA
     if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
 
     // explode it on comma
-    $PHORUM["args"] = explode( ",", $Q_STR );
+    $PHORUM["args"] = $Q_STR == '' ? array() : explode( ",", $Q_STR );
 
     // check for any assigned values
     if ( strstr( $Q_STR, "=" ) ) {
@@ -113,10 +113,11 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBA
     // Handle path info based URLs for the file script.
     if (phorum_page == 'file' &&
         !empty($_SERVER['PATH_INFO']) &&
-        preg_match('!^/(\d+)/(\d+)/!', $_SERVER['PATH_INFO'], $m))
+        preg_match('!^/(download/)?(\d+)/(\d+)/!', $_SERVER['PATH_INFO'], $m))
     {
-        $PHORUM['args']['file'] = $m[2];
-        $PHORUM['forum_id'] = $m[1];
+        $PHORUM['args']['file'] = $m[3];
+        $PHORUM['args'][0] = $PHORUM['forum_id'] = $m[2];
+        $PHORUM['args']['download'] = empty($m[1]) ? 0 : 1;
     }
 
     // set forum_id if not set already by a forum_id request parameter

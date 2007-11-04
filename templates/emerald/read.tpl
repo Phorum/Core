@@ -68,9 +68,11 @@
 
             {IF MESSAGES->attachments}
                 <div class="attachments">
-                    {LANG->Attachments}:
+                    {LANG->Attachments}:<br/>
                     {LOOP MESSAGES->attachments}
-                        <a href="{MESSAGES->attachments->url}">{MESSAGES->attachments->name} ({MESSAGES->attachments->size})</a>&nbsp;&nbsp;
+                        <a href="{MESSAGES->attachments->url}">{LANG->AttachOpen}</a> | <a href="{MESSAGES->attachments->download_url}">{LANG->AttachDownload}</a> -
+                        {MESSAGES->attachments->name}
+                        ({MESSAGES->attachments->size})</a><br/>
                     {/LOOP MESSAGES->attachments}
                 </div>
             {/IF}

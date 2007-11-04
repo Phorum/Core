@@ -186,10 +186,6 @@ img {
     border: 1px solid {border_color};
 }
 
-#phorum div.attachments a {
-    display: block;
-}
-
 #phorum span.new-flag {
     color: {new_color};
 }
