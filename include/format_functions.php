@@ -166,6 +166,10 @@ function phorum_format_messages ($data, $author_specs = NULL)
     if (isset($PHORUM["hooks"]["format"]))
         $data = phorum_hook("format", $data);
 
+    // A hook for module writers for doing post formatting fixups.
+    if (isset($PHORUM["hooks"]["format_fixup"]))
+        $data = phorum_hook("format_fixup", $data);
+
     // Clean up after the mods are done.
     foreach( $data as $key => $message ) {
 
