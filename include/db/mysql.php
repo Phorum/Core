@@ -1620,7 +1620,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     // Handle search for user_id only.
     // ----------------------------------------------------------------------
 
-    if ($search == '' && $author !== '' && $match_type = 'USER_ID')
+    if ($search == '' && $author != '' && $match_type == 'USER_ID')
     {
         $user_id = (int) $author;
         if (empty($user_id)) return $return;
@@ -1653,7 +1653,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     // Handle search for message and subject.
     // ----------------------------------------------------------------------
 
-    if ($search !== '')
+    if ($search != '')
     {
         $match_str = '';
         $tokens = array();
@@ -1767,7 +1767,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     // Handle search for author.
     // ----------------------------------------------------------------------
 
-    if ($author !== '')
+    if ($author != '')
     {
         $table_name = $PHORUM['search_table']."_author_".md5(microtime());
 
