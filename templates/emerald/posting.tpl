@@ -38,9 +38,11 @@
 
             {IF PREVIEW->attachments}
                 <div class="attachments">
-                    {LANG->Attachments}:
+                    {LANG->Attachments}:<br/>
                     {LOOP PREVIEW->attachments}
-                        <a href="{PREVIEW->attachments->url}">{PREVIEW->attachments->name} ({PREVIEW->attachments->size})</a>&nbsp;&nbsp;
+                        <a href="{PREVIEW->attachments->url}">{LANG->AttachOpen}</a> | <a href="{PREVIEW->attachments->download_url}">{LANG->AttachDownload}</a> -
+                        {PREVIEW->attachments->name}
+                        ({PREVIEW->attachments->size})</a><br/>
                     {/LOOP PREVIEW->attachments}
                 </div>
             {/IF}

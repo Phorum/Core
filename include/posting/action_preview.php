@@ -34,15 +34,17 @@ if (isset($message["user_id"]) && !empty($message["user_id"])) {
 }
 
 // Add the list of attachments.
-if ($attach_count) 
+if ($attach_count)
 {
-    define('PREVIEW_NO_ATTACHMENT_CLICK', 
+    define('PREVIEW_NO_ATTACHMENT_CLICK',
            "javascript:alert('" . $PHORUM["DATA"]["LANG"]["PreviewNoClickAttach"] . "')");
 
     // Create the URL and formatted size for attachment files.
     foreach ($previewmessage["attachments"] as $nr => $data) {
         $previewmessage["attachments"][$nr]["url"] =
             phorum_get_url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']));
+        $previewmessage["attachments"][$nr]["download_url"] =
+            phorum_get_url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
         $previewmessage["attachments"][$nr]["size"] =
             phorum_filesize($data["size"]);
     }
@@ -74,7 +76,7 @@ if (isset($previewmessage["attachments"])) {
         } else {
             unset($previewmessage["attachments"][$id]);
         }
-    }    
+    }
 }
 
 if ($attach_count)
@@ -82,10 +84,12 @@ if ($attach_count)
     // Disable clicking on attachments in the preview (to prevent the
     // browser from jumping to a viewing page, which might break the
     // editing flow). This is not done in the previous loop where the
-    // URL is set, so the formatting code for things like inline
+    // URL is set, so the formatting code for things like embedded
     // attachments can be used.
     foreach ($previewmessage["attachments"] as $nr => $data) {
-        $previewmessage["attachments"][$nr]["url"] = PREVIEW_NO_ATTACHMENT_CLICK;
+        $previewmessage["attachments"][$nr]["url"] =
+        $previewmessage["attachments"][$nr]["download_url"] =
+            PREVIEW_NO_ATTACHMENT_CLICK;
     }
 } else {
     unset($previewmessage["attachments"]);
@@ -96,10 +100,10 @@ if ($mode != "edit") {
     $previewmessage["datestamp"] = time();
 }
 
-// Format datestamp. 
+// Format datestamp.
 $previewmessage["raw_datestamp"] = $previewmessage["datestamp"];
 $previewmessage["datestamp"] = phorum_date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
-   
+
 $PHORUM["DATA"]["PREVIEW"] = $previewmessage;
-    
+
 ?>
