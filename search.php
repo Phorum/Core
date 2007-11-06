@@ -83,27 +83,20 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
         }
     }
 
-    if(empty($_GET['author'])) {
-        $url_author = "";
-    } else {
-        $url_author = urlencode($_GET["author"]);
-    }
-
-    if(empty($_GET['search'])) {
-        $url_search = "";
-    } else {
-        $url_search = urlencode($_GET["search"]);
-    }
-
     $url_parameters = array(
         PHORUM_SEARCH_URL,
-        "search=" . $url_search,
-        "author=" . $url_author,
+        "search=" .
+        (isset($_GET['search']) ? urlencode($_GET['search']):''),
+        "author=" .
+        (isset($_GET['author']) ? urlencode($_GET['author']):''),
         "page=1",
-        "match_type=" . urlencode($_GET['match_type']),
-        "match_dates=" . urlencode($_GET['match_dates']),
+        "match_type=" .
+        (isset($_GET['match_type']) ? urlencode($_GET['match_type']):''),
+        "match_dates=" .
+        (isset($_GET['match_dates']) ? urlencode($_GET['match_dates']):''),
         "match_forum=" . urlencode($match_forum),
-        "match_threads=" . urlencode($_GET['match_threads'])
+        "match_threads=" .
+        (isset($_GET['match_threads']) ? urlencode($_GET['match_threads']):'')
     );
 
     /**
