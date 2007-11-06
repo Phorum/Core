@@ -454,6 +454,65 @@ function phorum_api_admin_mods_save()
         "hooks" => $PHORUM["hooks"],
         "mods"  => $PHORUM["mods"]
     ));
+
+    // Reset the module information update checking data.
+    phorum_api_admin_mods_check_updated_info(TRUE);
+}
+// }}}
+
+// {{{ Function: phorum_api_admin_mods_check_updated_info()
+/**
+ * Check if there are modules for which the module information is updated.
+ *
+ * @param boolean $do_reset
+ *     If this parameter has a true value, then the active status for
+ *     the module information is stored in the database.
+ *
+ * @return array
+ *     An array of module names for which the module information was updated.
+ */
+function phorum_api_admin_mods_check_updated_info($do_reset = FALSE)
+{
+    global $PHORUM;
+
+    $existing = empty($PHORUM['mod_info_timestamps'])
+              ? array()
+              : $PHORUM['mod_info_timestamps'];
+
+    $new = array();
+    $need_update = array();
+
+    foreach ($PHORUM['mods'] as $mod => $active)
+    {
+        if (!$active) continue;
+        $info = "./mods/$mod/info.txt";
+        $filemod = "./mods/$mod.php";
+        if (file_exists($info)) {
+            $time = @filemtime($info);
+        } elseif (file_exists($filemod)) {
+            $time = @filemtime($filemod);
+        } else {
+            continue;
+        }
+
+        if (!isset($existing[$mod]) ||
+            $existing[$mod] != $time) {
+            $need_update[] = $mod;
+        }
+
+        $new[$mod] = $time;
+    }
+
+    $PHORUM['mod_info_timestamps'] = $new;
+
+    // Store the settings in the database if a reset is requested.
+    if ($do_reset) {
+        phorum_db_update_settings(array(
+            "mod_info_timestamps" => $new
+        ));
+    }
+
+    return $need_update;
 }
 // }}}
 

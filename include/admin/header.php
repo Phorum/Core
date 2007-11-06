@@ -337,6 +337,21 @@ function hide_help()
     setcookie("phorum_upgrade_available", '', time()-86400,
               $PHORUM["session_path"], $PHORUM["session_domain"]);
 } ?>
+    <td style="border-bottom: 1px solid navy" align="center" valign="middle">
+<?php
+    require_once('./include/api/admin_mods.php');
+    $updates = phorum_api_admin_mods_check_updated_info();
+    if (!empty($updates)) {
+        phorum_api_admin_mods_save();
+        print "<div style=\"padding:5px;background-color:#fffff0;".
+              "border:2px solid orange; text-align:left\">" .
+              "<strong>Notification:</strong> " .
+              "Updated module info for module".(count($updates)==1?"":"s") .
+              (count($updates)>10 ? "" : ":" . implode(", ", $updates)) .
+              "</div>";
+    }
+?>
+    </td>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
 
     <div id="phorum-status">
