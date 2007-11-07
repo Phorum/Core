@@ -8,6 +8,9 @@
 // Direct access to this file is not allowed.
 if (! defined("PHORUM")) return;
 
+// A define that other scripts can use to see if event logging was loaded.
+define('EVENT_LOGGING', TRUE);
+
 $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"] = 0;
 $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"]  = 0;
 
@@ -107,6 +110,12 @@ function event_logging_find_source($level = 0, $file = NULL)
 // an image file cannot be loaded, but this might happen a lot from modules
 // like the in body attachments module (if users posted pictures hosted on
 // other servers).
+//
+// Usage in other code:
+//
+// if (defined('EVENT_LOGGING')) phorum_mod_event_logging_suspend()
+// ... warnings generating piece of code ...
+// if (defined('EVENT_LOGGING')) phorum_mod_event_logging_resume()
 
 function phorum_mod_event_logging_suspend() {
     $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"] ++;
