@@ -22,7 +22,7 @@
  * using HTTP requests.
  *
  * @package    PhorumAPI
- * @subpackage HTTPGetAPI
+ * @subpackage Tools
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
@@ -39,7 +39,7 @@
  * @param string $url
  *     The URL to retrieve.
  *
- * @param integer $method
+ * @param string $method
  *     The method to use for retrieving the data. By default, this function
  *     will try to autodetect a working method. Providing a $method parameter
  *     is mostly useful for debugging purposes. Available methods (in the
