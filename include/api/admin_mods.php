@@ -482,25 +482,28 @@ function phorum_api_admin_mods_check_updated_info($do_reset = FALSE)
     $new = array();
     $need_update = array();
 
-    foreach ($PHORUM['mods'] as $mod => $active)
+    if (!empty($PHORUM['mods']))
     {
-        if (!$active) continue;
-        $info = "./mods/$mod/info.txt";
-        $filemod = "./mods/$mod.php";
-        if (file_exists($info)) {
-            $time = @filemtime($info);
-        } elseif (file_exists($filemod)) {
-            $time = @filemtime($filemod);
-        } else {
-            continue;
-        }
+        foreach ($PHORUM['mods'] as $mod => $active)
+        {
+            if (!$active) continue;
+            $info = "./mods/$mod/info.txt";
+            $filemod = "./mods/$mod.php";
+            if (file_exists($info)) {
+                $time = @filemtime($info);
+            } elseif (file_exists($filemod)) {
+                $time = @filemtime($filemod);
+            } else {
+                continue;
+            }
 
-        if (!isset($existing[$mod]) ||
-            $existing[$mod] != $time) {
-            $need_update[] = $mod;
-        }
+            if (!isset($existing[$mod]) ||
+                $existing[$mod] != $time) {
+                $need_update[] = $mod;
+            }
 
-        $new[$mod] = $time;
+            $new[$mod] = $time;
+        }
     }
 
     $PHORUM['mod_info_timestamps'] = $new;
