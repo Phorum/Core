@@ -23,7 +23,7 @@
  * due to crashed scripts or full disks.
  *
  * @package    PhorumAPI
- * @subpackage WriteFileAPI
+ * @subpackage Tools
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
