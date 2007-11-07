@@ -420,7 +420,7 @@ switch ($step){
             $forum=array(
             "name"=>'Test Forum',
             "active"=>1,
-            "description"=>'This is a test forum.  Feel free to delete it or edit after installation.',
+            "description"=>'This is a test forum.  Feel free to delete it or edit after installation, using the admin interface.',
             "template"=>PHORUM_DEFAULT_TEMPLATE,
             "folder_flag"=>0,
             "parent_id"=>0,
@@ -461,7 +461,7 @@ switch ($step){
             "status" => PHORUM_STATUS_APPROVED,
             "sort" => PHORUM_SORT_DEFAULT,
             "msgid" => '',
-            "body" => "This is a test message.  You can delete it after install using the admin.\n\nPhorum 5 Team"
+            "body" => "This is a test message. You can delete it after installation using the moderation tools. These tools will be visible in this screen if you log in as the administrator user that you created during install.\n\nPhorum 5 Team"
             );
 
             phorum_db_post_message($test_message);
