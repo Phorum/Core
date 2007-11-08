@@ -237,6 +237,8 @@
             $queue = &$context->get('SimpleErrorQueue');
             $queue->add($severity, $message, $filename, $line);
             set_error_handler('SimpleTestErrorHandler');
+            
+            return 1;
         }
     }
 ?>
