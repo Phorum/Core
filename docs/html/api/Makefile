@@ -1,4 +1,4 @@
-FILES="include/api/file_storage.php,include/api/custom_profile_fields.php,include/api/base.php,include/api/user.php,include/api/admin_mods.php,include/api/write_file.php,include/api/http_get.php"
+FILES="include/api/file_storage.php,include/api/custom_profile_fields.php,include/api/base.php,include/api/user.php,include/api/admin_mods.php,include/api/write_file.php,include/api/http_get.php,include/api/image.php"
 
 all:
 	(cd ../../..; phpdoc \
