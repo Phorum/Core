@@ -27,6 +27,8 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+if (!defined("PHORUM")) return;
+
 /**
  * This function can be used to retrieve data from a URL using
  * an HTTP GET request.
