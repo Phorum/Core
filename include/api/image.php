@@ -43,7 +43,7 @@ if (!defined('PHORUM')) return;
  * @param integer $max_w
  *     The maximum allowed width for the image in pixels.
  *
- * @param integer $max_y
+ * @param integer $max_h
  *     The maximum allowed height for the image in pixels.
  *
  * @param string $method
