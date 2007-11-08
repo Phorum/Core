@@ -67,6 +67,14 @@ function phorum_api_http_get($url, $method = NULL)
     // Try to use the CURL library tools
     // -----------------------------------------------------------------
 
+    // First, try to load the curl extension if it is not loaded yet.
+    // This way we can make this work on systems where curl is not built-in
+    // or loaded from the PHP ini.
+    if (($method === NULL || $method == 'curl') &&
+        !extension_loaded('curl')) {
+        @dl('curl.so');
+    }
+
     if (($method === NULL || $method == 'curl') &&
         extension_loaded('curl'))
     {
@@ -176,6 +184,14 @@ function phorum_api_http_get($url, $method = NULL)
     // -----------------------------------------------------------------
     // Try to use a direct fsockopen call.
     // -----------------------------------------------------------------
+
+    // First, try to load the socket extension if it is not loaded yet.
+    // This way we can make this work on systems where sockets are not
+    // built-in or loaded from the PHP ini.
+    if (($method === NULL || $method == 'socket') &&
+        !extension_loaded('socket')) {
+        @dl('socket.so');
+    }
 
     if (($method === NULL || $method == 'socket') &&
         extension_loaded('sockets'))
