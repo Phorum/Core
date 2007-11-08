@@ -91,7 +91,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // always should, but let's check it to be sure.
     if (!function_exists('getimagesize')) return phorum_api_error_set(
         PHORUM_ERRNO_ERROR,
-        'PHP lacks "getimagesize()" support.'
+        'PHP lacks "getimagesize()" support'
     );
 
     // Try to determine the image type and size using the getimagesize()
@@ -108,7 +108,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     @unlink($tmpfile);
     if ($file_info === FALSE) return phorum_api_error_set(
         PHORUM_ERRNO_ERROR,
-        'Running getimagesize() on the image data failed.'
+        'Running getimagesize() on the image data failed'
     );
 
     // Add the image data to the return array.
@@ -122,13 +122,13 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         if ($type != 'jpeg' && $type != 'gif' && $type != 'png') {
             return phorum_api_error_set(
                 PHORUM_ERRNO_ERROR,
-                "Scaling image type \"{$img['cur_mime']}\" is not supported."
+                "Scaling image type \"{$img['cur_mime']}\" is not supported"
             );
         }
     } else {
         return phorum_api_error_set(
             PHORUM_ERRNO_ERROR,
-            'The file does not appear to be an image.'
+            'The file does not appear to be an image'
         );
     }
 
@@ -172,7 +172,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
         $imagick->thumbnailImage($max_w, $max_h, TRUE);
-        $imagick->setFormat("jpeg");
+        $imagick->setFormat("png");
         $img['image']  = $imagick->getimageblob();
         $img['mime']   = 'image/'.$imagick->getFormat();
         $img['method'] = 'imagick';
@@ -200,7 +200,11 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         // image support for the type of image that we are handling.
         $gd = gd_info();
 
-        if (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
+        // We need PNG support for the scaled down image.
+        if (empty($gd['PNG Support'])) {
+            $error = "GD: no PNG support available for creating thumbnail";
+        }
+        elseif (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
             ($type == 'jpeg' && empty($gd['JPG Support'])) ||
             ($type == 'png'  && empty($gd['PNG Support']))) {
             $error = "GD: no support available for image type \"$type\"";
@@ -232,33 +236,42 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
             }
             else
             {
-                // Create the scaled image. Fill the image with white before
-                // scaling it, so scaled transparent images look good.
-                // The transparency replacement color might be something
-                // to put in the module's settings screen at some point.
-                // I think however, that white will fit most installations.
+                // Create the scaled image.
                 $scaled = imagecreatetruecolor($img['new_w'], $img['new_h']);
-                $white = imagecolorallocate($scaled, 255, 255, 255);
-                imagefilledrectangle(
-                    $scaled, 0, 0,
-                    $img['new_w'], $img['new_h'],
-                    $white
-                );
+
+                //Retain transparency.
+                $trans_idx = imagecolortransparent($original);
+                if ($trans_idx >= 0) {
+                    $trans = imagecolorsforindex($original, $trans_idx);
+                    $idx = imagecolorallocate(
+                        $scaled,
+                        $trans['red'], $trans['green'], $trans['blue']
+                    );
+                    imagefill($scaled, 0, 0, $idx);
+                    imagecolortransparent($scaled, $idx);
+                } elseif ($type == 'png') {
+                    imagealphablending($scaled, FALSE);
+                    $trans = imagecolorallocatealpha($scaled, 0, 0, 0, 127);
+                    imagefill($scaled, 0, 0, $trans);
+                    imagesavealpha($scaled, TRUE);
+                }
+
+                // Scale the image.
                 imagecopyresampled(
                     $scaled, $original, 0, 0, 0, 0,
                     $img['new_w'], $img['new_h'],
                     $img['cur_w'], $img['cur_h']
                 );
 
-                // Create the jpeg data for the scaled image.
+                // Create the png output data for the scaled image.
                 ob_start();
-                imagejpeg($scaled);
-                $jpeg = ob_get_contents();
+                imagepng($scaled);
+                $png = ob_get_contents();
                 $size = ob_get_length();
                 ob_end_clean();
 
-                $img['image']  = $jpeg;
-                $img['mime']   = 'image/jpeg';
+                $img['image']  = $png;
+                $img['mime']   = 'image/png';
                 $img['method'] = 'gd';
                 return $img;
             }
@@ -288,7 +301,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $cmd = escapeshellcmd($convert) . ' ' .
                '- ' .
                '-thumbnail ' . $img['new_w'] .'x'. $img['new_h'] . ' ' .
-               '-write jpeg:- ' .
+               '-write png:- ' .
                '--'; // Otherwise I get: option requires an argument `-write'
 
         // Run the command.
@@ -318,7 +331,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
         if ($exit == 0) {
             $img['image']  = $scaled;
-            $img['mime']   = 'image/jpeg';
+            $img['mime']   = 'image/png';
             $img['method'] = 'convert';
             return $img;
         }
