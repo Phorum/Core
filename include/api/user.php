@@ -369,21 +369,28 @@ function phorum_api_user_save($user, $flags = 0)
     include_once('./include/api/custom_profile_fields.php');
 
     // $user must be an array.
-    if (!is_array($user)) trigger_error(
-        'phorum_api_user_save(): $user argument is not an array',
-        E_USER_ERROR
-    );
+    if (!is_array($user)) {
+        trigger_error(
+        	'phorum_api_user_save(): $user argument is not an array',
+            E_USER_ERROR
+        );
+        return NULL;
+    }
 
     // We need at least the user_id field.
-    if (!array_key_exists('user_id', $user)) trigger_error(
-        'phorum_api_user_save(): missing field "user_id" in user data array',
-        E_USER_ERROR
-    );
+    if (!array_key_exists('user_id', $user))  {
+	    trigger_error(
+	        'phorum_api_user_save(): missing field "user_id" in user data array',
+	        E_USER_ERROR
+	    );
+	    return NULL;
+    }
     if ($user['user_id'] !== NULL && !is_numeric($user['user_id'])) {
         trigger_error(
             'phorum_api_user_save(): field "user_id" not NULL or numerical',
             E_USER_ERROR
         );
+        return NULL;
     }
 
     // Check if we are handling an existing or new user.
@@ -419,6 +426,7 @@ function phorum_api_user_save($user, $flags = 0)
                     'user data: ' . htmlspecialchars($fld),
                     E_USER_ERROR
                 );
+                return NULL;
             } else {
                 $fldtype = 'custom_profile_field';
             }
@@ -465,13 +473,14 @@ function phorum_api_user_save($user, $flags = 0)
                     htmlspecialchars($fldtype),
                     E_USER_ERROR
                 );
+                return NULL;
                 break;
         }
     }
 
     // Add the custom profile field data to the user data.
     $dbuser['user_data'] = $user_data;
-
+    
     // At this point, we should have a couple of mandatory fields available
     // in our data. Without these fields, the user record is not sane
     // enough to continue with.
@@ -482,6 +491,7 @@ function phorum_api_user_save($user, $flags = 0)
             'cannot be empty',
             E_USER_ERROR
         );
+        return NULL;
     }
     // Phorum sends out mail messages on several occasions. So we need a
     // mail address for the user.
@@ -491,6 +501,7 @@ function phorum_api_user_save($user, $flags = 0)
             'cannot be empty',
             E_USER_ERROR
         );
+        return NULL;
     }
 
     // For new accounts only.
@@ -633,10 +644,13 @@ function phorum_api_user_save($user, $flags = 0)
  */
 function phorum_api_user_save_raw($user)
 {
-    if (empty($user['user_id'])) trigger_error(
-        'phorum_api_user_save_raw(): the user_id field cannot be empty',
-        E_USER_ERROR
-    );
+    if (empty($user['user_id'])) {
+        trigger_error(
+        	'phorum_api_user_save_raw(): the user_id field cannot be empty',
+            E_USER_ERROR
+        );
+        return NULL;
+    }
 
     // This hook is documented in phorum_api_user_save().
     if (isset($PHORUM['hooks']['user_save'])) {
@@ -644,7 +658,7 @@ function phorum_api_user_save_raw($user)
     }
 
     // Store the data in the database.
-    phorum_db_user_save($user);
+    $return = phorum_db_user_save($user);
 
     // Invalidate the cache for the user, unless we are only updating
     // user activity tracking fields.
@@ -660,6 +674,8 @@ function phorum_api_user_save_raw($user)
             phorum_cache_remove('user', $user['user_id']);
         }
     }
+    
+    return $return;
 }
 // }}}
 
@@ -698,11 +714,13 @@ function phorum_api_user_save_settings($settings)
     }
 
     // Merge the setting with the existing settings.
-    foreach ($settings as $name => $value) {
-        if ($value === NULL) {
-            unset($PHORUM['user']['settings_data'][$name]);
-        } else {
-            $PHORUM['user']['settings_data'][$name] = $value;
+    if(is_array($settings)) {
+        foreach ($settings as $name => $value) {
+            if ($value === NULL) {
+                unset($PHORUM['user']['settings_data'][$name]);
+            } else {
+                $PHORUM['user']['settings_data'][$name] = $value;
+            }
         }
     }
 
@@ -716,6 +734,8 @@ function phorum_api_user_save_settings($settings)
     if (!empty($GLOBALS['PHORUM']['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
+    
+    return TRUE;
 }
 // }}}
 
@@ -1196,7 +1216,7 @@ function phorum_api_user_increment_posts($user_id = NULL)
     }
     settype($user_id, "int");
 
-    phorum_db_user_increment_posts($user_id);
+    return phorum_db_user_increment_posts($user_id);
 }
 // }}}
 
@@ -1243,7 +1263,7 @@ function phorum_api_user_delete($user_id)
     }
 
     // Remove the user and user related data from the database.
-    phorum_db_user_delete($user_id);
+    $return = phorum_db_user_delete($user_id);
 
     // Delete the personal user files for this user.
     require_once('./include/api/file_storage.php');
@@ -1251,6 +1271,8 @@ function phorum_api_user_delete($user_id)
     foreach ($files as $file_id => $file) {
         phorum_api_file_delete($file_id);
     }
+    
+    return $return;
 }
 // }}}
 
@@ -1358,6 +1380,7 @@ function phorum_api_user_authenticate($type, $username, $password)
                 'user_id values.',
                 E_USER_ERROR
             );
+            return NULL;
         }
 
         $user_id = $authinfo['user_id'];
@@ -1478,11 +1501,14 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
             $user = phorum_api_user_get($user, TRUE);
         }
         // Bogus $user parameter.
-        else trigger_error(
-            'phorum_api_user_set_active_user(): $user argument should be ' .
-            'one of NULL, array or integer',
-            E_USER_ERROR
-        );
+        else {
+            trigger_error(
+            	'phorum_api_user_set_active_user(): $user argument should be ' .
+            	'one of NULL, array or integer',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
 
         // Fall back to the anonymous user if the user is not activated.
         if ($user && $user['active'] != PHORUM_USER_ACTIVE) {
@@ -1676,18 +1702,24 @@ function phorum_api_user_session_create($type, $reset = 0)
 
     // Check if we have a valid session type.
     if ($type != PHORUM_FORUM_SESSION &&
-        $type != PHORUM_ADMIN_SESSION) trigger_error(
-        'phorum_api_user_session_create(): Illegal session type: ' .
-        htmlspecialchars($type),
-        E_USER_ERROR
-    );
+        $type != PHORUM_ADMIN_SESSION) {
+	        trigger_error(
+	        	'phorum_api_user_session_create(): Illegal session type: ' .
+	            htmlspecialchars($type),
+	            E_USER_ERROR
+	        );
+	        return NULL;
+        }
 
     // Check if the active Phorum user was set.
     if (empty($PHORUM['user']) ||
-        empty($PHORUM['user']['user_id'])) trigger_error(
-        'phorum_api_user_session_create(): Missing user in environment',
-        E_USER_ERROR
-    );
+        empty($PHORUM['user']['user_id'])) {
+            trigger_error(
+        		'phorum_api_user_session_create(): Missing user in environment',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
 
     // Check if the user is activated.
     if ($GLOBALS['PHORUM']['user']['active'] != PHORUM_USER_ACTIVE) {
@@ -1904,11 +1936,14 @@ function phorum_api_user_session_restore($type)
         // Lookup the admin cookie.
         $check_session[PHORUM_SESSION_ADMIN] = 1;
     }
-    else trigger_error(
-        'phorum_api_user_session_restore(): Illegal session type: ' .
-        htmlspecialchars($type),
-        E_USER_ERROR
-    );
+    else {
+        trigger_error(
+	        'phorum_api_user_session_restore(): Illegal session type: ' .
+	        htmlspecialchars($type),
+	        E_USER_ERROR
+        );
+        return NULL;
+    }
 
     // ----------------------------------------------------------------------
     // Check the session cookie(s).
@@ -2163,11 +2198,14 @@ function phorum_api_user_session_destroy($type)
                 PHORUM_SESSION_ADMIN, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
-        } else trigger_error(
-            'phorum_api_user_session_destroy(): Illegal session type: ' .
-            htmlspecialchars($type),
-            E_USER_ERROR
-        );
+        } else {
+            trigger_error(
+	            'phorum_api_user_session_destroy(): Illegal session type: ' .
+	            htmlspecialchars($type),
+	            E_USER_ERROR
+            );
+            return NULL;
+        }
 
         // If cookies are not in use, then the long term session is reset
         // to a new value. That way we fully invalidate URI authentication
@@ -2226,11 +2264,14 @@ function phorum_api_user_save_groups($user_id, $groups)
         if ($perm != PHORUM_USER_GROUP_SUSPENDED  &&
             $perm != PHORUM_USER_GROUP_UNAPPROVED &&
             $perm != PHORUM_USER_GROUP_APPROVED   &&
-            $perm != PHORUM_USER_GROUP_MODERATOR) trigger_error(
-            'phorum_api_user_save_groups(): Illegal group permission for ' .
-            'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
-            E_USER_ERROR
-        );
+            $perm != PHORUM_USER_GROUP_MODERATOR) {
+            trigger_error(
+	            'phorum_api_user_save_groups(): Illegal group permission for ' .
+	            'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
+	            E_USER_ERROR
+            );
+            return NULL;
+            }
 
         $dbgroups[$id] = $perm;
     }

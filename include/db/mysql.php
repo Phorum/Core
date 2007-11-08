@@ -4069,7 +4069,7 @@ function phorum_db_user_increment_posts($user_id)
     settype($user_id, 'int');
 
     if (!empty($user_id)) {
-        phorum_db_interact(
+        $res = phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$GLOBALS['PHORUM']['user_table']}
              SET    posts = posts + 1
@@ -4078,6 +4078,7 @@ function phorum_db_user_increment_posts($user_id)
             DB_MASTERQUERY
         );
     }
+    return $res;
 }
 // }}}
 
