@@ -5,3 +5,8 @@ url: http://www.phorum.org/
 
 hook: format|phorum_html
 
+# We want the format hook to run as the first one in the chain, so
+# other hooks who work on HTML tags can be sure that replacements like
+# "&gt;" to ">" are done.
+priority: run hook format before *
+
