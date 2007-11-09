@@ -28,7 +28,7 @@ include './common.php';
 // need this here to not clutter output with cookie warnings.
 ob_start();
 
-$PHORUM['cache_users'] = 0;
+$PHORUM['cache_users'] = 1;
 $PHORUM['cache_messages'] = 0;
 $PHORUM['cache_newflags'] = 0;
 $PHORUM['track_user_activity'] = 1;
@@ -138,6 +138,25 @@ class PhorumTest extends PHPUnit_Framework_TestCase
         }
         
         function testUserApiAdd() {
+
+            // do the try/catch run as trigger_error calls are returned as 
+            // exception from phpunit
+            try {
+                $user_id=phorum_api_user_save(1);
+                $this->fail('Adding user (no input)');
+            }
+            catch (PHPUnit_Framework_Error $expected) {
+                $this->assertTrue(true,'Adding user (no input)');
+            }    
+
+            
+            try {
+                $user_id=phorum_api_user_save(array('user_id'=>'foo'));
+                $this->fail('Adding user (wrong user_id)');
+            }
+            catch (PHPUnit_Framework_Error $expected) {
+                $this->assertTrue(true,'Adding user (wrong user_id)');
+            }                   
                         
             $user = array('password'=>'testPwd',
                           'active'=>PHORUM_USER_ACTIVE
@@ -148,31 +167,30 @@ class PhorumTest extends PHPUnit_Framework_TestCase
                 $this->fail('Adding user (missing username, email, user_id)');
             }
             catch (PHPUnit_Framework_Error $expected) {
-                $this->assertTrue(true,'Adding user (username, missing email, user_id)');
+                $this->assertTrue(true,'Adding user (missing email, username, user_id)');
             }
             
+            $user['user_id'] = NULL;
+            
+            try {
+                $user_id=phorum_api_user_save($user);
+                $this->fail('Adding user (missing username, email)');
+                
+            } catch (PHPUnit_Framework_Error $expected) {
+                $this->assertTrue(true,'Adding user (missing email, username)');
+            }
 
             $user['username']='testuser'.$this->sharedFixture;
 
             try {
                 $user_id=phorum_api_user_save($user);
-                $this->fail('Adding user (missing email, user_id)');
+                $this->fail('Adding user (missing email)');
             }
             catch (PHPUnit_Framework_Error $expected) {
-                $this->assertTrue(true,'Adding user (missing email, user_id)');
+                $this->assertTrue(true,'Adding user (missing email)');
             }
 
             $user['email']='testEmail'.$this->sharedFixture.'@example.com';
-            
-            try {
-                 $user_id=phorum_api_user_save($user);
-                 $this->fail('Adding user (user_id)');
-            
-            } catch (PHPUnit_Framework_Error $expected) {
-                $this->assertTrue(true,'Adding user (missing user_id)');
-            }
-            
-            $user['user_id'] = NULL;
             
             $user_id=phorum_api_user_save($user);
             
@@ -281,14 +299,22 @@ class PhorumTest extends PHPUnit_Framework_TestCase
             
             $user_id = phorum_api_user_search('username','testuser'.$this->sharedFixture,'=');
 
+            
+            $GLOBALS['PHORUM']['user']['user_id']=$user_id;
+            
+            // incrementing post-count
+            $ret = phorum_api_user_increment_posts(NULL);
+            
+            $this->assertTrue($ret,'Incrementing post count for current user.');
+            
             // incrementing post-count
             $ret = phorum_api_user_increment_posts($user_id);
             
-            $this->assertTrue($ret,'Incrementing post count for user.');
+            $this->assertTrue($ret,'Incrementing post count for user by id.');            
             
             $user_get = phorum_api_user_get($user_id);
                         
-            $this->assertTrue($user_get['posts'] == 1,'Checking post count.'); 
+            $this->assertTrue($user_get['posts'] == 2,'Checking post count.'); 
 
         }
         
@@ -296,17 +322,36 @@ class PhorumTest extends PHPUnit_Framework_TestCase
             
             $user_id = phorum_api_user_search('username','testuser'.$this->sharedFixture,'=');
             
-            // set active user
-            $GLOBALS['PHORUM']['user'] = phorum_api_user_get($user_id);
-            
             $ret = phorum_api_user_set_active_user(PHORUM_FORUM_SESSION,$user_id);
             
-            $this->assertTrue($ret,'Setting user active again.');    
+            $this->assertTrue($ret,'Setting given user_id active again.');    
+            
+            $ret = phorum_api_user_set_active_user(PHORUM_FORUM_SESSION,array('foo'=>'bar'));
+
+            $this->assertFalse($ret,'set_active_user with invalid array given.');
+
+            $ret = phorum_api_user_set_active_user(PHORUM_FORUM_SESSION,array('foo'));
+            $this->assertFalse($ret,'set_active_user with invalid user-input.');
+              
+            // set active user
+            $GLOBALS['PHORUM']['user'] = phorum_api_user_get($user_id);
 
             // create session
             $ret = phorum_api_user_session_create(PHORUM_FORUM_SESSION);
             
             $this->assertTrue($ret,'Creating user-session');
+        }
+        
+        function testUserApiSessionRestore() {
+            
+            $user_id = phorum_api_user_search('username','testuser'.$this->sharedFixture,'=');
+            
+            $GLOBALS['PHORUM']['user']['user_id']=$user_id;
+            $GLOBALS['PHORUM']['user'] = phorum_api_user_get($user_id);
+            
+            $ret = phorum_api_user_session_restore(PHORUM_FORUM_SESSION);
+            
+            $this->assertTrue($ret,'Restore user-session');
         }
         
         function testUserApiSearch() {
@@ -322,6 +367,8 @@ class PhorumTest extends PHPUnit_Framework_TestCase
     
         // very last one
         function testUserApiDelete() {
+            
+            $user_id = phorum_api_user_search('username','testuser'.$this->sharedFixture,'=');
             
             $ret = phorum_api_user_delete($this->user_id_used);
             $this->assertTrue($ret,'User delete.');
