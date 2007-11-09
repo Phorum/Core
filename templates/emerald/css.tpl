@@ -419,6 +419,10 @@ img {
     background-repeat: repeat-x;
 }
 
+#phorum div.message-body br {
+    clear: both;
+}
+
 #phorum div.message-date {
     font-size: {font_small};
 }

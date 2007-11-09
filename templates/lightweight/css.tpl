@@ -393,6 +393,10 @@ img {
     border-top: 0;
 }
 
+#phorum div.message-body br {
+    clear: both;
+}
+
 #phorum div.message-date {
     font-size: {font_small};
 }
