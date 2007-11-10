@@ -19,8 +19,6 @@ define('phorum_page','phpunittest');
  * 
  */
 
-require_once 'PHPUnit/Framework.php';
-
 $cwd = getcwd();
 chdir('../..');
 include './common.php';
@@ -32,6 +30,12 @@ $PHORUM['cache_users'] = 1;
 $PHORUM['cache_messages'] = 0;
 $PHORUM['cache_newflags'] = 0;
 $PHORUM['track_user_activity'] = 1;
+$PHORUM['tight_security'] = 1;
+$PHORUM['use_cookies'] = 0;
+
+require_once 'PHPUnit/Framework.php';
+
+
 
 //chdir($cwd);
 class PhorumTestSuite extends PHPUnit_Framework_TestSuite
@@ -62,7 +66,15 @@ class PhorumTest extends PHPUnit_Framework_TestCase
         function testPhorumSettingsLoad() {
             global $PHORUM;
             phorum_db_load_settings();
+
+            $PHORUM['cache_users'] = 1;
+            $PHORUM['cache_messages'] = 0;
+            $PHORUM['cache_newflags'] = 0;
+            $PHORUM['track_user_activity'] = 1;
+            $PHORUM['use_cookies'] = 0;
+            
             $this->assertTrue(!empty($PHORUM['internal_version']));
+            
         }
         
         function testPhorumDbForum() {
@@ -264,6 +276,8 @@ class PhorumTest extends PHPUnit_Framework_TestCase
         
         
         function testUserApiAuthentication() {
+            
+            //var_dump($GLOBALS['PHORUM']);
             
             // authentication
             $username = 'testuser'.$this->sharedFixture;
