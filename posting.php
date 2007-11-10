@@ -585,6 +585,10 @@ if ($PHORUM["posting_template"] == 'posting')
         // data won't be stripped from the message data later on.
         if ($var == "meta") continue;
 
+        // This one is filled from the language file, so there's no need
+        // to run htmlspecialchars on this one.
+        if ($var == "submitbutton_text") continue;
+
         if ($var == "attachments") {
             if (is_array($val)) {
                 foreach ($val as $nr => $data)
