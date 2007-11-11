@@ -45,7 +45,8 @@
               always wise to make a good backup of your running system. Make a backup your Phorum
               install directory and the database in which your Phorum tables are stored</listitem>
             <listitem>Download a newer Phorum5 package</listitem>
-            <listitem> Extract the files and put them on top of the current installation</listitem>
+            <listitem>Delete the folder include/db/upgrade for making sure that you have the correct db-upgrade-scripts.</listitem>
+            <listitem>Extract the files and put them on top of the current installation</listitem>
             <listitem>Keep the database settings from {phorum dir}/include/db/config.php the
             same</listitem>
           </itemizedlist>
