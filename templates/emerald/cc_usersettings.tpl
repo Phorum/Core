@@ -33,7 +33,7 @@
                 {/IF}
                 {IF SHOW_EMAIL_HIDE}<dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>{/IF}
                 {IF PROFILE->show_moderate_options}
-                    <dd><input type="checkbox" name="moderation_email" value="1"{PROFILE->moderation_email_checked} /> {LANG->ReceiveModerationMails}</dt>
+                    <dd><input type="checkbox" name="moderation_email" value="1"{PROFILE->moderation_email_checked} /> {LANG->ReceiveModerationMails}</dd>
                 {/IF}
             {/IF}
 
