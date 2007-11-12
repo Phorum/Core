@@ -58,7 +58,7 @@
     }
     $frm->addrow("Valid username characters (check none for no restrictions)", $checkboxes);
 
-    $frm->addrow("Allow only lower case characters", $frm->checkbox("only_lowercase", "1", "", $PHORUM["mod_username_restrictions"]["only_lowercase"]) . ' Yes');
+    $frm->addrow("Allow only lower case characters", $frm->checkbox("only_lowercase", "1", "Yes", $PHORUM["mod_username_restrictions"]["only_lowercase"]));
 
     $frm->show();
 ?>
