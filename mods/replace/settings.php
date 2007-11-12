@@ -2,14 +2,17 @@
 
     if(!defined("PHORUM_ADMIN")) return;
 
-    $error="";
     $curr="NEW";
 
     $match_types = array("string", "PCRE");
 
     if(count($_POST) && $_POST["search"]!="" && $_POST["replace"]!=""){
 
-        $item = array("search"=>$_POST["search"], "replace"=>$_POST["replace"], "pcre"=>$_POST["pcre"]);
+        $item = array(
+            "search"  => $_POST["search"],
+            "replace" => $_POST["replace"],
+            "pcre"    => $_POST["pcre"]
+       );
 
         if($_POST["curr"]!="NEW"){
             $PHORUM["mod_replace"][$_POST["curr"]]=$item;
@@ -17,20 +20,19 @@
             $PHORUM["mod_replace"][]=$item;
         }
 
-        if(empty($error)){
-            if(!phorum_db_update_settings(array("mod_replace"=>$PHORUM["mod_replace"]))){
-                $error="Database error while updating settings.";
-            } else {
-                echo "Replacement Updated<br />";
-            }
-        }
+        phorum_db_update_settings(array(
+            "mod_replace" => $PHORUM["mod_replace"]
+        ));
+        phorum_admin_okmsg("Replacement Updated");
     }
 
     if(isset($_GET["curr"])){
         if(isset($_GET["delete"])){
             unset($PHORUM["mod_replace"][$_GET["curr"]]);
-            phorum_db_update_settings(array("mod_replace"=>$PHORUM["mod_replace"]));
-            echo "Replacement Deleted<br />";
+            phorum_db_update_settings(array(
+                "mod_replace" => $PHORUM["mod_replace"]
+            ));
+            phorum_admin_okmsg("Replacement Deleted");
         } else {
             $curr = $_GET["curr"];
         }
@@ -51,7 +53,7 @@
 
     include_once "./include/admin/PhorumInputForm.php";
 
-    $frm =& new PhorumInputForm ("", "post", $submit);
+    $frm = new PhorumInputForm ("", "post", $submit);
 
     $frm->hidden("module", "modsettings");
 
