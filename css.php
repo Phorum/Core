@@ -133,8 +133,8 @@ if (isset($PHORUM['hooks']['css_register'])) {
 // Find the modification time for the css file and the settings file.
 list ($css_php, $css_tpl) = phorum_get_template_file($css);
 list ($settings_php, $settings_tpl) = phorum_get_template_file('settings');
-$css_t = @filemtime($css_tpl);
-$settings_t = @filemtime($settings_tpl);
+$css_t = @filemtime($css_php);
+$settings_t = @filemtime($settings_php);
 
 // Generate the cache key. While adding cache keys for the module
 // registrations, we also check the validity of the registration data.
