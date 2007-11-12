@@ -130,6 +130,14 @@ if (isset($PHORUM['hooks']['css_register'])) {
     $module_registrations = $res['register'];
 }
 
+// We load the parsed template into memory. This will refresh
+// the cached template file if required. This is the easiest
+// way to make this work correctly for nested template files.
+ob_start();
+include(phorum_get_template($css));
+$base = ob_get_contents();
+ob_end_clean();
+
 // Find the modification time for the css file and the settings file.
 list ($css_php, $css_tpl) = phorum_get_template_file($css);
 list ($settings_php, $settings_tpl) = phorum_get_template_file('settings');
