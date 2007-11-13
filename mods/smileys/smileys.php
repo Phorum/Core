@@ -48,7 +48,7 @@ function phorum_mod_smileys_after_header()
     }
 }
 
-function phorum_mod_smileys_format($data)
+function phorum_mod_smileys_format_fixup($data)
 {
     // Do not format smileys for the feeds.
     if (phorum_page == "feed") return $data;
