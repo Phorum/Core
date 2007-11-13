@@ -1,0 +1,311 @@
+Version 3 is basically a completely new Swift which is (barely) based on the original.
+
+3.3.2 [14th October 2007]
+-------------------------
+
+Bugfix
+ * QP encoding message truncation bug fixed (add a fallback statement to a while loop)
+
+Name changes
+ * Renamed $PopB4Stmp$.php to @PopB4Smtp.php after some complaints the file wouldn't FTP with some hosts.
+
+
+3.3.1 [24th August 2007]
+------------------------
+
+Bugfix
+  * Added the fixLE() check to QP encoding functions and moved its placement in 7/8 bit encoding.
+  
+
+3.3.0 [15th August 2007]
+------------------------
+
+Major changes
+  * Swift_Connection_Exception renamed to Swift_ConnectionException
+  * All exceptions subclass Swift_Exception
+  * $swift->log removed and replaced with a more complete logging system (crucial). See CRITICAL.txt for info.
+  * Swift_Message complex reference system tidied up along with a bugfix preventing proper unset()
+  * Unit test suite added.  This will probably be worked on/tidied up for a little while.
+
+3.2.6 [11th June 2007]
+------------------------
+
+Tweaks
+  * Decorator plugin no longer case sensitive for email addresses
+
+Bugfixes
+  * BatchMailer no longer NULLs out headers.  It now copies, then restores if needed.
+ 
+
+3.2.5 [2nd June 2007]
+------------------------
+
+Tweaks
+  * Allowed 5th parameter in mail() to be settable via $conn->setAdditionalMailParams()
+
+Bugfix
+  * Sendmail connection was calling stop() even if disconnect() was already called resulting in a foreach error.
+
+
+3.2.4 [24th May 2007]
+------------------------
+
+Tweaks
+  * Content-Id, by default uses RFC2821 compliant structure (name@host). This may be forced in
+    later versions just like Message-Id is forced to have a compliant structure.
+  * $headers->hasAttribute() simply returns false if the header is not set.  Previously it threw
+    and exception.
+  * EHLO/HELO identity changed to IP literal [1.2.3.4] by default.  This is less likely to be CBL'd.
+
+
+3.2.3 [17th May 2007]
+------------------------
+
+Features
+  * Added a FileEmbedder plugin to automatically embed files in HTML emails
+
+Bugfixes
+  * Actually made sure BatchMailer is tracking failed recipients.
+  
+Refactoring
+  * Moved logic from Swift_FileNameMaker into Swift_Message_Attachment::generateFileName()
+  * Moved logic from Swift_Message_Bondary into Swift_Message_Mime::generateBoundary()
+  
+3.2.2 [13th May 2007]
+------------------------
+
+Refactoring
+  * Refactored the iterators to allow new ones to be added
+  * Added MySQL iterator
+  * Allowed iterators to be set in batch mailer
+
+Bugfix
+  * Dropped type-hint for "array" in the array iterator.
+    - This doesn't work with PHP 5.0
+
+
+3.2.1 [8th May 2007]
+------------------------
+
+Bugfix
+  * Typo
+
+
+3.2.0 [6th May 2007]
+------------------------
+
+Features
+  * New BatchMailer class for more dedicated, failsafe Batch mail support.
+  * Swift_RecipientList now produces iterator objects (hint, extend it and have it pull results from a database
+  on-the-fly if you are working with large batches).
+
+Tweaks
+  * Destructors added to Sendmail and SMTP to cleanup open resources.  This may prevent hangs at end of script.
+  * Allowed authentication to be used on servers which don't report it.
+  * Allowed arrays to be passed to Swift_RecipientList.
+  * Adjusted QP encoding "soft-break" pattern to try it's best not the split between "=XX=YY" which could
+    be a multibyte character.
+
+Refactoring
+  * RecipientList refactored.
+  * Decoupled MIME class names from Swift_Message
+
+
+3.1.5 [24th April 2007]
+------------------------
+
+Bugfix
+  * Minor - wordwrap issue creating an unpleasing space character in long headers. Solved.
+ 
+3.1.4 [21st April 2007]
+------------------------
+
+Bugfixes
+  * Changed PLAIN authentication base64 encode responses, thanks to ~vanchuck for modifications.
+  * Changed the popen() stuff to check for sendmail's existence to a simple stat(). Fingers crossed.
+
+Features
+  * Added Swift_Message->setId(), generateId() and getId() thanks to Christian Rodriguez.
+  
+
+3.1.3 [11th April 2007]
+------------------------
+
+Bugfixes
+  * Changed the logic in Swift::send() to wait until DATA command is done before tallying up
+    totals.  This fixes some false positives.
+  * Swift_Message_Image was ignoring filenames passed via the constructor. Fixed.
+
+Tweaks
+  * SMTP connection failures now provide $errno and $errstr from fsockopen().
+  * Quoted <> 7-bit strings in headers don't get encoded, if header safe.
+  
+
+3.1.2 [29th March 2007]
+------------------------
+
+Bugfixes/Security Fixes
+  * Fixed a bug that was allowing a comma to be "injected" into the headers, thus allowing extra
+    addresses to be added to existing headers.
+  * Fixed a bug that was allowing email addresses in <> quotes to be split over multiple lines.
+
+3.1.1 [28th March 2007]
+------------------------
+
+Unit Test Tidying Up
+  * It's a work-in-progress but some of the units have been refactored
+  * Again, a work-in-progress, but DocBook comments are being added to the tests
+
+Tweaks
+  * Read-receipt headers improved (added more)
+
+3.1.0 [21st March 2007]
+------------------------
+
+Plugin API Modified
+  * Swift_Events_SendEvent now includes getFailedRecipients()
+  * Swift_Events_SendEvent will be dispatched even when send fails due to the above change.
+
+Plugins added
+  * Throttling rate plugin
+  * Bandwidth monitor plugin
+  * Verbose Sending plugin
+  * Message Decorator plugin (for customized messages)
+
+Tweaks
+  * More changes to QP encoding being quite literal about CRLF
+  * The sequence for auto-setting encoding/charset is now: UTF-8, US-ASCII (7bit), ISO-8859-1
+    Previously US-ASCII was not checked for
+
+Bugfixes
+  * fwrite() null or "" to connection previously triggered an error for lack of response - fixed.
+
+3.0.6 [15th March 2007]
+------------------------
+
+RFC Compliancy
+  * Done a lot of work on QP encoding which was causing (minor) issues before now.
+
+Bugfix
+  * Filenames were having first letter truncated in attachment if in CWD. Used basename() to fix.
+
+3.0.5 [8th March 2007]
+------------------------
+
+Bugfix
+  * $swift typo should have been $message in Swift.php
+
+3.0.4 [6th March 2007]
+------------------------
+
+More Encoding Adjustments
+  * Thanks to Joaquim Homrighausen (www.webbplatsen.se) the header encoding
+     specifically that for long and non-ascii attributes has been vastly improved and
+     works on-par with any popular, compliant mail client.
+
+Bugfixes
+  * MailSend plugin (for the NativeMail connection) was not working very well with
+     attachments.  Parts of this have now been completely rewritten and it's been well-tested.
+  * Sendmail connection was previously reporting to be connected even on windows and other
+     systems where sendmail did not exist.  This was due to proc_open() always returning a
+     shell process.  It now runs a preliminary check for stderr output *before* starting the connection
+  * class_exists() and interface_exists() now pass the second parameter to stop __autoload() being
+     invoked.
+
+Refactoring
+  * Refactored areas where Swift_ClassLoader was being called to K.I.S.S. (Keep it simple stupid)
+  * Added the BadResponseException to distinguish between actual connection failures, and unexpected
+    responses
+
+3.0.3 [4th March 2007]
+------------------------
+
+Bugfix
+  * Swift_Connection_Multi did not call the active connection when setting extensions
+
+3.0.2 [4th March 2007]
+------------------------
+
+Multiple Bugfixes
+  * Added some calls to Swift_ClassLoader before instanceof operators are used
+  * Ensured headers are iso-8859-1 by default, but UTF-8 if needed
+  * Resolved an issue with long attribute encoding caused by misinterpretation of RFC 2184
+  * Resolved an issue with Swift_Plugin_ConnectionRotator retrying the first open connection
+
+Small internal changes
+  * Made Swift_Cache_Disk throw an exception if it fails to write.  This had caused me to
+    receive emails regarding entirely blank messages.  This was tested to be the cause.
+    Fingers crossed!
+  * Changed QP encoding to use a callback rather than an evaluated expression.
+
+3.0.1 [23rd Feb 2007]
+------------------------
+
+Optimizations
+  * Abstracted caching mechanism so a DiskCache can be used
+  * Optimized includes memory usage by using Swift_ClassLoader
+  * Added benchmarks folder (Xdebug2 required!)
+  * Got rid of runAllTests.php and replaced with 4 smaller group tests
+
+3.0.0 [19th Feb 2007]
+------------------------
+
+Trivial Bugfixes
+  * SMTP SSL read error in PHP's fgets() worked around with a secondary EOF check
+  * Added extra newline to ending MIME boundary for Gmail with embedded images
+
+
+From RC2 to RC3
+------------------------
+
+Small Changes
+  * Eased up on the number of Exceptions that are thrown
+  * Added check if date_default_Timezone_set() exists for E_STRICT
+
+From RC1 to RC2
+-------------------------
+
+SMTP Connection BugFixed
+  * Port number was not defaulting to 25, 465 etc
+  * Encryption was not being set to any defaults
+
+Swift QUIT command response Code was wrongly 250. Corrected to 221.
+Changed send() to not throw exceptions purely on failed deliveries.
+
+Changes since Version 2
+-------------------------
+
+API Refactored:
+  * Message composition is now handled (and cached) by a sub-package
+    - More rigid RFC conformance
+    - Better support for header encoding
+    - More intellegent caching
+    - No need for "Template" plugins just to make customized messages
+    - Headers handled by a separate layer
+    - Full MIME node-tree support (you can keep nesting documents)
+  * Plugin API works in a more obvious and scalable fashion akin to Java Swing's Events
+    - Events fired by Swift controller class and picked up by Listener classes (plugins)
+    - Interfaces created for the individual event types
+    - Swift is message-passed with the event rather than set in the plugin as a property
+  * Connection I/O handling abstracted back into the connection classes
+    - The connections no longer just have references to open reading and writing resources,
+      they now deal with reading and writing
+    - Extension information stored in the connection itself so the correct behaviour is seen
+      if the connection is changed
+    - SMTP Authentication now handled by the connections on a per-connection basis
+  * Swift Main class tidied up and shortened through composition with message handling objects
+    - All message composition features have been removed from the Swift class
+    - Recipient handling has been removed from the Swift class and into Recipient handling
+      classes
+    - Sending is by default, no longer a batched send.  A batchSend() method has been provided
+  * NativeMail connection bugfixed
+    - Bcc recipients were not dealt with correctly in version 2; this is now corrected
+    - Refactored into a plugin and a connection stub
+
+Fully Test-Driven:
+  * For all you TDDers who won't go near code without tests you'll find that this release has
+    close to 100% test-coverage using SimpleTest
+
+
+
+End of file

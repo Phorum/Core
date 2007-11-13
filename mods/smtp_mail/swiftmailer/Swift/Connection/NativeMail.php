@@ -8,8 +8,9 @@
  * @license GNU Lesser General Public License
  */
 
-require_once dirname(__FILE__). "/../ClassLoader.php";
+require_once dirname(__FILE__) . "/../ClassLoader.php";
 Swift_ClassLoader::load("Swift_ConnectionBase");
+Swift_ClassLoader::load("Swift_Plugin_MailSend");
 
 /**
  * Swift mail() Connection
@@ -49,7 +50,6 @@ class Swift_Connection_NativeMail extends Swift_ConnectionBase
    */
   public function postConnect(Swift $instance)
   {
-    Swift_ClassLoader::load("Swift_Plugin_MailSend");
     $this->plugin = new Swift_Plugin_MailSend($this->getAdditionalMailParams());
     $instance->attachPlugin($this->plugin, "_MAIL_SEND");
   }
@@ -76,7 +76,7 @@ class Swift_Connection_NativeMail extends Swift_ConnectionBase
   /**
    * Read a full response from the buffer (this is spoofed if running in -t mode)
    * @return string
-   * @throws Swift_Connection_Exception Upon failure to read
+   * @throws Swift_ConnectionException Upon failure to read
    */
   public function read()
   {
@@ -93,7 +93,7 @@ class Swift_Connection_NativeMail extends Swift_ConnectionBase
   /**
    * Write a command to the process (leave off trailing CRLF)
    * @param string The command to send
-   * @throws Swift_Connection_Exception Upon failure to write
+   * @throws Swift_ConnectionException Upon failure to write
    */
   public function write($command, $end="\r\n")
   {
@@ -111,7 +111,7 @@ class Swift_Connection_NativeMail extends Swift_ConnectionBase
   }
   /**
    * Try to start the connection
-   * @throws Swift_Connection_Exception Upon failure to start
+   * @throws Swift_ConnectionException Upon failure to start
    */
   public function start()
   {
@@ -119,7 +119,7 @@ class Swift_Connection_NativeMail extends Swift_ConnectionBase
   }
   /**
    * Try to close the connection
-   * @throws Swift_Connection_Exception Upon failure to close
+   * @throws Swift_ConnectionException Upon failure to close
    */
   public function stop()
   {

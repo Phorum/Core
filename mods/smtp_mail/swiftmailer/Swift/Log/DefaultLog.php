@@ -10,14 +10,14 @@
  */
 
 require_once dirname(__FILE__) . "/../ClassLoader.php";
-Swift_ClassLoader::load("Swift_Log_Base");
+Swift_ClassLoader::load("Swift_Log");
 
 /**
  * The Default Logger class
  * @package Swift_Log
  * @author Chris Corbyn <chris@w3style.co.uk>
  */
-class Swift_Log_DefaultLog extends Swift_Log_Base
+class Swift_Log_DefaultLog extends Swift_Log
 {
   /**
    * Lines in the log
@@ -30,17 +30,20 @@ class Swift_Log_DefaultLog extends Swift_Log_Base
    * @param string The text for this entry
    * @param string The label for the type of entry
    */
-  public function add($text, $type)
+  public function add($text, $type = self::NORMAL)
   {
     $this->entries[] = $type . " " . $text;
     if ($this->getMaxSize() > 0) $this->entries = array_slice($this->entries, (-1 * $this->getMaxSize()));
   }
   /**
-   * Dump the contents of the log to the browser
+   * Dump the contents of the log to the browser.
+   * @param boolean True if the string should be returned rather than output.
    */
-  public function dump()
+  public function dump($return_only=false)
   {
-    echo implode("\n", $this->entries);
+    $ret = implode("\n", $this->entries);
+    if (!$return_only) echo $ret;
+    else return $ret;
   }
   /**
    * Empty the log

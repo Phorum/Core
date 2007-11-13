@@ -8,13 +8,15 @@
  * @package Swift
  * @license GNU Lesser General Public License
  */
- 
+
+require_once dirname(__FILE__) . "/ClassLoader.php";
+Swift_ClassLoader::load("Swift_Exception");
+
 /**
  * Swift File Exception
  * @package Swift
  * @author Chris Corbyn <chris@w3style.co.uk>
  */
-class Swift_FileException extends Exception
+class Swift_FileException extends Swift_Exception
 {
-  
 }

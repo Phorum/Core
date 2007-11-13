@@ -51,14 +51,25 @@ class Swift_Connection_Rotator extends Swift_ConnectionBase
    */
   public function addConnection(Swift_Connection $connection)
   {
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("Adding new connection of type '" . get_class($connection) . "' to rotator.");
+    }
     $this->connections[] = $connection;
   }
   /**
    * Rotate to the next working connection
-   * @throws Swift_Connection_Exception If no connections are available
+   * @throws Swift_ConnectionException If no connections are available
    */
   public function nextConnection()
   {
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add(" <==> Rotating connection.");
+    }
+    
     $total = count($this->connections);
     $start = $this->active === null ? 0 : ($this->active + 1);
     if ($start >= $total) $start = 0;
@@ -78,45 +89,45 @@ class Swift_Connection_Rotator extends Swift_ConnectionBase
         {
           $this->dead[] = $id;
           $this->connections[$id]->stop();
-          throw new Swift_Connection_Exception("The connection started but reported that it was not active");
+          throw new Swift_ConnectionException("The connection started but reported that it was not active");
         }
-      } catch (Swift_Connection_Exception $e) {
+      } catch (Swift_ConnectionException $e) {
         $fail_messages[] = $id . ": " . $e->getMessage();
       }
     }
     
     $failure = implode("<br />", $fail_messages);
-    throw new Swift_Connection_Exception("No connections were started.<br />" . $failure);
+    throw new Swift_ConnectionException("No connections were started.<br />" . $failure);
   }
   /**
    * Read a full response from the buffer
    * @return string
-   * @throws Swift_Connection_Exception Upon failure to read
+   * @throws Swift_ConnectionException Upon failure to read
    */
   public function read()
   {
     if ($this->active === null)
     {
-      throw new Swift_Connection_Exception("None of the connections set have been started");
+      throw new Swift_ConnectionException("None of the connections set have been started");
     }
     return $this->connections[$this->active]->read();
   }
   /**
    * Write a command to the server (leave off trailing CRLF)
    * @param string The command to send
-   * @throws swift_Connection_Exception Upon failure to write
+   * @throws Swift_ConnectionException Upon failure to write
    */
   public function write($command, $end="\r\n")
   {
     if ($this->active === null)
     {
-      throw new Swift_Connection_Exception("None of the connections set have been started");
+      throw new Swift_ConnectionException("None of the connections set have been started");
     }
     return $this->connections[$this->active]->write($command, $end);
   }
   /**
    * Try to start the connection
-   * @throws Swift_Connection_Exception Upon failure to start
+   * @throws Swift_ConnectionException Upon failure to start
    */
   public function start()
   {
@@ -124,7 +135,7 @@ class Swift_Connection_Rotator extends Swift_ConnectionBase
   }
   /**
    * Try to close the connection
-   * @throws Swift_Connection_Exception Upon failure to close
+   * @throws Swift_ConnectionException Upon failure to close
    */
   public function stop()
   {

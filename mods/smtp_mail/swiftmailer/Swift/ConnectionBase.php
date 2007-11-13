@@ -10,8 +10,9 @@
  */
 
 require_once dirname(__FILE__) . "/ClassLoader.php";
+Swift_ClassLoader::load("Swift_LogContainer");
 Swift_ClassLoader::load("Swift_Connection");
-Swift_ClassLoader::load("Swift_Connection_Exception");
+Swift_ClassLoader::load("Swift_ConnectionException");
 
 /**
  * Swift Connection Base Class
@@ -39,6 +40,11 @@ abstract class Swift_ConnectionBase implements Swift_Connection
   public function setExtension($name, $options=array())
   {
     $this->extensions[$name] = $options;
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("SMTP extension '" . $name . "' reported with attributes [" . implode(", ", $options) . "].");
+    }
   }
   /**
    * Check if a given extension has been set as available
@@ -57,7 +63,7 @@ abstract class Swift_ConnectionBase implements Swift_Connection
    * Get the list of attributes supported by the given extension
    * @param string The name of the connection
    * @return array The list of attributes
-   * @throws Swift_Connection_Exception If the extension cannot be found
+   * @throws Swift_ConnectionException If the extension cannot be found
    */
   public function getAttributes($extension)
   {
@@ -67,7 +73,7 @@ abstract class Swift_ConnectionBase implements Swift_Connection
     }
     else
     {
-      throw new Swift_Connection_Exception(
+      throw new Swift_ConnectionException(
       "Unable to locate any attributes for the extension '" . $extension . "' since the extension cannot be found. " .
       "Consider using hasExtension() to check.");
     }
@@ -87,5 +93,10 @@ abstract class Swift_ConnectionBase implements Swift_Connection
   public function setRequiresEHLO($set)
   {
     $this->isESMTP = (bool) $set;
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("Forcing ESMTP mode.  HELO is EHLO.");
+    }
   }
 }

@@ -203,16 +203,17 @@ class Swift_Message_Encoder
           if (preg_match('/^.{1,'.($init_chunk-5).'}[^=]{2}(?!=[A-F0-9]{2})/', $string, $matches)
             || preg_match('/^.{1,'.($init_chunk-6).'}([^=]{0,3})?/', $string, $matches))
           {
-            $ret .= $matches[0] . "=";
+            $ret .= $this->fixLE($matches[0] . "=", $le); //fixLE added 24/08/07
             $string = substr($string, strlen($matches[0]));
           }
         }
         elseif ($init_chunk) $ret .= "=";
         
         while (preg_match('/^.{1,'.($init_chunk-5).'}[^=]{2}(?!=[A-F0-9]{2})/', $string, $matches)
-          || preg_match('/^.{1,'.($chunk-6).'}([^=]{0,3})?/', $string, $matches))
+          || preg_match('/^.{1,'.($chunk-6).'}([^=]{0,3})?/', $string, $matches)
+          || (strlen($string) > 0 && $matches = array($string)))
         {
-          $ret .= $le . $matches[0] . "=";
+          $ret .= $this->fixLE($le . $matches[0] . "=", $le); //fixLE added 24/08/07
           $string = substr($string, strlen($matches[0]));
         }
       }
@@ -271,7 +272,7 @@ class Swift_Message_Encoder
     {
       $next = $this->rawQPEncode($bytes, true);
       preg_match_all('/.{1,'.($chunk-6).'}([^=]{0,3})?/', $next, $next);
-      if (count($next[0])) $cache->write("qp", implode("=" . $le, $next[0]));
+      if (count($next[0])) $cache->write("qp", $this->fixLE(implode("=" . $le, $next[0]), $le));
     }
     return $cache->getOutputStream("qp");
   }
@@ -299,8 +300,8 @@ class Swift_Message_Encoder
     Swift_ClassLoader::load("Swift_CacheFactory");
     $cache = Swift_CacheFactory::getCache();
     $ret = "";
-    while (false !== $byte = $file->read(8192)) $ret .= $this->fixLE($byte, $le);
-    $cache->write("7b", wordwrap($ret, $chunk-2, $le, 1));
+    while (false !== $bytes = $file->read(8192)) $ret .= $bytes;
+    $cache->write("7b", $this->fixLE(wordwrap($ret, $chunk-2, $le, 1), $le));
     return $cache->getOutputStream("7b");
   }
   /**
@@ -327,8 +328,8 @@ class Swift_Message_Encoder
     Swift_ClassLoader::load("Swift_CacheFactory");
     $cache = Swift_CacheFactory::getCache();
     $ret = "";
-    while (false !== $byte = $file->read(8192)) $ret .= $this->fixLE($byte, $le);
-    $cache->write("8b", wordwrap($ret, $chunk-2, $le, 1));
+    while (false !== $bytes = $file->read(8192)) $ret .= $bytes;
+    $cache->write("8b", $this->fixLE(wordwrap($ret, $chunk-2, $le, 1), $le));
     return $cache->getOutputStream("8b");
   }
   /**

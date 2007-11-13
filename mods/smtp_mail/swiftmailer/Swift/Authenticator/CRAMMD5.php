@@ -34,7 +34,7 @@ class Swift_Authenticator_CRAMMD5 implements Swift_Authenticator
       $challenge = base64_decode($encoded_challenge);
       $response = base64_encode($user . " " . self::generateCRAMMD5Hash($pass, $challenge));
       $swift->command($response, 235);
-    } catch (Swift_Connection_Exception $e) {
+    } catch (Swift_ConnectionException $e) {
       $swift->reset();
       return false;
     }

@@ -47,41 +47,47 @@ class Swift_Connection_Multi extends Swift_ConnectionBase
    */
   public function addConnection(Swift_Connection $connection, $id=null)
   {
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("Adding new connection of type '" . get_class($connection) . "' to the multi-redundant connection.");
+    }
     if ($id !== null) $this->connections[$id] = $connection;
     else $this->connections[] = $connection;
   }
   /**
    * Read a full response from the buffer
    * @return string
-   * @throws Swift_Connection_Exception Upon failure to read
+   * @throws Swift_ConnectionException Upon failure to read
    */
   public function read()
   {
     if ($this->active === null)
     {
-      throw new Swift_Connection_Exception("None of the connections set have been started");
+      throw new Swift_ConnectionException("None of the connections set have been started");
     }
     return $this->connections[$this->active]->read();
   }
   /**
    * Write a command to the server (leave off trailing CRLF)
    * @param string The command to send
-   * @throws swift_Connection_Exception Upon failure to write
+   * @throws Swift_ConnectionException Upon failure to write
    */
   public function write($command, $end="\r\n")
   {
     if ($this->active === null)
     {
-      throw new Swift_Connection_Exception("None of the connections set have been started");
+      throw new Swift_ConnectionException("None of the connections set have been started");
     }
     return $this->connections[$this->active]->write($command, $end);
   }
   /**
    * Try to start the connection
-   * @throws Swift_Connection_Exception Upon failure to start
+   * @throws Swift_ConnectionException Upon failure to start
    */
   public function start()
   {
+    $log = Swift_LogContainer::getLog();
     $fail_messages = array();
     foreach ($this->connections as $id => $conn)
     {
@@ -94,18 +100,22 @@ class Swift_Connection_Multi extends Swift_ConnectionBase
         }
         else
         {
-          throw new Swift_Connection_Exception("The connection started but reported that it was not active");
+          if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+          {
+            $log->add("Connection (" . $id . ") failed. Will try next connection if available.");
+          }
+          throw new Swift_ConnectionException("The connection started but reported that it was not active");
         }
-      } catch (Swift_Connection_Exception $e) {
+      } catch (Swift_ConnectionException $e) {
         $fail_messages[] = $id . ": " . $e->getMessage();
       }
     }
     $failure = implode("<br />", $fail_messages);
-    throw new Swift_Connection_Exception($failure);
+    throw new Swift_ConnectionException($failure);
   }
   /**
    * Try to close the connection
-   * @throws Swift_Connection_Exception Upon failure to close
+   * @throws Swift_ConnectionException Upon failure to close
    */
   public function stop()
   {

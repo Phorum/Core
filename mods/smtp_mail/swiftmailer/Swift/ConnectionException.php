@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Swift Bad Response Code Exception
+ * Swift Connection Exception
  * Please read the LICENSE file
  * @copyright Chris Corbyn <chris@w3style.co.uk>
  * @author Chris Corbyn <chris@w3style.co.uk>
@@ -10,13 +10,13 @@
  */
 
 require_once dirname(__FILE__) . "/ClassLoader.php";
-Swift_ClassLoader::load("Swift_ConnectionException");
+Swift_ClassLoader::load("Swift_Exception");
 
 /**
- * Swift Bad Response Exception
+ * Swift Connection Exception
  * @package Swift_Connection
  * @author Chris Corbyn <chris@w3style.co.uk>
  */
-class Swift_BadResponseException extends Swift_ConnectionException
+class Swift_ConnectionException extends Swift_Exception
 {
 }

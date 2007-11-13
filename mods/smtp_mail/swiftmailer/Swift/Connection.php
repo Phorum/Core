@@ -19,24 +19,24 @@ interface Swift_Connection
 {
   /**
    * Try to start the connection
-   * @throws Swift_Connection_Exception If the connection cannot be started
+   * @throws Swift_ConnectionException If the connection cannot be started
    */
   public function start();
   /**
    * Return the contents of the buffer
    * @return string
-   * @throws Swift_Connection_Exception If the buffer cannot be read
+   * @throws Swift_ConnectionException If the buffer cannot be read
    */
   public function read();
   /**
    * Write a command to the buffer
    * @param string The command to send
-   * @throws Swift_Connection_Exception If the write fails
+   * @throws Swift_ConnectionException If the write fails
    */
   public function write($command, $end="\r\n");
   /**
    * Try to stop the connection
-   * @throws Swift_Connection_Exception If the connection cannot be closed/stopped
+   * @throws Swift_ConnectionException If the connection cannot be closed/stopped
    */
   public function stop();
   /**
@@ -60,7 +60,7 @@ interface Swift_Connection
    * Get the list of attributes for the extension $name
    * @param string The name of the extension
    * @return array
-   * @throws Swift_Connection_Exception If no such extension can be found
+   * @throws Swift_ConnectionException If no such extension can be found
    */
   public function getAttributes($name);
   /**

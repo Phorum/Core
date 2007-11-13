@@ -200,6 +200,11 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
   public function attachAuthenticator(Swift_Authenticator $auth)
   {
     $this->authenticators[$auth->getAuthExtensionName()] = $auth;
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("Authentication mechanism '" . $auth->getAuthExtensionName() . "' attached.");
+    }
   }
   /**
    * Set the encryption level to use on the connection
@@ -227,11 +232,11 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
    * inner !feof() patch provided by Christian Rodriguez:
    * <a href="http://www.flyspray.org/">www.flyspray.org</a>
    * @return string
-   * @throws Swift_Connection_Exception Upon failure to read
+   * @throws Swift_ConnectionException Upon failure to read
    */
   public function read()
   {
-    if (!$this->handle) throw new Swift_Connection_Exception(
+    if (!$this->handle) throw new Swift_ConnectionException(
       "The SMTP connection is not alive and cannot be read from."  . $this->smtpErrors());
     $ret = "";
     $line = 0;
@@ -242,7 +247,7 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
       $tmp = @fgets($this->handle);
       if ($tmp === false && !feof($this->handle))
       {
-        throw new Swift_Connection_Exception(
+        throw new Swift_ConnectionException(
         "There was a problem reading line " . $line . " of an SMTP response. The response so far was:<br />[" . $ret .
         "].  It appears the connection has died without saying goodbye to us! Too many emails in one go perhaps?"  .
         $this->smtpErrors());
@@ -255,18 +260,18 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
   /**
    * Write a command to the server (leave off trailing CRLF)
    * @param string The command to send
-   * @throws swift_Connection_Exception Upon failure to write
+   * @throws Swift_ConnectionException Upon failure to write
    */
   public function write($command, $end="\r\n")
   {
-    if (!$this->handle) throw new Swift_Connection_Exception(
+    if (!$this->handle) throw new Swift_ConnectionException(
       "The SMTP connection is not alive and cannot be written to."  .
       $this->smtpErrors());
-    if (!@fwrite($this->handle, $command . $end) && !empty($command)) throw new Swift_Connection_Exception("The SMTP connection did not allow the command '" . $command . "' to be sent." . $this->smtpErrors());
+    if (!@fwrite($this->handle, $command . $end) && !empty($command)) throw new Swift_ConnectionException("The SMTP connection did not allow the command '" . $command . "' to be sent." . $this->smtpErrors());
   }
   /**
    * Try to start the connection
-   * @throws Swift_Connection_Exception Upon failure to start
+   * @throws Swift_ConnectionException Upon failure to start
    */
   public function start()
   {
@@ -287,10 +292,21 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
     if ($this->encryption == self::ENC_TLS) $server = "tls://" . $server;
     elseif ($this->encryption == self::ENC_SSL) $server = "ssl://" . $server;
     
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_log::LOG_EVERYTHING))
+    {
+      $log->add("Trying to connect to SMTP server at '" . $server . ":" . $this->port);
+    }
+    
     if (!$this->handle = @fsockopen($server, $this->port, $errno, $errstr, $this->timeout))
     {
+      $error_msg = "The SMTP connection failed to start [" . $server . ":" . $this->port . "]: fsockopen returned Error Number " . $errno . " and Error String '" . $errstr . "'";
+      if ($log->isEnabled())
+      {
+        $log->add($error_msg, Swift_Log::ERROR);
+      }
       $this->handle = null;
-      throw new Swift_Connection_Exception("The SMTP connection failed to start [" . $server . ":" . $this->port . "]: fsockopen returned Error Number " . $errno . " and Error String '" . $errstr . "'");
+      throw new Swift_ConnectionException($error_msg);
     }
     $this->errno =& $errno;
     $this->errstr =& $errstr;
@@ -306,7 +322,7 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
   /**
    * Authenticate if required to do so
    * @param Swift An instance of Swift
-   * @throws Swift_Connection_Exception If authentication fails
+   * @throws Swift_ConnectionException If authentication fails
    */
   public function postConnect(Swift $instance)
   {
@@ -321,13 +337,22 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
    * @param string Username
    * @param string Password
    * @param Swift An instance of swift
-   * @throws Swift_Connection_Exception Upon failure to authenticate
+   * @throws Swift_ConnectionException Upon failure to authenticate
    */
   public function runAuthenticators($user, $pass, Swift $swift)
   {
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("Trying to authenticate with username '" . $user . "'.");
+    }
     //Load in defaults
     if (empty($this->authenticators))
     {
+      if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+      {
+        $log->add("No authenticators loaded; looking for defaults.");
+      }
       $dir = dirname(__FILE__) . "/../Authenticator";
       $handle = opendir($dir);
       while (false !== $file = readdir($handle))
@@ -349,6 +374,10 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
     //Allow everything we have if the server has the audacity not to help us out.
     if (!$this->hasExtension("AUTH"))
     {
+      if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+      {
+        $log->add("Server (perhaps wrongly) is not advertising AUTH... manually overriding.");
+      }
       $looks_supported = false;
       $this->setExtension("AUTH", array_keys($this->authenticators));
     }
@@ -359,31 +388,47 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
       if (in_array($name, $this->getAttributes("AUTH")) || $name{0} == "*")
       {
         $tried++;
-        if ($this->authenticators[$name]->isAuthenticated($user, $pass, $swift)) return true;
+        if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+        {
+          $log->add("Trying '" . $name . "' authentication...");
+        }
+        if ($this->authenticators[$name]->isAuthenticated($user, $pass, $swift))
+        {
+          if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+          {
+            $log->add("Success! Authentication accepted.");
+          }
+          return true;
+        }
       }
     }
     
     //Server doesn't support authentication
     if (!$looks_supported && $tried == 0)
-      throw new Swift_Connection_Exception("Authentication is not supported by the server but a username and password was given.");
+      throw new Swift_ConnectionException("Authentication is not supported by the server but a username and password was given.");
     
     if ($tried == 0)
-      throw new Swift_Connection_Exception("No authentication mechanisms were tried since the server did not support any of the ones loaded. " .
+      throw new Swift_ConnectionException("No authentication mechanisms were tried since the server did not support any of the ones loaded. " .
       "Loaded authenticators: [" . implode(", ", array_keys($this->authenticators)) . "]");
     else
-      throw new Swift_Connection_Exception("Authentication failed using username '" . $user . "' and password '". str_repeat("*", strlen($pass)) . "'");
+      throw new Swift_ConnectionException("Authentication failed using username '" . $user . "' and password '". str_repeat("*", strlen($pass)) . "'");
   }
   /**
    * Try to close the connection
-   * @throws Swift_Connection_Exception Upon failure to close
+   * @throws Swift_ConnectionException Upon failure to close
    */
   public function stop()
   {
+    $log = Swift_LogContainer::getLog();
+    if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
+    {
+      $log->add("Closing down SMTP connection.");
+    }
     if ($this->handle)
     {
       if (!fclose($this->handle))
       {
-        throw new Swift_Connection_Exception("The SMTP connection could not be closed for an unknown reason." . $this->smtpErrors());
+        throw new Swift_ConnectionException("The SMTP connection could not be closed for an unknown reason." . $this->smtpErrors());
       }
       $this->handle = null;
     }

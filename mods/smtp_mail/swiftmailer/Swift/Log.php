@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Swift Mailer Logging Layer Interface
+ * Swift Mailer Logging Layer base class.
  * Please read the LICENSE file
  * @author Chris Corbyn <chris@w3style.co.uk>
  * @package Swift_Log
@@ -9,56 +9,144 @@
  */
 
 /**
- * The Logger Interface
+ * The Logger class/interface.
  * @package Swift_Log
  * @author Chris Corbyn <chris@w3style.co.uk>
  */
-interface Swift_Log
+abstract class Swift_Log
 {
   /**
-   * Enable logging
+   * A command type entry
    */
-  public function enable();
+  const COMMAND = ">>";
   /**
-   * Disable logging
+   * A response type entry
    */
-  public function disable();
+  const RESPONSE = "<<";
   /**
-   * Check if logging is enabled
+   * An error type entry
    */
-  public function isEnabled();
+  const ERROR = "!!";
   /**
-   * Add a failed recipient to the list
-   * @param string The address of the recipient
+   * A standard entry
    */
-  public function addFailedRecipient($address);
+  const NORMAL = "++";
   /**
-   * Get the list of failed recipients
-   * @return array
+   * Logging is off.
    */
-  public function getFailedRecipients();
+  const LOG_NOTHING = 0;
   /**
-   * Set the maximum size of this log (zero is no limit)
-   * @param int The maximum entries
+   * Only errors are logged.
    */
-  public function setMaxSize($size);
+  const LOG_ERRORS = 1;
   /**
-   * Get the current maximum allowed log size
-   * @return int
+   * Errors + sending failures.
    */
-  public function getMaxSize();
+  const LOG_FAILURES = 2;
+  /**
+   * All SMTP instructions + failures + errors.
+   */
+  const LOG_NETWORK = 3;
+  /**
+   * Runtime info + SMTP instructions + failures + errors.
+   */
+  const LOG_EVERYTHING = 4;
+  /**
+   * Failed recipients
+   * @var array
+   */
+  protected $failedRecipients = array();
+  /**
+   * The maximum number of log entries
+   * @var int
+   */
+  protected $maxSize = 50;
+  /**
+   * The level of logging currently set.
+   * @var int
+   */
+  protected $logLevel = self::LOG_NOTHING;
+  
   /**
    * Add a new entry to the log
    * @param string The information to log
    * @param string The type of entry (see the constants: COMMAND, RESPONSE, ERROR, NORMAL)
    */
-  public function add($text, $type);
+  abstract public function add($text, $type = self::NORMAL);
   /**
-   * Dump the contents of the log to the browser
+   * Dump the contents of the log to the browser.
+   * @param boolean True if the string should be returned rather than output.
    */
-  public function dump();
+  abstract public function dump($return_only=false);
   /**
    * Empty the log contents
    */
-  public function clear();
+  abstract public function clear();
+  /**
+   * Check if logging is enabled.
+   */
+  public function isEnabled()
+  {
+    return ($this->logLevel > self::LOG_NOTHING);
+  }
+  /**
+   * Add a failed recipient to the list
+   * @param string The address of the recipient
+   */
+  public function addFailedRecipient($address)
+  {
+    $this->failedRecipients[$address] = null;
+    $this->add("Recipient '" . $address . "' rejected by connection.", self::ERROR);
+  }
+  /**
+   * Get the list of failed recipients
+   * @return array
+   */
+  public function getFailedRecipients()
+  {
+    return array_keys($this->failedRecipients);
+  }
+  /**
+   * Set the maximum size of this log (zero is no limit)
+   * @param int The maximum entries
+   */
+  public function setMaxSize($size)
+  {
+    $this->maxSize = (int) $size;
+  }
+  /**
+   * Get the current maximum allowed log size
+   * @return int
+   */
+  public function getMaxSize()
+  {
+    return $this->maxSize;
+  }
+  /**
+   * Set the log level to one of the constants provided.
+   * @param int Level
+   */
+  public function setLogLevel($level)
+  {
+    $level = (int)$level;
+    $this->add("Log level changed to " . $level, self::NORMAL);
+    $this->logLevel = $level;
+  }
+  /**
+   * Get the current log level.
+   * @return int
+   */
+  public function getLogLevel()
+  {
+    return $this->logLevel;
+  }
+  /**
+   * Check if the log level includes the one given.
+   * @param int Level
+   * @return boolean
+   */
+  public function hasLevel($level)
+  {
+    return ($this->logLevel >= ((int)$level));
+  }
 }

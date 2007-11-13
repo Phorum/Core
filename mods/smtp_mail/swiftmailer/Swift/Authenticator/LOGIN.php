@@ -32,7 +32,7 @@ class Swift_Authenticator_LOGIN implements Swift_Authenticator
       $swift->command("AUTH LOGIN", 334);
       $swift->command(base64_encode($user), 334);
       $swift->command(base64_encode($pass), 235);
-    } catch (Swift_Connection_Exception $e) {
+    } catch (Swift_ConnectionException $e) {
       $swift->reset();
       return false;
     }
