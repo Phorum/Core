@@ -42,9 +42,11 @@ if (!defined('PHORUM')) return;
  *
  * @param integer $max_w
  *     The maximum allowed width for the image in pixels.
+ *     Use NULL or 0 (zero) to indicate that any width will do.
  *
  * @param integer $max_h
  *     The maximum allowed height for the image in pixels.
+ *     Use NULL or 0 (zero) to indicate that any height will do.
  *
  * @param string $method
  *     The method to use for scaling the image. By default, this function
@@ -64,15 +66,14 @@ if (!defined('PHORUM')) return;
  *
  *     An array is returned in case creating the thumbnail did work.
  *     This array contains the following fields:
- *     - image:    The scaled down image. NULL if no scaling was needed.
- *     - method:   The method that was used to create the thumbnail.
- *     - cur_w:    The width of the original $image.
- *     - cur_h:    The height of the original $image.
- *     - cur_mime: The MIME type of the original $image.
- *     - new_w:    The width of the scaled down image.
- *     - new_h:    The height of the scaled down image.
- *     - mime:     The MIME type of the scaled down image,
- *                 or NULL if no scaling was needed.
+ *     - image:     The scaled down image. NULL if no scaling was needed.
+ *     - method:    The method that was used to create the thumbnail.
+ *     - cur_w:     The width of the original $image.
+ *     - cur_h:     The height of the original $image.
+ *     - cur_mime:  The MIME type of the original $image.
+ *     - new_w:     The width of the scaled down image.
+ *     - new_h:     The height of the scaled down image.
+ *     - new_mime:  The MIME type of the scaled down image,
  */
 function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $method = NULL)
 {
@@ -81,10 +82,13 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     $GLOBALS['PHORUM']['API']['error'] = NULL;
     $error = NULL;
 
+    if (empty($max_w)) $max_w = NULL;
+    if (empty($max_h)) $max_h = NULL;
+
     // Initialize the return array.
     $img = array(
         'image'    => NULL,
-        'mime'     => NULL
+        'new_mime' => NULL
     );
 
     // Check if PHP supports the getimagesize() function. I think it
@@ -112,9 +116,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     );
 
     // Add the image data to the return array.
-    $img['cur_w']    = $file_info[0];
-    $img['cur_h']    = $file_info[1];
-    $img['cur_mime'] = $file_info['mime'];
+    $img['cur_w']     = $img['new_w']    = $file_info[0];
+    $img['cur_h']     = $img['new_h']    = $file_info[1];
+    $img['cur_mime']  = $img['new_mime'] = $file_info['mime'];
 
     // We support only GIF, JPG and PNG images.
     if (substr($img['cur_mime'], 0, 6) == 'image/') {
@@ -144,7 +148,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // No scaling needed, return.
     if ($scale_w === NULL && $scale_h === NULL) return $img;
     // The lowest scale factor wins. Compute the required image size.
-    if ($scale_h === NULL || $scale_w < $scale_h) {
+    if ($scale_h === NULL || ($scale_w !== NULL && $scale_w < $scale_h)) {
         $img['new_w'] = $max_w;
         $img['new_h'] = floor($img['cur_h']*$scale_w + 0.5);
     } else {
@@ -173,9 +177,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $imagick->readImageBlob($image);
         $imagick->thumbnailImage($max_w, $max_h, TRUE);
         $imagick->setFormat("png");
-        $img['image']  = $imagick->getimageblob();
-        $img['mime']   = 'image/'.$imagick->getFormat();
-        $img['method'] = 'imagick';
+        $img['image']    = $imagick->getimageblob();
+        $img['new_mime'] = 'image/'.$imagick->getFormat();
+        $img['method']   = 'imagick';
 
         return $img;
     }
@@ -270,9 +274,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
                 $size = ob_get_length();
                 ob_end_clean();
 
-                $img['image']  = $png;
-                $img['mime']   = 'image/png';
-                $img['method'] = 'gd';
+                $img['image']    = $png;
+                $img['new_mime'] = 'image/png';
+                $img['method']   = 'gd';
                 return $img;
             }
         }
@@ -330,9 +334,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $exit = proc_close($process);
 
         if ($exit == 0) {
-            $img['image']  = $scaled;
-            $img['mime']   = 'image/png';
-            $img['method'] = 'convert';
+            $img['image']    = $scaled;
+            $img['new_mime'] = 'image/png';
+            $img['method']   = 'convert';
             return $img;
         }
 
