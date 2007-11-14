@@ -137,6 +137,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     }
 
     // Check if scaling is required and if yes, what the new size should be.
+    // First, determine width and height scale factors.
     $scale_w = NULL;
     $scale_h = NULL;
     // Need horizontal scaling?
@@ -145,15 +146,17 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // Need vertical scaling?
     if ($max_h !== NULL && $max_h < $img['cur_h'])
         $scale_h = $max_h / $img['cur_h'];
+
     // No scaling needed, return.
     if ($scale_w === NULL && $scale_h === NULL) return $img;
+
     // The lowest scale factor wins. Compute the required image size.
     if ($scale_h === NULL || ($scale_w !== NULL && $scale_w < $scale_h)) {
         $img['new_w'] = $max_w;
         $img['new_h'] = floor($img['cur_h']*$scale_w + 0.5);
     } else {
-        $img['new_h'] = $max_h;
         $img['new_w'] = floor($img['cur_w']*$scale_h + 0.5);
+        $img['new_h'] = $max_h;
     }
 
     // -----------------------------------------------------------------
@@ -175,7 +178,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
-        $imagick->thumbnailImage($max_w, $max_h, TRUE);
+        $imagick->thumbnailImage($img['new_w'], $img['new_h'], TRUE);
         $imagick->setFormat("png");
         $img['image']    = $imagick->getimageblob();
         $img['new_mime'] = 'image/'.$imagick->getFormat();
