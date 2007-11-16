@@ -226,7 +226,7 @@ function phorum_convert_getNextMessage($res,$table_name) {
       $max_id= $CONVERT['max_id'];
 
       $id=$mdata['id'];
-      if($mdata['closed'])
+      if(isset($mdata['closed']) && $mdata['closed'])
             $closed=1;
       else
             $closed=0;
@@ -347,6 +347,9 @@ function phorum_convert_getNextUser($res) {
     unset($userdata['yahoo']);
     unset($userdata['msn']);
     unset($userdata['jabber']);
+    if(isset($userdata['sess_id'])) {
+        unset($userdata['sess_id']);
+    }
     
     $userdata['user_id']=$userdata['id'];
     unset($userdata['id']);
