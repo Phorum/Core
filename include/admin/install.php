@@ -340,6 +340,8 @@ switch ($step){
             "cache_rss" => "0",
             "cache_newflags" => "0",
             "cache_messages" => "0",
+            "cache_css" => "1",
+            "cache_javascript" => "1",
             "use_cookies" => "1",
             "use_bcc" => "1",
             "use_rss" => "1",
