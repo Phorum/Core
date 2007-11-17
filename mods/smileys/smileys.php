@@ -117,9 +117,12 @@ function phorum_mod_smileys_editor_tool_plugin()
         );
     }
 
+    $description = isset($lang['smileys help'])
+                   ? $lang['smileys help'] : 'smileys help';
+
     // Register the smileys help page.
     editor_tools_register_help(
-        'smileys help',
+        $description,
         phorum_get_url(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
     );
 }
