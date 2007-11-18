@@ -136,8 +136,10 @@
 
     $forums=phorum_db_get_forums();
 
-    if(isset($_GET["edit"])){
-        $_GET['group_id']=(int)$_GET["group_id"];
+    if(isset($_REQUEST["edit"]) && !empty($_REQUEST['group_id']) ){
+          
+        $group_id_in = (empty($_POST['group_id']))?$_GET['group_id']:$_POST['group_id'];
+        $_GET['group_id']=(int)$group_id_in;
 
         $group=$groups[$_GET["group_id"]];
 
@@ -148,6 +150,9 @@
         $frm->hidden("module", "groups");
 
         $frm->hidden("section", "edit");
+        
+        // for getting back to the edit-page
+        $frm->hidden('edit','1');   
 
         $frm->hidden("group_id", $_GET["group_id"]);
 
@@ -166,6 +171,9 @@
         $frm->hidden("module", "groups");
 
         $frm->hidden("section", "forums");
+        
+        // for getting back to the edit-page
+        $frm->hidden('edit','1');   
 
         $frm->hidden("group_id", $_GET["group_id"]);
 
