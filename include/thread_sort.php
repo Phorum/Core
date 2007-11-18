@@ -32,6 +32,10 @@ if(!defined("PHORUM")) return;
 function phorum_sort_threads($rows)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+    
+    if(count($rows) == 0) {
+        return $rows;
+    }
 
     // Get template defined settings values.
     $indentmultiplier = isset($PHORUM['TMP']['indentmultiplier'])
