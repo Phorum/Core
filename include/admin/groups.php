@@ -20,6 +20,7 @@
     if(!defined("PHORUM_ADMIN")) return;
 
     $error="";
+    $new_forum_permission = 0;
 
     if(count($_POST)){
 
@@ -72,6 +73,7 @@
                     }
 
                     $group["permissions"][$_POST["new_forum"]]=$permission;
+                    $new_forum_permission = $permission;
                 }
 
                 if(isset($_POST["delforum"])){
@@ -183,13 +185,13 @@
 
         $forumpaths = phorum_get_forum_info(1);
 
-        $perm_frm = $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_READ."]", 1, "Read")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts")."<br />".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files")."<br />".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users")."&nbsp;&nbsp;";
+        $perm_frm = $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $new_forum_permission & PHORUM_USER_ALLOW_READ)."&nbsp;&nbsp;".
+                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $new_forum_permission & PHORUM_USER_ALLOW_REPLY)."&nbsp;&nbsp;".
+                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $new_forum_permission & PHORUM_USER_ALLOW_NEW_TOPIC)."&nbsp;&nbsp;".
+                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts", $new_forum_permission & PHORUM_USER_ALLOW_EDIT)."<br />".
+                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $new_forum_permission & PHORUM_USER_ALLOW_ATTACH)."<br />".
+                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages", $new_forum_permission & PHORUM_USER_ALLOW_MODERATE_MESSAGES)."&nbsp;&nbsp;".
+                    $frm->checkbox("new_permissions[".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users", $new_forum_permission & PHORUM_USER_ALLOW_MODERATE_USERS)."&nbsp;&nbsp;";
 
 
         $arr[]="Add A Forum...";
