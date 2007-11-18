@@ -129,6 +129,8 @@
     </tr>
 
     {LOOP MESSAGES}
+    {VAR alt ""}
+    {VAR title ""}
 
     {! This is the current message }
     {IF MESSAGES->message_id MESSAGE->message_id}
