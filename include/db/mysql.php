@@ -2197,7 +2197,8 @@ function phorum_db_move_thread($thread_id, $toforum)
             // Gather information for updating the newflags.
             // Moving the newflag is only useful if it is higher than the
             // min_id of the target forum.
-            if ($mid > $new_newflags['min_id'][$toforum]) {
+            if (!empty($new_newflags['min_id'][$toforum]) &&
+                $mid > $new_newflags['min_id'][$toforum]) {
                 $message_ids[] = $mid;
             } else {
             // Other newflags can be deleted.
