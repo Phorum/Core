@@ -19,14 +19,14 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/admin_mods.php');
+require_once('./include/api/modules.php');
 
 // ----------------------------------------------------------------------
 // Process posted form data
 // ----------------------------------------------------------------------
 
 // Retrieve a list of available modules.
-$list = phorum_api_admin_mods_list();
+$list = phorum_api_modules_list();
 
 if(count($_POST) && (!defined("PHORUM_INSTALL") || isset($_POST["do_modules_update"])))
 {
@@ -35,14 +35,14 @@ if(count($_POST) && (!defined("PHORUM_INSTALL") || isset($_POST["do_modules_upda
         if(substr($key, 0, 5) == "mods_") {
             $mod = substr($key, 5);
             if ($value) {
-                phorum_api_admin_mods_enable($mod);
+                phorum_api_modules_enable($mod);
             } else {
-                phorum_api_admin_mods_disable($mod);
+                phorum_api_modules_disable($mod);
             }
         }
     }
 
-    phorum_api_admin_mods_save();
+    phorum_api_modules_save();
 
     if (defined("PHORUM_INSTALL")) {
         $step = "done";
@@ -57,7 +57,7 @@ if(count($_POST) && (!defined("PHORUM_INSTALL") || isset($_POST["do_modules_upda
 // ----------------------------------------------------------------------
 
 // Retrieve a list of available modules.
-$list = phorum_api_admin_mods_list();
+$list = phorum_api_modules_list();
 
 // Show module problems to the admin. These are serious issues, which we
 // do not want to stow away like the deprecated hooks reporting below.
@@ -166,8 +166,8 @@ foreach ($list['modules'] as $name => $info)
                 "your Phorum because of that requirement.<br/>"
             );
 
-            phorum_api_admin_mods_disable($name);
-            phorum_api_admin_mods_save();
+            phorum_api_modules_disable($name);
+            phorum_api_modules_save();
         }
     }
 }

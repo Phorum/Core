@@ -339,10 +339,10 @@ function hide_help()
 } ?>
     <td style="border-bottom: 1px solid navy" align="center" valign="middle">
 <?php
-    require_once('./include/api/admin_mods.php');
-    $updates = phorum_api_admin_mods_check_updated_info();
+    require_once('./include/api/modules.php');
+    $updates = phorum_api_modules_check_updated_info();
     if (!empty($updates)) {
-        phorum_api_admin_mods_save();
+        phorum_api_modules_save();
         print "<div style=\"padding:5px;background-color:#fffff0;".
               "border:2px solid orange; text-align:left\">" .
               "<strong>Notification:</strong> " .

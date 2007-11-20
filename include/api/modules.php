@@ -46,7 +46,7 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
 );
 // }}}
 
-// {{{ Function: phorum_api_admin_mods_list()
+// {{{ Function: phorum_api_modules_list()
 /**
  * Retrieve a list of all available modules.
  *
@@ -68,7 +68,7 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
  *       An array of (HTML formatted) errors and warnings regarding module
  *       problems.
  */
-function phorum_api_admin_mods_list()
+function phorum_api_modules_list()
 {
     global $PHORUM;
 
@@ -207,24 +207,24 @@ function phorum_api_admin_mods_list()
 }
 // }}}
 
-// {{{ Function: phorum_api_admin_mods_enable()
+// {{{ Function: phorum_api_modules_enable()
 /**
  * Flag a module as enabled.
  *
  * This will only flag the module as enabled. After calling this function,
- * {@link phorum_api_admin_mods_save()} has to be called to store the
+ * {@link phorum_api_modules_save()} has to be called to store the
  * new module settings in the database.
  *
  * @param string $module
  *     The name of the module to enable.
  */
-function phorum_api_admin_mods_enable($module)
+function phorum_api_modules_enable($module)
 {
     global $PHORUM;
 
     // Load the module info if this was not done yet.
     if (!isset($PHORUM["API"]["mods_modules"])) {
-        phorum_api_admin_mods_list();
+        phorum_api_modules_list();
     }
 
     // Check if the module is valid.
@@ -237,18 +237,18 @@ function phorum_api_admin_mods_enable($module)
 }
 // }}}
 
-// {{{ Function: phorum_api_admin_mods_disable()
+// {{{ Function: phorum_api_modules_disable()
 /**
  * Flag a module as disabled.
  *
  * This will only flag the module as disabled. After calling this function,
- * {@link phorum_api_admin_mods_save()} has to be called to store the
+ * {@link phorum_api_modules_save()} has to be called to store the
  * new module settings in the database.
  *
  * @param string $module
  *     The name of the module to disabled.
  */
-function phorum_api_admin_mods_disable($module)
+function phorum_api_modules_disable($module)
 {
     global $PHORUM;
 
@@ -258,7 +258,7 @@ function phorum_api_admin_mods_disable($module)
 }
 // }}}
 
-// {{{ Function: phorum_api_admin_mods_save()
+// {{{ Function: phorum_api_modules_save()
 /**
  * Store the module information in the database.
  *
@@ -266,13 +266,13 @@ function phorum_api_admin_mods_disable($module)
  * enabled modules and write the result data ($PHORUM["mods"] and
  * $PHORUM["hooks"]) to the database.
  */
-function phorum_api_admin_mods_save()
+function phorum_api_modules_save()
 {
     global $PHORUM;
 
     // Load the module info if this was not done yet.
     if (!isset($PHORUM["API"]["mods_modules"])) {
-        phorum_api_admin_mods_list();
+        phorum_api_modules_list();
     }
 
     // For easy access.
@@ -456,11 +456,11 @@ function phorum_api_admin_mods_save()
     ));
 
     // Reset the module information update checking data.
-    phorum_api_admin_mods_check_updated_info(TRUE);
+    phorum_api_modules_check_updated_info(TRUE);
 }
 // }}}
 
-// {{{ Function: phorum_api_admin_mods_check_updated_info()
+// {{{ Function: phorum_api_modules_check_updated_info()
 /**
  * Check if there are modules for which the module information is updated.
  *
@@ -471,7 +471,7 @@ function phorum_api_admin_mods_save()
  * @return array
  *     An array of module names for which the module information was updated.
  */
-function phorum_api_admin_mods_check_updated_info($do_reset = FALSE)
+function phorum_api_modules_check_updated_info($do_reset = FALSE)
 {
     global $PHORUM;
 
