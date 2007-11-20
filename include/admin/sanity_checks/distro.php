@@ -121,7 +121,7 @@
         'include/thread_sort.php',
         'include/upload_functions.php',
         'include/version_functions.php',
-        'include/api/admin_mods.php',
+        'include/api/modules.php',
         'include/api/custom_profile_fields.php',
         'include/api/file_storage.php',
         'include/api/base.php',
