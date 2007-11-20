@@ -25,7 +25,7 @@
  * and deactivating them.
  *
  * @package    PhorumAPI
- * @subpackage AdminModsAPI
+ * @subpackage ModulesAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
