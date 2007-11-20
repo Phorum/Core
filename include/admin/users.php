@@ -235,7 +235,9 @@ if (!isset($_GET["edit"]) && !isset($_POST['section']))
     // Build the search parameters query string items.
     $url_safe_search = '';
     foreach ($user_search_fields as $field) {
-        $url_safe_search .= "&$field=" . urlencode($_REQUEST[$field]);
+        if (isset($_REQUEST[$field])) {
+            $url_safe_search .= "&$field=" . urlencode($_REQUEST[$field]);
+        }
     }
 
     settype($_REQUEST["start"], "integer");
