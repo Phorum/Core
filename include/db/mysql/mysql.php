@@ -113,6 +113,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
          ? mysql_unbuffered_query($sql, $conn)
          : mysql_query($sql, $conn);
 
+    // Handle errors.
     if ($res === FALSE)
     {
         // See if the $flags tell us to ignore the error.

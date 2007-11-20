@@ -119,7 +119,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
          $res = mysqli_query($conn, $sql);
     }
 
-    // Execute the SQL query.
+    // Handle errors.
     if ($res === FALSE)
     {
         // See if the $flags tell us to ignore the error.
