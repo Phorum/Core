@@ -60,6 +60,7 @@ function phorum_build_forum_list() {
         $forum['forum_path'] = unserialize($forum['forum_path']);
 
         $indent = count($forum["forum_path"]) - 2;
+		if($indent < 0) $indent = 0;
 
         $forum_picker[$forum["forum_id"]] = array(
             "forum_id" => $forum["forum_id"],
