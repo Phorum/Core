@@ -480,7 +480,7 @@ function phorum_api_user_save($user, $flags = 0)
 
     // Add the custom profile field data to the user data.
     $dbuser['user_data'] = $user_data;
-    
+
     // At this point, we should have a couple of mandatory fields available
     // in our data. Without these fields, the user record is not sane
     // enough to continue with.
@@ -674,7 +674,7 @@ function phorum_api_user_save_raw($user)
             phorum_cache_remove('user', $user['user_id']);
         }
     }
-    
+
     return $return;
 }
 // }}}
@@ -734,7 +734,7 @@ function phorum_api_user_save_settings($settings)
     if (!empty($GLOBALS['PHORUM']['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
-    
+
     return TRUE;
 }
 // }}}
@@ -763,8 +763,8 @@ function phorum_api_user_save_settings($settings)
  *     containing user data is returned or NULL if the user was not found.
  *     If the $user_id parameter is an array of user_ids, then an array
  *     of user data arrays is returned, indexed by the user_id.
- *     Users for user_ids that are not found are not included in the
- *     returned array.
+ *     For user_ids that are not found, no entry will be available in
+ *     the returned array.
  */
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
@@ -1271,7 +1271,7 @@ function phorum_api_user_delete($user_id)
     foreach ($files as $file_id => $file) {
         phorum_api_file_delete($file_id);
     }
-    
+
     return $return;
 }
 // }}}
@@ -2390,7 +2390,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
         // Check the access rights for each forum.
         foreach ($forum_access as $id => $data)
         {
-            // Access to folders is always granted. 
+            // Access to folders is always granted.
             if (!empty($forums[$id]['folder_flag'])) {
                 $forum_access[$id] = TRUE;
                 continue;
