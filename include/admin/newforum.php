@@ -15,6 +15,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 if(!defined("PHORUM_ADMIN")) return;
@@ -23,7 +24,8 @@ include_once "./include/format_functions.php";
 
 $error="";
 
-if(count($_POST)){
+if (count($_POST))
+{
 
     // set the defaults and check values
 
