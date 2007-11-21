@@ -92,7 +92,8 @@
             $setforumpath = false;
             if(defined("PHORUM_EDIT_FOLDER")){
                 if($oldfolder['name'] != $_POST['name'] ||
-                   $oldfolder['parent_id'] != $_POST['parent_id'] ) {
+                   $oldfolder['parent_id'] != $_POST['parent_id'] ||
+                   $setvroot) {
                        $setforumpath = true;
                    }
             // add the folder
