@@ -17,99 +17,114 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
-$parent_id = (int)((isset($_GET["parent_id"])) ? $_GET["parent_id"] : 0);
+include_once('./include/api/forums.php');
+
+$folder_id = (int)((isset($_GET["parent_id"])) ? $_GET["parent_id"] : 0);
 $parent_parent_id = (int)((isset($_GET["pparent"])) ? $_GET["pparent"] : 0);
 
-$forums=phorum_db_get_forums(0, $parent_id);
+// Load the info for the current folder.
+$folder = phorum_api_forums_get($folder_id);
 
-// change the display-order
-if(isset($_GET['display_up']) || isset($_GET['display_down'])) {
+// Load the list of forums and folders that are in the current folder.
+$forums = phorum_api_forums_by_folder($folder_id);
 
-    // load all the forums up for ordering
-    foreach($forums as $forum_id=>$forum_data){
-        $forum_order[]=$forum_id;
+// Change the display order of the items in the list.
+if (isset($_GET['display_up']) || isset($_GET['display_down']))
+{
+    if (isset($_GET['display_up'])) {
+        $forum_id = (int)$_GET['display_up'];
+        $movement = 'up';
+    } else {
+        $forum_id = (int)$_GET['display_down'];
+        $movement = 'down';
     }
 
-    // find the one we are moving
-    $key=array_search(isset($_GET['display_up'])?$_GET['display_up']:$_GET['display_down'], $forum_order);
+    phorum_api_forums_change_order($folder_id, $forum_id, $movement, 1);
 
-    $newkey=NULL;
-
-    // set the new key for it
-    if($key>0 && isset($_GET['display_up'])){
-        $newkey=$key-1;
-    }
-
-    if($key<count($forum_order)-1 && isset($_GET['display_down'])){
-        $newkey=$key+1;
-    }
-
-    // if we have a newkey, make the move
-    if(isset($newkey)){
-        $tmp=$forum_order[$key];
-        $forum_order[$key]=$forum_order[$newkey];
-        $forum_order[$newkey]=$tmp;
-
-
-        // loop through all the forums and updated the ones that changed.
-        // We have to look at them all because the default value for
-        // display order is 0 for all forums.  So, in an unsorted forlder
-        // all the values are set to 0 until you move one.
-        foreach($forum_order as $new_display_order=>$forum_id){
-            if($forums[$forum_id]["display_order"]!=$new_display_order){
-                $forums[$forum_id]["display_order"]=$new_display_order;
-                $update_forum = array('forum_id'=>$forum_id,'display_order'=>$new_display_order);
-                phorum_db_update_forum($update_forum);
-            }
-        }
-
-        // get a fresh forum list with updated order.
-        $forums=phorum_db_get_forums(0, $parent_id);
-    }
-
+    // Get a fresh forum list with updated order.
+    $forums = phorum_api_forums_by_folder($folder_id);
 }
 
 $rows = '';
-foreach($forums as $forum_id => $forum){
-
-
-
-    if($forum["folder_flag"]){
-        $type="Folder";
-        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id=$forum_id&pparent=$parent_id\">Browse</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deletefolder&forum_id=$forum_id\">Delete</a>";
-        $editurl="{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id";
+foreach($forums as $forum_id => $forum)
+{
+    if ($forum["folder_flag"])
+    {
+        $type="folder";
+        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deletefolder&forum_id=$forum_id\">Delete</a>";
+        $mainurl="{$PHORUM["admin_http_path"]}?module=default&parent_id=$forum_id";
     } else {
-        $type="Forum";
+        $type="forum";
         $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editforum&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deleteforum&forum_id=$forum_id\">Delete</a>";
-        $editurl="{$PHORUM["admin_http_path"]}?module=editforum&forum_id=$forum_id";
+        $mainurl=NULL;
     }
 
-    $rows.="<tr><td class=\"PhorumAdminTableRow\"><a href=\"$editurl\">$forum[name]</a><br />$forum[description]</td><td class=\"PhorumAdminTableRow\">$type</td><td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=default&display_up=$forum_id&parent_id=$parent_id\">Up</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=default&display_down=$forum_id&parent_id=$parent_id\">Down</a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
+    $rows.="<tr><td valign=\"top\" class=\"PhorumAdminTableRow\">";
+    if ($mainurl) $rows .= "<a href=\"$mainurl\">";
+    $rows.="<img border=\"0\" alt=\"$type\" title=\"$type\" src=\"{$PHORUM["http_path"]}/images/$type.png\"/>";
+    if ($mainurl) $rows .= "</a>";
+    $rows.="</td><td valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
+    if ($mainurl) $rows .= "<a href=\"$mainurl\">";
+    $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
+    if ($mainurl) $rows .= "</a>";
+    $rows .= "<p class=\"forum-description\">$forum[description]</p></td><td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=default&display_up=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=default&display_down=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
-if(empty($rows)){
+if (empty($rows)) {
     $rows="<tr><td colspan=\"4\" class=\"PhorumAdminTableRow\">There are no forums or folders in this folder.</td></tr>\n";
 }
 
-if($parent_id>0){
-    $folder_data=phorum_get_folder_info();
+if ($folder_id > 0)
+{
+    if (!is_array($path)) $path = unserialize($folder['forum_path']);
+    $path = array_reverse($path, TRUE);
 
-    $path=$folder_data[$parent_id];
-} else {
-    $path="Choose a forum or folder.";
+    $elts = array();
+    foreach ($path as $id => $name) {
+        if (empty($elts)) {
+            if (empty($folder['vroot'])) {
+                $name = 'Root folder';
+            } else {
+                $elts[] = "<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$folder['parent_id']}\">Back to parent folder</a>";
+                $name = 'Virtual Root "'.$folder['name'].'"';
+            }
+        }
+        if ($folder_id == $id) {
+            $elts[] = '<strong>' . $name . '</strong>';
+        } else {
+            $elts[] = "<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id=$id\">$name</a>";
+        }
+    }
+
+    $path = implode(' / ', $elts);
 }
-
-
+else {
+    $path='<strong>Root folder</strong>';
+}
 
 ?>
 
-<div class="PhorumAdminTitle"><?php echo "$path &nbsp;&nbsp; <a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$parent_parent_id}\"><span class=\"PhorumAdminTitle\">Go Up</span></a>";?></div>
+<div class="PhorumAdminTitle">
+  Forum and folder settings
+</div>
+
+<div class="PhorumAdminBreadcrumbs">
+  <?php
+  if (empty($folder['forum_id'])) {
+      print "<img border=\"0\" src=\"{$PHORUM["http_path"]}/images/folder.png\" alt=\"Root folder\" title=\"Root folder\"/>";
+  } else {
+      print "<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$parent_parent_id}\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/folder_up.png\" alt=\"Go one level up\" title=\"Go one level up\"/></a>";
+  }
+  echo "&nbsp;$path";
+  ?>
+</div>
+
 <table border="0" cellspacing="2" cellpadding="3" width="100%">
 <tr>
-    <td class="PhorumAdminTableHead">Name</td>
-    <td class="PhorumAdminTableHead">Type</td>
+    <td class="PhorumAdminTableHead">&nbsp;</td>
+    <td width="100%" class="PhorumAdminTableHead">Name</td>
     <td class="PhorumAdminTableHead">Move</td>
     <td class="PhorumAdminTableHead">Actions</td>
 </tr>
