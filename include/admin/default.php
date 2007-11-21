@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-include_once('./include/api/admin_forums.php');
+include_once('./include/api/forums.php');
 
 $folder_id = (int)((isset($_GET["parent_id"])) ? $_GET["parent_id"] : 0);
 $parent_parent_id = (int)((isset($_GET["pparent"])) ? $_GET["pparent"] : 0);
