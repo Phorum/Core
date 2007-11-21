@@ -30,14 +30,14 @@
  * folders are also identified by a forum_id.
  *
  * @package    PhorumAPI
- * @subpackage AdminForumsAPI
+ * @subpackage ForumsAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM")) return;
 
-// {{{ Function: phorum_api_admin_forums_get
+// {{{ Function: phorum_api_forums_get
 /**
  * Retrieve the data for one or more forums and/or folders.
  *
@@ -52,7 +52,7 @@ if (!defined("PHORUM_ADMIN")) return;
  *     by their display order. For forum_ids that are not found, no entry
  *     will be available in the returned array.
  */
-function phorum_api_admin_forums_get($forum_id)
+function phorum_api_forums_get($forum_id)
 {
     $forum_ids = is_array($forum_id) ? $forum_id : array($forum_id);
     $forums = phorum_db_get_forums($forum_ids);
@@ -65,9 +65,9 @@ function phorum_api_admin_forums_get($forum_id)
 }
 // }}}
 
-// {{{ Function: phorum_api_admin_forums_by_folder()
+// {{{ Function: phorum_api_forums_by_folder()
 /**
- * Retrieve a list of all available forums within a certain folder.
+ * Retrieve data for all direct descendant forums and folders within a folder.
  *
  * @param integer $folder_id
  *     The forum_id of the folder for which to retrieve the forums.
@@ -76,22 +76,56 @@ function phorum_api_admin_forums_get($forum_id)
  *     An array of forums, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_admin_forums_by_folder($folder_id = 0)
+function phorum_api_forums_by_folder($folder_id = 0)
 {
     return phorum_db_get_forums(0, $folder_id);
 }
 // }}}
 
-// {{{ Function: phorum_api_admin_forums_change_order()
+// {{{ Function: phorum_api_forums_by_vroot()
+/**
+ * Retrieve data for all forums and folders that belong to a certain vroot.
+ *
+ * @param integer $vroot_id
+ *     The forum_id of the vroot for which to retrieve the forums.
+ *
+ * @return array
+ *     An array of forums, index by the their forum_id and sorted
+ *     by their display order.
+ */
+function phorum_api_forums_by_vroot($vroot_id = 0)
+{
+    return phorum_db_get_forums(0, NULL, $vroot_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_by_inheritance()
+/**
+ * Retrieve data for all forums inheriting their settings from a certain forum.
+ *
+ * @param integer $forum_id
+ *     The forum_id for which to check what forums inherit its setting.
+ *
+ * @return array
+ *     An array of forums, index by the their forum_id and sorted
+ *     by their display order.
+ */
+function phorum_api_forums_by_inheritance($forum_id = 0)
+{
+    return phorum_db_get_forums(0, NULL, NULL, $forum_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_change_order()
 /**
  * Change the displaying order for forums and folders in a certain folder.
- * 
+ *
  * @param integer $folder_id
  *     The forum_id of the folder in which to change the display order.
- * 
+ *
  * @param integer $forum_id
  *     The id of the forum or folder to move.
- * 
+ *
  * @param string $movement
  *     This field determines the type of movement to apply to the forum
  *     or folder. This can be one of:
@@ -100,52 +134,51 @@ function phorum_api_admin_forums_by_folder($folder_id = 0)
  *     - "pos": Move the forum or folder to position $value
  *     - "start": Move the forum or folder to the start of the list
  *     - "end": Move the forum or folder to the end of the list
- * 
+ *
  * @param mixed $value
  *     This field specifies a value for the requested type of movement.
  *     An integer value is only needed for movements "up", "down" and "pos".
  *     For other movements, this parameter can be omitted.
  */
-function phorum_api_admin_forums_change_order($folder_id, $forum_id, $movement, $value = NULL)
+function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value = NULL)
 {
     settype($folder_id, 'int');
     settype($forum_id, 'int');
     if ($value !== NULL) settype($value, 'int');
-    
+
     // Get the forums for the specified folder.
-    $forums = phorum_api_admin_forums_by_folder($folder_id);
-    
+    $forums = phorum_api_forums_by_folder($folder_id);
+
     // Prepare the forum list for easy ordering.
     $current_pos = NULL;
-    $last_pos = NULL;
     $pos = 0;
     $forum_ids = array();
     foreach ($forums as $forum) {
         if ($forum['forum_id'] == $forum_id) $current_pos = $pos;
-        $forum_ids[$pos++] = $forum['forum_id'];    
+        $forum_ids[$pos++] = $forum['forum_id'];
     }
-    
+
     $pos--;  // to make this the last index position in the array.
-    
+
     // If the forum_id is not in the folder, then return right away.
     if ($current_pos === NULL) return;
-    
+
     switch ($movement)
     {
         case "up":    $new_pos = $current_pos - $value; break;
         case "down":  $new_pos = $current_pos + $value; break;
-        case "pos":   $new_pos = $value;                break;     
+        case "pos":   $new_pos = $value;                break;
         case "start": $new_pos = 0;                     break;
         case "end":   $new_pos = $pos;                  break;
-        
+
         default:
             trigger_error(
-                "phorum_api_admin_forums_change_order(): " .
+                "phorum_api_forums_change_order(): " .
                 "Illegal \$momement parameter \"$movement\" used",
                 E_USER_ERROR
             );
     }
-    
+
     // Keep the new position within boundaries.
     if ($new_pos < 0) $new_pos = 0;
     if ($new_pos > $pos) $new_pos = $pos;
@@ -166,7 +199,7 @@ function phorum_api_admin_forums_change_order($folder_id, $forum_id, $movement, 
                 $new_order[] = $forum_id;
             }
         } else {
-            $new_order[] = $forum_ids[$i]; 
+            $new_order[] = $forum_ids[$i];
         }
     }
 

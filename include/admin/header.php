@@ -83,10 +83,24 @@ input, textarea, select, td
     color: White;
 }
 
+.input-form-td-break, .PhorumAdminTitle a
+{
+    color: white;
+}
+
 .input-form-td-subbreak
 {
     background-color: #CCCCDA;
     color: black;
+}
+
+.PhorumAdminBreadcrumbs
+{
+    background-color: #CCCCDA;
+    border: 1px solid Navy;
+    color: black;
+    font-size: 14px;
+    padding: 5px;
 }
 
 .input-form-td-message
@@ -133,6 +147,11 @@ input, textarea, select, td
     color: Navy;
     padding: 3px;
     font-size: 13px;
+}
+
+.PhorumAdminTableRow p.forum-description {
+    padding: 0px;
+    margin: 3px 0px 0px 0px;
 }
 
 .PhorumAdminTableHead
