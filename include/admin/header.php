@@ -151,7 +151,25 @@ input, textarea, select, td
 
 .PhorumAdminTableRow p.forum-description {
     padding: 0px;
-    margin: 3px 0px 0px 0px;
+    margin: 3px 0px 0px 20px;
+}
+
+.icon-folder-up {
+    width: 22px;
+    padding-left: 22px;
+    background: url(<?php print $PHORUM['http_path'] ?>/images/folder_up.png) 0 1px no-repeat;
+}
+
+.icon-folder {
+    width: 22px;
+    padding-left: 22px;
+    background: url(<?php print $PHORUM['http_path'] ?>/images/folder.png) 0 1px no-repeat;
+}
+
+.icon-forum {
+    width: 22px;
+    padding-left: 22px;
+    background: url(<?php print $PHORUM['http_path'] ?>/images/forum.png) 0 1px no-repeat;
 }
 
 .PhorumAdminTableHead
