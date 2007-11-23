@@ -20,6 +20,9 @@
 define('phorum_page','javascript');
 include_once("./common.php");
 
+// So we can use {URL->HTTP_PATH} in the templates.
+phorum_build_common_urls();
+
 /**
  * [hook]
  *     javascript_register
