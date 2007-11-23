@@ -31,6 +31,9 @@ if(isset($PHORUM["args"]["1"])){
     exit(1);
 }
 
+// So we can use {URL->HTTP_PATH} in the templates.
+phorum_build_common_urls();
+
 /**
  * [hook]
  *     css_register
