@@ -61,19 +61,16 @@ foreach($forums as $forum_id => $forum)
         $mainurl=NULL;
     }
 
-    $rows.="<tr><td valign=\"top\" class=\"PhorumAdminTableRow\">";
+    $rows.="<tr><td valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
     if ($mainurl) $rows .= "<a href=\"$mainurl\">";
-    $rows.="<img border=\"0\" alt=\"$type\" title=\"$type\" src=\"{$PHORUM["http_path"]}/images/$type.png\"/>";
-    if ($mainurl) $rows .= "</a>";
-    $rows.="</td><td valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
-    if ($mainurl) $rows .= "<a href=\"$mainurl\">";
+    $rows .= "<span class=\"icon-$type\"></span>";
     $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
     if ($mainurl) $rows .= "</a>";
     $rows .= "<p class=\"forum-description\">$forum[description]</p></td><td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=default&display_up=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=default&display_down=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
 if (empty($rows)) {
-    $rows="<tr><td colspan=\"4\" class=\"PhorumAdminTableRow\">There are no forums or folders in this folder.</td></tr>\n";
+    $rows="<tr><td colspan=\"3\" class=\"PhorumAdminTableRow\">There are no forums or folders in this folder.</td></tr>\n";
 }
 
 if ($folder_id > 0)
@@ -113,17 +110,16 @@ else {
 <div class="PhorumAdminBreadcrumbs">
   <?php
   if (empty($folder['forum_id'])) {
-      print "<img border=\"0\" src=\"{$PHORUM["http_path"]}/images/folder.png\" alt=\"Root folder\" title=\"Root folder\"/>";
+      print "<span class=\"icon-folder\"></span>";
   } else {
-      print "<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$parent_parent_id}\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/folder_up.png\" alt=\"Go one level up\" title=\"Go one level up\"/></a>";
+      print "<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$parent_parent_id}\"><span class=\"icon-folder-up\"></span></a>";
   }
-  echo "&nbsp;$path";
+  echo "$path";
   ?>
 </div>
 
 <table border="0" cellspacing="2" cellpadding="3" width="100%">
 <tr>
-    <td class="PhorumAdminTableHead">&nbsp;</td>
     <td width="100%" class="PhorumAdminTableHead">Name</td>
     <td class="PhorumAdminTableHead">Move</td>
     <td class="PhorumAdminTableHead">Actions</td>
