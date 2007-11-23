@@ -314,7 +314,7 @@ function phorum_controlcenter_user_save($panel)
         phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, $userdata["user_id"]);
 
         // If a new password was set, then reset all session id(s), so
-        // other computers or browser will loose any active session that
+        // other computers or browser will lose any active session that
         // they are running.
         if (isset($userdata["password"]) && $userdata["password"] != '') {
             phorum_api_user_session_create(

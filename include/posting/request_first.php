@@ -126,7 +126,7 @@ if (($mode == "post" || $mode == "reply" || $mode == "quote") && $PHORUM["DATA"]
 
 // When replying, the user might already be subscribed to the thread,
 // in which case the follow mode needs to be initializated to not
-// loose the follow mode on posting the reply.
+// lose the follow mode on posting the reply.
 if ($mode == "reply" && $PHORUM["DATA"]["LOGGEDIN"])
 {
     $type = phorum_api_user_get_subscription(

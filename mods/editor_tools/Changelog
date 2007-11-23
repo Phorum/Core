@@ -191,7 +191,7 @@ Changelog:
 
     - For MSIE, the active textarea selection is now stored before
       opening the color or text size popup and restored after
-      a selection has been made. This is done, because MSIE looses
+      a selection has been made. This is done, because MSIE loses
       the selection range when focus moves to another object.
       This caused for example the color code to be never around
       the selected text in MSIE.

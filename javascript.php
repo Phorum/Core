@@ -214,7 +214,7 @@ if (empty($PHORUM['cache_javascript']) || !file_exists($cache_file))
         phorum_write_file($cache_file, $content);
     }
 
-    // Send the RSS to the browser.
+    // Send the JavaScript to the browser.
     header("Content-Type: text/javascript");
     print "/* FRESH */";
     print $content;
@@ -241,7 +241,7 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
     }
 }
 
-// Send the RSS to the browser.
+// Send the JavaScript to the browser.
 header("Content-Type: text/javascript");
 header("Last-Modified: " . date("r", $last_modified));
 
