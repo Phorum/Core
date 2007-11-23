@@ -280,7 +280,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
         phorum_write_file($cache_file, $content);
     }
 
-    // Send the RSS to the browser.
+    // Send the CSS to the browser.
     header("Content-Type: text/css");
     print $content;
 
@@ -306,7 +306,7 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
     }
 }
 
-// Send the RSS to the browser.
+// Send the CSS to the browser.
 header("Content-Type: text/css");
 header("Last-Modified: " . date("r", $last_modified));
 
