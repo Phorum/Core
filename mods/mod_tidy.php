@@ -13,21 +13,17 @@ function mod_tidy_start(){
 
 function mod_tidy_end($buffer){
 
+    $pres_tags = array("pre", "xmp", "textarea");
+
     $preserved_tags = array();
 
-    if(preg_match_all("!(<pre.*?>).+?(</pre.*?>)!ms", $buffer, $matches)){
-        foreach($matches[0] as $match){
-            $hash = md5($match);
-            $preserved_tags[$hash] = $match;
-            $buffer = str_replace($match, "<".$hash.">", $buffer);
-        }
-    }
-
-    if(preg_match_all("!(<xmp.*?>).+?(</xmp.*?>)!ms", $buffer, $matches)){
-        foreach($matches[0] as $match){
-            $hash = md5($match);
-            $preserved_tags[$hash] = $match;
-            $buffer = str_replace($match, "<".$hash.">", $buffer);
+    foreach($pres_tags as $pres_tag){
+        if(preg_match_all("!(<$pres_tag.*?>).+?(</$pres_tag.*?>)!ms", $buffer, $matches)){
+            foreach($matches[0] as $match){
+                $hash = md5($match);
+                $preserved_tags[$hash] = $match;
+                $buffer = str_replace($match, "<".$hash.">", $buffer);
+            }
         }
     }
 
