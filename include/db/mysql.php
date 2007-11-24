@@ -1628,7 +1628,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         // Seach for messages.
         $sql = "SELECT SQL_CALC_FOUND_ROWS *
                 FROM   {$PHORUM['message_table']}
-                USE    KEY(user_message)
+                USE    KEY(user_messages)
                 WHERE  user_id = $user_id AND
                        status=".PHORUM_STATUS_APPROVED." AND
                        moved=0
