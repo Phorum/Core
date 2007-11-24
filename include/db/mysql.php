@@ -7155,7 +7155,8 @@ function phorum_db_create_tables()
            KEY last_post_time (forum_id,status,modifystamp),
            KEY next_prev_thread (forum_id,status,thread),
            KEY user_id (user_id),
-           KEY recent_user_id (recent_user_id)
+           KEY recent_user_id (recent_user_id),
+           KEY user_messages (user_id, message_id)
        )",
 
       "CREATE TABLE {$PHORUM['settings_table']} (
