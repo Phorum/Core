@@ -234,7 +234,7 @@ function phorum_mod_bbcode_format($data)
                     "$quotestart",
                     "$quotestart<strong>$1</strong><br/>",
                     "$quotestart<strong>$1</strong><br/>",
-                    "</div></blockquote>"
+                    "<br/></div></blockquote>"
                 ), $body);
             }
         }
