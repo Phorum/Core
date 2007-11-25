@@ -371,7 +371,7 @@ function phorum_api_user_save($user, $flags = 0)
     // $user must be an array.
     if (!is_array($user)) {
         trigger_error(
-        	'phorum_api_user_save(): $user argument is not an array',
+            'phorum_api_user_save(): $user argument is not an array',
             E_USER_ERROR
         );
         return NULL;
@@ -379,11 +379,11 @@ function phorum_api_user_save($user, $flags = 0)
 
     // We need at least the user_id field.
     if (!array_key_exists('user_id', $user))  {
-	    trigger_error(
-	        'phorum_api_user_save(): missing field "user_id" in user data array',
-	        E_USER_ERROR
-	    );
-	    return NULL;
+        trigger_error(
+           'phorum_api_user_save(): missing field "user_id" in user data array',
+           E_USER_ERROR
+        );
+        return NULL;
     }
     if ($user['user_id'] !== NULL && !is_numeric($user['user_id'])) {
         trigger_error(
@@ -646,7 +646,7 @@ function phorum_api_user_save_raw($user)
 {
     if (empty($user['user_id'])) {
         trigger_error(
-        	'phorum_api_user_save_raw(): the user_id field cannot be empty',
+            'phorum_api_user_save_raw(): the user_id field cannot be empty',
             E_USER_ERROR
         );
         return NULL;
@@ -1503,8 +1503,8 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
         // Bogus $user parameter.
         else {
             trigger_error(
-            	'phorum_api_user_set_active_user(): $user argument should be ' .
-            	'one of NULL, array or integer',
+                'phorum_api_user_set_active_user(): $user argument should be ' .
+                'one of NULL, array or integer',
                 E_USER_ERROR
             );
             return NULL;
@@ -1703,23 +1703,23 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Check if we have a valid session type.
     if ($type != PHORUM_FORUM_SESSION &&
         $type != PHORUM_ADMIN_SESSION) {
-	        trigger_error(
-	        	'phorum_api_user_session_create(): Illegal session type: ' .
-	            htmlspecialchars($type),
-	            E_USER_ERROR
-	        );
-	        return NULL;
-        }
+        trigger_error(
+            'phorum_api_user_session_create(): Illegal session type: ' .
+            htmlspecialchars($type),
+            E_USER_ERROR
+        );
+        return NULL;
+    }
 
     // Check if the active Phorum user was set.
     if (empty($PHORUM['user']) ||
         empty($PHORUM['user']['user_id'])) {
-            trigger_error(
-        		'phorum_api_user_session_create(): Missing user in environment',
-                E_USER_ERROR
-            );
-            return NULL;
-        }
+        trigger_error(
+            'phorum_api_user_session_create(): Missing user in environment',
+            E_USER_ERROR
+        );
+        return NULL;
+    }
 
     // Check if the user is activated.
     if ($GLOBALS['PHORUM']['user']['active'] != PHORUM_USER_ACTIVE) {
@@ -1938,9 +1938,9 @@ function phorum_api_user_session_restore($type)
     }
     else {
         trigger_error(
-	        'phorum_api_user_session_restore(): Illegal session type: ' .
-	        htmlspecialchars($type),
-	        E_USER_ERROR
+            'phorum_api_user_session_restore(): Illegal session type: ' .
+            htmlspecialchars($type),
+            E_USER_ERROR
         );
         return NULL;
     }
@@ -2200,9 +2200,9 @@ function phorum_api_user_session_destroy($type)
             );
         } else {
             trigger_error(
-	            'phorum_api_user_session_destroy(): Illegal session type: ' .
-	            htmlspecialchars($type),
-	            E_USER_ERROR
+                'phorum_api_user_session_destroy(): Illegal session type: ' .
+                htmlspecialchars($type),
+                E_USER_ERROR
             );
             return NULL;
         }
@@ -2266,9 +2266,9 @@ function phorum_api_user_save_groups($user_id, $groups)
             $perm != PHORUM_USER_GROUP_APPROVED   &&
             $perm != PHORUM_USER_GROUP_MODERATOR) {
             trigger_error(
-	            'phorum_api_user_save_groups(): Illegal group permission for ' .
-	            'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
-	            E_USER_ERROR
+                'phorum_api_user_save_groups(): Illegal group permission for ' .
+                'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
+                E_USER_ERROR
             );
             return NULL;
             }
