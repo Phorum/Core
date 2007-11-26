@@ -13,6 +13,11 @@
     border: 1px solid #000000;
     background: transparent;
 }
+
+#phorum div.message-body br {
+    clear:both;
+}
+
 #phorum table.list th  {
     background: transparent;
     color: #000000;
@@ -25,3 +30,4 @@
 #phorum a,#phorum a:hover {
     color: #000000;
 }
+
