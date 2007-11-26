@@ -119,10 +119,5 @@ else {
 </div>
 
 <table border="0" cellspacing="2" cellpadding="3" width="100%">
-<tr>
-    <td width="100%" class="PhorumAdminTableHead">Name</td>
-    <td class="PhorumAdminTableHead">Move</td>
-    <td class="PhorumAdminTableHead">Actions</td>
-</tr>
 <?php echo $rows; ?>
 </table>
