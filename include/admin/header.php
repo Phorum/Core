@@ -149,6 +149,10 @@ input, textarea, select, td
     font-size: 13px;
 }
 
+.forum-title {
+    width: 100%;
+}
+
 .PhorumAdminTableRow p.forum-description {
     padding: 0px;
     margin: 3px 0px 0px 20px;

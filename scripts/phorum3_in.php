@@ -185,8 +185,7 @@ function phorum_convert_prepareForum($forumdata) {
                      'display_ip_address' => $forumdata['showip'],
                      'allow_email_notify' => $forumdata['emailnotification'],
                      'language' => basename($forumdata['lang'],".php"),
-                     'email_moderators' => $email_mod,
-                     'edit_post' => $forumdata['allow_edit']
+                     'email_moderators' => $email_mod
                      );
     }
     return $newforum;

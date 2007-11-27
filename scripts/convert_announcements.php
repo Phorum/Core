@@ -42,7 +42,6 @@ $template=array(
     "language"=>$PHORUM["default_language"],
     "email_moderators"=>0,
     "display_order"=>99,
-    "edit_post"=>1,
     "pub_perms" =>  1,
     "reg_perms" =>  3
 );

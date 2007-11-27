@@ -1943,7 +1943,7 @@ function phorum_db_get_neighbour_thread($key, $direction)
  *
  * @param mixed $forum_ids
  *     A single forum_id or an array of forum_ids for which to retrieve the
- *     forum data. If this parameter is 0 (zero), then the $parent_id
+ *     forum data. If this parameter is NULL, then the $parent_id
  *     parameter will be checked.
  *
  * @param mixed $parent_id
@@ -1963,7 +1963,7 @@ function phorum_db_get_neighbour_thread($key, $direction)
  * @return array
  *     An array of forums, indexed by forum_id.
  */
-function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
+function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -2317,7 +2317,7 @@ function phorum_db_reopen_thread($thread_id)
  *     parent_id, list_length_flat, list_length_threaded, read_length,
  *     moderation, threaded_list, threaded_read, float_to_top,
  *     display_ip_address, allow_email_notify, language, email_moderators,
- *     display_order, edit_post, pub_perms, reg_perms.
+ *     display_order, pub_perms, reg_perms.
  *
  * @return integer
  *     The forum_id that was assigned to the new forum.
@@ -7098,7 +7098,6 @@ function phorum_db_create_tables()
            display_order            int unsigned   NOT NULL default '0',
            read_length              int unsigned   NOT NULL default '0',
            vroot                    int unsigned   NOT NULL default '0',
-           edit_post                tinyint(1)     NOT NULL default '1',
            template_settings        text           NOT NULL,
            forum_path               text           NOT NULL,
            count_views              tinyint(1)     NOT NULL default '0',
