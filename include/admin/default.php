@@ -61,12 +61,12 @@ foreach($forums as $forum_id => $forum)
         $mainurl=NULL;
     }
 
-    $rows.="<tr><td valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
+    $rows.="<tr><th align=\"left\" valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
     if ($mainurl) $rows .= "<a href=\"$mainurl\">";
     $rows .= "<span class=\"icon-$type\"></span>";
     $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
     if ($mainurl) $rows .= "</a>";
-    $rows .= "<p class=\"forum-description\">$forum[description]</p></td><td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=default&display_up=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=default&display_down=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
+    $rows .= "<p class=\"forum-description\">$forum[description]</p></th><td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=default&display_up=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=default&display_down=$forum_id&parent_id=$folder_id\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
 if (empty($rows)) {
