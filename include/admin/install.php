@@ -411,7 +411,6 @@ switch ($step){
             "display_order"=>99,
             "pub_perms" =>  1,
             "reg_perms" =>  3,
-            "template_settings" => "",
             "forum_path" => 'a:2:{i:1;s:13:"Announcements";i:0;s:8:"Phorum 5";}'
             );
 
@@ -439,7 +438,6 @@ switch ($step){
             "display_order"=>0,
             "pub_perms" =>  1,
             "reg_perms" =>  15,
-            "template_settings" => "",
             "forum_path" => 'a:2:{i:1;s:10:"Test Forum";i:0;s:8:"Phorum 5";}'
             );
 

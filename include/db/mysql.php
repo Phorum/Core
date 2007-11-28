@@ -2329,7 +2329,6 @@ function phorum_db_add_forum($forum)
     // check for fields that must be set for mysql strict mode
     if(empty($forum["description"])) $forum["description"] = "";
     if(empty($forum["forum_path"])) $forum["forum_path"] = "";
-    if(empty($forum["template_settings"])) $forum["template_settings"] = "";
 
     $insertfields = array();
     foreach ($forum as $key => $value)
@@ -7098,7 +7097,6 @@ function phorum_db_create_tables()
            display_order            int unsigned   NOT NULL default '0',
            read_length              int unsigned   NOT NULL default '0',
            vroot                    int unsigned   NOT NULL default '0',
-           template_settings        text           NOT NULL,
            forum_path               text           NOT NULL,
            count_views              tinyint(1)     NOT NULL default '0',
            count_views_per_thread   tinyint(1)     NOT NULL default '0',
