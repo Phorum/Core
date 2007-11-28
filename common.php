@@ -28,7 +28,7 @@ define( "PHORUM", "5.3-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2007112400" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2007112900" );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -36,7 +36,7 @@ define( "PHORUM_SCHEMA_PATCHLEVEL", "2007112400" );
 // important internal change  was done as the extension's version number.
 // This version number should match the one in the php_phorum.h header file
 // for the module.
-define( "PHORUM_EXTENSION_VERSION", "20070522" );
+define( "PHORUM_EXTENSION_VERSION", "20071129" );
 
 // all other constants in ./include/constants.php
 include_once( "./include/constants.php" );
