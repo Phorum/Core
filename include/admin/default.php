@@ -70,16 +70,13 @@ foreach($forums as $forum_id => $forum)
 }
 
 if (empty($rows)) {
-    $rows="<tr><td colspan=\"3\" class=\"PhorumAdminTableRow\">There are no forums or folders in this folder.</td></tr>\n";
+    $rows="<tr><td colspan=\"3\" class=\"PhorumAdminTableRow\" style=\"padding:15px\">There are no forums or folders in this folder.</td></tr>\n";
 }
 
 if ($folder_id > 0)
 {
-    if (!is_array($path)) $path = unserialize($folder['forum_path']);
-    $path = array_reverse($path, TRUE);
-
     $elts = array();
-    foreach ($path as $id => $name) {
+    foreach ($folder['forum_path'] as $id => $name) {
         if (empty($elts)) {
             if (empty($folder['vroot'])) {
                 $name = 'Root folder';
