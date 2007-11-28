@@ -98,12 +98,10 @@ function phorum_get_forum_info($forums_only=0,$vroot = -1)
             $path = $forum["name"];
             $parent_id=$forum["parent_id"];
 
-            while( $parent_id!=0 ){
-
+            while ($parent_id != 0)
+            {
                 $path=$forums[$parent_id]["name"]."::$path";
-
                 $parent_id=$forums[$parent_id]["parent_id"];
-
             }
 
             if($forums_only!=3 && $forum['vroot'] && $forum['vroot']==$forum['forum_id']) {
@@ -178,47 +176,69 @@ function phorum_admin_get_descending($parent) {
     return $ret_data;
 }
 
-function phorum_admin_build_path_array($only_forum = -1)
+function phorum_admin_build_path_array($only_forum = NULL)
 {
+    $paths = array();
 
-    $folders=array();
-    $folder_data=array();
+    // The forum_id = 0 root node is not in the database.
+    // Here, we create a representation for that node that will work.
+    $root = array(
+        'vroot'    => 0,
+        'forum_id' => 0,
+        'name'     => $GLOBALS['PHORUM']['title']
+    );
 
-    $forums = phorum_db_get_forums();
-    $forums[0]=array('vroot'=>0,'forum_id'=>0,'name'=>$GLOBALS['PHORUM']['title']);
-
-    //print_var($forums['20428']);
-
-    foreach($forums as $forum){
-
-        if($only_forum == -1 || $forum['forum_id'] == $only_forum)  {
-
-            $path = array();
-            $path[$forum['forum_id']] = $forum["name"];
-            $parent_id=$forum["parent_id"];
-
-            if($forum['forum_id'] != $forum['vroot']) {
-
-                while( true ){
-
-                    $path[$parent_id]=$forums[$parent_id]["name"];
-
-                    // get-out condition
-                    if($parent_id == 0 || $forums[$parent_id]["vroot"] == $forums[$parent_id]["forum_id"]) {
-                        break;
-                    }
-
-                    $parent_id=$forums[$parent_id]["parent_id"];
-
-                }
-            }
+    // If we are going to update the paths for all nodes, then we pull
+    // in our full list of forums and folders from the database. If we only
+    // need the path for a single node, then the node and all its parent
+    // nodes are retrieved using single calls to the database.
+    if ($only_forum === NULL) {
+        $nodes = phorum_db_get_forums();
+        $nodes[0] = $root;
+    } else {
+        if ($only_forum == 0) {
+            $nodes = array(0 => $root);
+        } else {
+            $node = phorum_db_get_forums($only_forum);
+            $nodes = array($forum['forum_id'] => $forum);
         }
-        $folders[$forum["forum_id"]]=$path;
     }
 
-    $folders = array_reverse($folders, true);
+    // Build the paths for the retrieved node(s).
+    foreach($nodes as $id => $node)
+    {
+        $path = array();
 
-    return $folders;
+        while (TRUE)
+        {
+            // Add the node to the path.
+            $path[$node['forum_id']] = $node['name'];
 
+            // Stop building when we hit a (v)root.
+            if ($node['forum_id'] == 0 ||
+                $node['vroot'] == $node['forum_id']) break;
+
+            // Find the parent node. The root node (forum_id = 0) is special,
+            // since that one is not in the database. We create an entry on
+            // the fly for that one here.
+            if ($node['parent_id'] == 0) {
+                $node = $root;
+            } elseif ($only_forum !== NULL) {
+                $node = phorum_db_get_forums($node['parent_id']);
+            } else {
+                $node = $nodes[$node['parent_id']];
+            }
+        }
+
+        // Reverse the path, since we have been walking up the path here.
+        // For the parts of the application that use this data, it's more
+        // logical if the root nodes come first in the path arrays.
+        $paths[$id] = array_reverse($path, TRUE);
+    }
+
+    // We cannot remember what this was needed for. For now, we leave it out.
+    // $paths = array_reverse($folders, true);
+
+    return $paths;
 }
 ?>

@@ -411,7 +411,7 @@ switch ($step){
             "display_order"=>99,
             "pub_perms" =>  1,
             "reg_perms" =>  3,
-            "forum_path" => 'a:2:{i:1;s:13:"Announcements";i:0;s:8:"Phorum 5";}'
+            "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:1;s:13:"Announcements";}'
             );
 
             phorum_db_add_forum($forum);
@@ -438,7 +438,7 @@ switch ($step){
             "display_order"=>0,
             "pub_perms" =>  1,
             "reg_perms" =>  15,
-            "forum_path" => 'a:2:{i:1;s:10:"Test Forum";i:0;s:8:"Phorum 5";}'
+            "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:1;s:10:"Test Forum";}'
             );
 
             $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);

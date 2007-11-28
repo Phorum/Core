@@ -151,6 +151,7 @@ input, textarea, select, td
 
 .forum-title {
     width: 100%;
+    font-weight: normal;
 }
 
 .PhorumAdminTableRow p.forum-description {

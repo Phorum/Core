@@ -15,13 +15,14 @@ define('phorum_page', 'create_moderator_groups');
 
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
+require_once './include/api/forums.php';
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();
 
 print "\nCreate forum moderator groups ...\n";
 
-$forums = phorum_db_get_forums();
+$forums = phorum_api_forums_get();
 
 // Find out which forums already have a moderator group available.
 $forum_has_moderator = array();
@@ -47,9 +48,8 @@ foreach ($forums as $forum_id => $fdata)
     }
 
     $path = $fdata['forum_path'];
-    if (!is_array($path)) $path = unserialize($path);
-    array_pop($path);
-    $name = implode('::',array_reverse($path));
+    array_shift($path);
+    $name = implode('::',$path);
 
     $group_id = phorum_db_add_group("Moderate $name");
     if (!$group_id) die("Error adding group \"$name\".\n");

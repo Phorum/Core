@@ -12,7 +12,8 @@ function phorum_build_forum_list() {
     $forum_picker = array();
 
     // build forum drop down data
-    $forums = phorum_db_get_forums($allowed_forums);
+    require_once('./include/api/forums.php');
+    $forums = phorum_api_forums_get($allowed_forums);
 
     foreach($forums as $forum){
         $tmp_forums[$forum["forum_id"]]["forum_id"] = $forum["forum_id"];
@@ -57,10 +58,8 @@ function phorum_build_forum_list() {
             $url = phorum_get_url(PHORUM_LIST_URL, $forum["forum_id"]);
         }
 
-        $forum['forum_path'] = unserialize($forum['forum_path']);
-
         $indent = count($forum["forum_path"]) - 2;
-		if($indent < 0) $indent = 0;
+        if($indent < 0) $indent = 0;
 
         $forum_picker[$forum["forum_id"]] = array(
             "forum_id" => $forum["forum_id"],
@@ -76,7 +75,6 @@ function phorum_build_forum_list() {
     }
 
     return $forum_picker;
-
 }
 
 ?>

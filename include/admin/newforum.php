@@ -192,11 +192,11 @@ if (count($_POST))
 
                 // set/build the forum_path
                 $cur_forum_id=$forum_settings['forum_id'];
-
                 $built_paths = phorum_admin_build_path_array($cur_forum_id);
-
-                $update_forum = array('forum_id'=>$cur_forum_id,
-                'forum_path'=>$built_paths[$cur_forum_id]);
+                $update_forum = array(
+                    'forum_id'   => $cur_forum_id,
+                    'forum_path' => $built_paths[$cur_forum_id]
+                );
                 phorum_db_update_forum($update_forum);
             }
 
@@ -222,13 +222,14 @@ if (count($_POST))
                 unset($_POST['forum_id']);
             }
             $res=phorum_db_add_forum($_POST);
+
             // set/build the forum_path
             $cur_forum_id=$res;
-
             $built_paths = phorum_admin_build_path_array($cur_forum_id);
-
-            $update_forum = array('forum_id'=>$cur_forum_id,
-            'forum_path'=>$built_paths[$cur_forum_id]);
+            $update_forum = array(
+                'forum_id'   => $cur_forum_id,
+                'forum_path' => $built_paths[$cur_forum_id]
+            );
             phorum_db_update_forum($update_forum);
         }
 
