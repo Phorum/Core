@@ -201,8 +201,7 @@ function phorum_admin_build_path_array($only_forum = NULL)
         if ($only_forum == 0) {
             $nodes = array(0 => $root);
         } else {
-            $node = phorum_db_get_forums($only_forum);
-            $nodes = array($forum['forum_id'] => $forum);
+            $nodes = phorum_db_get_forums($only_forum);
         }
     }
 
@@ -226,7 +225,8 @@ function phorum_admin_build_path_array($only_forum = NULL)
             if ($node['parent_id'] == 0) {
                 $node = $root;
             } elseif ($only_forum !== NULL) {
-                $node = phorum_db_get_forums($node['parent_id']);
+                $tmp = phorum_db_get_forums($node['parent_id']);
+                $node = $tmp[$node['parent_id']];
             } else {
                 $node = $nodes[$node['parent_id']];
             }
