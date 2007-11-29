@@ -359,6 +359,107 @@ function phorum_api_forums_folder_save($folder)
 }
 // }}}
 
+// {{{ Function: phorum_api_forums_build_path()
+/**
+ * This function can be used for building the folder paths that lead up to
+ * forums/folders.
+ *
+ * The function is internally used by Phorum to build the paths that are stored
+ * in the "forum_path" field of the forums table. If you need access to the
+ * path for a folder or forum, then do not call this function for retrieving
+ * that info, but look at the "forum_path" field instead.
+ *
+ * @param mixed $forum_id
+ *     If $forum_id is NULL, then the paths for all available forums and
+ *     folders will be built. Otherwise, only the path for the requested
+ *     forum_id is built.
+ *
+ * @return array
+ *     If the $forum_id parameter is a single forum_id, then a single path
+ *     is returned. If it is NULL, then an array or paths is returned, indexed
+ *     by the forum_id for which the path was built.
+ *     Each path is an array, containing the nodes in the path
+ *     (key = forum_id, value = name). The first element in a path array will
+ *     be the (v)root and the last element the forum or folder for which the
+ *     path was built.
+ *
+ *     Note: the root node (forum_id = 0) will also be returned in the
+ *     data when using NULL or 0 as the $forum_id argument. This is however a
+ *     generated node for which no database record exists. So if you are using
+ *     this functions return data for updating folders in the database, then
+ *     beware to skip the forum_id = 0 root node.
+ */
+function phorum_api_forums_build_path($forum_id = NULL)
+{
+    $paths = array();
+
+    // The forum_id = 0 root node is not in the database.
+    // Here, we create a representation for that node that will work.
+    $root = array(
+        'vroot'    => 0,
+        'forum_id' => 0,
+        'name'     => $GLOBALS['PHORUM']['title']
+    );
+
+    // If we are going to update the paths for all nodes, then we pull
+    // in our full list of forums and folders from the database. If we only
+    // need the path for a single node, then the node and all its parent
+    // nodes are retrieved using single calls to the database.
+    if ($forum_id === NULL) {
+        $nodes = phorum_db_get_forums();
+        $nodes[0] = $root;
+    } else {
+        if ($forum_id == 0) {
+            $nodes = array(0 => $root);
+        } else {
+            $nodes = phorum_db_get_forums($forum_id);
+        }
+    }
+
+    // Build the paths for the retrieved node(s).
+    foreach($nodes as $id => $node)
+    {
+        $path = array();
+
+        while (TRUE)
+        {
+            // Add the node to the path.
+            $path[$node['forum_id']] = $node['name'];
+
+            // Stop building when we hit a (v)root.
+            if ($node['forum_id'] == 0 ||
+                $node['vroot'] == $node['forum_id']) break;
+
+            // Find the parent node. The root node (forum_id = 0) is special,
+            // since that one is not in the database. We create an entry on
+            // the fly for that one here.
+            if ($node['parent_id'] == 0) {
+                $node = $root;
+            } elseif ($forum_id !== NULL) {
+                $tmp = phorum_db_get_forums($node['parent_id']);
+                $node = $tmp[$node['parent_id']];
+            } else {
+                $node = $nodes[$node['parent_id']];
+            }
+        }
+
+        // Reverse the path, since we have been walking up the path here.
+        // For the parts of the application that use this data, it's more
+        // logical if the root nodes come first in the path arrays.
+        $paths[$id] = array_reverse($path, TRUE);
+    }
+
+    // We cannot remember what this was needed for. For now, we leave it out.
+    // $paths = array_reverse($folders, true);
+
+    if ($forum_id === NULL) {
+        return $paths;
+    } else {
+        return isset($paths[$forum_id]) ? $paths[$forum_id] : NULL;
+    }
+}
+// }}}
+
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
 // ------------------------------------------------------------------------
