@@ -29,7 +29,7 @@ define('TOKEN_DEBUGGER', 0);
 // PHP time limit to a high value to prevent execution timeouts.
 set_time_limit(600);
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 // Get some form variables.
 $action = isset($_POST['action']) ? $_POST['action'] : 'start';

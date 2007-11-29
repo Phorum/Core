@@ -27,10 +27,9 @@ if(!defined("PHORUM_ADMIN")) return;
 
 define("ADMIN_MODULE", "message_prune");
 
-require_once("./include/format_functions.php");
-
-require_once("./include/api/base.php");
-require_once("./include/api/file_storage.php");
+require_once('./include/format_functions.php');
+require_once('./include/api/base.php');
+require_once('./include/api/file_storage.php');
 
 // ----------------------------------------------------------------------
 // Possible filter rules description

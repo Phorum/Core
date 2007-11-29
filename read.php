@@ -18,12 +18,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','read');
 
-include_once("./common.php");
-include_once("./include/email_functions.php");
-include_once("./include/format_functions.php");
+require_once('./common.php');
+require_once('./include/email_functions.php');
+require_once('./include/format_functions.php');
 
 // for dev-purposes ..
-//include_once('./include/timing.php');
+//require_once('./include/timing.php');
 
 //timing_start();
 
@@ -644,7 +644,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     if($PHORUM["threaded_read"]) {
 
         // don't move this up.  We want it to be conditional.
-        include_once("./include/thread_sort.php");
+        require_once('./include/thread_sort.php');
 
         // run read-threads mods
         if (isset($PHORUM["hooks"]["readthreads"]))

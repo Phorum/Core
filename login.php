@@ -18,8 +18,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','login');
 
-include_once( "./common.php" );
-include_once( "./include/email_functions.php" );
+require_once('./common.php');
+require_once('./include/email_functions.php');
 
 // ----------------------------------------------------------------------------
 // Handle logout
@@ -115,7 +115,7 @@ if (count($_POST) > 0) {
             } else {
 
                 // Generate and store a new password for the user.
-                include_once( "./include/profile_functions.php" );
+                require_once('./include/profile_functions.php');
                 $newpass = phorum_gen_password();
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = $newpass;

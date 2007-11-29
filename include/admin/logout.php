@@ -17,13 +17,13 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-    if(!defined("PHORUM_ADMIN")) return;
+if(!defined("PHORUM_ADMIN")) return;
 
-    include_once("./include/api/base.php");
-    include_once("./include/api/user.php");
+require_once('./include/api/base.php');
+require_once('./include/api/user.php');
 
-    phorum_api_user_session_destroy(PHORUM_ADMIN_SESSION);
-    phorum_redirect_by_url($PHORUM["admin_http_path"]);
-    exit();
+phorum_api_user_session_destroy(PHORUM_ADMIN_SESSION);
+phorum_redirect_by_url($PHORUM["admin_http_path"]);
+exit();
 
 ?>

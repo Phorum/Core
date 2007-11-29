@@ -26,8 +26,8 @@
     // the code run faster.
     error_reporting  (E_ERROR | E_WARNING | E_PARSE);
 
-    include_once "./common.php";
-    include_once "./include/admin_functions.php";
+    require_once('./common.php');
+    require_once('./include/admin_functions.php');
 
     // determine absolute URI for the admin
     if(isset($_SERVER["SCRIPT_URI"])){
@@ -91,12 +91,9 @@
 
     $module = phorum_hook( "admin_pre", $module );
     ob_start();
-    if($module!="help") include_once "./include/admin/header.php";
-    include_once "./include/admin/$module.php";
-    if($module!="help") include_once "./include/admin/footer.php";
+    if($module!="help") require_once('./include/admin/header.php');
+    require_once("./include/admin/$module.php");
+    if($module!="help") require_once('./include/admin/footer.php');
     ob_end_flush();
-
-
-
 
 ?>

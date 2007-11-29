@@ -22,7 +22,7 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once("./include/version_functions.php");
+require_once('./include/version_functions.php');
 
 // Put in a variable, for easy testing of other version numbers.
 $phorum_ver = PHORUM;

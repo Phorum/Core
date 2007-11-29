@@ -52,7 +52,7 @@ if ( count( $_POST ) ) {
     }
 
     if(isset($_POST['rebuild_metadata']) && !empty($_POST['rebuild_metadata'])) {
-        include_once './include/thread_info.php';
+        require_once('./include/thread_info.php');
 
         // we need to rebuild the forumstats
         $forums = phorum_db_get_forums();
@@ -143,7 +143,7 @@ if ( $error ) {
     phorum_admin_okmsg ( $okmsg);
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 $frm = &new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "rebuild" );

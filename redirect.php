@@ -24,7 +24,7 @@
 
 define('phorum_page', 'redirect');
 
-require_once("./common.php");
+require_once('./common.php');
 
 if (isset($PHORUM["args"]["phorum_redirect_to"])) {
     $redir = urldecode($PHORUM["args"]["phorum_redirect_to"]);

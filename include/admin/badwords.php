@@ -106,7 +106,7 @@
         $banlists=phorum_db_get_banlists();
         $bad_words=$banlists[PHORUM_BAD_WORDS];
 
-        include_once "./include/admin/PhorumInputForm.php";
+        require_once('./include/admin/PhorumInputForm.php');
 
         $frm = new PhorumInputForm ("", "post", $submit);
 

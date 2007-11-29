@@ -20,7 +20,7 @@
 if(!defined("PHORUM")) return;
 
 // For phorum_check_ban_lists().
-include_once("./include/profile_functions.php");
+require_once('./include/profile_functions.php');
 
 // Create a list of the bans that we want to check.
 $bans = array();

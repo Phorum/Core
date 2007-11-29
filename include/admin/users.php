@@ -181,8 +181,8 @@ if ($error) {
     phorum_admin_error($error);
 }
 
-include_once "./include/admin/PhorumInputForm.php";
-include_once "./include/profile_functions.php";
+require_once('./include/admin/PhorumInputForm.php');
+require_once('./include/profile_functions.php');
 
 if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
     echo "Phorum User Admin only works with the Phorum User System.";

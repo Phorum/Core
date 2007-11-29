@@ -604,7 +604,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // it kind of sucks to have this here, but it is the best way
     // to ensure that it gets done if stuff is deleted.
     // leave this include here, it needs to be conditional
-    include_once("./include/thread_info.php");
+    require_once('./include/thread_info.php');
     phorum_update_thread_info($thread);
 
     // we need to delete the subscriptions for that thread too
@@ -4346,7 +4346,7 @@ function phorum_db_pg_last_error($err){
 
     if (!defined("PHORUM_ADMIN")){
         if($logsetting == 'mail') {
-            include_once("./include/email_functions.php");
+            require_once('./include/email_functions.php');
             $data=array('mailmessage'=>"An SQL-error occured in your phorum-installation.\n\nThe error-message was:\n$err\n\n",
                         'mailsubject'=>'Phorum: an SQL-error occured');
             phorum_email_user(array($adminemail),$data);

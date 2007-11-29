@@ -18,9 +18,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 define('phorum_page','index');
 
-include_once( "./common.php" );
-
-include_once( "./include/format_functions.php" );
+require_once('./common.php');
+require_once('./include/format_functions.php');
 
 if(!phorum_check_read_common()) {
   return;
@@ -81,9 +80,9 @@ if ( isset( $PHORUM["forum_id"] ) ) {
 }
 
 if($PHORUM["use_new_folder_style"]){
-    include_once "./include/index_new.php";
+    require_once('./include/index_new.php');
 } else {
-    include_once "./include/index_classic.php";
+    require_once('./include/index_classic.php');
 }
 
 ?>

@@ -77,7 +77,7 @@
 
 define('phorum_page','addon');
 
-include_once( "./common.php" );
+require_once('./common.php');
 
 // Bail out early if there are no modules enabled that implement
 // the addon hook.

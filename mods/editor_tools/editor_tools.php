@@ -36,7 +36,7 @@ define('TOOL_IHEIGHT',     5);
 define('TOOL_TARGET',      6);
 
 // Load default settings.
-require_once("./mods/editor_tools/defaults.php");
+require_once('./mods/editor_tools/defaults.php');
 
 /**
  * Register the additional CSS code for this module.

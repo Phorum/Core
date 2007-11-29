@@ -20,8 +20,10 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once './include/format_functions.php';
-require_once './include/api/forums.php';
+require_once('./include/format_functions.php');
+require_once('./include/api/forums.php');
+require_once('./include/upload_functions.php');
+require_once('./include/admin/PhorumInputForm.php');
 
 $error="";
 
@@ -278,8 +280,6 @@ if($error){
     phorum_admin_error($error);
 }
 
-include_once "./include/admin/PhorumInputForm.php";
-
 $frm = new PhorumInputForm ("", "post");
 
 if(defined("PHORUM_DEFAULT_OPTIONS")){
@@ -459,7 +459,6 @@ $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", 
 
 $frm->addrow("Allowed Files (eg: gif;jpg;png, empty for any)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
-require_once('./include/upload_functions.php');
 $system_max_upload = phorum_get_system_max_upload();
 $max_size = phorum_filesize($system_max_upload[0]);
 

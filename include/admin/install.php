@@ -21,8 +21,8 @@ if(!defined("PHORUM_ADMIN")) return;
 
 define("PHORUM_INSTALL", 1);
 
-include_once("./include/api/base.php");
-include_once("./include/api/user.php");
+require_once('./include/api/base.php');
+require_once('./include/api/user.php');
 
 if(!phorum_db_check_connection()){
     echo "A database connection could not be established.  Please edit include/db/config.php.";
@@ -153,7 +153,7 @@ if ($step == 0 && !isset($_POST["sanity_checks_done"]))
     return;
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 if(count($_POST)){
 
@@ -212,7 +212,7 @@ if(count($_POST)){
             break;
 
         case "modules":
-            include_once "./include/admin/mods.php";
+            require_once('./include/admin/mods.php');
             break;
     }
 
@@ -464,7 +464,7 @@ switch ($step){
 
             phorum_db_post_message($test_message);
 
-            include_once ("./include/thread_info.php");
+            require_once('./include/thread_info.php');
 
             phorum_update_thread_info($test_message["thread"]);
 
@@ -552,7 +552,7 @@ switch ($step){
 
     case "modules":
 
-        include_once "./include/admin/mods.php";
+        require_once('./include/admin/mods.php');
         break;
 }
 

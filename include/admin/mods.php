@@ -96,7 +96,7 @@ if (count($list['deprecated']))
     <?php
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 if(defined("PHORUM_INSTALL")){
     $frm = new PhorumInputForm ("", "post", "Continue ->");

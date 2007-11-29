@@ -95,9 +95,9 @@ if ( $error ) {
     phorum_admin_okmsg ( $okmsg);
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
-$frm = &new PhorumInputForm ( "", "post" );
+$frm = new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "cache" );
 $frm->addbreak( "Phorum Cache Settings" );
 $row=$frm->addrow( "Cache Directory", $frm->text_box( "cache", $PHORUM["cache"], 30 ) );

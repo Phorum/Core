@@ -26,7 +26,7 @@
             $text = "This module is not enabled yet. You can change its settings but the module is only active if you enable it on the previous page.";
             phorum_admin_error($text);
         }
-        include_once("./mods/$mod/settings.php");
+        require_once("./mods/$mod/settings.php");
 
     } else {
 

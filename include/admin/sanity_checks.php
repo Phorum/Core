@@ -116,7 +116,8 @@ if ($module == "install") return;
 // Build the sanity checking admin page.
 // ========================================================================
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
+
 $frm = new PhorumInputForm ("", "post", "Restart sanity checks");
 
 $frm->hidden("module", "sanity_checks");

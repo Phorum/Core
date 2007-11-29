@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . "/class.captcha_base.php");
+require_once(dirname(__FILE__) . '/class.captcha_base.php');
 
 class captcha_plaintext extends captcha_base
 {

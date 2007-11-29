@@ -17,7 +17,7 @@ define("phorum_page", "rebuild_search_table");
 define("PHORUM_ADMIN", 1);
 
 chdir(dirname(__FILE__) . "/..");
-require_once './common.php';
+require_once('./common.php');
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();

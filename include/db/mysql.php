@@ -1179,7 +1179,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // It kind of sucks to have this here, but it is the best way
     // to ensure that thread info gets updated if messages are deleted.
     // Leave this include down here, so it is included conditionally.
-    include_once('./include/thread_info.php');
+    require_once('./include/thread_info.php');
     phorum_update_thread_info($thread);
 
     // We need to delete the subscriptions for the thread too.

@@ -19,8 +19,8 @@
 
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
-require_once("./include/api/base.php");
-require_once("./include/api/file_storage.php");
+require_once('./include/api/base.php');
+require_once('./include/api/file_storage.php');
 
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
@@ -146,7 +146,7 @@ foreach($mod_forums as $forum => $rest) {
         $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
     }
 
-    require_once("./include/format_functions.php");
+    require_once('./include/format_functions.php');
     $rows = phorum_format_messages($rows);
     $PHORUM['DATA']['PREPOST'] = array_merge($PHORUM['DATA']['PREPOST'], $rows);
 }

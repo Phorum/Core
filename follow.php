@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','subscribe');
 
-include_once("./common.php");
+require_once('./common.php');
 
 phorum_require_login();
 
@@ -78,7 +78,7 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 } else {
     // we are following a new thread
 
-    require_once("include/format_functions.php");
+    require_once('include/format_functions.php');
     $messages = phorum_format_messages(array(1=>$message));
     $message = $messages[1];
 

@@ -20,9 +20,9 @@
 
 define("phorum_page", "feed");
 
-include_once("./common.php");
-include_once("./include/format_functions.php");
-include_once("./include/feed_functions.php");
+require_once('./common.php');
+require_once('./include/format_functions.php');
+require_once('./include/feed_functions.php');
 
 // somehow we got to a folder
 if(!empty($PHORUM["folder_flag"]) && $PHORUM["forum_id"] != $PHORUM["vroot"]){

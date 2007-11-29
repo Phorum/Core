@@ -19,7 +19,7 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once './include/api/forums.php';
+require_once('./include/api/forums.php');
 
 $error="";
 $setvroot=false; // is this folder set as vroot?
@@ -201,7 +201,7 @@ if($error){
     phorum_admin_error($error);
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 $frm = new PhorumInputForm ("", "post");
 

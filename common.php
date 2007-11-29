@@ -39,15 +39,15 @@ define( "PHORUM_SCHEMA_PATCHLEVEL", "2007112900" );
 define( "PHORUM_EXTENSION_VERSION", "20071129" );
 
 // all other constants in ./include/constants.php
-include_once( "./include/constants.php" );
+require_once('./include/constants.php');
 
 // setup the PHORUM var
 global $PHORUM;
 $PHORUM = array();
 
 // API code
-include_once("./include/api/base.php");
-include_once("./include/api/user.php");
+require_once('./include/api/base.php');
+require_once('./include/api/user.php');
 
 // the TMP member holds template {DEFINE ..} definitions and temporary
 // arrays and such in template code
@@ -142,7 +142,7 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
     @ini_set("display_errors", 0);
 
     // Load configuration.
-    if (! include_once( "./include/db/config.php" )) {
+    if (! require_once('./include/db/config.php')) {
         print '<html><head><title>Phorum error</title></head><body>';
         print '<h2>Phorum database configuration error</h2>';
 
@@ -187,7 +187,7 @@ if ($PHORUM["DBCONFIG"]["type"] == "mysqli" &&
 
 // Load the database layer.
 $PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
-include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
+require_once("./include/db/{$PHORUM['DBCONFIG']['type']}.php");
 
 if(!phorum_db_check_connection()){
     if(isset($PHORUM["DBCONFIG"]["down_page"])){
@@ -248,7 +248,7 @@ if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
 // related URL's. It is loaded conditionally, to make it possible to override
 // it from the phorum PHP extension.
 if (!function_exists('phorum_get_url')) {
-    include_once("./include/phorum_get_url.php");
+    require_once('./include/phorum_get_url.php');
 }
 
 // Defaults for missing settings (these can be needed after upgrading, in
@@ -286,7 +286,7 @@ if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
 // load the caching-layer - you can specify a different one in the settings
 // one caching layer *needs* to be loaded
 $PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
-include_once( "./include/cache/$PHORUM[cache_layer].php" );
+require_once("./include/cache/$PHORUM[cache_layer].php");
 
 // a hook for rewriting vars at the beginning of common.php,
 //right after loading the settings from the database
@@ -446,7 +446,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
         ob_start();
-        include_once( phorum_get_template( "settings" ) );
+        require_once(phorum_get_template("settings"));
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
@@ -459,7 +459,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     $PHORUM['language'] = basename($PHORUM['language']);
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
-        include_once( "./include/lang/$PHORUM[language].php" );
+        require_once("./include/lang/$PHORUM[language].php");
     }
     // load languages for localized modules
     if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
@@ -468,10 +468,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             // load mods for this hook
             $mod = basename($mod);
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
-                include_once "./mods/$mod/lang/$PHORUM[language].php";
+                require_once("./mods/$mod/lang/$PHORUM[language].php");
             }
             elseif ( file_exists( "./mods/$mod/lang/english.php" ) ) {
-                include_once "./mods/$mod/lang/english.php";
+                require_once("./mods/$mod/lang/english.php");
             }
         }
     }
@@ -607,7 +607,7 @@ else {
     // author name in messages for deleted users to "anonymous".
     $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"]);
     if (file_exists("./include/lang/$PHORUM[language].php")) {
-        include_once("./include/lang/$PHORUM[language].php");
+        require_once("./include/lang/$PHORUM[language].php");
     }
 }
 
@@ -831,7 +831,7 @@ function phorum_get_template( $page )
 
     // Pre-process template if the output file isn't available.
     if (! file_exists($phpfile)) {
-        include_once "./include/templates.php";
+        require_once('./include/templates.php');
         phorum_import_template($page, $tplfile, $phpfile);
     }
 
@@ -919,9 +919,9 @@ function phorum_hook( $hook )
             // load mods for this hook
             $mod = basename($mod);
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
-                include_once "./mods/$mod/$mod.php";
+                require_once("./mods/$mod/$mod.php");
             } elseif ( file_exists( "./mods/$mod.php" ) ) {
-                include_once "./mods/$mod.php";
+                require_once("./mods/$mod.php");
             }
         }
 
@@ -1235,7 +1235,7 @@ function phorum_database_error($error)
         case "mail":
         default:
 
-            include_once("./include/email_functions.php");
+            require_once('./include/email_functions.php');
 
             $data = array(
               "mailmessage" =>

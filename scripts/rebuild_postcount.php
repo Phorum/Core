@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 
 This is just a simple script for updating the post-count of each user, which
@@ -19,7 +19,7 @@ define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_postcount');
 
 chdir(dirname(__FILE__) . "/..");
-require_once './common.php';
+require_once('./common.php');
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();
@@ -32,7 +32,7 @@ if (! ini_get('safe_mode')) {
 print "\nCounting the posts for all users ...\n";
 $postcounts = phorum_db_interact(
     DB_RETURN_ROWS,
-    "SELECT user_id, count(*) 
+    "SELECT user_id, count(*)
      FROM   {$PHORUM["message_table"]}
      WHERE  user_id != 0
      GROUP  BY user_id"

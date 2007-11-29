@@ -5,7 +5,7 @@ define('PHORUM_ADMIN', 1);
 define('phorum_page', 'convert_announcements');
 
 chdir(dirname(__FILE__) . "/..");
-require_once './common.php';
+require_once('./common.php');
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();

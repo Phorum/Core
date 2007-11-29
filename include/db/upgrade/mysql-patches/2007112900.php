@@ -1,7 +1,7 @@
 <?php
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once './include/api/forums.php';
+require_once('./include/api/forums.php');
 
 // Rebuild the forum-paths for each and every forum in the tree.
 $forums = phorum_api_forums_build_path();

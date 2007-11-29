@@ -133,13 +133,13 @@
         phorum_admin_error($error);
     }
 
-    include_once "./include/admin/PhorumInputForm.php";
+    require_once('./include/admin/PhorumInputForm.php');
     $groups=phorum_db_get_groups(0, TRUE);
 
     $forums=phorum_db_get_forums();
 
     if(isset($_REQUEST["edit"]) && !empty($_REQUEST['group_id']) ){
-          
+
         $group_id_in = (empty($_POST['group_id']))?$_GET['group_id']:$_POST['group_id'];
         $_GET['group_id']=(int)$group_id_in;
 
@@ -152,9 +152,9 @@
         $frm->hidden("module", "groups");
 
         $frm->hidden("section", "edit");
-        
+
         // for getting back to the edit-page
-        $frm->hidden('edit','1');   
+        $frm->hidden('edit','1');
 
         $frm->hidden("group_id", $_GET["group_id"]);
 
@@ -173,9 +173,9 @@
         $frm->hidden("module", "groups");
 
         $frm->hidden("section", "forums");
-        
+
         // for getting back to the edit-page
-        $frm->hidden('edit','1');   
+        $frm->hidden('edit','1');
 
         $frm->hidden("group_id", $_GET["group_id"]);
 

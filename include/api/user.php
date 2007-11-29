@@ -366,7 +366,7 @@ function phorum_api_user_save($user, $flags = 0)
 {
     global $PHORUM;
 
-    include_once('./include/api/custom_profile_fields.php');
+    require_once('./include/api/custom_profile_fields.php');
 
     // $user must be an array.
     if (!is_array($user)) {

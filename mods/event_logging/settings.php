@@ -5,8 +5,8 @@
 if (! defined("PHORUM_ADMIN")) return;
 
 // Load the constants and defaults that we use.
-require_once("./mods/event_logging/constants.php");
-require_once("./mods/event_logging/defaults.php");
+require_once('./mods/event_logging/constants.php');
+require_once('./mods/event_logging/defaults.php');
 
 print '<h1>Phorum Event Logging</h1>';
 

@@ -48,8 +48,8 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 }
 
 // include required files
-include_once './common.php';
-include_once './include/version_functions.php';
+require_once('./common.php');
+require_once('./include/version_functions.php');
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();

@@ -1,7 +1,7 @@
 <?php
     if (!defined("PHORUM_ADMIN")) return;
 
-    require_once("./mods/spamhurdles/defaults.php");
+    require_once('./mods/spamhurdles/defaults.php');
 
     // save settings
     if (count($_POST))
@@ -45,7 +45,7 @@
     </div>
     <?php
 
-    include_once "./include/admin/PhorumInputForm.php";
+    require_once('./include/admin/PhorumInputForm.php');
     $frm = new PhorumInputForm ("", "post", "Save");
     $frm->hidden("module", "modsettings");
     $frm->hidden("mod", "spamhurdles");

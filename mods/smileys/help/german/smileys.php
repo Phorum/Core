@@ -1,7 +1,7 @@
 <?php
   chdir('../../../../');
   define('phorum_page','smiley_help');
-  include_once( "./common.php" );
+  require_once('./common.php');
 
   // The definition of the possible uses for a smiley.
   $PHORUM_MOD_SMILEY_USES = array(

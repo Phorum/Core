@@ -18,10 +18,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','moderation');
 
-include_once("./common.php");
-include_once("./include/moderation_functions.php");
-include_once("./include/thread_info.php");
-include_once("./include/email_functions.php");
+require_once('./common.php');
+require_once('./include/moderation_functions.php');
+require_once('./include/thread_info.php');
+require_once('./include/email_functions.php');
 
 if(!phorum_check_read_common()) {
   return;

@@ -150,7 +150,7 @@ for( $x = -23;$x <= 23;$x++ ) {
     $tz_range[$x] = $x;
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 $frm = new PhorumInputForm ( "", "post" );
 

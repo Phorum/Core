@@ -1,6 +1,6 @@
 <?php
-require_once(dirname(__FILE__) . "/class.captcha_base.php");
-require_once(dirname(__FILE__) . "/class.banner.php");
+require_once(dirname(__FILE__) . '/class.captcha_base.php');
+require_once(dirname(__FILE__) . '/class.banner.php');
 
 class captcha_image extends captcha_base
 {

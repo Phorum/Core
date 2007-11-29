@@ -1,9 +1,9 @@
 <?php
 if (!defined("PHORUM")) return;
 
-require_once("./mods/spamhurdles/lib/iscramble.php");
-require_once("./mods/spamhurdles/defaults.php");
-require_once("./mods/spamhurdles/db.php");
+require_once('./mods/spamhurdles/lib/iscramble.php');
+require_once('./mods/spamhurdles/defaults.php');
+require_once('./mods/spamhurdles/db.php');
 
 define("KEY_NOTAVAIL", -1);
 define("KEY_AVAIL", 0);

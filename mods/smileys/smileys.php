@@ -2,7 +2,7 @@
 
 if(!defined("PHORUM")) return;
 
-require_once("./mods/smileys/defaults.php");
+require_once('./mods/smileys/defaults.php');
 
 // Register the additional CSS code for this module.
 function phorum_mod_smileys_css_register($data)

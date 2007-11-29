@@ -40,7 +40,7 @@
         phorum_admin_okmsg("The module settings were successfully saved.");
     }
 
-    include_once "./include/admin/PhorumInputForm.php";
+    require_once('./include/admin/PhorumInputForm.php');
     $frm = new PhorumInputForm ("", "post", "Save");
     $frm->hidden("module", "modsettings");
     $frm->hidden("mod", "username_restrictions"); 

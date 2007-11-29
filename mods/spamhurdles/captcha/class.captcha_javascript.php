@@ -1,7 +1,7 @@
 <?php
-require_once(dirname(__FILE__) . "/class.captcha_base.php");
-require_once(dirname(__FILE__) . "/class.banner.php");
-require_once(dirname(__FILE__) . "/../lib/iscramble.php");
+require_once(dirname(__FILE__) . '/class.captcha_base.php');
+require_once(dirname(__FILE__) . '/class.banner.php');
+require_once(dirname(__FILE__) . '/../lib/iscramble.php');
 
 class captcha_javascript extends captcha_base
 {

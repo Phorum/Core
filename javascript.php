@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','javascript');
-include_once("./common.php");
+require_once('./common.php');
 
 // So we can use {URL->HTTP_PATH} in the templates.
 phorum_build_common_urls();
@@ -213,7 +213,7 @@ if (empty($PHORUM['cache_javascript']) || !file_exists($cache_file))
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-        include_once "./include/templates.php";
+        require_once('./include/templates.php');
         phorum_write_file($cache_file, $content);
     }
 

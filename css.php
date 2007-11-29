@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','css');
-include_once("./common.php");
+require_once('./common.php');
 
 // Set to FALSE to disable CSS compression.
 define('PHORUM_COMPRESS_CSS', TRUE);
@@ -279,7 +279,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
     }
 
     if (!empty($PHORUM['cache_css'])) {
-        include_once "./include/templates.php";
+        require_once('./include/templates.php');
         phorum_write_file($cache_file, $content);
     }
 

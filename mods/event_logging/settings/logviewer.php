@@ -2,7 +2,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-include_once("./include/format_functions.php");
+require_once('./include/format_functions.php');
 
 $strings = $PHORUM["DATA"]["MOD_EVENT_LOGGING"];
 
@@ -148,7 +148,7 @@ $logs = event_logging_getlogs($page, $pagelength, $filter);
 // Display header form for paging and filtering.
 // ----------------------------------------------------------------------
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 $frm = new PhorumInputForm ("", "post", $filter_mode ? "Apply filter" : "Refresh page");
 $frm->hidden("module", "modsettings");
 $frm->hidden("mod", "event_logging");

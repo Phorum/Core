@@ -21,7 +21,7 @@ if (count($_POST))
 }
 
 // Create the settings form.
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 $frm = new PhorumInputForm ("", "post", "Save settings");
 $frm->hidden("module", "modsettings");
 $frm->hidden("mod", "event_logging"); 

@@ -21,7 +21,7 @@
 if(!defined("PHORUM_ADMIN")) return;
 
 // Load default settings and tag descriptions.
-require_once("./mods/bbcode/defaults.php");
+require_once('./mods/bbcode/defaults.php');
 
 // Available options for the bbcode tag dropdown menus.
 $options_without_editor_tools = array(
@@ -63,7 +63,7 @@ if (count($_POST))
     }
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 $frm = new PhorumInputForm ("", "post", "Save settings");
 $frm->hidden("module", "modsettings");
 $frm->hidden("mod", "bbcode");

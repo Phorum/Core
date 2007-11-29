@@ -55,8 +55,8 @@ if (! defined('phorum_page')) {
     define('phorum_page', 'post');
 }
 
-include_once("./common.php");
-include_once("include/format_functions.php");
+require_once('./common.php');
+require_once('./include/format_functions.php');
 
 // Check if the Phorum is in read-only mode.
 if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){

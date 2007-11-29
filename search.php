@@ -18,14 +18,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','search');
 
-include_once("./common.php");
-include_once("./include/forum_functions.php");
+require_once('./common.php');
+require_once('./include/forum_functions.php');
+require_once('./include/format_functions.php');
 
 if(!phorum_check_read_common()) {
   return;
 }
 
-include_once("./include/format_functions.php");
 // set all our URL's
 phorum_build_common_urls();
 
@@ -184,8 +184,6 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
     $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-
-    include_once("./include/format_functions.php");
 
     if(isset($PHORUM["args"]["page"])){
         $PHORUM["args"]["page"] = (int)$PHORUM["args"]["page"];

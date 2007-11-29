@@ -102,7 +102,7 @@
 
     } else {
 
-        include_once "./include/admin/PhorumInputForm.php";
+        require_once('./include/admin/PhorumInputForm.php');
 
         $frm = new PhorumInputForm ("", "post", $submit);
 

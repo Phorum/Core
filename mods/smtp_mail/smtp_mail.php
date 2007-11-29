@@ -28,8 +28,8 @@ function phorum_smtp_send_messages ($data)
 
             // include the swiftmailer-class
 
-            require_once SWIFT_DIRECTORY."/Swift.php";
-            require_once SWIFT_DIRECTORY."/Swift/Connection/SMTP.php";
+            require_once(SWIFT_DIRECTORY . '/Swift.php');
+            require_once(SWIFT_DIRECTORY . '/Swift/Connection/SMTP.php');
 
             // set the connection type
             if($settings['conn'] == 'plain') {

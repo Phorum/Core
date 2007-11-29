@@ -19,8 +19,8 @@
 
 if(!defined("PHORUM")) return;
 
-include_once("./include/api/base.php");
-include_once("./include/api/user.php");
+require_once('./include/api/base.php');
+require_once('./include/api/user.php');
 
 function phorum_valid_email($email){
     $PHORUM = $GLOBALS["PHORUM"];
@@ -221,7 +221,7 @@ function phorum_email_notice($message)
         return;
     }
 
-    include_once("./include/format_functions.php");
+    require_once('./include/format_functions.php');
 
     $mail_users_full = phorum_api_user_list_subscribers($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
 
@@ -280,7 +280,7 @@ function phorum_email_moderators($message)
     $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], FALSE, TRUE);
 
     if (count($mail_users)) {
-        include_once("./include/format_functions.php");
+        require_once('./include/format_functions.php');
         if($message["status"] > 0) { // just notification of a new message
             $mailsubjecttpl = 'NewUnModeratedSubject';
             $mailmessagetpl = 'NewUnModeratedMessage';

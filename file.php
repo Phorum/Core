@@ -18,9 +18,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','file');
 
-include_once("./common.php");
-include_once("./include/api/base.php");
-include_once("./include/api/file_storage.php");
+require_once('./common.php');
+require_once('./include/api/base.php');
+require_once('./include/api/file_storage.php');
 
 // We start a buffer here, so we can catch any (warning) output
 // from being prepended to file data that we return. The file

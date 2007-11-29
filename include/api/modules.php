@@ -77,7 +77,7 @@ function phorum_api_modules_list()
     $deprecated = array();
     $problems   = array();
 
-    include_once('./include/version_functions.php');
+    require_once('./include/version_functions.php');
 
     $dh = opendir("./mods");
     if (! $dh) trigger_error(

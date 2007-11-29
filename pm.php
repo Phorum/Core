@@ -32,15 +32,15 @@
 
 define('phorum_page','pm');
 
-include_once("./common.php");
+require_once('./common.php');
 
 phorum_require_login();
 
 // set all our common URL's
 phorum_build_common_urls();
 
-include_once("./include/email_functions.php");
-include_once("./include/format_functions.php");
+require_once('./include/email_functions.php');
+require_once('./include/format_functions.php');
 
 // a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
@@ -156,7 +156,7 @@ $error_msg = "";
 //  Start editor       Post message         Post reply
 if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id)))
 {
-    include_once("./include/profile_functions.php");
+    require_once('./include/profile_functions.php');
     $error = phorum_check_bans(array(
         array($PHORUM["user"]["username"], PHORUM_BAD_NAMES),
         array($PHORUM["user"]["email"],    PHORUM_BAD_EMAILS),
@@ -454,7 +454,7 @@ if (!empty($action)) {
                             // Do e-mail notifications on successful sending.
                             } elseif (!empty($PHORUM['allow_pm_email_notify'])) {
 
-                                include_once("./include/email_functions.php");
+                                require_once('./include/email_functions.php');
 
                                 $pm_message = array(
                                     'pm_message_id' => $pm_message_id,
@@ -961,7 +961,7 @@ function phorum_pm_format($messages)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
-    include_once("./include/format_functions.php");
+    require_once('./include/format_functions.php');
 
     // Reformat message so it looks like a forum message (so we can run it
     // through phorum_format_messages) and do some PM specific formatting.

@@ -20,8 +20,8 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-include_once("./include/api/base.php");
-include_once("./include/api/custom_profile_fields.php");
+require_once('./include/api/base.php');
+require_once('./include/api/custom_profile_fields.php');
 
 // Create or update a custom profile field.
 if(count($_POST) && $_POST['name'] != '')
@@ -166,7 +166,7 @@ if ($field === NULL) {
 }
 
 // Display the custom profile field editor.
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 
 $frm = new PhorumInputForm ("", "post", $submit);
 $frm->hidden("module", "customprofile");

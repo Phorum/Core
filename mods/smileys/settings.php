@@ -2,9 +2,9 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once("./include/admin/PhorumInputForm.php");
-require_once("./mods/smileys/smileyslib.php");
-require_once("./mods/smileys/defaults.php");
+require_once('./include/admin/PhorumInputForm.php');
+require_once('./mods/smileys/smileyslib.php');
+require_once('./mods/smileys/defaults.php');
 
 // The definition of the possible uses for a smiley.
 $PHORUM_MOD_SMILEY_USES = array(

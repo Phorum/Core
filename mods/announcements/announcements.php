@@ -76,7 +76,7 @@ function phorum_show_announcements ()
         }
     }
 
-    require_once("./include/format_functions.php");
+    require_once('./include/format_functions.php');
 
     // Process the announcements.
     foreach($messages as $message)

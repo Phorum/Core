@@ -25,8 +25,8 @@ if(!phorum_db_check_connection()){
     return;
 }
 
-include_once "./include/admin/PhorumInputForm.php";
-include_once "./include/version_functions.php";
+require_once('./include/admin/PhorumInputForm.php');
+require_once('./include/version_functions.php');
 
 // Find and count the upgrades that have to be run.
 $upgrades = phorum_dbupgrade_getupgrades();

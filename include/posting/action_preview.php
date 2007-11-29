@@ -61,7 +61,7 @@ if (($mode == "post" || $mode == "reply") &&
 }
 
 // Format the message using the default formatting.
-include_once("./include/format_functions.php");
+require_once('./include/format_functions.php');
 $previewmessages = phorum_format_messages(array($previewmessage));
 $previewmessage = array_shift($previewmessages);
 

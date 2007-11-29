@@ -18,9 +18,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','list');
 
-include_once("./common.php");
-include_once("./include/format_functions.php");
-//include_once('./include/timing.php');
+require_once('./common.php');
+require_once('./include/format_functions.php');
+//require_once('./include/timing.php');
 
 //timing_start();
 
@@ -234,7 +234,7 @@ if($rows == null) {
 
         }
         // don't move this up.  We want it to be conditional.
-        include_once("./include/thread_sort.php");
+        require_once('./include/thread_sort.php');
 
         $rows = phorum_sort_threads($rows);
 

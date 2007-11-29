@@ -15,8 +15,8 @@ define('phorum_page', 'rebuild_thread_info');
 define('PHORUM_ADMIN', 1);
 
 chdir(dirname(__FILE__) . "/..");
-require_once './common.php';
-include './include/thread_info.php';
+require_once('./common.php');
+require_once('./include/thread_info.php');
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();

@@ -6,7 +6,7 @@
 // Phorum wrapper to create a portable, dynamic Phorum with a single code base
 // and to safely wrap Phorum to protect it from other applications. 
 
-include_once "./phorum_settings.php";
+require_once('./phorum_settings.php');
 
 chdir($PHORUM_DIR);
 
@@ -40,7 +40,7 @@ if(file_exists("./$page.php")){
 function phorum_namespace($page)
 {
     global $PHORUM;  // globalize the $PHORUM array
-    include_once("./$page.php");
+    require_once("./$page.php");
 }
 
 ?>

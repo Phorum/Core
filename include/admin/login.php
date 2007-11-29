@@ -20,8 +20,8 @@
     // don't allow this page to be loaded directly
     if(!defined("PHORUM_ADMIN")) exit();
 
-    include_once("./include/api/base.php");
-    include_once("./include/api/user.php");
+    require_once('./include/api/base.php');
+    require_once('./include/api/user.php');
 
     if(isset($_POST["username"]) && isset($_POST["password"]))
     {
@@ -50,7 +50,7 @@
         }
     }
 
-    include_once "./include/admin/PhorumInputForm.php";
+    require_once('./include/admin/PhorumInputForm.php');
 
     $frm = new PhorumInputForm ("", "post");
 
