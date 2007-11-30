@@ -297,68 +297,6 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
 }
 // }}}
 
-// {{{ Function: phorum_api_forums_folder_save()
-/**
- * Create or update a folder.
- *
- * This function can be used for both creating and updating Phorum folders.
- * If no forum_id is provided in the folder data, a new folder will be created.
- * If a forum_id is provided, then the existing folder will be updated or a
- * new folder with that forum_id is created.
- *
- * @param array $folder
- *     An array containing folder data. This array should at least contain
- *     a field "folder_id". This field can be NULL to create a new folder
- *     with an automatically assigned folder_id. It can also be set to a
- *     folder_id to either update an existing folder or to create a new folder
- *     with the provided folder_id. Other fields in the folder data are:
- *     - name: the name to assign to the folder. Phorum will not escape HTML
- *       code in this name, so formatting the title using HTML is allowed.
- *     - description: the description for the folder. Phorum will not escape
- *       HTML code in this name, so formatting the description using HTML
- *       is allowed.
- *     - parent_id: The folder_id of the parent folder.
- *     - active: Whether the folder is active/visible (1) or not (0).
- *     - template: The name of the template to use for the folder.
- *     - language: The name of the language to use for the folder.
- *     - vroot: Whether the folder is a vroot (1) or not (0).
- *
- * @return array
- *     The forum_id of the folder. For new folderss, the newly assigned
- *     folder_id will be returned.
- */
-function phorum_api_forums_folder_save($folder)
-{
-    // $folder must be an array.
-    if (!is_array($folder)) {
-        trigger_error(
-            'phorum_api_forums_folder_save(): $folder argument is not an array',
-            E_USER_ERROR
-        );
-        return NULL;
-    }
-
-    // We need at least the folder_id field.
-    if (!array_key_exists('folder_id', $folder))  {
-        trigger_error(
-           'phorum_api_forums_folder_save(): missing field "folder_id" ' .
-           'in folder data array',
-           E_USER_ERROR
-        );
-        return NULL;
-    }
-    if ($folder['folder_id'] !== NULL && !is_numeric($folder['folder_id'])) {
-        trigger_error(
-            'phorum_api_forums_folder_save(): field "folder_id" not NULL or numerical',
-            E_USER_ERROR
-        );
-        return NULL;
-    }
-
-    // TODO
-}
-// }}}
-
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
 // ------------------------------------------------------------------------
