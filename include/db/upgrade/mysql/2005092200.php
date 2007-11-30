@@ -6,20 +6,19 @@ if(!defined("PHORUM_ADMIN")) return;
 
 $old_table = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
 
-$cid=phorum_db_mysql_connect();
-
 $check_tables = array(
    $PHORUM["pm_messages_table"] => 1,
    $PHORUM["pm_folders_table"]  => 1,
    $PHORUM["pm_xref_table"]     => 1,
 );
 
-$res = mysql_query("show tables");
-if ($res) {
-    while (($row = mysql_fetch_array($res))) {
-        if (isset($check_tables[$row[0]])) {
-            unset($check_tables[$row[0]]);
-        }
+$rows = phorum_db_interact(
+    DB_RETURN_ROWS,
+    "SHOW TABLES"
+);
+foreach ($rows as $row) {
+    if (isset($check_tables[$row[0]])) {
+        unset($check_tables[$row[0]]);
     }
 }
 
@@ -29,7 +28,7 @@ if (count($check_tables)) { ?>
     completed successfully. The old style private messages table
     <?php print $old_table ?> will be kept for backup. <?php
 } else {
-    $upgrade_queries[] = "DROP TABLE $old_table"; 
+    $upgrade_queries[] = "DROP TABLE $old_table";
 }
 
 ?>
