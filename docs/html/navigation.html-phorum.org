@@ -30,7 +30,7 @@ urchinTracker();
   <td onclick="loadURL('/support.php');"><a target="_top" href="http://www.phorum.org/support.php">SUPPORT</a></td>
   <td onclick="loadURL('/phorum5/index.php');"><a target="_top" href="http://www.phorum.org/phorum5/index.php">COMMUNITY</a></td>
   <td onclick="loadURL('/development/');"><a target="_top" href="http://www.phorum.org/development/">DEVELOPMENT</a></td>
-  <td onclick="loadURL('/docs/html/');"><a target="_top" href="http://www.phorum.org/docs/html/">DOCUMENTATION</a></td>
+  <td onclick="loadURL('/docs/html/');"><a target="_top" href="http://www.phorum.org/docs/html/">DOCS</a></td>
   <td onclick="loadURL('/demo/');"><a target="_top" href="http://www.phorum.org/demo/">DEMO</a></td>
   <td onclick="loadURL('/links.php');"><a target="_top" href="http://www.phorum.org/links.php">LINKS</a></td>
   </tr>
