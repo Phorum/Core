@@ -5,7 +5,8 @@ if(!defined("PHORUM_ADMIN")) return;
 $rows = phorum_db_interact(
     DB_RETURN_ASSOCS,
     "SELECT user_id, user_data
-     FROM   {$PHORUM['user_table']}"
+     FROM   {$PHORUM['user_table']}",
+    NULL, DB_MASTERQUERY
 );
 
 foreach ($rows as $row)
@@ -64,8 +65,23 @@ foreach ($rows as $row)
         }
     }
 
-    $userdata['user_data']=$user_data_new;
-    phorum_api_user_save($userdata);
+    $userdata['user_data'] = serialize($user_data_new);
+
+    // Prepare the user table fields.
+    $values = array();
+    foreach ($userdata as $key => $value) {
+        $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+        $values[] = "$key = '$value'";
+    }
+    $user_id = $userdata['user_id'];
+    unset($userdata['user_id']);
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['user_table']}
+         SET    ".implode(', ', $values)."
+         WHERE  user_id = $user_id",
+        NULL, DB_MASTERQUERY
+    );
 }
 
 ?>

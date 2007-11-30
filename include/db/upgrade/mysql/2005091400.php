@@ -40,7 +40,8 @@ $old_table = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
 $rows = phorum_db_interact(
     DB_RETURN_ASSOCS,
     "SELECT *
-     FROM   $old_table"
+     FROM   $old_table",
+    NULL, DB_MASTERQUERY
 );
 foreach ($rows as $row)
 {
