@@ -14,7 +14,8 @@ $check_tables = array(
 
 $rows = phorum_db_interact(
     DB_RETURN_ROWS,
-    "SHOW TABLES"
+    "SHOW TABLES",
+    NULL, DB_MASTERQUERY
 );
 foreach ($rows as $row) {
     if (isset($check_tables[$row[0]])) {

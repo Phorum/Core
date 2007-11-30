@@ -7,21 +7,24 @@ if(!defined("PHORUM_ADMIN")) return;
 phorum_db_interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
-     ADD   message_id INT UNSIGNED NOT NULL DEFAULT '0'"
+     ADD   message_id INT UNSIGNED NOT NULL DEFAULT '0'",
+    NULL, DB_MASTERQUERY
 );
 
 // removing old primary-key
 phorum_db_interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
-     DROP PRIMARY KEY"
+     DROP PRIMARY KEY",
+    NULL, DB_MASTERQUERY
 );
 
 // adding new primary-key
 phorum_db_interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
-     ADD PRIMARY KEY (user_id , forum_id , message_id)"
+     ADD PRIMARY KEY (user_id , forum_id , message_id)",
+    NULL, DB_MASTERQUERY
 );
 
 // converting the newflags
@@ -29,7 +32,8 @@ $rows = phorum_db_interact(
     DB_RETURN_ASSOCS,
     "SELECT *
      FROM {$PHORUM['user_newflags_table']}
-     WHERE message_id=0"
+     WHERE message_id=0",
+    NULL, DB_MASTERQUERY
 );
 $olduser=$GLOBALS['PHORUM']['user']['user_id'];
 foreach ($rows as $row)
@@ -52,14 +56,16 @@ $GLOBALS['PHORUM']['user']['user_id']=$olduser;
 phorum_db_interact(
     DB_RETURN_RES,
     "DELETE FROM {$PHORUM['user_newflags_table']}
-     WHERE message_id=0"
+     WHERE message_id=0",
+    NULL, DB_MASTERQUERY
 );
 
 // remove old column
 phorum_db_interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
-     DROP newflags"
+     DROP newflags",
+    NULL, DB_MASTERQUERY
 );
 
 ?>
