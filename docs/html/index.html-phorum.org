@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+   "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+  <head>
+    <title>Phorum documentation</title>
+  </head>
+  <frameset rows="101,*" noresize="noresize"
+            frameborder="no" framespacing="0" border="0">
+    <frame name="navigation" src="navigation.html" scrolling="no" />
+    <frame name="content" src="faq/" />
+  </frameset>
+  <noframes>
+    <h2>Frame Alert</h2>
+    <p>
+      This document is designed to be viewed using the frames feature.
+      If you see this message, you are using a non-frame-capable web client.
+    </p>
+  </noframes>
+</html>

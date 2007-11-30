@@ -1,6 +1,7 @@
 body {
     font-family: arial,helvetica,sans-serif;
     background-color: white;
+    background-image: none;
     color: #345;
     line-height: 1.3em;
     margin: 0px;
@@ -44,6 +45,28 @@ body {
     margin: 15px 0 0 10px;
 }
 
+#submenu-bar{
+    background-color: white;
+    text-align: center;
+}
+
+#submenu-bar table {
+    max-width: 900px;
+    width: expression(document.body.clientWidth > 900 ? "900px" : true);
+    border: 1px solid #B6B6B6;
+    border-top: none;
+}
+
+#submenu-bar td {
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#submenu-bar td:hover {
+    background-color: transparent;
+}
+
 #menu-bar{
     background-color: #DFDFDF;
     background-image: url("images/menu-background.png");
@@ -62,7 +85,7 @@ body {
     font-size: 11px;
     font-weight: bold;
     text-align: center;
-    width: 16%;
+    width: 14%;
     border-right: 1px solid #B6B6B6;
     cursor: pointer;
 }

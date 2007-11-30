@@ -1,3 +1,7 @@
+# Can be overridden using:
+# make TPLSET=.....
+TEMPLATE=default
+
 all:
 	(cd ../docbook/developer; ./mkhookdocs)
 	(cd user; make)
@@ -6,6 +10,12 @@ all:
 	(cd api; make)
 	(cd faq; make)
 	(cd db; make)
+	cp index.html-$(TEMPLATE) index.html
+	cp navigation.html-$(TEMPLATE) navigation.html
+
+template:
+	cp index.html-$(TEMPLATE) index.html
+	cp navigation.html-$(TEMPLATE) navigation.html
 
 clean:
 	(cd user; make clean)

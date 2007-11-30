@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Phorum: PHP Message Board</title>
+    <meta name="description" content="Phorum is open source forum software with a penchant for speed.  Phorum's very flexible hook and module system can satisfy every web master's needs." />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="icon" type="image/png" href="http://www.phorum.org/favicon.png" />
+<link rel="stylesheet" type="text/css" href="http://www.phorum.org/styles/main.css" media="screen,print" />
+<link rel="stylesheet" type="text/css" href="http://www.phorum.org/styles/front-page.css" media="screen,print" />
+<link rel="stylesheet" type="text/css" href="navigation.css" media="screen,print" />
+<script type="text/javascript">
+  function loadURL(url) {
+      window.document.location = url;
+      return false;
+  }
+</script>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-89211-1";
+urchinTracker();
+</script>
+</head>
+<body>
+<div id="top-bar" align="center"><div id="buttons"><a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=17632&amp;t=61"><img src="http://www.phorum.org/images/firefox_80x15.png" border="0" height="15" width="80" alt="Firefox" /></a><a href="http://www.php.net/"><img src="http://www.phorum.org/images/php_power.png" border="0" height="15" width="80" alt="PHP" /></a></div><div id="logo"><a href="http://www.phorum.org/"><img  src="http://www.phorum.org/images/logo.png" width="111" height="26" border="0" alt="PHORUM" /></a></div></div>
+<div id="menu-bar" align="center">
+  <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+  <tr>
+  <td onclick="loadURL('/downloads.php');"><a target="_top" href="http://www.phorum.org/downloads.php">DOWNLOADS</a></td>
+  <td onclick="loadURL('/support.php');"><a target="_top" href="http://www.phorum.org/support.php">SUPPORT</a></td>
+  <td onclick="loadURL('/phorum5/index.php');"><a target="_top" href="http://www.phorum.org/phorum5/index.php">COMMUNITY</a></td>
+  <td onclick="loadURL('/development/');"><a target="_top" href="http://www.phorum.org/development/">DEVELOPMENT</a></td>
+  <td onclick="loadURL('/docs/html/');"><a target="_top" href="http://www.phorum.org/docs/html/">DOCUMENTATION</a></td>
+  <td onclick="loadURL('/demo/');"><a target="_top" href="http://www.phorum.org/demo/">DEMO</a></td>
+  <td onclick="loadURL('/links.php');"><a target="_top" href="http://www.phorum.org/links.php">LINKS</a></td>
+  </tr>
+  </table>
+</div>
+<div id="submenu-bar" align="center">
+  <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
+  <tr>
+  <td><a target="content" href="faq/">FAQ</a></td>
+  <td><a target="content" href="admin/">ADMIN MANUAL</a></td>
+  <td><a target="content" href="user/">USER MANUAL</a></td>
+  <td><a target="content" href="developer/">DEVELOPER MANUAL</a></td>
+  <td><a target="content" href="api">PHORUM API</a></td>
+  <td><a target="content" href="db">DB LAYER</a></td>
+  </tr>
+  </table>
+</div>
+</body>
+</html>
+
