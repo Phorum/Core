@@ -22,7 +22,7 @@ urchinTracker();
 </script>
 </head>
 <body>
-<div id="top-bar" align="center"><div id="buttons"><a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=17632&amp;t=61"><img src="http://www.phorum.org/images/firefox_80x15.png" border="0" height="15" width="80" alt="Firefox" /></a><a href="http://www.php.net/"><img src="http://www.phorum.org/images/php_power.png" border="0" height="15" width="80" alt="PHP" /></a></div><div id="logo"><a href="http://www.phorum.org/"><img  src="http://www.phorum.org/images/logo.png" width="111" height="26" border="0" alt="PHORUM" /></a></div></div>
+<div id="top-bar" align="center"><div id="buttons"><a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=17632&amp;t=61"><img src="http://www.phorum.org/images/firefox_80x15.png" border="0" height="15" width="80" alt="Firefox" /></a><a href="http://www.php.net/"><img src="http://www.phorum.org/images/php_power.png" border="0" height="15" width="80" alt="PHP" /></a></div><div id="logo"><a target="_top" href="http://www.phorum.org/"><img  src="http://www.phorum.org/images/logo.png" width="111" height="26" border="0" alt="PHORUM" /></a></div></div>
 <div id="menu-bar" align="center">
   <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
   <tr>
