@@ -37,8 +37,12 @@ $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_xref_table"]} (
 
 // converting the old PM system to the new one.
 $old_table = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";
-$res=mysql_query("SELECT * FROM $old_table");
-while($row=mysql_fetch_assoc($res))
+$rows = phorum_db_interact(
+    DB_RETURN_ASSOCS,
+    "SELECT *
+     FROM   $old_table"
+);
+foreach ($rows as $row)
 {
     // Put the message in the message table.
     $meta = serialize(array(

@@ -3,18 +3,37 @@ if(!defined("PHORUM_ADMIN")) return;
 
 // wow doing it all by hand this time :(
 
-$cid=phorum_db_mysql_connect();
 // adding the new field
-mysql_query("ALTER TABLE {$PHORUM['user_newflags_table']} ADD message_id INT( 11 ) NOT NULL",$cid);
+phorum_db_interact(
+    DB_RETURN_RES,
+    "ALTER TABLE {$PHORUM['user_newflags_table']}
+     ADD   message_id INT UNSIGNED NOT NULL DEFAULT '0'"
+);
+
 // removing old primary-key
-mysql_query("ALTER TABLE {$PHORUM['user_newflags_table']} DROP PRIMARY KEY",$cid);
+phorum_db_interact(
+    DB_RETURN_RES,
+    "ALTER TABLE {$PHORUM['user_newflags_table']}
+     DROP PRIMARY KEY"
+);
+
 // adding new primary-key
-mysql_query("ALTER TABLE {$PHORUM['user_newflags_table']} ADD PRIMARY KEY ( user_id , forum_id , message_id )",$cid);
+phorum_db_interact(
+    DB_RETURN_RES,
+    "ALTER TABLE {$PHORUM['user_newflags_table']}
+     ADD PRIMARY KEY (user_id , forum_id , message_id)"
+);
 
 // converting the newflags
-$res=mysql_query("SELECT * FROM {$PHORUM['user_newflags_table']} where message_id=0",$cid);
+$rows = phorum_db_interact(
+    DB_RETURN_ASSOCS,
+    "SELECT *
+     FROM {$PHORUM['user_newflags_table']}
+     WHERE message_id=0"
+);
 $olduser=$GLOBALS['PHORUM']['user']['user_id'];
-while($row=mysql_fetch_assoc($res)) {
+foreach ($rows as $row)
+{
     $forum=$row['forum_id'];
     $data=unserialize($row['newflags']);
     $GLOBALS['PHORUM']['user']['user_id']=$row['user_id'];
@@ -29,9 +48,18 @@ while($row=mysql_fetch_assoc($res)) {
     unset($newdata);
 }
 $GLOBALS['PHORUM']['user']['user_id']=$olduser;
-mysql_query("DELETE FROM {$PHORUM['user_newflags_table']} where message_id=0",$cid);
+
+phorum_db_interact(
+    DB_RETURN_RES,
+    "DELETE FROM {$PHORUM['user_newflags_table']}
+     WHERE message_id=0"
+);
 
 // remove old column
-mysql_query("ALTER TABLE {$PHORUM['user_newflags_table']} DROP newflags",$cid);
+phorum_db_interact(
+    DB_RETURN_RES,
+    "ALTER TABLE {$PHORUM['user_newflags_table']}
+     DROP newflags"
+);
 
 ?>
