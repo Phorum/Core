@@ -15,6 +15,7 @@ Table of contents:
    1.1.3 From a system console
    1.2 Upgrading templates and hacks
 2. Upgrading from Phorum 3.4.x to Phorum5
+3. Upgrading from Phorum 5.0 or 5.1 to Phorum 5.2
 
 
 1. Upgrading from a Phorum5 version to another Phorum5 version
@@ -129,3 +130,13 @@ Table of contents:
      it from the command line or by opening it from your webbrowser. See
      also the instructions in the script itself.
 
+
+3. Upgrading from Phorum 5.0 or 5.1 to Phorum 5.2
+-------------------------------------------------------------------------------
+
+   - The primary change for upgrading between 5.1 and 5.2 was the changes to 
+     announcements.  Announcements in 5.2 are now assigned to a specific forum
+     and via a module are displayed at the top of the pages.  To convert your
+     announcements, you will need to run the convert_announcements.php script
+     that is located in the scripts directory.  Do this after you upgrade.  It
+     will create the announcements forum and move the messages into it.
