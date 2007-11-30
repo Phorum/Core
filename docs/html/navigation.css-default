@@ -1,11 +1,11 @@
 body {
-    font-family: arial,helvetica,sans-serif;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: white;
     background-image: none;
     color: #345;
     line-height: 1.3em;
-    margin: 0px;
-    padding: 0px;
 }
 
 #top-bar {

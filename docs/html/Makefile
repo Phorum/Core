@@ -12,10 +12,12 @@ all:
 	(cd db; make)
 	cp index.html-$(TEMPLATE) index.html
 	cp navigation.html-$(TEMPLATE) navigation.html
+	cp navigation.css-$(TEMPLATE) navigation.css
 
 template:
 	cp index.html-$(TEMPLATE) index.html
 	cp navigation.html-$(TEMPLATE) navigation.html
+	cp navigation.css-$(TEMPLATE) navigation.css
 
 clean:
 	(cd user; make clean)
