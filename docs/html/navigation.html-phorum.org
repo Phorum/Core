@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="navigation.css" media="screen,print" />
 <script type="text/javascript">
   function loadURL(url) {
-      window.document.location = url;
+      top.location.href = url;
       return false;
   }
 </script>
