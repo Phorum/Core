@@ -262,12 +262,36 @@ function phorum_api_modules_disable($module)
 /**
  * Store the module information in the database.
  *
- * This function will sort out all module and hook priorities for the
- * enabled modules and write the result data ($PHORUM["mods"] and
+ * This function will write the generated module data ($PHORUM["mods"] and
  * $PHORUM["hooks"]) to the database.
  */
 function phorum_api_modules_save()
 {
+    global $PHORUM;
+    
+    phorum_api_modules_generate_moduleinfo();
+
+    // Store the settings in the database.
+    phorum_db_update_settings(array(
+        "hooks" => $PHORUM["hooks"],
+        "mods"  => $PHORUM["mods"]
+    ));
+
+    // Reset the module information update checking data.
+    phorum_api_modules_check_updated_info(TRUE);
+}
+// }}}
+
+// {{{ Function: phorum_api_modules_generate_moduleinfo()
+/**
+ * Generate the module information based on enabled/disabled state
+ *
+ * This function will sort out all module and hook priorities for the
+ * enabled modules and fills ($PHORUM["mods"] and
+ * $PHORUM["hooks"]) with the correct values.
+ * 
+ */
+function phorum_api_modules_generate_moduleinfo() {
     global $PHORUM;
 
     // Load the module info if this was not done yet.
@@ -448,15 +472,7 @@ function phorum_api_modules_save()
         }
     }
     $PHORUM["hooks"] = $hooks;
-
-    // Store the settings in the database.
-    phorum_db_update_settings(array(
-        "hooks" => $PHORUM["hooks"],
-        "mods"  => $PHORUM["mods"]
-    ));
-
-    // Reset the module information update checking data.
-    phorum_api_modules_check_updated_info(TRUE);
+        
 }
 // }}}
 
