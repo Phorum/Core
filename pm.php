@@ -426,7 +426,39 @@ if (!empty($action)) {
                             {
                                 if ($user['admin']) continue; // No limits for admins
                                 $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS, $user["user_id"]);
-                                if ($current_count['total'] >= $PHORUM['max_pm_messagecount']) {
+                                
+                                $max_allowed_message_count = $PHORUM['max_pm_messagecount'];
+                                
+                                
+                                /**
+                                 * [hook]
+                                 *     pm_checkmailboxsize
+                                 *
+                                 * [description]
+                                 *     This hook can be used to return a different number of allowed
+                                 *     private messages for a user or do other checks on that data 
+                                 *
+                                 * [category]
+                                 *     PM
+                                 *
+                                 * [when]
+                                 *     Right before the maximum number of messages for a given user is
+                                 *     checked for sending a message
+                                 *
+                                 * [input]
+                                 *     An array containing the current user (which is an array of its own),
+                                 *     his currently counted messages and the currently allowed message-count
+                                 *
+                                 * [output]
+                                 *     The same array as the one that was used for the hook call
+                                 *     argument.
+                                 */
+                                
+                                if (isset($PHORUM["hooks"]["pm_checkmailboxsize"]))
+                                    list($user,$current_count,$max_allowed_message_count) = 
+                                         phorum_hook("pm_checkmailboxsize", array($user,$current_count,$max_allowed_message_count));
+                                    
+                                if ($current_count['total'] >= $max_allowed_message_count) {
                                     if ($user['user_id'] == $PHORUM["user"]["user_id"]) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMFromMailboxFull"];
                                     } else {
