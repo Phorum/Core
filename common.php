@@ -142,7 +142,7 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
     @ini_set("display_errors", 0);
 
     // Load configuration.
-    if (! require_once('./include/db/config.php')) {
+    if (! include_once('./include/db/config.php')) {
         print '<html><head><title>Phorum error</title></head><body>';
         print '<h2>Phorum database configuration error</h2>';
 
