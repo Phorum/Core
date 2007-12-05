@@ -700,7 +700,7 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
     if (count($allowed_forums) == 1) {
-        $sql .= " AND forum_id = " . array_shift($forum_id);
+        $sql .= " AND forum_id = " . array_shift($allowed_forums);
     } else {
         $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
     }
