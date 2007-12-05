@@ -49,6 +49,6 @@
           {IF NAME}<a href="{URL->LIST}">{NAME}</a>&nbsp;:&nbsp;{/IF}
           {TITLE}
         </span>
-        {IF URL->INDEX}<a href="{URL->INDEX}">{/IF}<img src="templates/default/images/logo.png" alt="The fastest message board... ever. " title="The fastest message board... ever. " width="170" height="42" border="0" />{IF URL->INDEX}</a>{/IF}
+        {IF URL->INDEX}<a href="{URL->INDEX}">{/IF}<img src="templates/classic/images/logo.png" alt="The fastest message board... ever. " title="The fastest message board... ever. " width="170" height="42" border="0" />{IF URL->INDEX}</a>{/IF}
         <div class="PhorumFloatingText">{DESCRIPTION}&nbsp;</div>
         {/IF}

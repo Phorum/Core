@@ -217,7 +217,7 @@ div.phorum-menu li
     font-size: {navfontsize};
     padding: 0 0 0 15px;
     margin-top:3px;
-    background-image: url('templates/default/images/square_bullet.png');
+    background-image: url('templates/classic/images/square_bullet.png');
     background-repeat: no-repeat;
     background-position: 1px 2px;
 }
