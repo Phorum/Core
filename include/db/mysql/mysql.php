@@ -87,6 +87,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             phorum_database_error('Failed to select the database.');
             exit;
         }
+        if(!empty($PHORUM['DBCONFIG']['charset'])) {
+            mysql_query( "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",$conn);
+            mysql_query( "SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",$conn);
+        }          
     }
 
     // RETURN: database connection handle

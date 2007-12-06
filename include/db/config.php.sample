@@ -38,6 +38,10 @@ $PHORUM['DBCONFIG']=array(
     // (always disable this option for MySQL versions prior to 4.0.18!)
     'mysql_use_ft'  =>  '1',
 
+    // specifies the charset used for the create-table statements
+    // and the connection(s) later on.
+    'charset' => 'utf8',
+
     // For master/slave setup (if mysql_php_extension is set to
     // "mysqli_replication") you need to specify the slave-servers to use.
     // if you don't do this all queries will go to the master-server anyway.

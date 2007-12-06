@@ -82,6 +82,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             phorum_database_error('Failed to connect to the database.');
             exit;
         }
+        
+        if(!empty($PHORUM['DBCONFIG']['charset'])) {
+            mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+            mysqli_query( $conn,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+        }            
 
         // putting this here for testing mainly
         // All of Phorum should work in strict mode
