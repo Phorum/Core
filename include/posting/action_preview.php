@@ -62,8 +62,10 @@ if (($mode == "post" || $mode == "reply") &&
 
 // Format the message using the default formatting.
 include_once("./include/format_functions.php");
-$previewmessages = phorum_format_messages(array($previewmessage));
-$previewmessage = array_shift($previewmessages);
+$previewmessages = phorum_format_messages(array(
+    $previewmessage['message_id'] => $previewmessage)
+);
+$previewmessage = $previewmessages[$previewmessage['message_id']];
 
 // Recount the number of attachments. Formatting mods might have changed
 // the number of attachments we have to display using default formatting.
