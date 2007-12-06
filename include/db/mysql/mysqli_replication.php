@@ -102,7 +102,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                             sort($PHORUM['DBCONFIG']['slaves']);
                         }
                     }
-                }                
+                }
+                if(!empty($PHORUM['DBCONFIG']['charset'])) {
+                    mysqli_query( $conn_read,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+                    mysqli_query( $conn_read,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+                }
         }
         
         $conn = $conn_read;
@@ -119,6 +123,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 $PHORUM['DBCONFIG']['password'],
                 $PHORUM['DBCONFIG']['name']
             );
+            
+            if(!empty($PHORUM['DBCONFIG']['charset'])) {
+                mysqli_query( $conn_write,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+                mysqli_query( $conn_write,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+            }
         }
         
         $conn = $conn_write;
