@@ -431,6 +431,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
         $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
+    if ( !file_exists("./include/lang/$PHORUM[language].php") ) {
+        $PHORUM["language"] = PHORUM_DEFAULT_LANGUAGE;
+    }
 
     // set the user-selected template
     if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) &&
@@ -469,8 +472,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
                 include_once "./mods/$mod/lang/$PHORUM[language].php";
             }
-            elseif ( file_exists( "./mods/$mod/lang/english.php" ) ) {
-                include_once "./mods/$mod/lang/english.php";
+            elseif ( file_exists( "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php" ) ) {
+                include_once "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
             }
         }
     }
