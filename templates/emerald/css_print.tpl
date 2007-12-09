@@ -1,3 +1,5 @@
+/* BEGIN TEMPLATE css_print.tpl */
+
 /* does not use template values on purpose */
 
 #phorum #post, #phorum #thread-options, #phorum .nav, #phorum .message-options, #phorum .message-moderation {
@@ -31,3 +33,4 @@
     color: #000000;
 }
 
+/* END TEMPLATE css_print.tpl */

@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE pm_post.tpl -->
 {IF PREVIEW}
 
     <div class="information">
@@ -94,5 +95,4 @@
     </div>
 
 </form>
-
-
+<!-- END TEMPLATE pm_post.tpl -->

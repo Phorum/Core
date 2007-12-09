@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE read.tpl -->
 <div class="nav">
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
@@ -127,4 +128,4 @@
         {IF TOPIC->URL->MOVE}<a class="icon icon-move" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
     {/IF}
 </div>
-
+<!-- END TEMPLATE read.tpl -->

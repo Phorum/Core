@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_subscriptions.tpl -->
 <form action="{URL->ACTION}" method="POST">
     {POST_VARS}
     <div class="generic">
@@ -77,3 +78,4 @@
     <div class="generic">{LANG->NoFollowedThreads}</div>
 {/IF}
 <p>{LANG->HowToFollowThreads}</p>
+<!-- END TEMPLATE cc_subscriptions.tpl -->

@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_index.tpl -->
 <div class="nav">
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF FORUM_ID}<a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>{/IF}
@@ -66,3 +67,4 @@
         </td>
     </tr>
 </table>
+<!-- END TEMPLATE cc_index.tpl -->

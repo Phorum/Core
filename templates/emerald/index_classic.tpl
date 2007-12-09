@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE index_classic.tpl -->
 {IF FOLDERS}
     <table cellspacing="0" class="list">
         <tr>
@@ -47,3 +48,4 @@
         {/LOOP FORUMS}
     </table>
 {/IF FORUMS}
+<!-- END TEMPLATE index_classic.tpl -->

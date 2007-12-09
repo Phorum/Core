@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE merge_form.tpl -->
 <div class="generic">
 
     {IF FORM->merge_none}
@@ -32,3 +33,4 @@
     {/IF}
 
 </div>
+<!-- END TEMPLATE merge_form.tpl -->

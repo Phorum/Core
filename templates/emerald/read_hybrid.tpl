@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE read_hybrid.tpl -->
 <div class="nav">
     {INCLUDE "paging"}
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
@@ -129,4 +130,4 @@
         {IF TOPIC->URL->MOVE}<a class="icon icon-move" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
     {/IF}
 </div>
-
+<!-- END TEMPLATE read_hybrid.tpl -->

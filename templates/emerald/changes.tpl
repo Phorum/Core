@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE changes.tpl -->
 <p>{LANG->Message}: <a href="{MESSAGE->URL->READ}">{MESSAGE->subject}</a></p>
 
 <div class="nav">
@@ -18,22 +19,21 @@
                 {LANG->ChangeBy}: {CHANGES->username}<br />
                 {LANG->ChangeDate}: {CHANGES->date}<br />
             {/IF}
-            
+
         <strong>
             <br />{CHANGES->colored_subject}<br />
-        </strong> 
-        
+        </strong>
 
-            
-            
+
+
+
         </div>
-       
-        
+
+
         <div class="message-body">
             {CHANGES->colored_body}
         </div>
 
     </div>
 {/LOOP CHANGES}
-
-
+<!-- END TEMPLATE changes.tpl -->

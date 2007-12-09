@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE list.tpl -->
 <div class="nav">
     {INCLUDE "paging"}
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
@@ -114,3 +115,4 @@
     {INCLUDE "paging"}
 </div>
 <br />
+<!-- END TEMPLATE list.tpl -->

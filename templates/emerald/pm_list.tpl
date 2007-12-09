@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE pm_list.tpl -->
 <form action="{URL->ACTION}" method="post" id="phorum-pm-list">
     {POST_VARS}
     <input type="hidden" name="action" value="list" />
@@ -8,3 +9,4 @@
         {INCLUDE "pm_list_outgoing"}
     {/IF}
 </form>
+<!-- END TEMPLATE pm_list.tpl -->

@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE move_form.tpl -->
 <div class="generic">
     <h4>{LANG->MoveThread}</h4>
     <form method="POST" action="{URL->ACTION}">
@@ -16,3 +17,4 @@
         <input type="submit" name="move" value="{LANG->MoveThread}" />
     </form>
 </div>
+<!-- END TEMPLATE move_form.tpl -->

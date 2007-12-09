@@ -9,7 +9,7 @@
 {! --- This is used the number of page numbers shown on the list page in the paging section (eg. 1 2 3 4 5) --- }
 {DEFINE list_pages_shown 5}
 
-{! --- Define on what page notifications should be displayed ---- }
+{! --- Define on what pages notifications should be displayed ---- }
 {DEFINE show_notify_for_pages "index,list,cc"}
 
 {! -- This is the image for the gauge bar to show how full the PM box is -- }
@@ -27,10 +27,13 @@
 {VAR font_x_small   "75%"}
 {VAR font_xx_small  "65%"}
 
+{! -- The maximum width of the Phorum content (the div with id "phorum")  -- }
+{VAR max_width "900px"}  {! -- CSS size values allowed. No effect in MSIE 6 }
+{VAR max_width_ie "900"} {! -- px width values allowed. Sets max MSIE 6 width }
 
-{! -- Sizes -- }
-{VAR max_width "900px"}  {! -- No effect in IE 6 -- }
-
+{! -- Logo size (images/logo.png). Update this if you replace the logo.png -- }
+{VAR logo_width     "111"}
+{VAR logo_height     "25"}
 
 {! -- colors -- }
 {VAR body_background_color "White"}

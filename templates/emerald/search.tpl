@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE search.tpl -->
 {IF SEARCH->noresults}
     <div class="information">
         <h4>{LANG->NoResults}</h4>
@@ -97,5 +98,4 @@
         </form>
     </div>
 {/IF}
-
-
+<!-- END TEMPLATE search.tpl -->

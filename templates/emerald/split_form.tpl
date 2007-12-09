@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE split_form.tpl -->
 <div class="generic">
     <h4>{LANG->SplitThread}</h4>
     <form method="POST" action="{URL->ACTION}">
@@ -10,3 +11,4 @@
         <input type="submit" name="move" value="{LANG->SplitThread}" />
     </form>
 </div>
+<!-- END TEMPLATE split_form.tpl -->

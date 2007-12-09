@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE pm_buddies.tpl -->
 {IF BUDDYCOUNT}
     <form id="phorum-pm-list" action="{URL->ACTION}" method="post">
         {POST_VARS}
@@ -43,4 +44,4 @@
 {ELSE}
     <div class="generic">{LANG->BuddyListIsEmpty}</>
 {/IF}
-
+<!-- END TEMPLATE pm_buddies.tpl -->

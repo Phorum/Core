@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE index_new.tpl -->
 <table cellspacing="0" class="list">
     {VAR first_pass 1}
     {LOOP FORUMS}
@@ -55,3 +56,4 @@
         {/IF}
     {/LOOP FORUMS}
 </table>
+<!-- END TEMPLATE index_new.tpl -->

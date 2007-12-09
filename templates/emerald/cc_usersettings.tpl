@@ -1,4 +1,4 @@
-
+<!-- BEGIN TEMPLATE cc_usersettings.tpl -->
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
 
@@ -143,3 +143,4 @@
     </div>
 
 </form>
+<!-- END TEMPLATE cc_usersettings.tpl -->

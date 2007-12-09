@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_groupmod.tpl -->
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
 
@@ -57,7 +58,7 @@
                                     <select name="status[{USERS->userid}]">
                                         {LOOP STATUS_OPTIONS}
                                             <?php
-                                            // to get around a minor templating problem, we'll figure
+                                            // to get around a minor templating problem, we will figure
                                             // out if we have this line selected here
                                             $PHORUM['TMP']['STATUS_OPTIONS']['selected'] = ($PHORUM['TMP']['STATUS_OPTIONS']['value'] == $PHORUM['TMP']['USERS']['status']);
                                             ?>
@@ -94,3 +95,4 @@
         </dl>
     </div>
 {/IF}
+<!-- END TEMPLATE cc_groupmod.tpl -->
