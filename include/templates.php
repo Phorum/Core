@@ -182,6 +182,16 @@ function phorum_import_template_pass2($template)
     // This array is used for keeping track of loop variables.
     $loopvars = array();
 
+    // Remove all comments from the code that are on a single line.
+    // We do not want these to generate empty lines in the output.
+    $tmp = '';
+    foreach (explode("\n", $template) as $line) {
+        if (!preg_match('/^\s*\{![^\]]*?\}\s*$/', $line)) {
+            $tmp .= "$line\n";
+        }
+    }
+    $template= $tmp;
+
     // Find and process all template statements in the code.
     preg_match_all("/\{[\"\'\!\/A-Za-z0-9].+?\}/s", $template, $matches);
     foreach ($matches[0] as $match)
