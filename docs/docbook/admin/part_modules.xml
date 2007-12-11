@@ -6,7 +6,7 @@
     <para>
       Modules are (often) small extensions to Phorum-functionality without sacrificing performance of the Phorum-core.
       You can install them if needed for using their functionalities.<sbr/>
-      Take a look at the <ulink url="http://www.phorum.org/development/wiki/ListOfModules">Modules-List</ulink> to see the currently available modules.
+      Take a look at the <ulink url="http://trac.phorum.org/wiki/ListOfModules">Modules-List</ulink> to see the currently available modules.
     </para>
   </section>
   <section id="modules.installation">
