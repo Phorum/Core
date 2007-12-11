@@ -507,8 +507,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             phorum_build_common_urls();
 
             $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-        $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
-        $PHORUM["DATA"]["LOGGEDIN"] = false;
+            $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
+            $PHORUM["DATA"]["LOGGEDIN"] = false;
 
             if (phorum_page != 'login') {
 
@@ -516,7 +516,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 exit();
             }
 
-        } elseif($PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
+        } elseif(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
             $PHORUM["DATA"]["GLOBAL_ERROR"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
             $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
             $PHORUM["DATA"]["LOGGEDIN"] = false;
