@@ -7,7 +7,7 @@ function phorum_setup_announcements ()
     global $PHORUM;
 
     // This variable will be used to store the formatted announcements.
-    $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = NULL;
+    $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = '';
 
     // Check if we are on a page on which the announcements have to be shown.
     if (empty($PHORUM["mod_announcements"]["pages"][phorum_page])) return;
@@ -137,7 +137,7 @@ function phorum_show_announcements ()
     $PHORUM = $GLOBALS['PHORUM'];
 
     // No announcements setup or automatic displaying disabled?
-    if ($PHORUM['DATA']['MOD_ANNOUNCEMENTS'] === NULL ||
+    if (empty($PHORUM['DATA']['MOD_ANNOUNCEMENTS']) ||
         !empty($PHORUM['mod_announcements']['disable_autodisplay'])) return;
 
     print $GLOBALS['PHORUM']['DATA']['MOD_ANNOUNCEMENTS'];
