@@ -351,6 +351,8 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
  *     with an automatically assigned user_id. It can also be set to a
  *     user_id to either update an existing user or to create a new user
  *     with the provided user_id.
+ *     If a new user is created, then all user fields must be provided
+ *     in the user data.
  *
  * @param int $flags
  *     If the flag {@link PHORUM_FLAG_RAW_PASSWORD} is set, then the
@@ -378,10 +380,10 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // We need at least the user_id field.
-    if (!array_key_exists('user_id', $user))  {
+    if (!array_key_exists('user_id', $user)) {
         trigger_error(
-           'phorum_api_user_save(): missing field "user_id" in user data array',
-           E_USER_ERROR
+            'phorum_api_user_save(): missing field "user_id" in user data array',
+            E_USER_ERROR
         );
         return NULL;
     }
@@ -658,7 +660,7 @@ function phorum_api_user_save_raw($user)
     }
 
     // Store the data in the database.
-    $return = phorum_db_user_save($user);
+    phorum_db_user_save($user);
 
     // Invalidate the cache for the user, unless we are only updating
     // user activity tracking fields.
@@ -674,8 +676,6 @@ function phorum_api_user_save_raw($user)
             phorum_cache_remove('user', $user['user_id']);
         }
     }
-
-    return $return;
 }
 // }}}
 
@@ -714,7 +714,7 @@ function phorum_api_user_save_settings($settings)
     }
 
     // Merge the setting with the existing settings.
-    if(is_array($settings)) {
+    if (is_array($settings)) {
         foreach ($settings as $name => $value) {
             if ($value === NULL) {
                 unset($PHORUM['user']['settings_data'][$name]);
@@ -734,8 +734,6 @@ function phorum_api_user_save_settings($settings)
     if (!empty($GLOBALS['PHORUM']['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
-
-    return TRUE;
 }
 // }}}
 
@@ -763,8 +761,8 @@ function phorum_api_user_save_settings($settings)
  *     containing user data is returned or NULL if the user was not found.
  *     If the $user_id parameter is an array of user_ids, then an array
  *     of user data arrays is returned, indexed by the user_id.
- *     For user_ids that are not found, no entry will be available in
- *     the returned array.
+ *     Users for user_ids that are not found are not included in the
+ *     returned array.
  */
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
@@ -1216,7 +1214,7 @@ function phorum_api_user_increment_posts($user_id = NULL)
     }
     settype($user_id, "int");
 
-    return phorum_db_user_increment_posts($user_id);
+    phorum_db_user_increment_posts($user_id);
 }
 // }}}
 
@@ -1263,7 +1261,7 @@ function phorum_api_user_delete($user_id)
     }
 
     // Remove the user and user related data from the database.
-    $return = phorum_db_user_delete($user_id);
+    phorum_db_user_delete($user_id);
 
     // Delete the personal user files for this user.
     require_once('./include/api/file_storage.php');
@@ -1271,8 +1269,6 @@ function phorum_api_user_delete($user_id)
     foreach ($files as $file_id => $file) {
         phorum_api_file_delete($file_id);
     }
-
-    return $return;
 }
 // }}}
 
@@ -1604,6 +1600,10 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 /**
  * Create a Phorum user session.
  *
+ * Before calling this function, the variable $PHORUM['use_cookies']
+ * should be set to one of {@link PHORUM_NO_COOKIES},
+ * {@link PHORUM_USE_COOKIES} or {@link PHORUM_REQUIRE_COOKIES}.
+ *
  * Phorum does not use PHP sessions. Instead, it uses its own session
  * management system for remembering logged in users. There are
  * multiple reasons for that, amongst which are:
@@ -1886,6 +1886,10 @@ function phorum_api_user_session_create($type, $reset = 0)
  * This function will check for a valid user session for either the
  * forum or the admin interface (based on the $type parameter). If a valid
  * session is found, then the user session will be restored.
+ *
+ * Before calling this function, the variable $PHORUM['use_cookies']
+ * should be set to one of {@link PHORUM_NO_COOKIES},
+ * {@link PHORUM_USE_COOKIES} or {@link PHORUM_REQUIRE_COOKIES}.
  *
  * @param string $type
  *     The type of session to check for. This must be one of
@@ -2271,7 +2275,7 @@ function phorum_api_user_save_groups($user_id, $groups)
                 E_USER_ERROR
             );
             return NULL;
-            }
+        }
 
         $dbgroups[$id] = $perm;
     }
