@@ -6,7 +6,8 @@ function phorum_setup_announcements ()
 {
     global $PHORUM;
 
-    $PHORUM["MOD_ANNOUNCEMENTS_FORUM_ID"] = 0;
+    // This variable will be used to store the formatted announcements.
+    $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = NULL;
 
     // Check if we are on a page on which the announcements have to be shown.
     if (empty($PHORUM["mod_announcements"]["pages"][phorum_page])) return;
@@ -17,45 +18,26 @@ function phorum_setup_announcements ()
     // announcement forum.
     if ($PHORUM['vroot'] > 0 && isset($PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) {
 
-    $PHORUM["MOD_ANNOUNCEMENTS_FORUM_ID"] =
-    $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']];
+    $ann_forum_id = $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']];
 
     // Inside the top level folder, where we have a forum that is configured
     // to be used for announcements and the current forum is not that
     // announcement forum.
     } elseif($PHORUM['vroot'] == 0 && isset($PHORUM["mod_announcements"]["forum_id"]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["forum_id"]) {
 
-        $PHORUM["MOD_ANNOUNCEMENTS_FORUM_ID"] =
-            $PHORUM["mod_announcements"]["forum_id"];
+        $ann_forum_id = $PHORUM["mod_announcements"]["forum_id"];
 
-    // Otherwise, no announcements have to be shown.
-    } else {
-        return;
     }
-}
 
-// Register the additional CSS code for this module.
-function phorum_mod_announcements_css_register($data)
-{
-    $data['register'][] = array(
-        "module" => "announcements",
-        "where"  => "after",
-        "source" => "template(announcements::css)"
-    );
-    return $data;
-}
-
-function phorum_show_announcements ()
-{
-    $PHORUM=$GLOBALS["PHORUM"];
-
-    // Return immediately if we do not have to show announcements.
-    if (empty($PHORUM["MOD_ANNOUNCEMENTS_FORUM_ID"])) return;
-
-    $forum_id = $PHORUM["MOD_ANNOUNCEMENTS_FORUM_ID"];
+    // If no announcement forum_id is found, no announcements
+    // have to be shown.
+    if ($ann_forum_id === NULL) return;
 
     // Retrieve the last number of posts from the announcement forum.
-    $messages = phorum_db_get_recent_messages($PHORUM["mod_announcements"]["number_to_show"], 0, $forum_id, 0, true);
+    $messages = phorum_db_get_recent_messages(
+        $PHORUM["mod_announcements"]["number_to_show"],
+        0, $ann_forum_id, 0, true
+    );
     unset($messages["users"]);
 
     // No announcements to show? Then we are done.
@@ -64,19 +46,19 @@ function phorum_show_announcements ()
     // Read the newflags information for authenticated users.
     $newinfo = NULL;
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
-        $newflagkey = $forum_id."-".$PHORUM['user']['user_id'];
+        $newflagkey = $ann_forum_id."-".$PHORUM['user']['user_id'];
         if ($PHORUM['cache_newflags']) {
             $newinfo = phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
         }
         if($newinfo == NULL) {
-            $newinfo = phorum_db_newflag_get_flags($forum_id);
+            $newinfo = phorum_db_newflag_get_flags($ann_forum_id);
             if ($PHORUM['cache_newflags']) {
                 phorum_cache_put('newflags',$newflagkey,$newinfo,86400,$PHORUM['cache_version']);
             }
         }
     }
 
-    require_once('./include/format_functions.php');
+    require_once("./include/format_functions.php");
 
     // Process the announcements.
     foreach($messages as $message)
@@ -132,8 +114,33 @@ function phorum_show_announcements ()
     if (isset($PHORUM["hooks"]["format"]))
         $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
 
-    // Display the announcements.
+    // Build the announcements code.
+    ob_start();
     include phorum_get_template("announcements::announcements");
+    $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = ob_get_contents();
+    ob_end_clean();
+}
+
+// Register the additional CSS code for this module.
+function phorum_mod_announcements_css_register($data)
+{
+    $data['register'][] = array(
+        "module" => "announcements",
+        "where"  => "after",
+        "source" => "template(announcements::css)"
+    );
+    return $data;
+}
+
+function phorum_show_announcements ()
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    // No announcements setup or automatic displaying disabled?
+    if ($PHORUM['DATA']['MOD_ANNOUNCEMENTS'] === NULL ||
+        !empty($PHORUM['mod_announcements']['disable_autodisplay'])) return;
+
+    print $GLOBALS['PHORUM']['DATA']['MOD_ANNOUNCEMENTS'];
 }
 
 ?>
