@@ -13,7 +13,7 @@ foreach ($_GET as $k => $v) {
 }
 
 // Are we running in filter mode?
-$filter_mode = defined("LOGVIEWER_FILTER_MODE") || 
+$filter_mode = defined("LOGVIEWER_FILTER_MODE") ||
                isset($_POST["filter_mode"]);
 
 // Some defaults for the page.
@@ -95,10 +95,10 @@ if ($filter_mode)
 if (isset($_POST["clear"]))
 {
     if ($filter_mode) {
-        event_logging_clearlogs($filter);     
+        event_logging_clearlogs($filter);
         phorum_admin_okmsg("The filtered event logs have been deleted.");
     } else {
-        event_logging_clearlogs();     
+        event_logging_clearlogs();
         phorum_admin_okmsg("All event logs have been deleted.");
     }
 }
@@ -117,7 +117,7 @@ if (isset($_POST["prevpage"])) {
 }
 
 // What page length to use?
-$pagelength = isset($_POST["pagelength"]) 
+$pagelength = isset($_POST["pagelength"])
            ? (int)$_POST["pagelength"]
            : $default_pagelength;
 if (!isset($pagelengths[$pagelength])) $pagelength = $default_pagelength;
@@ -157,7 +157,7 @@ $frm->hidden("el_action", $filter_mode ? "filter" : "logviewer");
 
 $frm->addrow(
     "<span style=\"float:right;margin-right:10px\">" .
-         $frm->select_tag("pagelength", $pagelengths, $pagelength, 
+         $frm->select_tag("pagelength", $pagelengths, $pagelength,
                           'onchange="this.form.submit()"') .
         "&nbsp;&nbsp;&nbsp
          <input type=\"submit\" name=\"prevpage\" value=\"&lt;&lt;\"/>
@@ -170,7 +170,7 @@ $frm->addrow(
 if ($filter_mode)
 {
     $frm->hidden("filter_mode", 1);
-    
+
     $loglevel_checkboxes = '';
     foreach ($strings["LOGLEVELS"] as $l => $s) {
         $loglevel_checkboxes .= '<span style="white-space: nowrap">' . $frm->checkbox("show_loglevel[$l]", "1", "", isset($show_loglevel[$l])?1:0, "id=\"llcb_$l\"") . ' <label for="llcb_'.$l.'"><img align="absmiddle" src="'.$PHORUM["http_path"].'/mods/event_logging/images/loglevels/'.$l.'.png"/> ' . $s . '</label></span> ';
@@ -198,7 +198,7 @@ if ($filter_mode)
 
 $frm->show();
 
-// Use some javascript to create an additional submit button, 
+// Use some javascript to create an additional submit button,
 // which can be used for clearing logs from the database.
 ?>
 <script type="text/javascript">
@@ -239,7 +239,7 @@ for (var i = 0; i < buttons.length; i++) {
 // ----------------------------------------------------------------------
 
 if ($logcount == 0) { ?>
-    <div style="text-align: center; 
+    <div style="text-align: center;
                 padding:20px;
                 margin-top: 15px;
                 font-weight: bold;
@@ -311,8 +311,9 @@ foreach ($logs as $loginfo)
     $message_url = NULL;
     if ($loginfo["message_id"] !== NULL && $loginfo["message_id"] > 0) {
         $message_url = phorum_get_url(
-            PHORUM_FOREIGN_READ_URL, 
-            $loginfo["forum_id"], 
+            PHORUM_FOREIGN_READ_URL,
+            $loginfo["forum_id"],
+            $loginfo["thread"],
             $loginfo["message_id"]
         );
     }
@@ -358,7 +359,7 @@ foreach ($logs as $loginfo)
             'User IP address = <a title="Extend filter using this IP address" href="'.$filter_base.'&ip='.urlencode($loginfo["ip"]).'">'. $loginfo["ip"] . '</a>' .
             ($loginfo["hostname"] !== NULL
              ? ', hostname = ' . htmlspecialchars($loginfo["hostname"])
-             : '') . '<br/>' . 
+             : '') . '<br/>' .
 
             ($message_url !== NULL
              ? '<br/><b>Related message:</b><br/>
@@ -369,8 +370,8 @@ foreach ($logs as $loginfo)
 
             ($details !== NULL
              ? '<br/><b>Additional details:</b><br/><br/>' .
-               nl2br(htmlspecialchars($details)) . '<br/>' 
-             : '') . 
+               nl2br(htmlspecialchars($details)) . '<br/>'
+             : '') .
             '<br/>
           </div>
         </td>
