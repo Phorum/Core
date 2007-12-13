@@ -28,82 +28,119 @@ if (!isset($PHORUM["internal_patchlevel"])) {
 }
 
 /**
- * Parses the Phorum version number.
- * @param version - version number to parse
- * @return An array containing two elements. The first one holds the release
- *         type, which can be "unknown" (parse failed), "snapshot", "stable"
- *         or "development". The version can either be NULL or an array
- *         containing a splitted up version number (only for "stable"
- *         and "development").
+ * Parses a Phorum version number.
+ *
+ * The following version numberings are recognized:
+ *
+ * - Snapshot release, e.g. "phorum5-svn-2007121315".
+ *   We only have one version element for these.
+ *   The returned release type will be "snapshot".
+ *
+ * - Development release from the downloads section at phorum.org,
+ *   e.g. "5.1.10-alpha", "5.2.1-beta" or "5.2.2-RC1". The returned
+ *   release type will be "development" and the version will contain
+ *   three elements.
+ *
+ * - Stable release, e.g. "5.1.20" or "5.1.16a". A letter can be appended
+ *   to indicate a quick fix release. We let the letter come back as a
+ *   numerical value in the fourth element of the returned version array,
+ *   (where a = 1, b = 2, etc) or 0 (zero) if no quick fix version is
+ *   available. Normally, we shouldn't get further than an "a" or "b"
+ *   quick fix release. The returned release type will be "stable".
+ *
+ * - Development release from the subversion repository, e.g. "5.2-dev".
+ *   The version will have two elements. The returned release type
+ *   will be "repository".
+ *
+ * If the version number cannot be parsed, then the returned release
+ * type will be "unknown" and the parsed version will be an empty array.
+ * This case should never happen of course.
+ *
+ * @param string $version
+ *     The version number to parse.
+ *
+ * @return array
+ *     An array containing three elements:
+ *     - The second one the release type, which can be "unknown"
+ *       (parse failed), "development", "snapshot", "repository" or
+ *       "stable".
+ *     - An array containing the parsed version. This version is an
+ *       array containing a split up version number, with zero to four
+ *       elements in it (only relevant version parts are added).
+ *     - The version number that was parsed.
  */
 function phorum_parse_version($version)
 {
-    if (preg_match('/^\w+-(svn|cvs)-\d+$/', $version)) {
+    // Snapshot release, e.g. "phorum5-svn-2007121315".
+    if (preg_match('/^phorum(\d+)-svn-\d+$/', $version, $m)) {
         $release = 'snapshot';
-        $parsed_version = array(0,0,0,0);
+        $parsed_version = array($m[1]);
+    // Stable release, e.g. "5.1.20" or "5.1.16a".
     } elseif (preg_match('/^(\d+)\.(\d+).(\d+)([a-z])?$/', $version, $m)) {
         $release = 'stable';
-        $parsed_version = array_slice($m, 1);
-    } elseif (preg_match('/^(\d+)\.(\d+)-(dev)/', $version, $m)) {
+        $subrelease = empty($m[4]) ? 0 : ord($m[4])-96; // ord('a') = 97;
+        $parsed_version = array($m[1], $m[2], $m[3], $subrelease);
+    // Development release from a subversion tree, e.g. "5.2-dev".
+    } elseif (preg_match('/^(\d+)\.(\d+)(-\w+)?$/', $version, $m)) {
+        $release = 'repository';
+        $parsed_version = array($m[1], $m[2]);
+    // Development release, e.g. "5.1.10-alpha", "5.2.1-beta" or "5.2.2-RC1".
+    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)-\w+$/', $version, $m)) {
         $release = 'development';
-        $parsed_version = array($m[1], $m[2], 0, $m[3]);
-    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)(-alpha|-beta|-RC\d+)?$/', $version, $m)) {
-        $release = 'development';
-        $parsed_version = array_slice($m, 1);
+        $parsed_version = array($m[1], $m[2], $m[3]);
+    // We should never get here.
     } else {
         $release = 'unknown';
-        $parsed_version = NULL;
+        $parsed_version = array();
     }
 
-    return array($release, $parsed_version);
+    return array($release, $parsed_version, $version);
 }
 
 /**
- * Compares two version numbers as returned by phorum_parse_version()
- * and tells which of those two is larger.
- * @param version1 - The first version number
- * @param version2 - The second version number
- * @return 1 if version1 is higher than version2, 0 if equal, -1 if lower
+ * Compares two version numbers as returned by phorum_parse_version().
+ *
+ * This function will tell which of two version numbers is higher.
+ *
+ * @param array version1
+ *     The first version number.
+ *
+ * @param array version2
+ *     The second version number
+ *
+ * @return integer
+ *      1 if version1 is higher than version2.
+ *      0 if they are equal.
+ *     -1 if version1 is lower lower than version2.
  */
 function phorum_compare_version($version1, $version2)
 {
-    // Compare segment by segment which version is higher.
-    // Segments 1, 2 and 3 are always numbers. Segment 4 can be
-    // a post-release version letter (a, b, c, etc.) or a
-    // development release marker (-alpha and -beta).
+    // Compare relevant parts of the parsed version numbers to see
+    // which version is higher.
     for ($s=0; $s<=3; $s++) {
-        if ($s != 3) {
-            if ($version1[$s] > $version2[$s]) return 1;
-            if ($version1[$s] < $version2[$s]) return -1;
-        } else {
-            // Build a numerical representation for segment 4.
-            // * 0 if no segment 4 is set
-            // * 1 for alpha
-            // * 2 for beta
-            // * ord for single char version additions (a = 97)
-            $v1 = 0; $v2 = 0;
-            if (isset($version1[$s])) {
-                if ($version1[$s] == '-alpha') $v1 = 1;
-                elseif ($version1[$s] == '-beta') $v1 = 2;
-                elseif (strlen($version1[$s]) == 1) $v1 = ord($version1[$s]);
-            }
-            if (isset($version2[$s])) {
-                if ($version2[$s] == '-alpha') $v2 = 1;
-                elseif ($version2[$s] == '-beta') $v2 = 2;
-                elseif (strlen($version2[$s]) == 1) $v2 = ord($version2[$s]);
-            }
-            // Same version number with a development suffix is
-            // considered lower than without any suffix.
-            if ($v1 == 0 && ($v2 == 1 || $v2 == 2)) return 1;
-            if (($v1 == 1 || $v1 == 2) && $v2 == 0) return -1;
-
-            if ($v1 > $v2) return 1;
-            if ($v1 < $v2) return -1;
-        }
+        if (!isset($version1[1][$s]) || !isset($version2[1][$s])) break;
+        if ($version1[1][$s] > $version2[1][$s]) return +1;
+        if ($version1[1][$s] < $version2[1][$s]) return -1;
     }
 
-    // No difference was found.
-    return 0;
+    // No difference was found. In this case, we consider the release type.
+    // Repository can of course be a lower release than a stable one,
+    // but we always see it as a higher release. People that use development
+    // releases should know what they are doing.
+    $order = array(
+        'unknown'     => 0,
+        'stable'      => 1,
+        'development' => 2,
+        'snapshot'    => 3,
+        'repository'  => 4
+    );
+
+    $t1 = $order[$version1[0]];
+    $t2 = $order[$version2[0]];
+
+    if ($t1 == $t2)    return  0;
+    elseif ($t1 < $t2) return -1;
+    else               return +1;
 }
 
 /**
