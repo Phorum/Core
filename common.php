@@ -927,7 +927,15 @@ function phorum_hook( $hook )
             }
         }
 
+        $called = array();
+
         foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
+
+            // don't call a function twice in case it gets
+            // put into the hook twice somehow
+            if(isset($called[$func])) continue;
+            $called[$func] = true;
+
             // call functions for this hook
             if ( function_exists( $func ) ) {
                 if(count($args)){

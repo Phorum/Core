@@ -82,10 +82,18 @@ foreach($vroots as $vroot){
 }
 
 // add the hooks and functions to the module
-$PHORUM["hooks"]["common"]["mods"][] = "announcements";
-$PHORUM["hooks"]["common"]["funcs"][] = "phorum_setup_announcements";
-$PHORUM["hooks"]["after_header"]["mods"][] = "announcements";
-$PHORUM["hooks"]["after_header"]["funcs"][] = "phorum_show_announcements";
+if(!in_array("announcements", $PHORUM["hooks"]["common"]["mods"])){
+    $PHORUM["hooks"]["common"]["mods"][] = "announcements";
+}
+if(!in_array("phorum_setup_announcements", $PHORUM["hooks"]["common"]["funcs"])){
+    $PHORUM["hooks"]["common"]["funcs"][] = "phorum_setup_announcements";
+}
+if(!in_array("announcements", $PHORUM["hooks"]["after_header"]["mods"])){
+    $PHORUM["hooks"]["after_header"]["mods"][] = "announcements";
+}
+if(!in_array("phorum_show_announcements", $PHORUM["hooks"]["after_header"]["funcs"])){
+    $PHORUM["hooks"]["after_header"]["funcs"][] = "phorum_show_announcements";
+}
 $PHORUM["mods"]["announcements"] = 1;
 
 // update module in phorum settings
