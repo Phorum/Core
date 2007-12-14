@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Formatterad kod',
     'quote'         => 'Infoga citerad text',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Quote',
+
     # Dialogs and errors.
     'enter url'     => 'Var vänlig ange sökvägen, URLen, dit du vill skapa en länk.',
     'enter url description' => 'Var vänlig ange en beskrivning för länken.',

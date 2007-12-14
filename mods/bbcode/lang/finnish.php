@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Koodi blokki',
     'quote'         => 'Liitä lainaus',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Lainaus',
+
     # Dialogs and errors.
     'enter url'     => 'Ole hyvä ja syötä linkin osoite.',
     'enter url description' => 'Ole hyvä ja syötä linkin kuvaus.',

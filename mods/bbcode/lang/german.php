@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Vorformatierten Text einfuegen',
     'quote'         => 'Zitierten Text einfuegen',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Zitat',
+
     # Dialogs and errors.
     'enter url'     => 'Bitte geben Sie die Adresse ein, zu der Sie einen Link erstellen wollen.',
     'enter email'   => 'Bitte geben Sie die E-Mail Adresse ein, zu der Sie einen Link erstellen wollen.',

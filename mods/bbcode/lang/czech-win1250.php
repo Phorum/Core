@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Neformátovaný text',
     'quote'         => 'Vložit citaci',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Citaci',
+
     # Dialogs and errors.
     'enter url'     => 'Prosím, vložte adresu odkazu.',
     'enter url description' => 'Prosím vložte popis odkazu.',

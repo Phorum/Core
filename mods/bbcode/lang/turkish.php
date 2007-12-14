@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Biçimlendirilmiþ Yazý',
     'quote'         => 'Alýntý',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Alýntý',
+
     # Dialogs and errors.
     'enter url'     => 'Lütfen baðlantýsýný yaratmak istediðiniz site adresini giriniz.',
     'enter email'   => 'Lütfen baðlantýsýný yaratmak istediðiniz E-Posta adresini giriniz.',

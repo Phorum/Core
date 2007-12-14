@@ -24,10 +24,41 @@
  * retrieve information about the available forums and folders and takes care
  * of creating and editing them.
  *
- * This API combines forums and folders into one API script, because at the
- * data level, they are the same kind of entity. Folders are also forums,
- * only they act differently based on the "folder_flag" field. Therefore,
- * folders are also identified by a forum_id.
+ * This API combines forums and folders into one API layer, because at the
+ * data level, they are the same kind of entity. Folders are forums as well,
+ * only they act differently, based on the "folder_flag" field. Below, you can
+ * find the fields that are used for forums and folders.
+ *
+ * <b>Folder fields</b>
+ *
+ *     - name: the name to assign to the folder. Phorum will not escape HTML
+ *       code in this name, so formatting the title using HTML is allowed.
+ *     - description: the description for the folder. Phorum will not escape
+ *       HTML code in this name, so formatting the description using HTML
+ *       is allowed.
+ *     - parent_id: The folder_id of the parent folder or 0 (zero) if the
+ *       folder resides in the top level root folder.
+ *     - vroot: The vroot in which the folder resides. If the folder is
+ *       the top level folder for a vroot, then the value for this field will
+ *       be the same as the folder's forum_id.
+ *     - active: Whether the folder is active/visible (1) or not (0).
+ *     - template: The name of the template to use for the folder.
+ *     - language: The name of the language to use for the folder.
+ *
+ * <b>Forum fields</b>
+ *
+ *     - name: the name to assign to the forum. Phorum will not escape HTML
+ *       code in this name, so formatting the title using HTML is allowed.
+ *     - description: the description for the forum. Phorum will not escape
+ *       HTML code in this name, so formatting the description using HTML
+ *       is allowed.
+ *     - parent_id: The folder_id of the parent folder or 0 (zero) if the
+ *       forum resides in the top level root folder.
+ *     - vroot: The vroot in which the forum resides.
+ *     - active: Whether the forum is active/visible (1) or not (0).
+ *     - template: The name of the template to use for the folder.
+ *     - language: The name of the language to use for the folder.
+ *     TODO other forum fields. Maybe a different location would be better?
  *
  * @package    PhorumAPI
  * @subpackage ForumsAPI
@@ -43,6 +74,7 @@ if (!defined("PHORUM")) return;
  */
 $GLOBALS['PHORUM']['API']['folder_fields'] = array(
   'forum_id'                => 'int',
+  'folder_flag'             => 'bool',
   'parent_id'               => 'int',
   'name'                    => 'string',
   'description'             => 'string',
@@ -51,6 +83,7 @@ $GLOBALS['PHORUM']['API']['folder_fields'] = array(
   'display_order'           => 'int',
   'vroot'                   => 'int',
 
+  // Display settings.
   'template'                => 'string',
   'language'                => 'string'
 );
@@ -61,6 +94,7 @@ $GLOBALS['PHORUM']['API']['folder_fields'] = array(
  */
 $GLOBALS['PHORUM']['API']['forum_fields'] = array(
   'forum_id'                 => 'int',
+  'folder_flag'              => 'bool',
   'parent_id'                => 'int',
   'name'                     => 'string',
   'description'              => 'string',
@@ -165,15 +199,19 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
                 case 'int':
                     $filtered[$fld] = (int)$forum[$fld];
                     break;
+
                 case 'string':
                     $filtered[$fld] = $forum[$fld];
                     break;
+
                 case 'bool':
-                    $filtered[$fld] = empty($forum[$fld]) ? 0 : 1;
+                    $filtered[$fld] = empty($forum[$fld]) ? FALSE : TRUE;
                     break;
+
                 case 'array':
                     $filtered[$fld] = unserialize($forum[$fld]);
                     break;
+
                 default:
                     trigger_error(
                         'phorum_api_forums_get(): Illegal field type used: ' .
@@ -192,6 +230,187 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
     } else {
       return isset($forums[$forum_ids]) ? $forums[$forum_ids] : NULL;
     }
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_save()
+/**
+ * Create or update a folder or forum.
+ *
+ * @param array $data
+ *     An array containing folder or forum data. This array should contain at
+ *     least the field "forum_id". This field can be NULL to create a new
+ *     entry with an automatically assigned forum_id. It can also be set to a
+ *     forum_id to either update an existing entry or to create a new one
+ *     with the provided forum_id.
+ *     If a new entry is created, then all forum or folder fields must be
+ *     provided in the data.
+ *
+ * @return integer
+ *     The forum_id of the forum or folder. For new ones, the newly assigned
+ *     forum_id will be returned.
+ */
+function phorum_api_forums_save($data)
+{
+    // $data must be an array.
+    if (!is_array($data)) {
+        trigger_error(
+            'phorum_api_forums_save(): $data argument is not an array',
+            E_USER_ERROR
+        );
+        return NULL;
+    }
+
+    // We need at least the forum_id field.
+    if (!array_key_exists('forum_id', $data))  {
+        trigger_error(
+           'phorum_api_forums_save(): missing field "forum_id" ' .
+           'in the data array',
+           E_USER_ERROR
+        );
+        return NULL;
+    }
+    if ($data['forum_id'] !== NULL && !is_numeric($data['forum_id'])) {
+        trigger_error(
+            'phorum_api_forums_save(): field "forum_id" not NULL or numerical',
+            E_USER_ERROR
+        );
+        return NULL;
+    }
+
+    // Check if we are handling an existing or new entry.
+    $existing = NULL;
+    if ($data['forum_id'] !== NULL) {
+        $existing = phorum_api_forums_get($data['forum_id']);
+    }
+
+    // The forum_path is a field that is generated by the API code. So we
+    // pull it from the incoming data array here.
+    unset($data['forum_path']);
+
+    // Create a data array that is understood by the database layer.
+    // We start out with the existing record, if we have one.
+    $dbdata = $existing === NULL ? array() : $existing;
+
+    // Merge in the fields from the $data argument.
+    foreach ($data as $fld => $val) {
+        $dbdata[$fld] = $val;
+    }
+
+    // By now, we need the folder_flag field, so we know what kind
+    // of entry we are handling.
+    if (!array_key_exists('folder_flag', $dbdata))  {
+        trigger_error(
+           'phorum_api_forums_save(): missing field "folder_flag" ' .
+           'in the data array',
+           E_USER_ERROR
+        );
+        return NULL;
+    }
+
+    // The folder_flag cannot change during the lifetime of an entry.
+    if ($existing) {
+        $check1 = $existing['folder_flag'] ? TRUE : FALSE;
+        $check2 = $dbdata['folder_flag']   ? TRUE : FALSE;
+        if ($check1 != $check2) {
+            trigger_error(
+                "phorum_api_forums_save(): the folder_flag cannot change",
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+    }
+
+    // Find the fields specification to use for this record.
+    $fields = $dbdata['folder_flag']
+            ? $GLOBALS['PHORUM']['API']['folder_fields']
+            : $GLOBALS['PHORUM']['API']['forum_fields'];
+
+    // Check and format fields.
+    foreach ($dbdata as $fld => $val)
+    {
+        // Make sure that a valid field name is used. We do a strict check
+        // on this (in the spirit of defensive programming).
+        if (!array_key_exists($fld, $fields)) {
+            trigger_error(
+                'phorum_api_forums_save(): Illegal field name used in ' .
+                'data: ' . htmlspecialchars($fld),
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+
+        $fldtype = $fields[$fld];
+        unset($fields[$fld]); // for tracking if all fields are available.
+
+        switch ($fldtype)
+        {
+            case 'int':
+                $dbdata[$fld] = $val === NULL ? NULL : (int) $val;
+                break;
+
+            case 'string':
+                $dbdata[$fld] = $val === NULL ? NULL : trim($val);
+                break;
+
+            case 'bool':
+                $dbdata[$fld] = $val ? 1 : 0;
+                break;
+
+            case 'array':
+                $dbdata[$fld] = is_array($val) ? serialize($val) : '';
+                break;
+
+            default:
+                trigger_error(
+                    'phorum_api_forums_save(): Illegal field type used: ' .
+                    htmlspecialchars($fldtype),
+                    E_USER_ERROR
+                );
+                return NULL;
+                break;
+        }
+    }
+
+    // Check if all required fields are available.
+    // The forum_path is autogenerated and does not have to be provided.
+    unset($fields['forum_path']);
+    unset($dbdata['forum_path']);
+    if (count($fields)) {
+        trigger_error(
+            'phorum_api_forums_save(): Missing field(s) in the data: ' .
+            implode(', ', array_keys($fields)),
+            E_USER_ERROR
+        );
+        return NULL;
+    }
+
+    // Add or update the forum or folder in the database.
+    if ($existing) {
+        phorum_db_update_forum($dbdata);
+    } else {
+        $dbdata['forum_id'] = phorum_db_add_forum($dbdata);
+    }
+
+    // (Re)build the forum_path if required.
+    if ( !$existing ||
+         ($existing['parent_id'] != $dbdata['parent_id']) ||
+         ($existing['vroot']     != $dbdata['vroot']) ||
+         ($existing['name']      != $dbdata['name']) ) {
+        $path = phorum_api_forums_build_path($dbdata['forum_id']);
+        phorum_db_update_forum(array(
+            'forum_id'   => $dbdata['forum_id'],
+            'forum_path' => serialize($path)
+        ));
+        print "SET " . join(",",$path) . "\n";
+        print_r(array(
+            'forum_id'   => $dbdata['forum_id'],
+            'forum_path' => serialize($path)
+        ));
+    }
+
+
+    return $dbdata['user_id'];
 }
 // }}}
 
@@ -294,68 +513,6 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
             ));
         }
     }
-}
-// }}}
-
-// {{{ Function: phorum_api_forums_folder_save()
-/**
- * Create or update a folder.
- *
- * This function can be used for both creating and updating Phorum folders.
- * If no forum_id is provided in the folder data, a new folder will be created.
- * If a forum_id is provided, then the existing folder will be updated or a
- * new folder with that forum_id is created.
- *
- * @param array $folder
- *     An array containing folder data. This array should at least contain
- *     a field "folder_id". This field can be NULL to create a new folder
- *     with an automatically assigned folder_id. It can also be set to a
- *     folder_id to either update an existing folder or to create a new folder
- *     with the provided folder_id. Other fields in the folder data are:
- *     - name: the name to assign to the folder. Phorum will not escape HTML
- *       code in this name, so formatting the title using HTML is allowed.
- *     - description: the description for the folder. Phorum will not escape
- *       HTML code in this name, so formatting the description using HTML
- *       is allowed.
- *     - parent_id: The folder_id of the parent folder.
- *     - active: Whether the folder is active/visible (1) or not (0).
- *     - template: The name of the template to use for the folder.
- *     - language: The name of the language to use for the folder.
- *     - vroot: Whether the folder is a vroot (1) or not (0).
- *
- * @return array
- *     The forum_id of the folder. For new folderss, the newly assigned
- *     folder_id will be returned.
- */
-function phorum_api_forums_folder_save($folder)
-{
-    // $folder must be an array.
-    if (!is_array($folder)) {
-        trigger_error(
-            'phorum_api_forums_folder_save(): $folder argument is not an array',
-            E_USER_ERROR
-        );
-        return NULL;
-    }
-
-    // We need at least the folder_id field.
-    if (!array_key_exists('folder_id', $folder))  {
-        trigger_error(
-           'phorum_api_forums_folder_save(): missing field "folder_id" ' .
-           'in folder data array',
-           E_USER_ERROR
-        );
-        return NULL;
-    }
-    if ($folder['folder_id'] !== NULL && !is_numeric($folder['folder_id'])) {
-        trigger_error(
-            'phorum_api_forums_folder_save(): field "folder_id" not NULL or numerical',
-            E_USER_ERROR
-        );
-        return NULL;
-    }
-
-    // TODO
 }
 // }}}
 

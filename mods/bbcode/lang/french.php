@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Code formaté',
     'quote'         => 'Citation',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Citation',
+
     # Dialogs and errors.
     'enter url'     => 'Veuillez entrer l\'URL vers laquelle vous voulez créer un lien.',
     'enter url description' => 'Veuillez saisir une description pour ce lien.',

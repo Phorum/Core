@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Codice formattato',
     'quote'         => 'Inserisci le virgolette',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Virgolette',
+
     # Dialogs and errors.
     'enter url'     => 'Perfavore, inserisci un indirizzo internet di cui vuoi creare il link.',
     'enter url description' => 'Perfavore entra la descrizione per il link.',
