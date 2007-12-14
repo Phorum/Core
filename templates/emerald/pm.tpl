@@ -57,6 +57,7 @@
             {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
             {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
             {INCLUDE PM_TEMPLATE}
+            <!-- CONTINUE TEMPLATE pm.tpl -->
         </td>
     </tr>
 </table>
