@@ -117,7 +117,7 @@ function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array
 {
     $include_depth++;
 
-    if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) trigger_error( 
+    if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) trigger_error(
         "phorum_import_template_pass1: the include depth has passed " .
         "the maximum allowed include depth of " .
         PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH . ". Maybe some circular " .
@@ -182,15 +182,53 @@ function phorum_import_template_pass2($template)
     // This array is used for keeping track of loop variables.
     $loopvars = array();
 
-    // Remove all comments from the code that are on a single line.
-    // We do not want these to generate empty lines in the output.
+    // This variable determines whether tidying has to be done on the
+    // template. The variable can be set from the template, using the
+    // template defininition:
+    //
+    //   {DEFINE tidy_template <value>}
+    //
+    // The <value> can be one of:
+    //
+    // 0 - Apply no compression at all.
+    // 1 - Remove leading and trailing white space from lines and
+    //     fully delete empty lines.
+    // 2 - Additionally, remove some extra unneeded white space and HTML
+    //     comments. Note that this makes the output code quite unreadable,
+    //     so it's typically an option to set in a production environment.
+    //
+    // This option is implemented as a template setting and not as a global
+    // configuration setting, to prevent broken templates if for some reason
+    // the tidying process cripples the template code. This way, the settings
+    // can be different per template.
+    //
+    $do_tidy = !empty($GLOBALS['PHORUM']['TMP']['tidy_template'])
+             ? (int) $GLOBALS['PHORUM']['TMP']['tidy_template'] : 0;
+
+    // Remove all template comments from the code that are on a single line.
+    // We do not want these to generate empty lines in the output. Also
+    // remove leading and trailing whitespace if the setting "template_tidy"
+    // was set to 1 or higher in the template's settings.tpl file.
     $tmp = '';
     foreach (explode("\n", $template) as $line) {
-        if (!preg_match('/^\s*\{![^\]]*?\}\s*$/', $line)) {
+        if ($do_tidy) $line = trim($line);
+        if ((!$do_tidy || $line != '') &&
+            !preg_match('/^\{![^\]]*?\}\s*$/', $line)) {
             $tmp .= "$line\n";
         }
     }
     $template= $tmp;
+
+    // If the tidy_template variable was 2 or higher, then apply extreme
+    // tidying to the template to make it even smaller.
+    if ($do_tidy >= 2)
+    {
+        // Strip whitespace after tags that we can safely ignore.
+        $template = preg_replace('!\s*(</?(div|td|tr|th|table|p|ul|li|body|head|html|script|meta|select|option|iframe|h\d|br)(?:\s[^>]*|\s*)/?>)\s*!i', "$1", $template);
+
+        // Strip HTML comments from the code.
+        $template = preg_replace('/<!--[^>]*-->/', '', $template);
+    }
 
     // Find and process all template statements in the code.
     preg_match_all("/\{[\"\'\!\/A-Za-z0-9].+?\}/s", $template, $matches);
@@ -240,7 +278,7 @@ function phorum_import_template_pass2($template)
             //
             case "include":
                 $include = "include";
-                $statement = array_shift($tokens); 
+                $statement = array_shift($tokens);
                 if (strtolower($tokens[0]) == "once" && isset($tokens[1])) {
                     $include = "include_once";
                     array_shift($tokens);
@@ -370,8 +408,8 @@ function phorum_import_template_pass2($template)
             //     The variable will be compared to the value. If no value is
             //     given, the condition will be true if the variable is set
             //     and not empty.
-            // 
-            //     If the keyword "not" is prepended, the result of the 
+            //
+            //     If the keyword "not" is prepended, the result of the
             //     comparison will be negated.
             //
             //     Multiple conditions can be linked using the keywords
@@ -407,7 +445,7 @@ function phorum_import_template_pass2($template)
                 array_push($conditions, $condition);
 
                 // Build condition PHP code.
-                while (count($conditions)) 
+                while (count($conditions))
                 {
                     $condition = array_shift($conditions);
 
@@ -509,7 +547,7 @@ function phorum_import_template_pass2($template)
     }
 
     // Add some initialization code to the template.
-    $template = 
+    $template =
         "<?php if(!defined(\"PHORUM\")) return; ?>\n" .
         "<?php \$PHORUM['LOOPSTACK'] = array() ?>\n" .
         $template;
@@ -519,7 +557,7 @@ function phorum_import_template_pass2($template)
 
 /**
  * Splits a template statement into separate tokens. This will split the
- * statement on whitespace, except for string tokens that look like 
+ * statement on whitespace, except for string tokens that look like
  * "a string" or 'a string'. Inside the string tokens, quotes can be
  * escaped using \" and \' (just like in PHP).
  *
@@ -528,7 +566,7 @@ function phorum_import_template_pass2($template)
  */
 function phorum_tokenize_statement($statement)
 {
-    $tokens = array();    
+    $tokens = array();
 
     $quote = NULL;
     $escaped = false;
@@ -543,7 +581,7 @@ function phorum_tokenize_statement($statement)
         {
             // Simply add escaped characters.
             if ($escaped) {
-                $token .= $ch; 
+                $token .= $ch;
                 $escaped = false;
                 continue;
             }
@@ -626,7 +664,7 @@ function phorum_determine_index($loopvars, $varname)
 /**
  * Translates a template variable name into a PHP string.
  *
- * @param $index - Determines if TMP or DATA is used 
+ * @param $index - Determines if TMP or DATA is used
  *     as the index. If the $index is an array of loopvars,
  *     it's determined automatically. If it's set to a scalar
  *     value of "TMP" or "DATA", then that index is used.
@@ -654,13 +692,13 @@ function phorum_templatevariable_to_php($index, $varname)
  *
  * @param $loopvars - The current array of loop variables.
  * @param $value - The value to translate.
- * @return $phpcode - The PHP representation of the $value. 
+ * @return $phpcode - The PHP representation of the $value.
  * @return $type - The type of value.
  */
 function phorum_templatevalue_to_php($loopvars, $value)
 {
     // Integers
-    if (is_numeric($value)) { 
+    if (is_numeric($value)) {
         $type = "integer";
     }
     // Strings
@@ -727,7 +765,7 @@ function phorum_write_file($file, $data)
         "\"" . htmlspecialchars($file) . "\". This is probably caused by " .
         "the file permissions on your Phorum cache directory",
         E_USER_ERROR
-    ); 
+    );
     fputs($fp, $data);
     if (! fclose($fp)) trigger_error(
         "phorum_write_file: error on closing the file " .
