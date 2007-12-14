@@ -15,6 +15,16 @@
 {! -- This is the image for the gauge bar to show how full the PM box is -- }
 {VAR gauge_image "templates/emerald/images/gauge.gif"}
 
+{! --- Apply some compression to the template data. This feature is      --- }
+{! --- implemented by Phorum's template parsing code. Possible values    --- }
+{! --- for this setting are:                                             --- }
+{! --- 0 - Apply no compression at all.                                  --- }
+{! --- 1 - Remove white space at start of lines and empty lines.         --- }
+{! --- 2 - Additionally, remove some extra unneeded white space and HTML --- }
+{!         comments. Note that this makes the output quite unreadable,   --- }
+{!         so it is mainly useful for a production environment.          --- }
+{DEFINE tidy_template 0}
+
 {! -- Fonts -- }
 
 {VAR default_font "Arial"}
