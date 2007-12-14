@@ -414,6 +414,7 @@ img {
     border-top: 0;
     background-image: url('{message_background_image}');
     background-repeat: repeat-x;
+    overflow: hidden; /* makes the div extend around floated elements */
 }
 
 #phorum div.message-body br {
@@ -436,6 +437,7 @@ img {
 #phorum div.message-options {
     text-align: right;
     font-size: {font_small};
+    clear: both;
 }
 
 #phorum #thread-options {
