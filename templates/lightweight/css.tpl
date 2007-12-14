@@ -391,6 +391,7 @@ img {
     margin: 0 0 16px 0;
     border: 1px solid {border_color};
     border-top: 0;
+    overflow: hidden; /* makes the div extend around floated elements */
 }
 
 #phorum div.message-body br {
@@ -413,6 +414,7 @@ img {
 #phorum div.message-options {
     text-align: right;
     font-size: {font_small};
+    clear: both;
 }
 
 #phorum #thread-options {
