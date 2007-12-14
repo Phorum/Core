@@ -60,6 +60,7 @@
 
             {IF content_template}
                 {INCLUDE content_template}
+                <!-- CONTINUE TEMPLATE cc_index.tpl -->
             {ELSE}
                 <div class="information">{OKMSG}</div>
             {/IF}

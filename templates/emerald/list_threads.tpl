@@ -1,6 +1,7 @@
 <!-- BEGIN TEMPLATE list_threads.tpl -->
 <div class="nav">
     {INCLUDE "paging"}
+    <!-- CONTINUE TEMPLATE list_threads.tpl -->
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
     {IF URL->MARK_READ}
@@ -108,6 +109,7 @@
 </table>
 <div class="nav">
     {INCLUDE "paging"}
+    <!-- CONTINUE TEMPLATE list_threads.tpl -->
 </div>
 <br />
 <!-- END TEMPLATE list_threads.tpl -->

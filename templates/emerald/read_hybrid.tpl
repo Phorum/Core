@@ -1,6 +1,7 @@
 <!-- BEGIN TEMPLATE read_hybrid.tpl -->
 <div class="nav">
     {INCLUDE "paging"}
+    <!-- CONTINUE TEMPLATE read_hybrid.tpl -->
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF FORUM_ID}<a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>{/IF}
     {IF FORUM_ID}<a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>{/IF}
@@ -104,6 +105,7 @@
 
 <div class="nav">
     {INCLUDE "paging"}
+    <!-- CONTINUE TEMPLATE read_hybrid.tpl -->
     <a class="icon icon-prev" href="{URL->NEWERTHREAD}">{LANG->NewerThread}</a>
     <a class="icon icon-next" href="{URL->OLDERTHREAD}">{LANG->OlderThread}</a>
 </div>

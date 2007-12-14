@@ -11,6 +11,7 @@
 
     <div class="nav">
         {INCLUDE "paging"}
+        <!-- CONTINUE TEMPLATE search.tpl -->
         {LANG->Results} {RANGE_START} - {RANGE_END} {LANG->of} {TOTAL}
     </div>
 
@@ -38,6 +39,7 @@
 
     <div class="nav">
         {INCLUDE "paging"}
+        <!-- CONTINUE TEMPLATE search.tpl -->
     </div>
 
     <br />

@@ -8,5 +8,6 @@
     {ELSE}
         {INCLUDE "pm_list_outgoing"}
     {/IF}
+    <!-- CONTINUE TEMPLATE list.tpl -->
 </form>
 <!-- END TEMPLATE pm_list.tpl -->

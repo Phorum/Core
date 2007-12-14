@@ -102,6 +102,7 @@
 
 <div class="nav">
     {INCLUDE "paging"}
+    <!-- CONTINUE TEMPLATE read.tpl -->
     <a class="icon icon-prev" href="{URL->NEWERTHREAD}">{LANG->NewerThread}</a>
     <a class="icon icon-next" href="{URL->OLDERTHREAD}">{LANG->OlderThread}</a>
 </div>
