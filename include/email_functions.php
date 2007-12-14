@@ -282,11 +282,6 @@ function phorum_email_moderators($message)
     if (count($mail_users)) {
         include_once("./include/format_functions.php");
         if($message["status"] > 0) { // just notification of a new message
-            // Not a real language string. For consistency, we create the
-            // fake language string on the fly here.
-            $PHORUM["DATA"]["LANG"]['NewUnModeratedSubject'] =
-                $PHORUM["DATA"]["LANG"]['NewModeratedSubject'];
-
             $mailsubjecttpl = 'NewUnModeratedSubject';
             $mailmessagetpl = 'NewUnModeratedMessage';
             $mailsubject    = $PHORUM["DATA"]["LANG"]['NewUnModeratedSubject'];

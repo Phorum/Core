@@ -325,6 +325,7 @@
         "NewModeratedMessage"   =>      "There has been a new message sent to a forum which you are moderating.\nThe message has the subject %subject%\nand it can be reviewed and approved through the following URL\n%approve_url%\n\n",
         "NewModeratedSubject"   =>      "New message in moderated forum",
         "NewUnModeratedMessage" =>      "There has been a new message sent to a forum which you are moderating.\nThe message has been posted by %author% with the subject %subject%\nand it can be read through the following URL\n%read_url%\n\n",
+        "NewUnModeratedSubject" =>      "New message in forum",
         "NewPrivateMessages"    =>      "You have new private messages",
         "NewReplyMessage"       =>      "Hello,\n\nYou are receiving this email because you are following the topic:\n\n  %subject%\n  <%read_url%>\n\nTo stop following this topic click here:\n<%remove_url%>\n\nTo stop receiving emails, but leave this topic on your follow list, click here:\n<%noemail_url%>\n\nTo view your followed topics, click here:\n<%followed_threads_url%>",
         "NewReplySubject"       =>      "[%forumname%] New reply: %subject%",
