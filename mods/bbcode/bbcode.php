@@ -222,7 +222,7 @@ function phorum_mod_bbcode_format($data)
                 count($m[0]) == substr_count($body, "[/quote]"))
             {
                 $quotestart = '<blockquote class="bbcode">'.
-                              $PHORUM["DATA"]["LANG"]["Quote"] .
+                              $PHORUM["DATA"]["LANG"]["mod_bbcode"]["quote_title"] .
                               ':<div>';
 
                 $body = preg_replace(array(

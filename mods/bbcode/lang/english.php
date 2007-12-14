@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Formatted code',
     'quote'         => 'Insert quoted text',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Quote',
+
     # Dialogs and errors.
     'enter url'     => 'Please, enter the URL to which you want to create a link.',
     'enter email'   => 'Please, enter the email address for which you want to create a link.',

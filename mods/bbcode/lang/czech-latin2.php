@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Neform tovanì text',
     'quote'         => 'Vlo§it citaci',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Citaci',
+
     # Dialogs and errors.
     'enter url'     => 'Pros¡m, vlo§te adresu odkazu.',
     'enter url description' => 'Pros¡m vlo§te popis odkazu.',

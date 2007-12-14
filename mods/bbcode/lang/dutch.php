@@ -18,6 +18,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'quote'         => 'Quote invoegen',
     'help'          => 'Help',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Quote',
+
     # Dialogs and errors.
     'enter size'    => 'Voer de tekstgrootte in.',
     'enter email'   => 'Voer het emailadres in.',

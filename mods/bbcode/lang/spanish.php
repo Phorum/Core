@@ -17,6 +17,9 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'code'          => 'Insertar texto de código',
     'quote'         => 'Insertar cita textual',
 
+    # The text that is shown in the quote block.
+    'quote_title'   => 'Cita',
+
     # Dialogs and errors.
     'enter url'     => 'Introduce la dirección URL a la que quieres crear un enlace.',
     'enter url description' => 'Introduce descripción del enlace.',
