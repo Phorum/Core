@@ -548,6 +548,11 @@ function phorum_import_template_pass2($template)
         }
 
         // Replace all occurances of the template statement in the template.
+        // Do a replacement for matches at the end of a line first.
+        // If <?php ... >\n is at the end of a line, then PHP will ignore
+        // the newline, causing the next line to stick to it. So here
+        // we append an additional newline to work around that.
+        $template = str_replace("$match\n", "$repl\n\n", $template);
         $template = str_replace($match, $repl, $template);
     }
 
