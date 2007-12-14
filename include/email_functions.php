@@ -19,8 +19,8 @@
 
 if(!defined("PHORUM")) return;
 
-require_once('./include/api/base.php');
-require_once('./include/api/user.php');
+require_once("./include/api/base.php");
+require_once("./include/api/user.php");
 
 function phorum_valid_email($email){
     $PHORUM = $GLOBALS["PHORUM"];
@@ -221,7 +221,7 @@ function phorum_email_notice($message)
         return;
     }
 
-    require_once('./include/format_functions.php');
+    include_once("./include/format_functions.php");
 
     $mail_users_full = phorum_api_user_list_subscribers($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
 
@@ -280,19 +280,23 @@ function phorum_email_moderators($message)
     $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], FALSE, TRUE);
 
     if (count($mail_users)) {
-        require_once('./include/format_functions.php');
+        include_once("./include/format_functions.php");
         if($message["status"] > 0) { // just notification of a new message
-            $mailsubjecttpl = 'NewUnModeratedSubject';
-            $mailmessagetpl = 'NewUnModeratedMessage';
-
             // Not a real language string. For consistency, we create the
             // fake language string on the fly here.
             $PHORUM["DATA"]["LANG"]['NewUnModeratedSubject'] =
                 $PHORUM["DATA"]["LANG"]['NewModeratedSubject'];
 
+            $mailsubjecttpl = 'NewUnModeratedSubject';
+            $mailmessagetpl = 'NewUnModeratedMessage';
+            $mailsubject    = $PHORUM["DATA"]["LANG"]['NewUnModeratedSubject'];
+            $mailmessage    = $PHORUM["DATA"]["LANG"]['NewUnModeratedMessage'];
+
         } else { // posts needing approval
             $mailsubjecttpl = 'NewModeratedSubject';
             $mailmessagetpl = 'NewModeratedMessage';
+            $mailsubject    = $PHORUM["DATA"]["LANG"]['NewModeratedSubject'];
+            $mailmessage    = $PHORUM["DATA"]["LANG"]['NewModeratedMessage'];
         }
 
         $mail_data = array(
@@ -306,8 +310,8 @@ function phorum_email_moderators($message)
             "plain_body"  => phorum_strip_body($message['body']),
             "approve_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=messages"),
             "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
-            "mailmessage" => $PHORUM["DATA"]["LANG"][$mailmessagetpl],
-            "mailsubject" => $PHORUM["DATA"]["LANG"][$mailsubjecttpl],
+            "mailmessage" => $mailmessage,
+            "mailsubject" => $mailsubject,
 
             // For email_user_start.
             "mailmessagetpl" => $mailmessagetpl,
