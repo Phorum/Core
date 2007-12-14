@@ -196,8 +196,15 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
     // Check for language strings that are missing.
     $missing = array();
     $count_missing = 0;
-    foreach ($language_strings as $string => $data) {
-        if ($string == 'TIME') continue; // This one is special.
+    foreach ($language_strings as $string => $data)
+    {
+        // This one is special.
+        if ($string == 'TIME') continue;
+
+        // Multi-dimentional string? That must be a module lang string
+        // (cut at PHORUM->LANG->myarray-|>word).
+        if (preg_match('/-$/', $string)) continue;
+
         if (! isset($CURRENT["DATA"]["LANG"][$string])) {
             array_push($missing, $string);
             $translation = urlencode("'" . addslashes($string) . "'");
@@ -653,7 +660,13 @@ function phorum_extract_language_strings()
 {
     global $extract_strings;
     $extract_strings = array();
+
     phorum_extract_language_strings_recurse(".");
+
+    // For the announcement module, we keep the language strings in
+    // the main langage file.
+    phorum_extract_language_strings_recurse("./mods/announcements");
+
     return $extract_strings;
 }
 
