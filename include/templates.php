@@ -217,18 +217,23 @@ function phorum_import_template_pass2($template)
             $tmp .= "$line\n";
         }
     }
-    $template= $tmp;
 
     // If the tidy_template variable was 2 or higher, then apply extreme
     // tidying to the template to make it even smaller.
     if ($do_tidy >= 2)
     {
         // Strip whitespace after tags that we can safely ignore.
-        $template = preg_replace('!\s*(</?(div|td|tr|th|table|p|ul|li|body|head|html|script|meta|select|option|iframe|h\d|br)(?:\s[^>]*|\s*)/?>)\s*!i', "$1", $template);
+        $tmp = preg_replace('!\s*(</?(div|td|tr|th|table|p|ul|li|body|head|html|script|meta|select|option|iframe|h\d|br)(?:\s[^>]*|\s*)/?>)\s*!i', "$1", $tmp);
 
         // Strip HTML comments from the code.
-        $template = preg_replace('/<!--[^>]*-->/', '', $template);
+        $tmp = preg_replace('/<!--[^>]*-->/', '', $tmp);
     }
+
+    // Always start the compiled template with a newline, to have the
+    // templates somewhat separated in the output. This will also make
+    // sure that comments at the start of the template will be at the
+    // start of the line.
+    $template = "\n".$tmp;
 
     // Find and process all template statements in the code.
     preg_match_all("/\{[\"\'\!\/A-Za-z0-9].+?\}/s", $template, $matches);
