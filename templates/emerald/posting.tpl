@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE posting.tpl -->
 {IF REPLY_ON_READ}
 <a name="REPLY"></a>
 {/IF}
@@ -237,4 +238,4 @@
 {IF MODERATED}
     <div class="notice">{LANG->ModeratedForum}</div>
 {/IF}
-
+<!-- END TEMPLATE posting.tpl -->

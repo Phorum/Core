@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE register.tpl -->
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
 
@@ -38,3 +39,4 @@
 
   </form>
 </div>
+<!-- END TEMPLATE register.tpl -->

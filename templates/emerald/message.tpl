@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE message.tpl -->
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}
     <div class="information">
@@ -10,4 +11,4 @@
         {/IF}
     </div>
 {/IF}
-
+<!-- END TEMPLATE message.tpl -->

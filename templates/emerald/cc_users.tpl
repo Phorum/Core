@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_users.tpl -->
 <form action="{ACTION}" method="post">
     {POST_VARS}
     <table cellspacing="0" class="list">
@@ -16,3 +17,4 @@
     </table>
     <input type="submit" name="approve" value="{LANG->ApproveUser}" />&nbsp;<input type="submit" name="disapprove" value="{LANG->DenyUser}" />
 </form>
+<!-- END TEMPLATE cc_users.tpl -->

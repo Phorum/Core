@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE pm_list_incoming.tpl -->
 {IF MESSAGECOUNT}
     <table border="0" cellspacing="0" class="list">
         <tr>
@@ -54,4 +55,4 @@
     <div class="generic">{LANG->PMFolderIsEmpty}</div>
 
 {/IF}
-
+<!-- END TEMPLATE pm_list_incoming.tpl -->

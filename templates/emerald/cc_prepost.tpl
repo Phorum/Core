@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_prepost.tpl -->
 <script type="text/javascript">
 var phorum_marked_all = false;
 function phorum_markAllCheckboxes() {
@@ -74,4 +75,4 @@ function phorum_markAllCheckboxes() {
 </form>
 
 {/IF}
-
+<!-- END TEMPLATE cc_prepost.tpl -->

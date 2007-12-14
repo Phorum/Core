@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_start.tpl -->
 <div class="generic">
     <dl>
         <dt>{LANG->Username}:</dt>
@@ -41,3 +42,4 @@
     </table>
   </div>
 {/IF}
+<!-- END TEMPLATE cc_start.tpl -->

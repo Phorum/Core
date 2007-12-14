@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE pm_folders.tpl -->
 <form action="{URL->ACTION}" method="post">
     {POST_VARS}
     <input type="hidden" name="action" value="folders" />
@@ -42,3 +43,4 @@
         </div>
     </form>
 {/IF}
+<!-- END TEMPLATE pm_folders.tpl -->

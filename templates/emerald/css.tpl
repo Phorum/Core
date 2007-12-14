@@ -1,3 +1,4 @@
+/* BEGIN TEMPLATE css.tpl */
 
 /* overall style */
 
@@ -288,17 +289,12 @@ img {
     margin: 16px 0 0px 16px;
 }
 
-#phorum #top {
+#phorum #page-info {
     padding: 8px 8px 8px 0;
     margin: 0 16px 16px 0;
 }
 
-#phorum #top-right {
-    float: right;
-    text-align: right;
-}
-
-#phorum #description {
+#phorum #page-info .description {
     margin: 8px 8px 0 0;
     padding-right: 32px;
     font-size: {font_small};
@@ -362,12 +358,13 @@ img {
 }
 
 #phorum #search-area {
+    float: right;
+    text-align: right;
     padding: 8px 8px 8px 32px;
     background-repeat: no-repeat;
     background-position: 8px 12px;
     margin: 0 16px 0 0;
 }
-
 
 #phorum #header-search-form {
     display: inline;
@@ -686,6 +683,10 @@ img {
     background-image: url('templates/{TEMPLATE}/images/key_go.png');
 }
 
+.icon-key-delete {
+    background-image: url('templates/{TEMPLATE}/images/key_delete.png');
+}
+
 .icon-list {
     background-image: url('templates/{TEMPLATE}/images/text_align_justify.png');
 }
@@ -792,6 +793,7 @@ img {
     border: 1px solid {pre_border_color};
     background-color: {pre_background_color};
     padding: 8px;
+    overflow: auto;
 }
 
-
+/* END TEMPLATE css.tpl */
