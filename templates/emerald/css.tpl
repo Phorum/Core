@@ -415,6 +415,7 @@ img {
     border-top: 0;
     background-image: url('{message_background_image}');
     background-repeat: repeat-x;
+    background-color: {message_background_color};
     overflow: hidden; /* makes the div extend around floated elements */
 }
 

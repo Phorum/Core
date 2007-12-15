@@ -70,6 +70,7 @@
 {VAR span_addition_font_color "#000000"}
 {VAR span_removal_background_color "#FFCBCB"}
 {VAR span_removal_font_color "#000000"}
+{VAR message_background_color "White"}
 
 {! -- Background Images -- }
 {VAR header_background_image "templates/emerald/images/header_background.png"}
