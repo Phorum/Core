@@ -57,13 +57,10 @@
         {POST_VARS}
 
         <div class="generic">
-
-            <small>
-
                 {IF SHOW_SPECIALOPTIONS}
 
                   <div id="post-moderation">
-
+                    <small>
                     {LANG->Special}:<br />
 
                     {IF OPTION_ALLOWED->sticky}
@@ -75,11 +72,10 @@
                     {/IF}
 
                     <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF} /> <label for="allow-reply">{LANG->AllowReplies}</label>
-
+                    </small>
                   </div>
-
                 {/IF}
-
+                <small>
                 {IF MODE "moderation"}
                   {LANG->YourName}:<br/>
                 {ELSE}
@@ -120,31 +116,32 @@
 
                 {HOOK "tpl_editor_after_subject"}
 
+                </small>
                 {IF POSTING->user_id}
 
-                    {LANG->Options}:<br />
+                    <small>{LANG->Options}:</small><br />
 
                     {IF OPTION_ALLOWED->subscribe}
 
-                        <input type="checkbox" id="subscription-follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onchange="phorum_subscription_displaystate()"{/IF} /> <label for="subscription-follow">{LANG->FollowThread}</label><br />
+                        <input type="checkbox" id="subscription-follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onchange="phorum_subscription_displaystate()"{/IF} /> <label for="subscription-follow"><small>{LANG->FollowThread}</small></label><br />
 
                         {IF OPTION_ALLOWED->subscribe_mail}
                           <div id="subscription-mail-div">
-                            <img src="{URL->TEMPLATE}/images/tree-L.gif" border="0"/>
-                            <input type="checkbox" id="subscription-mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription-mail">{LANG->EmailReplies}</label>
+                            <img src="{URL->TEMPLATE}/images/tree-L.gif" border="0" alt="tree-L" />
+                            <input type="checkbox" id="subscription-mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription-mail"><small>{LANG->EmailReplies}</small></label>
                           </div>
-  
+
                           <script type="text/javascript">
                           // <![CDATA[
                           function phorum_subscription_displaystate() {
                             if (document.getElementById) {
-                              var f = document.getElementById('subscription-follow'); 
+                              var f = document.getElementById('subscription-follow');
                               var d = document.getElementById('subscription-mail-div');
                               var e = document.getElementById('subscription-mail');
                               d.style.display  = f.checked ? 'block' : 'none';
                             }
                           }
-  
+
                           // Setup initial display state for subscription options.
                           phorum_subscription_displaystate();
                           // ]]>
@@ -152,11 +149,10 @@
                         {/IF}
                     {/IF}
 
-                    <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show-signature">{LANG->AddSig}</label><br />
+                    <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show-signature"><small>{LANG->AddSig}</small></label><br />
                     <br/>
 
                 {/IF}
-            </small>
 
             {IF ATTACHMENTS}
                 <small>{LANG->Attachments}:</small><br />
@@ -184,12 +180,14 @@
                     <strong>{LANG->AttachFull}</strong>
                 {ELSE}
                     <script type="text/javascript">
+                    //<![CDATA[
                       function phorumShowAttachForm() {
                         document.getElementById('attach-link').style.display='none';
                         document.getElementById('attach-form').style.display='block';
                       }
                       document.write("<div id=\"attach-link\" class=\"attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...<\/b><\/a><\/div>\n");
                       document.write("<div id=\"attach-form\" style=\"display: none;\">");
+                    // ]]>
                     </script>
                     <div class="attach-link">{AttachPhrase}</div>
                     <ul>
@@ -200,7 +198,11 @@
                     </ul>
                     <input type="file" size="50" name="attachment" />
                     <input type="submit" name="attach" value="{LANG->Attach}" />
-                    <script type="text/javascript">document.write('<\/div>');</script>
+                    <script type="text/javascript">
+                    //<![CDATA[
+                    document.write('<\/div>');
+                    // ]]>
+                    </script>
                 {/IF}
 
                 <br />
