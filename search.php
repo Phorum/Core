@@ -29,6 +29,13 @@ include_once("./include/format_functions.php");
 // set all our URL's
 phorum_build_common_urls();
 
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>$PHORUM['DATA']['URL']['SEARCH'],
+                                       'TEXT'=>$PHORUM['DATA']['LANG']['Search'],
+                                       'NOSPACER'=>1
+                                      );
+
+
 // A pointer for the portable code that the search page is used.
 $PHORUM["DATA"]["POST_VARS"] .=
     '<input type="hidden" name="phorum_page" value="search" />';
@@ -185,7 +192,6 @@ if(!empty($phorum_search) || !empty($phorum_author)){
     $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
-    include_once("./include/format_functions.php");
 
     if(isset($PHORUM["args"]["page"])){
         $PHORUM["args"]["page"] = (int)$PHORUM["args"]["page"];

@@ -98,6 +98,12 @@ $PHORUM['DATA']['SHOW_PM_EMAIL_NOTIFY'] = !empty($PHORUM["allow_pm_email_notify"
 // The form action for the common form.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL);
 
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>$PHORUM['DATA']['URL']['REGISTERPROFILE'],
+                                       'TEXT'=>$PHORUM['DATA']['LANG']['MyProfile'],
+                                       'NOSPACER'=>1
+                                      );
+
 $user = $PHORUM['user'];
 
 // Security messures.
