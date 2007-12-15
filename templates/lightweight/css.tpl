@@ -83,6 +83,7 @@ img {
     background-position: 1px 2px;
     padding: 4px 10px 2px 0;
     font-weight: normal;
+    white-space: nowrap;
 }
 
 #phorum h1 {
