@@ -150,6 +150,7 @@
             <h4 style="padding-left: {MESSAGES->indent_cnt}px;">
                 {title}
                 <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
+                {IF MESSAGES->new}<span class="new-indicator">{LANG->New}</span>{/IF}
                 {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" width="16" height="16" border="0" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
             </h4>
         </td>

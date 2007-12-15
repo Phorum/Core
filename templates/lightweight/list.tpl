@@ -39,7 +39,7 @@
     {ELSEIF MESSAGES->new}
         {VAR title LANG->NewMessage}
     {ELSE}
-        {VAR title ""}
+        {VAR title "&nbsp;"}
     {/IF}
 
     {IF MESSAGES->new}
@@ -50,7 +50,7 @@
 
     <tr>
 
-        <td width="1%" class="{altclass}">{title}</td>
+        <td width="1%" class="{altclass}">{IF MESSAGES->new}<a href="{MESSAGES->URL->NEWPOST}"><span class="new-indicator">{LANG->New}</span></a>{else}{title}{/IF}</td>
         <td width="59%" class="{altclass}">
             <h4>
                 <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
