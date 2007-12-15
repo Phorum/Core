@@ -229,11 +229,7 @@ function phorum_import_template_pass2($template)
         $tmp = preg_replace('/<!--[^>]*-->/', '', $tmp);
     }
 
-    // Always start the compiled template with a newline, to have the
-    // templates somewhat separated in the output. This will also make
-    // sure that comments at the start of the template will be at the
-    // start of the line.
-    $template = "\n".$tmp;
+    $template = $tmp;
 
     // Find and process all template statements in the code.
     preg_match_all("/\{[\"\'\!\/A-Za-z0-9].+?\}/s", $template, $matches);
