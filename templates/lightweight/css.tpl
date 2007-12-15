@@ -620,6 +620,7 @@ img {
     border: 1px solid {pre_border_color};
     background-color: {pre_background_color};
     padding: 8px;
+    overflow: auto;
 }
 
 
