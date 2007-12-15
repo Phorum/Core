@@ -46,7 +46,7 @@
 {VAR logo_height     "25"}
 
 {! -- colors -- }
-{VAR body_background_color "White"}
+{VAR body_background_color "grey"}
 {VAR default_font_color "Black"}
 {VAR default_background_color "White"}
 {VAR alt_background_color "#edf2ed"} {! -- should compliment default_background_color -- }
@@ -70,6 +70,7 @@
 {VAR span_addition_font_color "#000000"}
 {VAR span_removal_background_color "#FFCBCB"}
 {VAR span_removal_font_color "#000000"}
+{VAR message_background_color "White"}
 
 {! -- Background Images -- }
 {VAR header_background_image "templates/emerald/images/header_background.png"}
