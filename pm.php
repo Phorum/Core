@@ -70,6 +70,12 @@ if (! $PHORUM["enable_pm"]) {
     return;
 }
 
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>$PHORUM['DATA']['URL']['PM'],
+                                       'TEXT'=>$PHORUM['DATA']['LANG']['PrivateMessages'],
+                                       'NOSPACER'=>1
+                                      );
+
 // ------------------------------------------------------------------------
 // Parameter handling
 // ------------------------------------------------------------------------

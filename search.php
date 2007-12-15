@@ -29,6 +29,13 @@ if(!phorum_check_read_common()) {
 // set all our URL's
 phorum_build_common_urls();
 
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>$PHORUM['DATA']['URL']['SEARCH'],
+                                       'TEXT'=>$PHORUM['DATA']['LANG']['Search'],
+                                       'NOSPACER'=>1
+                                      );
+
+
 // A pointer for the portable code that the search page is used.
 $PHORUM["DATA"]["POST_VARS"] .=
     '<input type="hidden" name="phorum_page" value="search" />';

@@ -65,29 +65,13 @@
 </div>
 
 <div id="breadcrumb">
-
-{IF PHORUM_PAGE "control"}
-    <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a> &gt;
-{ELSEIF PHORUM_PAGE "pm"}
-    <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->PM}">{LANG->PrivateMessages}</a> &gt;
-{ELSEIF PHORUM_PAGE "search"}
-    <a href="{URL->INDEX}">{TITLE}</a> &gt;
-{ELSEIF NAME AND NOT PHORUM_PAGE "list"}
-    {! This is a read page }
-    <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->LIST}">{NAME}</a> &gt;
-{ELSEIF NAME}
-    {! This is a forum page other than a read page or a folder page }
-    <a href="{URL->INDEX}">{TITLE}</a> &gt;
-{ELSE}
-    {IF PHORUM_PAGE "read"}
-        {! This is an announcement read page }
-        <a href="{URL->INDEX}">{TITLE}</a> &gt;
-    {ELSE}
-        {! This is the index }
-        &nbsp;
-    {/IF}
-{/IF}
-
+      {LOOP BREADCRUMBS}
+        {IF BREADCRUMBS->URL}
+        <a href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
+        {ELSE}
+        {BREADCRUMBS->TEXT}{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
+        {/IF}
+      {/LOOP BREADCRUMBS}
 </div>
 
 <div id="top-right">

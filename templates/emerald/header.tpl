@@ -157,32 +157,13 @@ Some Icons courtesy of:
     {! the Phorum start location (leaving a "breadcrumb" at every step }
     {! deeper into the site structure.) }
     <div id="breadcrumb">
-
-      {IF PHORUM_PAGE "control"}
-        {! This is a user control center related page }
-        <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a> &gt;
-      {ELSEIF PHORUM_PAGE "pm"}
-        {! This is a private messages related page }
-        <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->PM}">{LANG->PrivateMessages}</a> &gt;
-      {ELSEIF PHORUM_PAGE "search"}
-        {! This is the message search page }
-        <a href="{URL->INDEX}">{TITLE}</a> &gt;
-      {ELSEIF NAME AND NOT PHORUM_PAGE "list"}
-        {! This is a read page }
-        <a href="{URL->INDEX}">{TITLE}</a> &gt; <a href="{URL->LIST}">{NAME}</a> &gt;
-      {ELSEIF NAME}
-        {! This is a forum page other than a read page or a folder page }
-        <a href="{URL->INDEX}">{TITLE}</a> &gt;
-      {ELSE}
-        {IF PHORUM_PAGE "read"}
-          {! This is an announcement read page }
-          <a href="{URL->INDEX}">{TITLE}</a> &gt;
+      {LOOP BREADCRUMBS}
+        {IF BREADCRUMBS->URL}
+        <a href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
         {ELSE}
-          {! This is the top level index page, so no breadcrumbs available. }
-          &nbsp;
+        {BREADCRUMBS->TEXT}{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
         {/IF}
-      {/IF}
-
+      {/LOOP BREADCRUMBS}
     </div> <!-- end of div id=breadcrumb -->
 
     {! This div holds the search form }
