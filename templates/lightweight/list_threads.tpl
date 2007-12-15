@@ -38,13 +38,9 @@
             {VAR title LANG->Sticky}
         {ELSEIF MESSAGES->moved}
             {VAR title LANG->MovedSubject}
-        {ELSEIF MESSAGES->new}
-            {VAR title LANG->NewMessage}
         {ELSE}
             {VAR title ""}
         {/IF}
-    {ELSEIF MESSAGES->new}
-        {VAR title LANG->New}
     {ELSE}
         {VAR title ""}
     {/IF}
@@ -58,7 +54,7 @@
     <tr>
     <td width="65%" class="{altclass}">
         <h4 style="padding-left: {MESSAGES->indent_cnt}px">
-            {title}
+            {IF MESSAGES->new}<span class="new-indicator">{LANG->New}</span>{/IF}{title}
             <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
             {IF MESSAGES->meta->attachments}<small>(@ {LANG->Attachments})</small>{/IF}
             {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}
