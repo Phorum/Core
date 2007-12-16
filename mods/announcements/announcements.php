@@ -10,7 +10,13 @@ function phorum_setup_announcements ()
     $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = '';
 
     // Check if we are on a page on which the announcements have to be shown.
-    if (empty($PHORUM["mod_announcements"]["pages"][phorum_page])) return;
+    if (!empty($PHORUM["mod_announcements"]["pages"]["home"])) {
+        if ($PHORUM['vroot'] != $PHORUM['forum_id'] || phorum_page != 'index')
+            return;
+    } else {
+        if (empty($PHORUM["mod_announcements"]["pages"][phorum_page]))
+            return;
+    }
 
     // Check if we need to show announcements.
     // Inside a vroot, where we have a vroot configuration for the forum

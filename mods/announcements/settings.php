@@ -42,13 +42,14 @@ $frm->hidden("mod", "announcements");
 $frm->addbreak("Announcement Settings");
 
 
-$page_list = $frm->checkbox("pages[index]", 1, "Forum List (index.php)", $PHORUM["mod_announcements"]["pages"]["index"])."<br/>".
+$page_list = $frm->checkbox("pages[home]", 1, "Home page, root level forum list (index.php)", $PHORUM["mod_announcements"]["pages"]["home"])."<br/>".
+             $frm->checkbox("pages[index]", 1, "Any forum List (index.php)", $PHORUM["mod_announcements"]["pages"]["index"])."<br/>".
              $frm->checkbox("pages[list]", 1, "Message List (list.php)", $PHORUM["mod_announcements"]["pages"]["list"])."<br/>".
              $frm->checkbox("pages[read]", 1, "Read Message (read.php)", $PHORUM["mod_announcements"]["pages"]["read"]);
 
 $frm->addrow("Announcements Appear On", $page_list);
 
-$row = $frm->addrow("Disable automatic displaying of the announcements?", $frm->checkbox("disable_autodisplay", 1, "Disable automatic displaying", $PHORUM["mod_announcements"]["disable_autodisplay"]));
+$row = $frm->addrow("Disable automatic displaying of announcements?", $frm->checkbox("disable_autodisplay", 1, "Disable automatic displaying", $PHORUM["mod_announcements"]["disable_autodisplay"]));
 $frm->addhelp($row, "Disable automatic displaying", "By default, the announcements will be displayed after the page header automatically. If you need more control over the exact placement, then enable this option. Then you can specify where you want the announcements to appear yourself by placing the code {MOD_ANNOUNCEMENTS} in your templates.");
 
 $frm->addrow("Show only unread messages to the user?", $frm->checkbox("only_show_unread", 1, "Show only unread", $PHORUM["mod_announcements"]["only_show_unread"]));
