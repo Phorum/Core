@@ -597,13 +597,12 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
-    if(!empty($PHORUM['forum_path']) && !is_array($PHORUM['forum_path'])) 
-        $PHORUM['forum_path'] = unserialize($PHORUM['forum_path']);    
-    
+    if(!empty($PHORUM['forum_path']) && !is_array($PHORUM['forum_path']))
+        $PHORUM['forum_path'] = unserialize($PHORUM['forum_path']);
+
     $PHORUM['DATA']['BREADCRUMBS']=array();
 
-
-    if(count($PHORUM['forum_path'])) {
+    if(!empty($PHORUM['forum_path'])) {
         $list_page_url_template = phorum_get_url(PHORUM_LIST_URL, '%forum_id%');
 
         foreach ($PHORUM['forum_path'] as $id => $name) {
