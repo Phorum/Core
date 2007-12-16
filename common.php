@@ -601,12 +601,38 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     $PHORUM['DATA']['BREADCRUMBS']=array();
 
-    if(!empty($PHORUM['forum_path'])) {
-        $list_page_url_template = phorum_get_url(PHORUM_LIST_URL, '%forum_id%');
-
-        foreach ($PHORUM['forum_path'] as $id => $name) {
-            $PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>str_replace('%forum_id%',$id,$list_page_url_template),'TEXT'=>$name);
+    // Add the current forum path to the breadcrumbs.
+    $list_page_url_template = phorum_get_url(PHORUM_LIST_URL, '%forum_id%');
+    if(empty($PHORUM['forum_path'])) {
+        $id = $PHORUM['forum_id'];
+        $PHORUM['DATA']['BREADCRUMBS'][]=array(
+            'URL'  => str_replace('%forum_id%',$id,$list_page_url_template),
+            'TEXT' => $PHORUM['DATA']['LANG']['Home'],
+            'ID'   => $id,
+            'TYPE' => 'root'
+        );
+    } else {
+        $track = NULL;
+        foreach ($PHORUM['forum_path'] as $id => $name)
+        {
+            if ($track === NULL) {
+                $name = $PHORUM['DATA']['LANG']['Home'];
+                $type = 'root';
+                $first = FALSE;
+            } else {
+                $type = 'folder';
+            }
+            // Note: $id key is not required in general. Only used for
+            // fixing up the last entry's TYPE.
+            $PHORUM['DATA']['BREADCRUMBS'][$id]=array(
+                'URL'  => str_replace('%forum_id%',$id,$list_page_url_template),
+                'TEXT' => strip_tags($name),
+                'ID'   => $id,
+                'TYPE' => $type
+            );
+            $track = $id;
         }
+        $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
     }
 }
 

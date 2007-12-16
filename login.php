@@ -250,6 +250,13 @@ if (! isset($redir)) {
     $redir = phorum_get_url(PHORUM_LIST_URL);
 }
 
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>'',
+    'TEXT'=>$PHORUM['DATA']['LANG']['LogIn'],
+    'TYPE'=>'login'
+);
+
 // Setup template data.
 $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
 $PHORUM["DATA"]["URL"]["REGISTER"] = phorum_get_url( PHORUM_REGISTER_URL );

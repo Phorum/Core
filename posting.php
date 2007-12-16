@@ -273,16 +273,24 @@ if ($initial) {
 // create page titles which match the editing mode).
 $PHORUM["DATA"]["MODE"] = $mode;
 
-// Set the page title and description accordingly
+// Set the page title, description and breadcrumbs accordingly
 switch($mode){
     case "post":
         $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["StartNewTopic"];
         $PHORUM["DATA"]["DESCRIPTION"] = "";
+        $PHORUM['DATA']['BREADCRUMBS'][] = array(
+            'URL'  => '',
+            'TEXT' => $PHORUM['DATA']['LANG']['NewTopic']
+        );
         break;
     case "moderation":
     case "edit":
         $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMessage"];
         $PHORUM["DATA"]["DESCRIPTION"] = "";
+        $PHORUM['DATA']['BREADCRUMBS'][] = array(
+            'URL'  => '',
+            'TEXT' => $PHORUM['DATA']['LANG']['EditMessage']
+        );
         break;
 }
 

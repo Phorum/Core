@@ -228,6 +228,7 @@
         "Hidden"                =>      "Hidden",
         "HideEmail"             =>      "Hide my email address from other users",
         "HideMessage"           =>      "Hide + Replies",
+        "Home"                  =>      "Home",
         "HowToFollowThreads"    =>      "You can follow a topic by clicking \"Follow Topic\" when reading a message.  Also, if you select \"Send replies to this topic to me via email\" when creating a post, the message will be added to your followed topic list.",
 
         "INBOX"                 =>      "Inbox",

@@ -157,12 +157,15 @@ Some Icons courtesy of:
     {! the Phorum start location (leaving a "breadcrumb" at every step }
     {! deeper into the site structure.) }
     <div id="breadcrumb">
+      {VAR FIRST TRUE}
       {LOOP BREADCRUMBS}
+        {IF NOT FIRST} &gt;{/IF}
         {IF BREADCRUMBS->URL}
-        <a href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
+          <a href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
         {ELSE}
-        {BREADCRUMBS->TEXT}{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
+          {BREADCRUMBS->TEXT}
         {/IF}
+        {VAR FIRST FALSE}
       {/LOOP BREADCRUMBS}
     </div> <!-- end of div id=breadcrumb -->
 
