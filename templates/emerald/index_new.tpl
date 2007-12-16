@@ -1,6 +1,5 @@
 <!-- BEGIN TEMPLATE index_new.tpl -->
 <table cellspacing="0" class="list">
-    {VAR first_pass 1}
     {LOOP FORUMS}
         {IF FORUMS->level 0}
             <tr>
