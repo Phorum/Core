@@ -65,7 +65,6 @@ $okmsg = "";
 
 // Handle posted form data.
 if (count($_POST) > 0) {
-
     // The user wants to retrieve a new password.
     if (isset($_POST["lostpass"])) {
 
@@ -249,6 +248,13 @@ if (!empty( $PHORUM["args"]["redir"])) {
 if (! isset($redir)) {
     $redir = phorum_get_url(PHORUM_LIST_URL);
 }
+
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>'',
+    'TEXT'=>$PHORUM['DATA']['LANG']['LogIn'],
+    'TYPE'=>'login'
+);
 
 // Setup template data.
 $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;

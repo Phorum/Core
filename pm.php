@@ -71,10 +71,11 @@ if (! $PHORUM["enable_pm"]) {
 }
 
 // fill the breadcrumbs-info
-$PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>$PHORUM['DATA']['URL']['PM'],
-                                       'TEXT'=>$PHORUM['DATA']['LANG']['PrivateMessages'],
-                                       'NOSPACER'=>1
-                                      );
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>$PHORUM['DATA']['URL']['PM'],
+    'TEXT'=>$PHORUM['DATA']['LANG']['PrivateMessages'],
+    'TYPE'=>'pm'
+);
 
 // ------------------------------------------------------------------------
 // Parameter handling
@@ -432,17 +433,17 @@ if (!empty($action)) {
                             {
                                 if ($user['admin']) continue; // No limits for admins
                                 $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS, $user["user_id"]);
-                                
+
                                 $max_allowed_message_count = $PHORUM['max_pm_messagecount'];
-                                
-                                
+
+
                                 /**
                                  * [hook]
                                  *     pm_checkmailboxsize
                                  *
                                  * [description]
                                  *     This hook can be used to return a different number of allowed
-                                 *     private messages for a user or do other checks on that data 
+                                 *     private messages for a user or do other checks on that data
                                  *
                                  * [category]
                                  *     PM
@@ -459,11 +460,11 @@ if (!empty($action)) {
                                  *     The same array as the one that was used for the hook call
                                  *     argument.
                                  */
-                                
+
                                 if (isset($PHORUM["hooks"]["pm_checkmailboxsize"]))
-                                    list($user,$current_count,$max_allowed_message_count) = 
+                                    list($user,$current_count,$max_allowed_message_count) =
                                          phorum_hook("pm_checkmailboxsize", array($user,$current_count,$max_allowed_message_count));
-                                    
+
                                 if ($current_count['total'] >= $max_allowed_message_count) {
                                     if ($user['user_id'] == $PHORUM["user"]["user_id"]) {
                                         $error = $PHORUM["DATA"]["LANG"]["PMFromMailboxFull"];

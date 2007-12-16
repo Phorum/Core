@@ -65,13 +65,16 @@
 </div>
 
 <div id="breadcrumb">
-      {LOOP BREADCRUMBS}
-        {IF BREADCRUMBS->URL}
-        <a href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
-        {ELSE}
-        {BREADCRUMBS->TEXT}{IF NOT BREADCRUMBS->NOSPACER} &gt;{/IF}
-        {/IF}
-      {/LOOP BREADCRUMBS}
+  {VAR FIRST TRUE}
+  {LOOP BREADCRUMBS}
+    {IF NOT FIRST} &gt;{/IF}
+    {IF BREADCRUMBS->URL}
+      <a href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
+    {ELSE}
+      {BREADCRUMBS->TEXT}
+    {/IF}
+    {VAR FIRST FALSE}
+  {/LOOP BREADCRUMBS}
 </div>
 
 <div id="top-right">

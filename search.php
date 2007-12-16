@@ -30,10 +30,11 @@ if(!phorum_check_read_common()) {
 phorum_build_common_urls();
 
 // fill the breadcrumbs-info
-$PHORUM['DATA']['BREADCRUMBS'][]=array('URL'=>$PHORUM['DATA']['URL']['SEARCH'],
-                                       'TEXT'=>$PHORUM['DATA']['LANG']['Search'],
-                                       'NOSPACER'=>1
-                                      );
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>$PHORUM['DATA']['URL']['SEARCH'],
+    'TEXT'=>$PHORUM['DATA']['LANG']['Search'],
+    'TYPE'=>'search'
+);
 
 
 // A pointer for the portable code that the search page is used.
