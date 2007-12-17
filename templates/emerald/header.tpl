@@ -161,7 +161,7 @@ Some Icons courtesy of:
       {LOOP BREADCRUMBS}
         {IF NOT FIRST} &gt;{/IF}
         {IF BREADCRUMBS->URL}
-          <a {IF BREADCRUMBS->ID AND BREADCRUMBS->TYPE}rel="breadcrumb-{BREADCRUMBS->TYPE}[{BREADCRUMBS->ID}]"{/IF} href="{BREADCRUMBS->URL}">{TEXT}</a>
+          <a {IF BREADCRUMBS->ID AND BREADCRUMBS->TYPE}rel="breadcrumb-{BREADCRUMBS->TYPE}[{BREADCRUMBS->ID}]"{/IF} href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
         {ELSE}
           {BREADCRUMBS->TEXT}
         {/IF}
