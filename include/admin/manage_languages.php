@@ -351,8 +351,8 @@ function phorum_write_language_file($lang, $CURRENT)
         "//\n" .
         "// See http://www.php.net/htmlspecialchars for info on charset\n" .
         "// compatibility. If the charset that you specified above is\n" .
-        "// compatible with htmlspecialchars(), then you can set this\n" .
-        "// variable to NULL. Otherwise, specify a compatible character\n" .
+        "// compatible with htmlspecialchars(), then you can leave this\n" .
+        "// variable empty. Otherwise, specify a compatible character\n" .
         "// set (ISO-8859-1 is usually a good choice for this).\n" .
         "\$PHORUM['DATA']['HCHARSET'] = " . urldecode($CURRENT['DATA']['HCHARSET']) . ";\n" .
         "\n" .
