@@ -172,7 +172,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     }
 
     if (($method === NULL || $method == 'imagick') &&
-        extension_loaded('imagick'))
+        extension_loaded('imagick') && class_exists('Imagick'))
     {
         $method = NULL;
 
