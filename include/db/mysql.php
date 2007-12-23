@@ -970,23 +970,20 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     }
 
     // Full text searching updates.
-    if (!empty($PHORUM['DBCONFIG']['mysql_use_ft']))
-    {
-        $search_text = $message['author']  .' | '.
-                       $message['subject'] .' | '.
-                       $message['body'];
+    $search_text = $message['author']  .' | '.
+                   $message['subject'] .' | '.
+                   $message['body'];
 
-        phorum_db_interact(
-            DB_RETURN_RES,
-            "INSERT DELAYED INTO {$PHORUM['search_table']}
-                    (message_id, forum_id,
-                     search_text)
-             VALUES ({$message['message_id']}, {$message['forum_id']},
-                     '$search_text')",
-            NULL,
-            DB_MASTERQUERY
-        );
-    }
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "INSERT DELAYED INTO {$PHORUM['search_table']}
+                (message_id, forum_id,
+                 search_text)
+         VALUES ({$message['message_id']}, {$message['forum_id']},
+                 '$search_text')",
+        NULL,
+        DB_MASTERQUERY
+    );
 
     return $message_id;
 }
@@ -4002,14 +3999,14 @@ function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
     // So instead of inserting a record, we need to update one here.
     if (!$res) {
       phorum_db_interact(
-	  DB_RETURN_RES,
+      DB_RETURN_RES,
           "UPDATE {$PHORUM['subscribers_table']}
            SET    sub_type = $type
            WHERE  user_id  = $user_id AND
                   forum_id = $forum_id AND
                   thread   = $thread",
-	  NULL,
-	  DB_MASTERQUERY
+      NULL,
+      DB_MASTERQUERY
       );
     }
 
