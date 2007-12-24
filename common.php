@@ -376,7 +376,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // stick some stuff from the settings into the DATA member
     $PHORUM["DATA"]["NAME"] = ( isset( $PHORUM["name"] ) ) ? $PHORUM["name"] : "";
-    $PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"]  ) ) ? strip_tags( preg_replace("!\s+!", " ", $PHORUM["description"]) ) : "";
+    $PHORUM["DATA"]["HTML_DESCRIPTION"] = ( isset( $PHORUM["description"]  ) ) ? preg_replace("!\s+!", " ", $PHORUM["description"]) : "";
+    $PHORUM["DATA"]["DESCRIPTION"] = strip_tags($PHORUM["DATA"]["HTML_DESCRIPTION"]);
     $PHORUM["DATA"]["ENABLE_PM"] = ( isset( $PHORUM["enable_pm"] ) ) ? $PHORUM["enable_pm"] : "";
     if ( !empty( $PHORUM["DATA"]["HTML_TITLE"] ) && !empty( $PHORUM["DATA"]["NAME"] ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;

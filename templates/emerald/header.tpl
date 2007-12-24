@@ -189,8 +189,8 @@ Some Icons courtesy of:
       {IF HEADING}
         {! This is custom set heading }
           <h1 class="heading">{HEADING}</h1>
-        {IF DESCRIPTION}
-          <div class="description">{DESCRIPTION}</div>
+        {IF HTML_DESCRIPTION}
+          <div class="description">{HTML_DESCRIPTION}</div>
         {/IF}
       {ELSEIF MESSAGE->subject}
         {! This is a threaded read page }
@@ -202,11 +202,15 @@ Some Icons courtesy of:
       {ELSEIF NAME}
         {! This is a forum page other than a read page or a folder page }
         <h1 class="heading">{NAME}</h1>{! replace with path see http://www.phorum.org/cgi-bin/trac.cgi/ticket/213 }
-        <div class="description">{DESCRIPTION}&nbsp;</div>
+        {IF HTML_DESCRIPTION}
+          <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
+        {/IF}
       {ELSE}
         {! This is the index }
         <h1 class="heading">{TITLE}</h1>
-        <div class="description">{DESCRIPTION}&nbsp;</div>
+        {IF HTML_DESCRIPTION}
+          <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
+        {/IF}
       {/IF}
 
     </div> <!-- end of div id=page-info -->

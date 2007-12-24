@@ -99,8 +99,8 @@ if ($PHORUM['DATA']['CHARSET']) {
 {IF HEADING}
     {! This is custom set heading }
     <h1>{HEADING}</h1>
-    {IF DESCRIPTION}
-        <div id="description">{DESCRIPTION}</div>
+    {IF HTML_DESCRIPTION}
+        <div id="description">{HTML_DESCRIPTION}</div>
     {/IF}
 {ELSEIF MESSAGE->subject}
     {! This is a threaded read page }
@@ -112,11 +112,15 @@ if ($PHORUM['DATA']['CHARSET']) {
 {ELSEIF NAME}
     {! This is a forum page other than a read page or a folder page }
     <h1>{NAME}</h1>{! replace with path see http://www.phorum.org/cgi-bin/trac.cgi/ticket/213 }
-    <div id="description">{DESCRIPTION}&nbsp;</div>
+    {IF HTML_DESCRIPTION}
+      <div id="description">{HTML_DESCRIPTION}&nbsp;</div>
+    {/IF}
 {ELSE}
     {! This is the index }
     <h1>{TITLE}</h1>
-    <div id="description">{DESCRIPTION}&nbsp;</div>
+    {IF HTML_DESCRIPTION}
+      <div id="description">{HTML_DESCRIPTION}&nbsp;</div>
+    {/IF}
 {/IF}
 
 
