@@ -1,9 +1,11 @@
-{IF CHARSET}
-<?php header("Content-Type: text/html; charset=".htmlspecialchars($PHORUM['DATA']['CHARSET'])); ?>
-<?php echo '<?' ?>xml version="1.0" encoding="{CHARSET}"<?php echo '?>' ?>
-{ELSE}
-<?php echo '<?' ?>xml version="1.0" <?php echo '?>' ?>
-{/IF}
+<?php
+if ($PHORUM['DATA']['CHARSET']) {
+    header("Content-Type: text/html; charset=".htmlspecialchars($PHORUM['DATA']['CHARSET']));
+    echo '<?xml version="1.0" encoding="'.$PHORUM['DATA']['CHARSET'].'"?>';
+} else {
+    echo '<?xml version="1.0" ?>';
+}
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{LOCALE}" lang="{LOCALE}">
 <head>

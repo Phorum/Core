@@ -1,9 +1,16 @@
-{IF CHARSET}
+{! The doctype declaration, which tells the browser what version of markup }
+{! is used in the document and what character set to use. Leave this }
+{! untouched, unless you know what you are doing. The default doctype }
+{! is targeted at "Standards Mode" in XHTML 1.0 Transitional. For more }
+{! info on this subject, see http://hsivonen.iki.fi/doctype/ }
 <?php
-  header("Content-Type: text/html; charset=".htmlspecialchars($PHORUM['DATA']['CHARSET']))
+if ($PHORUM['DATA']['CHARSET']) {
+    header("Content-Type: text/html; charset=".htmlspecialchars($PHORUM['DATA']['CHARSET']));
+    echo '<?xml version="1.0" encoding="'.$PHORUM['DATA']['CHARSET'].'"?>';
+} else {
+    echo '<?xml version="1.0" ?>';
+}
 ?>
-{/IF}
-<?php echo '<?' ?>xml version="1.0" encoding="{CHARSET}"<?php echo '?>' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html lang="<?php echo $PHORUM['locale']; ?>">
   <head>
