@@ -1401,11 +1401,15 @@ function phorum_api_user_authenticate($type, $username, $password)
 
         // If the temporary password matched, then synchronize the main
         // password with the temporary password. The temporary password
-        // is kept the same.
+        // is kept the same. We also reset the long term session id, so
+        // sessions in other browsers are reset along with the pasword
+        // reset. For the active browser, a new session id will be generated
+        // by the {@link phorum_api_user_session_create()} function.
         if ($temporary_matched) {
             phorum_api_user_save(array(
-                'user_id'  => $user_id,
-                'password' => $password
+                'user_id'   => $user_id,
+                'password'  => $password,
+                'sessid_lt' => ''
             ));
         }
     }
