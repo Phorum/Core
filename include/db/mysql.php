@@ -1817,8 +1817,8 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                 "CREATE TEMPORARY TABLE $table (
                    KEY (message_id)
                  ) ENGINE=HEAP
-                   SELECT message_id
-                   FROM   $main_table $joined_tables"
+                   SELECT m.message_id
+                   FROM   $main_table m $joined_tables"
             );
         }
 
