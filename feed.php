@@ -39,11 +39,6 @@ if(empty($PHORUM["forum_id"])){
     $forums[$PHORUM["forum_id"]] = $PHORUM;
 }
 
-// checking read-permissions
-if(empty($forums) || !phorum_check_read_common()) {
-  return;
-}
-
 // grab the data from cache if we can
 // only do this with caching enabled
 $cache_key = $_SERVER["REQUEST_URI"].",".$PHORUM["user"]["user_id"];
