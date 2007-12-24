@@ -37,6 +37,11 @@ $PHORUM['DBCONFIG']=array(
     // Full text searching? 1=enabled, 0=disabled
     // (always disable this option for MySQL versions prior to 4.0.18!)
     'mysql_use_ft'  =>  '1',
+    
+    // don't populate the search-table for mysql fulltext search
+    // (useful if you use a alternate search-backend which doesn't use
+    //  the search-tabl)
+    'empty_search_table' => '0',    
 
     // specifies the charset used for the create-table statements
     // and the connection(s) later on.

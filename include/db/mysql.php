@@ -968,22 +968,25 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
         $message['thread'] = $message_id;
     }
+    
+    if(empty($PHORUM['DBCONFIG']['empty_search_table'])){
 
-    // Full text searching updates.
-    $search_text = $message['author']  .' | '.
-                   $message['subject'] .' | '.
-                   $message['body'];
-
-    phorum_db_interact(
-        DB_RETURN_RES,
-        "INSERT DELAYED INTO {$PHORUM['search_table']}
-                (message_id, forum_id,
-                 search_text)
-         VALUES ({$message['message_id']}, {$message['forum_id']},
-                 '$search_text')",
-        NULL,
-        DB_MASTERQUERY
-    );
+        // Full text searching updates.
+        $search_text = $message['author']  .' | '.
+                       $message['subject'] .' | '.
+                       $message['body'];
+    
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "INSERT DELAYED INTO {$PHORUM['search_table']}
+                    (message_id, forum_id,
+                     search_text)
+             VALUES ({$message['message_id']}, {$message['forum_id']},
+                     '$search_text')",
+            NULL,
+            DB_MASTERQUERY
+        );
+    }
 
     return $message_id;
 }
@@ -1047,7 +1050,8 @@ function phorum_db_update_message($message_id, $message)
     if (!empty($PHORUM['DBCONFIG']['mysql_use_ft']) &&
         isset($message['author']) &&
         isset($message['subject']) &&
-        isset($message['body'])) {
+        isset($message['body']) &&
+        empty($PHORUM['DBCONFIG']['empty_search_table'])) {
 
         $search_text = $message['author']  .' | '.
                        $message['subject'] .' | '.
