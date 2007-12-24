@@ -19,24 +19,24 @@
 
 /*
  * Simple file-based caching-layer
- * Recommended are some more sophisticated solutions, like 
+ * Recommended are some more sophisticated solutions, like
  * memcached-, mmcache/eaccelerator-layer
  */
 if(!defined("PHORUM")) return;
 
 /* Only load the caching mechanism if we have a cache directory configured. */
 if(!isset($PHORUM["cache"])) return;
- 
- 
+
+
 /* initializing our real cache-dir */
 $PHORUM['real_cache']=$PHORUM['cache']."/".md5(__FILE__);
 
 /*
- * This function returns the cached data for the given key(s) 
+ * This function returns the cached data for the given key(s)
  * or NULL if no data is cached.
  */
 function phorum_cache_get($type,$key,$version=NULL) {
-	
+
     $partpath=$GLOBALS['PHORUM']['real_cache']."/".$type;
 
     if(is_array($key)) {
@@ -46,25 +46,25 @@ function phorum_cache_get($type,$key,$version=NULL) {
 	    if(file_exists($path)) {
                 // the data is: array($ttl_time,$data,$version)
                 // $version might not be set.
-                $retval=unserialize(file_get_contents($path));
+                $retval=unserialize(@file_get_contents($path));
 
                 // timeout?
                 if($retval[0] < time()) {
                     @unlink($path);
                 // version expired?
-                } elseif ($version != NULL && 
+                } elseif ($version != NULL &&
                           (!isset($retval[2]) || $retval[2] != $version)) {
                     @unlink($path);
                 } else {
-                    $ret[$realkey]=$retval[1];	
+                    $ret[$realkey]=$retval[1];
                 }
 
                 unset($retval);
             }
         }
 
-        if(count($ret) == 0) $ret = NULL;	
-    
+        if(count($ret) == 0) $ret = NULL;
+
     } else {
         $path=$partpath."/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
         if(!file_exists($path)){
@@ -72,31 +72,31 @@ function phorum_cache_get($type,$key,$version=NULL) {
         } else {
             // the data is: array($ttl_time,$data,$version)
             // $version might not be set.
-            $retval=unserialize(file_get_contents($path));
+            $retval=unserialize(@file_get_contents($path));
 
             // timeout?
             if($retval[0] < time()) {
                 $ret = NULL;
                 @unlink($path);
             // version expired?
-            } elseif ($version != NULL && 
+            } elseif ($version != NULL &&
                       (!isset($retval[2]) || $retval[2]<$version)) {
                 $ret = NULL;
                 @unlink($path);
             } else {
                 $ret = $retval[1];
             }
-	    
+
 	    unset($retval);
         }
     }
-	
+
     return $ret;
 }
 
 /*
- * Puts some data into the cache 
- * returns number of bytes written (something 'true') or false ... 
+ * Puts some data into the cache
+ * returns number of bytes written (something 'true') or false ...
  * depending of the success of the function
  */
 function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version = NULL) {
@@ -109,9 +109,9 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$versio
     $ttl_time=time()+$ttl;
     $fp=fopen($file,"w");
     $ret=fwrite($fp,serialize(array($ttl_time,$data,$version)));
-    fclose($fp);    
-    
-    return $ret;   
+    fclose($fp);
+
+    return $ret;
 }
 
 /*
@@ -122,11 +122,11 @@ function phorum_cache_remove($type,$key) {
     $ret  =true;
     $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
     if(file_exists($path)) {
-        $ret=@unlink($path);   
+        $ret=@unlink($path);
     }
-    
+
     return $ret;
-} 
+}
 
 /*
  * Clears all data from the cache
@@ -134,12 +134,12 @@ function phorum_cache_remove($type,$key) {
 function phorum_cache_clear() {
     $dir = $GLOBALS['PHORUM']['real_cache'];
     $ret = false;
-    
+
     if(!empty($dir) && $dir != "/") {
         phorum_cache_rmdir($dir);
     }
-    
-    return $ret;   
+
+    return $ret;
 }
 
 /*
@@ -152,7 +152,7 @@ function phorum_cache_purge($full = false) {
     // Return a report about the purging action.
     require_once("./include/format_functions.php");
     return "Finished purging the file based data cache<br/>\n" .
-           "Purged " . phorum_filesize($purged) . " of " . 
+           "Purged " . phorum_filesize($purged) . " of " .
            phorum_filesize($total) . "<br/>\n";
 }
 function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
@@ -166,7 +166,7 @@ function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
         if (is_dir("$dir/$subdir/$entry")) {
             $subdirs[] = "$subdir/$entry";
         } elseif ($entry == "data.php" && is_file("$dir/$subdir/$entry")) {
-            $contents = file_get_contents("$dir/$subdir/$entry");
+            $contents = @file_get_contents("$dir/$subdir/$entry");
             $total += strlen($contents);
             $data = unserialize($contents);
             if ( $full || ($data[0] < time()) ) {
@@ -179,7 +179,7 @@ function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
     closedir($dh);
 
     foreach ($subdirs as $s) {
-        list ($total, $purged, $sub_did_purge) = 
+        list ($total, $purged, $sub_did_purge) =
             phorum_cache_purge_recursive($dir, $s, $total, $purged, $full);
         if ($sub_did_purge) $did_purge = true;
     }
@@ -201,18 +201,18 @@ function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
 
 // helper functions
 
-// recursively deletes all files/dirs in a directory 
+// recursively deletes all files/dirs in a directory
 
 // recursively creates a directory-tree
 function phorum_cache_mkdir($path) {
     if(empty($path)) return false;
     if(is_dir($path)) return true;
     if (!phorum_cache_mkdir(dirname($path))) return false;
-    mkdir($path);
+    @mkdir($path);
     return true;
 }
 
-// recursively deletes all files/dirs in a directory 
+// recursively deletes all files/dirs in a directory
 function phorum_cache_rmdir( $path ) {
 	$stack[]=$path;
 
