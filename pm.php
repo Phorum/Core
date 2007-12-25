@@ -1006,6 +1006,9 @@ function phorum_pm_format($messages)
     // through phorum_format_messages) and do some PM specific formatting.
     foreach ($messages as $id => $message)
     {
+        // The formatting code expects a message id.
+        $messages[$id]["message_id"] = $id;
+
         // Read URLs need a folder id, so we only create that URL if
         // one's available.
         if (isset($message['pm_folder_id'])) {
