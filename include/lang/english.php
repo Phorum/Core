@@ -615,6 +615,7 @@
         "-7"  => "(GMT - 7:00 hours) Mountain Time (US &amp; Canada)",
         "-6"  => "(GMT - 6:00 hours) Central Time (US &amp; Canada), Mexico City",
         "-5"  => "(GMT - 5:00 hours) Eastern Time (US &amp; Canada), Bogota, Lima, Quito",
+        "-4.5" => "(GMT -4:30 hours) Venezuela",
         "-4"  => "(GMT - 4:00 hours) Atlantic Time (Canada), Caracas, La Paz",
         "-3.5" => "(GMT - 3:30 hours) Newfoundland",
         "-3"   => "(GMT - 3:00 hours) Brazil, Buenos Aires, Georgetown, Falkland Is.",
