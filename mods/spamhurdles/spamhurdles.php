@@ -247,13 +247,13 @@ function phorum_mod_spamhurdles_build_form($type)
     // (used for cleaning up old data).
     ?>
     <script type="text/javascript">
-    <!--
+    //<![CDATA[
     var today = new Date();
     var expire = new Date();
     expire.setTime(today.getTime() + 3600000*24*30);
     document.cookie = "mod_spamhurdles_key=<?php print $key?>;expires="+
                       expire.toGMTString();
-    // -->
+    //]]>
     </script> <?php
 
     // Add data for the HTML commented form field check.
@@ -526,7 +526,7 @@ function phorum_mod_spamhurdles_before_footer()
         if ($delay < 0) $delay = 0; ?>
 
         <script type="text/javascript">
-        <!--
+        //<![CDATA[
           var poststr;
           var secondsleft = <?php print $delay ?>;;
           var postbutton;
@@ -555,7 +555,7 @@ function phorum_mod_spamhurdles_before_footer()
                   setTimeout('spamhurdles_postdelay_countdown()', 1000);
               }
           }
-        // -->
+        //]]>
         </script>
         <?php
     }
@@ -567,6 +567,7 @@ function phorum_mod_spamhurdles_before_footer()
     {
         ob_start(); ?>
         <script>
+        //<![CDATA[
         if (document.getElementById)
         {
             // Extract the signing key from the page.
@@ -588,6 +589,7 @@ function phorum_mod_spamhurdles_before_footer()
             fld.value = signature;
             f.appendChild(fld);
         }
+        //]]>
         </script>
         <?php
         $html = ob_get_contents();
