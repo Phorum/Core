@@ -11,8 +11,15 @@
  *                                                                            *
  ******************************************************************************/
 
-$iscramble_version = "1.0";
+/******************************************************************************
+ * Modified by Maurice Makaay <maurice@phorum.org> for making this code work  *
+ * inside xml/xhtml content as well. This includes some code to make          *
+ * javascript code that is in the scrambled data execute (the original        *
+ * document.writeln() method will execute this JavaScript code as well).      *
+ ******************************************************************************
+/
 
+$iscramble_version = "1.0-phorum";
 
 /* Perform ROT13 encoding on a string */
 function iScramble_rot13($str)
@@ -74,6 +81,9 @@ function iScramble_escape($plain)
 function iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>[Please Enable JavaScript]</i>")
 {
     global $iscramble_version;
+    static $iscramble_idx = 0;
+
+    $iscramble_idx ++;
 
     $escaped = iScramble_escape($plain);
     if ($rot13)
@@ -117,7 +127,34 @@ function iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>[Please Enab
 
     // Generate the JavaScript
     // Phorum change: make script compliant with w3 checks.
-    $javascript = "<script type=\"text/javascript\">\n<!--\n";
+    $javascript = "<span id=\"iscramble_{$iscramble_idx}\"></span>";
+    $javascript .= "<script type=\"text/javascript\">\n";
+    $javascript .= "//<![CDATA[\n";
+
+    if ($iscramble_idx == 1)
+    {
+        $javascript .= "
+        function iscramble_eval_javascript(data) {
+            var cursor = 0; var start = 1; var end = 1;
+            while (cursor < data.length && start > 0 && end > 0) {
+                start = data.indexOf('<script', cursor);
+                end   = data.indexOf('</script', cursor);
+                if (end > start && end > -1) {
+                    if (start > -1) {
+                        var res = data.substring(start, end);
+                        start = res.indexOf('>') + 1;
+                        res = res.substring(start);
+                        if (res.length != 0) {
+                            eval(res);
+                        }
+                    }
+                    cursor = end + 1;
+                }
+            }
+        }\n";
+    }
+
+    $javascript .= "var box = document.getElementById('iscramble_{$iscramble_idx}');";
     $javascript .= "var a='';var b='$scrambled';var c='$password';";
     if ($rot13)
     {
@@ -148,8 +185,11 @@ function iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>[Please Enab
         $javascript .= "if ((d>=65 && d<78) || (d>=97 && d<110)) d+=13; else if ((d>=78 && d<91) || (d>=110 && d<123)) d-=13;a+=String.fromCharCode(d);}";
     }
 
-    $javascript .= "document.writeln(unescape(a));\n";
-    $javascript .= "-->\n</script>\n";
+    $javascript .= "var unscrambled_data = unescape(a);\n";
+    $javascript .= "box.innerHTML = unscrambled_data;\n";
+    $javascript .= "iscramble_eval_javascript(unscrambled_data);\n";
+    $javascript .= "//]]>\n";
+    $javascript .= "</script>\n";
     $javascript .= "<noscript>\n$sorry\n</noscript>\n";
 
     return $javascript;
