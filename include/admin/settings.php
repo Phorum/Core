@@ -278,7 +278,7 @@ $frm->addhelp($row, "Session Path", "When cookies are sent to client's browser, 
 $row=$frm->addrow( "Session Domain", $frm->text_box( "session_domain", $PHORUM["session_domain"], 30 ) );
 $frm->addhelp($row, "Session Domain", "Most likely, you can leave this blank.  If you know you need to use a different domain (like you use forums.example.com, you may want to just use example.com as the domain), you may enter it here." );
 
-$row=$frm->addrow( "Track User Usage", $frm->select_tag( "track_user_activity", array( 0=>"Never", 86400=>"Once per day", 3600=>"Once per hour", 600=>"Once per 5 minutes", 1=>"Constantly" ), $PHORUM["track_user_activity"] ) );
+$row=$frm->addrow( "Track User Usage", $frm->select_tag( "track_user_activity", array( 0=>"Never", 86400=>"Once per day", 3600=>"Once per hour", 1800=>"Once per half hour", 900=>"Once per 15 minutes", 600=>"Once per 10 minutes", 300=>"Once per 5 minutes", 1=>"Constantly" ), $PHORUM["track_user_activity"] ) );
 $frm->addhelp($row, "Track User Usage", "When set, the last time a user accessed the Phorum will be recorded as often as you have decided upon.  This will require constant updates to your database.  If you have a busy forum on weak equipment, it may be bad to use a short update interval." );
 
 $frm->addbreak( "Tighter Security" );
