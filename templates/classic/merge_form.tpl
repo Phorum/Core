@@ -19,9 +19,10 @@
       <div class="PhorumStdBlockHeader PhorumNarrowBlock" style="text-align: left;"><span class="PhorumHeadingLeft">{LANG->MergeThread}</span></div>
       <div class="PhorumStdBlock PhorumNarrowBlock" style="text-align: left;">
         <div class="PhorumFloatingText">
-          {LANG->MergeThreadAction}:<br /><br />
-          {LANG->Thread}: '{FORM->merge_subject1}'<br />
-          {LANG->Thread}: '{FORM->thread_subject}'<br /><br />
+            <p>{LANG->MergeThreadAction1}</p>
+            {LANG->Thread} 1: <strong>{FORM->merge_subject1}</strong><br />
+            {LANG->Thread} 2: <strong>{FORM->thread_subject}</strong><br /><br />
+            <p>{LANG->MergeThreadAction2}</p>
           <input type="submit" class="PhorumSubmit" name="move" value="{LANG->MergeThread}" />
         </div>
       </div>
