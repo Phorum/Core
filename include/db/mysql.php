@@ -70,7 +70,7 @@ $PHORUM['user_permissions_table']   = $prefix . '_user_permissions';
 $PHORUM['groups_table']             = $prefix . '_groups';
 $PHORUM['forum_group_xref_table']   = $prefix . '_forum_group_xref';
 $PHORUM['user_group_xref_table']    = $prefix . '_user_group_xref';
-$PHORUM['user_custom_fields_table'] = $prefix . '_user_custom_fields';
+$PHORUM['custom_fields_table']      = $prefix . '_custom_fields';
 $PHORUM['banlist_table']            = $prefix . '_banlists';
 $PHORUM['pm_messages_table']        = $prefix . '_pm_messages';
 $PHORUM['pm_folders_table']         = $prefix . '_pm_folders';
@@ -3254,8 +3254,8 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
     $custom_fields = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT *
-         FROM   {$PHORUM['user_custom_fields_table']}
-         WHERE  $user_where",
+         FROM   {$PHORUM['custom_fields_table']}
+         WHERE  $user_where AND field_type = ".PHORUM_CUSTOM_FIELD_USER,
         NULL,
         $flags
     );
@@ -3270,14 +3270,14 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         if (!isset($users[$fld['user_id']])) continue;
 
         // Skip unknown custom profile fields.
-        if (! isset($PHORUM['PROFILE_FIELDS'][$fld['type']])) continue;
+        if (! isset($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER][$fld['type']])) continue;
 
         // Fetch the name for the custom profile field.
-        $name = $PHORUM['PROFILE_FIELDS'][$fld['type']]['name'];
+        $name = $PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER][$fld['type']]['name'];
 
         // For "html_disabled" fields, the data is XSS protected by
         // replacing special HTML characters with their HTML entities.
-        if ($PHORUM['PROFILE_FIELDS'][$fld['type']]['html_disabled']) {
+        if ($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER][$fld['type']]['html_disabled']) {
             $users[$fld['user_id']][$name] = htmlspecialchars($fld['data']);
             continue;
         }
@@ -3785,9 +3785,9 @@ function phorum_db_user_save($userdata)
             // Try to insert a new record.
             $res = phorum_db_interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['user_custom_fields_table']}
-                        (user_id, type, data)
-                 VALUES ($user_id, $key, '$val')",
+                "INSERT INTO {$PHORUM['custom_fields_table']}
+                        (relation_id, field_type, type, data)
+                 VALUES ($user_id, ".PHORUM_CUSTOM_FIELD_USER.", $key, '$val')",
                 NULL,
                 DB_DUPKEYOK | DB_MASTERQUERY
             );
@@ -3797,9 +3797,11 @@ function phorum_db_user_save($userdata)
             if (!$res) {
               phorum_db_interact(
                   DB_RETURN_RES,
-                  "UPDATE {$PHORUM['user_custom_fields_table']}
+                  "UPDATE {$PHORUM['custom_fields_table']}
                    SET    data = '$val'
-                   WHERE  user_id = $user_id AND type = $key",
+                   WHERE  relation_id = $user_id AND 
+                          field_type = ".PHORUM_CUSTOM_FIELD_USER." AND 
+                          type = $key",
                   NULL,
                   DB_MASTERQUERY
               );
@@ -4193,7 +4195,6 @@ function phorum_db_user_delete($user_id)
         $PHORUM['pm_buddies_table'],
         $PHORUM['pm_folders_table'],
         $PHORUM['pm_xref_table'],
-        $PHORUM['user_custom_fields_table']
     );
 
     // Delete the data for the $user_id from all those tables.
@@ -4206,6 +4207,15 @@ function phorum_db_user_delete($user_id)
             DB_GLOBALQUERY | DB_MASTERQUERY
         );
     }
+    
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM ".$PHORUM['custom_fields_table']."
+        WHERE relation_id = $user_id AND field_type =".PHORUM_CUSTOM_FIELD_USER,
+        NULL,
+        DB_GLOBALQUERY | DB_MASTERQUERY
+    );
+
 
     // See if we created any orphin private messages. We do this in
     // a loop using the standard phorum_db_pm_update_message_info()
@@ -6745,9 +6755,9 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
             settype($id, 'int');
             $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
             if ($operator[$key] == '*') {
-                $clauses[] = "(type = $id AND data LIKE '%$value[$key]%')";
+                $clauses[] = "(field_type = ".PHORUM_CUSTOM_FIELD_USER." AND type = $id AND data LIKE '%$value[$key]%')";
             } else {
-                $clauses[] = "(type = $id AND data $operator[$key] '$value[$key]')";
+                $clauses[] = "(field_type = ".PHORUM_CUSTOM_FIELD_USER." AND type = $id AND data $operator[$key] '$value[$key]')";
             }
         }
     }
@@ -6769,8 +6779,8 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
         DB_RETURN_ROWS,
-        "SELECT DISTINCT(user_id)
-         FROM   {$PHORUM['user_custom_fields_table']}
+        "SELECT DISTINCT(relation_id)
+         FROM   {$PHORUM['custom_fields_table']}
          $where $limit",
         0 // keyfield 0 is the user_id
     );
@@ -7303,12 +7313,13 @@ function phorum_db_create_tables()
            FULLTEXT KEY search_text (search_text)
        ) TYPE=MyISAM DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
 
-      "CREATE TABLE {$PHORUM['user_custom_fields_table']} (
-           user_id                  int unsigned   NOT NULL default '0',
+      "CREATE TABLE {$PHORUM['custom_fields_table']} (
+           relation_id              int unsigned   NOT NULL default '0',
+           field_type               tinyint(1)     NOT NULL default '1',
            type                     int unsigned   NOT NULL default '0',
            data                     text           NOT NULL,
 
-           PRIMARY KEY (user_id, type)
+           PRIMARY KEY (relation_id, field_type, type)
        ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
 
       "CREATE TABLE {$PHORUM['pm_messages_table']} (

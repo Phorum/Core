@@ -368,7 +368,7 @@ function phorum_api_user_save($user, $flags = 0)
 {
     global $PHORUM;
 
-    require_once('./include/api/custom_profile_fields.php');
+    require_once('./include/api/custom_fields.php');
 
     // $user must be an array.
     if (!is_array($user)) {
@@ -421,7 +421,7 @@ function phorum_api_user_save($user, $flags = 0)
         $fldtype = NULL;
         $custom  = NULL;
         if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
-            $custom = phorum_api_custom_profile_field_byname($fld);
+            $custom = phorum_api_custom_field_byname($fld,PHORUM_CUSTOM_FIELD_USER);
             if ($custom === NULL) {
                 trigger_error(
                     'phorum_api_user_save(): Illegal field name used in ' .
@@ -767,6 +767,8 @@ function phorum_api_user_save_settings($settings)
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    
+    require_once('./include/api/custom_fields.php');
 
     if (!is_array($user_id)) {
         $user_ids = array($user_id);
@@ -912,6 +914,8 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
 function phorum_api_user_get_setting($name)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    
+    
 
     // No settings available at all?
     if (empty($PHORUM['user']['settings_data'])) return NULL;

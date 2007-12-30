@@ -119,8 +119,8 @@ $user["signature_formatted"] = $fake_messages[0]["body"];
 $user["signature"] = htmlspecialchars($user["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
 // Initialize any custom profile fields that are not present.
-if (!empty($PHORUM["PROFILE_FIELDS"])) {
-    foreach($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+if (!empty($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
+    foreach($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
         if ($id === 'num_fields' || !empty($field['deleted'])) continue;
         if (!isset($user[$field['name']])) $user[$field['name']] = "";
     }
@@ -278,7 +278,7 @@ function phorum_controlcenter_user_save($panel)
         'real_name'       => NULL,
     );
     // Add custom profile fields as acceptable fields.
-    foreach ($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+    foreach ($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
         if ($id === "num_fields" || !empty($field['deleted'])) continue;
         $userdata[$field["name"]] = NULL;
     }

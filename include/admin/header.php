@@ -444,6 +444,7 @@ Phorum Status:
         $menu->add("Ban Lists", "banlist", "Edits the list of banned names, email addresses and IP addresses.");
         $menu->add("Censor List", "badwords", "Edit the list of words that are censored in posts.");
         $menu->add("Modules", "mods", "Administer the Phorum Modules that are installed.");
+        $menu->add("Custom Fields", "customprofile", "Allows administrator to add fields to Phorum parts.");        
 
         $menu->show();
 
@@ -460,7 +461,6 @@ Phorum Status:
 
         $menu->add("Edit Users", "users", "Allows administrator to edit users including deactivating them.");
         $menu->add("Edit Groups", "groups", "Allows administrator to edit groups and their forum permissions.");
-        $menu->add("Custom Profiles", "customprofile", "Allows administrator to add fields to Phorum profile.");
 
         $menu->show();
         $menu = new PhorumAdminMenu("Maintenance");

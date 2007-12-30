@@ -21,6 +21,7 @@
 if(!defined("PHORUM_ADMIN")) return;
 
 include('./include/format_functions.php');
+require_once('./include/api/custom_fields.php');
 
 $user_status_map = array(
     'any'                     => 'Any user status',
@@ -413,6 +414,7 @@ EOT;
 if (isset($_REQUEST["user_id"]))
 {
     print "<a href=\"$referrer\">Back to the user overview</a><br/>";
+    
 
     $user = phorum_api_user_get($_REQUEST["user_id"], TRUE);
 
@@ -452,7 +454,7 @@ if (isset($_REQUEST["user_id"]))
         $frm->addhelp($row, "Date last active", "This shows the date, when the user was last seen in the forum. Check your setting on \"Track user usage\" in the \"General Settings\". As long as this setting is not enabled, the activity will not be tracked.");
 
         $cf_header_shown=0;
-        foreach($PHORUM["PROFILE_FIELDS"] as $key => $item){
+        foreach($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $key => $item){
             if ($key === 'num_rows' || !empty($item['deleted'])) continue;
             if(!empty($item['show_in_admin'])) {
                 if(!$cf_header_shown) {
