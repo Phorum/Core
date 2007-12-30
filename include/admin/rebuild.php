@@ -121,6 +121,22 @@ if ( count( $_POST ) ) {
         $okmsg .= "Searchdata successfully rebuilt.<br />";
 
     }
+    
+    if(isset($_POST['rebuild_forumpaths']) && !empty($_POST['rebuild_forumpaths'])) {
+        require_once('./include/api/forums.php');
+        $forums = phorum_api_forums_build_path();
+        unset($forums[0]);
+
+        foreach($forums as $fid => $forumpath)
+        {
+            phorum_db_update_forum(array(
+                'forum_id'   => $fid,
+                'forum_path' => $forumpath
+            ));
+        }
+        
+        $okmsg .= "Forum paths successfully rebuilt.<br />";
+    }
 
     if(isset($_POST['rebuild_userposts']) && !empty($_POST['rebuild_userposts'])) {
 
@@ -158,10 +174,12 @@ $frm->addhelp($row, "Rebuild message meta-data", "Phorum stores meta-data about 
 $row=$frm->addrow( "Rebuild search data", $frm->checkbox('rebuild_searchdata',1,"Yes"));
 $frm->addhelp($row, "Rebuild search data", "Phorum stores all posts a second time in a separate table for avoiding concurrency issues and building fulltext indexes.<br />In case of manual changes to the messages or crashing servers this data can be outdated or broken, therefore this option rebuilds the search-table from the original messages.<br /><strong>ATTENTION:</strong>This can take a long time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
 
+$row=$frm->addrow( "Rebuild forum paths", $frm->checkbox('rebuild_forumpaths',1,"Yes"));
+$frm->addhelp($row, "Rebuild forum paths", "Phorum stores the path from the root-folder to the forum in an array with the forum-data. I case of large changes with virtual roots or moving around forums and folders these can get off and show a wrong breadcrumbs navigation and similar problems. You can rebuild these cached forum-paths for all forums and folders with selecting this option." );
+
 $row=$frm->addrow( "Rebuild user post counts", $frm->checkbox('rebuild_userposts',1,"Yes"));
 $frm->addhelp($row, "Rebuild user post counts", "Phorum stores the numbers of posts a user has made in the user-data.<br />In case of manual changes to the database like deleting messages manually, this data can be outdated or broken, therefore this option rebuilds the post-counts from the existing messages for the user-id.<br /><strong>ATTENTION:</strong>This can take a some time with lots of messages and eventually lead to timeouts if your execution timeout is too low." );
 
-// TODO add help
 $row=$frm->addrow( "Rebuild display names", $frm->checkbox('rebuild_display_names', 1 ,"Yes"));
 $frm->addhelp($row, "Rebuild display names", "Phorum stores the name to display for users redundantly in the database at several places. This is done for speeding up Phorum (because this way, Phorum does not need to retrieve the display name separately when showing for example a forum message list or a PM inbox list). The administrator can choose whether to use the username or the user's real name as the name to display.<br/><br/>If for some reason, the display names get out of sync or if you installed a module that modifies the display name (in which case you need to reprocess the display name for all users), you can rebuild all real name data using this option.");
 
