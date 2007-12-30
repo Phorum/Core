@@ -82,6 +82,7 @@ function phorum_check_bans($bans)
     // $PHORUM["DATA"]["LANG"]["ErrBannedEmail"]
     // $PHORUM["DATA"]["LANG"]["ErrBannedUser"]
     // $PHORUM["DATA"]["LANG"]["ErrBannedIP"]
+    // $PHORUM["DATA"]["LANG"]["ErrBannedContent"]
 
     $cache_key = $PHORUM['forum_id'];
 
