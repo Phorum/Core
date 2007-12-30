@@ -12,7 +12,7 @@ $upgrade_queries[]= "CREATE TABLE {$PHORUM["pm_messages_table"]} (
     datestamp int(10) unsigned NOT NULL default '0',
     meta mediumtext NOT NULL,
     PRIMARY KEY (pm_message_id)
-) TYPE=MyISAM";
+)";
 
 $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_folders_table"]} (
     pm_folder_id int(10) unsigned NOT NULL auto_increment,
@@ -20,7 +20,7 @@ $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_folders_table"]} (
     foldername varchar(20) NOT NULL default '',
     KEY user_id (user_id),
     PRIMARY KEY (pm_folder_id)
-) TYPE=MyISAM";
+)";
 
 $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_xref_table"]} (
     pm_xref_id int(10) unsigned NOT NULL auto_increment,
@@ -33,7 +33,7 @@ $upgrade_queries[] = "CREATE TABLE {$PHORUM["pm_xref_table"]} (
     PRIMARY KEY (pm_xref_id),
     KEY xref (user_id,pm_folder_id,pm_message_id),
     KEY read_flag (read_flag)
-) TYPE=MyISAM";
+)";
 
 // converting the old PM system to the new one.
 $old_table = "{$PHORUM['DBCONFIG']['table_prefix']}_private_messages";

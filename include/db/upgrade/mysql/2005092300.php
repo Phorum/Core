@@ -7,6 +7,6 @@ $upgrade_queries[]= "CREATE TABLE {$PHORUM["pm_buddies_table"]} (
     buddy_user_id int(10) unsigned NOT NULL, 
     PRIMARY KEY pm_buddy_id (pm_buddy_id), 
     UNIQUE KEY userids (user_id, buddy_user_id)
-) TYPE=MyISAM";
+)";
 
 ?>
