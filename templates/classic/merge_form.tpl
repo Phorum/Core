@@ -4,8 +4,9 @@
     <div class="PhorumStdBlockHeader PhorumNarrowBlock" style="text-align: left;"><span class="PhorumHeadingLeft">{LANG->MergeThread}</span></div>
     <div class="PhorumStdBlock PhorumNarrowBlock" style="text-align: left;">
       <div class="PhorumFloatingText">
-        {LANG->MergeThreadWith}:<br /><br />
-        {LANG->MergeThreadInfo}<br />
+        <p>{LANG->MergeThreadInfo1}</p>
+        <strong>{FORM->merge_subject1}</strong>
+        <p>{LANG->MergeThreadInfo2}</p>   
       </div>
     </div>
   {/IF}
