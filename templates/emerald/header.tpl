@@ -108,10 +108,6 @@ Some Icons courtesy of:
 
   {IF NOT PRINTVIEW}
 
-    <a href="{URL->RECENT_MESSAGES}">
-      {LANG->mod_recent_messages->RecentMessages}
-    </a>
-
     {! This <div> shows code that relates to the currently active Phorum user }
     {! or shows code for logging in or creating a new profile if there is no }
     {! user logged in. }
