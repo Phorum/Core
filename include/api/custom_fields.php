@@ -18,18 +18,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements the Phorum custom profile fields API.
+ * This script implements the Phorum custom fields API.
  *
- * Custom profile fields are a way of dynamically extending the available
- * data fields for a user, without having to extend the user database table
- * with additional fields.
+ * Custom fields are a way of dynamically extending the available
+ * data fields for various objects (users, forums, messages),
+ * without having to extend the related database tables with
+ * additional fields.
  *
  * This API can be used for handling the configuration of these custom
- * profile fields. The actual use of the fields is fully integrated in the
- * Phorum user API.
+ * fields. The actual use of the fields is fully integrated in the related
+ * API calls.
  *
  * @package    PhorumAPI
- * @subpackage CustomProfileFieldAPI
+ * @subpackage CustomFieldAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
@@ -38,40 +39,53 @@ if (!defined('PHORUM')) return;
 
 // {{{ Constant and variable definitions
 
-// Reserved custom profile field names.
+// Reserved custom field names.
 $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
     'panel', 'name', 'value', 'error'
 );
 
 /**
  * The maximum size that can be used for storing data for a single
- * custom profile field.
+ * custom field. This value depends on the type of field that is used
+ * in the database for storing custom field data. If you need a higher
+ * value for this, then mind that the custom fields table needs to be
+ * altered as wel.
  */
 define('PHORUM_MAX_CPLENGTH', 65000);
 
 /**
- * The type of the custom field
- *
+ * The custom field type that indicates that a custom field
+ * is linked to the users.
  */
 define('PHORUM_CUSTOM_FIELD_USER',1);
+
+/**
+ * The custom field type that indicates that a custom field
+ * is linked to the forums.
+ */
 define('PHORUM_CUSTOM_FIELD_FORUM',2);
+
+/**
+ * The custom field type that indicates that a custom field
+ * is linked to the messages.
+ */
 define('PHORUM_CUSTOM_FIELD_MESSAGE',3);
 
 // }}}
 
 // {{{ Function: phorum_api_custom_field_configure
 /**
- * Create or update the configuration for a custom profile field.
+ * Create or update the configuration for a custom field.
  *
  * @param array $field
  *     This parameter holds the field configuration to save. This array
  *     must contain the following fields:
  *
  *     - id: If a new field has to be created, then use NULL for this field.
- *           If a profile field has to be updated, then use the existing
- *           profile field's id.
+ *           If a custom field has to be updated, then use the existing
+ *           custom field's id.
  *
- *     - name: The name that has to be assigned to the custom profile field.
+ *     - name: The name that has to be assigned to the custom field.
  *           This name can only contain letters, numbers and underscores
  *           (_) and it has to start with a letter.
  *
@@ -79,10 +93,10 @@ define('PHORUM_CUSTOM_FIELD_MESSAGE',3);
  *     value will be used for them.
  *
  *     - length: The maximum length for the field data. This will make sure
- *           that the data that is stored in the custom profile field will
+ *           that the data that is stored in the custom field will
  *           be truncated in case its length surpasses the configured
- *           custom profile field length. If this field is missing or set
- *           to NULL, then the default length 255 will be used.
+ *           custom field length. If this field is missing or set to NULL,
+ *           then the default length 255 will be used.
  *
  *     - html_disabled: If this field is set to a true value, then
  *           special HTML characters are not usable in this field. When
@@ -91,24 +105,27 @@ define('PHORUM_CUSTOM_FIELD_MESSAGE',3);
  *           field if the data that will be saved in the field is really safe
  *           for direct use in a web page (to learn about the security risks
  *           involved, search for "XSS" and "cross site scripting" on
- *           the internet). If this field is missing or set to NULL, then
- *           the default setting TRUE will be used.
+ *           the internet) or if it is used to store serialized data.
+ *           If this field is missing or set to NULL, then the default
+ *           setting TRUE will be used.
  *
  *     - type: This field specifies the type of a custom field.
- *           It can be one of PHORUM_CUSTOM_FIELD_USER, PHORUM_CUSTOM_FIELD_FORUM
- *           or PHORUM_CUSTOM_FIELD_MESSAGE .
+ *           This can be one of
+ *           {@link PHORUM_CUSTOM_FIELD_USER},
+ *           {@link PHORUM_CUSTOM_FIELD_FORUM} or
+ *           {@link PHORUM_CUSTOM_FIELD_MESSAGE}.
  *
  *     - show_in_admin: If this field is set to a true value, then the field
- *           will be displayed on the details page e.g. for a user in the admin
- *           "Edit Users" section. If this field is missing or set to NULL,
- *           then the default setting FALSE will be used.
+ *           will be displayed on the details page e.g. for a user in the
+ *           admin "Edit Users" section. If this field is missing or set
+ *           to NULL, then the default setting FALSE will be used.
  *
  * @return array
- *     This function returns the profile field data in an array, containing
+ *     This function returns the custom field data in an array, containing
  *     the same fields as the {@link $field} function parameter. If a new
  *     field was created, then the "file_id" field will be set to the new
- *     custom profile field id. The fields "length" and "html_disabled" will
- *     also be updated to their defaults if they were set to NULL in
+ *     custom field id. The fields "length" and "html_disabled" will also
+ *     be updated to their defaults if they were set to NULL in
  *     the $field argument.
  */
 function phorum_api_custom_field_configure($field)
@@ -117,7 +134,7 @@ function phorum_api_custom_field_configure($field)
 
     // The available fields and their defaults. NULL indicates a mandatory
     // field. The field "id" can be NULL though, when creating a new
-    // custom profile field.
+    // custom field.
     $fields = array(
         'id'            => NULL,
         'name'          => NULL,
@@ -154,7 +171,7 @@ function phorum_api_custom_field_configure($field)
     settype($field['html_disabled'], 'bool');
     settype($field['show_in_admin'], 'bool');
 
-    // Check the profile field name.
+    // Check the custom field name.
     if (!preg_match('/^[a-z][\w_]*$/i', $field['name'])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
@@ -163,7 +180,7 @@ function phorum_api_custom_field_configure($field)
         );
     }
 
-    // Check if the profile field name isn't an internally used name.
+    // Check if the custom field name isn't an internally used name.
     // This is either one of the reserved names or a field that is
     // already used as a user data field.
     if (in_array($field['name'], $PHORUM['API']['cpf_reserved']) ||
@@ -171,8 +188,7 @@ function phorum_api_custom_field_configure($field)
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
             "The name \"{$field['name']}\" is reserved for internal use " .
-            'by Phorum. Please choose a different name for your custom ' .
-            'profile field.'
+            'by Phorum. Please choose a different name for your custom field.'
         );
     }
 
@@ -180,7 +196,7 @@ function phorum_api_custom_field_configure($field)
     if ($field['length'] > PHORUM_MAX_CPLENGTH) {
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
-            "The length \"{$field['length']}\" for the custom profile " .
+            "The length \"{$field['length']}\" for the custom " .
             'field is too large. The maximum length that can be used ' .
             'is ' . PHORUM_MAX_CPLENGTH . '.'
         );
@@ -197,9 +213,9 @@ function phorum_api_custom_field_configure($field)
         phorum_api_custom_field_byname($field['name'], $field['type'])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
-            "A custom profile field with the name \"{$field['name']}\" " .
+            "A custom field with the name \"{$field['name']}\" " .
             'already exists. Please choose a different name for your ' .
-            'custom profile field.'
+            'custom field.'
         );
     }
 
@@ -208,14 +224,14 @@ function phorum_api_custom_field_configure($field)
         !isset($PHORUM['PROFILE_FIELDS'][$field['type']][$field['id']])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
-            "A custom profile field with id \"{$field['id']}\" does not " .
+            "A custom field with id \"{$field['id']}\" does not " .
             'exist. Maybe the field was deleted before you updated its ' .
             'settings.'
         );
     }
 
     // If we have to create a new field, then find a new id for it.
-    // For indexing, we use the "num_fields" profile field configuration
+    // For indexing, we use the "num_fields" custom field configuration
     // setting. This field is more an auto increment index counter than
     // the number of fields. For historical reasons, we keep this name
     // in here (some module contain code which makes use of num_fields
@@ -227,7 +243,7 @@ function phorum_api_custom_field_configure($field)
         // higher than what's in num_fields, then we move the counter up.
         $high = isset($PHORUM['PROFILE_FIELDS'][$field['type']]['num_fields'])
               ? (int) $PHORUM['PROFILE_FIELDS'][$field['type']]['num_fields'] : 0;
-        foreach ($PHORUM['PROFILE_FIELDS'] as $checkid => $profile_field) {
+        foreach ($PHORUM['PROFILE_FIELDS'] as $checkid => $custom_field) {
             if ($checkid > $high) $high = $checkid;
         }
 
@@ -238,7 +254,7 @@ function phorum_api_custom_field_configure($field)
         $PHORUM['PROFILE_FIELDS'][$field['type']]['num_fields'] = $field['id'];
     }
 
-    // Update the profile fields information in the settings.
+    // Update the custom fields information in the settings.
     $PHORUM['PROFILE_FIELDS'][$field['type']][$field['id']] = $field;
     phorum_db_update_settings(array(
         'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
@@ -250,10 +266,10 @@ function phorum_api_custom_field_configure($field)
 
 // {{{ Function: phorum_api_custom_field_byname
 /**
- * Retrieve the information for a custom profile field by its name.
+ * Retrieve the information for a custom field by its name.
  *
  * @param string $name
- *     The name of the profile field to lookup.
+ *     The name of the custom field to lookup.
  *
  * @param integer $type
  *     The type of custom field. This is one of
@@ -262,13 +278,13 @@ function phorum_api_custom_field_configure($field)
  *     {@link PHORUM_CUSTOM_FIELD_MESSAGE}.
  *
  * @return mixed
- *     If no profile field could be found for the name, then NULL will
+ *     If no custom field could be found for the name, then NULL will
  *     be returned. Otherwise the field configuration will be returned.
  *     The field configuration is an array, containing the fields:
  *     "id", "name", "length" and "html_disabled".
  *
  *     If the field was marked as deleted by the
- *     {@link phorum_api_custom_profile_field_delete()} function, then the
+ *     {@link phorum_api_custom_field_delete()} function, then the
  *     field "deleted" will be available and set to a true value.
  */
 function phorum_api_custom_field_byname($name, $type)
@@ -276,15 +292,15 @@ function phorum_api_custom_field_byname($name, $type)
     if(isset($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type]) &&
        is_array($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type])) {
 
-        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $profile_field) {
-            if ($id !== 'num_fields' && $profile_field['name'] == $name)
+        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $custom_field) {
+            if ($id !== 'num_fields' && $custom_field['name'] == $name)
             {
-                // Fix custom profile fields that were created the 5.1 way
-                // (most probably by modules that handle configuration of these
+                // Fix custom fields that were created the 5.1 way (most
+                // probably by modules that handled configuration of these
                 // fields on their own).
-                if (empty($profile_field['id'])) $profile_field['id'] = $id;
+                if (empty($custom_field['id'])) $custom_field['id'] = $id;
 
-                return $profile_field;
+                return $custom_field;
             }
         }
     }
@@ -295,7 +311,7 @@ function phorum_api_custom_field_byname($name, $type)
 
 // {{{ Function: phorum_api_custom_field_delete
 /**
- * Delete a custom profile field.
+ * Delete a custom field.
  *
  * @param int $id
  *     The id of the custom field to delete.
@@ -305,7 +321,7 @@ function phorum_api_custom_field_byname($name, $type)
  *
  * @param bool $hard_delete
  *     If this parameter is set to a false value (the default), then the
- *     profile field will only be marked as deleted. The configuration
+ *     custom field will only be marked as deleted. The configuration
  *     will be kept intact in the database. This way, we can help admins
  *     in restoring fields that were deleted by accident.
  *
@@ -336,14 +352,14 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
 
 // {{{ Function: phorum_api_custom_field_restore
 /**
- * Restore a previously deleted custom profile field.
+ * Restore a previously deleted custom field.
  *
- * If a profile field is deleted, it's settings and data are not deleted.
+ * If a custom field is deleted, it's settings and data are not deleted.
  * The field is only flagged as deleted. This function can be used for
  * reverting the delete action.
  *
  * @param int $id
- *     The id of the custom profile field to restore.
+ *     The id of the custom field to restore.
  *
  * @param int $type
  *     The type of the custom field to delete
@@ -370,8 +386,7 @@ function phorum_api_custom_field_restore($id,$type)
     }
     else return phorum_api_error_set(
         PHORUM_ERRNO_NOTFOUND,
-        "Unable to restore custom profile field $id: " .
-        "no configuration found."
+        "Unable to restore custom field $id: no configuration found."
     );
 
     return TRUE;
@@ -380,13 +395,12 @@ function phorum_api_custom_field_restore($id,$type)
 
 // {{{ Function: phorum_api_custom_field_checkconfig()
 /**
- * Check and fix the custom profile field configuration.
+ * Check and fix the custom field configuration.
  *
  * This function has mainly been implemented for fixing problems that
- * are introduced by modules that create custom profile fields on their
- * own. Besides that, it was also written to upgrade the profile field
- * configuration, because Phorum 5.2 introduced some new fields in
- * the config.
+ * are introduced by modules that create custom fields on their own.
+ * Besides that, it was also written to upgrade the custom field
+ * configuration.
  */
 function phorum_api_custom_field_checkconfig()
 {
@@ -452,7 +466,7 @@ function phorum_api_custom_field_checkconfig()
 
         }
 
-    // Save the custom profile field settings to the database.
+    // Save the custom field settings to the database.
     phorum_db_update_settings(array(
         'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
     ));
