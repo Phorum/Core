@@ -28,10 +28,16 @@
  * profile fields. The actual use of the fields is fully integrated in the 
  * Phorum user API.
  *
+ * This is a backward compatibility layer, which interfaces to the
+ * Custom Fields API, which can be used to tie custom fields to other
+ * things than users alone. If you start writing new code, then it's best
+ * to use the Custom Fields API right away instead of this one.
+ *
  * @package    PhorumAPI
  * @subpackage CustomProfileFieldAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
+ * @deprecated Superceded by the more generic Custom Fields API.
  */
 
 if (!defined('PHORUM')) return;
@@ -90,7 +96,7 @@ function phorum_api_custom_profile_field_configure($field)
 {
     global $PHORUM;
 
-    $field['type']=PHORUM_CUSTOM_FIELD_USER;
+    $field['type'] = PHORUM_CUSTOM_FIELD_USER;
 
     $field = phorum_api_custom_field_configure($field);
 
@@ -117,7 +123,6 @@ function phorum_api_custom_profile_field_configure($field)
  */
 function phorum_api_custom_profile_field_byname($name)
 {
-    
     $return = phorum_api_custom_field_byname($name,PHORUM_CUSTOM_FIELD_USER);
 
     return $return;
@@ -142,8 +147,8 @@ function phorum_api_custom_profile_field_byname($name)
  */
 function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
 {
-    $return = phorum_api_custom_field_delete($id,PHORUM_CUSTOM_FIELD_USER,$hard_delete);
-    
+    $return = phorum_api_custom_field_delete($id, PHORUM_CUSTOM_FIELD_USER, $hard_delete);
+
     return $return;
 }
 // }}}
@@ -167,8 +172,7 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
  */
 function phorum_api_custom_profile_field_restore($id)
 {
-    
-    $return = phorum_api_custom_field_restore($id,PHORUM_CUSTOM_FIELD_USER);
+    $return = phorum_api_custom_field_restore($id, PHORUM_CUSTOM_FIELD_USER);
 
     return $return;
 }
