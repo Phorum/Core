@@ -18,8 +18,11 @@ $upgrade_queries[]="
 
            PRIMARY KEY (relation_id, field_type, type)
        )$charset_str
-       SELECT user_id as relation_id,".PHORUM_CUSTOM_FIELD_USER.",type,data
-       FROM {$PHORUM['DBCONFIG']['table_prefix']}_user_custom_fields";
+       SELECT user_id as relation_id,
+              ".PHORUM_CUSTOM_FIELD_USER." as field_type,
+              type,
+              data
+       FROM   {$PHORUM['DBCONFIG']['table_prefix']}_user_custom_fields";
 
 
 ?>
