@@ -968,14 +968,14 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
         $message['thread'] = $message_id;
     }
-    
+
     if(empty($PHORUM['DBCONFIG']['empty_search_table'])){
 
         // Full text searching updates.
         $search_text = $message['author']  .' | '.
                        $message['subject'] .' | '.
                        $message['body'];
-    
+
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT DELAYED INTO {$PHORUM['search_table']}
@@ -3149,12 +3149,12 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
 
     if (is_array($user_id)) {
         if (count($user_id)) {
-            $user_where = 'user_id IN ('.implode(', ', $user_id).')';
+            $user_ids = 'IN ('.implode(', ', $user_id).')';
         } else {
             return array();
         }
     } else {
-        $user_where = "user_id = $user_id";
+        $user_ids = "= $user_id";
     }
 
     if($write_server) {
@@ -3168,7 +3168,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         DB_RETURN_ASSOCS,
         "SELECT *
          FROM   {$PHORUM['user_table']}
-         WHERE  $user_where",
+         WHERE  user_id $user_ids",
         'user_id',
         $flags
     );
@@ -3193,7 +3193,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
                     forum_id,
                     permission
              FROM   {$PHORUM['user_permissions_table']}
-             WHERE  $user_where",
+             WHERE  user_id $user_ids",
             NULL,
             $flags
         );
@@ -3215,7 +3215,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
              FROM   {$PHORUM['user_group_xref_table']}
                     LEFT JOIN {$PHORUM['forum_group_xref_table']}
                     USING (group_id)
-             WHERE  $user_where AND
+             WHERE  user_id $user_ids AND
                     status >= ".PHORUM_USER_GROUP_APPROVED,
             NULL,
             $flags
@@ -3250,12 +3250,16 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         }
     }
 
+    // For pulling in the constant .PHORUM_CUSTOM_FIELD_USER.
+    require_once("./include/api/custom_fields.php");
+
     // Retrieve custom user profile fields for the requested users.
     $custom_fields = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT *
          FROM   {$PHORUM['custom_fields_table']}
-         WHERE  $user_where AND field_type = ".PHORUM_CUSTOM_FIELD_USER,
+         WHERE  relation_id $user_ids AND
+                field_type = ".PHORUM_CUSTOM_FIELD_USER,
         NULL,
         $flags
     );
@@ -3769,6 +3773,9 @@ function phorum_db_user_save($userdata)
     // Update custom user fields for the user.
     if (isset($custom_profile_data))
     {
+        // For pulling in the constant .PHORUM_CUSTOM_FIELD_USER.
+        require_once("./include/api/custom_fields.php");
+
         // Insert new custom profile fields.
         foreach ($custom_profile_data as $key => $val)
         {
@@ -3799,8 +3806,8 @@ function phorum_db_user_save($userdata)
                   DB_RETURN_RES,
                   "UPDATE {$PHORUM['custom_fields_table']}
                    SET    data = '$val'
-                   WHERE  relation_id = $user_id AND 
-                          field_type = ".PHORUM_CUSTOM_FIELD_USER." AND 
+                   WHERE  relation_id = $user_id AND
+                          field_type = ".PHORUM_CUSTOM_FIELD_USER." AND
                           type = $key",
                   NULL,
                   DB_MASTERQUERY
@@ -4207,11 +4214,12 @@ function phorum_db_user_delete($user_id)
             DB_GLOBALQUERY | DB_MASTERQUERY
         );
     }
-    
+
     phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM ".$PHORUM['custom_fields_table']."
-        WHERE relation_id = $user_id AND field_type =".PHORUM_CUSTOM_FIELD_USER,
+         WHERE  relation_id = $user_id AND
+                field_type =".PHORUM_CUSTOM_FIELD_USER,
         NULL,
         DB_GLOBALQUERY | DB_MASTERQUERY
     );

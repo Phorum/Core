@@ -420,8 +420,9 @@ function phorum_api_user_save($user, $flags = 0)
         // on this (in the spirit of defensive programming).
         $fldtype = NULL;
         $custom  = NULL;
-        if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
-            $custom = phorum_api_custom_field_byname($fld,PHORUM_CUSTOM_FIELD_USER);
+        if (!array_key_exists($fld, $PHORUM['API']['user_fields']))
+        {
+            $custom = phorum_api_custom_field_byname($fld, PHORUM_CUSTOM_FIELD_USER);
             if ($custom === NULL) {
                 trigger_error(
                     'phorum_api_user_save(): Illegal field name used in ' .
