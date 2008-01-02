@@ -19,6 +19,7 @@ function phorum_build_forum_list() {
         $tmp_forums[$forum["forum_id"]]["forum_id"] = $forum["forum_id"];
         $tmp_forums[$forum["forum_id"]]["parent"] = $forum["parent_id"];
         $tmp_forums[$forum["parent_id"]]["children"][] = $forum["forum_id"];
+        $forums[$forum["parent_id"]]["childcount"]++;
     }
 
     $order = array();
@@ -51,8 +52,13 @@ function phorum_build_forum_list() {
         if(!is_numeric($curr_id)) break;
     }
 
-    foreach($order as $forum){
-        if($forum["folder_flag"]){
+    foreach($order as $forum)
+    {
+        if($forum["folder_flag"])
+        {
+            // Skip empty folders.
+            if (empty($forums[$forum['forum_id']]['childcount'])) continue;
+
             $url = phorum_get_url(PHORUM_INDEX_URL, $forum["forum_id"]);
         } else {
             $url = phorum_get_url(PHORUM_LIST_URL, $forum["forum_id"]);
