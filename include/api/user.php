@@ -522,7 +522,7 @@ function phorum_api_user_save($user, $flags = 0)
     {
         // Sometimes, this function is (accidentally) called with existing
         // passwords in the data. Prevent duplicate encryption.
-        if ($existing  && strlen($existing[$fld]) == 32 &&
+        if ($existing && strlen($existing[$fld]) == 32 &&
             $existing[$fld] == $dbuser[$fld]) {
             continue;
         }
@@ -598,6 +598,53 @@ function phorum_api_user_save($user, $flags = 0)
      */
     if (isset($PHORUM['hooks']['user_save'])) {
         $dbuser = phorum_hook('user_save', $dbuser);
+    }
+
+    /**
+     * [hook]
+     *     user_register
+     *
+     * [description]
+     *     This hook is called when a user registration is completed by
+     *     setting the status for the user to PHORUM_USER_ACTIVE.
+     *     This hook will not be called right after filling in the
+     *     registration form (unless of course, the registration has been
+     *     setup to require no verification at all in which case the user
+     *     becomes active right away).
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Right after a new user registration becomes active.
+     *
+     * [input]
+     *     An array containing user data for the registered user.
+     *
+     * [output]
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly with some updated fields in it.
+     */
+    if (isset($PHORUM['hooks']['user_register']))
+    {
+        // Only fire this hook if a user goes from some pending state
+        // to the active state.
+        if ($dbuser['active'] == PHORUM_USER_ACTIVE)
+        {
+            // For new users we have no existing status. For those we asume
+            // a pending status, so below a switch to active status will mean
+            // that the user registration is activated.
+            $orig_status = $existing
+                         ? $existing['active']
+                         : PHORUM_USER_PENDING_MOD;
+
+            if ($orig_status == PHORUM_USER_PENDING_BOTH ||
+                $orig_status == PHORUM_USER_PENDING_EMAIL ||
+                $orig_status == PHORUM_USER_PENDING_MOD) {
+
+                $dbuser = phorum_hook('user_register', $dbuser);
+            }
+        }
     }
 
     // Add or update the user in the database.
