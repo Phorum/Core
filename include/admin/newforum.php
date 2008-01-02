@@ -287,6 +287,7 @@ if(defined("PHORUM_DEFAULT_OPTIONS")){
 } else {
     $frm->hidden("module", "newforum");
     $title="Add A Forum";
+    $active = 1; // not set in the default forum options
 }
 
 $frm->addbreak($title);
