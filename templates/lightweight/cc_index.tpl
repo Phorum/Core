@@ -1,3 +1,4 @@
+<!-- BEGIN TEMPLATE cc_index.tpl -->
 <div class="nav">
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     {IF FORUM_ID}<a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>{/IF}
@@ -26,6 +27,7 @@
                 <ul>
                     <li><a {IF PROFILE->PANEL "forum"}class="current" {/IF}href="{URL->CC6}">{LANG->EditBoardsettings}</a></li>
                     <li><a {IF PROFILE->PANEL "password"}class="current" {/IF}href="{URL->CC7}">{LANG->ChangePassword}</a></li>
+                    {HOOK "tpl_cc_menu_options_hook"}
                 </ul>
 
                 {IF MYFILES}
@@ -47,8 +49,10 @@
                         {IF GROUP_MODERATOR}
                             <li><a {IF PROFILE->PANEL "groupmod"}class="current" {/IF}href="{URL->CC15}">{LANG->GroupMembership}</a></li>
                         {/IF}
+                        {HOOK "tpl_cc_menu_moderator_hook"}
                     </ul>
                 {/IF}
+
             </div>
         </td>
 
@@ -56,6 +60,7 @@
 
             {IF content_template}
                 {INCLUDE content_template}
+                <!-- CONTINUE TEMPLATE cc_index.tpl -->
             {ELSE}
                 <div class="information">{OKMSG}</div>
             {/IF}
@@ -63,3 +68,4 @@
         </td>
     </tr>
 </table>
+<!-- END TEMPLATE cc_index.tpl -->
