@@ -1,4 +1,4 @@
-/* Phorum constants, extracted from Phorum 5.2-dev */
+/* Phorum constants, extracted from Phorum 5.3-dev */
 
 #define PHORUM_FILE_EXTENSION "php"
 #define PHORUM_LIST_URL 1

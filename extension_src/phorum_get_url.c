@@ -633,7 +633,8 @@ list_url(void *h, void *u, int argc, zval ***argv)
  * File URL handler.
  *
  * If a filename=... parameter is set, then change that parameter into
- * pathinfo, unless this feature is not enabled in the Phorum settings.
+ * a pathinfo based URL, unless this feature is not enabled in the Phorum
+ * settings.
  */
 char *
 file_url(void *h, void *u, int argc, zval ***argv)
@@ -643,77 +644,155 @@ file_url(void *h, void *u, int argc, zval ***argv)
     zval     *z;
     int       i;
 
+    char *p_filename                 = NULL;
+    char *p_download                 = NULL;
+    char *p_file_id                  = NULL;
+    int   p_filename_idx             = -1;
+    int   p_download_idx             = -1;
+    int   p_file_id_idx              = -1;
+
+    /* Retrieve the value of the file_url_uses_pathinfo setting. */
     z = get_PHORUM("file_url_uses_pathinfo");
     if (z != NULL) {
         convert_to_long(z);
         if (Z_LVAL_P(z) > 0) file_url_uses_pathinfo = 1;
     }
 
-    // If the file_url_uses_pathinfo option is disabled, then the file
-    // URL behaves exactly like the standard URL.
+    /* If the file_url_uses_pathinfo option is disabled, then the file 
+     * URL behaves exactly like the standard URL. */
     if (file_url_uses_pathinfo == 0) {
         default_url_build(h, u, argc, argv);
         return default_url_format(u);
     }
 
-    /* Check if there is a filename parameter in the arguments. */
+    /* Rewrite parameter in the arguments to pathinfo parts. */
     for (i=0; i<argc; i++)
     {
+        int srcpos, dstpos;
         zval **zarg = argv[i];
         convert_to_string(*zarg);
 
+        /* Handle "file=<file_id>" argument. */
+        if (strlen(Z_STRVAL_PP(zarg)) > 5 &&
+            strncmp(Z_STRVAL_PP(zarg), "file=", 5) == 0)
+        {
+            /* In case there is more than one file argument. Should
+             * not really happen, but still, let's prevent mem leaks. */
+            if (p_file_id == NULL) {
+                p_file_id = estrdup("/download");
+            }
+
+            p_file_id = estrdup(Z_STRVAL_PP(zarg) + 4);
+            p_file_id[0] = '/';
+
+            /* Keep track of index for removing file argument later on. */
+            p_file_id_idx = i;
+        }
+
+        /* Handle "download=*" argument. */
+        else
+        if (strncmp(Z_STRVAL_PP(zarg), "download=", 9) == 0)
+        {
+            /* In case there is more than one download argument. Should
+             * not really happen, but still, let's prevent mem leaks. */
+            if (p_download == NULL) {
+                p_download = estrdup("/download");
+            }
+
+            /* Keep track of index for removing download argument later on. */
+            p_download_idx = i;
+        }
+
+        /* Handle "filename=thefile.ext" argument. */
+        else
         if (strlen(Z_STRVAL_PP(zarg)) > 9 &&
             strncmp(Z_STRVAL_PP(zarg), "filename=", 9) == 0)
         {
-            int   srcpos, dstpos = 0, len, prev_is_special = 0;
-            char *pathinfo       = NULL;
+            int len, prev_is_special = 0;
 
-            pathinfo = estrdup(Z_STRVAL_PP(zarg) + 8);
+            /* In case there is more than one filename argument. Should
+             * not really happen, but still, let's prevent mem leaks. */
+            if (p_filename != NULL) {
+                efree(p_filename);
+            }
+
+            p_filename = estrdup(Z_STRVAL_PP(zarg) + 8);
 
             /* Pathinfo starts with a slash. */
-            pathinfo[dstpos++] = '/';
+            dstpos = 0;
+            p_filename[dstpos++] = '/';
 
             /* Generate safe pathinfo, unless the filename is "%file_name%".
              * We should not mangle that one, because it is used as a
              * replacable string inside file URL templates. */
-            if (strcmp(pathinfo, "/%file_name%")) {
-                len = strlen(pathinfo);
+            if (strcmp(p_filename, "/%file_name%")) {
+                len = strlen(p_filename);
                 for (srcpos=1; srcpos<len; srcpos++) {
-                    if ((pathinfo[srcpos] >= 'a' && pathinfo[srcpos] <= 'z') ||
-                        (pathinfo[srcpos] >= 'A' && pathinfo[srcpos] <= 'Z') ||
-                        (pathinfo[srcpos] >= '0' && pathinfo[srcpos] <= '9') ||
-                        pathinfo[srcpos] == '-' || pathinfo[srcpos] == '.') {
+                    if ((p_filename[srcpos] >= 'a' && p_filename[srcpos] <= 'z') ||
+                        (p_filename[srcpos] >= 'A' && p_filename[srcpos] <= 'Z') ||
+                        (p_filename[srcpos] >= '0' && p_filename[srcpos] <= '9') ||
+                        p_filename[srcpos] == '-' || p_filename[srcpos] == '.') {
                         prev_is_special = 0;
-                        pathinfo[dstpos++] = pathinfo[srcpos];
+                        p_filename[dstpos++] = p_filename[srcpos];
                         continue;
                     } else {
                         if (!prev_is_special) {
-                            pathinfo[dstpos++] = '_';
+                            p_filename[dstpos++] = '_';
                         }
                         prev_is_special = 1;
                     }
                 }
-                pathinfo[dstpos] = '\0';
+                p_filename[dstpos] = '\0';
             }
 
-            /* In case there was more than one filename argument. Should
-             * not really happen, but still, let's keep it in mind. */
-            if (url->pathinfo != NULL) {
-                efree(url->pathinfo);
-            }
-
-            url->pathinfo = pathinfo;
-
-            /* Remove the filename argument. */
-            dstpos = i;
-            srcpos = i + 1;
-            while (srcpos <= argc) {
-                argv[dstpos++] = argv[srcpos++];
-            }
-            argc --;
-            i--;
+            /* Keep track of index for removing filename argument later on. */
+            p_filename_idx = i;
         }
     }
+
+    /* If we have a file_id and filename, then we can format the file URL
+     * as a pathinfo based URL. */
+    if (p_file_id && p_filename)
+    {
+        int      dstpos = 0;
+        int      srcpos = 0;
+        url_arg *arg;
+
+        /* The forum_id is put in the pathinfo. */
+        url->add_forum_id = 0;
+
+        /* Format the pathinfo. */
+        arg = format_url_arg("%s/%ld%s%s",
+            (p_download ? p_download : ""),
+            get_PHORUM_long("forum_id"),
+            p_file_id,
+            p_filename
+        );
+
+        /* Should not happen. */
+        if (url->pathinfo != NULL) {
+            efree(url->pathinfo);
+        }
+
+        /* Set the pathinfo. */
+        url->pathinfo = estrdup(arg->str);
+
+        /* Remove arguments that we do not need from the argument list. */
+        for (srcpos = 0; srcpos < argc; srcpos++)
+        {
+            if (srcpos == p_file_id_idx  ||
+                srcpos == p_filename_idx ||
+                srcpos == p_download_idx ) continue;
+
+            argv[dstpos++] = argv[srcpos];
+        }
+        argc = dstpos;
+    }
+
+    /* Clean up after ourselves. */
+    if (p_filename) efree(p_filename);
+    if (p_file_id)  efree(p_file_id);
+    if (p_download) efree(p_download);
 
     default_url_build(h, u, argc, argv);
     return default_url_format(u);

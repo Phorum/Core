@@ -13,7 +13,6 @@ You can install the Phorum extension on a UNIX system
 using the following commands (asuming that you have a working
 gcc build environment and phpize):
 
-# php extract_constants.php
 # phpize
 # ./configure
 # make

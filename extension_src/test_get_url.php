@@ -25,15 +25,23 @@ define('phorum_page', 'read');
 
 for($i=0;$i<1;$i++)
 {
-var_dump(phorum_get_url(PHORUM_FILE_URL, "file=123", "filename=%file_name%"));
-var_dump(phorum_get_url(PHORUM_FEED_URL, "type=rss", "replies=1"));
+print "WITHOUT PATHINFO\n";
 $PHORUM["file_url_uses_pathinfo"] = 0;
-var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=test.jpg"));
+#var_dump(phorum_get_url(PHORUM_FILE_URL, "file=123", "filename=%file_name%"));
+#var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=test.jpg"));
+var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=twofileargs.php", "last=arg", "download=1"));
+
+print "WITH PATHINFO\n";
 $PHORUM["file_url_uses_pathinfo"] = 1;
-var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=twofileargs.php", "filename=test++funny_chars*flattening.jpg", "last=arg"));
-var_dump(phorum_get_url(PHORUM_FILE_URL, "filename=onefilearg.php", "file=1"));
-var_dump(phorum_get_url(PHORUM_FILE_URL));
-var_dump(phorum_get_url(PHORUM_FILE_URL, "filename=********.gif"));
+var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1", "filename=somefile.php", "last=arg", "download=1"));
+var_dump(phorum_get_url(PHORUM_FILE_URL, "file=1234", "filename=anotherfile.gif"));
+#var_dump(phorum_get_url(PHORUM_FILE_URL, "filename=onefilearg.php", "file=1"));
+#var_dump(phorum_get_url(PHORUM_FILE_URL));
+#var_dump(phorum_get_url(PHORUM_FILE_URL, "filename=********.gif"));
+
+exit;
+
+var_dump(phorum_get_url(PHORUM_FEED_URL, "type=rss", "replies=1"));
 
 var_dump(phorum_get_url(PHORUM_BASE_URL));
 var_dump(phorum_get_url(PHORUM_INDEX_URL, 10, "type=ok"));
