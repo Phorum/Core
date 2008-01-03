@@ -50,7 +50,7 @@ if ($step == 0 && !isset($_POST["sanity_checks_done"]))
     $GLOBALS["PHORUM"]["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
 
     // Load and run all available checks.
-    include("include/admin/sanity_checks.php");
+    include("./include/admin/sanity_checks.php");
 
     ?>
     <h1>Checking your system</h1>
