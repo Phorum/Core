@@ -4719,7 +4719,6 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
 }
 // }}}
 
-
 // {{{ Function: phorum_db_newflag_check()
 /**
  * Checks if there are new messages in the forums given in forum_ids
@@ -4781,7 +4780,6 @@ function phorum_db_newflag_check($forum_ids)
 
 }
 // }}}
-
 
 // {{{ Function: phorum_db_newflag_count()
 /**
@@ -7247,7 +7245,7 @@ function phorum_db_create_tables()
 
       "CREATE TABLE {$PHORUM['groups_table']} (
            group_id                 int unsigned   NOT NULL auto_increment,
-           name                     varchar(255)   NOT NULL default '0',
+           name                     varchar(255)   NOT NULL default '',
            open                     tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY  (group_id)
