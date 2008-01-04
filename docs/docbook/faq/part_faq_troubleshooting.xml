@@ -18,6 +18,9 @@
       After editing the php.ini, restart the webserver. From then on, using
       the back button should work like expected.
     </para>
+    <para>
+	If you do not have access to php.ini (you are using a hosting account), submit a request to your host asking that they change the aforementioned parameter for you. Most hosts should be willing to do this in the majority of cases.
+	</para>
   </section>
 
 </chapter>

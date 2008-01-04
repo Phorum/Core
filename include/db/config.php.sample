@@ -40,7 +40,7 @@ $PHORUM['DBCONFIG']=array(
     
     // don't populate the search-table for mysql fulltext search
     // (useful if you use a alternate search-backend which doesn't use
-    //  the search-tabl)
+    //  the search-table)
     'empty_search_table' => '0',
     
     // specifies the charset used for the create-table statements
