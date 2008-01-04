@@ -290,7 +290,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             </listitem>
           </varlistentry>
           </variablelist>
-          The following options apply only to the mysql-layer:
+          <emphasis>The following options apply only to the mysql-layer:</emphasis>
           <variablelist>
           <varlistentry>
             <term>mysql_use_ft</term>
