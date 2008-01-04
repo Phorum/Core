@@ -21,11 +21,11 @@
     <para>
       This is the quickstart guide for installing Phorum, aimed at people
       that are used to working with websites, PHP and databases. If you
-      are having problems following this guide, then please read 
+      are having problems following this guide, then please read
       <xref linkend="installation.detailed"/> instead.
       <itemizedlist>
         <listitem>Unpack Phorum into a directory below your website's document root;</listitem>
-        <listitem>Create a database and a full-access database user for that database;</listitem>
+        <listitem>Create a database and a full access database user for that database;</listitem>
         <listitem>Edit <filename>include/db/config.php.sample</filename>, save it as <filename>include/db/config.php</filename>;</listitem>
         <listitem>Open <filename>{phorum url}/admin.php</filename> in your web browser and finish the install.</listitem>
       </itemizedlist>
@@ -38,7 +38,7 @@
     <section>
       <title>Download Phorum</title>
       <para>
-        If you haven't already done so, download the latest stable 
+        If you haven't already done so, download the latest stable
         Phorum distribution from &www.phorum.org;.
       </para>
     </section>
@@ -51,7 +51,7 @@
       <para>
         If you have downloaded the .zip file, you can extract the
         files from that archive directly using Windows XP's zipfile support.
-        If you downloaded the .tar.gz file or if you are using a Windows 
+        If you downloaded the .tar.gz file or if you are using a Windows
         version that does not have built-in zipfile support, then you will
         have to download an appropriate tool for unpacking, e.g. WinZip
         (<ulink url="http://www.winzip.com/">http://www.winzip.com/</ulink>).
@@ -77,7 +77,7 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
         <remark>TODO: this section should be in a document conventions
         section</remark>
         The document root for a website is the directory in which your
-        site's web pages are stored. If your website's URL is 
+        site's web pages are stored. If your website's URL is
         <filename>http://www.example.com</filename> and you place the Phorum
         files in a directory called <filename>forum</filename> inside
         your document root, your Phorum installation will be available
@@ -95,9 +95,9 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
       </para>
       <para>
         If the webserver is running on another system, you will have to
-        upload the files to your website's document root. In most cases, 
+        upload the files to your website's document root. In most cases,
         you will use FTP for this, but some hosting providers require
-        SCP (secure copy, which is more secure than FTP). 
+        SCP (secure copy, which is more secure than FTP).
         If you do not know how or where to upload the Phorum files,
         please contact your hosting provider.
       </para>
@@ -117,7 +117,7 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
           "forgot to do chmod 777" on any of the Phorum files.<sbr/>
           <sbr/>
           The only directory that might have to be made writable for the
-          webserver is <filename>./cache</filename> 
+          webserver is <filename>./cache</filename>
           (see <xref linkend="install.additionalissues"/>).
           But this directory is not used in a default installation.
         </note>
@@ -129,26 +129,27 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
       <para>
         Phorum stores all its data in a database. So if you do not already
         have a database which you will be using for Phorum, you now need to
-        create one. Officially, only the 
+        create one. Officially, only the
         <ulink url="http://www.mysql.com/">MySQL</ulink>
         database server is supported
         by Phorum, so we recommend to use MySQL whenever possible.
       </para>
       <para>
-		If you have hosted your site with a hosting provider, 
-		you should have access to a control panel (usually cPanel or similar). 
-		There should be a MySQL database link on the main page of the control panel, 
-		and from there you can create a database. 
-		Alternatively, you could have access to phpMyAdmin. 
-		Log into phpMyAdmin using the username and password that your host has provided, 
-		and use the "create new database" function on the main page. 
-		If none of these options are available to you, contact your host and they will be able to do it for you.
-	  </para>
+        If you have hosted your site with a hosting provider,
+        you should have access to a control panel (usually cPanel or similar).
+        There should be a MySQL database link on the main page of the control
+        panel, and from there you can create a database. Alternatively, you
+        could have access to phpMyAdmin. Log into phpMyAdmin using the
+        username and password that your host has provided, and use the
+        "create new database" function on the main page. If none of these
+        options are available to you, contact your host and they will be
+        able to do it for you.
+      </para>
       <para>
         If you run your own database server, then you will have to
         create the database and the user yourself. If you are using
         a control panel, like phpmyadmin, then use that control panel
-        to create them. You can use the mysql SQL prompt to create 
+        to create them. You can use the mysql SQL prompt to create
         the database by issuing the appropriate commands. For example:
         <screen>
 mysql&gt; <literal>CREATE DATABASE phorum;</literal>
@@ -167,12 +168,12 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
       <title>Configure the database access for Phorum</title>
       <para>
         After setting up the database, you will have to tell Phorum how
-        to access that database. The configuration for this is put in 
+        to access that database. The configuration for this is put in
         the file <filename>include/db/config.php</filename> inside your
         Phorum directory. This file is not included in the distribution.
         Only a differently named sample file is included (this is to
         prevent overwriting your configuration when upgrading Phorum).
-        Copy or rename the sample configuration file 
+        Copy or rename the sample configuration file
         <filename>include/db/config.php.sample</filename> to
         <filename>include/db/config.php</filename>. Then edit the
         <filename>config.php</filename> file to match the access
@@ -211,7 +212,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             <term>server</term>
             <listitem>
               <para>
-                This is the hostname or IP-address of your database server. 
+                This is the hostname or IP-address of your database server.
                 On a lot of systems, the database server will run on the
                 same system as the web server. In those cases, the default
                 value <literal>localhost</literal> will often be correct.
@@ -226,13 +227,13 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
               <para>
                 MySQL (and a lot of other database servers) can handle
                 multiple databases in one database server. Each database
-                is referenced by its own unique name. This setting is 
+                is referenced by its own unique name. This setting is
                 used for configuring the name of the database that Phorum
                 has to use.
               </para>
               <para>
                 If you have created the database using the example command
-                from above (<literal>CREATE DATABASE phorum</literal>), 
+                from above (<literal>CREATE DATABASE phorum</literal>),
                 then you can use the default value <literal>phorum</literal>.
               </para>
             </listitem>
@@ -264,7 +265,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
                 that Phorum uses. If other applications are using the
                 same database or if you have multiple Phorum installations
                 that use the same database name, this prefix can be used to
-                prevent table name collisions. E.g. if you set the 
+                prevent table name collisions. E.g. if you set the
                 prefix to <literal>myprefix</literal>, then the full name
                 of the users table will be <literal>myprefix_users</literal>.
                 For most installations, you can keep the default value
@@ -288,18 +289,31 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
                 to display.
               </para>
             </listitem>
+            <term>upgrade_page</term>
+            <listitem>
+              <para>
+                Phorum uses a simple built-in page to inform visitors and
+                the site admin that the database has to be upgraded.
+                If you want to provide a custom upgrade message page for
+                this, you can set this setting to the URL of the page that
+                you want to display.
+              </para>
+            </listitem>
           </varlistentry>
           <varlistentry>
             <term>upgrade_page</term>
             <listitem>
               <para>
-                An optional URL for redirecting the user when the database has to be
-                upgraded. If you want to use this field, remove the "//" in front of it.
+                An optional URL for redirecting the user when the database
+                has to be upgraded. If you want to use this field, remove
+                the "//" in front of it.
               </para>
             </listitem>
-          </varlistentry>          
+          </varlistentry>
           </variablelist>
-          <emphasis>The following options apply only to the mysql-layer:</emphasis>
+          <emphasis>
+            The following options apply only to the mysql-layer:
+          </emphasis>
           <variablelist>
           <varlistentry>
             <term>mysql_use_ft</term>
@@ -318,14 +332,15 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
                 <literal>0</literal>.
               </para>
             </listitem>
-          </varlistentry>          
+          </varlistentry>
           <varlistentry>
             <term>mysql_php_extension</term>
             <listitem>
               <para>
                 This option defines which MySQL PHP extension should be used.
-                Either NULL, "mysql", "mysqli" or "mysqli_replication" for master/slave setups.
-                If NULL, Phorum will autodetect the extension to use.
+                Either NULL, "mysql", "mysqli" or "mysqli_replication" for
+                master/slave setups. If NULL, Phorum will autodetect the
+                extension to use.
               </para>
             </listitem>
           </varlistentry>
@@ -333,36 +348,41 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             <term>empty_search_table</term>
             <listitem>
               <para>
-              This option defines if Phorum should populate the search-table with data
-              for mysql fulltext search (useful if you use a alternate search-backend which doesn't use
-              the search-table). 0 will put the messages into the search-table, 1 will keep it empty.
+                This option defines if Phorum should populate the search
+                table with data for mysql fulltext search (useful if you
+                use a alternate search backend which doesn't use the
+                search table): 0 will put the messages into the search table,
+                1 will keep it empty.
               </para>
             </listitem>
-          </varlistentry>    
+          </varlistentry>
           <varlistentry>
             <term>charset</term>
             <listitem>
               <para>
-              This option specifies the charset used for the create-table statements
-              and the connection(s) later on.
+              This option specifies the charset used for the create table
+              statements and the connection(s) later on.
               <important>
                   Never change the charset on a running system!
               </important>
               </para>
             </listitem>
-          </varlistentry>      
+          </varlistentry>
           <varlistentry>
             <term>slaves</term>
             <listitem>
               <para>
-                This array can hold a number of slave-servers to use in master/slave mode.
-			    All write queries will go to the default server above, which is the master-
-			    server in this setup and read-load will be split randomly over the slave-
-			    servers specified in this array. If you want your master-server to get read-
-			    load as well you need to specify it here too.
-			    Some read-queries will go to the master-server anyway in case they are
-			    vulnerable to replication-lag.
-			    <example><title>Configuring slaves with the MySQL-layer</title><programlisting><![CDATA[
+                This array can hold a number of slave servers to use in
+                master/slave mode. All write queries will go to the default
+                server above, which is the master server in this setup and
+                read load will be split randomly over the slave servers
+                specified in this array. If you want your master server to
+                get read load as well you need to specify it here too.
+                Some read queries will go to the master server anyway in
+                case they are vulnerable to replication lag.
+                <example>
+                  <title>Configuring slaves with the MySQL layer</title>
+                  <programlisting><![CDATA[
 <?php
     'slaves'=>array(
         array(    // Database connection 1.
@@ -381,10 +401,12 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
         'user'          =>  'phorum5',
         'password'      =>  'phorum5')
     )
-?> ]]></programlisting></example>
+?> ]]>
+                  </programlisting>
+                </example>
               </para>
             </listitem>
-          </varlistentry>   
+          </varlistentry>
         </variablelist>
       </para>
     </section>
@@ -392,16 +414,16 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
     <section>
       <title>Run the web based installer</title>
       <para>
-        Now that you have uploaded the files, created the database and 
+        Now that you have uploaded the files, created the database and
         configured the database access for Phorum, you are ready to
         run the web based installation script. Open
         <filename>{phorum url}/admin.php</filename> using your
         web browser. This is the administration interface, which will
-        automatically detect that a fresh install has to be 
+        automatically detect that a fresh install has to be
         performed.
       </para>
       <para>
-        Follow the instructions on screen to finish the Phorum 
+        Follow the instructions on screen to finish the Phorum
         installation.
       </para>
     </section>
@@ -433,7 +455,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             <sbr/><sbr/>
           </listitem>
           <listitem>
-            Customize the looks of Phorum to your needs by creating a 
+            Customize the looks of Phorum to your needs by creating a
             custom template. Instructions for this can be found in
             the templates section of the developer manual.
             <sbr/><sbr/>
@@ -457,7 +479,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
         <para>
           In the Phorum settings, there is an entry called "Cache Directory".
           On UNIX systems, the installer will have set that to the default
-          location <filename>/tmp</filename>. 
+          location <filename>/tmp</filename>.
           The cache directory is used
           for storing cached data and compiled templates. You can change
           the location of your cache directory if you do not want the
@@ -466,7 +488,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
           <screen>
 Warning:
 fopen(/tmp/tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
-failed to open stream: permission denied in 
+failed to open stream: permission denied in
 /path/to/phorum/include/templates.php on line 184</screen>
           If you want to change the cache directory settings, we advise
           you to change it to <filename>./cache</filename> (this directory
@@ -475,7 +497,7 @@ failed to open stream: permission denied in
         <para>
           You will have to make sure
           that this directory is writable by the webserver. Most likely
-          this means that you have to make it world writable. On a 
+          this means that you have to make it world writable. On a
           UNIX shell prompt, you can do this using the following
           commands:
           <screen>
@@ -513,14 +535,14 @@ c:\path\to\phorum\include\templates.php on line 184</screen>
         </para>
       </section>
       <section>
-        <title>Problems sending mail to end-users</title>
+        <title>Problems sending mail to end users</title>
         <para>
           PHP has to be configured correctly on Windows systems to be able to
           send out mail. If this is not done, you might get errors and mail
           will not arrive. What you need to do is edit the file "php.ini"
           (this file holds the configuration for PHP). Find the section that
           is called "[mail function]". In this section, set the parameter
-          "SMTP" to the hostname or IP-address of the your SMTP server. If
+          "SMTP" to the hostname or IP address of the your SMTP server. If
           you do not know your SMTP server, please ask your internet access
           provider. After this, PHP will know what mailserver to use for
           sending out mail messages.
@@ -545,8 +567,8 @@ c:\path\to\phorum\include\templates.php on line 184</screen>
           and <literal>$PHORUM['short_date']</literal> in the
           language file
           <filename>{phorum dir}/include/lang/yourlanguage.php</filename>),
-          please read the PHP documentation for strftime() and its 
-          limitations on the Windows platform at 
+          please read the PHP documentation for strftime() and its
+          limitations on the Windows platform at
           <ulink url="http://www.php.net/strftime"/>
         </para>
       </section>

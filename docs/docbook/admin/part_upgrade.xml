@@ -118,7 +118,7 @@
       <para>
         <emphasis role="bold">Instructions from phorum3to5convert.php</emphasis>
         <sbr/> This script will convert the data from a Phorum 3 database to a Phorum 5 database.
-          <emphasis role="bold">It does not change any of the old phorum3-tables. The data is only
+          <emphasis role="bold">It does not change any of the old phorum3 tables. The data is only
           copied over to the new Phorum 5 tables. </emphasis></para>
       <para> Instructions: <itemizedlist>
 
@@ -153,7 +153,7 @@
             the command line. This is the preferred way of running the upgrade:
             <screen>shell&gt; <literal>php phorum3to5convert.php</literal></screen>
           </listitem>
-          <listitem>If you do not have shell access, call the upgrade script from your browser: <screen><literal> &lt;phorum5-url&gt;/phorum3to5convert.php </literal></screen>
+          <listitem>If you do not have shell access, call the upgrade script from your browser: <screen><literal>{phorum url}/phorum3to5convert.php</literal></screen>
             <emphasis role="bold"> *** THIS STEP MAY TAKE A WHILE ***</emphasis>
           </listitem>
           <listitem>Take a look at the Phorum 5 forums to see if everything was converted correctly.</listitem>
