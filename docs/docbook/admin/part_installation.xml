@@ -289,6 +289,15 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
               </para>
             </listitem>
           </varlistentry>
+          <varlistentry>
+            <term>upgrade_page</term>
+            <listitem>
+              <para>
+                An optional URL for redirecting the user when the database has to be
+                upgraded. If you want to use this field, remove the "//" in front of it.
+              </para>
+            </listitem>
+          </varlistentry>          
           </variablelist>
           <emphasis>The following options apply only to the mysql-layer:</emphasis>
           <variablelist>
@@ -346,9 +355,33 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             <term>slaves</term>
             <listitem>
               <para>
-              For master/slave setup (if mysql_php_extension is set to
-              "mysqli_replication") you need to specify the slave-servers to use.
-              if you don't do this all queries will go to the master-server anyway.
+                This array can hold a number of slave-servers to use in master/slave mode.
+			    All write queries will go to the default server above, which is the master-
+			    server in this setup and read-load will be split randomly over the slave-
+			    servers specified in this array. If you want your master-server to get read-
+			    load as well you need to specify it here too.
+			    Some read-queries will go to the master-server anyway in case they are
+			    vulnerable to replication-lag.
+			    <example><title>Configuring slaves with the MySQL-layer</title><programlisting><![CDATA[
+<?php
+    'slaves'=>array(
+        array(    // Database connection 1.
+        'name'          =>  'phorum5',
+        'server'        =>  '192.168.1.5',
+        'user'          =>  'phorum5',
+        'password'      =>  'phorum5'),
+        array(    // Database connection 2.
+        'name'          =>  'phorum5',
+        'server'        =>  '192.168.1.6',
+        'user'          =>  'phorum5',
+        'password'      =>  'phorum5'),
+        array(    // Database connection 3.
+        'name'          =>  'phorum5',
+        'server'        =>  '192.168.1.7',
+        'user'          =>  'phorum5',
+        'password'      =>  'phorum5')
+    )
+?> ]]></programlisting></example>
               </para>
             </listitem>
           </varlistentry>   
