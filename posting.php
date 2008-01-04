@@ -59,13 +59,15 @@ require_once('./common.php');
 require_once('./include/format_functions.php');
 
 // Check if the Phorum is in read-only mode.
-if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only"){
-    phorum_build_common_urls();
-    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
-    // Only show header and footer when not included in another page.
-    phorum_output("message");
+if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only") {
+    if(!(isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"])){
+        phorum_build_common_urls();
+        // Only show header and footer when not included in another page.
+        phorum_output("message");
+    }
     return;
 }
+
 
 // No forum id was set. Take the user back to the index.
 if(!isset($PHORUM["forum_id"])){
