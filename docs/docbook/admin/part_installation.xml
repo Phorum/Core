@@ -135,10 +135,15 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
         by Phorum, so we recommend to use MySQL whenever possible.
       </para>
       <para>
-        If you have hosted your site with a hosting provider, then ask
-        your hosting provider to setup the database and a full access
-        database user for you.
-      </para>
+		If you have hosted your site with a hosting provider, 
+		you should have access to a control panel (usually cPanel or similar). 
+		There should be a MySQL database link on the main page of the control panel, 
+		and from there you can create a database. 
+		Alternatively, you could have access to phpMyAdmin. 
+		Log into phpMyAdmin using the username and password that your host has provided, 
+		and use the "create new database" function on the main page. 
+		If none of these options are available to you, contact your host and they will be able to do it for you.
+	  </para>
       <para>
         If you run your own database server, then you will have to
         create the database and the user yourself. If you are using
@@ -181,7 +186,6 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
         file to the correct location after editing it locally.
       </para>
       <para>
-      <remark>update with current config.php, which has additional features</remark>
         In the configuration file, you will find the following settings:
         <variablelist>
           <varlistentry>
@@ -274,6 +278,21 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
             </listitem>
           </varlistentry>
           <varlistentry>
+            <term>down_page</term>
+            <listitem>
+              <para>
+                Phorum uses a built-in error message to inform visitors
+                when no database connection can be made. If you want to
+                provide a custom error message page for this, you can
+                set this setting to the URL of the page that you want
+                to display.
+              </para>
+            </listitem>
+          </varlistentry>
+          </variablelist>
+          The following options apply only to the mysql-layer:
+          <variablelist>
+          <varlistentry>
             <term>mysql_use_ft</term>
             <listitem>
               <para>
@@ -290,19 +309,49 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypa
                 <literal>0</literal>.
               </para>
             </listitem>
-          </varlistentry>
+          </varlistentry>          
           <varlistentry>
-            <term>down_page</term>
+            <term>mysql_php_extension</term>
             <listitem>
               <para>
-                Phorum uses a built-in error message to inform visitors
-                when no database connection can be made. If you want to
-                provide a custom error message page for this, you can
-                set this setting to the URL of the page that you want
-                to display.
+                This option defines which MySQL PHP extension should be used.
+                Either NULL, "mysql", "mysqli" or "mysqli_replication" for master/slave setups.
+                If NULL, Phorum will autodetect the extension to use.
               </para>
             </listitem>
           </varlistentry>
+          <varlistentry>
+            <term>empty_search_table</term>
+            <listitem>
+              <para>
+              This option defines if Phorum should populate the search-table with data
+              for mysql fulltext search (useful if you use a alternate search-backend which doesn't use
+              the search-table). 0 will put the messages into the search-table, 1 will keep it empty.
+              </para>
+            </listitem>
+          </varlistentry>    
+          <varlistentry>
+            <term>charset</term>
+            <listitem>
+              <para>
+              This option specifies the charset used for the create-table statements
+              and the connection(s) later on.
+              <important>
+                  Never change the charset on a running system!
+              </important>
+              </para>
+            </listitem>
+          </varlistentry>      
+          <varlistentry>
+            <term>slaves</term>
+            <listitem>
+              <para>
+              For master/slave setup (if mysql_php_extension is set to
+              "mysqli_replication") you need to specify the slave-servers to use.
+              if you don't do this all queries will go to the master-server anyway.
+              </para>
+            </listitem>
+          </varlistentry>   
         </variablelist>
       </para>
     </section>
