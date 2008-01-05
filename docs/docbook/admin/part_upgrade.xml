@@ -141,7 +141,7 @@
             "phpmyadmin". The queries to execute are (replace "phorum" with your own table_prefix if
             you changed this during install):
             <screen><literal>DELETE FROM phorum_search; <sbr/>
-                DELETE FROM phorum_messages;<sbr/> 
+                DELETE FROM phorum_messages;<sbr/>
                 DELETE FROM phorum_forums;</literal></screen>
             I could do this from this script as well, but I would find that a little bit rude ;-))</listitem>
 
