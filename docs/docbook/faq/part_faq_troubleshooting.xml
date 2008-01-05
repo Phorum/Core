@@ -25,5 +25,13 @@
       this in the majority of cases.
     </para>
   </section>
-
+  <section>
+  	<title>Help! I've deleted the admin user and can't log in!</title>
+  	<para>
+  		Create a new user using the registration form, and then set
+  		the admin parameter of the user to 1 in the database itself.
+  		This can be done using phpmyAdmin or a similar control panel,
+  		or the shell.
+  	</para>
+  </section>
 </chapter>

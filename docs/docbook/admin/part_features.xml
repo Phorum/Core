@@ -91,7 +91,215 @@
       </section>
       
   </section>
-  
-  
+  <section id="features.bbcode">
+  	<title>BBCode (Module)</title>
+  	<section id="features.bbcode.intro">
+  		<title>What is BBCode?</title>
+  		<para>
+  			BBCode (Bulletin Board Code) is a system of tags which
+  			allows users to add markup to messages (bold, italic,
+  			images, links etc) in a safe way. For example, if text in
+  			a post was enclosed like so: [i]text[/i], it would be
+  			rendered in italics, [b]text[/b] would be rendered in
+  			bold, and so on.
+  		</para>
+  	</section>
+  	<section id="features.bbcode.howto">
+  		<title>How do I use BBCode?</title>
+  		<para>
+  			BBCode is enabled by default. To configure it, go to the
+  			admin panel, click on "Modules" in the sidebar, and click
+  			on "Settings" next to the BBCode module. Here you can
+  			change a number of useful options, including whether or
+  			not to have a button for a certain BBCode in the editor
+  			tools bar, for added usability. See
+  			<xref linkend=" features.editortools.intro" />
+  			for more information on this feature. Explanations of what
+  			the options do can be found by clicking on the help
+  			buttons next to them.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.editortools">
+  	<title>Editor tools (Module)</title>
+  	<section id="features.editortools.intro">
+  		<title>What is Editor tools?</title>
+  		<para>
+  			The editor tools module adds a toolbar to the Phorum
+  			message editor, which can be used by visitors to easily
+  			add things like BBcode tags and smileys to their postings.
+  			This is particularily useful for users unfamiliar with
+  			BBCode syntax. It is enabled by default.
+  		</para>
+  	</section>
+  	<section id="features.editortools.intro">
+  		<title>How do I use Editor tools?</title>
+  		<para>
+  			Simply click on the button on the toolbar to insert the
+  			tags for the effect that you desire. By clicking on
+  			"Settings" in the admin panel Modules section, you can
+  			toggle whether or not for an additional help button to be
+  			displayed on the toolbar, which gives information on
+  			BBCode syntax and smilies.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.eventlogging">
+  	<title>Event Logging (Module)</title>
+  	<section id="features.eventlogging.intro ">
+  		<title>What is Event Logging?</title>
+  		<para>
+  			This module implements an event logging system, which can
+  			be used for logging various events. Other modules can use
+  			this module for logging purposes too. This module can be
+  			useful for tracking the actions of your users and your
+  			moderators, or for tracking development issues. It is
+  			disabled by default.
+  		</para>
+  	</section>
+  	<section id="features.eventlogging.howto">
+  		<title>How do I use Event Logging?</title>
+  		<para>
+  			First, go the the Modules section in the admin panel and
+  			enable the module. Then, click on Settings to configure
+  			what you want to be logged. You can view the logs from the
+  			Settings page by clicking on View logged events, or if you
+  			are trying to find something specific, filter them by
+  			selecting Filter logged events.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.html">
+  	<title>HTML in posts (Module)</title>
+  	<section id="features.html.intro">
+  		<title>What is HTML in posts?</title>
+  		<para>
+  			This module allow HTML to be used in posts. This includes
+  			allowing special characters (eg. UTF-8) that are HTML
+  			encoded. Note: BBCode is a safer alternative to HTML, due
+  			to the issues that HTML embedded in posts can cause. It is
+  			disabled by default. We recommend you leave it that way
+  			unless you know what you are doing ;)
+  		</para>
+  	</section>
+  	<section id="features.html.howto">
+  		<title>How do I use HTML in posts?</title>
+  		<para>
+  			Enable the module in the admin panel, and Phorum will then
+  			render HTML in posts, instead of just as plain text.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.sendmailsmtp">
+  	<title>Send mail through SMTP (Module)</title>
+  	<section id="features.sendmailsmtp.intro ">
+  		<title>What is Send mail through SMTP?</title>
+  		<para>
+  			This module allows to send the mail-messages from phorum
+  			(i.e. notifies) through an external SMTP-Server without
+  			using PHPs internal mail-function. This is useful for when
+  			PHP is not setup to use a local SMTP server, or if you
+  			need to use an SMTP server with SSL/TLS or smtp-auth. It
+  			is disabled by default.
+  		</para>
+  	</section>
+  	<section id="features.sendmailsmtp.howto">
+  		<title>How do I use Send mail through SMTP?</title>
+  		<para>
+  			Once you have enabled the module, you need to fill out the
+  			details of the SMTP server in the Settings page. If your
+  			Phorum is in a shared hosting environment, then your host
+  			should have sent them to you when you created your
+  			account. If not, ask them.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.simpletext">
+  	<title>Simple Text Replacement (Module)</title>
+  	<section id="features.simpletext.intro ">
+  		<title>What is Simple Text Replacement?</title>
+  		<para>
+  			This module allows admins to define text replacement in
+  			messages. So for example, if you set the module to replace
+  			the word "foobar" with "cake", if a user submits a post
+  			with "foobar" in it, it will be replaced with "cake". It
+  			is disabled by default.
+  		</para>
+  	</section>
+  	<section id="features.simpletext.howto">
+  		<title>How do I use Simple Text Replacement?</title>
+  		<para>
+  			Once you have enabled the module, click on Settings. Here,
+  			you can view the list of existing strings, or add your
+  			own. Simply enter a string to match, and what to replace
+  			it with. You can also use PCRE's (Perl Compatible Regular
+  			Expressions).
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.smileys">
+  	<title>Smileys (Module)</title>
+  	<section id="features.smileys.intro">
+  		<title>What are Smileys?</title>
+  		<para>
+  			Smileys are graphical alternatives to the regularly used
+  			emoticons, such as :) and :(. This module is enabled by
+  			default. As long as the module is enabled, Phorum will
+  			render the supplied strings in the settings section as the
+  			image which is provided.
+  		</para>
+  	</section>
+  	<section id="features.smileys.intro">
+  		<title>How do I use Smileys?</title>
+  		<para>
+  			In the Settings section of the Smiley module you can
+  			change the positioning of smilies on the page, add more
+  			smilies and other settings.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.spamhurdles">
+  	<title>Spam Hurdles (Module)</title>
+  	<section id="features.spamhurdles.intro">
+  		<title>What is Spam Hurdles?</title>
+  		<para>
+  			The Spam Hurdles contains a number of useful features
+  			designed to stop spamming of your board. It consists of
+  			CAPTCHA features, to prevent automated bots from posting
+  			and/or signing up, and various other checks. It is
+  			disabled by default. It is recommended that boards that do
+  			not require registration for posting enable this.
+  		</para>
+  	</section>
+  	<section id="features.spamhurdles.howto">
+  		<title>How do I use Spam Hurdles?</title>
+  		<para>
+  			Once you have enabled the module, go to the Settings page.
+  			Here, you can choose which checks should be enabled,
+  			ranging from CAPTCHA to features preventing multiple post
+  			submissions.
+  		</para>
+  	</section>
+  </section>
+
+  <section id="features.tidyoutput">
+  	<title>Tidy Output (Module)</title>
+  	<section id="features.tidyoutput.intro">
+  		<title>What is Tidy Output?</title>
+  		<para>
+  			This module removes unneeded white space from Phorum's
+  			output saving bandwidth. It is disabled by default.
+  		</para>
+  	</section>
+  </section>
+
+
 
 </chapter>

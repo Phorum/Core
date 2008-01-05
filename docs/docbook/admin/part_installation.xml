@@ -94,12 +94,16 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
         to your website's document root.
       </para>
       <para>
-        If the webserver is running on another system, you will have to
-        upload the files to your website's document root. In most cases,
-        you will use FTP for this, but some hosting providers require
-        SCP (secure copy, which is more secure than FTP).
-        If you do not know how or where to upload the Phorum files,
-        please contact your hosting provider.
+      	If the webserver is running on another system, you will have
+      	to upload the files to your website's document root. In most
+      	cases, you will use FTP for this. You will need an FTP client
+      	(a good free one is FileZilla). Connect to ftp.yourdomain.com
+      	and proceed to upload the files to the document root. The
+      	procedure for doing this differs depending on the client; if
+      	in doubt, refer to the client's documentation. However, some
+      	hosting providers require SCP (secure copy, which is more
+      	secure than FTP). If you do not know how or where to upload
+      	the Phorum files, please contact your hosting provider.
       </para>
       <para>
         <note>
