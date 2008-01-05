@@ -8,7 +8,7 @@
       Modules are (often) small extensions to Phorum-functionality without
       sacrificing performance of the Phorum-core. You can install them if
       needed for using their functionalities.<sbr/>
-      Take a look at the <ulink url="http://trac.phorum.org/wiki/ListOfModules">Modules-List</ulink> to see the currently available modules.
+      Take a look at the <ulink url="http://www.phorum.org/phorum5/list.php?62">Modules/Add-Ons forum</ulink> to see the currently available modules.
     </para>
   </section>
 
@@ -24,7 +24,9 @@
           <para>
             Single file modules consist of a single php-file containing
             also the description and hook-names. These kind of modules
-            can't have a settings-page.<sbr/>
+            can't have a settings-page.
+          </para>
+          <para>
             You install a single file module by simply dropping its
             php-file into the mods directory and enabling it in the
             administration pages.
@@ -33,11 +35,16 @@
         <listitem>
           Multi file modules
           <para>
-            Multi file modules consist of at least a directory with a php-file named the same as the directory and an info.txt-file.
-            Additionally for a settings-page there needs to be a settings.php. Beside these standard-files there can be all kind of
-            files and directories used for the module's functions.<sbr/>
-            You install a multi-file module by copying the whole directory (preserving its directory structure) into the mods-directory
-            and enabling it in the admin.
+            Multi file modules consist of at least a directory with a
+            php-file named the same as the directory and an info.txt-file.
+            Additionally for a settings-page there needs to be a settings.php.
+            Beside these standard-files there can be all kind of files and
+            directories used for the module's functions.
+          </para>
+          <para>
+            You install a multi-file module by copying the whole directory
+            (preserving its directory structure) into the mods-directory
+            and enabling it in the administration pages.
           </para>
         </listitem>
       </itemizedlist>
