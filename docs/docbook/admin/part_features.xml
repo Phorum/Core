@@ -113,7 +113,7 @@
   			change a number of useful options, including whether or
   			not to have a button for a certain BBCode in the editor
   			tools bar, for added usability. See
-  			<xref linkend=" features.editortools.intro" />
+  			<xref linkend="features.editortools.intro" />
   			for more information on this feature. Explanations of what
   			the options do can be found by clicking on the help
   			buttons next to them.
@@ -133,7 +133,7 @@
   			BBCode syntax. It is enabled by default.
   		</para>
   	</section>
-  	<section id="features.editortools.intro">
+  	<section id="features.editortools.howto">
   		<title>How do I use Editor tools?</title>
   		<para>
   			Simply click on the button on the toolbar to insert the
@@ -300,6 +300,26 @@
   	</section>
   </section>
 
-
+  <section id="features.usernamerestrictions">
+  	<title>Username Restrictions (Module)</title>
+  	<section id=" features.usernamerestrictions.intro">
+  		<title>What is Username Restrictions?</title>
+  		<para>
+  			This module implements configurable features for enforcing
+  			user name restrictions. The module will check the user
+  			name at registration time and show an error to the user if
+  			the new username does not meet the restrictions. It is
+  			disabled by default.
+  		</para>
+  	</section>
+  	<section id="features.usernamerestrictions.howto">
+  		<title>How do I use Username Restrictions?</title>
+  		<para>
+  			Once you have enabled the module, you can configure
+  			settings such as username length and character preferences
+  			in the module settings page.
+  		</para>
+  	</section>
+  </section>
 
 </chapter>
