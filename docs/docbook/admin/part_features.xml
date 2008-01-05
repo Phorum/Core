@@ -94,7 +94,7 @@
 		<section id="features.modules.included">
 			<title>Modules included in the distribution</title>
 			<section id="features.modules.included.announcements">
-				<title>Announcements (Module)</title>
+				<title>Announcements</title>
 				<section
 					id="features.modules.included.announcements.intro">
 					<title>What are announcements?</title>
@@ -188,7 +188,7 @@
 
 			</section>
 			<section id="features.modules.included.bbcode">
-				<title>BBCode (Module)</title>
+				<title>BBCode</title>
 				<section id="features.modules.included.bbcode.intro">
 					<title>What is BBCode?</title>
 					<para>
@@ -221,7 +221,7 @@
 			</section>
 
 			<section id="features.modules.included.editortools">
-				<title>Editor tools (Module)</title>
+				<title>Editor tools</title>
 				<section
 					id="features.modules.included.editortools.intro">
 					<title>What is Editor tools?</title>
@@ -250,7 +250,7 @@
 			</section>
 
 			<section id="features.modules.included.eventlogging">
-				<title>Event Logging (Module)</title>
+				<title>Event Logging</title>
 				<section
 					id="features.modules.included.eventlogging.intro ">
 					<title>What is Event Logging?</title>
@@ -280,7 +280,7 @@
 			</section>
 
 			<section id="features.modules.included.html">
-				<title>HTML in posts (Module)</title>
+				<title>HTML in posts</title>
 				<section id="features.modules.included.html.intro">
 					<title>What is HTML in posts?</title>
 					<para>
@@ -304,7 +304,7 @@
 			</section>
 
 			<section id="features.modules.included.sendmailsmtp">
-				<title>Send mail through SMTP (Module)</title>
+				<title>Send mail through SMTP</title>
 				<section
 					id="features.modules.included.sendmailsmtp.intro ">
 					<title>What is Send mail through SMTP?</title>
@@ -333,7 +333,7 @@
 			</section>
 
 			<section id="features.modules.included.simpletext">
-				<title>Simple Text Replacement (Module)</title>
+				<title>Simple Text Replacement</title>
 				<section
 					id="features.modules.included.simpletext.intro ">
 					<title>What is Simple Text Replacement?</title>
@@ -361,7 +361,7 @@
 			</section>
 
 			<section id="features.modules.included.smileys">
-				<title>Smileys (Module)</title>
+				<title>Smileys</title>
 				<section id="features.modules.included.smileys.intro">
 					<title>What are Smileys?</title>
 					<para>
@@ -384,7 +384,7 @@
 			</section>
 
 			<section id="features.modules.included.spamhurdles">
-				<title>Spam Hurdles (Module)</title>
+				<title>Spam Hurdles</title>
 				<section
 					id="features.modules.included.spamhurdles.intro">
 					<title>What is Spam Hurdles?</title>
@@ -412,7 +412,7 @@
 			</section>
 
 			<section id="features.modules.included.tidyoutput">
-				<title>Tidy Output (Module)</title>
+				<title>Tidy Output</title>
 				<section
 					id="features.modules.included.tidyoutput.intro">
 					<title>What is Tidy Output?</title>
@@ -426,7 +426,7 @@
 
 			<section
 				id="features.modules.included.usernamerestrictions">
-				<title>Username Restrictions (Module)</title>
+				<title>Username Restrictions</title>
 				<section id=" features.usernamerestrictions.intro">
 					<title>What is Username Restrictions?</title>
 					<para>
