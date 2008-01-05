@@ -1,14 +1,17 @@
 <chapter id="modules.main">
+
   <title>Phorum Modules</title>
 
   <section id="modules.intro">
     <title>Introduction</title>
     <para>
-      Modules are (often) small extensions to Phorum-functionality without sacrificing performance of the Phorum-core.
-      You can install them if needed for using their functionalities.<sbr/>
+      Modules are (often) small extensions to Phorum-functionality without
+      sacrificing performance of the Phorum-core. You can install them if
+      needed for using their functionalities.<sbr/>
       Take a look at the <ulink url="http://trac.phorum.org/wiki/ListOfModules">Modules-List</ulink> to see the currently available modules.
     </para>
   </section>
+
   <section id="modules.installation">
     <title>How do I install a module?</title>
     <para>
@@ -19,9 +22,12 @@
         <listitem>
           Single file modules
           <para>
-            Single file modules consist of a single php-file containing also the description and hook-names.
-            These kind of modules can't have a settings-page.<sbr/>
-            You install a single file module by simply dropping its php-file into the mods directory and enabling it in the administration pages.
+            Single file modules consist of a single php-file containing
+            also the description and hook-names. These kind of modules
+            can't have a settings-page.<sbr/>
+            You install a single file module by simply dropping its
+            php-file into the mods directory and enabling it in the
+            administration pages.
           </para>
         </listitem>
         <listitem>
@@ -35,10 +41,7 @@
           </para>
         </listitem>
       </itemizedlist>
-      
-      
     </para>
   </section>
-  
 
 </chapter>

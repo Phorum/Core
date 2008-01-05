@@ -5,93 +5,452 @@
     <title>Virtual Roots</title>
     <section id="features.vroots.intro">
       <title>What are Virtual Roots?</title>
-    <para>
-      Virtual Roots allow you to run "a phorum inside a phorum".
-      It makes the selected folder to the "root folder" of all forums and folders below it which means that the "forum-list" links go as far up as to this folder and searches for "all forums"
-      are limited to forums in this virtual root. The announcement-module has also functions to use a different forum per virtual root for the announcements.
-      On the other hand, the administration-page is about all the forums/folders and users are valid about all forums (in all virtual roots) in the installation.
+      <para>
+        Virtual Roots allow you to run "a phorum inside a
+        phorum". It makes the selected folder to the "root
+        folder" of all forums and folders below it which means
+        that the "forum-list" links go as far up as to this
+        folder and searches for "all forums" are limited to
+        forums in this virtual root. The announcement-module has
+        also functions to use a different forum per virtual root
+        for the announcements. On the other hand, the
+        administration-page is about all the forums/folders and
+        users are valid about all forums (in all virtual roots)
+        in the installation.
       </para>
     </section>
-     <section id="features.vroots.howto">
-       <title>How do I create a virtual root?</title>
-       <para>
-      To create a virtual root just create a folder and select the checkbox "Virtual Root for descending forums/folders" for this folder.
-      From now on every folder or forum below this folder will be contained in this virtual root.
-       </para>
-       </section>
+    <section id="features.vroots.howto">
+      <title>How do I create a virtual root?</title>
+      <para>
+        To create a virtual root just create a folder and select
+        the checkbox "Virtual Root for descending
+        forums/folders" for this folder. From now on every
+        folder or forum below this folder will be contained in
+        this virtual root.
+      </para>
+    </section>
   </section>
   <section id="features.modules">
     <title>Phorum Modules</title>
-    
+
     <section id="features.modules.intro">
       <title>What are Phorum Modules?</title>
       <para>
-        Modules are (often) small extensions to Phorum-functionality without sacrificing performance of the Phorum-core.
-        You can install them if needed for using their functionalities.<sbr/>
-        Take a look at the <ulink url="http://trac.phorum.org/wiki/ListOfModules">Modules-List</ulink> to see the currently available modules.
+        Modules are (often) small extensions to
+        Phorum-functionality without sacrificing performance of
+        the Phorum-core. You can install them if needed for
+        using their functionalities.
+        <sbr />
+        Take a look at the
+        <ulink
+          url="http://trac.phorum.org/wiki/ListOfModules">
+          Modules-List
+        </ulink>
+        to see the currently available modules.
       </para>
     </section>
     <section id="features.modules.installation">
       <title>How do I install a module?</title>
       <para>
-        All modules are installed inside the subdirectory "mods" of your
-        Phorum installation directory. There are two types of modules:
-        single file and multi file modules.
+        All modules are installed inside the subdirectory "mods"
+        of your Phorum installation directory. There are two
+        types of modules: single file and multi file modules.
         <itemizedlist>
           <listitem>
             Single file modules
             <para>
-              Single file modules consist of a single php-file containing also the description and hook-names.
-              These kind of modules can't have a settings-page.<sbr/>
-              You install a single file module by simply dropping its php-file into the mods directory and enabling it in the administration pages.
+              Single file modules consist of a single
+              php-file containing also the description and
+              hook-names. These kind of modules can't have
+              a settings-page.
+              <sbr />
+              You install a single file module by simply
+              dropping its php-file into the mods
+              directory and enabling it in the
+              administration pages.
             </para>
           </listitem>
           <listitem>
             Multi file modules
             <para>
-              Multi file modules consist of at least a directory with a php-file named the same as the directory and an info.txt-file.
-              Additionally for a settings-page there needs to be a settings.php. Beside these standard-files there can be all kind of
-              files and directories used for the module's functions.<sbr/>
-              You install a multi-file module by copying the whole directory (preserving its directory structure) into the mods-directory
+              Multi file modules consist of at least a
+              directory with a php-file named the same as
+              the directory and an info.txt-file.
+              Additionally for a settings-page there needs
+              to be a settings.php. Beside these
+              standard-files there can be all kind of
+              files and directories used for the module's
+              functions.
+              <sbr />
+              You install a multi-file module by copying
+              the whole directory (preserving its
+              directory structure) into the mods-directory
               and enabling it in the admin.
             </para>
           </listitem>
         </itemizedlist>
       </para>
     </section>
-  </section>
-  <section id="features.announcements">
-    <title>Announcements (Module)</title>
-    <section id="features.announcements.intro">
-      <title>What are announcements?</title>
-      <para>
-        Announcements are important messages shown to all users and on all (or specified) pages which should stand out over the regular posts.<sbr/>
-      Since Phorum-5.2 announcements are handled as a module which is distributed with Phorum. See <xref linkend="features.modules"/> for generic module instructions.
-      The module allows for better separation of posts and announcements and also some additional features like hiding announcements after a given time and it opens
-      the way for other future announcements modules which offer even more functionalities.
-      </para>
-    </section>
-    <section id="features.announcements.howto">
-      <title>How do I use announcements?</title>
-      <para>
-        The announcement-module works with a separate announcements-forum whose messages are shown above the message-list as specified.
-        Therefore follow this description to enable announcements for your Phorum:
-        <itemizedlist>
-          <listitem>Create a separate announcement-forum. The name doesn't matter, just try to remember it.</listitem>
-          <listitem>Go to the Admin -> Modules panel and click on the "Settings" link of the announcements-module.</listitem>
-          <listitem>Select the pages where announcements should be visible on (index, list and/or read)</listitem>
-          <listitem>Select if only unread announcements should be shown to the user<sbr/><emphasis role="bold">Note: Only announcements the user has clicked on to read the message are counted as read.</emphasis></listitem>
-          <listitem>Enter the number of announcements that should be shown.<sbr/><emphasis role="bold">Attention: This number of announcements is all that is retrieved before doing the additional checks like for date and being new to the user.</emphasis></listitem>
-          <listitem>Enter the maximum number of days an announcement should be visible for.<sbr/><emphasis role="bold">Note: The post-date is being used to calculate that. Edits are not taken into account.</emphasis></listitem>          
-          <listitem>Select the announcement forum where the messages should be taken from</listitem>
-          <listitem>Optional: If you have vroots then these will be listed and you have the chance to select different announcement forums for them.</listitem>
-        </itemizedlist>
-        
-      </para>
+    <section id="features.modules.included">
+      <title>Modules included in the distribution</title>
+      <section id="features.modules.included.announcements">
+        <title>Announcements</title>
+        <section
+          id="features.modules.included.announcements.intro">
+          <title>What are announcements?</title>
+          <para>
+            Announcements are important messages shown to
+            all users and on all (or specified) pages which
+            should stand out over the regular posts.
+            <sbr />
+            Since Phorum-5.2 announcements are handled as a
+            module which is distributed with Phorum. See
+            <xref linkend="features.modules" />
+            for generic module instructions. The module
+            allows for better separation of posts and
+            announcements and also some additional features
+            like hiding announcements after a given time and
+            it opens the way for other future announcements
+            modules which offer even more functionalities.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.announcements.howto">
+          <title>How do I use announcements?</title>
+          <para>
+            The announcement-module works with a separate
+            announcements-forum whose messages are shown
+            above the message-list as specified. Therefore
+            follow this description to enable announcements
+            for your Phorum:
+            <itemizedlist>
+              <listitem>
+                Create a separate announcement-forum.
+                The name doesn't matter, just try to
+                remember it.
+              </listitem>
+              <listitem>
+                Go to the Admin -> Modules panel and
+                click on the "Settings" link of the
+                announcements-module.
+              </listitem>
+              <listitem>
+                Select the pages where announcements
+                should be visible on (index, list and/or
+                read)
+              </listitem>
+              <listitem>
+                Select if only unread announcements
+                should be shown to the user
+                <sbr />
+                <emphasis role="bold">
+                  Note: Only announcements the user
+                  has clicked on to read the message
+                  are counted as read.
+                </emphasis>
+              </listitem>
+              <listitem>
+                Enter the number of announcements that
+                should be shown.
+                <sbr />
+                <emphasis role="bold">
+                  Attention: This number of
+                  announcements is all that is
+                  retrieved before doing the
+                  additional checks like for date and
+                  being new to the user.
+                </emphasis>
+              </listitem>
+              <listitem>
+                Enter the maximum number of days an
+                announcement should be visible for.
+                <sbr />
+                <emphasis role="bold">
+                  Note: The post-date is being used to
+                  calculate that. Edits are not taken
+                  into account.
+                </emphasis>
+              </listitem>
+              <listitem>
+                Select the announcement forum where the
+                messages should be taken from
+              </listitem>
+              <listitem>
+                Optional: If you have vroots then these
+                will be listed and you have the chance
+                to select different announcement forums
+                for them.
+              </listitem>
+            </itemizedlist>
+
+          </para>
+        </section>
+
       </section>
-      
+      <section id="features.modules.included.bbcode">
+        <title>BBCode</title>
+        <section id="features.modules.included.bbcode.intro">
+          <title>What is BBCode?</title>
+          <para>
+            BBCode (Bulletin Board Code) is a system of tags
+            which allows users to add markup to messages
+            (bold, italic, images, links etc) in a safe way.
+            For example, if text in a post was enclosed like
+            so: [i]text[/i], it would be rendered in
+            italics, [b]text[/b] would be rendered in bold,
+            and so on.
+          </para>
+        </section>
+        <section id="features.modules.included.bbcode.howto">
+          <title>How do I use BBCode?</title>
+          <para>
+            BBCode is enabled by default. To configure it,
+            go to the admin panel, click on "Modules" in the
+            sidebar, and click on "Settings" next to the
+            BBCode module. Here you can change a number of
+            useful options, including whether or not to have
+            a button for a certain BBCode in the editor
+            tools bar, for added usability. See
+            <xref
+              linkend="features.modules.included.editortools.intro" />
+            for more information on this feature.
+            Explanations of what the options do can be found
+            by clicking on the help buttons next to them.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.editortools">
+        <title>Editor tools</title>
+        <section
+          id="features.modules.included.editortools.intro">
+          <title>What is Editor tools?</title>
+          <para>
+            The editor tools module adds a toolbar to the
+            Phorum message editor, which can be used by
+            visitors to easily add things like BBcode tags
+            and smileys to their postings. This is
+            particularily useful for users unfamiliar with
+            BBCode syntax. It is enabled by default.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.editortools.howto">
+          <title>How do I use Editor tools?</title>
+          <para>
+            Simply click on the button on the toolbar to
+            insert the tags for the effect that you desire.
+            By clicking on "Settings" in the admin panel
+            Modules section, you can toggle whether or not
+            for an additional help button to be displayed on
+            the toolbar, which gives information on BBCode
+            syntax and smilies.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.eventlogging">
+        <title>Event Logging</title>
+        <section
+          id="features.modules.included.eventlogging.intro ">
+          <title>What is Event Logging?</title>
+          <para>
+            This module implements an event logging system,
+            which can be used for logging various events.
+            Other modules can use this module for logging
+            purposes too. This module can be useful for
+            tracking the actions of your users and your
+            moderators, or for tracking development issues.
+            It is disabled by default.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.eventlogging.howto">
+          <title>How do I use Event Logging?</title>
+          <para>
+            First, go the the Modules section in the admin
+            panel and enable the module. Then, click on
+            Settings to configure what you want to be
+            logged. You can view the logs from the Settings
+            page by clicking on View logged events, or if
+            you are trying to find something specific,
+            filter them by selecting Filter logged events.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.html">
+        <title>HTML in posts</title>
+        <section id="features.modules.included.html.intro">
+          <title>What is HTML in posts?</title>
+          <para>
+            This module allow HTML to be used in posts. This
+            includes allowing special characters (eg. UTF-8)
+            that are HTML encoded. Note: BBCode is a safer
+            alternative to HTML, due to the issues that HTML
+            embedded in posts can cause. It is disabled by
+            default. We recommend you leave it that way
+            unless you know what you are doing ;)
+          </para>
+        </section>
+        <section id="features.modules.included.html.howto">
+          <title>How do I use HTML in posts?</title>
+          <para>
+            Enable the module in the admin panel, and Phorum
+            will then render HTML in posts, instead of just
+            as plain text.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.sendmailsmtp">
+        <title>Send mail through SMTP</title>
+        <section
+          id="features.modules.included.sendmailsmtp.intro ">
+          <title>What is Send mail through SMTP?</title>
+          <para>
+            This module allows to send the mail-messages
+            from phorum (i.e. notifies) through an external
+            SMTP-Server without using PHPs internal
+            mail-function. This is useful for when PHP is
+            not setup to use a local SMTP server, or if you
+            need to use an SMTP server with SSL/TLS or
+            smtp-auth. It is disabled by default.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.sendmailsmtp.howto">
+          <title>How do I use Send mail through SMTP?</title>
+          <para>
+            Once you have enabled the module, you need to
+            fill out the details of the SMTP server in the
+            Settings page. If your Phorum is in a shared
+            hosting environment, then your host should have
+            sent them to you when you created your account.
+            If not, ask them.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.simpletext">
+        <title>Simple Text Replacement</title>
+        <section
+          id="features.modules.included.simpletext.intro ">
+          <title>What is Simple Text Replacement?</title>
+          <para>
+            This module allows admins to define text
+            replacement in messages. So for example, if you
+            set the module to replace the word "foobar" with
+            "cake", if a user submits a post with "foobar"
+            in it, it will be replaced with "cake". It is
+            disabled by default.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.simpletext.howto">
+          <title>How do I use Simple Text Replacement?</title>
+          <para>
+            Once you have enabled the module, click on
+            Settings. Here, you can view the list of
+            existing strings, or add your own. Simply enter
+            a string to match, and what to replace it with.
+            You can also use PCRE's (Perl Compatible Regular
+            Expressions).
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.smileys">
+        <title>Smileys</title>
+        <section id="features.modules.included.smileys.intro">
+          <title>What are Smileys?</title>
+          <para>
+            Smileys are graphical alternatives to the
+            regularly used emoticons, such as :) and :(.
+            This module is enabled by default. As long as
+            the module is enabled, Phorum will render the
+            supplied strings in the settings section as the
+            image which is provided.
+          </para>
+        </section>
+        <section id="features.modules.included.smileys.intro">
+          <title>How do I use Smileys?</title>
+          <para>
+            In the Settings section of the Smiley module you
+            can change the positioning of smilies on the
+            page, add more smilies and other settings.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.spamhurdles">
+        <title>Spam Hurdles</title>
+        <section
+          id="features.modules.included.spamhurdles.intro">
+          <title>What is Spam Hurdles?</title>
+          <para>
+            The Spam Hurdles contains a number of useful
+            features designed to stop spamming of your
+            board. It consists of CAPTCHA features, to
+            prevent automated bots from posting and/or
+            signing up, and various other checks. It is
+            disabled by default. It is recommended that
+            boards that do not require registration for
+            posting enable this.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.spamhurdles.howto">
+          <title>How do I use Spam Hurdles?</title>
+          <para>
+            Once you have enabled the module, go to the
+            Settings page. Here, you can choose which checks
+            should be enabled, ranging from CAPTCHA to
+            features preventing multiple post submissions.
+          </para>
+        </section>
+      </section>
+
+      <section id="features.modules.included.tidyoutput">
+        <title>Tidy Output</title>
+        <section
+          id="features.modules.included.tidyoutput.intro">
+          <title>What is Tidy Output?</title>
+          <para>
+            This module removes unneeded white space from
+            Phorum's output saving bandwidth. It is disabled
+            by default.
+          </para>
+        </section>
+      </section>
+
+      <section
+        id="features.modules.included.usernamerestrictions">
+        <title>Username Restrictions</title>
+        <section id="features.usernamerestrictions.intro">
+          <title>What is Username Restrictions?</title>
+          <para>
+            This module implements configurable features for
+            enforcing user name restrictions. The module
+            will check the user name at registration time
+            and show an error to the user if the new
+            username does not meet the restrictions. It is
+            disabled by default.
+          </para>
+        </section>
+        <section
+          id="features.modules.included.usernamerestrictions.howto">
+          <title>How do I use Username Restrictions?</title>
+          <para>
+            Once you have enabled the module, you can
+            configure settings such as username length and
+            character preferences in the module settings
+            page.
+          </para>
+        </section>
+      </section>
+    </section>
   </section>
-  
-  
+
 
 </chapter>
