@@ -40,6 +40,25 @@ p {
     padding-left: 40px;
 }
 
+div.table {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+div.table p {
+    padding-left: 0;
+}
+div.table table {
+    border-collapse: collapse;
+}
+div.table table td,
+div.table table th {
+    text-align: left;
+    padding: 5px;
+}
+div.table table th {
+    background-color: #f5f5f5;
+}
+
 .itemizedlist {
     margin-left: 30px;
 }
@@ -154,6 +173,7 @@ p.copyright {
 }
 
 
+
 #top-bar {
     text-align: left;
     height: 46px;
@@ -231,3 +251,5 @@ p.copyright {
 #menu-bar a:hover {
     background-color: transparent;
 }
+
+
