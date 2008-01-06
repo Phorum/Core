@@ -231,11 +231,12 @@ $template_hide = 1;
     <para>
       Phorum uses its own template language to allow for dynamic templates
       without using PHP. More information on this can be found in
-      the section about the <xref linkend="templates.templatelang" />.
+      the section about the <xref linkend="templates.templatelang"
+      xrefstyle="template:Phorum template language"/>.
     </para>
   </section>
 
-  <section id="templates.templatelang" xreflabel="Phorum template language">
+  <section id="templates.templatelang">
     <title>The Phorum template language</title>
 
     <section>
@@ -277,20 +278,24 @@ Your username is: {USER->username}
       </para>
     </section>
 
-    <section id="templates.datatypes" xreflabel="Data types">
+    <section id="templates.datatypes">
       <title>Data types</title>
 
       <para>
         The template language supports four data types to use in statements:
         <itemizedlist>
-          <listitem><xref linkend="templates.integers"/></listitem>
-          <listitem><xref linkend="templates.strings"/></listitem>
-          <listitem><xref linkend="templates.phpconstants"/></listitem>
-          <listitem><xref linkend="templates.templatevars"/></listitem>
+          <listitem><xref linkend="templates.integers"
+                          xrefstyle="template:Integers"/></listitem>
+          <listitem><xref linkend="templates.strings"
+                          xrefstyle="template:Strings"/></listitem>
+          <listitem><xref linkend="templates.phpconstants"
+                          xrefstyle="template:PHP Constants"/></listitem>
+          <listitem><xref linkend="templates.templatevars"
+                          xrefstyle="template:Template variables"/></listitem>
         </itemizedlist>
       </para>
 
-      <section id="templates.integers" xreflabel="Integers">
+      <section id="templates.integers">
         <title>Integers</title>
         <para>
           Integers are formatted as a sequence of numbers.
@@ -309,7 +314,7 @@ The variable INTEGERVAR is {INTEGERVAR}.
         </para>
       </section>
 
-      <section id="templates.strings" xreflabel="Strings">
+      <section id="templates.strings">
         <title>Strings</title>
         <para>
           Strings are sequences of characters within quotes (both double and
@@ -339,7 +344,7 @@ The variable INTEGERVAR is {INTEGERVAR}.
         </para>
       </section>
 
-      <section id="templates.phpconstants" xreflabel="PHP constants">
+      <section id="templates.phpconstants">
         <title>PHP constants</title>
 
         <para>
@@ -365,7 +370,7 @@ The variable INTEGERVAR is {INTEGERVAR}.
         </para>
       </section>
 
-      <section id="templates.templatevars" xreflabel="Template variables">
+      <section id="templates.templatevars">
         <title>Template variables</title>
 
         <para>
@@ -419,19 +424,27 @@ The current forum's name is: {NAME}<br/>
         The template language has a number of statements that can be
         used for executing templating actions and decisions.
         <itemizedlist>
-          <listitem><xref linkend="templates.display"/></listitem>
-          <listitem><xref linkend="templates.comments"/></listitem>
-          <listitem><xref linkend="templates.define"/></listitem>
-          <listitem><xref linkend="templates.var"/></listitem>
-          <listitem><xref linkend="templates.if"/></listitem>
-          <listitem><xref linkend="templates.loop"/></listitem>
-          <listitem><xref linkend="templates.include"/></listitem>
-          <listitem><xref linkend="templates.hook"/></listitem>
+          <listitem><xref linkend="templates.display"
+                          xrefstyle="template:Display a variable"/></listitem>
+          <listitem><xref linkend="templates.comments"
+                          xrefstyle="template:In line comments"/></listitem>
+          <listitem><xref linkend="templates.define"
+                          xrefstyle="template:DEFINE"/></listitem>
+          <listitem><xref linkend="templates.var"
+                          xrefstyle="template:VAR"/></listitem>
+          <listitem><xref linkend="templates.if"
+                          xrefstyle="template:IF .. ELSEIF .. ELSE .."/></listitem>
+          <listitem><xref linkend="templates.loop"
+                          xrefstyle="template:LOOP"/></listitem>
+          <listitem><xref linkend="templates.include"
+                          xrefstyle="template:INCLUDE"/></listitem>
+          <listitem><xref linkend="templates.hook"
+                          xrefstyle="template:HOOK"/></listitem>
         </itemizedlist>
-        
+
       </para>
 
-      <section id="templates.display" xreflabel="Display a variable">
+      <section id="templates.display">
         <title>Display a variable</title>
         <para>
           <variablelist>
@@ -462,7 +475,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.comments" xreflabel="In line comments">
+      <section id="templates.comments">
         <title>In line comments</title>
         <para>
           <variablelist>
@@ -499,7 +512,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.define" xreflabel="DEFINE">
+      <section id="templates.define">
         <title>DEFINE</title>
         <para>
           <variablelist>
@@ -545,7 +558,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.var" xreflabel="VAR">
+      <section id="templates.var">
         <title>VAR</title>
         <para>
           <variablelist>
@@ -592,7 +605,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.if" xreflabel="IF .. ELSEIF .. ELSE ..">
+      <section id="templates.if">
         <title>IF .. ELSEIF .. ELSE ..</title>
         <para>
           <variablelist>
@@ -676,7 +689,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.loop" xreflabel="LOOP">
+      <section id="templates.loop">
         <title>LOOP</title>
         <para>
           <variablelist>
@@ -732,7 +745,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.include" xreflabel="INCLUDE">
+      <section id="templates.include">
         <title>INCLUDE</title>
         <para>
           <variablelist>
@@ -817,7 +830,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
         </para>
       </section>
 
-      <section id="templates.hook" xreflabel="HOOK">
+      <section id="templates.hook">
         <title>HOOK</title>
         <para>
           <variablelist>

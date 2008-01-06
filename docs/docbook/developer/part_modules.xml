@@ -131,6 +131,20 @@ function phorum_mod_foo_some_hook ($data) {
   <section id="modules.writingyourown">
     <title>Writing your own modules</title>
 
+    <section id="module.writingyourownintro">
+      <title>Introduction</title>
+      This section will explain to you how to roll your own Phorum modules.
+      We will start out by explaining some of the
+      <xref linkend="modules.terminology" xrefstyle="template:terminology"/>
+      that relates to modules. After that, we will explain a very important
+      part modules: the <xref linkend="modules.moduleinfo"
+      xrefstyle="template:module information"/>. This contains information
+      for both Phorum (what hooks to run in what order, version dependancies)
+      and module users (title, description and other interesting facts).
+      From there on we will walk you through all the possibilities that
+      modules have.
+    </section>
+
     <section id="modules.moduleinfo">
       <title>Module information</title>
       <para>
@@ -386,31 +400,30 @@ priority: run some_hook before some_other_module]]></programlisting>
         before the same hook in the module "some_other_module".
       </para>
 
-    </section>
+    </section> <!-- end of module info -->
 
     <section id="modules.structure">
-      <title>Module structure</title>
+      <title>Module file structure</title>
 
         <section id="modules.structureintro">
           <title>Introduction</title>
           <para>
-            <xref linkend="modules.hookfunctions"
-                  xrefstyle="template:Hook functions"/>
-            and
+            This section describes the file structure of Phorum modules.
+            This structure contains things like the
             <xref linkend="modules.moduleinfo"
-                  xrefstyle="template:module information"/>
-            are all the parts needed for creating a working module. However,
-            your module might need extra stuff like template, language and
-            image files. You can store these files along with your module when
-            using the
-            <xref linkend="modules.multifile"
-                  xrefstyle="template:multiple file module structure"/>
+            xrefstyle="template:module information"/>,
+            <xref linkend="modules.hookfunctions"
+            xrefstyle="template:hook functions"/> and possibly additional
+            stuff like templates, translations, modules settings, images,
+            scripts, classes, etc.
           </para>
           <para>
-            If you do not need to store any other stuff with your module, you
-            can also choose to use the
+            If your module only needs module information and hook functions
+            to function, it is possible to use the
             <xref linkend="modules.singlefile"
-                  xrefstyle="template:single file module structure"/>
+            xrefstyle="template:single file structure"/>. If you need more
+            than that, then use the <xref linkend="modules.multifile"
+            xrefstyle="template:multiple file structure"/>.
           </para>
         </section>
 
@@ -484,11 +497,11 @@ function phorum_mod_foo_some_other_hook ($data) {
 
             Installation of a single file module is done by putting the PHP
             file (e.g. <filename>mod_foo.php</filename>) directly in the
-            directory {phorum dir}/mods/ and activating the module from the
-            "Modules" screen in your admin interface.
+            directory <filename>{phorum dir}/mods/</filename> and activating
+            the module from the "Modules" screen in your admin interface.
           </para>
 
-        </section>
+        </section> <!-- end of single file modules -->
 
         <section id="modules.multifile">
           <title>Multiple file modules</title>
@@ -500,9 +513,10 @@ function phorum_mod_foo_some_other_hook ($data) {
           </para>
           <para>
             They are stored in their own subdirectory below
-            the directory {phorum dir}/mods/. So if you have a module named
-            "foo", you will have to create a directory
-            {phorum dir}/mods/foo/ for storing all module files.
+            the directory <filename>{phorum dir}/mods/</filename>.
+            If you have a module named "foo", you will have to create a
+            directory <filename>{phorum dir}/mods/foo/</filename> for storing
+            all module files.
           </para>
           <para>
             Inside this subdirectory, you will have to create a least
@@ -589,10 +603,264 @@ function phorum_mod_foo_some_other_hook ($data) {
             </itemizedlist>
           </para>
 
-        </section>
+        </section> <!-- end of multi file modules -->
 
-    </section>
+    </section> <!-- end of module structure -->
 
-  </section>
+    <section id="modules.languages">
+      <title>Supporting multiple languages</title>
+
+      <para>
+        This feature is supported by the <xref linkend="modules.multifile"
+        xrefstyle="template:multiple file structure"/>.
+      </para>
+      <para>
+        If your module includes text that will be displayed to end users,
+        you should strongly consider making it support multiple languages.
+        This will allow Phorum installations that use a different language(s)
+        to display output of your module in the same language(s),
+        instead of the language you have written the module in.
+      </para>
+      <para>
+        For supporting multiple languages, the first thing to do is add the
+        following line to your module information file
+        <filename>info.txt</filename>:
+
+        <programlisting>hook: lang|</programlisting>
+
+        There is no actual hook function configured here, because the
+        "lang" hook is only used as a marker for Phorum. It tells Phorum
+        that your module supports multiple languages.
+      </para>
+      <para>
+        Next, you must provide at least one language file with your module.
+        Language files are stored in a subdirectory name "lang" inside your
+        module directory. In our sample module, the full directory would be
+        <filename>{phorum dir}/mods/foo/lang/</filename>. The language files
+        must be named identical to the main language files that Phorum uses.
+        To include both English and French, your module would require the
+        following file structure:
+        <programlisting>
+{phorum dir}/
+     |
+     +-- mods/
+          |
+          +-- foo/
+               |
+               +-- info.txt
+               |
+               +-- foo.php
+               |
+               +-- lang/
+                    |
+                    +-- english.php
+                    |
+                    +-- french.php </programlisting>
+
+        The structure of your language files will be almost identical to
+        that of the main Phorum language files. However, for your own
+        language files it is advisable to add an extra level in the
+        language variables, to avoid conflicts with language string from
+        other modules or Phorum itself. Here is an example of how you
+        could do that:
+
+        <programlisting><![CDATA[
+<?php
+$PHORUM["DATA"]["LANG"]["mod_foo"] = array(
+    "Hello"   => "Hello!",
+    "Bye"     => "Good bye!"
+);
+?> ]]></programlisting>
+
+        Here, the extra inserted level is <literal>["mod_foo"]</literal>.
+        To access the "Hello" string from your module code you would
+        use the PHP variable:
+        <programlisting>
+$PHORUM["DATA"]["LANG"]["mod_foo"]["Hello"]</programlisting>
+
+        When you want to use the language string from a template file,
+        the you would use the following <xref linkend="templates.templatevars"
+        xrefstyle="template:template variable"/>:
+        <programlisting>
+{LANG->mod_foo->Hello}</programlisting>
+
+      </para>
+      <para>
+        In case a Phorum installation is using a language that your module
+        does not support, Phorum will automatically attempt to fallback to
+        English. So it is highly recommend that you include an
+        <filename>english.php</filename> language file in all your modules.
+        If both the current language and English are not found, Phorum will
+        be unable to load a language for your module and will display empty
+        space instead of your language strings.
+      </para>
+      <para>
+        Always try to reuse strings that are already in the main Phorum
+        language files itself. Only create custom strings when there is
+        no alternative available. Having more text to translate is more
+        work for translators and using core language strings helps in
+        keeping the used terminology consistent.
+      </para>
+
+    </section> <!-- end of module languages -->
+
+    <section id="modules.datastorage">
+      <title>Module data storage</title>
+
+      <section id="modules.datastorageintro">
+        <title>Introduction</title>
+        <para>
+          Sometimes, modules will have to store some data in the Phorum
+          system. For example an avatar module would have to store what
+          avatar a user want to show and a poll module would have to add
+          the question, answers and voting results for a poll to messages
+          in which a poll is added.
+        </para>
+        <para>
+          This section description what standard methods are available for
+          letting modules store their data in the Phorum system. Of course,
+          as a module writer, you can divert from this and use any kind
+          of storage that you like. You are in no way limited to only use
+          Phorum specific methods here.
+        </para>
+      </section>
+
+      <section id="modules.storemessagedata">
+        <title>Storing data for messages</title>
+
+        <para>
+          If your module needs to store data along with a Phorum message,
+          the easiest way is to make use of the meta information array that
+          is attached to each message array
+          (<literal>$message["meta"]</literal>).
+          This array is a regular PHP array, which is stored in the
+          database as serialized data (see <ulink url="http://www.php.net/serialize">PHP's serialize manual</ulink>).
+          Because Phorum and other modules make use of this meta data as
+          well, you should never squash it, neither access the meta data
+          in the database directly. Instead use the methods described in
+          this section.
+        </para>
+        <para>
+          To prevent name space collissions with other modules or Phorum,
+          it is good practice to create only one key in the meta data
+          array named <literal>mod_&lt;yourmodule&gt;</literal> (in our
+          example: <literal>mod_foo</literal>). If your module needs to
+          store only one single value, then put it directly under this key:
+          <programlisting>
+$message["meta"]["mod_foo"] = "the single value";</programlisting>
+          If multiple values need to be stored, then put an array under
+          the key. This array can be as complicated as you like:
+          <programlisting><![CDATA[
+$message["meta"]["mod_foo"] = array(
+    "key1"    => "value1",
+    "key2"    => "value2",
+    "complex" => array(
+        0 => "what",
+        1 => "a",
+        2 => "cool",
+        3 => "module"
+    )
+); ]]></programlisting>
+        </para>
+        <para>
+          <important>because the meta data is stored as serialized data in the
+          database, it is not possible to handle the data you store in there
+          through SQL queries.</important>
+        </para>
+        <para>
+          When storing information in the meta data from a hook function, you
+          can encounter two different situations, which both need a different
+          way of handling: hooks that get an editable message array as their
+          argument and hooks that don't.
+        </para>
+
+        <section id="modules.storemessagedata.type1">
+          <title>
+            From hooks that get an editable message array as their argument
+          </title>
+          <para>
+            <remark>
+              If you see ??? below at the places where you are supposed
+              to see hook docs, then it is because the hook docs for
+              "before_post" and "before_edit" have not yet been written.
+            </remark>
+            There are some hooks that send a full message structure to the
+            hook functions. These can change the message structure before
+            returning it to Phorum. Examples are the hooks
+            "<xref linkend="hook.before_post"/>" and
+            "<xref linkend="hook.before_edit"/>". For these kind of
+            hooks, you can update the meta information in the message
+            structure and be done with it. Here's an example of what this
+            could look like in your hook function:
+            <programlisting><![CDATA[
+function phorum_mod_foo_before_post ($message)
+{
+    // Make sure that we have an array for mod_foo in the meta data.
+    if (!isset($message["meta"]["mod_foo"]) ||
+        !is_array($message["meta"]["mod_foo"])) {
+        $message["meta"]["mod_foo"]["foodata"] = array();
+    }
+
+    // Add some fields to the mod_foo data.
+    $message["meta"]["mod_foo"]["foodata"] = "Some data";
+    $message["meta"]["mod_foo"]["bardata"] = "Some more data";
+
+    // Return the updated message. Phorum will take care of
+    // storing the "mod_foo" array in the database.
+    return $message;
+} ]]></programlisting>
+          </para>
+        </section> <!-- end of storing message data from message hooks -->
+
+        <section id="modules.storemessagedata.type2">
+          <title>From other hooks</title>
+          <para>
+            For other hooks, the proper way to store information in the meta
+            data is to first retrieve the current message data (including the
+            current meta data) using the phorum_db_get_message() function.
+            After this, merge the information for your module with the
+            existing meta data and store the updated data in the database
+            using the phorum_db_update_message() function.
+            Here is an example of what this could look like in your hook
+            function:
+            <programlisting><![CDATA[
+function phorum_mod_foo_some_hook ($data)
+{
+    // Somehow you get the id for the message. Here we asume
+    // that it is stored in the $data hook parameter.
+    $message_id = $data["message_id"];
+
+    // Retrieve the message from the database.
+    $message = phorum_db_get_message ($message_id);
+
+    // Extract the current meta data.
+    $meta = $message['meta'];
+
+    // Make sure that we have an array for mod_foo in the meta data.
+    if (!isset($meta["mod_foo"]) || !is_array($meta["mod_foo"])) {
+        $meta["mod_foo"]["foodata"] = array();
+    }
+
+    // Add some fields to the mod_foo data.
+    $meta["mod_foo"]["foodata"] = "Some data";
+    $meta["mod_foo"]["bardata"] = "Some more data";
+
+    // Store the updated meta data in the database.
+    phorum_db_update_message($message_id, array("meta" => $meta));
+
+    // Return the data that we got as input for this hook function.
+    return $data;
+} ]]></programlisting>
+
+           Changing meta data for a message this way will ensure that the
+           existing meta data is kept intact.
+          </para>
+        </section> <!-- end of storing message data from other hooks -->
+
+      </section> <!-- end of storing message data -->
+
+    </section> <!-- end of storing data for a module -->
+
+  </section> <!-- end of writing your own modules -->
 
 </chapter>
