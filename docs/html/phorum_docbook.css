@@ -53,6 +53,7 @@ div.table table {
 div.table table td,
 div.table table th {
     text-align: left;
+    vertical-align: top;
     padding: 5px;
 }
 div.table table th {
@@ -69,6 +70,7 @@ li p {
     color: black;
 }
 .toc p,
+.list-of-tables p,
 .list-of-examples p {
     padding-left: 0px;
 }
