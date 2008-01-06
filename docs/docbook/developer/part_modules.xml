@@ -428,10 +428,15 @@ priority: run some_hook before some_other_module]]></programlisting>
             need additional files in the future.
           </para>
           <para>
-            Single file modules consist of one single PHP file, which contains
-            both the module information and the hook functions. For storing
-            the module informaton, a special PHP comment is used.
-            This comment must look like the following:
+            Single file modules consist of one single PHP file. The name
+            of this file is not restricted. We advice you to use
+            <filename>mod_&lt;module name&gt;.php</filename> though
+            for clarity and consitency with other module
+            (e.g. <filename>mod_foo.php</filename>).
+            This file contains both the module information and the hook
+            function definitions. For storing the module informaton, a
+            special PHP comment is used. This comment must look like the
+            following:
             <programlisting><![CDATA[
 /* phorum module info
 <module information lines go here>
@@ -442,7 +447,8 @@ priority: run some_hook before some_other_module]]></programlisting>
             check on PHORUM at the start of this file):
             <example id="example.singlefilemodule">
               <title>Single file module</title>
-<programlisting><![CDATA[
+<programlisting>
+<filename>{phorum dir}/mods/mod_foo.php</filename><![CDATA[
 <?php
 
 if(!defined("PHORUM")) return;
@@ -477,9 +483,9 @@ function phorum_mod_foo_some_other_hook ($data) {
             </example>
 
             Installation of a single file module is done by putting the PHP
-            file (e.g. foo.php) directly in the directory {phorum dir}/mods/
-            and activating the module from the "Modules" screen in your
-            admin interface.
+            file (e.g. <filename>mod_foo.php</filename>) directly in the
+            directory {phorum dir}/mods/ and activating the module from the
+            "Modules" screen in your admin interface.
           </para>
 
         </section>
@@ -524,7 +530,7 @@ function phorum_mod_foo_some_other_hook ($data) {
             <example id="example.multifilemodule">
               <title>Multi file module</title>
 <programlisting>
-<emphasis role="bold">info.txt</emphasis><![CDATA[
+<filename>{phorum dir}/mods/foo/info.txt</filename><![CDATA[
 title: Foo
 desc: This is the Foo module for Phorum. Nothing exciting...
 version: 1.0.2
@@ -540,7 +546,7 @@ hook: yet_another_hook|phorum_mod_foo_some_other_hook
 priority: run some_hook before some_other_module]]></programlisting>
 
 <programlisting>
-<emphasis role="bold">foo.php</emphasis><![CDATA[
+<filename>{phorum dir}/mods/foo/foo.php</filename><![CDATA[
 <?php
 
 if(!defined("PHORUM")) return;
