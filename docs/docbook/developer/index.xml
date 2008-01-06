@@ -8,6 +8,7 @@
     <!ENTITY part_preface SYSTEM "../part_preface.xml">
 
     <!ENTITY part_templates SYSTEM "part_templates.xml">
+    <!ENTITY part_modules SYSTEM "part_modules.xml">
     <!ENTITY part_hooks SYSTEM "part_hooks.xml">
     <!ENTITY part_hooks_generated SYSTEM "part_hooks_generated.xml">
 
@@ -19,5 +20,6 @@
   &bookinfo;
   &part_preface;
   &part_templates;
+  &part_modules;
   &part_hooks;
 </book>
