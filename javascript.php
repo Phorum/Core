@@ -77,12 +77,12 @@ phorum_build_common_urls();
  *         <br>
  *         It is okay for the module to provide multiple cache keys
  *         for different situations (e.g. if the JavaScript code depends on
- *         a group or so). Keep in mind though that for each different
+ *         a group). Keep in mind though that for each different
  *         cache key, a separate cache file is generated. If you are
  *         generating different JavaScript code per user or so, then it might
  *         be better to add the JavaScript code differently (e.g. through a
  *         custom JavaScript generating script or by adding the code to
- *         the $PHORUM['DATA']['HEAD_DATA'] variable. Also, do not use
+ *         the $PHORUM['DATA']['HEAD_DATA'] variable). Also, do not use
  *         this to only add JavaScript code to certain phorum pages. Since
  *         the resulting JavaScript data is cached, it is no problem if you
  *         add the JavaScript code for your module to the code for
