@@ -69,6 +69,16 @@
             if ($res[0] != PHORUM_SANITY_OK) return $res;
         }
 
+        if ($is_install && empty($PHORUM['DBCONFIG']['charset'])) return array(
+            PHORUM_SANITY_WARN,
+            "Database configuration parameter \"charset\" empty.",
+            "The option \"charset\" is empty in your database configuration.
+             Although you can install Phorum without setting an explicit
+             charset here, we strongly advice against this. Without a
+             specific charset here, you might run into problems with
+             special characters later on."
+        );
+
         // All checks are OK.
         return array(PHORUM_SANITY_OK, NULL, NULL);
     }
