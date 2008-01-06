@@ -1,5 +1,5 @@
 title: Send mail through SMTP
-desc:  This module allows to send the mail-messages from phorum (i.e. notifies) through an external SMTP-Server without using PHPs internal mail-function
+desc:  This module allows Phorum to send the email through an SMTP servers instead of using PHP's mail() function.  Some ISPs disable the mail function and this module is needed to send emails to users.  Only use it if you need it.
 author: Phorum Dev Team
 url: http://www.phorum.org/
 hook:  send_mail|phorum_smtp_send_messages
