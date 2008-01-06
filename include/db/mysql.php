@@ -7064,6 +7064,10 @@ function phorum_db_create_tables()
 
     $lang = PHORUM_DEFAULT_LANGUAGE;
 
+    $charset = empty($PHORUM['DBCONFIG']['charset'])
+             ? ''
+             : "DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
+
     $create_table_queries = array(
 
       "CREATE TABLE {$PHORUM['forums_table']} (
@@ -7112,7 +7116,7 @@ function phorum_db_create_tables()
            KEY name (name),
            KEY active (active, parent_id),
            KEY group_id (parent_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['message_table']} (
            message_id               int unsigned   NOT NULL auto_increment,
@@ -7157,7 +7161,7 @@ function phorum_db_create_tables()
            KEY user_id (user_id),
            KEY recent_user_id (recent_user_id),
            KEY user_messages (user_id, message_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['settings_table']} (
            name                     varchar(255)   NOT NULL default '',
@@ -7165,7 +7169,7 @@ function phorum_db_create_tables()
            data                     text           NOT NULL,
 
            PRIMARY KEY (name)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['subscribers_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -7175,7 +7179,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (user_id,forum_id,thread),
            KEY forum_id (forum_id,thread,sub_type)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['user_permissions_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -7184,7 +7188,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY  (user_id,forum_id),
            KEY forum_id (forum_id,permission)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       // When creating extra fields, then mind to update the file
       // include/api/custom_profile_fields.php script too (it contains a
@@ -7232,7 +7236,7 @@ function phorum_db_create_tables()
            KEY activity (date_last_active,hide_activity,last_active_forum),
            KEY date_added (date_added),
            KEY email_temp (email_temp)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['user_newflags_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -7241,7 +7245,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY  (user_id,forum_id,message_id),
            KEY move (message_id, forum_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['groups_table']} (
            group_id                 int unsigned   NOT NULL auto_increment,
@@ -7249,7 +7253,7 @@ function phorum_db_create_tables()
            open                     tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY  (group_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['forum_group_xref_table']} (
            forum_id                 int unsigned   NOT NULL default '0',
@@ -7258,7 +7262,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY  (forum_id,group_id),
            KEY group_id (group_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['user_group_xref_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -7266,7 +7270,7 @@ function phorum_db_create_tables()
            status                   tinyint(4)     NOT NULL default '1',
 
            PRIMARY KEY  (user_id,group_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['files_table']} (
            file_id                  int unsigned   NOT NULL auto_increment,
@@ -7282,7 +7286,7 @@ function phorum_db_create_tables()
            KEY add_datetime (add_datetime),
            KEY message_id_link (message_id,link),
            KEY user_id_link (user_id,link)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['banlist_table']} (
            id                       int unsigned   NOT NULL auto_increment,
@@ -7293,7 +7297,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (id),
            KEY forum_id (forum_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['search_table']} (
            message_id               int unsigned   NOT NULL default '0',
@@ -7303,7 +7307,7 @@ function phorum_db_create_tables()
            PRIMARY KEY (message_id),
            KEY forum_id (forum_id),
            FULLTEXT KEY search_text (search_text)
-       ) TYPE=MyISAM DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) TYPE=MyISAM $charset",
 
       "CREATE TABLE {$PHORUM['user_custom_fields_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -7311,7 +7315,7 @@ function phorum_db_create_tables()
            data                     text           NOT NULL,
 
            PRIMARY KEY (user_id, type)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['pm_messages_table']} (
            pm_message_id            int unsigned   NOT NULL auto_increment,
@@ -7324,7 +7328,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (pm_message_id),
            KEY user_id (user_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['pm_folders_table']} (
            pm_folder_id             int unsigned   NOT NULL auto_increment,
@@ -7332,7 +7336,7 @@ function phorum_db_create_tables()
            foldername               varchar(20)    NOT NULL default '',
 
            PRIMARY KEY (pm_folder_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['pm_xref_table']} (
            pm_xref_id               int unsigned   NOT NULL auto_increment,
@@ -7346,7 +7350,7 @@ function phorum_db_create_tables()
            PRIMARY KEY (pm_xref_id),
            KEY xref (user_id,pm_folder_id,pm_message_id),
            KEY read_flag (read_flag)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['pm_buddies_table']} (
            pm_buddy_id              int unsigned   NOT NULL auto_increment,
@@ -7356,7 +7360,7 @@ function phorum_db_create_tables()
            PRIMARY KEY pm_buddy_id (pm_buddy_id),
            UNIQUE KEY userids (user_id, buddy_user_id),
            KEY buddy_user_id (buddy_user_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+       ) $charset",
 
       "CREATE TABLE {$PHORUM['message_tracking_table']} (
            track_id                 int unsigned   NOT NULL auto_increment,
@@ -7368,7 +7372,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY track_id (track_id),
            KEY message_id (message_id)
-       ) DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}"
+       ) $charset",
     );
 
     foreach ($create_table_queries as $sql) {
