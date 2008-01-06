@@ -16,6 +16,7 @@
   <ul>
     <li><a {IF PROFILE->PANEL "forum"}class="phorum-current-page" {/IF}href="{URL->CC6}">{LANG->EditBoardsettings}</a></li>
     <li><a {IF PROFILE->PANEL "password"}class="phorum-current-page" {/IF}href="{URL->CC7}">{LANG->ChangePassword}</a></li>
+    {HOOK "tpl_cc_menu_options_hook"}
   </ul>
   {IF MYFILES}
     {LANG->Files}
@@ -35,6 +36,7 @@
       {IF GROUP_MODERATOR}
         <li><a {IF PROFILE->PANEL "membership"}class="phorum-current-page" {/IF}href="{URL->CC15}">{LANG->GroupMembership}</a></li>
       {/IF}
+      {HOOK "tpl_cc_menu_moderator_hook"}
     </ul>
   {/IF}
 </div>
