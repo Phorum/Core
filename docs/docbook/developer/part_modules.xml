@@ -361,6 +361,113 @@ function phorum_mod_foo_some_hook ($data) {
               </entry>
             </row>
 
+            <row>
+              <entry>
+                <emphasis role="bold">category</emphasis>
+              </entry>
+              <entry>
+                <para>
+                  The category field is used for categorizing the module.
+                  You can place your module inside one or more categories by
+                  adding one or more category lines to the module information.
+                  The category is used for automatically generating a
+                  categorized list of available modules on the phorum.org
+                  web site.
+                </para>
+                <para>
+                  For consistency and for preventing wild growth of
+                  categories, we use a fixed set of categories from which
+                  you can choose. Please select your category / categories
+                  carefully and do not put your module in too many
+                  categories. Available categories to choose from are:
+                  <itemizedlist>
+                    <listitem>
+                      <emphasis role="bold">admin</emphasis><sbr/>
+                      Modules that are useful for performing administrative
+                      tasks and for handling advanced Phorum configuration.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">bbcode</emphasis><sbr/>
+                      Modules that implement extra BBcode tags.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">embed_content</emphasis><sbr/>
+                      Modules for embedding content (e.g. images, audio,
+                      video, flash, etc.) in message bodies. These
+                      modules implement viewers that are shown inside the
+                      message bodies when reading the message and which take
+                      away the need to launch some external viewer to open
+                      attachments and/or linked files.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">phorum3conversion</emphasis><sbr/>
+                      Modules that can help sites to convert from the
+                      old Phorum 3 system to Phorum 5.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">email</emphasis><sbr/>
+                      Modules that extend or enhance the email system.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">integration</emphasis><sbr/>
+                      Modules that can be used for integrating Phorum with
+                      other systems.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">user_management</emphasis><sbr/>
+                      These modules deal with user registration, logging in
+                      and out, login status and user management tasks.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">moderator</emphasis><sbr/>
+                      Modules that extend or enhance the moderation system.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">posting</emphasis><sbr/>
+                      Modules that extend or enhance posting and/or
+                      editing messages.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">search</emphasis><sbr/>
+                      Modules that provide search features
+                      or that replace the full message search backend.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">seo</emphasis><sbr/>
+                      Modules that apply search engine optimization
+                      measures to Phorum.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">spam</emphasis><sbr/>
+                      Modules that help protecting Phorum against spam.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">user_features</emphasis><sbr/>
+                      Modules that give the users new options and enhance
+                      their experience.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">viewlayout</emphasis><sbr/>
+                      Modules that add information to or alter the view /
+                      layout of Phorum pages.
+                    </listitem>
+                    <listitem>
+                      <emphasis role="bold">uncategorized</emphasis><sbr/>
+                      Modules that do not have a category assigned. This one
+                      is mainly mentioned for completeness. In the online
+                      module list, this category will be assigned to modules
+                      that don't have a category set in their info.txt.
+                    </listitem>
+                  </itemizedlist>
+                </para>
+                <para>
+                  Example:<sbr/>
+                  <literal>category: user_features</literal><sbr/>
+                  <literal>category: posting</literal>
+                </para>
+              </entry>
+            </row>
+
           </tbody>
           </tgroup>
         </table>
@@ -384,6 +491,7 @@ release_date: Jan 1st, 2008
 url: http://www.phorum.org
 author: John Doe <johndoe@example.com>
 require_version: 5.2.2
+category: user_features
 
 hook: some_hook|phorum_mod_foo_some_hook
 hook: some_other_hook|phorum_mod_foo_some_other_hook
@@ -474,6 +582,7 @@ release_date: Jan 1st, 2008
 url: http://www.phorum.org
 author: John Doe <johndoe@example.com>
 require_version: 5.2.2
+category: user_features
 
 hook: some_hook|phorum_mod_foo_some_hook
 hook: some_other_hook|phorum_mod_foo_some_other_hook
@@ -552,6 +661,7 @@ release_date: Jan 1st, 2008
 url: http://www.phorum.org
 author: John Doe <johndoe@example.com>
 require_version: 5.2.2
+category: user_features
 
 hook: some_hook|phorum_mod_foo_some_hook
 hook: some_other_hook|phorum_mod_foo_some_other_hook
