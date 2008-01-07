@@ -65,6 +65,18 @@ if (!defined('PHORUM')) return;
 function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 {
     static $conn;
+    static $querytrack;
+
+    $debug = $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
+
+    if(!empty($debug)) {
+        if(!isset($querytrack) || !is_array($querytrack)) {
+            $querytrack = array(
+                            'count'=>0,
+                            'queries'=>array()
+                          );
+        }
+    }
 
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
@@ -82,11 +94,18 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             phorum_database_error('Failed to connect to the database.');
             exit;
         }
-        
+
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
             mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
             mysqli_query( $conn,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
-        }            
+            if($debug) {
+                $querytrack['count']+=2;
+                if($debug > 1) {
+                    $querytrack['queries'][]=array('query'=>"1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+                    $querytrack['queries'][]=array('query'=>"2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+                }
+            }
+        }
 
         // putting this here for testing mainly
         // All of Phorum should work in strict mode
@@ -122,6 +141,14 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
          }
     } else {
          $res = mysqli_query($conn, $sql);
+    }
+
+    if($debug) {
+             $querytrack['count']++;
+             if($debug > 1)
+                $querytrack['queries'][]=array('query'=>$querytrack['count'].": $sql");
+
+             $GLOBALS['PHORUM']['DATA']['DBDEBUG']=$querytrack;
     }
 
     // Handle errors.

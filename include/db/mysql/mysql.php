@@ -65,6 +65,18 @@ if (!defined('PHORUM')) return;
 function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 {
     static $conn;
+    static $querytrack;
+
+    $debug = $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
+
+    if(!empty($debug)) {
+        if(!isset($querytrack) || !is_array($querytrack)) {
+            $querytrack = array(
+                            'count'=>0,
+                            'queries'=>array()
+                          );
+        }
+    }
 
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
@@ -90,7 +102,14 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
             mysql_query( "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",$conn);
             mysql_query( "SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",$conn);
-        }          
+            if($debug) {
+                $querytrack['count']+=2;
+                if($debug > 1) {
+                    $querytrack['queries'][]="1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'";
+                    $querytrack['queries'][]="2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
+                }
+            }
+        }
     }
 
     // RETURN: database connection handle
@@ -116,6 +135,15 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
            $return === DB_RETURN_ROWS
          ? mysql_unbuffered_query($sql, $conn)
          : mysql_query($sql, $conn);
+
+         if($debug) {
+             $querytrack['count']++;
+             if($debug > 1)
+                $querytrack['queries'][]=$querytrack['count'].": $sql";
+
+             $GLOBALS['PHORUM']['DATA']['DBDEBUG']=$querytrack;
+         }
+
 
     // Handle errors.
     if ($res === FALSE)
@@ -157,7 +185,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             $err = mysql_error($conn);
 
             // RETURN: error message or NULL
-            if ($return === DB_RETURN_ERROR) return $err;     
+            if ($return === DB_RETURN_ERROR) return $err;
 
             // Trigger an error.
             phorum_database_error("$err ($errno): $sql");
@@ -267,8 +295,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
 /**
  * Return a single row from a query result. This function can be used
- * if a lot of rows have to be processed one by one, in which case the 
- * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the 
+ * if a lot of rows have to be processed one by one, in which case the
+ * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the
  * {@link phorum_db_interact()} function might consume lots of memory.
  *
  * @param resource $res

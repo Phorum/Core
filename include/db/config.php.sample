@@ -37,11 +37,11 @@ $PHORUM['DBCONFIG']=array(
     // Full text searching? 1=enabled, 0=disabled
     // (always disable this option for MySQL versions prior to 4.0.18!)
     'mysql_use_ft'  =>  '1',
-    
+
     // don't populate the search-table for mysql fulltext search
     // (useful if you use a alternate search-backend which doesn't use
     //  the search-table)
-    'empty_search_table' => '0',    
+    'empty_search_table' => '0',
 
     // specifies the charset used for the create-table statements
     // and the connection(s) later on.
@@ -50,7 +50,11 @@ $PHORUM['DBCONFIG']=array(
     // For master/slave setup (if mysql_php_extension is set to
     // "mysqli_replication") you need to specify the slave-servers to use.
     // if you don't do this all queries will go to the master-server anyway.
-    'slaves' => array()
+    'slaves' => array(),
+
+    // For collecting (and showing) the number of queries run (set to 1)
+    // and for collecting (and showing) the queries run (set to 2)
+    'dbdebug'=>0,
 );
 
 /*
@@ -153,6 +157,18 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
         'password'      =>  'phorum5')
     )
 
-    );
+ * dbdebug:
+   This setting tells the db-layer to collect the number of queries run
+   and the exact queries run.
+   Set to 1 for only collecting the number of queries
+   Set to 2 for collecting the number of queries and the queries itself
+   Some template code like the following can be used to show its result
+  {IF DBDEBUG}
+  {DBDEBUG->count} queries run.<br /><br />
+  {LOOP DBDEBUG->queries}
+  {DBDEBUG->queries->query}<br />
+  {/LOOP DBDEBUG->queries}
+  {/IF}
+
 */
 ?>
