@@ -59,7 +59,8 @@ include_once("./common.php");
 include_once("include/format_functions.php");
 
 // Check if the Phorum is in read-only mode.
-if(isset($PHORUM["status"]) && $PHORUM["status"]=="read-only") {
+if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
+   && empty($PHORUM['user']['admin']) ) {
     if(!(isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"])){
         phorum_build_common_urls();
         // Only show header and footer when not included in another page.
