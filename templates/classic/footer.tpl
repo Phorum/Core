@@ -10,7 +10,7 @@
       {/LOOP DBDEBUG->queries}
       </small>
       {/IF}
-{! these are the two div�s from header.tpl }
+{! these are the two div's from header.tpl }
       </div>
     </div>
   </body>
