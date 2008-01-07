@@ -1744,6 +1744,10 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
             {
                 $condition = ($match_type == "ALL") ? "AND" : "OR";
 
+                foreach($tokens as $tid => $token) {
+                     $tokens[$tid] = phorum_db_interact(DB_RETURN_QUOTED, $token);
+                }
+
                 $match_str = "search_text LIKE " .
                              "('%".implode("%' $condition '%", $tokens)."%')";
             }
