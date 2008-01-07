@@ -968,7 +968,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
         $message['thread'] = $message_id;
     }
-    
+
     if(empty($PHORUM['DBCONFIG']['empty_search_table'])) {
 
         // Full text searching updates.
@@ -1051,9 +1051,9 @@ function phorum_db_update_message($message_id, $message)
     if (!empty($PHORUM['DBCONFIG']['mysql_use_ft']) &&
         isset($message['author']) &&
         isset($message['subject']) &&
-        isset($message['body']) && 
+        isset($message['body']) &&
         empty($PHORUM['DBCONFIG']['empty_search_table']) ) {
-                       
+
 
         $search_text = $message['author']  .' | '.
                        $message['subject'] .' | '.
@@ -1745,6 +1745,10 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
             if (count($tokens))
             {
                 $condition = ($match_type == "ALL") ? "AND" : "OR";
+
+                foreach($tokens as $tid => $token) {
+                     $tokens[$tid] = phorum_db_interact(DB_RETURN_QUOTED, $token);
+                }
 
                 $match_str = "search_text LIKE " .
                              "('%".implode("%' $condition '%", $tokens)."%')";
