@@ -442,7 +442,7 @@ switch ($step){
             "pub_perms" =>  1,
             "reg_perms" =>  15,
             "template_settings" => "",
-            "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:1;s:10:"Test Forum";}'
+            "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:2;s:10:"Test Forum";}'
             );
 
             $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
