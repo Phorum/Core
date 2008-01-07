@@ -316,7 +316,7 @@ function editor_tools_construct_popup(create_id, anchor)
     popup_obj.id = create_id;
     popup_obj.className = 'editor-tools-popup';
     popup_obj.style.display = 'none';
-    document.body.appendChild(popup_obj);
+    document.getElementById('editor-tools').appendChild(popup_obj);
 
     popup_obj._anchor = anchor;
 
