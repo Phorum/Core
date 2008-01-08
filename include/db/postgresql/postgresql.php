@@ -116,12 +116,13 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     # I am concerned as to how this should be properly done
     # but it seems to be the only way to get get SQLSTATE if
     # an error has occurred
+    
+    # KEY THING TO REMEMBER:
+    # res will always have a value here.
+    # query SQLSTATE to get details of status
     $res = pg_get_result($conn);
 
     $SQLSTATE = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-    
-#    echo 'AT ' . __FILE__ . '::' . __LINE__ . '<pre>'; var_dump($sql); echo '</pre>';
-#    echo "SQLSTATE='$SQLSTATE'<br>\n";
     
     if ($SQLSTATE != 0)
     {
@@ -152,7 +153,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
             // Duplicate entry for key.
             case '23505':
-              if ($flags & DB_DUPKEYOK) $ignore_error = TRUE;
+              if ($flags & DB_DUPKEYOK) {
+                  $ignore_error = TRUE;
+                  # the code expects res to have no value upon error
+                  unset($res);
+              }
               break;
         }
 
