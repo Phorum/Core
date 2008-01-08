@@ -1,9 +1,9 @@
 <?php
 if (!defined("PHORUM")) return;
 
-require_once('./mods/spamhurdles/lib/iscramble.php');
-require_once('./mods/spamhurdles/defaults.php');
-require_once('./mods/spamhurdles/db.php');
+require_once("./mods/spamhurdles/lib/iscramble.php");
+require_once("./mods/spamhurdles/defaults.php");
+require_once("./mods/spamhurdles/db.php");
 
 define("KEY_NOTAVAIL", -1);
 define("KEY_AVAIL", 0);
@@ -275,14 +275,13 @@ function phorum_mod_spamhurdles_build_form($type)
              src="<?php print $PHORUM["http_path"] ?>/mods/spamhurdles/lib/pixel.gif"
              alt="<?php print $spamhurdles["signkey"] ?>"
              id="spamhurdles_img" />
-
-        <script type="text/javascript"
-             src="<?php print $PHORUM["http_path"] ?>/mods/spamhurdles/lib/md5.js">
-        </script>
         <?php
         $html = ob_get_contents();
         ob_end_clean();
         print iScramble($html, FALSE, FALSE, '');
+        ?>
+        <script type="text/javascript" src="<?php print $PHORUM["http_path"] ?>/mods/spamhurdles/lib/md5.js"> </script>
+        <?php
     }
 
     // Show a CAPTCHA if one was generated earlier on.
