@@ -15,7 +15,7 @@
       The hooks allow a webmaster to create modules for doing things
       like using external authentication, altering message data before
       it is stored, adding custom information about users or messages,
-      ec. Almost anything you can think of can be implemented through
+      etc. Almost anything you can think of can be implemented through
       the hook &amp; module system.
     </para>
     <para>
