@@ -19,7 +19,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements a MySQL Phorum database layer.
+ * This script implements a PostgreSQL Phorum database layer.
  *
  * The other Phorum code does not care how data is stored.
  * The only requirement is that it is returned from these functions
@@ -2209,9 +2209,9 @@ function phorum_db_add_forum($forum)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // check for fields that must be set for mysql strict mode
-    if(empty($forum["description"])) $forum["description"] = "";
-    if(empty($forum["forum_path"])) $forum["forum_path"] = "";
+    // check for fields that must be set for MySQL strict mode
+    if(empty($forum["description"]))       $forum["description"] = "";
+    if(empty($forum["forum_path"]))        $forum["forum_path"] = "";
     if(empty($forum["template_settings"])) $forum["template_settings"] = "";
 
     $insertfields = array();
@@ -4094,6 +4094,8 @@ function phorum_db_user_delete($user_id)
     // function and not a single SQL statement with something like
     // pm_message_id IN (...) in it, because MySQL won't use an index
     // for that, making the full lookup very slow on large PM tables.
+    // But then, this is PostgreSQL, so we might be able to make
+    // this one statement.
     foreach ($pmxrefs as $row) {
         phorum_db_pm_update_message_info($row[0]);
     }
@@ -6735,7 +6737,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  * );
  * </code>
  *
- * For MySQL, this would be turned into the MySQL WHERE statement:
+ * This would be turned into the SQL WHERE statement:
  * <code>
  * ... WHERE field1 LIKE '%test data%'
  *     AND (field2 = 'whatever' OR field2 = 'something else')
@@ -7341,7 +7343,7 @@ function phorum_db_sanitychecks()
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // Retrieve the MySQL server version.
+    // Retrieve the PostgreSQL server version.
     $version = phorum_db_interact(
         DB_RETURN_VALUE,
         'SELECT version()',
@@ -7385,7 +7387,7 @@ function phorum_db_sanitychecks()
          version number, so the checking scripts can be updated."
     );
     
-    // MySQL before version 4.
+    // PostgreSQL before version 4.
     if ($ver[0] < 8) return array(
         PHORUM_SANITY_CRIT,
         "The PostgreSQL database server that is used is too old. The
@@ -7409,6 +7411,8 @@ function phorum_db_sanitychecks()
 // If the config.php specifies a PHP database extension, then this one is
 // used for loading the specific PHP database extension code. Otherwise,
 // we try to auto-detect which one is available.
+// There is just one Phorum extenstion for PostgreSQL but we take the same
+// approach to be consistent.
 
 $ext = 'postgresql';
 
@@ -7416,9 +7420,7 @@ $ext = 'postgresql';
 $extfile = "./include/db/postgresql/{$ext}.php";
 if (!file_exists($extfile)) trigger_error(
    "The Phorum PostgresSQL database layer is unable to find the extension " .
-   "file $extfile on the system. Check if all Phorum files are uploaded " .
-   "and if you did specify the correct \"mysql_php_extension\" in the file " .
-   "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
+   "file $extfile on the system. Check if all Phorum files are uploaded. ",
    E_USER_ERROR
 );
 include($extfile);
