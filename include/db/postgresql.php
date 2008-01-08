@@ -400,6 +400,7 @@ function phorum_db_update_settings($settings)
                 NULL,
                 DB_DUPKEYOK | DB_MASTERQUERY
             );
+
             // If no result was returned, then the query failed. This probably
             // means that we already have the settings record in the database.
             // So instead of inserting a record, we need to update one here.
