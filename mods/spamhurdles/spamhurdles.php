@@ -123,6 +123,10 @@ function phorum_mod_spamhurdles_common()
             setcookie("mod_spamhurdles_key", "", time()-86400);
         }
     }
+
+    // We use (a modified version of) iScramble on several occasions.
+    // Load a little javascript function that we need for it.
+    $PHORUM['DATA']['HEAD_TAGS'] .= iScramble_javascript();
 }
 
 // Generic function for initializing spam hurdles for a form.
