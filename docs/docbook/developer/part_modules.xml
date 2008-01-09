@@ -63,6 +63,23 @@
       </para>
     </section>
 
+    <section id="modules.addons">
+      <title>Add-ons</title>
+      <para>
+        If you add functionality to Phorum by providing extra scripts
+        that go in the Phorum install directory and/or extra templates
+        that need to be added to the main template directory
+        (<filename>templates/templatename/...</filename>), then we
+        talk about an add-on.
+      </para>
+      <para>
+        For Phorum 5.0, this was a pretty common thing to do. For Phorum
+        5.1 and up, a special script was added for being able to implement
+        addon code fully through a module. Therefore, there is no real
+        need anymore for writing add-ons: <filename>addon.php</filename>.
+      </para>
+    </section>
+
     <section id="modules.hooks">
       <title>Hooks</title>
       <para>
@@ -1167,10 +1184,10 @@ function phorum_mod_foo_user_save ($user)
 
     </section> <!-- end of storing data for a module -->
 
-    <section id="modules.generatingurls">
-      <title>Generating URLs for Phorum</title>
+    <section id="modules.buildingurls">
+      <title>Building URLs for Phorum</title>
 
-      <section id="modules.generatingurlsintro">
+      <section id="modules.buildingurlsintro">
         <title>Introduction</title>
         <para>
           You might have noticed that all URLs that are used by Phorum
@@ -1225,13 +1242,13 @@ function phorum_mod_foo_user_save ($user)
       </section> <!-- end of generating urls intro -->
 
       <section id="modules.scripturls">
-        <title>Build URLs to Phorum PHP scripts: phorum_get_url()</title>
+        <title>Build URLs for Phorum PHP scripts: phorum_get_url()</title>
         <para>
           Phorum uses the function <literal>phorum_get_url()</literal> to
-          consistenly build URLs that point to Phorum scripts. It is
+          consistenly build URLs that point to Phorum PHP scripts. It is
           recommended that you use this function as well when creating
-          URLs yourself, so special features and future changes will
-          automatically be incorporated in the links you use.
+          URLs to scripts yourself, so special features and future changes
+          will automatically be incorporated in the links you use.
         </para>
         <para>
           Here is an example of building an URL, which will open the
@@ -1244,25 +1261,39 @@ function phorum_mod_foo_user_save ($user)
 $url = phorum_get_url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           </example>
           The argument list that this function takes, depends on the first
-          argument which tells Phorum what kind of URL has to be built.
-          So when building other URLs, other arguments will be used.
+          argument which tells Phorum what URL type has to be built.
+          When building other URLs, other arguments will be used.
         </para>
         <para>
-          If you need to build a non-standard Phorum URL to link to your
-          own PHP script, you can use <literal>phorum_get_url()</literal>
-          as well. The way to go is simple. You need to use
-          <literal>PHORUM_CUSTOM_URL</literal> as the first argument and
-          add all URL building parameters to it.
-          The first parameter needs to be the filename of the file to link
-          to, without the (.php) extension. The second parameter needs to
-          be FALSE or TRUE. If it is TRUE, then the current forum_id is
-          added to the URL. All other parameters are added as is to the URL.
+          About all URL types that <literal>phorum_get_url()</literal>
+          supports are used for building URLs that point to the scripts
+          that are bundled with Phorum. Sometimes, you might want to add
+          an extra script of your own to the Phorum tree (see
+          <xref linkend="modules.addons"/>). For those, you can use
+          <literal>phorum_get_url()</literal> as well. The way to go is
+          simple. You need to use <literal>PHORUM_CUSTOM_URL</literal> as
+          the first argument and add the following parameters to it:
+          <itemizedlist>
+            <listitem>
+              The first parameter needs to be the filename of the file to link
+              to, without the (.php) extension.
+            </listitem>
+            <listitem>
+              The second parameter needs to be FALSE or TRUE. If it is TRUE,
+              then the current forum_id is added to the URL.
+            </listitem>
+            <listitem>
+              All other parameters are added directly to the URL.
+            </listitem>
+          </itemizedlist>
         </para>
         <para>
           Here is an example of building a custom URL which links to the
-          file <filename>myfile.php</filename>. The URL has to have the
-          forum_id in it and needs to contain the additional parameters
-          <filename>foo=bar</filename> and <filename>baz=foo</filename>:
+          add-on file <filename>myfile.php</filename> in the Phorum
+          installation directory. Lets asume that the URL has to have the
+          forum_id in it and that it needs to contain the additional
+          parameters <filename>foo=bar</filename> and
+          <filename>baz=foo</filename>:
           <example>
             <title> 
               Generating a custom script URL using phorum_get_url()
