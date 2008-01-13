@@ -21,7 +21,7 @@
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
 // the Phorum version
-define( "PHORUM", "5.2.6" );
+define( "PHORUM", "5.2.6a" );
 
 // our database schema version in format of year-month-day-serial
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
