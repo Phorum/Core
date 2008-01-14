@@ -10,6 +10,21 @@ function phorum_setup_announcements ()
     $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = '';
 
     // Check if we are on a page on which the announcements have to be shown.
+    if (phorum_page == 'index') {
+        // Hide the announcements, unless enabled for "index".
+        $hide = empty($PHORUM["mod_announcements"]["pages"]["index"]);
+        // Show announcements for the root page if "home" is enabled.
+        if ($PHORUM['vroot'] == $PHORUM['forum_id'] &&
+            !empty($PHORUM["mod_announcements"]["pages"]["home"])) {
+            $hide = FALSE;
+        }
+        if ($hide) return;
+    } else {
+        if (empty($PHORUM["mod_announcements"]["pages"][phorum_page]))
+            return;
+    }
+
+    // Check if we are on a page on which the announcements have to be shown.
     if (!empty($PHORUM["mod_announcements"]["pages"]["home"])) {
         if ($PHORUM['vroot'] != $PHORUM['forum_id'] || phorum_page != 'index')
             return;
