@@ -20,6 +20,11 @@
 // Check that this file is not loaded directly.
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
+
+// ----------------------------------------------------------------------
+// Initialize variables and constants and load required libraries
+// ----------------------------------------------------------------------
+
 // the Phorum version
 define( "PHORUM", "5.2-dev" );
 
@@ -37,32 +42,211 @@ define( "PHORUM_SCHEMA_PATCHLEVEL", "2007112900" );
 // for the module.
 define( "PHORUM_EXTENSION_VERSION", "20070522" );
 
-// all other constants in ./include/constants.php
-include_once( "./include/constants.php" );
-
-// setup the PHORUM var
+// Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
-$PHORUM = array();
+$PHORUM = array
+(                                                                                  // The DATA member holds the template variables.
+    'DATA' => array(                                                                   'GET_VARS'  => array(),
+        'POST_VARS' => ''                                                          ),
 
-// API code
-include_once("./include/api/base.php");
-include_once("./include/api/user.php");
+    // The TMP member hold template {DEFINE ..} definitions, temporary
+    // arrays and such in template code.
+    'TMP'  => array(),
 
-// the TMP member holds template {DEFINE ..} definitions and temporary
-// arrays and such in template code
-$PHORUM["TMP"] = array();
+    // Query arguments.
+    'args' => array(),
 
-// the DATA member contains the data that templates can access
-$PHORUM["DATA"] = array();
-$PHORUM["DATA"]["GET_VARS"] = array();
-$PHORUM["DATA"]["POST_VARS"] = "";
+    // The active forum id.
+    'forum_id' => 0
+);
 
-// get the forum id if set with a request parameter
-if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
-    $PHORUM["forum_id"] = $_REQUEST["forum_id"];
+// Load all constants from ./include/constants.php
+require_once( "./include/constants.php" );
+
+// Load the API code that is required for all pages.
+require_once("./include/api/base.php");
+require_once("./include/api/user.php");
+
+
+// ----------------------------------------------------------------------
+// Load the database layer and setup a connection
+// ----------------------------------------------------------------------
+
+// Get the database settings. It is possible to override the database
+// settings by defining a global variable $PHORUM_ALT_DBCONFIG which
+// overrides $PHORUM["DBCONFIG"] (from include/db/config.php). This is
+// only allowed if "PHORUM_WRAPPER" is defined and if the alternative
+// configuration wasn't passed as a request parameter (which could
+// set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
+if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER")) {
+
+    // Backup display_errors setting.
+    $orig = ini_get("display_errors");
+    @ini_set("display_errors", 0);
+
+    // Load configuration.
+    if (! include_once( "./include/db/config.php" )) {
+        print '<html><head><title>Phorum error</title></head><body>';
+        print '<h2>Phorum database configuration error</h2>';
+
+        // No database configuration found.
+        if (!file_exists("./include/db/config.php")) { ?>
+            Phorum has been installed on this server, but the configuration<br/>
+            for the database connection has not yet been made. Please read<br/>
+            <a href="docs/install.txt">docs/install.txt</a> for installation
+            instructions. <?php
+        } else {
+            $fp = fopen("./include/db/config.php", "r");
+            // Unable to read the configuration file.
+            if (!$fp) { ?>
+                A database configuration file was found in
+                ./include/db/config.php,<br/>but Phorum was unable to read it.
+                Please check the file permissions<br/>for this file. <?php
+            // Unknown error.
+            } else {
+                fclose($fp); ?>
+                A database configuration file was found in
+                ./include/dbconfig.php,<br/>but it could not be loaded.
+                It possibly contains one or more errors.<br/>Please check
+                your configuration file. <?php
+            }
+        }
+
+        print '</body></html>';
+        exit(1);
+    }
+
+    // Restore original display_errors setting.
+    @ini_set("display_errors", $orig);
+} else {
+    $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
 }
 
-// strip the slashes off of POST data if magic_quotes is on
+// Backward compatbility: the "mysqli" layer was merged with the "mysql"
+// layer, but people might still be using "mysqli" as their configured
+// database type.
+if ($PHORUM["DBCONFIG"]["type"] == "mysqli" &&
+    !file_exists("./include/db/mysqli.php")) {
+    $PHORUM["DBCONFIG"]["type"] = "mysql";
+}
+
+// Load the database layer.
+$PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
+require_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
+
+// Try to setup a connection to the database.
+if(!phorum_db_check_connection()){
+    if(isset($PHORUM["DBCONFIG"]["down_page"])){
+        phorum_redirect_by_url($PHORUM["DBCONFIG"]["down_page"]);
+        exit();
+    } else {
+        echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
+        exit();
+    }
+}
+
+
+// ----------------------------------------------------------------------
+// Load and process the Phorum settings
+// ----------------------------------------------------------------------
+
+// Load the Phorum settings from the database.
+phorum_db_load_settings();
+
+// For command line scripts, disable caching.
+// The command line user is often different from the web server
+// user, possibly causing permission problems on the cache.
+if (defined('PHORUM_SCRIPT'))
+{
+    $PHORUM['cache_banlists']   = 0;
+    $PHORUM['cache_css']        = 0;
+    $PHORUM['cache_javascript'] = 0;
+    $PHORUM['cache_layer']      = 0;
+    $PHORUM['cache_messages']   = 0;
+    $PHORUM['cache_newflags']   = 0;
+    $PHORUM['cache_rss']        = 0;
+    $PHORUM['cache_users']      = 0;
+}
+
+// Defaults for missing settings (these can be needed after upgrading, in
+// case the admin did not yet save a newly added Phorum setting).
+if (!isset($PHORUM["default_feed"]))   $PHORUM["default_feed"]   = "rss";
+if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = 0;
+if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = 0;
+
+
+// If we have no private key for signing data, generate one now,
+// but only if it's not a fresh install.
+if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
+   $chars = "0123456789!@#$%&abcdefghijklmnopqr".
+            "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   $private_key = "";
+   for ($i = 0; $i<40; $i++) {
+       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
+   }
+   $PHORUM["private_key"] = $private_key;
+   phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
+}
+
+// Determine the caching layer to load.
+if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
+    $PHORUM['cache_layer'] = 'file';
+} else {
+    // Safeguard for wrongly selected cache-layers.
+    // Falling back to file-layer if descriptive functions aren't existing.
+    if($PHORUM['cache_layer'] == 'memcached' && !function_exists('memcache_connect')) {
+        $PHORUM['cache_layer'] = 'file';
+    } elseif($PHORUM['cache_layer'] == 'apc' && !function_exists('apc_fetch')) {
+        $PHORUM['cache_layer'] = 'file';
+    }
+}
+
+// Load the caching-layer. You can specify a different one in the settings.
+// One caching layer *needs* to be loaded.
+$PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
+require_once( "./include/cache/$PHORUM[cache_layer].php" );
+
+// Try to load the Phorum PHP extension, if has been enabled in the admin.
+// As a precaution, never load it from the admin code (so the extension
+// support can be disabled at all time if something unexpected happens).
+if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
+{
+    // Load the extension library.
+    if (! extension_loaded('phorum')) {
+        @dl('phorum.so');
+    }
+
+    // Check if the version of the PHP extension matches the
+    // one required by the Phorum installation.
+    if (extension_loaded('phorum')) {
+        $ext_ver = phorum_ext_version();
+        if ($ext_ver != PHORUM_EXTENSION_VERSION) {
+            // The version does not match. Disable the extension support.
+            phorum_db_update_settings(array("php_phorum_extension" => 0));
+            print "<html><head><title>Phorum Extension Error</title></head><body>";
+            print "<h1>Phorum Extension Error</h1>" .
+                  "The Phorum PHP extension was loaded, but its version<br/>" .
+                  "does not match the Phorum version. Therefore, the<br/>" .
+                  "extension has now be disabled. Reload this page to continue.";
+            print "</body></html>";
+            exit(0);
+        }
+    }
+}
+
+// Setup phorum_get_url(): this function is used for generating all Phorum
+// related URL's. It is loaded conditionally, to make it possible to override
+// it from the phorum PHP extension.
+if (!function_exists('phorum_get_url')) {
+    require_once("./include/phorum_get_url.php");
+}
+
+
+// ----------------------------------------------------------------------
+// Parse and handle request data
+// ----------------------------------------------------------------------
+
+// Thanks a lot for magic quotes :-/
 if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
     foreach( $_POST as $key => $value ) {
         if ( !is_array( $value ) )
@@ -78,9 +262,67 @@ if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
     }
 }
 
-// look for and parse the QUERY_STRING
-// this only applies to urls that we create using phorum_get_url()
-// scripts using urls from forms (search) should use $_GET or $_POST
+/*
+ * [hook]
+ *     parse_request
+ *
+ * [description]
+ *     This hook gives modules a chance to tweak the request environment,
+ *     before Phorum parses and handles the request data. For tweaking the
+ *     request environment, some of the options are:
+ *     <ul>
+ *       <li>
+ *         Changing the value of <literal>$_REQUEST["forum_id"]</literal>
+ *         to override the used forum_id.
+ *       </li>
+ *       <li>
+ *         Changing the value of <literal>$_SERVER["QUERY_STRING"]</literal>
+ *         or setting the global override variable
+ *         <literal>$PHORUM_CUSTOM_QUERY_STRING</literal> to feed Phorum a
+ *         different query string than the one provided by the webserver.
+ *       </li>
+ *     </ul>
+ *     Tweaking the request data should result in data that Phorum can handle.
+ *
+ * [category]
+ *     Request initialization
+ *
+ * [when]
+ *     Right before Phorum runs the request parsing code in
+ *     <filename>common.php</filename>.
+ *
+ * [input]
+ *     No input.
+ *
+ * [output]
+ *     No output.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_parse_request()
+ *     {
+ *         // Override the query string.
+ *         global $PHORUM_CUSTOM_QUERY_STRING
+ *         $PHORUM_CUSTOM_QUERY_STRING = "1,some,phorum,query=string";
+ *
+ *         // Override the forum_id.
+ *         $_SERVER['forum_id'] = "1234";
+ *     }
+ *     </hookcode>
+ */
+if (isset($PHORUM["hooks"]["parse_request"])) {
+    phorum_hook("parse_request");
+}
+
+// Get the forum id if set using a request parameter.
+if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
+    $PHORUM["forum_id"] = $_REQUEST["forum_id"];
+}
+
+// Look for and parse the QUERY_STRING.
+// This only applies to URLs that we create using phorum_get_url().
+// Scripts using data originating from standard HTML forms (e.g. search)
+// will have to use $_GET or $_POST.
 if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"])))
 {
     $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
@@ -129,179 +371,66 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBA
 // set the forum_id to 0 if not set by now.
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 
-// Get the database settings. It is possible to override the database
-// settings by defining a global variable $PHORUM_ALT_DBCONFIG which
-// overrides $PHORUM["DBCONFIG"] (from include/db/config.php). This is
-// only allowed if "PHORUM_WRAPPER" is defined and if the alternative
-// configuration wasn't passed as a request parameter (which could
-// set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
-if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER")) {
-    // Backup display_errors setting.
-    $orig = ini_get("display_errors");
-    @ini_set("display_errors", 0);
-
-    // Load configuration.
-    if (! include_once( "./include/db/config.php" )) {
-        print '<html><head><title>Phorum error</title></head><body>';
-        print '<h2>Phorum database configuration error</h2>';
-
-        // No database configuration found.
-        if (!file_exists("./include/db/config.php")) { ?>
-            Phorum has been installed on this server, but the configuration<br/>
-            for the database connection has not yet been made. Please read<br/>
-            <a href="docs/install.txt">docs/install.txt</a> for installation instructions. <?php
-        } else {
-            $fp = fopen("./include/db/config.php", "r");
-            // Unable to read the configuration file.
-            if (!$fp) { ?>
-                A database configuration file was found in ./include/db/config.php,<br/>
-                but Phorum was unable to read it. Please check the file permissions<br/>
-                for this file. <?php
-            // Unknown error.
-            } else {
-                fclose($fp); ?>
-                A database configuration file was found in ./include/dbconfig.php,<br/>
-                but it could not be loaded. It possibly contains one or more errors.<br/>
-                Please check your configuration file. <?php
-            }
-        }
-
-        print '</body></html>';
-        exit(1);
-    }
-
-    // Restore original display_errors setting.
-    @ini_set("display_errors", $orig);
-} else {
-    $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
-}
-
-// Backward compatbility: the "mysqli" layer was merged with the "mysql"
-// layer, but people might still be using "mysqli" as their configured
-// database type.
-if ($PHORUM["DBCONFIG"]["type"] == "mysqli" &&
-    !file_exists("./include/db/mysqli.php")) {
-    $PHORUM["DBCONFIG"]["type"] = "mysql";
-}
-
-// Load the database layer.
-$PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
-include_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
-
-if(!phorum_db_check_connection()){
-    if(isset($PHORUM["DBCONFIG"]["down_page"])){
-        phorum_redirect_by_url($PHORUM["DBCONFIG"]["down_page"]);
-        exit();
-    } else {
-        echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
-        exit();
-    }
-}
-
-// get the Phorum settings
-phorum_db_load_settings();
-
-// For command line scripts, disable caching.
-// The command line user is often different from the web server
-// user, possibly causing permission problems on the cache.
-if (defined('PHORUM_SCRIPT'))
-{
-    $PHORUM['cache_banlists']   = 0;
-    $PHORUM['cache_css']        = 0;
-    $PHORUM['cache_javascript'] = 0;
-    $PHORUM['cache_layer']      = 0;
-    $PHORUM['cache_messages']   = 0;
-    $PHORUM['cache_newflags']   = 0;
-    $PHORUM['cache_rss']        = 0;
-    $PHORUM['cache_users']      = 0;
-}
-
-// Try to load the Phorum PHP extension, if has been enabled in the admin.
-// As a precaution, never load it from the admin code (so the extension
-// support can be disabled at all time if something unexpected happens).
-if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
-{
-    // Load the extension library.
-    if (! extension_loaded('phorum')) {
-        @dl('phorum.so');
-    }
-
-    // Check if the version of the PHP extension matches the Phorum installation.
-    if (extension_loaded('phorum')) {
-        $ext_ver = phorum_ext_version();
-        if ($ext_ver != PHORUM_EXTENSION_VERSION) {
-            // The version does not match. Disable the extension support.
-            phorum_db_update_settings(array("php_phorum_extension" => 0));
-            print "<html><head><title>Phorum Extension Error</title></head><body>";
-            print "<h1>Phorum Extension Error</h1>" .
-                  "The Phorum PHP extension was loaded, but its version<br/>" .
-                  "does not match the Phorum version. Therefore, the<br/>" .
-                  "extension has now be disabled. Reload this page to continue.";
-            print "</body></html>";
-            exit(0);
-        }
-    }
-}
-
-// Setup phorum_get_url(): this function is used for generating all Phorum
-// related URL's. It is loaded conditionally, to make it possible to override
-// it from the phorum PHP extension.
-if (!function_exists('phorum_get_url')) {
-    include_once("./include/phorum_get_url.php");
-}
-
-// Defaults for missing settings (these can be needed after upgrading, in
-// case the admin did not yet save a newly added Phorum setting).
-if (! isset($PHORUM["default_feed"])) $PHORUM["default_feed"] = "rss";
-
-// If we have no private key for signing data, generate one now,
-// but only if it's not a fresh install.
-if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
-   $chars = "0123456789!@#$%&abcdefghijklmnopqr".
-            "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-   $private_key = "";
-   for ($i = 0; $i<40; $i++) {
-       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
-   }
-   $PHORUM["private_key"] = $private_key;
-   phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
-}
-
-// determine the caching layer to load
-if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
-    $PHORUM['cache_layer'] = 'file';
-} else {
-    // safeguard for wrongly selected cache-layers
-
-    // falling back to file-layer if descriptive functions aren't existing
-
-    if($PHORUM['cache_layer'] == 'memcached' && !function_exists('memcache_connect')) {
-        $PHORUM['cache_layer'] = 'file';
-    } elseif($PHORUM['cache_layer'] == 'apc' && !function_exists('apc_fetch')) {
-        $PHORUM['cache_layer'] = 'file';
-    }
-}
-
-// load the caching-layer - you can specify a different one in the settings
-// one caching layer *needs* to be loaded
-$PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
-include_once( "./include/cache/$PHORUM[cache_layer].php" );
-
-// a hook for rewriting vars at the beginning of common.php,
-//right after loading the settings from the database
+/*
+ * [hook]
+ *     common_pre
+ *
+ * [description]
+ *     This hook can be used for overriding settings that were loaded and
+ *     setup at the start of the <filename>common.php</filename> script.
+ *     If you want to dynamically assign and tweak certain settings, then
+ *     this is the designated hook to use for that.<sbr/>
+ *     <sbr/>
+ *     Because the hook was put after the request parsing phase, you can
+ *     make use of the request data that is stored in the global variables
+ *     <literal>$PHORUM['forum_id']</literal> and
+ *     <literal>$PHORUM['args']</literal>.
+ *
+ * [category]
+ *     Request initialization
+ *
+ * [when]
+ *     Right after loading the settings from the database and parsing the
+ *     request, but before making descisions on user, language and template.
+ *
+ * [input]
+ *     No input.
+ *
+ * [output]
+ *     No output.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_common_pre()
+ *     {
+ *         global $PHORUM;
+ *
+ *         // If we are in the forum with id = 10, we set the administrator
+ *         // email information to a different value than the one configured
+ *         // in the general settings.
+ *         if ($PHORUM["forum_id"] == 10)
+ *         {
+ *             $PHORUM["system_email_from_name"] = "John Doe";
+ *             $PHORUM["system_email_from_address"] = "John.Doe@example.com";
+ *         }
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["common_pre"])) {
-    phorum_hook( "common_pre", "" );
+    phorum_hook("common_pre", "");
 }
 
+// ----------------------------------------------------------------------
+// Setup data for standard (not admin) pages
+// ----------------------------------------------------------------------
+
+// TODO: Do we ever need this in admin? If not, it can go inside the block.
 // stick some stuff from the settings into the DATA member
 $PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
 $PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"] ) ) ? $PHORUM["description"] : "";
 $PHORUM["DATA"]["HTML_TITLE"] = ( !empty( $PHORUM["html_title"] ) ) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
 $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head_tags"] : "";
 $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
-
-////////////////////////////////////////////////////////////
-// only do this stuff if we are not in the admin
 
 if ( !defined( "PHORUM_ADMIN" ) ) {
 
@@ -336,8 +465,54 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
         $forum_settings = phorum_db_get_forums( $PHORUM["forum_id"] );
 
-        if ( !isset( $forum_settings[$PHORUM["forum_id"]] ) ) {
-            phorum_hook( "common_no_forum", "" );
+        if ( !isset($forum_settings[$PHORUM["forum_id"]]) )
+        {
+            /*
+             * [hook]
+             *     common_no_forum
+             *
+             * [description]
+             *     This hook is called in case a forum_id is requested for
+             *     an unknown or inaccessible forum. It can be used for
+             *     doing things like logging the bad requests or fully
+             *     overriding Phorum's default behavior for these cases
+             *     (which is redirecting the user back to the index page).
+             *
+             * [category]
+             *     Request initialization
+             *
+             * [when]
+             *     In <filename>common.php</filename>, right after detecting
+             *     that a requested forum does not exist or is inaccessible
+             *     and right before redirecting the user back to the Phorum
+             *     index page.
+             *
+             * [input]
+             *     No input.
+             *
+             * [output]
+             *     No output.
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_common_no_forum()
+             *     {
+             *         // Return a 404 Not found error instead of redirecting
+             *         // the user back to the index.
+             *         header("HTTP/1.0 404 Not Found");
+             *         print "<html><head>\n";
+             *         print "  <title>404 - Not Found</title>\n";
+             *         print "</head><body>";
+             *         print "  <h1>404 - Forum Not Found</h1>";
+             *         print "</body></html>";
+             *         exit();
+             *     }
+             *     </hookcode>
+             */
+            if (isset($PHORUM["hooks"]["common_no_forum"])) {
+                phorum_hook("common_no_forum", "");
+            }
+
             phorum_redirect_by_url( phorum_get_url( PHORUM_INDEX_URL ) );
             exit();
         }
@@ -410,9 +585,52 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
-    // a hook for rewriting vars in common.php after loading the user
-    if (isset($PHORUM["hooks"]["common_post_user"]))
-         phorum_hook( "common_post_user", "" );
+    /*
+     * [hook]
+     *     common_post_user
+     *
+     * [description]
+     *     This hook gives modules a chance to override Phorum variables
+     *     and settings, after the active user has been loaded. The settings
+     *     for the active forum are also loaded before this hook is called,
+     *     therefore this hook can be used for overriding general settings,
+     *     forum settings and user settings.
+     *
+     * [category]
+     *     Request initialization
+     *
+     * [when]
+     *     Right after loading the data for the active user in
+     *     <filename>common.php</filename>, but before deciding on the
+     *     language and template to use.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_common_post_user()
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Switch the read mode for admin users to threaded.
+     *         if ($PHORUM['user']['user_id'] && $PHORUM['user']['admin']) {
+     *             $PHORUM['threaded_read'] = PHORUM_THREADED_ON;
+     *         }
+     *
+     *         // Disable "float_to_top" for anonymous users.
+     *         if (!$PHORUM['user']['user_id']) {
+     *             $PHORUM['float_to_top'] = 0;
+     *         }
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["common_post_user"])) {
+         phorum_hook("common_post_user", "");
+    }
 
     // set up the template
 
@@ -449,7 +667,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
         ob_start();
-        include_once( phorum_get_template( "settings" ) );
+        require_once( phorum_get_template( "settings" ) );
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
@@ -462,7 +680,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     $PHORUM['language'] = basename($PHORUM['language']);
     if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
-        include_once( "./include/lang/$PHORUM[language].php" );
+        require_once( "./include/lang/$PHORUM[language].php" );
     }
     // load languages for localized modules
     if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
@@ -471,10 +689,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             // load mods for this hook
             $mod = basename($mod);
             if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
-                include_once "./mods/$mod/lang/$PHORUM[language].php";
+                require_once "./mods/$mod/lang/$PHORUM[language].php";
             }
             elseif ( file_exists( "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php" ) ) {
-                include_once "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
+                require_once "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
             }
         }
     }
@@ -486,15 +704,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // use the CHARSET for it instead.
     if (empty($PHORUM["DATA"]["HCHARSET"])) {
         $PHORUM["DATA"]["HCHARSET"] = $PHORUM["DATA"]["CHARSET"];
-    }
-
-    // just setting this up for upgraded installs where this might not be set up
-    if(!isset($PHORUM['cache_newflags'])) {
-        $PHORUM['cache_newflags'] = 0;
-    }
-
-    if(!isset($PHORUM['cache_messages'])) {
-        $PHORUM['cache_messages'] = 0;
     }
 
     // HTML titles can't contain HTML code, so we strip HTML tags
@@ -568,9 +777,43 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
-    // a hook for rewriting vars at the end of common.php
-    if (isset($PHORUM["hooks"]["common"]))
-        phorum_hook( "common", "" );
+    /*
+     * [hook]
+     *     common
+     *
+     * [description]
+     *     This hook gives modules a chance to override Phorum variables
+     *     and settings near the end of the <filename>common.php</filename>
+     *     script. This can be used to override the Phorum (settings)
+     *     variables that are setup during this script.
+     *
+     * [category]
+     *     Request initialization
+     *
+     * [when]
+     *     At the end of <filename>common.php</filename>.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_common()
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Override the admin email address.
+     *         $PHORUM["system_email_from_name"] = "John Doe";
+     *         $PHORUM["system_email_from_address"] = "John.Doe@example.com";
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["common"])) {
+        phorum_hook("common", "");
+    }
 
     $PHORUM['DATA']['USER'] = $PHORUM['user'];
     $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
@@ -604,11 +847,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     // Add the current forum path to the breadcrumbs.
     $index_page_url_template = phorum_get_url(PHORUM_INDEX_URL, '%forum_id%');
-    
+
     if(empty($PHORUM['forum_path'])) {
         $id = $PHORUM['forum_id'];
         $url = empty($id)?  phorum_get_url(PHORUM_INDEX_URL) : str_replace('%forum_id%',$id,$index_page_url_template);
-        
+
         $PHORUM['DATA']['BREADCRUMBS'][]=array(
             'URL'  => $url,
             'TEXT' => $PHORUM['DATA']['LANG']['Home'],
@@ -626,12 +869,12 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             } else {
                 $type = 'folder';
             }
-            
+
             if(empty($id)) {
                 $url = phorum_get_url(PHORUM_INDEX_URL);
             } else {
                 $url = str_replace('%forum_id%',$id,$index_page_url_template);
-            }            
+            }
             // Note: $id key is not required in general. Only used for
             // fixing up the last entry's TYPE.
             $PHORUM['DATA']['BREADCRUMBS'][$id]=array(
@@ -643,13 +886,14 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $track = $id;
         }
         $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
-        $PHORUM['DATA']['BREADCRUMBS'][$track]['URL']  = phorum_get_url(PHORUM_LIST_URL, $track);
-        
+        $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_get_url(PHORUM_LIST_URL, $track);
+
     }
 }
 
-////////////////////////////////////////////////////////////
-// only do this stuff if we are in the admin
+// ----------------------------------------------------------------------
+// Setup data for admin pages
+// ----------------------------------------------------------------------
 
 else {
 
@@ -658,20 +902,50 @@ else {
     // author name in messages for deleted users to "anonymous".
     $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"]);
     if (file_exists("./include/lang/$PHORUM[language].php")) {
-        include_once("./include/lang/$PHORUM[language].php");
+        require_once("./include/lang/$PHORUM[language].php");
     }
 }
 
-//////////////////////////////////////////////////////////
-// functions
 
+// ----------------------------------------------------------------------
+// Functions
+// ----------------------------------------------------------------------
 
 /**
  * Shutdown function
  */
-function phorum_shutdown() {
-    if (isset($PHORUM["hooks"]["shutdown"]))
-        phorum_hook( "shutdown" );
+function phorum_shutdown()
+{
+    /*
+     * [hook]
+     *     phorum_shutdown
+     *
+     * [description]
+     *     This hook gives modules a chance to easily hook into
+     *     PHP's <phpfunc>register_shutdown_function</phpfunc>
+     *     functionality.<sbr/>
+     *     <sbr/>
+     *     Code that you put in a phorum_shutdown hook will be run after
+     *     running a Phorum script finishes. This hook can be considered
+     *     an expert hook. Only use it if you really need it and if you
+     *     are aware of implementation details of PHP's shutdown
+     *     functionality.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After running a Phorum script finishes.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($PHORUM["hooks"]["shutdown"])) {
+        phorum_hook("shutdown");
+    }
 }
 register_shutdown_function("phorum_shutdown");
 
@@ -813,8 +1087,51 @@ function phorum_output($templates) {
         $templates = array($templates);
     }
 
-    if (isset($GLOBALS["PHORUM"]["hooks"]["start_output"]))
+    /*
+     * [hook]
+     *     start_output
+     *
+     * [description]
+     *     This hook gives modules a chance to apply some last minute
+     *     changes to the Phorum data. You can also use this hook to
+     *     call <phpfunc>ob_start</phpfunc> if you need to buffer Phorum's
+     *     full output (e.g. to do some post processing on the data
+     *     from the <hook>end_output</hook> hook.<sbr/>
+     *     <sbr/>
+     *     Note: this hook is only called for standard pages (the ones
+     *     that are constructed using a header, body and footer) and not
+     *     for output from scripts that do raw output like
+     *     <filename>file.php</filename>, <filename>javascript.php</filename>,
+     *     <filename>css.php</filename> and <filename>rss.php</filename>.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After setting up all Phorum data, right before sending the
+     *     page header template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_start_output()
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Add some custom data to the page title.
+     *         $title = $PHORUM['DATA']['HTML_TITLE'];
+     *         $PHORUM['DATA']['HTML_TITLE'] = "-=| Phorum Rocks! |=- $title";
+     *     }
+     *     </hookcode>
+     */
+    if (isset($GLOBALS["PHORUM"]["hooks"]["start_output"])) {
         phorum_hook("start_output");
+    }
 
     // Copy only what we need into the current scope. We do this at
     // this point and not earlier, so the start_output hook can be
@@ -827,20 +1144,125 @@ function phorum_output($templates) {
 
     include phorum_get_template("header");
 
-    if (isset($PHORUM["hooks"]["after_header"]))
+    /*
+     * [hook]
+     *     after_header
+     *
+     * [description]
+     *     This hook can be used for adding content to the pages that is
+     *     displayed after the page header template, but before the main
+     *     page content.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the page header template, but before sending the
+     *     main page content.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_header()
+     *     {
+     *         // Only add data after the header for the index and list pages.
+     *         if (phorum_page != 'index' && phorum_page != 'list') return;
+     *
+     *         // Add some static notification after the header.
+     *         print '<div style="border:1px solid orange; padding: 1em">';
+     *         print 'Welcome to our forums!';
+     *         print '</div>';
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["after_header"])) {
         phorum_hook("after_header");
+    }
 
     foreach($templates as $template){
         include phorum_get_template($template);
     }
 
-    if (isset($PHORUM["hooks"]["before_footer"]))
+    /*
+     * [hook]
+     *     before_footer
+     *
+     * [description]
+     *     This hook can be used for adding content to the pages that is
+     *     displayed after the main page content, but before the page footer.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the main page content, but before sending the
+     *     page footer template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_before_footer()
+     *     {
+     *         // Add some static notification before the footer.
+     *         print '<div style="font-size: 90%">';
+     *         print '  For technical support, please send a mail to ';
+     *         print '  <a href="mailto:tech@example.com">the webmaster</a>.';
+     *         print '</div>';
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["before_footer"])) {
         phorum_hook("before_footer");
+    }
 
     include phorum_get_template("footer");
 
-    if (isset($PHORUM["hooks"]["end_output"]))
+    /*
+     * [hook]
+     *     end_output
+     *
+     * [description]
+     *     This hook can be used for performing post output tasks.
+     *     One of the things that you could use this for, is for
+     *     reading in buffered output using <phpfunc>ob_get_contents</phpfunc>
+     *     in case you started buffering using <phpfunc>ob_start</phpfunc>
+     *     from the <hook>start_output</hook> hook.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the page footer template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_end_output()
+     *     {
+     *         // Some made up call to some fake statistics package.
+     *         include("/usr/share/lib/footracker.php");
+     *         footracker_register_request();
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["end_output"])) {
         phorum_hook("end_output");
+    }
 }
 
 /**
@@ -882,7 +1304,7 @@ function phorum_get_template( $page )
 
     // Pre-process template if the output file isn't available.
     if (! file_exists($phpfile)) {
-        include_once "./include/templates.php";
+        require_once "./include/templates.php";
         phorum_import_template($page, $tplfile, $phpfile);
     }
 
@@ -970,9 +1392,9 @@ function phorum_hook( $hook )
             // load mods for this hook
             $mod = basename($mod);
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
-                include_once "./mods/$mod/$mod.php";
+                require_once "./mods/$mod/$mod.php";
             } elseif ( file_exists( "./mods/$mod.php" ) ) {
-                include_once "./mods/$mod.php";
+                require_once "./mods/$mod.php";
             }
         }
 
@@ -1225,8 +1647,59 @@ function phorum_database_error($error)
     // clean page in the admin interface).
     phorum_ob_clean();
 
-    // Give modules a chance to handle or process the database error.
-    phorum_hook("database_error", $error);
+    /*
+     * [hook]
+     *     database_error
+     *
+     * [description]
+     *     Give modules a chance to handle or process database errors.
+     *     This can be useful to implement addional logging backends and/or
+     *     alerting mechanisms. Another option is to fully override Phorum's
+     *     default database error handling by handling the error and then
+     *     calling exit() from the hook to prevent the default Phorum code
+     *     from running.<sbr/>
+     *     <sbr/>
+     *     Note: If you decide to use the full override scenario, then
+     *     it is best to make your module run the database_error hook
+     *     last, so other modules can still run their hook handling
+     *     before the script exits. To accomplish this, add this to your
+     *     module info:
+     *     <programlisting>
+     *     priority: run hook database_error after *
+     *     </programlisting>
+     *
+     * [category]
+     *     Miscelaneous
+     *
+     * [when]
+     *     At the start of the function
+     *     <literal>phorum_database_error</literal> (which you can find in
+     *     <filename>common.php</filename>). This function is called from
+     *     the database layer when some database error occurs.
+     *
+     * [input]
+     *     The error message that was returned from the database layer.
+     *     This error is not HTML escaped, so if you send it to the browser,
+     *     be sure to preprocess it using <phpfunc>htmlspecialchars</phpfunc>.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_database_error($error)
+     *     {
+     *         // Log database errors to syslog facility "LOCAL0".
+     *         openlog("Phorum", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+     *         syslog(LOG_ERR, $error);
+     *
+     *         return $error;
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["database_error"])) {
+        phorum_hook("database_error", $error);
+    }
 
     // Find out what type of error handling is required.
     $logopt = isset($PHORUM["error_logging"])
@@ -1294,7 +1767,7 @@ function phorum_database_error($error)
         case "mail":
         default:
 
-            include_once("./include/email_functions.php");
+            require_once("./include/email_functions.php");
 
             $data = array(
               "mailmessage" =>

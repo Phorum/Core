@@ -131,6 +131,10 @@ function format_part($part)
         ']]></programlisting>'
     ), $part);
 
+    // Some special entries for easy referencing.
+    $part = preg_replace('!<hook>([\w_]+)</hook>!', '<xref linkend="hook.$1"/>', $part);
+    $part = preg_replace('!<phpfunc>([\w_]+)</phpfunc>!i', '<ulink url="http://www.php.net/$1">$1</ulink>', $part);
+
     return $part;
 }
 
