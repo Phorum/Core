@@ -1288,7 +1288,7 @@ $url = phorum_get_url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           </itemizedlist>
         </para>
         <para>
-          Here is an example of building a custom URL which links to the
+          Here is an example of building a URL which links to the
           add-on file <filename>myfile.php</filename> in the Phorum
           installation directory. Lets asume that the URL has to have the
           forum_id in it and that it needs to contain the additional
@@ -1299,15 +1299,49 @@ $url = phorum_get_url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
               Generating a custom script URL using phorum_get_url()
             </title>
             <programlisting><![CDATA[
-$url = phorum_get_url(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar", "baz=foo"); ]]></programlisting>
+// Build the URL for the add-on script.
+$url = phorum_get_url(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar", "baz=foo");
+
+// After this, you could store the URL in the template data, so you
+// can use it from the templates to link to the add-on script.
+// Here an example for filling the template variable {URL->MYFILE}:
+$PHORUM["DATA"]["URL"]["MYFILE"] = $url; ]]></programlisting>
           </example>
         </para>
       </section> <!-- end of build urls to Phorum PHP scripts -->
 
       <section id="modules.scripturls">
-        <title>Build URLs to other files in the Phorum tree</title>
+        <title>Build URLs to files in the Phorum tree</title>
         <para>
-          TODO
+          If you have some non-script files in your module that you need
+          to access through a URL, then make sure that you are generating
+          absolute URLs for these. You can make use of the Phorum
+          setting variable <literal>$PHORUM['http_path']</literal>
+          to build these. This setting relates to the "HTTP Path"
+          option under "General Settings" in the admin interface.
+        </para>
+        <para>
+          Let's asume you have a file named <filename>foobar.gif</filename>
+          in your "foo" module tree, then you could generate the URL for
+          that file like this:
+          <example>
+            <title> 
+              Generating an absolute URL for a file in a module directory
+            </title>
+            <programlisting><![CDATA[
+// Since the code probably runs inside a function scope,
+// the global $PHORUM variable needs to be imported.
+global $PHORUM;
+
+// Build the URL for the foobar.gif.
+$url = $PHORUM['http_path'] . "/mods/foo/foobar.gif";
+
+// After this, you could store the URL in the template data, so you
+// can use it from the templates. Here an example for filling the
+// template variable {MOD_FOO->IMAGE_URL}:
+$PHORUM["DATA"]["MOD_FOO"]["IMAGE_URL"] = $url; ]]></programlisting>
+          </example>
+
         </para>
       </section>
 
