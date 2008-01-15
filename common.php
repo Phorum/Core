@@ -529,6 +529,47 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
+    /*
+     * [hook]
+     *     common_post_user
+     *
+     * [description]
+     *     This hook gives modules a chance to override Phorum variables
+     *     and settings, after the active user has been loaded. The settings
+     *     for the active forum are also loaded before this hook is called,
+     *     therefore this hook can be used for overriding general settings,
+     *     forum settings and user settings.
+     *
+     * [category]
+     *     Request initialization
+     *
+     * [when]
+     *     Right after loading the data for the active user in common.php.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_common_post_user()
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Switch the read mode for admin users to threaded.
+     *         if ($PHORUM['user']['user_id'] && $PHORUM['user']['admin']) {
+     *             $PHORUM['threaded_read'] = PHORUM_THREADED_ON;
+     *         }
+     *
+     *         // Disable "float_to_top" for anonymous users.
+     *         if (!$PHORUM['user']['user_id']) {
+     *             $PHORUM['float_to_top'] = 0;
+     *         }
+     *     }
+     *     </hookcode>
+     */
     // a hook for rewriting vars in common.php after loading the user
     if (isset($PHORUM["hooks"]["common_post_user"]))
          phorum_hook( "common_post_user", "" );
