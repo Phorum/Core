@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','javascript');
-require_once('./common.php');
+require_once("./common.php");
 
 // So we can use {URL->HTTP_PATH} in the templates.
 phorum_build_common_urls();
@@ -49,19 +49,19 @@ phorum_build_common_urls();
  *     <li><b>source</b><br>
  *         Specifies the source of the JavaScript data. This can be one of:
  *         <ul>
- *         <li><b>file(<path to filename>)</b><br>
+ *         <li><b>file(&lt;path to filename&gt;)</b><br>
  *             For including a static JavaScript file. The path should be
  *             absolute or relative to the Phorum install directory,
- *             e.g. "file(mods/foobar/baz.js)". Because this file
- *             is loaded using a PHP include() call, it is possible to
- *             include PHP code in this file. Mind that this code
- *             is stored interpreted in the cache.</li>
- *         <li><b>template(<template name>)</b><br>
+ *             e.g. "<literal>file(mods/foobar/baz.js</literal>)".
+ *             Because this file is loaded using a PHP include() call,
+ *             it is possible to include PHP code in this file. Mind that
+ *             this code is stored interpreted in the cache.</li>
+ *         <li><b>template(&lt;template name&gt;)</b><br>
  *             For including a Phorum template,
- *             e.g. "template(foobar::baz)"</li>
- *         <li><b>function(<function name>)</b><br>
+ *             e.g. "<literal>template(foobar::baz)</literal>"</li>
+ *         <li><b>function(&lt;function name&gt;)</b><br>
  *             For calling a function to retrieve the JavaScript code,
- *             e.g. "function(mod_foobar_get_js)"</li>
+ *             e.g. "<literal>function(mod_foobar_get_js</literal>)"</li>
  *         </ul>
  *     </li>
  *     <li><b>cache_key</b><br>
@@ -82,11 +82,11 @@ phorum_build_common_urls();
  *         generating different JavaScript code per user or so, then it might
  *         be better to add the JavaScript code differently (e.g. through a
  *         custom JavaScript generating script or by adding the code to
- *         the $PHORUM['DATA']['HEAD_DATA'] variable). Also, do not use
- *         this to only add JavaScript code to certain phorum pages. Since
- *         the resulting JavaScript data is cached, it is no problem if you
- *         add the JavaScript code for your module to the code for
- *         every page.
+ *         the <literal>$PHORUM['DATA']['HEAD_DATA']</literal> variable).
+ *         Also, do not use this to only add JavaScript code to certain
+ *         phorum pages. Since the resulting JavaScript data is cached,
+ *         it is no problem if you add the JavaScript code for your module
+ *         to the code for every page.
  *     </li>
  *     </ul>
  *

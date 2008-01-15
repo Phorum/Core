@@ -22,7 +22,7 @@ foreach ( explode("\n", $files) as $file) {
     if (!$fp) die("Reading file $file failed!\n");
 
     $hook    = NULL;
-    $doc     = NULL; 
+    $doc     = NULL;
     $section = NULL;
     while ($line = fgets($fp))
     {
@@ -59,11 +59,15 @@ foreach ( explode("\n", $files) as $file) {
                 }
             }
         } else {
-            if (preg_match('/^\s*\*\s*\[(description|category|when|input|output)\]\s*(.*)\s*$/', $line, $m)) {
+            if (preg_match('/^\s*\*\s*\[(description|category|when|input|output|example)\]\s*(.*)\s*$/', $line, $m)) {
                 $section = $m[1];
                 $doc[$section] .= $m[2] . "\n";
             } elseif ($section !== NULL){
-                $doc[$section] .= preg_replace('/^\s*\*\s*/', '', $line);
+                if ($section == 'example') {
+                    $doc[$section] .= preg_replace('/^\s*\*/', '', $line);
+                } else {
+                    $doc[$section] .= preg_replace('/^\s*\*\s*/', '', $line);
+                }
             }
         }
     }
@@ -84,17 +88,36 @@ fputs($fp, "
 
 function format_part($part)
 {
-    $part = htmlspecialchars($part);
+    // First pass: see how much space we can remove from the start of
+    // the lines in the example.
+    $min_space = NULL;
+    foreach (explode("\n", $part) as $line) {
+        if (!preg_match('/^(\s+)\S/', $line, $m)) continue;
+        $space = strlen($m[1]);
+        if ($min_space === NULL || $min_space > $space) $min_space = $space;
+    }
+    // Second pass: remove the whitespace.
+    if ($min_space !== NULL) {
+        $newpart = '';
+        foreach (explode("\n", $part) as $line) {
+            $line = substr($line, $min_space);
+            $newpart .= "$line\n";
+        }
+        $part = $newpart;
+    }
 
+    // Replace some HTML-like shortcuts for docbook code.
     $part = str_replace(array(
-        '&lt;ul&gt;',
-        '&lt;li&gt;',
-        '&lt;/li&gt;',
-        '&lt;/ul&gt;',
-        '&lt;b&gt;',
-        '&lt;/b&gt;',
-        '&lt;br&gt;',
-        '&lt;br/&gt;'
+        '<ul>',
+        '<li>',
+        '</li>',
+        '</ul>',
+        '<b>',
+        '</b>',
+        '<br>',
+        '<br/>',
+        '<hookcode>',
+        '</hookcode>'
     ), array(
         '<itemizedlist>',
         '<listitem>',
@@ -103,7 +126,9 @@ function format_part($part)
         '<emphasis role="bold">',
         '</emphasis>',
         '<sbr/>',
-        '<sbr/>'
+        '<sbr/>',
+        '<programlisting><![CDATA[',
+        ']]></programlisting>'
     ), $part);
 
     return $part;
@@ -150,6 +175,16 @@ foreach ($hookdocs as $category => $hooks)
         fputs($fp, "      <para>\n");
         fputs($fp, format_part($hook['output']));
         fputs($fp, "      </para>\n");
+        if (!empty($hook['example'])) {
+            fputs($fp, "      <para>\n");
+            fputs($fp, "        <emphasis role=\"bold\">\n");
+            fputs($fp, "          Example code:\n");
+            fputs($fp, "        </emphasis>\n");
+            fputs($fp, "      </para>\n");
+            fputs($fp, "      <para>\n");
+            fputs($fp, format_part($hook['example']));
+            fputs($fp, "      </para>\n");
+        }
         fputs($fp, "    </section>\n");
     }
 

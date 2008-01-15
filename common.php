@@ -235,12 +235,6 @@ if (!function_exists('phorum_get_url')) {
     require_once("./include/phorum_get_url.php");
 }
 
-// a hook for rewriting vars at the beginning of common.php,
-// right after loading all the settings from the database.
-if (isset($PHORUM["hooks"]["common_pre"])) {
-    phorum_hook( "common_pre", "" );
-}
-
 
 // ----------------------------------------------------------------------
 // Parse and handle request data
@@ -260,6 +254,57 @@ if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
         else
             $_GET[$key] = phorum_recursive_stripslashes( $value );
     }
+}
+
+/*
+ * [hook]
+ *     parse_request
+ *
+ * [description]
+ *     This hook gives modules a chance to tweak the request environment,
+ *     before Phorum parses and handles the request data. For tweaking the
+ *     request environment, some of the options are:
+ *     <ul>
+ *       <li>
+ *         Changing the value of <literal>$_REQUEST["forum_id"]</literal>
+ *         to override the used forum_id.
+ *       </li>
+ *       <li>
+ *         Changing the value of <literal>$_SERVER["QUERY_STRING"]</literal>
+ *         or setting the global override variable
+ *         <literal>$PHORUM_CUSTOM_QUERY_STRING</literal> to feed Phorum a
+ *         different query string than the one provided by the webserver.
+ *       </li>
+ *     </ul>
+ *     Tweaking the request data should result in data that Phorum can handle.
+ *
+ * [category]
+ *     Request initialization
+ *
+ * [when]
+ *     Right before Phorum runs the request parsing code in common.php.
+ *
+ * [input]
+ *     No input.
+ *
+ * [output]
+ *     No output.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_parse_request()
+ *     {
+ *         // Override the query string.
+ *         global $PHORUM_CUSTOM_QUERY_STRING
+ *         $PHORUM_CUSTOM_QUERY_STRING = "1,some,phorum,query=string";
+ *
+ *         // Override the forum_id.
+ *         $_SERVER['forum_id'] = "1234";
+ *     }
+ *     </hookcode>
+ */
+if (isset($PHORUM["hooks"]["parse_request"])) {
+    phorum_hook( "parse_request");
 }
 
 // Get the forum id if set using a request parameter.
@@ -319,6 +364,51 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBA
 // set the forum_id to 0 if not set by now.
 if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
 
+/*
+ * [hook]
+ *     common_pre
+ *
+ * [description]
+ *     This hook can be used for overriding settings that were loaded and setup
+ *     at the start of the common.php script. If you want to dynamically assign
+ *     and tweak certain settings, then this is the designated hook to use
+ *     for that.
+ *
+ * [category]
+ *     Request initialization
+ *
+ * [when]
+ *     Right after loading the settings from the database and parsing the
+ *     request. It was put after the request parsing, to allow using
+ *     the forum id variable <literal>$PHORUM['forum_id']</literal> in your
+ *     hook code.
+ *
+ * [input]
+ *     No input.
+ *
+ * [output]
+ *     No output.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_common_pre()
+ *     {
+ *         global $PHORUM;
+ *
+ *         // If we are in the forum with id = 10, we set the administrator
+ *         // email information to a different value than the one configured
+ *         // in the general settings.
+ *         if ($PHORUM["forum_id"] == 10)
+ *         {
+ *             $PHORUM["system_email_from_name"] = "John Doe";
+ *             $PHORUM["system_email_from_address"] = "John.Doe@example.com";
+ *         }
+ *     }
+ *     </hookcode>
+ */
+if (isset($PHORUM["hooks"]["common_pre"])) {
+    phorum_hook( "common_pre", "" );
+}
 
 // ----------------------------------------------------------------------
 // Setup data for standard (not admin) pages
