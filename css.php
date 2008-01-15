@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','css');
-include_once("./common.php");
+require_once('./common.php');
 
 // Set to FALSE to disable CSS compression.
 define('PHORUM_COMPRESS_CSS', TRUE);
@@ -76,19 +76,19 @@ phorum_build_common_urls();
  *         <li><b>source</b><br>
  *             Specifies the source of the CSS data. This can be one of:
  *             <ul>
- *             <li><b>file(<path to filename>)</b><br>
+ *             <li><b>file(&lt;path to filename&gt;)</b><br>
  *                 For including a static CSS file. The path should be
  *                 absolute or relative to the Phorum install directory,
- *                 e.g. "file(mods/foobar/baz.css)". Because this file
- *                 is loaded using a PHP include() call, it is possible to
- *                 include PHP code in this file. Mind that this code
- *                 is stored interpreted in the cache.</li>
- *             <li><b>template(<template name>)</b><br>
+ *                 e.g. "<literal>file(mods/foobar/baz.css)</literal>".
+ *                 Because this file is loaded using a PHP include() call,
+ *                 it is possible to include PHP code in this file. Mind that
+ *                 this code is stored interpreted in the cache.</li>
+ *             <li><b>template(&lt;template name&gt;)</b><br>
  *                 For including a Phorum template,
- *                 e.g. "template(foobar::baz)"</li>
- *             <li><b>function(<function name>)</b><br>
+ *                 e.g. "<literal>template(foobar::baz)</literal>"</li>
+ *             <li><b>function(&lt;function name&gt;)</b><br>
  *                 For calling a function to retrieve the CSS code,
- *                 e.g. "function(mod_foobar_get_css)"</li>
+ *                 e.g. "<literal>function(mod_foobar_get_css)</literal>"</li>
  *             </ul>
  *         </li>
  *         <li><b>cache_key</b><br>
@@ -235,11 +235,6 @@ $cache_file = "{$PHORUM['cache']}/tpl-{$PHORUM['template']}-css-$css-" .
 // Create the cache file if it does not exist or if caching is disabled.
 if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
 {
-    ob_start();
-    include(phorum_get_template($css));
-    $base = ob_get_contents();
-    ob_end_clean();
-
     $before = '';
     $after  = '';
 
@@ -284,7 +279,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
     }
 
     if (!empty($PHORUM['cache_css'])) {
-        include_once "./include/templates.php";
+        require_once('./include/templates.php');
         phorum_write_file($cache_file, $content);
     }
 
