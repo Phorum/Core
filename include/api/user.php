@@ -350,8 +350,6 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
  * For those cases, the most basic use of this API function can be found
  * in the examples below.
  * <code>
- * // It is okay to supply a user_id for new users as well, so for creating
- * // and updating a Phorum user, this code would work:
  * $user = array(
  *     "user_id"   => 1234,
  *     "username"  => 'johndoe',
