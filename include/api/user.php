@@ -579,9 +579,11 @@ function phorum_api_user_save($user, $flags = 0)
      *     This hook can be used to handle the data that is going to be
      *     stored in the database for a user. Modules can do some last
      *     minute change on the data or keep some external system in sync
-     *     with the Phorum user data. In combination with the [user_get]
-     *     hook, this hook can also be used to store and retrieve some of
-     *     the Phorum user fields using some external system.
+     *     with the Phorum user data.<sbr/>
+     *     <sbr/>
+     *     In combination with the <hook>user_get</hook> hook, this hook
+     *     could also be used to store and retrieve some of the Phorum
+     *     user fields using some external system.
      *
      * [category]
      *     User data handling
@@ -595,6 +597,23 @@ function phorum_api_user_save($user, $flags = 0)
      * [output]
      *     The same array as the one that was used for the hook call
      *     argument, possibly with some updated fields in it.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_save($user)
+     *     {
+     *         // Add "[A]" in front of admin user real_name fields.
+     *         $A = $user["admin"] ? "[A]" : "";
+     *         $real_name = preg_replace('/^\[A\]/', $A, $user["real_name"]);
+     *         $user['real_name'] = $real_name;
+     *
+     *         // Some fictional external system to keep in sync.
+     *         include("../coolsys.php");
+     *         coolsys_save($user);
+     *
+     *         return $user;
+     *     }
+     *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_save'])) {
         $dbuser = phorum_hook('user_save', $dbuser);
@@ -624,6 +643,18 @@ function phorum_api_user_save($user, $flags = 0)
      * [output]
      *     The same array as the one that was used for the hook call
      *     argument, possibly with some updated fields in it.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_register($user)
+     *     {
+     *         // Log user registrations through syslog.
+     *         openlog("Phorum", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+     *         syslog(LOG_NOTICE, "New user registration: $user[username]");
+     *
+     *         return $user;
+     *     }
+     *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_register']))
     {
@@ -916,9 +947,11 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
      * [description]
      *     This hook can be used to handle the data that was retrieved
      *     from the database for a user. Modules can add and modify the
-     *     user data. In combination with the [user_save]
-     *     hook, this hook can also be used to store and retrieve some of
-     *     the Phorum user fields in some external system
+     *     user data.<sbr/>
+     *     <sbr/>
+     *     In combination with the <hook>user_save</hook> hook, this hook
+     *     could also be used to store and retrieve some of the Phorum
+     *     user fields in some external system
      *
      * [category]
      *     User data handling
@@ -927,12 +960,43 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
      *     Just after user data has been retrieved from the database.
      *
      * [input]
-     *     An array of users. Each item in this array is an array
-     *     containing data for a single user.
+     *     This hook receives two arguments.<sbr/>
+     *     The first argument contains an array of users.
+     *     Each item in this array is an array containing data for
+     *     a single user, which can be updated.<sbr/>
+     *     The second argument contains a boolean that indicates whether
+     *     detailed information (i.e. including group info) is retrieved.
      *
      * [output]
-     *     The same array as the one that was used for the hook call
-     *     argument, possibly with some updated fields in it.
+     *     The array that was used as the first argument for the hook call,
+     *     possibly with some updated users in it.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_get($user, $detailed)
+     *     {
+     *         // Let's asume that our usernames are based on the
+     *         // system users on a UNIX system. We could merge some
+     *         // info from the password file with the Phorum info here.
+     *
+     *         // First try to lookup the password file entry.
+     *         // Return if this lookup fails.
+     *         $pw = posix_getpwnam($user['username']);
+     *         if (empty($pw)) return $user;
+     *
+     *         // On a lot of systems, the "gecos" field contains
+     *         // the real name for the user.
+     *         $user['real_name'] = $pw["gecos"] != ''
+     *                            ? $pw["gecos"]
+     *                            : $user["real_name"];
+     *
+     *         // If a custom profile field "shell" was created, then
+     *         // we could also put the user's shell in the data.
+     *         $user['shell'] = $pw['shell'];
+     *
+     *         return $user;
+     *     }
+     *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_get'])) {
         $users = phorum_hook('user_get', $users, $detailed);
@@ -1241,6 +1305,28 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      * [output]
      *     The same array as was used for the hook call argument,
      *     possibly with some updated fields in it.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_list($users)
+     *     {
+     *         // Only run this hook code for authenticated users.
+     *         if (empty($PHORUM["user"]["user_id"])) return $users;
+     *
+     *         // Retrieve a list of buddies for the active user.
+     *         // If there are no buddies, then no work is needed.
+     *         $buddies = phorum_db_pm_buddy_list();
+     *         if (empty($buddies)) return $users;
+     *
+     *         // Flag buddies in the user list.
+     *         $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["Buddy"];
+     *         foreach ($buddies as $user_id => $info) {
+     *             $users[$user_id]["display_name"] .= " ($langstr)";
+     *         }
+     *
+     *         return $users;
+     *     }
+     *     </hookcode>
      */
     if (isset($GLOBALS['PHORUM']['hooks']['user_list'])) {
         $list = phorum_hook('user_list', $list);
@@ -1302,6 +1388,18 @@ function phorum_api_user_delete($user_id)
      * [output]
      *     The same user_id as the one that was used for the hook
      *     call argument.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_delete($user)
+     *     {
+     *         // Log user delete through syslog.
+     *         openlog("Phorum", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+     *         syslog(LOG_NOTICE, "Delete user registration: $user[username]");
+     *
+     *         return $user;
+     *     }
+     *     </hookcode>
      */
     if (isset($GLOBALS['PHORUM']['hooks']['user_delete'])) {
         phorum_hook('user_delete', $user_id);
@@ -1402,6 +1500,39 @@ function phorum_api_user_authenticate($type, $username, $password)
      *     <li>FALSE: the authentication credentials are rejected</li>
      *     <li>1234: the numerical user_id of the authenticated user</li>
      *     </ul>
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_authenticate($auth)
+     *     {
+     *         // Only trust admin logins from IP addresses in 10.1.2.0/24.
+     *         if ($auth["type"] == PHORUM_ADMIN_SESSION) {
+     *             if (substr($_SERVER['REMOTE_ADDR'],0,7) != '10.1.2.') {
+     *                 $auth["user_id"] = FALSE;
+     *                 return $auth;
+     *             }
+     *         }
+     *
+     *         // Let Phorum handle autentication for all users that
+     *         // have a username starting with "bar" (not a really
+     *         // useful feature, but it shows the use of the NULL
+     *         // return value ;-).
+     *         if (substr($auth["username"], 0, 3) == "bar") {
+     *             $auth["user_id"] = NULL;
+     *             return $auth;
+     *         }
+     *
+     *         // Authenticate other logins against an external source. Here
+     *         // we call some made up function for checking the password,
+     *         // which returns the user_id for the authenticated user.
+     *         $user_id = some_func_that_checks_pw(
+     *             $auth["username"],
+     *             $auth["password"]
+     *         );
+     *         $auth["user_id"] = empty($user_id) ? FALSE : $user_id;
+     *         return $auth;
+     *     }
+     *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_authenticate']))
     {
@@ -1740,12 +1871,61 @@ function phorum_api_user_session_create($type, $reset = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // Allow modules to handle creating a session or to simply fully
-    // ignore creating sessions (for example useful if the hook
-    // "user_session_restore" is used to inherit an external session from
-    // some 3rd party application). The hook function gets the session
-    // type as its argument and can return NULL if the Phorum session
-    // create function does not have to be run.
+    /**
+     * [hook]
+     *     user_session_create
+     *
+     * [description]
+     *     Allow modules to override Phorum's session create management or
+     *     to even fully omit creating of a session (for example useful
+     *     if the hook <hook>user_session_restore</hook> is used
+     *     to inherit an external session from some 3rd party application).
+     *
+     * [category]
+     *     User authentication and session handling
+     *
+     * [when]
+     *     Just before Phorum runs its own session initialization code
+     *     in the user API function
+     *     <literal>phorum_api_user_session_create()</literal>.
+     *
+     * [input]
+     *     The session type for which a session must be created.
+     *     This can be either <literal>PHORUM_FORUM_SESSION</literal>
+     *     or <literal>PHORUM_ADMIN_SESSION</literal>.
+     *
+     * [output]
+     *     Same as input if Phorum has to run its standard session
+     *     initialization code or NULL if that code should be fully skipped.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_session_create($type)
+     *     {
+     *         // Let Phorum handle admin sessions on its own.
+     *         if ($type == PHORUM_ADMIN_SESSION) return $type;
+     *
+     *         // Override the session handling for front end forum sessions.
+     *         // We could for example put the session in a standard PHP
+     *         // session by first starting a PHP session if that was
+     *         // not done yet...
+     *         if (!session_id()) session_start();
+     *
+     *         // ...and then storing the user_id of the current user in the
+     *         // PHP session data. The user_id is really the only thing
+     *         // that needs to be remembered for a Phorum session, because
+     *         // all other data for the user is stored in the database.
+     *         $phorum_user_id = $GLOBALS["PHORUM"]["user"]["user_id"];
+     *         $_SESSION['phorum_user_id'] = $phorum_user_id;
+     *
+     *         // Tell Phorum not to run its own session initialization code.
+     *         return NULL;
+     *     }
+     *     </hookcode>
+     *
+     *     See the <hook>user_session_restore</hook> hook for an example
+     *     of how to let Phorum pick up this PHP based session.
+     */
     if (isset($PHORUM['hooks']['user_session_create'])) {
         if (phorum_hook('user_session_create', $type) === NULL) {
             return TRUE;
@@ -2013,14 +2193,100 @@ function phorum_api_user_session_restore($type)
     // modules to hook into the session system to do the check for us.
     // This can for example be used to let Phorum inherit an already
     // running authenticated session in some external system.
-    //
-    // What the module has to do, is fill the fields from the passed
-    // array with the user_id of the user for which a session is active
-    // or FALSE if there is no session active. One or more of the fields
-    // can be kept at NULL to have them handled by Phorum. This way,
-    // the module could let the front end forum sesson inherit the
-    // session from a different system, but let Phorum fully handle the
-    // admin sessions on it own.
+
+    /**
+     * [hook]
+     *     user_session_restore
+     *
+     * [description]
+     *     Allow modules to override Phorum's session restore management.
+     *     This hook is the designated hook if you need to let Phorum
+     *     inherit an authenticated session from some external system.<sbr/>
+     *     <sbr/>
+     *     The array that is passed to this hook,
+     *     contains a key for each of the Phorum session types:
+     *     <ul>
+     *       <li>PHORUM_SESSION_LONG_TERM</li>
+     *       <li>PHORUM_SESSION_SHORT_TERM</li>
+     *       <li>PHORUM_SESSION_ADMIN</li>
+     *     </ul>
+     *     <sbr/>
+     *     What the module has to do, is fill the values for each of these
+     *     keys with the user_id of the Phorum user for which the session that
+     *     the key represents should be considered active. Other options
+     *     are FALSE to indicate that no session is active and NULL to
+     *     tell Phorum to handle session restore on its own.<sbr/>
+     *     <sbr/>
+     *     Note that the user for which a user_id is provided through this
+     *     hook must exist in the Phorum system before returning from this
+     *     hook. One option to take care of that constraint is letting
+     *     this hook create the user on-the-fly if needed. A cleaner way
+     *     would be to synchronize the user data from the main system at those
+     *     times when the user data changes (create, update and delete user).
+     *     Of course it is highly dependent on the other system whether
+     *     you can implement that kind of Phorum user management in the main
+     *     application.<sbr/>
+     *     <sbr/>
+     *     Hint: Creating users can be done using the
+     *     <literal> phorum_api_user_save()</literal> user API function.
+     *
+     * [category]
+     *     User authentication and session handling
+     *
+     * [when]
+     *     Just before Phorum runs its own session restore code
+     *     in the user API function
+     *     <literal>phorum_api_user_session_restore()</literal>.
+     *
+     * [input]
+     *     An array containing three keys:
+     *     <ul>
+     *       <li>PHORUM_SESSION_LONG_TERM</li>
+     *       <li>PHORUM_SESSION_SHORT_TERM</li>
+     *       <li>PHORUM_SESSION_ADMIN</li>
+     *     </ul>
+     *     By default, all values for these keys are NULL.
+     *
+     * [output]
+     *     Same as input, possibly with updated array values.
+     *
+     * [example]
+     *     See the <hook>user_session_create</hook> hook for an example
+     *     of how to let Phorum setup the PHP session that is picked up
+     *     in this example hook.
+     *     <hookcode>
+     *     function phorum_mod_foo_user_session_restore($sessions)
+     *     {
+     *         // Override the session handling for front end forum sessions.
+     *         // We could for example retrieve a session from a standard PHP
+     *         // session by first starting a PHP session if that was
+     *         // not done yet...
+     *         if (!session_id()) session_start();
+     *
+     *         // ...and then retrieving the user_id of the current user
+     *         // from the PHP session data. The user_id is really the
+     *         // only thing that needs to be remembered for a Phorum
+     *         // session, because all other data for the user is stored
+     *         // in the database. If no user id was set in the session,
+     *         // then use FALSE to flag this to Phorum.
+     *         $phorum_user_id = empty($_SESSION['phorum_user_id'])
+     *                         ? FALSE : $_SESSION['phorum_user_id'];
+     *
+     *         // If we only use session inheritance for the front end
+     *         // forum session (highly recommended for security), then
+     *         // We keep PHORUM_SESSION_ADMIN at NULL (default value).
+     *         // The other two need to be updated. If the main system does
+     *         // not use the concept of one long and one short term cookie
+     *         // (named "tight security" by Phorum), then simply assign
+     *         // the user_id to both PHORUM_SESSION_LONG_TERM and
+     *         // PHORUM_SESSION_SHORT_TERM.
+     *         $sessions[PHORUM_SESSION_SHORT_TERM] = $phorum_user_id;
+     *         $sessions[PHORUM_SESSION_LONG_TERM] = $phorum_user_id;
+     *
+     *         return $sessions;
+     *     }
+     *     </hookcode>
+     */
     $hook_sessions = array(
         PHORUM_SESSION_LONG_TERM  => NULL,
         PHORUM_SESSION_SHORT_TERM => NULL,
