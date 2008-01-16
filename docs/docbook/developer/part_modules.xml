@@ -918,8 +918,7 @@ $message["meta"]["mod_foo"] = array(
             There are some hooks that send a full message structure to the
             hook functions. These can change the message structure before
             returning it to Phorum. Examples are the hooks
-            "<xref linkend="hook.before_post"/>" and
-            "<xref linkend="hook.before_edit"/>". For these kind of
+            "hook.before_post" and "before_edit". For these kind of
             hooks, you can update the meta information in the message
             structure and be done with it. Here's an example of what this
             could look like in your hook function:
