@@ -2493,12 +2493,63 @@ function phorum_api_user_session_destroy($type)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // Allow modules to handle destroying a session or to simply fully
-    // ignore destroying sessions (for example useful if the hook
-    // "user_session_restore" is used to inherit an external session from
-    // some 3rd party application). The hook function gets the session
-    // type as its argument and can return NULL if the Phorum session
-    // destroy function does not have to be run.
+    /**
+     * [hook]
+     *     user_session_destroy
+     *
+     * [description]
+     *     Allow modules to override Phorum's session destroy management or
+     *     to even fully omit destroying a session (for example useful
+     *     if the hook <hook>user_session_restore</hook> is used
+     *     to inherit an external session from some 3rd party application).
+     *
+     * [category]
+     *     User authentication and session handling
+     *
+     * [when]
+     *     Just before Phorum runs its own session destroy code
+     *     in the user API function
+     *     <literal>phorum_api_user_session_destroy()</literal>.
+     *
+     * [input]
+     *     The session type for which a session must be destroyed.
+     *     This can be either <literal>PHORUM_FORUM_SESSION</literal>
+     *     or <literal>PHORUM_ADMIN_SESSION</literal>.
+     *
+     * [output]
+     *     Same as input if Phorum has to run its standard session
+     *     destroy code or NULL if that code should be fully skipped.
+     *
+     * [example]
+     *     See the <hook>user_session_create</hook> hook for an example
+     *     of how to let Phorum setup the PHP session that is destroyed
+     *     in this example hook.
+     *     <hookcode>
+     *     function phorum_mod_foo_user_session_destroy($type)
+     *     {
+     *         // Let Phorum handle destroying of admin sessions on its own.
+     *         if ($type == PHORUM_ADMIN_SESSION) return $type;
+     *
+     *         // Override the session handling for front end forum sessions.
+     *         // We could for example have stored the session in a standard
+     *         // PHP session. First, we start a PHP session if that was
+     *         // not done yet.
+     *         if (!session_id()) session_start();
+     *
+     *         // After starting the PHP session, we can clear the session
+     *         // data for the Phorum user. In the user_session_create hook
+     *         // example code, we stored the user_id for the active user
+     *         // in the session. Here we clear that data. We could also
+     *         // have destroyed the full PHP session, but in that case we
+     *         // would risk destroying session data that was setup by
+     *         // other PHP scripts.
+     *         unset($_SESSION['phorum_user_id']);
+     *
+     *         // Tell Phorum not to run its own session destroy code.
+     *         return NULL;
+     *     }
+     *     </hookcode>
+     */
     $do_phorum_destroy_session = TRUE;
     if (isset($PHORUM['hooks']['user_session_destroy'])) {
         if (phorum_hook('user_session_destroy', $type) === NULL) {
