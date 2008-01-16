@@ -345,6 +345,38 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
  * If a user_id is provided, then the existing user will be updated or a
  * new user with that user_id is created.
  *
+ * Often when calling this function yourself, you will be doing that for
+ * synchronizing a user from some external system with the Phorum database.
+ * For those cases, the most basic use of this API function can be found
+ * in the examples below.
+ * <code>
+ * // It is okay to supply a user_id for new users as well, so for creating
+ * // and updating a Phorum user, this code would work:
+ * $user = array(
+ *     "user_id"   => 1234,
+ *     "username"  => 'johndoe',
+ *     "password"  => '#barbar#',
+ *     "email"     => 'john.doe@example.com',
+ *     "admin"     => 0,
+ *     "active"    => PHORUM_USER_ACTIVE
+ * );
+ * phorum_api_user_save($user);
+ * </code>
+ *
+ * If you do not have the plain text password available, but only an MD5
+ * hash for the password, then you can use the following code instead.
+ * <code>
+ * $user = array(
+ *     "user_id"   => 1234,
+ *     "username"  => 'johndoe',
+ *     "password"  => '5d61ed116ffdecf2d29cd1ed9bd9d4cb',
+ *     "email"     => 'john.doe@example.com',
+ *     "admin"     => 0,
+ *     "active"    => PHORUM_USER_ACTIVE
+ * );
+ * phorum_api_user_save($user, PHORUM_FLAG_RAW_PASSWORD);
+ * </code>
+ *
  * @param array $user
  *     An array containing user data. This array should at least contain
  *     a field "user_id". This field can be NULL to create a new user
