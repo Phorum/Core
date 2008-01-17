@@ -36,33 +36,40 @@ $PHORUM['memcache_obj']->connect('127.0.0.1', 11211);
  * or NULL if no data is cached for this key
  */
 function phorum_cache_get($type,$key,$version=NULL) {
-	if(is_array($key)) {
-		$getkey=array();
-		foreach($key as $realkey) {
-			$getkey[]=$type."_".$realkey;
-		}
-	} else {
-		$getkey=$type."_".$key;
-	}
+    if(is_array($key)) {
+        $getkey=array();
+        foreach($key as $realkey) {
+            $getkey[]=$type."_".$realkey;
+        }
+    } else {
+        $getkey=$type."_".$key;
+    }
 
     @$ret=$GLOBALS['PHORUM']['memcache_obj']->get($getkey);
 
-    if(is_array($getkey)) {
-        // rewriting them as we need to strip out the type :(
-        $typelen=(strlen($type)+1);
-    	foreach($ret as $retkey => $retdata) {
-	        if ($version == NULL || 
-	            ($retdata[1] != NULL && $retdata[1] == $version))
-    	            $ret[substr($retkey,$typelen)]=$retdata[0];
+    if($ret!==false){
 
-            unset($ret[$retkey]);
-    	}
+        if(is_array($getkey)) {
+            // rewriting them as we need to strip out the type :(
+            $typelen=(strlen($type)+1);
+            foreach($ret as $retkey => $retdata) {
+                if ($version == NULL ||
+                    ($retdata[1] != NULL && $retdata[1] == $version))
+                        $ret[substr($retkey,$typelen)]=$retdata[0];
+
+                unset($ret[$retkey]);
+            }
+        } else {
+            if ( is_array($ret) && count($ret) != 0 &&
+                 ($version == NULL || ($ret[1] != NULL && $ret[1] == $version)) )
+                $ret = $ret[0];
+            else
+                $ret = NULL;
+        }
+
     } else {
-	    if ( is_array($ret) && count($ret) != 0 && 
-             ($version == NULL || ($ret[1] != NULL && $ret[1] == $version)) )
-            $ret = $ret[0];
-        else
-            $ret = NULL;
+
+        $ret = NULL;
     }
 
     return $ret;
@@ -75,7 +82,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
  * depending of the success of the function
  */
 function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
-	@$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, array($data,$version), 0, $ttl);
+    @$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, array($data,$version), 0, $ttl);
     return $ret;
 }
 
