@@ -65,7 +65,7 @@
         <tr>
           <td colspan="2">
   
-          <input type="checkbox" id="subscription-follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onchange="phorum_subscription_displaystate()"{/IF} /> <label for="subscription-follow">{LANG->FollowThread}</label><br />
+          <input type="checkbox" id="subscription-follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onclick="phorum_subscription_displaystate()"{/IF} /> <label for="subscription-follow">{LANG->FollowThread}</label><br />
   
           {IF OPTION_ALLOWED->subscribe_mail}
             <div id="subscription-mail-div">
