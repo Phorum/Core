@@ -277,7 +277,7 @@ function phorum_email_moderators($message)
 {
     $PHORUM=$GLOBALS["PHORUM"];
 
-    $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], FALSE, TRUE);
+    $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], $PHORUM['email_ignore_admin'], TRUE);
 
     if (count($mail_users)) {
         include_once("./include/format_functions.php");
