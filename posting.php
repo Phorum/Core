@@ -490,8 +490,10 @@ if ( !$PHORUM["DATA"]["ERROR"] && $finish )
 if ($PHORUM["posting_template"] == 'posting')
 {
     // Make up the text which must be used on the posting form's submit button.
-    $button_txtid = $mode == "edit" ? "SaveChanges" : "Post";
-    $message["submitbutton_text"] = $PHORUM["DATA"]["LANG"][$button_txtid];
+    $button_txt = $mode == "edit"
+                ? $PHORUM["DATA"]["LANG"]["SaveChanges"]
+                : $PHORUM["DATA"]["LANG"]["Post"];
+    $message["submitbutton_text"] = $button_txt;
 
     // Attachment config
     if($PHORUM["max_attachments"]){
