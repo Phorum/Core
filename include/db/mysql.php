@@ -209,7 +209,7 @@ function phorum_db_mysql_connect() {
  * This function will sanitize a mixed variable based on a given type
  * for safe use in SQL queries.
  *
- * @param mixed $var
+ * @param mixed &$var
  *     The variable to be sanitized. Passed by reference, so the original
  *     variable will be updated. It can be either a single variable or an
  *     array containing multiple variables.
@@ -842,7 +842,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  * If the "thread" index is set to zero, a new thread will be started and the
  * "thread" index will be filled with the new thread id upon return.
  *
- * @param array $message
+ * @param array &$message
  *     The message to post. This is an array, which should contain the
  *     following fields: forum_id, thread, parent_id, author, subject, email,
  *     ip, user_id, moderator_post, status, sort, msgid, body, closed.
