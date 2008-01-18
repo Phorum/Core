@@ -186,7 +186,7 @@ function phorum_generate_language_file($lang, $displayname, $generate_new)
           "can replace all language strings by strings which apply to " .
           "\"" . htmlspecialchars($displayname) . "\". After updating the new " .
           "file, you will have to place it in " .
-          "<b>include/lang/" . htmlspecialchars($fullfile) . ".php</b>, " .
+          "<b>include/lang/" . htmlspecialchars($basename) . ".php</b>, " .
           "so Phorum can use it (backup your old file first of course!)."
         );
     }
