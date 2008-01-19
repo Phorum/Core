@@ -111,14 +111,20 @@ if (empty($module_registrations)) {
 $cache_key = $PHORUM['template'];
 foreach ($module_registrations as $id => $r)
 {
-    if (!isset($r['module'])) trigger_error(
-        "javascript_register hook: module registration error: " .
-        "the \"module\" field was not set."
-    );
-    if (!isset($r['source'])) trigger_error(
-        "javascript_register hook: module registration error: " .
-        "the \"source\" field was not set."
-    );
+    if (!isset($r['module'])) {
+        trigger_error(
+            "javascript_register hook: module registration error: " .
+            "the \"module\" field was not set."
+        );
+        exit(1);
+    }
+    if (!isset($r['source'])) {
+        trigger_error(
+            "javascript_register hook: module registration error: " .
+            "the \"source\" field was not set."
+        );
+        exit(1);
+    }
     if (preg_match('/^(file|template|function)\((.+)\)$/', $r['source'], $m))
     {
         $module_registrations[$id]['type']   = $m[1];
@@ -157,19 +163,24 @@ foreach ($module_registrations as $id => $r)
 
             case "function":
 
-                if (!isset($r['cache_key'])) trigger_error(
-                    "javascript_register hook: module registration error: " .
-                    "\"cache_key\" field missing for source " .
-                    "\"{$r['source']}\" in module \"{$r['module']}\"."
-                );
-
+                if (!isset($r['cache_key'])) {
+                    trigger_error(
+                        "javascript_register hook: module registration " .
+                        "error: \"cache_key\" field missing for source " .
+                        "\"{$r['source']}\" in module \"{$r['module']}\"."
+                    );
+                    exit(1);
+                }
                 break;
         }
-    } else trigger_error(
-        "javascript_register hook: module registration error: " .
-        "illegal format for source definition \"{$r['source']}\" " .
-        "in module \"{$r['module']}\"."
-    );
+    } else {
+        trigger_error(
+            "javascript_register hook: module registration error: " .
+            "illegal format for source definition \"{$r['source']}\" " .
+            "in module \"{$r['module']}\"."
+        );
+        exit(1);
+    }
 
     $cache_key .= '|' . $r['module'] . ':' . $r['cache_key'];
 }
