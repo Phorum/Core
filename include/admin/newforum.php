@@ -159,8 +159,9 @@ if(count($_POST)){
                 $forum_settings_inherit["parent_id"] = (int)$_POST["parent_id"];
                 $forum_settings_inherit["inherit_id"] = $_POST["inherit_id"];
 
-                // don't inherit this settings
+                // don't inherit these settings
                 unset($forum_settings_inherit["message_count"]);
+                unset($forum_settings_inherit["sticky_count"]);
                 unset($forum_settings_inherit["thread_count"]);
                 unset($forum_settings_inherit["last_post_time"]);
 
