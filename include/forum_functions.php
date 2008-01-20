@@ -19,7 +19,11 @@ function phorum_build_forum_list() {
         $tmp_forums[$forum["forum_id"]]["forum_id"] = $forum["forum_id"];
         $tmp_forums[$forum["forum_id"]]["parent"] = $forum["parent_id"];
         $tmp_forums[$forum["parent_id"]]["children"][] = $forum["forum_id"];
-        $forums[$forum["parent_id"]]["childcount"]++;
+        if (empty($forums[$forum["parent_id"]]["childcount"])) {
+            $forums[$forum["parent_id"]]["childcount"] = 1;
+        } else {
+            $forums[$forum["parent_id"]]["childcount"]++;
+        }
     }
 
     $order = array();

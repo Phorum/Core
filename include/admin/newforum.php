@@ -18,251 +18,80 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
 require_once('./include/format_functions.php');
 require_once('./include/api/forums.php');
 require_once('./include/upload_functions.php');
 require_once('./include/admin/PhorumInputForm.php');
 
-$error="";
+$error = "";
 
 if (count($_POST))
 {
-
-    // set the defaults and check values
-
-    foreach($_POST as $field=>$value){
-
-        switch($field){
-
-            case "name":
-                if(empty($value) && $_POST["module"]!="forum_defaults"){
-                    $error="Please fill in Title";
-                }
-                break;
-
-            case "list_length_flat":
-                $_POST[$field]=(int)$value;
-                if(empty($_POST[$field])){
-                    $_POST[$field]=30;
-                }
-                break;
-
-            case "list_length_threaded":
-                $_POST[$field]=(int)$value;
-                if(empty($_POST[$field])){
-                    $_POST[$field]=15;
-                }
-                break;
-
-            case "read_length":
-                $_POST[$field]=(int)$value;
-                if(empty($_POST[$field])){
-                    $_POST[$field]=10;
-                }
-                break;
-
-            case "max_attachments":
-                $_POST[$field]=(int)$value;
-                if(empty($_POST[$field])){
-                    $_POST["allow_attachment_types"]="";
-                    $_POST["max_attachment_size"]=0;
-                    $_POST["max_totalattachment_size"]=0;
-                }
-                break;
-
-            case "max_attachment_size":
-            case "max_totalattachment_size":
-                $_POST[$field]=(int)$value;
-                break;
-
-            case "display_fixed":
-                $_POST[$field]=(int)$value;
-                break;
-
-            case "pub_perms":
-                $permission = 0;
-                foreach($_POST["pub_perms"] as $perm=>$check){
-                    $permission = $permission | $perm;
-                }
-
-                $_POST["pub_perms"]=$permission;
-                break;
-
-            case "reg_perms":
-                $permission = 0;
-                foreach($_POST["reg_perms"] as $perm=>$check){
-                    $permission = $permission | $perm;
-                }
-
-                $_POST["reg_perms"]=$permission;
-                break;
-
-            case "inherit_id":
-                if( $_POST['inherit_id'] !== NULL && $_POST["inherit_id"] != "NULL" && $_POST['inherit_id'] != 0) {
-                    $forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
-                    if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
-                        $error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
-                    }
-                    if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] === 0) {
-                        $error="Settings can't be inherited by this forum, because this forum already inherits the default settings";
-                    }
-                }
-                break;
+    // Build a forum data array based on the posted data.
+    $forum = array();
+    foreach ($_POST as $field => $value)
+    {
+        // Create permission bitmasks. These are stored in the forum by means
+        // of separate checkboxes per bit.
+        if ($field == 'pub_perms' || $field == 'reg_perms')
+        {
+            $bits = empty($value) ? array() : $value;
+            $bitmask = 0;
+            foreach ($bits as $bit => $dummy) $bitmask |= $bit;
+            $forum[$field] = $bitmask;
         }
-
-        if($error) break;
-
-
-    }
-
-    if(empty($error)){
-        unset($_POST["module"]);
-
-        // handling vroots
-        if($_POST['parent_id'] > 0) {
-            $parent_folder=phorum_db_get_forums($_POST['parent_id']);
-            if($parent_folder[$_POST['parent_id']]['vroot'] > 0) {
-                $_POST['vroot'] = (int)$parent_folder[$_POST['parent_id']]['vroot'];
-            }
-        } else {
-            $_POST['vroot']=0;
+        // The inherit_id can be the string "NULL", in which case we need
+        // to translate it into a real NULL value.
+        elseif ($field == 'inherit_id') {
+            $forum[$field] = $value == 'NULL' ? NULL : (int) $value;
         }
-
-        // if we received no perms, set them to 0 so they will get saved correctly.
-
-        if(!isset($_POST['pub_perms']) || empty($_POST["pub_perms"])) $_POST["pub_perms"]=0;
-        if(!isset($_POST['reg_perms']) || empty($_POST["reg_perms"])) $_POST["reg_perms"]=0;
-
-        $old_settings_arr = phorum_db_get_forums($_POST["forum_id"]);
-        $old_settings = array_shift($old_settings_arr);
-
-        if($_POST["forum_id"] && $old_settings["inherit_id"]!==NULL && $_POST["inherit_id"]=="NULL"){
-            $reload = true;
-        }
-
-        // inherit settings if we've set this and are not in the default forum options
-        if( !defined("PHORUM_DEFAULT_OPTIONS") && $_POST["inherit_id"]!="NULL"  && $_POST['inherit_id'] !== NULL ) {
-
-            // Load inherit forum settings
-            if($_POST["inherit_id"]==0){
-                $forum_settings_inherit[0]=$PHORUM["default_forum_options"];
-            } else {
-                $forum_settings_inherit = phorum_db_get_forums($_POST["inherit_id"]);
-            }
-
-            if( isset($forum_settings_inherit[$_POST["inherit_id"]]) ) {
-
-                // slave settings
-                $forum_settings_inherit=$forum_settings_inherit[$_POST["inherit_id"]];
-                $forum_settings_inherit["forum_id"] = (int)$_POST["forum_id"];
-                $forum_settings_inherit["name"] = $_POST["name"];
-                $forum_settings_inherit["description"] = $_POST["description"];
-                $forum_settings_inherit["active"] = (int)$_POST["active"];
-                $forum_settings_inherit["vroot"] = (int)$_POST["vroot"];
-                $forum_settings_inherit["parent_id"] = (int)$_POST["parent_id"];
-                $forum_settings_inherit["inherit_id"] = $_POST["inherit_id"];
-
-                // don't inherit this settings
-                unset($forum_settings_inherit["message_count"]);
-                unset($forum_settings_inherit["thread_count"]);
-                unset($forum_settings_inherit["last_post_time"]);
-
-                // we don't need to save the master forum
-                unset($forum_settings_inherit[$inherit_id]);
-                $_POST =$forum_settings_inherit;
-
-            } else {
-                $_POST["inherit_id"]="NULL";
-                unset($_POST["pub_perms"]);
-                unset($_POST["reg_perms"]);
-            }
-
-        }
-
-        if(defined("PHORUM_EDIT_FORUM") || defined("PHORUM_DEFAULT_OPTIONS")){
-
-            $forum_settings=$_POST;
-
-            if(defined("PHORUM_DEFAULT_OPTIONS")){
-                // these two will not be set if no options were checked
-                if(empty($forum_settings["pub_perms"])) $forum_settings["pub_perms"] = 0;
-                if(empty($forum_settings["reg_perms"])) $forum_settings["reg_perms"] = 0;
-                $res=phorum_db_update_settings(array("default_forum_options" => $forum_settings));
-            } else {
-                $res=phorum_db_update_forum($forum_settings);
-
-                // set/build the forum_path
-                $cur_forum_id=$forum_settings['forum_id'];
-                $path = phorum_api_forums_build_path($cur_forum_id);
-                $update_forum = array(
-                    'forum_id'   => $cur_forum_id,
-                    'forum_path' => $path
-                );
-                phorum_db_update_forum($update_forum);
-            }
-
-            // setting the current settings to all forums/folders inheriting from this forum/default settings
-            $forum_inherit_settings =phorum_db_get_forums(false,false,false,intval($_POST["forum_id"]));
-            foreach($forum_inherit_settings as $inherit_setting) {
-                $forum_settings["forum_id"] =$inherit_setting["forum_id"];
-                // We don't need to inherit this settings
-                unset($forum_settings["name"]);
-                unset($forum_settings["description"]);
-                unset($forum_settings["active"]);
-                unset($forum_settings["parent_id"]);
-                unset($forum_settings["inherit_id"]);
-                unset($forum_settings["message_count"]);
-                unset($forum_settings["thread_count"]);
-                unset($forum_settings["last_post_time"]);
-
-                $res_inherit =phorum_db_update_forum($forum_settings);
-            }
-
-        } else {
-            if(isset($_POST['forum_id'])) {
-                unset($_POST['forum_id']);
-            }
-            $res=phorum_db_add_forum($_POST);
-
-            // set/build the forum_path
-            $cur_forum_id=$res;
-            $path = phorum_api_forums_build_path($cur_forum_id);
-            $update_forum = array(
-                'forum_id'   => $cur_forum_id,
-                'forum_path' => $path
-            );
-            phorum_db_update_forum($update_forum);
-        }
-
-        if($res){
-
-            if($reload){
-                $url = $PHORUM["admin_http_path"]."?module=editforum&forum_id=$_POST[forum_id]";
-            } else {
-                $url = $PHORUM["admin_http_path"]."?module=default&parent_id=$_POST[parent_id]";
-            }
-
-            phorum_redirect_by_url($url);
-            exit();
-        } else {
-            $error="Database error while adding/updating forum.";
+        // All other fields are simply copied.
+        elseif (array_key_exists($field, $PHORUM['API']['forum_fields'])) {
+          $forum[$field] = $value;
         }
     }
 
-    foreach($_POST as $key=>$value){
-        $$key=$value;
-    }
-    $pub_perms=0;
-    if(isset($_POST["pub_perms"])) foreach($_POST["pub_perms"] as $perm=>$check){
-        $pub_perms = $pub_perms | $perm;
-    }
-    $reg_perms=0;
-    if(isset($_POST["reg_perms"])) foreach($_POST["reg_perms"] as $perm=>$check){
-        $reg_perms = $reg_perms | $perm;
+    // Check for errors in the provided data.
+    $errors = array();
+
+    // Was a title filled in for the forum?
+    if (!defined('PHORUM_DEFAULT_OPTIONS') && trim($forum['name']) == '') {
+        $errors[] = 'The "Title" field is empty. Please, fill in a title.';
     }
 
+    // If there were no errors, then store the data in the database.
+    if (empty($errors))
+    {
+        // Store default settings.
+        if (defined('PHORUM_DEFAULT_OPTIONS'))
+        {
+            // Store the default settings in the database.
+            phorum_api_forums_save($forum, PHORUM_FLAG_DEFAULTS);
+
+            // The URL to redirect to.
+            $url = $PHORUM['admin_http_path']."?module=forum_defaults&saved=1";
+        }
+        // Create or update a forum.
+        else
+        {
+            // Some statically assigned fields.
+            $forum['folder_flag'] = 0;
+            // For new forums.
+            if (!defined('PHORUM_EDIT_FORUM')) {
+                $forum['forum_id'] = NULL;
+            }
+
+            // Store the forum data in the database.
+            phorum_api_forums_save($forum);
+
+            // The URL to redirect to.
+            $url = $PHORUM["admin_http_path"]."?module=default&parent_id=$forum[parent_id]";
+        }
+
+        phorum_redirect_by_url($url);
+    }
 
 } elseif(defined("PHORUM_EDIT_FORUM")) {
 
@@ -276,8 +105,12 @@ if (count($_POST))
 
 }
 
-if($error){
-    phorum_admin_error($error);
+if ($errors){
+    phorum_admin_error(join("<br/>", $errors));
+}
+
+if (isset($_GET['saved'])) {
+    phorum_admin_okmsg('The default settings were successfully saved');
 }
 
 $frm = new PhorumInputForm ("", "post");

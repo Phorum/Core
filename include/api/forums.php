@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements the Phorum forum admin API.
+ * This script implements the Phorum forums API.
  *
  * This API is used for managing Phorum forums and folders. It can be used to
  * retrieve information about the available forums and folders and takes care
@@ -59,6 +59,8 @@
  *     - template: The name of the template to use for the folder.
  *     - language: The name of the language to use for the folder.
  *     TODO other forum fields. Maybe a different location would be better?
+ *     TODO I think this should go in an "Internals" chapter in the
+ *     developer docbook.
  *
  * @package    PhorumAPI
  * @subpackage ForumsAPI
@@ -68,80 +70,117 @@
 
 if (!defined("PHORUM")) return;
 
+// {{{ Constant and variable definitions
+
+/**
+ * The FFLD_* definitions indicate the position of the configation
+ * options in the forum field definitions.
+ */
+define('FFLD_MS',      0);
+define('FFLD_TYPE',    1);
+define('FFLD_DEFAULT', 2);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_save()}
+ * that it should not save the settings to the database, but only prepare
+ * the data and return the prepared data array.
+ */
+define('PHORUM_FLAG_PREPARE', 1);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_save()}
+ * that the provided data have to be stored in the default settings.
+ */
+define('PHORUM_FLAG_DEFAULTS', 2);
+
 /**
  * This array describes folder data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
+ * Value format: <m|v>:<type>[:default]
+ * m = master field; always determined by the folder's configuration data.
+ * s = slave field; overridden by inheritance parent if inherid_id is set.
  */
 $GLOBALS['PHORUM']['API']['folder_fields'] = array(
-  'forum_id'                => 'int',
-  'folder_flag'             => 'bool',
-  'parent_id'               => 'int',
-  'name'                    => 'string',
-  'description'             => 'string',
-  'active'                  => 'bool',
-  'forum_path'              => 'array',
-  'display_order'           => 'int',
-  'vroot'                   => 'int',
+  'forum_id'                => 'm:int',
+  'folder_flag'             => 'm:bool:1',
+  'parent_id'               => 'm:int:0',
+  'name'                    => 'm:string',
+  'description'             => 'm:string:',
+  'active'                  => 'm:bool:1',
+  'forum_path'              => 'm:array',
+  'display_order'           => 'm:int:0',
+  'vroot'                   => 'm:int:0',
+  'cache_version'           => 'm:int:0',
+  'inherit_id'              => 'm:int:0',
 
   // Display settings.
-  'template'                => 'string',
-  'language'                => 'string'
+  'template'                => 's:string:'.PHORUM_DEFAULT_TEMPLATE,
+  'language'                => 's:string:'.PHORUM_DEFAULT_LANGUAGE
 );
 
 /**
  * This array describes forum data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
+ * Value format: <m|v>:<type>[:default]
+ * m = master field; always determined by the folder's configuration data.
+ * s = slave field; overridden by inheritance parent if inherid_id is set.
  */
 $GLOBALS['PHORUM']['API']['forum_fields'] = array(
-  'forum_id'                 => 'int',
-  'folder_flag'              => 'bool',
-  'parent_id'                => 'int',
-  'name'                     => 'string',
-  'description'              => 'string',
-  'active'                   => 'bool',
-  'forum_path'               => 'array',
-  'display_order'            => 'int',
-  'vroot'                    => 'int',
-  'cache_version'            => 'int',
+  'forum_id'                 => 'm:int',
+  'folder_flag'              => 'm:bool:0',
+  'parent_id'                => 'm:int:0',
+  'name'                     => 'm:string',
+  'description'              => 'm:string:',
+  'active'                   => 'm:bool:1',
+  'forum_path'               => 'm:array',
+  'display_order'            => 'm:int:0',
+  'vroot'                    => 'm:int:0',
+  'cache_version'            => 'm:int:0',
+  'inherit_id'               => 'm:int:0',
 
   // Display settings.
-  'display_fixed'            => 'bool',
-  'inherit_id'               => 'int',
-  'template'                 => 'string',
-  'language'                 => 'string',
-  'reverse_threading'        => 'bool',
-  'float_to_top'             => 'bool',
-  'threaded_list'            => 'int',
-  'list_length_flat'         => 'int',
-  'list_length_threaded'     => 'int',
-  'threaded_read'            => 'int',
-  'read_length'              => 'int',
-  'display_ip_address'       => 'bool',
+  'display_fixed'            => 's:bool:0',
+  'template'                 => 's:string:'.PHORUM_DEFAULT_TEMPLATE,
+  'language'                 => 's:string:'.PHORUM_DEFAULT_LANGUAGE,
+  'reverse_threading'        => 's:bool:0',
+  'float_to_top'             => 's:bool:1',
+  'threaded_list'            => 's:int:0',
+  'list_length_flat'         => 's:int:30',
+  'list_length_threaded'     => 's:int:15',
+  'threaded_read'            => 's:int:0',
+  'read_length'              => 's:int:10',
+  'display_ip_address'       => 's:bool:0',
 
   // Posting settings.
-  'check_duplicate'          => 'bool',
+  'check_duplicate'          => 's:bool:1',
 
   // Statistics and statistics settings.
-  'message_count'            => 'int',
-  'thread_count'             => 'int',
-  'sticky_count'             => 'int',
-  'last_post_time'           => 'int',
-  'count_views'              => 'bool',
-  'count_views_per_thread'   => 'bool',
+  'message_count'            => 'm:int:0',
+  'thread_count'             => 'm:int:0',
+  'sticky_count'             => 'm:int:0',
+  'last_post_time'           => 'm:int:0',
+  'count_views'              => 's:bool:1',
+  'count_views_per_thread'   => 's:bool:0',
 
   // Permission settings.
-  'moderation'               => 'int',
-  'email_moderators'         => 'bool',
-  'allow_email_notify'       => 'bool',
-  'pub_perms'                => 'int',
-  'reg_perms'                => 'int',
+  'moderation'               => 's:int:0',
+  'email_moderators'         => 's:bool:1',
+  'allow_email_notify'       => 's:bool:1',
+  'pub_perms'                => 's:int:'.PHORUM_USER_ALLOW_READ,
+  'reg_perms'                => 's:int:'.(
+       PHORUM_USER_ALLOW_READ  |
+       PHORUM_USER_ALLOW_REPLY |
+       PHORUM_USER_ALLOW_EDIT  |
+       PHORUM_USER_ALLOW_NEW_TOPIC
+  ),
 
   // Attachment settings.
-  'allow_attachment_types'   => 'string',
-  'max_attachment_size'      => 'int',
-  'max_totalattachment_size' => 'int',
-  'max_attachments'          => 'int',
+  'allow_attachment_types'   => 's:string:',
+  'max_attachment_size'      => 's:int:0',
+  'max_totalattachment_size' => 's:int:0',
+  'max_attachments'          => 's:int:0',
 );
+// }}}
 
 // {{{ Function: phorum_api_forums_get
 /**
@@ -192,12 +231,19 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
         $filtered = array('folder_flag' => $forum['folder_flag'] ? 1 : 0);
 
         // Add fields to the filtered data.
-        foreach ($fields as $fld => $fldtype)
+        foreach ($fields as $fld => $fldspec)
         {
-            switch ($fldtype)
+            $spec = explode(":", $fldspec);
+
+            switch ($spec[FFLD_TYPE])
             {
                 case 'int':
-                    $filtered[$fld] = (int)$forum[$fld];
+                    // The inherit_id field can be NULL, so we need to
+                    // differentiate for NULL values here. For the other
+                    // types, there are currenctly no NULL fields available.
+                    $filtered[$fld] = $forum[$fld] === NULL
+                                    ? NULL
+                                    : (int)$forum[$fld];
                     break;
 
                 case 'string':
@@ -235,22 +281,58 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
 
 // {{{ Function: phorum_api_forums_save()
 /**
- * Create or update a folder or forum.
+ * This function can be used for creating and updating folders or forums and
+ * for updating default forum settings.
+ *
+ * Here is an example for creating a forum below the folder with forum_id 1234,
+ * which inherits its settings from the default forum settings.
+ * <code>
+ * $newforum = array(
+ *     'forum_id'    => NULL,
+ *     'folder_flag' => 0,
+ *     'parent_id'   => 1234,
+ *     'inherit_id'  => 0,
+ *     'name'        => 'Foo bar baz talk'
+ * );
+ * $forum = phorum_api_forums_save($newforum);
+ * print "The forum_id for the new forum is " . $forum['forum_id'] . "\n";
+ * </code>
+ *
+ * This example will update some default forum settings. This will also
+ * update the forums / folders that inherit their settings from the
+ * default settings.
+ * <code>
+ * $newsettings = array(
+ *     'display_ip_address' => 0,
+ *     'count_views'        => 1,
+ *     'language'           => 'foolang'
+ * );
+ * phorum_api_forums_save($newsettings, PHORUM_FLAG_DEFAULTS);
+ * </code>
  *
  * @param array $data
  *     An array containing folder or forum data. This array should contain at
  *     least the field "forum_id". This field can be NULL to create a new
- *     entry with an automatically assigned forum_id. It can also be set to a
- *     forum_id to either update an existing entry or to create a new one
- *     with the provided forum_id.
- *     If a new entry is created, then all forum or folder fields must be
- *     provided in the data.
+ *     entry with an automatically assigned forum_id (in which case you will
+ *     also need to provide at least the fields "folder_flag" and "name).
+ *     It can also be set to a forum_id to either update an existing entry or
+ *     to create a new one with the provided forum_id.
  *
- * @return integer
- *     The forum_id of the forum or folder. For new ones, the newly assigned
- *     forum_id will be returned.
+ * @param boolean $flags
+ *     If the {@link PHORUM_FLAG_PREPARE} flag is set, then this function
+ *     will not save the data in the database. Instead, it will only prepare
+ *     the data for storage and return the prepared data.
+ *     If the {@link PHORUM_FLAG_DEFAULTS} flag is set, then the data will
+ *     be stored in the default forum settings.
+ *
+ * @return array
+ *     If the {@link PHORUM_FLAG_PREPARE} is set, this function will only
+ *     prepare the data for storage and return the prepared data array.
+ *     Otherwise, the stored data will be returned. The main difference is
+ *     that for new forums or folders, the forum_id field will be updated
+ *     to the newly assigned forum_id.
  */
-function phorum_api_forums_save($data)
+function phorum_api_forums_save($data, $flags = 0)
 {
     // $data must be an array.
     if (!is_array($data)) {
@@ -261,32 +343,51 @@ function phorum_api_forums_save($data)
         return NULL;
     }
 
-    // We need at least the forum_id field.
-    if (!array_key_exists('forum_id', $data))  {
-        trigger_error(
-           'phorum_api_forums_save(): missing field "forum_id" ' .
-           'in the data array',
-           E_USER_ERROR
-        );
-        return NULL;
-    }
-    if ($data['forum_id'] !== NULL && !is_numeric($data['forum_id'])) {
-        trigger_error(
-            'phorum_api_forums_save(): field "forum_id" not NULL or numerical',
-            E_USER_ERROR
-        );
-        return NULL;
-    }
+    // Initialize data for saving default forum settings.
+    if ($flags & PHORUM_FLAG_DEFAULTS)
+    {
+        $existing = empty($GLOBALS['PHORUM']['default_forum_options'])
+                  ? NULL : $GLOBALS['PHORUM']['default_forum_options'];
 
-    // Check if we are handling an existing or new entry.
-    $existing = NULL;
-    if ($data['forum_id'] !== NULL) {
-        $existing = phorum_api_forums_get($data['forum_id']);
+        // Force a few settings to static values to have the data
+        // processed correctly by the code below.
+        $data['forum_id']    = NULL;
+        $data['parent_id']   = 0;
+        $data['inherit_id']  = NULL;
+        $data['folder_flag'] = 0;
+        $data['name']        = 'Default settings';
     }
+    // Initialize data for saving forum settings.
+    else
+    {
+        // We always require the forum_id field. For new forums, we want to
+        // retrieve an explicit forum_id = NULL field.
+        if (!array_key_exists('forum_id', $data))  {
+            trigger_error(
+               'phorum_api_forums_save(): missing field "forum_id" ' .
+               'in the data array',
+               E_USER_ERROR
+            );
+            return NULL;
+        }
+        if ($data['forum_id'] !== NULL && !is_numeric($data['forum_id'])) {
+            trigger_error(
+                'phorum_api_forums_save(): field "forum_id" not NULL or numerical',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
 
-    // The forum_path is a field that is generated by the API code. So we
-    // pull it from the incoming data array here.
-    unset($data['forum_path']);
+        // Check if we are handling an existing or new entry.
+        $existing = NULL;
+        if ($data['forum_id'] !== NULL) {
+            $existing = phorum_api_forums_get($data['forum_id']);
+        }
+
+        // The forum_path is a field that is generated by the API code. So we
+        // pull it from the incoming data array here.
+        unset($data['forum_path']);
+    }
 
     // Create a data array that is understood by the database layer.
     // We start out with the existing record, if we have one.
@@ -297,27 +398,32 @@ function phorum_api_forums_save($data)
         $dbdata[$fld] = $val;
     }
 
-    // By now, we need the folder_flag field, so we know what kind
-    // of entry we are handling.
-    if (!array_key_exists('folder_flag', $dbdata))  {
-        trigger_error(
-           'phorum_api_forums_save(): missing field "folder_flag" ' .
-           'in the data array',
-           E_USER_ERROR
-        );
-        return NULL;
-    }
-
-    // The folder_flag cannot change during the lifetime of an entry.
-    if ($existing) {
-        $check1 = $existing['folder_flag'] ? TRUE : FALSE;
-        $check2 = $dbdata['folder_flag']   ? TRUE : FALSE;
-        if ($check1 != $check2) {
+    // Some checks when we are not handling saving of default settings.
+    if (!($flags & PHORUM_FLAG_DEFAULTS))
+    {
+        // By now, we need the folder_flag field, so we know what kind
+        // of entry we are handling.
+        if (!array_key_exists('folder_flag', $dbdata))  {
             trigger_error(
-                "phorum_api_forums_save(): the folder_flag cannot change",
-                E_USER_ERROR
+               'phorum_api_forums_save(): missing field "folder_flag" ' .
+               'in the data array',
+               E_USER_ERROR
             );
             return NULL;
+        }
+
+        // The folder_flag cannot change during the lifetime of an entry.
+        if ($existing)
+        {
+            $check1 = $existing['folder_flag'] ? TRUE : FALSE;
+            $check2 = $dbdata['folder_flag']   ? TRUE : FALSE;
+            if ($check1 != $check2) {
+                trigger_error(
+                    "phorum_api_forums_save(): the folder_flag cannot change",
+                    E_USER_ERROR
+                );
+                return NULL;
+            }
         }
     }
 
@@ -326,7 +432,10 @@ function phorum_api_forums_save($data)
             ? $GLOBALS['PHORUM']['API']['folder_fields']
             : $GLOBALS['PHORUM']['API']['forum_fields'];
 
-    // Check and format fields.
+    // A copy of the $fields array to keep track of missing fields.
+    $missing = $fields;
+
+    // Check and format the provided fields.
     foreach ($dbdata as $fld => $val)
     {
         // Make sure that a valid field name is used. We do a strict check
@@ -340,10 +449,12 @@ function phorum_api_forums_save($data)
             return NULL;
         }
 
-        $fldtype = $fields[$fld];
-        unset($fields[$fld]); // for tracking if all fields are available.
+        $spec = explode(':', $fields[$fld]);
 
-        switch ($fldtype)
+        // For tracking if all required fields are available.
+        unset($missing[$fld]);
+
+        switch ($spec[FFLD_TYPE])
         {
             case 'int':
                 $dbdata[$fld] = $val === NULL ? NULL : (int) $val;
@@ -364,7 +475,7 @@ function phorum_api_forums_save($data)
             default:
                 trigger_error(
                     'phorum_api_forums_save(): Illegal field type used: ' .
-                    htmlspecialchars($fldtype),
+                    htmlspecialchars($spec[FFLD_TYPE]),
                     E_USER_ERROR
                 );
                 return NULL;
@@ -372,45 +483,416 @@ function phorum_api_forums_save($data)
         }
     }
 
-    // Check if all required fields are available.
     // The forum_path is autogenerated and does not have to be provided.
-    unset($fields['forum_path']);
+    // Therefore, we take it out of the loop here.
+    unset($missing['forum_path']);
     unset($dbdata['forum_path']);
-    if (count($fields)) {
+
+    // Check if all required fields are available.
+    if (count($missing))
+    {
+        // Try to fill in some default values for the missing fields.
+        foreach ($missing as $fld => $fldspec)
+        {
+            $spec = explode(':', $fldspec);
+            if (isset($spec[FFLD_DEFAULT])) {
+                $dbdata[$fld] = $spec[FFLD_DEFAULT];
+                unset($missing[$fld]);
+            }
+        }
+    }
+
+    // Apply inheritance driven settings to the data if some sort of
+    // inheritance is configured. Options for this field are:
+    // - NULL       : no inheritance used
+    // - 0          : inherit from the default forum options
+    // - <forum_id> : inherit from the forum identified by this forum_id
+    if ($dbdata['inherit_id'] !== NULL)
+    {
+        // Inherit from the default settings.
+        if ($dbdata['inherit_id'] == 0) {
+            $defaults = $GLOBALS['PHORUM']['default_forum_options'];
+        }
+        // Inherit from a specific forum.
+        else
+        {
+            $defaults = phorum_api_forums_get($dbdata['inherit_id']);
+
+            // Check if the inherit_id forum was found.
+            if ($defaults === NULL) {
+                trigger_error(
+                    'phorum_api_forums_save(): no forum found for ' .
+                    'inherid_id ' . $dbdata['inherit_id'],
+                    E_USER_ERROR
+                );
+                return NULL;
+            }
+
+            // It is only allowed to inherit settings from forums.
+            if (!empty($defaults['folder_flag'])) {
+                trigger_error(
+                    'phorum_api_forums_save(): inherit_id ' .
+                    $dbdata['inherit_id'] . ' points to a folder instead of ' .
+                    'a forum. You can only inherit from forums.',
+                    E_USER_ERROR
+                );
+            }
+
+            // Inherited inheritance is not allowed.
+            if ($defaults['inherit_id'] !== NULL) {
+                trigger_error(
+                    'phorum_api_forums_save(): inherit_id ' .
+                    $dbdata['inherit_id'] . ' points to a forum that ' .
+                    'inherits settings itself. Inherited inheritance is ' .
+                    'not allowed.',
+                    E_USER_ERROR
+                );
+            }
+        }
+
+        // Overlay our data record with the inherited settings.
+        if (is_array($defaults)){
+            foreach ($defaults as $fld => $value)
+            {
+                // We need to check if the $fld is in $fields, because we
+                // could be applying forum defaults to a folder here.
+                // A folder does not contain all the same fields as a forum.
+                // Also check if we're handling a slave (s) field.
+                if (isset($fields[$fld]) && $fields[$fld][0] == 's') {
+                    $dbdata[$fld] = $value;
+                    unset($missing[$fld]);
+                }
+            }
+        }
+    }
+
+    // Check if there are any missing fields left.
+    if (count($missing)) {
         trigger_error(
             'phorum_api_forums_save(): Missing field(s) in the data: ' .
-            implode(', ', array_keys($fields)),
+            implode(', ', array_keys($missing)),
             E_USER_ERROR
         );
         return NULL;
     }
 
-    // Add or update the forum or folder in the database.
+    // If we are storing default settings, then filter the data array to
+    // only contain fields that are no master fields. We could store them
+    // unfiltered in the database, but this provides cleaner data.
+    if ($flags & PHORUM_FLAG_DEFAULTS)
+    {
+        $filtered = array();
+        foreach ($dbdata as $fld => $value) {
+            if (isset($fields[$fld]) && $fields[$fld][0] == 's') {
+                $filtered[$fld] = $value;
+            }
+        }
+        $dbdata = $filtered;
+    }
+
+    // Return the prepared data if the PHORUM_FLAG_PREPARE flag was set.
+    if ($flags & PHORUM_FLAG_PREPARE) {
+        return $dbdata;
+    }
+
+    // Store default settings in the database.
+    if ($flags & PHORUM_FLAG_DEFAULTS)
+    {
+        // Create or update the settings record.
+        phorum_db_update_settings(array(
+            'default_forum_options' => $dbdata
+        ));
+
+        // Update the global default forum options variable, so it
+        // matches the updated settings.
+        $GLOBALS['PHORUM']['default_forum_options'] = $dbdata;
+
+        // Update all forums that inherit the default settings.
+        $childs = phorum_api_forums_by_inheritance(0);
+        if (!empty($childs)) {
+            foreach ($childs as $child) {
+                phorum_api_forums_save(array(
+                    'forum_id' => $child['forum_id']
+                ));
+            }
+        }
+
+        return $dbdata;
+    }
+
+    // Store the forum or folder in the database.
     if ($existing) {
         phorum_db_update_forum($dbdata);
     } else {
         $dbdata['forum_id'] = phorum_db_add_forum($dbdata);
     }
 
-    // (Re)build the forum_path if required.
+    // Handle changes that influence the forum tree paths.
+    // We handle the updates in a separate function, because we need
+    // to be able to do recursive handling for those.
     if ( !$existing ||
          ($existing['parent_id'] != $dbdata['parent_id']) ||
          ($existing['vroot']     != $dbdata['vroot']) ||
          ($existing['name']      != $dbdata['name']) ) {
-        $path = phorum_api_forums_build_path($dbdata['forum_id']);
-        phorum_db_update_forum(array(
-            'forum_id'   => $dbdata['forum_id'],
-            'forum_path' => serialize($path)
-        ));
-        print "SET " . join(",",$path) . "\n";
-        print_r(array(
-            'forum_id'   => $dbdata['forum_id'],
-            'forum_path' => serialize($path)
-        ));
+
+        $recurse = $existing ? TRUE : FALSE;
+        if (!phorum_api_forums_update_path($dbdata, $recurse)) return NULL;
     }
 
+    // Handle cascading of inherited settings.
+    // Inheritance is only possible from existing forums that do not inherit
+    // settings themselves. So only if the currently saved entry does match
+    // those criteria, we might have to cascade.
+    if ($existing &&
+        $existing['folder_flag'] == 0 &&
+        $existing['inherit_id'] === NULL)
+    {
+        // Find the forums and folders that inherit from this forum.
+        $childs = phorum_api_forums_by_inheritance($existing['forum_id']);
 
-    return $dbdata['user_id'];
+        // If there are child forums, then update their inherited settings.
+        if (!empty($childs)) {
+            foreach ($childs as $child) {
+                phorum_api_forums_save(array(
+                    'forum_id' => $child['forum_id']
+                ));
+            }
+        }
+    }
+
+    return $dbdata;
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_update_path()
+/**
+ * This function can be used to (recursively) update forum_path fields.
+ *
+ * The function is internally used by Phorum to update the paths that are
+ * stored in the "forum_path" field of the forums table. Under normal
+ * circumstances, this function will be called when appropriate by the
+ * {@link phorum_api_forums_save()} function.
+ *
+ * @param array $forum
+ *     A forum data array. The forum_path will be updated for this forum.
+ *     The array requires at least the fields: forum_id, parent_id,
+ *     folder_flag and vroot.
+ *
+ * @param boolean $recurse
+ *     If this parameter is set to TRUE (the default), then recursive
+ *     path updates will be done. The function will walk down the folder/forum
+ *     tree to update all paths.
+ *
+ * @return mixed
+ *     On failure trigger_error() will be called. If some error handler
+ *     does not stop script execution, this function will return NULL.
+ *     On success, an updated $forum array will be returned.
+ */
+function phorum_api_forums_update_path($forum, $recurse = TRUE)
+{
+    // Check if the parent_id is valid.
+    if ($forum['parent_id'] != 0)
+    {
+        $parent = phorum_api_forums_get($forum['parent_id']);
+
+        // Check if the parent was found.
+        if ($parent === NULL) {
+            trigger_error(
+                'phorum_api_forums_save(): parent_id ' .
+                $forum['parent_id'] . ' point to a folder that does ' .
+                'not exist.',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+
+        // Check if the parent is a folder.
+        if (!$parent['folder_flag']) {
+            trigger_error(
+                'phorum_api_forums_save(): parent_id ' .
+                $forum['parent_id'] . ' does not point to a folder. ' .
+                'You can only put forums/folders inside folders.',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+    }
+
+    // If this is not a vroot folder, then the $forum needs to inherit
+    // its vroot from its parent. We'll silently fix inconsitencies
+    // in this info here.
+    if (!$forum['folder_flag'] || $forum['vroot'] != $forum['forum_id']) {
+        $forum['vroot'] = $parent['vroot'];
+    }
+
+    // Check if the vroot is valid.
+    if ($forum['vroot'] != 0)
+    {
+        // Retrieve the info from the vroot.
+        $vroot = phorum_api_forums_get($forum['vroot']);
+
+        // Check if the vroot was found.
+        if ($vroot === NULL) {
+            trigger_error(
+                'phorum_api_forums_save(): vroot ' .
+                $forum['vroot'] . ' point to a folder that does ' .
+                'not exist.',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+
+        // Check if the vroot is a folder.
+        if (!$vroot['folder_flag']) {
+            trigger_error(
+                'phorum_api_forums_save(): vroot ' .
+                $forum['vroot'] . ' does not point to a folder. ' .
+                'Only folders can be vroots.',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+
+        // Check if the vroot folder is setup as a vroot.
+        if ($vroot['vroot'] != $vroot['forum_id']) {
+            trigger_error(
+                'phorum_api_forums_save(): vroot ' .
+                $forum['vroot'] . ' points to a folder that is  not ' .
+                'setup as a vroot folder.',
+                E_USER_ERROR
+            );
+            return NULL;
+        }
+    }
+
+    // Rebuild the forum_path for this forum.
+    $path = phorum_api_forums_build_path($forum['forum_id']);
+    $forum['forum_path'] = $path;
+    phorum_db_update_forum(array(
+        'vroot'      => $forum['vroot'],
+        'forum_id'   => $forum['forum_id'],
+        'forum_path' => $forum['forum_path']
+    ));
+
+    // Cascade path updates down the forum tree. This is only
+    // applicable to folders and if recursion is enabled.
+    if ($forum['folder_flag'] && $recurse)
+    {
+        // Find the forums and folders that are contained by this folder.
+        $childs = phorum_api_forums_by_parent_id($forum['forum_id']);
+
+        // If there are childs, then update their vroot (which might have
+        // changed) and save them to have the path updated.
+        if (!empty($childs)) {
+            foreach ($childs as $child){
+                $child['vroot'] = $forum['vroot'];
+                if (!phorum_api_forums_update_path($child)) {
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    return $forum;
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_build_path()
+/**
+ * This function can be used for building the folder paths that lead up to
+ * forums/folders.
+ *
+ * The function is internally used by Phorum to build the paths that are stored
+ * in the "forum_path" field of the forums table. If you need access to the
+ * path for a folder or forum, then do not call this function for retrieving
+ * that info, but look at the "forum_path" field in the forum or folder
+ * info instead.
+ *
+ * @param mixed $forum_id
+ *     If $forum_id is NULL, then the paths for all available forums and
+ *     folders will be built. Otherwise, only the path for the requested
+ *     forum_id is built.
+ *
+ * @return array
+ *     If the $forum_id parameter is a single forum_id, then a single path
+ *     is returned. If it is NULL, then an array or paths is returned, indexed
+ *     by the forum_id for which the path was built.
+ *     Each path is an array, containing the nodes in the path
+ *     (key = forum_id, value = name). The first element in a path array will
+ *     be the (v)root and the last element the forum or folder for which the
+ *     path was built.
+ *
+ *     Note: the root node (forum_id = 0) will also be returned in the
+ *     data when using NULL or 0 as the $forum_id argument. This is however a
+ *     generated node for which no database record exists. So if you are using
+ *     this functions return data for updating folders in the database, then
+ *     beware to skip the forum_id = 0 root node.
+ */
+function phorum_api_forums_build_path($forum_id = NULL)
+{
+    $paths = array();
+
+    // The forum_id = 0 root node is not in the database.
+    // Here, we create a representation for that node that will work.
+    $root = array(
+        'vroot'    => 0,
+        'forum_id' => 0,
+        'name'     => $GLOBALS['PHORUM']['title']
+    );
+
+    // If we are going to update the paths for all nodes, then we pull
+    // in our full list of forums and folders from the database. If we only
+    // need the path for a single node, then the node and all its parent
+    // nodes are retrieved using single calls to the database.
+    if ($forum_id === NULL) {
+        $nodes = phorum_db_get_forums();
+        $nodes[0] = $root;
+    } else {
+        if ($forum_id == 0) {
+            $nodes = array(0 => $root);
+        } else {
+            $nodes = phorum_db_get_forums($forum_id);
+        }
+    }
+
+    // Build the paths for the retrieved node(s).
+    foreach($nodes as $id => $node)
+    {
+        $path = array();
+
+        while (TRUE)
+        {
+            // Add the node to the path.
+            $path[$node['forum_id']] = $node['name'];
+
+            // Stop building when we hit a (v)root.
+            if ($node['forum_id'] == 0 ||
+                $node['vroot'] == $node['forum_id']) break;
+
+            // Find the parent node. The root node (forum_id = 0) is special,
+            // since that one is not in the database. We create an entry on
+            // the fly for that one here.
+            if ($node['parent_id'] == 0) {
+                $node = $root;
+            } elseif ($forum_id !== NULL) {
+                $tmp = phorum_db_get_forums($node['parent_id']);
+                $node = $tmp[$node['parent_id']];
+            } else {
+                $node = $nodes[$node['parent_id']];
+            }
+        }
+
+        // Reverse the path, since we have been walking up the path here.
+        // For the parts of the application that use this data, it's more
+        // logical if the root nodes come first in the path arrays.
+        $paths[$id] = array_reverse($path, TRUE);
+    }
+
+    if ($forum_id === NULL) {
+        return $paths;
+    } else {
+        return isset($paths[$forum_id]) ? $paths[$forum_id] : NULL;
+    }
 }
 // }}}
 
@@ -516,107 +998,6 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
 }
 // }}}
 
-// {{{ Function: phorum_api_forums_build_path()
-/**
- * This function can be used for building the folder paths that lead up to
- * forums/folders.
- *
- * The function is internally used by Phorum to build the paths that are stored
- * in the "forum_path" field of the forums table. If you need access to the
- * path for a folder or forum, then do not call this function for retrieving
- * that info, but look at the "forum_path" field instead.
- *
- * @param mixed $forum_id
- *     If $forum_id is NULL, then the paths for all available forums and
- *     folders will be built. Otherwise, only the path for the requested
- *     forum_id is built.
- *
- * @return array
- *     If the $forum_id parameter is a single forum_id, then a single path
- *     is returned. If it is NULL, then an array or paths is returned, indexed
- *     by the forum_id for which the path was built.
- *     Each path is an array, containing the nodes in the path
- *     (key = forum_id, value = name). The first element in a path array will
- *     be the (v)root and the last element the forum or folder for which the
- *     path was built.
- *
- *     Note: the root node (forum_id = 0) will also be returned in the
- *     data when using NULL or 0 as the $forum_id argument. This is however a
- *     generated node for which no database record exists. So if you are using
- *     this functions return data for updating folders in the database, then
- *     beware to skip the forum_id = 0 root node.
- */
-function phorum_api_forums_build_path($forum_id = NULL)
-{
-    $paths = array();
-
-    // The forum_id = 0 root node is not in the database.
-    // Here, we create a representation for that node that will work.
-    $root = array(
-        'vroot'    => 0,
-        'forum_id' => 0,
-        'name'     => $GLOBALS['PHORUM']['title']
-    );
-
-    // If we are going to update the paths for all nodes, then we pull
-    // in our full list of forums and folders from the database. If we only
-    // need the path for a single node, then the node and all its parent
-    // nodes are retrieved using single calls to the database.
-    if ($forum_id === NULL) {
-        $nodes = phorum_db_get_forums();
-        $nodes[0] = $root;
-    } else {
-        if ($forum_id == 0) {
-            $nodes = array(0 => $root);
-        } else {
-            $nodes = phorum_db_get_forums($forum_id);
-        }
-    }
-
-    // Build the paths for the retrieved node(s).
-    foreach($nodes as $id => $node)
-    {
-        $path = array();
-
-        while (TRUE)
-        {
-            // Add the node to the path.
-            $path[$node['forum_id']] = $node['name'];
-
-            // Stop building when we hit a (v)root.
-            if ($node['forum_id'] == 0 ||
-                $node['vroot'] == $node['forum_id']) break;
-
-            // Find the parent node. The root node (forum_id = 0) is special,
-            // since that one is not in the database. We create an entry on
-            // the fly for that one here.
-            if ($node['parent_id'] == 0) {
-                $node = $root;
-            } elseif ($forum_id !== NULL) {
-                $tmp = phorum_db_get_forums($node['parent_id']);
-                $node = $tmp[$node['parent_id']];
-            } else {
-                $node = $nodes[$node['parent_id']];
-            }
-        }
-
-        // Reverse the path, since we have been walking up the path here.
-        // For the parts of the application that use this data, it's more
-        // logical if the root nodes come first in the path arrays.
-        $paths[$id] = array_reverse($path, TRUE);
-    }
-
-    // We cannot remember what this was needed for. For now, we leave it out.
-    // $paths = array_reverse($folders, true);
-
-    if ($forum_id === NULL) {
-        return $paths;
-    } else {
-        return isset($paths[$forum_id]) ? $paths[$forum_id] : NULL;
-    }
-}
-// }}}
-
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
 // ------------------------------------------------------------------------
@@ -629,12 +1010,29 @@ function phorum_api_forums_build_path($forum_id = NULL)
  *     The forum_id of the folder for which to retrieve the forums.
  *
  * @return array
- *     An array of forums, index by the their forum_id and sorted
+ *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
 function phorum_api_forums_by_folder($folder_id = 0)
 {
    return phorum_api_forums_get(NULL, $folder_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_by_parent_id()
+/**
+ * Retrieve data for all child forums and folders for a given parent folder.
+ *
+ * @param integer $parent_id
+ *     The parent_id of the folder for which to retrieve the forums.
+ *
+ * @return array
+ *     An array of forums and folders, index by the their forum_id and sorted
+ *     by their display order.
+ */
+function phorum_api_forums_by_parent_id($parent_id = 0)
+{
+    return phorum_api_forums_get(NULL, $parent_id);
 }
 // }}}
 
@@ -646,7 +1044,7 @@ function phorum_api_forums_by_folder($folder_id = 0)
  *     The forum_id of the vroot for which to retrieve the forums.
  *
  * @return array
- *     An array of forums, index by the their forum_id and sorted
+ *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
 function phorum_api_forums_by_vroot($vroot_id = 0)
@@ -657,13 +1055,14 @@ function phorum_api_forums_by_vroot($vroot_id = 0)
 
 // {{{ Function: phorum_api_forums_by_inheritance()
 /**
- * Retrieve data for all forums inheriting their settings from a certain forum.
+ * Retrieve data for all forums and folders that inherit their settings
+ * from a certain forum.
  *
  * @param integer $forum_id
  *     The forum_id for which to check what forums inherit its setting.
  *
  * @return array
- *     An array of forums, index by the their forum_id and sorted
+ *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
 function phorum_api_forums_by_inheritance($forum_id = 0)

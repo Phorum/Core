@@ -209,7 +209,7 @@ function phorum_db_mysql_connect() {
  * This function will sanitize a mixed variable based on a given type
  * for safe use in SQL queries.
  *
- * @param mixed $var
+ * @param mixed &$var
  *     The variable to be sanitized. Passed by reference, so the original
  *     variable will be updated. It can be either a single variable or an
  *     array containing multiple variables.
@@ -842,7 +842,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  * If the "thread" index is set to zero, a new thread will be started and the
  * "thread" index will be filled with the new thread id upon return.
  *
- * @param array $message
+ * @param array &$message
  *     The message to post. This is an array, which should contain the
  *     following fields: forum_id, thread, parent_id, author, subject, email,
  *     ip, user_id, moderator_post, status, sort, msgid, body, closed.
@@ -2344,22 +2344,14 @@ function phorum_db_add_forum($forum)
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
                 $insertfields[$key] = $value;
-            /**
-             * @todo Wouldn't it be better to have this one set to a real
-             *       NULL value from the script that calls this function?
-             *       If for some reason somebody wants to use the string
-             *       'NULL' for a value (a geek setting up a Phorum
-             *       probably ;-), then strange things will happen.
-             */
-            } elseif ($value == 'NULL') {
-                $insertfields[$key] = $value;
+            } elseif ($value === NULL) {
+                $insertfields[$key] = 'NULL';
             } else {
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
                 $insertfields[$key] = "'$value'";
             }
         }
     }
-
 
     $forum_id = phorum_db_interact(
         DB_RETURN_NEWID,
@@ -2374,102 +2366,79 @@ function phorum_db_add_forum($forum)
 }
 // }}}
 
-// {{{ Function: phorum_db_add_message_edit()
+// {{{ Function: phorum_db_update_forum()
 /**
- * Add a message-edit item
+ * Update the settings for one or more forums.
  *
- * @param array $edit_data
- *     The edit_data to add. This is an array, which should contain the
- *     following fields: diff_body, diff_subject, time, message_id and user_id.
+ * @param array $forum
+ *     The forum to update. This is an array, which should contain at least
+ *     the field "forum_id" to indicate what forum to update. Next to that,
+ *     one or more of the other fields from phorum_db_add_forum() can be
+ *     used to describe changed values. The "forum_id" field can also
+ *     contain an array of forum_ids. By using that, the settings can be
+ *     updated for all the forum_ids at once.
  *
- * @return integer
- *     The tracking_id that was assigned to that edit
+ * @return boolean
+ *     True if all settings were stored successfully. This function will
+ *     always return TRUE, so we could do without a return value. The
+ *     return value is here for backward compatibility.
  */
-function phorum_db_add_message_edit($edit_data)
+function phorum_db_update_forum($forum)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
+    // Check if the forum_id is set.
+    if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
+        'phorum_db_update_forum(): $forum["forum_id"] cannot be empty',
+        E_USER_ERROR
+    );
 
-    foreach ($edit_data as $key => $value) {
-        if (is_numeric($value)) {
-            $edit_data[$key] = (int)$value;
-        } elseif (is_array($value)) {
-            $value = serialize($value);
-            $edit_data[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value);
-        } else {
-            $edit_data[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value);
+    phorum_db_sanitize_mixed($forum['forum_id'], 'int');
+
+    // See what forum(s) to update.
+    if (is_array($forum['forum_id'])) {
+        $forumwhere = 'forum_id IN ('.implode(', ',$forum['forum_id']).')';
+    } else {
+        $forumwhere = 'forum_id = ' . $forum['forum_id'];
+    }
+    unset($forum['forum_id']);
+
+    // Prepare the SQL code for updating the fields.
+    $fields = array();
+    foreach ($forum as $key => $value)
+    {
+        if (phorum_db_validate_field($key))
+        {
+            if ($key == 'forum_path') {
+                $value = serialize($value);
+                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                $fields[] = "$key = '$value'";
+            } elseif (is_numeric($value) &&
+                !in_array($key,$PHORUM['string_fields_forum'])) {
+                $value = (int)$value;
+                $fields[] = "$key = $value";
+            } elseif ($value == 'NULL') {
+                $fields[] = "$key = $value";
+            } else {
+                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                $fields[] = "$key = '$value'";
+            }
         }
     }
 
-    $insertfields = array(
-        'message_id'     => $edit_data['message_id'],
-        'user_id'        => $edit_data['user_id'],
-        'time'           => $edit_data['time'],
-        'diff_body'      => "'" . $edit_data['diff_body'] . "'",
-        'diff_subject'   => "'" . $edit_data['diff_subject'] . "'",
-    );
-
-    // Insert the tracking-entry and get the new tracking_id.
-    $tracking_id = phorum_db_interact(
-        DB_RETURN_NEWID,
-        "INSERT INTO {$PHORUM['message_tracking_table']}
-                (".implode(', ', array_keys($insertfields)).")
-         VALUES (".implode(', ', $insertfields).")",
-        NULL,
-        DB_MASTERQUERY
-    );
-
-    return $tracking_id;
-}
-// }}}
-
-// {{{ Function: phorum_db_get_message_edits()
-/**
- * Retrieve a list of message-edits for a message
- *
- * @param integer $message_id
- *     The message id for which to retrieve the edits.
- *
- * @return array
- *     An array of message edits, indexed by track_id. The array elements
- *     are arrays containing the fields: user_id, time, diff_body
- *     and diff_subject.
- */
-function phorum_db_get_message_edits($message_id)
-{
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    settype($message_id, 'int');
-
-    // Select the message files from the database.
-    $edits = phorum_db_interact(
-        DB_RETURN_ASSOCS,
-        "SELECT user_id,
-                time,
-                diff_body,
-                diff_subject,
-                track_id
-         FROM   {$PHORUM['message_tracking_table']}
-         WHERE  message_id = $message_id
-         ORDER  BY track_id ASC",
-        'track_id'
-    );
-
-    foreach ($edits as $id => $edit)
-    {
-        // Unpack the message meta data.
-        $edits[$id]['diff_body'] = empty($edit['diff_body'])
-                               ? array()
-                               : unserialize($edit['diff_body']);
-
-        // Unpack the message meta data.
-        $edits[$id]['diff_subject'] = empty($edit['diff_subject'])
-                               ? array()
-                               : unserialize($edit['diff_subject']);
-
+    // Run the update, if there are fields to update.
+    if (count($fields)) {
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM['forums_table']}
+             SET "  .implode(', ', $fields) . "
+             WHERE  $forumwhere",
+            NULL,
+            DB_MASTERQUERY
+        );
     }
 
-    return $edits;
+    return TRUE;
 }
 // }}}
 
@@ -2589,79 +2558,102 @@ function phorum_db_drop_folder($forum_id)
 }
 // }}}
 
-// {{{ Function: phorum_db_update_forum()
+// {{{ Function: phorum_db_add_message_edit()
 /**
- * Update the settings for one or more forums.
+ * Add a message-edit item
  *
- * @param array $forum
- *     The forum to update. This is an array, which should contain at least
- *     the field "forum_id" to indicate what forum to update. Next to that,
- *     one or more of the other fields from phorum_db_add_forum() can be
- *     used to describe changed values. The "forum_id" field can also
- *     contain an array of forum_ids. By using that, the settings can be
- *     updated for all the forum_ids at once.
+ * @param array $edit_data
+ *     The edit_data to add. This is an array, which should contain the
+ *     following fields: diff_body, diff_subject, time, message_id and user_id.
  *
- * @return boolean
- *     True if all settings were stored successfully. This function will
- *     always return TRUE, so we could do without a return value. The
- *     return value is here for backward compatibility.
+ * @return integer
+ *     The tracking_id that was assigned to that edit
  */
-function phorum_db_update_forum($forum)
+function phorum_db_add_message_edit($edit_data)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // Check if the forum_id is set.
-    if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
-        'phorum_db_update_forum(): $forum["forum_id"] cannot be empty',
-        E_USER_ERROR
-    );
 
-    phorum_db_sanitize_mixed($forum['forum_id'], 'int');
-
-    // See what forum(s) to update.
-    if (is_array($forum['forum_id'])) {
-        $forumwhere = 'forum_id IN ('.implode(', ',$forum['forum_id']).')';
-    } else {
-        $forumwhere = 'forum_id = ' . $forum['forum_id'];
-    }
-    unset($forum['forum_id']);
-
-    // Prepare the SQL code for updating the fields.
-    $fields = array();
-    foreach ($forum as $key => $value)
-    {
-        if (phorum_db_validate_field($key))
-        {
-            if ($key == 'forum_path') {
-                $value = serialize($value);
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key = '$value'";
-            } elseif (is_numeric($value) &&
-                !in_array($key,$PHORUM['string_fields_forum'])) {
-                $value = (int)$value;
-                $fields[] = "$key = $value";
-            } elseif ($value == 'NULL') {
-                $fields[] = "$key = $value";
-            } else {
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key = '$value'";
-            }
+    foreach ($edit_data as $key => $value) {
+        if (is_numeric($value)) {
+            $edit_data[$key] = (int)$value;
+        } elseif (is_array($value)) {
+            $value = serialize($value);
+            $edit_data[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value);
+        } else {
+            $edit_data[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value);
         }
     }
 
-    // Run the update, if there are fields to update.
-    if (count($fields)) {
-        phorum_db_interact(
-            DB_RETURN_RES,
-            "UPDATE {$PHORUM['forums_table']}
-             SET "  .implode(', ', $fields) . "
-             WHERE  $forumwhere",
-            NULL,
-            DB_MASTERQUERY
-        );
+    $insertfields = array(
+        'message_id'     => $edit_data['message_id'],
+        'user_id'        => $edit_data['user_id'],
+        'time'           => $edit_data['time'],
+        'diff_body'      => "'" . $edit_data['diff_body'] . "'",
+        'diff_subject'   => "'" . $edit_data['diff_subject'] . "'",
+    );
+
+    // Insert the tracking-entry and get the new tracking_id.
+    $tracking_id = phorum_db_interact(
+        DB_RETURN_NEWID,
+        "INSERT INTO {$PHORUM['message_tracking_table']}
+                (".implode(', ', array_keys($insertfields)).")
+         VALUES (".implode(', ', $insertfields).")",
+        NULL,
+        DB_MASTERQUERY
+    );
+
+    return $tracking_id;
+}
+// }}}
+
+// {{{ Function: phorum_db_get_message_edits()
+/**
+ * Retrieve a list of message-edits for a message
+ *
+ * @param integer $message_id
+ *     The message id for which to retrieve the edits.
+ *
+ * @return array
+ *     An array of message edits, indexed by track_id. The array elements
+ *     are arrays containing the fields: user_id, time, diff_body
+ *     and diff_subject.
+ */
+function phorum_db_get_message_edits($message_id)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    settype($message_id, 'int');
+
+    // Select the message files from the database.
+    $edits = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT user_id,
+                time,
+                diff_body,
+                diff_subject,
+                track_id
+         FROM   {$PHORUM['message_tracking_table']}
+         WHERE  message_id = $message_id
+         ORDER  BY track_id ASC",
+        'track_id'
+    );
+
+    foreach ($edits as $id => $edit)
+    {
+        // Unpack the message meta data.
+        $edits[$id]['diff_body'] = empty($edit['diff_body'])
+                               ? array()
+                               : unserialize($edit['diff_body']);
+
+        // Unpack the message meta data.
+        $edits[$id]['diff_subject'] = empty($edit['diff_subject'])
+                               ? array()
+                               : unserialize($edit['diff_subject']);
+
     }
 
-    return TRUE;
+    return $edits;
 }
 // }}}
 
