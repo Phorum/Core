@@ -67,26 +67,26 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     static $conn_read;
     static $conn_write;
     $PHORUM = $GLOBALS['PHORUM'];
-    
-    if(  !($flags & DB_MASTERQUERY) && 
+
+    if(  !($flags & DB_MASTERQUERY) &&
          !empty($PHORUM['DBCONFIG']['slaves']) &&
          is_array($PHORUM['DBCONFIG']['slaves'])
       ) {
-                  
+
         if(empty($conn_read)) {
                 // loop the servers until we get a connect
                 // this could slow you down if you have a lot of downed
                 // read servers
                 while(!$conn_read && count($PHORUM['DBCONFIG']['slaves'])){
-                    
+
                     $rand_server = mt_rand(0, count($PHORUM['DBCONFIG']['slaves']));
-                    
+
                     // just in case someone did non-contiguous keys
                     if(!empty($PHORUM['DBCONFIG']['slaves'][$rand_server])) {
-                        
-                        
+
+
                         $server_data = $PHORUM['DBCONFIG']['slaves'][$rand_server];
-                        
+
                         $conn_read = mysqli_connect(
                             $server_data['server'],
                             $server_data['user'],
@@ -97,48 +97,48 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                             // if we could not connect, remove this server
                             // from the array for this request.
                             unset($PHORUM['DBCONFIG']['slaves'][$rand_server]);
-                            
+
                             // to get the keys renumbered
                             sort($PHORUM['DBCONFIG']['slaves']);
                         }
                     }
-                }  
+                }
 
                 if(!empty($PHORUM['DBCONFIG']['charset'])) {
                     mysqli_query( $conn_read,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
                     mysqli_query( $conn_read,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
-                }                
+                }
         }
-        
+
         $conn = $conn_read;
-                
-    } else { 
+
+    } else {
         // masterquery aka write-query
         // try to connect to the master
-               
+
         if(empty($conn_write)) {
-            
+
             $conn_write = mysqli_connect(
                 $PHORUM['DBCONFIG']['server'],
                 $PHORUM['DBCONFIG']['user'],
                 $PHORUM['DBCONFIG']['password'],
                 $PHORUM['DBCONFIG']['name']
             );
-            
+
             if(!empty($PHORUM['DBCONFIG']['charset'])) {
                 mysqli_query( $conn_write,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
                 mysqli_query( $conn_write,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
-            }            
+            }
         }
-        
+
         $conn = $conn_write;
     }
 
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
     {
-        
-        
+
+
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
             phorum_database_error('Failed to connect to the database.');

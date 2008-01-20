@@ -53,8 +53,8 @@ $PHORUM['DBCONFIG']=array(
     'slaves' => array(),
 
     // For collecting (and showing) the number of queries run (set to 1)
-    // and for collecting (and showing) the queries run (set to 2)
-    'dbdebug'=>0,
+    // and for collecting (and showing) the queries run (set to 2).
+    'dbdebug' => 0,
 );
 
 /*

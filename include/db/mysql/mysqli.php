@@ -67,14 +67,15 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     static $conn;
     static $querytrack;
 
-    $debug = $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
+    $debug = empty($GLOBALS['PHORUM']['DBCONFIG']['dbdebug'])
+           ? 0 : $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
 
-    if(!empty($debug)) {
-        if(!isset($querytrack) || !is_array($querytrack)) {
+    if (!empty($debug)) {
+        if (!isset($querytrack) || !is_array($querytrack)) {
             $querytrack = array(
-                            'count'=>0,
-                            'queries'=>array()
-                          );
+                'count'   => 0,
+                'queries' => array()
+            );
         }
     }
 
@@ -95,14 +96,14 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             exit;
         }
 
-        if(!empty($PHORUM['DBCONFIG']['charset'])) {
-            mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-            mysqli_query( $conn,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
-            if($debug) {
-                $querytrack['count']+=2;
-                if($debug > 1) {
-                    $querytrack['queries'][]=array('query'=>"1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-                    $querytrack['queries'][]=array('query'=>"2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+        if (!empty($PHORUM['DBCONFIG']['charset'])) {
+            mysqli_query($conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+            mysqli_query($conn,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+            if ($debug) {
+                $querytrack['count'] += 2;
+                if ($debug > 1) {
+                    $querytrack['queries'][] = array('query'=>"1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+                    $querytrack['queries'][] = array('query'=>"2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
                 }
             }
         }
@@ -143,12 +144,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
          $res = mysqli_query($conn, $sql);
     }
 
-    if($debug) {
-             $querytrack['count']++;
-             if($debug > 1)
-                $querytrack['queries'][]=array('query'=>$querytrack['count'].": $sql");
+    if ($debug) {
+         $querytrack['count']++;
+         if ($debug > 1)
+             $querytrack['queries'][] = array('query'=>$querytrack['count'].": $sql");
 
-             $GLOBALS['PHORUM']['DATA']['DBDEBUG']=$querytrack;
+         $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;
     }
 
     // Handle errors.

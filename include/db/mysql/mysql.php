@@ -67,14 +67,15 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     static $conn;
     static $querytrack;
 
-    $debug = $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
+    $debug = empty($GLOBALS['PHORUM']['DBCONFIG']['dbdebug']);
+           ? 0 : $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
 
-    if(!empty($debug)) {
-        if(!isset($querytrack) || !is_array($querytrack)) {
+    if (!empty($debug)) {
+        if (!isset($querytrack) || !is_array($querytrack)) {
             $querytrack = array(
-                            'count'=>0,
-                            'queries'=>array()
-                          );
+                'count'   => 0,
+                'queries' => array()
+            );
         }
     }
 
@@ -102,11 +103,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
             mysql_query( "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",$conn);
             mysql_query( "SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",$conn);
-            if($debug) {
-                $querytrack['count']+=2;
-                if($debug > 1) {
-                    $querytrack['queries'][]="1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'";
-                    $querytrack['queries'][]="2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
+            if ($debug) {
+                $querytrack['count'] += 2;
+                if ($debug > 1) {
+                    $querytrack['queries'][] = "1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'";
+                    $querytrack['queries'][] = "2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
                 }
             }
         }
@@ -136,12 +137,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
          ? mysql_unbuffered_query($sql, $conn)
          : mysql_query($sql, $conn);
 
-         if($debug) {
+         if ($debug) {
              $querytrack['count']++;
-             if($debug > 1)
-                $querytrack['queries'][]=$querytrack['count'].": $sql";
+             if ($debug > 1)
+                 $querytrack['queries'][] = $querytrack['count'].": $sql";
 
-             $GLOBALS['PHORUM']['DATA']['DBDEBUG']=$querytrack;
+             $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;
          }
 
 
