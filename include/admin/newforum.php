@@ -209,6 +209,7 @@ if(count($_POST)){
                 unset($forum_settings["parent_id"]);
                 unset($forum_settings["inherit_id"]);
                 unset($forum_settings["message_count"]);
+                unset($forum_settings["sticky_count"]);
                 unset($forum_settings["thread_count"]);
                 unset($forum_settings["last_post_time"]);
 
