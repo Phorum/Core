@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/forums.php');
+require_once('./include/api/forum.php');
 
 $error="";
 $setvroot=false; // is this folder set as vroot?

@@ -120,9 +120,9 @@ if ( count( $_POST ) ) {
         $okmsg .= "Searchdata successfully rebuilt.<br />";
 
     }
-    
+
     if(isset($_POST['rebuild_forumpaths']) && !empty($_POST['rebuild_forumpaths'])) {
-        require_once('./include/api/forums.php');
+        require_once('./include/api/forum.php');
         $forums = phorum_api_forums_build_path();
         unset($forums[0]);
 
@@ -133,7 +133,7 @@ if ( count( $_POST ) ) {
                 'forum_path' => $forumpath
             ));
         }
-        
+
         $okmsg .= "Forum paths successfully rebuilt.<br />";
     }
 

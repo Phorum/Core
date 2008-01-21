@@ -15,7 +15,7 @@ define('phorum_page', 'create_moderator_groups');
 
 chdir(dirname(__FILE__) . "/..");
 require_once('./common.php');
-require_once('./include/api/forums.php');
+require_once('./include/api/forum.php');
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();
