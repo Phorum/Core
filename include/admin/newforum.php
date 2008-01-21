@@ -22,7 +22,6 @@ if (!defined("PHORUM_ADMIN")) return;
 require_once('./include/format_functions.php');
 require_once('./include/api/forum.php');
 require_once('./include/upload_functions.php');
-require_once('./include/admin/PhorumInputForm.php');
 
 $errors = array();
 
@@ -105,8 +104,8 @@ if (count($_POST))
 elseif (defined("PHORUM_EDIT_FORUM"))
 {
     $forum_id = isset($_POST['forum_id']) ? $_POST['forum_id'] : $_GET['forum_id'];
-    $forum_settings = phorum_api_forums_get($forum_id);
-    extract($forum_settings);
+    $forum = phorum_api_forums_get($forum_id);
+    extract($forum);
 }
 // Initialize the form for editing default settings.
 elseif (defined("PHORUM_DEFAULT_OPTIONS"))
@@ -123,7 +122,6 @@ else
         'inherit_id'  => 0,
         'name'        => ''
     ), PHORUM_FLAG_PREPARE);
-
     extract($forum);
 }
 
@@ -139,6 +137,7 @@ if (isset($_GET['saved'])) {
     phorum_admin_okmsg('The default settings were successfully saved');
 }
 
+require_once('./include/admin/PhorumInputForm.php');
 $frm = new PhorumInputForm ("", "post");
 
 if (defined("PHORUM_DEFAULT_OPTIONS")) {

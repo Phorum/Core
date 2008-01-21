@@ -122,7 +122,7 @@ if ( count( $_POST ) ) {
     }
 
     if(isset($_POST['rebuild_forumpaths']) && !empty($_POST['rebuild_forumpaths'])) {
-        require_once('./include/api/forum.php');
+        require_once('./include/api/forums.php');
         $forums = phorum_api_forums_build_path();
         unset($forums[0]);
 

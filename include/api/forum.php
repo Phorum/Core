@@ -18,16 +18,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements the Phorum forums API.
+ * This script implements the Phorum forum API.
  *
- * This API is used for managing Phorum forums and folders. It can be used to
- * retrieve information about the available forums and folders and takes care
- * of creating and editing them.
+ * This API is used for managing the Phorum forum and folder hierarchy.
+ * It can be used to retrieve information about the available forums and
+ * folders and takes care of creating and editing them.
  *
- * This API combines forums and folders into one API layer, because at the
- * data level, they are the same kind of entity. Folders are forums as well,
- * only they act differently, based on the "folder_flag" field. Below, you can
- * find the fields that are used for forums and folders.
+ * This API combines forums and folders into a single API layer, because at the
+ * data level, they are the same kind of entity. Folders are forums as well.
+ * They just act differently, based on the "folder_flag" field.
+ *
+ * Below, you can find a description of the fields that are used for
+ * forums and folders.
  *
  * <b>Folder fields</b>
  *
