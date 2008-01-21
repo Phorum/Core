@@ -21,6 +21,11 @@ if (!defined("PHORUM_ADMIN")) return;
 
 require_once('./include/api/forums.php');
 
+// Show message if set in the URL.
+if (isset($_GET['okmsg'])) {
+    phorum_admin_okmsg(htmlspecialchars($_GET['okmsg']));
+}
+
 $folder_id = (int)((isset($_GET["parent_id"])) ? $_GET["parent_id"] : 0);
 $parent_parent_id = (int)((isset($_GET["pparent"])) ? $_GET["pparent"] : 0);
 

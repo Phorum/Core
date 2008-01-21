@@ -19,186 +19,95 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/forum.php');
+require_once('./include/api/forums.php');
 
-$error="";
-$setvroot=false; // is this folder set as vroot?
+$errors = array();
 
-if(count($_POST)){
+// ----------------------------------------------------------------------
+// Handle posted form data
+// ----------------------------------------------------------------------
 
-    // Post data preprocessing.
-    foreach($_POST as $field=>$value){
-
-        switch($field){
-
-            case "name":
-                $value = trim($value);
-                $_POST["name"] = $value;
-                if($value == ""){
-                    $error="Please fill in Title";
-                }
-                break;
-            case "vroot":
-                // did we set this folder as vroot?
-                // existing folder new vroot for everything below
-                if($value > 0 &&
-                    (isset($_POST['forum_id']) && $_POST['forum_id'])) {
-                    $setvroot=true;
-                // new folder which is vroot for everything below
-                } elseif($value > 0 && !defined("PHORUM_EDIT_FOLDER")) {
-                    $setvroot=true;
-                }
-                break;
+if (count($_POST))
+{
+    // Build a folder data array based on the posted data.
+    $folder = array();
+    foreach ($_POST as $field => $value)
+    {
+        // The inherit_id can be the string "NULL", in which case we need
+        // to translate it into a real NULL value.
+        if ($field == 'inherit_id') {
+            $folder[$field] = $value == 'NULL' ? NULL : (int) $value;
+        }
+        // All other fields are simply copied.
+        elseif (array_key_exists($field, $PHORUM['API']['folder_fields'])) {
+          $folder[$field] = $value;
         }
     }
 
-    if(empty($error)){
-        $_POST = phorum_hook("admin_editfolder_form_save", $_POST);
-        if (isset($_POST["error"])) {
-            $error = $_POST["error"];
-            unset($_POST["error"]);
-        }
+    // Was a title filled in for the folder?
+    if (!defined('PHORUM_DEFAULT_OPTIONS') && trim($folder['name']) == '') {
+        $errors[] = 'The "Title" field is empty. Please, fill in a title.';
     }
 
-    // we need the old folder for vroots ... see below
-    if(defined("PHORUM_EDIT_FOLDER")){
-        $cur_folder_id=$_POST['forum_id'];
-        $oldfolder_tmp=phorum_db_get_forums($cur_folder_id);
-        $oldfolder=array_shift($oldfolder_tmp);
-    } else {
-        $oldfolder=array('vroot'=>0,'parent_id'=>0);
-    }
-
-    if(empty($error)){
-        unset($_POST["module"]);
-        unset($_POST["vroot"]); // we set it separately below
-
-        // update the folder
-        if(defined("PHORUM_EDIT_FOLDER")){
-            $cur_folder_id=$_POST['forum_id'];
-            $res=phorum_db_update_forum($_POST);
-        // add the folder
-        } else {
-
-            $res=phorum_db_add_forum($_POST);
-            $cur_folder_id=$res;
-
-            $path = phorum_api_forums_build_path($cur_folder_id);
-
-            $update_forum = array(
-                'forum_id'   => $cur_folder_id,
-                'forum_path' => $path
-            );
-            phorum_db_update_forum($update_forum);
+    // If there were no errors, then store the data in the database.
+    if (empty($errors))
+    {
+        // Some statically assigned fields.
+        $folder['folder_flag'] = 1;
+        // For new folders.
+        if (!defined('PHORUM_EDIT_FOLDER')) {
+            $folder['forum_id'] = NULL;
         }
 
-        // check for changes which require a forum-path update
-        $setforumpath = false;
-        if(defined("PHORUM_EDIT_FOLDER")){
-            if($oldfolder['name'] != $_POST['name'] ||
-               $oldfolder['parent_id'] != $_POST['parent_id'] ||
-               $setvroot) {
-                   $setforumpath = true;
-               }
-        // add the folder
-        }
+        // Store the forum data in the database.
+        phorum_api_forums_save($folder);
 
+        // The message to show on the next page.
+        $okmsg = "Folder \"{$folder['name']}\" was successfully saved";
 
-        // other db-operations done, now doing the work for vroots
-        if($res){
+        // The URL to redirect to.
+        $url = $PHORUM["admin_http_path"] .
+               "?module=default" .
+               "&parent_id=$folder[parent_id]" .
+               "&okmsg=" . urlencode($okmsg);
 
-            $cur_folder_tmp=phorum_db_get_forums($cur_folder_id);
-            $cur_folder=array_shift($cur_folder_tmp);
-
-            if($setforumpath) {
-                $setforum_children = phorum_admin_get_descending($cur_folder_id);
-
-                $built_paths = phorum_api_forums_build_path();
-
-                $update_forum = array(
-                    'forum_id'   => $cur_folder_id,
-                    'forum_path' => $built_paths[$cur_folder_id]
-                );
-                phorum_db_update_forum($update_forum);
-
-                if(is_array($setforum_children) && count($setforum_children)) {
-
-                    foreach ($setforum_children as $child_forum_id => $child) {
-                        $update_forum = array(
-                            'forum_id'   => $child['forum_id'],
-                            'forum_path' => $built_paths[$child_forum_id]
-                        );
-                        phorum_db_update_forum($update_forum);
-                    }
-
-                }
-
-            }
-
-
-            if (!$setvroot && (
-                // we had a vroot before but now we removed it
-                ($oldfolder['vroot'] && $oldfolder['vroot'] == $cur_folder_id) ||
-                // or we moved this folder somewhere else
-                ($oldfolder['parent_id'] != $cur_folder['parent_id'])
-               )) {
-
-                // get the parent_id and set its vroot (if its a folder)
-                // to the desc folders/forums
-                if($cur_folder['parent_id'] > 0) { // is it a real folder?
-                    $parent_folder=phorum_db_get_forums($cur_folder['parent_id']);
-
-                    // then set the vroot to the vroot of the parent-folder (be it 0 or a real vroot)
-                    phorum_admin_set_vroot($cur_folder_id,$parent_folder[$cur_folder['parent_id']]['vroot'],$cur_folder_id);
-
-                } else { // just default root ...
-                    phorum_admin_set_vroot($cur_folder_id,0,$cur_folder_id);
-                }
-
-            // we have now set this folder as vroot
-            } elseif($setvroot && ($oldfolder['vroot']==0 || $oldfolder['vroot'] != $cur_folder_id)) {
-                if(!phorum_admin_set_vroot($cur_folder_id)) {
-                    $error="Database error while setting virtual-root info.";
-                }
-
-            } // is there an else?
-
-        } else {
-            $error="Database error while adding/updating folder.";
-        }
+        phorum_redirect_by_url($url);
+        exit;
     }
 
-    if(empty($error)) {
-        phorum_redirect_by_url("{$PHORUM["admin_http_path"]}?parent_id={$cur_folder["parent_id"]}");
-        exit();
-    }
-
-    foreach($_POST as $key=>$value){
-        $$key=$value;
-    }
-
-    $forum_settings = $_POST;
-
-    if ($setvroot) {
-        $vroot = $_POST["forum_id"];
-    } else {
-        if ($_POST["forum_id"] != $oldfolder["vroot"]) {
-            $vroot = $oldfolder["vroot"];
-        } else {
-            $vroot = 0;
-        }
-    }
-    $forum_settings["vroot"] = $vroot;
-
-} elseif(defined("PHORUM_EDIT_FOLDER")) {
-
-    $forums = phorum_db_get_forums($_REQUEST["forum_id"]);
-    $forum_settings = $forums[$_REQUEST["forum_id"]];
-    extract($forum_settings);
 }
 
-if($error){
-    phorum_admin_error($error);
+// ----------------------------------------------------------------------
+// Handle initializing the form for various cases
+// ----------------------------------------------------------------------
+
+// Initialize the form for editing an existing folder.
+if (defined("PHORUM_EDIT_FOLDER"))
+{
+    $folder_id = isset($_POST['forum_id']) ? $_POST['forum_id'] : $_GET['forum_id'];
+    $folder = phorum_api_forums_get($folder_id);
+    extract($folder);
+}
+
+// Initialize the form for creating a new folder.
+else
+{
+    // Prepare a folder data array for initializing the form.
+    $folder = phorum_api_forums_save(array(
+        'forum_id'    => NULL,
+        'folder_flag' => 1,
+        'inherit_id'  => 0,
+        'name'        => ''
+    ), PHORUM_FLAG_PREPARE);
+    extract($folder);
+}
+
+// ----------------------------------------------------------------------
+// Handle displaying the forum settings form
+// ----------------------------------------------------------------------
+
+if ($errors){
+    phorum_admin_error(join("<br/>", $errors));
 }
 
 require_once('./include/admin/PhorumInputForm.php');
@@ -207,10 +116,11 @@ $frm = new PhorumInputForm ("", "post");
 
 $folder_data=phorum_get_folder_info();
 
-if(defined("PHORUM_EDIT_FOLDER")){
+if (defined("PHORUM_EDIT_FOLDER"))
+{
     $frm->hidden("module", "editfolder");
     $frm->hidden("forum_id", $forum_id);
-    $title="Edit Folder";
+    $title = "Edit existing folder";
 
     $this_folder=$folder_data[$_REQUEST["forum_id"]];
 
@@ -238,8 +148,6 @@ if(defined("PHORUM_EDIT_FOLDER")){
     $active=1;
     $template=PHORUM_DEFAULT_TEMPLATE;
 }
-
-$frm->hidden("folder_flag", "1");
 
 $frm->addbreak($title);
 
