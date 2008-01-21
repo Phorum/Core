@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -331,6 +331,9 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
  *     Otherwise, the stored data will be returned. The main difference is
  *     that for new forums or folders, the forum_id field will be updated
  *     to the newly assigned forum_id.
+ *
+ * @todo when setting up inheritance, then check if there aren't any
+ *       forums that are already inheriting setting from the saved forum.
  */
 function phorum_api_forums_save($data, $flags = 0)
 {

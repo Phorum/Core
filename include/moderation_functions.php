@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,6 +14,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 if(!defined("PHORUM")) return;
@@ -35,7 +35,7 @@ function phorum_return_to_list()
     exit();
 }
 
-/* A function to get moderator_data from the user's profile. 
+/* A function to get moderator_data from the user's profile.
  * Without an argument, all moderator_data is returned. With a key as
  * argument, the data for that key is returned or NULL in case the
  * key does not exist.
@@ -43,7 +43,7 @@ function phorum_return_to_list()
 function phorum_moderator_data_get($key = null)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    
+
     $user_data = phorum_api_user_get($PHORUM['DATA']['USER']['user_id']);
     if( $user_data['moderator_data'] ) {
         $moderator_data =unserialize($user_data['moderator_data']);
@@ -61,10 +61,10 @@ function phorum_moderator_data_get($key = null)
 function phorum_moderator_data_save($moderator_data)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-        
+
     // Clear value in case no data is left in $moderator_data.
     $value = count($moderator_data) ? serialize($moderator_data) : '';
-    
+
     phorum_api_user_save_raw(array(
         "user_id" => $PHORUM['user']['user_id'],
         "moderator_data" => $value,
@@ -73,7 +73,7 @@ function phorum_moderator_data_save($moderator_data)
 
 /* A function to place a key/value pair in the moderator_data. */
 function phorum_moderator_data_put($key, $val)
-{   
+{
     $moderator_data = phorum_moderator_data_get();
     $moderator_data[$key] = $val;
     phorum_moderator_data_save($moderator_data);
@@ -86,8 +86,5 @@ function phorum_moderator_data_remove($key)
     unset($moderator_data[$key]);
     phorum_moderator_data_save($moderator_data);
 }
-
-
-
 
 ?>

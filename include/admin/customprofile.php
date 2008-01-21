@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -31,7 +30,7 @@ $TYPES_ARRAY = array(PHORUM_CUSTOM_FIELD_USER    => 'User',
 if(count($_POST) && $_POST['name'] != '')
 {
     $_POST['curr'] = $_POST['curr'] == 'NEW' ? 'NEW' : (int)$_POST['curr'];
-    $_POST['type'] = (int)$_POST['type']; 
+    $_POST['type'] = (int)$_POST['type'];
     $_POST['name'] = trim($_POST['name']);
     $_POST['length'] = (int)$_POST['length'];
     $_POST['html_disabled'] = !empty($_POST['html_disabled']) ? 1 : 0;
@@ -83,7 +82,7 @@ if(count($_POST) && $_POST['name'] != '')
             <input type="hidden" name="name"
                 value="<?php print htmlspecialchars($_POST['name']) ?>" />
             <input type="hidden" name="type"
-                value="<?php print htmlspecialchars($_POST['type']) ?>" />                
+                value="<?php print htmlspecialchars($_POST['type']) ?>" />
             <input type="hidden" name="length"
                 value="<?php print htmlspecialchars($_POST['length']) ?>" />
             <input type="hidden" name="html_disabled"
@@ -173,8 +172,8 @@ if ($field === NULL) {
     $html_disabled = $field['html_disabled'];
     $show_in_admin = isset($field['show_in_admin'])
                    ? $field['show_in_admin'] : 0;
-    $type          = isset($field['type']) 
-                   ? $field['type'] : PHORUM_CUSTOM_FIELD_USER;                   
+    $type          = isset($field['type'])
+                   ? $field['type'] : PHORUM_CUSTOM_FIELD_USER;
     $title         = "Edit Profile Field";
     $submit        = "Update";
 }
@@ -259,12 +258,12 @@ if ($curr == "NEW")
         {
              if (isset($fields["num_fields"]))
                     unset($fields["num_fields"]);
-                    
+
              foreach($fields as $key => $item) {
                 // Do not show deleted fields.
                 if (!empty($item['deleted'])) continue;
                 $readable_type = $TYPES_ARRAY[$type];
-    
+
                 print "<tr>\n";
                 print "  <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
                 print "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";

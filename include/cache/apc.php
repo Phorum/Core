@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,9 +14,12 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
 // original version of this cache-layer provided by john wards                //
 // modified by thomas seifert to work with multi-gets                         //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -39,11 +41,11 @@ function phorum_cache_get($type,$key,$version=NULL) {
     } else {
         $getkey=$type."_".$key;
         $data = apc_fetch($getkey);
-        if ($version == NULL || 
+        if ($version == NULL ||
             ($data[1] != NULL && $data[1] == $version)) {
             $ret=$data[0];
         }
-    }   
+    }
 
     if($ret === false || (is_array($ret) && count($ret) == 0))
         $ret=NULL;

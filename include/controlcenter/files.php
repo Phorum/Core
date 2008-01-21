@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -18,7 +17,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_CONTROL_CENTER")) return;
+if (!defined("PHORUM_CONTROL_CENTER")) return;
 
 require_once('./include/api/base.php');
 require_once('./include/api/file_storage.php');

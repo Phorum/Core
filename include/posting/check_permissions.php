@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,9 +14,10 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM")) return;
+if (!defined("PHORUM")) return;
 
 // Check if the user is allowed to post a new message or a reply.
 if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) ||

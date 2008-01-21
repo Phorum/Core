@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -19,8 +18,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define("phorum_page", "feed");
-
 require_once('./common.php');
+
 require_once('./include/format_functions.php');
 require_once('./include/feed_functions.php');
 

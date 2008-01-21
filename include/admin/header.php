@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,24 +14,25 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-    if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
-    // load the default Phorum language
-    if(isset($PHORUM["default_forum_options"]["language"])){
-        $lang = basename($PHORUM["default_forum_options"]["language"]);
-	if (!file_exists("./include/lang/${lang}.php")) {
-	    $lang = PHORUM_DEFAULT_LANGUAGE;
-        }
-        require_once("./include/lang/{$lang}.php");
+// load the default Phorum language
+if(isset($PHORUM["default_forum_options"]["language"])){
+    $lang = basename($PHORUM["default_forum_options"]["language"]);
+if (!file_exists("./include/lang/${lang}.php")) {
+  $lang = PHORUM_DEFAULT_LANGUAGE;
     }
+    require_once("./include/lang/{$lang}.php");
+}
 
-    // HTTP Content-Type header with the charset from the default language
-    if (isset($PHORUM["DATA"]['CHARSET'])) {
-        header("Content-Type: text/html; " .
-               "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
-    }
+// HTTP Content-Type header with the charset from the default language
+if (isset($PHORUM["DATA"]['CHARSET'])) {
+    header("Content-Type: text/html; " .
+           "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
+}
 ?>
 <html>
 <head>

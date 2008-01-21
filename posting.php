@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,6 +14,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // This script can initially be called in multiple ways to indicate what
@@ -51,11 +51,9 @@
 // Basic setup and checks
 // ----------------------------------------------------------------------
 
-if (! defined('phorum_page')) {
-    define('phorum_page', 'post');
-}
-
+if (! defined('phorum_page')) define('phorum_page', 'post');
 require_once('./common.php');
+
 require_once('./include/format_functions.php');
 
 // Check if the Phorum is in read-only mode.

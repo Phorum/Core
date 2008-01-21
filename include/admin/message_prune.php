@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,6 +15,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 //   Author: Maurice Makaay <maurice@phorum.org>                              //
@@ -23,7 +24,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
 define("ADMIN_MODULE", "message_prune");
 

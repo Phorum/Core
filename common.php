@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,6 +14,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // Check that this file is not loaded directly.
@@ -45,9 +45,13 @@ define( "PHORUM_EXTENSION_VERSION", "20071129" );
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
 $PHORUM = array
-(                                                                                  // The DATA member holds the template variables.
-    'DATA' => array(                                                                   'GET_VARS'  => array(),
-        'POST_VARS' => ''                                                          ),
+(
+    // The DATA member holds the template variables.
+    'DATA'      => array(),
+
+    // For collecting query variables for a next request.
+    'GET_VARS'  => array(),
+    'POST_VARS' => '',
 
     // The TMP member hold template {DEFINE ..} definitions, temporary
     // arrays and such in template code.

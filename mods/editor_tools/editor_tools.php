@@ -1,7 +1,7 @@
 <?php
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-// Copyright (C) 2007  Phorum Development Team                               //
+// Copyright (C) 2008  Phorum Development Team                               //
 // http://www.phorum.org                                                     //
 //                                                                           //
 // This program is free software. You can redistribute it and/or modify      //
@@ -17,7 +17,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM")) return;
+if (!defined("PHORUM")) return;
 
 define('MOD_EDITOR_TOOLS_BASE', $PHORUM["http_path"] . '/mods/editor_tools');
 define('MOD_EDITOR_TOOLS_ICONS', MOD_EDITOR_TOOLS_BASE . '/icons');

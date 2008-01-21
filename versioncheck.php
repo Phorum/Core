@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,16 +14,17 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+
 define('phorum_page','version_iframe');
+require_once('./common.php');
 
 // Check for new versions of the Phorum software. Only do this once by
 // issuing a cookie which remembers whether we need to upgrade or not.
 // This file is included within an <iframe> in the admin interface header,
 // so downtime of the phorum.org website won't affect the performance of
 // the admin interface for Phorum users.
-
-require_once('./common.php');
 
 if (isset($_COOKIE["phorum_upgrade_available"])) {
     $upgrade_available = $_COOKIE["phorum_upgrade_available"];

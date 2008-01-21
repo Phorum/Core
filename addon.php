@@ -1,8 +1,7 @@
 <?php
-
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-// Copyright (C) 2007  Phorum Development Team                               //
+// Copyright (C) 2008  Phorum Development Team                               //
 // http://www.phorum.org                                                     //
 //                                                                           //
 // This program is free software. You can redistribute it and/or modify      //
@@ -15,6 +14,7 @@
 //                                                                           //
 // You should have received a copy of the Phorum License                     //
 // along with this program.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 // This script can be used for implementing addon scripts, using the
@@ -30,16 +30,16 @@
 //
 // To implement an addon script, the following needs to be done:
 //
-// 1) Create a module, which contains a function that has to be 
+// 1) Create a module, which contains a function that has to be
 //    called for running the addon code. For example:
-//    
+//
 //    function phorum_mod_foo_youraddonfunction() {
 //      # Code for implementing the addon goes here.
 //      # This can of course also be an include of a script
 //      # to run, using include("./mods/foo/yourscript.php").
 //      # ...
 //    }
-// 
+//
 // 2) In the module information, register an addon hook for the function:
 //
 //    hook: addon|phorum_mod_foo_youraddonfunction
@@ -53,7 +53,7 @@
 // LINKING TO AN ADDON SCRIPT:
 // ---------------------------
 //
-// If you want to link to the addon script, then always use the 
+// If you want to link to the addon script, then always use the
 // phorum_get_url() function for generating the URL to link to.
 //
 //   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo");
@@ -61,8 +61,8 @@
 //
 // IMPLEMENTING MULTIPLE ADDON ACTIONS:
 // ------------------------------------
-// 
-// Only one addon hook is allowed per module. If your module needs to 
+//
+// Only one addon hook is allowed per module. If your module needs to
 // implement multiple addon script actions, then handle this by means
 // of extra custom parameters for the addon.php URL, for example:
 //
@@ -73,7 +73,7 @@
 // would look like this:
 //
 //   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo", "action=bar");
-// 
+//
 
 define('phorum_page','addon');
 
@@ -120,15 +120,17 @@ foreach ($avail_hooks["mods"] as $id => $checkmodule) {
 
 if (count($filtered_hooks["mods"]) == 0) trigger_error(
     '<h1>Modscript Error</h1>' .
-    'No addon hook enabled for module "'. htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .'"',
+    'No addon hook enabled for module "' .
+    htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . '"',
     E_USER_ERROR
 );
 
 if (count($filtered_hooks["mods"]) > 1) trigger_error(
     '<h1>Modsript Error</h1>' .
     'More than one addon hook was registered ' .
-    'in the info for module "' . htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . '".<br/>Only ' .
-    'one addon hook is allowed per module.',
+    'in the info for module "' .
+    htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .
+    '".<br/>Only one addon hook is allowed per module.',
     E_USER_ERROR
 );
 

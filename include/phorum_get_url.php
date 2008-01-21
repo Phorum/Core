@@ -202,6 +202,12 @@ function phorum_get_url()
             $query_string = substr($query_string, 0, -1 );  // trim off ending ,
         }
 
+        if ( isset($PHORUM['hooks']['url_build']) ) {
+            $query_items = explode(',', $query_string);
+            $url = phorum_hook('url_build', NULL, $name, $query_items, $suffix, $pathinfo);
+            if ($url) return $url;
+        }
+
         if ( function_exists( "phorum_custom_get_url" ) ) {
             $query_items = $query_string == ''
                          ? array() : explode(',', $query_string);

@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,6 +14,7 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
 // Redirect to another page. This is used for working around an MSIE bug 
@@ -23,7 +23,6 @@
 // enctype="multipart/mixed" form... *sigh*.
 
 define('phorum_page', 'redirect');
-
 require_once('./common.php');
 
 if (isset($PHORUM["args"]["phorum_redirect_to"])) {

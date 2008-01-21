@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -17,15 +16,16 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
 define("PHORUM_INSTALL", 1);
 
 require_once('./include/api/base.php');
 require_once('./include/api/user.php');
 
-if(!phorum_db_check_connection()){
-    echo "A database connection could not be established.  Please edit include/db/config.php.";
+if (!phorum_db_check_connection()){
+    echo "A database connection could not be established.<br/>";
+    echo "Please check the database configuration in include/db/config.php.";
     return;
 }
 

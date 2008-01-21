@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,13 +14,14 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-    if(!defined("PHORUM_ADMIN")) return;
-    
-    phorum_db_update_settings( array("status"=>$_POST["status"]) );
-        
-    phorum_redirect_by_url($PHORUM["admin_http_path"]);
-    exit();
-    
+if (!defined("PHORUM_ADMIN")) return;
+
+phorum_db_update_settings(array("status" => $_POST["status"]));
+
+phorum_redirect_by_url($PHORUM["admin_http_path"]);
+exit();
+
 ?>

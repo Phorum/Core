@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -25,7 +24,11 @@ require_once('./include/api/forums.php');
 require_once('./include/upload_functions.php');
 require_once('./include/admin/PhorumInputForm.php');
 
-$error = "";
+$errors = array();
+
+// ----------------------------------------------------------------------
+// Handle posted form data
+// ----------------------------------------------------------------------
 
 if (count($_POST))
 {
@@ -52,9 +55,6 @@ if (count($_POST))
           $forum[$field] = $value;
         }
     }
-
-    // Check for errors in the provided data.
-    $errors = array();
 
     // Was a title filled in for the forum?
     if (!defined('PHORUM_DEFAULT_OPTIONS') && trim($forum['name']) == '') {
@@ -87,23 +87,49 @@ if (count($_POST))
             phorum_api_forums_save($forum);
 
             // The URL to redirect to.
-            $url = $PHORUM["admin_http_path"]."?module=default&parent_id=$forum[parent_id]";
+            $url = $PHORUM["admin_http_path"] .
+                   "?module=default&parent_id=$forum[parent_id]";
         }
 
         phorum_redirect_by_url($url);
+        exit;
     }
 
-} elseif(defined("PHORUM_EDIT_FORUM")) {
-
-    $forum_settings = phorum_db_get_forums($_REQUEST["forum_id"]);
-    extract($forum_settings[$_REQUEST["forum_id"]]);
-
-} else {
-
-    // this is either a new forum or we are editing the default options
-    extract($PHORUM["default_forum_options"]);
-
 }
+
+// ----------------------------------------------------------------------
+// Handle initializing the form for various cases
+// ----------------------------------------------------------------------
+
+// Initialize the form for editing an existing forum.
+elseif (defined("PHORUM_EDIT_FORUM"))
+{
+    $forum_id = isset($_POST['forum_id']) ? $_POST['forum_id'] : $_GET['forum_id'];
+    $forum_settings = phorum_api_forums_get($forum_id);
+    extract($forum_settings);
+}
+// Initialize the form for editing default settings.
+elseif (defined("PHORUM_DEFAULT_OPTIONS"))
+{
+    extract($PHORUM["default_forum_options"]);
+}
+// Initialize the form for creating a new forum.
+else
+{
+    // Prepare a forum data array for initializing the form.
+    $forum = phorum_api_forums_save(array(
+        'forum_id'    => NULL,
+        'folder_flag' => 0,
+        'inherit_id'  => 0,
+        'name'        => ''
+    ), PHORUM_FLAG_PREPARE);
+
+    extract($forum);
+}
+
+// ----------------------------------------------------------------------
+// Handle displaying the forum settings form
+// ----------------------------------------------------------------------
 
 if ($errors){
     phorum_admin_error(join("<br/>", $errors));
@@ -115,24 +141,22 @@ if (isset($_GET['saved'])) {
 
 $frm = new PhorumInputForm ("", "post");
 
-if(defined("PHORUM_DEFAULT_OPTIONS")){
+if (defined("PHORUM_DEFAULT_OPTIONS")) {
     $frm->hidden("module", "forum_defaults");
-    $frm->hidden("forum_id", 0);
-    $title="Default Forum Settings";
-} elseif(defined("PHORUM_EDIT_FORUM")){
+    $title = "Edit the default forum settings";
+} elseif(defined("PHORUM_EDIT_FORUM")) {
     $frm->hidden("module", "editforum");
     $frm->hidden("forum_id", $forum_id);
-    $title="Edit Forum";
+    $title = "Edit settings for forum \"$name\" ($forum_id)";
 } else {
     $frm->hidden("module", "newforum");
-    $title="Add A Forum";
-    $active = 1; // not set in the default forum options
+    $title = "Create a new forum";
 }
 
 $frm->addbreak($title);
 
-if(!defined("PHORUM_DEFAULT_OPTIONS")){
-
+if (!defined("PHORUM_DEFAULT_OPTIONS"))
+{
     $frm->addrow("Forum Title", $frm->text_box("name", $name, 30,50));
 
     $frm->addrow("Forum Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");

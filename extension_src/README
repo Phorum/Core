@@ -1,6 +1,6 @@
 Extension : Phorum 5 extension
 Author    : Maurice Makaay <maurice@phorum.org>
-Copyright : 2007, Phorum Development Team
+Copyright : 2007-2008, Phorum Development Team
 
 This PHP extension is used for speeding up Phorum 5. Bottleneck functions
 in the PHP code are implemented as pure C-code to gain as much speed as

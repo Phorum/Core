@@ -1,8 +1,7 @@
 <?php
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,16 +14,13 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-    if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
-    define("PHORUM_EDIT_FORUM", 1);
+define("PHORUM_EDIT_FORUM", 1);
 
-    if(empty($_REQUEST["forum_id"])){
-        phorum_admin_error("forum_id not set");
-    } else {
-        include "./include/admin/newforum.php";
-    }
+include "./include/admin/newforum.php";
 
 ?>
