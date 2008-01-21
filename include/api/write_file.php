@@ -28,6 +28,8 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+if (!defined("PHORUM")) return;
+
 /**
  * This function can be used to safely write a file to disk.
  *
