@@ -44,10 +44,10 @@ if (count($_POST))
             foreach ($bits as $bit => $dummy) $bitmask |= $bit;
             $forum[$field] = $bitmask;
         }
-        // The inherit_id can be the string "NULL", in which case we need
-        // to translate it into a real NULL value.
+        // The inherit_id can be -1, in which case we need
+        // to translate it into a NULL value.
         elseif ($field == 'inherit_id') {
-            $forum[$field] = $value == 'NULL' ? NULL : (int) $value;
+            $forum[$field] = $value == -1 ? NULL : (int) $value;
         }
         // All other fields are simply copied.
         elseif (array_key_exists($field, $PHORUM['API']['forum_fields'])) {
@@ -166,24 +166,17 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
         $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
     }
 
-
     $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
 
-    // Edit + inherit_id exists
-    if(defined("PHORUM_EDIT_FORUM") && strlen($inherit_id)>0 ) {
-
-        if($inherit_id!=0){
-            $forum_settings_inherit = phorum_db_get_forums($inherit_id);
-        }
-        // inherit_forum not exists
-        if( $inherit_id==0 || isset($forum_settings_inherit[$inherit_id]) ) {
-            $disabled_form_input="disabled=\"disabled\"";
-        } else {
-            $inherit_id ="0";
-            unset($forum_settings_inherit);
-        }
-    } else {
-        unset($disabled_form_input);
+    // If we're inheriting settings from a different forum,
+    // then disable the inherited fields in the input.
+    $disabled_form_input = '';
+    if ($inherit_id !== NULL) {
+        $disabled_form_input = 'disabled="disabled"';
+    }
+    // NULL value for $inherit_id is stored in the form as -1.
+    else {
+        $inherit_id = -1;
     }
 
     $frm->addbreak("Inherit Forum Settings");
@@ -191,10 +184,10 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
     $forum_list=phorum_get_forum_info(1);
 
     $forum_list["0"] ="Use Default Forum Settings";
-    $forum_list["NULL"] ="None - I want to customize this forum's settings";
+    $forum_list["-1"] ="None - I want to customize this forum's settings";
 
-    // Remove this Forum
-    if($forum_id>0){
+    // Remove the forum that we are currently handling from the list.
+    if (!empty($forum_id)) {
         unset($forum_list[$forum_id]);
     }
 
@@ -202,7 +195,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
 
     // remove forums that inherit
     foreach($dbforums as $dbforum_id=>$forum){
-        if($forum["inherit_id"] !== NULL){
+        if($forum["$inherit_id"] !== NULL){
             unset($forum_list[$dbforum_id]);
         }
     }
@@ -217,7 +210,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
     }
 
     // set to NULL if inherit is disabled
-    if($inherit_id=="" && $inherit_id!==0) $inherit_id="NULL";
+    //if($inherit_id=="" && $inherit_id!==0) $inherit_id="NULL";
 
     $add_inherit_text="";
     if(!empty($disabled_form_input_inherit)) {

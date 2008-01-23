@@ -130,7 +130,7 @@ else
         'inherit_id'  => 0,
         'name'        => ''
     ), PHORUM_FLAG_PREPARE);
-    extract($folder);
+    print_r($folder);
 }
 
 // ----------------------------------------------------------------------

@@ -113,7 +113,7 @@ $GLOBALS['PHORUM']['API']['folder_fields'] = array(
   'display_order'           => 'm:int:0',
   'vroot'                   => 'm:int:0',
   'cache_version'           => 'm:int:0',
-  'inherit_id'              => 'm:int:0',
+  'inherit_id'              => 'm:intORnull:0',
 
   // Display settings.
   'template'                => 's:string:'.PHORUM_DEFAULT_TEMPLATE,
@@ -138,7 +138,7 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
   'display_order'            => 'm:int:0',
   'vroot'                    => 'm:int:0',
   'cache_version'            => 'm:int:0',
-  'inherit_id'               => 'm:int:0',
+  'inherit_id'               => 'm:intORnull:0',
 
   // Display settings.
   'display_fixed'            => 's:bool:0',
@@ -240,12 +240,12 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
             switch ($spec[FFLD_TYPE])
             {
                 case 'int':
-                    // The inherit_id field can be NULL, so we need to
-                    // differentiate for NULL values here. For the other
-                    // types, there are currenctly no NULL fields available.
+                    $filtered[$fld] = (int) $forum[$fld];
+                    break;
+
+                case 'intORnull':
                     $filtered[$fld] = $forum[$fld] === NULL
-                                    ? NULL
-                                    : (int)$forum[$fld];
+                                    ? NULL : (int)$forum[$fld];
                     break;
 
                 case 'string':
@@ -462,11 +462,15 @@ function phorum_api_forums_save($data, $flags = 0)
         switch ($spec[FFLD_TYPE])
         {
             case 'int':
+                $dbdata[$fld] = (int) $val;
+                break;
+
+            case 'intORnull':
                 $dbdata[$fld] = $val === NULL ? NULL : (int) $val;
                 break;
 
             case 'string':
-                $dbdata[$fld] = $val === NULL ? NULL : trim($val);
+                $dbdata[$fld] = trim($val);
                 break;
 
             case 'bool':

@@ -2416,8 +2416,8 @@ function phorum_db_update_forum($forum)
                 !in_array($key,$PHORUM['string_fields_forum'])) {
                 $value = (int)$value;
                 $fields[] = "$key = $value";
-            } elseif ($value == 'NULL') {
-                $fields[] = "$key = $value";
+            } elseif ($value === NULL) {
+                $fields[] = "$key = NULL";
             } else {
                 $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
                 $fields[] = "$key = '$value'";
