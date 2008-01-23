@@ -31,12 +31,22 @@ if (count($_POST))
 {
     // Build a folder data array based on the posted data.
     $folder = array();
+    $enable_vroot = FALSE;
     foreach ($_POST as $field => $value)
     {
         // The inherit_id can be the string "NULL", in which case we need
         // to translate it into a real NULL value.
         if ($field == 'inherit_id') {
             $folder[$field] = $value == 'NULL' ? NULL : (int) $value;
+        }
+        // The "vroot" field is a virtual field for this form. It only
+        // indicates that the folder has to be activated as a vroot.
+        // In the data, the vroot indicates to what vroot a forum or
+        // folder belongs. To make a certain folder a vroot folder, we
+        // have to set the vroot field to the same value as the forum_id
+        // field later on.
+        elseif ($field == 'vroot') {
+            $enable_vroot = TRUE;
         }
         // All other fields are simply copied.
         elseif (array_key_exists($field, $PHORUM['API']['folder_fields'])) {
@@ -60,7 +70,29 @@ if (count($_POST))
         }
 
         // Store the forum data in the database.
-        phorum_api_forums_save($folder);
+        $newfolder = phorum_api_forums_save($folder);
+
+        // Handle enabling and disabling vroot support.
+        // Currently stored as a vroot folder?
+        if ($newfolder['vroot'] == $newfolder['forum_id']) {
+            // And requested to disable the vroot?
+            if (! $enable_vroot) {
+                phorum_api_forums_save(array(
+                    'forum_id' => $newfolder['forum_id'],
+                    'vroot'    => $newfolder['parent_id']
+                ));
+            }
+        }
+        // Currently not a vroot folder?
+        else {
+            // And requested to enable the vroot?
+            if ($enable_vroot) {
+                phorum_api_forums_save(array(
+                    'forum_id' => $newfolder['forum_id'],
+                    'vroot'    => $newfolder['forum_id']
+                ));
+            }
+        }
 
         // The message to show on the next page.
         $okmsg = "Folder \"{$folder['name']}\" was successfully saved";
@@ -74,7 +106,6 @@ if (count($_POST))
         phorum_redirect_by_url($url);
         exit;
     }
-
 }
 
 // ----------------------------------------------------------------------

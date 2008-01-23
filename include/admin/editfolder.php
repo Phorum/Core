@@ -17,7 +17,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
 define("PHORUM_EDIT_FOLDER", 1);
 
