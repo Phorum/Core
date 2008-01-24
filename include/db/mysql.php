@@ -7159,6 +7159,7 @@ function phorum_db_create_tables()
            KEY new_count (forum_id,status,moved,message_id),
            KEY new_threads (forum_id,status,parent_id,moved,message_id),
            KEY recent_threads (status, parent_id, message_id),
+           KEY updated_threads (status, parent_id, modifystamp),
            KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
