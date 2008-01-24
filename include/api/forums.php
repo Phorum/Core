@@ -333,9 +333,6 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
  *     Otherwise, the stored data will be returned. The main difference is
  *     that for new forums or folders, the forum_id field will be updated
  *     to the newly assigned forum_id.
- *
- * @todo when setting up inheritance, then check if there aren't any
- *       forums that are already inheriting setting from the saved forum.
  */
 function phorum_api_forums_save($data, $flags = 0)
 {
@@ -518,6 +515,23 @@ function phorum_api_forums_save($data, $flags = 0)
     // - <forum_id> : inherit from the forum identified by this forum_id
     if ($dbdata['inherit_id'] !== NULL)
     {
+        // Check if the settings for this forum aren't inherited by
+        // a different forum already. Inherited inheritance is not allowed.
+        if ($existing) {
+            $childs = phorum_api_forums_by_inheritance($dbdata['forum_id']);
+            if (!empty($childs)) {
+                trigger_error(
+                    'phorum_api_forums_save(): forum_id ' .
+                    $dbdata['forum_id'] . ' cannot inherit data from some ' .
+                    'other forum or default settings, because on or more ' .
+                    'other folders and/or forums are inheriting their data ' .
+                    'from this one already. Inherited inheritance is not ' .
+                    'allowed.',
+                    E_USER_ERROR
+                );
+            }
+        }
+
         // Inherit from the default settings.
         if ($dbdata['inherit_id'] == 0) {
             $defaults = $GLOBALS['PHORUM']['default_forum_options'];
