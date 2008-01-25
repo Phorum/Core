@@ -67,7 +67,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     static $conn;
     static $querytrack;
 
-    $debug = empty($GLOBALS['PHORUM']['DBCONFIG']['dbdebug']);
+    $debug = empty($GLOBALS['PHORUM']['DBCONFIG']['dbdebug'])
            ? 0 : $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
 
     if (!empty($debug)) {
