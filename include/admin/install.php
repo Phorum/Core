@@ -369,6 +369,7 @@ switch ($step){
             "hide_forums" => "1",
             "enable_new_pm_count" => "1",
             "track_user_activity" => "86400",
+            "track_edits" => 0,
             "html_title" => "Phorum",
             "head_tags" => "",
             "cache_users" => 0,

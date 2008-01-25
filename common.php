@@ -32,7 +32,7 @@ define( "PHORUM", "5.2-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2008012401" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2008012500" );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -45,9 +45,12 @@ define( "PHORUM_EXTENSION_VERSION", "20070522" );
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
 $PHORUM = array
-(                                                                                  // The DATA member holds the template variables.
-    'DATA' => array(                                                                   'GET_VARS'  => array(),
-        'POST_VARS' => ''                                                          ),
+(
+    // The DATA member holds the template variables.
+    'DATA' => array(
+        'GET_VARS'  => array(),
+        'POST_VARS' => ''
+    ),
 
     // The TMP member hold template {DEFINE ..} definitions, temporary
     // arrays and such in template code.
@@ -167,13 +170,6 @@ if (defined('PHORUM_SCRIPT'))
     $PHORUM['cache_rss']        = 0;
     $PHORUM['cache_users']      = 0;
 }
-
-// Defaults for missing settings (these can be needed after upgrading, in
-// case the admin did not yet save a newly added Phorum setting).
-if (!isset($PHORUM["default_feed"]))   $PHORUM["default_feed"]   = "rss";
-if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = 0;
-if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = 0;
-
 
 // If we have no private key for signing data, generate one now,
 // but only if it's not a fresh install.
