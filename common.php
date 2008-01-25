@@ -47,11 +47,12 @@ global $PHORUM;
 $PHORUM = array
 (
     // The DATA member holds the template variables.
-    'DATA'      => array(),
-
-    // For collecting query variables for a next request.
-    'GET_VARS'  => array(),
-    'POST_VARS' => '',
+    'DATA' => array
+    (
+        // For collecting query variables for a next request.
+        'GET_VARS'  => array(),
+        'POST_VARS' => '',
+    ),
 
     // The TMP member hold template {DEFINE ..} definitions, temporary
     // arrays and such in template code.
