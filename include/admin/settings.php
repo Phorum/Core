@@ -323,8 +323,8 @@ $frm->addhelp($row, "Enable Drop-down User List", "By setting this to Yes, Phoru
 $row = $frm->addrow( "What to use as the display name", $frm->select_tag("display_name_source", array("username" => "User's username", "real_name" => "User's real name"), isset($PHORUM["display_name_source"]) ? $PHORUM["display_name_source"] : "username") );
 $frm->addhelp($row, "What to use as the display name", "You can choose to use either the user's username or the real name (which can be edited by the user from the control center) as the name by which the user is referenced throughout all Phorum pages.<br/><br/>This is not an option that you normally would want to change on a live system that has been running for a while. One reason is that all stored names will have to be updated in the database (e.g. the posting authors), which can take quite a while on a big forum (it <i>will</i> work though). More impor tant is that you might confuse your users by changing the display names.");
 
-$row=$frm->addrow( "Hide Email-Addresses", $frm->select_tag( "hide_email_addr", array( "No", "Yes" ), $PHORUM["hide_email_addr"] ) );
-$frm->addhelp($row, "Hide E-Mail-Addresses", "You can choose to use whether all email-addresses should be hidden. This includes the email-addresses of anonymous users and registered users in their profile. The separate option to hide the email-address in the controlcenter will be hidden too.");
+$row=$frm->addrow( "Force hiding of email addresses", $frm->select_tag( "hide_email_addr", array( "No", "Yes" ), $PHORUM["hide_email_addr"] ) );
+$frm->addhelp($row, "Force hiding of email addresses", "If set to \"No\", then registered users can choose themselves whether they want their email addresses displayed to other users or not. If set to \"Yes\", then all email addresses will be hidden, including those of anonymous users. Also, the option \"Allow other users to see my email address\" will be removed from the user control center.");
 
 $upload_arr = array(
 
