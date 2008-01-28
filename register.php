@@ -19,6 +19,7 @@
 
 define('phorum_page','register');
 require_once('./common.php');
+require_once('./include/api/custom_fields.php');
 
 require_once('./include/profile_functions.php');
 require_once('./include/email_functions.php');

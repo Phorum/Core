@@ -35,8 +35,9 @@ if (count($_POST))
     $forum = array();
     foreach ($_POST as $field => $value)
     {
-        // Create permission bitmasks. These are stored in the forum by means
-        // of separate checkboxes per bit.
+        // Process permission bitmasks. These are stored in the form by means
+        // of separate checkboxes per bit. Here we translate them into
+        // a single permission value.
         if ($field == 'pub_perms' || $field == 'reg_perms')
         {
             $bits = empty($value) ? array() : $value;
@@ -45,7 +46,7 @@ if (count($_POST))
             $forum[$field] = $bitmask;
         }
         // The inherit_id can be -1, in which case we need
-        // to translate it into a NULL value.
+        // to translate it into a NULL value for the back end.
         elseif ($field == 'inherit_id') {
             $forum[$field] = $value == -1 ? NULL : (int) $value;
         }
@@ -70,7 +71,8 @@ if (count($_POST))
             phorum_api_forums_save($forum, PHORUM_FLAG_DEFAULTS);
 
             // The URL to redirect to.
-            $url = $PHORUM['admin_http_path']."?module=forum_defaults&saved=1";
+            $url = $PHORUM['admin_http_path']."?module=forum_defaults&okmsg=" .
+                   urlencode('The default settings were successfully saved');
         }
         // Create or update a forum.
         else
@@ -93,7 +95,6 @@ if (count($_POST))
         phorum_redirect_by_url($url);
         exit;
     }
-
 }
 
 // ----------------------------------------------------------------------
@@ -133,8 +134,8 @@ if ($errors){
     phorum_admin_error(join("<br/>", $errors));
 }
 
-if (isset($_GET['saved'])) {
-    phorum_admin_okmsg('The default settings were successfully saved');
+if (isset($_GET['okmsg'])) {
+    phorum_admin_okmsg(htmlspecialchars($_GET['okmsg']));
 }
 
 require_once('./include/admin/PhorumInputForm.php');
@@ -146,7 +147,7 @@ if (defined("PHORUM_DEFAULT_OPTIONS")) {
 } elseif(defined("PHORUM_EDIT_FORUM")) {
     $frm->hidden("module", "editforum");
     $frm->hidden("forum_id", $forum_id);
-    $title = "Edit settings for forum \"$name\" ($forum_id)";
+    $title = "Edit settings for forum \"$name\" (Id: $forum_id)";
 } else {
     $frm->hidden("module", "newforum");
     $title = "Create a new forum";
@@ -154,80 +155,124 @@ if (defined("PHORUM_DEFAULT_OPTIONS")) {
 
 $frm->addbreak($title);
 
+// Options that are only required when editing or creating a forum.
 if (!defined("PHORUM_DEFAULT_OPTIONS"))
 {
     $frm->addrow("Forum Title", $frm->text_box("name", $name, 30,50));
 
     $frm->addrow("Forum Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
-    $folder_list=phorum_get_folder_info();
-    $frm->addrow("Folder", $frm->select_tag("parent_id", $folder_list, $parent_id));
+    $folders = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_FOLDERS);
+    $folder_list = array(0 => '/ (Root folder)');
+    foreach ($folders as $id => $folder) {
+        array_shift($folder['forum_path']);
+        $folder_list[$id] = '/ ' . implode(' / ', $folder['forum_path']);
+    }
+    asort($folder_list);
+
+    $frm->addrow(
+        "Put this forum below folder",
+        $frm->select_tag("parent_id", $folder_list, $parent_id)
+    );
     if($vroot > 0) {
-        $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
+        $frm->addrow(
+            "This folder is in the Virtual Root of:",
+            $folder_list[$vroot]
+        );
     }
 
-    $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
+    $row = $frm->addrow(
+        "Make this forum visible in the forum index?",
+        $frm->select_tag("active", array("No", "Yes"), $active)
+    );
+    $frm->addhelp($row, "Make this forum visible in the forum index?",
+        'If this option is set to "No", then this forum will not be visible
+         in the forum index. This is mainly an option for temporarily keeping
+         a forum hidden to your users (e.g. while you are creating and
+         configuring a forum or for testing out features).<br/>
+         <br/>
+         <b>This is not a security option!</b><br/>
+         <br/>
+         A forum that is not visible is still accessible by all users
+         that have at least read access for it. If you need a forum that is
+         only accessible by some of your users, then use the permission system
+         for that. Revoke all rights from public and anonymous users in the
+         forum settings and use group or user permissions to grant access
+         to the users.'
+    );
 
     // If we're inheriting settings from a different forum,
     // then disable the inherited fields in the input.
     $disabled_form_input = '';
     if ($inherit_id !== NULL) {
         $disabled_form_input = 'disabled="disabled"';
-    }
-    // NULL value for $inherit_id is stored in the form as -1.
-    else {
+    } else {
+        // NULL value for $inherit_id is stored in the form as -1.
         $inherit_id = -1;
     }
 
     $frm->addbreak("Inherit Forum Settings");
 
-    $forum_list=phorum_get_forum_info(1);
-
-    $forum_list["0"] ="Use Default Forum Settings";
-    $forum_list["-1"] ="None - I want to customize this forum's settings";
-
-    // Remove the forum that we are currently handling from the list.
-    if (!empty($forum_id)) {
-        unset($forum_list[$forum_id]);
-    }
-
-    $dbforums=phorum_db_get_forums();
-
-    // remove forums that inherit
-    foreach($dbforums as $dbforum_id=>$forum){
-        if($forum["$inherit_id"] !== NULL){
-            unset($forum_list[$dbforum_id]);
-        }
-    }
-
-    // Check for Slaves
-    if( intval($forum_id) ) {
-
-        $forum_inherit_settings=phorum_db_get_forums(false,false,false,intval($forum_id));
-        if( count($forum_inherit_settings)>0 ) {
-            $disabled_form_input_inherit="disabled=\"disabled\"";
-        }
-    }
-
-    // set to NULL if inherit is disabled
-    //if($inherit_id=="" && $inherit_id!==0) $inherit_id="NULL";
-
+    // First check if the settings for this forum are inherited by one or
+    // more other forums and/or folders. Inherited inheritance is not
+    // allowed, so if this is the case, choosing a forum to inherit from
+    // is not allowed.
+    $disabled_form_input_inherit = '';
     $add_inherit_text="";
-    if(!empty($disabled_form_input_inherit)) {
-        $add_inherit_text="<br />You can't inherit from another forum as these forums inherit from the current forum already:<br /><ul>\n";
-        foreach($forum_inherit_settings as $set_id => $set_data) {
-            $add_inherit_text.="<li>".$set_data['name']." ( Id: $set_id ) </li>\n";
+    if ($forum_id) {
+        $slaves = phorum_api_forums_by_inheritance($forum_id);
+        if (!empty($slaves))
+        {
+            $disabled_form_input_inherit='disabled="disabled"';
+
+            $add_inherit_text="<br />You cannot let this forum inherit its " .
+                              "settings from another forum, bacause the " .
+                              "following forums and or folders inherit from " .
+                              "the current forum already:<br /><ul>\n";
+            foreach($slaves as $id => $data) {
+                array_shift($data['forum_path']);
+                $edit_url = $PHORUM['admin_http_path'] . '?module=edit' .
+                            ($data['folder_flag'] ? 'folder' : 'forum') .
+                            '&forum_id=' . $id;
+                $add_inherit_text .= "<li><a href=\"$edit_url\">" .
+                                     implode(" / ", $data['forum_path']) .
+                                     "</li>\n";
+            }
+            $add_inherit_text.="</ul>\n";
         }
-        $add_inherit_text.="</ul>\n";
     }
 
-    $row=$frm->addrow("Inherit Settings from Forum", $frm->select_tag("inherit_id", $forum_list, $inherit_id, $disabled_form_input_inherit).$add_inherit_text);
+    // If the current forum is allowed to inherit settings from another
+    // forum, then build a list of forums from which we can inherit.
+    if ($add_inherit_text == '')
+    {
+        $forum_list = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INHERIT_MASTERS);
 
-    // Set Settings from inherit forum
-    if( $forum_settings_inherit ) {
-        $forum_settings =$forum_settings_inherit;
-        extract($forum_settings[$inherit_id]);
+        // Remove the forum that we are currently handling from the list.
+        if (!empty($forum_id)) {
+            unset($forum_list[$forum_id]);
+        }
+
+        // Prepare the forum names to show.
+        foreach ($forum_list as $id => $forum) {
+            array_shift($forum['forum_path']);
+            $forum_list[$id] = "Forum: " . implode("/", $forum['forum_path']);
+        }
+    } else {
+        $forum_list = array();
     }
+
+    // Add standard inheritance options.
+    $forum_list["0"]  = "The default forum settings";
+    $forum_list["-1"] = "No inheritance - I want to customize this forum's settings";
+
+    $row = $frm->addrow(
+        "Inherit settings from",
+        $frm->select_tag(
+            "inherit_id", $forum_list, $inherit_id,
+            $disabled_form_input_inherit
+        ) . $add_inherit_text
+    );
 }
 
 $frm->addbreak("Moderation / Permissions");

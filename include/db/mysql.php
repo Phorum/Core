@@ -1943,7 +1943,8 @@ function phorum_db_get_neighbour_thread($key, $direction)
 /**
  * Retrieve a list of forums. The forums which are returned can be filtered
  * through the function parameters. Note that only one parameter is
- * effective at a time.
+ * effective at a time, except for the $only_inherit_masters parameter,
+ * which can be used in conjunction with the other parameters.
  *
  * @param mixed $forum_ids
  *     A single forum_id or an array of forum_ids for which to retrieve the
@@ -1964,10 +1965,20 @@ function phorum_db_get_neighbour_thread($key, $direction)
  *     Retrieve the forum data for all forums that inherit their settings
  *     from the forum with id $inherit_id.
  *
+ * @param boolean $only_inherit_masters
+ *     If this parameter has a true value (default is FALSE), then only forums
+ *     that can act as a settings inheritance master will be returned (these
+ *     are the forums for which customized settings are used, which means
+ *     that inherit_id is NULL).
+ *
+ * @param boolean $only_folders
+ *     If this parameter has a true value (default is FALSE), then only folders
+ * will be retrurned.
+ *
  * @return array
  *     An array of forums, indexed by forum_id.
  */
-function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
+function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $only_inherit_masters = FALSE, $only_folders = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1997,6 +2008,14 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
         $where .= "vroot = $vroot";
     } else {
         $where .= 'forum_id <> 0';
+    }
+
+    if ($only_inherit_masters) {
+        $where .= ' AND inherit_id IS NULL AND folder_flag = 0';
+    }
+
+    if ($only_folders) {
+        $where .= ' AND folder_flag = 1';
     }
 
     $forums = phorum_db_interact(

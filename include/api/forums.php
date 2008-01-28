@@ -96,6 +96,19 @@ define('PHORUM_FLAG_PREPARE', 1);
 define('PHORUM_FLAG_DEFAULTS', 2);
 
 /**
+ * Function call flag, which tells {@link phorum_api_forums_get()}
+ * that the return data should only contain forums from which the settings
+ * can be inherited by another forum or folder.
+ */
+define('PHORUM_FLAG_INHERIT_MASTERS', 4);
+
+/**
+ * Function call flag which tells {@link phorum_api_forums_get()}
+ * that the return data should only contain folders.
+ */
+define('PHORUM_FLAG_FOLDERS', 8);
+
+/**
  * This array describes folder data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  * Value format: <m|v>:<type>[:default]
@@ -186,7 +199,10 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
 
 // {{{ Function: phorum_api_forums_get
 /**
- * Retrieve the data for forums and/or folders in various ways.
+ * Retrieve the data for forums and/or folders in various ways. Note that
+ * only one of the parameters $forum_ids, $parent_id, $vroot and $inherit_id
+ * will be effective at a time. The parameter $only_inherit_masters can be
+ * used in conjunction with all of these.
  *
  * @param mixed $forum_ids
  *     A single forum_id or an array of forum_ids for which to retrieve the
@@ -207,6 +223,14 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     Retrieve the forum data for all forums that inherit their settings
  *     from the forum with id $inherit_id.
  *
+ * @param integer $flags
+ *     If the {@link PHORUM_FLAG_INHERIT_MASTERS} flag is set, then
+ *     only forums that can act as a settings inheritance master will be
+ *     returned (these are the forums that do not inherit their settings
+ *     from either the default settings or from another forum).
+ *     If the {@link PHORUM_FLAG_FOLDERS} flag is set, then only
+ *     folders will be returned.
+ *
  * @return mixed
  *     If the $forum_ids parameter is used and if it contains a single
  *     forum_id, then a single array containg forum data is returned or
@@ -216,10 +240,12 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     parameter is an array containing non-existant forum_ids, then the
  *     return array will have no entry available in the returned array.
  */
-function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
+function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $flags = 0)
 {
     // Retrieve the forums/folders from the database.
-    $forums = phorum_db_get_forums($forum_ids, $parent_id, $vroot, $inherit_id);
+    $only_inherit_masters = $flags & PHORUM_FLAG_INHERIT_MASTERS;
+    $only_folders = $flags & PHORUM_FLAG_FOLDERS;
+    $forums = phorum_db_get_forums($forum_ids, $parent_id, $vroot, $inherit_id, $only_inherit_masters, $only_folders);
 
     // Filter and process the returned records.
     foreach ($forums as $id => $forum)
@@ -1066,13 +1092,18 @@ function phorum_api_forums_by_parent_id($parent_id = 0)
  * @param integer $vroot_id
  *     The forum_id of the vroot for which to retrieve the forums.
  *
+ * @param boolean $only_inherit_masters
+ *     If set to a true value (default is FALSE), then this function will
+ *     only return forums which can be used as a settings inheritance
+ *     master.
+ *
  * @return array
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_by_vroot($vroot_id = 0)
+function phorum_api_forums_by_vroot($vroot_id = 0, $only_inherit_masters = FALSE)
 {
-    return phorum_api_forums_get(NULL, NULL, $vroot_id);
+    return phorum_api_forums_get(NULL, NULL, $vroot_id, NULL, $only_inherit_masters);
 }
 // }}}
 
