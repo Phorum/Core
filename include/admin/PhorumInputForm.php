@@ -206,6 +206,8 @@ class PhorumInputForm {
 
     function show()
     {
+        $PHORUM = $GLOBALS['PHORUM'];
+
         if(count($this->_help)){
             echo "<script type=\"text/javascript\">\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
@@ -240,7 +242,7 @@ class PhorumInputForm {
                 }
                 $title = $row["break"];
                 if ( isset( $this->_help[$key] ) ) {
-                    $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
+                    $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"$PHORUM[http_path]/images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
                 }
                 echo "<tr class=\"input-form-tr\">\n";
                 echo "  <td colspan=\"2\" class=\"input-form-td-break $extra_class\">$title</td>\n";
@@ -255,7 +257,7 @@ class PhorumInputForm {
                 $title = $row["title"];
 
                 if ( isset( $this->_help[$key] ) ) {
-                    $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
+                    $title = $title . "<a href=\"javascript:show_help($key);\"><img class=\"question\" alt=\"Help\" title=\"Help\" border=\"0\" src=\"$PHORUM[http_path]/images/qmark.gif\" height=\"16\" width=\"16\" /></a>";
                 }
 
                 echo "<tr class=\"input-form-tr\">\n";
