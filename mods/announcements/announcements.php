@@ -25,6 +25,8 @@ function phorum_setup_announcements ()
     }
 
     // Check if we need to show announcements.
+    $ann_forum_id = NULL;
+
     // Inside a vroot, where we have a vroot configuration for the forum
     // to use for announcements and the current forum is not that
     // announcement forum.
