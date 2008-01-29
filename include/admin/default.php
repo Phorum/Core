@@ -76,13 +76,18 @@ if (empty($rows)) {
 if ($folder_id > 0)
 {
     $elts = array();
-    foreach ($folder['forum_path'] as $id => $name) {
+    foreach ($folder['forum_path'] as $id => $name)
+    {
+        if (!empty($folder['vroot']) &&
+            $folder['vroot'] == $folder['forum_id'] &&
+            $folder['parent_id'] == $id) continue;
+
         if (empty($elts)) {
             if (empty($folder['vroot'])) {
                 $name = 'Root folder';
             } else {
                 $elts[] = "<a href=\"{$PHORUM["admin_http_path"]}?module=default&parent_id={$folder['parent_id']}\">Back to parent folder</a>";
-                $name = 'Virtual Root "'.$folder['name'].'"';
+                $name = 'Virtual Root "'.$name.'"';
             }
         }
         if ($folder_id == $id) {
