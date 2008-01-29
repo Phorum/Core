@@ -24,6 +24,7 @@ require_once('./include/api/custom_fields.php');
 
 $user_status_map = array(
     'any'                     => 'Any user status',
+    'pending'                 => 'Any pending status',
     PHORUM_USER_PENDING_BOTH  => 'Pending user + moderator confirmation',
     PHORUM_USER_PENDING_EMAIL => 'Pending user confirmation',
     PHORUM_USER_PENDING_MOD   => 'Pending moderator confirmation',
@@ -74,7 +75,6 @@ if(count($_POST))
 
         switch( $_POST["section"] ) {
 
-
             case "forums":
 
                 if($_POST["new_forum"]){
@@ -123,6 +123,7 @@ if(count($_POST))
                 break;
 
             case "groups":
+
                 $groupdata = array();
 
                 if($_POST["new_group"]){
@@ -155,7 +156,22 @@ if(count($_POST))
             $user_data['password_temp']=$_POST['password1'];
         }
 
-        // clean up
+        if (isset($user_data['username'])) {
+            // Trim and collapse spaces to prevent usernames that visually
+            // look the same (since browsers collapse multiple spaces in HTML).
+            $user_data['username'] = preg_replace('/\s+/', ' ', trim($user_data['username']));
+
+            // In case of errors we have to show the possibly modified username.
+            $_POST['username'] = $user_data['userdata'];
+
+            // Check if the username isn't already taken by another user.
+            $existing = phorum_api_user_search('username', $user_data['username']);
+            if ($existing && $existing != $user_data['user_id']) {
+              $error = "That username is already in use by another user";
+            }
+        }
+
+        // Clean up fields from the $_POST data that are not in the user data.
         unset($user_data["module"]);
         unset($user_data["section"]);
         unset($user_data["password1"]);
@@ -169,6 +185,7 @@ if(count($_POST))
                 unset($user_data["error"]);
             }
         }
+
         if(empty($error)){
             phorum_api_user_save($user_data);
             phorum_admin_okmsg("User Saved");
@@ -192,7 +209,9 @@ if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
 if (!isset($_GET["edit"]) && !isset($_POST['section']))
 {
     print "<a href=\"{$PHORUM["admin_http_path"]}?module=users\">" .
-          "Show all users</a><br/>";
+          "Show all users</a>&nbsp;&nbsp;";
+    print "<a href=\"{$PHORUM["admin_http_path"]}?module=user_create\">" .
+          "Create new user</a><br/>";
 
     if (empty($_REQUEST["user_id"]))
     {
@@ -300,9 +319,15 @@ if (!isset($_GET["edit"]) && !isset($_POST['section']))
     if (isset($_REQUEST['search_status']) &&
         $_REQUEST['search_status'] != '' &&
         $_REQUEST['search_status'] != 'any') {
+
         $search_fields[] = 'active';
-        $search_values[] = (int) $_REQUEST['search_status'];
-        $search_operators[] = '=';
+        if ($_REQUEST['search_status'] == 'pending') {
+            $search_values[] = 0;
+            $search_operators[] = '<';
+        } else {
+            $search_values[] = (int) $_REQUEST['search_status'];
+            $search_operators[] = '=';
+        }
     }
 
     // Find a list of all matching user_ids.
@@ -413,9 +438,10 @@ EOT;
 if (isset($_REQUEST["user_id"]))
 {
     print "<a href=\"$referrer\">Back to the user overview</a><br/>";
-    
 
-    $user = phorum_api_user_get($_REQUEST["user_id"], TRUE);
+    $user = empty($user_data)
+          ? phorum_api_user_get($_REQUEST["user_id"], TRUE)
+          : $user_data;
 
     if(count($user)){
 
@@ -431,7 +457,12 @@ if (isset($_REQUEST["user_id"]))
 
         $frm->addbreak("Edit User");
 
-        $frm->addrow("User Name", htmlspecialchars($user["username"])."&nbsp;&nbsp;<a href=\"#forums\">Edit Forum Permissions</a>&nbsp;&nbsp;<a href=\"#groups\">Edit Groups</a>");
+        $frm->addrow("",
+            "<a href=\"#forums\">Edit Forum Permissions</a>&nbsp;&nbsp;" .
+            "<a href=\"#groups\">Edit Groups</a>"
+        );
+
+        $frm->addrow("User Name", $frm->text_box("username", $user["username"], 50));
 
         $frm->addrow("Real Name", $frm->text_box("real_name", $user["real_name"], 50));
 
