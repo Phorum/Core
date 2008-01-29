@@ -86,7 +86,7 @@ function phorum_mod_editor_tools_common()
 
     // Add a help tool. We add it as the first tool, so we can
     // shift it nicely to the right side of the page using CSS float.
-    if ($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"]) {
+    if (!empty($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"])) {
         editor_tools_register_tool('help', $lang['help']);
     }
 
