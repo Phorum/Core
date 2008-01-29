@@ -83,7 +83,6 @@ if ($folder_id > 0)
     $elts = array();
     foreach ($folder['forum_path'] as $id => $name)
     {
-        print "$id $name<br>";
         if (empty($elts)) {
             if (empty($folder['vroot'])) {
                 $name = 'Root folder';
