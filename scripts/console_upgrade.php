@@ -171,7 +171,7 @@ foreach ($upgrades as $id => $upgrade)
     }
 
     // Run the upgrade.
-    $update_internal_version = $file ? TRUE : FALSE;
+    $update_internal_version = $file ? FALSE : TRUE;
     $message = phorum_dbupgrade_run($upgrade, $update_internal_version);
 
     // Strip HTML code from the returned upgrade message,
