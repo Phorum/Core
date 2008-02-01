@@ -66,8 +66,8 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 
   The type of database. Typically 'mysql' (the only database type which
   is officially supported by the Phorum distribution). If your PHP version
-  supports the mysqli interface, then you can also use 'mysqli'.
-  Do not change this value, unless you know what you are doing.
+  supports the "mysqli" extension, then do not change this field to "mysqli".
+  Instead use the "mysql_php_extension" option.
 
 * name:
 
