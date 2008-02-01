@@ -17,17 +17,6 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-// if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
-   echo "This script cannot be run from a browser.";
-   return;
-}
-
-$noprompt = (isset($argv[1]) && $argv[1] == '-a');
-
-define("phorum_page", "console_upgrade");
-define("PHORUM_ADMIN", 1);
-
 // I guess the phorum-directory is one level up. if you move the script to
 // somewhere else you'll need to change that.
 $PHORUM_DIRECTORY = dirname(__FILE__) . "/../";
@@ -47,9 +36,78 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
     exit(1);
 }
 
-// include required files
+// if we are running in the webserver, bail out
+if (isset($_SERVER["REMOTE_ADDR"])) {
+   echo "This script cannot be run from a browser.";
+   return;
+}
+
+// Load Phorum core code.
+define("phorum_page", "console_upgrade");
+define("PHORUM_ADMIN", 1);
 require_once('./common.php');
 require_once('./include/version_functions.php');
+
+// Fetch command line arguments. We could rely on $argv here, but that
+// is not registered on all systems (needs a php.ini setting).
+$argv = $_SERVER['argv'];
+$cmd  = basename(array_shift($argv));
+
+function usage()
+{
+    print "\n";
+    print "Usage: $cmd [-h] [-a] [-f <upgrade file>]\n";
+    print "\n";
+    print "   -h: show this help\n";
+    print "   -a: run all upgrades without confirmation prompts\n";
+    print "   -f: run the upgrade from the provided upgrade file. This\n";
+    print "       one can be useful to re-run a specific upgrade in case\n";
+    print "       it failed when running it the first time from the\n";
+    print "       standard upgrading process.\n";
+    print "       The upgrade file to run should be provided relative to\n";
+    print "       the directory \"include/db/upgrade\" below the Phorum\n";
+    print "       directory.\n";
+    print "\n";
+    print "   example -f usage:\n";
+    print "\n";
+    print "   $ php console_upgrade.php -f mysql-patches/2008012500.php\n";
+    print "\n";
+    exit(0);
+}
+
+$noprompt = FALSE;
+$file = NULL;
+while (!empty($argv))
+{
+    $opt = array_shift($argv);
+
+    switch ($opt)
+    {
+        case "-h":
+            usage();
+            exit;
+            break;
+
+        case "-a":
+            $noprompt = TRUE;
+            break;
+
+        case "-f":
+            if (empty($argv)) {
+                die("Missing value for -f argument.\n");
+            }
+            $file = array_shift($argv);
+            $file = "./include/db/upgrade/$file";
+            if (! file_exists($file)) {
+                die("Upgrade file \"$file\" not found.\n");
+            }
+            break;
+
+        default:
+            die("Illegal command line option \"$opt\".\nUse -h for help.\n");
+            break;
+    }
+}
 
 // Make sure that the output is not buffered.
 phorum_ob_clean();
@@ -67,8 +125,29 @@ if(!phorum_db_check_connection()){
     exit(1);
 }
 
+// Prepare single file upgrade.
+if ($file)
+{
+    $type = (strstr($file, '-patches')) ? 'patch' : 'schema';
+    if (preg_match('!/(\d{10})\.php$!', $file, $m)) {
+        $version = $m[1];
+    } else {
+        die("Upgrade filename does not look like a db patch filename.\n");
+    }
+    $upgrades = array(
+        $file => array(
+            "version" => $version,
+            "type"    => $type,
+            "file"    => $file
+        )
+    );
+}
+// Prepare standard upgrade
+else {
+    $upgrades = phorum_dbupgrade_getupgrades();
+}
+
 // Run upgrades until we are up to date.
-$upgrades = phorum_dbupgrade_getupgrades();
 $total = count($upgrades);
 $index = 0;
 foreach ($upgrades as $id => $upgrade)
@@ -76,15 +155,24 @@ foreach ($upgrades as $id => $upgrade)
     $index++;
 
     if (!$noprompt) {
-        echo "Next upgrade: $id ($index of $total)\n";
+        if ($total == 1) {
+            echo "Upgrade: $id\n";
+        } else {
+            echo "Next upgrade: $id ($index of $total)\n";
+        }
         echo "Press ENTER to run this upgrade or CTRL+C to stop > ";
         fgets(STDIN);
     } else {
-        echo "Running upgrade $index of $total > ";
+        if ($total == 1) {
+            echo "Running upgrade: $id\n";
+        } else {
+            echo "Running upgrade $index of $total\n";
+        }
     }
 
     // Run the upgrade.
-    $message = phorum_dbupgrade_run($upgrade);
+    $update_internal_version = $file ? TRUE : FALSE;
+    $message = phorum_dbupgrade_run($upgrade, $update_internal_version);
 
     // Strip HTML code from the returned upgrade message,
     // so we can display it on the console.

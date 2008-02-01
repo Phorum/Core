@@ -234,7 +234,7 @@ function phorum_find_upgrades($version = PHORUM)
  *                         - version: the version of the upgrade file
  *                         - type: the type of upgrade ("patch" or "schema")
  *                         - file: the path to the upgrade file
- *                         The array is sorted by version number. 
+ *                         The array is sorted by version number.
  */
 function phorum_dbupgrade_getupgrades()
 {
@@ -260,12 +260,12 @@ function phorum_dbupgrade_getupgrades()
             "./include/db/upgrade/$core_type" .
             ($type == 'patch' ? '-patches' : '');
 
-        $versionvar = $type == 'patch' 
+        $versionvar = $type == 'patch'
                     ? 'internal_patchlevel'
                     : 'internal_version';
 
         // Find all available upgrade files in the upgrade directory.
-        // Upgrade file are in the format YYYYMMDDSS.php, where 
+        // Upgrade file are in the format YYYYMMDDSS.php, where
         // Y = year, M = month, D = day, S = serial.
         // Example: "2007031700.php".
         if (($dh =@opendir($upgradepath)) === FALSE) die (
@@ -303,9 +303,14 @@ function phorum_dbupgrade_getupgrades()
  *
  * @param $upgrades - An upgrade description. One element from the array
  *                    as returned by phorum_dbupgrade_getupgrades().
- * @return $msg - Describes the results of the upgrade. 
+ * @param $update_internal_version - whether to update the internal version
+ *                    for Phorum or not. This one is TRUE by default.
+ *                    It can be used by scripts that have to re-run an old
+ *                    single upgrade file and for which the internal version
+ *                    should not be put back to an old value.
+ * @return $msg - Describes the results of the upgrade.
  */
-function phorum_dbupgrade_run($upgrade)
+function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
 {
     $PHORUM      = $GLOBALS["PHORUM"];
     $version     = $upgrade["version"];
@@ -331,10 +336,13 @@ function phorum_dbupgrade_run($upgrade)
     if (file_exists($upgradefile) && is_readable($upgradefile))
     {
         // Initialize the return message.
+        if (!$update_internal_version) {
+            $msg = "Installing patch $version ...<br/>\n";
+        }
         // Patch level 1111111111 is a special value that is used by
         // phorum if there is no patch level stored in the database.
         // So this is the first time a patch is installed.
-        if ($fromversion == '1111111111') {
+        elseif ($fromversion == '1111111111') {
             $msg = "Upgrading to patch level $version ...<br/>\n";
         } else {
             $msg = "Upgrading from " .
@@ -358,10 +366,12 @@ function phorum_dbupgrade_run($upgrade)
         } else {
             $msg.= "The upgrade was successful.<br/>\n";
         }
-        
+
         // Update the upgrade version info.
-        $GLOBALS["PHORUM"][$versionvar] = $version;
-        phorum_db_update_settings(array($versionvar => $version));
+        if ($update_internal_version) {
+            $GLOBALS["PHORUM"][$versionvar] = $version;
+            phorum_db_update_settings(array($versionvar => $version));
+        }
 
         return $msg;
 
