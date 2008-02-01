@@ -72,12 +72,14 @@
 		
 		
 	}
+/* path fixed for Phorum */
 	.colorPickerTab_inactive span{
-		background-image:url(images/tab_left_inactive.gif);
+		background-image:url(mods/bbcode/colorpicker/images/tab_left_inactive.gif);
 	}
 	
+/* path fixed for Phorum */
 	.colorPickerTab_active span{
-		background-image:url(images/tab_left_active.gif);
+		background-image:url(mods/bbcode/colorpicker/images/tab_left_active.gif);
 
 	}
 	.colorPickerTab_inactive span, .colorPickerTab_active span{
