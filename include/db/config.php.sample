@@ -37,12 +37,12 @@ $PHORUM['DBCONFIG']=array(
     // Full text searching? 1=enabled, 0=disabled
     // (always disable this option for MySQL versions prior to 4.0.18!)
     'mysql_use_ft'  =>  '1',
-    
+
     // don't populate the search-table for mysql fulltext search
     // (useful if you use a alternate search-backend which doesn't use
     //  the search-table)
     'empty_search_table' => '0',
-    
+
     // specifies the charset used for the create-table statements
     // and the connection(s) later on.
     'charset' => 'utf8',
@@ -62,8 +62,8 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 
   The type of database. Typically 'mysql' (the only database type which
   is officially supported by the Phorum distribution). If your PHP version
-  supports the mysqli interface, then you can also use 'mysqli'.
-  Do not change this value, unless you know what you are doing.
+  supports the "mysqli" extension, then do not change this field to "mysqli".
+  Instead use the "mysql_php_extension" option.
 
 * name:
 
