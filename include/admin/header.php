@@ -362,7 +362,7 @@ function hide_help()
 </head>
 <body>
 <div id="helpdiv">
-<div id="helpdiv-hide"><a href="javascript:hide_help();"><img border="0" src="images/close.gif" height="16" width="16" /></a></div>
+<div id="helpdiv-hide"><a href="javascript:hide_help();"><img border="0" src="<?php print $PHORUM['http_path'] ?>/images/close.gif" height="16" width="16" /></a></div>
 <div id="helpdiv-title">&nbsp;Phorum Admin Help</div>
 <div id="helpdiv-content">
 <div id="help-title"></div>
