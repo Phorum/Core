@@ -876,7 +876,7 @@ function phorum_api_user_save_settings($settings)
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    
+
     require_once('./include/api/custom_fields.php');
 
     if (!is_array($user_id)) {
@@ -1056,8 +1056,8 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
 function phorum_api_user_get_setting($name)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    
-    
+
+
 
     // No settings available at all?
     if (empty($PHORUM['user']['settings_data'])) return NULL;
@@ -2721,7 +2721,7 @@ function phorum_api_user_save_groups($user_id, $groups)
  * @return mixed
  *     The return value depends on the $forum_id argument that was used:
  *
- *     - Single forum_id , 0 (zero) or {@link PHORUM_ACCESS_ANY}:
+ *     - Single forum_id, forum_id 0 (zero) or {@link PHORUM_ACCESS_ANY}:
  *       return either TRUE (access granted) or FALSE (access denied).
  *
  *     - An array of forum_ids or {@link PHORUM_ACCESS_LIST}:
