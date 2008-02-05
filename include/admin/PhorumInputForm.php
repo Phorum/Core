@@ -299,7 +299,7 @@ class PhorumInputForm {
             if ( $x == 0 && $blank_line ) {
                 $values[0] = "";
             } else {
-                $key = ( $x < 10 ) ? "0$x" : $x;
+                $key = ( $x < 10 ) ? '0'.$x : $x;
                 $values[$key] = $x;
             }
         }
@@ -326,7 +326,7 @@ class PhorumInputForm {
             if ( $x == 0 && $blank_line ) {
                 $values[0] = "";
             } elseif ( $x > 0 ) {
-                $key = ( $x < 10 ) ? "0$x" : $x;
+                $key = ( $x < 10 ) ? '0'.$x : $x;
                 $values[$key] = date( "F", mktime( 0, 0, 0, $x ) );
             }
         }
@@ -336,7 +336,7 @@ class PhorumInputForm {
             if ( $x == 0 && $blank_line ) {
                 $values[0] = "";
             } elseif ( $x > 0 ) {
-                $key = ( $x < 10 ) ? "0$x" : $x;
+                $key = ( $x < 10 ) ? '0'.$x : $x;
                 $values[$key] = $x;
             }
         }
@@ -425,6 +425,34 @@ class PhorumInputForm {
         $data = "<nobr><input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;<label for=\"$id\">$caption</label></nobr>";
 
         return $data;
+    }
+
+    function select_folder($name, $value, $ignore_folder = NULL, $extra = '')
+    {
+        // Build the a folder list.
+        $folders = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_FOLDERS);
+        $folder_list = array(0 => '/ (Root folder)');
+        foreach ($folders as $id => $folder)
+        {
+            // Skip a folder and its childs if requested through the
+            // $ignore_folder parameter.
+            if (!empty($ignore_folder) &&
+                isset($folder['forum_path'][$ignore_folder])) {
+                continue;
+            }
+
+            // Format the folder name to show in the select list.
+            if ($folder['vroot']) {
+                $folder_list[$id] = '/ Vroot: ' . implode(' / ', $folder['forum_path']);
+            } else {
+                array_shift($folder['forum_path']);
+                $folder_list[$id] = '/ ' . implode(' / ', $folder['forum_path']);
+            }
+        }
+        asort($folder_list);
+
+        // Build the form component.
+        return $this->select_tag($name, $folder_list, $value, $extra);
     }
 
     // $list and $checklist are both associative and should have the same indicies

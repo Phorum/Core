@@ -95,6 +95,7 @@ if (count($_POST))
         phorum_redirect_by_url($url);
         exit;
     }
+    extract($forum);
 }
 
 // ----------------------------------------------------------------------
@@ -162,18 +163,11 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
 
     $frm->addrow("Forum Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
-    $folders = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_FOLDERS);
-    $folder_list = array(0 => '/ (Root folder)');
-    foreach ($folders as $id => $folder) {
-        array_shift($folder['forum_path']);
-        $folder_list[$id] = '/ ' . implode(' / ', $folder['forum_path']);
-    }
-    asort($folder_list);
-
     $frm->addrow(
         "Put this forum below folder",
-        $frm->select_tag("parent_id", $folder_list, $parent_id)
+        $frm->select_folder("parent_id", $parent_id)
     );
+
     if($vroot > 0) {
         $frm->addrow(
             "This folder is in the Virtual Root of:",

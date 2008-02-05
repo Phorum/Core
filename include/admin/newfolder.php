@@ -34,10 +34,10 @@ if (count($_POST))
     $enable_vroot = FALSE;
     foreach ($_POST as $field => $value)
     {
-        // The inherit_id can be the string "NULL", in which case we need
-        // to translate it into a real NULL value.
+        // The inherit_id can be -1, in which case we need
+        // to translate it into a NULL value for the back end.
         if ($field == 'inherit_id') {
-            $folder[$field] = $value == 'NULL' ? NULL : (int) $value;
+            $folder[$field] = $value == -1 ? NULL : (int) $value;
         }
         // The "vroot" field is a virtual field for this form. It only
         // indicates that the folder has to be activated as a vroot.
@@ -113,11 +113,11 @@ if (count($_POST))
 // ----------------------------------------------------------------------
 
 // Initialize the form for editing an existing folder.
-if (defined("PHORUM_EDIT_FOLDER"))
+elseif (defined("PHORUM_EDIT_FOLDER"))
 {
-    $folder_id = isset($_POST['forum_id']) ? $_POST['forum_id'] : $_GET['forum_id'];
+    $folder_id = isset($_POST['forum_id'])
+               ? $_POST['forum_id'] : $_GET['forum_id'];
     $folder = phorum_api_forums_get($folder_id);
-    extract($folder);
 }
 
 // Initialize the form for creating a new folder.
@@ -130,14 +130,36 @@ else
         'inherit_id'  => 0,
         'name'        => ''
     ), PHORUM_FLAG_PREPARE);
-    print_r($folder);
+}
+
+extract($folder);
+
+// The vroot parameter in the form is a checkbox, while the value in
+// the database is a forum_id. We have to do a translation here.
+if (isset($enable_vroot)) { // set when posting a form
+    $vroot = $enable_vroot ? 1 : 0;
+} elseif (!empty($forum_id) && $vroot == $forum_id) {
+    $vroot = 1;
+} else {
+    $foreign_vroot = $vroot;
+    $vroot = 0;
+}
+
+// If we're inheriting settings from a forum,
+// then disable the inherited fields in the input.
+$disabled_form_input = '';
+if ($inherit_id !== NULL) {
+    $disabled_form_input = 'disabled="disabled"';
+} else {
+    // NULL value for $inherit_id is stored in the form as -1.
+    $inherit_id = -1;
 }
 
 // ----------------------------------------------------------------------
-// Handle displaying the forum settings form
+// Handle displaying the folder settings form
 // ----------------------------------------------------------------------
 
-if ($errors){
+if ($errors) {
     phorum_admin_error(join("<br/>", $errors));
 }
 
@@ -145,39 +167,19 @@ require_once('./include/admin/PhorumInputForm.php');
 
 $frm = new PhorumInputForm ("", "post");
 
-$folder_data=phorum_get_folder_info();
-
+// Edit an existing folder.
 if (defined("PHORUM_EDIT_FOLDER"))
 {
     $frm->hidden("module", "editfolder");
     $frm->hidden("forum_id", $forum_id);
     $title = "Edit existing folder";
-
-    $this_folder=$folder_data[$_REQUEST["forum_id"]];
-
-    foreach($folder_data as $folder_id=> $folder){
-
-        // remove children from the list
-        if($folder_id!=$_REQUEST["forum_id"] && substr($folder, 0, strlen($this_folder)+2)!="$this_folder::"){
-            $folders[$folder_id]=$folder;
-        }
-    }
-
-    if($vroot == $forum_id) {
-        $vroot=1;
-    } else {
-        $foreign_vroot=$vroot;
-        $vroot=0;
-    }
-
-} else {
+}
+// Create a new folder.
+else
+{
     $frm->hidden("module", "newfolder");
     $title="Add A Folder";
-
-    $folders=$folder_data;
-    $vroot=0;
-    $active=1;
-    $template=PHORUM_DEFAULT_TEMPLATE;
+    $folders  = $folder_data;
 }
 
 $frm->addbreak($title);
@@ -186,20 +188,47 @@ $frm->addrow("Folder Title", $frm->text_box("name", $name, 30));
 
 $frm->addrow("Folder Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
-$frm->addrow("Folder", $frm->select_tag("parent_id", $folders, $parent_id));
+$frm->addrow("Put this forum below folder", $frm->select_folder('parent_id', $parent_id, $folder_id));
 
 $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
-
-$frm->addbreak("Display Settings");
-
-$frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template));
-
-$frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language));
 
 $frm->addrow("Virtual Root for descending forums/folders", $frm->checkbox("vroot","1","enabled",($vroot)?1:0));
 if($foreign_vroot > 0) {
     $frm->addrow("This folder is in the Virtual Root of:",$folders[$foreign_vroot]);
 }
+
+$frm->addbreak("Inherit Folder Settings");
+
+$forum_list = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INHERIT_MASTERS);
+
+// Remove the forum that we are currently handling from the list.
+if (!empty($forum_id)) {
+    unset($forum_list[$forum_id]);
+}
+
+// Prepare the forum names to show.
+foreach ($forum_list as $id => $forum) {
+    array_shift($forum['forum_path']);
+    $forum_list[$id] = "Forum: " . implode("/", $forum['forum_path']);
+}
+
+// Add standard inheritance options.
+$forum_list["0"]  = "The default forum settings";
+$forum_list["-1"] = "No inheritance - I want to customize this forum's settings";
+
+$row = $frm->addrow(
+    "Inherit display settings from",
+    $frm->select_tag(
+        "inherit_id", $forum_list, $inherit_id
+    ) . $add_inherit_text
+);
+
+
+$frm->addbreak("Display Settings");
+
+$frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template, $disabled_form_input));
+
+$frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language, $disabled_form_input));
 
 phorum_hook("admin_editfolder_form", $frm, $forum_settings);
 
