@@ -135,7 +135,7 @@ Contents:
    by issuing commands like:
 
    mysql> CREATE DATABASE phorum;
-   mysql> GRANT ALL ON phorum.* TO user@localhost IDENTIFIED BY 'password';
+   mysql> GRANT ALL ON phorum.* TO 'user'@'localhost' IDENTIFIED BY 'password';
 
    Of course, for security reasons you would use your own user and
    password instead.
