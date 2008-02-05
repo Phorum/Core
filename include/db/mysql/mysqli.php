@@ -155,6 +155,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
             // Duplicate entry for key.
             case 1062:
+            // For MySQL server versions 5.1.15 up to 5.1.20.
+            // See bug #28842 (http://bugs.mysql.com/bug.php?id=28842)
+            case 1582:
               if ($flags & DB_DUPKEYOK) $ignore_error = TRUE;
               break;
         }
