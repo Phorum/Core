@@ -6,12 +6,12 @@
 
   <!-- Some info for db-debugging -->
   {IF DBDEBUG}
-  <small>
-  {DBDEBUG->count} queries run.<br /><br />
-  {LOOP DBDEBUG->queries}
-  {DBDEBUG->queries->query}<br />
-  {/LOOP DBDEBUG->queries}
-  </small>
+    <small>
+    {DBDEBUG->count} queries run.<br /><br />
+    {LOOP DBDEBUG->queries}
+      {DBDEBUG->queries->query}<br />
+    {/LOOP DBDEBUG->queries}
+    </small>
   {/IF}
 
   </div> <!-- end of div id="phorum" -->
