@@ -158,10 +158,11 @@ shell&gt; <literal>tar xvf phorum-x.y.z.tar</literal></screen>
         the database by issuing the appropriate commands. For example:
         <screen>
 mysql&gt; <literal>CREATE DATABASE phorum;</literal>
-mysql&gt; <literal>GRANT ALL ON phorum.* TO myuser@localhost IDENTIFIED BY 'mypassword';</literal></screen>
+mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY 'mypassword';</literal></screen>
         Of course, for security reasons you would not use "myuser" and
         "mypassword" but a username and password that you made up
-        yourself.
+        yourself. Also "localhost" should match the hostname of the MySQL
+        server to which Phorum will connect.
       </para>
       <para>
         If you are unsure on how to create a database and a database user,
