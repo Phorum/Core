@@ -13,7 +13,7 @@ Contents:
    3.5 Configure the database access
    3.6 Run the web based installer
    3.7 Things to do after installing Phorum
-4. Additional issues 
+4. Additional issues
    4.1 Additional issues for UNIX (Linux, BSD, Solaris, etc.)
        4.1.2 Cache directory
    4.2 Additional issues for Windows
@@ -61,27 +61,27 @@ Contents:
 
    If you haven't already done so, download the latest Phorum distribution
    from http://phorum.org/downloads.php
-   
+
 
  3.2 Unpack the downloaded archive
  ---------------------------------
-   
+
    From Windows:
-   
+
    If you have downloaded the .zip file, you can extract the
    files from that archive directly using Windows XP's zipfile support.
    If you downloaded the .tar.gz file, you will have to download an
    appropriate tool for unpacking, e.g. WinZip (http://www.winzip.com/).
-   
+
    From UNIX:
-   
+
    If you have access to a UNIX shell, you can unpack the .tar.gz
    archive using the following command:
-   
+
    shell> tar xvzf phorum-x.y.z.tar.gz
-   
+
    Or if the tar program on your system does not support the -z flag:
-   
+
    shell> gunzip phorum-x-y-z.tar.gz
    shell> tar xvf phorum-x.y.z.tar
 
@@ -96,17 +96,17 @@ Contents:
    URL "http://www.example.com/forum". From now on, we will name this
    URL simply {phorum url}. So if you see {phorum url}/admin.php, using the
    example we mean http://www.example.com/forum/admin.php
-   
+
    If the webserver is running on the same system as where you have
    unpacked the downloaded archive, you can move the unpacked files
    to your website's document root.
-   
+
    If the webserver is running on another system, you will have to upload
    the files to your website's document root. In most cases, you will use
    FTP for this, but some hosting providers require SCP (secure copy,
    which is more secure than FTP). If you do not know how or where to
    upload the Phorum files, please contact your hosting provider.
-   
+
    Security note:
    (simply ignore this if it does not make sense to you)
    There are software packages that require you to make files writable
@@ -123,23 +123,23 @@ Contents:
    Phorum stores all its data in a database. So you now need to create
    a database. Officially, only the MySQL database server is supported
    by Phorum, so we recommend to use MySQL whenever possible.
-   
+
    If you have hosted your site with a hosting provider, then ask
    your hosting provider to setup the database and a full access
    database user for you.
-   
+
    If you run your own database server, then you will have to create
    the database and the user yourself. If you are using a control
    panel, like phpmyadmin, then use that control panel to create
    them. Else, you can use the mysql prompt to create the database
    by issuing commands like:
-   
+
    mysql> CREATE DATABASE phorum;
-   mysql> GRANT ALL ON phorum.* TO user@localhost IDENTIFIED BY password;
-   
+   mysql> GRANT ALL ON phorum.* TO 'user'@'localhost' IDENTIFIED BY 'password';
+
    Of course, for security reasons you would use your own user and
    password instead.
-   
+
    If you are unsure how to create a database and a database user,
    please refer to your system documentation.
 
@@ -152,11 +152,11 @@ Contents:
    include/db/config.php inside your Phorum directory. This file is
    not in the distribution. Only a differently named sample file is
    included.
-   
+
    First, copy or rename the file "include/db/config.php.sample" to
    "include/db/config.php". Now edit the config.php file to match the
    access settings for the database that was created in step 4.
-   
+
    If you run your website on a remote server, then either edit
    the config.php file directly on that server (e.g. through a
    UNIX prompt) or upload the file to the correct location after
@@ -204,13 +204,13 @@ Contents:
    of system checks to rule out some basic problems. If problems are
    found, please follow the instructions from the sanity checks page
    to solve them.
-   
+
    Login into the admin interface at {phorum url}/admin.php and check
    out what settings can be done to customize Phorum to your likings.
-   
+
    Customize the looks of Phorum to your needs by creating a custom
    template. Instructions can be found in docs/creating_templates.txt.
-   
+
    Read the additional issues for your system (below), docs/faq.txt
    and any other files in the docs dir that may help you.
 
