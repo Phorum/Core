@@ -565,6 +565,17 @@ function phorum_api_forums_save($data, $flags = 0)
         // Inherit from a specific forum.
         else
         {
+            // Inheriting from yourself? No way.
+            if ($dbdata['inherit_id'] == $dbdata['forum_id']) {
+                trigger_error(
+                    'phorum_api_forums_save(): a forum or folder cannot ' .
+                    'inherit settings from itself. Save was called for ' .
+                    'forum_id ' . $dbdata['forum_id'] . ' with that same ' .
+                    'forum_id set as the inherit_id.',
+                    E_USER_ERROR
+                );
+            }
+
             $defaults = phorum_api_forums_get($dbdata['inherit_id']);
 
             // Check if the inherit_id forum was found.
