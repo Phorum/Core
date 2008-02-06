@@ -6,9 +6,6 @@
                 {IF FORUMS->forum_id FORUMS->vroot}
                     <th align="left">
                         {LANG->Forums}
-                        {IF FORUMS->description}
-                            <small>{FORUMS->description}</small>
-                        {/IF}
                     </th>
                 {ELSE}
                     <th align="left" class="icon-folder">
