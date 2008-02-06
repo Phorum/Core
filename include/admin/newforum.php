@@ -31,6 +31,11 @@ $errors = array();
 
 if (count($_POST))
 {
+    // Handling of checkboxes.
+    if (!isset($_POST['pub_perms'])) $_POST['pub_perms'] = array();
+    if (!isset($_POST['reg_perms'])) $_POST['reg_perms'] = array();
+    if (!isset($_POST['allow_email_notify'])) $_POST['allow_email_notify'] = 0;
+
     // Build a forum data array based on the posted data.
     $forum = array();
     foreach ($_POST as $field => $value)
@@ -44,11 +49,6 @@ if (count($_POST))
             $bitmask = 0;
             foreach ($bits as $bit => $dummy) $bitmask |= $bit;
             $forum[$field] = $bitmask;
-        }
-        // The inherit_id can be -1, in which case we need
-        // to translate it into a NULL value for the back end.
-        elseif ($field == 'inherit_id') {
-            $forum[$field] = $value == -1 ? NULL : (int) $value;
         }
         // All other fields are simply copied.
         elseif (array_key_exists($field, $PHORUM['API']['forum_fields'])) {
@@ -163,12 +163,13 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
 
     $frm->addrow("Forum Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
+    $parent_id_options = phorum_api_forums_get_parent_id_options($forum_id);
     $frm->addrow(
         "Put this forum below folder",
-        $frm->select_folder("parent_id", $parent_id)
+        $frm->select_tag('parent_id', $parent_id_options, $parent_id)
     );
 
-    if($vroot > 0) {
+    if ($vroot > 0) {
         $frm->addrow(
             "This folder is in the Virtual Root of:",
             $folder_list[$vroot]
@@ -190,19 +191,16 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
          A forum that is not visible is still accessible by all users
          that have at least read access for it. If you need a forum that is
          only accessible by some of your users, then use the permission system
-         for that. Revoke all rights from public and anonymous users in the
-         forum settings and use group or user permissions to grant access
+         for that. Revoke all rights from both public and registered users in
+         the forum settings and use group or user permissions to grant access
          to the users.'
     );
 
     // If we're inheriting settings from a different forum,
     // then disable the inherited fields in the input.
     $disabled_form_input = '';
-    if ($inherit_id !== NULL) {
+    if ($inherit_id != -1) {
         $disabled_form_input = 'disabled="disabled"';
-    } else {
-        // NULL value for $inherit_id is stored in the form as -1.
-        $inherit_id = -1;
     }
 
     $frm->addbreak("Inherit Forum Settings");
@@ -220,7 +218,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
             $disabled_form_input_inherit='disabled="disabled"';
 
             $add_inherit_text="<br />You cannot let this forum inherit its " .
-                              "settings from another forum, bacause the " .
+                              "settings from another forum, because the " .
                               "following forums and or folders inherit from " .
                               "the current forum already:<br /><ul>\n";
             foreach($slaves as $id => $data) {
@@ -236,34 +234,11 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
         }
     }
 
-    // If the current forum is allowed to inherit settings from another
-    // forum, then build a list of forums from which we can inherit.
-    if ($add_inherit_text == '')
-    {
-        $forum_list = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INHERIT_MASTERS);
-
-        // Remove the forum that we are currently handling from the list.
-        if (!empty($forum_id)) {
-            unset($forum_list[$forum_id]);
-        }
-
-        // Prepare the forum names to show.
-        foreach ($forum_list as $id => $forum) {
-            array_shift($forum['forum_path']);
-            $forum_list[$id] = "Forum: " . implode("/", $forum['forum_path']);
-        }
-    } else {
-        $forum_list = array();
-    }
-
-    // Add standard inheritance options.
-    $forum_list["0"]  = "The default forum settings";
-    $forum_list["-1"] = "No inheritance - I want to customize this forum's settings";
-
+    $inherit_id_options = phorum_api_forums_get_inherit_id_options($forum_id);
     $row = $frm->addrow(
-        "Inherit settings from",
+        "Inherit the settings below this option from",
         $frm->select_tag(
-            "inherit_id", $forum_list, $inherit_id,
+            "inherit_id", $inherit_id_options, $inherit_id,
             $disabled_form_input_inherit
         ) . $add_inherit_text
     );
@@ -277,7 +252,6 @@ $frm->addhelp($row, "Moderate Messages", "This setting determines whether messag
 
 $frm->addrow("Email Messages To Moderators", $frm->select_tag("email_moderators", array(PHORUM_EMAIL_MODERATOR_OFF=>"Disabled", PHORUM_EMAIL_MODERATOR_ON=>"Enabled"), $email_moderators, $disabled_form_input));
 
-$row = $frm->addrow("Allow Email Notification for following topics", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
 $frm->addhelp($row, "Allow Email Notification", "This option determines if it is possible for users to use email notification when following topics within this forum.<br/><br/>This does not only apply to enabling email notification at post time, but it also applies to clicking on \"".$PHORUM["DATA"]["LANG"]["FollowThread"]."\" from the message read page and to managing subscriptions from the user control center.");
 
 $pub_perm_frm = $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $pub_perms & PHORUM_USER_ALLOW_READ, $disabled_form_input)."&nbsp;&nbsp;".
@@ -285,17 +259,18 @@ $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $pub_perms 
 $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $pub_perms & PHORUM_USER_ALLOW_NEW_TOPIC, $disabled_form_input)."<br />".
 $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $pub_perms & PHORUM_USER_ALLOW_ATTACH, $disabled_form_input);
 
-$frm->addrow("Public Users", $pub_perm_frm);
+$frm->addrow("Public Anonymous Users", $pub_perm_frm);
 
 $reg_perm_frm = $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $reg_perms & PHORUM_USER_ALLOW_READ, $disabled_form_input)."&nbsp;&nbsp;".
 $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $reg_perms & PHORUM_USER_ALLOW_REPLY, $disabled_form_input)."&nbsp;&nbsp;".
 $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", $reg_perms & PHORUM_USER_ALLOW_NEW_TOPIC, $disabled_form_input)."<br />".
 $frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts", $reg_perms & PHORUM_USER_ALLOW_EDIT, $disabled_form_input)."&nbsp;&nbsp;".
-$frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $reg_perms & PHORUM_USER_ALLOW_ATTACH, $disabled_form_input);
+$frm->checkbox("reg_perms[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", $reg_perms & PHORUM_USER_ALLOW_ATTACH, $disabled_form_input) . "<br/>".
+$frm->checkbox('allow_email_notify', 1, 'Use email notification for following topics', $allow_email_notify, $disabled_form_input);
 
 $row=$frm->addrow("Registered Users", $reg_perm_frm);
 
-$frm->addhelp($row, "Registered Users", "These settings do not apply to users that are granted permissions directly via the user admin or via a group permissions.");
+$frm->addhelp($row, "Registered Users", "These are the permissions that apply to registered users. Note that these permissions can be overridden by permissions that were granted directly to the user or to a group to which a user belongs.");
 
 $frm->addbreak("Display Settings");
 

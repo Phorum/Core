@@ -427,34 +427,6 @@ class PhorumInputForm {
         return $data;
     }
 
-    function select_folder($name, $value, $ignore_folder = NULL, $extra = '')
-    {
-        // Build the a folder list.
-        $folders = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_FOLDERS);
-        $folder_list = array(0 => '/ (Root folder)');
-        foreach ($folders as $id => $folder)
-        {
-            // Skip a folder and its childs if requested through the
-            // $ignore_folder parameter.
-            if (!empty($ignore_folder) &&
-                isset($folder['forum_path'][$ignore_folder])) {
-                continue;
-            }
-
-            // Format the folder name to show in the select list.
-            if ($folder['vroot']) {
-                $folder_list[$id] = '/ Vroot: ' . implode(' / ', $folder['forum_path']);
-            } else {
-                array_shift($folder['forum_path']);
-                $folder_list[$id] = '/ ' . implode(' / ', $folder['forum_path']);
-            }
-        }
-        asort($folder_list);
-
-        // Build the form component.
-        return $this->select_tag($name, $folder_list, $value, $extra);
-    }
-
     // $list and $checklist are both associative and should have the same indicies
     function checkbox_list( $prefix, $list, $separator = "&nbsp;&nbsp;", $checklist = 0 )
     {

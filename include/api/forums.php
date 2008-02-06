@@ -126,7 +126,7 @@ $GLOBALS['PHORUM']['API']['folder_fields'] = array(
   'display_order'           => 'm:int:0',
   'vroot'                   => 'm:int:0',
   'cache_version'           => 'm:int:0',
-  'inherit_id'              => 'm:intORnull:0',
+  'inherit_id'              => 'm:inherit_id:0',
 
   // Display settings.
   'template'                => 's:string:'.PHORUM_DEFAULT_TEMPLATE,
@@ -151,7 +151,7 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
   'display_order'            => 'm:int:0',
   'vroot'                    => 'm:int:0',
   'cache_version'            => 'm:int:0',
-  'inherit_id'               => 'm:intORnull:0',
+  'inherit_id'               => 'm:inherit_id:0',
 
   // Display settings.
   'display_fixed'            => 's:bool:0',
@@ -242,6 +242,12 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  */
 function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $flags = 0)
 {
+    // We might get an $inherit_id parameter that is NULL or -1, since we
+    // present the database value NULL as -1 from this API (because using
+    // NULL values in a form isn't really an option.
+    $inherit_id = ($inherit_id != -1 && $inherit_id !== NULL)
+                ? (int)$inherit_id : NULL;
+
     // Retrieve the forums/folders from the database.
     $only_inherit_masters = $flags & PHORUM_FLAG_INHERIT_MASTERS;
     $only_folders = $flags & PHORUM_FLAG_FOLDERS;
@@ -269,9 +275,13 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
                     $filtered[$fld] = (int) $forum[$fld];
                     break;
 
-                case 'intORnull':
+                case 'inherit_id':
+                    // This is a special one. The database value is NULL or
+                    // a positive integer, but NULL is not an easy value to
+                    // use in HTML forms. Therefore, we provide the value
+                    // -1 to indicate a NULL value here.
                     $filtered[$fld] = $forum[$fld] === NULL
-                                    ? NULL : (int)$forum[$fld];
+                                    ? -1 : (int)$forum[$fld];
                     break;
 
                 case 'string':
@@ -289,7 +299,7 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
                 default:
                     trigger_error(
                         'phorum_api_forums_get(): Illegal field type used: ' .
-                        htmlspecialchars($fldtype),
+                        htmlspecialchars($spec[FFLD_TYPE]),
                         E_USER_ERROR
                     );
                     break;
@@ -370,6 +380,9 @@ function phorum_api_forums_save($data, $flags = 0)
         );
         return NULL;
     }
+
+    // Used for keeping track of an existing db record.
+    $existing = NULL;
 
     // Initialize data for saving default forum settings.
     if ($flags & PHORUM_FLAG_DEFAULTS)
@@ -488,8 +501,13 @@ function phorum_api_forums_save($data, $flags = 0)
                 $dbdata[$fld] = (int) $val;
                 break;
 
-            case 'intORnull':
-                $dbdata[$fld] = $val === NULL ? NULL : (int) $val;
+            case 'inherit_id':
+                // This is a special one. The database value is NULL or
+                // a positive integer, but NULL is not an easy value to
+                // use in HTML forms. Therefore, we also accept the value
+                // -1 to indicate a NULL value here.
+                $dbdata[$fld] = ($val === NULL || $val == -1)
+                              ? NULL : (int) $val;
                 break;
 
             case 'string':
@@ -599,7 +617,7 @@ function phorum_api_forums_save($data, $flags = 0)
             }
 
             // Inherited inheritance is not allowed.
-            if ($defaults['inherit_id'] !== NULL) {
+            if ($defaults['inherit_id'] != -1) {
                 trigger_error(
                     'phorum_api_forums_save(): inherit_id ' .
                     $dbdata['inherit_id'] . ' points to a forum that ' .
@@ -705,7 +723,7 @@ function phorum_api_forums_save($data, $flags = 0)
     // those criteria, we might have to cascade.
     if ($existing &&
         $existing['folder_flag'] == 0 &&
-        $existing['inherit_id'] === NULL)
+        $existing['inherit_id'] == -1)
     {
         // Find the forums and folders that inherit from this forum.
         $childs = phorum_api_forums_by_inheritance($existing['forum_id']);
@@ -1133,6 +1151,135 @@ function phorum_api_forums_by_vroot($vroot_id = 0, $only_inherit_masters = FALSE
 function phorum_api_forums_by_inheritance($forum_id = 0)
 {
     return phorum_api_forums_get(NULL, NULL, NULL, $forum_id);
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_get_parent_id_options()
+/**
+ * This function can be used to build a list of valid parent_id options
+ * for a given forum_id.
+ *
+ * The forum_id parameter is used to skip the folder and its own children
+ * when creating a parent folder list for a folder.
+ *
+ * The returned options list consists of:
+ * - Folders that can act as a parent folder
+ * - An option for using the root folder (which is not a real folder in the db)
+ *
+ * @param mixed $forum_id
+ *     The forum_id for which to create the parent folder list or NULL if all
+ *     possible parent folders should be included in the list (useful in
+ *     case you need a list of parent_id options for a new forum or folder).
+ *
+ * @return array
+ *     An array of valid parent folder options. The keys are values that can
+ *     be used for setting the parent_id. The values are descriptions of
+ *     the options.
+ */
+function phorum_api_forums_get_parent_id_options($forum_id = NULL)
+{
+    // The options array to build.
+    $options = array();
+
+    // Retrieve the available folders.
+    $folders = phorum_api_forums_get(
+        NULL, NULL, NULL, NULL, PHORUM_FLAG_FOLDERS
+    );
+
+    // Add the available folders.
+    foreach ($folders as $id => $folder)
+    {
+        // Skip the folder and its childs for which a parent_id option
+        // list is being built.
+        if (!empty($forum_id) &&
+            isset($folder['forum_path'][$forum_id])) {
+            continue;
+        }
+
+        // Format the option description.
+        if ($folder['vroot']) {
+            $options[$id] = '/ Vroot: ' . implode(' / ', $folder['forum_path']);
+        } else {
+            array_shift($folder['forum_path']);
+            $options[$id] = '/ ' . implode(' / ', $folder['forum_path']);
+        }
+    }
+
+    // Sort the options.
+    natcasesort($options);
+
+    // Add the root folder option. Make sure it always is the first option.
+    $options = array_reverse($options, TRUE);
+    $options[0] = '/ (Root folder)';
+    $options = array_reverse($options, TRUE);
+
+    return $options;
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_get_inherit_id_options()
+/**
+ * This function can be used to build a list of valid inherit_id options
+ * for a given forum_id.
+ *
+ * The forum_id is used to skip the forum itself when building an inheritance
+ * options list for a forum. A forum cannot inherit its own settings.
+ *
+ * The returned options list consists of:
+ * - Forums that can act as an inherit master
+ * - An option for inheriting from the default forum settings
+ * - An option for using no inheritance at all
+ *
+ * @param mixed $forum_id
+ *     The forum_id for which to create the options list or NULL if all
+ *     possible inherit masters should be included in the list (useful in
+ *     case you need a list of inherit_id options for a new forum or folder).
+ *
+ * @return array
+ *     An array of inheritance options. The keys are values that can be
+ *     used for setting the inherit_id. The values are descriptions of
+ *     the options.
+ */
+function phorum_api_forums_get_inherit_id_options($forum_id = NULL)
+{
+    if ($forum_id !== NULL) settype($forum_id, 'int');
+
+    // The options array to build.
+    $options = array();
+
+    // Retrieve the forums that can be used for inheriting settings.
+    $masters = phorum_api_forums_get(
+        NULL, NULL, NULL, NULL, PHORUM_FLAG_INHERIT_MASTERS
+    );
+
+    // Remove the forum_id to ignore from the list.
+    if ($forum_id !== NULL) {
+        unset($masters[$forum_id]);
+    }
+
+    // Add the available inheritable forums.
+    foreach ($masters as $id => $forum)
+    {
+        // Format the option description.
+        if ($forum['vroot']) {
+            $options[$id] = '/ Vroot: ' . implode(' / ', $forum['forum_path']);
+        } else {
+            array_shift($forum['forum_path']);
+            $options[$id] = '/ ' . implode(' / ', $forum['forum_path']);
+        }
+    }
+
+    // Sort the options.
+    natcasesort($options);
+
+    // Add the standard inheritance options. Make sure they always are
+    // the first options in the list.
+    $options = array_reverse($options, TRUE);
+    $options[0]  = "The default forum settings";
+    $options[-1] = "No inheritance - I want to customize the settings";
+    $options = array_reverse($options, TRUE);
+
+    return $options;
 }
 // }}}
 

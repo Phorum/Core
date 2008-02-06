@@ -34,18 +34,13 @@ if (count($_POST))
     $enable_vroot = FALSE;
     foreach ($_POST as $field => $value)
     {
-        // The inherit_id can be -1, in which case we need
-        // to translate it into a NULL value for the back end.
-        if ($field == 'inherit_id') {
-            $folder[$field] = $value == -1 ? NULL : (int) $value;
-        }
         // The "vroot" field is a virtual field for this form. It only
         // indicates that the folder has to be activated as a vroot.
         // In the data, the vroot indicates to what vroot a forum or
         // folder belongs. To make a certain folder a vroot folder, we
         // have to set the vroot field to the same value as the forum_id
         // field later on.
-        elseif ($field == 'vroot') {
+        if ($field == 'vroot') {
             $enable_vroot = TRUE;
         }
         // All other fields are simply copied.
@@ -145,14 +140,11 @@ if (isset($enable_vroot)) { // set when posting a form
     $vroot = 0;
 }
 
-// If we're inheriting settings from a forum,
+// If we are inheriting settings from a forum,
 // then disable the inherited fields in the input.
 $disabled_form_input = '';
-if ($inherit_id !== NULL) {
+if ($inherit_id != -1) {
     $disabled_form_input = 'disabled="disabled"';
-} else {
-    // NULL value for $inherit_id is stored in the form as -1.
-    $inherit_id = -1;
 }
 
 // ----------------------------------------------------------------------
@@ -188,41 +180,41 @@ $frm->addrow("Folder Title", $frm->text_box("name", $name, 30));
 
 $frm->addrow("Folder Description", $frm->textarea("description", $description, $cols=60, $rows=10, "style=\"width: 100%;\""), "top");
 
-$frm->addrow("Put this forum below folder", $frm->select_folder('parent_id', $parent_id, $folder_id));
+$parent_id_options = phorum_api_forums_get_parent_id_options($forum_id);
+$frm->addrow(
+    "Put this forum below folder",
+    $frm->select_tag('parent_id', $parent_id_options, $parent_id)
+);
 
 $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
 
-$frm->addrow("Virtual Root for descending forums/folders", $frm->checkbox("vroot","1","enabled",($vroot)?1:0));
-if($foreign_vroot > 0) {
-    $frm->addrow("This folder is in the Virtual Root of:",$folders[$foreign_vroot]);
+$row = $frm->addrow("Virtual Root for descending forums/folders", $frm->checkbox("vroot","1","enabled",($vroot)?1:0));
+$frm->addhelp($row,
+    "Virtual Root for descending forums/folders",
+    "If you enable the virtual root feature for a folder, then this folder
+     will act as a separate Phorum installation. The folder will not be
+     visible in its parent folder anymore and if you visit the folder, it will
+     behave as if it were a Phorum root folder. This way you can run
+     multiple separated forums on a single Phorum installation.<br/><br/>
+     The users will be able to access all virtual root folders, unless you
+     use the permission system to setup different access rules."
+);
+if ($foreign_vroot > 0) {
+    $frm->addrow(
+        "This folder is in the Virtual Root of:",
+        $folders[$foreign_vroot]
+    );
 }
 
 $frm->addbreak("Inherit Folder Settings");
 
-$forum_list = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INHERIT_MASTERS);
-
-// Remove the forum that we are currently handling from the list.
-if (!empty($forum_id)) {
-    unset($forum_list[$forum_id]);
-}
-
-// Prepare the forum names to show.
-foreach ($forum_list as $id => $forum) {
-    array_shift($forum['forum_path']);
-    $forum_list[$id] = "Forum: " . implode("/", $forum['forum_path']);
-}
-
-// Add standard inheritance options.
-$forum_list["0"]  = "The default forum settings";
-$forum_list["-1"] = "No inheritance - I want to customize this forum's settings";
-
+$inherit_id_options = phorum_api_forums_get_inherit_id_options($forum_id);
 $row = $frm->addrow(
-    "Inherit display settings from",
+    "Inherit the settings below this option from",
     $frm->select_tag(
-        "inherit_id", $forum_list, $inherit_id
+        "inherit_id", $inherit_id_options, $inherit_id
     ) . $add_inherit_text
 );
-
 
 $frm->addbreak("Display Settings");
 

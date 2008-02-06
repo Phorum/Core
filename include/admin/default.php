@@ -57,12 +57,14 @@ foreach($forums as $forum_id => $forum)
 {
     if ($forum["folder_flag"])
     {
+        $visit_url = phorum_get_url(PHORUM_INDEX_URL, $forum['forum_id']);
         $type="folder";
-        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deletefolder&forum_id=$forum_id\">Delete</a>";
+        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editfolder&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deletefolder&forum_id=$forum_id\">Delete</a>&nbsp;&#149;&nbsp;<a href=\"$visit_url\">Visit</a>";
         $mainurl="{$PHORUM["admin_http_path"]}?module=default&parent_id=$forum_id";
     } else {
+        $visit_url = phorum_get_url(PHORUM_LIST_URL, $forum['forum_id']);
         $type="forum";
-        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editforum&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deleteforum&forum_id=$forum_id\">Delete</a>";
+        $actions="<a href=\"{$PHORUM["admin_http_path"]}?module=editforum&forum_id=$forum_id\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=deleteforum&forum_id=$forum_id\">Delete</a>&nbsp;&#149;&nbsp;<a href=\"$visit_url\">Visit</a>";
         $mainurl=NULL;
     }
 
