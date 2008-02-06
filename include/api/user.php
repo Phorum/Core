@@ -2655,7 +2655,7 @@ function phorum_api_user_session_destroy($type)
 function phorum_api_user_get_groups($user_id)
 {
     // Retrieve information for all the groups for the user.
-    $groupss = phorum_api_user_check_group_access(
+    $groups = phorum_api_user_check_group_access(
         PHORUM_USER_GROUP_SUSPENDED,
         PHORUM_ACCESS_LIST,
         $user_id
