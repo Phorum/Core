@@ -119,9 +119,9 @@ function phorum_format_messages ($data, $author_specs = NULL)
         // Run bad word replacement code on subject and author.
         if($bad_word_check) {
             if (isset($message["subject"]))
-                $message["subject"] = preg_replace($replace_words, $replace_vals, $message["subject"]);
+                $data[$key]["subject"] = preg_replace($replace_words, $replace_vals, $data[$key]["subject"]);
             if (isset($message["author"]))
-                $message["author"] = preg_replace($replace_words, $replace_vals, $message["author"]);
+                $data[$key]["author"] = preg_replace($replace_words, $replace_vals, $data[$key]["author"]);
         }
 
         // Escape special HTML characters in fields.
