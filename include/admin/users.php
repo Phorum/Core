@@ -24,6 +24,7 @@ include('./include/format_functions.php');
 
 $user_status_map = array(
     'any'                     => 'Any user status',
+    'pending'                 => 'Any pending status',
     PHORUM_USER_PENDING_BOTH  => 'Pending user + moderator confirmation',
     PHORUM_USER_PENDING_EMAIL => 'Pending user confirmation',
     PHORUM_USER_PENDING_MOD   => 'Pending moderator confirmation',
@@ -235,7 +236,9 @@ if (!isset($_GET["edit"]) && !isset($_POST['section']))
     // Build the search parameters query string items.
     $url_safe_search = '';
     foreach ($user_search_fields as $field) {
-        $url_safe_search .= "&$field=" . urlencode($_REQUEST[$field]);
+        if (isset($_REQUEST[$field])) {
+            $url_safe_search .= "&$field=" . urlencode($_REQUEST[$field]);
+        }
     }
 
     settype($_REQUEST["start"], "integer");
@@ -298,9 +301,15 @@ if (!isset($_GET["edit"]) && !isset($_POST['section']))
     if (isset($_REQUEST['search_status']) &&
         $_REQUEST['search_status'] != '' &&
         $_REQUEST['search_status'] != 'any') {
+
         $search_fields[] = 'active';
-        $search_values[] = (int) $_REQUEST['search_status'];
-        $search_operators[] = '=';
+        if ($_REQUEST['search_status'] == 'pending') {
+            $search_values[] = 0;
+            $search_operators[] = '<';
+        } else {
+            $search_values[] = (int) $_REQUEST['search_status'];
+            $search_operators[] = '=';
+        }
     }
 
     // Find a list of all matching user_ids.
