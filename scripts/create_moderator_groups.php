@@ -34,7 +34,6 @@ foreach ($groups as $id => $group) {
         }
     }
 }
-print_r($forum_has_moderator);
 
 foreach ($forums as $forum_id => $fdata)
 {
