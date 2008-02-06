@@ -7,9 +7,6 @@
                     <th align="left">
                         <img src="{URL->TEMPLATE}/images/folder.png" class="icon1616" alt="&bull;" />
                         {LANG->Forums}
-                        {IF FORUMS->description}
-                            <small>{FORUMS->description}</small>
-                        {/IF}
                     </th>
                 {ELSE}
                     <th align="left">
