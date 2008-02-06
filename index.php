@@ -32,11 +32,6 @@ if (!phorum_check_read_common()) { return; }
 if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
     !empty($PHORUM['user']['user_id'])) {
 
-    /**
-     * @todo do we need to clear $PHORUM['user']['newinfo'] ?
-     */
-    unset($PHORUM['user']['newinfo']);
-
     // Mark the forum read.
     phorum_db_newflag_allread($PHORUM["forum_id"]);
 
