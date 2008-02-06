@@ -2641,20 +2641,19 @@ function phorum_api_user_session_destroy($type)
  *
  * @param integer $user_id
  *     The user_id of the user for which to retrieve the groups.
+ *
+ * @return array
+ *     An array of groups for the user. The keys are the group ids.
+ *     The values are group information arrays.
  */
 function phorum_api_user_get_groups($user_id)
 {
     // Retrieve information for all the groups for the user.
-    $groups_access = phorum_api_user_check_group_access(
+    $groups = phorum_api_user_check_group_access(
         PHORUM_USER_GROUP_SUSPENDED,
-        PHORUM_ACCESS_LIST, $user_id
+        PHORUM_ACCESS_LIST,
+        $user_id
     );
-
-    // Convert the list to a basic group id => group status list.
-    $groups = array();
-    foreach ($groups_access as $group) {
-        $groups[$group['group_id']] = $group['user_status'];
-    }
 
     return $groups;
 }
