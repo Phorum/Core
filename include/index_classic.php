@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM")) return;
 
-$forums = phorum_db_get_forums( 0, $parent_id );
+$forums = phorum_db_get_forums( 0, $PHORUM['forum_id'] );
 
 $PHORUM["DATA"]["FORUMS"] = array();
 
@@ -50,7 +50,7 @@ foreach( $forums as $forum ) {
         $forum["url"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
 
         // if there is only one forum in Phorum, redirect to it.
-        if ( $parent_id==0 && count( $forums ) < 2 ) {
+        if ( $PHORUM['forum_id']==0 && count( $forums ) < 2 ) {
             phorum_redirect_by_url($forum['url']);
             exit();
         }

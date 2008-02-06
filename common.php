@@ -29,7 +29,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.3-dev" );
 
 // our database schema version in format of year-month-day-serial
-define( "PHORUM_SCHEMA_VERSION", "2007123002" );
+define( "PHORUM_SCHEMA_VERSION", "2008020600" );
 
 // our database patch level in format of year-month-day-serial
 define( "PHORUM_SCHEMA_PATCHLEVEL", "2008012500" );
@@ -1350,7 +1350,7 @@ function phorum_build_common_urls()
         // either a folder where the link should be shown (not vroot or root)
         // or an active forum where the link should be shown
 
-        if(isset($PHORUM["use_new_folder_style"]) && $PHORUM["use_new_folder_style"] ) {
+        if (isset($PHORUM["index_style"]) && $PHORUM["index_style"] == PHORUM_INDEX_FLAT) {
             // go to root or vroot
             $index_id=$PHORUM["vroot"]; // vroot is either 0 (root) or another id
 

@@ -22,68 +22,80 @@ require_once('./common.php');
 
 require_once('./include/format_functions.php');
 
-if(!phorum_check_read_common()) {
-  return;
-}
+// Check if the user has read permission for the current folder.
+if (!phorum_check_read_common()) { return; }
 
-// check for markread
-if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
-    // setting all posts read
-    if(isset($PHORUM["forum_id"])){
-        unset($PHORUM['user']['newinfo']);
-        phorum_db_newflag_allread($PHORUM["forum_id"]);
-        if($PHORUM['cache_newflags']) {
-            $newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
-            phorum_cache_remove('newflags', $newflagkey);
-            phorum_cache_remove('newflags_index', $newflagkey);
-        }
+// Handle "mark read" clicks. The arguments for such click are:
+// [0] => The id of the forum to mark read (stored in $PHORUM['forum_id']).
+// [1] => The string "markread"
+// [2] => The id of the folder in which the marked read forum resides.
+if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
+    !empty($PHORUM['user']['user_id'])) {
+
+    /**
+     * @todo do we need to clear $PHORUM['user']['newinfo'] ?
+     */
+    unset($PHORUM['user']['newinfo']);
+
+    // Mark the forum read.
+    phorum_db_newflag_allread($PHORUM["forum_id"]);
+
+    // Clear the newflag caches.
+    if ($PHORUM['cache_newflags'])
+    {
+        $newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
+        phorum_cache_remove('newflags', $newflagkey);
+        phorum_cache_remove('newflags_index', $newflagkey);
     }
 
-    // redirect to a fresh list of the current folder without markread in url
-    if(isset($PHORUM["args"][2]) && !empty($PHORUM["args"][2])) {
-        $folder_id = (int)$PHORUM["args"][2];
-        $dest_url = phorum_get_url(PHORUM_INDEX_URL,$folder_id);
+    // Redirect to a fresh list of the current folder without the mark read
+    // parameters in the URL. This way we prevent users from bookmarking
+    // the mark read URL.
+    if (!empty($PHORUM["args"][2])) {
+        $dest_url = phorum_get_url(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
     } else {
         $dest_url = phorum_get_url(PHORUM_INDEX_URL);
     }
     phorum_redirect_by_url($dest_url);
     exit();
-
 }
 
-// somehow we got to a forum in index.php
-if(!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"]==0){
+// Somehow we arrived at a forum instead of a folder.
+// Redirect the user to the message list for that forum.
+if (!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"] == 0) {
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
     phorum_redirect_by_url($dest_url);
     exit();
 }
 
-// add feed urls
-if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
+// Setup the syndication feed URLs for this folder.
+$PHORUM['DATA']['FEEDS'] = array();
+if (!empty($PHORUM['use_rss']))
 {
-    $PHORUM['DATA']['FEEDS'] = array(
-        array(
-            'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
-            'TITLE' => $PHORUM['DATA']['FEED'] . ' ('. strtolower($PHORUM['DATA']['LANG']['Threads']) . ')'
-        ),
-        array(
-            "URL" => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
-            "TITLE" => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
-        )
+    // Add the feed for new threads.
+    $PHORUM['DATA']['FEEDS'][] = array(
+        'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
+        'TITLE' => $PHORUM['DATA']['FEED'] . ' ('. strtolower($PHORUM['DATA']['LANG']['Threads']) . ')'
+    );
+
+    // Add the feed for new threads and their replies.
+    $PHORUM['DATA']['FEEDS'][] = array(
+        'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
+        'TITLE' => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
     );
 }
 
+// From here on we differentiate the code per index style that we use.
+switch ($PHORUM['index_style'])
+{
+    case PHORUM_INDEX_FLAT:
+        require_once('./include/index_new.php');
+        break;
 
-if ( isset( $PHORUM["forum_id"] ) ) {
-    $parent_id = (int)$PHORUM["forum_id"];
-} else {
-    $parent_id = 0;
-}
-
-if($PHORUM["use_new_folder_style"]){
-    require_once('./include/index_new.php');
-} else {
-    require_once('./include/index_classic.php');
+    case PHORUM_INDEX_DIRECTORY:
+    default: // Should not happen
+        require_once('./include/index_classic.php');
+        break;
 }
 
 ?>

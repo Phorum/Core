@@ -19,17 +19,17 @@
 
 if (!defined("PHORUM")) return;
 
-// get vroot or create a fake one for forum_id=0
-if($PHORUM["forum_id"]==0){
+require_once('./include/api/forums.php');
 
+// Get the vroot data record or create a fake one for forum_id = 0.
+if ($PHORUM["forum_id"]==0) {
     $forums[0] = array(
-                    "forum_id" => 0,
-                    "folder_flag" => 1,
-                    "vroot" => 0
-                 );
+        "forum_id"    => 0,
+        "folder_flag" => 1,
+        "vroot"       => 0
+    );
 } else {
-
-    $forums = phorum_db_get_forums( $PHORUM["forum_id"] );
+    $forums = phorum_api_forums_get(array($PHORUM["forum_id"]));
 }
 
 // init some data

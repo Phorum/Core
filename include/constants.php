@@ -97,6 +97,10 @@ define("PHORUM_THREADED_ON", 1);
 define("PHORUM_THREADED_OFF", 2);
 define("PHORUM_THREADED_HYBRID", 3);
 
+// index page styles
+define("PHORUM_INDEX_DIRECTORY", 0);
+define("PHORUM_INDEX_FLAT", 1);
+
 // edit tracking
 define("PHORUM_EDIT_TRACK_OFF", 0);
 define("PHORUM_EDIT_TRACK_ON", 1);

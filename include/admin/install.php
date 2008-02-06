@@ -378,7 +378,7 @@ switch ($step){
             "redirect_after_post" => "list",
             "reply_on_read_page" => 1,
             "status" => "normal",
-            "use_new_folder_style" => 1,
+            "index_style" => PHORUM_INDEX_FLAT,
             "default_forum_options" => $default_forum_options,
             "hooks"=> $hooks_initial,
             "mods" => $mods_initial,
