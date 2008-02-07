@@ -309,6 +309,33 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
         $forums[$id] = $filtered;
     }
 
+    // If forum_id 0 (zero) is requested, then we create a fake folder
+    // record. This is the root folder, which does not correspond to an
+    // actual record in the database.
+    if ($forum_ids !== NULL) {
+        if ((is_array($forum_ids) && in_array(0, $forum_ids)) ||
+            (!is_array($forum_ids) && $forum_ids === 0)) {
+
+            $PHORUM = $GLOBALS['PHORUM'];
+            $template = $PHORUM['default_forum_options']['template'];
+            $language = $PHORUM['default_forum_options']['language'];
+
+            $forums[0] = array(
+                'forum_id'      => 0,
+                'folder_flag'   => 1,
+                'vroot'         => 0,
+                'parent_id'     => NULL,
+                'inherit_id'    => 0,
+                'active'        => 1,
+                'name'          => $PHORUM['title'],
+                'description'   => $PHORUM['description'],
+                'forum_path'    => array(0 => $PHORUM['title']),
+                'template'      => $template,
+                'language'      => $language
+            );
+        }
+    }
+
     if ($forum_ids === NULL || is_array($forum_ids)) {
       return $forums;
     } else {
