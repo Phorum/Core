@@ -9,7 +9,7 @@
     <small>
     {DBDEBUG->count} queries run.<br /><br />
     {LOOP DBDEBUG->queries}
-      {DBDEBUG->queries->query}<br />
+      {DBDEBUG->queries}<br />
     {/LOOP DBDEBUG->queries}
     </small>
   {/IF}
