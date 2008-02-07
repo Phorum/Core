@@ -26,6 +26,7 @@
 
 require_once('./include/format_functions.php'); // For phorum_filesize()
 require_once('./include/upload_functions.php');
+require_once('./include/api/forums.php');
 
 $phorum_check = "File uploading (personal files and attachments)";
 
@@ -55,7 +56,11 @@ function phorum_check_upload_limits($is_install) {
     }
 
     // Check limits for attachment uploading in forums.
-    $forums = phorum_db_get_forums();
+    require_once('./include/api/forums.php');
+    $forums = phorum_api_forums_get(
+        NULL, NULL, NULL, NULL,
+        PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS
+    );
     foreach ($forums as $id => $forum) {
         if ($forum["max_attachments"] > 0 && $forum["max_attachment_size"]) {
             $upload_used = true;

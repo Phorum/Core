@@ -21,6 +21,7 @@ if (!defined("PHORUM_ADMIN")) return;
 
 include('./include/format_functions.php');
 require_once('./include/api/custom_fields.php');
+require_once('./include/api/forums.php');
 
 $user_status_map = array(
     'any'                     => 'Any user status',
@@ -519,7 +520,16 @@ if (isset($_REQUEST["user_id"]))
 
         $frm->addhelp($row, "Forum Permissions", "These are permissions set exclusively for this user.  You need to grant all permisssions you want the user to have for a forum here.  No permissions from groups or a forum's properties will be used once the user has specific permissions for a forum.");
 
-        $forums=phorum_db_get_forums();
+        /**
+         * @todo This would need PHORUM_FLAG_FORUMS too, but care has to
+         *       be taken about the code below too then. I'll postpone
+         *       adding this, until the phorum_get_forum_info() call is
+         *       API-fied as well.
+         */
+        $forums = phorum_api_forums_get(
+            NULL, NULL, NULL, NULL,
+            PHORUM_FLAG_INCLUDE_INACTIVE
+        );
 
         $forumpaths = phorum_get_forum_info(1);
 

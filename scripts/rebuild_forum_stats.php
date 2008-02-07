@@ -22,8 +22,11 @@ if (! ini_get('safe_mode')) {
 
 print "\nRebuild forum stats ...\n";
 
-// we need to rebuild the forumstats
-$forums = phorum_db_get_forums();
+require_once('./include/api/forums.php');
+$forums = phorum_api_forums_get(
+    NULL, NULL, NULL, NULL,
+    PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS
+);
 
 $count_total = count($forums);
 $size = strlen($count_total);
@@ -31,10 +34,8 @@ $count = 0;
 
 foreach ($forums as $fid => $fdata)
 {
-    if ($fdata['folder_flag'] == 0) {
-        $PHORUM['forum_id'] = $fid;
-        phorum_db_update_forum_stats(true);
-    }
+    $PHORUM['forum_id'] = $fid;
+    phorum_db_update_forum_stats(true);
 
     $count ++;
 

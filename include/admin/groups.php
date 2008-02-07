@@ -19,6 +19,8 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
+require_once('./include/api/forums.php');
+
 $error="";
 $new_forum_permission = 0;
 
@@ -82,7 +84,6 @@ if (count($_POST))
                 }
             }
 
-
             if(isset($_POST["forums"])){
                 foreach($_POST["forums"] as $forum_id){
                     $permission=0;
@@ -130,7 +131,14 @@ if($error){
 require_once('./include/admin/PhorumInputForm.php');
 $groups=phorum_db_get_groups(0, TRUE);
 
-$forums=phorum_db_get_forums();
+/**
+ * @todo Add PHORUM_FLAG_FORUMS when the phorum_get_forum_info() call
+ *       from below is APIfied.
+ */
+$forums = phorum_api_forums_get(
+    NULL, NULL, NULL, NULL,
+    PHORUM_FLAG_INCLUDE_INACTIVE
+);
 
 if(isset($_REQUEST["edit"]) && !empty($_REQUEST['group_id']) ){
 

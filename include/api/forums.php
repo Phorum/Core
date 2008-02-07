@@ -109,6 +109,19 @@ define('PHORUM_FLAG_INHERIT_MASTERS', 4);
 define('PHORUM_FLAG_FOLDERS', 8);
 
 /**
+ * Function call flag which tells {@link phorum_api_forums_get()}
+ * that the return data should only contain forums.
+ */
+define('PHORUM_FLAG_FORUMS', 16);
+
+/**
+ * Function call flag which tells {@link phorum_api_forums_get()}
+ * that the return data should contain inactive forums as well
+ * (for these the "active" field is set to zero).
+ */
+define('PHORUM_FLAG_INCLUDE_INACTIVE', 32);
+
+/**
  * This array describes folder data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  * Value format: <m|v>:<type>[:default]
@@ -230,6 +243,12 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     from either the default settings or from another forum).
  *     If the {@link PHORUM_FLAG_FOLDERS} flag is set, then only
  *     folders will be returned.
+ *     If the {@link PHORUM_FLAG_FORUMS} flag is set, then only
+ *     forums will be returned.
+ *     If the {@link PHORUM_FLAG_INCLUDE_INACTIVE} flag is set, then
+ *     inactive forums and folders will be included in the return data.
+ *     This is mainly useful for administrative interfaces that need to
+ *     be able to access all created forums and folders.
  *
  * @return mixed
  *     If the $forum_ids parameter is used and if it contains a single
@@ -248,10 +267,23 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
     $inherit_id = ($inherit_id != -1 && $inherit_id !== NULL)
                 ? (int)$inherit_id : NULL;
 
+    // Find the return_type parameter for the db call.
+    // 0 = forums and folders, 1 = folders, 2 = forums.
+    if ($flags & PHORUM_FLAG_FOLDERS) {
+        $return_type = ($flags & PHORUM_FLAG_FORUMS) ? 0 : 1;
+    } elseif ($flags & PHORUM_FLAG_FORUMS) {
+        $return_type = 2;
+    } else {
+        $return_type = 0;
+    }
+
     // Retrieve the forums/folders from the database.
-    $only_inherit_masters = $flags & PHORUM_FLAG_INHERIT_MASTERS;
-    $only_folders = $flags & PHORUM_FLAG_FOLDERS;
-    $forums = phorum_db_get_forums($forum_ids, $parent_id, $vroot, $inherit_id, $only_inherit_masters, $only_folders);
+    $forums = phorum_db_get_forums(
+        $forum_ids, $parent_id, $vroot, $inherit_id,
+        $flags & PHORUM_FLAG_INHERIT_MASTERS,
+        $return_type,
+        $flags & PHORUM_FLAG_INCLUDE_INACTIVE
+    );
 
     // Filter and process the returned records.
     foreach ($forums as $id => $forum)
@@ -1114,13 +1146,17 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
  * @param integer $folder_id
  *     The forum_id of the folder for which to retrieve the forums.
  *
+ * @param int $flags
+ *     This function takes the same flags as the
+ *     {@link phorum_api_forums_get()} function.
+ *
  * @return array
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_by_folder($folder_id = 0)
+function phorum_api_forums_by_folder($folder_id = 0, $flags = 0)
 {
-   return phorum_api_forums_get(NULL, $folder_id);
+   return phorum_api_forums_get(NULL, $folder_id, NULL, NULL, $flags);
 }
 // }}}
 
@@ -1131,13 +1167,17 @@ function phorum_api_forums_by_folder($folder_id = 0)
  * @param integer $parent_id
  *     The parent_id of the folder for which to retrieve the forums.
  *
+ * @param int $flags
+ *     This function takes the same flags as the
+ *     {@link phorum_api_forums_get()} function.
+ *
  * @return array
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_by_parent_id($parent_id = 0)
+function phorum_api_forums_by_parent_id($parent_id = 0, $flags = 0)
 {
-    return phorum_api_forums_get(NULL, $parent_id);
+    return phorum_api_forums_get(NULL, $parent_id, NULL, NULL, $flags);
 }
 // }}}
 
@@ -1148,18 +1188,17 @@ function phorum_api_forums_by_parent_id($parent_id = 0)
  * @param integer $vroot_id
  *     The forum_id of the vroot for which to retrieve the forums.
  *
- * @param boolean $only_inherit_masters
- *     If set to a true value (default is FALSE), then this function will
- *     only return forums which can be used as a settings inheritance
- *     master.
+ * @param int $flags
+ *     This function takes the same flags as the
+ *     {@link phorum_api_forums_get()} function.
  *
  * @return array
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_by_vroot($vroot_id = 0, $only_inherit_masters = FALSE)
+function phorum_api_forums_by_vroot($vroot_id = 0, $flags = 0)
 {
-    return phorum_api_forums_get(NULL, NULL, $vroot_id, NULL, $only_inherit_masters);
+    return phorum_api_forums_get(NULL, NULL, $vroot_id, NULL, $flags);
 }
 // }}}
 
@@ -1171,13 +1210,17 @@ function phorum_api_forums_by_vroot($vroot_id = 0, $only_inherit_masters = FALSE
  * @param integer $forum_id
  *     The forum_id for which to check what forums inherit its setting.
  *
+ * @param int $flags
+ *     This function takes the same flags as the
+ *     {@link phorum_api_forums_get()} function.
+ *
  * @return array
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_by_inheritance($forum_id = 0)
+function phorum_api_forums_by_inheritance($forum_id = 0, $flags = 0)
 {
-    return phorum_api_forums_get(NULL, NULL, NULL, $forum_id);
+    return phorum_api_forums_get(NULL, NULL, NULL, $forum_id, $flags);
 }
 // }}}
 

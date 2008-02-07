@@ -1971,14 +1971,21 @@ function phorum_db_get_neighbour_thread($key, $direction)
  *     are the forums for which customized settings are used, which means
  *     that inherit_id is NULL).
  *
- * @param boolean $only_folders
- *     If this parameter has a true value (default is FALSE), then only folders
- * will be retrurned.
+ * @param boolean $return_type
+ *     0 to return both forums and folders.
+ *     1 to return only folders.
+ *     2 to return only forums.
+ *
+ * @param boolean $include_inactive
+ *     If this parameter has a true value (default is FALSE), then both
+ *     active and inactive forums and folders will be returned. Returning
+ *     inactive ones is useful for administrative interfaces, which need to
+ *     be able to access all forums and folders.
  *
  * @return array
  *     An array of forums, indexed by forum_id.
  */
-function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $only_inherit_masters = FALSE, $only_folders = FALSE)
+function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $only_inherit_masters = FALSE, $return_type = 0, $include_inactive = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -2000,10 +2007,10 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
         }
     } elseif ($inherit_id !== NULL) {
         $where .= "inherit_id = $inherit_id";
-        if (!defined('PHORUM_ADMIN')) $where.=' AND active=1';
+        if (!$include_inactive) $where.=' AND active=1';
     } elseif ($parent_id !== NULL) {
         $where .= "parent_id = $parent_id";
-        if (!defined('PHORUM_ADMIN')) $where.=' AND active=1';
+        if (!$include_inactive) $where.=' AND active=1';
     } elseif ($vroot !== NULL) {
         $where .= "vroot = $vroot";
     } else {
@@ -2014,8 +2021,10 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
         $where .= ' AND inherit_id IS NULL AND folder_flag = 0';
     }
 
-    if ($only_folders) {
+    if ($return_type == 1) {
         $where .= ' AND folder_flag = 1';
+    } elseif ($return_type == 2) {
+        $where .= ' AND folder_flag = 0';
     }
 
     $forums = phorum_db_interact(

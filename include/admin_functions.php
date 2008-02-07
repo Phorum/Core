@@ -19,6 +19,8 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
+require_once('./include/api/forums.php');
+
 function phorum_admin_error($error)
 {
     echo "<div class=\"PhorumAdminError\">$error</div>\n";
@@ -35,18 +37,19 @@ function phorum_get_folder_info()
     $folders=array();
     $folder_data=array();
 
-    $forums = phorum_db_get_forums();
+    $forums = phorum_api_forums_get(
+        NULL, NULL, NULL, NULL,
+        PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FOLDERS
+    );
 
     foreach($forums as $forum){
-        if($forum["folder_flag"]){
-            $path = $forum["name"];
-            $parent_id=$forum["parent_id"];
-            while($parent_id!=0  && $parent_id!=$forum["forum_id"]){
-                $path=$forums[$parent_id]["name"]."::$path";
-                $parent_id=$forums[$parent_id]["parent_id"];
-            }
-            $folders[$forum["forum_id"]]=$path;
+        $path = $forum["name"];
+        $parent_id=$forum["parent_id"];
+        while($parent_id!=0  && $parent_id!=$forum["forum_id"]){
+            $path=$forums[$parent_id]["name"]."::$path";
+            $parent_id=$forums[$parent_id]["parent_id"];
         }
+        $folders[$forum["forum_id"]]=$path;
     }
 
     asort($folders);
@@ -83,7 +86,10 @@ function phorum_get_forum_info($forums_only=0,$vroot = -1)
     $folders=array();
     $folder_data=array();
 
-    $forums = phorum_db_get_forums();
+    $forums = phorum_api_forums_get(
+        NULL, NULL, NULL, NULL,
+        PHORUM_FLAG_INCLUDE_INACTIVE
+    );
 
     foreach($forums as $forum){
 
@@ -165,11 +171,11 @@ function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0) {
 function phorum_admin_get_descending($parent) {
 
     $ret_data=array();
-    $arr_data=phorum_db_get_forums(0,$parent);
+    $arr_data = phorum_api_forums_by_parent_id($parent);
     foreach($arr_data as $key => $val) {
         $ret_data[$key]=$val;
         if($val['folder_flag'] == 1) {
-            $more_data=phorum_db_get_forums(0,$val['forum_id']);
+            $more_data=phorum_api_forums_by_parent_id($val['forum_id']);
             $ret_data=$ret_data + $more_data; // array_merge reindexes the array
         }
     }

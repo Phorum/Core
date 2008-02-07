@@ -21,41 +21,44 @@ if (!defined("PHORUM")) return;
 
 require_once('./include/api/forums.php');
 
-// Get the vroot data record or create a fake one for forum_id = 0.
-if ($PHORUM["forum_id"]==0) {
-    $forums[0] = array(
-        "forum_id"    => 0,
-        "folder_flag" => 1,
-        "vroot"       => 0
-    );
-} else {
-    $forums = phorum_api_forums_get(array($PHORUM["forum_id"]));
-}
+// Get the data for the folder at which we are looking.
+// This also initializes our forums storage array, in which we
+// will gather data for forums and folders.
+$forums = phorum_api_forums_get(array($PHORUM["forum_id"]));
 
 // init some data
 $PHORUM["DATA"]["FORUMS"] = array();
-$forums_shown=false;
+$forums_shown    = false;
 $forums_to_check = array();
 
-// get all the children forums/folders for the current forum_id
-if($PHORUM["vroot"]==$PHORUM["forum_id"]){
-    $more_forums = phorum_db_get_forums( 0, $PHORUM["forum_id"] );
-    foreach($more_forums as $forum_id => $forum){
-        if(empty($forums[$forum_id])){
-            $forums[$forum_id]=$forum;
-            if($PHORUM["show_new_on_index"]!=0 && $forum["folder_flag"]==0){
-                $forums_to_check[] = $forum_id;
-            }
+// A list of folders that we have to show on the page. We start out with
+// the folder at which we are looking.
+$folders = array($PHORUM['forum_id'] => $PHORUM['forum_id']);
+
+// If we are in a root or a vroot folder, then we show both the forums that
+// are directly in the (v)root and all first level folders and their contents.
+// To be able to do this, we have to retrieve all children for the (v)root.
+if ($PHORUM["vroot"] == $PHORUM["forum_id"])
+{
+    $child_forums = phorum_api_forums_by_parent_id($PHORUM["forum_id"]);
+    foreach ($child_forums as $forum_id => $forum)
+    {
+        // Add the child forum or folder to the list of forums.
+        $forums[$forum_id] = $forum;
+
+        // Keep track of forums for which we need to check for
+        // newly posted messages.
+        if ($PHORUM["show_new_on_index"] && $forum["folder_flag"]==0) {
+            $forums_to_check[] = $forum_id;
         }
     }
-    $folders[$PHORUM["forum_id"]]=$PHORUM["forum_id"];
 }
 
-
-
 // loop the children and get their children.
-foreach( $forums as $key=>$forum ) {
-    if($forum["folder_flag"] && $forum["vroot"]==$PHORUM["vroot"]){
+foreach ($forums as $key => $forum)
+{
+    if ($forum["folder_flag"] && $forum["vroot"] == $PHORUM["vroot"])
+    {
         $folders[$key]=$forum["forum_id"];
         $forums[$key]["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
         $forums[$key]["level"] = 0;
@@ -77,7 +80,7 @@ foreach( $forums as $key=>$forum ) {
     }
 }
 
-if($PHORUM["DATA"]["LOGGEDIN"] && !empty($forums_to_check)){
+if ($PHORUM["DATA"]["LOGGEDIN"] && !empty($forums_to_check)) {
     if($PHORUM["show_new_on_index"]==2){
         $new_checks = phorum_db_newflag_check($forums_to_check);
     } elseif($PHORUM["show_new_on_index"]==1){

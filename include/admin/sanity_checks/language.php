@@ -45,13 +45,18 @@ function phorum_check_language($is_install = false) {
     if ($is_install) return array(PHORUM_SANITY_OK, NULL, NULL);
 
     // Check for the forum specific language file(s).
-    $forums = phorum_db_get_forums();
+    require_once('./include/api/forums.php');
+    $forums = phorum_api_forums_get(
+        NULL, NULL, NULL, NULL,
+        PHORUM_FLAG_INCLUDE_INACTIVE
+    );
     foreach ($forums as $id => $forum) {
         if (!empty($forum["language"]) && !$checked[$forum["language"]] &&
             !file_exists("./include/lang/{$forum["language"]}.php")) {
+            $type = $forum['folder_flag'] ? 'folder' : 'forum';
             return array(
               PHORUM_SANITY_WARN,
-              "The language for forum \"".
+              "The language for $type \"".
                htmlspecialchars($forum["name"])."\" is set to
                \"".htmlspecialchars($forum["language"])."\",
                but the language file \"include/lang/".

@@ -21,6 +21,7 @@ define('phorum_page','index');
 require_once('./common.php');
 
 require_once('./include/format_functions.php');
+require_once('./include/api/forums.php');
 
 // Check if the user has read permission for the current folder.
 if (!phorum_check_read_common()) { return; }
@@ -84,12 +85,12 @@ if (!empty($PHORUM['use_rss']))
 switch ($PHORUM['index_style'])
 {
     case PHORUM_INDEX_FLAT:
-        require_once('./include/index_new.php');
+        require_once('./include/index_flat.php');
         break;
 
     case PHORUM_INDEX_DIRECTORY:
     default: // Should not happen
-        require_once('./include/index_classic.php');
+        require_once('./include/index_directory.php');
         break;
 }
 

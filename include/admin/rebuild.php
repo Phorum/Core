@@ -19,6 +19,8 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
+require_once('./include/api/forums.php');
+
 $error = "";
 
 if ( count( $_POST ) ) {
@@ -26,22 +28,22 @@ if ( count( $_POST ) ) {
 
     if(isset($_POST['rebuild_forumstats']) && !empty($_POST['rebuild_forumstats'])) {
         // we need to rebuild the forumstats
-        $forums = phorum_db_get_forums();
+        $forums = phorum_api_forums_get(
+            NULL, NULL, NULL, NULL,
+            PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS
+        );
 
         // shouldn't be needed but just in case ...
         $old_forum_id = $PHORUM['forum_id'];
 
         $forums_updated=0;
-        foreach ($forums as $fid => $fdata) {
+        foreach ($forums as $fid => $fdata)
+        {
+            $PHORUM['forum_id'] = $fid;
 
-            if($fdata['folder_flag'] == 0) {
+            phorum_db_update_forum_stats(true);
 
-                $PHORUM['forum_id'] = $fid;
-
-                phorum_db_update_forum_stats(true);
-
-                $forums_updated++;
-            }
+            $forums_updated++;
         }
 
         $PHORUM['forum_id'] = $old_forum_id;
@@ -54,7 +56,7 @@ if ( count( $_POST ) ) {
         require_once('./include/thread_info.php');
 
         // we need to rebuild the forumstats
-        $forums = phorum_db_get_forums();
+        $forums = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INCLUDE_INACTIVE);
 
         // shouldn't be needed but just in case ...
         $old_forum_id = $PHORUM['forum_id'];
