@@ -7155,8 +7155,7 @@ function phorum_db_create_tables()
 
            PRIMARY KEY (forum_id),
            KEY name (name),
-           KEY active (active, parent_id),
-           KEY group_id (parent_id)
+           KEY folder_index (parent_id, vroot, active, folder_flag)
        ) $charset",
 
       "CREATE TABLE {$PHORUM['message_table']} (
