@@ -178,14 +178,44 @@ $frm->addhelp($row, "DNS Lookups",
      then there might be DNS problems on your server. In that case, disable
      DNS lookups as a work around.");
 
-$row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
-$frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
+$row=$frm->addrow( "Hide inaccessible Forums on the Index Page", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
+$frm->addhelp($row, "Hide inaccessible Forums on the Index Page", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
 
-$row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_on_index", array( "No", "Yes", "No count, just indicator" ), $PHORUM["show_new_on_index"] ) );
-$frm->addhelp($row, "Show New Count in Forum List", "This feature will show registered users how many new messages and threads there are in each forum on the forum list page.  If you have a large number of posts, a large number of forums, a large number of users or some combination of the three, this setting could cause some performance issues.  If you see performance issues, try setting it \"No count, indicator only\" or \"No\"" );
+$row=$frm->addrow( "Show New Counts for Forums on the Index Page", $frm->select_tag( "show_new_on_index", array( "No", "Yes", "No count, just indicator" ), $PHORUM["show_new_on_index"] ) );
+$frm->addhelp($row, "Show New Counts for Forums on the Index Page", "This feature will show registered users how many new messages and threads there are in each forum on the forum list page.  If you have a large number of posts, a large number of forums, a large number of users or some combination of the three, this setting could cause some performance issues.  If you see performance issues, try setting it \"No count, indicator only\" or \"No\"" );
 
-$row=$frm->addrow( "Folder/Forum display style", $frm->select_tag( "use_new_folder_style", array( "Directory Structure", "Flat Structure" ), $PHORUM["use_new_folder_style"] ) );
-$frm->addhelp($row, "Folder/Forum display style", "Since version 3, Phorum has included folders.  Until version 5.1, forums inside folders did not show until you clicked on the folder.  In 5.1, the list of forums in a folder can now be shown under that folder in the forum list.  This allows admins to organize a large list of forums all on one page." );
+$row=$frm->addrow( "How to Display Forums and Folders on the Index Page", $frm->select_tag( "use_new_folder_style", array( "Directory Structure", "Flat Structure" ), $PHORUM["use_new_folder_style"] ) );
+$frm->addhelp($row, "How to Display Forums and Folders on the Index Page",
+    "Forum has multiple displaying styles available for the index page:
+     <ul>
+     <li><b>Directory Structure:</b><br/>
+         <br/>
+         <em>This style resembles the way in which you normally would browse a
+         filesystem directory structure, hence the name.</em><br/>
+         <br/>
+         When using this style, the index page will show a list of folders
+         and a list of forums that are available in the folder for which the
+         index page is shown. The user can either go to a forum or traverse
+         the folder tree by going to one of the deeper folders.<br/><br/></li>
+     <li><b>Flat Structure</b><br/>
+         <br/>
+         <em>This style will present the user a flat list of category sections
+         with forums (and possibly folders) in them. This is the style
+         that most forums use nowadays.</em><br/>
+         <br/>
+         When using this style, the root index page will show category
+         sections with forums and folders in them. Each section is a folder
+         that is directly below the root. The folders and forums that are
+         in those folders are shown in the corresponding sections.<br/>
+         Forums that are placed directly in the root folder, will be
+         shown in a generic \"Forums\" section.<br/>
+         <br/>
+         When visiting a subfolder, then the folders and forums inside that
+         subfolder are shown. For a subfolder, No sections are displayed.
+         This means that browsing subfolders in the flat structure works
+         a bit like browsing them in the directory structure.</li>
+     </ul>"
+);
 
 $row=$frm->addrow( "Enable Moderator Notifications", $frm->select_tag( "enable_moderator_notifications", array( "No", "Yes" ), $PHORUM["enable_moderator_notifications"] ) );
 $frm->addhelp($row, "Enable Moderator Notifications", "By setting this to Yes, Phorum will display notice to the various kinds of moderators when they have a new item that requires their attention. For example, message moderators will see a notice whenever there is an unapproved message." );
