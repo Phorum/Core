@@ -117,7 +117,9 @@ foreach( $folders as $folder_key=>$folder_id ) {
                 $forum["last_post"] = "&nbsp;";
             }
 
+            $forum["raw_message_count"] = $forum["message_count"];
             $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+            $forum["raw_thread_count"] = $forum["thread_count"];
             $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
 
             if($PHORUM["DATA"]["LOGGEDIN"]) {
@@ -168,6 +170,46 @@ if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
     unset($PHORUM["DATA"]["URL"]["INDEX"]);
 }
 
+/**
+ * [hook]
+ *     index
+ *
+ * [description]
+ *     This hook can be used to modify the data for folders and forums
+ *     that are shown on the index page.
+ *
+ * [category]
+ *     Page data handling
+ *
+ * [when]
+ *     Just before the index page is shown.
+ *
+ * [input]
+ *     An array containing all the forums and folders that will be shown
+ *     on the index page.
+ *
+ * [output]
+ *     The same array as the one that was used for the hook call
+ *     argument, possibly with some updated fields in it.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_index($data)
+ *     {
+ *         global $PHORUM;
+ *
+ *         foreach ($data as $id => $item)
+ *         {
+ *             if (!$item['folder_flag'])
+ *             {
+ *                 $data[$id]['description'] .= '<br/>Blah foo bar baz';
+ *             }
+ *         }
+ *
+ *         return $data;
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["index"]))
     $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
 
