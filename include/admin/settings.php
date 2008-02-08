@@ -181,7 +181,7 @@ $frm->addhelp($row, "DNS Lookups",
 $row=$frm->addrow( "Hide Forums", $frm->select_tag( "hide_forums", array( "No", "Yes" ), $PHORUM["hide_forums"] ) );
 $frm->addhelp($row, "Hide Forums", "By setting this to Yes, forums that users are not allowed to read will be hidden from them in the forums list." );
 
-$row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_on_index", array( "No", "Yes", "No count, just indicator" ), $PHORUM["show_new_on_index"] ) );
+$row=$frm->addrow( "Show New Count in Forum List", $frm->select_tag( "show_new_on_index", array( PHORUM_NEWFLAGS_NOCOUNT => "No", PHORUM_NEWFLAGS_COUNT => "Yes", PHORUM_NEWFLAGS_CHECK => "No count, just indicator" ), $PHORUM["show_new_on_index"] ) );
 $frm->addhelp($row, "Show New Count in Forum List", "This feature will show registered users how many new messages and threads there are in each forum on the forum list page.  If you have a large number of posts, a large number of forums, a large number of users or some combination of the three, this setting could cause some performance issues.  If you see performance issues, try setting it \"No count, indicator only\" or \"No\"" );
 
 $row=$frm->addrow( "Folder/Forum display style", $frm->select_tag( "index_style", array( PHORUM_INDEX_DIRECTORY => 'Directory Structure', PHORUM_INDEX_FLAT => 'Flat Structure' ), $PHORUM["index_style"] ) );

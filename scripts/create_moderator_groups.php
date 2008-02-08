@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // This script creates a moderator group for every forum on the system.
 // After running this script, you can use those groups for assigning
@@ -66,7 +66,7 @@ foreach ($forums as $forum_id => $fdata)
                          PHORUM_USER_ALLOW_MODERATE_USERS
         )
     ));
-     
+
     print "[CREATED GROUP]\n";
 }
 

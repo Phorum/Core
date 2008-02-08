@@ -101,6 +101,11 @@ define("PHORUM_THREADED_HYBRID", 3);
 define("PHORUM_INDEX_DIRECTORY", 0);
 define("PHORUM_INDEX_FLAT", 1);
 
+// index new message count settings
+define("PHORUM_NEWFLAGS_NOCOUNT", 0);
+define("PHORUM_NEWFLAGS_COUNT", 1);
+define("PHORUM_NEWFLAGS_CHECK", 2);
+
 // edit tracking
 define("PHORUM_EDIT_TRACK_OFF", 0);
 define("PHORUM_EDIT_TRACK_ON", 1);

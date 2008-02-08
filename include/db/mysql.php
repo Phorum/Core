@@ -1953,13 +1953,13 @@ function phorum_db_get_neighbour_thread($key, $direction)
  *
  * @param mixed $parent_id
  *     Retrieve the forum data for all forums that have their parent_id set
- *     to $parent_id. If this parameter is NULL, then the $vroot parameter
+ *     to $parent_id. If this parameter is NULL, then the $inherit_id
  *     will be checked.
  *
  * @param mixed $vroot
- *     Retrieve the forum data for all forums that are in the given $vroot.
- *     If this parameter is NULL, then the $inherit_id parameter will be
- *     checked.
+ *     Retrieve only forum data for forums that are in the given $vroot.
+ *     This parameter can be used in combination with one of the parameters
+ *     $forum_ids, $parent_id and $inherit_id as well.
  *
  * @param mixed $inherit_id
  *     Retrieve the forum data for all forums that inherit their settings
@@ -2007,14 +2007,18 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
         }
     } elseif ($inherit_id !== NULL) {
         $where .= "inherit_id = $inherit_id";
-        if (!$include_inactive) $where.=' AND active=1';
     } elseif ($parent_id !== NULL) {
         $where .= "parent_id = $parent_id";
-        if (!$include_inactive) $where.=' AND active=1';
-    } elseif ($vroot !== NULL) {
-        $where .= "vroot = $vroot";
     } else {
         $where .= 'forum_id <> 0';
+    }
+
+    if (!$include_inactive) {
+        $where .= ' AND active = 1';
+    }
+
+    if ($vroot !== NULL) {
+        $where .= " AND vroot = $vroot";
     }
 
     if ($only_inherit_masters) {

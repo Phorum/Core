@@ -17,163 +17,283 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if (!defined("PHORUM")) return;
+if (!defined('PHORUM')) return;
 
-require_once('./include/api/forums.php');
+// --------------------------------------------------------------------
+// Retrieve information from the database
+// --------------------------------------------------------------------
 
 // Get the data for the folder at which we are looking.
-// This also initializes our forums storage array, in which we
+// This initializes our forums storage array, in which we
 // will gather data for forums and folders.
-$forums = phorum_api_forums_get(array($PHORUM["forum_id"]));
-
-// init some data
-$PHORUM["DATA"]["FORUMS"] = array();
-$forums_shown    = false;
-$forums_to_check = array();
+$forums = phorum_api_forums_get(array($PHORUM['forum_id']));
 
 // A list of folders that we have to show on the page. We start out with
 // the folder at which we are looking.
-$folders = array($PHORUM['forum_id'] => $PHORUM['forum_id']);
+// Key: the forum_id of the folder.
+// Value: an array of forum_ids that are contained in this folder.
+$folders = array($PHORUM['forum_id'] => array());
 
-// If we are in a root or a vroot folder, then we show both the forums that
-// are directly in the (v)root and all first level folders and their contents.
-// To be able to do this, we have to retrieve all children for the (v)root.
-if ($PHORUM["vroot"] == $PHORUM["forum_id"])
+// This array is used to keep track of forums for which we will check
+// if there are unread messages available.
+$forums_to_check = array();
+
+// If we are in a (v)root folder, then we show the forums that are in the
+// (v)root as separate sections in the flat index view. To be able to do this,
+// we have to know what folders are directly below the
+
+// If we are in a (v)root folder, then we show the forums that are in the
+// (v)root as separate sections in the flat index view. To be able to do this,
+// we have to know what folders are directly below the (v)root. Here, we look
+// those up and extend the $folders array.
+if ($PHORUM['vroot'] == $PHORUM['forum_id'])
 {
-    $child_forums = phorum_api_forums_by_parent_id($PHORUM["forum_id"]);
-    foreach ($child_forums as $forum_id => $forum)
-    {
-        // Add the child forum or folder to the list of forums.
-        $forums[$forum_id] = $forum;
+  $child_folders = phorum_api_forums_get(
+  NULL, $PHORUM['forum_id'], NULL, $PHORUM['vroot'],
+  $PHORUM['forum_id'], PHORUM_FLAG_FOLDERS
+  );
 
-        // Keep track of forums for which we need to check for
-        // newly posted messages.
-        if ($PHORUM["show_new_on_index"] && $forum["folder_flag"]==0) {
-            $forums_to_check[] = $forum_id;
+  foreach ($child_folders as $forum_id => $folder)
+  {
+    // Add the child folder data to the list of forums.
+    $forums[$forum_id] = $folder;
+
+    // Keep track of folders that are below the (v)root.
+    $folders[$forum_id] = array();
+  }
+}
+
+// Loop over all the folders (flat view sections) that we will show and get
+// their child forums and folders.
+foreach ($folders as $folder_id => $dummy)
+{
+  $folder = $forums[$folder_id];
+
+  // These folders are level zero folders. To the child forums and folders,
+  // level 1 will be assigned. The level value can be used in the template
+  // to see where a new top level folder starts.
+  $forums[$folder_id]['level'] = 0;
+
+  // Retrieve the children for the current folder. For the (v)root folder,
+  // we only retrieve the contained forums, since its folders will be shown
+    // as separate sections in the flat index view instead.
+    $children = phorum_api_forums_get(
+        NULL, $folder_id, NULL, $PHORUM['vroot'],
+        $PHORUM['vroot'] == $folder_id ? PHORUM_FLAG_FORUMS : 0
+    );
+
+    foreach($children as $child_forum_id => $child_forum)
+    {
+        // Add the forum or folder to the child list for the current folder.
+        $folders[$folder_id][$child_forum_id] = $child_forum;
+
+        // Keep track of the visible forums for which we need to check
+        // for unread messages later on.
+        if ($PHORUM['user']['user_id'] &&
+            $PHORUM['show_new_on_index'] != PHORUM_NEWFLAGS_NOCOUNT &&
+            !$child_forum['folder_flag']) {
+            $forums_to_check[] = $child_forum_id;
         }
     }
 }
 
-// loop the children and get their children.
-foreach ($forums as $key => $forum)
+// For authenticated users, check if there are unread messages in the forums.
+if ($PHORUM['user']['user_id'] && !empty($forums_to_check))
 {
-    if ($forum["folder_flag"] && $forum["vroot"] == $PHORUM["vroot"])
-    {
-        $folders[$key]=$forum["forum_id"];
-        $forums[$key]["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
-        $forums[$key]["level"] = 0;
-
-        if(isset($more_forums) && $forum["forum_id"] == $PHORUM["forum_id"]) {
-            $sub_forums = $more_forums;
-        } else {
-            $sub_forums = phorum_db_get_forums( 0, $forum["forum_id"] );
-        }
-
-        foreach($sub_forums as $sub_forum){
-            if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=0)){
-                $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
-                if($PHORUM["show_new_on_index"]!=0 && $sub_forum["folder_flag"]==0){
-                    $forums_to_check[] = $sub_forum["forum_id"];
-                }
-            }
-        }
-    }
-}
-
-if ($PHORUM["DATA"]["LOGGEDIN"] && !empty($forums_to_check)) {
-    if($PHORUM["show_new_on_index"]==2){
+    if ($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_CHECK) {
         $new_checks = phorum_db_newflag_check($forums_to_check);
-    } elseif($PHORUM["show_new_on_index"]==1){
+    } elseif($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_COUNT) {
         $new_counts = phorum_db_newflag_count($forums_to_check);
     }
 }
 
-foreach( $folders as $folder_key=>$folder_id ) {
+// --------------------------------------------------------------------
+// Setup the template data and display the template
+// --------------------------------------------------------------------
 
-    if(!isset($folder_forums[$folder_id])) continue;
+$PHORUM['DATA']['FORUMS'] = array();
 
-    $shown_sub_forums=array();
+foreach ($folders as $folder_id => $children)
+{
+    // A URL for the index for this folder.
+    $forums[$folder_id]['URL']['LIST'] = phorum_get_url(
+        PHORUM_INDEX_URL, $folder_id
+    );
 
-    foreach($folder_forums[$folder_id] as $key=>$forum){
+    // Skip folders that do not contain any visible children.
+    if (empty($children)) continue;
 
-        if($forum["folder_flag"]) {
-            $forum["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
-        } else {
-            if($PHORUM["hide_forums"] && !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
-                unset($folder_forums[$folder_id][$key]);
+    // Build a list of formatted child forums and folders.
+    $shown_children = array();
+    foreach($children as $forum_id => $forum)
+    {
+        // Setup template data for folders.
+        if ($forum['folder_flag'])
+        {
+            // A URL for the index view for this folder.
+            $forum['URL']['INDEX'] = phorum_get_url(PHORUM_INDEX_URL, $forum_id);
+        }
+        // Setup template data for forums.
+        else
+        {
+            // If inaccessible forums should be hidden on the index, then check
+            // if the current user has rights to access the current forum.
+            if ($PHORUM['hide_forums'] &&
+                !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
                 continue;
             }
 
-        $forum["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
-        if ($PHORUM['DATA']['LOGGEDIN']) {
-            $forum["URL"]["MARK_READ"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread", $PHORUM['forum_id'] );
-        }
-        if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']) {
-            $forum["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $forum["forum_id"], "type=".$PHORUM["default_feed"] );
-        }
+            // A URL for the message list for this forum.
+            $forum['URL']['LIST'] = phorum_get_url(PHORUM_LIST_URL, $forum_id);
 
-
-            if ( $forum["message_count"] > 0 ) {
-                $forum["last_post"] = phorum_date( $PHORUM["long_date_time"], $forum["last_post_time"] );
-                $forum["raw_last_post"] = $forum["last_post_time"];
-            } else {
-                $forum["last_post"] = "&nbsp;";
+            // A "mark forum read" URL for authenticated users.
+            if ($PHORUM['user']['user_id']) {
+                $forum['URL']['MARK_READ'] = phorum_get_url(
+                    PHORUM_INDEX_URL,
+                    $forum_id,
+                    'markread',
+                    $PHORUM['forum_id']
+                );
             }
 
-            $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-            $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+            // A URL to the syndication feed.
+            if (!empty($PHORUM['use_rss'])) {
+                $forum['URL']['FEED'] = phorum_get_url(
+                    PHORUM_FEED_URL,
+                    $forum_id,
+                    'type='.$PHORUM['default_feed']
+                );
+            }
 
-            if($PHORUM["DATA"]["LOGGEDIN"]) {
+            // Format the last post time, unless no messages were posted at all.
+            if ($forum['message_count'] > 0)
+            {
+                // For dates, we store an unmodified version to always have
+                // the original date available for modules. Not strictly
+                // needed for this one, since we to not override the original
+                // "last_post_time" field, but we still add it to be compliant
+                // with the rest of the Phorum code.
+                $forum['raw_last_post'] = $forum['last_post_time'];
 
-                if($PHORUM["show_new_on_index"]==1){
+                $forum['last_post'] = phorum_date(
+                    $PHORUM['long_date_time'],
+                    $forum['last_post_time']
+                );
+            }
+            // If no messages were posted, we revert to a simple &nbsp;
+            else {
+                $forum['last_post'] = '&nbsp;';
+            }
 
-                    $forum["new_messages"] = number_format($new_counts[$forum["forum_id"]]["messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-                    $forum["new_threads"] = number_format($new_counts[$forum["forum_id"]]["threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+            // Some number formatting.
+            $forum['message_count'] = number_format(
+                $forum['message_count'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+            $forum['thread_count'] = number_format(
+                $forum['thread_count'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
 
-                } elseif($PHORUM["show_new_on_index"]==2){
-
-                    if(!empty($new_checks[$forum["forum_id"]])){
-                        $forum["new_message_check"] = true;
-                    } else {
-                        $forum["new_message_check"] = false;
-                    }
-
+            // Add unread message information for authenticated users.
+            if ($PHORUM['user']['user_id'])
+            {
+                if ($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_COUNT)
+                {
+                    $forum['new_messages'] = number_format(
+                        $new_counts[$forum_id]['messages'], 0,
+                        $PHORUM['dec_sep'], $PHORUM['thous_sep']
+                    );
+                    $forum['new_threads'] = number_format(
+                        $new_counts[$forum_id]['threads'], 0,
+                        $PHORUM['dec_sep'], $PHORUM['thous_sep']
+                    );
                 }
-
+                elseif($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_CHECK)
+                {
+                    $new = empty($new_checks[$forum_id]) ? FALSE : TRUE;
+                    $forum['new_message_check'] = $new;
+                }
             }
         }
 
-        $forum["level"] = 1;
+        // These are level one forums and folders.
+        $forum['level'] = 1;
 
-        $shown_sub_forums[] = $forum;
-
+        $shown_children[] = $forum;
     }
 
-    if(count($shown_sub_forums)){
-        $PHORUM["DATA"]["FORUMS"][]=$forums[$folder_key];
-        $PHORUM["DATA"]["FORUMS"]=array_merge($PHORUM["DATA"]["FORUMS"], $shown_sub_forums);
+    // Only add the current folder to the template data if it contains
+    // visible forums or folders.
+    if (count($shown_children)) {
+        $PHORUM['DATA']['FORUMS'][] = $forums[$folder_id];
+        $PHORUM['DATA']['FORUMS']   = array_merge(
+            $PHORUM['DATA']['FORUMS'],
+            $shown_children
+        );
     }
-
 }
 
-
-// set all our URL's
+// Build all our standard URL's.
 phorum_build_common_urls();
 
-if(!count($PHORUM["DATA"]["FORUMS"])){
-    $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["NoForums"];
-    phorum_output("message");
+// A message to show if there are no visible forums at all.
+if (!count($PHORUM['DATA']['FORUMS'])) {
+    $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['NoForums'];
+    phorum_output('message');
     return;
 }
 
-// should we show the top-link?
-if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-    unset($PHORUM["DATA"]["URL"]["INDEX"]);
+/**
+ * [hook]
+ *     index
+ *
+ * [description]
+ *     This hook can be used to modify the data for folders and forums
+ *     that are shown on the index page.
+ *
+ * [category]
+ *     Page data handling
+ *
+ * [when]
+ *     Just before the index page is shown.
+ *
+ * [input]
+ *     An array containing all the forums and folders that will be shown
+ *     on the index page.
+ *
+ * [output]
+ *     The same array as the one that was used for the hook call
+ *     argument, possibly with some updated fields in it.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_index($data)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // An example to add some data to the description of
+ *         // forums on the index page in flat view.
+ *         if ($PHORUM['index_style'] == PHORUM_INDEX_FLAT)
+ *         {
+ *             foreach ($data as $id => $item)
+ *             {
+ *                 if (!$item['folder_flag'])
+ *                 {
+ *                     $data[$id]['description'] .= '<br/>Blah foo bar baz';
+ *                 }
+ *             }
+ *         }
+ *
+ *         return $data;
+ *     }
+ *     </hookcode>
+ */
+if (isset($PHORUM['hooks']['index'])) {
+    $PHORUM['DATA']['FORUMS'] = phorum_hook('index', $PHORUM['DATA']['FORUMS']);
 }
 
-if (isset($PHORUM["hooks"]["index"]))
-    $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
-
-phorum_output("index_new");
+// Display the page.
+phorum_output('index_flat');
 
 ?>

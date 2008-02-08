@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // if we are running in the webserver, bail out
 if (isset($_SERVER["REMOTE_ADDR"])) {

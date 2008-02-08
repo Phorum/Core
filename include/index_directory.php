@@ -114,7 +114,7 @@ if(!$forums_shown){
         unset($PHORUM["DATA"]["URL"]["INDEX"]);
     }
 
-    phorum_output("index_classic");
+    phorum_output("index_directory");
 }
 
 ?>

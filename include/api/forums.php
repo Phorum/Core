@@ -227,14 +227,15 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     to $parent_id. If this parameter is NULL, then the $vroot parameter
  *     will be checked.
  *
- * @param mixed $vroot
- *     Retrieve the forum data for all forums that are in the given $vroot.
- *     If this parameter is NULL, then the $inherit_id parameter will be
- *     checked.
- *
  * @param mixed $inherit_id
  *     Retrieve the forum data for all forums that inherit their settings
  *     from the forum with id $inherit_id.
+ *
+ * @param mixed $vroot
+ *     Retrieve the forum data for all forums that are in the given $vroot.
+ *     If this parameter is NULL, then forums from any vroot will be
+ *     returned. This parameter can be used in combination with
+ *     the $forum_ids, $parent_id and $inherit_id parameters.
  *
  * @param integer $flags
  *     If the {@link PHORUM_FLAG_INHERIT_MASTERS} flag is set, then
@@ -259,7 +260,7 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     parameter is an array containing non-existant forum_ids, then the
  *     return array will have no entry available in the returned array.
  */
-function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $flags = 0)
+function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id = NULL, $vroot = NULL, $flags = 0)
 {
     // We might get an $inherit_id parameter that is NULL or -1, since we
     // present the database value NULL as -1 from this API (because using
@@ -1198,7 +1199,7 @@ function phorum_api_forums_by_parent_id($parent_id = 0, $flags = 0)
  */
 function phorum_api_forums_by_vroot($vroot_id = 0, $flags = 0)
 {
-    return phorum_api_forums_get(NULL, NULL, $vroot_id, NULL, $flags);
+    return phorum_api_forums_get(NULL, NULL, NULL, $vroot_id, $flags);
 }
 // }}}
 
@@ -1220,7 +1221,7 @@ function phorum_api_forums_by_vroot($vroot_id = 0, $flags = 0)
  */
 function phorum_api_forums_by_inheritance($forum_id = 0, $flags = 0)
 {
-    return phorum_api_forums_get(NULL, NULL, NULL, $forum_id, $flags);
+    return phorum_api_forums_get(NULL, NULL, $forum_id, NULL, $flags);
 }
 // }}}
 

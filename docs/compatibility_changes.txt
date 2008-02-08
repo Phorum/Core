@@ -8,29 +8,44 @@ backward compatibility for third party code that was written for Phorum.
 Phorum 5.2 -> Phorum 5.3:
 -------------------------
 
+  Templates
+  ---------
 
-* Configuration variable $PHORUM['use_new_folder_style'] was renamed to
-  $PHORUM['index_style']. The old values were true and false. The new values
-  to use are PHORUM_INDEX_DIRECTORY and PHORUM_INDEX_FLAT.
+  * Renamed template files:
 
-  Along with this change, the index scripts were renamed:
-  include/index_classic.php -> include/index_directory.php
-  include/index_new.php     -> include/index_flat.php
-
-  This change was done to get rid of the "new" and "classic" terminology,
-  which doesn't tell new users of Phorum much. It also opens up options
-  for implementing more index styles than "directory" and "flat" alone.
+    index_classic.tpl         -> index_directory.tpl
+    index_new.tpl             -> index_flat.tpl
 
 
-* phorum_db_get_forums() previously skipped loading inactive forums and
-  folders, unless PHORUM_ADMIN was defined. This function now has an
-  extra argument $include_inactive, which can be used to tell specifically
-  whether the inactive entries should be loaded or not.
+  Core code
+  ---------
 
-  Some more new arguments were added to this db layer call, but those should
-  be backward compatible. To retrieve forums and folders from the database
-  howevere, it is adviced to not use this db layer call anymore, but
-  the API call phorum_api_forums_get() instead.
+  * Configuration variable $PHORUM['use_new_folder_style'] was renamed to
+    $PHORUM['index_style']. The old values were TRUE and FALSE. The new
+    values to use are PHORUM_INDEX_DIRECTORY and PHORUM_INDEX_FLAT.
 
-  This change was done for implementing the new Forums API code.
+    Along with this change, the index scripts were renamed:
+    include/index_classic.php -> include/index_directory.php
+    include/index_new.php     -> include/index_flat.php
+
+    And the related template files:
+    index_classic.tpl         -> index_directory.tpl
+    index_new.tpl             -> index_flat.tpl
+
+    This change was done to get rid of the "new" and "classic" terminology,
+    which doesn't tell new users of Phorum much. It also opens up options
+    for implementing more index styles than "directory" and "flat" alone.
+
+  * phorum_db_get_forums() previously skipped loading inactive forums and
+    folders, unless PHORUM_ADMIN was defined. This function now has an
+    extra argument $include_inactive, which can be used to tell specifically
+    whether the inactive entries should be loaded or not.
+
+    Some more new arguments were added to this db layer call, but those are
+    backward compatible. To retrieve forums and folders from the database
+    however, it is adviced to not use this db layer call anymore, but
+    the API call phorum_api_forums_get() instead.
+
+    This change was done for implementing the new Forums API code.
+
 
