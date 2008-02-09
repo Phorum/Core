@@ -1294,7 +1294,7 @@ $url = phorum_get_url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           parameters <filename>foo=bar</filename> and
           <filename>baz=foo</filename>:
           <example>
-            <title> 
+            <title>
               Generating a custom script URL using phorum_get_url()
             </title>
             <programlisting><![CDATA[
@@ -1324,7 +1324,7 @@ $PHORUM["DATA"]["URL"]["MYFILE"] = $url; ]]></programlisting>
           in your "foo" module tree, then you could generate the URL for
           that file like this:
           <example>
-            <title> 
+            <title>
               Generating an absolute URL for a file in a module directory
             </title>
             <programlisting><![CDATA[
