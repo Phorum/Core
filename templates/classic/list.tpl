@@ -50,5 +50,5 @@
 {INCLUDE "paging"}
 <div class="PhorumNavBlock" style="text-align: left;">
   <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Options}:</span>
-  {IF LOGGEDIN true}&nbsp;<a class="PhorumNavLink" href="{URL->MARKREAD}">{LANG->MarkRead}</a>{/IF}
+  {IF LOGGEDIN true}&nbsp;<a class="PhorumNavLink" href="{URL->MARK_READ}">{LANG->MarkRead}</a>{/IF}
 </div>
