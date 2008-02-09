@@ -105,7 +105,7 @@ if(isset($PHORUM['DATA']['PROFILE']['is_dst']) && $PHORUM['DATA']['PROFILE']['is
 $PHORUM["DATA"]["TIMEZONE"][] = array( 'tz' => '-99', 'str' => $PHORUM['DATA']['LANG']['Default'], 'sel' => $defsel );
 foreach( $PHORUM['DATA']['LANG']['TIME'] as $tz => $str ) {
     if ( isset($PHORUM['DATA']['PROFILE']['tz_offset']) && $PHORUM['DATA']['PROFILE']['tz_offset'] === "$tz" ) {
-        $sel = " selected";
+        $sel = " selected=\"selected\"";
     } else {
         $sel = "";
     } 
