@@ -3,14 +3,7 @@
         </div>
 
         <!-- Some info for db-debugging -->
-        {IF DBDEBUG}
-          <small>
-            {DBDEBUG->count} queries run.<br /><br />
-            {LOOP DBDEBUG->queries}
-              {DBDEBUG->queries->query} ({DBDEBUG->queries->time}s)<br/>
-            {/LOOP DBDEBUG->queries}
-          </small>
-        {/IF}
+        {IF DBDEBUG}{INCLUDE "dbdebug"}{/IF}
 
 {! these are the two div's from header.tpl }
       </div>

@@ -74,6 +74,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if (!isset($querytrack) || !is_array($querytrack)) {
             $querytrack = array(
                 'count'   => 0,
+                'time'    => 0,
                 'queries' => array()
             );
         }
@@ -107,12 +108,14 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 $querytrack['count'] += 2;
                 if ($debug > 1) {
                     $querytrack['queries'][] = array(
-                        'query' => "001: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
-                        'time'  => '0.000'
+                        'number' => '001',
+                        'query'  => "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
+                        'time'   => '0.000'
                     );
                     $querytrack['queries'][] = array(
-                        'query' => "002: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
-                        'time' => '0.000'
+                        'number' => '002',
+                        'query'  => "SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+                        'time'   => '0.000'
                     );
                 }
             }
@@ -152,9 +155,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         $querytrack['count']++;
         if ($debug > 1) {
             $t2 = array_sum(explode(' ', microtime()));
+            $time = sprintf("%0.3f", $t2 - $t1);
+            $querytrack['time'] += $time;
             $querytrack['queries'][] = array(
-                'query' => sprintf("%03d: %s", $querytrack['count'], $sql),
-                'time'  => sprintf("%0.3f", $t2 - $t1)
+                'number' => sprintf("%03d", $querytrack['count']),
+                'query'  => htmlspecialchars($sql),
+                'time'   => $time
             );
         }
         $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;
