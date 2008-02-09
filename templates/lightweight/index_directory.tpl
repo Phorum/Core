@@ -5,7 +5,7 @@
         </tr>
         {LOOP FOLDERS}
             <tr>
-                <td width="55%" ><h3><a href="{FOLDERS->URL->LIST}">{FOLDERS->name}</a></h3>
+                <td width="55%" ><h3><a href="{FOLDERS->URL->INDEX}">{FOLDERS->name}</a></h3>
                     <p>{FOLDERS->description}</p>
                 </td>
             </tr>

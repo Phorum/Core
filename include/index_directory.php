@@ -19,102 +19,75 @@
 
 if (!defined("PHORUM")) return;
 
-$forums = phorum_db_get_forums( 0, $PHORUM['forum_id'] );
+// --------------------------------------------------------------------
+// Retrieve information from the database
+// --------------------------------------------------------------------
 
-$PHORUM["DATA"]["FORUMS"] = array();
+// Retrieve the children for the current folder.
+$forums = phorum_api_forums_get(
+    NULL, $PHORUM['forum_id'], NULL, $PHORUM['vroot']
+);
 
-$forums_shown=false;
-
-$new_checks = array();
-
-if($PHORUM["DATA"]["LOGGEDIN"] && !empty($forums)){
-    if($PHORUM["show_new_on_index"]==2){
-        $new_checks = phorum_db_newflag_check(array_keys($forums));
-    } elseif($PHORUM["show_new_on_index"]==1){
-        $new_counts = phorum_db_newflag_count(array_keys($forums));
+// For the directory index view, we show the folders and forums separately.
+// Here we separate the forum_ids for these two.
+$folder_ids = array();
+$forum_ids  = array();
+foreach ($forums as $forum_id => $forum)
+{
+    // Handle folders.
+    if ($forum['folder_flag'])
+    {
+        $folder_ids[] = $forum_id;
     }
-}
-
-foreach( $forums as $forum ) {
-
-    if ( $forum["folder_flag"] ) {
-
-        $forum["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
-
-    } else {
-
-        if($PHORUM["hide_forums"] && !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum["forum_id"])){
+    // Handle forums.
+    else
+    {
+        // If inaccessible forums should be hidden on the index, then check
+        // if the current user has rights to access the current forum.
+        if (!$forum['folder_flag'] && $PHORUM['hide_forums'] &&
+            !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
             continue;
         }
 
-        $forum["url"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
-
-        // if there is only one forum in Phorum, redirect to it.
-        if ( $PHORUM['forum_id']==0 && count( $forums ) < 2 ) {
-            phorum_redirect_by_url($forum['url']);
-            exit();
-        }
-
-        if ( $forum["message_count"] > 0 ) {
-            $forum["raw_last_post"] = $forum["last_post_time"];
-            $forum["last_post"] = phorum_date( $PHORUM["long_date_time"], $forum["last_post_time"] );
-        } else {
-            $forum["last_post"] = "&nbsp;";
-        }
-
-        $forum["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL, $forum["forum_id"] );
-        if ($PHORUM["DATA"]["LOGGEDIN"]) {
-            $forum["URL"]["MARK_READ"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"], "markread" );
-        }
-        if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']) {
-            $forum["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $forum["forum_id"], "type=".$PHORUM["default_feed"] );
-        }
-
-        if($PHORUM["DATA"]["LOGGEDIN"]){
-            if($PHORUM["show_new_on_index"]==1){
-
-                $forum["new_messages"] = number_format($new_counts[$forum["forum_id"]]["messages"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-                $forum["new_threads"] = number_format($new_counts[$forum["forum_id"]]["threads"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
-
-            } elseif($PHORUM["show_new_on_index"]==2){
-
-                $forum["new_message_check"] = $new_checks[$forum["forum_id"]];
-            }
-        }
-    }
-
-    $forums_shown=true;
-
-    if($forum["folder_flag"]){
-        $PHORUM["DATA"]["FOLDERS"][] = $forum;
-    } else {
-        $PHORUM["DATA"]["FORUMS"][] = $forum;
+        $forum_ids[] = $forum_id;
     }
 }
 
-if(!$forums_shown){
-    // we did not show any forums here, show an error-message
-    // set all our URL's
-    phorum_build_common_urls();
-    unset($PHORUM["DATA"]["URL"]["TOP"]);
-    $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoForums"];
+// --------------------------------------------------------------------
+// Setup the template data and display the template
+// --------------------------------------------------------------------
 
-    phorum_output("message");
+// Format the data for the forums and folders that we gathered.
+$forums = phorum_api_forums_format($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
-} else {
+// Build all our standard URL's.
+phorum_build_common_urls();
 
-    if (isset($PHORUM["hooks"]["index"]))
-        $PHORUM["DATA"]["FORUMS"]=phorum_hook("index", $PHORUM["DATA"]["FORUMS"]);
-
-    // set all our URL's
-    phorum_build_common_urls();
-
-    // should we show the top-link?
-    if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
-        unset($PHORUM["DATA"]["URL"]["INDEX"]);
-    }
-
-    phorum_output("index_directory");
+// A message to show if there are no visible forums or folders at all.
+if (empty($forums)) {
+    $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['NoForums'];
+    phorum_output('message');
+    return;
 }
+
+// Run the "index" hook. This one is documented in index_flat.php.
+if (isset($PHORUM['hooks']['index'])) {
+    $forums = phorum_hook('index', $forums);
+}
+
+// Build the template folders array.
+$PHORUM['DATA']['FOLDERS'] = array();
+foreach ($folder_ids as $folder_id) {
+    $PHORUM['DATA']['FOLDERS'][] = $forums[$folder_id];
+}
+
+// Build the template forums array.
+$PHORUM['DATA']['FORUMS'] = array();
+foreach ($forum_ids as $forum_id) {
+    $PHORUM['DATA']['FORUMS'][] = $forums[$forum_id];
+}
+
+// Display the page.
+phorum_output("index_directory");
 
 ?>

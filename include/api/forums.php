@@ -122,6 +122,12 @@ define('PHORUM_FLAG_FORUMS', 16);
 define('PHORUM_FLAG_INCLUDE_INACTIVE', 32);
 
 /**
+ * Function call flag which tells {@link phorum_api_forums_format()}
+ * to add information about unread messages to the formatted data.
+ */
+define('PHORUM_FLAG_ADD_UNREAD_INFO', 64);
+
+/**
  * This array describes folder data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  * Value format: <m|v>:<type>[:default]
@@ -1135,6 +1141,145 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
     }
 }
 // }}}
+
+// {{{ Function: phorum_api_forums_format()
+/**
+ * This function handles preparing forum or folder data
+ * for use in the templates.
+ *
+ * @param array $forums
+ *     An array of forum and/or folder data records to format.
+ *
+ * @param int $flags
+ *     If the {@link PHORUM_FLAG_ADD_UNREAD_INFO} flag is set, then template
+ *     data for showing new messages/threads will be added to the data records.
+ *     The exact data that is added depends on the value of the
+ *     $PHORUM['show_new_on_index'] setting variable.
+ *
+ * @param array
+ *     The same as the $forums argument array, with formatting applied
+ *     and template variables added.
+ */
+function phorum_api_forums_format($forums, $flags)
+{
+    $PHORUM = $GLOBALS['PHORUM'];
+
+    require_once('./include/format_functions.php');
+
+    // For tracking forums for which we have to check unread messages.
+    $forums_to_check = array();
+
+    foreach ($forums as $forum_id => $forum)
+    {
+        // Setup template data for folders.
+        if ($forum['folder_flag'])
+        {
+            // A URL for the index view for this folder. We also set this
+            // one up as URL->LIST, because up to Phorum 5.3 that variable
+            // was in use.
+            $forum['URL']['INDEX'] =
+            $forum['URL']['LIST'] =
+                phorum_get_url(PHORUM_INDEX_URL, $forum_id);
+        }
+        // Setup template data for forums.
+        else
+        {
+            // A URL for the message list for this forum.
+            $forum['URL']['LIST'] = phorum_get_url(PHORUM_LIST_URL, $forum_id);
+
+            // A "mark forum read" URL for authenticated users.
+            if ($PHORUM['user']['user_id']) {
+                $forum['URL']['MARK_READ'] = phorum_get_url(
+                    PHORUM_INDEX_URL,
+                    $forum_id,
+                    'markread',
+                    $PHORUM['forum_id']
+                );
+            }
+
+            // A URL to the syndication feed.
+            if (!empty($PHORUM['use_rss'])) {
+                $forum['URL']['FEED'] = phorum_get_url(
+                    PHORUM_FEED_URL,
+                    $forum_id,
+                    'type='.$PHORUM['default_feed']
+                );
+            }
+
+            // For dates, we store an unmodified version to always have
+            // the original date available for modules. Not strictly
+            // needed for this one, since we to not override the original
+            // "last_post_time" field, but we still add it to be compliant
+            // with the rest of the Phorum code.
+            $forum['raw_last_post'] = $forum['last_post_time'];
+
+            // Format the last post time, unless no messages were posted at all.
+            if ($forum['message_count'] > 0)
+            {
+                $forum['last_post'] = phorum_date(
+                    $PHORUM['long_date_time'],
+                    $forum['last_post_time']
+                );
+            }
+            // If no messages were posted, we revert to a simple &nbsp;
+            else {
+                $forum['last_post'] = '&nbsp;';
+            }
+
+            // Some number formatting.
+            $forum['message_count'] = number_format(
+                $forum['message_count'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+            $forum['thread_count'] = number_format(
+                $forum['thread_count'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+
+            $forums_to_check[] = $forum_id;
+        }
+
+        // Put the formatted record back in the array.
+        $forums[$forum_id] = $forum;
+    }
+
+    // If no unread message info has to be added, we are done.
+    if (!($flags & PHORUM_FLAG_ADD_UNREAD_INFO) ||
+         $PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_NOCOUNT ||
+        !$PHORUM['user']['user_id'] ||
+        empty($forums_to_check)) return $forums;
+
+    // Add unread message information.
+    if ($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_COUNT)
+    {
+        $new_info = phorum_db_newflag_count($forums_to_check);
+
+        foreach ($forums_to_check as $forum_id)
+        {
+            $forums[$forum_id]['new_messages'] = number_format(
+                $new_info[ $forum_id]['messages'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+            $forums[$forum_id]['new_threads'] = number_format(
+                $new_info[$forum_id]['threads'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+        }
+    }
+    elseif($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_CHECK)
+    {
+        $new_info = phorum_db_newflag_check($forums_to_check);
+
+        foreach ($forums_to_check as $forum_id)
+        {
+            $has_new = empty($new_info[$forum_id]) ? FALSE : TRUE;
+            $forums[$forum_id]['new_message_check'] = $has_new;
+        }
+    }
+
+    return $forums;
+}
+//}}}
 
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
