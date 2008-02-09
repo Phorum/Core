@@ -102,8 +102,14 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             if ($debug) {
                 $querytrack['count'] += 2;
                 if ($debug > 1) {
-                    $querytrack['queries'][] = array('query'=>"1: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-                    $querytrack['queries'][] = array('query'=>"2: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
+                    $querytrack['queries'][] = array(
+                        'query' => "001: SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
+                        'time'  => '0.000'
+                    );
+                    $querytrack['queries'][] = array(
+                        'query' => "002: SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
+                        'time' => '0.000'
+                    );
                 }
             }
         }
@@ -132,6 +138,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         'missing sql query statement!', E_USER_ERROR
     );
 
+    // Time the query for debug level 2 and up.
+    if ($debug > 1) {
+        $t1 = array_sum(explode(' ', microtime()));
+    }
+
     // Execute the SQL query.
     // For queries where we are going to retrieve multiple rows, we
     // use an unuffered query result.
@@ -145,11 +156,15 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     }
 
     if ($debug) {
-         $querytrack['count']++;
-         if ($debug > 1)
-             $querytrack['queries'][] = array('query'=>$querytrack['count'].": $sql");
-
-         $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;
+        $querytrack['count']++;
+        if ($debug > 1) {
+            $t2 = array_sum(explode(' ', microtime()));
+            $querytrack['queries'][] = array(
+                'query' => sprintf("%03d: %s", $querytrack['count'], $sql),
+                'time'  => sprintf("%0.3f", $t2 - $t1)
+            );
+        }
+        $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;
     }
 
     // Handle errors.
