@@ -135,6 +135,19 @@ if (empty($PHORUM['DATA']['FORUMS'])) {
     return;
 }
 
+// If we are at the (v)root index page and if we only have one forum or
+// folder visible there, then directly jump to that one.
+// We check for two forums here, since the first would be the section
+// folder and the second one would be the entry inside that folder.
+if ($PHORUM['vroot'] == $PHORUM['forum_id'] &&
+    count($PHORUM['DATA']['FORUMS']) == 2) {
+    $forum = array_pop($PHORUM['DATA']['FORUMS']);
+    $url = $forum['folder_flag']
+         ? $forum['URL']['INDEX'] : $forum['URL']['LIST'];
+    phorum_redirect_by_url($url);
+    exit;
+}
+
 /**
  * [hook]
  *     index

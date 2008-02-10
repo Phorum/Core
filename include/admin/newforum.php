@@ -106,7 +106,9 @@ if (count($_POST))
 elseif (defined("PHORUM_EDIT_FORUM"))
 {
     $forum_id = isset($_POST['forum_id']) ? $_POST['forum_id'] : $_GET['forum_id'];
-    $forum = phorum_api_forums_get($forum_id);
+    $forum = phorum_api_forums_by_forum_id(
+        $forum_id, PHORUM_FLAG_INCLUDE_INACTIVE
+    );
     extract($forum);
 }
 // Initialize the form for editing default settings.

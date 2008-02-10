@@ -33,7 +33,7 @@ $parent_parent_id = (int)((isset($_GET["pparent"])) ? $_GET["pparent"] : 0);
 $folder = phorum_api_forums_get($folder_id);
 
 // Load the list of forums and folders that are in the current folder.
-$forums = phorum_api_forums_by_folder($folder_id);
+$forums = phorum_api_forums_by_folder($folder_id, PHORUM_FLAG_INCLUDE_INACTIVE);
 
 // Change the display order of the items in the list.
 if (isset($_GET['display_up']) || isset($_GET['display_down']))

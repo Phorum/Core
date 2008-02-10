@@ -112,7 +112,9 @@ elseif (defined("PHORUM_EDIT_FOLDER"))
 {
     $folder_id = isset($_POST['forum_id'])
                ? $_POST['forum_id'] : $_GET['forum_id'];
-    $folder = phorum_api_forums_get($folder_id);
+    $folder = phorum_api_forums_by_forum_id(
+        $folder_id, PHORUM_FLAG_INCLUDE_INACTIVE
+    );
 }
 
 // Initialize the form for creating a new folder.
@@ -186,7 +188,7 @@ $frm->addrow(
     $frm->select_tag('parent_id', $parent_id_options, $parent_id)
 );
 
-$frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
+$frm->addrow("Make this forum visible in the forum index?", $frm->select_tag("active", array("No", "Yes"), $active));
 
 $row = $frm->addrow("Virtual Root for descending forums/folders", $frm->checkbox("vroot","1","enabled",($vroot)?1:0));
 $frm->addhelp($row,
