@@ -53,7 +53,7 @@
                         </select>
                     </dd>
                     <dt>{LANG->IsDST}:&nbsp;</dt>
-                    <dd><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}></dd>
+                    <dd><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}/></dd>
                 {/IF}
                 <dt>{LANG->Language}:&nbsp;</dt>
                 <dd>
