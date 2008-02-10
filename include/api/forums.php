@@ -1468,7 +1468,7 @@ function phorum_api_forums_by_forum_id($forum_ids = 0, $flags = 0)
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_by_folder($folder_id = 0, $flags = 0)
+function phorum_api_forums_by_folder_id($folder_id = 0, $flags = 0)
 {
    return phorum_api_forums_get(NULL, $folder_id, NULL, NULL, $flags);
 }
