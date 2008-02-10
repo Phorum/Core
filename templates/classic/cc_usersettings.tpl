@@ -65,7 +65,7 @@
           </tr>
           <tr>
             <td nowrap="nowrap">{LANG->IsDST}:&nbsp;</td>
-            <td><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}></td>
+            <td><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}/></td>
           </tr>
         {/IF}
         <tr>
