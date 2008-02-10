@@ -1183,7 +1183,7 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  * The parameters $field, $value and $operator (which are used for defining
  * the search condition) can be arrays or single values. If arrays are used,
  * then all three parameter arrays must contain the same number of elements
- * and the key values in the arrays must be the same.
+ * and the keys in the arrays must be the same.
  *
  * @param mixed $field
  *     The user table field (string) or fields (array) to search on.
@@ -1237,7 +1237,7 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
  * The parameters $field_id, $value and $operator (which are used for defining
  * the search condition) can be arrays or single values. If arrays are used,
  * then all three parameter arrays must contain the same number of elements
- * and the key values in the arrays must be the same.
+ * and the keys in the arrays must be the same.
  *
  * @param mixed $field_id
  *     The custom profile field id (integer) or ids (array) to search on.
