@@ -1942,9 +1942,8 @@ function phorum_db_get_neighbour_thread($key, $direction)
 // {{{ Function: phorum_db_get_forums()
 /**
  * Retrieve a list of forums. The forums which are returned can be filtered
- * through the function parameters. Note that only one parameter is
- * effective at a time, except for the $only_inherit_masters parameter,
- * which can be used in conjunction with the other parameters.
+ * through the function parameters. Note that only one parameter of
+ * $forum_ids, $parent_id and $inherit_id is effective at a time.
  *
  * @param mixed $forum_ids
  *     A single forum_id or an array of forum_ids for which to retrieve the
