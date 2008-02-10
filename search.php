@@ -22,6 +22,7 @@ require_once('./common.php');
 
 require_once('./include/forum_functions.php');
 require_once('./include/format_functions.php');
+require_once('./include/api/forums.php');
 
 if(!phorum_check_read_common()) {
   return;
@@ -245,7 +246,9 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
         $match_number = $start + 1;
 
-        $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
+        $forums = phorum_api_forums_by_vroot(
+            $PHORUM["vroot"], PHORUM_FLAG_INCLUDE_INACTIVE
+        );
 
         if (!$raw_body)
             $arr["rows"] = phorum_format_messages($arr["rows"]);
