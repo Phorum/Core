@@ -802,7 +802,7 @@ function phorum_api_user_save_raw($user)
  *
  * If you are writing modules that need to store data for a user, then please
  * do not use this function. Instead, use custom profile fields. The data
- * that is stored using this function can be best looked at as if it were
+ * that are stored using this function can be best looked at as if they were
  * session data.
  *
  * @param array $settings
