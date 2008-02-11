@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+v1.1.6
+
+    - Added a fix for making the module database install code work for
+      MySQL strict mode. Thanks to phorum.org user "shaneshack" for
+      finding and reporting the problem!
+
 v1.1.5
 
     - Added Turkish language file.
