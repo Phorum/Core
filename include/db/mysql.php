@@ -6721,7 +6721,6 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     if (!is_array($field_id)) $field_id = array($field_id);
     if (!is_array($value))    $value    = array($value);
     if (!is_array($operator)) $operator = array($operator);
-    if (!is_array($sort) && $sort!==NULL) $sort = array($sort);
 
     // Basic check to see if all condition arrays contain the
     // same number of elements.
