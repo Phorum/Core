@@ -637,35 +637,35 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
          phorum_hook("common_post_user", "");
     }
 
-    // set up the template
+    // only do those parts if the forum is not set to fixed view
+    if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
 
-    // check for a template being passed on the url
-    // only use valid template names
-    if ( !empty( $PHORUM["args"]["template"] ) ) {
-        $template = basename( $PHORUM["args"]["template"] );
-        if ($template != '..') {
-            $PHORUM["template"] = $template;
+        // check for a template being passed on the url
+        // only use valid template names
+        if(!empty( $PHORUM["args"]["template"] ) ) {
+            $template = basename( $PHORUM["args"]["template"] );
+            if ($template != '..') {
+                $PHORUM["template"] = $template;
+            }
         }
-    }
+        
+        // get the language file
+        if(isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) ) {
+            $PHORUM['language'] = $PHORUM['user']['user_language'];
+        }
 
-    // get the language file
-    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) &&
-            isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) )
-        $PHORUM['language'] = $PHORUM['user']['user_language'];
+        if( isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template']) &&
+            (!isset( $PHORUM["user_template"] ) || !empty($PHORUM['user_template']))
+        ) {
+            $PHORUM['template'] = $PHORUM['user']['user_template'];
+        }
+        
+    }
 
     if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
         $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
     if ( !file_exists("./include/lang/$PHORUM[language].php") ) {
         $PHORUM["language"] = PHORUM_DEFAULT_LANGUAGE;
-    }
-
-    // set the user-selected template
-    if ( ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) &&
-            isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template']) &&
-            (!isset( $PHORUM["user_template"] )  || !empty($PHORUM['user_template']))
-         ) {
-
-        $PHORUM['template'] = $PHORUM['user']['user_template'];
     }
 
     // user output buffering so we don't get header errors
