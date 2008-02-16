@@ -40,9 +40,10 @@
       {/IF}
     </table>
   </div>
-  {IF ENABLE_PM}
-    <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
-      <span class="PhorumNavHeading">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{PROFILE->URL->PM}">{LANG->SendPM}</a>{IF NOT PROFILE->is_buddy}&bull;<a class="PhorumNavLink" href="{PROFILE->URL->ADD_BUDDY}">{LANG->BuddyAdd}</a>{/IF}
-    </div>
-  {/IF}
+  <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">
+    {IF ENABLE_PM}
+      <span class="PhorumNavHeading">{LANG->Options}:</span>&nbsp;<a class="PhorumNavLink" href="{PROFILE->URL->PM}">{LANG->SendPM}</a>{IF NOT PROFILE->is_buddy}&bull;<a class="PhorumNavLink" href="{PROFILE->URL->ADD_BUDDY}">{LANG->BuddyAdd}</a>&bull;{/IF}
+    {/IF}
+    <a class="PhorumNavLink" href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a>
+  </div>
 </div>
