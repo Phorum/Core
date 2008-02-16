@@ -127,6 +127,10 @@ function phorum_setup_announcements ()
     // Apply standard formatting to the messages.
     if (isset($PHORUM["hooks"]["format"]))
         $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
+        
+    // A hook for module writers for doing post formatting fixups.
+    if (isset($PHORUM["hooks"]["format_fixup"]))
+        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format_fixup", $PHORUM["DATA"]["ANNOUNCEMENTS"]);        
 
     // Build the announcements code.
     ob_start();
