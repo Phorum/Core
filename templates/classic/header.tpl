@@ -14,16 +14,14 @@ if ($PHORUM['DATA']['CHARSET']) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html lang="<?php echo $PHORUM['locale']; ?>">
   <head>
-    <style type="text/css">
-      {IF PRINTVIEW}
-        {INCLUDE "css_print"}
-      {ELSE}
-        {INCLUDE "css"}
-        @media print{
-        {INCLUDE "css_print"}
-        }
-      {/IF}
-    </style>
+    {IF PRINTVIEW}
+      <meta name="robots" content="NOINDEX,NOFOLLOW">
+      <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="screen,print" />
+    {ELSE}
+      <link rel="stylesheet" type="text/css" href="{URL->CSS}" media="screen" />
+      <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
+    {/IF}
+
     {IF URL->RSS}
       <link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="{URL->RSS}" />
     {/IF}
