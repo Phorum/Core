@@ -426,7 +426,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     if($PHORUM["threaded_read"]) {
         $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, $message_id, "printview");
     } else {
-        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, "printview");
+        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, "printview",'page='.$page);
     }
     $thread_is_closed = (bool)$data[$thread]["closed"];
 
