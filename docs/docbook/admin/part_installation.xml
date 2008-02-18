@@ -285,6 +285,25 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
             </listitem>
           </varlistentry>
           <varlistentry>
+            <term>port</term>
+            <listitem>
+              <para>
+                This port is used to connect to the database server.
+                For most installations, you can keep the default value
+                <literal>3306</literal> which is the regular port for mysql.
+              </para>
+            </listitem>
+          </varlistentry>  
+          <varlistentry>
+            <term>socket</term>
+            <listitem>
+              <para>
+                The socket which is used by the database server to connect to.
+                Overrides the port if the hostname is localhost for mysql.
+              </para>
+            </listitem>
+          </varlistentry> 
+          <varlistentry>
             <term>down_page</term>
             <listitem>
               <para>
@@ -395,17 +414,23 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
         'name'          =>  'phorum5',
         'server'        =>  '192.168.1.5',
         'user'          =>  'phorum5',
-        'password'      =>  'phorum5'),
+        'password'      =>  'phorum5',
+        'port'          =>  '3306',
+        'socket'        =>  NULL),
         array(    // Database connection 2.
         'name'          =>  'phorum5',
         'server'        =>  '192.168.1.6',
         'user'          =>  'phorum5',
-        'password'      =>  'phorum5'),
+        'password'      =>  'phorum5',
+        'port'          =>  '3306',
+        'socket'        =>  NULL),
         array(    // Database connection 3.
         'name'          =>  'phorum5',
         'server'        =>  '192.168.1.7',
         'user'          =>  'phorum5',
-        'password'      =>  'phorum5')
+        'password'      =>  'phorum5',
+        'port'          =>  '3306',
+        'socket'        =>  NULL)
     )
 ?> ]]>
                   </programlisting>
