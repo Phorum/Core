@@ -91,7 +91,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                             $server_data['server'],
                             $server_data['user'],
                             $server_data['password'],
-                            $server_data['name']
+                            $server_data['name'],
+                            $server_data['port'],
+                            $server_data['socket']
                         );
                         if(!$conn_read){
                             // if we could not connect, remove this server
@@ -122,7 +124,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 $PHORUM['DBCONFIG']['server'],
                 $PHORUM['DBCONFIG']['user'],
                 $PHORUM['DBCONFIG']['password'],
-                $PHORUM['DBCONFIG']['name']
+                $PHORUM['DBCONFIG']['name'],
+                $PHORUM['DBCONFIG']['port'],
+                $PHORUM['DBCONFIG']['socket']
             );
 
             if(!empty($PHORUM['DBCONFIG']['charset'])) {

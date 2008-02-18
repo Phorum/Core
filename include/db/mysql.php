@@ -7549,12 +7549,28 @@ function phorum_db_sanitychecks()
 // we try to auto-detect which one is available.
 
 $ext = NULL;
+// could be unset in Phorum < 5.2.7
+if(!isset($PHORUM['DBCONFIG']['socket'])) {
+    $PHORUM['DBCONFIG']['socket']=NULL;
+}
+if(!isset($PHORUM['DBCONFIG']['port'])) {
+    $PHORUM['DBCONFIG']['port']=NULL;
+}
+
 if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    $ext = basename($PHORUM['DBCONFIG']['mysql_php_extension']);
 } elseif (function_exists('mysqli_connect')) {
    $ext = "mysqli";
 } elseif (function_exists('mysql_connect')) {
    $ext = "mysql";
+   
+   // build the right hostname for the mysql extension
+   // not having separate args for port and socket
+   if(!empty($PHORUM['DBCONFIG']['socket'])) {
+       $PHORUM['DBCONFIG']['server'].=":".$PHORUM['DBCONFIG']['socket'];
+   } elseif(!empty($PHORUM['DBCONFIG']['port'])) {
+       $PHORUM['DBCONFIG']['server'].=":".$PHORUM['DBCONFIG']['port'];
+   }
 } else {
    // Up to here, no PHP extension was found. This probably means that no
    // MySQL extension is loaded. Here we'll try to dynamically load an

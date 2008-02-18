@@ -89,7 +89,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             $PHORUM['DBCONFIG']['server'],
             $PHORUM['DBCONFIG']['user'],
             $PHORUM['DBCONFIG']['password'],
-            $PHORUM['DBCONFIG']['name']
+            $PHORUM['DBCONFIG']['name'],
+            $PHORUM['DBCONFIG']['port'],
+            $PHORUM['DBCONFIG']['socket']
         );
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;

@@ -22,6 +22,12 @@ $PHORUM['DBCONFIG']=array(
     'user'          =>  'phorum5',
     'password'      =>  'phorum5',
     'table_prefix'  =>  'phorum',
+    
+    // the mysql port to use. 3306 is the mysql default
+    'port'          => '3306',
+    
+    // socket to use for the connection, overrides port if host is set to localhost
+    'socket'        => NULL,
 
     // 'down_page'     => 'http://www.example.com/phorum/down.html',
     // 'upgrade_page'  => 'http://www.example.com/phorum/upgrade.html',
@@ -144,17 +150,23 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
         'name'          =>  'phorum5',
         'server'        =>  '192.168.1.5',
         'user'          =>  'phorum5',
-        'password'      =>  'phorum5'),
+        'password'      =>  'phorum5',
+        'port'          =>  '3306',
+        'socket'        =>  NULL),
         array(    // Database connection 2.
         'name'          =>  'phorum5',
         'server'        =>  '192.168.1.6',
         'user'          =>  'phorum5',
-        'password'      =>  'phorum5'),
+        'password'      =>  'phorum5',
+        'port'          =>  '3306',
+        'socket'        =>  NULL),
         array(    // Database connection 3.
         'name'          =>  'phorum5',
         'server'        =>  '192.168.1.7',
         'user'          =>  'phorum5',
-        'password'      =>  'phorum5')
+        'password'      =>  'phorum5',
+        'port'          =>  '3306',
+        'socket'        =>  NULL)
     )
 
  * dbdebug:
