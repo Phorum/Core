@@ -23,7 +23,7 @@
         <td class="PhorumTableRow" nowrap="nowrap">
           <a href="{MESSAGES->URL->PROFILE}">{MESSAGES->author}</a>&nbsp;
         </td>
-        <td class="PhorumTableRow" nowrap="nowrap" width="1">
+        <td class="PhorumTableRow" nowrap="nowrap" width="10%">
           <div style="white-space:nowrap">{MESSAGES->date}&nbsp;</div>
         </td>
       </tr>
