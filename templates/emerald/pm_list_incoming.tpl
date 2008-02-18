@@ -31,7 +31,7 @@
                     {/IF}
                 </td>
                 <td nowrap="nowrap"><a href="{MESSAGES->URL->PROFILE}">{MESSAGES->author}</a>&nbsp;</td>
-                <td nowrap="nowrap" width="1">{MESSAGES->date}&nbsp;</td>
+                <td width="10%" nowrap="nowrap">{MESSAGES->date}</td>
             </tr>
         {/LOOP MESSAGES}
     </table>
