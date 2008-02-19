@@ -45,7 +45,7 @@ function spamhurdles_db_install()
             print "<b>Unexpected situation on installing " .
                   "the Spam Hurdles module</b>: running the " .
                   "install queries from file " . htmlspecialchars($sqlfile) .
-                  " failed";
+                  " failed: " . htmlspecialchars($err);
             return false;
         }
 
