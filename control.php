@@ -219,7 +219,8 @@ if(empty($PHORUM["DATA"]["HEADING"])){
 }
 
 // unset default description
-$PHORUM["DATA"]["DESCRIPTION"] = "";
+$PHORUM['DATA']['DESCRIPTION'] = '';
+$PHORUM['DATA']['HTML_DESCRIPTION'] = '';
 
 // The include file can set the template we have to use for
 // displaying the main part of the control panel screen

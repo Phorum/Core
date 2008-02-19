@@ -623,6 +623,14 @@ if (!empty($action)) {
 // Display a PM page
 // ------------------------------------------------------------------------
 
+if(empty($PHORUM["DATA"]["HEADING"])){
+    $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["PrivateMessages"];
+}
+
+// unset default description
+$PHORUM['DATA']['DESCRIPTION'] = '';
+$PHORUM['DATA']['HTML_DESCRIPTION'] = '';
+
 // Use the message list as the default page.
 if (!$page){
     $page = "list";
