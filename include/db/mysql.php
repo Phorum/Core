@@ -5403,6 +5403,7 @@ function phorum_db_get_banlists($ordered=FALSE)
         $banlists[$ban['type']][$ban['id']] = array (
             'pcre'     => $ban['pcre'],
             'string'   => $ban['string'],
+            'comments' => $ban['comments'],
             'forum_id' => $ban['forum_id']
         );
     }
@@ -5441,7 +5442,8 @@ function phorum_db_get_banitem($banid)
             'pcre'     => $bans[0]['pcre'],
             'string'   => $bans[0]['string'],
             'forum_id' => $bans[0]['forum_id'],
-            'type'     => $bans[0]['type']
+            'type'     => $bans[0]['type'],
+            'comments' => $bans[0]['comments']
         );
     } else {
         $ban = array();
@@ -5497,6 +5499,11 @@ function phorum_db_del_banitem($banid)
  *     The forum_id to link the ban to. This can be a real forum_id, a
  *     vroot id or 0 (zero) to indicate a GLOBAL ban item.
  *
+ * @param string $comments
+ *     Comments to add to the ban item. This can be used for documenting the
+ *     ban item (why was the ban created, when was this done or generally
+ *     any info that an administrator finds useful).
+ *
  * @param integer $banid
  *     This parameter can be set to the id of a ban item to let the
  *     function update an existing ban. If set to 0 (zero), a new ban
@@ -5505,7 +5512,7 @@ function phorum_db_del_banitem($banid)
  * @return boolean
  *     True if the ban item was created or updated successfully.
  */
-function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
+function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $comments, $banid=0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -5517,6 +5524,7 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
     settype($banid, 'int');
 
     $string = phorum_db_interact(DB_RETURN_QUOTED, $string);
+    $comments = phorum_db_interact(DB_RETURN_QUOTED, $comments);
 
     // Update an existing ban item.
     if ($banid > 0) {
@@ -5526,7 +5534,8 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
              SET    forum_id = $forum_id,
                     type     = $type,
                     pcre     = $pcre,
-                    string   = '$string'
+                    string   = '$string',
+                    comments = '$comments'
              WHERE  id = $banid",
             NULL,
             DB_MASTERQUERY
@@ -5537,8 +5546,8 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $banid=0)
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['banlist_table']}
-                    (forum_id,type,pcre,string)
-             VALUES ($forum_id, $type, $pcre, '$string')",
+                    (forum_id, type, pcre, string, comments)
+             VALUES ($forum_id, $type, $pcre, '$string', '$comments')",
             NULL,
             DB_MASTERQUERY
         );
@@ -7334,6 +7343,7 @@ function phorum_db_create_tables()
            type                     tinyint(4)     NOT NULL default '0',
            pcre                     tinyint(1)     NOT NULL default '0',
            string                   varchar(255)   NOT NULL default '',
+           comments                 text           NOT NULL,
 
            PRIMARY KEY (id),
            KEY forum_id (forum_id)

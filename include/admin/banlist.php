@@ -39,7 +39,7 @@ if (count($_POST) && $_POST["string"]!="")
 {
     if ($_POST["curr"]!="NEW")
     {
-        $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST["curr"]);
+        $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST['comments'],$_POST['curr']);
         if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists'])
         {
             // we need to increase the version in that case to
@@ -55,7 +55,7 @@ if (count($_POST) && $_POST["string"]!="")
             }
         }
     } else {
-        $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],0);
+        $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST['comments'],0);
     }
 
     if(!$ret){
@@ -84,6 +84,7 @@ if($curr!="NEW"){
 }
 
 settype($string, "string");
+settype($comments, "string");
 settype($type, "int");
 settype($pcre, "int");
 settype($forum_id,"int");
@@ -186,6 +187,17 @@ if($_GET["curr"] && $_GET["delete"]){
     ");
 
     $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
+
+    $row = $frm->addrow(
+        'Comments',
+        $frm->textarea('comments', htmlspecialchars($comments), 50, 7)
+    );
+    $frm->addhelp($row, "Comments",
+        "This field can be used to add some comments to the ban (why you
+         created it, when you did this, when the ban can be deleted, etc.)
+         These comments will only be shown on this page and are meant as
+         a means for the administrator to do some bookkeeping."
+    );
 
     $frm->show();
 
