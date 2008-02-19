@@ -68,6 +68,8 @@
  * @subpackage ForumsAPI
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
+ *
+ * @todo Implement PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS flag.
  */
 
 if (!defined("PHORUM")) return;
@@ -122,10 +124,18 @@ define('PHORUM_FLAG_FORUMS', 16);
 define('PHORUM_FLAG_INCLUDE_INACTIVE', 32);
 
 /**
+ * Function call flag which tells {@link phorum_api_forums_tree()}
+ * to include empty folders in the tree.
+ */
+define('PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS', 64);
+
+/**
  * Function call flag which tells {@link phorum_api_forums_format()}
  * to add information about unread messages to the formatted data.
  */
-define('PHORUM_FLAG_ADD_UNREAD_INFO', 64);
+define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);
+
+
 
 /**
  * This array describes folder data fields. It is mainly used internally
@@ -1080,7 +1090,7 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
     if ($value !== NULL) settype($value, 'int');
 
     // Get the forums for the specified folder.
-    $forums = phorum_api_forums_by_folder($folder_id);
+    $forums = phorum_api_forums_by_folder_id($folder_id);
 
     // Prepare the forum list for easy ordering.
     $current_pos = NULL;
@@ -1148,6 +1158,154 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
             ));
         }
     }
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_tree()
+/**
+ * This function can be used to build a tree structure for the available
+ * folders and forums.
+ *
+ * @param mixed $vroot
+ *     The vroot for which to build the forums tree (0 (zero) to
+ *     use the main root folder) or NULL to use the current (v)root.
+ *
+ * @param int $flags
+ *     If the {@link PHORUM_FLAG_INCLUDE_INACTIVE} flag is set, then
+ *     inactive forums and folders will be included in the tree.
+ *     If the {@link PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS} flag is set, then
+ *     empty folders will be included in the tree. By default, empty folders
+ *     will be taken out of the tree.
+ *
+ * @return array
+ *     An array containing arrays that describe nodes in the tree.
+ *     The nodes are in the order in which they would appear in an expanded
+ *     tree, moving from top to bottom. An "indent" field is added to each
+ *     node array to tell at what indention level the node lives.
+ */
+function phorum_api_forums_tree($vroot = NULL, $flags = 0)
+{
+    global $PHORUM;
+
+    if ($vroot === NULL) {
+        $vroot = isset($PHORUM['vroot']) ? $PHORUM['vroot'] : 0;
+    } else {
+        settype($vroot, 'int');
+    }
+
+    // Get the information for the root.
+    $root = phorum_api_forums_by_forum_id($vroot, $flags);
+    if (!$root) {
+        trigger_error(
+            "phorum_api_forums_tree(): vroot $vroot does not exist",
+            E_USER_ERROR
+        );
+        return NULL;
+    }
+    if ($root['vroot'] != $root['forum_id']) {
+        trigger_error(
+            "phorum_api_forums_tree(): vroot $vroot is not a vroot folder",
+            E_USER_ERROR
+        );
+        return NULL;
+    }
+
+    // Temporarily witch to the vroot for which we are building a tree.
+    $orig_vroot = isset($PHORUM['vroot']) ? $PHORUM['vroot'] : 0;
+    $PHORUM['vroot'] = $vroot;
+
+    // Check what forums the current user can read in that vroot.
+    $allowed_forums = phorum_api_user_check_access(
+        PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
+    );
+
+    // Load the data for those forums.
+    $forums = phorum_api_forums_by_forum_id($allowed_forums, $flags);
+
+    // Sort the forums in a tree structure.
+    // First pass: build a parent / child relationship structure.
+    $tmp_forums = array();
+    foreach ($forums as $forum_id => $forum)
+    {
+        $tmp_forums[$forum_id]['forum_id'] = $forum_id;
+        $tmp_forums[$forum_id]['parent'] = $forum['parent_id'];
+        if (empty($forums[$forum["parent_id"]]["childcount"])) {
+            $tmp_forums[$forum["parent_id"]]["children"] = array($forum_id);
+            $forums[$forum["parent_id"]]["childcount"] = 1;
+        } else {
+            $tmp_forums[$forum["parent_id"]]["children"][] = $forum_id;
+            $forums[$forum["parent_id"]]["childcount"]++;
+        }
+    }
+
+    // Second pass: sort the folders and forums in their tree order.
+    $order = array();
+    $stack = array();
+    $seen  = array();
+    $curr_id = $vroot;
+    while (count($tmp_forums))
+    {
+        // Add the current element to the tree order array. Do not add it
+        // in case we've already seen it (we move down and back up the tree
+        // during processing, so we could see an element twice
+        // while doing that).
+        if ($curr_id != 0 && empty($seen[$curr_id])) {
+            $order[$curr_id] = $forums[$curr_id];
+            $seen[$curr_id] = true;
+        }
+
+        // Push the current element on the tree walking stack
+        // to move down the tree.
+        array_push($stack, $curr_id);
+
+        // Get the current element's data.
+        $data = $tmp_forums[$curr_id];
+
+        // If there are no children (anymore), then move back up the the tree.
+        if (empty($data["children"]))
+        {
+            unset($tmp_forums[$curr_id]);
+            array_pop($stack);
+            $curr_id = array_pop($stack);
+        }
+        // Otherwise, take the first child and process that one in the
+        // next iteration of this loop.
+        else {
+            $curr_id = array_shift($tmp_forums[$curr_id]["children"]);
+        }
+
+        if (!is_numeric($curr_id)) break;
+    }
+
+    $tree = array();
+    foreach ($order as $forum)
+    {
+        if ($forum["folder_flag"])
+        {
+            // Skip empty folders.
+            if (empty($forums[$forum['forum_id']]['childcount'])) continue;
+
+            $url = phorum_get_url(PHORUM_INDEX_URL, $forum["forum_id"]);
+        } else {
+            $url = phorum_get_url(PHORUM_LIST_URL, $forum["forum_id"]);
+        }
+
+        // Add the indent level for the node.
+        $indent = count($forum["forum_path"]) - 2;
+        if($indent < 0) $indent = 0;
+        $forum['indent'] = $indent;
+
+        // Some entries that are added to the forum array to be backward
+        // compatible with the deprecated phorum_build_forum_list() function.
+        $forum['stripped_name'] = strip_tags($forum['name']);
+        $forum['indent_spaces'] = str_repeat('&nbsp;', $indent);
+        $forum['url']           = $url;
+        $forum['path']          = $forum['forum_path'];
+
+        $tree[$forum["forum_id"]] = $forum;
+    }
+
+    return $tree;
 }
 // }}}
 
@@ -1300,7 +1458,7 @@ function phorum_api_forums_get_inherit_id_options($forum_id = NULL)
  *     The same as the $forums argument array, with formatting applied
  *     and template variables added.
  */
-function phorum_api_forums_format($forums, $flags)
+function phorum_api_forums_format($forums, $flags = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1453,7 +1611,7 @@ function phorum_api_forums_by_forum_id($forum_ids = 0, $flags = 0)
 }
 // }}}
 
-// {{{ Function: phorum_api_forums_by_folder()
+// {{{ Function: phorum_api_forums_by_folder_id()
 /**
  * Retrieve data for all direct descendant forums and folders within a folder.
  *

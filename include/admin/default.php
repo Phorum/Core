@@ -51,7 +51,7 @@ if (isset($_GET['display_up']) || isset($_GET['display_down']))
     phorum_api_forums_change_order($folder_id, $forum_id, $movement, 1);
 
     // Get a fresh forum list with updated order.
-    $forums = phorum_api_forums_by_folder($folder_id);
+    $forums = phorum_api_forums_by_folder_id($folder_id);
 }
 
 $rows = '';

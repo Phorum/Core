@@ -348,7 +348,8 @@ $PHORUM["DATA"]["SEARCH"]["match_dates"] = $PHORUM["args"]["match_dates"];
 $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
 $PHORUM["DATA"]["SEARCH"]["match_threads"] = (int)$PHORUM["args"]["match_threads"];
 
-$PHORUM["DATA"]["SEARCH"]["forum_list"] = phorum_build_forum_list();
+require_once('./include/api/forums.php');
+$PHORUM["DATA"]["SEARCH"]["forum_list"] = phorum_api_forums_tree();
 if(isset($PHORUM["args"]["match_forum"])){
     $match_forum = explode(",", $PHORUM["args"]["match_forum"]);
     foreach($PHORUM["DATA"]["SEARCH"]["forum_list"] as $key=>$list_item){
