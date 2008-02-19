@@ -20,6 +20,13 @@ Phorum 5.2 -> Phorum 5.3:
   Core code
   ---------
 
+  * phorum_build_forum_list() from include/forum_functions.php has been
+    deprecated in favor of phorum_api_forums_tree() from the forums API
+    include/api/forums.php. The call is backward compatible and for now,
+    we have a replacement forum_functions.php which still implements
+    the phorum_build_forum_list() function. For new code, it is adviced
+    to use phorum_api_forums_tree().
+
   * Configuration variable $PHORUM['use_new_folder_style'] was renamed to
     $PHORUM['index_style']. The old values were TRUE and FALSE. The new
     values to use are PHORUM_INDEX_DIRECTORY and PHORUM_INDEX_FLAT.
@@ -48,4 +55,9 @@ Phorum 5.2 -> Phorum 5.3:
 
     This change was done for implementing the new Forums API code.
 
+  * phorum_db_mod_banlists() now takes an extra argument to make it
+    possible to store a comment with the ban items.
+
+  * DOC TODO: the custom profile fields were transferred to custom fields,
+    which can be added to users, forums and messages.
 
