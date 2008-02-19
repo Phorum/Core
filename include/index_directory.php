@@ -62,7 +62,9 @@ $forums = phorum_api_forums_format($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
 // If we are at the (v)root index page and if we only have one forum or
 // folder visible there, then directly jump to that one.
-if ($PHORUM['vroot'] == $PHORUM['forum_id'] && count($forums) == 1) {
+if (!empty($PHORUM['jump_on_single_forum']) &&
+    $PHORUM['vroot'] == $PHORUM['forum_id'] &&
+    count($forums) == 1) {
     $forum = array_pop($forums);
     $url = $forum['folder_flag']
          ? $forum['URL']['INDEX'] : $forum['URL']['LIST'];

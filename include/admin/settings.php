@@ -217,6 +217,9 @@ $frm->addhelp($row, "How to Display Forums and Folders on the Index Page",
      </ul>"
 );
 
+$row=$frm->addrow("Go To Forum if only One Forum is Visible on the Index", $frm->select_tag("jump_on_single_forum", array( "No", "Yes" ), $PHORUM['jump_on_single_forum'] ) );
+$frm->addhelp($row, "Go To Forum if only One Forum is Visible on the Index", "By setting this to Yes, Phorum will automatically jump to a forum if that is the only forum visible on the index page. This can be useful in case you are running a forum site with only one forum (or where visitors see only one forum due to permission settings), so visitors do not have to do an additional click to get from the index to the forum.");
+
 $row=$frm->addrow( "Enable Moderator Notifications", $frm->select_tag( "enable_moderator_notifications", array( "No", "Yes" ), $PHORUM["enable_moderator_notifications"] ) );
 $frm->addhelp($row, "Enable Moderator Notifications", "By setting this to Yes, Phorum will display notice to the various kinds of moderators when they have a new item that requires their attention. For example, message moderators will see a notice whenever there is an unapproved message." );
 

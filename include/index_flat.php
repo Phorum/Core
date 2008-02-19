@@ -139,7 +139,8 @@ if (empty($PHORUM['DATA']['FORUMS'])) {
 // folder visible there, then directly jump to that one.
 // We check for two forums here, since the first would be the section
 // folder and the second one would be the entry inside that folder.
-if ($PHORUM['vroot'] == $PHORUM['forum_id'] &&
+if (!empty($PHORUM['jump_on_single_forum']) &&
+    $PHORUM['vroot'] == $PHORUM['forum_id'] &&
     count($PHORUM['DATA']['FORUMS']) == 2) {
     $forum = array_pop($PHORUM['DATA']['FORUMS']);
     $url = $forum['folder_flag']
