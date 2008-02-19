@@ -164,9 +164,17 @@ if($pages>$page){
     $nextpage=$page+1;
     $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$nextpage),$list_page_url_template);
 }
-if($page>1){
+
+if ($page>1)
+{
     $prevpage=$page-1;
     $PHORUM["DATA"]["URL"]["PREVPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$prevpage),$list_page_url_template);
+
+    $PHORUM['DATA']['BREADCRUMBS'][]=array(
+        'URL'=>'',
+        'TEXT'=>$PHORUM['DATA']['LANG']['Page'] . ' ' . $page,
+        'TYPE'=>'forum-page'
+    );
 }
 
 $min_id=0;
