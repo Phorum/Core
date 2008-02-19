@@ -1,4 +1,4 @@
-<!-- BEGIN TEMPLATE index_new.tpl -->
+<!-- BEGIN TEMPLATE index_flat.tpl -->
 <table cellspacing="0" class="list">
     {LOOP FORUMS}
         {IF FORUMS->level 0}
@@ -52,4 +52,4 @@
         {/IF}
     {/LOOP FORUMS}
 </table>
-<!-- END TEMPLATE index_new.tpl -->
+<!-- END TEMPLATE index_flat.tpl -->
