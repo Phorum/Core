@@ -6,9 +6,9 @@
 if (!defined('PHORUM_ADMIN')) return;
 
 if (empty($PHORUM["use_new_folder_style"])) {
-    $index_style = PHORUM_INDEX_FLAT;
-} else {
     $index_style = PHORUM_INDEX_DIRECTORY;
+} else {
+    $index_style = PHORUM_INDEX_FLAT;
 }
 
 // Add the new setting to the database.
