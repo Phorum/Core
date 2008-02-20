@@ -5,8 +5,6 @@
   <form action="{URL->ACTION}" method="post" style="display: inline;">
     {POST_VARS}
 
-    <h4>{LANG->Register}</h4>
-
     <table cellspacing="0" border="0">
       <tr>
         <td nowrap="nowrap">{LANG->Username}*:&nbsp;</td>
