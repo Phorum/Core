@@ -364,7 +364,7 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
     // actual record in the database.
     if ($forum_ids !== NULL) {
         if ((is_array($forum_ids) && in_array(0, $forum_ids)) ||
-            (!is_array($forum_ids) && $forum_ids === 0)) {
+            (!is_array($forum_ids) && $forum_ids !== NULL && $forum_ids == 0)) {
 
             $PHORUM = $GLOBALS['PHORUM'];
             $template = $PHORUM['default_forum_options']['template'];
