@@ -881,9 +881,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             );
             $track = $id;
         }
-        $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
-        $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_get_url(PHORUM_LIST_URL, $track);
-
+        if (!$PHORUM['folder_flag']) {
+            $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
+            $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_get_url(PHORUM_LIST_URL, $track);
+        }
     }
 }
 
