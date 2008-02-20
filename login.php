@@ -250,12 +250,17 @@ if (! isset($redir)) {
     $redir = phorum_get_url(PHORUM_LIST_URL);
 }
 
-// fill the breadcrumbs-info
+// fill the breadcrumbs-info.
 $PHORUM['DATA']['BREADCRUMBS'][]=array(
     'URL'=>'',
     'TEXT'=>$PHORUM['DATA']['LANG']['LogIn'],
     'TYPE'=>'login'
 );
+
+// fill the page heading info.
+$PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['LogIn'];
+$PHORUM['DATA']['HTML_DESCRIPTION'] = '';
+$PHORUM['DATA']['DESCRIPTION'] = '';
 
 // Setup template data.
 $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;

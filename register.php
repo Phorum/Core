@@ -250,6 +250,18 @@ if (count($_POST)) {
     }
 }
 
+// fill the breadcrumbs-info.
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>'',
+    'TEXT'=>$PHORUM['DATA']['LANG']['Register'],
+    'TYPE'=>'register'
+);
+
+// fill the page heading info.
+$PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['Register'];
+$PHORUM['DATA']['HTML_DESCRIPTION'] = '';
+$PHORUM['DATA']['DESCRIPTION'] = '';
+
 # Setup static template data.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_REGISTER_ACTION_URL );
 $PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
