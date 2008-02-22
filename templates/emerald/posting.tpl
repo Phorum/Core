@@ -181,7 +181,7 @@
                 {/IF}
 
                 {IF ATTACHMENTS_FULL}
-                    <strong>{LANG->AttachFull}</strong>
+                    <strong>{LANG->AttachFull}</strong><br/>
                 {ELSE}
                     <script type="text/javascript">
                     //<![CDATA[
