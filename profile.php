@@ -126,6 +126,11 @@ if (isset($PHORUM["hooks"]["profile"]))
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UserProfile"];
 $PHORUM["DATA"]["DESCRIPTION"] = "";
 
+// fill the breadcrumbs-info.
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>'', 'TEXT'=>strip_tags($PHORUM["DATA"]["HEADING"]),
+    'TYPE'=>'profile'
+);
 
 // set all our URL's
 phorum_build_common_urls();
