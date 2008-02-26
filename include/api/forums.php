@@ -203,7 +203,7 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
   'thread_count'             => 'm:int:0',
   'sticky_count'             => 'm:int:0',
   'last_post_time'           => 'm:int:0',
-  'count_views'              => 's:bool:1',
+  'count_views'              => 's:int:1',
   'count_views_per_thread'   => 's:bool:0',
 
   // Permission settings.
