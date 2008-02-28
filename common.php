@@ -819,6 +819,67 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         phorum_hook("common", "");
     }
 
+    /*
+     * [hook]
+     *     page_&lt;phorum_page&gt;
+     *
+     * [description]
+     *     This hook gives modules a chance to run hook code for a specific
+     *     Phorum page near the end of the the <filename>common.php</filename>
+     *     script.<sbr/>
+     *     <sbr/>
+     *     It gives modules a chance to override Phorum variables
+     *     and settings near the end of the <filename>common.php</filename>
+     *     script. This can be used to override the Phorum (settings)
+     *     variables that are setup during this script.
+     *     <sbr/>
+     *     The <literal>phorum_page</literal> definition that is set
+     *     for each script is used to construct the name of the hook that will
+     *     be called. For example the <filename>index.php</filename> script
+     *     uses phorum_page <literal>index</literal>, which means that the
+     *     called hook will be <literal>page_index</literal>.
+     *
+     * [category]
+     *     Request initialization
+     *
+     * [when]
+     *     At the end of <filename>common.php</filename>, right after the
+     *     <hook>common</hook> hook is called.<sbr/>
+     *     <sbr/>
+     *     You can look at this as if the hook is called at the start of the
+     *     called script, since including <filename>common.php</filename>
+     *     is about the first thing that a Phorum script does.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_page_list()
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Set the type of list page to use, based on a cookie.
+     *         if (empty($_COOKIE['list_style'])) {
+     *             $PHORUM['threaded_list'] = PHORUM_THREADED_DEFAULT;
+     *         } elseif ($_COOKIE['list_style'] == 'threaded') {
+     *             $PHORUM['threaded_list'] = PHORUM_THREADED_ON;
+     *         } elseif ($_COOKIE['list_style'] == 'flat') {
+     *             $PHORUM['threaded_list'] = PHORUM_THREADED_OFF;
+     *         } elseif ($_COOKIE['list_style'] == 'hybrid') {
+     *             $PHORUM['threaded_list'] = PHORUM_THREADED_HYBRID;
+     *         }
+     *     }
+     *     </hookcode>
+     */
+    $page_hook = 'page_'.phorum_page;
+    if (isset($PHORUM["hooks"][$page_hook])) {
+        phorum_hook($page_hook, "");
+    }
+
     $PHORUM['DATA']['USER'] = $PHORUM['user'];
     $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     if (isset($PHORUM['DATA']['USER']['real_name']))
