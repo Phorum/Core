@@ -380,9 +380,6 @@ if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
  * [hook]
  *     common_pre
  *
- * [availability]
- *     Phorum 5 >= 5.2.7
- *
  * [description]
  *     This hook can be used for overriding settings that were loaded and
  *     setup at the start of the <filename>common.php</filename> script.
@@ -824,7 +821,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     /*
      * [hook]
-     *     page_&lt;phorum_page&gt;
+     *     page_<phorum_page>
+     *
+     * [availability]
+     *     Phorum 5 >= 5.2.7
      *
      * [description]
      *     This hook gives modules a chance to run hook code for a specific
