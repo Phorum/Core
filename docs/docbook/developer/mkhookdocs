@@ -49,6 +49,7 @@ foreach ( explode("\n", $files) as $file) {
                     $hook = $m[1];
                     $doc  = array(
                         "hook"        => $m[1],
+                        "availability"=> '',
                         "category"    => NULL,
                         "description" => NULL,
                         "when"        => NULL,
@@ -59,7 +60,7 @@ foreach ( explode("\n", $files) as $file) {
                 }
             }
         } else {
-            if (preg_match('/^\s*\*\s*\[(description|category|when|input|output|example)\]\s*(.*)\s*$/', $line, $m)) {
+            if (preg_match('/^\s*\*\s*\[(description|availability|category|when|input|output|example)\]\s*(.*)\s*$/', $line, $m)) {
                 $section = $m[1];
                 $doc[$section] .= $m[2] . "\n";
             } elseif ($section !== NULL){
@@ -152,6 +153,12 @@ foreach ($hookdocs as $category => $hooks)
 
         fputs($fp, "    <section id=\"hook.$name\" xreflabel=\"$name\">\n");
         fputs($fp, "      <title>$name</title>\n");
+        $hook['availability'] = preg_replace('/^\s+|\s+$/', '', $hook['availability']);
+        if (!empty($hook['availability'])) {
+            fputs($fp, "      <para>\n");
+            fputs($fp, "        ({$hook['availability']})\n");
+            fputs($fp, "      </para>\n");
+        }
         fputs($fp, "      <para>\n");
         fputs($fp, format_part($hook['description']));
         fputs($fp, "      </para>\n");
