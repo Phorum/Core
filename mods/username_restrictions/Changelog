@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+2008-02-29 v1.0.2
+
+    - Allow setting a min_length without setting a max_lenght. The max_length
+      was set to the min_length in this case. Thanks to Lammi41 for the
+      bug report and patch.
+
 2007-10-23 v1.0.1
 
     - Added Turkish language file. 

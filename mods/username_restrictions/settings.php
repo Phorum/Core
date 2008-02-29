@@ -28,7 +28,8 @@
 
         // Take care of applying sane settings.
         if ($settings["min_length"] < 0) $settings["min_length"] = 0;
-        if ($settings["max_length"] < $settings["min_length"]) {
+        if ($settings["max_length"] < $settings["min_length"] &&
+            $settings["max_length"] != 0) {
             $settings["max_length"] = $settings["min_length"];
         }
 
@@ -62,4 +63,3 @@
 
     $frm->show();
 ?>
-
