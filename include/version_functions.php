@@ -61,11 +61,12 @@ if (!isset($PHORUM["internal_patchlevel"])) {
  *
  * @return array
  *     An array containing three elements:
- *     - The second one the release type, which can be "unknown"
- *       (parse failed), "development", "snapshot", "repository" or
- *       "stable".
+ *     - The release type, which can be "unknown" (parse failed),
+ *       "alpha", "beta", "development" (if something else than the
+ *       previous two were used for a development version), "snapshot",
+ *       "repository", "candidate" or "stable".
  *     - An array containing the parsed version. This version is an
- *       array containing a split up version number, with zero to four
+ *       array containing a split up version number, with zero to five
  *       elements in it (only relevant version parts are added).
  *     - The version number that was parsed.
  */
@@ -80,14 +81,22 @@ function phorum_parse_version($version)
         $release = 'stable';
         $subrelease = empty($m[4]) ? 0 : ord($m[4])-96; // ord('a') = 97;
         $parsed_version = array($m[1], $m[2], $m[3], $subrelease);
+    // Release candidate, e.g. "5.1.26-RC1" or "5.2.10a-RC2".
+    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)([a-z])?-RC(\d+)$/', $version, $m)) {
+        $release = 'candidate';
+        $subrelease = empty($m[4]) ? 0 : ord($m[4])-96; // ord('a') = 97;
+        $parsed_version = array($m[1], $m[2], $m[3], $subrelease, $m[5]);
     // Development release from a subversion tree, e.g. "5.2-dev".
     } elseif (preg_match('/^(\d+)\.(\d+)(-\w+)?$/', $version, $m)) {
         $release = 'repository';
         $parsed_version = array($m[1], $m[2]);
-    // Development release, e.g. "5.1.10-alpha", "5.2.1-beta" or "5.2.2-RC1".
-    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)-\w+$/', $version, $m)) {
-        $release = 'development';
-        $parsed_version = array($m[1], $m[2], $m[3]);
+    // Development release, e.g. "5.1.10-alpha", "5.2.1a-beta".
+    } elseif (preg_match('/^(\d+)\.(\d+).(\d+)([a-z])?-(\w+)$/', $version, $m)) {
+        if ($m[5] == 'alpha')    $release = 'alpha';
+        elseif ($m[5] == 'beta') $release = 'beta';
+        else                     $release = 'development';
+        $subrelease = empty($m[4]) ? 0 : ord($m[4])-96; // ord('a') = 97;
+        $parsed_version = array($m[1], $m[2], $m[3], $subrelease);
     // We should never get here.
     } else {
         $release = 'unknown';
@@ -98,15 +107,17 @@ function phorum_parse_version($version)
 }
 
 /**
- * Compares two version numbers as returned by phorum_parse_version().
+ * Compares two version numbers.
  *
  * This function will tell which of two version numbers is higher.
  *
  * @param array version1
- *     The first version number.
+ *     The first version number. Either the version number or the
+ *     return array from phorum_parse_version().
  *
  * @param array version2
- *     The second version number
+ *     The second version number. Either the version number or the
+ *     return array from phorum_parse_version().
  *
  * @return integer
  *      1 if version1 is higher than version2.
@@ -115,9 +126,13 @@ function phorum_parse_version($version)
  */
 function phorum_compare_version($version1, $version2)
 {
+    // Parse version numbers if no parsed arrays were provided.
+    if (!is_array($version1)) $version1 = phorum_parse_version($version1);
+    if (!is_array($version2)) $version2 = phorum_parse_version($version2);
+
     // Compare relevant parts of the parsed version numbers to see
-    // which version is higher.
-    for ($s=0; $s<=3; $s++) {
+    // what version is higher.
+    for ($s=0; $s<=4; $s++) {
         if (!isset($version1[1][$s]) || !isset($version2[1][$s])) break;
         if ($version1[1][$s] > $version2[1][$s]) return +1;
         if ($version1[1][$s] < $version2[1][$s]) return -1;
@@ -129,16 +144,19 @@ function phorum_compare_version($version1, $version2)
     // releases should know what they are doing.
     $order = array(
         'unknown'     => 0,
-        'stable'      => 1,
-        'development' => 2,
-        'snapshot'    => 3,
-        'repository'  => 4
+        'alpha'       => 1,
+        'beta'        => 2,
+        'development' => 3,
+        'candidate'   => 4,
+        'stable'      => 5,
+        'snapshot'    => 6,
+        'repository'  => 7
     );
 
     $t1 = $order[$version1[0]];
     $t2 = $order[$version2[0]];
 
-    if ($t1 == $t2)    return  0;
+    if ($t1 == $t2)    return 0;
     elseif ($t1 < $t2) return -1;
     else               return +1;
 }
