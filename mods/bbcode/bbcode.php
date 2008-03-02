@@ -168,8 +168,10 @@ function phorum_mod_bbcode_format($data)
 
         $body = $message["body"];
 
-        // Convert bare URLs into bbcode tags, unless [url] is disabled.
-        if (!empty($enabled['url']))
+        // Convert bare URLs into bbcode tags, unless [url] and/or
+        // bare URL processing are disabled.
+        if (!empty($enabled['url']) &&
+            !empty($PHORUM["mod_bbcode"]["process_bare_urls"]))
         {
             // A magic marker, to tag our URL conversion.
             $marker = 'BBCODEMARKER'.substr(md5(microtime()), 0, 8);
@@ -197,8 +199,10 @@ function phorum_mod_bbcode_format($data)
         }
 
         // Convert bare email addresses into bbcode tags, unless [email]
-        // is disabled.
-        if (!empty($enabled['email'])) {
+        // and/or bare email address processing are disabled.
+        if (!empty($enabled['email']) &&
+            !empty($PHORUM["mod_bbcode"]["process_bare_email"]))
+        {
             $body = preg_replace("/(^|[\s])([a-z0-9][a-z0-9\-_\.\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[a-z0-9])([\?\!\.,;:\s]|<phorum break>|$)/i", "$1[email]$2[/email]$3", $body);
         }
 
