@@ -41,9 +41,9 @@ function phorum_cache_get($type,$key,$version=NULL) {
 
     if(is_array($key)) {
         $ret=array();
-	foreach($key as $realkey) {
+        foreach($key as $realkey) {
             $path=$partpath."/".wordwrap(md5($realkey), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
-	    if(file_exists($path)) {
+            if(file_exists($path)) {
                 // the data is: array($ttl_time,$data,$version)
                 // $version might not be set.
                 $retval=unserialize(@file_get_contents($path));
@@ -87,7 +87,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
                 $ret = $retval[1];
             }
 
-	    unset($retval);
+            unset($retval);
         }
     }
 
@@ -212,29 +212,36 @@ function phorum_cache_mkdir($path) {
     return true;
 }
 
-// recursively deletes all files/dirs in a directory
-function phorum_cache_rmdir( $path ) {
-	$stack[]=$path;
+// Recursively deletes all files/dirs in a directory.
+// We suspend the event logging module if it is enabled here,
+// because we might be trying to remove non empty directories,
+// resulting in harmless PHP warnings.
+function phorum_cache_rmdir( $path )
+{
+    if (defined('EVENT_LOGGING')) phorum_mod_event_logging_suspend();
 
-	$dirs[]=$path;
+    $stack[]=$path;
+    $dirs[]=$path;
 
-	while(count($stack)){
-		$path=array_shift($stack);
-		$dir = opendir( $path ) ;
-		while ( $entry = readdir( $dir ) ) {
-			if ( is_file( $path . "/" . $entry ) ) {
-				@unlink($path."/".$entry);
-			} elseif ( is_dir( $path . "/" . $entry ) && $entry != '.' && $entry != '..' ) {
-				array_unshift($dirs, $path . "/" . $entry)  ;
-				$stack[]=$path . "/" . $entry  ;
-			}
-		}
-		closedir( $dir ) ;
-	}
-	foreach($dirs as $dir){
-		@rmdir($dir);
-	}
-	return;
+    while(count($stack)){
+        $path=array_shift($stack);
+        $dir = opendir( $path ) ;
+        while ( $entry = readdir( $dir ) ) {
+            if ( is_file( $path . "/" . $entry ) ) {
+                @unlink($path."/".$entry);
+            } elseif ( is_dir( $path . "/" . $entry ) && $entry != '.' && $entry != '..' ) {
+                array_unshift($dirs, $path . "/" . $entry)  ;
+                $stack[]=$path . "/" . $entry  ;
+            }
+        }
+        closedir( $dir ) ;
+    }
+    foreach($dirs as $dir){
+        @rmdir($dir);
+    }
+
+    if (defined('EVENT_LOGGING')) phorum_mod_event_logging_resume();
+    return;
 }
 
 ?>

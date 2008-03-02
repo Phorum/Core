@@ -39,7 +39,7 @@ For a more specific view, you can use the "Filter logged events" page.
 There you can setup a filter for only showing a subset of the available
 event logs. If you take a look at the logs, you'll notice that some of the
 items in there are clickable. If you click on them, they will be added to
-the filter setup. 
+the filter setup.
 
 
 Write event logs from other modules:

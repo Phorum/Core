@@ -112,9 +112,9 @@ function event_logging_find_source($level = 0, $file = NULL)
 //
 // Usage in other code:
 //
-// if (defined('EVENT_LOGGING')) phorum_mod_event_logging_suspend()
+// if (defined('EVENT_LOGGING')) phorum_mod_event_logging_suspend();
 // ... warnings generating piece of code ...
-// if (defined('EVENT_LOGGING')) phorum_mod_event_logging_resume()
+// if (defined('EVENT_LOGGING')) phorum_mod_event_logging_resume();
 
 function phorum_mod_event_logging_suspend() {
     $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"] ++;
