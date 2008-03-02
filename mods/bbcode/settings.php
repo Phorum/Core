@@ -1,8 +1,7 @@
 <?php
-
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-// Copyright (C) 2007  Phorum Development Team                               //
+// Copyright (C) 2008  Phorum Development Team                               //
 // http://www.phorum.org                                                     //
 //                                                                           //
 // This program is free software. You can redistribute it and/or modify      //
@@ -18,10 +17,10 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_ADMIN")) return;
+if (!defined("PHORUM_ADMIN")) return;
 
 // Load default settings and tag descriptions.
-require_once("./mods/bbcode/defaults.php");
+require_once('./mods/bbcode/defaults.php');
 
 // Available options for the bbcode tag dropdown menus.
 $options_without_editor_tools = array(
@@ -41,6 +40,8 @@ if (count($_POST))
       "rel_no_follow"          => empty($_POST["rel_no_follow"])          ?0:1,
       "quote_hook"             => empty($_POST["quote_hook"])             ?0:1,
       "show_full_urls"         => empty($_POST["show_full_urls"])         ?0:1,
+      "process_bare_urls"      => empty($_POST["process_bare_urls"])      ?0:1,
+      "process_bare_email"     => empty($_POST["process_bare_email"])     ?0:1,
       "allow_disable_per_post" => empty($_POST["allow_disable_per_post"]) ?0:1,
     );
 
@@ -63,7 +64,7 @@ if (count($_POST))
     }
 }
 
-include_once "./include/admin/PhorumInputForm.php";
+require_once('./include/admin/PhorumInputForm.php');
 $frm = new PhorumInputForm ("", "post", "Save settings");
 $frm->hidden("module", "modsettings");
 $frm->hidden("mod", "bbcode");
@@ -72,6 +73,12 @@ $frm->addbreak("General settings for the BBcode module");
 
 $row = $frm->addrow("Open links in new window", $frm->checkbox("links_in_new_window", "1", "Yes", $PHORUM["mod_bbcode"]["links_in_new_window"]));
 $frm->addhelp($row, "Open links in new window", "When users post links on your forum, you can choose whether to open these in a new window or not.");
+
+$row = $frm->addrow("Turn bare URLs into clickable links", $frm->checkbox("process_bare_urls", "1", "Yes", $PHORUM["mod_bbcode"]["process_bare_urls"]));
+$frm->addhelp($row, "Turn bare URLs into clickable links", "If you enable this option, then the BBcode module will try to detect bare URLs in the message (URLs that are not surrounded by [url]...[/url] BBcode tags) and turn those into clickable links (as if they were surrounded by [url]...[/url]).");
+
+$row = $frm->addrow("Turn bare email addresses into clickable links", $frm->checkbox("process_bare_email", "1", "Yes", $PHORUM["mod_bbcode"]["process_bare_email"]));
+$frm->addhelp($row, "Turn bare email addresses into clickable links", "If you enable this option, then the BBcode module will try to detect bare email addresses in the message (addresses that are not surrounded by [email]...[/email] BBcode tags) and turn those into clickable links (as if they were surrounded by [email]...[/email]).");
 
 $row = $frm->addrow("Show full URLs", $frm->checkbox("show_full_urls", "1", "Yes", $PHORUM["mod_bbcode"]["show_full_urls"]));
 $frm->addhelp($row, "Show full URLs", "By default, URLs are truncated by phorum to show only [www.example.com]. This is done to prevent very long URLs from cluttering and distrurbing the web site layout. By enabling this feature, you can suppress the truncation, so full URLs are shown.");

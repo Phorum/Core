@@ -1,8 +1,7 @@
 <?php
-
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-// Copyright (C) 2007  Phorum Development Team                               //
+// Copyright (C) 2008  Phorum Development Team                               //
 // http://www.phorum.org                                                     //
 //                                                                           //
 // This program is free software. You can redistribute it and/or modify      //
@@ -18,7 +17,7 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM") && !defined('PHORUM_ADMIN')) return;
+if (!defined("PHORUM") && !defined('PHORUM_ADMIN')) return;
 
 // Value array contain the following fields:
 // [0] A description of the BBcode tool
@@ -129,6 +128,14 @@ if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["quote_hook"])) {
 
 if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["show_full_urls"])) {
     $GLOBALS["PHORUM"]["mod_bbcode"]["show_full_urls"] = 0;
+}
+
+if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["process_bare_urls"])) {
+    $GLOBALS["PHORUM"]["mod_bbcode"]["process_bare_urls"] = 1;
+}
+
+if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["process_bare_email"])) {
+    $GLOBALS["PHORUM"]["mod_bbcode"]["process_bare_email"] = 1;
 }
 
 if (!isset($GLOBALS["PHORUM"]["mod_bbcode"]["enabled"]) ||
