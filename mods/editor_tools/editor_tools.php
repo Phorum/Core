@@ -179,10 +179,10 @@ function phorum_mod_editor_tools_before_footer()
 
         // Default for the icon size to use.
         if (!isset($toolinfo[TOOL_IWIDTH]) || empty($toolinfo[TOOL_IWIDTH])) {
-            $toolinfo[TOOL_IWIDTH] = 21;
+            $toolinfo[TOOL_IWIDTH] = MOD_EDITOR_TOOLS_DEFAULT_IWIDTH;
         }
         if (!isset($toolinfo[TOOL_IHEIGHT]) || empty($toolinfo[TOOL_IHEIGHT])) {
-            $toolinfo[TOOL_IHEIGHT] = 20;
+            $toolinfo[TOOL_IHEIGHT] = MOD_EDITOR_TOOLS_DEFAULT_IHEIGHT;
         }
 
         // Default for the target to use.
