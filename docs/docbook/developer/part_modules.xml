@@ -13,7 +13,6 @@
       "foo". Of course you will not name your module "foo", but something much
       more appropriate. If you're not familiar with the terms "foo" and "bar",
       you can visit <ulink url="http://en.wikipedia.org/wiki/Metasyntactic_variable">Wikipedia</ulink> to see why we chose them.
-
     </para>
     <para>
       <remark>TODO: Link to section once it's ready</remark>
@@ -61,6 +60,23 @@
         the public. Modules are the preferred way of modifying Phorum
         functionality, because that will make both upgrading your distribution
         and having your modification adopted by others easier.
+      </para>
+    </section>
+
+    <section id="modules.addons">
+      <title>Add-ons</title>
+      <para>
+        If you add functionality to Phorum by providing extra scripts
+        that go in the Phorum install directory and/or extra templates
+        that need to be added to the main template directory
+        (<filename>templates/templatename/...</filename>), then we
+        talk about an add-on.
+      </para>
+      <para>
+        For Phorum 5.0, this was a pretty common thing to do. For Phorum
+        5.1 and up, a special script was added for being able to implement
+        addon code fully through a module. Therefore, there is no real
+        need anymore for writing add-ons: <filename>addon.php</filename>.
       </para>
     </section>
 
@@ -695,16 +711,14 @@ function phorum_mod_foo_some_other_hook ($data) {
             possibilities are:
             <itemizedlist>
               <listitem>
-                Using custom files for your module
+                Adding custom files to your module tree
                 (images, classes, libs, etc.);
               </listitem>
               <listitem>
-                Letting your module support multiple languages.
-                (See XXX about creation of language files)
+                <xref linkend="modules.languages" xrefstyle="template:Letting your module support multiple languages"/>;
               </listitem>
               <listitem>
-                Creating a settings screen for your module;
-                (See XXX about creation of settings screens)
+                <xref linkend="modules.settings" xrefstyle="template:Implementing a settings screen for your module"/>;
               </listitem>
               <listitem>
                 Adding template files for your module;
@@ -750,7 +764,9 @@ function phorum_mod_foo_some_other_hook ($data) {
         must be named identical to the main language files that Phorum uses.
         To include both English and French, your module would require the
         following file structure:
-        <programlisting>
+        <example>
+          <title>Tree structure for a module that supports languages</title>
+          <programlisting>
 {phorum dir}/
      |
      +-- mods/
@@ -766,6 +782,7 @@ function phorum_mod_foo_some_other_hook ($data) {
                     +-- english.php
                     |
                     +-- french.php </programlisting>
+        </example>
 
         The structure of your language files will be almost identical to
         that of the main Phorum language files. However, for your own
@@ -774,13 +791,16 @@ function phorum_mod_foo_some_other_hook ($data) {
         other modules or Phorum itself. Here is an example of how you
         could do that:
 
-        <programlisting><![CDATA[
+        <example>
+          <title>Custom language file for a module</title>
+          <programlisting><![CDATA[
 <?php
 $PHORUM["DATA"]["LANG"]["mod_foo"] = array(
     "Hello"   => "Hello!",
     "Bye"     => "Good bye!"
 );
 ?> ]]></programlisting>
+        </example>
 
         Here, the extra inserted level is <literal>["mod_foo"]</literal>.
         To access the "Hello" string from your module code you would
@@ -897,8 +917,7 @@ $message["meta"]["mod_foo"] = array(
             There are some hooks that send a full message structure to the
             hook functions. These can change the message structure before
             returning it to Phorum. Examples are the hooks
-            "<xref linkend="hook.before_post"/>" and
-            "<xref linkend="hook.before_edit"/>". For these kind of
+            "hook.before_post" and "before_edit". For these kind of
             hooks, you can update the meta information in the message
             structure and be done with it. Here's an example of what this
             could look like in your hook function:
@@ -927,10 +946,11 @@ function phorum_mod_foo_before_post ($message)
           <para>
             For other hooks, the proper way to store information in the meta
             data is to first retrieve the current message data (including the
-            current meta data) using the phorum_db_get_message() function.
+            current meta data) using the
+            <literal>phorum_db_get_message()</literal> function.
             After this, merge the information for your module with the
             existing meta data and store the updated data in the database
-            using the phorum_db_update_message() function.
+            using the <literal>phorum_db_update_message()</literal> function.
             Here is an example of what this could look like in your hook
             function:
             <programlisting><![CDATA[
@@ -969,7 +989,520 @@ function phorum_mod_foo_some_hook ($data)
 
       </section> <!-- end of storing message data -->
 
+      <section id="modules.storeuserdata">
+        <title>Storing data for users</title>
+
+        <section id="modules.customuserfields">
+          <title>Custom profile fields for users</title>
+          <para>
+            If your module needs to store data along with a Phorum user,
+            you can make use of custom profile fields. These fields will
+            be accessible from within the user data. E.g. if you create
+            a custom profile field named "foobar", the value of that field
+            will be stored in $user["foobar"] (so right next to the standard
+            fields like $user["username"] and $user["email"]).
+          </para>
+          <para>
+            Creating custom profile fields can be done from the admin
+            interface, under "Custom Profiles". It is also possible to
+            let your module create the custom profile field fully
+            automatical, by using the <ulink url="../api/PhorumAPI/CustomProfileFieldAPI/_custom_profile_fields.php.html">Custom Profile Fields API</ulink>.
+            If you choose to let the user of your module create the field by
+            hand, then please include a thorough description of what
+            configuration the user has to do. A lot of problems with modules
+            that require manual configuration come from using wrong
+            options for a custom profile field.
+          </para>
+          <para>
+            <emphasis role="bold">
+              Using a separate field for each piece of data
+            </emphasis>
+          </para>
+          <para>
+            When using a custom profile field for storing module information,
+            you can use a separate field for each piece of data you want to
+            store. The advantage of doing this, is that you can then use the
+            option "Disable HTML" for the fields that you will be sending to
+            the user's browser. In fields with this option enabled, characters
+            that have a special meaning in HTML will be escaped after loading
+            the user from the database. This prevents the field from being
+            vulnerable to XSS attacks. Recommended settings for storing a single
+            value in a profile field are:
+            <itemizedlist>
+              <listitem>
+                <emphasis role="bold">Field Name:</emphasis><sbr/>
+                Name your field <literal>mod_&lt;module name&gt;</literal>
+                if you only need to store one single value. If you need to
+                store more values, then use the format
+                <literal>mod_&lt;module name&gt;_&lt;field name&gt;</literal>.
+                This prevents the risk of clashing with standard Phorum user
+                fields or custom fields that are added for other modules.
+                For example, the "foo" module could use the field names
+                <literal>mod_foo_size</literal> and
+                <literal>mod_foo_name</literal>.
+              </listitem>
+              <listitem>
+                <emphasis role="bold">Field Length:</emphasis><sbr/>
+                If you want some field to contain a predefined maximum number
+                of characters, then fill in that number of characters in this
+                field. Before storing the field data to the database, Phorum
+                will trim the data down if it is longer than the defined number
+                of characters. If you need no limit, you can also use
+                <literal>65000</literal> here.
+              </listitem>
+              <listitem>
+                <emphasis role="bold">Disable HTML:</emphasis><sbr/>
+                Enable this option, unless you are absolutely sure that the
+                data for this field is either not shown in the browser or
+                escaped by your module before showing it.
+              </listitem>
+              <listitem>
+                <emphasis role="bold">Show in user admin:</emphasis><sbr/>
+                If you want the field to be visible along with the user data
+                for a user in the admin interface, then enable this option.
+              </listitem>
+            </itemizedlist>
+          </para>
+          <para>
+            <emphasis role="bold">
+              Using a single field for storing a complex data structure
+            </emphasis>
+          </para>
+          <para>
+            Instead, you can also create a single field for storing
+            a complete array of information. Phorum will automatically take care
+            of storing this information (serialized) in the database. You only
+            should make sure that the custom profile field is large enough to
+            store all the data and that HTML is allowed for the field, so the
+            special PHP serialization code will not be broken by escaping special
+            characters. When your module needs to store multiple fields,
+            this is the preferred way. Recommended settings for storing a full
+            array in a profile field are:
+            <itemizedlist>
+              <listitem>
+                <emphasis role="bold">Field Name:</emphasis><sbr/>
+                Name your field <literal>mod_&lt;module name&gt;</literal>,
+                so you will not risk clashes with standard Phorum user fields
+                or custom fields that are added for other modules. For example,
+                the "foo" module would use the field name
+                <literal>mod_foo</literal>.
+              </listitem>
+              <listitem>
+                <emphasis role="bold">Field Length:</emphasis><sbr/>
+                Use <literal>65000</literal> here. Using smaller values will
+                not make the database storage smaller. This value is only used
+                to trim down the data to the provided length. So for storing
+                serialized data, it is best to set this value as high as
+                possible.
+              </listitem>
+              <listitem>
+                <emphasis role="bold">Disable HTML:</emphasis><sbr/>
+                Disable this option, so the serialize data will not be
+                broken by escaping special characters.
+              </listitem>
+              <listitem>
+                <emphasis role="bold">Show in user admin:</emphasis><sbr/>
+                Disable this option. There is currently no support for showing
+                serialized fields in the user admin pages in a readable way.
+              </listitem>
+            </itemizedlist>
+          </para>
+        </section> <!-- end of custom user fields -->
+
+        <section id="modules.storeuserdata.type1">
+          <title>
+            From hooks that get an editable user array as their argument
+          </title>
+          <para>
+            There are some hooks that send a full message structure to the
+            hook functions. These can change the message structure before
+            returning it to Phorum. An example is the hook
+            "<xref linkend="hook.user_save"/>". For these kind of
+            hooks, you can update the custom profile field data in the user
+            structure and be done with it. Here's an example of what this
+            could look like in your hook function:
+            <programlisting><![CDATA[
+function phorum_mod_foo_user_save ($user)
+{
+    // Some data to store in the "mod_foo" custom field.
+    $data = array(
+        "user_id" => $user_id,
+        "mod_foo" => array (
+            "foodata" => "Some user data",
+            "bardata" => "Some more user data"
+        )
+    );
+
+    // Put the data in the user sructure.
+    $user["mod_foo"] = $data;
+
+    // Return the updated user. Phorum will take care of
+    // storing the "mod_foo" array in the database.
+    return $user;
+} ]]></programlisting>
+          </para>
+        </section>
+
+        <section id="modules.storeuserdata.type2">
+          <title>From other hooks</title>
+          <para>
+            For storing data in the custom profile field, you can make use of
+            the <literal>phorum_api_user_save()</literal> function. This
+            function needs the user_id of the user and all fields that need
+            to be updated. Below are two pieces of code which show how our
+            example module might store data for a user (asuming $user_id is
+            the id of the user that must be changed).
+            <example>
+              <title>Filling custom profile fields for a user with data</title>
+              <programlisting><![CDATA[
+  // When using multiple fields "mod_foo_foodata" and "mod_foo_bardata".
+
+  $userdata = array(
+      "user_id"         => $user_id,
+      "mod_foo_foodata" => "Some user data",
+      "mod_foo_bardata" => "Some more user data"
+  );
+  phorum_api_user_save($userdata);
+
+  // When using a single custom field "mod_foo" for this module:
+
+  $userdata = array(
+      "user_id" => $user_id,
+      "mod_foo" => array (
+          "foodata" => "Some user data",
+          "bardata" => "Some more user data"
+      )
+  );
+  phorum_api_user_save($userdata);]]></programlisting>
+            </example>
+
+          </para>
+        </section>
+
+      </section> <!-- end of storing user data -->
+
     </section> <!-- end of storing data for a module -->
+
+    <section id="modules.buildingurls">
+      <title>Building URLs for Phorum</title>
+
+      <section id="modules.buildingurlsintro">
+        <title>Introduction</title>
+        <para>
+          You might have noticed that all URLs that are used by Phorum
+          are full absolute URLs. Phorum does not use relative URLs anywhere.
+          and all of the URLs that point to Phorum PHP scripts are generated
+          by the function <literal>phorum_get_url()</literal>. This was done
+          for several reasons. Here are some of them, for the curious
+          developer:
+          <itemizedlist>
+            <listitem>
+              By generating full URLs, we guarantee ourselves that the user
+              is always opening pages within the same domain. With relative
+              URLs, the user might end up at a different domain because of
+              some webserver redirect (e.g. from
+              <literal>http://example.com</literal> to
+              <literal>http://www.example.com</literal>), causing possible
+              loss of cookies as a result (since cookies bind to domains).
+              Loss of cookies result in the user being logged out.
+            </listitem>
+            <listitem>
+              Integrating Phorum in a website is a lot easier when using
+              absolute URLs. When editing the header template for example,
+              it should be okay to add a
+              <literal>&lt;base href="..."/&gt;</literal> in there, pointing
+              at the URL where the original site exists. After doing so, the
+              header template can use the same constructions and paths as
+              the main site's header template.
+            </listitem>
+            <listitem>
+              This becomes even more important when running Phorum in portable
+              or embedded setups. There, Phorum will be run from some
+              script at a random location and no longer from a script in the
+              Phorum directory. By using absolute URLs, the linked resources
+              can still be found.
+            </listitem>
+            <listitem>
+              Code for generating absolute URLs is needed for generating
+              URLs that can be put in mail messages. It's a logical choice
+              to use the same code for generating the other URLs in Phorum,
+              so only one URL generating function has to be maintained.
+            </listitem>
+            <listitem>
+              By letting <literal>phorum_get_url()</literal> generate all
+              URLs, we are prepared for future changes and new features.
+              If changes are needed in the URL schema, we only have to
+              update this function and nothing further. All core code and
+              modules that use this function will automatically follow
+              the changes.
+            </listitem>
+          </itemizedlist>
+        </para>
+      </section> <!-- end of generating urls intro -->
+
+      <section id="modules.scripturls">
+        <title>Build URLs for Phorum PHP scripts: phorum_get_url()</title>
+        <para>
+          Phorum uses the function <literal>phorum_get_url()</literal> to
+          consistenly build URLs that point to Phorum PHP scripts. It is
+          recommended that you use this function as well when creating
+          URLs to scripts yourself, so special features and future changes
+          will automatically be incorporated in the links you use.
+        </para>
+        <para>
+          Here is an example of building an URL, which will open the
+          profile page for the user with user_id = 17:
+          <example>
+            <title>
+              Generating a profile URL using phorum_get_url()
+            </title>
+            <programlisting><![CDATA[
+$url = phorum_get_url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
+          </example>
+          The argument list that this function takes, depends on the first
+          argument which tells Phorum what URL type has to be built.
+          When building other URLs, other arguments will be used.
+        </para>
+        <para>
+          About all URL types that <literal>phorum_get_url()</literal>
+          supports are used for building URLs that point to the scripts
+          that are bundled with Phorum. Sometimes, you might want to add
+          an extra script of your own to the Phorum tree (see
+          <xref linkend="modules.addons"/>). For those, you can use
+          <literal>phorum_get_url()</literal> as well. The way to go is
+          simple. You need to use <literal>PHORUM_CUSTOM_URL</literal> as
+          the first argument and add the following parameters to it:
+          <itemizedlist>
+            <listitem>
+              The first parameter needs to be the filename of the file to link
+              to, without the (.php) extension.
+            </listitem>
+            <listitem>
+              The second parameter needs to be FALSE or TRUE. If it is TRUE,
+              then the current forum_id is added to the URL.
+            </listitem>
+            <listitem>
+              All other parameters are added directly to the URL.
+            </listitem>
+          </itemizedlist>
+        </para>
+        <para>
+          Here is an example of building a URL which links to the
+          add-on file <filename>myfile.php</filename> in the Phorum
+          installation directory. Lets asume that the URL has to have the
+          forum_id in it and that it needs to contain the additional
+          parameters <filename>foo=bar</filename> and
+          <filename>baz=foo</filename>:
+          <example>
+            <title>
+              Generating a custom script URL using phorum_get_url()
+            </title>
+            <programlisting><![CDATA[
+// Build the URL for the add-on script.
+$url = phorum_get_url(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar", "baz=foo");
+
+// After this, you could store the URL in the template data, so you
+// can use it from the templates to link to the add-on script.
+// Here an example for filling the template variable {URL->MYFILE}:
+$PHORUM["DATA"]["URL"]["MYFILE"] = $url; ]]></programlisting>
+          </example>
+        </para>
+      </section> <!-- end of build urls to Phorum PHP scripts -->
+
+      <section id="modules.scripturls">
+        <title>Build URLs to files in the Phorum tree</title>
+        <para>
+          If you have some non-script files in your module that you need
+          to access through a URL, then make sure that you are generating
+          absolute URLs for these. You can make use of the Phorum
+          setting variable <literal>$PHORUM['http_path']</literal>
+          to build these. This setting relates to the "HTTP Path"
+          option under "General Settings" in the admin interface.
+        </para>
+        <para>
+          Let's asume you have a file named <filename>foobar.gif</filename>
+          in your "foo" module tree, then you could generate the URL for
+          that file like this:
+          <example>
+            <title>
+              Generating an absolute URL for a file in a module directory
+            </title>
+            <programlisting><![CDATA[
+// Since the code probably runs inside a function scope,
+// the global $PHORUM variable needs to be imported.
+global $PHORUM;
+
+// Build the URL for the foobar.gif.
+$url = $PHORUM['http_path'] . "/mods/foo/foobar.gif";
+
+// After this, you could store the URL in the template data, so you
+// can use it from the templates. Here an example for filling the
+// template variable {MOD_FOO->IMAGE_URL}:
+$PHORUM["DATA"]["MOD_FOO"]["IMAGE_URL"] = $url; ]]></programlisting>
+          </example>
+
+        </para>
+      </section>
+
+    </section> <!-- end of generating custom urls -->
+
+    <section id="modules.settings">
+      <title>Implementing a settings screen for your module</title>
+
+      <para>
+        Note: this feature is only available for modules that use the
+        <xref linkend="modules.multifile"
+              xrefstyle="multiple file module structure"/>
+      </para>
+      <para>
+        Some modules that you write might need to store settings for later
+        use. For those, you can create a settings page that can be
+        accessed from the &quot;Modules&quot; page in the admin interface.
+      </para>
+      <para>
+        The settings page must be put in your module's directory by the
+        name of &quot;<filename>settings.php</filename>&quot;.
+        So for our example module "foo" the file would go in
+        {phorum dir}/mods/foo/settings.php. In the admin interface under
+        the option "Modules", a link to the settings.php page will
+        automatically be added if the settings.php file is available
+        for your module.
+      </para>
+      <para>
+        Although you can do anything you want in your settings.php script,
+        it is recommended that you use the tools that are handed to you
+        by Phorum for building pages and storing settings.<sbr/>
+        If the standard tools are not enough for building your settings
+        page, then it is of course fine to do things differently
+        (e.g. let your module create and use database tables or build the
+        full settings interface using your own form code.)
+      </para>
+      <section id="modules.phoruminputform">
+        <title>Building input forms</title>
+        <para>
+          The Phorum PHP object "PhorumInputForm" can be used to build
+          input forms and table displays in the admin interface.
+          The best thing you can do for learning the possibilities of
+          this class is to look at other Phorum modules (like "bbcode"
+          or "replace") or the core admin scripts from the
+          <filename>{phorum dir}/include/admin</filename> directory.
+        </para>
+      </section>
+      <section id="modules.feedback">
+        <title>Error and success feedback messages</title>
+        <para>
+          For displaying error and success messages, make use of the functions
+          <literal>phorum_admin_error()</literal> and
+          <literal> phorum_admin_okmsg()</literal>. Both functions take
+          the message to display as their argument. By using those functions,
+          the messages are shown using the standard Phorum admin formatting.
+        </para>
+      </section>
+      <section id="modules.savesettings">
+        <title>Saving module settings to the database</title>
+        <para>
+          Another tool is the function
+          <literal>phorum_db_update_settings()</literal> that can
+          be used for storing settings in the database. To store settings using
+          this function, you can use code like this:
+          <example>
+            <title>
+              Storing settings for a module in the database
+            </title>
+            <programlisting><![CDATA[
+  // It is possible to store either scalars or arrays in a settings field.
+  // Phorum will automatically take care of correct handling.
+  $foo_settings = array();
+  $foo_settings["foodata"] = "Some setting data";
+  $foo_settings["bardata"] = "Some more setting data";
+
+  // Store the data in the database.
+  phorum_db_update_settings(array("mod_foo" => $foo_settings));
+
+  // In the next request, the settings data can be found in
+  // the variable $PHORUM['mod_foot'], for example:
+  print $PHORUM['mod_foo']['foodata'];]]></programlisting>
+          </example>
+        </para>
+      </section>
+      <section id="modules.security">
+        <title>Prevent settings.php from being loaded directly</title>
+        <para>
+          To ensure that your settings.php file is only loaded from the admin
+          interface, place this line at the top of your settings.php file
+          (see also XXX: secure against hackers):
+          <programlisting>if (!defined("PHORUM_ADMIN")) return;</programlisting>
+        </para>
+      </section>
+      <section id="modules.example">
+        <title>Full module settings page example</title>
+        <para>
+          Here is a full example settings page, using the tools from above.
+          A real settings page will often be much larger than this, but the
+          basics are the same.
+          <example>
+            <title>
+              An example module settings.php script
+            </title>
+            <programlisting><![CDATA[
+  <?php
+
+  if (!defined("PHORUM_ADMIN")) return;
+
+  // If data is posted, then store the posted settings in the database.
+  if (count($_POST))
+  {
+      $PHORUM['mod_foo']['field1'] = empty($_POST['field1']) ? 0 : 1;
+      $PHORUM['mod_foo']['field2'] = (int) $_POST['field2'];
+
+      // Do some error checking.
+      if ($PHORUM['mod_foo']['field2'] > 1000) {
+          phorum_admin_error("The value for field 2 is too high!");
+      }
+      // The data was okay. Store the settings.
+      else {
+          phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+          phorum_admin_okmsg('The settings were saved successfully');
+      }
+  }
+
+  // This block is standard for every settings page. The "mod" field
+  // must be set to the name of the module for which the settings
+  // page is written.
+  include_once "./include/admin/PhorumInputForm.php";
+  $frm = new PhorumInputForm ("", "post", "Submit this form");
+  $frm->hidden("module", "modsettings");
+  $frm->hidden("mod", "foo");
+
+  // Add a header row to the form.
+  $frm->addbreak("Foo module settings");
+
+  // Add a checkbox to the form.
+  $row = $frm->addrow(
+      "Field 1",
+      $frm->checkbox("field1", "1", "Yes", $PHORUM['mod_foo']['field1'])
+  );
+
+  // Add a help balloon to Field 1.
+  $frm->addhelp(
+      $row, "Field 1",
+      "This is a help balloon text for Field 1."
+  );
+
+  // Add a text field to the form.
+  $frm->addrow(
+      "Field 2",
+      $frm->text_box("field2", $PHORUM['mod_foo']['field2'], 50)
+  );
+
+  // Display the form.
+  $frm->show();
+
+  ?>
+  ]]></programlisting></example>
+        </para>
+      </section>
+    </section> <!-- end of implementing settings for your module -->
 
   </section> <!-- end of writing your own modules -->
 
