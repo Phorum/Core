@@ -706,6 +706,9 @@ switch ($page) {
          * [hook]
          *     buddy_list
          *
+         * [availability]
+         *     Phorum 5 >= 5.2.7
+         *
          * [description]
          *     This hook can be used for reformatting a list of buddies.
          *     Reformatting could mean things like changing the sort
@@ -786,6 +789,9 @@ switch ($page) {
              * [hook]
              *     pm_list
              *
+             * [availability]
+             *     Phorum 5 >= 5.2.7
+             *
              * [description]
              *     This hook can be used for reformatting a list of
              *     private messages.
@@ -858,6 +864,9 @@ switch ($page) {
             /**
              * [hook]
              *     pm_read
+             *
+             * [availability]
+             *     Phorum 5 >= 5.2.7
              *
              * [description]
              *     This hook can be used for reformatting a single private
