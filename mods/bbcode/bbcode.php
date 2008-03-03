@@ -132,14 +132,14 @@ function phorum_mod_bbcode_format($data)
     // Add 'url' support.
     if (!empty($enabled['url']))
     {
-        $search[]  = "/\[url\]((http|https|ftp|mailto):\/\/([a-z0-9\.\-@:]+)[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),\#%~ ]*?)\[\/url\]/is";
+        $search[]  = "/\[url\]((http:\/\/|https:\/\/|ftp:\/\/|mailto:)([a-z0-9\.\-@:]+)[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),\#%~ ]*?)\[\/url\]/is";
         if (empty($settings['show_full_urls'])) {
             $replace[] = "[<a $extra_href_properties href=\"$1\">$3</a>]";
         } else {
             $replace[] = "<a $extra_href_properties href=\"$1\">$1</a>";
         }
 
-        $search[]  = "/\[url=((http|https|ftp|mailto):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%# ]+?)\](.+?)\[\/url\]/is";
+        $search[]  = "/\[url=((http:\/\/|https:\/\/|ftp:\/\/|mailto:)[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%# ]+?)\](.+?)\[\/url\]/is";
         $replace[] = "<a $extra_href_properties href=\"$1\">$3</a>";
     }
 
