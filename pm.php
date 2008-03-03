@@ -673,6 +673,61 @@ switch ($page) {
             $buddies[$id] = $buddy;
         }
 
+        /**
+         * [hook]
+         *     buddy_list
+         *
+         * [description]
+         *     This hook can be used for reformatting a list of buddies.
+         *     Reformatting could mean things like changing the sort
+         *     order or modifying the fields in the buddy arrays.
+         *
+         * [category]
+         *     Buddies system
+         *
+         * [when]
+         *     Right after Phorum has formatted the buddy list. This is
+         *     primarily done when the list of buddies is shown in the
+         *     private message system.
+         *
+         * [input]
+         *     An array of buddy info arrays. Each info array contains a
+         *     couple of fields that describe the budy: user_id,
+         *     display_name, mutual (0 = not mutual, 1 = mutual),
+         *     URL->PROFILE, date_last_active (formatted date) and
+         *     raw_date_last_active (Epoch timestamp).
+         *
+         * [output]
+         *     The same array as was used for the hook call argument,
+         *     possibly with some updated fields in it.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_buddy_list($buddies)
+         *     {
+         *         // Add a CSS class around the display names for
+         *         // the mutual buddies (of course this could also
+         *         // easily be implemented as a pure template change,
+         *         // but remember that this is just an example).
+         *         foreach ($buddies as $id => $buddy)
+         *         {
+         *             if ($buddy['mutual'])
+         *             {
+         *                 $buddies[$id]['display_name'] =
+         *                     '<span class="mutual_buddy">' .
+         *                     $buddy['display_name'] .
+         *                     '</span>';
+         *             }
+         *         }
+         *
+         *         return $buddies;
+         *     }
+         *     </hookcode>
+         */
+        if (isset($PHORUM['hooks']['buddy_list'])) {
+            $buddies = phorum_hook('buddy_list', $buddies);
+        }
+
         $PHORUM["DATA"]["USERTRACK"] = $PHORUM["track_user_activity"];
         $PHORUM["DATA"]["BUDDIES"] = $buddies;
         $PHORUM["DATA"]["BUDDYCOUNT"] = count($buddies);
@@ -696,6 +751,48 @@ switch ($page) {
 
             // Prepare data for the templates (formatting and XSS prevention).
             $list = phorum_pm_format($list);
+
+            /**
+             * [hook]
+             *     pm_list
+             *
+             * [description]
+             *     This hook can be used for reformatting a list of
+             *     private messages.
+             *
+             * [category]
+             *     Private message system
+             *
+             * [when]
+             *     Right after Phorum has formatted the private message list.
+             *     This is primarily done when a list of private messages is
+             *     shown in the private message system.
+             *
+             * [input]
+             *     An array of private message info arrays.
+             *
+             * [output]
+             *     The same array as was used for the hook call argument,
+             *     possibly with some updated fields in it.
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_pm_list($messages)
+             *     {
+             *         // Filter out private messages that are sent by
+             *         // evil user X with user_id 666.
+             *         foreach ($messages as $id => $message) {
+             *             if ($message['user_id'] == 666) {
+             *                 unset($messages[$id]);
+             *             }
+             *         }
+             *         return $messages;
+             *     }
+             *     </hookcode>
+             */
+            if (isset($PHORUM['hooks']['pm_list'])) {
+                $list = phorum_hook('pm_list', $list);
+            }
 
             // Setup template variables.
             $PHORUM["DATA"]["MESSAGECOUNT"] = count($list);
@@ -724,8 +821,50 @@ switch ($page) {
             // Run the message through the default message formatting.
             list($message) = phorum_pm_format(array($message));
 
-            // We do not want to show a recipient list if there are a lot of recipients.
-            $message["show_recipient_list"] = ($message["recipient_count"] < 10);
+            // We do not want to show a recipient list if there are
+            // a lot of recipients.
+            $message["show_recipient_list"] = ($message["recipient_count"]<10);
+
+            /**
+             * [hook]
+             *     pm_read
+             *
+             * [description]
+             *     This hook can be used for reformatting a single private
+             *     message for reading.
+             *
+             * [category]
+             *     Private message system
+             *
+             * [when]
+             *     Right after Phorum has formatted the private message.
+             *     This is primarily done when a private message read page is
+             *     shown in the private message system.
+             *
+             * [input]
+             *     An array, describing a single private message.
+             *
+             * [output]
+             *     The same array as was used for the hook call argument,
+             *     possibly with some updated fields in it.
+             *
+             * [example}
+             *     <hookcode>
+             *     function phorum_mod_foo_pm_read($message)
+             *     {
+             *         // Add a notice to messages that were sent by
+             *         // evil user X with user_id 666.
+             *         if ($message['user_id'] == 666) {
+             *             $message['subject'] .= ' <strong>EVIL!</strong>';
+             *         }
+             *
+             *         return $message;
+             *     }
+             *     </hookcode>
+             */
+            if (isset($PHORUM['hooks']['pm_read'])) {
+                $message = phorum_hook('pm_read', $message);
+            }
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
             $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["PMRead"];
