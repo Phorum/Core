@@ -318,16 +318,22 @@ foreach ($logs as $loginfo)
         );
     }
 
+    if (!isset($PHORUM['short_time'])) {
+        $f = str_replace($PHORUM['short_date'],'',$PHORUM['short_date_time']);
+        $f = preg_replace('/^\s+|\s+$/', '', $f);
+        $PHORUM['short_time'] = $f;
+    }
+
     print '
       <tr>
         <td valign="middle" style="white-space:nowrap">
           <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'"/>
         </td>
         <td valign="left" style="white-space:nowrap; font-size: 10px">'.
-          phorum_date("%m/%d/%Y", $loginfo["datestamp"]).
+          phorum_date($PHORUM['short_date'], $loginfo["datestamp"]).
        '</td>
         <td valign="left" style="white-space:nowrap; font-size: 10px">'.
-          phorum_date("%I:%M%p", $loginfo["datestamp"]).
+          phorum_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
           <a title="Extend filter using this source" href="'.$filter_base.'&source='.urlencode($loginfo["source"]).'">'.htmlspecialchars($loginfo["source"]).'</a>
