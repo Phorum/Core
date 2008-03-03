@@ -718,8 +718,7 @@ function phorum_mod_foo_some_other_hook ($data) {
                 <xref linkend="modules.languages" xrefstyle="template:Letting your module support multiple languages"/>;
               </listitem>
               <listitem>
-                Creating a settings screen for your module;
-                (See XXX about creation of settings screens)
+                <xref linkend="modules.settings" xrefstyle="template:Implementing a settings screen for your module"/>;
               </listitem>
               <listitem>
                 Adding template files for your module;
@@ -947,10 +946,11 @@ function phorum_mod_foo_before_post ($message)
           <para>
             For other hooks, the proper way to store information in the meta
             data is to first retrieve the current message data (including the
-            current meta data) using the phorum_db_get_message() function.
+            current meta data) using the
+            <literal>phorum_db_get_message()</literal> function.
             After this, merge the information for your module with the
             existing meta data and store the updated data in the database
-            using the phorum_db_update_message() function.
+            using the <literal>phorum_db_update_message()</literal> function.
             Here is an example of what this could look like in your hook
             function:
             <programlisting><![CDATA[
@@ -1147,11 +1147,11 @@ function phorum_mod_foo_user_save ($user)
           <title>From other hooks</title>
           <para>
             For storing data in the custom profile field, you can make use of
-            the phorum_api_user_save() function. This function needs the
-            user_id of the user and all fields that need to be updated.
-            Below are two pieces of code which show how our example module
-            might store data for a user (asuming $user_id is the id of the
-            user that must be changed).
+            the <literal>phorum_api_user_save()</literal> function. This
+            function needs the user_id of the user and all fields that need
+            to be updated. Below are two pieces of code which show how our
+            example module might store data for a user (asuming $user_id is
+            the id of the user that must be changed).
             <example>
               <title>Filling custom profile fields for a user with data</title>
               <programlisting><![CDATA[
@@ -1345,6 +1345,164 @@ $PHORUM["DATA"]["MOD_FOO"]["IMAGE_URL"] = $url; ]]></programlisting>
       </section>
 
     </section> <!-- end of generating custom urls -->
+
+    <section id="modules.settings">
+      <title>Implementing a settings screen for your module</title>
+
+      <para>
+        Note: this feature is only available for modules that use the
+        <xref linkend="modules.multifile"
+              xrefstyle="multiple file module structure"/>
+      </para>
+      <para>
+        Some modules that you write might need to store settings for later
+        use. For those, you can create a settings page that can be
+        accessed from the &quot;Modules&quot; page in the admin interface.
+      </para>
+      <para>
+        The settings page must be put in your module's directory by the
+        name of &quot;<filename>settings.php</filename>&quot;.
+        So for our example module "foo" the file would go in
+        {phorum dir}/mods/foo/settings.php. In the admin interface under
+        the option "Modules", a link to the settings.php page will
+        automatically be added if the settings.php file is available
+        for your module.
+      </para>
+      <para>
+        Although you can do anything you want in your settings.php script,
+        it is recommended that you use the tools that are handed to you
+        by Phorum for building pages and storing settings.<sbr/>
+        If the standard tools are not enough for building your settings
+        page, then it is of course fine to do things differently
+        (e.g. let your module create and use database tables or build the
+        full settings interface using your own form code.)
+      </para>
+      <section id="modules.phoruminputform">
+        <title>Building input forms</title>
+        <para>
+          The Phorum PHP object "PhorumInputForm" can be used to build
+          input forms and table displays in the admin interface.
+          The best thing you can do for learning the possibilities of
+          this class is to look at other Phorum modules (like "bbcode"
+          or "replace") or the core admin scripts from the
+          <filename>{phorum dir}/include/admin</filename> directory.
+        </para>
+      </section>
+      <section id="modules.feedback">
+        <title>Error and success feedback messages</title>
+        <para>
+          For displaying error and success messages, make use of the functions
+          <literal>phorum_admin_error()</literal> and
+          <literal> phorum_admin_okmsg()</literal>. Both functions take
+          the message to display as their argument. By using those functions,
+          the messages are shown using the standard Phorum admin formatting.
+        </para>
+      </section>
+      <section id="modules.savesettings">
+        <title>Saving module settings to the database</title>
+        <para>
+          Another tool is the function
+          <literal>phorum_db_update_settings()</literal> that can
+          be used for storing settings in the database. To store settings using
+          this function, you can use code like this:
+          <example>
+            <title>
+              Storing settings for a module in the database
+            </title>
+            <programlisting><![CDATA[
+  // It is possible to store either scalars or arrays in a settings field.
+  // Phorum will automatically take care of correct handling.
+  $foo_settings = array();
+  $foo_settings["foodata"] = "Some setting data";
+  $foo_settings["bardata"] = "Some more setting data";
+
+  // Store the data in the database.
+  phorum_db_update_settings(array("mod_foo" => $foo_settings));
+
+  // In the next request, the settings data can be found in
+  // the variable $PHORUM['mod_foot'], for example:
+  print $PHORUM['mod_foo']['foodata'];]]></programlisting>
+          </example>
+        </para>
+      </section>
+      <section id="modules.security">
+        <title>Prevent settings.php from being loaded directly</title>
+        <para>
+          To ensure that your settings.php file is only loaded from the admin
+          interface, place this line at the top of your settings.php file
+          (see also XXX: secure against hackers):
+          <programlisting>if (!defined("PHORUM_ADMIN")) return;</programlisting>
+        </para>
+      </section>
+      <section id="modules.example">
+        <title>Full module settings page example</title>
+        <para>
+          Here is a full example settings page, using the tools from above.
+          A real settings page will often be much larger than this, but the
+          basics are the same.
+          <example>
+            <title>
+              An example module settings.php script
+            </title>
+            <programlisting><![CDATA[
+  <?php
+
+  if (!defined("PHORUM_ADMIN")) return;
+
+  // If data is posted, then store the posted settings in the database.
+  if (count($_POST))
+  {
+      $PHORUM['mod_foo']['field1'] = empty($_POST['field1']) ? 0 : 1;
+      $PHORUM['mod_foo']['field2'] = (int) $_POST['field2'];
+
+      // Do some error checking.
+      if ($PHORUM['mod_foo']['field2'] > 1000) {
+          phorum_admin_error("The value for field 2 is too high!");
+      }
+      // The data was okay. Store the settings.
+      else {
+          phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+          phorum_admin_okmsg('The settings were saved successfully');
+      }
+  }
+
+  // This block is standard for every settings page. The "mod" field
+  // must be set to the name of the module for which the settings
+  // page is written.
+  include_once "./include/admin/PhorumInputForm.php";
+  $frm = new PhorumInputForm ("", "post", "Submit this form");
+  $frm->hidden("module", "modsettings");
+  $frm->hidden("mod", "foo");
+
+  // Add a header row to the form.
+  $frm->addbreak("Foo module settings");
+
+  // Add a checkbox to the form.
+  $row = $frm->addrow(
+      "Field 1",
+      $frm->checkbox("field1", "1", "Yes", $PHORUM['mod_foo']['field1'])
+  );
+
+  // Add a help balloon to Field 1.
+  $frm->addhelp(
+      $row, "Field 1",
+      "This is a help balloon text for Field 1."
+  );
+
+  // Add a text field to the form.
+  $frm->addrow(
+      "Field 2",
+      $frm->text_box("field2", $PHORUM['mod_foo']['field2'], 50)
+  );
+
+  // Display the form.
+  $frm->show();
+
+  ?>
+  ]]></programlisting></example>
+        </para>
+      </section>
+    </section> <!-- end of implementing settings for your module -->
 
   </section> <!-- end of writing your own modules -->
 
