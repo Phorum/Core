@@ -234,7 +234,7 @@ function phorum_relative_date($time)
 
     $PHORUM = $GLOBALS["PHORUM"];
 
-    $today = strtotime(date('M j, Y'));
+    $today = strtotime(phorum_date('%Y-%m-%d', time()));
 
     $reldays = ($time - $today)/86400;
 

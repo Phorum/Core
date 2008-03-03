@@ -75,7 +75,7 @@ function phorum_email_user($addresses, $data)
     if (isset($PHORUM["hooks"]["email_user_start"]))
         list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
 
-    // Clear some variables that meant for use by the email_user_start hook.
+    // Clear some variables that are meant for use by the email_user_start hook.
     unset($data['mailmessagetpl']);
     unset($data['mailsubjecttpl']);
     unset($data['language']);
