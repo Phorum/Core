@@ -252,7 +252,12 @@ if (!function_exists('phorum_get_url')) {
 // ----------------------------------------------------------------------
 
 // Thanks a lot for magic quotes :-/
-if ( get_magic_quotes_gpc() && count( $_REQUEST ) ) {
+// In PHP6, magic quotes are (finally) removed, so we have to check for
+// the get_magic_quotes_gpc() function here. The "@" is for suppressing
+// deprecation warnings that are spawned by PHP 5.3 and higher when
+// using the get_magic_quotes_gpc() function.
+if ( function_exists('get_magic_quotes_gpc') &&
+     @get_magic_quotes_gpc() && count( $_REQUEST ) ) {
     foreach( $_POST as $key => $value ) {
         if ( !is_array( $value ) )
             $_POST[$key] = stripslashes( $value );
