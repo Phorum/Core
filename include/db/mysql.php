@@ -1783,7 +1783,10 @@ function phorum_db_save_group($group)
 
     $ret=false;
 
+    // Temporarily pull the permissions from the array, because
+    // phorum_db_sanitize_mixed() does not know how to handle arrays in arrays.
     $permissions = $group["permissions"];
+    unset($group["permissions"]);
     phorum_db_sanitize_mixed($group, "string");
     $group["permissions"] = $permissions;
 
