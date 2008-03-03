@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -20,6 +20,10 @@
 /**
  * This script implements utility functions for working with images.
  *
+ * Phorum does not require this API for the core features. It is mainly
+ * provided to offer module writers are stable and powerful API for
+ * working with images.
+ *
  * @package    PhorumAPI
  * @subpackage Tools
  * @copyright  2007, Phorum Development Team
@@ -28,6 +32,8 @@
 
 if (!defined('PHORUM')) return;
 
+
+// {{{ Function: phorum_api_image_thumbnail()
 /**
  * Create an image thumbnail.
  *
@@ -95,7 +101,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // always should, but let's check it to be sure.
     if (!function_exists('getimagesize')) return phorum_api_error_set(
         PHORUM_ERRNO_ERROR,
-        'PHP lacks "getimagesize()" support'
+        'Your PHP installation lacks "getimagesize()" support'
     );
 
     // Try to determine the image type and size using the getimagesize()
@@ -179,7 +185,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
         $imagick->thumbnailImage($img['new_w'], $img['new_h'], TRUE);
-        $imagick->setFormat("png");
+        $imagick->setFormat("jpg");
         $img['image']    = $imagick->getimageblob();
         $img['new_mime'] = 'image/'.$imagick->getFormat();
         $img['method']   = 'imagick';
@@ -270,15 +276,15 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
                     $img['cur_w'], $img['cur_h']
                 );
 
-                // Create the png output data for the scaled image.
+                // Create the jpeg output data for the scaled image.
                 ob_start();
-                imagepng($scaled);
-                $png = ob_get_contents();
+                imagejpeg($scaled);
+                $image = ob_get_contents();
                 $size = ob_get_length();
                 ob_end_clean();
 
-                $img['image']    = $png;
-                $img['new_mime'] = 'image/png';
+                $img['image']    = $image;
+                $img['new_mime'] = 'image/jpeg';
                 $img['method']   = 'gd';
                 return $img;
             }
@@ -308,7 +314,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $cmd = escapeshellcmd($convert) . ' ' .
                '- ' .
                '-thumbnail ' . $img['new_w'] .'x'. $img['new_h'] . ' ' .
-               '-write png:- ' .
+               '-write jpeg:- ' .
                '--'; // Otherwise I get: option requires an argument `-write'
 
         // Run the command.
@@ -338,7 +344,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
         if ($exit == 0) {
             $img['image']    = $scaled;
-            $img['new_mime'] = 'image/png';
+            $img['new_mime'] = 'image/jpeg';
             $img['method']   = 'convert';
             return $img;
         }
@@ -375,5 +381,6 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         'No working image scaling method found'
     );
 }
+// }}}
 
 ?>
