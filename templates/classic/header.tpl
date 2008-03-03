@@ -37,12 +37,12 @@ if ($PHORUM['DATA']['CHARSET']) {
     <div align="{forumalign}">
       <div class="PDDiv">
       {IF NOT PRINTVIEW}
-        {IF notice_all}
+        {IF USER->NOTICE->SHOW OR USER->new_private_messages}
           <div class="PhorumNotificationArea PhorumNavBlock">
-            {IF NEW_PRIVATE_MESSAGES}<a class="PhorumNavLink" href="{URL->PM}">{LANG->NewPrivateMessages}</a><br />{/IF}
-            {IF notice_messages}<a class="PhorumNavLink" href="{notice_messages_url}">{LANG->UnapprovedMessagesLong}</a><br />{/IF}
-            {IF notice_users}<a class="PhorumNavLink" href="{notice_users_url}">{LANG->UnapprovedUsersLong}</a><br />{/IF}
-            {IF notice_groups}<a class="PhorumNavLink" href="{notice_groups_url}">{LANG->UnapprovedGroupMembers}</a><br />{/IF}
+            {IF USER->new_private_messages}<a class="PhorumNavLink" href="{URL->PM}">{LANG->NewPrivateMessages}</a><br />{/IF}
+            {IF USER->NOTICE->MESSAGES}<a class="PhorumNavLink" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a><br />{/IF}
+            {IF USER->NOTICE->USERS}<a class="PhorumNavLink" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a><br />{/IF}
+            {IF USER->NOTICE->GROUPS}<a class="PhorumNavLink" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a><br />{/IF}
           </div>
         {/IF}
         <span class="PhorumTitleText PhorumLargeFont">
