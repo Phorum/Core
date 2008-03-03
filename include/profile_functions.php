@@ -101,6 +101,10 @@ function phorum_check_bans($bans)
             if(isset($GLOBALS["PHORUM"]["banlists"]) &&
                     isset($PHORUM['cache_banlists']) &&
                     $PHORUM['cache_banlists']) {
+                if (!isset($PHORUM['banlist_version'])) {
+                    $PHORUM['banlist_version'] = 1;
+                    phorum_db_update_settings(array('banlist_version' => 1));
+                }
                 phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
             }
         }
