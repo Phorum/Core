@@ -313,7 +313,7 @@ foreach ($logs as $loginfo)
         $message_url = phorum_get_url(
             PHORUM_FOREIGN_READ_URL,
             $loginfo["forum_id"],
-            $loginfo["thread"],
+            $loginfo["thread_id"],
             $loginfo["message_id"]
         );
     }
