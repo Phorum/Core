@@ -1352,7 +1352,7 @@ $PHORUM["DATA"]["MOD_FOO"]["IMAGE_URL"] = $url; ]]></programlisting>
       <para>
         Note: this feature is only available for modules that use the
         <xref linkend="modules.multifile"
-              xrefstyle="multiple file module structure"/>
+              xrefstyle="template:multiple file module structure"/>
       </para>
       <para>
         Some modules that you write might need to store settings for later
