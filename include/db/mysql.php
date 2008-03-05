@@ -3276,7 +3276,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         }
     }
 
-    // For pulling in the constant .PHORUM_CUSTOM_FIELD_USER.
+    // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
     require_once("./include/api/custom_fields.php");
 
     // Retrieve custom user profile fields for the requested users.
@@ -3799,7 +3799,7 @@ function phorum_db_user_save($userdata)
     // Update custom user fields for the user.
     if (isset($custom_profile_data))
     {
-        // For pulling in the constant .PHORUM_CUSTOM_FIELD_USER.
+        // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
         require_once("./include/api/custom_fields.php");
 
         // Insert new custom profile fields.
@@ -4240,6 +4240,9 @@ function phorum_db_user_delete($user_id)
             DB_GLOBALQUERY | DB_MASTERQUERY
         );
     }
+
+    // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
+    require_once("./include/api/custom_fields.php");
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -6787,6 +6790,9 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     );
 
     $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*');
+
+    // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
+    require_once("./include/api/custom_fields.php");
 
     // Construct the required "WHERE" clause.
     $clauses = array();
