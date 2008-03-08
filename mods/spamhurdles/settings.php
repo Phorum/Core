@@ -99,6 +99,7 @@
 
     $row = $frm->addrow("Enable spoken CAPTCHA? You will need the program \"Flite\" for this.", $frm->checkbox("spoken_captcha", 1, "", $PHORUM["mod_spamhurdles"]["spoken_captcha"]));
     $frm->addhelp($row, "Enable spoken CAPTCHA", 'Vision impaired people can have trouble reading and thus solving a CAPTCHA. For those people, you can supply a spoken CAPTCHA code. To be able to use this option, the program "Flite" (Festival-Lite) has to be installed on the webserver. For information on this, see http://www.speech.cs.cmu.edu/flite/');
+    $warn = '';
     if (!empty($PHORUM["mod_spamhurdles"]["flite_location"]) &&
         !file_exists($PHORUM["mod_spamhurdles"]["flite_location"])) {
         $warn = '<div style="color:red">The flite program does not exist at the specified location</div>';
