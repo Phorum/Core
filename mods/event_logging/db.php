@@ -3,7 +3,7 @@
 if(!defined("PHORUM")) return;
 
 // Load the definitions for the constants that we use.
-require_once("./mods/event_logging/constants.php");
+require_once('./mods/event_logging/constants.php');
 
 // The database schema version, which is used to handle
 // installation and upgrades directly from the module.
@@ -256,6 +256,7 @@ function event_logging_writelog($loginfo)
 function event_logging_create_where($filter)
 {
     if ($filter === NULL || !is_array($filter)) return '';
+    $t = $GLOBALS["PHORUM"]["event_logging_table"]; // shorthand
 
     $where_parts = array();
 
@@ -268,8 +269,8 @@ function event_logging_create_where($filter)
             }
 
             $where = count($filter["loglevels"]) == 1
-                   ? "loglevel = " . $filter["loglevels"][0]
-                   : "loglevel IN (".implode(",", $filter["loglevels"]).")";
+                   ? "$t.loglevel = " . $filter["loglevels"][0]
+                   : "$t.loglevel IN (".implode(",", $filter["loglevels"]).")";
 
             $where_parts[] = $where;
         }
@@ -284,8 +285,8 @@ function event_logging_create_where($filter)
             }
 
             $where = count($filter["categories"]) == 1
-                   ? "category = " . $filter["categories"][0]
-                   : "category IN (".implode(",", $filter["categories"]).")";
+                   ? "$t.category = " . $filter["categories"][0]
+                   : "$t.category IN (".implode(",", $filter["categories"]).")";
 
             $where_parts[] = $where;
         }
@@ -299,6 +300,7 @@ function event_logging_create_where($filter)
     ) as $field => $type) {
         if (isset($filter[$field]) && trim($filter[$field]) != '') {
             $val = trim($filter[$field]);
+            if ($field != 'username') $field = "$t.$field";
             if ($type == 'int') {
                 $where_parts[] = "$field = " . (int) $val;
             } else {
