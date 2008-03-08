@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2008-03-08 v1.0.4
+
+    - Made the JOIN queries work in all MySQL server versions by fully
+      qualifying the fields that are used in the queries.
+
 2007-08-17 v1.0.3
 
     - Made the module settings screen behave in case the module is
