@@ -32,7 +32,7 @@ function phorum_setup_announcements ()
     // announcement forum.
     if ($PHORUM['vroot'] > 0 && isset($PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) {
 
-    $ann_forum_id = $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']];
+        $ann_forum_id = $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']];
 
     // Inside the top level folder, where we have a forum that is configured
     // to be used for announcements and the current forum is not that
