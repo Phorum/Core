@@ -1117,7 +1117,7 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
         default:
             trigger_error(
                 "phorum_api_forums_change_order(): " .
-                "Illegal \$momement parameter \"$movement\" used",
+                "Illegal \$movement parameter \"$movement\" used",
                 E_USER_ERROR
             );
     }
