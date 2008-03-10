@@ -189,7 +189,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
             // tags have their own line break. Without this, there would
             // be to many white lines.
             $message["body"] = preg_replace(
-                "/\s*(<\/?(?:div|xmp|blockquote|pre).*?>)\s*\Q$phorum_br\E/",
+                "/\s*(<\/?(?:div|xmp|blockquote|pre)[^>]*>)\s*\Q$phorum_br\E/",
                 "$1", $message["body"]
             );
 
