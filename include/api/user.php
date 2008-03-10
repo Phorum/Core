@@ -1452,6 +1452,38 @@ function phorum_api_user_delete($user_id)
 }
 // }}}
 
+// {{{ Function: phorum_api_user_format()
+/*
+ * This function handles preparing user data * for use in the templates.
+ *
+ * @param mixed $users
+ *     An array of user data records to format.
+ *
+ * @return array
+ *     The same as the $users argument array, with formatting applied.
+ */
+function phorum_api_user_format($users)
+{
+    global $PHORUM;
+
+    foreach ($users as $id => $user)
+    {
+        foreach (array(
+            'username', 'real_name', 'display_name',
+            'email', 'signature'
+        ) as $field) {
+            if (isset($user[$field])) {
+                $users[$id][$field] = htmlspecialchars(
+                    $user[$field], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                );
+            }
+        }
+    }
+
+    return $users;
+}
+// }}}
+
 // ----------------------------------------------------------------------
 // Authentication and session management.
 // ----------------------------------------------------------------------
