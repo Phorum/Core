@@ -881,15 +881,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         phorum_hook($page_hook, "");
     }
 
-    $PHORUM['DATA']['USER'] = $PHORUM['user'];
-    $PHORUM['DATA']['USER']["username"] = htmlspecialchars($PHORUM['DATA']['USER']["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    if (isset($PHORUM['DATA']['USER']['real_name']))
-        $PHORUM['DATA']['USER']["real_name"] = htmlspecialchars($PHORUM['DATA']['USER']["real_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    if (isset($PHORUM['DATA']['USER']['display_name']))
-        $PHORUM['DATA']['USER']["display_name"] = htmlspecialchars($PHORUM['DATA']['USER']["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    if(isset($PHORUM['DATA']['USER']["email"])) $PHORUM['DATA']['USER']["email"] = htmlspecialchars($PHORUM['DATA']['USER']["email"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    if(isset($PHORUM['DATA']['USER']["signature"])) $PHORUM['DATA']['USER']["signature"] = htmlspecialchars($PHORUM['DATA']['USER']["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-
+    $formatted = phorum_api_user_format(array($PHORUM['user']));
+    $PHORUM['DATA']['USER'] = $formatted[0];
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];

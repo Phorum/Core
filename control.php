@@ -331,6 +331,12 @@ function phorum_controlcenter_user_save($panel)
             );
         }
 
+        // Copy data from the updated user back into the user template data.
+        $formatted = phorum_api_user_format(array($GLOBALS['PHORUM']['user']));
+        foreach ($formatted[0] as $key => $val) {
+            $GLOBALS['PHORUM']['DATA']['USER'][$key] = $val;
+        }
+
         // Copy data from the updated user back into the template data.
         // Leave PANEL and forum_id alone (these are injected into the
         // userdata in the template from this script).
