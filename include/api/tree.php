@@ -149,6 +149,13 @@ function phorum_api_tree_build($nodes, $root_id = 0, $id_fld = 'id', $parent_id_
     // stack level counting, so we move our stack level base.
     $stack_lvl_base = isset($pnodes[$root_id]['data']) ? 0 : -1;
 
+    // Do create some fake data now to prevent warnings in the code below.
+    if ($stack_lvl_base == -1 && $cut_fld !== NULL) {
+        $pnodes[$root_id]['data'] = array(
+            $cut_fld => ''
+        );
+    }
+
     // Build the result tree. We start at the root node.
     $tree      = array();
     $stack     = array();
