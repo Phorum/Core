@@ -534,9 +534,6 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
 
                 $sortorder = "sort, $sortfield DESC, message_id";
 
-                if (!empty($PHORUM['reverse_threading']))
-                    $sortorder.=' DESC';
-
                 $sql = "SELECT $messagefields
                         FROM   {$PHORUM['message_table']}
                         WHERE  status = ".PHORUM_STATUS_APPROVED." AND
@@ -1389,11 +1386,6 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
        // Handle the page offset.
        $start = $PHORUM['read_length'] * ($page-1);
        $sql .= " LIMIT $start,".$PHORUM['read_length'];
-    } else {
-       // Handle reverse threading. This is only done if $page is 0.
-       // In that case, the messages for threaded read are retrieved.
-       if (!empty($PHORUM['reverse_threading']))
-           $sql.=' DESC';
     }
 
     if($write_server) {
