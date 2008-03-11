@@ -43,6 +43,13 @@ Phorum 5.2 -> Phorum 5.3:
     which doesn't tell new users of Phorum much. It also opens up options
     for implementing more index styles than "directory" and "flat" alone.
 
+  * DOC TODO: the custom profile fields were transferred to custom fields,
+    which can be added to users, forums and messages.
+
+
+  Database layer code
+  -------------------
+
   * phorum_db_get_forums() previously skipped loading inactive forums and
     folders, unless PHORUM_ADMIN was defined. This function now has an
     extra argument $include_inactive, which can be used to tell specifically
@@ -58,6 +65,8 @@ Phorum 5.2 -> Phorum 5.3:
   * phorum_db_mod_banlists() now takes an extra argument to make it
     possible to store a comment with the ban items.
 
-  * DOC TODO: the custom profile fields were transferred to custom fields,
-    which can be added to users, forums and messages.
+  * phorum_db_get_thread_list() and phorum_db_get_messages() do no longer
+    produce different output based on $PHORUM['reverse_threading'].
+    The new tree sorting code from include/api/tree.php can handle reverse
+    threading on an ascending sorted message list.
 
