@@ -30,23 +30,7 @@ require_once('./common.php');
 require_once('./include/admin_functions.php');
 
 // determine absolute URI for the admin
-if(isset($_SERVER["SCRIPT_URI"])){
-    $PHORUM["admin_http_path"] = $_SERVER["SCRIPT_URI"];
-} else {
-    // On some systems, the port is also in the HTTP_HOST, so we
-    // need to strip the port if it appears to be in there.
-    if (preg_match('/^(.+):(.+)$/', $_SERVER['HTTP_HOST'], $m)) {
-        $host = $m[1];
-        if (!isset($_SERVER['SERVER_PORT'])) {
-            $_SERVER['SERVER_PORT'] = $m[2];
-        }
-    } else {
-        $host = $_SERVER['HTTP_HOST'];
-    }
-    $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
-    $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80) ? ':'.$_SERVER["SERVER_PORT"] : "";
-    $PHORUM["admin_http_path"] = $protocol.'://'.$host.$port.$_SERVER['PHP_SELF'];
-}
+$PHORUM["admin_http_path"] = phorum_get_current_url(false);
 
 // determine http_path (at install time; after that it's in the settings)
 if(!isset($PHORUM["http_path"])){

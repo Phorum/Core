@@ -232,4 +232,51 @@ function phorum_get_url()
 
 }
 
+
+/**
+ * Determines the current pages URL
+ *
+ * Several places in code we need to produce the current URL for use in
+ * redirects and use in forms.  This function does that to the best of
+ * our ability
+ *
+ * @param   boolean $include_query_string
+ *      If true, the query string is appended to the URL.
+ *      If false the query string is left off
+ *
+ * @return  string
+ *      The current URL
+ *
+ */
+function phorum_get_current_url($include_query_string=true) {
+
+    $url = "";
+
+    if(isset($_SERVER["SCRIPT_URI"])){
+
+        $url = $_SERVER["SCRIPT_URI"];
+
+    } else {
+        // On some systems, the port is also in the HTTP_HOST, so we
+        // need to strip the port if it appears to be in there.
+        if (preg_match('/^(.+):(.+)$/', $_SERVER['HTTP_HOST'], $m)) {
+            $host = $m[1];
+            if (!isset($_SERVER['SERVER_PORT'])) {
+                $_SERVER['SERVER_PORT'] = $m[2];
+            }
+        } else {
+            $host = $_SERVER['HTTP_HOST'];
+        }
+        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
+        $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80) ? ':'.$_SERVER["SERVER_PORT"] : "";
+        $url = $protocol.'://'.$host.$port.$_SERVER['PHP_SELF'];
+    }
+
+    if($include_query_string && !empty($_SERVER["QUERY_STRING"])){
+        $url += "?".$_SERVER["QUERY_STRING"];
+    }
+
+    return $url;
+}
+
 ?>
