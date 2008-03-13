@@ -45,9 +45,9 @@ $default_cache_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp
 if ($step == 0 && !isset($_POST["sanity_checks_done"]))
 {
     // Setup some fake environment data for the checks.
-    $GLOBALS["PHORUM"]["default_forum_options"]["language"] = PHORUM_DEFAULT_LANGUAGE;
-    $GLOBALS["PHORUM"]["cache"] = $default_cache_dir;
-    $GLOBALS["PHORUM"]["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
+    $PHORUM["default_forum_options"]["language"] = PHORUM_DEFAULT_LANGUAGE;
+    $PHORUM["cache"] = $default_cache_dir;
+    $PHORUM["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
 
     // Load and run all available checks.
     include("./include/admin/sanity_checks.php");
@@ -442,12 +442,12 @@ switch ($step){
             "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:2;s:10:"Test Forum";}'
             );
 
-            $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
-            $GLOBALS["PHORUM"]['vroot']=0;
+            $PHORUM['forum_id']=phorum_db_add_forum($forum);
+            $PHORUM['vroot']=0;
 
             // create a test post
             $test_message=array(
-            "forum_id" => $GLOBALS['PHORUM']["forum_id"],
+            "forum_id" => $PHORUM["forum_id"],
             "thread" => 0,
             "parent_id" => 0,
             "author" => 'Phorum Installer',
