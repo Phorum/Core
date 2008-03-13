@@ -329,20 +329,20 @@ function phorum_controlcenter_user_save($panel)
         }
 
         // Copy data from the updated user back into the user template data.
-        $formatted = phorum_api_user_format(array($GLOBALS['PHORUM']['user']));
+        $formatted = phorum_api_user_format(array($PHORUM['user']));
         foreach ($formatted[0] as $key => $val) {
-            $GLOBALS['PHORUM']['DATA']['USER'][$key] = $val;
+            $PHORUM['DATA']['USER'][$key] = $val;
         }
 
         // Copy data from the updated user back into the profile template data.
         // Leave PANEL and forum_id alone (these are injected into the
         // userdata in the template from this script).
-        foreach ($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key => $val) {
+        foreach ($PHORUM["DATA"]["PROFILE"] as $key => $val) {
             if ($key == "PANEL" || $key == "forum_id") continue;
-            if (isset($GLOBALS["PHORUM"]["user"][$key])) {
-                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key] = $GLOBALS["PHORUM"]["user"][$key];
+            if (isset($PHORUM["user"][$key])) {
+                $PHORUM["DATA"]["PROFILE"][$key] = $PHORUM["user"][$key];
             } else {
-                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key] = "";
+                $PHORUM["DATA"]["PROFILE"][$key] = "";
             }
         }
     }

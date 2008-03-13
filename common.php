@@ -1042,14 +1042,14 @@ function phorum_check_read_common()
     if ( $PHORUM["forum_id"] > 0 && !$PHORUM["folder_flag"] && !phorum_api_user_check_access( PHORUM_USER_ALLOW_READ ) ) {
         if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
             // if they are logged in and not allowed, they don't have rights
-            $GLOBALS['PHORUM']["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
         } else {
             // check if they could read if logged in.
             // if so, let them know to log in.
             if ( ( empty( $PHORUM["DATA"]["POST"]["parentid"] ) && $PHORUM["reg_perms"] &PHORUM_USER_ALLOW_READ ) ) {
-                $GLOBALS['PHORUM']["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginRead"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginRead"];
             } else {
-                $GLOBALS['PHORUM']["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
+                $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
             }
         }
 
@@ -1082,7 +1082,7 @@ function phorum_check_read_common()
  */
 function phorum_get_template_file( $page )
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check for a module reference in the page name.
     $fullpage = $page;
@@ -1381,7 +1381,7 @@ function phorum_get_template( $page )
 // creates URLs used on most pages
 function phorum_build_common_urls()
 {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_get_url( PHORUM_BASE_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["HTTP_PATH"] = $PHORUM['http_path'];
@@ -1445,7 +1445,7 @@ function phorum_build_common_urls()
 // calls phorum mod functions
 function phorum_hook( $hook )
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // get arguments passed to the function
     $args = func_get_args();
@@ -1708,7 +1708,7 @@ function phorum_ob_clean()
  */
 function phorum_database_error($error)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).
