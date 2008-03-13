@@ -644,7 +644,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
                 $PHORUM["template"] = $template;
             }
         }
-        
+
         // get the language file
         if(isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) ) {
             $PHORUM['language'] = $PHORUM['user']['user_language'];
@@ -655,7 +655,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         ) {
             $PHORUM['template'] = $PHORUM['user']['user_template'];
         }
-        
+
     }
 
     if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
@@ -1016,7 +1016,7 @@ function phorum_require_login()
 {
     $PHORUM = $GLOBALS['PHORUM'];
     if ( !$PHORUM["user"]["user_id"] ) {
-        $url = phorum_get_url( PHORUM_LOGIN_URL, "redir=" . urlencode( $PHORUM["http_path"] . "/" . basename( $_SERVER["PHP_SELF"] ) . "?" . $_SERVER["QUERY_STRING"] ) );
+        $url = phorum_get_url( PHORUM_LOGIN_URL, "redir=" . phorum_get_current_url() );
         phorum_redirect_by_url( $url );
         exit();
     }

@@ -30,23 +30,7 @@
     include_once "./include/admin_functions.php";
 
     // determine absolute URI for the admin
-    if(isset($_SERVER["SCRIPT_URI"])){
-        $PHORUM["admin_http_path"] = $_SERVER["SCRIPT_URI"];
-    } else {
-        // On some systems, the port is also in the HTTP_HOST, so we
-        // need to strip the port if it appears to be in there.
-        if (preg_match('/^(.+):(.+)$/', $_SERVER['HTTP_HOST'], $m)) {
-            $host = $m[1];
-            if (!isset($_SERVER['SERVER_PORT'])) {
-                $_SERVER['SERVER_PORT'] = $m[2];
-            }
-        } else {
-            $host = $_SERVER['HTTP_HOST'];
-        }
-        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
-        $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80) ? ':'.$_SERVER["SERVER_PORT"] : "";
-        $PHORUM["admin_http_path"] = $protocol.'://'.$host.$port.$_SERVER['PHP_SELF'];
-    }
+    $PHORUM["admin_http_path"] = phorum_get_current_url(false);
 
     // determine http_path (at install time; after that it's in the settings)
     if(!isset($PHORUM["http_path"])){
@@ -79,12 +63,15 @@
             $module="login";
         } else {
             // load the default module if none is specified
-            if(!empty($_REQUEST["module"]) && is_string($_REQUEST["module"])){
-                $module = @basename($_REQUEST["module"]);
-            } else {
+            $module = "";
+            if(isset($_POST["module"]) && is_scalar($_POST["module"])){
+                $module = @basename($_POST["module"]);
+            } elseif(isset($_GET["module"]) && is_scalar($_GET["module"])){
+                $module = @basename($_GET["module"]);
+            }
+            if(empty($module) || !file_exists("./include/admin/$module.php")){
                 $module = "default";
             }
-
         }
 
     }
