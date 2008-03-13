@@ -165,7 +165,7 @@ $GLOBALS["PHORUM"]["distro_languages"] = array(
 
 function phorum_check_distro()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $errors = array();
 

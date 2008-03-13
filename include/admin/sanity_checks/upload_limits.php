@@ -31,7 +31,7 @@ require_once('./include/api/forums.php');
 $phorum_check = "File uploading (personal files and attachments)";
 
 function phorum_check_upload_limits($is_install) {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     if ($is_install) {
         return array(PHORUM_SANITY_SKIP, NULL, NULL);
@@ -112,7 +112,7 @@ function phorum_single_check_upload_limits ($howmuch, $what, $maxphp, $maxdb)
     if (!empty($maxphp) && $howmuch > $maxphp) return array(
         PHORUM_SANITY_WARN,
         "You have configured ".htmlspecialchars($what)." to ".
-         phorum_filesize($howmuch).". Your PHP installation only 
+         phorum_filesize($howmuch).". Your PHP installation only
          supports ".phorum_filesize($maxphp).". Your users might
          have problems with uploading their files because of this.",
         "Raise the options post_max_size and upload_max_filesize in your

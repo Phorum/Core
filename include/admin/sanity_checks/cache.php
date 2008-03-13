@@ -25,13 +25,13 @@ $phorum_check = "Phorum cache";
 
 function phorum_check_cache($is_install = FALSE)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     $dir = $PHORUM["cache"];
 
     // Some general solution descriptions.
     $solution_1 = "Change the Cache Directory setting under
                    General Settings.";
-    $solution_2 = "Change the Cache Directory setting under General 
+    $solution_2 = "Change the Cache Directory setting under General
                    Settings or give your webserver more permissions
                    for the current cache directory.";
 
@@ -40,7 +40,7 @@ function phorum_check_cache($is_install = FALSE)
         $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
         "The system is unable to find the cache
          directory \"".htmlspecialchars($dir)."\" on
-         your system.", 
+         your system.",
         $solution_1
     );
 
@@ -69,15 +69,15 @@ function phorum_check_cache($is_install = FALSE)
 
     // Some very unusual thing might happen. On Windows2000 we have seen
     // that the webserver can write a message to the cache directory,
-    // but that it cannot read it afterwards. Probably due to 
-    // specific NTFS file permission settings. So here we have to make 
+    // but that it cannot read it afterwards. Probably due to
+    // specific NTFS file permission settings. So here we have to make
     // sure that we can open the file that we just wrote.
     $checkfp = fopen($dummy_file, "r");
     if (! $checkfp) return array(
         $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
-        "The system was able to write a file to your cache directory 
+        "The system was able to write a file to your cache directory
          \"".htmlspecialchars($dir)."\", but afterwards the created
-         file could not be read by the webserver. This is probably 
+         file could not be read by the webserver. This is probably
          caused by the file permissions on your cache directory.",
         $solution_2
     );

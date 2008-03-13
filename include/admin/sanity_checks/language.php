@@ -23,7 +23,7 @@
 $phorum_check = "Language support";
 
 function phorum_check_language($is_install = false) {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $checked = array();
 

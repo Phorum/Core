@@ -31,7 +31,7 @@
 $phorum_check = "Database connection";
 
 function phorum_check_database($is_install = false) {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check if we have a database configuration available.
     if (! isset($PHORUM["DBCONFIG"])) return array(

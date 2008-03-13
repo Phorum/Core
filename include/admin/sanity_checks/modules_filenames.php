@@ -23,7 +23,7 @@ $phorum_check = "Modules (file name / directory name consistency)";
 
 function phorum_check_modules_filenames($is_install = false)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     if ($is_install) {
         return array(PHORUM_SANITY_SKIP, NULL, NULL);
