@@ -252,7 +252,7 @@ phorum_output($template);
  */
 function phorum_controlcenter_user_save($panel)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     $error = "";
     $okmsg = "";
 

@@ -83,7 +83,7 @@ $PHORUM['DATA']['BREADCRUMBS'][]=array(
 // Do typecasting if requested.
 function phorum_getparam($name, $type = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $ret = NULL;
     if (isset($PHORUM["args"][$name])) {
@@ -1153,7 +1153,7 @@ if ($error_msg) {
 // Apply the default forum message formatting to a private message.
 function phorum_pm_format($messages)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     require_once('./include/format_functions.php');
 
@@ -1233,7 +1233,7 @@ function phorum_pm_format($messages)
 // Apply message reply quoting to a private message.
 function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreplyto = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Build the reply subject.
     if (substr($message["subject"], 0, 3) != "Re:") {

@@ -1021,7 +1021,7 @@ register_shutdown_function("phorum_shutdown");
  */
 function phorum_require_login()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     if ( !$PHORUM["user"]["user_id"] ) {
         $url = phorum_get_url( PHORUM_LOGIN_URL, "redir=" . phorum_get_current_url() );
         phorum_redirect_by_url( $url );
@@ -1035,7 +1035,7 @@ function phorum_require_login()
  */
 function phorum_check_read_common()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $retval = true;
 
@@ -1542,7 +1542,7 @@ function phorum_get_template_info()
 function phorum_get_language_info()
 {
     // to make some language-files happy which are using $PHORUM-variables
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $langs = array();
 

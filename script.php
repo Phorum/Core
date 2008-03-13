@@ -73,7 +73,7 @@ while (count($args))
 // At least one of --module or --scheduled is required.
 // Additionally, exactly one module name is required for "external" mode.
 if ($callhook === NULL || ($callhook == 'external' and count($modules) != 1)) {
-    echo $GLOBALS["PHORUM"]["DATA"]["LANG"]["ScriptUsage"];
+    echo $PHORUM["DATA"]["LANG"]["ScriptUsage"];
     exit(1);
 }
 
@@ -148,7 +148,7 @@ elseif ($callhook == 'scheduled')
 // ----------------------------------------------------------------------
 
 else {
-    echo $GLOBALS["PHORUM"]["DATA"]["LANG"]["ScriptUsage"];
+    echo $PHORUM["DATA"]["LANG"]["ScriptUsage"];
     exit(1);
 }
 

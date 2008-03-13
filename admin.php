@@ -57,9 +57,9 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
     // Try to restore an admin session.
     phorum_api_user_session_restore(PHORUM_ADMIN_SESSION);
 
-    if(!isset($GLOBALS["PHORUM"]["user"]) || !$GLOBALS["PHORUM"]["user"]["admin"]){
+    if(!isset($PHORUM["user"]) || !$PHORUM["user"]["admin"]){
         // if not an admin
-        unset($GLOBALS["PHORUM"]["user"]);
+        unset($PHORUM["user"]);
         $module="login";
     } else {
         // load the default module if none is specified

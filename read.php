@@ -748,7 +748,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         // and again for the header-links
         $PHORUM['DATA']['FEEDS'] = array(array(
             'TITLE' => $PHORUM['DATA']['FEED'],
-            'URL' => $GLOBALS["PHORUM"]["DATA"]["URL"]["FEED"]
+            'URL' => $PHORUM["DATA"]["URL"]["FEED"]
         ));
     }
 

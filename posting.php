@@ -667,7 +667,7 @@ if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
 // only the fields which are flagged as read-only will be copied.
 function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // If we have a user linked to the current message, then get the
     // user data from the database, if it has to be applied as

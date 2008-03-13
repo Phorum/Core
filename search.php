@@ -49,7 +49,7 @@ $PHORUM["DATA"]["SEARCH"]["safe_search"] = "";
 $PHORUM["DATA"]["SEARCH"]["safe_author"] = "";
 
 function phorum_search_check_valid_vars() {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
     $retval=true;
 
     // Check the match_type.
