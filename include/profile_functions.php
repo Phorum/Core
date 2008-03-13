@@ -109,7 +109,7 @@ function phorum_check_bans($bans)
             }
         }
     }
-    if(! isset($GLOBALS['PHORUM']['banlists'])) return NULL;
+    if(! isset($PHORUM['banlists'])) return NULL;
 
     // Run the checks.
     for (;;) {
@@ -183,9 +183,9 @@ function phorum_check_ban_lists($value, $type)
             }
         }
     }
-    if(! isset($GLOBALS['PHORUM']['banlists'])) return true;
+    if(! isset($PHORUM['banlists'])) return true;
 
-    $banlists = $GLOBALS['PHORUM']['banlists'];
+    $banlists = $PHORUM['banlists'];
 
     $value = trim($value);
 
