@@ -26,7 +26,7 @@ require_once('./include/thread_info.php');
  */
 function phorum_return_to_list()
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
     if(!empty($PHORUM["forum_id"])){
         phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     }else{
@@ -42,7 +42,7 @@ function phorum_return_to_list()
  */
 function phorum_moderator_data_get($key = null)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $user_data = phorum_api_user_get($PHORUM['DATA']['USER']['user_id']);
     if( $user_data['moderator_data'] ) {
@@ -60,7 +60,7 @@ function phorum_moderator_data_get($key = null)
 /* A function to save moderator_data in the user's profile. */
 function phorum_moderator_data_save($moderator_data)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Clear value in case no data is left in $moderator_data.
     $value = count($moderator_data) ? serialize($moderator_data) : '';

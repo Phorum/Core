@@ -48,7 +48,7 @@ if (!defined("PHORUM")) return;
  */
 function phorum_format_messages ($data, $author_specs = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Prepare author specs.
     if ($author_specs === NULL) $author_specs = array();
@@ -210,7 +210,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
  */
 function phorum_date( $picture, $ts )
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Setting locale.
     if (!isset($PHORUM['locale']))
@@ -236,7 +236,7 @@ function phorum_date( $picture, $ts )
 function phorum_relative_date($time)
 {
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $today = strtotime(phorum_date('%Y-%m-%d', time()));
 

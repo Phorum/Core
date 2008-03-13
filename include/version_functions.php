@@ -256,7 +256,7 @@ function phorum_find_upgrades($version = PHORUM)
  */
 function phorum_dbupgrade_getupgrades()
 {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Find the core type for the used db layer. By default, the core type
     // is the same as the db layer type. A db layer can however override the
@@ -330,7 +330,8 @@ function phorum_dbupgrade_getupgrades()
  */
 function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
 {
-    $PHORUM      = $GLOBALS["PHORUM"];
+    global $PHORUM;
+
     $version     = $upgrade["version"];
     $type        = $upgrade["type"];
     $upgradefile = $upgrade["file"];
@@ -387,7 +388,7 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
 
         // Update the upgrade version info.
         if ($update_internal_version) {
-            $GLOBALS["PHORUM"][$versionvar] = $version;
+            $PHORUM[$versionvar] = $version;
             phorum_db_update_settings(array($versionvar => $version));
         }
 

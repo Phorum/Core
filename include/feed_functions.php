@@ -4,7 +4,7 @@
 
 function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_description) {
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
     $buffer.= "<rss version=\"2.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
@@ -72,7 +72,7 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
 
 function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed_description) {
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $self = $PHORUM["http_path"]."/feed.php?".$_SERVER["QUERY_STRING"];
 
@@ -115,7 +115,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
         $category = $forums[$message["forum_id"]]["name"];
 
         $author = isset($users[$message['user_id']]) && $users[$message['user_id']] != '' ? $users[$message['user_id']] : $message['author'];
-        
+
         $body = strtr($message['body'], "\001\002\003\004\005\006\007\010\013\014\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037", "????????????????????????????");
 
         $buffer.= "    <entry>\n";
@@ -141,7 +141,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
 function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed_description) {
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $buffer = "<div id=\"phorum_feed\">\n";
     $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</div>\n";
@@ -185,7 +185,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
 
 function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_description) {
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // build PHP array to later be turned into a JS object
 

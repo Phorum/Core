@@ -64,7 +64,7 @@ function phorum_gen_password($charpart=4, $numpart=3)
  */
 function phorum_check_bans($bans)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // A mapping from bantype -> error message to return on match.
     $phorum_bantype2error = array (
@@ -87,25 +87,25 @@ function phorum_check_bans($bans)
     $cache_key = $PHORUM['forum_id'];
 
     // Load the ban lists.
-    if (! isset($GLOBALS["PHORUM"]["banlists"])) {
+    if (! isset($PHORUM["banlists"])) {
         if(!empty($PHORUM['cache_banlists']) && !empty($PHORUM['banlist_version'])) {
-            $GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
-            if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
-                unset($GLOBALS["PHORUM"]["banlists"]);
+            $PHORUM["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+            if(!is_array($PHORUM["banlists"]) || !count($PHORUM["banlists"])) {
+                unset($PHORUM["banlists"]);
             }
         }
         // not found or no caching enabled
-        if(! isset($GLOBALS["PHORUM"]["banlists"]) ) {
-            $GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
+        if(! isset($PHORUM["banlists"]) ) {
+            $PHORUM["banlists"] = phorum_db_get_banlists();
 
-            if(isset($GLOBALS["PHORUM"]["banlists"]) &&
+            if(isset($PHORUM["banlists"]) &&
                     isset($PHORUM['cache_banlists']) &&
                     $PHORUM['cache_banlists']) {
                 if (!isset($PHORUM['banlist_version'])) {
                     $PHORUM['banlist_version'] = 1;
                     phorum_db_update_settings(array('banlist_version' => 1));
                 }
-                phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
+                phorum_cache_put('banlist',$cache_key,$PHORUM["banlists"],7200,$PHORUM['banlist_version']);
             }
         }
     }
@@ -159,27 +159,27 @@ function phorum_check_bans($bans)
  */
 function phorum_check_ban_lists($value, $type)
 {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Load the ban lists.
-    if (! isset($GLOBALS["PHORUM"]["banlists"]))
+    if (! isset($PHORUM["banlists"]))
     {
         $cache_key = $PHORUM['forum_id'];
 
         if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists']) {
-            $GLOBALS["PHORUM"]["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
-            if(!is_array($GLOBALS["PHORUM"]["banlists"]) || !count($GLOBALS["PHORUM"]["banlists"])) {
-                unset($GLOBALS["PHORUM"]["banlists"]);
+            $PHORUM["banlists"]=phorum_cache_get('banlist',$cache_key,$PHORUM['banlist_version']);
+            if(!is_array($PHORUM["banlists"]) || !count($PHORUM["banlists"])) {
+                unset($PHORUM["banlists"]);
             }
         }
         // not found or no caching enabled
-        if(! isset($GLOBALS["PHORUM"]["banlists"]) ) {
-            $GLOBALS["PHORUM"]["banlists"] = phorum_db_get_banlists();
+        if(! isset($PHORUM["banlists"]) ) {
+            $PHORUM["banlists"] = phorum_db_get_banlists();
 
-            if(isset($GLOBALS["PHORUM"]["banlists"]) &&
+            if(isset($PHORUM["banlists"]) &&
                     isset($PHORUM['cache_banlists']) &&
                     $PHORUM['cache_banlists']) {
-                phorum_cache_put('banlist',$cache_key,$GLOBALS["PHORUM"]["banlists"],7200,$PHORUM['banlist_version']);
+                phorum_cache_put('banlist',$cache_key,$PHORUM["banlists"],7200,$PHORUM['banlist_version']);
             }
         }
     }

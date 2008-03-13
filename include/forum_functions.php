@@ -2,7 +2,7 @@
 
 function phorum_build_forum_list() {
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check what forums the current user can read.
     $allowed_forums = phorum_api_user_check_access(

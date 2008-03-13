@@ -23,7 +23,7 @@ require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
 function phorum_valid_email($email){
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $ret = false;
 
@@ -65,7 +65,7 @@ function phorum_valid_email($email){
  */
 function phorum_email_user($addresses, $data)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if(!isset($data['from_address'])) {
         $data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
@@ -188,9 +188,9 @@ function phorum_email_pm_notice($message, $langusers)
 
     foreach ($langusers as $language => $users)
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
 
-        $language = basename($language); 
+        $language = basename($language);
 
         if ( file_exists( "./include/lang/$language.php" ) ) {
             $mail_data['language'] = $language;
@@ -214,7 +214,7 @@ function phorum_email_pm_notice($message, $langusers)
 
 function phorum_email_notice($message)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // do we allow email-notification for that forum?
     if(!$PHORUM['allow_email_notify']) {
@@ -275,7 +275,7 @@ function phorum_email_notice($message)
 
 function phorum_email_moderators($message)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], $PHORUM['email_ignore_admin'], TRUE);
 

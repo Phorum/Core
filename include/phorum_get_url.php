@@ -52,7 +52,7 @@ $PHORUM["url_patterns"] = array(
 
 function phorum_get_url()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $argv = func_get_args();
 

@@ -34,7 +34,7 @@ function phorum_remove_hidden($val)
  */
 function phorum_update_thread_info($thread)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $messages=phorum_db_get_messages($thread,0,1,1);
     //these are not needed here
