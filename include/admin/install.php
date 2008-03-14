@@ -42,7 +42,7 @@ $default_cache_dir = (substr(__FILE__, 0, 1)=="/") ? "/tmp" : "C:\\Windows\\Temp
 // Run sanity checks prior to installing Phorum. Here we do some
 // checks to see if the environment is setup correctly for running
 // Phorum.
-if ($step == 0 && !isset($_POST["sanity_checks_done"]))
+if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
 {
     // Setup some fake environment data for the checks.
     $GLOBALS["PHORUM"]["default_forum_options"]["language"] = PHORUM_DEFAULT_LANGUAGE;
