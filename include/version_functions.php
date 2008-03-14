@@ -245,14 +245,14 @@ function phorum_find_upgrades($version = PHORUM)
  * Retrieves all database patches and upgrades that have not yet
  * been processed.
  *
- * @return $upgradefiles - An array of upgradefiles. The keys in the array
- *                         are "<version>-<type>", where <type> is either
- *                         "patch" or "schema". The values are arrays with
- *                         the following fields set:
- *                         - version: the version of the upgrade file
- *                         - type: the type of upgrade ("patch" or "schema")
- *                         - file: the path to the upgrade file
- *                         The array is sorted by version number.
+ * @return array $upgradefiles
+ *     An array of upgradefiles. The keys in the array are "<version>-<type>",
+ *     where <type> is either "patch" or "schema". The values are arrays with
+ *     the following fields set:
+ *       - version: the version of the upgrade file
+ *       - type: the type of upgrade ("patch" or "schema")
+ *       - file: the path to the upgrade file
+ *     The array is sorted by version number.
  */
 function phorum_dbupgrade_getupgrades()
 {
@@ -278,9 +278,13 @@ function phorum_dbupgrade_getupgrades()
             "./include/db/upgrade/$core_type" .
             ($type == 'patch' ? '-patches' : '');
 
-        $versionvar = $type == 'patch'
-                    ? 'internal_patchlevel'
-                    : 'internal_version';
+        $curversion = $type == 'patch'
+                    ? $PHORUM['internal_patchlevel']
+                    : $PHORUM['internal_version'];
+
+        $wantversion = $type == 'patch'
+                    ? PHORUM_SCHEMA_PATCHLEVEL
+                    : PHORUM_SCHEMA_VERSION;
 
         // Find all available upgrade files in the upgrade directory.
         // Upgrade file are in the format YYYYMMDDSS.php, where
@@ -293,7 +297,7 @@ function phorum_dbupgrade_getupgrades()
         while (($file = readdir ($dh)) !== FALSE) {
             if (preg_match('/^(\d{10})\.php$/', $file, $m)) {
                 $version = $m[1];
-                if ($version > $PHORUM[$versionvar]) {
+                if ($version > $curversion && $version <= $wantversion) {
                     $upgrades["$version-$type"] = array(
                         "version" => $version,
                         "type"    => $type,
