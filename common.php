@@ -1177,21 +1177,21 @@ function phorum_get_template_file( $page )
     // fallback to the configured default template. If that one can also
     // not be found, then fallback to the default template.
     if (empty($PHORUM["template"]) || !file_exists("$prefix/{$PHORUM['template']}$postfix")) {
-        $PHORUM["template"] = $PHORUM["default_forum_options"]["template"];
-        if ($PHORUM["template"] != PHORUM_DEFAULT_TEMPLATE && !file_exists("$prefix/{$PHORUM['template']}$postfix")) {
-            $PHORUM["template"] = PHORUM_DEFAULT_TEMPLATE;
+        $template = $PHORUM["default_forum_options"]["template"];
+        if ($template != PHORUM_DEFAULT_TEMPLATE && !file_exists("$prefix/$template$postfix")) {
+            $template = PHORUM_DEFAULT_TEMPLATE;
         }
 
         // If we're not handling a module template, then we can change the
         // global template to remember the fallback template and to make
         // sure that {URL->TEMPLATE} and {TEMPLATE} aren't pointing to a
         // non-existant template in the end..
-        if ($module === NULL) {
-            $GLOBALS["PHORUM"]["template"] = $PHORUM["template"];
-        }
+        if ($module === NULL) { $PHORUM["template"] = $template; }
+    } else {
+        $template = $PHORUM['template'];
     }
 
-    $tplbase = "$prefix/$PHORUM[template]/$page";
+    $tplbase = "$prefix/$template/$page";
 
     // check for straight PHP file
     if ( file_exists( "$tplbase.php" ) ) {
@@ -1199,7 +1199,7 @@ function phorum_get_template_file( $page )
     // not there, look for a template
     } else {
         $tplfile = "$tplbase.tpl";
-        $safetemplate = str_replace(array("-",":"), array("_","_"), $PHORUM["template"]);
+        $safetemplate = str_replace(array("-",":"), array("_","_"), $template);
         if ($module !== NULL) $page = "$module::$page";
         $safepage = str_replace(array("-",":"), array("_","_"), $page);
         $phpfile = "{$PHORUM["cache"]}/tpl-$safetemplate-$safepage-" .
