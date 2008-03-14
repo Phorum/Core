@@ -1589,6 +1589,8 @@ function phorum_recursive_stripslashes( $array )
 // returns the available templates as an array
 function phorum_get_template_info()
 {
+    global $PHORUM;
+
     $tpls = array();
 
     $d = dir( $PHORUM['template_path'] );
