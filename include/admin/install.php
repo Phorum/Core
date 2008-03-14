@@ -350,6 +350,7 @@ switch ($step){
             "internal_patchlevel" => "" . PHORUM_SCHEMA_PATCHLEVEL . "",
             "PROFILE_FIELDS" => array(),
             "enable_pm" => "1",
+            "display_name_source" => "username",
             "user_edit_timelimit" => "0",
             "enable_new_pm_count" => "1",
             "enable_dropdown_userlist" => "1",
