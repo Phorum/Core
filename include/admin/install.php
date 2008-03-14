@@ -22,6 +22,7 @@ define("PHORUM_INSTALL", 1);
 
 require_once('./include/api/base.php');
 require_once('./include/api/user.php');
+require_once('./include/api/custom_fields.php');
 
 if (!phorum_db_check_connection()){
     echo "A database connection could not be established.<br/>";
@@ -348,7 +349,11 @@ switch ($step){
             "default_feed" => "rss",
             "internal_version" => "" . PHORUM_SCHEMA_VERSION . "",
             "internal_patchlevel" => "" . PHORUM_SCHEMA_PATCHLEVEL . "",
-            "PROFILE_FIELDS" => array(),
+            "PROFILE_FIELDS" => array(
+                PHORUM_CUSTOM_FIELD_USER => array(),
+                PHORUM_CUSTOM_FIELD_FORUM => array(),
+                PHORUM_CUSTOM_FIELD_MESSAGE => array()
+            ),
             "enable_pm" => "1",
             "user_edit_timelimit" => "0",
             "enable_new_pm_count" => "1",
