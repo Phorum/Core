@@ -355,6 +355,7 @@ switch ($step){
                 PHORUM_CUSTOM_FIELD_MESSAGE => array()
             ),
             "enable_pm" => "1",
+            "display_name_source" => "username",
             "user_edit_timelimit" => "0",
             "enable_new_pm_count" => "1",
             "enable_dropdown_userlist" => "1",
