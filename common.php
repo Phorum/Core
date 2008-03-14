@@ -179,7 +179,6 @@ if (!isset($PHORUM["default_feed"]))   $PHORUM["default_feed"]   = "rss";
 if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = 0;
 if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = 0;
 
-
 // If we have no private key for signing data, generate one now,
 // but only if it's not a fresh install.
 if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
@@ -246,6 +245,11 @@ if (!function_exists('phorum_get_url')) {
     require_once("./include/phorum_get_url.php");
 }
 
+// Setup the template path and http path. These are put in a variable to give
+// module authors a chance to override them. This can be especially useful
+// for distibuting a module that contains a full Phorum template as well.
+$PHORUM['template_path'] = './templates';
+$PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
 
 // ----------------------------------------------------------------------
 // Parse and handle request data
@@ -678,7 +682,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         ob_start();
         require_once( phorum_get_template( "settings" ) );
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
-        $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
+        $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM['template_http_path']}/{$PHORUM["template"]}";
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
         $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
         if (!empty($PHORUM['hooks']['javascript_register'])) {
@@ -1064,6 +1068,70 @@ function phorum_check_read_common()
 }
 
 /**
+ * Switch to a different template(path).
+ *
+ * This function can be used to setup the data that is needed for activating
+ * a different template or template storage path. This can be especially
+ * useful for modules that can use this function to switch Phorum to a
+ * template that is stored inside the module's directory (so no file copying
+ * required to get the module's template tree into place). If for example
+ * module "Foo" has a template directory "./mods/foo/templates/bar", then
+ * the module could use this code to make sure that this template is used.
+ * <code>
+ *   phorum_switch_template(
+ *       "bar",
+ *       "./mods/foo/templates",
+ *       $PHORUM['http_path']."/mods/foo/templates"
+ *   );
+ * </code>
+ *
+ * Beware that after doing this, the module's template directory is expected
+ * to carry a full standard Phorum template and not only templates that are
+ * required by the module for access through the "foo::templatename"
+ * construction. Therefore, this template needs to have an info.php that
+ * describes the template and a copy of all other template files that
+ * Phorum normally uses.
+ *
+ * @param string $template
+ *     The name of the template to active (e.g. "emerald", "lightweight", etc.)
+ *     If this parameter is NULL, then no change will be done to the
+ *     currently activated template.
+ *
+ * @param string $template_path
+ *     The path to the base of the template directory. By default,
+ *     this is "./templates". If this parameter is NULL, then
+ *     no change will be done to the currenctly configured path.
+ *
+ * @param string $template_http_path
+ *     The URL to the base of the template directory. By default,
+ *     this is "<http_path>/templates". If this parameter is NULL, then
+ *     no change will be done to the currenctly configured http path.
+ *
+ */
+function phorum_switch_template($template = NULL, $template_path = NULL, $template_http_path = NULL)
+{
+    global $PHORUM;
+
+    if ($template !== NULL) {
+        $PHORUM['template'] = basename($template);
+    }
+    if ($template_path !== NULL) {
+        $PHORUM['template_path'] = $template_path;
+    }
+    if ($template_http_path !== NULL) {
+        $PHORUM['template_http_path'] = $template_http_path;
+    }
+
+    $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
+    $PHORUM["DATA"]["URL"]["TEMPLATE"] =
+        $PHORUM['template_http_path'] .'/'. $PHORUM['template'];
+
+    ob_start();
+    include(phorum_get_template('settings'));
+    ob_end_clean();
+}
+
+/**
  * Find out what input and output files to use for a template file.
  *
  * @param string $page
@@ -1095,14 +1163,14 @@ function phorum_get_template_file( $page )
     $page = basename($page);
 
     if ($module === NULL) {
-        $prefix = "./templates";
+        $prefix = $PHORUM['template_path'];
         // The postfix is used for checking if the template directory
         // contains at least the mandatory info.php file. Otherwise, it
         // could be an incomplete or empty template.
-        $postfix = "/info.php";
+        $postfix = '/info.php';
     } else {
-        $prefix = "./mods/" . basename($module) . "/templates";
-        $postfix = "";
+        $prefix = './mods/'.basename($module).'/templates';
+        $postfix = '';
     }
 
     // If no user template is set or if the template file cannot be found,
@@ -1523,10 +1591,10 @@ function phorum_get_template_info()
 {
     $tpls = array();
 
-    $d = dir( "./templates" );
+    $d = dir( $PHORUM['template_path'] );
     while ( false !== ( $entry = $d->read() ) ) {
-        if ( $entry != "." && $entry != ".." && file_exists( "./templates/$entry/info.php" ) ) {
-            include "./templates/$entry/info.php";
+        if ( $entry != "." && $entry != ".." && file_exists($PHORUM['template_path'].'/'.$entry.'/info.php' ) ) {
+            include $PHORUM['template_path'].'/'.$entry.'/info.php';
             if ( !isset( $template_hide ) || empty( $template_hide ) || defined( "PHORUM_ADMIN" ) ) {
                 $tpls[$entry] = "$name $version";
             } else {
