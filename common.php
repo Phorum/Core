@@ -1515,6 +1515,10 @@ function phorum_hook( $hook )
 {
     global $PHORUM;
 
+    // keep track of modules that we have already loaded at
+    // earlier calls to the phorum_hook() function
+    static $load_cache = array();
+
     // get arguments passed to the function
     $args = func_get_args();
 
@@ -1522,10 +1526,15 @@ function phorum_hook( $hook )
     array_shift($args);
 
     if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
-
+        // load mods for this hook
         foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
-            // load mods for this hook
+
             $mod = basename($mod);
+
+            // Check if the module file is not yet loaded.
+            if (isset($load_cache[$mod])) continue;
+            $load_cache[$mod] = 1;
+
             if ( file_exists( "./mods/$mod/$mod.php" ) ) {
                 require_once "./mods/$mod/$mod.php";
             } elseif ( file_exists( "./mods/$mod.php" ) ) {
