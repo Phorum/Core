@@ -210,6 +210,9 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
 
     foreach ($msgs as $msg)
     {
+        // if the message was already deleted, skip it
+        if(isset($delete_messages[$msg["message_id"]])) continue;
+
         $PHORUM["forum_id"] = $msg["forum_id"];
 
         $delmode = $msg["parent_id"] == 0
