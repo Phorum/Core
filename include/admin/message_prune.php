@@ -210,6 +210,9 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
 
     foreach ($msgs as $msg)
     {
+        // if the message was already deleted, skip it
+        if(isset($delete_messages[$msg["message_id"]])) continue;
+
         $PHORUM["forum_id"] = $msg["forum_id"];
 
         $delmode = $msg["parent_id"] == 0
@@ -351,6 +354,7 @@ if (isset($_POST["filterdesc"]))
     // Let the database layer turn the metaquery into a real query
     // and run it against the database.
     $messages = phorum_db_metaquery_messagesearch($meta);
+
     if ($messages === NULL) {
         phorum_admin_error("Internal error: failed to run a message search");
     }
