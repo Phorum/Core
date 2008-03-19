@@ -124,6 +124,8 @@ if (isset($PHORUM["hooks"]["profile"]))
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UserProfile"];
 $PHORUM["DATA"]["DESCRIPTION"] = "";
+$PHORUM['DATA']['HTML_DESCRIPTION'] = ''; 
+
 
 // fill the breadcrumbs-info.
 $PHORUM['DATA']['BREADCRUMBS'][]=array(
