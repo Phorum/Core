@@ -122,6 +122,7 @@ function phorum_api_modules_list()
 
         // Parse the module information.
         $info = array();
+        $info['module'] = $entry;
         $info['version_disabled'] = false;
         foreach ($lines as $line) {
 
@@ -268,13 +269,14 @@ function phorum_api_modules_disable($module)
 function phorum_api_modules_save()
 {
     global $PHORUM;
-    
+
     phorum_api_modules_generate_moduleinfo();
 
     // Store the settings in the database.
     phorum_db_update_settings(array(
-        "hooks" => $PHORUM["hooks"],
-        "mods"  => $PHORUM["mods"]
+        "hooks"       => $PHORUM["hooks"],
+        "mods"        => $PHORUM["mods"],
+        "moddblayers" => $PHORUM["moddblayers"]
     ));
 
     // Reset the module information update checking data.
@@ -287,9 +289,9 @@ function phorum_api_modules_save()
  * Generate the module information based on enabled/disabled state
  *
  * This function will sort out all module and hook priorities for the
- * enabled modules and fills ($PHORUM["mods"] and
- * $PHORUM["hooks"]) with the correct values.
- * 
+ * enabled modules and fills $PHORUM["mods"], $PHORUM["hooks"] and
+ * $PHORUM['moddblayers'] with the correct values.
+ *
  */
 function phorum_api_modules_generate_moduleinfo() {
     global $PHORUM;
@@ -472,7 +474,16 @@ function phorum_api_modules_generate_moduleinfo() {
         }
     }
     $PHORUM["hooks"] = $hooks;
-        
+
+    // Create the module dblayer version configuration.
+    $moddblayers = array();
+    foreach ($modules as $mod) {
+        if (isset($mod['dbversion']) &&
+            preg_match('/^\d+$/', $mod['dbversion'])) {
+            $moddblayers[$mod['module']] = $mod['dbversion'];
+        }
+    }
+    $PHORUM["moddblayers"] = $moddblayers;
 }
 // }}}
 
@@ -529,6 +540,70 @@ function phorum_api_modules_check_updated_info($do_reset = FALSE)
         phorum_db_update_settings(array(
             "mod_info_timestamps" => $new
         ));
+    }
+
+    return $need_update;
+}
+// }}}
+
+// {{{ Function: phorum_api_modules_check_updated_dblayer()
+/**
+ * Check if there are modules for which the database layer code is updated.
+ *
+ * @return array
+ *     An array of required module database upgrades. Each element in the
+ *     array is an array on its own, containing information about a single
+ *     required upgrade. The fields in this array are:
+ *     - module: The module for which the upgrade is required;
+ *     - version: The version number for the upgrade;
+ *     - file: The file that contains the upgrade code.
+ */
+function phorum_api_modules_check_updated_dblayer()
+{
+    global $PHORUM;
+
+    $need_update = array();
+
+    if (!empty($PHORUM['moddblayers']))
+    {
+        foreach ($PHORUM['moddblayers'] as $mod => $reqversion)
+        {
+            // Determine the installed db layer version. If no installation
+            // was done at all yet, then use version zero.
+            $curversion = !empty($PHORUM["mod_{$mod}_dbversion"])
+                        ? $PHORUM["mod_{$mod}_dbversion"] : 0;
+
+            // Check if the required database layer version is higher
+            // than the current database layer version.
+            if ($reqversion > $curversion)
+            {
+                // Find the available db upgrade files for the module.
+                // Filter out the upgrades that have to be run.
+                $type = $PHORUM['DBCONFIG']['type'];
+                $dbdir = "./mods/$mod/db/upgrade/$type";
+                $dir = @opendir($dbdir);
+                if ($dir) {
+                    while ($entry = readdir($dir)) {
+                        if (preg_match('/^(\d{10})\.php$/', $entry, $m)) {
+                            if ($m[1] > $curversion && $m[1] <= $reqversion) {
+                                $need_update[$mod.'/'.$m[1]] = array(
+                                    'type'      => 'module',
+                                    'module'    => $mod,
+                                    'version'   => $m[1],
+                                    'file'      => "$dbdir/$entry"
+                                );
+                            }
+                        }
+                    }
+                    closedir($dir);
+                }
+            }
+        }
+
+        // Now that we collected the module db layer upgrade files,
+        // we sort them, so the upgrade files for each module will
+        // be run in the correct order.
+        ksort($need_update);
     }
 
     return $need_update;

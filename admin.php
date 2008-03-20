@@ -37,6 +37,10 @@ if(!isset($PHORUM["http_path"])){
     $PHORUM["http_path"] = dirname($_SERVER["PHP_SELF"]);
 }
 
+// A variable that can be filled for showing a notification in the
+// admin header.php.
+$notification = NULL;
+
 // if we are installing or upgrading, we don't need to check for a session
 // 2005081000 was the internal version that introduced the installed flag
 if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHORUM['internal_version']>='2005081000')) {
@@ -69,8 +73,27 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
             $module = "default";
         }
 
-    }
+        // Check if there are updated module information files.
+        // If yes, the load the information and store the data.
+        require_once('./include/api/modules.php');
+        $updates = phorum_api_modules_check_updated_info();
+        if (!empty($updates)) {
+            phorum_api_modules_save();
+            $notification =
+                "Updated module info for module".(count($updates)==1?"":"s") .
+                (count($updates)>10 ? "" : ":" . implode(", ", $updates));
+        }
 
+        // Check if there are modules that require a database layer upgrade.
+        // If this is the case, then we will run the upgrade code in
+        // module upgrading mode.
+        require_once('./include/api/modules.php');
+        $modupgrades = phorum_api_modules_check_updated_dblayer();
+        if (!empty($modupgrades)) {
+            define('MODULE_DATABASE_UPGRADE', 1);
+            $module = "upgrade";
+        }
+    }
 }
 
 $module = phorum_hook( "admin_pre", $module );

@@ -324,7 +324,8 @@ function phorum_dbupgrade_getupgrades()
  * Perform the upgrade for a single upgrade file.
  *
  * @param $upgrades - An upgrade description. One element from the array
- *                    as returned by phorum_dbupgrade_getupgrades().
+ *                    as returned by phorum_dbupgrade_getupgrades()
+ *                    or phorum_api_modules_check_updated_dblayer().
  * @param $update_internal_version - whether to update the internal version
  *                    for Phorum or not. This one is TRUE by default.
  *                    It can be used by scripts that have to re-run an old
@@ -339,11 +340,42 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
     $version     = $upgrade["version"];
     $type        = $upgrade["type"];
     $upgradefile = $upgrade["file"];
+    $module      = isset($upgrade['module']) ? $upgrade['module'] : NULL;
 
-    $versionvar = $type == 'patch' ? 'internal_patchlevel':'internal_version';
+    switch ($type)
+    {
+        case 'patch':
+            $versionvar  = 'internal_patchlevel';
+            $description = 'database patch';
+            $support     = 'the Phorum Development Team';
+            break;
+
+        case 'schema':
+            $versionvar  = 'internal_version';
+            $description = "database schema upgrade";
+            $support     = 'the Phorum Development Team';
+            break;
+
+        case 'module':
+            $versionvar  = "mod_{$module}_dbversion";
+            $description = 'module upgrade for module "' .
+                           htmlspecialchars($module) . '"';
+            $support     = 'the module author';
+            break;
+
+        default:
+            trigger_error(
+                E_USER_ERROR,
+                'phorum_dbupgrade_run(): ' .
+                'Illegal upgrade type "'.htmlspecialchars($type).'"'
+            );
+            exit;
+            break;
+    }
 
     // Find the version from which we're upgrading.
-    $fromversion = $PHORUM[$versionvar];
+    $fromversion = isset($PHORUM[$versionvar])
+                 ? $PHORUM[$versionvar] : 1111111111;
 
     // Executing large, long running scripts can result in problems,
     // in case the script hits PHP resource boundaries. Here we try
@@ -359,33 +391,40 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
     if (file_exists($upgradefile) && is_readable($upgradefile))
     {
         // Initialize the return message.
-        if (!$update_internal_version) {
-            $msg = "Installing patch $version ...<br/>\n";
-        }
         // Patch level 1111111111 is a special value that is used by
         // phorum if there is no patch level stored in the database.
         // So this is the first time a patch is installed.
-        elseif ($fromversion == '1111111111') {
-            $msg = "Upgrading to patch level $version ...<br/>\n";
+        if (!$update_internal_version || $fromversion == '1111111111') {
+            $msg = "Installing $description, version $version ...<br/>\n";
         } else {
-            $msg = "Upgrading from " .
-                   ($type == "patch"?"patch level ":"database version ") .
-                   "$fromversion to $version ...<br/>\n";
+            $msg = "Upgrading $description, " .
+                   "from version $fromversion to $version ...<br/>\n";
         }
 
         // Load the upgrade file. The upgrade file should fill the
         // $upgrade_queries array with the neccessary queries to run.
+        $upgrade_description = NULL;
         $upgrade_queries = array();
         include($upgradefile);
+
+        if (!empty($upgrade_description)) {
+            $msg .= "Description: " . $upgrade_description . "<br/>";
+        }
 
         // Run the upgrade queries.
         $err = phorum_db_run_queries($upgrade_queries);
         if($err !== NULL){
-            $msg.= "An error occured during this upgrade:<br/><br/>\n" .
-                   "<span style=\"color:red\">$err</span><br/><br/>\n" .
-                   "Please make note of this error and contact the " .
-                   "Phorum Dev Team for help.\nYou can try to continue " .
-                   "with the rest of the upgrade.<br/>\n";
+            $msg.= "<br/><span style=\"color:red\">" .
+                   "<strong style=\"font-size:120%\">" .
+                   "An error occured during this upgrade:" .
+                   "</strong><br/>" .
+                   "$err<br/>" .
+                   "Upgrade file: ".htmlspecialchars($upgradefile) .
+                   "</span><br/><br/>\n" .
+                   "Please make note of this error and the upgrade file " .
+                   "and contact $support for help.<br/><br/>" .
+                   "You can try to continue with the rest of the " .
+                   "upgrade if you know what went wrong.<br/>\n";
         } else {
             $msg.= "The upgrade was successful.<br/>\n";
         }

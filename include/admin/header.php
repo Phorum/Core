@@ -383,19 +383,16 @@ function hide_help()
               $PHORUM["session_path"], $PHORUM["session_domain"]);
 } ?>
     <td style="border-bottom: 1px solid navy" align="center" valign="middle">
+
 <?php
-    require_once('./include/api/modules.php');
-    $updates = phorum_api_modules_check_updated_info();
-    if (!empty($updates)) {
-        phorum_api_modules_save();
-        print "<div style=\"padding:5px;background-color:#fffff0;".
-              "border:2px solid orange; text-align:left\">" .
-              "<strong>Notification:</strong> " .
-              "Updated module info for module".(count($updates)==1?"":"s") .
-              (count($updates)>10 ? "" : ":" . implode(", ", $updates)) .
-              "</div>";
-    }
+// This notification can be set from the main admin.php file.
+if ($notification !== NULL) {
+    print "<div style=\"padding:5px;background-color:#fffff0;".
+          "border:2px solid orange; text-align:left\">" .
+          "<strong>Notification:</strong> " . $notification;
+}
 ?>
+
     </td>
     <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
 

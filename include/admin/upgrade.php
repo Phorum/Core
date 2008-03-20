@@ -28,8 +28,17 @@ if (!phorum_db_check_connection()) {
 require_once('./include/admin/PhorumInputForm.php');
 require_once('./include/version_functions.php');
 
+$is_module_upgrade = isset($_POST['is_module_upgrade'])
+      ? ($_POST['is_module_upgrade'] ? 1 : 0)
+      : (defined('MODULE_DATABASE_UPGRADE') ? 1 : 0);
+
 // Find and count the upgrades that have to be run.
-$upgrades = phorum_dbupgrade_getupgrades();
+if ($is_module_upgrade) {
+    require_once('./include/api/modules.php');
+    $upgrades = phorum_api_modules_check_updated_dblayer();
+} else {
+    $upgrades = phorum_dbupgrade_getupgrades();
+}
 $upgradecount = count($upgrades);
 
 // Find the upgrade step that we have to run.
@@ -47,12 +56,24 @@ switch ($step) {
 
         $frm = new PhorumInputForm ("", "post", "Continue -&gt;");
 
-        $frm->addbreak("Phorum Upgrade");
-        $frm->addmessage("
-            This wizard will upgrade Phorum on your server.<br/>
-            Phorum has confirmed that it can connect to your database.<br/>
-            Press continue when you are ready to start the upgrade.");
+        $frm->addbreak(
+            $is_module_upgrade
+            ? "Phorum Module Upgrade"
+            : "Phorum Upgrade"
+        );
+        $frm->addmessage(
+            $is_module_upgrade
+            ? "Upgrades are available for one or more Phorum Modules.<br/>
+               This wizard will handle these upgrades."
+            : "Upgrades are available for Phorum.<br/>
+               This wizard will handle these upgrades."
+        );
+        $frm->addmessage(
+            "Phorum has confirmed that it can connect to your database.<br/>
+             Press continue when you are ready to start the upgrade."
+        );
         $frm->hidden("module", "upgrade");
+        $frm->hidden("is_module_upgrade", $is_module_upgrade);
         $frm->hidden("step", "1");
         $frm->hidden("upgradecount", $upgradecount);
         $frm->show();
@@ -67,6 +88,7 @@ switch ($step) {
                ? $_POST["upgradeindex"]+1 : 1;
         $count = isset($_POST["upgradecount"])
                ? $_POST["upgradecount"] : $upgradecount;
+
         // Make sure that the visual feedback doesn't turn up weird
         // if the admin does some clicking back and forth in the browser.
         if ($index > $count) {
@@ -80,7 +102,7 @@ switch ($step) {
 
         // Show the results.
         $frm = new PhorumInputForm ("", "post", "Continue -&gt;");
-        $frm->addbreak("Upgrading tables (multiple steps possible) ...");
+        $frm->addbreak("Upgrading Phorum (multiple steps possible) ...");
         $w = floor(($index/$count)*100);
         $frm->addmessage(
             '<table><tr><td>' .
@@ -93,6 +115,7 @@ switch ($step) {
         $frm->addmessage($message);
         $frm->hidden("step", 1);
         $frm->hidden("module", "upgrade");
+        $frm->hidden("is_module_upgrade", $is_module_upgrade);
         $frm->hidden("upgradeindex", $index);
         $frm->hidden("upgradecount", $count);
         $frm->show();

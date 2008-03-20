@@ -1525,20 +1525,31 @@ function phorum_hook( $hook )
     // shift off hook name
     array_shift($args);
 
-    if ( isset( $PHORUM["hooks"][$hook] ) && is_array($PHORUM["hooks"][$hook])) {
-        // load mods for this hook
-        foreach( $PHORUM["hooks"][$hook]["mods"] as $mod ) {
+    if ( isset( $PHORUM["hooks"][$hook] ) &&
+         is_array($PHORUM["hooks"][$hook])) {
 
+        // load mods for this hook
+        foreach( $PHORUM["hooks"][$hook]["mods"] as $mod )
+        {
             $mod = basename($mod);
 
             // Check if the module file is not yet loaded.
             if (isset($load_cache[$mod])) continue;
             $load_cache[$mod] = 1;
 
-            if ( file_exists( "./mods/$mod/$mod.php" ) ) {
+            // Load the module file.
+            if ( file_exists("./mods/$mod/$mod.php") ) {
                 require_once "./mods/$mod/$mod.php";
-            } elseif ( file_exists( "./mods/$mod.php" ) ) {
+            } elseif ( file_exists("./mods/$mod.php") ) {
                 require_once "./mods/$mod.php";
+            }
+
+            // Load the module database layer file.
+            if (!empty($PHORUM['moddblayers'][$mod])) {
+                $file = "./mods/$mod/db/{$PHORUM['DBCONFIG']['type']}.php";
+                if (file_exists($file)) {
+                    require_once($file);
+                }
             }
         }
 
