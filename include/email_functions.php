@@ -67,8 +67,20 @@ function phorum_email_user($addresses, $data)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    if(!isset($data['from_address'])) {
-        $data['from_address'] = "\"".$PHORUM['system_email_from_name']."\" <".$PHORUM['system_email_from_address'].">";
+    // If we have no from_address in the message data, then generate
+    // from_address ourselves, based on the system_email_* settings.
+    if (!isset($data['from_address']) || trim($data['from_address']) == '')
+    {
+        $from_name = trim($PHORUM['system_email_from_name']);
+        if ($from_name != '') {
+            $prefix  = '"'.$from_name.'" <';
+            $postfix = '>';
+        } else {
+            $prefix = $postfix = '';
+        }
+
+        $data['from_address'] =
+            $prefix . $PHORUM['system_email_from_address'] . $postfix;
     }
 
     // Allow modules to pre-process the mail message.
