@@ -98,36 +98,44 @@ function phorum_email_user($addresses, $data)
     $num_addresses = count($addresses);
     $from_address = $data['from_address'];
 
+    # Try to find a useful hostname to use in the Message-ID.
+    $host = "";
+    if (isset($_SERVER["HTTP_HOST"])) {
+        $host = $_SERVER["HTTP_HOST"];
+    } else if (function_exists("posix_uname")) {
+        $sysinfo = @posix_uname();
+        if (!empty($sysinfo["nodename"])) {
+            $host .= $sysinfo["nodename"];
+        }
+        if (!empty($sysinfo["domainname"])) {
+            $host .= $sysinfo["domainname"];
+        }
+    } else if (function_exists("php_uname")) {
+        $host = @php_uname("n");
+    } else if (($envhost = getenv("HOSTNAME")) !== false) {
+        $host = $envhost;
+    }
+    if (empty($host)) {
+        $host = "webserver";
+    }
+
     // Compose an RFC compatible Message-ID header.
     if(isset($data["msgid"]))
     {
-        # Try to find a useful hostname to use in the Message-ID.
-        $host = "";
-        if (isset($_SERVER["HTTP_HOST"])) {
-            $host = $_SERVER["HTTP_HOST"];
-        } else if (function_exists("posix_uname")) {
-            $sysinfo = @posix_uname();
-            if (!empty($sysinfo["nodename"])) {
-                $host .= $sysinfo["nodename"];
-            }
-            if (!empty($sysinfo["domainname"])) {
-                $host .= $sysinfo["domainname"];
-            }
-        } else if (function_exists("php_uname")) {
-            $host = @php_uname("n");
-        } else if (($envhost = getenv("HOSTNAME")) !== false) {
-            $host = $envhost;
-        }
-        if (empty($host)) {
-            $host = "webserver";
-        }
-
         $messageid = "<{$data['msgid']}@$host>";
-        $messageid_header="\nMessage-ID: $messageid";
-    } else {
-        $messageid = "";
-        $messageid_header="";
     }
+    else
+    {
+        $l = localtime(time());
+        $l[4]++; $l[5]+=1900;
+        $stamp = sprintf(
+            "%d%02d%02d%02d%02d",
+            $l[5], $l[4], $l[3], $l[2], $l[1]
+        );
+        $rand = substr(md5(microtime()), 0, 14);
+        $messageid = "<$stamp.$rand@$host>";
+    }
+    $messageid_header="\nMessage-ID: $messageid";
 
     // Allow modules to send the mail message. A module can either
     // remove the recipients for which they did send a mail from the
