@@ -23,7 +23,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Tools
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -53,7 +53,7 @@ if (!defined("PHORUM")) return;
  * @return string $data
  *     The data that was loaded from the URL or NULL if an error occurred.
  *     The function {@link phorum_api_strerror()} can be used to retrieve
- *     information about the error which occurred.
+ *     information about the error that occurred.
  */
 function phorum_api_http_get($url, $method = NULL)
 {

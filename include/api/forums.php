@@ -66,7 +66,7 @@
  *
  * @package    PhorumAPI
  * @subpackage ForumsAPI
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
  * @todo Implement PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS flag.
@@ -105,32 +105,32 @@ define('PHORUM_FLAG_DEFAULTS', 2);
 define('PHORUM_FLAG_INHERIT_MASTERS', 4);
 
 /**
- * Function call flag which tells {@link phorum_api_forums_get()}
+ * Function call flag, which tells {@link phorum_api_forums_get()}
  * that the return data should only contain folders.
  */
 define('PHORUM_FLAG_FOLDERS', 8);
 
 /**
- * Function call flag which tells {@link phorum_api_forums_get()}
+ * Function call flag, which tells {@link phorum_api_forums_get()}
  * that the return data should only contain forums.
  */
 define('PHORUM_FLAG_FORUMS', 16);
 
 /**
- * Function call flag which tells {@link phorum_api_forums_get()}
+ * Function call flag, which tells {@link phorum_api_forums_get()}
  * that the return data should contain inactive forums as well
  * (for these the "active" field is set to zero).
  */
 define('PHORUM_FLAG_INCLUDE_INACTIVE', 32);
 
 /**
- * Function call flag which tells {@link phorum_api_forums_tree()}
+ * Function call flag, which tells {@link phorum_api_forums_tree()}
  * to include empty folders in the tree.
  */
 define('PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS', 64);
 
 /**
- * Function call flag which tells {@link phorum_api_forums_format()}
+ * Function call flag, which tells {@link phorum_api_forums_format()}
  * to add information about unread messages to the formatted data.
  */
 define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);

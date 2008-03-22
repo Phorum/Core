@@ -26,7 +26,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Tools
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -40,7 +40,7 @@ if (!defined('PHORUM')) return;
  * This function can be used to create a scaled down thumbnail version of
  * an image. You can specifiy a width and/or a height to which to scale
  * down the image. The aspect ratio will always be kept. If both a width
- * and height are provided, then the one which requires the largest scale
+ * and height are provided, then the one that requires the largest scale
  * down will be leading.
  *
  * @param string $image
@@ -68,7 +68,7 @@ if (!defined('PHORUM')) return;
  * @return mixed
  *     NULL is returned in case creating the thumbnail failed. The function
  *     {@link phorum_api_strerror()} can be used to retrieve information
- *     about the error which occurred.
+ *     about the error that occurred.
  *
  *     An array is returned in case creating the thumbnail did work.
  *     This array contains the following fields:

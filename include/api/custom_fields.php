@@ -31,7 +31,7 @@
  *
  * @package    PhorumAPI
  * @subpackage CustomFieldAPI
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -234,7 +234,7 @@ function phorum_api_custom_field_configure($field)
     // For indexing, we use the "num_fields" custom field configuration
     // setting. This field is more an auto increment index counter than
     // the number of fields. For historical reasons, we keep this name
-    // in here (some module contain code which makes use of num_fields
+    // in here (some module contain code that makes use of num_fields
     // directly).
     if ($field['id'] === NULL)
     {
@@ -368,7 +368,7 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
  *     TRUE if the restore was successfull or FALSE if there was an error.
  *     The functions {@link phorum_api_strerror()} and
  *     {@link phorum_api_errno()} can be used to retrieve information about
- *     the error which occurred.
+ *     the error that occurred.
  */
 function phorum_api_custom_field_restore($id,$type)
 {

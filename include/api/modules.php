@@ -26,7 +26,7 @@
  *
  * @package    PhorumAPI
  * @subpackage ModulesAPI
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -88,7 +88,7 @@ function phorum_api_modules_list()
 
     while ($entry = readdir($dh))
     {
-        // Some entries which we skip by default.
+        // Some entries that we skip by default.
         // ATTIC    : a directory that I (maurice) sometimes use for storing
         //            deprecated modules or for moving stuff temporarily out
         //            of the way.
@@ -612,7 +612,7 @@ function phorum_api_modules_check_updated_dblayer()
 
 // {{{ Function: module_sort()
 /**
- * A small utility function which can be used to sort modules by name
+ * A small utility function that can be used to sort modules by name
  * using the uasort() command.
  */
 function module_sort($a, $b) { return strcasecmp($a["title"], $b["title"]); }

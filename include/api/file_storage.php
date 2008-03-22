@@ -20,7 +20,7 @@
 /**
  * This script implements the Phorum file storage API.
  *
- * A "Phorum file" is a file which is used from within Phorum as a
+ * A "Phorum file" is a file that is used from within Phorum as a
  * personal user file (which can be uploaded through the user's control
  * center) or as a message attachment.
  *
@@ -30,7 +30,7 @@
  *
  * @package    PhorumAPI
  * @subpackage FileStorageAPI
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -161,7 +161,7 @@ function phorum_api_file_get_mimetype($filename)
  *     If access is allowed, then TRUE will be returned. If access is denied,
  *     then FALSE will be returned. The functions {@link phorum_api_strerror()}
  *     and {@link phorum_api_errno()} can be used to retrieve information
- *     about the error which occurred.
+ *     about the error that occurred.
  */
 function phorum_api_file_check_write_access($file)
 {
@@ -343,7 +343,7 @@ function phorum_api_file_check_write_access($file)
  * @return mixed
  *     On error, this function will return FALSE. The functions
  *     {@link phorum_api_strerror()} and {@link phorum_api_errno()} can
- *     be used to retrieve information about the error which occurred.
+ *     be used to retrieve information about the error that occurred.
  *
  *     On success, an array containing the data for the stored file
  *     will be returned. If the function is called with no "file_id"
@@ -400,7 +400,7 @@ function phorum_api_file_store($file)
             case "add_datetime":
             case "result":
             case "mime_type":
-                // These are some dynamic fields which might be pressent
+                // These are some dynamic fields that might be pressent
                 // in the data, when storing file data that was returned
                 // by the file retrieve function. We simply skip these here.
                 break;
@@ -557,7 +557,7 @@ function phorum_api_file_store($file)
  *     On error, this function will return FALSE.
  *     The functions {@link phorum_api_strerror()} and
  *     {@link phorum_api_errno()} can be used to retrieve information about
- *     the error which occurred.
+ *     the error that occurred.
  *
  *     On success, it returns an array containing descriptive data for
  *     the file. The following fields are available in this array:
@@ -704,7 +704,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  *     {@link phorum_api_file_check_read_access()} as input for this function.
  *
  * @param integer $flags
- *     These are flags which influence aspects of the function call. It is
+ *     These are flags that influence aspects of the function call. It is
  *     a bitflag value, so you can OR multiple flags together. Available
  *     flags for this function are: {@link PHORUM_FLAG_IGNORE_PERMS},
  *     {@link PHORUM_FLAG_GET}, {@link PHORUM_FLAG_SEND} and
@@ -715,7 +715,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  *     On error, this function will return FALSE.
  *     The functions {@link phorum_api_strerror()} and
  *     {@link phorum_api_errno()} can be used to retrieve information about
- *     the error which occurred.
+ *     the error that occurred.
  *
  *     If the {@link PHORUM_FLAG_SEND} flag is used, then the function will
  *     return NULL.
@@ -901,7 +901,7 @@ function phorum_api_file_check_delete_access($file_id)
     }
 
     // The file is not owned by the user. In that case, the user only has
-    // rights to delete it if it is a file that is linked to a message which
+    // rights to delete it if it is a file that is linked to a message that
     // the user posted himself of which was posted in a forum for which
     // the user is a moderator.
     if ($file["link"] == PHORUM_LINK_MESSAGE)

@@ -32,7 +32,7 @@
  *
  * @package    PhorumAPI
  * @subpackage UserAPI
- * @copyright  2007, Phorum Development Team
+ * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
  * @example    user_auth_module.php Authentication override module example
@@ -559,7 +559,7 @@ function phorum_api_user_save($user, $flags = 0)
 
         // If the password field is empty, we should never store the MD5 sum
         // of an empty string as a safety precaution. Instead we store a
-        // string which will never work as a password. This could happen in
+        // string that will never work as a password. This could happen in
         // case of bugs in the code or in case external user auth is used
         // (in which case Phorum can have empty passwords, since the Phorum
         // passwords are not used at all).
@@ -576,7 +576,7 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // Determine the display name to use for the user. If the setting
-    // $PHORUM["custom_display_name"] is enabled (a "secret" setting which
+    // $PHORUM["custom_display_name"] is enabled (a "secret" setting that
     // cannot be changed through the admin settings, but only through
     // modules that consciously set it), then Phorum expects that the display
     // name is a HTML formatted display_name field, which is provided by
@@ -794,8 +794,8 @@ function phorum_api_user_save_raw($user)
  *
  * This function can be used to store arbitrairy settings for the active
  * Phorum user in the database. The main goal for this function is to store
- * user settings which are not available as a Phorum user table field in
- * the database. These are settings which do not really belong to the Phorum
+ * user settings that are not available as a Phorum user table field in
+ * the database. These are settings that do not really belong to the Phorum
  * core, but which are for example used for remembering some kind of state
  * in a user interface (templates). Since each user interface might require
  * different settings, a dynamic settings storage like this is required.
@@ -887,7 +887,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
 
     // Prepare the return data array. For each requested user_id,
     // a slot is prepared in this array. Also, turn the user id array
-    // into an array which has the user_id as both the key and value.
+    // into an array that has the user_id as both the key and value.
     $users = array();
     $new_user_ids = array();
     foreach ($user_ids as $id) {
