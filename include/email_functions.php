@@ -66,14 +66,22 @@ function phorum_valid_email($email){
 function phorum_email_user($addresses, $data)
 {
     global $PHORUM;
+    require_once('./include/api/mail.php');
 
     // If we have no from_address in the message data, then generate
     // from_address ourselves, based on the system_email_* settings.
     if (!isset($data['from_address']) || trim($data['from_address']) == '')
     {
         $from_name = trim($PHORUM['system_email_from_name']);
-        if ($from_name != '') {
-            $prefix  = '"'.$from_name.'" <';
+        if ($from_name != '')
+        {
+            // Handle Quoted-Printable encoding of the from name.
+            // Mail headers can not contain 8-bit data as per RFC821.
+            $pre = '=?'.$PHORUM["DATA"]["CHARSET"].'?Q?'; $post = '?=';
+            $q = phorum_api_mail_encode_quotedprintable($from_name, "\t");
+            if ($q !== NULL) $from_name = $pre . $q . $post;
+
+            $prefix  = $from_name.' <';
             $postfix = '>';
         } else {
             $prefix = $postfix = '';
@@ -148,6 +156,12 @@ function phorum_email_user($addresses, $data)
         $messageid = "<$stamp.$rand@$host>";
     }
     $messageid_header="\nMessage-ID: $messageid";
+
+    // Handle Quoted-Printable encoding of the Subject: header.
+    // Mail headers can not contain 8-bit data as per RFC821.
+    $pre = '=?'.$PHORUM["DATA"]["CHARSET"].'?q?'; $post = '?=';
+    $q = phorum_api_mail_encode_quotedprintable($mailsubject, "\t");
+    if ($q !== NULL) $mailsubject = $pre . $q . $post;
 
     // Allow modules to send the mail message. A module can either
     // remove the recipients for which they did send a mail from the
