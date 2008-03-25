@@ -22,6 +22,9 @@ define('phorum_page','login');
 require_once('./common.php');
 require_once('./include/email_functions.php');
 
+// The language data is often used, so let's prevent RSI.
+$lang = $PHORUM['DATA']['LANG'];
+
 // ----------------------------------------------------------------------------
 // Handle logout
 // ----------------------------------------------------------------------------
@@ -74,7 +77,7 @@ if (count($_POST) > 0) {
 
         // Did the user enter an email address?
         if (empty($_POST["lostpass"])) {
-            $error = $PHORUM["DATA"]["LANG"]["LostPassError"];
+            $error = $lang["LostPassError"];
         }
 
         // Is the email address available in the database?
@@ -89,7 +92,7 @@ if (count($_POST) > 0) {
             // User registration not yet approved by a moderator.
             if($user["active"] == PHORUM_USER_PENDING_MOD) {
                 $template = "message";
-                $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
+                $okmsg = $lang["RegVerifyMod"];
             // User registration still need email verification.
             } elseif ($user["active"] == PHORUM_USER_PENDING_EMAIL ||
                       $user["active"] == PHORUM_USER_PENDING_BOTH) {
@@ -101,14 +104,44 @@ if (count($_POST) > 0) {
 
                 // Mail the new confirmation code to the user.
                 $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
-                $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
-                $maildata["mailmessage"] =
-                   wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"],72).
-                   "\n\n$verify_url\n\n".
-                   wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"],72);
+                $maildata["mailsubject"] = $lang["VerifyRegEmailSubject"];
+
+                // The mailmessage can be composed in two different ways.
+                // This was done for backward compatibility for the language
+                // files. Up to Phorum 5.2, we had VerifyRegEmailBody1 and
+                // VerifyRegEmailBody2 for defining the lost password mail body.
+                // In 5.3, we switched to a single variable VerifyRegEmailBody.
+                // Eventually, the variable replacements need to be handled
+                // by the mail API layer.
+                if (isset($lang["VerifyRegEmailBody"]))
+                {
+                    $maildata['mailmessage'] = wordwrap(str_replace(
+                        array(
+                            '%title%',
+                            '%username%',
+                            '%verify_url%',
+                            '%login_url%'
+                        ),
+                        array(
+                            $PHORUM['title'],
+                            $user['username'],
+                            $verify_url,
+                            phorum_get_url(PHORUM_LOGIN_URL)
+                        ),
+                        $lang["VerifyRegEmailBody"]
+                    ), 72);
+                }
+                else
+                {
+                    $maildata["mailmessage"] =
+                       wordwrap($lang["VerifyRegEmailBody1"], 72).
+                       "\n\n$verify_url\n\n".
+                       wordwrap($lang["VerifyRegEmailBody2"], 72);
+                }
+
                 phorum_email_user(array($user["email"]), $maildata);
 
-                $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
+                $okmsg = $lang["RegVerifyEmail"];
                 $template="message";
 
             // The user is active.
@@ -124,24 +157,54 @@ if (count($_POST) > 0) {
                 // Mail the new password.
                 $user = phorum_api_user_get($uid);
                 $maildata = array();
-                $maildata['mailmessage'] =
-                   wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody1"],72).
-                   "\n\n".
-                   $PHORUM["DATA"]["LANG"]["Username"] .": $user[username]\n".
-                   $PHORUM["DATA"]["LANG"]["Password"] .": $newpass".
-                   "\n\n".
-                   wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody2"],72);
-                $maildata['mailsubject'] = $PHORUM["DATA"]["LANG"]["LostPassEmailSubject"];
+
+                // The mailmessage can be composed in two different ways.
+                // This was done for backward compatibility for the language
+                // files. Up to Phorum 5.2, we had LostPassEmailBody1 and
+                // LostPassEmailBody2 for defining the lost password mail body.
+                // In 5.3, we switched to a single variable LostPassEmailBody.
+                // Eventually, the variable replacements need to be handled
+                // by the mail API layer.
+                if (isset($lang["LostPassEmailBody"]))
+                {
+                    $maildata['mailmessage'] = wordwrap(str_replace(
+                        array(
+                            '%title%',
+                            '%username%',
+                            '%password%',
+                            '%login_url%'
+                        ),
+                        array(
+                            $PHORUM['title'],
+                            $user[username],
+                            $newpass,
+                            phorum_get_url(PHORUM_LOGIN_URL)
+                        ),
+                        $lang["LostPassEmailBody"]
+                    ), 72);
+                }
+                else
+                {
+                    $maildata['mailmessage'] =
+                       wordwrap($lang["LostPassEmailBody1"], 72).
+                       "\n\n".
+                       $lang["Username"] .": $user[username]\n".
+                       $lang["Password"] .": $newpass".
+                       "\n\n".
+                       wordwrap($lang["LostPassEmailBody2"], 72);
+                }
+
+                $maildata['mailsubject'] = $lang["LostPassEmailSubject"];
                 phorum_email_user(array( 0 => $user['email'] ), $maildata);
 
-                $okmsg = $PHORUM["DATA"]["LANG"]["LostPassSent"];
+                $okmsg = $lang["LostPassSent"];
 
             }
         }
 
         // The entered email address was not found.
         else {
-            $error = $PHORUM["DATA"]["LANG"]["LostPassError"];
+            $error = $lang["LostPassError"];
         }
     }
 
@@ -150,9 +213,10 @@ if (count($_POST) > 0) {
 
         // Check if the phorum_tmp_cookie was set. If not, the user's
         // browser does not support cookies.
-        if ($PHORUM["use_cookies"] == PHORUM_REQUIRE_COOKIES && !isset($_COOKIE["phorum_tmp_cookie"])) {
+        if ($PHORUM["use_cookies"] == PHORUM_REQUIRE_COOKIES &&
+            !isset($_COOKIE["phorum_tmp_cookie"])) {
 
-            $error = $PHORUM["DATA"]["LANG"]["RequireCookies"];
+            $error = $lang["RequireCookies"];
 
         } else {
 
@@ -215,7 +279,7 @@ if (count($_POST) > 0) {
 
             // Login failed or session startup failed. For both we show
             // the invalid login error.
-            $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
+            $error = $lang["InvalidLogin"];
 
             // TODO API: move to user API.
             if (isset($PHORUM["hooks"]["failed_login"]))
@@ -252,13 +316,13 @@ if (! isset($redir)) {
 
 // fill the breadcrumbs-info.
 $PHORUM['DATA']['BREADCRUMBS'][]=array(
-    'URL'=>'',
-    'TEXT'=>$PHORUM['DATA']['LANG']['LogIn'],
-    'TYPE'=>'login'
+    'URL'  => '',
+    'TEXT' => $lang['LogIn'],
+    'TYPE' => 'login'
 );
 
 // fill the page heading info.
-$PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['LogIn'];
+$PHORUM['DATA']['HEADING'] = $lang['LogIn'];
 $PHORUM['DATA']['HTML_DESCRIPTION'] = '';
 $PHORUM['DATA']['DESCRIPTION'] = '';
 

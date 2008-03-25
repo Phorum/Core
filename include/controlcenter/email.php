@@ -68,7 +68,9 @@ if ( count( $_POST ) ) {
             $maildata=array(
             'mailmessage'   => wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
             'mailsubject'   => $PHORUM['DATA']['LANG']['EmailVerifySubject'],
+            # "uname" is for language file backward compatibility
             'uname'         => $PHORUM['DATA']['PROFILE']['username'],
+            'username'      => $PHORUM['DATA']['PROFILE']['username'],
             'newmail'       => $_POST['email'],
             'mailcode'      => $conf_code,
             'cc_url'        => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)

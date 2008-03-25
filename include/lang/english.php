@@ -150,7 +150,7 @@
         "EmailVerifyDesc"       =>      "Verification of the new email-address",
         "EmailVerifyEnterCode"  =>      "Please enter the verification code you got",
         "EmailVerifySubject"    =>      "Verification of your new email-address",
-        "EmailVerifyBody"       =>      "Hello %uname%,\n\nThis email is sent to you because you requested to change your email-address in your profile. To confirm that this is a valid email-address you are receiving this mail with your confirmation-code. You can simply ignore this mail if you are not %uname%.\n\nThe new email-address is: %newmail%\nThe confirmation code is: %mailcode%\n\nPlease enter the code in your profile to confirm the change:\n\n<%cc_url%>\n\nThanks, $PHORUM[title]",
+        "EmailVerifyBody"       =>      "Hello %username%,\n\nThis email is sent to you because you requested to change your email-address in your profile. To confirm that this is a valid email-address you are receiving this mail with your confirmation-code. You can simply ignore this mail if you are not %username%.\n\nThe new email-address is: %newmail%\nThe confirmation code is: %mailcode%\n\nPlease enter the code in your profile to confirm the change:\n\n<%cc_url%>\n\nThanks, $PHORUM[title]",
         "EnableNotifyDefault"   =>      "Which follow-topic options should be selected by default?",
         "Error"                 =>      "Error",
         "ErrAuthor"             =>      "Please fill in the author field.",
@@ -239,8 +239,7 @@
         "LostPassError"         =>      "The email address you entered could not be found.",
         "LostPassInfo"          =>      "Enter your email address below and a new password will be sent to you.",
         "LostPassEmailSubject"  =>      "Your login information for the $PHORUM[title]",
-        "LostPassEmailBody1"    =>      "Someone (hopefully you) has requested a new password for your account at $PHORUM[title].  If it was not you, you can ignore this email and continue using your old password.\n\nIf it was you, here is your new login for the forums.",
-        "LostPassEmailBody2"    =>      "You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "LostPassEmailBody"     =>      "Someone (hopefully you) has requested a new password for your account at %title%.  If it was not you, you can ignore this email and continue using your old password.\n\nIf it was you, here is your new login for the forums.\n\nUsername: %username%\nPassword: %password%\n\nYou can login to %title% at %login_url%\n\nThanks, %title%",
         "LostPassSent"          =>      "A new password has been sent to the email address you provided.",
 
         "MakeSticky"            =>      "Make Sticky",
@@ -508,8 +507,7 @@
         "UserProfile"           =>      "User Profile",
 
         "VerifyRegEmailSubject" =>      "Please verify your account",
-        "VerifyRegEmailBody1"   =>      "To validate your $PHORUM[title] account, please click on the URL below.",
-        "VerifyRegEmailBody2"   =>      "Once verified, you can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "VerifyRegEmailBody"    =>      "To validate your %title% account, please click on the URL below.\n\n%verify_url%\n\nOnce verified, you can login to %title% at the URL\n\n%login_url%\n\nThanks, $PHORUM[title]",
         "ViewChanges"           =>      "view changes",
         "ViewFlatList"          =>      "One entry per topic",
         "ViewFlatRead"          =>      "Multiple messages per page sorted by time",
