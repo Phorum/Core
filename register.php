@@ -206,7 +206,45 @@ if (count($_POST)) {
                     }
                     $maildata = array();
                     $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
-                    $maildata["mailmessage"] = wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
+                    // The mailmessage can be composed in two different ways.
+                    // This was done for backward compatibility for the
+                    // language files. Up to Phorum 5.2, we had
+                    // VerifyRegEmailBody1 and VerifyRegEmailBody2 for
+                    // defining the lost password mail body. In 5.3, we
+                    // switched to a single variable VerifyRegEmailBody.
+                    // Eventually, the variable replacements need to be
+                    // handled by the mail API layer.
+                    if (isset($PHORUM['DATA']['LANG']['VerifyRegEmailBody']))
+                    {
+                        $maildata['mailmessage'] = wordwrap(str_replace(
+                            array(
+                                '%title%',
+                                '%username%',
+                                '%verify_url%',
+                                '%login_url%'
+                            ),
+                            array(
+                                $PHORUM['title'],
+                                $userdata['username'],
+                                $verify_url,
+                                phorum_get_url(PHORUM_LOGIN_URL)
+                            ),
+                            $PHORUM['DATA']['LANG']['VerifyRegEmailBody']
+                        ), 72);
+                    }
+                    else
+                    {
+                        // Hide the deprecated language strings from the
+                        // amin language tool by not using the full syntax
+                        // for those.
+                        $lang = $PHORUM['DATA']['LANG'];
+
+                        $maildata["mailmessage"] =
+                           wordwrap($lang['VerifyRegEmailBody1'], 72).
+                           "\n\n$verify_url\n\n".
+                           wordwrap($lang['VerifyRegEmailBody2'], 72);
+                    }
+
                     phorum_email_user(array($userdata["email"]), $maildata);
                 }
 
