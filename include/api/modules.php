@@ -568,6 +568,10 @@ function phorum_api_modules_check_updated_dblayer()
     {
         foreach ($PHORUM['moddblayers'] as $mod => $reqversion)
         {
+            // Check if the module is currently enabled. If not, then we
+            // will not include any upgrades for it.
+            if (empty($PHORUM['mods'][$mod])) continue;
+
             // Determine the installed db layer version. If no installation
             // was done at all yet, then use version zero.
             $curversion = !empty($PHORUM["mod_{$mod}_dbversion"])
