@@ -105,7 +105,7 @@ if (!empty($group_id)){
     $PHORUM["DATA"]["GROUP"]["id"] = $group_id;
     $PHORUM["DATA"]["GROUP"]["name"] = $group[$group_id]["name"];
     $PHORUM["DATA"]["USERS"] = array();
-    $PHORUM["DATA"]["GROUP"]["URL"]["VIEW"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id);
+    $PHORUM["DATA"]["GROUP"]["URL"]["VIEW"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id);
 
     $PHORUM["DATA"]["FILTER"] = array();
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowAll"],
@@ -203,8 +203,8 @@ else{
             "name" => $groupname,
             "unapproved" => count($members),
             "URL" => array(
-                "VIEW" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
-                "UNAPPROVED" => phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
+                "VIEW" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
+                "UNAPPROVED" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
             )
         );
     }
