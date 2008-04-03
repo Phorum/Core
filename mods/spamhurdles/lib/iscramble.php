@@ -36,7 +36,7 @@ function iScramble_javascript()
            var cursor = 0; var start = 1; var end = 1;
            while (cursor < data.length && start > 0 && end > 0) {
                start = data.indexOf('<script', cursor);
-               end   = data.indexOf('</script', cursor);
+               end   = data.indexOf('<\/script', cursor);
                if (end > start && end > -1) {
                    if (start > -1) {
                        var res = data.substring(start, end);
