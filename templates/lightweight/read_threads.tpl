@@ -68,7 +68,7 @@
                 {LOOP MESSAGE->attachments}
                     <a href="{MESSAGE->attachments->url}">{LANG->AttachOpen}</a> | <a href="{MESSAGE->attachments->download_url}">{LANG->AttachDownload}</a> -
                     {MESSAGE->attachments->name}
-                    ({MESSAGE->attachments->size})</a><br/>
+                    ({MESSAGE->attachments->size})<br/>
                 {/LOOP MESSAGE->attachments}
             </div>
         {/IF}
