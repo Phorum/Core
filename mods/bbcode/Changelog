@@ -1,0 +1,22 @@
+Changelog:
+----------
+
+2008-04-15 v2.0.0
+
+   - Rewrite for implementing a new tokenizer that allows for more advanced
+     bbcode features. The new tokenizer also allows for automatic fixing of
+     broken BBcode formatting (wrongly nested tags or tags that are not closed.
+     It also allows for quoted tag arguments, which makes tags like
+     [quote="[SomeClan] Gam3r \"666\" d00d"] possible.
+
+   - The [email] tag now supports a new tag argument "subject". The editor
+     tool button asks for the subject to use. This needs a new language
+     string "enter subject" in the module's language file. If you have a
+     language string for this, please let me know so I can include it in
+     the module package.
+
+   - A new tag [list] is implemented. For this tag, some new language
+     strings are required. These are "list", "enter new list item" and
+     all the list descriptions that are formatted as "list type X".
+     If you have language strings for these, please let me know so I can
+     include them in the module package.

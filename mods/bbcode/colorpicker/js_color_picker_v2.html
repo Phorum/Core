@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>Popup color picker</title>
+	<style type="text/css">
+	body{
+		font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;
+		width:100%;
+		height:100%;
+		margin:0px;
+		padding:0px;
+		background-image:url('http://www.dhtmlgoodies.com/images/heading3.gif');
+		background-repeat:no-repeat;
+		padding-top:85px;					
+		overflow:hidden;
+	}
+	
+
+	</style>
+	<link rel="stylesheet" href="js_color_picker_v2.css" media="screen">
+	<script src="color_functions.js"></script>		
+	<script type="text/javascript" src="js_color_picker_v2.js"></script>
+</head>
+<body>
+<form>
+
+<h1>Example 1</h1>
+<div style="width:103px;width/* */:/**/100px;width: /**/100px;height:20px;border:1px solid #7F9DB9;">
+	<input type="text" maxlength="7" style="width:80px;font-size:12px;height:17px;float:left;border:0px;padding-top:2px" name="rgb" size="10">
+	<img style="float:right;padding-right:1px;padding-top:1px" src="images/select_arrow.gif" onmouseover="this.src='images/select_arrow_over.gif'" onmouseout="this.src='images/select_arrow.gif'" onclick="showColorPicker(this,document.forms[0].rgb)">
+</div>
+
+
+<h2>Simpler example 2</h2>
+
+<table>
+	<tr>
+		<td><input type="text" size="10" maxlength="7" name="rgb2"></td>
+		<td><input type="button" value="Color picker" onclick="showColorPicker(this,document.forms[0].rgb2)"></td>
+	</tr>
+</table>
+
+</form>
+
+
+</body>
+</html>
