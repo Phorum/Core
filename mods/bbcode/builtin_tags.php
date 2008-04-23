@@ -151,7 +151,8 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_ARGS          => array('list' => 'b'),
-        BBCODE_INFO_CALLBACK      => 'bbcode_list_handler'
+        BBCODE_INFO_CALLBACK      => 'bbcode_list_handler',
+        BBCODE_INFO_STRIPBREAK    => TRUE
     ),
 
     // No description defined. This one is covered by the list item.

@@ -1,6 +1,14 @@
 Changelog:
 ----------
 
+2008-04-16 v2.0.1
+
+   - Implemented a new tag configuration option BBCODE_INFO_STRIPBREAK.
+     If eneabled for a tag, a <phorum break> that comes after the close
+     tag is stripped. This is useful for tags that translate to an HTML
+     tag that does not need the additional break for spacing.
+     This option is enabled for the [list] bbcode tag.
+
 2008-04-15 v2.0.0
 
    - Rewrite for implementing a new tokenizer that allows for more advanced
