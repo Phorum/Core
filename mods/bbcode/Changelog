@@ -9,6 +9,8 @@ Changelog:
      tag that does not need the additional break for spacing.
      This option is enabled for the [list] bbcode tag.
 
+   - Fixed turning bare URLs and email addresses into clickable links.
+
 2008-04-15 v2.0.0
 
    - Rewrite for implementing a new tokenizer that allows for more advanced
