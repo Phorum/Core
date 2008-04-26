@@ -169,6 +169,27 @@ Aber mit [code] darum, sieht es wie folgt aus:
     <hr>
     Dies ist haupts&auml;chlich sinnvoll, um l&auml;ngeren Text zu strukturieren.
 
+    <h3>Itemized list:<br/>[list]<br/>[*] item 1<br/>[*] item 2<br/>[/list]</h3>
+
+    The [list] tag can be used for adding lists of items to your message.
+    By default, the list items will be shown using bullets in front of
+    them. By assigning one of "1" (numbers), "a" (letters), "A" (capital
+    letters), "i" (Roman numbers) or "I" (Roman capital numbers), the
+    bullet type can be changed. Examples:<br/><br/>
+    <tt>
+    [list]<br/>
+    [*] item 1<br/>
+    [*] item 2<br/>
+    [list]<br/>
+    [list=A]<br/>
+    [*] another item 1<br/>
+    [*] another item 2<br/>
+    [/list]<br/>
+    </tt><br/><br/>
+    These will be displayed as:<br/><br/>
+    <ul><li>item 1</li><li>item 2</li></ul>
+    <ol type="A"><li>another item 1</li><li>another item 2</li></ol>
+
     <br/><br/><br/><br/>
   </body>
 </html>

@@ -174,7 +174,11 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_VALUEONLY     => TRUE,
         BBCODE_INFO_ARGS          => array('quote' => ''),
-        BBCODE_INFO_CALLBACK      => 'bbcode_quote_handler'
+        BBCODE_INFO_CALLBACK      => 'bbcode_quote_handler',
+        // This one not enabled now, because this is also taken care of
+        // in include/format_functions.php.
+        //BBCODE_INFO_STRIPBREAK    => TRUE
+
     ),
 
     'code' => array(
@@ -186,7 +190,10 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_REPLACEOPEN   => '<pre class="bbcode">',
-        BBCODE_INFO_REPLACECLOSE  => '</pre>'
+        BBCODE_INFO_REPLACECLOSE  => '</pre>',
+        // This one not enabled now, because this is also taken care of
+        // in include/format_functions.php.
+        //BBCODE_INFO_STRIPBREAK    => TRUE
     ),
 
     'center' => array(

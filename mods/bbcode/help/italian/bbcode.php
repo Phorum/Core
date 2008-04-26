@@ -10,7 +10,7 @@
     Sono dei codici che possono essere usati per formattare il
     testo. Questa pagina aiuta a capire come puó essere utilizzato
     il BBcode su questo forum.
-    
+
     <h3>Testo in grasseto: [b]...[/b]<br/>
         Testo sottolineato: [u]...[/u]<br/>
         Testo italico: [i]...[/i]<br/>
@@ -19,7 +19,7 @@
 	Facendo uso di questi codici si possono applicare stili
 	diversi su parti del testo.
     <p>Per esempio, se scriviamo le seguenti frasi nel modo seguente:</p>
-    
+
     <tt>
     [b]Questo testo é in grasseto[/b]<br/>
     [i]Questo testo é in italico[/i]<br/>
@@ -27,7 +27,7 @@
     [s]Questo testo ha una riga sopra[/s]<br/>
     [b][i]Questo testo[/i] é [s]vario[/s] e misto[/b]
     </tt><br/><br/>
-    
+
     Il testo, una volta pubblicato, diventerá:<br/><br/>
     <b>Questo testo é in grasseto</b><br/>
     <i>Questo testo é in italico</i><br/>
@@ -39,9 +39,9 @@
     <h3>Posto in alto: [sup]...[/sup]<br/>Posto in basso: [sub]...[/sub] </h3>
     Inserendo questi codici, potete scrivere ponendo il testo in alto
     oppure in basso rispetto alla riga. Questo ad esempio puó tornare
-    utile nell'utilizzo dei numeri come 
+    utile nell'utilizzo dei numeri come
     "2<sup>4</sup> = 16" or "H<sub>2</sub>O".
-    
+
     Ad esempio:<br/><br/>
     <tt>
     [sup]posto in alto[/sup] normale [sub]posto in basso[/sub]
@@ -58,7 +58,7 @@
     <tt>
     Chi ha paura del
     <nobr>[color=red]rosso[/color],</nobr>
-    <nobr>[color=#eeaa00]giallo[/color]</nobr> e del 
+    <nobr>[color=#eeaa00]giallo[/color]</nobr> e del
     <nobr>[color=#30f]blu[/color]?</nobr>
     </tt><br/><br/>
     Diventerá:<br/><br/>
@@ -83,7 +83,7 @@
     <span style="font-size: small">CHE</span>
     <span style="font-size: medium">IO</span>
     <span style="font-size: large">STIA</span>
-    <span style="font-size: x-large">CRESCENDO!</span> 
+    <span style="font-size: x-large">CRESCENDO!</span>
 
     <h3>Testo centrato: [center]...[/center]</h3>
     Puoi usare questo codice per impostare il testo al centro dello schermo. Per esempio:<br/><br/>
@@ -96,7 +96,7 @@
     <h3>Crea un link ad un immagine da un indirizzo internet: [img]...[/img]<br/>
         Link ad un sito web: [url]...[/url] or [url=...]...[/url]<br/>
         Link ad un indirizzo e-mail [email]...[/email]</h3>
-    Questi sono tutti codici per creare links da risorse disponibili nel web. 
+    Questi sono tutti codici per creare links da risorse disponibili nel web.
     Alcuni esempi:<br/><br/>
     <tt>
     [img]http://www.somesite.com/cool/thumbsup.gif[/img]<br/>
@@ -104,7 +104,7 @@
     [url=http://www.phorum.org]Visit Phorum.org![/url]<br/>
     [email]someuser@somesite.com[/email]
     </tt></br></br>
-    Questo é come apparirá:<br/><br/> 
+    Questo é come apparirá:<br/><br/>
     <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/thumbsup.gif" border="0"/><br/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Visit Phorum.org!</a><br/>
@@ -116,10 +116,10 @@
 	In questi casi si usano i codici [tag]. Esempio:
 <pre>
 [code]
- _____  _                                
-|  __ \| |                               
-| |__) | |__   ___  _ __ _   _ _ __ ___  
-|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ 
+ _____  _
+|  __ \| |
+| |__) | |__   ___  _ __ _   _ _ __ ___
+|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \
 | |    | | | | (_) | |  | |_| | | | | | |
 |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
 [/code]
@@ -136,10 +136,10 @@ Senza [code] prima e [/code] alla fine, questo testo apparirebbe completamente s
 <br/>
 Ma inserendo [code] prima e [/code] alla fine, apparirá cosí:
 <pre style="border: 1px solid #dde; background-color: #ffe; padding: 0px 0px 0px 10px">
-  _____  _                                
- |  __ \| |                               
- | |__) | |__   ___  _ __ _   _ _ __ ___  
- |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \  
+  _____  _
+ |  __ \| |
+ | |__) | |__   ___  _ __ _   _ _ __ ___
+ |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \
  | |    | | | | (_) | |  | |_| | | | | | |
  |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
 
@@ -159,7 +159,7 @@ Ma inserendo [code] prima e [/code] alla fine, apparirá cosí:
     E metterseli contro?<br/>
     [/quote]
     </tt><br/><br/>
-    Diventerá:<br/><br/> 
+    Diventerá:<br/><br/>
     <blockquote class="bbcode">Quote:<div>DubaiMania.NET é il miglior sito!</div></blockquote>
     <blockquote class="bbcode">Quote:<div><strong>Dall'Amleto, di William Shakespeare</strong><br />
     Essere o non essere, --questo il dilemma:--
@@ -178,6 +178,27 @@ Ma inserendo [code] prima e [/code] alla fine, apparirá cosí:
     Apparirá cosí:
     <hr>
     Questa funzione servirá soprattutto per aggiungere una struttura ad un lungo messaggio
+
+    <h3>Itemized list:<br/>[list]<br/>[*] item 1<br/>[*] item 2<br/>[/list]</h3>
+
+    The [list] tag can be used for adding lists of items to your message.
+    By default, the list items will be shown using bullets in front of
+    them. By assigning one of "1" (numbers), "a" (letters), "A" (capital
+    letters), "i" (Roman numbers) or "I" (Roman capital numbers), the
+    bullet type can be changed. Examples:<br/><br/>
+    <tt>
+    [list]<br/>
+    [*] item 1<br/>
+    [*] item 2<br/>
+    [list]<br/>
+    [list=A]<br/>
+    [*] another item 1<br/>
+    [*] another item 2<br/>
+    [/list]<br/>
+    </tt><br/><br/>
+    These will be displayed as:<br/><br/>
+    <ul><li>item 1</li><li>item 2</li></ul>
+    <ol type="A"><li>another item 1</li><li>another item 2</li></ol>
 
     <br/><br/><br/><br/>
   </body>

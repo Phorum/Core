@@ -1,6 +1,16 @@
 Changelog:
 ----------
 
+2008-04-16 v2.0.2
+
+   - A help text for [list] was added to the BBcode help page.
+     Translations will be needed for the available languages.
+     For now, the english help was added to all help files for all
+     languages.
+
+   - Added back the templates directory which holds the template for
+     the "disable BBcode" option in the posting editor.
+
 2008-04-16 v2.0.1
 
    - Implemented a new tag configuration option BBCODE_INFO_STRIPBREAK.
@@ -30,3 +40,9 @@ Changelog:
      all the list descriptions that are formatted as "list type X".
      If you have language strings for these, please let me know so I can
      include them in the module package.
+
+   - The [img] tag now supports a "size" argument, to change the displaying
+     size of the image (in pixels). For example [img size="50x50"]...[/img]
+     or [img size="50"]...[/img].
+
+

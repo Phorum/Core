@@ -36,7 +36,7 @@
 
     <h3>Superscript: [sup]...[/sup]<br/>Subscript: [sub]...[/sub] </h3>
     By using these tags, you can print a piece of text using subscript
-    or superscript. This is for example useful for things like 
+    or superscript. This is for example useful for things like
     "2<sup>4</sup> = 16" or "H<sub>2</sub>O". Example:<br/><br/>
     <tt>
     [sup]superscript[/sup] normal [sub]subscript[/sub]
@@ -51,7 +51,7 @@
     <tt>
     Who is afraid of
     <nobr>[color=red]red[/color],</nobr>
-    <nobr>[color=#eeaa00]yellow[/color]</nobr> and 
+    <nobr>[color=#eeaa00]yellow[/color]</nobr> and
     <nobr>[color=#30f]blue[/color]?</nobr>
     </tt><br/><br/>
     This will be displayed as:<br/><br/>
@@ -76,10 +76,10 @@
     <span style="font-size: small">looks</span>
     <span style="font-size: medium">like</span>
     <span style="font-size: large">I'm</span>
-    <span style="font-size: x-large">growing!</span> 
+    <span style="font-size: x-large">growing!</span>
 
     <h3>Center text: [center]...[/center]</h3>
-    You can use this for centering a piece of text on the 
+    You can use this for centering a piece of text on the
     center of the screen. Example:<br/><br/>
     <tt>
     [center]I'm right in the middle of it all[/center]
@@ -98,7 +98,7 @@
     [url=http://www.phorum.org]Visit Phorum.org![/url]<br/>
     [email]someuser@somesite.com[/email]
     </tt></br></br>
-    These will be displayed as:<br/><br/> 
+    These will be displayed as:<br/><br/>
     <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/thumbsup.gif" border="0"/><br/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Visit Phorum.org!</a><br/>
@@ -110,10 +110,10 @@
     For those cases, you can use the [code] tag. Example:
 <pre>
 [code]
- _____  _                                
-|  __ \| |                               
-| |__) | |__   ___  _ __ _   _ _ __ ___  
-|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ 
+ _____  _
+|  __ \| |
+| |__) | |__   ___  _ __ _   _ _ __ ___
+|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \
 | |    | | | | (_) | |  | |_| | | | | | |
 |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
 [/code]
@@ -130,10 +130,10 @@ Without the [code] around it, this would look totally scrambled, like:
 <br/>
 But with the [code] around it, it looks like:
 <pre style="border: 1px solid #dde; background-color: #ffe; padding: 0px 0px 0px 10px">
-  _____  _                                
- |  __ \| |                               
- | |__) | |__   ___  _ __ _   _ _ __ ___  
- |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \  
+  _____  _
+ |  __ \| |
+ | |__) | |__   ___  _ __ _   _ _ __ ___
+ |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \
  | |    | | | | (_) | |  | |_| | | | | | |
  |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
 
@@ -153,7 +153,7 @@ But with the [code] around it, it looks like:
     And by opposing end them?<br/>
     [/quote]
     </tt><br/><br/>
-    These will be displayed as:<br/><br/> 
+    These will be displayed as:<br/><br/>
     <blockquote class="bbcode">Quote:<div>Phorum is the best!</div></blockquote>
     <blockquote class="bbcode">Quote:<div><strong>From Hamlet, by William Shakespeare</strong><br />
     To be or not to be, --that is the question:--
@@ -171,7 +171,28 @@ But with the [code] around it, it looks like:
     To add a separator line to your message, you can use [hr].
     This will look like:
     <hr>
-    This is mainly useful for adding structure to very long messages. 
+    This is mainly useful for adding structure to very long messages.
+
+    <h3>Itemized list:<br/>[list]<br/>[*] item 1<br/>[*] item 2<br/>[/list]</h3>
+
+    The [list] tag can be used for adding lists of items to your message.
+    By default, the list items will be shown using bullets in front of
+    them. By assigning one of "1" (numbers), "a" (letters), "A" (capital
+    letters), "i" (Roman numbers) or "I" (Roman capital numbers), the
+    bullet type can be changed. Examples:<br/><br/>
+    <tt>
+    [list]<br/>
+    [*] item 1<br/>
+    [*] item 2<br/>
+    [list]<br/>
+    [list=A]<br/>
+    [*] another item 1<br/>
+    [*] another item 2<br/>
+    [/list]<br/>
+    </tt><br/><br/>
+    These will be displayed as:<br/><br/>
+    <ul><li>item 1</li><li>item 2</li></ul>
+    <ol type="A"><li>another item 1</li><li>another item 2</li></ol>
 
     <br/><br/><br/><br/>
   </body>

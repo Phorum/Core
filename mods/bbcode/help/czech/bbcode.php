@@ -6,7 +6,7 @@
   <body>
     <h2>BBcode nápovìda</h2>
 
-    BBcode je zkratka pro "Bulletin Board code". Jedná se o jazyk se znaky, který mùže být použit pro fórum 
+    BBcode je zkratka pro "Bulletin Board code". Jedná se o jazyk se znaky, který mùže být použit pro fórum
 		k formátování zpráv. Tato nápovìda popisuje, jak mùže být BBCode užíváno  v tomto fóru.
 
     <h3>Tuèný text: [b]...[/b]<br/>
@@ -14,7 +14,7 @@
         Kurzíva: [i]...[/i]<br/>
         Pøeškrtnutý text: [s]...[/s]<br/>
         </h3>
-    
+
 		Tyto znaèky mùžete použít ke zmìne stylu èástí textu.
     Pøíklady:<br/><br/>
     <tt>
@@ -38,7 +38,7 @@
     <tt>
     [sup]Horní index[/sup] normální [sub]dolní index[/sub]
     </tt><br/><br/>
-    
+
 		Pøíklad se zobrazí takto:<br/><br/>
     <sup>Horní index</sup> normální <sub>dolní index</sub>
 
@@ -74,7 +74,7 @@
     <span style="font-size: small">vypadá</span>
     <span style="font-size: medium">jako,</span>
     <span style="font-size: large">že</span>
-    <span style="font-size: x-large">rostu!</span> 
+    <span style="font-size: x-large">rostu!</span>
 
     <h3>Centrovaný text: [center]...[/center]</h3>
     Znaèka se mùže použít pro vycentrování èástí textu.
@@ -96,7 +96,7 @@
     [url=http://www.phorum.org]Navštivte Phorum.org![/url]<br/>
     [email]someuser@somesite.com[/email]
     </tt></br></br>
-    Pøíklady se zobrazí takto:<br/><br/> 
+    Pøíklady se zobrazí takto:<br/><br/>
     <img src="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/help/thumbsup.gif" border="0"/><br/>
     [<a href="http://www.phorum.org">www.phorum.org</a>]<br/>
     <a rel="nofollow" href="http://www.phorum.org">Navštivte Phorum.org!</a><br/>
@@ -108,10 +108,10 @@
 		Pøíklad:
 <pre>
 [code]
- _____  _                                
-|  __ \| |                               
-| |__) | |__   ___  _ __ _   _ _ __ ___  
-|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \ 
+ _____  _
+|  __ \| |
+| |__) | |__   ___  _ __ _   _ _ __ ___
+|  ___/| '_ \ / _ \| '__| | | | '_ ` _ \
 | |    | | | | (_) | |  | |_| | | | | | |
 |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
 [/code]
@@ -128,17 +128,17 @@ Bez znaèky [code] dojde ke zhroucení formátovaného textu, jako zde:
 <br/>
 Se znaèkou  [code] vypadá text takto:
 <pre style="border: 1px solid #dde; background-color: #ffe; padding: 0px 0px 0px 10px">
-  _____  _                                
- |  __ \| |                               
- | |__) | |__   ___  _ __ _   _ _ __ ___  
- |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \  
+  _____  _
+ |  __ \| |
+ | |__) | |__   ___  _ __ _   _ _ __ ___
+ |  ___/| '_ \ / _ \| '__| | | | '_ ` _ \
  | |    | | | | (_) | |  | |_| | | | | | |
  |_|    |_| |_|\___/|_|   \__,_|_| |_| |_|
 
 </pre>
 
     <h3>Uvozený text: [quote]...[/quote] or [quote=...]...[/quote]</h3>
-		Chcete-li pøidat uvozovky do své zprávy, mùžete použít tuto znaèku. 
+		Chcete-li pøidat uvozovky do své zprávy, mùžete použít tuto znaèku.
 		Mužete zvolit, zda chcete ke znaèce zahrnout napøíklad také jméno osoby nebo ne.
 		Pøíklad:<br/><br/>
     <tt>
@@ -151,7 +151,7 @@ Se znaèkou  [code] vypadá text takto:
 		a tak s tím skoncovat? Umøít - spát - a dost.<br/>
     [/quote]
     </tt><br/><br/>
-    Takto se pøíklad zobrazí:<br/><br/> 
+    Takto se pøíklad zobrazí:<br/><br/>
     <blockquote class="bbcode">Quote:<div>Phorum je nejlepší!</div></blockquote>
     <blockquote class="bbcode">Quote:<div><strong>Hamlet - William Shakespeare</strong><br />
     Být èi nebýt? To je otázka.
@@ -170,6 +170,28 @@ Se znaèkou  [code] vypadá text takto:
     Takto bude vypadat výsledek:
     <hr>
 		Tato znaèka je vhodná k rozdìlení struktury u dlouhých zpráv.
+
+    <h3>Itemized list:<br/>[list]<br/>[*] item 1<br/>[*] item 2<br/>[/list]</h3>
+
+    The [list] tag can be used for adding lists of items to your message.
+    By default, the list items will be shown using bullets in front of
+    them. By assigning one of "1" (numbers), "a" (letters), "A" (capital
+    letters), "i" (Roman numbers) or "I" (Roman capital numbers), the
+    bullet type can be changed. Examples:<br/><br/>
+    <tt>
+    [list]<br/>
+    [*] item 1<br/>
+    [*] item 2<br/>
+    [list]<br/>
+    [list=A]<br/>
+    [*] another item 1<br/>
+    [*] another item 2<br/>
+    [/list]<br/>
+    </tt><br/><br/>
+    These will be displayed as:<br/><br/>
+    <ul><li>item 1</li><li>item 2</li></ul>
+    <ol type="A"><li>another item 1</li><li>another item 2</li></ol>
+
     <br/><br/><br/><br/>
   </body>
 </html>
