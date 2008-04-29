@@ -379,7 +379,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
 
 // A hook to allow modules to change the abilities from above.
 if (isset($PHORUM["hooks"]["posting_permissions"]))
-    phorum_hook("posting_permission");
+    phorum_hook("posting_permissions");
 
 // Show special sort options in the editor? These only are
 // honoured for the thread starter messages, so we check the
