@@ -29,7 +29,8 @@ if (!phorum_check_read_common()) { return; }
 // Handle "mark read" clicks. The arguments for such click are:
 // [0] => The id of the forum to mark read (stored in $PHORUM['forum_id']).
 // [1] => The string "markread"
-// [2] => The id of the folder in which the marked read forum resides.
+// [2] => The id of the folder to which the user should be redirected after
+//        the markread action.
 if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
     !empty($PHORUM['user']['user_id'])) {
 
