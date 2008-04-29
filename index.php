@@ -42,7 +42,7 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["D
     // redirect to a fresh list of the current folder without markread in url
     if(isset($PHORUM["args"][2]) && !empty($PHORUM["args"][2])) {
         $folder_id = (int)$PHORUM["args"][2];
-        $dest_url = phorum_get_url(PHORUM_INDEX_URL,$folder_id);
+        $dest_url = phorum_get_url(PHORUM_INDEX_URL, $folder_id);
     } else {
         $dest_url = phorum_get_url(PHORUM_INDEX_URL);
     }
