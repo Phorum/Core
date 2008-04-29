@@ -35,6 +35,7 @@ $user_status_map = array(
 // A utility list of field names that are used for searching.
 $user_search_fields = array(
     'search_username',
+    'search_display_name',
     'search_email',
     'search_type',
     'search_status',
