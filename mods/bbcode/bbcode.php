@@ -20,7 +20,14 @@
 if (!defined("PHORUM")) return;
 
 require_once('./mods/bbcode/api.php');
+require_once('./mods/bbcode/builtin_tags.php');
 require_once('./mods/bbcode/defaults.php');
+
+// Initialize the bbcode parser if that has not been done before.
+// This will mainly be used at install time to initialize the data.
+if (!isset($GLOBALS['PHORUM']['mod_bbcode_parser'])) {
+    bbcode_api_initparser();
+}
 
 // Message formatting hook, for translating BBcode tags into HTML.
 function phorum_mod_bbcode_format($data)
@@ -168,26 +175,32 @@ function phorum_mod_bbcode_editor_tool_plugin()
 {
     global $PHORUM;
 
-    $lang   = $PHORUM['DATA']['LANG']['mod_bbcode'];
+    $lang = $PHORUM['DATA']['LANG']['mod_bbcode'];
 
     $nr_of_enabled_tags = 0;
 
     $enabled = isset($PHORUM['mod_bbcode']['enabled'])
         ? $PHORUM['mod_bbcode']['enabled'] : array();
+    $builtin = $PHORUM['MOD_BBCODE']['BUILTIN'];
 
     // Register the tool buttons.
     foreach ($PHORUM['mod_bbcode_parser']['taginfo'] as $id => $taginfo)
     {
-        // Keep track of the number of enabled tags.
-        if (!empty($PHORUM["mod_bbcode"]["enabled"][$id])) {
-            $nr_of_enabled_tags ++;
-        }
-
         // Skip tool if no editor tools button is implemented.
         if (! $taginfo[BBCODE_INFO_HASEDITORTOOL]) continue;
 
-        // Skip tool, unless the editor tool button is enabled.
-        if ($enabled[$id] != 2) continue;
+        // Check if the editor tool should be shown. If not, then skip
+        // to the next tag. If there are no settings saved yet for the
+        // module, then use the settings from the builtin tag list.
+        if ((isset($PHORUM['mod_bbcode']['enabled'][$id]) &&
+             $enabled[$id] != 2) ||
+            (!isset($PHORUM['mod_bbcode']['enabled'][$id]) &&
+             $builtin[$id][BBCODE_INFO_DEFAULTSTATE] != 2)) {
+             continue;
+        }
+
+        // Keep track of the number of enabled tags.
+        $nr_of_enabled_tags ++;
 
         // Determine the description to use for the tool. If we can find
         // a description in the language strings, then we use that one.

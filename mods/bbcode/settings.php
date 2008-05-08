@@ -22,6 +22,9 @@ if (!defined("PHORUM_ADMIN")) return;
 // Load tag descriptions.
 require_once('./mods/bbcode/builtin_tags.php');
 
+// Load default settings.
+require_once('./mods/bbcode/defaults.php');
+
 // Available option sets for the bbcode tag dropdown menus.
 $options_without_editor_tools = array(
     0  => 'Disabled',

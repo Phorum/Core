@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+2008-05-08 v2.0.3
+
+   - Fixes for making upgrades and fresh installations work smoother
+     (without having to save the module settings before things start
+     to work).
+
 2008-04-16 v2.0.2
 
    - A help text for [list] was added to the BBcode help page.

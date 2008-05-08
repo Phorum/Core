@@ -1,6 +1,6 @@
 title: BBcode
 desc:  This module allows users to add BBcode (Bulletin Board Code) tags to their postings. BBcode tags are a safe way of adding markup (bold, italic, images, links, etc.).
-version: 2.0.2
+version: 2.0.3
 author: Phorum Dev Team
 url: http://www.phorum.org/
 
