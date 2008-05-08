@@ -121,6 +121,35 @@ if ( count( $_POST ) )
                     $need_display_name_updates = TRUE;
                 }
                 break;
+
+            case "open_id":
+
+                // check user open id field
+
+                $field = phorum_api_custom_field_byname("open_id", PHORUM_CUSTOM_FIELD_USER);
+                if($value==true){
+                    if(empty($field)){
+                        $open_id_field = array(
+                            'id'            => NULL,
+                            'name'          => "open_id",
+                            'type'          => PHORUM_CUSTOM_FIELD_USER,
+                            'length'        => 255,
+                            'html_disabled' => FALSE,
+                            'show_in_admin' => true
+                        );
+                        phorum_api_custom_field_configure($open_id_field);
+                    } elseif($field["deleted"]) {
+                        phorum_api_custom_field_restore(PHORUM_CUSTOM_FIELD_USER, $field["id"]);
+                    }
+                } else {
+                    $field = phorum_api_custom_field_byname("open_id", PHORUM_CUSTOM_FIELD_USER);
+                    if(!empty($field)){
+                        phorum_api_custom_field_delete(PHORUM_CUSTOM_FIELD_USER, $field["id"]);
+                    }
+                }
+
+
+                break;
         }
 
         if ( $error ) break;
@@ -348,6 +377,8 @@ $reg_con_arr = array(
     );
 
 $row=$frm->addrow( "Registration Verification", $frm->select_tag( "registration_control", $reg_con_arr, $PHORUM["registration_control"] ) );
+
+$row=$frm->addrow( "Allow OpenID", $frm->select_tag( "open_id", array( "No", "Yes" ), $PHORUM["open_id"] ) );
 
 $row=$frm->addrow( "Enable Drop-down User List", $frm->select_tag( "enable_dropdown_userlist", array( "No", "Yes" ), $PHORUM["enable_dropdown_userlist"] ) );
 
