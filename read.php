@@ -22,43 +22,21 @@ require_once('./common.php');
 
 require_once('./include/email_functions.php');
 require_once('./include/format_functions.php');
-
-// for dev-purposes ..
-//require_once('./include/timing.php');
-
-//timing_start();
+require_once('./include/api/newflags.php');
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
 
 // checking read-permissions
-if(!phorum_check_read_common()) {
-  return;
+if (!phorum_check_read_common()) {
+    return;
 }
 
 // somehow we got to a folder
-if($PHORUM["folder_flag"]){
+if ($PHORUM["folder_flag"]) {
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
-}
-
-$newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
-
-if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
-
-    $PHORUM['user']['newinfo'] = null;
-
-    if($PHORUM['cache_newflags']) {
-        $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
-    }
-
-    if($PHORUM['user']['newinfo'] == null) {
-        $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
-        if($PHORUM['cache_newflags']) {
-            phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'],86400,$PHORUM['cache_version']);
-        }
-    }
 }
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
@@ -94,78 +72,49 @@ if(empty($PHORUM["args"][1])) {
         $dest_url="";
         $newervar=(int)$PHORUM["args"][1];
 
-        switch($PHORUM["args"][2]) {
+        switch($PHORUM["args"][2])
+        {
             case "newer":
                 $thread = phorum_db_get_neighbour_thread($newervar, "newer");
                 break;
+
             case "older":
                 $thread = phorum_db_get_neighbour_thread($newervar, "older");
                 break;
+
             case "markthreadread":
+                // thread needs to be in $thread for the redirection
+                $thread = (int) $PHORUM['args'][1];
 
-                if($PHORUM["DATA"]["LOGGEDIN"]) {
-                    // thread needs to be in $thread for the redirection
-                    $thread = (int)$PHORUM["args"][1];
-                    $thread_message=phorum_db_get_message($thread,'message_id');
-
-                    $mids=array();
-                    foreach($thread_message['meta']['message_ids'] as $mid) {
-                        if(!isset($PHORUM['user']['newinfo'][$mid]) && $mid > $PHORUM['user']['newinfo']['min_id']) {
-                            $mids[]=$mid;
-                        }
-                    }
-
-                    $msg_count=count($mids);
-
-                    // any messages left to update newinfo with?
-                    if($msg_count > 0){
-                        phorum_db_newflag_add_read($mids);
-                        if($PHORUM['cache_newflags']) {
-                            phorum_cache_remove('newflags',$newflagkey);
-                            phorum_cache_remove('newflags_index',$newflagkey);
-                        }
-                        unset($mids);
-                    }
+                if ($PHORUM['user']['user_id']) {
+                    phorum_api_newflags_markread(
+                        $thread, PHORUM_MARKREAD_THREADS
+                    );
                 }
-                // could be called from list too
+
+                // Could be called from list too, in which case we need
+                // to redirect back to the list.
                 if(isset($PHORUM["args"][3]) && $PHORUM["args"][3] == "list") {
                     $dest_url = phorum_get_url(PHORUM_LIST_URL);
                     phorum_redirect_by_url($dest_url);
                 }
                 break;
+
             case "gotonewpost":
                 // thread needs to be in $thread for the redirection
                 $thread = (int)$PHORUM["args"][1];
-                $thread_message=phorum_db_get_message($thread,'message_id');
-                $message_ids=$thread_message['meta']['message_ids'];
 
-                $last_id = 0;
-                foreach($message_ids as $mkey => $mid) {
-                    if ($last_id < $mid) $last_id = $mid;
-                    // if already read, remove it from message-array
-                    if(isset($PHORUM['user']['newinfo'][$mid]) || $mid <= $PHORUM['user']['newinfo']['min_id']) {
-                        unset($message_ids[$mkey]);
+                // Find the first unread message_id.
+                $new_message = phorum_api_newflags_firstunread($thread);
+
+                if ($new_message) {
+                    if ($PHORUM['threaded_read'] == 0) { // get new page
+                        $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                    } else { // for threaded
+                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
                     }
-
                 }
-
-                // it could happen that they are all read. In that case,
-                // we jump to the last message in the thread.
-                if (!count($message_ids)) {
-                    $new_message = $last_id;
-                } else {
-                    // Find the lowest unread message id.
-                    asort($message_ids,SORT_NUMERIC);
-                    $new_message = array_shift($message_ids);
-                }
-
-                if($PHORUM['threaded_read'] == 0) { // get new page
-                    $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
-                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
-                } else { // for threaded
-                    $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
-                }
-
                 break;
 
         }
@@ -197,14 +146,13 @@ if(empty($PHORUM["args"][1])) {
 // determining the page if page isn't given and message_id != thread
 $page=0;
 if(!$PHORUM["threaded_read"]) {
-    if(isset($PHORUM['args']['page']) && is_numeric($PHORUM["args"]["page"]) && $PHORUM["args"]["page"] > 0) {
-                $page=(int)$PHORUM["args"]["page"];
+    if (isset($PHORUM['args']['page']) &&
+        is_numeric($PHORUM["args"]["page"]) && $PHORUM["args"]["page"] > 0) {
+        $page=(int)$PHORUM["args"]["page"];
     } elseif($message_id != $thread) {
-                $page=ceil(phorum_db_get_message_index($thread,$message_id)/$PHORUM['read_length']);
-    } else {
-                $page=1;
+        $page=ceil(phorum_db_get_message_index($thread,$message_id)/$PHORUM['read_length']);
     }
-    if(empty($page)) {
+    if (empty($page)) {
         $page=1;
     }
 }
@@ -499,11 +447,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $URLS["reopen_url"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_REOPEN_THREAD,$thread),$moderation_url_template);
     }
 
-    // main loop for template setup
-    $messages=array();
-    $read_messages=array(); // needed for newinfo
-    foreach($data as $key => $row) {
+    // Add information about new messages to the thread.
+    $data = phorum_api_newflags_format_messages($data, PHORUM_NEWFLAGS_BY_MESSAGE);
 
+    // main loop for template setup
+    $messages = array();
+    $read_messages = array(); // needed for marking new messages as read later on
+    foreach($data as $key => $row)
+    {
         // should we remove the bodies in threaded view
         if($remove_threaded_bodies && $row["message_id"]!=$thread && $row["message_id"] != $message_id) {
             unset($row["body"]); // strip body
@@ -523,9 +474,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             unset($row["user"]["password"]);
             unset($row["user"]["password_tmp"]);
         }
-        if(!($PHORUM["threaded_read"]==1) && $PHORUM["DATA"]["LOGGEDIN"] && $row['message_id'] > $PHORUM['user']['newinfo']['min_id'] && !isset($PHORUM['user']['newinfo'][$row['message_id']])) { // set this message as read
-            $read_messages[] = array("id"=>$row['message_id'],"forum"=>$row['forum_id']);
+
+        // Keep track of unread messages that we have to mark as read.
+        if (isset($row['new'])) {
+            $read_messages[] = $row['message_id'];
         }
+
         // is the message unapproved?
         $row["is_unapproved"] = ($row['status'] < 0) ? 1 : 0;
 
@@ -646,15 +600,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             }
         }
 
-        // newflag, if its NOT in newinfo AND newer than min_id,
-        // then its a new message
-        $row["new"]="";
-        if ($PHORUM["DATA"]["LOGGEDIN"]){
-            if (!isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
-                $row["new"]= $PHORUM["DATA"]["LANG"]["newflag"];
-            }
-        }
-
         $messages[$row["message_id"]]=$row;
     }
 
@@ -668,10 +613,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $messages = phorum_hook("readthreads", $messages);
 
         $messages = phorum_sort_threads($messages);
-
-        if($PHORUM["DATA"]["LOGGEDIN"] && !isset($PHORUM['user']['newinfo'][$message_id]) && $message_id > $PHORUM['user']['newinfo']['min_id']) {
-            $read_messages[] = array("id"=>$message_id,"forum"=>$messages[$message_id]['forum_id']);
-        }
 
         // we have to loop again and create the urls for the Next and Previous links.
         foreach($messages as $key => $row) {
@@ -757,16 +698,14 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $templates = array();
 
-    if($PHORUM["threaded_read"] == 1) {
+    if ($PHORUM["threaded_read"] == 1) {
         $templates[] = "read_threads";
-    } elseif($PHORUM["threaded_read"] == 2) {
-
+    } elseif ($PHORUM["threaded_read"] == 2) {
         $templates[] = "read_hybrid";
-
     } else {
-
         $templates[] = "read";
     }
+
     if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
         if(count($read_messages)) {
             phorum_db_newflag_add_read($read_messages);
@@ -777,10 +716,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
     }
 
-    // An anchor so clicking on a reply button can let the browser
-    // jump to the editor or the closed thread message.
-    if(isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
-        $PHORUM["DATA"]["REPLY_ON_READ"] = true;
+    // Marking the new messages that we have seen as read.
+    if($PHORUM["DATA"]["LOGGEDIN"] && count($read_messages)) {
+        phorum_api_newflags_markread($read_messages, PHORUM_MARKREAD_MESSAGES);
     }
 
     // Never show the reply box if the message is closed.

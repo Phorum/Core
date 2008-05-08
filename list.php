@@ -18,68 +18,45 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','list');
+
 require_once('./common.php');
-
 require_once('./include/format_functions.php');
-//require_once('./include/timing.php');
-
-//timing_start();
+require_once('./include/api/newflags.php');
 
 // set all our common URL's
 phorum_build_common_urls();
 
-if(!phorum_check_read_common()) {
+if (!phorum_check_read_common()) {
   return;
 }
 
-
-if(empty($PHORUM["forum_id"])){
+// No forum_id in the request.
+if (empty($PHORUM["forum_id"])){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL);
     phorum_redirect_by_url($dest_url);
     exit();
 }
 
-// somehow we got to a folder in list.php
-if($PHORUM["folder_flag"]){
+// Somehow we got to a folder in list.php.
+if ($PHORUM["folder_flag"]){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
 }
 
-$newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
+// Handle "mark read" clicks.
+if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' &&
+    $PHORUM['user']['user_id']) {
 
-// check for markread
-if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
-    // setting all posts read
-    unset($PHORUM['user']['newinfo']);
-    phorum_db_newflag_allread();
-    if($PHORUM['cache_newflags']) {
-        phorum_cache_remove('newflags',$newflagkey);
-        phorum_cache_remove('newflags_index',$newflagkey);
-    }
+    // Mark all posts in the current forum as read.
+    phorum_api_newflags_markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
 
-
-    // redirect to a fresh list without markread in url
+    // Redirect to a fresh list of the current folder without the mark read
+    // parameters in the URL. This way we prevent users from bookmarking
+    // the mark read URL.
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
     phorum_redirect_by_url($dest_url);
     exit();
-
-}
-
-if ($PHORUM["DATA"]["LOGGEDIN"]) { // reading newflags in
-
-    $PHORUM['user']['newinfo'] = null;
-
-    if($PHORUM['cache_newflags']) {
-        $PHORUM['user']['newinfo']=phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
-    }
-
-    if($PHORUM['user']['newinfo'] == null) {
-        $PHORUM['user']['newinfo']=phorum_db_newflag_get_flags();
-        if($PHORUM['cache_newflags']) {
-            phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'],86400,$PHORUM['cache_version']);
-        }
-    }
 }
 
 // figure out what page we are on
@@ -90,12 +67,11 @@ if (empty($PHORUM["args"]["page"]) || !is_numeric($PHORUM["args"]["page"]) || $P
 }
 $offset=$page-1;
 
-// check the moderation-settings
+// Check if the current user is allowed to moderate messages.
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-// Find out how many forums this user can moderate.
-// If the user can moderate more than one forum, then
-// present the move message moderation link.
+// Find out how many forums this user can moderate. If the user can moderate
+// more than one forum, then we will present the move message moderation link.
 if ($PHORUM["DATA"]["MODERATOR"]) {
     $modforums = phorum_api_user_check_access(
         PHORUM_USER_ALLOW_MODERATE_MESSAGES,
@@ -104,7 +80,8 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
     $build_move_url = count($modforums) >= 2;
 }
 
-if($PHORUM['threaded_list']) { // make it simpler :)
+// Determine what list length to use.
+if($PHORUM['threaded_list']) {
     $PHORUM["list_length"] = $PHORUM['list_length_threaded'];
 } else {
     $PHORUM["list_length"] = $PHORUM['list_length_flat'];
@@ -119,56 +96,77 @@ $pages=ceil(($PHORUM["thread_count"] - $PHORUM['sticky_count']) / $PHORUM["list_
 // In that case, simply use one page.
 if ($pages == 0) $pages = 1;
 
-$pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"])) ? $PHORUM["TMP"]["list_pages_shown"] : 11;
+$pages_shown = (isset($PHORUM["TMP"]["list_pages_shown"]))
+             ? $PHORUM["TMP"]["list_pages_shown"] : 11;
 
 // first $pages_shown pages
-if($page - floor($pages_shown/2) <= 0  || $page < $pages_shown){
+if ($page - floor($pages_shown/2) <= 0  || $page < $pages_shown) {
     $page_start=1;
-
 // last $pages_shown pages
 } elseif($page > $pages - floor($pages_shown/2)) {
     $page_start = $pages - $pages_shown + 1;
-
 // all others
 } else {
     $page_start = $page - floor($pages_shown/2);
 }
 
-$pageno=1;
+$pageno = 1;
 
 $list_page_url_template = phorum_get_url(PHORUM_LIST_URL, '%forum_id%', 'page=%page_num%');
 
-for($x=0;$x<$pages_shown && $x<$pages;$x++){
+for ($x=0;$x<$pages_shown && $x<$pages;$x++) {
     $pageno=$x+$page_start;
     $PHORUM["DATA"]["PAGES"][] = array(
-    "pageno"=>$pageno,
-    "url"=>str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$pageno),$list_page_url_template),
+    "pageno" => $pageno,
+    "url"    => str_replace(
+                    array('%forum_id%', '%page_num%'),
+                    array($PHORUM["forum_id"], $pageno),
+                    $list_page_url_template
+                )
     );
 }
 
 
 $PHORUM["DATA"]["CURRENTPAGE"]=$page;
 $PHORUM["DATA"]["TOTALPAGES"]=$pages;
-$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]=str_replace('%forum_id%',$PHORUM["forum_id"],$list_page_url_template);
+$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]=str_replace(
+    '%forum_id%',$PHORUM["forum_id"],$list_page_url_template
+);
 
 
 if($page_start>1){
-    $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],'1'),$list_page_url_template);
+    $PHORUM["DATA"]["URL"]["FIRSTPAGE"]=str_replace(
+        array('%forum_id%','%page_num%'),
+        array($PHORUM["forum_id"],'1'),
+        $list_page_url_template
+    );
 }
 
 if($pageno<$pages){
-    $PHORUM["DATA"]["URL"]["LASTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$pages),$list_page_url_template);
+    $PHORUM["DATA"]["URL"]["LASTPAGE"]=str_replace(
+        array('%forum_id%','%page_num%'),
+        array($PHORUM["forum_id"],$pages),
+        $list_page_url_template
+    );
 }
 
 if($pages>$page){
     $nextpage=$page+1;
-    $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$nextpage),$list_page_url_template);
+    $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(
+        array('%forum_id%','%page_num%'),
+        array($PHORUM["forum_id"],$nextpage),
+        $list_page_url_template
+    );
 }
 
 if ($page>1)
 {
     $prevpage=$page-1;
-    $PHORUM["DATA"]["URL"]["PREVPAGE"]=str_replace(array('%forum_id%','%page_num%'),array($PHORUM["forum_id"],$prevpage),$list_page_url_template);
+    $PHORUM["DATA"]["URL"]["PREVPAGE"]=str_replace(
+        array('%forum_id%','%page_num%'),
+        array($PHORUM["forum_id"],$prevpage),
+        $list_page_url_template
+    );
 
     $PHORUM['DATA']['BREADCRUMBS'][]=array(
         'URL'=>'',
@@ -191,17 +189,13 @@ if($PHORUM['cache_messages'] &&
     $rows = phorum_cache_get('message_list',$cache_key);
 }
 
-if($rows == null) {
-
-
-    //timing_mark('before db');
+if($rows == null)
+{
     // Get the threads
     $rows = array();
 
     // get the thread set started
     $rows = phorum_db_get_thread_list($offset, $bodies_in_list);
-
-    //timing_mark('after db');
 
     // redirect if invalid page
     if(count($rows) < 1 && $offset > 0){
@@ -391,8 +385,6 @@ if($rows == null) {
 if($PHORUM["count_views"] == 2) { // viewcount as column
     $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
 }
-//timing_mark('after preparation');
-
 if($PHORUM['DATA']['LOGGEDIN']) {
 
     // used later if user is moderator
@@ -408,37 +400,22 @@ if($PHORUM['DATA']['LOGGEDIN']) {
     }
     $mark_thread_read_url_template = phorum_get_url(PHORUM_READ_URL, '%thread_id%', "markthreadread", "list");
 
-    // the stuff needed by user
-    foreach($rows as $key => $row){
-        // Newflag for collapsed flat view or for sticky threads. For these,
-        // we only show the information for the thread starter. But we have
-        // to go through all the messages in the thread to see if any of
-        // them is new.
-        if (empty($row['moved']) && (!$PHORUM['threaded_list'] || $rows[$key]['sort'] == PHORUM_SORT_STICKY) &&
-            isset($row['meta']['message_ids']) && is_array($row['meta']['message_ids'])) {
+    // Add newflags to the messages for authenticated users.
+    if ($PHORUM['user']['user_id']) {
+        $mode = $PHORUM['threaded_list']
+              ? PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY
+              : PHORUM_NEWFLAGS_BY_THREAD;
+        $rows = phorum_api_newflags_format_messages($rows, $mode, FALSE);
+    }
 
-            foreach ($row['meta']['message_ids'] as $cur_id) {
-                if(!isset($PHORUM['user']['newinfo'][$cur_id]) && $cur_id > $PHORUM['user']['newinfo']['min_id']) {
-                    $rows[$key]["new"] = $PHORUM["DATA"]["LANG"]["newflag"];
-                    $rows[$key]["URL"]["MARKTHREADREAD"] = str_replace('%thread_id%',$row['thread'],$mark_thread_read_url_template);
-                    break;
-                }
-                // for users without min_id
-                if($min_id == 0 || $min_id > $cur_id) $min_id = $cur_id;
-            }
+    foreach ($rows as $key => $row)
+    {
+        if (isset($row['new'])) {
+            $rows[$key]["URL"]["MARKTHREADREAD"] = str_replace(
+                '%thread_id%', $row['thread'], $mark_thread_read_url_template
+            );
         }
-        // For other views, we have a line for each message. So here
-        // we only have to look at the message itself to decide whether
-        // it's new or not.
-        else {
-            if (empty($row['moved']) && !isset($PHORUM['user']['newinfo'][$row['message_id']]) && $row['message_id'] > $PHORUM['user']['newinfo']['min_id']) {
-                $rows[$key]["new"]=$PHORUM["DATA"]["LANG"]["newflag"];
-                $rows[$key]["URL"]["MARKTHREADREAD"] = str_replace('%thread_id%',$row['thread'],$mark_thread_read_url_template);
-            }
 
-            // for users without min_id
-            if($min_id == 0 || $min_id > $row['message_id']) $min_id = $row['message_id'];
-        }
 
         if($PHORUM["DATA"]["MODERATOR"]){
 
@@ -553,8 +530,6 @@ $recent_author_spec = array(
 // format messages
 $rows = phorum_format_messages($rows, array($recent_author_spec));
 
-//timing_mark('after formatting');
-
 // set up the data
 $PHORUM["DATA"]["MESSAGES"] = $rows;
 
@@ -584,15 +559,13 @@ if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
 }
 
 // updating new-info for first visit (last message on first page is first new)
-if ($PHORUM["DATA"]["LOGGEDIN"] && $PHORUM['user']['newinfo']['min_id'] == 0 && !isset($PHORUM['user']['newinfo'][$min_id]) && $min_id != 0){
+$newflags = phorum_api_newflags_by_forum($PHORUM['forum_id']);
+if ($PHORUM['user']['user_id'] &&
+    $newflags['min_id'] == 0 && !isset($newflags[$min_id]) && $min_id != 0) {
     // setting it as min-id
     // set it -1 as the comparison is "post newer than min_id"
     $min_id--;
-    phorum_db_newflag_add_read($min_id);
-    if($PHORUM['cache_newflags']) {
-        phorum_cache_remove('newflags',$newflagkey);
-        phorum_cache_remove('newflags_index',$newflagkey);
-    }
+    phorum_api_newflags_markread($min_id, PHORUM_MARKREAD_MESSAGES);
 }
 
 // include the correct template
@@ -603,8 +576,5 @@ if ($PHORUM["threaded_list"]){
 }
 
 phorum_output($template);
-
-//timing_mark('end');
-//timing_print();
 
 ?>
