@@ -81,6 +81,8 @@ initialize_get_url_handlers()
      PHORUM_ADDON_URL,             &basic_url, "addon",      FORUM_ID,    GET_VARS);
     register_url_handler(
      PHORUM_CUSTOM_URL,            &custom_url,"",           NO_FORUM_ID, GET_VARS);
+    register_url_handler(
+     PHORUM_OPENID_URL,            &basic_url, "openid",     NO_FORUM_ID, NO_GET_VARS);
 }
 
 /**
@@ -658,7 +660,7 @@ file_url(void *h, void *u, int argc, zval ***argv)
         if (Z_LVAL_P(z) > 0) file_url_uses_pathinfo = 1;
     }
 
-    /* If the file_url_uses_pathinfo option is disabled, then the file 
+    /* If the file_url_uses_pathinfo option is disabled, then the file
      * URL behaves exactly like the standard URL. */
     if (file_url_uses_pathinfo == 0) {
         default_url_build(h, u, argc, argv);
