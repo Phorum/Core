@@ -45,6 +45,12 @@
 
 if (!defined('PHORUM')) return;
 
+/**
+ * Requires
+ */
+require_once('./include/api/custom_fields.php');
+
+
 // {{{ Constant and variable definitions
 /**
  * If a user API is written as a replacement for the standard Phorum user API,
@@ -397,8 +403,6 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
 function phorum_api_user_save($user, $flags = 0)
 {
     global $PHORUM;
-
-    require_once('./include/api/custom_fields.php');
 
     // $user must be an array.
     if (!is_array($user)) {
@@ -876,8 +880,6 @@ function phorum_api_user_save_settings($settings)
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-
-    require_once('./include/api/custom_fields.php');
 
     if (!is_array($user_id)) {
         $user_ids = array($user_id);

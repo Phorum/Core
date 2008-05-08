@@ -77,6 +77,10 @@ $PHORUM['pm_xref_table']            = $prefix . '_pm_xref';
 $PHORUM['pm_buddies_table']         = $prefix . '_pm_buddies';
 $PHORUM['message_tracking_table']   = $prefix . '_messages_edittrack';
 
+// For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
+require_once("./include/api/custom_fields.php");
+
+
 /**
  * Message fields which are always strings, even if they contain numbers only.
  * Used in post-message and update-message, otherwise strange things happen.
@@ -3268,9 +3272,6 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         }
     }
 
-    // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
-    require_once("./include/api/custom_fields.php");
-
     // Retrieve custom user profile fields for the requested users.
     $custom_fields = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -3791,8 +3792,6 @@ function phorum_db_user_save($userdata)
     // Update custom user fields for the user.
     if (isset($custom_profile_data))
     {
-        // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
-        require_once("./include/api/custom_fields.php");
 
         // Insert new custom profile fields.
         foreach ($custom_profile_data as $key => $val)
@@ -4233,8 +4232,6 @@ function phorum_db_user_delete($user_id)
         );
     }
 
-    // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
-    require_once("./include/api/custom_fields.php");
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -6783,9 +6780,6 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
 
     $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*');
 
-    // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
-    require_once("./include/api/custom_fields.php");
-
     // Construct the required "WHERE" clause.
     $clauses = array();
     foreach ($field_id as $key => $id) {
@@ -6813,6 +6807,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
         // query results to only one record.
         $limit = $return_array ? '' : 'LIMIT 1';
     }
+
 
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
@@ -7571,7 +7566,7 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    $ext = "mysqli";
 } elseif (function_exists('mysql_connect')) {
    $ext = "mysql";
-   
+
    // build the right hostname for the mysql extension
    // not having separate args for port and socket
    if(!empty($PHORUM['DBCONFIG']['socket'])) {
