@@ -80,7 +80,9 @@ initialize_get_url_handlers()
     register_url_handler(
      PHORUM_ADDON_URL,             &basic_url, "addon",      FORUM_ID,    GET_VARS);
     register_url_handler(
-     PHORUM_CUSTOM_URL,            &custom_url,"",           NO_FORUM_ID, GET_VARS);
+     PHORUM_CUSTOM_URL,            &custom_url, "",          NO_FORUM_ID, GET_VARS);
+    register_url_handler(
+     PHORUM_AJAX_URL,              &basic_url, "ajax",       NO_FORUM_ID, NO_GET_VARS);
 }
 
 /**

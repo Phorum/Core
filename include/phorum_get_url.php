@@ -47,6 +47,7 @@ $PHORUM["url_patterns"] = array(
     PHORUM_SEARCH_URL               => array("search",     PHORUM_URL_ADD_FORUM_ID,  true),
     PHORUM_SUBSCRIBE_URL            => array("subscribe",  PHORUM_URL_ADD_FORUM_ID,  true),
     PHORUM_ADDON_URL                => array("addon",      PHORUM_URL_ADD_FORUM_ID,  true),
+    PHORUM_AJAX_URL                 => array("ajax",       PHORUM_URL_NO_FORUM_ID,   false),
 );
 
 
