@@ -1,5 +1,5 @@
 # Can be overridden using:
-# make TPLSET=.....
+# make TEMPLATE=.....
 TEMPLATE=default
 
 all:
