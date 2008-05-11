@@ -13,9 +13,9 @@ ARGUMENTS
 
 EXAMPLE JSON REQUESTS
 
-    { "function": "helloworld" }
+    { "call": "helloworld" }
 
-    { "function": "helloworld",
+    { "call": "helloworld",
       "who": "John Doe" }
 
 RETURN VALUE

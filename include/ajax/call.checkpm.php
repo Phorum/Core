@@ -10,25 +10,25 @@ ARGUMENTS
 
         The user_id of the user to check for. If this user_id is
         not provided, the user_id of the logged in user will be
-        used instead. If no user is logged in, the function will
+        used instead. If no user is logged in, the call will
         return zero by default.
 
 EXAMPLE JSON REQUESTS
 
-    { "function": "checkpm" }
+    { "call": "checkpm" }
 
-    { "function": "checkpm",
+    { "call": "checkpm",
       "user_id": 1234 }
 
 RETURN VALUE
 
-    The function will return zero if there are no unread private
-    messages or if no user_id is known. The function will return
+    The call will return zero if there are no unread private
+    messages or if no user_id is known. The call will return
     one if there are unread private messages.
 
 ERRORS
 
-    The function will return an error if the user_id is not in the
+    The call will return an error if the user_id is not in the
     right format.
 
 AUTHOR
