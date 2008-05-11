@@ -10,158 +10,213 @@
      <emphasis role="bold"> Phorum Title:</emphasis>
      Enter the title of your forum here. This will be displayed on
      the index page of your forum.
-     </para>
-     <para>
+   </para>
+   <para>
      <emphasis role="bold"> Phorum Description:</emphasis> A description of
      your forum. This will be displayed on the index page of your forum.
      This is also useful from a Search Engine Optimization perspective.
-     </para>
-     <para>
-     <emphasis role="bold">DNS Lookups:</emphasis> If enabled, this instructs
-     forum to perform a DNS lookup on certain items, such as:
+   </para>
+   <para>
+     <emphasis role="bold">DNS Lookups:</emphasis>
+     If enabled, this instructs forum to perform a DNS lookup on certain
+     items, such as:
      <itemizedlist>
-     <listitem><para>logging the hostname from which a message was posted, instead
-     of the plain IP address;</para></listitem>
-     <listitem><para> being able to create IP ban items based on host and domain names;
-     </para></listitem>
-     <listitem><para>checking the email address that is for user registrations.</para></listitem>
+       <listitem><para>
+         logging the hostname from which a message was posted, instead
+         of the plain IP address;
+       </para></listitem>
+       <listitem><para>
+         being able to create IP ban items based on host and domain names;
+       </para></listitem>
+       <listitem><para>
+         checking the email address that is for user registrations.
+       </para></listitem>
      </itemizedlist>
-     Generally this is a useful function for an administrator, and should be left enabled.
-     However, if Phorum keeps reporting illegal email addresses during signup or if you are
-     suffering from massive delays during posting messages, then there might
-     be DNS problems on your server. In that case, disable DNS lookups as a work around.
-     </para>
-     <para>
-     <emphasis role="bold">Hide Forums:</emphasis> If this is enabled, forums which a user does
+     Generally this is a useful function for an administrator, and should
+     be left enabled. However, if Phorum keeps reporting illegal email
+     addresses during signup or if you are suffering from massive delays
+     during posting messages, then there might be DNS problems on your
+     server. In that case, disable DNS lookups as a work around.
+   </para>
+   <para>
+     <emphasis role="bold">Hide Forums:</emphasis>
+     If this is enabled, forums which a user does
      not have the permissions to read will be hidden from them.
+   </para>
+   <para>
+     <emphasis role="bold"> Show New Count in Forum List:</emphasis>
+     This feature will show registered users how many new messages and
+     threads there are in each forum on the forum list page. If you have
+     a large number of posts, a large number of forums, a large number
+     of users or some combination of the three, this setting could cause
+     some performance issues. If you see performance issues, try setting
+     it "No count, indicator only" or "No"
+   </para>
+   <para>
+     <emphasis role="bold">Folder/Forum Display Style:</emphasis>
+     Since version 3, Phorum has included folders.
+     Until version 5.1, forums inside folders did not show until you
+     clicked on the folder. In 5.1, the list of forums in a folder can
+     now be shown under that folder in the forum list. This allows admins
+     to organize a large list of forums all on one page.
      </para>
      <para>
-     <emphasis role="bold"> Show New Count in Forum List:</emphasis> This feature will show
-     registered users how many new messages and threads there are in each forum on the forum
-     list page. If you have a large number of posts, a large number of forums, a large number
-     of users or some combination of the three, this setting could cause some performance issues.
-     If you see performance issues, try setting it "No count, indicator only" or "No"
-     </para>
-     <para>
-     <emphasis role="bold">Folder/Forum Display Style:</emphasis> Since version 3, Phorum has included folders.
-     Until version 5.1, forums inside folders did not show until you clicked on the folder. In 5.1, the list of
-     forums in a folder can now be shown under that folder in the forum list. This allows admins to organize a
-     large list of forums all on one page.
-     </para>
-     <para>
-     <emphasis role="bold">Enable Moderator Notifications:</emphasis> By setting this to Yes, Phorum will display
-     a notice to the various kinds of moderators when they have a new item that requires their attention. For
-     example, if this setting is enabled, moderators will see a notice whenever there is an unapproved message.
-     </para>
-     <para>
-     <emphasis role="bold">User Post Edit Time Limit:</emphasis>If set to a value larger then 0, this acts as a
-     time limit for post editing. Users will only be able to edit their own posts within this time limit. This
-     only applies if a user has the necessary permissions to edit their post, and does not affect moderators.
-     </para>
-     <para>
-     <emphasis role="bold">Track Edit Changes:</emphasis> When enabled, the changes made to a message will be stored
+     <emphasis role="bold">Enable Moderator Notifications:</emphasis>
+     By setting this to Yes, Phorum will display a notice to the various
+     kinds of moderators when they have a new item that requires their
+     attention. For example, if this setting is enabled, moderators
+     will see a notice whenever there is an unapproved message.
+   </para>
+   <para>
+     <emphasis role="bold">User Post Edit Time Limit:</emphasis>
+     If set to a value larger then 0, this acts as a time limit for post
+     editing. Users will only be able to edit their own posts within
+     this time limit. This only applies if a user has the necessary
+     permissions to edit their post, and does not affect moderators.
+   </para>
+   <para>
+     <emphasis role="bold">Track Edit Changes:</emphasis>
+     When enabled, the changes made to a message will be stored
      and viewed by users. It can optionaly only be viewed by moderators.
-     </para>
-     <para>
-     <emphasis role="bold">Reply form appears:</emphasis> This setting specifies where the reply form for threads is
+   </para>
+   <para>
+     <emphasis role="bold">Reply form appears:</emphasis>
+     This setting specifies where the reply form for threads is
      displayed, either on the read page or on a separate page.
-     </para>
-     <para>
-     <emphasis role="bold">After posting goto:</emphasis> This setting specifies where the user is redirected after
+   </para>
+   <para>
+     <emphasis role="bold">After posting goto:</emphasis>
+     This setting specifies where the user is redirected after
      posting, either to the message read page or the message list.
-     </para>
-     <para>
-     <emphasis role="bold">After submitting a search query:</emphasis> On large forums or slow servers, searching
-     for messages might take a little while. To prevent users from submitting the same search query over and over
-     again (in case they think the search didn't work, because they didn't get their results fast enough), you can
-     show an intermediate page, telling the user that the search is running. If your system can deliver search results
-     quickly enough, then you can skip the intermediate page and go directly to the search results page.
-     </para>
-     <para>
-     <emphasis role="bold">Database error handling:</emphasis> This setting determines how Phorum handles database errors.
-     The default is to show the errors on screen. "Errors will go to a logfile" is useful if you don't want your users to
-     see the errors, and "Errors will be emailed" is useful if you want immediate notification of any database errors on
-     your forums.
-     </para>
-     <para>
-     <emphasis role="bold">Secret private key for signing data:</emphasis> On several occasions, data is transferred from
-     the Phorum system to the user's system and back again. To be sure that there was no tampering with this data on the
-     way, it is signed by Phorum using this secret key. If you do not understand what this is for, then it is safe to
-     simply keep the pre-configured value.
+   </para>
+   <para>
+     <emphasis role="bold">After submitting a search query:</emphasis>
+     On large forums or slow servers, searching for messages might take a
+     little while. To prevent users from submitting the same search
+     query over and over again (in case they think the search didn't work,
+     because they didn't get their results fast enough), you can show an
+     intermediate page, telling the user that the search is running.
+     If your system can deliver search results quickly enough, then you can
+     skip the intermediate page and go directly to the search results page.
+   </para>
+   <para>
+     <emphasis role="bold">Database error handling:</emphasis>
+     This setting determines how Phorum handles database errors. The default
+     is to show the errors on screen. "Errors will go to a logfile" is useful
+     if you don't want your users to see the errors, and "Errors will be
+     emailed" is useful if you want immediate notification of any database
+     errors on your forums.
+   </para>
+   <para>
+     <emphasis role="bold">Secret private key for signing data:</emphasis>
+     On several occasions, data is transferred from the Phorum system to
+     the user's system and back again. To be sure that there was no
+     tampering with this data on the way, it is signed by Phorum using
+     this secret key. If you do not understand what this is for, then
+     it is safe to simply keep the pre-configured value.
      <sbr />
-     <important>If you change this key, users who are active right now might experience problems.</important>
-     </para>
-     <para>
-     <emphasis role="bold">Allow Linking to Uploaded Files:</emphasis> You may not want to allow other web sites to link
-     to files that users have uploaded to your forums. If not, then set this option to "Only from the forum". If you want
-     to use links on other parts of your web site, then use "From this web site". If you want to allow other websites to
-     link to your forum file uploads, then select "From any web site".
-     </para>
-     <para>
-     If your needs are more specific than this (e.g. if you want to allow access from a specific group of web sites), you 
-     will need to use your web server's security features to accomplish this. Apache users can reference Prevent "Image 
-     Theft" at <ulink url="http://httpd.apache.org/docs/env.html#examples">http://httpd.apache.org/docs/env.html#examples.
-     </ulink>Users of the cPanel system can also configure this through the "Hotlink Protection" feature.
-     </para>
-     <para>
-     <emphasis role="bold">Put file name in pathinfo for file download URLs:</emphasis> All Phorum file downloads (for
-     user files and forum message attachments) run through the file.php script. As a result, users who right-click a
-     file URL and choose "Save link as .." will end up in their browser with file.php as the default file name. With
-     this option enabled however, Phorum will try to give the browser a real file name instead. This is done by putting
-     the file name in the URL as pathinfo (which makes the download link look like /file.php/downloadfile.ext?1,2,file=3).
-     </para>
-     <para>
-     The webserver needs to support the use of pathinfo for this feature to work. So if you are unable to download files
-     after enabling this option, your webserver probably lacks pathinfo support and you cannot use this feature.
-     </para>
-     <para>
-     <emphasis role="bold">Phorum PHP extension support:</emphasis> For very busy Phorum web sites, a special PHP 
-     extension can be installed for speeding up some time and memory consuming Phorum tasks. This extension needs to
-     be installed in the global PHP extensions directory (/usr/lib/php/modules), so you either need to be the system 
-     administrator yourself or have to get help from a willing administrator.
-     </para>
-     <para>
-     The extension source can be found in the directory "extension_src" in the Phorum package. See the README file in
-     that directory for compilation and installation instructions.
-     </para>
-     <para>
-     If the extension is successfully installed, then you will see a green square in the option line. If you see a red 
-     square, then there is no use in enabling this option, because Phorum was unable to detect a working extension in 
-     that case.
-     </para>
-     <para>
-     Most people can keep this option set to disabled.
-     </para>
-   
+     <important>
+       If you change this key, users who are active right now might
+       experience problems.
+     </important>
+   </para>
+   <para>
+     <emphasis role="bold">Allow Linking to Uploaded Files:</emphasis>
+     You may not want to allow other web sites to link to files that users
+     have uploaded to your forums. If not, then set this option to
+     "Only from the forum". If you want to use links on other parts
+     of your web site, then use "From this web site". If you want to
+     allow other websites to link to your forum file uploads, then select
+     "From any web site".
+   </para>
+   <para>
+     If your needs are more specific than this (e.g. if you want to allow
+     access from a specific group of web sites), you will need to use your
+     web server's security features to accomplish this. Apache users can
+     reference Prevent "Image Theft" at
+     <ulink url="http://httpd.apache.org/docs/env.html#examples">http://httpd.apache.org/docs/env.html#examples</ulink>.
+     Users of the cPanel system can also configure this through the
+     "Hotlink Protection" feature.
+   </para>
+   <para>
+     <emphasis role="bold">Put file name in pathinfo for file download URLs:</emphasis>
+     All Phorum file downloads (for user files and forum message attachments)
+     run through the file.php script. As a result, users who right-click a
+     file URL and choose "Save link as .." will end up in their browser with
+     file.php as the default file name. With this option enabled however,
+     Phorum will try to give the browser a real file name instead. This is
+     done by putting the file name in the URL as pathinfo (which makes the
+     download link look like
+     <filename>/file.php/downloadfile.ext?1,2,file=3</filename>).
+   </para>
+   <para>
+     The webserver needs to support the use of pathinfo for this feature to
+     work. So if you are unable to download files after enabling this option,
+     your webserver probably lacks pathinfo support and you cannot use
+     this feature.
+   </para>
+   <para>
+     <emphasis role="bold">Phorum PHP extension support:</emphasis>
+     For very busy Phorum web sites, a special PHP extension can be installed
+     for speeding up some time and memory consuming Phorum tasks. This
+     extension needs to be installed in the global PHP extensions directory
+     (<filename>/usr/lib/php/modules</filename>), so you either need to be
+     the system administrator yourself or have to get help from a willing
+     administrator.
+   </para>
+   <para>
+     The extension source can be found in the directory "extension_src" in
+     the Phorum package. See the README file in that directory for
+     compilation and installation instructions.
+   </para>
+   <para>
+     If the extension is successfully installed, then you will see a green
+     square in the option line. If you see a red square, then there is no
+     use in enabling this option, because Phorum was unable to detect a
+     working extension in that case.
+   </para>
+   <para>
+   Most people can keep this option set to disabled.
+   </para>
 
    <section id="features.settings.general.html">
     <title>HTML Settings</title>
      <para>
-     <emphasis role="bold">Phorum HTML Title:</emphasis> This can be used to set the title of your Phorum. Equivalent to changing 
-     the HTML title tag.
+       <emphasis role="bold">Phorum HTML Title:</emphasis>
+       This can be used to set the title of your Phorum. Equivalent to
+       changing the HTML title tag.
      </para>
      <para>
-     <emphasis role="bold">Phorum Head Tags:</emphasis> This option can be used to provide additional HTML code that will be 
-     added to the head section of the pages. This could for example be used for adding meta keywords.
+       <emphasis role="bold">Phorum Head Tags:</emphasis>
+       This option can be used to provide additional HTML code that will
+       be added to the head section of the pages. This could for example
+       be used for adding meta keywords.
      </para>
      <para>
-     <emphasis role="bold">Show and allow feed links:</emphasis> A feed is a standardized format for providing information about 
-     new content on a web site. Various programs can be used to process and read feed information (e.g. specialized "feed readers",
-     Firefox, Google's on line feed reader, Thunderbird mail). If you enable this feature, then your visitors will be able to subscribe to
-     feeds for your forums.
+       <emphasis role="bold">Show and allow feed links:</emphasis>
+       A feed is a standardized format for providing information about
+       new content on a web site. Various programs can be used to process
+       and read feed information (e.g. specialized "feed readers",
+       Firefox, Google's on line feed reader, Thunderbird mail). If you
+       enable this feature, then your visitors will be able to subscribe to
+       feeds for your forums.
      </para>
      <para>
-     Note that feed readers will automatically poll for feed updates using a client side defined time interval, so with a lot of active 
-     feed subscriptions, the number of requests to your web server will rise. Phorum uses server side caching of the feed data to keep 
-     the server load that is required for supporting feeds to a minimum.
+       Note that feed readers will automatically poll for feed updates using
+       a client side defined time interval, so with a lot of active feed
+       subscriptions, the number of requests to your web server will rise.
+       Phorum uses server side caching of the feed data to keep the server
+       load that is required for supporting feeds to a minimum.
      </para>
      <para>
-     <emphasis role="bold">Default feed type:</emphasis> There are multiple standards for providing content feeds. Phorum supports RSS 
-     and ATOM, which are the most widely spread XML based feed formats.
-     <sbr />
-     If you are unsure what to use, then select "RSS".
+       <emphasis role="bold">Default feed type:</emphasis>
+       There are multiple standards for providing content feeds. Phorum
+       supports RSS and ATOM, which are the most widely spread XML based
+       feed formats.
+       <sbr />
+       If you are unsure what to use, then select "RSS".
      </para>
-    </section>   
+    </section>
    </section>
   </section>
 
