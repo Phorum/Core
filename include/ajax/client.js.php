@@ -5,18 +5,21 @@ header('Cache-control: must-revalidate');
 header('Pragma: cache');
 ?>
 
-Phorum.Ajax =
-{
-    // The version of this lib
-    'version': 1.0.0,
+// We might use this in the future for the core Phorum javascript code.
+// At time of writing, this one is not available.
+if (!document.Phorum) Phorum = {};
 
-    // The URL that we use to access the Phorum Ajax layer.
-    'URL': '<?php print addslashes(phorum_get_url(PHORUM_AJAX_URL))?>',
+Phorum.Ajax = {};
 
-    // Storage for Ajax call return data. This acts as a local cache
-    // for keeping track of already retrieved items.
-    'cache' = new Array(),
-};
+// The version of this lib
+Phorum.Ajax.version = '1.0.0';
+
+// The URL that we use to access the Phorum Ajax layer.
+Phorum.Ajax.URL = '<?php print addslashes(phorum_get_url(PHORUM_AJAX_URL))?>';
+
+// Storage for Ajax call return data. This acts as a local cache
+// for keeping track of already retrieved items.
+Phorum.Ajax.cache = {};
 
 /**
  * Create an XMLHttpRequest object.
@@ -39,8 +42,9 @@ Phorum.Ajax.getXMLHttpRequest = function(req)
             'MSXML2.XMLHttp',
             'Microsoft.XMLHttp'
         ];
-        for (var i=0; i < versions.length; i++)
-          try { xhr = new ActiveXObject(versions[i]); } catch (e) { }
+        for (var i=0; i < versions.length; i++) {
+            try { xhr = new ActiveXObject(versions[i]); } catch (e) { }
+        }
     }
 
     if (xhr) {
@@ -49,7 +53,7 @@ Phorum.Ajax.getXMLHttpRequest = function(req)
     }
 
     if (req.onFailure) req.onFailure(
-        "Phorum: Unable to create an XMLHttpRequest object"
+        'Phorum: Unable to create an XMLHttpRequest object'
     );
     return null;
 }
@@ -76,7 +80,8 @@ Phorum.Ajax.call = function(req)
     if (! req['call']) {
         if (req.onFailure) req.onFailure(
             'Phorum.Ajax.call() error: missing property ' +
-            '"call" for the request object.");
+            '"call" for the request object.'
+        );
         return;
     }
 
@@ -194,6 +199,8 @@ Phorum.Ajax.evalJavaScript = function(data)
 // Based on byteson by Andrea Giammarchi
 // (http://www.devpro.it/byteson/)
 // ======================================================================
+
+Phorum.JSON = {};
 
 Phorum.JSON.common =
 {

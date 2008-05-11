@@ -49,7 +49,7 @@ function phorum_api_json_encode($var)
 // {{{ Function phorum_api_json_decode()
 function phorum_api_json_decode($var)
 {
-    return json_decode($var);
+    return json_decode($var, TRUE);
 }
 // }}}
 

@@ -37,6 +37,15 @@ if ($PHORUM['args'][0] == 'client') {
 }
 
 // ----------------------------------------------------------------------
+// Show examples page.
+// ----------------------------------------------------------------------
+
+if ($PHORUM['args'][0] == 'examples') {
+    include('./include/ajax/examples.php');
+    exit;
+}
+
+// ----------------------------------------------------------------------
 // Dispatch Ajax calls
 // ----------------------------------------------------------------------
 
@@ -83,7 +92,7 @@ $ajax_call = basename($PHORUM['ajax_args']['call']);
  * [availability]
  *     Phorum 5 >= 5.2.8
  *
- * * [description]
+ * [description]
  *     This hook allows module writers to implement calls for the
  *     Phorum Ajax layer.<sbr/>
  *     <sbr/>
@@ -94,7 +103,7 @@ $ajax_call = basename($PHORUM['ajax_args']['call']);
  *     <sbr/>
  *     A call implementation should always be using
  *     the provided functions <literal>phorum_ajax_return()</literal>
- *     and <litera>phorum_ajax_error()</literal> to return data to the
+ *     and <literal>phorum_ajax_error()</literal> to return data to the
  *     client. Because these functions will call <literal>exit</literal>
  *     after they are done, hook functions that implement an Ajax call stop
  *     page execution and do not return like other hook functions.
@@ -208,11 +217,12 @@ function phorum_ajax_return($data)
  *     The name of the argument to retrieve.
  *
  * @param mixed $type
+ *
  *     The type of data to retrieve. Options are: "int", "int>0", "string",
- *     "format", "boolean". These types can be prefixed with "array:" to
- *     indicate that an array of those types has to be returned. If the input
- *     argument is not an array in this case, then this function will convert
- *     it to a single item array.
+ *     "boolean". These types can be prefixed with "array:" to indicate
+ *     that an array of those types has to be returned. If the input
+ *     argument is not an array in this case, then this function will
+ *     convert it to a single item array.
  *
  *     The type can also be NULL, in which case the argument is not checked
  *     at all. This is useful for more complex data types, which need to be
@@ -256,10 +266,13 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
     if (!is_array($value)) $value = array(0 => $value);
 
     // Check the argument's data type.
-    switch ($type) {
+    switch ($type)
+    {
         case 'string':
             break;
+
         case 'int>0':
+
         case 'int':
             foreach ($value as $k => $v) {
                 if (!preg_match('/^[-+]?\d+$/', $v)) phorum_ajax_error(
@@ -272,6 +285,7 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
                     ", larger than zero");
             }
             break;
+
         case 'boolean':
             foreach ($value as $k => $v) {
                 $val = strtolower($v);
@@ -285,16 +299,7 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
                     " (0, 1, \"yes\", \"no\", \"true\" or \"false\")");
             }
             break;
-        case 'format':
-            foreach ($value as $k => $v) {
-                $value[$k] = $v = strtolower($v);
-                if (!preg_match('/^(html|stripped|text|collapsed)$/', $v))
-                  phorum_ajax_error(
-                    "illegal argument: argument \"$arg\" must contain " .
-                    ($array ? "only format values" : "a format value") .
-                    " (\"html\", \"text\" or \"collapsed\")");
-            }
-            break;
+
         default:
             phorum_ajax_error("Internal error: illegal argument type: " .
                        ($array ? "array:" : "") . $type);
