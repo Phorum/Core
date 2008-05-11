@@ -345,6 +345,10 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         $markread = array();
         foreach ($threads as $thread)
         {
+            // In case this was no thread or broken thread data.
+            if ($thread['parent'] != 0 ||
+                empty($thread['meta']['message_ids'])) continue;
+
             // Fetch the user's newflags for the thread's forum, so we
             // can limit the messages to mark read to the actual unread
             // messages in the thread.
