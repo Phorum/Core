@@ -1,10 +1,10 @@
 <chapter id="features.main">
   <title>How to configure and use the Phorum Features</title>
 
-<section id="features.main.settings">
+<section id="features.settings">
 <title>Phorum Settings</title>
 
-<section id="features.main.settings.general">
+<section id="features.settings.general">
    <title>General Settings</title>
     <para>
      <emphasis role="bold"> Phorum Title:</emphasis>
