@@ -50,7 +50,7 @@
   <section>
     <title>
       What are sticky topics?
-    </title> 
+    </title>
     <para>
       Sticky topics (a.k.a. "stickies") are topics that stay at the top of
       the forum they are posted in and do not get bumped down as new topics
@@ -77,15 +77,17 @@
   </section>
 
   <section>
-  <title>
-  How do I stop spammers from signing up and posting on my forum?
-  </title>
-  <para>
-  From Phorum 5.2 onwards, the comprehensive Spam Hurdles module is included, which includes
-  a number of spam prevention tools, including CAPTCHA (Completely Automated Public Turing test
-  to tell Computers and Humans Apart). For more information on this and other modules, have a look
-  at the <ulink url="../admin/index.html"> Administrator Manual</ulink>.
-  </para>
+    <title>
+      How do I stop spammers from signing up and posting on my forum?
+    </title>
+    <para>
+      From Phorum 5.2 onwards, the comprehensive Spam Hurdles module is
+      included, which includes a number of spam prevention tools,
+      including CAPTCHA (Completely Automated Public Turing test
+      to tell Computers and Humans Apart). For more information on
+      this and other modules, have a look at the
+      <ulink url="../admin/index.html"> Administrator Manual</ulink>.
+    </para>
   </section>
 
 </chapter>
