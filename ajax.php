@@ -172,11 +172,10 @@ phorum_ajax_error('Unknown call "'.$ajax_call.'" in Ajax POST request');
  */
 function phorum_ajax_error($message)
 {
-    $message = preg_replace('/[\r\n]+/', '', $message);
     $message = phorum_api_json_convert_to_utf8($message);
 
-    header("HTTP/1.1 500 $message");
-    header("Status: 500 $message");
+    header("HTTP/1.1 500 Phorum Ajax error");
+    header("Status: 500 Phorum Ajax error");
     header("Content-Type: text/plain; charset=UTF-8");
     print $message;
     exit(1);
