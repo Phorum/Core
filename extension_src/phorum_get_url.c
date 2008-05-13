@@ -82,6 +82,8 @@ initialize_get_url_handlers()
     register_url_handler(
      PHORUM_CUSTOM_URL,            &custom_url,"",           NO_FORUM_ID, GET_VARS);
     register_url_handler(
+     PHORUM_AJAX_URL,              &basic_url,"",            NO_FORUM_ID, NO_GET_VARS);
+    register_url_handler(
      PHORUM_OPENID_URL,            &basic_url, "openid",     NO_FORUM_ID, NO_GET_VARS);
 }
 

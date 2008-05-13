@@ -214,7 +214,8 @@ define("PHORUM_CHANGES_URL", 32);
 define("PHORUM_CSS_URL", 33);
 define("PHORUM_POSTING_ACTION_URL", 34);
 define("PHORUM_JAVASCRIPT_URL", 35);
-define("PHORUM_OPENID_URL", 36);
+define("PHORUM_AJAX_URL", 36);
+define("PHORUM_OPENID_URL", 37);
 
 // constants below here do not have to have a constant value,
 // as long as each is unique.  They are used for enumeration.
