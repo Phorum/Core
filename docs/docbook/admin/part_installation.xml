@@ -7,8 +7,8 @@
       Requirement for running Phorum are:
       <itemizedlist>
         <listitem>A webserver (like Apache or Microsoft IIS);</listitem>
-        <listitem>PHP, version 4.3.0 or above;</listitem>
-        <listitem>A MySQL server, version 4.0.18 or above.</listitem>
+        <listitem>PHP, version 5.2 or above;</listitem>
+        <listitem>A MySQL server, version 5.0 or above.</listitem>
       </itemizedlist>
       If you do not run your own website, but have hosted your website
       with a hosting provider, then please ask your hosting provider if
