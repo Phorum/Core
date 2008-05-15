@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2008-05-15 v2.0.4
+
+   - Made the tag and argument name parsing case insensitive, to match
+     the old BBcode module behavior.
+
 2008-05-08 v2.0.3
 
    - Fixes for making upgrades and fresh installations work smoother
