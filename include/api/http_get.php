@@ -304,7 +304,38 @@ function phorum_api_http_get($url, $method = NULL)
             }
 
             // If we got the data, we can return it.
-            if ($code == 200) {
+            if ($code == 200)
+            {
+                // Check if we need to handle chunked transfers
+                // (see RFC 2616, section 3.6.1: Chunked Transfer Coding).
+                if (preg_match('/^Transfer-Encoding:\s*chunked\s*$/m',$header))
+                {
+                    $unchunked = '';
+                    for(;;)
+                    {
+                        // Check if there is another chunk.
+                        // There should be, but let's protect against
+                        // bad chunked data.
+                        if (strstr($body, "\r\n") === FALSE) break;
+
+                        // Get the size of the next chunk.
+                        list ($sz,$rest) = explode("\r\n", $body, 2);
+                        $sz = preg_replace('/;.*$/', '', $sz);
+                        $sz = hexdec($sz);
+
+                        // Size 0 indicates end of body data.
+                        if ($sz == 0) break;
+
+                        // Add the chunk to the unchunked body data.
+                        $unchunked .= substr($rest, 0, $sz);
+                        $body = substr($rest, $sz + 2); // +2 = skip \r\n
+                    }
+
+                    // Return the unchunked body content.
+                    return $unchunked;
+                }
+
+                // Return the body content.
                 return $body;
             }
 
