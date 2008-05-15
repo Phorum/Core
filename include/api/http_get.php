@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2008  Phorum Development Team                              //
+//   Copyright (C) 2007  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -23,11 +23,11 @@
  *
  * @package    PhorumAPI
  * @subpackage Tools
- * @copyright  2008, Phorum Development Team
+ * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined("PHORUM")) return;
+if (!defined('PHORUM')) return;
 
 /**
  * This function can be used to retrieve data from a URL using
@@ -53,7 +53,7 @@ if (!defined("PHORUM")) return;
  * @return string $data
  *     The data that was loaded from the URL or NULL if an error occurred.
  *     The function {@link phorum_api_strerror()} can be used to retrieve
- *     information about the error that occurred.
+ *     information about the error which occurred.
  */
 function phorum_api_http_get($url, $method = NULL)
 {
@@ -304,7 +304,38 @@ function phorum_api_http_get($url, $method = NULL)
             }
 
             // If we got the data, we can return it.
-            if ($code == 200) {
+            if ($code == 200)
+            {
+                // Check if we need to handle chunked transfers
+                // (see RFC 2616, section 3.6.1: Chunked Transfer Coding).
+                if (preg_match('/^Transfer-Encoding:\s*chunked\s*$/m',$header))
+                {
+                    $unchunked = '';
+                    for(;;)
+                    {
+                        // Check if there is another chunk.
+                        // There should be, but let's protect against
+                        // bad chunked data.
+                        if (strstr($body, "\r\n") === FALSE) break;
+
+                        // Get the size of the next chunk.
+                        list ($sz,$rest) = explode("\r\n", $body, 2);
+                        $sz = preg_replace('/;.*$/', '', $sz);
+                        $sz = hexdec($sz);
+
+                        // Size 0 indicates end of body data.
+                        if ($sz == 0) break;
+
+                        // Add the chunk to the unchunked body data.
+                        $unchunked .= substr($rest, 0, $sz);
+                        $body = substr($rest, $sz + 2); // +2 = skip \r\n
+                    }
+
+                    // Return the unchunked body content.
+                    return $unchunked;
+                }
+
+                // Return the body content.
                 return $body;
             }
 
