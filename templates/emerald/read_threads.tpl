@@ -109,7 +109,7 @@
     {/IF}
 
     {IF URL->MARKTHREADREAD}
-        <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
+        <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}" onclick="return Phorum.UI.markread('threads', {TOPIC->thread})">{LANG->MarkThreadRead}</a>
     {/IF}
     {IF TOPIC->URL->FOLLOW}
         <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
@@ -180,7 +180,7 @@
     <tr>
         <td width="65%" class="message-subject-threaded {altclass}">
             <h4 style="padding-left: {MESSAGES->indent_cnt}px;">
-                <img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" title="{title}" />
+                <img src="{URL->TEMPLATE}/images/{icon}.png" class="new-flag-icon-{MESSAGES->forum_id}-{MESSAGES->thread}{IF MESSAGES->sort PHORUM_SORT_STICKY}sticky{/IF} icon1616" alt="{alt}" title="{title}" />
                 <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
                 {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" class="icon1616" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
             </h4>

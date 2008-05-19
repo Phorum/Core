@@ -34,11 +34,10 @@ if ($PHORUM['DATA']['CHARSET']) {
   <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
 {/IF}
 
-{! Load Javascript code. This code origins from modules that add their code }
-{! using the "javascript_register" module hook. }
-{IF URL->JAVASCRIPT}
-  <script type="text/javascript" src="{URL->JAVASCRIPT}"></script>
-{/IF}
+{! Load Javascript code. This code origins from core Phorum javascript }
+{! code, template javascript code (templates/.../javascript.tpl) and }
+{! modules that add their code using the "javascript_register" module hook. }
+<script type="text/javascript" src="{URL->JAVASCRIPT}"></script>
 
 {! Add links to the available RSS feeds. }
 {IF FEEDS}

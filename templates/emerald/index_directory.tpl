@@ -26,21 +26,25 @@
         {LOOP FORUMS}
             <tr>
                 <td width="55%">
-                    <h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>{IF FORUMS->new_message_check}&nbsp;&nbsp;<span class="new-indicator">({LANG->NewMessages})</span>{/IF}</h3>
+                    <h3><a href="{FORUMS->URL->LIST}">{FORUMS->name}</a>{IF FORUMS->new_message_check}<span class="new-flag-{FORUMS->forum_id}">&nbsp;&nbsp;<span class="new-indicator">({LANG->NewMessages})</span></span>{/IF}</h3>
                     <p>{FORUMS->description}</p>
-                    {IF FORUMS->URL->MARK_READ}<a class="icon icon-tag-green" href="{FORUMS->URL->MARK_READ}">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
+                    {IF FORUMS->URL->MARK_READ}<a class="icon icon-tag-green" href="{FORUMS->URL->MARK_READ}" onclick="return Phorum.UI.markread('forums', {FORUMS->forum_id})">{LANG->MarkForumRead}</a>&nbsp;&nbsp;&nbsp;{/IF}
                     {IF FORUMS->URL->FEED}<a class="icon icon-feed" href="{FORUMS->URL->FEED}">{FEED}</a>{/IF}
                 </td>
                 <td width="12%" nowrap="nowrap" align="center">
                     {FORUMS->thread_count}
                     {IF FORUMS->new_threads}
+                      <span class="new-flag-{FORUMS->forum_id}">
                         (<span class="new-flag">{FORUMS->new_threads} {LANG->newflag}</span>)
+                      </span>
                     {/IF}
                 </td>
                 <td width="12%" nowrap="nowrap" align="center">
                     {FORUMS->message_count}
                     {IF FORUMS->new_messages}
+                      <span class="new-flag-{FORUMS->forum_id}">
                         (<span class="new-flag">{FORUMS->new_messages} {LANG->newflag}</span>)
+                      </span>
                     {/IF}
                 </td>
                 <td width="21%" nowrap="nowrap">{FORUMS->last_post}</td>
