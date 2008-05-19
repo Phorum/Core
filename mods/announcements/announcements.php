@@ -139,9 +139,8 @@ function phorum_setup_announcements ()
 
     // A hook for module writers for doing post formatting fixups.
     if (isset($PHORUM["hooks"]["format_fixup"]))
-        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format_fixup", $PHORUM["DATA"]["ANNOUNCEMENTS"]);        
-        
-        
+        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format_fixup", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
+
     // Build the announcements code.
     ob_start();
     include phorum_get_template("announcements::announcements");
@@ -159,6 +158,17 @@ function phorum_mod_announcements_css_register($data)
     );
     return $data;
 }
+
+// Register the additional JavaScript code for this module.
+function phorum_mod_announcements_javascript_register($data)
+{
+    $data[] = array(
+        "module" => "announcements",
+        "source" => "template(announcements::javascript)"
+    );
+    return $data;
+}
+
 
 function phorum_show_announcements ()
 {

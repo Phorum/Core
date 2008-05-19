@@ -3,6 +3,7 @@ desc:  Shows topics from one forum as announcements in a variety of ways.
 author: Phorum Dev Team
 url: http://www.phorum.org/
 
-hook:  after_header|phorum_show_announcements
-hook:  common|phorum_setup_announcements
-hook:  css_register|phorum_mod_announcements_css_register
+hook: after_header|phorum_show_announcements
+hook: common|phorum_setup_announcements
+hook: css_register|phorum_mod_announcements_css_register
+hook: javascript_register|phorum_mod_announcements_javascript_register
