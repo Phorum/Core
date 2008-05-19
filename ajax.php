@@ -31,7 +31,13 @@ require_once('./include/api/json.php');
 // Client JavaScript library
 // ----------------------------------------------------------------------
 
-if ($PHORUM['args'][0] == 'client') {
+if ($PHORUM['args'][0] == 'client')
+{
+    header("Content-type: text/javascript");
+    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 28800) . ' GMT');
+    header('Cache-control: must-revalidate');
+    header('Pragma: cache');
+
     include('./include/ajax/client.js.php');
     exit;
 }

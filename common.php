@@ -678,9 +678,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
         $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
-        if (!empty($PHORUM['hooks']['javascript_register'])) {
-            $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_get_url(PHORUM_JAVASCRIPT_URL);
-        }
+        $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_get_url(PHORUM_JAVASCRIPT_URL);
+        $PHORUM["DATA"]["URL"]["AJAX"] = phorum_get_url(PHORUM_AJAX_URL);
         ob_end_clean();
     }
 

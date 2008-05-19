@@ -1,13 +1,7 @@
-<?php
-header("Content-type: text/javascript");
-header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 28800) . ' GMT');
-header('Cache-control: must-revalidate');
-header('Pragma: cache');
-?>
-
-// We might use this in the future for the core Phorum javascript code.
-// At time of writing, this one is not available.
-if (!document.Phorum) Phorum = {};
+// Create the Phorum object if it's not available. It it created in the
+// core javascript.php, but when loading this code from an external
+// page, it might not be available.
+if (!document.Phorum || Phorum == undefined) Phorum = {};
 
 Phorum.Ajax = {};
 
@@ -15,7 +9,7 @@ Phorum.Ajax = {};
 Phorum.Ajax.version = '1.0.0';
 
 // The URL that we use to access the Phorum Ajax layer.
-Phorum.Ajax.URL = '<?php print addslashes(phorum_get_url(PHORUM_AJAX_URL))?>';
+Phorum.Ajax.URL = '<?php print addslashes($PHORUM['DATA']['URL']['AJAX']) ?>';
 
 // Storage for Ajax call return data. This acts as a local cache
 // for keeping track of already retrieved items.

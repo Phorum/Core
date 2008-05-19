@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -22,6 +22,29 @@ require_once("./common.php");
 
 // So we can use {URL->HTTP_PATH} in the templates.
 phorum_build_common_urls();
+
+// An array that is used for gathering the parts that
+// have to be added to the javascript code.
+$module_registrations = array();
+
+// Add core Phorum Ajax layer client JavaScript code.
+$module_registrations[] = array(
+    'module'    => 'core',
+    'source'    => 'file(include/ajax/client.js.php)',
+    'cache_key' => filemtime('./include/ajax/client.js.php') .
+                   $PHORUM['DATA']['URL']['AJAX']
+);
+
+// Add template specific javascript code, if available. The template writer
+// can put the javascript code to include in the file
+// "templates/<name>/javascript.tpl" or "templates/<name>/javascript.php".
+if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
+    file_exists("./templates/{$PHORUM['template']}/javascript.php")) {
+    $module_registrations[] = array(
+        'module' => $PHORUM['template'] . ' template',
+        'source' => 'template(javascript)'
+    );
+}
 
 /**
  * [hook]
@@ -94,16 +117,10 @@ phorum_build_common_urls();
  *     The same array as the one that was used as the hook call
  *     argument, possibly extended with one or more registrations.
  */
-$module_registrations = array();
 if (isset($PHORUM['hooks']['javascript_register'])) {
-    $module_registrations = phorum_hook('javascript_register', array());
-}
-
-// No registrations at all? Then return an empty JavaScript page.
-if (empty($module_registrations)) {
-    header("Content-Type: text/javascript");
-    print "// Phorum JavaScript: no JavaScript required.\n";
-    exit(0);
+    $module_registrations = phorum_hook(
+        'javascript_register', $module_registrations
+    );
 }
 
 // Generate the cache key. While adding cache keys for the module
@@ -195,7 +212,11 @@ $cache_file = "{$PHORUM['cache']}/tpl-{$PHORUM['template']}-javascript-" .
 // Create the cache file if it does not exist or if caching is disabled.
 if (empty($PHORUM['cache_javascript']) || !file_exists($cache_file))
 {
-    $content = '';
+    $content =
+        "// Phorum object. Other JavaScript code for Phorum can extend\n" .
+        "// this one to implement functionality without risking name\n" .
+        "// name space collissions.\n" .
+        "Phorum = {};\n\n";
 
     foreach ($module_registrations as $id => $r)
     {
@@ -206,7 +227,11 @@ if (empty($PHORUM['cache_javascript']) || !file_exists($cache_file))
         {
             case "file":
                 ob_start();
-                include($r['source']);
+                // Make sure that relative paths start with "./",
+                // just in case "." is not in the PHP include path.
+                $path = $r['source'][0] == '/'
+                      ? $r['source'] : './'.$r['source'];
+                include($path);
                 $content .= ob_get_contents();
                 ob_end_clean();
                 break;
