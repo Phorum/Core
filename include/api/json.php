@@ -37,11 +37,11 @@ if (!defined('PHORUM')) return;
 function phorum_api_json_encode($var)
 {
     global $PHORUM;
-    $charset = $PHORUM['DATA']['CHARSET'];
-    if (strtoupper($charset) == 'UTF-8') {
+
+    if (strtoupper($PHORUM['DATA']['CHARSET']) == 'UTF-8') {
         return json_encode($var);
     } else {
-        return json_encode(phorum_api_json_charsetfix($var, $charset));
+        return json_encode(phorum_api_json_convert_to_utf8($var));
     }
 }
 // }}}
@@ -53,9 +53,14 @@ function phorum_api_json_decode($var)
 }
 // }}}
 
-// {{{ Function: phorum_api_json_charsetfix()
-function phorum_api_json_charsetfix($var, $charset)
+// {{{ Function: phorum_api_json_convert_to_utf8()
+function phorum_api_json_convert_to_utf8($var)
 {
+    global $PHORUM;
+
+    // Don't convert if Phorum is in UTF-8 mode already.
+    if (strtoupper($PHORUM['DATA']['CHARSET']) == 'UTF-8') return $var;
+
     // This character map is used to fix differences between ISO-8859-1 and
     // Windows-1252. The 1252 characters sometimes get in messages when users
     // cut-and-paste from Word and for some reason these are not handled
@@ -97,16 +102,16 @@ function phorum_api_json_charsetfix($var, $charset)
    {
        $new = array();
        foreach ($var as $k => $v) {
-           $new[phorum_api_json_charsetfix($k, $charset)] =
-               phorum_api_json_charsetfix($v, $charset);
+           $new[phorum_api_json_convert_to_utf8($k)] =
+               phorum_api_json_convert_to_utf8($v);
        }
        $var = $new;
    }
    elseif (is_object($var))
    {
        $vars = get_class_vars(get_class($var));
-       foreach ($vars as $m => $v) {
-           $var->$m = phorum_api_json_charsetfix($v, $charset);
+       foreach ($vars as $property => $value) {
+           $var->$property = phorum_api_json_convert_to_utf8($value);
        }
    }
    elseif (is_string($var))
@@ -115,7 +120,7 @@ function phorum_api_json_charsetfix($var, $charset)
        $var = strtr($var, $cp1252_map);
 
        // Convert to UTF-8.
-       $var = iconv($charset, 'UTF-8', $var);
+       $var = iconv($PHORUM['DATA']['CHARSET'], 'UTF-8', $var);
    }
    return $var;
 }
