@@ -20,6 +20,17 @@
 if (!defined("PHORUM")) return;
 
 /**
+ * This array describes deprecated template files, which have been
+ * replaced by new template files. For backward compatibility, the template
+ * layer code will transparently rewrite new template file names to the
+ * old ones if the new file is not available.
+ */
+$GLOBALS['PHORUM']['API']['template_deprecated_files'] = array(
+    'index_new'        => 'index_flat',
+    'index_classic'    => 'index_directory'
+);
+
+/**
  * Mainly used for cirular loop protection in template includes. The
  * default value should be more than sufficient for any template.
  */
@@ -43,6 +54,24 @@ define("PHORUM_DEPRECATED", "[Template statement \"%\" has been deprecated; Plea
  */
 function phorum_import_template($page, $infile, $outfile)
 {
+    global $PHORUM;
+
+    // Some backward compatibility for renamed template files.
+    // Fall back to the deprecated template file if the new one is
+    // not available.
+    foreach ($PHORUM['API']['template_deprecated_files'] as $old => $new)
+    {
+        if ($page == $new && !file_exists($infile))
+        {
+            // Rewrite the infile using the old template name.
+            list ($phpfile, $infile) = phorum_get_template_file($old);
+
+            // Just in case a .php file was used, in which case $infile
+            // will be NULL. We treat that .php file as a .tpl file here.
+            if (!$infile) $infile = $phpfile;
+        }
+    }
+
     // Template pass 1:
     // Recursively process all template {include ...} statements, to
     // construct a single template data block.
@@ -792,6 +821,5 @@ function phorum_write_file($file, $data)
     );
     fclose($fp);
 }
-
 
 ?>
