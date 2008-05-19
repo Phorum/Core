@@ -25,8 +25,10 @@ require_once('./include/api/user.php');
 require_once('./include/api/custom_fields.php');
 
 if (!phorum_db_check_connection()){
-    echo "A database connection could not be established.<br/>";
-    echo "Please check the database configuration in include/db/config.php.";
+    phorum_admin_error(
+        "A database connection could not be established.<br/>" .
+        "Please check the database configuration in include/db/config.php."
+    );
     return;
 }
 
@@ -174,12 +176,12 @@ if(count($_POST)){
 
             if(!empty($_POST["admin_user"]) && !empty($_POST["admin_pass"]) && !empty($_POST["admin_pass2"]) && !empty($_POST["admin_email"])){
                 if($_POST["admin_pass"]!=$_POST["admin_pass2"]){
-                    echo "The password fields do not match<br />";
+                    phorum_admin_error("The password fields do not match");
                 } elseif(phorum_api_user_authenticate(PHORUM_ADMIN_SESSION, $_POST["admin_user"],$_POST["admin_pass"])){
                     if($PHORUM["user"]["admin"]){
-                        echo "Admin user already exists and has permissions.<br />";
+                        phorum_admin_error("Admin user already exists and has permissions.");
                     } else {
-                        echo "That user already exists but does not have admin permissions.<br />";
+                        phorum_admin_error("That user already exists but does not have admin permissions.");
                     }
                 } else {
 
@@ -187,7 +189,7 @@ if(count($_POST)){
                     $user = array( "user_id"=>NULL, "username"=>$_POST["admin_user"], "password"=>$_POST["admin_pass"], "email"=>$_POST["admin_email"], "active"=>1, "admin"=>1 );
 
                     if(!phorum_api_user_save($user)){
-                        echo "There was an error adding the user.<br />";
+                        phorum_admin_error("There was an error adding the user.");
                     }
 
                     // set the default http_path so we can continue.
@@ -207,13 +209,36 @@ if(count($_POST)){
 
                 }
             } else {
-                echo "Please fill in all fields.<br />";
+                phorum_admin_error("Please fill in all fields.");
             }
 
             break;
 
         case "modules":
-            require_once('./include/admin/mods.php');
+
+            // Retrieve a list of available modules.
+            require_once('./include/api/modules.php');
+            $list = phorum_api_modules_list();
+
+            // Process posted form data
+            if (isset($_POST["do_modules_update"]))
+            {
+                foreach ($_POST as $key => $value) {
+                    $key = base64_decode($key);
+                    if(substr($key, 0, 5) == "mods_") {
+                        $mod = substr($key, 5);
+                        if ($value) {
+                            phorum_api_modules_enable($mod);
+                        } else {
+                            phorum_api_modules_disable($mod);
+                        }
+                    }
+                }
+
+                phorum_api_modules_save();
+
+                $step = "done";
+            }
             break;
     }
 
@@ -559,7 +584,40 @@ switch ($step){
 
     case "modules":
 
-        require_once('./include/admin/mods.php');
+        // Retrieve a list of available modules.
+        require_once('./include/api/modules.php');
+        $list = phorum_api_modules_list();
+
+        $frm = new PhorumInputForm ("", "post", "Continue ->");
+        $frm->addbreak("Optional modules");
+        $frm->hidden("module", "install");
+        $frm->hidden("sanity_checks_done", "1");
+        $frm->hidden("step", "modules");
+        $frm->hidden("do_modules_update", "1");
+        $frm->addmessage(
+            "Phorum has a very robust module system.  The following modules are
+             included with the distribution.  You can find more modules at the
+             Phorum web site.  Some modules may have additional configuration
+             options, which are not available during install.  To configure the
+             modules, click the \"Modules\" menu item in the admin interface
+             after installation is done."
+        );
+
+        foreach ($list['modules'] as $name => $info)
+        {
+            // Should not happen.
+            if ($info['version_disabled']) continue;
+
+            $text = $info["title"];
+            if(isset($info["desc"])){
+                $text.="<div class=\"small\">".wordwrap($info["desc"], 90, "<br />")."</div>";
+            }
+
+            $frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $info['enabled']));
+        }
+
+        $frm->show();
+
         break;
 }
 

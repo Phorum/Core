@@ -313,8 +313,8 @@ img.question
 }
 
 </style>
-<script>
-
+<script type="text/javascript">
+//<![CDATA[
 function show_help(key)
 {
     if (document.all) {
@@ -358,6 +358,7 @@ function hide_help()
     document.getElementById('help-text').innerHTML = "";
 }
 
+//]]>
 </script>
 </head>
 <body>
