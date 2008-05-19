@@ -1,5 +1,5 @@
 hook:  format|phorum_mod_replace
-title: Simple Text Replacement Mod
-desc:  This module allows admins to define text replacement in messages.
+title: Replace Text
+desc:  This module allows admins to define simple text replacements that have to be applied to messages.
 author: Phorum Dev Team
 url: http://www.phorum.org/

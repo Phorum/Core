@@ -3,7 +3,7 @@
 /* phorum module info
 hook:  common|mod_tidy_start
 title: Tidy Output
-desc:  This module removes unneeded white space from Phorum's output saving bandwidth.
+desc:  This module removes unneeded white space from Phorum's output, saving bandwidth.
 */
 
 
