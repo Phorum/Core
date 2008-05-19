@@ -79,7 +79,7 @@
 
     $frm->addbreak("Interactive CAPTCHA");
 
-    $row = $frm->addrow("Let visitors solve a CAPTCHA when registering a new account?", $frm->checkbox("register_captcha", 1, "", $PHORUM["mod_spamhurdles"]["register_captcha"]));
+    $row = $frm->addrow("Let visitors solve a CAPTCHA when registering a new account?", $frm->checkbox("register_captcha", 1, "Yes", $PHORUM["mod_spamhurdles"]["register_captcha"]));
     $frm->addhelp($row, "Registering CAPTCHA", "If this option is enabled, a CAPTCHA (Completely Automated Public Turing-test to tell Computers and Humans Apart) will be used when visitors are registering a new user account. A check is added to the registering process, where the user has to prove that he/she is a human, by solving a simple puzzle. Below you can specify which type of CAPTCHA to use for this.<br/><br/><b>User impact:</b><br/>The user will have to solve the CAPTCHA before a new account can be registered. So this will require an extra action by the user. The exact user impact depends on the type of CAPTCHA that is used.");
 
     $row = $frm->addrow("Let visitors solve a CAPTCHA when posting a new message", $frm->select_tag("posting_captcha", $userspec, $PHORUM["mod_spamhurdles"]["posting_captcha"]));
@@ -97,7 +97,7 @@
     $row = $frm->addrow("Which type of CAPTCHA?", $frm->select_tag("captcha_type", $captchaspec, $PHORUM["mod_spamhurdles"]["captcha_type"], "id=\"captcha_select\" onchange=\"handle_captcha_select()\""));
     $frm->addhelp($row, "Type of CAPTCHA", "This module supports a wide range of CAPTCHA types. See the README that was bundled with this module for detailed information on these types and for deciding which one you want to use for your site.");
 
-    $row = $frm->addrow("Enable spoken CAPTCHA? You will need the program \"Flite\" for this.", $frm->checkbox("spoken_captcha", 1, "", $PHORUM["mod_spamhurdles"]["spoken_captcha"]));
+    $row = $frm->addrow("Enable spoken CAPTCHA? You will need the program \"Flite\" for this.", $frm->checkbox("spoken_captcha", 1, "Yes", $PHORUM["mod_spamhurdles"]["spoken_captcha"]));
     $frm->addhelp($row, "Enable spoken CAPTCHA", 'Vision impaired people can have trouble reading and thus solving a CAPTCHA. For those people, you can supply a spoken CAPTCHA code. To be able to use this option, the program "Flite" (Festival-Lite) has to be installed on the webserver. For information on this, see http://www.speech.cs.cmu.edu/flite/');
     $warn = '';
     if (!empty($PHORUM["mod_spamhurdles"]["flite_location"]) &&
