@@ -123,7 +123,7 @@ $ajax_call = basename($PHORUM['ajax_args']['call']);
  *     array.
  *
  * [category]
- *     Miscelaneous
+ *     Miscellaneous
  *
  * [when]
  *     Just before ajax.php tries to find a built-in handler script
