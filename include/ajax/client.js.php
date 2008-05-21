@@ -23,8 +23,6 @@ Phorum.Ajax.cache = {};
  */
 Phorum.Ajax.getXMLHttpRequest = function(req)
 {
-    if (Phorum.Ajax.xhr) return Phorum.Ajax.xhr;
-
     var xhr;
     if (window.XMLHttpRequest) {
         xhr = new XMLHttpRequest();
@@ -42,7 +40,6 @@ Phorum.Ajax.getXMLHttpRequest = function(req)
     }
 
     if (xhr) {
-        Phorum.Ajax.xhr = xhr;
         return xhr;
     }
 
