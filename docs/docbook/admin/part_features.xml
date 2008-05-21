@@ -179,9 +179,7 @@
    Most people can keep this option set to disabled.
    </para>
 
-   <section id="features.settings.general.html">
-    <title>HTML Settings</title>
-     <para>
+      <para>
        <emphasis role="bold">Phorum HTML Title:</emphasis>
        This can be used to set the title of your Phorum. Equivalent to
        changing the HTML title tag.
@@ -217,8 +215,6 @@
        If you are unsure what to use, then select "RSS".
      </para>
 	 
-<section id="features.settings.general.filepath">
-  <title>File/Path Settings</title>
     <para>
       <emphasis role="bold">HTTP Path:</emphasis> This is the base URL of your Phorum.
     </para>
@@ -229,8 +225,6 @@
     </para>  
      
 	 </section>
-    </section>
-   </section>
   </section>
 
   <section id="features.vroots">
