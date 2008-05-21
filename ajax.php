@@ -27,6 +27,11 @@ define('phorum_page', 'ajax');
 require_once('./common.php');
 require_once('./include/api/json.php');
 
+// Registration of some language strings that can be used by Ajax clients.
+// We put them in here, so the language tool can find them.
+// $PHORUM['DATA']['LANG']['ActionPending']
+// $PHORUM['DATA']['LANG']['ActionsPending']
+
 // ----------------------------------------------------------------------
 // Client JavaScript library
 // ----------------------------------------------------------------------

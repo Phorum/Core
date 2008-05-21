@@ -16,6 +16,13 @@ Phorum 5.2 -> Phorum 5.3:
     index_classic.tpl         -> index_directory.tpl
     index_new.tpl             -> index_flat.tpl
 
+  Language strings
+  ----------------
+
+  * The following language strings were added:
+
+    ActionPending
+    ActionsPending
 
   Core code
   ---------

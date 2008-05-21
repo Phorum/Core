@@ -46,6 +46,8 @@
     $PHORUM["DATA"]["LANG"]=array(
 
         "Action"                =>      "Action",
+        "ActionPending"         =>      "%count% action pending ...",
+        "ActionsPending"        =>      "%count% actions pending ...",
         "Activity"              =>      "Show topics with activity in the last",
         "ActivityPost"          =>      "", // needed for some languages
         "Add"                   =>      "Add",
