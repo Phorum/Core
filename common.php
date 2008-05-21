@@ -1799,7 +1799,7 @@ function phorum_database_error($error)
      *     </programlisting>
      *
      * [category]
-     *     Miscelaneous
+     *     Miscellaneous
      *
      * [when]
      *     At the start of the function
