@@ -289,7 +289,113 @@
      <sbr />
      P.S. 1 day = 1440 minutes
      </para>
-     
+     <para>
+      <emphasis role="bold">Allow Time Zone Selection:</emphasis> If enabled, this will
+     allow users to change the timezone of the forum (specific to their account).
+     </para>
+     <para>
+      <emphasis role="bold">Allow Template Selection:</emphasis> If enabled, users will
+     find an option in their Control Center to select the template to use.
+       <sbr />
+     Note: The user selected template will only be used for forums, which do not have
+     "Fixed Display Settings" enabled in the forum settings.
+     </para>
+     <para>
+      <emphasis role="bold">Registration Verification:</emphasis> This allows you to 
+     force users to follow a verification process after registration. You can have
+     them verify either: 
+      <itemizedlist>
+       <listitem><para>
+     by email - a link is sent to the user's email address, which they have to click
+     on to activate their account)
+       </para></listitem>
+       <listitem><para>
+     by moderator - a moderator must approve the user before their account is activated
+       </para></listitem>
+      </itemizedlist>
+     Or both. This is a useful function to prevent spam, but keep in mind it adds extra
+     hurdles for users trying to register, which could put certain people off.
+     </para>
+     <para>
+      <emphasis role="bold">Enable Drop-down user list:</emphasis> By setting this to
+      Yes, Phorum will display a drop-down list of users instead of an empty text
+      box on pages where you can select a user. Two examples of such pages are when 
+      sending a private message, and when adding users to a group in the grou 
+      moderation page. This option should be disabled if you have a large number of 
+      users, as a list of thousands of users will slow performance dramatically. 
+     </para>
+     <para>
+      <emphasis role="bold">What to use as the display name:</emphasis> You can choose
+      to use either the user's username of the real name (which can be edited by the
+      user from the Control Center) as the name which the user is referenced to 
+      throughout all Phorum pages.
+       <important>
+       This is not an option that you normally would want to change on a live
+       system that has been running for a while. One reason is that all stored names 
+       will have to be updated in the database (e.g. the posting authors), which can 
+       take quite a while on a big forum (it will work though). More important is that
+       you might confuse your users by changing their display names.
+       </important>
+     </para>
+     <para>
+      <emphasis role="bold">Hide Email Addresses:</emphasis> You can choose to set
+      whether all email addresses should be hidden. This includes the email
+      addresses of anonymous users and registered users in their profile. The separate
+      option to hide the email address in the user Control Center will be hidden too.
+     </para>
+     <para>
+      <emphasis role="bold">File Uploads:</emphasis> These settings apply to personal
+      file uploads that users can do in their Control Center. The users can link to
+      these files by copying and pasting the file URLs. Some modules (like the avatar
+      module) also make user of personal files (for example, for storing images that
+      the user can use as the avatar to show). Keep in mind that upload file size is
+      also restricted by the upload size limit of php.ini.
+        <sbr />
+      These settings do not control uploading of forum message attachments. For 
+      changing message attachment settings, you have to edit the settings of the forum
+      for which you want to enable attachments.
+     </para>
+     <para>
+      <emphasis role="bold">Private Messaging (PM):</emphasis>: If enabled, this will
+      allow users to access/use the private messaging system.
+     </para>
+     <para>
+      <emphasis role="bold">Check for new PM:</emphasis> By settings this to Yes, 
+      Phorum will check if a user has new private messages, and display an indicator.
+      On a Phorum with a lot of users and private messages, this may hurt 
+      performance. This option has no effect if Private Messaging is disabled.
+     </para>
+     <para>
+      <emphasis role="bold">Maximum number of stored messages:</emphasis> This is the
+      maximum number of private messages that a user may store on the server. The
+      numbr of private messages is the total of all messages in all PM folders combined.
+      Setting this value to 0 will allow for unlimited messages.
+     </para>
+     <para>
+      <emphasis role="bold">Allow notification of PM by email:</emphasis> If this option
+     is enabled, Phorum will send a notification email to users that receive a new
+     private message. The user will find an option in their Control Center which can be
+     used to disable the notification email.
+     </para>
+     <para>
+      <emphasis role="bold">System Emails from Name:</emphasis> This allows you to
+      specify what name system emails are signed by.
+     </para>
+     <para>
+      <emphasis role="bold">System Emails from Address:</emphasis> Specify which email
+      address system emails are sent from.
+     </para>
+     <para>
+      <emphasis role="bold">Use Bcc in emails:</emphasis> This prevents recipients seeing 
+      the complete list of recipient addresses. If this is disabled, the system will
+      use CC (carbon copy), so each recipient can see all recipient email addresses.
+     </para>
+     <para>
+      <emphasis role="bold">Ignore admin for moderator emails:</emphasis> If you select
+      Yes for this option, then the moderator notifications and report message emails
+      will not be sent to the administrator, only to moderators.
+     </para> 
+          
  </section>
   </section>
 
