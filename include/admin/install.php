@@ -413,8 +413,8 @@ switch ($step){
             "default_forum_options" => $default_forum_options,
             "hooks"=> $hooks_initial,
             "mods" => $mods_initial,
-            "mod_announcements" => array('module'=>'modsettings','mod'=>'announcements','forum_id'=>1,'pages'=>array('index'=>'1','list'=>'1'),'number_to_show'=>5,'only_show_unread'=>NULL,'days_to_show'=>0)
-
+            "mod_announcements" => array('module'=>'modsettings','mod'=>'announcements','forum_id'=>1,'pages'=>array('index'=>'1','list'=>'1'),'number_to_show'=>5,'only_show_unread'=>NULL,'days_to_show'=>0),
+            "open_id" => 0
             );
 
             phorum_db_update_settings($settings);
