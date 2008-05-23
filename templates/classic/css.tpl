@@ -674,11 +674,12 @@ div.phorum-menu a.phorum-current-page
         margin: 0 0 0 10px;
     }
 
-    blockquote.bbcode div
+    blockquote.bbcode>div
     {
         margin: 0;
         padding: 5px;
         border: 1px solid {tablebordercolor};
+        overflow: hidden;
     }
 
     blockquote.bbcode strong
