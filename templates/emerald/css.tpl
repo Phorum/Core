@@ -786,6 +786,7 @@ img {
     margin: 0;
     padding: 5px;
     border: 1px solid {quote_border_color};
+    overflow: hidden;
 }
 
 #phorum blockquote.bbcode strong {
