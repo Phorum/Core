@@ -94,6 +94,8 @@ function filter_modules(form)
         status = form.filter_status.options[i].value;
     }
 
+    var hide_description = form.hide_description.checked;
+
     var match = form.filter_text.value.toLowerCase();
 
     var div_elts = document.getElementsByTagName('div');
@@ -101,6 +103,18 @@ function filter_modules(form)
     for (var i = 0; i < div_elts.length; i++)
     {
         var elt = div_elts[i];
+
+        // Handle description visibility.
+        if (elt.className == 'module_description' ||
+            elt.className == 'module_author') {
+            if (hide_description) {
+                elt.style.display = 'none';
+            } else {
+                elt.style.display = 'block';
+            }
+            continue;
+        }
+
         if (elt.className.substr(0, 12) == 'module_block')
         {
             // Handle visibility, based on the status filter.
@@ -269,6 +283,11 @@ $html = "<form id=\"modules_form\" " .
               isset($_POST['filter_text']) ? $_POST['filter_text'] : '',
               30, NULL, FALSE,
               'onkeyup="filter_modules(this.form)" id="filter_text"'
+          ) .
+          $frm->checkbox(
+              'hide_description', 1, 'hide descriptions',
+              isset($_POST['hide_description']) ? 1 : 0,
+              'onchange="filter_modules(this.form)" id="hide_descriptions"'
           ) .
         "</div>";
 
