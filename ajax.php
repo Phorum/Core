@@ -36,7 +36,7 @@ require_once('./include/api/json.php');
 // Client JavaScript library
 // ----------------------------------------------------------------------
 
-if ($PHORUM['args'][0] == 'client')
+if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'client')
 {
     header("Content-type: text/javascript");
     header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 28800) . ' GMT');
@@ -51,7 +51,7 @@ if ($PHORUM['args'][0] == 'client')
 // Show examples page.
 // ----------------------------------------------------------------------
 
-if ($PHORUM['args'][0] == 'examples') {
+if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'examples') {
     include('./include/ajax/examples.php');
     exit;
 }
