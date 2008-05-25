@@ -213,7 +213,9 @@ $cache_file = "{$PHORUM['cache']}/tpl-{$PHORUM['template']}-javascript-" .
               md5($cache_key . __FILE__);
 
 // Create the cache file if it does not exist or if caching is disabled.
-if (empty($PHORUM['cache_javascript']) || !file_exists($cache_file))
+if (isset($PHORUM['args']['refresh']) ||
+    empty($PHORUM['cache_javascript']) ||
+    !file_exists($cache_file))
 {
     $content =
         "// Phorum object. Other JavaScript code for Phorum can extend\n" .
@@ -249,6 +251,35 @@ if (empty($PHORUM['cache_javascript']) || !file_exists($cache_file))
         }
 
         $content .= "\n\n";
+    }
+
+    /**
+     * [hook]
+     *     javascript_filter
+     *
+     * [description]
+     *     This hook can be used to apply a filter to the Phorum JavaScript
+     *     code. This can for example be used for compressing or cleaning
+     *     up the JavaScript.
+     *
+     * [category]
+     *     Templating
+     *
+     * [when]
+     *     Right after the javascript.php script has generated a new
+     *     JavaScript file and right before storing that file in the cache.
+     *     The filter hook will not be run for every request to
+     *     javascript.php, but only in case the JavaScript code has
+     *     to be refreshed.
+     *
+     * [input]
+     *     The generated JavaScript code.
+     *
+     * [output]
+     *     The filtered JavaScript code.
+     */
+    if (isset($PHORUM['hooks']['javascript_filter'])) {
+        $content = phorum_hook('javascript_filter', $content);
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
