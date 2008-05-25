@@ -6,6 +6,10 @@ Changelog:
    - Made the tag and argument name parsing case insensitive, to match
      the old BBcode module behavior.
 
+   - Fixed a little JavaScript problem. I was using the reserved word
+     'char' as a variable name, which is bad practice and got rejected
+     by Yahoo's Javascript YUI Compressor.
+
 2008-05-08 v2.0.3
 
    - Fixes for making upgrades and fresh installations work smoother
