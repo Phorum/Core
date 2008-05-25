@@ -1,0 +1,23 @@
+title: BBcode
+desc:  This module allows users to add BBcode (Bulletin Board Code) tags to their postings. BBcode tags are a safe way of adding markup (bold, italic, images, links, etc.).
+version: 2.0.4
+author: Phorum Dev Team
+url: http://www.phorum.org/
+
+hook: lang|
+hook: css_register|phorum_mod_bbcode_css_register
+hook: javascript_register|phorum_mod_bbcode_javascript_register
+hook: format|phorum_mod_bbcode_format
+hook: quote|phorum_mod_bbcode_quote
+hook: editor_tool_plugin|phorum_mod_bbcode_editor_tool_plugin
+hook: addon|phorum_mod_bbcode_addon
+hook: tpl_editor_disable_bbcode|phorum_mod_bbcode_tpl_editor_disable_bbcode
+hook: posting_custom_action|phorum_mod_bbcode_posting_custom_action
+
+# Always run bbcode formatting as the last hook.
+priority: run module after *
+priority: run hook format after *
+
+# The bbcode tool button are the most standard ones. We want to have
+# those added to the tool bar as the first buttons.
+priority: run hook editor_tool_plugin before *
