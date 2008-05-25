@@ -54,11 +54,11 @@ function quote_bbcode_argument(str)
     {
         var quoted = '';
         for (var i = 0; i < str.length; i++) {
-            var char = str[i];
-            if (char == '\\' || char == '"') {
+            var c = str[i];
+            if (c == '\\' || c == '"') {
                 quoted += '\\';
             }
-            quoted += char;
+            quoted += c;
         }
 
         return '"' + quoted + '"';
