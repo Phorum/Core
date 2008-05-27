@@ -539,19 +539,29 @@ function bbcode_api_tokenize($text)
                 // a tag in the parse tree, then we go on with the tag that
                 // we found. Otherwise, we go back to searching a new tag
                 // opening character.
-                else {
+                else
+                {
+                    // Did we find a tag?
+                    if (!isset($node['tag'])) { $state = 1; continue 2; }
+                    $is_closetag = !empty($node['tag'][1]); // 1 = close tag?
+
+                    // Find the current character that our cursor is on.
                     $l = $text[--$cursor];
-                    if (($l == ' ' || $l == '=' || $l == ']') &&
-                        isset($node['tag']))
-                    {
-                        $current_tagname = $node['tag'][0]; // 0 = tag name
-                        $current_tag = $taginfo[$current_tagname];
-                        $current_token = $node['tag'];
-                        break;
-                    } else {
-                        $state = 1;
-                        continue 2;
+
+                    // For close tags, we need a closing square bracket here.
+                    if ($is_closetag && $l != ']') { $state = 1; continue 2; }
+
+                    // For open tags, we need a space, equal sign or
+                    // closing square bracket here.
+                    if ($l != ' ' && $l != '=' && $l != ']') {
+                        $state = 1; continue 2;
                     }
+
+                    // Checks passed. This might just be a valid tag!
+                    $current_tagname = $node['tag'][0]; // 0 = tag name
+                    $current_tag = $taginfo[$current_tagname];
+                    $current_token = $node['tag'];
+                    break;
                 }
             }
 
@@ -575,9 +585,11 @@ function bbcode_api_tokenize($text)
             }
 
             // Check if we're handling a closing tag for a tag that
-            // we autoclosed before. If so, then we want to skip this
-            // tag totally.
-            if ($is_closetag && !empty($autoclosed[$current_tagname]))
+            // we autoclosed or did not open before. If so, then we
+            // want to skip this tag totally.
+            if ($is_closetag && (
+                !empty($autoclosed[$current_tagname]) ||
+                 empty($opentags[$current_tagname])))
             {
                 // If there is text in the text node building up to
                 // the tag that we are skipping, then add this to
@@ -590,7 +602,14 @@ function bbcode_api_tokenize($text)
                 }
 
                 // One automatically closed tag is accounted for now.
-                $autoclosed[$current_tagname]--;
+                if (!empty($autoclosed[$current_tagname])) {
+                    $autoclosed[$current_tagname]--;
+                }
+                // Stale close tag. We include the stale tag string
+                // in the current text node.
+                else {
+                    $tokens[$tokenidx][2] += ($cursor-$text_end + 1);
+                }
 
                 // Continue searching for a new tag, right after the close tag.
                 $text_start = ++$cursor;
