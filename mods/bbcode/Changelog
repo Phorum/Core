@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+2008-05-27 v2.0.5
+
+   - Improved handling of stale close tags in the text and fixed
+     a PHP undefined index warning along with it. Thanks to
+     CBiLL for the problem report.
+
 2008-05-15 v2.0.4
 
    - Made the tag and argument name parsing case insensitive, to match
