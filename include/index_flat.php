@@ -40,10 +40,6 @@ $forums = phorum_api_forums_get(array($PHORUM['forum_id']));
 
 // If we are in a (v)root folder, then we show the forums that are in the
 // (v)root as separate sections in the flat index view. To be able to do this,
-// we have to know what folders are directly below the
-
-// If we are in a (v)root folder, then we show the forums that are in the
-// (v)root as separate sections in the flat index view. To be able to do this,
 // we have to know what folders are directly below the (v)root. Here, we look
 // those up and extend the $folders array.
 if ($PHORUM['vroot'] == $PHORUM['forum_id'])
