@@ -44,7 +44,8 @@ Phorum.Ajax.getXMLHttpRequest = function(req)
     }
 
     if (req.onFailure) req.onFailure(
-        'Phorum: Unable to create an XMLHttpRequest object'
+        'Phorum: Unable to create an XMLHttpRequest object',
+        -1, null
     );
     return null;
 }
@@ -71,7 +72,8 @@ Phorum.Ajax.call = function(req)
     if (! req['call']) {
         if (req.onFailure) req.onFailure(
             'Phorum.Ajax.call() error: missing property ' +
-            '"call" for the request object.'
+            '"call" for the request object.',
+            -1, null
         );
         return;
     }
@@ -124,7 +126,8 @@ Phorum.Ajax.call = function(req)
                   } catch (e) {
                       if (req.onFailure) req.onFailure(
                         'Ajax Phorum API call succeeded, but the return ' +
-                        'data could not be parsed as JSON data.'
+                        'data could not be parsed as JSON data.',
+                        xhr.status, xhr.responseText
                       );
                       return;
                   }
@@ -139,8 +142,8 @@ Phorum.Ajax.call = function(req)
               } else {
 
                   if (req.onFailure) req.onFailure(
-                      'The Ajax Phorum API call failed: ' +
-                      '[' + xhr.status + '] ' + xhr.responseText
+                      'The Ajax Phorum API call failed',
+                      xhr.status, xhr.responseText
                   );
               }
 
