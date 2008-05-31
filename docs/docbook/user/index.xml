@@ -8,15 +8,16 @@
   <!ENTITY bookinfo SYSTEM "../bookinfo.xml">
   <!ENTITY part_preface SYSTEM "../part_preface.xml">
 
+  <!ENTITY part_intro SYSTEM "part_intro.xml">
+  <!ENTITY part_usage SYSTEM "part_usage.xml">
+
   <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
   <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
 ]>
 
-<book lang="en"> &bookinfo; &part_preface; 
-  <chapter id="user.help">
-    <title>Help us to improve the documentation!</title>
-    <para>As you can see this book is still empty. If you want to help with
-      filling in the large gaps just send an email to <ulink url="mailto:documentation@phorum.org"
-        >documentation@phorum.org</ulink> with your text or ideas.</para>
-  </chapter>
-  </book>
+<book lang="en"> 
+&bookinfo; 
+&part_preface;
+&part_intro; 
+&part_usage;
+</book>
