@@ -1,0 +1,63 @@
+<chapter id="intro.main">
+  <title>Forums and Phorum - An introduction</title>
+  
+  <section>
+    <title>What is a forum?</title>
+    <para>
+     A forum is an online system which allows a group of users 
+     to communicate. Users can then post threads (essentially a 
+     starting point for a conversation) in a number of separate 
+     sub forums (each one usually covering a different topic).
+     </para>
+     <para>
+     A simple example forum structure would be as follows:
+     <itemizedlist>
+     <listitem><para>
+     Announcements
+     </para></listitem>
+     <listitem><para>
+     General Discussion
+     </para></listitem>
+     <listitem><para>
+     Entertainment
+     </para></listitem>
+     <listitem><para>
+     Technology
+     </para></listitem>
+     </itemizedlist>
+     </para>
+     <para>
+     In this way, users can discuss numerous topics amongst 
+     themselves in a centralized community, in a more convenient 
+     way than other communication methods (e.g. email) can facilitate.  
+     Many websites have forums as a way for visitors to meet and discuss
+     site content, and some sites are purely based around their forums.
+     A number of administrators and/or moderators are also usually present
+     on forum systems, making sure the forum runs smoothly and the users
+     adhere to the rules specific to that forum.
+     </para>
+     
+   </section>
+   
+   <section>
+   <title>What is Phorum?</title>
+     <para>
+     Phorum is one of many forum scripts available that internet users
+     can upload to their webspace. Started in 1999, it was designed to 
+     be as flexible as possible so as to meet the varying needs of 
+     different websites. It is extensively customisable, fast and stable,
+     with a large ever-growing number of modules available to extend
+     its functionality.
+     </para>
+     <para>
+     There are many forum scripts available for users to download, and while
+     most of them focus on particular needs (some are feature packed, some 
+     are minimalistic, some are designed specifically to be lightweight and 
+     fast), most of them also adhere to the same basic forum system outlined
+     in the opening section of this guide; they use a structure of multiple
+     categories/sub forums, in each of which users can post and reply to 
+     threads.  
+     </para>
+   </section>
+   
+</chapter>
