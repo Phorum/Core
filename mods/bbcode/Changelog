@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2008-06-03 v2.0.6
+
+   - Fixed a bug in handling stale close tags that directly follow 
+     another open or close tag. Thanks to CBiLL for the problem report.
+
 2008-05-27 v2.0.5
 
    - Improved handling of stale close tags in the text and fixed
