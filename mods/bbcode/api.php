@@ -593,7 +593,8 @@ function bbcode_api_tokenize($text)
             {
                 // If there is text in the text node building up to
                 // the tag that we are skipping, then add this to
-                // the parsed data.
+                // the parsed data. The skipped tag string is not
+                // included this way.
                 if ($text_end != $text_start)
                 {
                     $tokens[++$tokenidx] = array(
@@ -607,8 +608,16 @@ function bbcode_api_tokenize($text)
                 }
                 // Stale close tag. We include the stale tag string
                 // in the current text node.
-                else {
-                    $tokens[$tokenidx][2] += ($cursor-$text_end + 1);
+                else
+                {
+                    // Create a new textnode or add to the existing one.
+                    if ($tokens[$tokenidx][0] == 'TEXTNODE') {
+                        $tokens[$tokenidx][2] += ($cursor - $text_end + 1);
+                    } else {
+                        $tokens[++$tokenidx] = array(
+                            'TEXTNODE', $text_start, $cursor - $text_end + 1
+                        );
+                    }
                 }
 
                 // Continue searching for a new tag, right after the close tag.
