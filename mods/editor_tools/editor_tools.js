@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
-// Copyright (C) 2007  Phorum Development Team                               //
+// Copyright (C) 2008  Phorum Development Team                               //
 // http://www.phorum.org                                                     //
 //                                                                           //
 // This program is free software. You can redistribute it and/or modify      //
@@ -13,6 +13,7 @@
 //                                                                           //
 // You should have received a copy of the Phorum License                     //
 // along with this program.                                                  //
+//                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 // Javascript code for the Phorum editor_tools module.
@@ -434,6 +435,10 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
     var ta = target ? target : editor_tools_get_textarea();
     if (ta == null) return;
 
+    // Store the current scroll offset, so we can restore it after
+    // adding the tags to its contents.
+    var offset = ta.scrollTop;
+
     if(ta.setSelectionRange)
     {
         // Add pre and post to the text.
@@ -456,9 +461,9 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
         ta.value = pretext + pre + text + post + posttext;
 
         // Set the cursor to a logical position.
-        var cursorpos = pretext.length + pre.length;
-        if (text.length != 0) cursorpos += text.length + post.length;
-        ta.setSelectionRange(cursorpos, cursorpos);
+        var cursorpos1 = pretext.length + pre.length;
+        var cursorpos2 = cursorpos1 + text.length;
+        ta.setSelectionRange(cursorpos1, cursorpos2);
         ta.focus();
     }
     else if (document.selection) /* MSIE support */
@@ -498,6 +503,8 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
     } else { /* Support for really limited browsers, e.g. MSIE5 on MacOS */
         ta.value = ta.value + pre + post;
     }
+
+    ta.scrollTop = offset;
 }
 
 // ----------------------------------------------------------------------
