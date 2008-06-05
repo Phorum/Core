@@ -706,17 +706,6 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $templates[] = "read";
     }
 
-    if($PHORUM["DATA"]["LOGGEDIN"]) { // setting read messages really read
-        if(count($read_messages)) {
-            phorum_db_newflag_add_read($read_messages);
-            if($PHORUM['cache_newflags']) {
-                phorum_cache_remove('newflags',$newflagkey);
-                phorum_cache_remove('newflags_index',$newflagkey);
-            }
-        }
-    }
-
-    // Marking the new messages that we have seen as read.
     if($PHORUM["DATA"]["LOGGEDIN"] && count($read_messages)) {
         phorum_api_newflags_markread($read_messages, PHORUM_MARKREAD_MESSAGES);
     }
