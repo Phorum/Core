@@ -105,8 +105,8 @@ function editor_tools_get_textarea()
     }
 
     if (! editor_tools_textarea_obj) {
-        alert("editor_tools.js library reports: " +
-              "no textarea found on the current page.");
+        alert('editor_tools.js library reports: ' +
+              'no textarea found on the current page.');
         return null;
     }
 
@@ -153,8 +153,10 @@ function editor_tools_strip_whitespace(str, return_stripped)
     // Strip whitespace from end of string.
     for (;;) {
         var lastchar = str.substring(str.length-1, str.length);
-        if (lastchar == ' ') {
-            strip_post += ' ';
+        if (lastchar == ' '  || lastchar == '\r' ||
+            lastchar == '\n' || lastchar == '\t') {
+            strip_post = lastchar + strip_post;
+
             str = str.substring(0, str.length-1);
         } else {
             break;
@@ -164,8 +166,9 @@ function editor_tools_strip_whitespace(str, return_stripped)
     // Strip whitespace from start of string.
     for (;;) {
         var firstchar = str.substring(0,1);
-        if (firstchar == ' ') {
-            strip_pre += ' ';
+        if (firstchar == ' '  || firstchar == '\r' ||
+            firstchar == '\n' || firstchar == '\t') {
+            strip_pre += firstchar;
             str = str.substring(1);
         } else {
             break;
@@ -251,12 +254,12 @@ function editor_tools_construct()
         if (tool == 'color' && OLD_MSIE) continue;
 
         a_obj = document.createElement('a');
-        a_obj.id = "editor-tools-a-" + tool;
-        a_obj.href = "javascript:" + jsaction;
+        a_obj.id = 'editor-tools-a-' + tool;
+        a_obj.href = 'javascript:' + jsaction;
 
         img_obj = document.createElement('img');
-        img_obj.id = "editor-tools-img-" + tool;
-        img_obj.className = "editor-tools-button";
+        img_obj.id = 'editor-tools-img-' + tool;
+        img_obj.className = 'editor-tools-button';
         img_obj.src = icon;
         img_obj.width = iwidth;
         img_obj.height = iheight;
@@ -439,13 +442,14 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
     // adding the tags to its contents.
     var offset = ta.scrollTop;
 
-    if(ta.setSelectionRange)
+    if (ta.setSelectionRange)
     {
-        // Add pre and post to the text.
+        // Get the currently selected text.
         pretext = ta.value.substring(0, ta.selectionStart);
         text = ta.value.substring(ta.selectionStart, ta.selectionEnd);
         posttext = ta.value.substring(ta.selectionEnd, ta.value.length);
 
+        // Prompt for input if no text was selected and a prompt is set.
         if (text == '' && prompt_str) {
             text = prompt(prompt_str, '');
             if (text == null) return;
@@ -460,7 +464,7 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
 
         ta.value = pretext + pre + text + post + posttext;
 
-        // Set the cursor to a logical position.
+        // Reselect the selected text.
         var cursorpos1 = pretext.length + pre.length;
         var cursorpos2 = cursorpos1 + text.length;
         ta.setSelectionRange(cursorpos1, cursorpos2);
@@ -468,39 +472,56 @@ function editor_tools_add_tags(pre, post, target, prompt_str)
     }
     else if (document.selection) /* MSIE support */
     {
-        // Add pre and post to the text.
+        // Get the currently selected text.
         ta.focus();
         range = document.selection.createRange();
-        text = range.text;
 
+        // Fumbling to work around newline selections at the end of
+        // the text selection. MSIE does not include them in the
+        // range.text, but it does replace them when setting range.text
+        // to a new value :-/
+        var virtlen = range.text.length;
+        if (virtlen > 0) {
+            while (range.text.length == virtlen) {
+                range.moveEnd('character', -1);
+            }
+            range.moveEnd('character', +1);
+        }
+
+        // Prompt for input if no text was selected and a prompt is set.
+        text = range.text;
         if (text == '' && prompt_str) {
             text = prompt(prompt_str, '');
             if (text == null) return;
         }
 
-        if (text.length <= 0) {
-            // Add pre and post to the text.
-            range.text = pre + post;
+        // Strip whitespace from text selection and move it to the
+        // pre- and post.
+        var res = editor_tools_strip_whitespace(text, true);
+        text = res[0];
+        pre = res[1] + pre;
+        post = post + res[2];
 
-            // Set the cursor to a logical position.
-            range.moveStart("character", -(post.length));
-            range.moveEnd("character", -(post.length));
-            range.select();
-        } else {
-            // Strip whitespace from text selection and move it to the
-            // pre- and post.
-            var res = editor_tools_strip_whitespace(text, true);
-            text = res[0];
-            pre = res[1] + pre;
-            post = post + res[2];
+        // Add pre and post to the text.
+        range.text = pre + text + post;
 
-            // Add pre and post to the text.
-            range.text = pre + text + post;
-
-            // Set the cursor to a logical position.
-            range.select();
-        }
-    } else { /* Support for really limited browsers, e.g. MSIE5 on MacOS */
+        // Reselect the selected text. Another MSIE anomaly has to be
+        // taken care of here. MSIE will include carriage returns
+        // in the text.length, but it does not take them into account
+        // when using selection range moving methods :-/
+        // By setting the range.text before, the cursor is now after
+        // the replaced code, so we will move the start and the end
+        // back in the text.
+        var mvstart = post.length + text.length -
+                      ((text + post).split('\r').length - 1);
+        var mvend   = post.length +
+                      (post.split('\r').length - 1);
+        range.moveStart('character', -mvstart);
+        range.moveEnd('character', -mvend);
+        range.select();
+    }
+    else /* Support for really limited browsers, e.g. MSIE5 on MacOS */
+    {
         ta.value = ta.value + pre + post;
     }
 
