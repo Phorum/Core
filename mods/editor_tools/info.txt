@@ -13,3 +13,7 @@ hook: before_footer|phorum_mod_editor_tools_before_footer
 hook: css_register|phorum_mod_editor_tools_css_register
 hook: javascript_register|phorum_mod_editor_tools_javascript_register
 
+// Make sure that the initial javascript variables for the editor tools
+// are always setup before editor tool plugins that append data to these
+// variables are loaded.
+run hook javascript_register before *
