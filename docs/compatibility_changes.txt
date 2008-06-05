@@ -16,6 +16,16 @@ Phorum 5.2 -> Phorum 5.3:
     index_classic.tpl         -> index_directory.tpl
     index_new.tpl             -> index_flat.tpl
 
+  Modules
+  -------
+
+  * Announcement module has a new template:
+    mods/announcements/templates/emerald/javascript.tpl 
+    If you have a custom announcements template, then create
+    the javascript.tpl in your own template. Emerald uses it for
+    Ajax based newflags handling. It is okay to make this an empty file
+    for your template.
+
   Language strings
   ----------------
 
