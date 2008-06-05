@@ -200,7 +200,7 @@ function phorum_api_newflags_format_messages($messages, $mode = PHORUM_NEWFLAGS_
     foreach ($messages as $id => $message)
     {
         // Do not handle newflags for moved message notifications.
-        if ($message['move']) continue;
+        if ($message['moved']) continue;
 
         // Find the info for the message's forum.
         $forum_id = $message['forum_id'];
