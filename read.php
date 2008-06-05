@@ -721,6 +721,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         phorum_api_newflags_markread($read_messages, PHORUM_MARKREAD_MESSAGES);
     }
 
+    // {REPLY_ON_READ} is set when message replies are done on
+    // the read page. The template can use this to add the
+    // #REPLY anchor to the page. This way, the browser can jump
+    // to the editor when clicking a reply link.
+    $PHORUM["DATA"]["REPLY_ON_READ"] = !empty($PHORUM["reply_on_read_page"]);
+
     // Never show the reply box if the message is closed.
     if($thread_is_closed) {
 
