@@ -1,6 +1,21 @@
 Changelog:
 ----------
 
+2008-06-04 v1.2.3
+
+    - Added some improvements as suggested by David King (phorum.org
+      user "Optimal") and Oliver Riesen.
+
+      * prevented the textarea from jumping up when adding a tag to
+        the body when the textarea is scrolled down a bit.
+
+      * Selected text is now reselected after adding the tags to the
+        textarea. The user can now use this to easily apply multiple
+        tags to a piece of text, by clicking a few editor tools buttons
+        without having to reselect the text.
+
+      The new code was tested in Firefox 3, Opera 9.27 and MSIE 7.
+
 2007-10-23 v1.2.2
 
     - Make use of the new css_register and javascript_register hooks.
