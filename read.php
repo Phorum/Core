@@ -548,19 +548,22 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $row["default_reply"] = false;
         }
 
-        // should we show the signature?
-        if(isset($row['body'])) {
-            if(isset($row["user"]["signature"])
-               && isset($row['meta']['show_signature']) && $row['meta']['show_signature']==1){
+        if(isset($row['body']))
+        {
+            // Should we show the signature?
+            if(isset($row['user']['signature'])
+               && !empty($row['meta']['show_signature'])){
 
-                   $phorum_sig=trim($row["user"]["signature"]);
+                   $phorum_sig=trim($row['user']['signature']);
                    if(!empty($phorum_sig)){
-                       $row["body"].="\n\n$phorum_sig";
+                       $row['body'].="\n\n$phorum_sig";
                    }
             }
 
-            // add the edited-message to a post if its edited
-            if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
+            // Add the "edited X times by ..." message to a post
+            // if it was edited.
+            if (!empty($row['meta']['edit_count']))
+            {
                 $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
                 $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
                 $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'], $editmessage);
