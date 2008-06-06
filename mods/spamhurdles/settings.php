@@ -1,7 +1,7 @@
 <?php
     if (!defined("PHORUM_ADMIN")) return;
 
-    require_once('./mods/spamhurdles/defaults.php');
+    require_once("./mods/spamhurdles/defaults.php");
 
     // save settings
     if (count($_POST))
@@ -39,13 +39,20 @@
     }
 
     ?>
+    <a href="http://geekandpoke.typepad.com" target="_blank"><img style="border:none; padding:5px;float:right" title="Click here for more Geek and Poke cartoons!" alt="Geek and Poke cartoon" src="<?php print $PHORUM['http_path'] ?>/mods/spamhurdles/datasphorum_thumb.jpg"/></a>
     <div style="font-size: xx-large; font-weight: bold">Spam Hurdles Module</div>
-    <div style="padding-bottom: 15px; font-size: small">
+    <div style="padding-bottom: 15px; font-size: large">
       Let those spammers jump hoops and trip over hurdles...
     </div>
+     This module sets up some hurdles for forum spammers. It implements
+     both interactive (CAPTCHA) and non-interactive anti-spam methods
+     to keep away spam bots. On this page, you can control exactly
+     what spam hurdles to enable.
+
+    <br style="clear:both" />
     <?php
 
-    require_once('./include/admin/PhorumInputForm.php');
+    include_once "./include/admin/PhorumInputForm.php";
     $frm = new PhorumInputForm ("", "post", "Save");
     $frm->hidden("module", "modsettings");
     $frm->hidden("mod", "spamhurdles");
