@@ -54,7 +54,7 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
 
         $buffer.= "        <item>\n";
         $buffer.= "            <guid>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</guid>\n";
-        $buffer.= "            <title>$title<</title>\n";
+        $buffer.= "            <title>$title</title>\n";
         $buffer.= "            <link>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</link>\n";
         $buffer.= "            <description><![CDATA[$body]]></description>\n";
         $buffer.= "            <dc:creator>".htmlspecialchars($author, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</dc:creator>\n";
