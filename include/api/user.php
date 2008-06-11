@@ -445,7 +445,7 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // Initialize storage for custom profile field data.
-    $user_data = array();
+    $user_customfield_data = array();
 
     // Check and format fields.
     foreach ($dbuser as $fld => $val)
@@ -453,10 +453,13 @@ function phorum_api_user_save($user, $flags = 0)
         // Make sure that a valid field name is used. We do a strict check
         // on this (in the spirit of defensive programming).
         $fldtype = NULL;
-        $custom  = NULL;
         if (!array_key_exists($fld, $PHORUM['API']['user_fields']))
         {
-            $custom = phorum_api_custom_field_byname($fld, PHORUM_CUSTOM_FIELD_USER);
+        	/** 
+        	 * @todo readd this later once the reverse array is available for
+        	 *       a quick isset check 
+        	 */
+            /*$custom = phorum_api_custom_field_byname($fld, PHORUM_CUSTOM_FIELD_USER);
             if ($custom === NULL) {
                 trigger_error(
                     'phorum_api_user_save(): Illegal field name used in ' .
@@ -465,8 +468,9 @@ function phorum_api_user_save($user, $flags = 0)
                 );
                 return NULL;
             } else {
+            */
                 $fldtype = 'custom_profile_field';
-            }
+            //}
         } else {
             $fldtype = $PHORUM['API']['user_fields'][$fld];
         }
@@ -495,12 +499,8 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
 
             case 'custom_profile_field':
-                // Arrays and NULL values are left untouched.
-                // Other values are truncated to their configured field length.
-                if ($val !== NULL && !is_array($val)) {
-                    $val = substr($val, 0, $custom['length']);
-                }
-                $user_data[$custom['id']] = $val;
+
+                $user_customfield_data[$fld] = $val;
                 unset($dbuser[$fld]);
                 break;
 
@@ -514,9 +514,6 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
         }
     }
-
-    // Add the custom profile field data to the user data.
-    $dbuser['user_data'] = $user_data;
 
     // At this point, we should have a couple of mandatory fields available
     // in our data. Without these fields, the user record is not sane
@@ -717,6 +714,10 @@ function phorum_api_user_save($user, $flags = 0)
         phorum_db_user_save($dbuser);
     } else {
         $dbuser['user_id'] = phorum_db_user_add($dbuser);
+    }
+    // save his custom field data
+    if(is_array($user_customfield_data) && count($user_customfield_data) && !empty($dbuser['user_id'])) {
+        phorum_db_save_custom_fields($dbuser['user_id'],PHORUM_CUSTOM_FIELD_USER,$user_customfield_data);
     }
 
     // If the display name changed for the user, then we do need to run

@@ -3271,50 +3271,21 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
             }
         }
     }
-
-    // Retrieve custom user profile fields for the requested users.
-    $custom_fields = phorum_db_interact(
-        DB_RETURN_ASSOCS,
-        "SELECT *
-         FROM   {$PHORUM['custom_fields_table']}
-         WHERE  relation_id $user_ids AND
-                field_type = ".PHORUM_CUSTOM_FIELD_USER,
-        NULL,
-        $flags
-    );
+    
+    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_USER,$user_id,$flags);
 
     // Add custom user profile fields to the users.
-    foreach ($custom_fields as $fld)
+    foreach ($custom_fields as $fld_user_id => $fields)
     {
         // Skip profile fields for users which are not in our
         // $users array. This should not happen, but it could
         // happen in case some orphin custom user fields
         // are lingering in the database.
-        if (!isset($users[$fld['relation_id']])) continue;
-
-        // Skip unknown custom fields.
-        if (! isset($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER][$fld['type']])) continue;
-
-        // Fetch the name for the custom field.
-        $name = $PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER][$fld['type']]['name'];
-
-        // For "html_disabled" fields, the data is XSS protected by
-        // replacing special HTML characters with their HTML entities.
-        if ($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER][$fld['type']]['html_disabled']) {
-            $users[$fld['relation_id']][$name] = htmlspecialchars($fld['data']);
-            continue;
+        if (!isset($users[$fld_user_id])) continue;
+        
+        foreach($fields as $fieldname => $fielddata) {
+	        $users[$fld_user_id][$fieldname] = $fielddata;
         }
-
-        // Other fields can either contain raw values or serialized
-        // arrays. For serialized arrays, the field data is prefixed with
-        // a magic "P_SER:" (Phorum serialized) marker.
-        if (substr($fld['data'],0,6) == 'P_SER:') {
-            $users[$fld['relation_id']][$name]=unserialize(substr($fld['data'],6));
-            continue;
-        }
-
-        // The rest of the fields contain raw field data.
-        $users[$fld['relation_id']][$name] = $fld['data'];
     }
 
     if (is_array($user_id)) {
@@ -3324,6 +3295,91 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
     }
 }
 // }}}
+
+// {{{ Function: phorum_db_get_custom_fields()
+/**
+ * Retrieve custom fields for one or more objects
+ * of the given type
+ *
+ * @param integer $type
+ *     The type of the fields to be retrieved, can currently be:
+ *         PHORUM_CUSTOM_FIELD_USER
+ *         PHORUM_CUSTOM_FIELD_FORUM
+ *         PHORUM_CUSTOM_FIELD_MESSAGE
+ *
+ * @param mixed $relation_id
+ *     The id of the object the custom fields belong to
+ *
+ * @param integer $db_flags
+ *     database flags needed to be sent to the database functions
+ *
+ * @return mixed
+ *     An array of custom fields is returned, indexed by relation_id. 
+ *     For relation_ids that cannot be found, there will be no array element at all.
+ */
+function phorum_db_get_custom_fields($type,$relation_id,$db_flags) {
+
+    global $PHORUM;
+   
+    phorum_db_sanitize_mixed($relation_id, 'int');
+    phorum_db_sanitize_mixed($type, 'int');
+
+    if (is_array($relation_id)) {
+        if (count($relation_id)) {
+            $relation_ids = 'IN ('.implode(', ', $relation_id).')';
+        } else {
+            return array();
+        }
+    } else {
+        $relation_ids = "= $relation_id";
+    }
+   
+   
+   // Retrieve custom user profile fields for the requested users.
+    $custom_fields = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT *
+         FROM   {$PHORUM['custom_fields_table']}
+         WHERE  relation_id $relation_ids AND
+                field_type = $type",
+        NULL,
+        $db_flags
+    );
+
+    $requested_data=array();
+    // Add custom user profile fields to the users.
+    foreach ($custom_fields as $fld)
+    {
+
+        // Skip unknown custom fields.
+        if (! isset($PHORUM['PROFILE_FIELDS'][$type][$fld['type']])) continue;
+
+        // Fetch the name for the custom field.
+        $name = $PHORUM['PROFILE_FIELDS'][$type][$fld['type']]['name'];
+
+        // For "html_disabled" fields, the data is XSS protected by
+        // replacing special HTML characters with their HTML entities.
+        if ($PHORUM['PROFILE_FIELDS'][$type][$fld['type']]['html_disabled']) {
+            $requested_data[$fld['relation_id']][$name] = htmlspecialchars($fld['data']);
+            continue;
+        }
+
+        // Other fields can either contain raw values or serialized
+        // arrays. For serialized arrays, the field data is prefixed with
+        // a magic "P_SER:" (Phorum serialized) marker.
+        if (substr($fld['data'],0,6) == 'P_SER:') {
+            $requested_data[$fld['relation_id']][$name]=unserialize(substr($fld['data'],6));
+            continue;
+        }
+
+        // The rest of the fields contain raw field data.
+        $requested_data[$fld['relation_id']][$name] = $fld['data'];
+    }
+    
+    return $requested_data;
+}
+// }}}
+
 
 // {{{ Function: phorum_db_user_get_fields()
 /**
@@ -3789,53 +3845,68 @@ function phorum_db_user_save($userdata)
         }
     }
 
-    // Update custom user fields for the user.
-    if (isset($custom_profile_data))
-    {
-
-        // Insert new custom profile fields.
-        foreach ($custom_profile_data as $key => $val)
-        {
-            settype($key, "int");
-
-            // Arrays need to be serialized. The serialized data is prefixed
-            // with "P_SER:" as a marker for serialization.
-            if (is_array($val)) {
-                $val = 'P_SER:'.serialize($val);
-            } else {
-                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
-            }
-
-            // Try to insert a new record.
-            $res = phorum_db_interact(
-                DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['custom_fields_table']}
-                        (relation_id, field_type, type, data)
-                 VALUES ($user_id, ".PHORUM_CUSTOM_FIELD_USER.", $key, '$val')",
-                NULL,
-                DB_DUPKEYOK | DB_MASTERQUERY
-            );
-            // If no result was returned, then the query failed. This probably
-            // means that we already have a record in the database.
-            // So instead of inserting a record, we need to update one here.
-            if (!$res) {
-              phorum_db_interact(
-                  DB_RETURN_RES,
-                  "UPDATE {$PHORUM['custom_fields_table']}
-                   SET    data = '$val'
-                   WHERE  relation_id = $user_id AND
-                          field_type = ".PHORUM_CUSTOM_FIELD_USER." AND
-                          type = $key",
-                  NULL,
-                  DB_MASTERQUERY
-              );
-            }
-        }
-    }
 
     return TRUE;
 }
 // }}}
+
+function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data) {
+	    global $PHORUM;
+		
+	    // Update custom  fields for the object.
+	    if (isset($customfield_data))
+	    {
+	
+	        // Insert new custom profile fields.
+	        foreach ($customfield_data as $name => $val)
+	        {
+	        	$custom = phorum_api_custom_field_byname($name,$field_type);
+	        	
+	            // Arrays and NULL values are left untouched.
+                // Other values are truncated to their configured field length.
+                if ($val !== NULL && !is_array($val)) {
+                    $val = substr($val, 0, $custom['length']);
+                }
+	        	if($custom !== null) {
+	        		
+	        		$key = $custom['id'];
+	        		
+		            // Arrays need to be serialized. The serialized data is prefixed
+		            // with "P_SER:" as a marker for serialization.
+		            if (is_array($val)) {
+		                $val = 'P_SER:'.serialize($val);
+		            } else {
+		                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
+		            }
+		
+		            // Try to insert a new record.
+		            $res = phorum_db_interact(
+		                DB_RETURN_RES,
+		                "INSERT INTO {$PHORUM['custom_fields_table']}
+		                        (relation_id, field_type, type, data)
+		                 VALUES ($relation_id, $field_type , $key, '$val')",
+		                NULL,
+		                DB_DUPKEYOK | DB_MASTERQUERY
+		            );
+		            // If no result was returned, then the query failed. This probably
+		            // means that we already have a record in the database.
+		            // So instead of inserting a record, we need to update one here.
+		            if (!$res) {
+		              phorum_db_interact(
+		                  DB_RETURN_RES,
+		                  "UPDATE {$PHORUM['custom_fields_table']}
+		                   SET    data = '$val'
+		                   WHERE  relation_id = $relation_id AND
+		                          field_type = $field_type AND
+		                          type = $key",
+		                  NULL,
+		                  DB_MASTERQUERY
+		              );
+		            }
+	        	}
+	        }
+	    }
+}
 
 // {{{ Function: phorum_db_user_display_name_updates()
 /**

@@ -289,19 +289,22 @@ function phorum_api_custom_field_configure($field)
  */
 function phorum_api_custom_field_byname($name, $type)
 {
+	static $profile_fields_reverse = array();
+	
     if(isset($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type]) &&
        is_array($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type])) {
+       	
+       	if(!count($profile_fields_reverse)) {
 
-        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $custom_field) {
-            if ($id !== 'num_fields' && $custom_field['name'] == $name)
-            {
-                // Fix custom fields that were created the 5.1 way (most
-                // probably by modules that handled configuration of these
-                // fields on their own).
-                if (empty($custom_field['id'])) $custom_field['id'] = $id;
-
-                return $custom_field;
-            }
+	        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $custom_field) {
+	        	if($id !== 'num_fields') {
+	        		$profile_fields_reverse[$custom_field['name']] = $custom_field;
+	        	}
+	        }
+       	}
+       	
+        if(isset($profile_fields_reverse[$name])) {
+            return $profile_fields_reverse[$name];
         }
     }
 
