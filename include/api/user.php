@@ -1281,7 +1281,7 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
  */
 function phorum_api_user_search_custom_profile_field($field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
 {
-    return phorum_db_user_search_custom_profile_field($field_id, $value, $operator, $return_array, $type, $offset, $length);
+    return phorum_db_search_custom_profile_field(PHORUM_CUSTOM_FIELD_USER,$field_id, $value, $operator, $return_array, $type, $offset, $length);
 }
 // }}}
 
