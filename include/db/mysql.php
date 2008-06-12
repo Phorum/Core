@@ -2034,7 +2034,23 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
          ORDER  BY display_order ASC, name",
        'forum_id'
     );
+    
+    $forum_custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_ids);
 
+    // Add custom user profile fields to the users.
+    foreach ($forum_custom_fields as $forumid => $fields)
+    {
+        // Skip profile fields for users which are not in our
+        // $users array. This should not happen, but it could
+        // happen in case some orphin custom user fields
+        // are lingering in the database.
+        if (!isset($forums[$forumid])) continue;
+        
+        foreach($fields as $fieldname => $fielddata) {
+            $forums[$forumid][$fieldname] = $fielddata;
+        }
+    }
+    
     return $forums;
 }
 // }}}
@@ -2362,20 +2378,36 @@ function phorum_db_add_forum($forum)
     if(empty($forum["forum_path"])) $forum["forum_path"] = "";
 
     $insertfields = array();
+    $customfields = array();
+    
     foreach ($forum as $key => $value)
     {
         if (phorum_db_validate_field($key))
         {
-            if (is_numeric($value) &&
-                !in_array($key,$PHORUM['string_fields_forum'])) {
-                $value = (int)$value;
-                $insertfields[$key] = $value;
-            } elseif ($value === NULL) {
-                $insertfields[$key] = 'NULL';
+        	// find out if this field is a custom field
+        	/**
+        	 * @todo duplicated work. the same is done in phorum_db_save_custom_fields.
+        	 *       find out how to find the custom fields differently 
+        	 *       (define the real fields like for the users?)
+        	 */ 
+        	
+            $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
+            
+            if($custom === NULL) {
+	            if (is_numeric($value) &&
+	                !in_array($key,$PHORUM['string_fields_forum'])) {
+	                $value = (int)$value;
+	                $insertfields[$key] = $value;
+	            } elseif ($value === NULL) {
+	                $insertfields[$key] = 'NULL';
+	            } else {
+	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+	                $insertfields[$key] = "'$value'";
+	            }
             } else {
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $insertfields[$key] = "'$value'";
+            	$customfields[$key]=$value;
             }
+            
         }
     }
 
@@ -2387,6 +2419,10 @@ function phorum_db_add_forum($forum)
         NULL,
         DB_MASTERQUERY
     );
+    
+    if(is_array($customfields) && count($customfields)) {
+        phorum_db_save_custom_fields($forum_id,PHORUM_CUSTOM_FIELD_FORUM,$customfields);
+    }
 
     return $forum_id;
 }
@@ -2421,34 +2457,45 @@ function phorum_db_update_forum($forum)
 
     phorum_db_sanitize_mixed($forum['forum_id'], 'int');
 
+    $forum_id = $forum['forum_id'];
+    
     // See what forum(s) to update.
     if (is_array($forum['forum_id'])) {
         $forumwhere = 'forum_id IN ('.implode(', ',$forum['forum_id']).')';
+        $forum_ids = $forum['forum_id'];
     } else {
         $forumwhere = 'forum_id = ' . $forum['forum_id'];
+        $forum_ids = array($forum['forum_id']);
     }
     unset($forum['forum_id']);
 
     // Prepare the SQL code for updating the fields.
     $fields = array();
+    $customfields = array();
     foreach ($forum as $key => $value)
     {
         if (phorum_db_validate_field($key))
         {
-            if ($key == 'forum_path') {
-                $value = serialize($value);
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key = '$value'";
-            } elseif (is_numeric($value) &&
-                !in_array($key,$PHORUM['string_fields_forum'])) {
-                $value = (int)$value;
-                $fields[] = "$key = $value";
-            } elseif ($value === NULL) {
-                $fields[] = "$key = NULL";
-            } else {
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $fields[] = "$key = '$value'";
-            }
+        	$custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
+        	
+        	if($custom === null) {
+	            if ($key == 'forum_path') {
+	                $value = serialize($value);
+	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+	                $fields[] = "$key = '$value'";
+	            } elseif (is_numeric($value) &&
+	                !in_array($key,$PHORUM['string_fields_forum'])) {
+	                $value = (int)$value;
+	                $fields[] = "$key = $value";
+	            } elseif ($value === NULL) {
+	                $fields[] = "$key = NULL";
+	            } else {
+	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+	                $fields[] = "$key = '$value'";
+	            }
+        	} else {
+        		$customfields[$key]=$value;
+        	}
         }
     }
 
@@ -2462,6 +2509,12 @@ function phorum_db_update_forum($forum)
             NULL,
             DB_MASTERQUERY
         );
+    }
+    
+    if(is_array($customfields) && count($customfields)) {
+        foreach($forum_ids as $forum_id) {
+            phorum_db_save_custom_fields($forum_id,PHORUM_CUSTOM_FIELD_FORUM,$customfields);
+        }
     }
 
     return TRUE;
@@ -2503,6 +2556,9 @@ function phorum_db_drop_forum($forum_id)
             DB_MASTERQUERY
         );
     }
+    
+    // now delete its custom fields
+    phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_id);
 
     // Collect all orphin message attachment files from the database.
     // These are all messages that are linked to a message, but for which
@@ -2581,6 +2637,9 @@ function phorum_db_drop_folder($forum_id)
         NULL,
         DB_MASTERQUERY
     );
+    
+    // now delete its custom fields
+    phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_id);
 }
 // }}}
 
@@ -3775,11 +3834,6 @@ function phorum_db_user_save($userdata)
         }
         unset($userdata['forum_permissions']);
     }
-    if (isset($userdata['user_data'])) {
-        $custom_profile_data = $userdata['user_data'];
-        unset($userdata['user_data']);
-    }
-
     // The user_id is required for doing the update.
     if (!isset($userdata['user_id'])) trigger_error(
         'phorum_db_user_save(): the user_id field is missing in the ' .
@@ -4303,15 +4357,7 @@ function phorum_db_user_delete($user_id)
         );
     }
 
-
-    phorum_db_interact(
-        DB_RETURN_RES,
-        "DELETE FROM ".$PHORUM['custom_fields_table']."
-         WHERE  relation_id = $user_id AND
-                field_type =".PHORUM_CUSTOM_FIELD_USER,
-        NULL,
-        DB_GLOBALQUERY | DB_MASTERQUERY
-    );
+    phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_USER,$user_id);
 
 
     // See if we created any orphin private messages. We do this in
@@ -4347,6 +4393,19 @@ function phorum_db_user_delete($user_id)
     return TRUE;
 }
 // }}}
+
+function phorum_db_delete_custom_fields($type,$relation_id) {
+	global $PHORUM;
+	
+	phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM ".$PHORUM['custom_fields_table']."
+         WHERE  relation_id = $relation_id AND
+                field_type =".$type,
+        NULL,
+        DB_GLOBALQUERY | DB_MASTERQUERY
+    );
+}
 
 // {{{ Function: phorum_db_get_file_list()
 /**
@@ -6781,6 +6840,9 @@ function phorum_db_rebuild_user_posts()
 /**
  * Search for users, based on a simple search condition,
  * which can be used to search on custom profile fields.
+ * 
+ * ATTENTION: this function is only a wrapper for 
+ *            phorum_db_search_custom_profile_field
  *
  * The parameters $field_id, $value and $operator (which are used for defining
  * the search condition) can be arrays or single values. If arrays are used,
@@ -6821,11 +6883,66 @@ function phorum_db_rebuild_user_posts()
  */
 function phorum_db_user_search_custom_profile_field($field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
 {
+	   return phorum_db_search_custom_profile_field(PHORUM_CUSTOM_FIELD_USER,$field_id, $value, $operator, $return_array, $type, $offset, $length);
+}
+// }}}
+
+// {{{ Function: phorum_db_search_custom_profile_field()
+/**
+ * Search for objects, based on a simple search condition,
+ * which can be used to search on custom fields.
+ *
+ * The parameters $field_id, $value and $operator (which are used for defining
+ * the search condition) can be arrays or single values. If arrays are used,
+ * then all three parameter arrays must contain the same number of elements
+ * and the key values in the arrays must be the same.
+ *
+ * @param integer $fieldtype
+ *     The type of the fields to be retrieved, can currently be:
+ *         PHORUM_CUSTOM_FIELD_USER
+ *         PHORUM_CUSTOM_FIELD_FORUM
+ *         PHORUM_CUSTOM_FIELD_MESSAGE
+ * 
+ * @param mixed $field_id
+ *     The custom profile field id (integer) or ids (array) to search on.
+ *
+ * @param mixed $value
+ *     The value (string) or values (array) to search for.
+ *
+ * @param mixed $operator
+ *     The operator (string) or operators (array) to use. Valid operators are
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
+ *     "*" operator is for executing a "LIKE '%value%'" matching query.
+ *
+ * @param boolean $return_array
+ *     If this parameter has a true value, then an array of all matching
+ *     user_ids will be returned. Else, a single user_id will be returned.
+ *
+ * @param string $type
+ *     The type of search to perform. This can be one of:
+ *     - AND  match against all fields
+ *     - OR   match against any of the fields
+ *
+ * @param integer $offset
+ *     The result page offset starting with 0.
+ *
+ * @param integer $length
+ *     The result page length (nr. of results per page)
+ *     or 0 (zero, the default) to return all results.
+ *
+ * @return mixed
+ *     An array of matching relation_ids or a single relation_id (based on the
+ *     $return_array parameter). If no relation_ids can be found at all,
+ *     then 0 (zero) will be returned.
+ */
+function phorum_db_search_custom_profile_field($fieldtype,$field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
+{
     $PHORUM = $GLOBALS['PHORUM'];
 
     settype($return_array, 'bool');
     settype($offset, 'int');
     settype($length, 'int');
+    settype($fieldtype,'int');
 
     // Convert all search condition parameters to arrays.
     if (!is_array($field_id)) $field_id = array($field_id);
@@ -6858,9 +6975,9 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
             settype($id, 'int');
             $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
             if ($operator[$key] == '*') {
-                $clauses[] = "(field_type = ".PHORUM_CUSTOM_FIELD_USER." AND type = $id AND data LIKE '%$value[$key]%')";
+                $clauses[] = "(field_type = ".$fieldtype." AND type = $id AND data LIKE '%$value[$key]%')";
             } else {
-                $clauses[] = "(field_type = ".PHORUM_CUSTOM_FIELD_USER." AND type = $id AND data $operator[$key] '$value[$key]')";
+                $clauses[] = "(field_type = ".$fieldtype." AND type = $id AND data $operator[$key] '$value[$key]')";
             }
         }
     }
@@ -6881,7 +6998,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
 
 
     // Retrieve the matching user_ids from the database.
-    $user_ids = phorum_db_interact(
+    $relation_ids = phorum_db_interact(
         DB_RETURN_ROWS,
         "SELECT DISTINCT(relation_id)
          FROM   {$PHORUM['custom_fields_table']}
@@ -6890,17 +7007,17 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     );
 
     // No user_ids found at all?
-    if (count($user_ids) == 0) return 0;
+    if (count($relation_ids) == 0) return 0;
 
     // Return an array of user_ids.
     if ($return_array) {
-        foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
-        return $user_ids;
+        foreach ($relation_ids as $id => $rel_id) $relation_ids[$id] = $rel_id[0];
+        return $relation_ids;
     }
 
     // Return a single user_id.
-    list ($user_id, $dummy) = each($user_ids);
-    return $user_id;
+    list ($rel_id, $dummy) = each($relation_ids);
+    return $rel_id;
 }
 // }}}
 
