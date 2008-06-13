@@ -2042,7 +2042,7 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
     {
         // Skip profile fields for users which are not in our
         // $users array. This should not happen, but it could
-        // happen in case some orphin custom user fields
+        // happen in case some orphan custom user fields
         // are lingering in the database.
         if (!isset($forums[$forumid])) continue;
         
@@ -2560,7 +2560,7 @@ function phorum_db_drop_forum($forum_id)
     // now delete its custom fields
     phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_id);
 
-    // Collect all orphin message attachment files from the database.
+    // Collect all orphan message attachment files from the database.
     // These are all messages that are linked to a message, but for which
     // the message_id does not exist in the message table (anymore).
     // This might catch some more messages than only the ones for the
@@ -2796,7 +2796,7 @@ function phorum_db_get_groups($group_id = 0, $sorted = FALSE)
     foreach ($groups as $id => $group) $groups[$id]['permissions'] = array();
     foreach ($perms as $perm)
     {
-        // Little safety net against orphin records (shouldn't happen).
+        // Little safety net against orphan records (shouldn't happen).
         if (!isset($groups[$perm['group_id']])) continue;
 
         $groups[$perm['group_id']]['permissions'][$perm['forum_id']]
@@ -3307,7 +3307,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         {
             // Skip permissions for users which are not in our
             // $users array. This should not happen, but it could
-            // happen in case some orphin group permissions are
+            // happen in case some orphan group permissions are
             // lingering in the database.
             if (!isset($users[$perm[0]])) continue;
 
@@ -3338,7 +3338,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
     {
         // Skip profile fields for users which are not in our
         // $users array. This should not happen, but it could
-        // happen in case some orphin custom user fields
+        // happen in case some orphan custom user fields
         // are lingering in the database.
         if (!isset($users[$fld_user_id])) continue;
         
@@ -4323,7 +4323,7 @@ function phorum_db_user_delete($user_id)
 
     // Retrieve a list of private mesage xrefs for this user. After we delete
     // the pm xrefs for this user in the code afterwards, we might have
-    // created orphin PM messages (messages with no xrefs linked to them),
+    // created orphan PM messages (messages with no xrefs linked to them),
     // so we'll have to check for that later on.
     $pmxrefs = phorum_db_interact(
         DB_RETURN_ROWS,
@@ -4360,7 +4360,7 @@ function phorum_db_user_delete($user_id)
     phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_USER,$user_id);
 
 
-    // See if we created any orphin private messages. We do this in
+    // See if we created any orphan private messages. We do this in
     // a loop using the standard phorum_db_pm_update_message_info()
     // function and not a single SQL statement with something like
     // pm_message_id IN (...) in it, because MySQL won't use an index
@@ -4779,7 +4779,7 @@ function phorum_db_list_stale_files()
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    // Select orphin editor files.
+    // Select orphan editor files.
     // These are files that are linked to the editor and that were added
     // a while ago. These are from posts that were abandoned before posting.
     $stale_files = phorum_db_interact(
