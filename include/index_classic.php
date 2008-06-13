@@ -70,6 +70,12 @@ foreach( $forums as $forum ) {
             $forum["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $forum["forum_id"], "type=".$PHORUM["default_feed"] );
         }
 
+
+        $forum["raw_message_count"] = $forum["message_count"];
+        $forum["message_count"] = number_format($forum["message_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+        $forum["raw_thread_count"] = $forum["thread_count"];
+        $forum["thread_count"] = number_format($forum["thread_count"], 0, $PHORUM["dec_sep"], $PHORUM["thous_sep"]);
+
         if($PHORUM["DATA"]["LOGGEDIN"]){
             if($PHORUM["show_new_on_index"]==1){
 
