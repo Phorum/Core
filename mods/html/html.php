@@ -52,7 +52,7 @@ function phorum_html($data)
             // <br/> tags).
             $block_tags="table|pre|xmp";
 
-            preg_match_all("!(<($block_tags).*?>).+?(</($block_tags).*?>)!ms", $body, $matches);
+            preg_match_all("!(<($block_tags).*?>).+?(</($block_tags).*?>)!ims", $body, $matches);
 
             foreach($matches[0] as $block){
                 $newblock=str_replace("<phorum break>", "", $block);
