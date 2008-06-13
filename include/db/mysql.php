@@ -1090,6 +1090,7 @@ function phorum_db_update_message($message_id, $message)
 	            }
             } else {
             	$customfields[$key]=$value;
+            }
         }
     }
 
