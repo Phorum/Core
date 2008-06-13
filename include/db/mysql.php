@@ -568,6 +568,25 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
             }
         }
     }
+    
+    if($include_bodies && count($messages)) {
+        // get custom fields
+        $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
+    
+        // Add custom fields to the messages
+        foreach ($custom_fields as $message_id => $fields)
+        {
+            // Skip profile fields for messages which are not in our
+            // $return array. This should not happen, but it could
+            // happen in case some orphan custom fields
+            // are lingering in the database.
+            if (!isset($messages[$message_id])) continue;
+            
+            foreach($fields as $fieldname => $fielddata) {
+                $messages[$message_id][$fieldname] = $fielddata;
+            }
+        }    
+    }    
 
     return $messages;
 }
@@ -825,6 +844,25 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
                                ? array()
                                : unserialize($message['meta']);
     }
+    
+    if(!$countonly && count($messages)) {
+        // get custom fields
+        $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
+    
+        // Add custom fields to the messages
+        foreach ($custom_fields as $message_id => $fields)
+        {
+            // Skip profile fields for messages which are not in our
+            // $return array. This should not happen, but it could
+            // happen in case some orphan custom fields
+            // are lingering in the database.
+            if (!isset($messages[$message_id])) continue;
+            
+            foreach($fields as $fieldname => $fielddata) {
+                $messages[$message_id][$fieldname] = $fielddata;
+            }
+        }    
+    }
 
     return $messages;
 }
@@ -940,6 +978,13 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     if (isset($message['threadviewcount'])) {
         $insertfields['threadviewcount'] = $message['threadviewcount'];
     }
+    
+    $customfields=array();
+    foreach($message as $key => $value) {
+    	if(!isset($insertfields[$key])) {
+    		$customfields[$key] = $value;
+    	}
+    }
 
     // Insert the message and get the new message_id.
     $message_id = phorum_db_interact(
@@ -967,6 +1012,10 @@ function phorum_db_post_message(&$message, $convert=FALSE)
         );
 
         $message['thread'] = $message_id;
+    }
+    
+    if(count($customfields)) {
+        phorum_db_save_custom_fields($message_id,PHORUM_CUSTOM_FIELD_MESSAGE,$customfields);
     }
 
     if(empty($PHORUM['DBCONFIG']['empty_search_table'])){
@@ -1018,22 +1067,29 @@ function phorum_db_update_message($message_id, $message)
         E_USER_ERROR
     );
 
+    $customfields=array();
+    
     foreach ($message as $field => $value)
     {
         if (phorum_db_validate_field($field))
         {
-            if (is_numeric($value) &&
-                !in_array($field, $PHORUM['string_fields_message'])) {
-                $fields[] = "$field = $value";
-            } elseif (is_array($value)) {
-                $value = phorum_db_interact(DB_RETURN_QUOTED,serialize($value));
-                $message[$field] = $value;
-                $fields[] = "$field = '$value'";
+        	$custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_MESSAGE);
+            
+            if($custom === null) {
+	            if (is_numeric($value) &&
+	                !in_array($field, $PHORUM['string_fields_message'])) {
+	                $fields[] = "$field = $value";
+	            } elseif (is_array($value)) {
+	                $value = phorum_db_interact(DB_RETURN_QUOTED,serialize($value));
+	                $message[$field] = $value;
+	                $fields[] = "$field = '$value'";
+	            } else {
+	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+	                $message[$field] = $value;
+	                $fields[] = "$field = '$value'";
+	            }
             } else {
-                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-                $message[$field] = $value;
-                $fields[] = "$field = '$value'";
-            }
+            	$customfields[$key]=$value;
         }
     }
 
@@ -1045,6 +1101,10 @@ function phorum_db_update_message($message_id, $message)
         NULL,
         DB_MASTERQUERY
     );
+    
+    if(count($customfields)) {
+        phorum_db_save_custom_fields($message_id,$customfields);
+    }
 
     // Full text searching updates.
     if (!empty($PHORUM['DBCONFIG']['mysql_use_ft']) &&
@@ -1176,6 +1236,13 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         NULL,
         DB_MASTERQUERY
     );
+    if ($mode != PHORUM_DELETE_TREE) {
+    	$mids = array($message_id);
+    } 
+    // delete custom profile fields
+    if(count($mids)) {
+    	phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,$mids);
+    }
 
     // It kind of sucks to have this here, but it is the best way
     // to ensure that thread info gets updated if messages are deleted.
@@ -1329,7 +1396,27 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 
         $return[$message['message_id']] = $message;
     }
-
+    
+    if(count($return)) {
+	    // get custom fields
+	    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return));
+	
+	    // Add custom fields to the messages
+	    foreach ($custom_fields as $message_id => $fields)
+	    {
+	        // Skip profile fields for messages which are not in our
+	        // $return array. This should not happen, but it could
+	        // happen in case some orphan custom fields
+	        // are lingering in the database.
+	        if (!isset($return[$message_id])) continue;
+	        
+	        foreach($fields as $fieldname => $fielddata) {
+	            $return[$message_id][$fieldname] = $fielddata;
+	        }
+	    }    
+    }
+    
+    
     return $return;
 }
 // }}}
@@ -1445,9 +1532,30 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
             }
         }
     }
+    
+    if(count($messages)) {
+        // get custom fields
+        $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
+    
+        // Add custom fields to the messages
+        foreach ($custom_fields as $message_id => $fields)
+        {
+            // Skip profile fields for messages which are not in our
+            // $return array. This should not happen, but it could
+            // happen in case some orphan custom fields
+            // are lingering in the database.
+            if (!isset($messages[$message_id])) continue;
+            
+            foreach($fields as $fieldname => $fielddata) {
+                $messages[$message_id][$fieldname] = $fielddata;
+            }
+        }    
+    }
 
     // Store the involved users in the message array.
     $messages['users'] = $involved_users;
+    
+    
 
     return $messages;
 }
@@ -2037,12 +2145,12 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
     
     $forum_custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_ids);
 
-    // Add custom user profile fields to the users.
+    // Add custom fields to the forums
     foreach ($forum_custom_fields as $forumid => $fields)
     {
-        // Skip profile fields for users which are not in our
-        // $users array. This should not happen, but it could
-        // happen in case some orphan custom user fields
+        // Skip custom fields for forums which are not in our
+        // $forums array. This should not happen, but it could
+        // happen in case some orphan custom fields
         // are lingering in the database.
         if (!isset($forums[$forumid])) continue;
         
@@ -2561,7 +2669,7 @@ function phorum_db_drop_forum($forum_id)
     phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_id);
 
     // Collect all orphan message attachment files from the database.
-    // These are all messages that are linked to a message, but for which
+    // These are all files that are linked to a message, but for which
     // the message_id does not exist in the message table (anymore).
     // This might catch some more messages than only the ones for the
     // deleted forum alone. That should never be a problem.
@@ -2587,6 +2695,29 @@ function phorum_db_drop_forum($forum_id)
             DB_MASTERQUERY
         );
     }
+    
+    
+    // Collect all orphan message custom fields from the database.
+    // These are all custom fields that are linked to a message, but for which
+    // the message_id does not exist in the message table (anymore).
+    // This might catch some more custom fields than only the ones for the
+    // deleted forum alone. That should never be a problem.
+    $customfields = phorum_db_interact(
+        DB_RETURN_ROWS,
+        "SELECT DISTINCT(a.relation_id)
+         FROM   {$PHORUM['custom_fields_table']} as a
+                LEFT JOIN {$PHORUM['message_table']} as b
+                ON b.message_id = a.relation_id
+         WHERE  a.relation_id > 0 AND
+                a.field_type = '" . PHORUM_CUSTOM_FIELD_MESSAGE . "' AND
+                b.message_id is NULL",
+        0 // keyfield 0 is the relation_id
+    );    
+    
+    if(is_array($customfields) && count($customfields)) {
+        phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,$customfields);
+    }
+    
 }
 // }}}
 
@@ -4397,10 +4528,16 @@ function phorum_db_user_delete($user_id)
 function phorum_db_delete_custom_fields($type,$relation_id) {
 	global $PHORUM;
 	
+	if(is_array($relation_id)) {
+	    $rel_where = "relation_id IN (".implode(',',$relation_id).")"; 
+	} else {
+		$rel_where = "relation_id = $relation_id";
+	}
+	
 	phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM ".$PHORUM['custom_fields_table']."
-         WHERE  relation_id = $relation_id AND
+         WHERE  $rel_where AND
                 field_type =".$type,
         NULL,
         DB_GLOBALQUERY | DB_MASTERQUERY
