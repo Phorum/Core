@@ -84,7 +84,7 @@ if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
  *             e.g. "<literal>template(foobar::baz)</literal>"</li>
  *         <li><b>function(&lt;function name&gt;)</b><br>
  *             For calling a function to retrieve the JavaScript code,
- *             e.g. "<literal>function(mod_foobar_get_js</literal>)"</li>
+ *             e.g. "<literal>function(mod_foobar_get_js)</literal>"</li>
  *         </ul>
  *     </li>
  *     <li><b>cache_key</b><br>
