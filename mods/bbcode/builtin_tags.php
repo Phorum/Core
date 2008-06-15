@@ -157,7 +157,8 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
 
     // No description defined. This one is covered by the list item.
     // By not defining a description, we hide this one from the
-    // module settings interface.
+    // module settings interface. The dependency will make this tag
+    // active when the "list" tag is enabled.
     '*' => array(
         BBCODE_INFO_PARENTS       => array('list'),
         BBCODE_INFO_REPLACEOPEN   => '<li>',
