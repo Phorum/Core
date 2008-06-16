@@ -751,7 +751,20 @@ function phorum_read_file($file)
         "\"" . htmlspecialchars($file) . "\"",
         E_USER_ERROR
     );
-    $data = fread($fp, $size);
+    // Strip UTF-8 byte order markers from the files. These only mean
+    // harm for PHP scripts.
+    $data = '';
+    if ($size >= 3) {
+        $data = fread($fp, 3);
+        if ($data == "\xef\xbb\xbf") {
+            $data = '';
+        }
+        $size -= 3;
+    }
+    // Read the rest of the file.
+    if ($size > 0) {
+        $data .= fread($fp, $size);
+    }
     fclose($fp);
 
     return $data;
