@@ -71,8 +71,7 @@ if ($mode == "reply" || $mode == "quote")
         // directly, but it can contain HTML formatting code, in case
         // some module uses the custom display name functionality.
         $author = phorum_api_user_get_display_name(
-            $dbmessage["user_id"],
-            NULL, PHORUM_FLAG_PLAINTEXT
+            $dbmessage["user_id"], $dbmessage['author'], PHORUM_FLAG_PLAINTEXT
         );
 
         $quoted = 0;
