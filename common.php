@@ -87,6 +87,11 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
     $orig = ini_get("display_errors");
     @ini_set("display_errors", 0);
 
+    // Use output buffering so we don't get header errors if there's
+    // some additional output in the database config file (e.g. a UTF-8
+    // byte order marker).
+    ob_start();
+
     // Load configuration.
     if (! include_once( "./include/db/config.php" )) {
         print '<html><head><title>Phorum error</title></head><body>';
@@ -118,6 +123,9 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
         print '</body></html>';
         exit(1);
     }
+
+    // Clean up the output buffer.
+    ob_end_clean();
 
     // Restore original display_errors setting.
     @ini_set("display_errors", $orig);
@@ -669,10 +677,13 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["language"] = PHORUM_DEFAULT_LANGUAGE;
     }
 
-    // user output buffering so we don't get header errors
-    // not loaded if we are running an external or scheduled script
+    // Use output buffering so we don't get header errors if there's
+    // some additional output in the upcoming included files (e.g. UTF-8
+    // byte order markers).
+    ob_start();
+
+    // Not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
-        ob_start();
         require_once( phorum_get_template( "settings" ) );
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
@@ -680,7 +691,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
         $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_get_url(PHORUM_JAVASCRIPT_URL);
         $PHORUM["DATA"]["URL"]["AJAX"] = phorum_get_url(PHORUM_AJAX_URL);
-        ob_end_clean();
     }
 
     $PHORUM['language'] = basename($PHORUM['language']);
@@ -701,6 +711,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             }
         }
     }
+
+    // Clean up the output buffer.
+    ob_end_clean();
 
     // load the locale from the language file into the template vars
     $PHORUM["DATA"]["LOCALE"] = ( isset( $PHORUM["locale"] ) ) ? $PHORUM["locale"] : "";
