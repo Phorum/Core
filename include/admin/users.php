@@ -450,7 +450,9 @@ if (isset($_REQUEST["user_id"]))
         $frm->addrow("Signature", $frm->textarea("signature", $user["signature"]));
 
         $frm->addrow("Active", $frm->select_tag("active", array("No", "Yes"), $user["active"]));
-
+        
+        $frm->addrow("Forum posts",$user["posts"]);
+        
         $frm->addrow("Registration Date", phorum_date($PHORUM['short_date_time'], $user['date_added']));
 
         $row=$frm->addrow("Date last active", phorum_date($PHORUM['short_date_time'], $user['date_last_active']));
