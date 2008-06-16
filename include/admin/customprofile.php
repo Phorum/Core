@@ -251,6 +251,7 @@ if ($curr == "NEW")
           <td class="PhorumAdminTableHead">Length</td>
           <td class="PhorumAdminTableHead">HTML disabled</td>
           <td class="PhorumAdminTableHead">Type</td>
+          <td class="PhorumAdminTableHead">Show in Admin?</td>
           <td class="PhorumAdminTableHead">&nbsp;</td>
         </tr> <?php
 
@@ -269,6 +270,7 @@ if ($curr == "NEW")
                 print "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
                 print "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
                 print "    <td class=\"PhorumAdminTableRow\">".$readable_type."</td>\n";
+                print "    <td class=\"PhorumAdminTableRow\">".($item['show_in_admin']?"Yes":"No")."</td>\n";
                 print "    <td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&type=$type&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&type=$type&delete=1\">Delete</a></td>\n";
                 print "</tr>\n";
             }
