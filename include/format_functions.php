@@ -148,9 +148,14 @@ function phorum_format_messages ($data, $author_specs = NULL)
                      : $message[$spec[1]]);
             }
             // For anonymous user which left an email address.
-            elseif ($spec[2] !== NULL && !empty($message[$spec[2]]) &&
-                    (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))) {
-
+            // We only show the address if addresses aren't hidden globally,
+            // if the active user is an administrator or if the active user
+            // is a moderator with the PHORUM_MOD_EMAIL_VIEW constant enabled.
+            elseif ( $spec[2] !== NULL && !empty($message[$spec[2]]) &&
+                     (empty($PHORUM['hide_email_addr']) ||
+                      !empty($PHORUM["user"]["admin"]) ||
+                      (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
+                      (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW)) ) {
                 $data[$key][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $email_url = phorum_html_encode("mailto:".$message[$spec[2]]);
                 $data[$key]["URL"]["PROFILE"] = $email_url;
