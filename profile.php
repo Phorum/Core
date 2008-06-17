@@ -74,12 +74,10 @@ $PHORUM["DATA"]["PROFILE"]["forum_id"] = $PHORUM["forum_id"];
 $PHORUM["DATA"]["PROFILE"]["raw_date_added"]=$PHORUM["DATA"]["PROFILE"]["date_added"];
 $PHORUM["DATA"]["PROFILE"]["date_added"]=phorum_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
 
-if( (!empty($PHORUM["user"]["admin"]) ||
+if( (empty($PHORUM['hide_email_addr']) && !$user['hide_email']) ||
+    !empty($PHORUM["user"]["admin"]) ||
     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
-    (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ||
-    !$user["hide_email"]) &&
-    (!isset($PHORUM['hide_email_addr']) || empty($PHORUM['hide_email_addr']))){
-
+    (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ){
     $PHORUM["DATA"]["PROFILE"]["email"]=phorum_html_encode($user["email"]);
 } else {
     $PHORUM["DATA"]["PROFILE"]["email"] = $PHORUM["DATA"]["LANG"]["Hidden"];
