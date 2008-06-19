@@ -98,7 +98,18 @@ if ($mode == "post" || $mode == "reply")
 if ($finish && ($mode == 'edit' || $mode == 'reply'))
 {
     $id = $mode == "edit" ? "message_id" : "parent_id";
-    $origmessage = phorum_db_get_message($message[$id]);
+    
+    $origmessage = null;
+    if($PHORUM['cache_messages']) {
+        $origmessage = phorum_cache_get('message',$message[$id]);
+    }
+    
+    if($origmessage == null) {
+        $origmessage = phorum_db_get_message($message[$id]);
+        if($PHORUM['cache_messages']) {
+            phorum_cache_put('message',$message[$id],$origmessage);
+        }
+    }
     if (! $origmessage) {
         phorum_redirect_by_url(phorum_get_url(PHORUM_INDEX_URL));
         exit();
@@ -122,7 +133,16 @@ if ($message["user_id"]) {
 
 // Find the startmessage for the thread.
 if ($mode == "reply" || $mode == "edit") {
-    $top_parent = phorum_db_get_message($message["thread"]);
+    $top_parent = null;
+    if($PHORUM['cache_messages']) {
+        $top_parent = phorum_cache_get('message',$message["thread"]);
+    } 
+    if($top_parent == null) {
+        $top_parent = phorum_db_get_message($message["thread"]);
+        if($PHORUM['cache_messages']) {
+            phorum_cache_put('message',$message["thread"],$top_parent);
+        }
+    }
 }
 
 // Do permission checks for replying to messages.
@@ -130,7 +150,16 @@ if ($mode == "reply")
 {
     // Find the direct parent for this message.
     if ($message["thread"] != $message["parent_id"]) {
-        $parent = phorum_db_get_message($message["parent_id"]);
+	    $parent = null;
+	    if($PHORUM['cache_messages']) {
+	        $parent = phorum_cache_get('message',$message["parent_id"]);
+	    }  
+	    if($parent == null) {       
+            $parent = phorum_db_get_message($message["parent_id"]);
+            if($PHORUM['cache_messages']) {
+                phorum_cache_put('message',$message["parent_id"],$parent);
+            }
+	    }
     } else {
         $parent = $top_parent;
     }

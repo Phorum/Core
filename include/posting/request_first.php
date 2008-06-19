@@ -43,7 +43,18 @@ if ($mode != "post")
 
     // Load the message from the database. If the message
     // can't be retrieved, then return to the message list.
-    $dbmessage = phorum_db_get_message($message_id);
+    $dbmessage=null;
+    if($PHORUM['cache_messages']) {
+        $dbmessage = phorum_cache_get('message',$message_id);
+    }
+    
+    if($dbmessage == null) {
+        $dbmessage = phorum_db_get_message($message_id);
+        
+        if($PHORUM['cache_messages']) {
+            phorum_cache_put('message',$message_id,$dbmessage);
+        }
+    }
     if (! $dbmessage) {
         phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
         exit;
