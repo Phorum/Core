@@ -1391,7 +1391,7 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
                          : unserialize($message['meta']);
 
         if (! $multiple) {
-            $return = $message;
+            $return[$message['message_id']] = $message;
             break;
         }
 
@@ -1400,6 +1400,7 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
     
     if(count($return)) {
 	    // get custom fields
+	    
 	    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return),$flags);
 	
 	    // Add custom fields to the messages
@@ -1415,6 +1416,10 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 	            $return[$message_id][$fieldname] = $fielddata;
 	        }
 	    }    
+    }
+    
+    if (! $multiple) {
+        $return = array_shift($return);
     }
     
     
