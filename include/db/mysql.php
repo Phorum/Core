@@ -1400,7 +1400,7 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
     
     if(count($return)) {
 	    // get custom fields
-	    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return));
+	    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return),$flags);
 	
 	    // Add custom fields to the messages
 	    foreach ($custom_fields as $message_id => $fields)
@@ -1536,7 +1536,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
     
     if(count($messages)) {
         // get custom fields
-        $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
+        $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages),$flags);
     
         // Add custom fields to the messages
         foreach ($custom_fields as $message_id => $fields)
@@ -3508,7 +3508,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
  *     An array of custom fields is returned, indexed by relation_id. 
  *     For relation_ids that cannot be found, there will be no array element at all.
  */
-function phorum_db_get_custom_fields($type,$relation_id,$db_flags) {
+function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
 
     global $PHORUM;
    
