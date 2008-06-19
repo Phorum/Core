@@ -1649,7 +1649,9 @@ function phorum_get_template_info()
 function phorum_get_language_info()
 {
     // to make some language-files happy which are using $PHORUM-variables
-    global $PHORUM;
+    // don't make this really global
+    // included language file would override real language this way
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $langs = array();
 
