@@ -87,7 +87,6 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
         // Check if there are modules that require a database layer upgrade.
         // If this is the case, then we will run the upgrade code in
         // module upgrading mode.
-        require_once('./include/api/modules.php');
         $modupgrades = phorum_api_modules_check_updated_dblayer();
         if (!empty($modupgrades)) {
             define('MODULE_DATABASE_UPGRADE', 1);

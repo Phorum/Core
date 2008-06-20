@@ -358,8 +358,7 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
 
         case 'module':
             $versionvar  = "mod_{$module}_dbversion";
-            $description = 'module upgrade for module "' .
-                           htmlspecialchars($module) . '"';
+            $description = 'module "' . htmlspecialchars($module) . '"';
             $support     = 'the module author';
             break;
 

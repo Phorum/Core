@@ -144,7 +144,20 @@ if ($file)
 }
 // Prepare standard upgrade
 else {
-    $upgrades = phorum_dbupgrade_getupgrades();
+    // Collect standard database upgrades.
+    $dbupgrades = phorum_dbupgrade_getupgrades();
+
+    // Collect module database upgrades.
+    // First update module information if needed.
+    require_once('./include/api/modules.php');
+    $updates = phorum_api_modules_check_updated_info();
+    if (!empty($updates)) { phorum_api_modules_save(); }
+
+    // Check if there are modules that require a database layer upgrade.
+    $modupgrades = phorum_api_modules_check_updated_dblayer();
+
+    // Build the final list of upgrades.
+    $upgrades = $dbupgrades + $modupgrades;
 }
 
 // Run upgrades until we are up to date.
