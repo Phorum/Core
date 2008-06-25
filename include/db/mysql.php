@@ -7592,7 +7592,7 @@ function phorum_db_create_tables()
            show_signature           tinyint(1)     NOT NULL default '0',
            email_notify             tinyint(1)     NOT NULL default '0',
            pm_email_notify          tinyint(1)     NOT NULL default '1',
-           tz_offset                tinyint(2)     NOT NULL default '-99',
+           tz_offset                float(4,2)     NOT NULL default '-99.00',
            is_dst                   tinyint(1)     NOT NULL default '0',
            user_language            varchar(100)   NOT NULL default '',
            user_template            varchar(100)   NOT NULL default '',
