@@ -304,7 +304,7 @@ function event_logging_create_where($filter)
             if ($type == 'int') {
                 $where_parts[] = "$field = " . (int) $val;
             } else {
-                if (strstr($filter[$field], "*")) {
+                if (strstr($val, "*")) {
                     $val = str_replace('*', '%', $val);
                     $val = "'" . phorum_db_interact(DB_RETURN_QUOTED, $val) . "'";
                     $where_parts[] = "$field LIKE $val";
