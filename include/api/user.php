@@ -310,7 +310,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
   'show_signature'          => 'bool',
   'email_notify'            => 'int',
   'pm_email_notify'         => 'bool',
-  'tz_offset'               => 'int',
+  'tz_offset'               => 'float',
   'is_dst'                  => 'bool',
   'user_language'           => 'string',
   'user_template'           => 'string',
@@ -476,6 +476,10 @@ function phorum_api_user_save($user, $flags = 0)
                 $dbuser[$fld] = $val === NULL ? NULL : (int) $val;
                 break;
 
+            case 'float':
+            	$dbuser[$fld] = $val === NULL ? NULL : (float) $val;
+                break;
+                
             case 'string':
                 $dbuser[$fld] = $val === NULL ? NULL : trim($val);
                 break;
