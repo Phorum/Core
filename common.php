@@ -566,6 +566,11 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM["DATA"]["NAME"] = ( isset( $PHORUM["name"] ) ) ? $PHORUM["name"] : "";
     $PHORUM["DATA"]["HTML_DESCRIPTION"] = ( isset( $PHORUM["description"]  ) ) ? preg_replace("!\s+!", " ", $PHORUM["description"]) : "";
     $PHORUM["DATA"]["DESCRIPTION"] = strip_tags($PHORUM["DATA"]["HTML_DESCRIPTION"]);
+    // clean up some more stuff in the description without html
+    $search_arr  = array('\'','"');
+    $replace_arr = array('','');
+    $PHORUM["DATA"]["DESCRIPTION"]=str_replace($search_arr,$replace_arr,$PHORUM["DATA"]["DESCRIPTION"]);
+    
     $PHORUM["DATA"]["ENABLE_PM"] = ( isset( $PHORUM["enable_pm"] ) ) ? $PHORUM["enable_pm"] : "";
     if ( !empty( $PHORUM["DATA"]["HTML_TITLE"] ) && !empty( $PHORUM["DATA"]["NAME"] ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
