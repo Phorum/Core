@@ -42,8 +42,10 @@
 	temporary tables, which the search feature uses. To fix this, either grant your user 
 	temporary table creation permissions through a tool like phpmyadmin, or if you can't, 
 	contact your host to see if they can enable it for you.
+	</para>
 	<sbr />
-    If you cannnot obtain permissions to create temporary tables, you can alter the 
+	<para>
+        If you cannnot obtain permissions to create temporary tables, you can alter the 
 	"mysql_use_ft" variable in config.php to 0, which disables full text search (and temporary 
 	tables). This will make searching much slower and is only there for extreme cases where 
 	temporary tables are not allowed.
