@@ -141,6 +141,7 @@ img {
 #phorum div.nav {
     font-size: {font_small};
     margin: 0 0 5px 0;
+    line-height: 20px;
 }
 
 #phorum div.nav-right {
@@ -410,6 +411,7 @@ img {
     padding: 6px;
     background-color: {alt_background_color};
     border: 1px solid {border_color};
+    line-height: 20px;
 }
 
 #phorum div.message-options {
