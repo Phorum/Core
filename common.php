@@ -1148,15 +1148,11 @@ function phorum_switch_template($template = NULL, $template_path = NULL, $templa
     ob_end_clean();
 }
 
-/**
- * Find out what input and output files to use for a template file.
+/*
+ * Find out what input and output files to use for a template.
  *
  * @param string $page
- *     The template base name (e.g. "header", "css", etc.).
- *
- * @param string $module
- *     The module to load the template from or NULL if the
- *     main Phorum templates directory must be used.
+ *     The template name (e.g. "header", "css", "foobar::frontpage", etc.).
  *
  * @return array
  *     This function returns an array, containing two elements:
