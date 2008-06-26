@@ -46,7 +46,7 @@ function phorum_import_template($page, $infile, $outfile)
     // Template pass 1:
     // Recursively process all template {include ...} statements, to
     // construct a single template data block.
-    list ($template, $dependancies) = phorum_import_template_pass1($infile);
+    list ($template, $dependencies) = phorum_import_template_pass1($infile);
 
     // Template pass 2:
     // Translate all other template statements into PHP code.
@@ -55,7 +55,7 @@ function phorum_import_template($page, $infile, $outfile)
     // Write the compiled template to disk.
     //
     // For storing the compiled template, we use two files. The first one
-    // has some code for checking if one of the dependant files has been
+    // has some code for checking if one of the dependent files has been
     // updated and for rebuilding the template if this is the case.
     // This one loads the second file, which is the compiled template itself.
     //
@@ -72,12 +72,12 @@ function phorum_import_template($page, $infile, $outfile)
     $qstage2file = addslashes($stage2file);
 
     // Output file for stage 1. This file contains code to check the file
-    // dependancies. If one of the files that the template depends on is
+    // dependencies. If one of the files that the template depends on is
     // changed, the template has to be rebuilt. Also rebuild in case the
     // second stage compiled template is missing.
     $checks = array();
     $checks[] = "!file_exists(\"$qstage2file\")";
-    foreach ($dependancies as $file => $mtime) {
+    foreach ($dependencies as $file => $mtime) {
         $qfile = addslashes($file);
         $checks[] = "@filemtime(\"$qfile\") != $mtime";
     }
@@ -102,14 +102,14 @@ function phorum_import_template($page, $infile, $outfile)
  * all (static) {include <template>} statements are recursively resolved.
  * After resolving all includes, a complete single template is constructed.
  * During this process, the function will keep track of all file
- * dependancies for the constructed template.
+ * dependencies for the constructed template.
  *
  * @param $infile - The template file to process.
  * @param $include_depth - Current include depth (only for recursive call).
- * @param $deps - File dependancies (only for recursive call)
+ * @param $deps - File dependencies (only for recursive call)
  * @param $include_once - Already include pages (only for recursive call)
  * @return $template - The constructed template data.
- * @return $dependancies - An array containing file dependancies for the
+ * @return $dependencies - An array containing file dependencies for the
  *     created template data. The keys are filenames and the values are
  *     file modification times.
  */
