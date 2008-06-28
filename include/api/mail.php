@@ -33,32 +33,32 @@
 if (!defined('PHORUM')) return;
 
 /**
- * The wraplength for Quoted-Printable encoded data. RFC 2045 defines
+ * The wraplength for Quoted-Printable encoded data. The RFC defines
  * a maximum line length of 76 characters. We use a few characters less
- * here, to make wrapped mailheaders better fit 80 column displays.
+ * here, to make wrapped mailheaders better fit 80 column displays
+ * (pathetic, I know).
  */
 define('RFC2045_WRAPLEN', 70);
 
-// {{{ Function: phorum_api_mail_encode_quotedprintable()
+// {{{ Function: phorum_api_mail_encode_header()
 /**
- * Handle Quoted-Printable encoding, as defined by RFC 2045.
+ * Handle Quoted-Printable encoding of mail headers, as defined by RFC 2045.
  *
  * @param string $string
  *     The string to encode.
  *
- * @param boolean $wrap_prefix
- *     If line wrapping is applied (to not exceed the maximum line length
- *     as defined by the RFC), then this prefix is added to the start of
- *     the wrapped around lines. This is especially useful for encoding
- *     mail headers.
- *
- * @return mixed
- *     The Quoted-Printable encoded string or NULL if the string does
- *     not have to be encoded, because it does not contain any special
- *     characters at all.
+ * @return string
+ *     The Quoted-Printable encoded string or the orginal string if the
+ *     string does not have to be encoded, because it does not contain
+ *     any special characters at all.
  */
-function phorum_api_mail_encode_quotedprintable($string, $wrap_prefix = '')
+function phorum_api_mail_encode_header($string)
 {
+    global $PHORUM;
+    $prefix = '=?'.$PHORUM["DATA"]["CHARSET"].'?Q?';
+    $prefixlen = strlen($prefix);
+    $postfix = '?=';
+
     // From the RFC:
     // "Octets with decimal values of 33 through 60 inclusive, and 62
     //  through 126, inclusive, MAY be represented as the US-ASCII
@@ -87,19 +87,19 @@ function phorum_api_mail_encode_quotedprintable($string, $wrap_prefix = '')
     }
 
     // Quick shortcut.
-    if ($string == '') return NULL;
+    if ($string == '') return $string;
 
     // Find out how long the $string is.
     $len = strlen($string);
 
     // Check for strings that don't need encoding at all.
     $count = strspn($string, $safe_chars . $semi_safe_chars);
-    if ($count == $len) return NULL;
+    if ($count == $len) return $string;
 
     // Walk over the $string to encode it.
-    $res = '';
+    $res = $prefix;
     $cursor = 0;
-    $linecursor = 0;
+    $linecursor = $prefixlen;
     while ($len > 0)
     {
         // Check how many safe chars in a row we can find in the string
@@ -129,8 +129,8 @@ function phorum_api_mail_encode_quotedprintable($string, $wrap_prefix = '')
 
             // Characters left? Then add a soft break for the next batch.
             if ($count > 0) {
-                $res .= "=\r\n$wrap_prefix";
-                $linecursor = 0;
+                $res .= "$postfix\r\n\t$prefix";
+                $linecursor = $prefixlen;
             }
         }
 
@@ -159,7 +159,7 @@ function phorum_api_mail_encode_quotedprintable($string, $wrap_prefix = '')
             if ($string[$cursor] == "\r" &&
                 isset($string[$cursor+1]) &&
                 $string[$cursor + 1] == "\n") {
-                $res .= "\r\n$wrap_prefix";
+                $res .= "\r\n\t";
                 $cursor += 2;
                 $linecursor = 0;
                 $count -= 2;
@@ -172,8 +172,8 @@ function phorum_api_mail_encode_quotedprintable($string, $wrap_prefix = '')
                 // a soft break. We take 3 characters into account to
                 // take care of the "=XX" encoding.
                 if (($linecursor + 3) >= RFC2045_WRAPLEN) {
-                    $res .= "=\r\n$wrap_prefix";
-                    $linecursor = 0;
+                    $res .= "$postfix\r\n\t$prefix";
+                    $linecursor = $prefixlen;
                 }
 
                 // Add the escaped character.
@@ -188,6 +188,9 @@ function phorum_api_mail_encode_quotedprintable($string, $wrap_prefix = '')
         // No more characters left? Then we are done.
         if ($len == 0) break;
     }
+
+    // Add the closing postfix.
+    $res .= $postfix;
 
     return $res;
 }

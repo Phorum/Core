@@ -75,14 +75,9 @@ function phorum_email_user($addresses, $data)
         $from_name = trim($PHORUM['system_email_from_name']);
         if ($from_name != '')
         {
-            // Handle Quoted-Printable encoding of the from name.
+            // Handle (Quoted-Printable) encoding of the from name.
             // Mail headers can not contain 8-bit data as per RFC821.
-            $q = phorum_api_mail_encode_quotedprintable($from_name, "\t");
-            if ($q !== NULL) {
-                $pre = '=?'.$PHORUM["DATA"]["CHARSET"].'?Q?';
-                $post = '?=';
-                $from_name = $pre . $q . $post;
-            }
+            $from_name = phorum_api_mail_encode_header($from_name, "\t");
 
             $prefix  = $from_name.' <';
             $postfix = '>';
@@ -160,14 +155,9 @@ function phorum_email_user($addresses, $data)
     }
     $messageid_header="\nMessage-ID: $messageid";
 
-    // Handle Quoted-Printable encoding of the Subject: header.
+    // Handle (Quoted-Printable) encoding of the Subject: header.
     // Mail headers can not contain 8-bit data as per RFC821.
-    $q = phorum_api_mail_encode_quotedprintable($mailsubject, "\t");
-    if ($q !== NULL) {
-        $pre = '=?'.$PHORUM["DATA"]["CHARSET"].'?Q?';
-        $post = '?=';
-        $mailsubject = $pre . $q . $post;
-    }
+    $mailsubject = phorum_api_mail_encode_header($mailsubject, "\t");
 
     // Allow modules to send the mail message. A module can either
     // remove the recipients for which they did send a mail from the
