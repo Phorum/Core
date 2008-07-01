@@ -4118,12 +4118,12 @@ function phorum_db_user_display_name_updates($userdata)
     $PHORUM = $GLOBALS['PHORUM'];
     if (!isset($userdata['user_id'])) trigger_error(
         'phorum_db_user_display_name_updates(): Missing user_id field in ' .
-        'the $file parameter',
+        'the $userdata parameter',
         E_USER_ERROR
     );
     if (!isset($userdata['display_name'])) trigger_error(
         'phorum_db_user_display_name_updates(): Missing user_id field in ' .
-        'the $file parameter',
+        'the $userdata parameter',
         E_USER_ERROR
     );
 
