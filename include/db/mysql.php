@@ -4122,8 +4122,8 @@ function phorum_db_user_display_name_updates($userdata)
         E_USER_ERROR
     );
     if (!isset($userdata['display_name'])) trigger_error(
-        'phorum_db_user_display_name_updates(): Missing user_id field in ' .
-        'the $userdata parameter',
+        'phorum_db_user_display_name_updates(): Missing display_name field ' .
+        'in the $userdata parameter',
         E_USER_ERROR
     );
 
