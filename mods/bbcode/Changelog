@@ -1,9 +1,15 @@
 Changelog:
 ----------
 
+2008-07-01 v2.0.7
+
+   - Fixed a compatibility problem for PHP versions prior to 5.1.0.
+     The PHP function htmlspecialchars_decode() is not available for
+     those versions of PHP. Thanks to Adam for noticing!
+
 2008-06-03 v2.0.6
 
-   - Fixed a bug in handling stale close tags that directly follow 
+   - Fixed a bug in handling stale close tags that directly follow
      another open or close tag. Thanks to CBiLL for the problem report.
 
 2008-05-27 v2.0.5

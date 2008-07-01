@@ -1091,8 +1091,20 @@ function bbcode_email_handler($content, $args)
     }
 
     $append = '';
-    if ($args['subject'] != '') {
-        $subject = htmlspecialchars_decode($args['subject']);
+    if ($args['subject'] != '')
+    {
+        // Decode the HTML entities in the subject.
+        // Use a fallback function for PHP versions prior to 5.1.0.
+        if (function_exists('htmlspecialchars_decode')) {
+            $subject = htmlspecialchars_decode($args['subject']);
+        } else {
+            $subject = strtr(
+                $args['subject'],
+                array_flip(get_html_translation_table(HTML_SPECIALCHARS))
+            );
+        }
+
+        // Recode it using urlencoding, so we can put it in the URL.
         $append = '?subject='.rawurlencode($subject);
     }
 
