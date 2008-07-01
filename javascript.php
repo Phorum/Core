@@ -301,7 +301,7 @@ if (isset($PHORUM['args']['refresh']) ||
 $last_modified = @filemtime($cache_file);
 
 // Check if a If-Modified-Since header is in the request. If yes, then
-// check if the CSS code has changed, based on the filemtime() data from
+// check if the JavaScript code has changed, based on the filemtime() data from
 // above. If nothing changed, then we can return a 304 header, to tell the
 // browser to use the cached data.
 if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
