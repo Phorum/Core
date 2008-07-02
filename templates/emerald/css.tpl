@@ -4,6 +4,7 @@
 
 body {
     background-color: {body_background_color};
+    color: {default_font_color};
 }
 
 #phorum {
