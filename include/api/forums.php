@@ -138,7 +138,7 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     NULL if the forum was not found.
  *     For all other cases, an array of forum data arrays is returned, indexed
  *     by the forum_id and sorted by their display order. If the $forum_ids
- *     parameter is an array containing non-existant forum_ids, then the
+ *     parameter is an array containing non-existent forum_ids, then the
  *     return array will have no entry available in the returned array.
  */
 function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)

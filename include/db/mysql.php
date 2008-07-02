@@ -5858,7 +5858,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
                        : $info['special_folder'];
 
             // If there are stale messages for no longer existing folders
-            // (shouldn't happen), we do not want them to create non-existant
+            // (shouldn't happen), we do not want them to create non-existent
             // mailboxes in the list.
             if (isset($folders[$folder_id])) {
                 $folders[$folder_id]['total'] = $info['total'];
