@@ -445,7 +445,7 @@ function bbcode_api_tokenize($text)
 
     // Initialize the variables that are used during tokenizing.
     $cursor = 0;
-    $maxpos = strlen($text);
+    $maxpos = strlen($text) - 1;
     $state  = 1;
     $is_closetag = 0;
     $current_tag = NULL;

@@ -34,7 +34,6 @@ function phorum_mod_bbcode_format($data)
 {
     global $PHORUM;
     $settings = $PHORUM['mod_bbcode'];
-    $enabled  = $settings['enabled'];
 
     // Initialize the BBcode parser.
     static $init = FALSE;

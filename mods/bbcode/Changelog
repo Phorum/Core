@@ -7,6 +7,9 @@ Changelog:
      The PHP function htmlspecialchars_decode() is not available for
      those versions of PHP. Thanks to Adam for noticing!
 
+   - Fixed a few cases of undefined index warnings. Thanks to Oliver
+     Riesen for noticing!
+
 2008-06-03 v2.0.6
 
    - Fixed a bug in handling stale close tags that directly follow
