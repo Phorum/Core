@@ -1198,7 +1198,7 @@ function phorum_get_template_file( $page )
         // If we're not handling a module template, then we can change the
         // global template to remember the fallback template and to make
         // sure that {URL->TEMPLATE} and {TEMPLATE} aren't pointing to a
-        // non-existant template in the end..
+        // non-existent template in the end..
         if ($module === NULL) { $PHORUM["template"] = $template; }
     } else {
         $template = $PHORUM['template'];

@@ -604,7 +604,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     );
 
     // For the standard database based file storage, we do not have to
-    // do checks for checking file existance (since the data is in the
+    // do checks for checking file existence (since the data is in the
     // database and we found the record for it). Storage modules might
     // have to do additional checks though (e.g. to see if the file data
     // exists on disk), so here we give them a chance to check for it.
@@ -632,7 +632,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         if (empty($message)) return phorum_api_error_set(
             PHORUM_ERRNO_INTEGRITY,
             "An integrity problem was detected in the database: " .
-            "file id $file_id is linked to non existant " .
+            "file id $file_id is linked to non existent " .
             "message_id {$file["message_id"]}."
         );
         if ($message["forum_id"] != $PHORUM["forum_id"]) {
@@ -658,6 +658,12 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
 
         // Generate the base URL for the Phorum.
         $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
+
+        // Strip query string from the base URL. We mainly want to
+        // check if the location matches the Phorum location.
+        // Otherwise, we might get in troubles with things like
+        // URI authentication, where a session id is added to the URL.
+        $base = preg_replace('/\?.*$/', '', $base);
 
         // FORUMONLY: Links to forum files are only allowed from the forum.
         // Check if the referrer URL starts with the base Phorum URL.
@@ -871,7 +877,7 @@ function phorum_api_file_check_delete_access($file_id)
     // To prevent permission errors after deleting the same file twice,
     // we'll return TRUE if we did not find a file (if the file is not found,
     // then there's no harm in deleting it; the file storage API will
-    // silently ignore deleting non-existant files). If some other error
+    // silently ignore deleting non-existent files). If some other error
     // occurred, then we return FALSE (most likely, the user does not
     // even have read permission for the file, so delete access would
     // be out of the question too).
@@ -961,7 +967,7 @@ function phorum_api_file_delete($file)
     // Allow storage modules to handle the file data removal.
     // Modules should be aware of the fact that files don't have to
     // exist. The Phorum core does not throw errors when deleting a
-    // non existant file. Therefore modules should accept that case
+    // non existent file. Therefore modules should accept that case
     // as well, without throwing errors.
     if (isset($PHORUM["hooks"]["file_delete"]))
         phorum_hook("file_delete", $file_id);
