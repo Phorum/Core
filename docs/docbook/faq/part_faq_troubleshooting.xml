@@ -1,5 +1,5 @@
 <chapter>
-  <title>Trouble shooting</title>
+  <title>Troubleshooting</title>
 
   <section>
     <title>
@@ -19,8 +19,40 @@
       the back button should work like expected.
     </para>
     <para>
-	If you do not have access to php.ini (you are using a hosting account), submit a request to your host asking that they change the aforementioned parameter for you. Most hosts should be willing to do this in the majority of cases.
-	</para>
+      If you do not have access to php.ini (you are using a hosting account),
+      submit a request to your host asking that they change the
+      aforementioned parameter for you. Most hosts should be willing to do
+      this in the majority of cases.
+    </para>
   </section>
+  <section>
+    <title>Help! I've deleted the admin user and can't log in!</title>
+    <para>
+      Create a new user using the registration form, and then set
+      the admin parameter of the user to 1 in the database itself.
+      This can be done using phpmyAdmin or a similar control panel,
+      or the shell.
+    </para>
+  </section>
+  <section>
+    <title>Why do I get a database error about temporary tables when I search?</title>
+    <para>
+      If you get an access denied error about CREATE TEMPORARY TABLE when
+      you search, the MySQL user assigned to your Phorum database does not
+      have the rights to create temporary tables, which the search feature
+      uses. To fix this, either grant your user temporary table creation
+      permissions through a tool like phpmyadmin, or if you cannot, then
+      contact your host to see if they can enable it for you.
+    </para>
+    <para>
+      If you cannnot obtain permissions to create temporary tables, you can
+      install the "Non-Temporary Search" module which you can find in our
+      on line module list:<sbr/>
+      <sbr/>
+      &listofmodules;<sbr/>
+      <sbr/>
+      (warning: it will be a slow search on large data sets!)
+    </para>
+    </section>
 
 </chapter>

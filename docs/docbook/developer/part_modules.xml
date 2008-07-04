@@ -1117,10 +1117,10 @@ function phorum_mod_foo_some_hook ($data)
             There are some hooks that send a full message structure to the
             hook functions. These can change the message structure before
             returning it to Phorum. An example is the hook
-            "<xref linkend="hook.user_save"/>". For these kind of
-            hooks, you can update the custom profile field data in the user
-            structure and be done with it. Here's an example of what this
-            could look like in your hook function:
+            "<xref endterm="user_save" linkend="hook.user_save"/>".
+            For these kind of hooks, you can update the custom profile
+            field data in the user structure and be done with it. Here's
+            an example of what this could look like in your hook function:
             <programlisting><![CDATA[
 function phorum_mod_foo_user_save ($user)
 {
