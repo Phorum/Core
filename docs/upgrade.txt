@@ -122,7 +122,7 @@ Table of contents:
    - Update the posted message counters for the users:
    
      In the scripts directory, you will also find a script named
-     "update_postcount.php". This script can be used to update the number
+     "rebuild_postcount.php". This script can be used to update the number
      of posts for users to the right value. So if you want correct numbers
      to show up in the user profiles, just run this script once AFTER the
      conversion has been completed. To run it, you will have to copy it
