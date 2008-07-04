@@ -35,22 +35,24 @@
     </para>
   </section>
   <section>
-    <title>I get a database error about temporary tables when I search... why?</title>
-	<para>
-	If you get an access denied error about CREATE TEMPORARY TABLE when you search, the 
-	MySQL user assigned to your Phorum database does not have the rights to create 
-	temporary tables, which the search feature uses. To fix this, either grant your user 
-	temporary table creation permissions through a tool like phpmyadmin, or if you can't, 
-	contact your host to see if they can enable it for you.
-	</para>
-	<sbr />
-	<para>
-        If you cannnot obtain permissions to create temporary tables, you can alter the 
-	"mysql_use_ft" variable in config.php to 0, which disables full text search (and temporary 
-	tables). This will make searching much slower and is only there for extreme cases where 
-	temporary tables are not allowed.
-	</para>
-	</section>
-	
-	
+    <title>Why do I get a database error about temporary tables when I search?</title>
+    <para>
+      If you get an access denied error about CREATE TEMPORARY TABLE when
+      you search, the MySQL user assigned to your Phorum database does not
+      have the rights to create temporary tables, which the search feature
+      uses. To fix this, either grant your user temporary table creation
+      permissions through a tool like phpmyadmin, or if you cannot, then
+      contact your host to see if they can enable it for you.
+    </para>
+    <para>
+      If you cannnot obtain permissions to create temporary tables, you can
+      install the "Non-Temporary Search" module which you can find in our
+      on line module list:<sbr/>
+      <sbr/>
+      &listofmodules;<sbr/>
+      <sbr/>
+      (warning: it will be a slow search on large data sets!)
+    </para>
+    </section>
+
 </chapter>

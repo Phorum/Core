@@ -125,7 +125,7 @@
         through their arguments and have to return the (possibly modified)
         data, which will then go either back to Phorum or to the input
         of another module which also handles the same hook
-        (see <xref linkend="modules.hooks"/>).
+        (see <xref endterm="the hooks" linkend="modules.hooks"/>).
         Based on this, the most basic (and useless) hook function you could
         write would look somewhat like this (see XXX for an explanation
         of the naming scheme that was used for the function):
@@ -1117,10 +1117,10 @@ function phorum_mod_foo_some_hook ($data)
             There are some hooks that send a full message structure to the
             hook functions. These can change the message structure before
             returning it to Phorum. An example is the hook
-            "<xref linkend="hook.user_save"/>". For these kind of
-            hooks, you can update the custom profile field data in the user
-            structure and be done with it. Here's an example of what this
-            could look like in your hook function:
+            "<xref endterm="user_save" linkend="hook.user_save"/>".
+            For these kind of hooks, you can update the custom profile
+            field data in the user structure and be done with it. Here's
+            an example of what this could look like in your hook function:
             <programlisting><![CDATA[
 function phorum_mod_foo_user_save ($user)
 {
