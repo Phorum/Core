@@ -57,7 +57,7 @@ if(is_array($message) && count($message)) {
                 "mailmessage" => $PHORUM["DATA"]["LANG"]['ReportPostEmailBody'],
                 "mailsubject" => $PHORUM["DATA"]["LANG"]['ReportPostEmailSubject'],
                 "forumname"   => $PHORUM["DATA"]["NAME"],
-                "reportedby"  => $PHORUM["user"]["username"],
+                "reportedby"  => $PHORUM["user"]["display_name"],
                 "author"      => $message["author"],
                 "subject"     => $message["subject"],
                 "body"        => wordwrap($message["body"], 72),
