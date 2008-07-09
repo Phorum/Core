@@ -298,13 +298,13 @@ function phorum_api_custom_field_byname($name, $type)
 
 	        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $custom_field) {
 	        	if($id !== 'num_fields') {
-	        		$profile_fields_reverse[$custom_field['name']] = $custom_field;
+	        		$profile_fields_reverse[$type][$custom_field['name']] = $custom_field;
 	        	}
 	        }
        	}
        	
-        if(isset($profile_fields_reverse[$name])) {
-            return $profile_fields_reverse[$name];
+        if(isset($profile_fields_reverse[$type][$name])) {
+            return $profile_fields_reverse[$type][$name];
         }
     }
 
