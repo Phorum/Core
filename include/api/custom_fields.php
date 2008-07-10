@@ -294,7 +294,7 @@ function phorum_api_custom_field_byname($name, $type)
     if(isset($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type]) &&
        is_array($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type])) {
        	
-       	if(!count($profile_fields_reverse[$type])) {
+       	if( !isset($profile_fields_reverse[$type]) || !count($profile_fields_reverse[$type])) {
 
 	        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $custom_field) {
 	        	if($id !== 'num_fields') {
