@@ -525,8 +525,8 @@ function bbcode_api_tokenize($text)
             $current_tag = NULL;
             for (;;)
             {
-                $l = strtolower($text[$cursor++]);
                 if ($cursor > $maxpos) break 2;
+                $l = strtolower($text[$cursor++]);
 
                 // As long as we find matching nodes in the parse tree,
                 // we keep walking it.
@@ -789,8 +789,8 @@ function bbcode_api_tokenize($text)
             $current_arg = '';
             for (;;)
             {
-                $l = strtolower($text[$cursor++]);
                 if ($cursor > $maxpos) break 2;
+                $l = strtolower($text[$cursor++]);
 
                 // Walk the argument parse tree, until we cannot find
                 // a matching character anymore.
