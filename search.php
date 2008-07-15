@@ -387,6 +387,8 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     }
 }
 
+$PHORUM["DATA"]["DESCRIPTION"] = "";
+
 /**
  * [hook]
  *     search_output
