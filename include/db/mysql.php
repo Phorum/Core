@@ -3783,11 +3783,9 @@ function phorum_db_user_save($userdata)
 
             // Arrays need to be serialized. The serialized data is prefixed
             // with "P_SER:" as a marker for serialization.
-            if (is_array($val)) {
-                $val = 'P_SER:'.serialize($val);
-            } else {
-                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
-            }
+            if (is_array($val)) $val = 'P_SER:'.serialize($val);
+
+            $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
 
             // Try to insert a new record.
             $res = phorum_db_interact(
