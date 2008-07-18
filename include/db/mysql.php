@@ -568,11 +568,11 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
             }
         }
     }
-    
+
     if($include_bodies && count($messages)) {
         // get custom fields
         $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
-    
+
         // Add custom fields to the messages
         foreach ($custom_fields as $message_id => $fields)
         {
@@ -581,12 +581,12 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
             // happen in case some orphan custom fields
             // are lingering in the database.
             if (!isset($messages[$message_id])) continue;
-            
+
             foreach($fields as $fieldname => $fielddata) {
                 $messages[$message_id][$fieldname] = $fielddata;
             }
-        }    
-    }    
+        }
+    }
 
     return $messages;
 }
@@ -844,11 +844,11 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
                                ? array()
                                : unserialize($message['meta']);
     }
-    
+
     if(!$countonly && count($messages)) {
         // get custom fields
         $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
-    
+
         // Add custom fields to the messages
         foreach ($custom_fields as $message_id => $fields)
         {
@@ -857,11 +857,11 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
             // happen in case some orphan custom fields
             // are lingering in the database.
             if (!isset($messages[$message_id])) continue;
-            
+
             foreach($fields as $fieldname => $fielddata) {
                 $messages[$message_id][$fieldname] = $fielddata;
             }
-        }    
+        }
     }
 
     return $messages;
@@ -978,12 +978,12 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     if (isset($message['threadviewcount'])) {
         $insertfields['threadviewcount'] = $message['threadviewcount'];
     }
-    
+
     $customfields=array();
-    foreach($message as $key => $value) {
-    	if(!isset($insertfields[$key])) {
-    		$customfields[$key] = $value;
-    	}
+    foreach ($message as $key => $value) {
+        if (!isset($insertfields[$key])) {
+            $customfields[$key] = $value;
+        }
     }
 
     // Insert the message and get the new message_id.
@@ -1013,7 +1013,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 
         $message['thread'] = $message_id;
     }
-    
+
     if(count($customfields)) {
         phorum_db_save_custom_fields($message_id,PHORUM_CUSTOM_FIELD_MESSAGE,$customfields);
     }
@@ -1068,28 +1068,28 @@ function phorum_db_update_message($message_id, $message)
     );
 
     $customfields=array();
-    
+
     foreach ($message as $field => $value)
     {
         if (phorum_db_validate_field($field))
         {
-        	$custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_MESSAGE);
-            
+            $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_MESSAGE);
+
             if($custom === null) {
-	            if (is_numeric($value) &&
-	                !in_array($field, $PHORUM['string_fields_message'])) {
-	                $fields[] = "$field = $value";
-	            } elseif (is_array($value)) {
-	                $value = phorum_db_interact(DB_RETURN_QUOTED,serialize($value));
-	                $message[$field] = $value;
-	                $fields[] = "$field = '$value'";
-	            } else {
-	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-	                $message[$field] = $value;
-	                $fields[] = "$field = '$value'";
-	            }
+                if (is_numeric($value) &&
+                    !in_array($field, $PHORUM['string_fields_message'])) {
+                    $fields[] = "$field = $value";
+                } elseif (is_array($value)) {
+                    $value = phorum_db_interact(DB_RETURN_QUOTED,serialize($value));
+                    $message[$field] = $value;
+                    $fields[] = "$field = '$value'";
+                } else {
+                    $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                    $message[$field] = $value;
+                    $fields[] = "$field = '$value'";
+                }
             } else {
-            	$customfields[$key]=$value;
+                $customfields[$key]=$value;
             }
         }
     }
@@ -1102,7 +1102,7 @@ function phorum_db_update_message($message_id, $message)
         NULL,
         DB_MASTERQUERY
     );
-    
+
     if(count($customfields)) {
         phorum_db_save_custom_fields($message_id,$customfields);
     }
@@ -1238,11 +1238,11 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
         DB_MASTERQUERY
     );
     if ($mode != PHORUM_DELETE_TREE) {
-    	$mids = array($message_id);
-    } 
+        $mids = array($message_id);
+    }
     // delete custom profile fields
-    if(count($mids)) {
-    	phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,$mids);
+    if (count($mids)) {
+        phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,$mids);
     }
 
     // It kind of sucks to have this here, but it is the best way
@@ -1397,32 +1397,33 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 
         $return[$message['message_id']] = $message;
     }
-    
-    if(count($return)) {
-	    // get custom fields
-	    
-	    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return),$flags);
-	
-	    // Add custom fields to the messages
-	    foreach ($custom_fields as $message_id => $fields)
-	    {
-	        // Skip profile fields for messages which are not in our
-	        // $return array. This should not happen, but it could
-	        // happen in case some orphan custom fields
-	        // are lingering in the database.
-	        if (!isset($return[$message_id])) continue;
-	        
-	        foreach($fields as $fieldname => $fielddata) {
-	            $return[$message_id][$fieldname] = $fielddata;
-	        }
-	    }    
+
+    if (count($return))
+    {
+        // get custom fields
+
+        $custom_fields = phorum_db_get_custom_fields(
+            PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return),$flags);
+
+        // Add custom fields to the messages
+        foreach ($custom_fields as $message_id => $fields)
+        {
+            // Skip profile fields for messages which are not in our
+            // $return array. This should not happen, but it could
+            // happen in case some orphan custom fields
+            // are lingering in the database.
+            if (!isset($return[$message_id])) continue;
+
+            foreach($fields as $fieldname => $fielddata) {
+                $return[$message_id][$fieldname] = $fielddata;
+            }
+        }
     }
-    
+
     if (! $multiple) {
         $return = array_shift($return);
     }
-    
-    
+
     return $return;
 }
 // }}}
@@ -1538,11 +1539,11 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
             }
         }
     }
-    
+
     if(count($messages)) {
         // get custom fields
         $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages),$flags);
-    
+
         // Add custom fields to the messages
         foreach ($custom_fields as $message_id => $fields)
         {
@@ -1551,17 +1552,17 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
             // happen in case some orphan custom fields
             // are lingering in the database.
             if (!isset($messages[$message_id])) continue;
-            
+
             foreach($fields as $fieldname => $fielddata) {
                 $messages[$message_id][$fieldname] = $fielddata;
             }
-        }    
+        }
     }
 
     // Store the involved users in the message array.
     $messages['users'] = $involved_users;
-    
-    
+
+
 
     return $messages;
 }
@@ -2148,7 +2149,7 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
          ORDER  BY display_order ASC, name",
        'forum_id'
     );
-    
+
     $forum_custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_ids);
 
     // Add custom fields to the forums
@@ -2159,12 +2160,12 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
         // happen in case some orphan custom fields
         // are lingering in the database.
         if (!isset($forums[$forumid])) continue;
-        
+
         foreach($fields as $fieldname => $fielddata) {
             $forums[$forumid][$fieldname] = $fielddata;
         }
     }
-    
+
     return $forums;
 }
 // }}}
@@ -2493,35 +2494,34 @@ function phorum_db_add_forum($forum)
 
     $insertfields = array();
     $customfields = array();
-    
+
     foreach ($forum as $key => $value)
     {
         if (phorum_db_validate_field($key))
         {
-        	// find out if this field is a custom field
-        	/**
-        	 * @todo duplicated work. the same is done in phorum_db_save_custom_fields.
-        	 *       find out how to find the custom fields differently 
-        	 *       (define the real fields like for the users?)
-        	 */ 
-        	
+            // find out if this field is a custom field
+            /**
+             * @todo duplicated work. the same is done in phorum_db_save_custom_fields.
+             *       find out how to find the custom fields differently
+             *       (define the real fields like for the users?)
+             */
+
             $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
-            
+
             if($custom === NULL) {
-	            if (is_numeric($value) &&
-	                !in_array($key,$PHORUM['string_fields_forum'])) {
-	                $value = (int)$value;
-	                $insertfields[$key] = $value;
-	            } elseif ($value === NULL) {
-	                $insertfields[$key] = 'NULL';
-	            } else {
-	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-	                $insertfields[$key] = "'$value'";
-	            }
+                if (is_numeric($value) &&
+                    !in_array($key,$PHORUM['string_fields_forum'])) {
+                    $value = (int)$value;
+                    $insertfields[$key] = $value;
+                } elseif ($value === NULL) {
+                    $insertfields[$key] = 'NULL';
+                } else {
+                    $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                    $insertfields[$key] = "'$value'";
+                }
             } else {
-            	$customfields[$key]=$value;
+                $customfields[$key]=$value;
             }
-            
         }
     }
 
@@ -2533,7 +2533,7 @@ function phorum_db_add_forum($forum)
         NULL,
         DB_MASTERQUERY
     );
-    
+
     if(is_array($customfields) && count($customfields)) {
         phorum_db_save_custom_fields($forum_id,PHORUM_CUSTOM_FIELD_FORUM,$customfields);
     }
@@ -2572,7 +2572,7 @@ function phorum_db_update_forum($forum)
     phorum_db_sanitize_mixed($forum['forum_id'], 'int');
 
     $forum_id = $forum['forum_id'];
-    
+
     // See what forum(s) to update.
     if (is_array($forum['forum_id'])) {
         $forumwhere = 'forum_id IN ('.implode(', ',$forum['forum_id']).')';
@@ -2590,26 +2590,26 @@ function phorum_db_update_forum($forum)
     {
         if (phorum_db_validate_field($key))
         {
-        	$custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
-        	
-        	if($custom === null) {
-	            if ($key == 'forum_path') {
-	                $value = serialize($value);
-	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-	                $fields[] = "$key = '$value'";
-	            } elseif (is_numeric($value) &&
-	                !in_array($key,$PHORUM['string_fields_forum'])) {
-	                $value = (int)$value;
-	                $fields[] = "$key = $value";
-	            } elseif ($value === NULL) {
-	                $fields[] = "$key = NULL";
-	            } else {
-	                $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-	                $fields[] = "$key = '$value'";
-	            }
-        	} else {
-        		$customfields[$key]=$value;
-        	}
+            $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
+
+            if($custom === null) {
+                if ($key == 'forum_path') {
+                    $value = serialize($value);
+                    $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                    $fields[] = "$key = '$value'";
+                } elseif (is_numeric($value) &&
+                    !in_array($key,$PHORUM['string_fields_forum'])) {
+                    $value = (int)$value;
+                    $fields[] = "$key = $value";
+                } elseif ($value === NULL) {
+                    $fields[] = "$key = NULL";
+                } else {
+                    $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+                    $fields[] = "$key = '$value'";
+                }
+            } else {
+                $customfields[$key] = $value;
+            }
         }
     }
 
@@ -2624,7 +2624,7 @@ function phorum_db_update_forum($forum)
             DB_MASTERQUERY
         );
     }
-    
+
     if(is_array($customfields) && count($customfields)) {
         foreach($forum_ids as $forum_id) {
             phorum_db_save_custom_fields($forum_id,PHORUM_CUSTOM_FIELD_FORUM,$customfields);
@@ -2670,7 +2670,7 @@ function phorum_db_drop_forum($forum_id)
             DB_MASTERQUERY
         );
     }
-    
+
     // now delete its custom fields
     phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_id);
 
@@ -2701,8 +2701,8 @@ function phorum_db_drop_forum($forum_id)
             DB_MASTERQUERY
         );
     }
-    
-    
+
+
     // Collect all orphan message custom fields from the database.
     // These are all custom fields that are linked to a message, but for which
     // the message_id does not exist in the message table (anymore).
@@ -2718,12 +2718,12 @@ function phorum_db_drop_forum($forum_id)
                 a.field_type = '" . PHORUM_CUSTOM_FIELD_MESSAGE . "' AND
                 b.message_id is NULL",
         0 // keyfield 0 is the relation_id
-    );    
-    
+    );
+
     if(is_array($customfields) && count($customfields)) {
         phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,$customfields);
     }
-    
+
 }
 // }}}
 
@@ -2774,7 +2774,7 @@ function phorum_db_drop_folder($forum_id)
         NULL,
         DB_MASTERQUERY
     );
-    
+
     // now delete its custom fields
     phorum_db_delete_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_id);
 }
@@ -3467,7 +3467,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
             }
         }
     }
-    
+
     $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_USER,$user_id,$flags);
 
     // Add custom user profile fields to the users.
@@ -3478,9 +3478,9 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         // happen in case some orphan custom user fields
         // are lingering in the database.
         if (!isset($users[$fld_user_id])) continue;
-        
+
         foreach($fields as $fieldname => $fielddata) {
-	        $users[$fld_user_id][$fieldname] = $fielddata;
+            $users[$fld_user_id][$fieldname] = $fielddata;
         }
     }
 
@@ -3510,13 +3510,13 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
  *     database flags needed to be sent to the database functions
  *
  * @return mixed
- *     An array of custom fields is returned, indexed by relation_id. 
+ *     An array of custom fields is returned, indexed by relation_id.
  *     For relation_ids that cannot be found, there will be no array element at all.
  */
 function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
 
     global $PHORUM;
-   
+
     phorum_db_sanitize_mixed($relation_id, 'int');
     phorum_db_sanitize_mixed($type, 'int');
 
@@ -3529,8 +3529,8 @@ function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
     } else {
         $relation_ids = "= $relation_id";
     }
-   
-   
+
+
    // Retrieve custom user profile fields for the requested users.
     $custom_fields = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -3571,7 +3571,7 @@ function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
         // The rest of the fields contain raw field data.
         $requested_data[$fld['relation_id']][$name] = $fld['data'];
     }
-    
+
     return $requested_data;
 }
 // }}}
@@ -4041,62 +4041,60 @@ function phorum_db_user_save($userdata)
 }
 // }}}
 
-function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data) {
-	    global $PHORUM;
-		
-	    // Update custom  fields for the object.
-	    if (isset($customfield_data))
-	    {
-	
-	        // Insert new custom profile fields.
-	        foreach ($customfield_data as $name => $val)
-	        {
-	        	$custom = phorum_api_custom_field_byname($name,$field_type);
-	        	
-	            // Arrays and NULL values are left untouched.
-                // Other values are truncated to their configured field length.
-                if ($val !== NULL && !is_array($val)) {
-                    $val = substr($val, 0, $custom['length']);
+function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data)
+{
+    global $PHORUM;
+
+    // Update custom  fields for the object.
+    if (isset($customfield_data))
+    {
+        // Insert new custom profile fields.
+        foreach ($customfield_data as $name => $val)
+        {
+            $custom = phorum_api_custom_field_byname($name,$field_type);
+
+            // Arrays and NULL values are left untouched.
+            // Other values are truncated to their configured field length.
+            if ($val !== NULL && !is_array($val)) {
+                $val = substr($val, 0, $custom['length']);
+            }
+            if ($custom !== null)
+            {
+                $key = $custom['id'];
+
+                // Arrays need to be serialized. The serialized data is prefixed
+                // with "P_SER:" as a marker for serialization.
+                if (is_array($val)) $val = 'P_SER:'.serialize($val);
+
+                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
+
+                // Try to insert a new record.
+                $res = phorum_db_interact(
+                    DB_RETURN_RES,
+                    "INSERT INTO {$PHORUM['custom_fields_table']}
+                            (relation_id, field_type, type, data)
+                     VALUES ($relation_id, $field_type , $key, '$val')",
+                    NULL,
+                    DB_DUPKEYOK | DB_MASTERQUERY
+                );
+                // If no result was returned, then the query failed. This probably
+                // means that we already have a record in the database.
+                // So instead of inserting a record, we need to update one here.
+                if (!$res) {
+                  phorum_db_interact(
+                      DB_RETURN_RES,
+                      "UPDATE {$PHORUM['custom_fields_table']}
+                       SET    data = '$val'
+                       WHERE  relation_id = $relation_id AND
+                              field_type = $field_type AND
+                              type = $key",
+                            NULL,
+                            DB_MASTERQUERY
+                    );
                 }
-	        	if($custom !== null) {
-	        		
-	        		$key = $custom['id'];
-	        		
-		            // Arrays need to be serialized. The serialized data is prefixed
-		            // with "P_SER:" as a marker for serialization.
-		            if (is_array($val)) {
-		                $val = 'P_SER:'.serialize($val);
-		            } else {
-		                $val = phorum_db_interact(DB_RETURN_QUOTED, $val);
-		            }
-		
-		            // Try to insert a new record.
-		            $res = phorum_db_interact(
-		                DB_RETURN_RES,
-		                "INSERT INTO {$PHORUM['custom_fields_table']}
-		                        (relation_id, field_type, type, data)
-		                 VALUES ($relation_id, $field_type , $key, '$val')",
-		                NULL,
-		                DB_DUPKEYOK | DB_MASTERQUERY
-		            );
-		            // If no result was returned, then the query failed. This probably
-		            // means that we already have a record in the database.
-		            // So instead of inserting a record, we need to update one here.
-		            if (!$res) {
-		              phorum_db_interact(
-		                  DB_RETURN_RES,
-		                  "UPDATE {$PHORUM['custom_fields_table']}
-		                   SET    data = '$val'
-		                   WHERE  relation_id = $relation_id AND
-		                          field_type = $field_type AND
-		                          type = $key",
-		                  NULL,
-		                  DB_MASTERQUERY
-		              );
-		            }
-	        	}
-	        }
-	    }
+            }
+        }
+    }
 }
 
 // {{{ Function: phorum_db_user_display_name_updates()
@@ -4531,16 +4529,17 @@ function phorum_db_user_delete($user_id)
 }
 // }}}
 
-function phorum_db_delete_custom_fields($type,$relation_id) {
-	global $PHORUM;
-	
-	if(is_array($relation_id)) {
-	    $rel_where = "relation_id IN (".implode(',',$relation_id).")"; 
-	} else {
-		$rel_where = "relation_id = $relation_id";
-	}
-	
-	phorum_db_interact(
+function phorum_db_delete_custom_fields($type,$relation_id)
+{
+    global $PHORUM;
+
+    if (is_array($relation_id)) {
+        $rel_where = "relation_id IN (".implode(',',$relation_id).")";
+    } else {
+        $rel_where = "relation_id = $relation_id";
+    }
+
+    phorum_db_interact(
         DB_RETURN_RES,
         "DELETE FROM ".$PHORUM['custom_fields_table']."
          WHERE  $rel_where AND
@@ -6983,8 +6982,8 @@ function phorum_db_rebuild_user_posts()
 /**
  * Search for users, based on a simple search condition,
  * which can be used to search on custom profile fields.
- * 
- * ATTENTION: this function is only a wrapper for 
+ *
+ * ATTENTION: this function is only a wrapper for
  *            phorum_db_search_custom_profile_field
  *
  * The parameters $field_id, $value and $operator (which are used for defining
@@ -7026,7 +7025,10 @@ function phorum_db_rebuild_user_posts()
  */
 function phorum_db_user_search_custom_profile_field($field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
 {
-	   return phorum_db_search_custom_profile_field(PHORUM_CUSTOM_FIELD_USER,$field_id, $value, $operator, $return_array, $type, $offset, $length);
+    return phorum_db_search_custom_profile_field(
+        PHORUM_CUSTOM_FIELD_USER,
+        $field_id, $value, $operator, $return_array, $type, $offset, $length
+    );
 }
 // }}}
 
@@ -7045,7 +7047,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  *         PHORUM_CUSTOM_FIELD_USER
  *         PHORUM_CUSTOM_FIELD_FORUM
  *         PHORUM_CUSTOM_FIELD_MESSAGE
- * 
+ *
  * @param mixed $field_id
  *     The custom profile field id (integer) or ids (array) to search on.
  *
