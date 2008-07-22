@@ -119,7 +119,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
  *     This function returns TRUE on success or FALSE on failure.
  */
 function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
-    @return $GLOBALS['PHORUM']['memcache_obj']->set(
+    return @$GLOBALS['PHORUM']['memcache_obj']->set(
         $type."_".$key, array($data,$version), 0, $ttl
     );
 }
