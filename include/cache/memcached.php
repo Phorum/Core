@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2008  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -15,25 +15,43 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- * Memcached-based caching-layer
- * Memcached -> http://www.danga.com/memcached/
- * using the pecl-module for accessing memcached
- * -> http://pecl.php.net/package/memcache/
+/**
+ * This script implements the Phorum memcached-based caching-layer.
+ *
+ * To use this layer, both a memcached server and the "memcache"
+ * PHP pecl module are required.
+ *
+ * For Memcached, see http://www.danga.com/memcached/
+ *
+ * For the pecl module, see http://pecl.php.net/package/memcache/
  */
 if(!defined("PHORUM")) return;
 
 $PHORUM['memcache_obj'] = new Memcache;
-$PHORUM['memcache_obj']->connect('127.0.0.1', 11211);
-//$PHORUM['memcache_obj'] = memcache_connect('127.0.0.1', 11211);
+@$PHORUM['memcache_obj']->connect('127.0.0.1', 11211);
 
-
-
-/*
- * This function returns the cached data for the given key
- * or NULL if no data is cached for this key
+/**
+ * Retrieve an object from the cache.
+ *
+ * @param string $type 
+ *     A name for the group of data that is being cached.
+ *     Examples are "user" and "message".
+ *
+ * @param string $key
+ *     A unique key that identifies the object to retrieve.
+ *     This could for example be the user_id of a cached user.
+ *
+ * @param integer $version
+ *     The version of the object to retrieve. If the cached object's
+ *     version is older than the requested version, then no object
+ *     will be returned.
+ *
+ * @return mixed
+ *     This function returns the cached object for the given key
+ *     or NULL if no data is cached or if the cached data has expired.
  */
 function phorum_cache_get($type,$key,$version=NULL) {
     if(is_array($key)) {
@@ -76,19 +94,46 @@ function phorum_cache_get($type,$key,$version=NULL) {
 
 }
 
-/*
- * Puts some data into the cache
- * returns number of bytes written (something 'true') or false ...
- * depending of the success of the function
+/**
+ * Puts some data into the cache.
+ *
+ * @param string $type 
+ *     A name for the group of data that is being cached.
+ *     Examples are "user" and "message".
+ *
+ * @param string $key
+ *     A unique key that identifies the object that is cached.
+ *     This could for example be the user_id of a user that is being cached.
+ *     Existing data with the same $key is overwritten.
+ *
+ * @param integer $ttl
+ *     The maximum time (in seconds) that the data lives in the cache.
+ *     After this time, the data is expired.
+ *
+ * @param integer $version
+ *     The version to store along with the cached data. This version is
+ *     used by the {@link phorum_cache_get()} function to check whether
+ *     the cached data has expired or not.
+ * 
+ * @return boolean
+ *     This function returns TRUE on success or FALSE on failure.
  */
 function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
-    @$ret=$GLOBALS['PHORUM']['memcache_obj']->set($type."_".$key, array($data,$version), 0, $ttl);
-    return $ret;
+    @return $GLOBALS['PHORUM']['memcache_obj']->set(
+        $type."_".$key, array($data,$version), 0, $ttl
+    );
 }
 
 
-/*
- * Removes a key from the cache
+/**
+ * Removes an object from the cache
+ *
+ * @param string $type 
+ *     A name for the group of data that is being cached.
+ *     Examples are "user" and "message".
+ *
+ * @param string $key
+ *     A unique key that identifies the object that has to be removed.
  */
 function phorum_cache_remove($type,$key) {
 
@@ -102,8 +147,8 @@ function phorum_cache_purge($full = false) {
     return "Memcached cache purged";
 }
 
-/*
- * Clears all data from the cache
+/**
+ * Removes all objects from the cache.
  */
 function phorum_cache_clear() {
 
@@ -111,13 +156,6 @@ function phorum_cache_clear() {
 
     return $ret;
 }
-
-/*
- type can be nearly each value to specify a group of data
- used are currently:
- 'user'
- 'message'
-*/
 
 
 ?>
