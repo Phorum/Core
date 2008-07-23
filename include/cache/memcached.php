@@ -30,8 +30,13 @@
  */
 if(!defined("PHORUM")) return;
 
+// Connect to the memcached server. If the connection fails, then
+// destroy the memcache object. In this case, caching will not be
+// used during the remaining of the request.
 $PHORUM['memcache_obj'] = new Memcache;
-@$PHORUM['memcache_obj']->connect('127.0.0.1', 11211);
+if (!@$PHORUM['memcache_obj']->connect('127.0.0.1', 11211)) {
+    unset($PHORUM['memcache_obj']);
+}
 
 /**
  * Retrieve an object from the cache.
@@ -53,7 +58,10 @@ $PHORUM['memcache_obj'] = new Memcache;
  *     This function returns the cached object for the given key
  *     or NULL if no data is cached or if the cached data has expired.
  */
-function phorum_cache_get($type,$key,$version=NULL) {
+function phorum_cache_get($type,$key,$version=NULL)
+{
+    if (empty($GLOBALS['PHORUM']['memcache_obj'])) return NULL;
+
     if(is_array($key)) {
         $getkey=array();
         foreach($key as $realkey) {
@@ -63,7 +71,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
         $getkey=$type."_".$key;
     }
 
-    @$ret = $GLOBALS['PHORUM']['memcache_obj']->get($getkey);
+    $ret = @$GLOBALS['PHORUM']['memcache_obj']->get($getkey);
 
     if($ret!==false){
 
@@ -91,7 +99,6 @@ function phorum_cache_get($type,$key,$version=NULL) {
     }
 
     return $ret;
-
 }
 
 /**
@@ -118,12 +125,13 @@ function phorum_cache_get($type,$key,$version=NULL) {
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
+function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL)
+{
+    if (empty($GLOBALS['PHORUM']['memcache_obj'])) return FALSE;
     return @$GLOBALS['PHORUM']['memcache_obj']->set(
         $type."_".$key, array($data,$version), 0, $ttl
     );
 }
-
 
 /**
  * Removes an object from the cache
@@ -134,27 +142,48 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$versio
  *
  * @param string $key
  *     A unique key that identifies the object that has to be removed.
+ *
+ * @return boolean
+ *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_cache_remove($type,$key) {
-
-    @$ret=$GLOBALS['PHORUM']['memcache_obj']->delete( $type."_".$key, 0);
-
-    return $ret;
+function phorum_cache_remove($type,$key)
+{
+    if (empty($GLOBALS['PHORUM']['memcache_obj'])) return FALSE;
+    return @$GLOBALS['PHORUM']['memcache_obj']->delete( $type."_".$key, 0);
 }
 
+/**
+ * Delete all expired objects from the cache.
+ *
+ * Note: for the memcached cache, we have no option to only purge
+ * the expired objects. Instead, the full cache will be flushed.
+ *
+ * @param boolean $full
+ *     If true, then the full cache will be expired, not only the
+ *     expired part of the cache.
+ *
+ * @return string
+ *     A string describing the result status. This is used by the
+ *     cache purging screen in the admin interface to show the result.
+ */
 function phorum_cache_purge($full = false) {
+    if (empty($GLOBALS['PHORUM']['memcache_obj'])) {
+        return "Memcached cache not purged, connection to memcached failed.";
+    }
     phorum_cache_clear();
     return "Memcached cache purged";
 }
 
 /**
  * Removes all objects from the cache.
+ *
+ * @return boolean
+ *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_cache_clear() {
-
-    @$ret=$GLOBALS['PHORUM']['memcache_obj']->flush();
-
-    return $ret;
+function phorum_cache_clear()
+{
+    if (empty($GLOBALS['PHORUM']['memcache_obj'])) return FALSE;
+    return @$GLOBALS['PHORUM']['memcache_obj']->flush();
 }
 
 
