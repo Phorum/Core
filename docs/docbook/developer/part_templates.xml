@@ -431,7 +431,7 @@ The current forum's name is: {NAME}<br/>
 
 {LOOP MESSAGES}
   Subject: {MESSAGES->subject}<br/>
-{/LOOP} ]]></programlisting></example>
+{/LOOP MESSAGES} ]]></programlisting></example>
           What variables are available for what template pages is fully
           determined by Phorum.
         </para>
@@ -758,7 +758,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
 <ul>
 {LOOP USERS}
   <li>{USERS->username}</li>
-{/LOOP}
+{/LOOP USERS}
 </ul> ]]></programlisting></example>
               </para></listitem>
             </varlistentry>
@@ -837,7 +837,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
   {! Makes loop_variable available as temp_variable in the include }
   {VAR temp_variable loop_variable}
   {INCLUDE include_page}
-{/LOOP} ]]></programlisting>
+{/LOOP loop_variable} ]]></programlisting>
                   This way you can access the active LOOP element from the
                   included template through <literal>temp_variable</literal>.
                   If you would access <literal>loop_variable</literal>
@@ -924,7 +924,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
 
 {LOOP MESSAGES}
   {HOOK "show_message" MESSAGES}
-{/LOOP}
+{/LOOP MESSAGES}
 
 {VAR HOOKNAME "my_magic_hook"}
 {HOOK HOOKNAME "my argument"} ]]></programlisting></example>
