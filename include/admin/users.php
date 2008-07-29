@@ -212,8 +212,6 @@ if (!isset($_GET["edit"]) && !isset($_POST['section']))
 {
     print "<a href=\"{$PHORUM["admin_http_path"]}?module=users\">" .
           "Show all users</a>&nbsp;&nbsp;";
-    print "<a href=\"{$PHORUM["admin_http_path"]}?module=user_create\">" .
-          "Create new user</a><br/>";
 
     if (empty($_REQUEST["user_id"]))
     {
