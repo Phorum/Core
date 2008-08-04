@@ -294,7 +294,14 @@ function phorum_convert_getNextMessage($res,$table_name) {
                   $fp=fopen($filename, "r");
                   $buffer=base64_encode(fread($fp, filesize($filename)));
                   fclose($fp);
-                  $file_id = phorum_db_file_save($userid, $attachment['filename'], filesize($filename), $buffer, $newmessage['message_id']);
+                  $file_id = phorum_db_file_save(array(
+                        "user_id" => $userid,
+                        "filename" => $attachment['filename'],
+                        "filesize" => filesize($filename),
+                        "file_data" => $buffer,
+                        "message_id" => $newmessage['message_id'],
+                        "link" => PHORUM_LINK_MESSAGE
+                  ));
                   unset($buffer); // free that large buffer
                   $inserted_files[]=array("file_id"=>$file_id, "name"=>$attachment['filename'], "size"=>filesize($filename));
               }
