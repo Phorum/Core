@@ -17,9 +17,13 @@ if ($PHORUM['DATA']['CHARSET']) {
       <link rel="stylesheet" type="text/css" href="{URL->CSS_PRINT}" media="print" />
     {/IF}
 
-    {IF URL->RSS}
-      <link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="{URL->RSS}" />
+    {! Add links to the available RSS feeds. }
+    {IF FEEDS}
+      {LOOP FEEDS}
+      <link rel="alternate" type="{FEED_CONTENT_TYPE}" title="{FEEDS->TITLE}" href="{FEEDS->URL}" />
+      {/LOOP FEEDS}
     {/IF}
+
     {IF URL->JAVASCRIPT}
         <script type="text/javascript" src="{URL->JAVASCRIPT}"></script>
     {/IF}
