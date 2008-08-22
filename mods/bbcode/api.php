@@ -716,6 +716,7 @@ function bbcode_api_tokenize($text)
                     // is configured to do so.
                     if ($current_tag[BBCODE_INFO_STRIPBREAK])
                     {
+                        // First, skip any white space character that we find.
                         $peekcursor = $cursor + 1;
                         while (isset($text[$peekcursor]) &&
                                ($text[$peekcursor] == " " ||
@@ -723,8 +724,10 @@ function bbcode_api_tokenize($text)
                                 $text[$peekcursor] == "\r")) {
                             $peekcursor++;
                         }
-                        if ($peekcursor > $maxpos) break;
-                        if (substr($text,$peekcursor,14) == '<phorum break>') {
+
+                        // Check for a Phorum break and strip if we find one.
+                        if (isset($text[$peekcursor]) &&
+                            substr($text,$peekcursor,14) == '<phorum break>') {
                             $cursor = $peekcursor + 13;
                         }
                     }
