@@ -80,7 +80,7 @@ function phorum_api_mail_encode_header($string)
     static $safe_chars = NULL;
     static $semi_safe_chars = NULL;
     if ($safe_chars === NULL) {
-        $safe_chars = "!\"#$%&'()*+,-./0123456789:;<>'" .
+        $safe_chars = "!\"@#$%&'()*+,-./0123456789:;<>'" .
                       "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" .
                       "abcdefghijklmnopqrstuvwxyz{|}~";
         $semi_safe_chars = "? \t";
