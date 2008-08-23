@@ -568,7 +568,8 @@ function phorum_api_user_save($user, $flags = 0)
         // case of bugs in the code or in case external user auth is used
         // (in which case Phorum can have empty passwords, since the Phorum
         // passwords are not used at all).
-        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL || $dbuser[$fld] == '') {
+        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL ||
+            $dbuser[$fld] == '' || $dbuser[$fld] == '*NO PASSWORD SET*') {
             $dbuser[$fld] = '*NO PASSWORD SET*';
             continue;
         }
@@ -1946,7 +1947,7 @@ function phorum_api_user_session_create($type, $reset = 0)
      *
      * [description]
      *     Allow modules to override Phorum's session create management or
-     *     to even fully omit creating of a session (for example useful
+     *     to even fully omit creating a session (for example useful
      *     if the hook <hook>user_session_restore</hook> is used
      *     to inherit an external session from some 3rd party application).
      *
