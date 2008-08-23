@@ -566,7 +566,8 @@ function phorum_api_user_save($user, $flags = 0)
         // case of bugs in the code or in case external user auth is used
         // (in which case Phorum can have empty passwords, since the Phorum
         // passwords are not used at all).
-        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL || $dbuser[$fld] == '') {
+        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL ||
+            $dbuser[$fld] == '' || $dbuser[$fld] == '*NO PASSWORD SET*') {
             $dbuser[$fld] = '*NO PASSWORD SET*';
             continue;
         }
