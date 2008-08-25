@@ -406,13 +406,29 @@
     system based" is selected as the cache layer below.
     </para>
     <para>
-    For most installations, it will be fine to the default temp directory for the server 
+    For most installations, it will be fine to set it to the default temp directory for the server 
     (/tmp on UNIX systems and C:\Windows\Temp for Windows system).
     </para>
     <para>
     If your server has PHP Safe Mode enabled, you will need to create a directory under your 
     Phorum directory and make it writable by the web server (you can use the directory "./cache"
-    which was included in the Phorum distribution for this purpose).
+    which was included in the Phorum distribution for this purpose). Additionally, if you are
+    running Phorum on a shared server, it is generally advantageous to use the "./cache" directory
+    instead of "/tmp".
+    </para>
+    <para>
+    <emphasis role="bold">Enable Caching stylesheet data (CSS):</emphasis>
+    Phorum uses a system where modules can add data to the main stylesheet for the pages. 
+    By enabling this feature, Phorum can cache the dynamically generated data and improve 
+    caching of the stylesheet data in the browsers of your visitors. Enabling this 
+    feature is highly recommended. Only disable it if you are having problems with it.
+    </para>   
+    <para>
+    <emphasis role="bold">Enable Caching JavaScript code:</emphasis>
+    Phorum uses a system where modules can provide JavaScript code for the pages. By enabling 
+    this feature, Phorum can cache the dynamically generated data and improve caching of the 
+    JavaScript data in the browsers of your visitors. Enabling this feature is highly recommended.
+    Only disable it if you are having problems with it.
     </para>
    </section>  
   </section>
