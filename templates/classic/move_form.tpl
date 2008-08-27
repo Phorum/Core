@@ -10,6 +10,7 @@
     <div class="PhorumStdBlock PhorumNarrowBlock" style="text-align: left;">
       <div class="PhorumFloatingText">
         {LANG->MoveThreadTo}:<br />
+        <strong>{FORM->subject}</strong><br /><br />
         <select name="moveto">
           <option value="0">{LANG->SelectForum}</option>
                 {LOOP FORUMS}
