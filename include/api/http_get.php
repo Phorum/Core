@@ -388,7 +388,7 @@ function phorum_api_http_get($url, $method = NULL)
         ini_set('track_errors', $track);
 
         if ($contents === FALSE || $php_errormsg != '') {
-            $error = preg_replace('/(^.*?\:\s+|[\r\n)/', '', $php_errormsg);
+            $error = preg_replace('/(^.*?\:\s+|[\r\n])/', '', $php_errormsg);
             $error = "[$error]";
         } else {
             return $contents;
