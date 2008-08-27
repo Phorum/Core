@@ -42,6 +42,11 @@
                 <th align="left" nowrap="nowrap">{LANG->Email}</th>
             </tr>
             {LOOP TOPICS}
+                {IF altclass ""}
+                    {VAR altclass "alt"}
+                {ELSE}
+                    {VAR altclass ""}
+                {/IF}            
                 <tr>
                     <td width="5%"><input type="checkbox" name="delthreads[]" value="{TOPICS->thread}" /></td>
 
