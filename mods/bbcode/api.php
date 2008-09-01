@@ -611,7 +611,7 @@ function bbcode_api_tokenize($text)
                 else
                 {
                     // Create a new textnode or add to the existing one.
-                    if ($tokens[$tokenidx][0] == 'TEXTNODE') {
+                    if ($tokenidx && $tokens[$tokenidx][0] == 'TEXTNODE') {
                         $tokens[$tokenidx][2] += ($cursor - $text_end + 1);
                     } else {
                         $tokens[++$tokenidx] = array(

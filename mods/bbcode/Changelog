@@ -10,10 +10,14 @@ Changelog:
 
    - Fixed #795: BBcode module needs to explicitly include api.php
      to define the constants that are used in the settings page.
-     Thanks to Alexey Torkhov for the heads up.
 
    - Fixed #796: Undefined index "mod_bbcode_tags" in BBcode module.
-     Thanks to Alexey Torkhov for the heads up.
+
+   - Fixed #797: Undefined offset: 0 in api.php in case the message
+     started with a stale BBcode close tag.
+
+     Thanks to Alexey Torkhov for the heads up on these last three
+     module issues.
 
 2008-07-01 v2.0.7
 
