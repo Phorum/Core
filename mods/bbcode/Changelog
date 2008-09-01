@@ -12,6 +12,9 @@ Changelog:
      to define the constants that are used in the settings page.
      Thanks to Alexey Torkhov for the heads up.
 
+   - Fixed #796: Undefined index "mod_bbcode_tags" in BBcode module.
+     Thanks to Alexey Torkhov for the heads up.
+
 2008-07-01 v2.0.7
 
    - Fixed a compatibility problem for PHP versions prior to 5.1.0.
