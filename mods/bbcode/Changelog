@@ -1,6 +1,17 @@
 Changelog:
 ----------
 
+2008-09-01 v2.0.8
+
+   - Fixed #787: BBcode module: end of message end tags for some
+     bbcode tags were not processed correctly. The tag and the text
+     that came before the tag were duplicated at the end of the
+     rendered message.
+
+   - Fixed #795: BBcode module needs to explicitly include api.php
+     to define the constants that are used in the settings page.
+     Thanks to Alexey Torkhov for the heads up.
+
 2008-07-01 v2.0.7
 
    - Fixed a compatibility problem for PHP versions prior to 5.1.0.
