@@ -187,7 +187,7 @@ function phorum_available_releases()
                     if ($parsed_version[0] == $release) {
                         $releases[$release] = array(
                             "version"   => array_shift($fields),
-                            "pversion"  => $parsed_version[1],
+                            "pversion"  => $parsed_version,
                             "date"      => array_shift($fields),
                             "locations" => $fields
                         );
@@ -212,7 +212,7 @@ function phorum_available_releases()
 function phorum_find_upgrades($version = PHORUM)
 {
     // Parse the running version of phorum.
-    list ($running_release, $running_version) = phorum_parse_version($version);
+    $running_version = phorum_parse_version($version);
 
     // Retrieve the available releases.
     $releases = phorum_available_releases();
@@ -229,7 +229,9 @@ function phorum_find_upgrades($version = PHORUM)
             $releases["stable"]["upgrade"] = false;
         }
     }
-    if (($running_release == 'development' || $running_release == 'snapshot') && isset($releases["development"])) {
+    if (($running_version[0] == 'development' ||
+         $running_version[0] == 'snapshot') &&
+         isset($releases["development"])) {
         $avail_version = $releases["development"]["pversion"];
         if (phorum_compare_version($running_version, $avail_version) == -1) {
             $releases["development"]["upgrade"] = true;
