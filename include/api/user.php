@@ -341,7 +341,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
  * Create or update Phorum users.
  *
  * This function can be used for both creating and updating Phorum users.
- * If no user_id is provided in the user data, a new user will be created.
+ * If the user_id in the user data is NULL, a new user will be created.
  * If a user_id is provided, then the existing user will be updated or a
  * new user with that user_id is created.
  *
