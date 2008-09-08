@@ -433,7 +433,21 @@
     <para>
     <remark>TODO: which data to cache/cache layer</remark>
     </para>
-   </section>  
+   </section> 
+   
+   <section id="feautures.settings.banlists">
+    <title>Ban Lists</title>
+     <para>
+     Ban items can be used to deny new user registrations and posting of (private) messages, based on 
+     various criteria. If a ban item applies to a user action, then this action will be fully blocked by
+     Phorum. This can for example be used to block user registrations and postings from certain IP addresses
+     or to prevent certain words from being used in forum messages.
+     </para>
+     <para>
+     If you want to fully ban a user, then it's best to set "Active" to "No" for the user in the "Edit Users"
+     interface.
+     </para>
+   </section> 
   </section>
 
   <section id="features.vroots">
