@@ -430,6 +430,9 @@
     JavaScript data in the browsers of your visitors. Enabling this feature is highly recommended.
     Only disable it if you are having problems with it.
     </para>
+    <para>
+    <remark>TODO: which data to cache/cache layer</remark>
+    </para>
    </section>  
   </section>
 
