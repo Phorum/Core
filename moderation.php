@@ -172,6 +172,8 @@ switch ($mod_step) {
         break;
 
    case PHORUM_MOVE_THREAD: // this is the first step of a message move
+   	
+   	    include_once './include/forum_functions.php';
 
         $message = phorum_db_get_message($msgthd_id);
 
