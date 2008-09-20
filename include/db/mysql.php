@@ -4810,9 +4810,11 @@ function phorum_db_newflag_count($forum_ids)
     $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
 
     // get the total number of messages the user has read in each forum
-    $sql = "select forum_id, count(*) as count
+    $sql = "select {$PHORUM['user_newflags_table']}.forum_id, count(*) as count
             from {$PHORUM['user_newflags_table']}
-            where user_id=".$PHORUM["user"]["user_id"]." and
+            inner join {$PHORUM['message_table']} using (message_id, forum_id)
+            where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
+            status=".PHORUM_STATUS_APPROVED." and
             forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
 
@@ -4825,6 +4827,7 @@ function phorum_db_newflag_count($forum_ids)
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
             parent_id=0 and
+            status=".PHORUM_STATUS_APPROVED." and
             {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
 
@@ -7164,13 +7167,12 @@ function phorum_db_create_tables()
            KEY list_page_flat (forum_id,parent_id,thread),
            KEY new_count (forum_id,status,moved,message_id),
            KEY new_threads (forum_id,status,parent_id,moved,message_id),
-           KEY recent_threads (status, parent_id, message_id),
+           KEY recent_threads (status, parent_id, message_id, forum_id),
            KEY updated_threads (status, parent_id, modifystamp),
            KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
            KEY next_prev_thread (forum_id,status,thread),
-           KEY user_id (user_id),
            KEY recent_user_id (recent_user_id),
            KEY user_messages (user_id, message_id)
        ) $charset",
@@ -7535,14 +7537,14 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    $ext = "mysqli";
 } elseif (function_exists('mysql_connect')) {
    $ext = "mysql";
-   
+
    // build the right hostname for the mysql extension
    // not having separate args for port and socket
    if(!empty($PHORUM['DBCONFIG']['socket'])) {
        $PHORUM['DBCONFIG']['server'].=":".$PHORUM['DBCONFIG']['socket'];
    } elseif(!empty($PHORUM['DBCONFIG']['port'])) {
        $PHORUM['DBCONFIG']['server'].=":".$PHORUM['DBCONFIG']['port'];
-   }   
+   }
 } else {
    // Up to here, no PHP extension was found. This probably means that no
    // MySQL extension is loaded. Here we'll try to dynamically load an

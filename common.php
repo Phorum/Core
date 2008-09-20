@@ -32,7 +32,7 @@ define( "PHORUM", "5.2-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2008062500" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2008091900" );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -570,7 +570,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $search_arr  = array('\'','"');
     $replace_arr = array('','');
     $PHORUM["DATA"]["DESCRIPTION"]=str_replace($search_arr,$replace_arr,$PHORUM["DATA"]["DESCRIPTION"]);
-    
+
     $PHORUM["DATA"]["ENABLE_PM"] = ( isset( $PHORUM["enable_pm"] ) ) ? $PHORUM["enable_pm"] : "";
     if ( !empty( $PHORUM["DATA"]["HTML_TITLE"] ) && !empty( $PHORUM["DATA"]["NAME"] ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
