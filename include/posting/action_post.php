@@ -270,7 +270,26 @@ if ($success)
         $redir_url = phorum_get_url(PHORUM_LIST_URL);
     }
 
-    phorum_redirect_by_url($redir_url);
+    if ($message["status"] > 0) {
+        phorum_redirect_by_url($redir_url);
+    } else {
+    	// give a message about this being a moderated forum before redirecting
+    	$PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];
+    	$PHORUM['DATA']["URL"]["REDIRECT"]=$redir_url;
+    	
+    	// clickheremsg is depending on the place we are returning to
+    	$PHORUM['DATA']["URL"]["CLICKHERE"]=$redir_url;
+    	if ($PHORUM["redirect_after_post"] == "read") {
+    		$PHORUM['DATA']['CLICKHEREMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
+    	} else {
+    		$PHORUM['DATA']['CLICKHEREMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
+    	}
+    	
+    	// make it a little bit more visible
+    	$PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
+    	phorum_output('message');
+    	exit(0);
+    }
 
     return;
 }
