@@ -345,31 +345,38 @@ if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
 // This only applies to URLs that we create using phorum_get_url().
 // Scripts using data originating from standard HTML forms (e.g. search)
 // will have to use $_GET or $_POST.
-if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"])))
-{
-    $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
-           ? $_SERVER["QUERY_STRING"]
-           : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
+if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"]))) {
 
-    // ignore stuff past a #
-    if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
+    if(strpos($_SERVER["QUERY_STRING"], "&")!==false){
 
-    // explode it on comma
-    $PHORUM["args"] = $Q_STR == '' ? array() : explode( ",", $Q_STR );
+        $PHORUM["args"] = $_GET;
 
-    // check for any assigned values
-    if ( strstr( $Q_STR, "=" ) ) {
-        foreach( $PHORUM["args"] as $key => $arg ) {
+    } else {
 
-            // if an arg has an = create an element in args
-            // with left part as key and right part as value
-            if ( strstr( $arg, "=" ) ) {
-                list( $var, $value ) = explode( "=", $arg, 2 );
-                // get rid of the numbered arg, it is useless.
-                unset( $PHORUM["args"][$key] );
-                // add the named arg
-                // TODO: Why is urldecode() used here? IMO this can be omitted.
-                $PHORUM["args"][$var] = urldecode( $value );
+        $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
+               ? $_SERVER["QUERY_STRING"]
+               : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
+
+        // ignore stuff past a #
+        if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
+
+        // explode it on comma
+        $PHORUM["args"] = $Q_STR == '' ? array() : explode( ",", $Q_STR );
+
+        // check for any assigned values
+        if ( strstr( $Q_STR, "=" ) ) {
+            foreach( $PHORUM["args"] as $key => $arg ) {
+
+                // if an arg has an = create an element in args
+                // with left part as key and right part as value
+                if ( strstr( $arg, "=" ) ) {
+                    list( $var, $value ) = explode( "=", $arg, 2 );
+                    // get rid of the numbered arg, it is useless.
+                    unset( $PHORUM["args"][$key] );
+                    // add the named arg
+                    // TODO: Why is urldecode() used here? IMO this can be omitted.
+                    $PHORUM["args"][$var] = urldecode( $value );
+                }
             }
         }
     }
@@ -455,12 +462,12 @@ $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head
 $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
 if ( !defined( "PHORUM_ADMIN" ) ) {
-	
-	$skipsession = false;
-	
-	if(phorum_page == 'css' || phorum_page == 'javascript') {
-		$skipsession = true;
-	}
+
+    $skipsession = false;
+
+    if(phorum_page == 'css' || phorum_page == 'javascript') {
+        $skipsession = true;
+    }
 
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_DISABLED){
