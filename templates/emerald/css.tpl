@@ -386,8 +386,8 @@ img {
 }
 
 #phorum td.message-user-info {
-    float: right;
     font-size: {font_small};
+    white-space: nowrap;
 }
 
 #phorum div.message-author {
