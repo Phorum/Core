@@ -69,13 +69,6 @@ $PHORUM['DBCONFIG']=array(
     // See the end of this file for a detailed description of this option.
     'slaves' => array(),
 
-    // For collecting (and showing) the number of queries run (set to 1)
-    // and for collecting (and showing) the queries run (set to 2).
-    // This option is useful for developers who need to debug queries and
-    // query performance. Do not use it on a production system.
-    // Some template code is required for showing the results. The emerald
-    // template includes templates/emerald/dbdebug.tpl by default.
-    'dbdebug' => 0,
 );
 
 /*
