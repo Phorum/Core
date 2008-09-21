@@ -455,6 +455,12 @@ $PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head
 $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
 if ( !defined( "PHORUM_ADMIN" ) ) {
+	
+	$skipsession = false;
+	
+	if(phorum_page == 'css' || phorum_page == 'javascript') {
+		$skipsession = true;
+	}
 
     // if the Phorum is disabled, display a message.
     if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_DISABLED){
@@ -584,7 +590,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
 
     // Try to restore a user session.
-    if (phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
+    if (!$skipsession && phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
     {
         // if the user has overridden thread settings, change it here.
         if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
@@ -666,6 +672,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $template = basename( $PHORUM["args"]["template"] );
             if ($template != '..') {
                 $PHORUM["template"] = $template;
+                $PHORUM['DATA']['GET_VARS'][]="template=$template";
+                $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"template\" value=\"$template\" />\n";
             }
         }
 
