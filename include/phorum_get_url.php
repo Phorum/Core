@@ -267,7 +267,7 @@ function phorum_get_current_url($include_query_string=true) {
     }
 
     if($include_query_string && !empty($_SERVER["QUERY_STRING"])){
-        $url += "?".$_SERVER["QUERY_STRING"];
+        $url .= "?".$_SERVER["QUERY_STRING"];
     }
 
     return $url;
