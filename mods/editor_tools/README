@@ -38,7 +38,7 @@ Language support:
 -----------------
 
 This module supports multiple languages. If you want to translate the module
-to a new language, you'll have to copy lang/english.php to lang/yourlang.php 
+to a new language, you'll have to copy lang/english.php to lang/yourlang.php
 (yourlang.php must have the same name as Phorum's main language file that
 you use). After this, translate the strings in lang/yourlang.php.
 
@@ -68,15 +68,26 @@ examples on how to do this.
 
       function phorum_mod_foo_editor_tool_plugin()
       {
+          global $PHORUM;
+
           // Add javascript code to handle a click on the tool button.
+          // The javascript code is captured and added to the {HEAD_TAGS}
+          // template variable, so it will be added to the <head> section
+          // of the page through the header.tpl template. Note that you
+          // could also use other mechanisms to add the code to the pages,
+          // but for small bits of javascript, this might be the easiest
+          // way to do it.
+          ob_start();
           ?>
           <script type="text/javascript">
-          function mod_foo_editor_tool_action() {
-            alert('You clicked on the mod_foo editor tool');
-          }
+            function mod_foo_editor_tool_action() {
+              alert('You clicked on the mod_foo editor tool');
+            }
           </script>
           <?php
-   
+          $PHORUM['DATA']['HEAD_TAGS'] .= ob_get_contents();
+          ob_end_clean();
+
           // Register a tool button.
           editor_tools_register_tool(
               'foo',                         // Tool id
@@ -122,7 +133,7 @@ examples on how to do this.
           'The name of the help link',
           'http://www.yourhelp.com/page.html'
       );
-   
+
 
 If both mod_foo and the editor_tools module are enabled, the extra
 editor tool elements will be available in the button bar.
@@ -157,7 +168,7 @@ These are the changes that are needed:
    {editor_tools_hide_all_popups(); color_picker_div.style.display='block';}
 
 6) In the same function, remove the formField argument and also remove the
-   line at the end of the function where the formField is stored in a 
+   line at the end of the function where the formField is stored in a
    global variable.
 
 7) Add z-index: 1000 to the definition for #dhtmlgoodies_colorPicker
@@ -168,7 +179,7 @@ These are the changes that are needed:
 9) For MSIE5/MacOS9 support, remove the "?" after the "*" in the line:
    var navigatorVersion = navigator.appVersion.replace(/.*?MSIE...etc)/1;
 
-10) In js_color_picker_v2.css: -moz-user-select:no; -> -moz-user-select:none; 
+10) In js_color_picker_v2.css: -moz-user-select:no; -> -moz-user-select:none;
     url('...') -> url(...)
 
 11) In js_color_picker_v2.js.php, for providing more dynamics in the tabs:
