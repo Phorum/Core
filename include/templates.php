@@ -261,7 +261,7 @@ function phorum_import_template_pass2($template)
     $template = $tmp;
 
     // Find and process all template statements in the code.
-    preg_match_all("/\{[\"\'\!\/A-Za-z0-9].+?\}/s", $template, $matches);
+    preg_match_all("/\{[\"\'\!\/A-Za-z0-9].*?\}/s", $template, $matches);
     foreach ($matches[0] as $match)
     {
         // Strip surrounding { .. } from the statement.
