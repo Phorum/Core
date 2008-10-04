@@ -6765,7 +6765,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
         }
     }
     if (!empty($clauses)) {
-        $where = 'WHERE ' . implode(" $type ", $clauses);
+        $where = 'WHERE ' . implode(" OR ", $clauses);
     } else {
         $where = '';
     }
@@ -6779,13 +6779,25 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
         $limit = $return_array ? '' : 'LIMIT 1';
     }
 
+    // Build the final query.
+    if ($type == 'OR' || count($clauses) == 1)
+    {
+        $sql = "SELECT DISTINCT(user_id)
+                FROM   {$PHORUM['user_custom_fields_table']}
+                $where
+                $limit";
+    } else {
+        $sql = "SELECT user_id
+                FROM   {$PHORUM['user_custom_fields_table']}
+                $where
+                GROUP  BY user_id
+                HAVING count(*) = " . count($clauses) . " " .
+                $limit;
+    }
+
     // Retrieve the matching user_ids from the database.
     $user_ids = phorum_db_interact(
-        DB_RETURN_ROWS,
-        "SELECT DISTINCT(user_id)
-         FROM   {$PHORUM['user_custom_fields_table']}
-         $where $limit",
-        0 // keyfield 0 is the user_id
+        DB_RETURN_ROWS, $sql, 0 // keyfield 0 is the user_id
     );
 
     // No user_ids found at all?
