@@ -101,18 +101,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         if (!empty($PHORUM['DBCONFIG']['charset'])) {
             mysqli_query($conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-            mysqli_query($conn,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
             if ($debug) {
                 $querytrack['count'] += 2;
                 if ($debug > 1) {
                     $querytrack['queries'][] = array(
                         'number' => '001',
                         'query'  => "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
-                        'time'   => '0.000'
-                    );
-                    $querytrack['queries'][] = array(
-                        'number' => '002',
-                        'query'  => "SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}",
                         'time'   => '0.000'
                     );
                 }
