@@ -107,7 +107,6 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 }
                 if(!empty($PHORUM['DBCONFIG']['charset'])) {
                     mysqli_query( $conn_read,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-                    mysqli_query( $conn_read,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
                 }
         }
         
@@ -130,7 +129,6 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             
             if(!empty($PHORUM['DBCONFIG']['charset'])) {
                 mysqli_query( $conn_write,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-                mysqli_query( $conn_write,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
             }
         }
         

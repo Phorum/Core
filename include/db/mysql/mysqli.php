@@ -88,7 +88,6 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
             mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-            mysqli_query( $conn,"SET CHARACTER SET {$PHORUM['DBCONFIG']['charset']}");
         }        
         
         // putting this here for testing mainly
