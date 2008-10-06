@@ -37,8 +37,24 @@ if (!defined('PHORUM')) return;
  * implemented by {@link bbcode_api_tokenize()}. The final fourth step
  * is handled by {@link bbcode_api_render()}.
  *
- * @todo go over the code for HTML escaping consistency (no escaping from
- *       this code, Phorum escapes all code already)
+ * @todo Implement a good parsing rule for tags that take the inner content
+ *       and put that inside a new HTML tag. Those tags should not allow
+ *       nested BBcode tags when the content is used. It is no problem when
+ *       a bbcode argument is used, so that should still be allowed. Because
+ *       this sounds terribly confusing, here are some examples for the
+ *       distinct cases:
+ * 
+ *       [url]http://some.url[tag]nested data[/tag][/url]
+ *       For this case, the parser would turn [tag]nested data[/tag] into
+ *       <some>html tag</some>. Then, the parser would see:
+ *       [url]http://some.url<some>html tag</some>[/url]
+ *       When using this content for <a href="...">, this would introduce
+ *       HTML code inside the href, possibly opening options for XSS.
+ * 
+ *       [url=http://some.url][tag]nested data[/tag][/url]
+ *       This case is okay. The content here is put between <a href> and </a>
+ *       in the rendered output. This case should still be valid after
+ *       implementing the new parsing rule.
  */
 
 // --------------------------------------------------------------------
@@ -1090,7 +1106,11 @@ function bbcode_api_render($text, $tokens)
 function bbcode_email_handler($content, $args)
 {
     if ($args['email'] == '') {
-        $args['email'] = $content;
+        if (strpos($content, '<') !== FALSE ||
+            strpos($content, '"') !== FALSE ||
+            strpos($content, '>') !== FALSE) 
+            $content = preg_replace('/[<">].*[<">]/', '', $content);
+      	$args['email'] = $content;
     }
 
     $append = '';
@@ -1117,6 +1137,10 @@ function bbcode_email_handler($content, $args)
 function bbcode_img_handler($content, $args)
 {
     if ($args['img'] == '') {
+        if (strpos($content, '<') !== FALSE ||
+            strpos($content, '"') !== FALSE ||
+            strpos($content, '>') !== FALSE) 
+            $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['img'] = $content;
     }
     if (!preg_match('!^\w+://!', $args['img'])) {
@@ -1166,6 +1190,10 @@ function bbcode_url_handler($content, $args)
 
     $strip_url = FALSE;
     if ($args['url'] == '') {
+        if (strpos($content, '<') !== FALSE ||
+            strpos($content, '"') !== FALSE ||
+            strpos($content, '>') !== FALSE) 
+            $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['url'] = $content;
         $strip_url = TRUE;
     }
@@ -1210,8 +1238,8 @@ function bbcode_quote_handler($content, $args)
 {
     global $PHORUM;
 
-    $content = preg_replace('/^\s*\<(?:phorum break|br)\s*\/?\>/', '', $content);
-    $content = preg_replace('/\<(?:phorum break|br)\s*\/?\>\s*$/', '', $content);
+    $content = preg_replace('/^\s*\<(?:phorum break|br)\s*\/?\>/','', $content);
+    $content = preg_replace('/\<(?:phorum break|br)\s*\/?\>\s*$/','', $content);
 
     return '<blockquote class="bbcode">' .
             '<div>' .

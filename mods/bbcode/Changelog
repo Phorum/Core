@@ -1,6 +1,14 @@
 Changelog:
 ----------
 
+2008-10-06 v2.0.9
+
+   - Fixed #806: possible XSS leak plugged. This was reported as a
+     security vulnerability, however we were never able to produce
+     anything more than broken HTML code. Since broken HTML code is
+     not good and because we are rather safe than sorry, this fix
+     was implemented.
+
 2008-09-01 v2.0.8
 
    - Fixed #787: BBcode module: end of message end tags for some
