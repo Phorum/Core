@@ -3,6 +3,8 @@ if(!defined("PHORUM5_CONVERSION")) return;
 
 // Phorum3 - to - Phorum5 Conversion Library
 
+require_once('./include/api/file_storage.php');
+
 function phorum_convert_check_groups($link) {
     GLOBAL $CONVERT;
 
@@ -294,13 +296,13 @@ function phorum_convert_getNextMessage($res,$table_name) {
                   $fp=fopen($filename, "r");
                   $buffer=base64_encode(fread($fp, filesize($filename)));
                   fclose($fp);
-                  $file_id = phorum_db_file_save(array(
-                        "user_id" => $userid,
+                  $file_id = phorum_api_file_store(array(
                         "filename" => $attachment['filename'],
-                        "filesize" => filesize($filename),
                         "file_data" => $buffer,
-                        "message_id" => $newmessage['message_id'],
-                        "link" => PHORUM_LINK_MESSAGE
+                        "filesize" => filesize($filename),
+                        "link" => PHORUM_LINK_MESSAGE,
+                        "user_id" => $userid,
+                        "message_id" => $newmessage['message_id']
                   ));
                   unset($buffer); // free that large buffer
                   $inserted_files[]=array("file_id"=>$file_id, "name"=>$attachment['filename'], "size"=>filesize($filename));
