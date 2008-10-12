@@ -295,9 +295,9 @@ function phorum_convert_getNextMessage($res,$table_name) {
               $filename = $CONVERT['attachmentdir']."/".$table_name."/".$attachment['id'].strtolower(strrchr($attachment['filename'], "."));
               if(file_exists($filename) && filesize($filename)>0) {
                   $fp=fopen($filename, "r");
-                  $buffer=base64_encode(fread($fp, filesize($filename)));
+                  $buffer=fread($fp, filesize($filename));
                   fclose($fp);
-                  $file_id = phorum_api_file_store(array(
+                  $stored_file = phorum_api_file_store(array(
                         "filename" => $attachment['filename'],
                         "file_data" => $buffer,
                         "filesize" => filesize($filename),
@@ -306,7 +306,7 @@ function phorum_convert_getNextMessage($res,$table_name) {
                         "message_id" => $newmessage['message_id']
                   ));
                   unset($buffer); // free that large buffer
-                  $inserted_files[]=array("file_id"=>$file_id, "name"=>$attachment['filename'], "size"=>filesize($filename));
+                  $inserted_files[]=array("file_id"=>$stored_file['file_id'], "name"=>$attachment['filename'], "size"=>filesize($filename));
               }
           }
       }
