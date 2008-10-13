@@ -19,14 +19,14 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
+// Load constants.
+require_once('./mods/bbcode/api.php');
+
 // Load tag descriptions.
 require_once('./mods/bbcode/builtin_tags.php');
 
 // Load default settings.
 require_once('./mods/bbcode/defaults.php');
-
-// Load constants.
-require_once('./mods/bbcode/api.php');
 
 // Available option sets for the bbcode tag dropdown menus.
 $options_without_editor_tools = array(
