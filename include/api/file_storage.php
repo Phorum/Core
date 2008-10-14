@@ -412,44 +412,44 @@ function phorum_api_file_store($file)
                     E_USER_ERROR
                 );
         }
+    }
 
-        // Force the message_id and user_id to 0, depending on the
-        // link type. Also check if the required id field (user or
-        // message) is set for the used link type.
-        switch ($checkfile["link"])
-        {
-            case PHORUM_LINK_EDITOR:
+    // Force the message_id and user_id to 0, depending on the
+    // link type. Also check if the required id field (user or
+    // message) is set for the used link type.
+    switch ($checkfile["link"])
+    {
+        case PHORUM_LINK_EDITOR:
+            $checkfile["message_id"] = 0;
+            $checkfile["user_id"] = 0;
+            break;
+        case PHORUM_LINK_USER:
+            $checkfile["message_id"] = 0;
+            if (empty($checkfile["user_id"])) {
+                $checkfile["user_id"] = $PHORUM["user"]["user_id"];
+            }
+            if (empty($checkfile["user_id"])) trigger_error (
+                "phorum_api_file_store(): \$file set the link type to " .
+                "PHORUM_LINK_USER, but the user_id was not set.",
+                E_USER_ERROR
+            );
+            break;
+        case PHORUM_LINK_MESSAGE:
+            $checkfile["user_id"] = 0;
+            if (empty($checkfile["message_id"])) trigger_error (
+                "phorum_api_file_store(): \$file set the link type to " .
+                "PHORUM_LINK_USER, but the message_id was not set.",
+                E_USER_ERROR
+            );
+            break;
+        default:
+            if (empty($checkfile["message_id"])) {
                 $checkfile["message_id"] = 0;
+            }
+            if (empty($checkfile["user_id"])) {
                 $checkfile["user_id"] = 0;
-                break;
-            case PHORUM_LINK_USER:
-                $checkfile["message_id"] = 0;
-                if (empty($checkfile["user_id"])) {
-                    $checkfile["user_id"] = $PHORUM["user"]["user_id"];
-                }
-                if (empty($checkfile["user_id"])) trigger_error (
-                    "phorum_api_file_store(): \$file set the link type to " .
-                    "PHORUM_LINK_USER, but the user_id was not set.",
-                    E_USER_ERROR
-                );
-                break;
-            case PHORUM_LINK_MESSAGE:
-                $checkfile["user_id"] = 0;
-                if (empty($checkfile["message_id"])) trigger_error (
-                    "phorum_api_file_store(): \$file set the link type to " .
-                    "PHORUM_LINK_USER, but the message_id was not set.",
-                    E_USER_ERROR
-                );
-                break;
-            default:
-                if (empty($checkfile["message_id"])) {
-                    $checkfile["message_id"] = 0;
-                }
-                if (empty($checkfile["user_id"])) {
-                    $checkfile["user_id"] = 0;
-                }
-                break;
-        }
+            }
+            break;
     }
 
     // See if all required values are set.
