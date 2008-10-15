@@ -222,8 +222,11 @@ foreach($xml as $type => $data) {
 
             echo "Importing Folders...\n";
             $done = 0;
-            foreach($data->folder->folder as $folder){
+            foreach($data->folder as $folder){
+                $done++;
+                progress($done, count($data->folder));
                 $folder = makeArray($folder);
+                if($folder["id"]==0) continue;
                 $new_folder = array(
                     "forum_id" => null,
                     "name" => $folder["name"],
@@ -236,8 +239,6 @@ foreach($xml as $type => $data) {
 
                 $map["folders"][$folder["id"]] = $new_folder["folder_id"];
 
-                $done++;
-                progress($done, count($data->folder->folder));
             }
 
             echo "\n\n";
