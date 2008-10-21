@@ -94,7 +94,7 @@ foreach ($sanity_checks as $check)
     //
     // [3] A solution for the problem or NULL.
     //
-    $is_install = $module == "install";
+    $is_install = ($module == "install" || $module == "upgrade");
     list($status, $error, $solution) = call_user_func($check["function"], $is_install);
 
     $PHORUM["SANITY_CHECKS"]["CHECKS"][] = array(
@@ -110,7 +110,7 @@ foreach ($sanity_checks as $check)
 
 // If the sanity checks are called from the installation,
 // the we're done.
-if ($module == "install") return;
+if ($module == "install" || $module == "upgrade") return;
 
 // ========================================================================
 // Build the sanity checking admin page.
