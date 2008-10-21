@@ -5100,7 +5100,7 @@ function phorum_db_newflag_check($forum_ids)
  */
 function phorum_db_newflag_count($forum_ids)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+	global $PHORUM;
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
@@ -5114,10 +5114,12 @@ function phorum_db_newflag_count($forum_ids)
     $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
 
     // get the total number of messages the user has read in each forum
-    $sql = "select forum_id, count(*) as count
+    $sql = "select {$PHORUM['user_newflags_table']}.forum_id, count(*) as count
             from {$PHORUM['user_newflags_table']}
-            where user_id=".$PHORUM["user"]["user_id"]." and
-            forum_id in (".implode(",", $forum_ids).")
+            inner join {$PHORUM['message_table']} using (message_id, forum_id)
+            where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
+            status=".PHORUM_STATUS_APPROVED." and
+            {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
 
     $message_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
@@ -5129,6 +5131,7 @@ function phorum_db_newflag_count($forum_ids)
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
             parent_id=0 and
+            status=".PHORUM_STATUS_APPROVED." and
             {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
 
@@ -7539,13 +7542,12 @@ function phorum_db_create_tables()
            KEY list_page_flat (forum_id,parent_id,thread),
            KEY new_count (forum_id,status,moved,message_id),
            KEY new_threads (forum_id,status,parent_id,moved,message_id),
-           KEY recent_threads (status, parent_id, message_id),
+           KEY recent_threads (status, parent_id, message_id, forum_id),
            KEY updated_threads (status, parent_id, modifystamp),
            KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
            KEY next_prev_thread (forum_id,status,thread),
-           KEY user_id (user_id),
            KEY recent_user_id (recent_user_id),
            KEY user_messages (user_id, message_id)
        ) $charset",
@@ -7881,6 +7883,23 @@ function phorum_db_sanitychecks()
          website is hosted with a service provider, please contact
          the service provider to upgrade your MySQL database."
     );
+    
+    // MySQL before version 5.0
+    if ($ver[0] < 5) return array(
+        PHORUM_SANITY_WARN,
+        "The MySQL database server that is used does not
+         support all Phorum features. The running version is
+         \"" . htmlspecialchars($version) . "\", while MySQL version
+         5.0 or higher is recommended. MySQL has discontinued active development 
+         for all versions below 5.0. The Phorum teams uses 5.0 for all 
+         development. Phorum has been known to work with MySQL 4.1 and some 
+         later 4.0 versions. However, there is no testing with these versions. 
+         It is recommended that all users upgrade to 5.0 as soon as possible 
+         to get the most out of MySQL and Phorum.",
+        "Upgrade your MySQL server to a newer version. If your
+         website is hosted with a service provider, please contact
+         the service provider to upgrade your MySQL database."
+    );        
 
     // All checks are okay.
     return array (PHORUM_SANITY_OK, NULL);
