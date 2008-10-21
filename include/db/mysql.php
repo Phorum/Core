@@ -4815,7 +4815,7 @@ function phorum_db_newflag_count($forum_ids)
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
             status=".PHORUM_STATUS_APPROVED." and
-            forum_id in (".implode(",", $forum_ids).")
+            {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
             group by forum_id";
 
     $message_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
@@ -7519,6 +7519,23 @@ function phorum_db_sanitychecks()
          website is hosted with a service provider, please contact
          the service provider to upgrade your MySQL database."
     );
+    
+    // MySQL before version 5.0
+    if ($ver[0] < 5) return array(
+        PHORUM_SANITY_WARN,
+        "The MySQL database server that is used does not
+         support all Phorum features. The running version is
+         \"" . htmlspecialchars($version) . "\", while MySQL version
+         5.0 or higher is recommended. MySQL has discontinued active development 
+         for all versions below 5.0. The Phorum teams uses 5.0 for all 
+         development. Phorum has been known to work with MySQL 4.1 and some 
+         later 4.0 versions. However, there is no testing with these versions. 
+         It is recommended that all users upgrade to 5.0 as soon as possible 
+         to get the most out of MySQL and Phorum.",
+        "Upgrade your MySQL server to a newer version. If your
+         website is hosted with a service provider, please contact
+         the service provider to upgrade your MySQL database."
+    );    
 
     // All checks are okay.
     return array (PHORUM_SANITY_OK, NULL);
