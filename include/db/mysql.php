@@ -470,7 +470,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
         $sortfield = 'modifystamp';
         $index = 'list_page_float';
     } else {
-        $sortfield = 'thread';
+        $sortfield = 'datestamp';
         $index = 'list_page_flat';
     }
 
@@ -2013,7 +2013,7 @@ function phorum_db_get_neighbour_thread($key, $direction)
 
     settype($key, 'int');
 
-    $keyfield = $PHORUM['float_to_top'] ? 'modifystamp' : 'thread';
+    $keyfield = $PHORUM['float_to_top'] ? 'modifystamp' : 'datestamp';
 
     switch ($direction) {
         case 'newer': $compare = '>'; $orderdir = 'ASC';  break;
@@ -5100,7 +5100,7 @@ function phorum_db_newflag_check($forum_ids)
  */
 function phorum_db_newflag_count($forum_ids)
 {
-	global $PHORUM;
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
@@ -7539,7 +7539,7 @@ function phorum_db_create_tables()
            KEY special_threads (sort,forum_id),
            KEY status_forum (status,forum_id),
            KEY list_page_float (forum_id,parent_id,modifystamp),
-           KEY list_page_flat (forum_id,parent_id,thread),
+           KEY list_page_flat (forum_id,parent_id,datestamp),
            KEY new_count (forum_id,status,moved,message_id),
            KEY new_threads (forum_id,status,parent_id,moved,message_id),
            KEY recent_threads (status, parent_id, message_id, forum_id),
@@ -7883,23 +7883,23 @@ function phorum_db_sanitychecks()
          website is hosted with a service provider, please contact
          the service provider to upgrade your MySQL database."
     );
-    
+
     // MySQL before version 5.0
     if ($ver[0] < 5) return array(
         PHORUM_SANITY_WARN,
         "The MySQL database server that is used does not
          support all Phorum features. The running version is
          \"" . htmlspecialchars($version) . "\", while MySQL version
-         5.0 or higher is recommended. MySQL has discontinued active development 
-         for all versions below 5.0. The Phorum teams uses 5.0 for all 
-         development. Phorum has been known to work with MySQL 4.1 and some 
-         later 4.0 versions. However, there is no testing with these versions. 
-         It is recommended that all users upgrade to 5.0 as soon as possible 
+         5.0 or higher is recommended. MySQL has discontinued active development
+         for all versions below 5.0. The Phorum teams uses 5.0 for all
+         development. Phorum has been known to work with MySQL 4.1 and some
+         later 4.0 versions. However, there is no testing with these versions.
+         It is recommended that all users upgrade to 5.0 as soon as possible
          to get the most out of MySQL and Phorum.",
         "Upgrade your MySQL server to a newer version. If your
          website is hosted with a service provider, please contact
          the service provider to upgrade your MySQL database."
-    );        
+    );
 
     // All checks are okay.
     return array (PHORUM_SANITY_OK, NULL);
