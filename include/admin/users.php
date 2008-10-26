@@ -70,6 +70,53 @@ if(count($_POST))
             phorum_admin_okmsg("$count User(s) deleted.");
         }
 
+    //process new user data
+    } elseif (isset($_POST["addUser"])) {
+
+        $user_data = $_POST;
+
+        //check for pre-existing username
+        if (!empty($_POST["username"])) {
+            $existing_user = phorum_api_user_search("username", $_POST["username"]);
+            if (!empty($existing_user))
+                $error = "The user name \"$_POST[username]\" is already in use!";
+        } else {
+            $error = "You must provide a user name!";
+        }
+
+        //check for a valid email
+        if (!empty($_POST["email"])) {
+            include('./include/email_functions.php');
+            $valid_email = phorum_valid_email($_POST["email"]);
+            if ($valid_email !== true)
+                $error = "The email \"$_POST[email]\" is not valid!";
+        }
+
+        //check for password and password confirmation
+        if(isset($_POST['password1']) && !empty($_POST['password1']) && !empty($_POST['password2']) && $_POST['password1'] != $_POST['password2']) {
+            $error="Passwords don't match!";
+        } elseif(!empty($_POST['password1']) && !empty($_POST['password2'])) {
+            $user_data['password']=$_POST['password1'];
+            $user_data['password_temp']=$_POST['password1'];
+        } else {
+            $error="You must assign a password!";
+        }
+
+        unset($user_data["password1"]);
+        unset($user_data["password2"]);
+        unset($user_data["module"]);
+        unset($user_data["addUser"]);
+
+        if(empty($error)){
+            $user_data["user_id"] = NULL;
+            $user_data["active"] = PHORUM_USER_ACTIVE;
+            phorum_api_user_save($user_data);
+            phorum_admin_okmsg("User Added");
+        } else {
+            $addUser_error = 1;
+        }
+
+
     } else {
 
         $user_data=$_POST;
@@ -191,10 +238,11 @@ if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
     return;
 }
 
-if (!isset($_GET["edit"]) && !isset($_POST['section']))
+if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !isset($_POST['section']))
 {
     print "<a href=\"{$PHORUM["admin_http_path"]}?module=users\">" .
-          "Show all users</a><br/>";
+          "Show all users</a> | <a href=\"{$PHORUM["admin_http_path"]}" .
+      "?module=users&add=1\">Add User</a><br/>";
 
     if (empty($_REQUEST["user_id"]))
     {
@@ -450,9 +498,9 @@ if (isset($_REQUEST["user_id"]))
         $frm->addrow("Signature", $frm->textarea("signature", $user["signature"]));
 
         $frm->addrow("Active", $frm->select_tag("active", array("No", "Yes"), $user["active"]));
-        
+
         $frm->addrow("Forum posts",$user["posts"]);
-        
+
         $frm->addrow("Registration Date", phorum_date($PHORUM['short_date_time'], $user['date_added']));
 
         $row=$frm->addrow("Date last active", phorum_date($PHORUM['short_date_time'], $user['date_last_active']));
@@ -595,6 +643,35 @@ if (isset($_REQUEST["user_id"]))
 
     }
 
-}
+//display add user form
+} elseif (isset($_REQUEST["add"]) || isset($addUser_error)) {
 
+    $username = isset($user_data["username"]) ? $user_data["username"] : "";
+    $real_name = isset($user_data["real_name"]) ? $user_data["real_name"] : "";
+    $email = isset($user_data["email"]) ? $user_data["email"] : "";
+    $admin = isset($user_data["admin"]) ? $user_data["admin"] : "";
+
+    print "<a href=\"$referrer\">Back to the user overview</a><br/>";
+
+    $frm = new PhorumInputForm ("", "post", "Add User");
+
+    $frm->hidden("module", "users");
+
+    $frm->hidden("referrer", $referrer);
+
+    $frm->hidden("addUser", 1);
+
+    $frm->addbreak("Add User");
+
+    $frm->addrow("User Name", $frm->text_box("username", $username, 50));
+    $frm->addrow("Real Name", $frm->text_box("real_name", $real_name, 50));
+
+    $frm->addrow("Email", $frm->text_box("email", $email, 50));
+    $frm->addrow("Password", $frm->text_box("password1","", 0, 0, true));
+    $frm->addrow("Password (Confirmation)", $frm->text_box("password2","", 0, 0, true));
+
+    $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $admin));
+
+    $frm->show();
+}
 ?>
