@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2008-10-27 v1.0.5
+
+    - added display_name where applicable to show both username and 
+      display_name
+
 2008-03-08 v1.0.4
 
     - Made the JOIN queries work in all MySQL server versions by fully
