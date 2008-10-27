@@ -262,6 +262,8 @@ function phorum_mod_event_logging_after_register($data)
 
     list ($source, $from_module) = event_logging_find_source(1);
 
+    // display_name not available in this hook as it seems
+    
     event_logging_writelog(array(
         "message"   => "User registered for an account: " .
                        "{$data["username"]} <{$data["email"]}>.",
@@ -307,12 +309,17 @@ function phorum_mod_event_logging_after_login($data)
     if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_login"])
         return $data;
 
+    $displayname = "";        
+        
     if (isset($GLOBALS["PHORUM"]["user"]["username"])) {
         $username = $GLOBALS["PHORUM"]["user"]["username"];
-
+    
+	    if (isset($GLOBALS["PHORUM"]["user"]["display_name"])) 
+	        $displayname = $GLOBALS["PHORUM"]["user"]["display_name"];        
+        
         event_logging_writelog(array(
             "source"    => "forum login",
-            "message"   => "User $username logged in.",
+            "message"   => "User $displayname (Username: $username) logged in.",
             "loglevel"  => EVENTLOG_LVL_INFO,
             "category"  => EVENTLOG_CAT_SECURITY
         ));
@@ -330,13 +337,18 @@ function phorum_mod_event_logging_before_logout()
 
     if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_logout"])
         return;
+        
+    $displayname = "";
 
     if (isset($GLOBALS["PHORUM"]["user"]["username"])) {
         $username = $GLOBALS["PHORUM"]["user"]["username"];
+        
+	    if (isset($GLOBALS["PHORUM"]["user"]["display_name"])) 
+	        $displayname = $GLOBALS["PHORUM"]["user"]["display_name"];        
 
         event_logging_writelog(array(
             "source"    => "forum login",
-            "message"   => "User $username logged out.",
+            "message"   => "User $displayname (Username: $username) logged out.",
             "loglevel"  => EVENTLOG_LVL_INFO,
             "category"  => EVENTLOG_CAT_SECURITY
         ));
@@ -399,7 +411,7 @@ function phorum_mod_event_logging_after_edit($data)
     list ($source, $from_module) = event_logging_find_source(1);
 
     event_logging_writelog(array(
-        "message"    => $prefix . "Message \"{$data["subject"]}\" edited by \"{$GLOBALS["PHORUM"]["user"]["username"]}\".",
+        "message"    => $prefix . "Message \"{$data["subject"]}\" edited by \"{$GLOBALS["PHORUM"]["user"]["display_name"]} (Username: {$GLOBALS["PHORUM"]["user"]["username"]})\".",
         "forum_id"   => $data["forum_id"],
         "thread_id"  => $data["thread"],
         "message_id" => $data["message_id"],
