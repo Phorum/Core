@@ -35,7 +35,7 @@ if (!defined('PHORUM')) return;
 
 if (!function_exists('json_encode')) {
     require_once('./include/api/json-pear.php');
-    $PHORUM['API']['PEARJSON'] = new Services_JSON();
+    $GLOBALS['PHORUM']['API']['PEARJSON'] = new Services_JSON();
 }
 
 // {{{ Function: phorum_api_json_encode()
