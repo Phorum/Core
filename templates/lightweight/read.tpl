@@ -75,8 +75,6 @@
                         ({MESSAGES->attachments->size})<br/>
                     {/LOOP MESSAGES->attachments}
                 </div>
-
-                </div>
             {/IF}
 
             {IF MODERATOR true}
