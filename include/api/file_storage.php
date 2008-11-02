@@ -438,7 +438,7 @@ function phorum_api_file_store($file)
             $checkfile["user_id"] = 0;
             if (empty($checkfile["message_id"])) trigger_error (
                 "phorum_api_file_store(): \$file set the link type to " .
-                "PHORUM_LINK_USER, but the message_id was not set.",
+                "PHORUM_LINK_MESSAGE, but the message_id was not set.",
                 E_USER_ERROR
             );
             break;
