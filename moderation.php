@@ -172,8 +172,8 @@ switch ($mod_step) {
         break;
 
    case PHORUM_MOVE_THREAD: // this is the first step of a message move
-   	
-   	    include_once './include/forum_functions.php';
+
+        include_once './include/forum_functions.php';
 
         $message = phorum_db_get_message($msgthd_id);
 
@@ -196,7 +196,7 @@ switch ($mod_step) {
         // TODO: any two forums. Now we have a mix of those two.
         // add  && phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, $id) if the
         // mod should only be able to move to forums he also moderates
-        
+
         // get the forumlist
         $forums=phorum_build_forum_list();
         // ignore the current forum
@@ -204,7 +204,7 @@ switch ($mod_step) {
         $PHORUM['DATA']['FORUMS']=$forums;
 
         $PHORUM['DATA']['FRM']=1;
-        
+
         $output=true;
 
         $template="move_form";
@@ -411,7 +411,7 @@ switch ($mod_step) {
         phorum_update_thread_info($old_message['thread']);
 
         // updating the forum-stats
-        phorum_db_update_forum_stats(false, "-$num_hidden", $old_message["datestamp"]);
+        phorum_db_update_forum_stats(false, "-$num_hidden");
 
         $PHORUM['DATA']['OKMSG']="$num_hidden ".$PHORUM['DATA']['LANG']['MsgHiddenOk'];
         if(isset($PHORUM['args']["prepost"])) {
