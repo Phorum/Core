@@ -1201,7 +1201,7 @@ function bbcode_url_handler($content, $args)
         $args['url'] = 'http://'.$args['url'];
     }
     if ($strip_url && !$show_full_urls) {
-        $parts = parse_url($args['url']);
+        $parts = @parse_url($args['url']);
         return "[<a href=\"{$args['url']}\" $extratags>{$parts['host']}</a>]";
     } else {
         return "<a href=\"{$args['url']}\" $extratags>$content</a>";
