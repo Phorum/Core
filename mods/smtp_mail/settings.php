@@ -28,7 +28,7 @@ if(count($_POST)){
     }
 }
 
-require_once("./include/admin/PhorumInputForm.php");
+include_once "./include/admin/PhorumInputForm.php";
 
 $frm = new PhorumInputForm ("", "post", "Save");
 
@@ -42,7 +42,7 @@ $frm->addbreak("Settings for the SMTP Mail Module");
 $frm->addrow("Hostname of mailserver", $frm->text_box("host", $PHORUM['smtp_mail']['host'], 50));
 $frm->addrow("Port of mailserver", $frm->text_box("port", $PHORUM['smtp_mail']['port'], 5)." (Default Port is 25, unencrypted. Encrypted Port is usually 465)");
 
-$frm->addrow("Connection Type", $frm->select_tag("conn", array('auto'=>'Auto Detect','plain'=>'Plain Connection','ssl'=>'SSL-Encryption','tls'=>'TLS-Encryption'), $PHORUM['smtp_mail']['conn'])." (e.g. Google-Mail connection needs TLS)");
+$frm->addrow("Connection Type", $frm->select_tag("conn", array('plain'=>'Plain Connection','ssl'=>'SSL-Encryption','tls'=>'TLS-Encryption'), $PHORUM['smtp_mail']['conn'])." (e.g. Google-Mail connection needs TLS)");
 
 
 $frm->addrow("Use SMTP Auth", $frm->select_tag("auth",array(1=>'Yes',0=>'No'),$PHORUM['smtp_mail']['auth']));
