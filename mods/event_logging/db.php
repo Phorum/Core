@@ -241,7 +241,9 @@ function event_logging_writelog($loginfo)
         DB_RETURN_RES,
         "INSERT INTO {$PHORUM["event_logging_table"]}
                 (".implode(', ', array_keys($record)).")
-         VALUES (".implode(', ', $record).")"
+         VALUES (".implode(', ', $record).")", 
+         NULL, 
+         DB_MASTERQUERY 
     );
 }
 
@@ -393,7 +395,9 @@ function event_logging_countlogs($filter = NULL)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "DELETE FROM {$PHORUM["event_logging_table"]}
-                 WHERE  log_id <= {$rows[0]["log_id"]}"
+                 WHERE  log_id <= {$rows[0]["log_id"]}", 
+                NULL, 
+                DB_MASTERQUERY 
             );
         }
 
@@ -469,7 +473,9 @@ function event_logging_clearlogs($filter = NULL)
 
     phorum_db_interact(
         DB_RETURN_RES,
-        "DELETE FROM {$PHORUM["event_logging_table"]} $where"
+        "DELETE FROM {$PHORUM["event_logging_table"]} $where", 
+        NULL, 
+        DB_MASTERQUERY 
     );
 }
 
@@ -484,7 +490,9 @@ function event_logging_update_message_id_info($message_id, $forum_id, $thread_id
         "UPDATE {$PHORUM["event_logging_table"]}
          SET    forum_id = " . (int)$forum_id . ",
                 thread_id = " . (int)$thread_id . "
-         WHERE  message_id = " . (int)$message_id
+         WHERE  message_id = " . (int)$message_id, 
+         NULL, 
+         DB_MASTERQUERY 
     );
 }
 
