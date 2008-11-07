@@ -1131,7 +1131,22 @@ function bbcode_email_handler($content, $args)
         $append = '?subject='.rawurlencode($subject);
     }
 
-    return "<a href=\"mailto:{$args['email']}$append\">$content</a>";
+    // Obfuscate against mail address harvesting by spammers.
+    $email   = bbcode_html_encode($args['email']);
+    $content = bbcode_html_encode($content);
+
+    return "<a href=\"mailto:$email$append\">$content</a>";
+}
+
+function bbcode_html_encode($string)
+{
+    $ret_string = "";
+    $len = strlen( $string );
+    for( $x = 0;$x < $len;$x++ ) {
+        $ord = ord( $string[$x] );
+        $ret_string .= "&#$ord;";
+    }
+    return $ret_string;
 }
 
 function bbcode_img_handler($content, $args)
