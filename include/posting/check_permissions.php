@@ -139,7 +139,6 @@ if ($mode == "reply")
     $unapproved =
         empty($top_parent) ||
         empty($parent) ||
-        $top_parent["closed"] ||
         $top_parent["status"] != PHORUM_STATUS_APPROVED ||
         $parent["status"] != PHORUM_STATUS_APPROVED;
 
@@ -160,6 +159,13 @@ if ($mode == "reply")
         phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
         exit;
     }
+    
+    // closed topic, show a message
+    if($top_parent["closed"]) {
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
+        $PHORUM["posting_template"] = "message";
+        return;
+    }    
 
 }
 

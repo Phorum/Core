@@ -782,27 +782,30 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // to the editor when clicking a reply link.
     $PHORUM["DATA"]["REPLY_ON_READ"] = !empty($PHORUM["reply_on_read_page"]);
 
-    // Never show the reply box if the message is closed.
-    if($thread_is_closed) {
-
-        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
-        $templates[] = "message";
-
-    } elseif (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
-        // Prepare the arguments for the posting.php script.
-        $goto_mode = "reply";
-        if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
-            $goto_mode = "quote";
+    if (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
+    
+        // Never show the reply box if the message is closed.
+        if($thread_is_closed) {
+    
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
+            $templates[] = "message";
+    
+        } else {
+            // Prepare the arguments for the posting.php script.
+            $goto_mode = "reply";
+            if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
+                $goto_mode = "quote";
+            }
+    
+            $PHORUM["postingargs"] = array(
+                1 => $goto_mode,
+                2 => $message_id,
+                "as_include" => true
+            );
+    
+            include("./posting.php");
         }
-
-        $PHORUM["postingargs"] = array(
-            1 => $goto_mode,
-            2 => $message_id,
-            "as_include" => true
-        );
-
-        include("./posting.php");
-    }
+    }    
 
     phorum_output($templates);
 
