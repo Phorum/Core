@@ -164,6 +164,9 @@ if(count($_POST)){
                 unset($forum_settings_inherit["sticky_count"]);
                 unset($forum_settings_inherit["thread_count"]);
                 unset($forum_settings_inherit["last_post_time"]);
+                unset($forum_settings_inherit["display_order"]);
+                unset($forum_settings_inherit["cache_version"]);
+                unset($forum_settings_inherit["forum_path"]);
 
                 // we don't need to save the master forum
                 unset($forum_settings_inherit[$inherit_id]);
