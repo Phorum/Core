@@ -20,7 +20,9 @@ while ($row = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
            DB_RETURN_RES,
            "UPDATE {$PHORUM["pm_messages_table"]}
             SET    author = '$author'
-            WHERE  user_id = $u"
+            WHERE  user_id = $u", 
+           NULL, 
+           DB_MASTERQUERY 
         );
     }
 
@@ -38,7 +40,9 @@ while ($row = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
         DB_RETURN_RES,
         "UPDATE {$PHORUM["pm_messages_table"]}
          SET    meta = '$meta'
-         WHERE  pm_message_id = $m"
+         WHERE  pm_message_id = $m", 
+        NULL, 
+        DB_MASTERQUERY 
     );
 }
 
