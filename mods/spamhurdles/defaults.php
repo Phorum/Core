@@ -37,7 +37,7 @@ if (! isset($GLOBALS["PHORUM"]["mod_spamhurdles"]["flite_location"])) {
                     "/usr/local/flite/bin", "/opt/flite/bin");
     $flite_location = "";
     foreach ($search as $path) {
-        if (file_exists("$path/flite")) {
+        if (@file_exists("$path/flite")) {
             $flite_location = "$path/flite";
             break;
         }
