@@ -1,4 +1,3 @@
-<?php header("Content-Type: text/javascript") ?>
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
 // Copyright (C) 2007  Phorum Development Team                               //
