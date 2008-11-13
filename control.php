@@ -95,10 +95,6 @@ $PHORUM['DATA']['SHOW_EMAIL_HIDE'] = empty($PHORUM['hide_email_addr']) ? 1 : 0;
 // to disable it.
 $PHORUM['DATA']['SHOW_PM_EMAIL_NOTIFY'] = !empty($PHORUM["allow_pm_email_notify"]);
 
-// If pm email notifications are enabled, then the user can choose
-// for "Follow topic and Cc" as the default follow option.
-$PHORUM['DATA']['SHOW_EMAIL_NOTIFY'] = !empty($PHORUM["allow_email_notify"]);
-
 // The form action for the common form.
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL);
 
@@ -131,12 +127,6 @@ if (!empty($PHORUM["PROFILE_FIELDS"])) {
         if ($id === 'num_fields' || !empty($field['deleted'])) continue;
         if (!isset($user[$field['name']])) $user[$field['name']] = "";
     }
-}
-
-// If allow_email_notify is disabled, then the email_notify option should
-// be set to "1" (follow) if is currently set to "2" (follow + mail).
-if (empty($PHORUM["allow_email_notify"]) && $user['email_notify'] == 2) {
-    $user['email_notify'] = 1;
 }
 
 // Setup template data.
