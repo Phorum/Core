@@ -99,9 +99,7 @@
                     <select name="email_notify">
                       <option value="0"{IF PROFILE->email_notify 0} selected="selected" {/IF}>{LANG->None}</option>
                       <option value="1"{IF PROFILE->email_notify 1} selected="selected" {/IF}>{LANG->FollowThread}</option>
-                      {IF SHOW_EMAIL_NOTIFY}
                       <option value="2"{IF PROFILE->email_notify 2} selected="selected" {/IF}>{LANG->FollowWithEmailCC}</option>
-                      {/IF}
                     </select>
                 </dd>
 
