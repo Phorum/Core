@@ -33,9 +33,43 @@
 
 if (!defined('PHORUM')) return;
 
-if (!function_exists('json_encode')) {
-    require_once('./include/api/json-pear.php');
-    $GLOBALS['PHORUM']['API']['PEARJSON'] = new Services_JSON();
+if (!function_exists('json_decode'))
+{
+    function json_decode($content, $assoc=false)
+    {
+        require_once('./include/api/json-pear.php');
+
+        static $json_a;
+        static $json_b;
+
+        if ($assoc) {
+            if (!$json_a) {
+                $json_a = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
+            }
+            $json = $json_a;
+        } else {
+            if (!$json_b) {
+                $json_b = new Services_JSON;
+            }
+            $json = $json_b;
+        }
+
+        return $json->decode($content);
+    }
+}
+ 
+if (!function_exists('json_encode'))
+{
+    function json_encode($content)
+    {
+        require_once('./include/api/json-pear.php');
+
+        static $json;
+        if (!$json) {
+            $json = new Services_JSON;
+        }
+        return $json->encode($content);
+    }
 }
 
 // {{{ Function: phorum_api_json_encode()
@@ -47,11 +81,7 @@ function phorum_api_json_encode($var)
         $var = phorum_api_json_convert_to_utf8($var);
     }
 
-    if (empty($PHORUM['API']['PEARJSON'])) {
-        return json_encode($var);
-    } else {
-        return $PHORUM['API']['PEARJSON']->encode($var);
-    }
+    return json_encode($var);
 }
 // }}}
 
@@ -59,12 +89,7 @@ function phorum_api_json_encode($var)
 function phorum_api_json_decode($var)
 {
     global $PHORUM;
-
-    if (empty($PHORUM['API']['PEARJSON'])) {
-        return json_decode($var, TRUE);
-    } else {
-        return $PHORUM['API']['PEARJSON']->decode($var);
-    }
+    return json_decode($var, TRUE);
 }
 // }}}
 
