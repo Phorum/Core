@@ -12,7 +12,7 @@
                 <select name="adduser">
                     <option value="0">&nbsp;</option>
                     {LOOP NEWMEMBERS}
-                        <option value="{NEWMEMBERS->username}">{NEWMEMBERS->display_name}</option>
+                        <option value="{NEWMEMBERS->user_id}">{NEWMEMBERS->display_name}</option>
                     {/LOOP NEWMEMBERS}
                 </select>
             {ELSE}

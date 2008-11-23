@@ -61,12 +61,17 @@ if (!empty($group_id)){
     if (isset($_REQUEST["adduser"])){
 
         // Find the user_id for the user to add.
-        $userid = 0;
-        $name = trim($_REQUEST["adduser"]);
-        if ($name != '') {
-            $userids = phorum_api_user_search('display_name', $name, '=', TRUE);
-            if (!empty($userids) && count($userids) == 1) {
-                $userid = array_shift($userids);
+        if(is_numeric($_REQUEST["adduser"])){
+            // fix implemented 11/16/08
+            $userid = (int)$_REQUEST["adduser"];
+        } else {
+            // older templates may send username
+            $name = trim($_REQUEST["adduser"]);
+            if ($name != '') {
+                $userids = phorum_api_user_search('username', $name, '=', TRUE);
+                if (!empty($userids) && count($userids) == 1) {
+                    $userid = array_shift($userids);
+                }
             }
         }
 
