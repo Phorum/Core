@@ -78,7 +78,7 @@ if ( count( $_POST ) ) {
 
                 while($offset < $fdata['thread_count']) {
 
-                    $curpage = ($offset/100)+1;
+                    $curpage = ($offset/100);
                     $threads = phorum_db_get_thread_list($curpage);
 
                     $num_threads = count($threads);
@@ -135,7 +135,7 @@ if ( count( $_POST ) ) {
         phorum_redirect_by_url($PHORUM['admin_http_path'] . "?module=update_display_names&request=integrity");
         exit();
     }
-    
+
     if(isset($_POST['rebuild_forumpaths']) && !empty($_POST['rebuild_forumpaths'])) {
         $forums = phorum_admin_build_path_array();
         unset($forums[0]);
@@ -145,9 +145,9 @@ if ( count( $_POST ) ) {
             $update_forum = array('forum_id'=>$fid, 'forum_path'=>$forumpath);
             phorum_db_update_forum($update_forum);
         }
-        
+
         $okmsg .= "Forum paths successfully rebuilt.<br />";
-    }    
+    }
 }
 
 if ( $error ) {
