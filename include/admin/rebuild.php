@@ -79,7 +79,7 @@ if ( count( $_POST ) ) {
 
                 while($offset < $fdata['thread_count']) {
 
-                    $curpage = ($offset/100)+1;
+                    $curpage = ($offset/100);
                     $threads = phorum_db_get_thread_list($curpage);
 
                     $num_threads = count($threads);
