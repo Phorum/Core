@@ -43,14 +43,14 @@ if (!defined('PHORUM')) return;
  *       a bbcode argument is used, so that should still be allowed. Because
  *       this sounds terribly confusing, here are some examples for the
  *       distinct cases:
- * 
+ *
  *       [url]http://some.url[tag]nested data[/tag][/url]
  *       For this case, the parser would turn [tag]nested data[/tag] into
  *       <some>html tag</some>. Then, the parser would see:
  *       [url]http://some.url<some>html tag</some>[/url]
  *       When using this content for <a href="...">, this would introduce
  *       HTML code inside the href, possibly opening options for XSS.
- * 
+ *
  *       [url=http://some.url][tag]nested data[/tag][/url]
  *       This case is okay. The content here is put between <a href> and </a>
  *       in the rendered output. This case should still be valid after
@@ -780,6 +780,27 @@ function bbcode_api_tokenize($text)
                     }
 
                     $tokens[++$tokenidx] = $current_token;
+
+                    // Strip trailing break after the open tag, if the tag
+                    // is configured to do so and it is open only.
+                    if ($current_tag[BBCODE_INFO_STRIPBREAK] && $current_tag[BBCODE_INFO_OPENONLY])
+                    {
+                        // First, skip any white space character that we find.
+                        $peekcursor = $cursor + 1;
+                        while (isset($text[$peekcursor]) &&
+                               ($text[$peekcursor] == " " ||
+                                $text[$peekcursor] == "\n" ||
+                                $text[$peekcursor] == "\r")) {
+                            $peekcursor++;
+                        }
+
+                        // Check for a Phorum break and strip if we find one.
+                        if (isset($text[$peekcursor]) &&
+                            substr($text,$peekcursor,14) == '<phorum break>') {
+                            $cursor = $peekcursor + 13;
+                        }
+                    }
+
                 }
 
                 $cursor++;
@@ -1108,9 +1129,9 @@ function bbcode_email_handler($content, $args)
     if ($args['email'] == '') {
         if (strpos($content, '<') !== FALSE ||
             strpos($content, '"') !== FALSE ||
-            strpos($content, '>') !== FALSE) 
+            strpos($content, '>') !== FALSE)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
-      	$args['email'] = $content;
+        $args['email'] = $content;
     }
 
     $append = '';
@@ -1154,7 +1175,7 @@ function bbcode_img_handler($content, $args)
     if ($args['img'] == '') {
         if (strpos($content, '<') !== FALSE ||
             strpos($content, '"') !== FALSE ||
-            strpos($content, '>') !== FALSE) 
+            strpos($content, '>') !== FALSE)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['img'] = $content;
     }
@@ -1207,7 +1228,7 @@ function bbcode_url_handler($content, $args)
     if ($args['url'] == '') {
         if (strpos($content, '<') !== FALSE ||
             strpos($content, '"') !== FALSE ||
-            strpos($content, '>') !== FALSE) 
+            strpos($content, '>') !== FALSE)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['url'] = $content;
         $strip_url = TRUE;

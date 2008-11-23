@@ -143,6 +143,7 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_OPENONLY      => TRUE,
         BBCODE_INFO_REPLACEOPEN   => '<hr class="bbcode"/>',
+        BBCODE_INFO_STRIPBREAK    => TRUE
     ),
 
     'list' => array(
