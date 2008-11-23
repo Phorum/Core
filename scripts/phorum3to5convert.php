@@ -3,12 +3,20 @@
 /*
 
 ***** IT IS HIGHLY RECCOMENDED THAT YOU RUN THIS SCRIPT ON A CONSOLE
-***** PHP VERSION 4.2.0 OR HIGHER IS REQUIRED FOR RUNNING THIS SCRIPT
+***** PHP VERSION 5.1.0 OR HIGHER IS REQUIRED FOR RUNNING THIS SCRIPT
 ***** THE SCRIPT IS WRITTEN FOR UPGRADING PHORUM 3.4.x
 
 This script will convert the data from a Phorum 3 database to a Phorum 5
 database. It does not change any of the old phorum3-tables. The data is
 only copied over to the new Phorum 5 tables.
+
+
+**** BEFORE YOU USE THIS SCRIPT ****
+
+WARNING: The Phorum 3 and Phorum 5 tables in your MySQL database must be using
+the same character set and collation.  Before attempting to upgrade, please
+make sure the tables and the settings all use the same character set.
+
 
 Instructions:
 
@@ -67,6 +75,8 @@ ini_set ( "output_handler", "");
 @ob_end_flush();
 
 define("PHORUM5_CONVERSION", 1);
+define("phorum_page", "phorum_3_conversion");
+define("PHORUM_SCRIPT", 1);
 
 /***** CONFIGURATION FOR THE CONVERSION *****/
 
@@ -110,6 +120,9 @@ if (!$oldlink) {
     print "Couldn't connect to the old database.".$CONVERT['lbr'];
     exit();
 }
+
+// set the old data link's charset
+mysql_query("SET NAMES '{$PHORUM['DBCONFIG']['charset']}'", $oldlink);
 
 // checking attachment-dir
 if (!file_exists($CONVERT['attachmentdir']) || empty($CONVERT['attachmentdir'])) {
@@ -238,9 +251,12 @@ if($CONVERT['do_users']) {
     while ($cur_user = phorum_convert_getNextUser($res)) {
         if (isset($cur_user['user_id'])) {
             phorum_api_user_save($cur_user, PHORUM_FLAG_RAW_PASSWORD);
-            $user_groups=$group_perms[$cur_user['user_id']];
+            $user_groups = array();
+            if(isset($group_perms[$cur_user['user_id']])){
+                $user_groups=$group_perms[$cur_user['user_id']];
+            }
             if(count($user_groups)) { // setting the user's group-memberships
-            phorum_db_user_save_groups($cur_user['user_id'],$user_groups);
+                phorum_db_user_save_groups($cur_user['user_id'],$user_groups);
             }
             $count++;
         }
