@@ -1019,6 +1019,12 @@ else {
  */
 function phorum_shutdown()
 {
+    global $PHORUM;
+
+    // Strange things happen during shutdown
+    // make sure we are still in the Phorum dir
+    chdir(dirname(__FILE__));
+
     /*
      * [hook]
      *     phorum_shutdown
