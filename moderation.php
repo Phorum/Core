@@ -53,7 +53,49 @@ phorum_build_common_urls();
 // make it possible to override this var in a hook
 $is_admin_user=$PHORUM["user"]["admin"];
 
-// a hook for doing stuff in moderation, i.e. logging moderator-actions
+/*
+ * [hook]
+ *     moderation
+ *
+ * [description]
+ *     This hook can be used for logging moderator actions. You can
+ *     use the <literal>$PHORUM</literal> array to retrieve additional info
+ *     like the moderating user's id and similar.<sbr/>
+ *     <sbr/>
+ *     The moderation step id is the variable <literal>$mod_step</literal>
+ *     that is used in <filename>moderation.php</filename>. Please read that
+ *     script to see what moderation steps are available and for what moderation
+ *     actions they stand.<sbr/>
+ *     <sbr/>
+ *     When checking the moderation step id for a certain step, always use
+ *     the contstants that are defined for this in 
+ *     <filename>include/constants.php</filename>. The numerical value of this
+ *     id can change between Phorum releases.
+ *
+ * [category]
+ *     Moderation
+ *
+ * [when]
+ *     At the start of <filename>moderation.php</filename>
+ *
+ * [input]
+ *     The id of the moderation step which is run (read-only).
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_moderation ($mod_step) 
+ *     {
+ *         global $PHORUM;
+ *
+ *         // Update the last timestamp for the moderation step
+ *         $PHORUM["mod_foo"]["moderation_step_timestamps"][$mod_step] = time();
+ *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["moderation"]))
     phorum_hook("moderation",$mod_step);
 
