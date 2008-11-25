@@ -108,8 +108,63 @@ switch ($mod_step) {
 
         $message = phorum_db_get_message($msgthd_id);
 
-        // A hook to allow modules to implement extra or different
-        // delete functionality.
+        /*
+         * [hook]
+         *     before_delete
+         *
+         * [description]
+         *     This hook allows modules to implement extra or different delete
+         *     functionality.<sbr/>
+         *     <sbr/>
+         *     The primary use of this hook would be for moving the messages
+         *     to some archive-area instead of really deleting them.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, just before deleting
+         *     the message(s)
+         *
+         * [input]
+         *     An array containing the following 5 parameters:
+         *     <ul>
+         *     <li><literal>$delete_handled</literal>:
+         *         default = <literal>false</literal>, set it to true to avoid
+         *         the real delete afterwards</li>
+         *     <li><literal>$msg_ids</literal>:
+         *         an array containing all deleted message ids</li>
+         *     <li><literal>$msgthd_id</literal>:
+         *         the msg-id or thread-id to be deleted</li>
+         *     <li><literal>$message</literal>:
+         *         an array of the data for the message retrieved with
+         *         <literal>$msgthd_id</literal></li>
+         *     <li><literal>$delete_mode</literal>:
+         *         mode of deletion, either 
+         *         <literal>PHORUM_DELETE_MESSAGE</literal> or 
+         *         <literal>PHORUM_DELETE_TREE</literal></li>
+         *     </ul>
+         *
+         * [output]
+         *     Same as input.<sbr/>
+         *     <literal>$delete_handled</literal> and 
+         *     <literal>$msg_ids</literal> are used as return data for the hook.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_before_delete($data)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Store the message data in the module's settings for
+         *         // future use.
+         *         $PHORUM["mod_foo"]["deleted_messages"][$msgthd_id] = $message;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *         
+         *         return $data;
+         *     }
+         *     </hookcode>
+         */
         $delete_handled = 0;
         if (isset($PHORUM["hooks"]["before_delete"]))
             list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
