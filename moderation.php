@@ -216,8 +216,6 @@ switch ($mod_step) {
          *             $PHORUM["mod_foo"]["deleted_messages"][] = $msgthd_id;
          *         }
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
-         *         
-         *         return $data;
          *     }
          *     </hookcode>
          */
@@ -389,6 +387,41 @@ switch ($mod_step) {
 
                 phorum_db_post_message($newmessage);
             }
+            
+            /*
+             * [hook]
+             *     move_thread
+             *
+             * [description]
+             *     This hook can be used for performing actions like sending 
+             *     notifications or for making log entries after moving a 
+             *     thread.
+             *
+             * [category]
+             *     Moderation
+             *
+             * [when]
+             *     In <filename>moderation.php</filename>, right after a thread
+             *     has been moved by a moderator.
+             *
+             * [input]
+             *     The id of the thread that has been moved (read-only).
+             *
+             * [output]
+             *     None
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_move_thread($msgthd_id)
+             *     {
+             *         global $PHORUM;
+             *
+             *         // Log the moved thread id
+             *         $PHORUM["mod_foo"]["moved_threads"][] = $msgthd_id;
+             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *     }
+             *     </hookcode>
+             */
             if (isset($PHORUM["hooks"]["move_thread"]))
                 phorum_hook("move_thread", $msgthd_id);
 
