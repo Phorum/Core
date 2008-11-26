@@ -546,6 +546,57 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
 
+        /*
+         * [hook]
+         *     after_approve
+         *
+         * [description]
+         *     This hook can be used for performing extra actions after a
+         *     message has been approved.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right approving a message
+         *     and possibly its replies.
+         *
+         * [input]
+         *     An array containing two elements: 
+         *     <ul>
+         *     <li>The message data</li>
+         *     <li>The type of approval (either 
+         *     <literal>PHORUM_APPROVE_MESSAGE</literal> or
+         *     <literal>PHORUM_APPROVE_MESSAGE_TREE</literal>)</li>
+         *     </ul>
+         *
+         * [output]
+         *     Same as input.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_after_approve($data)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // alert the message author that their message has been
+         *         // approved
+         *         $pm_message = preg_replace(
+         *             "%message_subject%",
+         *             $data[0]["subject"],
+         *             $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageApprovedBody"]
+         *             );
+         *         phorum_db_pm_send(
+         *             $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageApprovedSubject"],
+         *             $pm_message,
+         *             $data[0]["user_id"]
+         *             );
+         *
+         *         return $data;
+         *
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["after_approve"]))
             phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
 
