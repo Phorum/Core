@@ -174,7 +174,50 @@ elseif ($do_attach && ! empty($_FILES))
         $file["data"] = @file_get_contents($file["tmp_name"]);
         $file["user_id"]=$PHORUM["user"]["user_id"];
 
-        // Run the before_attach hook.
+        /*
+         * [hook]
+         *     before_attach
+         *
+         * [description]
+         *     The primary use of this hook would be for creating an
+         *     alternate storage system for attachments. You would need to use 
+         *     the <hook>after_attach</hook> hook to complete the process as you
+         *     do not yet have the <literal>file_id</literal> for the file. You
+         *     will need to use the <hook>file</hook> hook to retreive the file 
+         *     data later.
+         *
+         * [category]
+         *     File storage
+         *
+         * [when]
+         *     In 
+         *     <filename>include/posting/action_attachments.php</filename>,
+         *     right before a file attachment is saved in the database.
+         *
+         * [input]
+         *     Two part array where the first element is the message array
+         *     and the second element is a file array that contains the 
+         *     name, size, and file data.
+         *
+         * [output]
+         *     Same as input.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_reopen_before_attach($data)
+         *     {
+         *         // Save the file with the amazing alternate_file_storage
+         *         // function I haven't yet created
+         *         alternate_file_storage($data[1]);
+         *
+         *         // Remove the file data saved with the alterante_file_storage
+         *         // function
+         *         $data[1]["file_data"] = "";
+         *
+         *         return $data;
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["before_attach"]))
             list($message, $file) =
                 phorum_hook("before_attach", array($message, $file));
