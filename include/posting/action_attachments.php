@@ -41,7 +41,52 @@ if ($do_detach)
                 $message["attachments"][$id]["keep"] = false;
             }
 
-            // Run the after_detach hook.
+            /*
+             * [hook]
+             *     after_detach
+             *
+             * [description]
+             *     The primary use of this hook would be for creating an
+             *     alternate storage system for attachments. Using this hook,
+             *     you can delete the file from your alternate storage.
+             *
+             * [category]
+             *     File storage
+             *
+             * [when]
+             *     In 
+             *     <filename>include/posting/action_attachments.php</filename>,
+             *     right after a file attachment is deleted from the database.
+             *
+             * [input]
+             *     Two part array where the first element is the message array
+             *     and the second element is a file array that contains the 
+             *     name, size, and <literal>file_id</literal> of the deleted
+             *     file.
+             *
+             * [output]
+             *     Same as input.
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_reopen_after_detach($data)
+             *     {
+             *         global $PHORUM;
+             *
+             *         // Remove the attachment from the log of messages with
+             *         // attachments
+             *         unset($PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][$data[1]["file_id"]]);
+             *
+             *         // If there are now no attachments on the current
+             *         // message, remove the message from the log
+             *         if (empty($PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]]))
+             *             unset($PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]]);
+             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *
+             *         return $data;
+             *     }
+             *     </hookcode>
+             */
             if (isset($PHORUM["hooks"]["after_detach"]))
                 list($message,$info) =
                     phorum_hook("after_detach", array($message,$info));
@@ -196,7 +241,7 @@ elseif ($do_attach && ! empty($_FILES))
              *
              *         // Log the messages with attachments, including the 
              *         // attachment names
-             *         $PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][] = $data[1]["name"];
+             *         $PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][$data[1]["file_id"]] = $data[1]["name"];
              *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
              *
              *         return $data;
