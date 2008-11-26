@@ -487,6 +487,39 @@ switch ($mod_step) {
         $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['ThreadReopenedOk'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_reopen_thread($msgthd_id);
+        /*
+         * [hook]
+         *     reopen_thread
+         *
+         * [description]
+         *     This hook can be used for performing actions like sending 
+         *     notifications or making log entries after reopening threads.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after a thread has
+         *     been reopened by a moderator.
+         *
+         * [input]
+         *     The id of the thread that has been reopened (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_reopen_thread($msgthd_id)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the reopened thread id
+         *         $PHORUM["mod_foo"]["reopened_threads"][] = $msgthd_id;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["reopen_thread"]))
             phorum_hook("reopen_thread", $msgthd_id);
 
