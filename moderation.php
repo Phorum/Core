@@ -711,7 +711,7 @@ switch ($mod_step) {
          *
          * [example]
          *     <hookcode>
-         *     function phorum_mod_foo_reopen_thread($msgthd_id)
+         *     function phorum_mod_foo_hide_thread($msgthd_id)
          *     {
          *         global $PHORUM;
          *
