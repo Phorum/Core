@@ -405,8 +405,8 @@ switch ($mod_step) {
 
         }
 
-        if (isset($PHORUM["hooks"]["hide"]))
-            phorum_hook("hide", $msgthd_id);
+        if (isset($PHORUM["hooks"]["hide_thread"]))
+            phorum_hook("hide_thread", $msgthd_id);
 
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
