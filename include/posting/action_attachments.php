@@ -159,7 +159,50 @@ elseif ($do_attach && ! empty($_FILES))
                 "linked"  => false,
             );
 
-            // Run the after_attach hook.
+            /*
+             * [hook]
+             *     after_attach
+             *
+             * [description]
+             *     The primary use of this hook would be for creating an
+             *     alternate storage system for attachments. You would need to
+             *     use the <hook>before_attach</hook> hook to remove the file
+             *     data and in this hook it could be saved properly. You will
+             *     need to use the <hook>file</hook> hook to retreive the file
+             *     data later.
+             *
+             * [category]
+             *     File storage
+             *
+             * [when]
+             *     In 
+             *     <filename>include/posting/action_attachments.php</filename>,
+             *     right after a file attachment is saved in the database.
+             *
+             * [input]
+             *     Two part array where the first element is the message array
+             *     and the second element is a file array that contains the 
+             *     name, size, and <literal>file_id</literal> of the newly saved
+             *     file.
+             *
+             * [output]
+             *     Same as input.
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_reopen_after_attach($data)
+             *     {
+             *         global $PHORUM;
+             *
+             *         // Log the messages with attachments, including the 
+             *         // attachment names
+             *         $PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][] = $data[1]["name"];
+             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *
+             *         return $data;
+             *     }
+             *     </hookcode>
+             */
             if (isset($PHORUM["hooks"]["after_attach"]))
                 list($message, $new_attachment) =
                     phorum_hook("after_attach", array($message, $new_attachment));
