@@ -688,6 +688,39 @@ switch ($mod_step) {
 
         }
 
+        /*
+         * [hook]
+         *     hide
+         *
+         * [description]
+         *     This hook can be used for performing actions like sending 
+         *     notifications or making log entries after hiding a message.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after a message has
+         *     been hidden by a moderator.
+         *
+         * [input]
+         *     The id of the thread that has been hidden (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_reopen_thread($msgthd_id)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the hidden thread id
+         *         $PHORUM["mod_foo"]["hidden_threads"][] = $msgthd_id;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["hide"]))
             phorum_hook("hide", $msgthd_id);
 
