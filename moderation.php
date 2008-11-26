@@ -183,7 +183,44 @@ switch ($mod_step) {
             }
         }
 
-        // Run a hook for performing custom actions after cleanup.
+        /*
+         * [hook]
+         *     delete
+         *
+         * [description]
+         *     This hook can be used for cleaning up anything you may have 
+         *     created with the post_post hook or any other hook that stored 
+         *     data tied to messages.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after deleting a 
+         *     message from the database.
+         *
+         * [input]
+         *     An array of ids for messages that have been deleted (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_delete($msgthd_ids)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the deleted message ids
+         *         foreach ($msgthd_ids as $msgthd_id) {
+         *             $PHORUM["mod_foo"]["deleted_messages"][] = $msgthd_id;
+         *         }
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *         
+         *         return $data;
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["delete"]))
             phorum_hook("delete", array($msgthd_id));
 
