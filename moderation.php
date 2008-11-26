@@ -690,7 +690,7 @@ switch ($mod_step) {
 
         /*
          * [hook]
-         *     hide
+         *     thread_hide
          *
          * [description]
          *     This hook can be used for performing actions like sending 
@@ -721,8 +721,8 @@ switch ($mod_step) {
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["hide"]))
-            phorum_hook("hide", $msgthd_id);
+        if (isset($PHORUM["hooks"]["thread_hide"]))
+            phorum_hook("thread_hide", $msgthd_id);
 
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
