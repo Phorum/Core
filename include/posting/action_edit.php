@@ -139,6 +139,50 @@ if (!count($dbmessage["meta"]["attachments"])) {
 if (isset($PHORUM["hooks"]["before_edit"]))
     $dbmessage = phorum_hook("before_edit", $dbmessage);
 phorum_db_update_message($message["message_id"], $dbmessage);
+/*
+ * [hook]
+ *     after_edit
+ *
+ * [description]
+ *     This hook can be used for sending notifications or for making log entries
+ *     in the database when editing takes place.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>include/posting/action_edit.php</filename>, right after
+ *     storing an edited message in the database.
+ *
+ * [input]
+ *     An array containing message data (read-only).
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_after_edit($dbmessage)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // If the message editor is not the same as the message author, alert
+ *         // the message author that their message has been edited
+ *         if ($PHORUM["user"]["user_id"] != $dbmessage["user_id"]) {
+ *             $pm_message = preg_replace(
+ *                 "/%message_subject%/",
+ *                 $dbmessage["subject"],
+ *                 $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageEditedBody"]
+ *                 );
+ *             phorum_db_pm_send(
+ *                 $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageEditedSubject"],
+ *                 $pm_message,
+ *                 $dbmessage["user_id"]
+ *                 );
+ *         }
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["after_edit"]))
     phorum_hook("after_edit", $dbmessage);
 
