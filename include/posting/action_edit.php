@@ -135,6 +135,42 @@ if (!count($dbmessage["meta"]["attachments"])) {
     unset($dbmessage["meta"]["attachments"]);
 }
 
+/*
+ * [hook]
+ *     before_edit
+ *
+ * [description]
+ *     This hook can be used to change the edited message before it is stored in
+ *     the database.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>include/posting/action_edit.php</filename>, right before
+ *     storing an edited message in the database.
+ *
+ * [input]
+ *     An array containing message data.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_before_edit($dbmessage)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // If the message body does not contain the disclaimer, add it
+ *         if (strpos($dbmessage["body"], $PHORUM["DATA"]["LANG"]["mod_foo"]["Disclaimer"]) === false) {
+ *             $dbmessage["body"] .= "\n".$PHORUM["DATA"]["LANG"]["mod_foo"]["Disclaimer"];
+ *         }
+ *
+ *         return $dbmessage;
+ *     }
+ *     </hookcode>
+ */
 // Update the data in the database and run pre and post editing hooks.
 if (isset($PHORUM["hooks"]["before_edit"]))
     $dbmessage = phorum_hook("before_edit", $dbmessage);
