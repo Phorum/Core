@@ -314,6 +314,69 @@ if (count($_POST) > 0) {
             $error = $PHORUM["DATA"]["LANG"]["InvalidLogin"];
 
             // TODO API: move to user API.
+            /*
+             * [hook]
+             *     failed_login
+             *
+             * [description]
+             *     This hook can be used for tracking failing login attempts.
+             *     This can be used for things like logging or implementing
+             *     login failure penalties (like temporary denying access after
+             *     X login attempts).
+             *
+             * [category]
+             *     Login/Logout
+             *
+             * [when]
+             *     In <filename>login.php</filename>, when a user login fails.
+             *
+             * [input]
+             *     An array containing three fields (read-only): 
+             *     <ul>
+             *         <li>username</li>
+             *         <li>password</li>
+             *         <li>location
+             *         <ul>
+             *              <li>The location field specifies where the login 
+             *              failure occurred and its value can be either 
+             *              <literal>forum</literal> or 
+             *              <literal>admin</literal>.</li>
+             *         </ul></li>
+             *     </ul>
+             *
+             * [output]
+             *     None
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_failed_login($data)
+             *     {
+             *         global $PHORUM;
+             *
+             *         // Get the current timestamp
+             *         $curr_time = time();
+             *
+             *         // Check for a previous login failure from the current
+             *         // IP address
+             *         if (!empty($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]])) {
+             *             // If the failures occur within the set time window,
+             *             // increment the login failure count
+             *             if ($curr_time <= ($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] + (int)$PHORUM["mod_foo"]["login_failures_time_window"])) {
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] ++;
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *             // Otherwise, reset the count.
+             *             } else {
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *         } else {
+             *             // Log the timestamp and IP address of a login failure
+             *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
+             *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *         }
+             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *     }
+             *     </hookcode>
+             */
             if (isset($PHORUM["hooks"]["failed_login"]))
                 phorum_hook("failed_login", array(
                     "username" => $_POST["username"],
