@@ -45,6 +45,42 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
         $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"][PHORUM_SESSION_LONG_TERM]), "", $url);
     }
 
+    /*
+     * [hook]
+     *     after_logout
+     *
+     * [description]
+     *     This hook can be used for performing tasks after a successful user
+     *     logout and for changing the page to which the user will be redirected
+     *     (by returning a different redirection URL). The user data will still
+     *     be availbale in $PHORUM["user"] at this point.
+     *
+     * [category]
+     *     Login/Logout
+     *
+     * [when]
+     *     In <filename>login.php</filename>, after a logout, just before
+     *     redirecting the user to a Phorum page.
+     *
+     * [input]
+     *     The redirection URL.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_logout($url)
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Return to the site's main page on logout
+     *         $url = $PHORUM["mod_foo"]["site_url"];
+     *
+     *         return $url;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["after_logout"]))
         $url = phorum_hook("after_logout", $url);
 
