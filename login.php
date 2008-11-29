@@ -27,6 +27,28 @@ include_once( "./include/email_functions.php" );
 
 if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
+    /*
+     * [hook]
+     *     before_logout
+     *
+     * [description]
+     *     This hook can be used for performing tasks before a user logout. The
+     *     user data will still be availbale in 
+     *     <literal>$PHORUM["user"]</literal> at this point.
+     *
+     * [category]
+     *     Login/Logout
+     *
+     * [when]
+     *     In <filename>login.php</filename>, just before destroying the user
+     *     session.
+     *
+     * [input]
+     *     None
+     *
+     * [output]
+     *     None
+     */
     if (isset($PHORUM["hooks"]["before_logout"]))
         phorum_hook("before_logout");
 
