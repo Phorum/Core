@@ -53,7 +53,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
      *     This hook can be used for performing tasks after a successful user
      *     logout and for changing the page to which the user will be redirected
      *     (by returning a different redirection URL). The user data will still
-     *     be availbale in $PHORUM["user"] at this point.
+     *     be availbale in <literal>$PHORUM["user"]</literal> at this point.
      *
      * [category]
      *     Login/Logout
@@ -239,8 +239,46 @@ if (count($_POST) > 0) {
                         $redir = phorum_get_url( PHORUM_LIST_URL );
                     }
 
-                    // The hook "after_login" can be used by module writers to
-                    // set a custom redirect URL.
+                    /*
+                     * [hook]
+                     *     after_login
+                     *
+                     * [description]
+                     *     This hook can be used for performing tasks after a
+                     *     successful user login and for changing the page to
+                     *     which the user will be redirected (by returning a
+                     *     different redirection URL). If you need to access the
+                     *     user data, then you can do this through the global 
+                     *     <literal>$PHORUM</literal> variable. The user data
+                     *     will be in <literal>$PHORUM["user"]</literal>.
+                     *
+                     * [category]
+                     *     Login/Logout
+                     *
+                     * [when]
+                     *     In <filename>login.php</filename>, after a successful
+                     *     login, just before redirecting the user to a Phorum
+                     *     page.
+                     *
+                     * [input]
+                     *     The redirection URL.
+                     *
+                     * [output]
+                     *     Same as input.
+                     *
+                     * [example]
+                     *     <hookcode>
+                     *     function phorum_mod_foo_after_login($url)
+                     *     {
+                     *         global $PHORUM;
+                     *
+                     *         // Redirect to the user's chosen page
+                     *         $url = $PHORUM["user"]["phorum_mod_foo_user_login_url"];
+                     *
+                     *         return $url;
+                     *     }
+                     *     </hookcode>
+                     */
                     if (isset($PHORUM["hooks"]["after_login"]))
                         $redir = phorum_hook("after_login", $redir);
 
