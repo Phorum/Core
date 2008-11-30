@@ -1962,4 +1962,27 @@ function phorum_database_error($error)
     exit();
 }
 
+// For safely doing substr() operations on strings that contain
+// multi-byte characters (which can happen when using UTF-8), we
+// need mb_substr(). Unfortunately, this function is part of a
+// PHP extension and we can therefore not be sure that it is
+// available in the PHP installation.
+//
+// Here we implement mb_substr() ourselves in case it is not
+// available, so we can safely use it in our code.
+if (!function_exists('mb_substr'))
+{
+    // For now, we implement mb_substr simply as substr().
+    // We need to think about adding a check for broken multi-byte
+    // characters at the end of the resulting substring.
+    function mb_substr($str, $start, $length = NULL, $encoding = NULL)
+    {
+        if ($length) {
+            return substr($str, $start, $lenght);
+        } else {
+            return substr($str, $start);
+        }
+    }
+}
+
 ?>
