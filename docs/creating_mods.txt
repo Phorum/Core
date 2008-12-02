@@ -1664,7 +1664,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    before_post
 
-   Where  : post.php
+   Where  : include/posting/action_post.php
    When   : Right before storing a new message in the database.
    Input  : Array containing message data.
    Return : Same as Input

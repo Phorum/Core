@@ -105,7 +105,40 @@ if (!count($message["meta"]["attachments"])) {
     unset($message["meta"]["attachments"]);
 }
 
-// Run pre post mods.
+/*
+ * [hook]
+ *     before_post
+ *
+ * [description]
+ *     This hook can be used to change the new message data before storing it in
+ *     the database.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>include/posting/action_post.php</filename>, right before
+ *     storing a new message in the database.
+ *
+ * [input]
+ *     An array containing message data.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_before_post($message)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // Add the disclaimer to the new message body
+ *         $message["body"] .= "\n".$PHORUM["DATA"]["LANG"]["mod_foo"]["Disclaimer"];
+ *         
+ *         return $message;
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["before_post"]))
     $message = phorum_hook("before_post", $message);
 
