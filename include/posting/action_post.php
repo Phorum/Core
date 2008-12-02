@@ -291,7 +291,49 @@ if ($success)
         phorum_email_moderators($message);
     }
 
-    // Run after post mods.
+    /*
+     * [hook]
+     *     after_post
+     *
+     * [description]
+     *     This hook can be used for performing actions based on what the
+     *     message contained.  It is specifically useful for altering the
+     *     redirect behavior.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>include/posting/action_post.php</filename>, after all 
+     *     the posting work is done and just before the user is redirected back
+     *     to the list.
+     *
+     * [input]
+     *     An array containing message data.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_post($message)
+     *     {
+     *         global $PHORUM;
+     *
+     *         // remove the post count increment for the user in select forums
+     *         if (in_array($message["forum_id"], $PHORUM["mod_foo"]["forums_to_ignore"])) {
+     *             phorum_api_user_save (
+     *                 array (
+     *                     "user_id"    => $PHORUM["user"]["user_id"],
+     *                     "posts"      => $PHORUM["user"]["posts"]
+     *                     )
+     *                 );
+     *         }
+     *
+     *         return $message;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["after_post"]))
         $message = phorum_hook("after_post", $message);
 

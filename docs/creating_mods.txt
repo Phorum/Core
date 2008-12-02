@@ -1101,8 +1101,8 @@ Table of contents:
    Where  : action_post.php
    When   : After all posting work is done and just before the user is
             redirected back to the list.
-   Input  : Array containing message data (read-only).
-   Return : none
+   Input  : Array containing message data
+   Return : Same as input
 
    This hook can be used for performing actions based on what the message
    contained.  It is specifically useful for altering the redirect behavior.
