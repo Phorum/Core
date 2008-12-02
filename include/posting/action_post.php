@@ -180,7 +180,44 @@ if ($success)
 
     phorum_update_thread_info($message["thread"]);
 
-    // Run mods for after db is set but before other actions occur.
+    /*
+     * [hook]
+     *     after_message_save
+     *
+     * [description]
+     *     This hook can be used for performing actions based on what the
+     *     message contained or altering it before it is emailed to the
+     *     subscribed users. It is also useful for adding or removing 
+     *     subscriptions.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>include/posting/action_post.php</filename>, right after
+     *     storing a new message and all database updates are done.
+     *
+     * [input]
+     *     An array containing message data.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_message_save($message)
+     *     {
+     *         global $PHORUM;
+     *
+     *         // If the message was posted in a monitored forum, log the id
+     *         if (in_array($message["forum_id"], $PHORUM["mod_foo"]["monitored_forums"])) {
+     *             $PHORUM["mod_foo"]["monitored_messages"][$message["forum_id"]][] = $message["message_id"];
+     *         }
+     *
+     *         return $message;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["after_message_save"]))
         $message = phorum_hook("after_message_save", $message);
 

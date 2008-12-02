@@ -1088,7 +1088,7 @@ Table of contents:
 
    Where  : action_post.php
    When   : After storing a new message and all database updates are done.
-   Input  : Array containing message data (read-only).
+   Input  : Array containing message data.
    Return : Same as Input
 
    This hook can be used for performing actions based on what the message
