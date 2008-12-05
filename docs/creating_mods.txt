@@ -1114,7 +1114,7 @@ Table of contents:
    When   : Right after a successful registration of a new user is done
             and all confirmation mails are sent.
    Input  : Array containing the user data of the user (read-only).
-   Return : Same as Input
+   Return : None
 
    This hook can be used for performing tasks (like logging and
    notification) after a successful user registration.

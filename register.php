@@ -259,7 +259,44 @@ if (count($_POST)) {
                 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
                 $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
 
-                // Run a hook, so module writers can run tasks after registering.
+                /*
+                 * [hook]
+                 *     after_register
+                 *
+                 * [description]
+                 *     This hook can be used for performing tasks (like logging
+                 *     and notification) after a successful user registration.
+                 *
+                 * [category]
+                 *     User data handling
+                 *
+                 * [when]
+                 *     In <filename>register.php</filename>, right after a
+                 *     successful registration of a new user is done and all
+                 *     confirmation mails are sent.
+                 *
+                 * [input]
+                 *     An array containing the user data of the newly registered
+                 *     user (read-only).
+                 *
+                 * [output]
+                 *     None
+                 *
+                 * [example]
+                 *     <hookcode>
+                 *     function phorum_mod_foo_after_register($data)
+                 *     {
+                 *         global $PHORUM;
+                 *
+                 *         // Keep a log of user registrations by user id with
+                 *         // the IP address of the computer they used to
+                 *         // register
+                 *         $PHORUM["mod_foo"]["user_registrations"][$userdata["user_id"]] = $_SERVER["REMOTE_ADDR"];
+                 *
+                 *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+                 *     }
+                 *     </hookcode>
+                 */
                 if (isset($PHORUM["hooks"]["after_register"])) {
                     $userdata["user_id"] = $user_id;
                     phorum_hook("after_register",$userdata);
