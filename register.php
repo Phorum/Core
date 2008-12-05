@@ -166,7 +166,55 @@ if (count($_POST)) {
             $userdata["active"] = PHORUM_USER_PENDING_BOTH;
         }
 
-        // Run a hook, so module writers can update and check the userdata.
+        /*
+         * [hook]
+         *     before_register
+         *
+         * [description]
+         *     This hook can be used for performing tasks before user 
+         *     registration. This hook is useful if you want to add some data to
+         *     or change some data in the user data and to check if the user 
+         *     data is correct.<sbr/>
+         *     <sbr/>
+         *     When checking the registration data, the hook can set the "error"
+         *     field in the returned user data array. When this field is set 
+         *     after running the hook, the registration processed will be halted
+         *     and the error will be displayed. If you created a custom form 
+         *     field "foo" and you require that field to be filled in, you could
+         *     create a hook function like the one in the example below.<sbr/>
+         *     <sbr/>
+         *     The error must be safely HTML escaped, so if you use untrusted
+         *     data in your error, then make sure that it is escaped using
+         *     <phpfunc>htmlspecialchars</phpfunc> to prevent XSS (see also
+         *     paragraph 3.6: Secure your pages from XSS).
+         *
+         * [category]
+         *     User data handling
+         *
+         * [when]
+         *     In <filename>register.php</filename>, right before a new user is
+         *     stored in the database.
+         *
+         * [input]
+         *     An array containing the user data of the soon-to-be-registered
+         *     user.
+         *
+         * [output]
+         *     Same as input.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_before_register ($data)
+         *     {
+         *         $myfield = trim($data['foo']);
+         *         if (empty($myfield)) {
+         *             $data['error'] = 'You need to fill in the foo field';
+         *         }
+         *
+         *         return $data;
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["before_register"]))
             $userdata = phorum_hook("before_register", $userdata);
 
