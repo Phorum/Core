@@ -159,6 +159,13 @@ define('DB_RETURN_NEWID',    9);
  */
 define('DB_RETURN_ERROR',   10);
 
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function close the connection to the database.
+ * The function will return no data.
+ */
+define('DB_CLOSE_CONN',     11);
+
 /**#@+
  * Constant for the phorum_db_interact() function call $flags parameter.
  */
@@ -282,6 +289,16 @@ function phorum_db_check_connection()
         DB_NOCONNECTOK | DB_MASTERQUERY
     ) ? TRUE : FALSE;
 }
+// }}}
+
+// {{{ Function: phorum_db_close_connection()
+/**
+ * Close the database connection.
+ */
+function phorum_db_close_connection()
+{
+    phorum_db_interact(DB_CLOSE_CONN);
+}   
 // }}}
 
 // {{{ Function: phorum_db_run_queries()

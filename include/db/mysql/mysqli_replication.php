@@ -39,8 +39,11 @@ if (!defined('PHORUM')) return;
  *                    DB_RETURN_NEWID     new row id for insert query
  *                    DB_RETURN_ERROR     an error message if the query
  *                                        failed or NULL if there was no error
+ *                    DB_CLOSE_CONN       close the connection, no return data
+ *
  * @param $sql      - The SQL query to run or the parameter to quote if
  *                    DB_RETURN_QUOTED is used.
+ *
  * @param $keyfield - When returning an array of rows, the indexes are
  *                    numerical by default (0, 1, 2, etc.). However, if
  *                    the $keyfield parameter is set, then from each
@@ -50,6 +53,7 @@ if (!defined('PHORUM')) return;
  *                    return data. Mind that there is no error checking
  *                    at all, so you have to make sure that you provide
  *                    a valid $keyfield here!
+ *
  * @param $flags    - Special flags for modifying the function's behavior.
  *                    These flags can be OR'ed if multiple flags are needed.
  *                    DB_NOCONNECTOK     Failure to connect is not fatal but
@@ -66,8 +70,24 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 {
     static $conn_read;
     static $conn_write;
-    $PHORUM = $GLOBALS['PHORUM'];
-    
+    global $PHORUM;
+
+    // Close the database connection.
+    if ($return == DB_CLOSE_CONN)
+    {
+        if (!empty($conn_read))
+        {
+            mysqli_close($conn_read);
+            $conn_read = null;
+        }
+        if (!empty($conn_write))
+        {
+            mysqli_close($conn_write);
+            $conn_write = null;
+        }
+        return;
+    }
+
     if(  !($flags & DB_MASTERQUERY) && 
          !empty($PHORUM['DBCONFIG']['slaves']) &&
          is_array($PHORUM['DBCONFIG']['slaves'])
@@ -138,8 +158,6 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
     {
-        
-        
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
             phorum_database_error('Failed to connect to the database.');

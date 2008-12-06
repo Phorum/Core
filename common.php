@@ -1043,6 +1043,9 @@ function phorum_shutdown()
     if (isset($PHORUM["hooks"]["shutdown"])) {
         phorum_hook("shutdown");
     }
+
+    // Shutdown the database connection.
+    phorum_db_close_connection();
 }
 register_shutdown_function("phorum_shutdown");
 
