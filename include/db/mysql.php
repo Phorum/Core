@@ -162,6 +162,13 @@ define('DB_RETURN_NEWID',    9);
  */
 define('DB_RETURN_ERROR',   10);
 
+/**
+ * Function call parameter $return for {@link phorum_db_interact()}.
+ * Makes the function close the connection to the database.
+ * The function will return no data.
+ */
+define('DB_CLOSE_CONN',     11);
+
 /**#@+
  * Constant for the phorum_db_interact() function call $flags parameter.
  */
@@ -284,6 +291,16 @@ function phorum_db_check_connection()
         NULL, NULL,
         DB_NOCONNECTOK | DB_MASTERQUERY
     ) ? TRUE : FALSE;
+}
+// }}}
+
+// {{{ Function: phorum_db_close_connection()
+/**
+ * Close the database connection.
+ */
+function phorum_db_close_connection()
+{
+    phorum_db_interact(DB_CLOSE_CONN);
 }
 // }}}
 
@@ -3576,7 +3593,6 @@ function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
 }
 // }}}
 
-
 // {{{ Function: phorum_db_user_get_fields()
 /**
  * Retrieve the data for a couple of user table fields for one or more users.
@@ -4041,6 +4057,7 @@ function phorum_db_user_save($userdata)
 }
 // }}}
 
+// {{{ Function: phorum_db_save_custom_fields()
 function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data)
 {
     global $PHORUM;
@@ -4096,6 +4113,7 @@ function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data
         }
     }
 }
+// }}}
 
 // {{{ Function: phorum_db_user_display_name_updates()
 /**
@@ -4529,6 +4547,7 @@ function phorum_db_user_delete($user_id)
 }
 // }}}
 
+// {{{ Function: phorum_db_delete_custom_fields
 function phorum_db_delete_custom_fields($type,$relation_id)
 {
     global $PHORUM;
@@ -4548,6 +4567,7 @@ function phorum_db_delete_custom_fields($type,$relation_id)
         DB_GLOBALQUERY | DB_MASTERQUERY
     );
 }
+// }}}
 
 // {{{ Function: phorum_db_get_file_list()
 /**

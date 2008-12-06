@@ -39,8 +39,11 @@ if (!defined('PHORUM')) return;
  *                    DB_RETURN_NEWID     new row id for insert query
  *                    DB_RETURN_ERROR     an error message if the query
  *                                        failed or NULL if there was no error
+ *                    DB_CLOSE_CONN       close the connection, no return data
+ *
  * @param $sql      - The SQL query to run or the parameter to quote if
  *                    DB_RETURN_QUOTED is used.
+ *
  * @param $keyfield - When returning an array of rows, the indexes are
  *                    numerical by default (0, 1, 2, etc.). However, if
  *                    the $keyfield parameter is set, then from each
@@ -50,6 +53,7 @@ if (!defined('PHORUM')) return;
  *                    return data. Mind that there is no error checking
  *                    at all, so you have to make sure that you provide
  *                    a valid $keyfield here!
+ *
  * @param $flags    - Special flags for modifying the function's behavior.
  *                    These flags can be OR'ed if multiple flags are needed.
  *                    DB_NOCONNECTOK     Failure to connect is not fatal but
@@ -66,6 +70,17 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 {
     static $conn;
     static $querytrack;
+
+    // Close the database connection.
+    if ($return == DB_CLOSE_CONN)
+    {
+        if (!empty($conn))
+        {
+            mysql_close($conn);
+            $conn = null;
+        }
+        return;
+    }
 
     $debug = empty($GLOBALS['PHORUM']['DBCONFIG']['dbdebug'])
            ? 0 : $GLOBALS['PHORUM']['DBCONFIG']['dbdebug'];
