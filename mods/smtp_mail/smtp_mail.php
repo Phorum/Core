@@ -69,6 +69,28 @@ function phorum_smtp_send_messages ($data)
             // add the newly created message-id
             $mail->HeaderLine("Message-ID", $data['messageid']);
             
+            // add attachments if provided
+            if(isset($data['attachments']) && count($data['attachments'])) {
+            	/*
+            	 * Expected input is an array of
+            	 * 
+            	 * array(
+            	 * 'filename'=>'name of the file including extension',
+            	 * 'filedata'=>'plain (not encoded) content of the file',
+            	 * 'mimetype'=>'mime type of the file', (optional)
+            	 * )
+            	 * 
+            	 */
+            	
+            	foreach($data['attachments'] as $att_id => $attachment) {
+            		$att_type = (!empty($attachment['mimetype']))?$attachment['mimetype']:'application/octet-stream';
+            		$mail->AddStringAttachment($attachment['filedata'],$attachment['filename'],'base64',$att_type);
+            		
+            		// try to unset it in the original array to save memory
+            		unset($data['attachments'][$att_id]);
+            	}
+            	
+            }
             
             if(!empty($settings['bcc']) && $num_addresses > 3){
             	$bcc = 1;

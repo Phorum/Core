@@ -1,6 +1,6 @@
 <?php
 /*
-* SMTP-Mail-Module v0.9
+* SMTP-Mail-Module
 * made by Thomas Seifert
 * email: thomas (at) phorum.org
 *
