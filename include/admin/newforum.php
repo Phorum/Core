@@ -173,7 +173,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
 
     if ($vroot > 0) {
         $frm->addrow(
-            "This folder is in the Virtual Root of:",
+            "This forum is in the Virtual Root of:",
             $folder_list[$vroot]
         );
     }
