@@ -306,7 +306,7 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
     $folder_list=phorum_get_folder_info();
     $frm->addrow("Folder", $frm->select_tag("parent_id", $folder_list, $parent_id));
     if($vroot > 0) {
-        $frm->addrow("This folder is in the Virtual Root of:",$folder_list[$vroot]);
+        $frm->addrow("This forum is in the Virtual Root of:",$folder_list[$vroot]);
     }
 
 
