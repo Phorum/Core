@@ -39,14 +39,14 @@ function phorum_setup_announcements ()
     // Inside a vroot, where we have a vroot configuration for the forum
     // to use for announcements and the current forum is not that
     // announcement forum.
-    if ($PHORUM['vroot'] > 0 && isset($PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) {
+    if ($PHORUM['vroot'] > 0 && !empty($PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']]) {
 
         $ann_forum_id = $PHORUM["mod_announcements"]["vroot"][$PHORUM['vroot']];
 
     // Inside the top level folder, where we have a forum that is configured
     // to be used for announcements and the current forum is not that
     // announcement forum.
-    } elseif($PHORUM['vroot'] == 0 && isset($PHORUM["mod_announcements"]["forum_id"]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["forum_id"]) {
+    } elseif($PHORUM['vroot'] == 0 && !empty($PHORUM["mod_announcements"]["forum_id"]) && $PHORUM["forum_id"] != $PHORUM["mod_announcements"]["forum_id"]) {
 
         $ann_forum_id = $PHORUM["mod_announcements"]["forum_id"];
 
