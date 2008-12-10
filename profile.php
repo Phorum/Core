@@ -134,6 +134,6 @@ $PHORUM['DATA']['BREADCRUMBS'][]=array(
 // set all our URL's
 phorum_build_common_urls();
 
-phorum_output("profile");
+phorum_output($template);
 
 ?>
