@@ -412,7 +412,53 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
     }
 }
 
-// A hook to allow modules to change the abilities from above.
+/*
+ * [hook]
+ *     posting_permissions
+ *
+ * [description]
+ *     This hook can be used for setting up custom abilities and permissions for
+ *     users, by updating the applicable fields in 
+ *     <literal>$GLOBALS["PHORUM"]["DATA"]</literal> (e.g. for giving certain
+ *     users the right to make postings sticky, without having to make the full
+ *     moderator for a forum).<sbr/>
+ *     <sbr/>
+ *     Read the code in <filename>posting.php</filename> before this hook is
+ *     called to find out what fields can be used.<sbr/>
+ *     <sbr/>
+ *     Beware: Only use this hook if you know what you are doing and understand
+ *     Phorum's editor permission code. If used wrong, you can open up security
+ *     holes in your Phorum installation!
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>posting.php</filename> right after Phorum has determined all
+ *     abilities that apply to the logged in user.
+ *
+ * [input]
+ *     None
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_permissions ()
+ *     {
+ *         global $PHORUM;
+ *
+ *         // get the previously stored id for the "sticky_allowed" group
+ *         $mod_foo_group_id = $PHORUM["mod_foo"]["sticky_allowed_group_id"];
+ *
+ *         // allow creating sticky posts for users in the "sticky_allowed"
+ *         // group, if the option has not already been enabled.
+ *         if (!$PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"])
+ *             $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = phorum_api_user_check_group_access (PHORUM_USER_GROUP_APPROVED, $mod_foo_group_id);
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["posting_permissions"]))
     phorum_hook("posting_permissions");
 

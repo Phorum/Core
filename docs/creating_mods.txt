@@ -1630,7 +1630,7 @@ Table of contents:
    of the posting fields in $PHORUM["posting_fields"].
 
    ----------------------------------------------------------------------------
-   posting_permission
+   posting_permissions
 
    Where  : posting.php
    When   : Right after Phorum has determined all abilities that apply
