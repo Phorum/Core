@@ -188,8 +188,41 @@ define("READONLYFIELDS", true);
 // Gather information about the editor state and start processing
 // ----------------------------------------------------------------------
 
-// A hook, so mods can do early environment modifications
-// (for example for changing the $PHORUM["post_field"] configuration).
+/*
+ * [hook]
+ *     posting_init
+ *
+ * [description]
+ *     This hook can be used for doing modifications to the environment of the
+ *     posting scripts at an early stage. One of the intended purposes of this
+ *     hook is to give mods a chance to change the configuration of the posting
+ *     fields in <literal>$PHORUM["posting_fields"]</literal>.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     Right after the <filename>posting.php</filename> script's configuration
+ *     setup and before starting the posting script processing.
+ *
+ * [input]
+ *     None
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_init ()
+ *     {
+ *         global $PHORUM;
+ *
+ *         //add the default, descriptive text to the message body
+ *         $PHORUM["posting_fields"]["body"][pf_INIT] = $PHORUM["DATA"]["LANG"]["mod_foo"]["default_body_text"];
+ *
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["posting_init"]))
     phorum_hook("posting_init", "");
 
