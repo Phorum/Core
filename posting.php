@@ -750,7 +750,69 @@ if ($PHORUM["posting_template"] == 'posting')
     // cancel button in all pages.
     $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
 
-    // A hook to give modules a last chance to update the message data.
+    /*
+     * [hook]
+     *     before_editor
+     *
+     * [description]
+     *     This hook can be used for changing message data, just before the 
+     *     editor is displayed. This is done after escaping message data for XSS
+     *     prevention is done. So in the hook, the module writer will have to be
+     *     aware that data is escaped and that he has to escape data himself if
+     *     needed.<sbr/>
+     *     <sbr/>
+     *     This hook is called every time the editor is displayed. If modifying
+     *     the message data does not have to be done on every request (for
+     *     example only on the first request when replying to a message), the
+     *     module will have to check the state the editor is in. Here's some
+     *     hints on what you could do to accomplish this:<sbr/>
+     *     <sbr/>
+     *     <ul>
+     *     <li>Check the editor mode: this can be done by looking at the
+     *         "mode" field in the message data. This field can be one of
+     *         "post", "reply" and "edit".</li>
+     *     <li>Check if it's the first request: this can be done by looking
+     *         at the <literal>$_POST</literal> array. If no field "message_id"
+     *         can be found in there, the editor is handing the first
+     *         request.</li>
+     *     </ul>
+     *     <sbr/>
+     *     Beware: this hook function only changes message data before it is
+     *     displayed in the editor. From the editor, the user can still change
+     *     the data. Therefore, this hook cannot be used to control the data
+     *     which will be stored in the database. If you need that functionality,
+     *     then use the hooks <hook>before_edit</hook> and/or
+     *     <hook>before_post</hook> instead.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>posting.php</filename> just before the message editor is
+     *     displayed.
+     *
+     * [input]
+     *     Array containing data for the message that will be shown in the
+     *     editor screen.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     // Using this, an example hook function that appends the string 
+     *     // "FOO!" to the subject when replying to a message (how useful ;-) 
+     *     // could look like this:
+     *     function phorum_mod_foo_before_editor ($data)
+     *     {
+     *         if ($data["mode"] == "reply" && ! isset($_POST["message_id])) {
+     *             $data["reply"] = $data["reply"] . " FOO!";
+     *         }
+     *
+     *         return $data;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["before_editor"]))
         $message = phorum_hook("before_editor", $message);
 
