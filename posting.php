@@ -510,9 +510,44 @@ if ($do_attach || $do_detach) {
 // Perform actions
 // ----------------------------------------------------------------------
 
-// Give modules a chance to perform actions of their own. These actions
-// can modify the message data if they like. This is the designated
-// hook for modules that want to modify the meta data for the message.
+/*
+ * [hook]
+ *     posting_custom_actions
+ *
+ * [description]
+ *     This hook can be used by modules to handle (custom) data coming from the
+ *     posting form. The module is allowed to change the data that is in the
+ *     input message. When a module needs to change the meta data for a message,
+ *     then this is the designated hook for that task.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>posting.php</filename> right after all the initialization
+ *     tasks are done and just before the posting script starts its own action
+ *     processing.
+ *
+ * [input]
+ *     Array containing message data.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_custom_actions ($message)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // for some reason, create an md5 signature for the original body
+ *         if (!empty($message["body"])
+ *             $message["meta"]["mod_foo"]["body_md5"] = md5($message["body"]);
+ *
+ *         return $message;
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["posting_custom_action"]))
     $message = phorum_hook("posting_custom_action", $message);
 
