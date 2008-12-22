@@ -1304,15 +1304,15 @@ Table of contents:
    ----------------------------------------------------------------------------
    check_post
 
-   Where  : post.php
+   Where  : include/posting/check_integrity.php
    When   : Right after performing preliminary posting checks, unless
             these checks have returned something bad.
    Input  : Array containing:
-            0 => the $_POST array with form data
-            1 => $error, to return errors in
+            0 => an array of the message data
+            1 => $error, used to return an error message
    Return : Same as Input
 
-   This hook can be used for modifying data in the $_POST array and for
+   This hook can be used for modifying the message data and for
    running additional checks on the data. If an error is put in $error,
    Phorum will stop posting the message and show the error to the user
    in the post-form.
