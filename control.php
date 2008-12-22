@@ -302,7 +302,56 @@ function phorum_controlcenter_user_save($panel)
     // Set static userdata.
     $userdata["user_id"] = $PHORUM["user"]["user_id"];
 
-    // Run a hook, so module writers can update and check the userdata.
+    /**
+     * [hook]
+     *     cc_save_user
+     *
+     * [description]
+     *     This hook works the same way as the <hook>before_register</hook>
+     *     hook, so you can also use it for changing and checking the user data
+     *     that will be saved in the database. There's one difference. If you
+     *     want to check a custom field, you'll also need to check the panel
+     *     which you are on, because this hook is called from multiple panels.
+     *     The panel that you are on will be stored in the 
+     *     <literal>panel</literal> field of the user data.<sbr/>
+     *     <sbr/>
+     *     The example hook belows demonstrates code which could be used if you
+     *     have added a custom field to the template for the option 
+     *     <literal>Edit My Profile</literal> in the control panel.
+     *
+     * [category]
+     *     Control center
+     *
+     * [when]
+     *     In <filename>control.php</filename>, right before data for a user is
+     *     saved in the control panel.
+     *
+     * [input]
+     *     An array containing the user data to save.
+     *     <ul>
+     *     <li>error:
+     *         modules can fill this field with an error message to show.</li>
+     *     </ul>
+     *
+     * [output]
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly with the "error" field updated in it.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_cc_save_user ($data)
+     *     {
+     *         // Only check data for the panel "user".
+     *         if ($data['panel'] != "user") return $data;
+     *
+     *         $myfield = trim($data['your_custom_field']);
+     *         if (empty($myfield)) {
+     *             $data['error'] = 'You need to fill in my custom field';
+     *         }
+     *
+     *         return $data;
+     *     }
+     */
     if (isset($PHORUM["hooks"]["cc_save_user"]))
         $userdata = phorum_hook("cc_save_user", $userdata);
 
