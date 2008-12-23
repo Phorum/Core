@@ -1428,9 +1428,9 @@ Table of contents:
    Return : array of addresses and data
 
    This hook is put at the very beginning of phorum_email_user and is therefore
-   called for *every* email that is send from phorum.
-   It is put before every replacement done in that function so that every data
-   which is send to that function can be replaced/changed at will
+   called for *every* email that is sent from phorum.
+   It is put before every replacement done in that function so that all data
+   which is sent to that function can be replaced/changed at will.
 
    ----------------------------------------------------------------------------
    end_output

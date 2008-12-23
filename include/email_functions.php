@@ -88,7 +88,48 @@ function phorum_email_user($addresses, $data)
             $prefix . $PHORUM['system_email_from_address'] . $postfix;
     }
 
-    // Allow modules to pre-process the mail message.
+    /*
+     * [hook]
+     *     email_user_start
+     *
+     * [description]
+     *     This hook is put at the very beginning of 
+     *     <literal>phorum_email_user()</literal> and is therefore called for
+     *     <emphasis>every</emphasis> email that is sent from Phorum. It is put
+     *     before every replacement done in that function so that all data which
+     *     is sent to that function can be replaced/changed at will.
+     *
+     * [category]
+     *     Moderation
+     *
+     * [when]
+     *     In the file <filename>email_functions.php</filename> at the start of
+     *     <literal>phorum_email_user()</literal> function, before any
+     *     modification of data
+     *
+     * [input]
+     *     An array containing:
+     *     <ul>
+     *     <li>An array of addresses</li>
+     *     <li>An array containing the message data</li>
+     *     </ul>
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_email_user_start (list($addresses, $data)) 
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Add our disclaimer to the end of every email message.
+     *         $data["mailmessage"] = $PHORUM["mod_foo"]["email_disclaimer"];
+     *
+     *         return array($addresses, $data);
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["email_user_start"]))
         list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
 
