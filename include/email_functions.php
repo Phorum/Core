@@ -104,14 +104,14 @@ function phorum_email_user($addresses, $data)
      *
      * [when]
      *     In the file <filename>email_functions.php</filename> at the start of
-     *     <literal>phorum_email_user()</literal> function, before any
-     *     modification of data
+     *     <literal>phorum_email_user()</literal>, before any modification of
+     *     data.
      *
      * [input]
      *     An array containing:
      *     <ul>
-     *     <li>An array of addresses</li>
-     *     <li>An array containing the message data</li>
+     *     <li>An array of addresses.</li>
+     *     <li>An array containing the message data.</li>
      *     </ul>
      *
      * [output]
@@ -199,10 +199,42 @@ function phorum_email_user($addresses, $data)
     // Mail headers can not contain 8-bit data as per RFC821.
     $mailsubject = phorum_api_mail_encode_header($mailsubject);
 
-    // Allow modules to send the mail message. A module can either
-    // remove the recipients for which they did send a mail from the
-    // addresses list or return 0 (zero) if the mail was sent
-    // to all recipients.
+    /*
+     * [hook]
+     *     send_mail
+     *
+     * [description]
+     *     This hook can be used for implementing an alternative mail sending
+     *     system. The hook should return true if Phorum should still send the
+     *     mails. If you do not want to have Phorum send the mails also, return
+     *     false.<sbr/>
+     *     <sbr/>
+     *     The SMTP module is a good example of using this hook to replace
+     *     Phorum's default mail sending system.
+     *
+     * [category]
+     *     Moderation
+     *
+     * [when]
+     *     In the file <filename>email_functions.php</filename> in
+     *     <literal>phorum_email_user()</literal>, right before email is sent
+     *     using <phpfunc>mail</phpfunc>.
+     *
+     * [input]
+     *     Array with mail data (read-only) containing:
+     *     <ul>
+     *     <li><literal>addresses</literal>, an array of e-mail addresses</li>
+     *     <li><literal>from</literal>, the sender address</li>
+     *     <li><literal>subject</literal>, the mail subject</li>
+     *     <li><literal>body</literal>, the mail body</li>
+     *     <li><literal>bcc</literal>, whether to use Bcc for mailing multiple
+     *     recipients</li>
+     *     </ul>
+     *
+     * [output]
+     *     true or false - see description.
+     *
+     */
     $send_messages = 1;
     if (isset($PHORUM["hooks"]["send_mail"]))
     {
