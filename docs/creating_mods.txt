@@ -1843,7 +1843,7 @@ Table of contents:
       # php ./script.php --scheduled
 
    When creating a scheduling service entry for running this
-   automatically, then remind to change the directory as well.
+   automatically, remember to change the directory as well.
    You might also have to use the full path to your PHP binary
    (/usr/bin/php or whatever it is on your system), because
    the scheduling service might not know the path to it. An entry
