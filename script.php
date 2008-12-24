@@ -118,7 +118,49 @@ if (count($modules))
 // ----------------------------------------------------------------------
 // Run the "external" hook for a module.
 // ----------------------------------------------------------------------
-
+/*
+ * [hook]
+ *     external
+ *
+ * [description]
+ *     The external hook functions are never called from any of the standard
+ *     Phorum pages. These functions are called by invoking 
+ *     <filename>script.php</filename> on the command line with the 
+ *     <literal>--module</literal> parameter. This can be used to pipe output
+ *     from some arbitrary command to a specific module, which can do something
+ *     with that input. If your module does not need any command line input and
+ *     is meant to be run on a regular basis, you should consider using the
+ *     <hook>scheduled</hook> hook.<sbr/>
+ *     <sbr/>
+ *     Mind that for using an <hook>external</hook> hook, the module in which it
+ *     is handled must be enabled in your admin interface. So if an 
+ *     <hook>external</hook> hook is not running, the containing module might be
+ *     disabled.<sbr/>
+ *     <sbr/>
+ *     To run this hook from the command line, you have to be in the Phorum
+ *     installation directory. So running the <hook>external</hook> hook of
+ *     a module named <literal>external_foo</literal> would be done like this on
+ *     a UNIX system prompt:
+ *     <hookcode>
+ *         # cd /your/phorum/dir
+ *         # php ./script.php --module=external_foo
+ *     </hookcode>
+ *     For easy use, you can of course put these commands in a script file.
+ *
+ * [category]
+ *     Miscellaneous
+ *
+ * [when]
+ *     In the <filename>script.php</filename> when called from the command
+ *     prompt or a script file.
+ *
+ * [input]
+ *     Any array of arguments. (Optional)
+ *
+ * [output]
+ *     None
+ *
+ */
 if ($callhook == 'external')
 {
     $module = array_shift($modules);
