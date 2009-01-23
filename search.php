@@ -383,7 +383,7 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
 
     $PHORUM["DATA"]["HTML_TITLE"].= PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["Search"];
     if(!empty($phorum_search)){
-        $PHORUM["DATA"]["HTML_TITLE"] .= " - ".$phorum_search;
+        $PHORUM["DATA"]["HTML_TITLE"] .= " - ".htmlspecialchars($phorum_search);
     }
 }
 
