@@ -366,7 +366,8 @@ function bbcode_api_buildparser($tags)
             $argparsetree = array();
             foreach ($tag[BBCODE_INFO_ARGS] as $argname => $default) {
                 $node =& $argparsetree;
-                for ($i=0; isset($argname[$i]); $i++)
+                $arglen = strlen($argname);
+                for ($i=0; $i<$arglen; $i++)
                 {
                     $l = $argname[$i];
                     if (!isset($node[$l]))
@@ -383,7 +384,8 @@ function bbcode_api_buildparser($tags)
         // Add the tag name to the tag name parse tree.
         $node =& $parsetree;
         $closenode =& $parsetree['/'];
-        for ($i=0; isset($tagname[$i]); $i++)
+        $taglen = strlen($tagname);
+        for ($i=0; $i<$taglen; $i++)
         {
             $l = $tagname[$i];
             if (!isset($node[$l]))
