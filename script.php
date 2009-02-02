@@ -118,6 +118,49 @@ if (count($modules))
 // Run the "external" hook for a module.
 // ----------------------------------------------------------------------
 
+/*
+ * [hook]
+ *     external
+ *
+ * [description]
+ *     The external hook functions are never called from any of the standard
+ *     Phorum pages. These functions are called by invoking 
+ *     <filename>script.php</filename> on the command line with the 
+ *     <literal>--module</literal> parameter. This can be used to pipe output
+ *     from some arbitrary command to a specific module, which can do something
+ *     with that input. If your module does not need any command line input and
+ *     is meant to be run on a regular basis, you should consider using the
+ *     <hook>scheduled</hook> hook.<sbr/>
+ *     <sbr/>
+ *     Mind that for using an <hook>external</hook> hook, the module in which it
+ *     is handled must be enabled in your admin interface. So if an 
+ *     <hook>external</hook> hook is not running, the containing module might be
+ *     disabled.<sbr/>
+ *     <sbr/>
+ *     To run this hook from the command line, you have to be in the Phorum
+ *     installation directory. So running the <hook>external</hook> hook of
+ *     a module named <literal>external_foo</literal> would be done like this on
+ *     a UNIX system prompt:
+ *     <hookcode>
+ *         # cd /your/phorum/dir
+ *         # php ./script.php --module=external_foo
+ *     </hookcode>
+ *     For easy use, you can of course put these commands in a script file.
+ *
+ * [category]
+ *     Miscellaneous
+ *
+ * [when]
+ *     In the <filename>script.php</filename> when called from the command
+ *     prompt or a script file.
+ *
+ * [input]
+ *     Any array of arguments. (Optional)
+ *
+ * [output]
+ *     None
+ */
+
 if ($callhook == 'external')
 {
     $module = array_shift($modules);
@@ -130,6 +173,7 @@ if ($callhook == 'external')
     array_unshift($callargs, $module);
     $callargs = array_values($callargs); // reindex (0, 1, 2, ...) array keys.
 
+
     // Call the external hook.
     phorum_hook("external", $callargs);
 }
@@ -137,6 +181,72 @@ if ($callhook == 'external')
 // ----------------------------------------------------------------------
 // Run the "scheduled" hook for all modules.
 // ----------------------------------------------------------------------
+
+/*
+ * [hook]
+ *     scheduled
+ *
+ * [description]
+ *     <hook>Scheduled</hook> hook functions are similar to
+ *     <hook>external</hook> ones, except these functions do not require any
+ *     input from the command line. The modules containing this hook are invoked
+ *     by running <filename>script.php</filename> with the
+ *     <literal>--scheduled</literal> argument (no module name is taken; this
+ *     argument will run all scheduled hooks for all available modules).<sbr/>
+ *     <sbr/>
+ *     Like the name of the hook already suggests, this hook can be used for
+ *     creating tasks which have to be executed on a regular basis. To archieve
+ *     this, you can let <filename>script.php</filename> run from a scheduling
+ *     service (like a cron job on a UNIX system).<sbr/>
+ *     <sbr/>
+ *     In general, <hook>scheduled</hook> hooks are used for automating tasks
+ *     you want to execute without having to perform any manual action.
+ *     Practical uses for a scheduled hook could be:
+ *     <ul>
+ *     <li>housekeeping (cleanup of stale/old data)</li>
+ *     <li>daily content generation (like sending daily digests containing all
+ *     posted messages for that day)</li>
+ *     <li>forum statistics generation</li>
+ *     </ul>
+ *     <sbr/>
+ *     Keep in mind that for using this hook, the module in which it is handled
+ *     must be enabled in your admin interface. So if this hook is not running, 
+ *     the containing module might be disabled.<sbr/>
+ *     <sbr/>
+ *     To run this hook from the command line or from a scheduling service, you
+ *     have to be in the Phorum installation directory. So running this hook for
+ *     your Phorum installation would be done like this on a UNIX system prompt:
+ *     <hookcode>
+ *     # cd /your/phorum/dir
+ *     # php ./script.php --scheduled
+ *     </hookcode>
+ *     <sbr/>
+ *     When creating a scheduling service entry for running this automatically,
+ *     remember to change the directory as well. You might also have to use the
+ *     full path to your PHP binary (<filename>/usr/bin/php</filename> or
+ *     whatever it is on your system), because the scheduling service might not
+ *     know the path to it. An entry for the cron system on UNIX could look like
+ *     this:
+ *     <hookcode>
+ *     0 0 * * * cd /your/phorum/dir && /usr/bin/php ./script.php --scheduled
+ *     </hookcode>
+ *     <sbr/>
+ *     Please refer to your system's documentation to see how to use your
+ *     system's scheduling service.
+ *
+ * [category]
+ *     Miscellaneous
+ *
+ * [when]
+ *     In the <filename>script.php</filename> when called from the command
+ *     prompt or a script file with the <literal>--scheduled</literal> argument.
+ *
+ * [input]
+ *     None
+ *
+ * [output]
+ *     None
+ */
 
 elseif ($callhook == 'scheduled')
 {

@@ -28,6 +28,29 @@ require_once('./include/email_functions.php');
 
 if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
+    /*
+     * [hook]
+     *     before_logout
+     *
+     * [description]
+     *     This hook can be used for performing tasks before a user logout.
+     *     The user data will still be availbale in 
+     *     <literal>$PHORUM["user"]</literal> at this point.
+     *
+     * [category]
+     *     Login/Logout
+     *
+     * [when]
+     *     In <filename>login.php</filename>, just before destroying the user
+     *     session.
+     *
+     * [input]
+     *     None
+     *
+     * [output]
+     *     None
+     */
+
     if (isset($PHORUM["hooks"]["before_logout"]))
         phorum_hook("before_logout");
 
@@ -46,6 +69,43 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
         $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"][PHORUM_SESSION_LONG_TERM]), "", $url);
     }
 
+    /*
+     * [hook]
+     *     after_logout
+     *
+     * [description]
+     *     This hook can be used for performing tasks after a successful
+     *     user logout and for changing the page to which the user will be
+     *     redirected (by returning a different redirection URL). The user
+     *     data will still be available in <literal>$PHORUM["user"]</literal>
+     *     at this point.
+     *
+     * [category]
+     *     Login/Logout
+     *
+     * [when]
+     *     In <filename>login.php</filename>, after a logout, just before
+     *     redirecting the user to a Phorum page.
+     *
+     * [input]
+     *     The redirection URL.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_logout($url)
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Return to the site's main page on logout
+     *         $url = $PHORUM["mod_foo"]["site_url"];
+     *
+     *         return $url;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["after_logout"]))
         $url = phorum_hook("after_logout", $url);
 
@@ -274,8 +334,46 @@ if (count($_POST) > 0) {
                         $redir = phorum_get_url( PHORUM_LIST_URL );
                     }
 
-                    // The hook "after_login" can be used by module writers to
-                    // set a custom redirect URL.
+                    /*
+                     * [hook]
+                     *     after_login
+                     *
+                     * [description]
+                     *     This hook can be used for performing tasks after a
+                     *     successful user login and for changing the page to
+                     *     which the user will be redirected (by returning a
+                     *     different redirection URL). If you need to access the
+                     *     user data, then you can do this through the global 
+                     *     <literal>$PHORUM</literal> variable. The user data
+                     *     will be in <literal>$PHORUM["user"]</literal>.
+                     *
+                     * [category]
+                     *     Login/Logout
+                     *
+                     * [when]
+                     *     In <filename>login.php</filename>, after a successful
+                     *     login, just before redirecting the user to a Phorum
+                     *     page.
+                     *
+                     * [input]
+                     *     The redirection URL.
+                     *
+                     * [output]
+                     *     Same as input.
+                     *
+                     * [example]
+                     *     <hookcode>
+                     *     function phorum_mod_foo_after_login($url)
+                     *     {
+                     *         global $PHORUM;
+                     *
+                     *         // Redirect to the user's chosen page
+                     *         $url = $PHORUM["user"]["phorum_mod_foo_user_login_url"];
+                     *
+                     *         return $url;
+                     *     }
+                     *     </hookcode>
+                     */
                     if (isset($PHORUM["hooks"]["after_login"]))
                         $redir = phorum_hook("after_login", $redir);
 
@@ -288,6 +386,68 @@ if (count($_POST) > 0) {
             // the invalid login error.
             $error = $PHORUM['DATA']['LANG']["InvalidLogin"];
 
+            /*
+             * [hook]
+             *     failed_login
+             *
+             * [description]
+             *     This hook can be used for tracking failing login attempts.
+             *     This can be used for things like logging or implementing
+             *     login failure penalties (like temporary denying access after
+             *     X login attempts).
+             *
+             * [category]
+             *     Login/Logout
+             *
+             * [when]
+             *     In <filename>login.php</filename>, when a user login fails.
+             *
+             * [input]
+             *     An array containing three fields (read-only): 
+             *     <ul>
+             *         <li>username</li>
+             *         <li>password</li>
+             *         <li>location
+             *         <ul>
+             *              <li>The location field specifies where the login 
+             *              failure occurred and its value can be either 
+             *              <literal>forum</literal> or 
+             *              <literal>admin</literal>.</li>
+             *         </ul></li>
+             *     </ul>
+             *
+             * [output]
+             *     None
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_failed_login($data)
+             *     {
+             *         global $PHORUM;
+             *
+             *         // Get the current timestamp
+             *         $curr_time = time();
+             *
+             *         // Check for a previous login failure from the current IP address
+             *         if (!empty($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]])) {
+             *             // If the failures occur within the set time window,
+             *             // increment the login failure count
+             *             if ($curr_time <= ($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] + (int)$PHORUM["mod_foo"]["login_failures_time_window"])) {
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] ++;
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *             // Otherwise, reset the count.
+             *             } else {
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
+             *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *         } else {
+             *             // Log the timestamp and IP address of a login failure
+             *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
+             *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *         }
+             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *     }
+             *     </hookcode>
+             */
             // TODO API: move to user API.
             if (isset($PHORUM["hooks"]["failed_login"]))
                 phorum_hook("failed_login", array(
