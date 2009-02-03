@@ -186,8 +186,42 @@ define("READONLYFIELDS", true);
 // Gather information about the editor state and start processing
 // ----------------------------------------------------------------------
 
-// A hook, so mods can do early environment modifications
-// (for example for changing the $PHORUM["post_field"] configuration).
+/*
+ * [hook]
+ *     posting_init
+ *
+ * [description]
+ *     This hook can be used for doing modifications to the environment of the
+ *     posting scripts at an early stage. One of the intended purposes of this
+ *     hook is to give mods a chance to change the configuration of the posting
+ *     fields in <literal>$PHORUM["post_fields"]</literal>.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     Right after the <filename>posting.php</filename> script's configuration
+ *     setup and before starting the posting script processing.
+ *
+ * [input]
+ *     None
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_init ()
+ *     {
+ *         global $PHORUM;
+ *
+ *         // Set the default content for the message body.
+ *         $PHORUM["post_fields"]["body"][pf_INIT] =
+ *             $PHORUM["DATA"]["LANG"]["mod_foo"]["default_body_text"];
+ *
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["posting_init"]))
     phorum_hook("posting_init", "");
 
@@ -377,7 +411,59 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
     }
 }
 
-// A hook to allow modules to change the abilities from above.
+/*
+ * [hook]
+ *     posting_permissions
+ *
+ * [description]
+ *     This hook can be used for setting up custom abilities and permissions for
+ *     users, by updating the applicable fields in 
+ *     <literal>$GLOBALS["PHORUM"]["DATA"]["OPTION_ALLOWED"]</literal>
+ *     (e.g. for giving certain users the right to make postings sticky, without
+ *     having to make the full moderator for a forum).<sbr/>
+ *     <sbr/>
+ *     Read the code in <filename>posting.php</filename> before this hook is
+ *     called to find out what fields can be used.<sbr/>
+ *     <sbr/>
+ *     Beware: Only use this hook if you know what you are doing and understand
+ *     Phorum's editor permission code. If used wrong, you can open up security
+ *     holes in your Phorum installation!
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>posting.php</filename> right after Phorum has determined all
+ *     abilities that apply to the logged in user.
+ *
+ * [input]
+ *     None
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_permissions ()
+ *     {
+ *         global $PHORUM;
+ *
+ *         // get the previously stored id for the "sticky_allowed" group
+ *         $mod_foo_group_id = $PHORUM["mod_foo"]["sticky_allowed_group_id"];
+ *
+ *         // allow creating sticky posts for users in the "sticky_allowed"
+ *         // group, if the option has not already been enabled.
+ *         if (!$PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"])
+ *         {
+ *             $is_in_group = phorum_api_user_check_group_access(
+ *                 PHORUM_USER_GROUP_APPROVED,
+ *                 $mod_foo_group_id
+ *             );
+ *             $PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"] = $is_in_group;
+ *         }
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["posting_permissions"]))
     phorum_hook("posting_permissions");
 
@@ -429,9 +515,45 @@ if ($do_attach || $do_detach) {
 // Perform actions
 // ----------------------------------------------------------------------
 
-// Give modules a chance to perform actions of their own. These actions
-// can modify the message data if they like. This is the designated
-// hook for modules that want to modify the meta data for the message.
+/*
+ * [hook]
+ *     posting_custom_action
+ *
+ * [description]
+ *     This hook can be used by modules to handle (custom) data coming from the
+ *     posting form. The module is allowed to change the data that is in the
+ *     input message. When a module needs to change the meta data for a message,
+ *     then this is the designated hook for that task.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>posting.php</filename> right after all the initialization
+ *     tasks are done and just before the posting script starts its own action
+ *     processing.
+ *
+ * [input]
+ *     Array containing message data.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_custom_actions ($message)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // for some reason, create an MD5 signature for the original body
+ *         if (!empty($message["body"]) {
+ *             $message["meta"]["mod_foo"]["body_md5"] = md5($message["body"]);
+ *         }
+ *
+ *         return $message;
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["posting_custom_action"]))
     $message = phorum_hook("posting_custom_action", $message);
 
@@ -634,7 +756,69 @@ if ($PHORUM["posting_template"] == 'posting')
     // cancel button in all pages.
     $PHORUM["DATA"]["SHOW_CANCEL_BUTTON"] = (isset($PHORUM["postingargs"]["as_include"]) ? false : true);
 
-    // A hook to give modules a last chance to update the message data.
+    /*
+     * [hook]
+     *     before_editor
+     *
+     * [description]
+     *     This hook can be used for changing message data, just before the 
+     *     editor is displayed. This is done after escaping message data for XSS
+     *     prevention is done. So in the hook, the module writer will have to be
+     *     aware that data is escaped and that he has to escape data himself if
+     *     needed.<sbr/>
+     *     <sbr/>
+     *     This hook is called every time the editor is displayed. If modifying
+     *     the message data does not have to be done on every request (for
+     *     example only on the first request when replying to a message), the
+     *     module will have to check the state the editor is in. Here's some
+     *     hints on what you could do to accomplish this:<sbr/>
+     *     <sbr/>
+     *     <ul>
+     *     <li>Check the editor mode: this can be done by looking at the
+     *         "mode" field in the message data. This field can be one of
+     *         "post", "reply" and "edit".</li>
+     *     <li>Check if it's the first request: this can be done by looking
+     *         at the <literal>$_POST</literal> array. If no field "message_id"
+     *         can be found in there, the editor is handing the first
+     *         request.</li>
+     *     </ul>
+     *     <sbr/>
+     *     Beware: this hook function only changes message data before it is
+     *     displayed in the editor. From the editor, the user can still change
+     *     the data. Therefore, this hook cannot be used to control the data
+     *     which will be stored in the database. If you need that functionality,
+     *     then use the hooks <hook>before_edit</hook> and/or
+     *     <hook>before_post</hook> instead.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>posting.php</filename> just before the message editor is
+     *     displayed.
+     *
+     * [input]
+     *     Array containing data for the message that will be shown in the
+     *     editor screen.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     // Using this, an example hook function that appends the string 
+     *     // "FOO!" to the subject when replying to a message (how useful ;-) 
+     *     // could look like this:
+     *     function phorum_mod_foo_before_editor ($data)
+     *     {
+     *         if ($data["mode"] == "reply" && ! isset($_POST["message_id])) {
+     *             $data["reply"] = $data["reply"] . " FOO!";
+     *         }
+     *
+     *         return $data;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["before_editor"]))
         $message = phorum_hook("before_editor", $message);
 
