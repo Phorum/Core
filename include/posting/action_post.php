@@ -297,7 +297,7 @@ if ($success)
      *
      * [description]
      *     This hook can be used for performing actions based on what the
-     *     message contained.  It is specifically useful for altering the
+     *     message contained. It is specifically useful for altering the
      *     redirect behavior.
      *
      * [category]
@@ -306,7 +306,7 @@ if ($success)
      * [when]
      *     In <filename>include/posting/action_post.php</filename>, after all 
      *     the posting work is done and just before the user is redirected back
-     *     to the list.
+     *     to the message list page.
      *
      * [input]
      *     An array containing message data.
