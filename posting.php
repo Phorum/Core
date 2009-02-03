@@ -196,7 +196,7 @@ define("READONLYFIELDS", true);
  *     This hook can be used for doing modifications to the environment of the
  *     posting scripts at an early stage. One of the intended purposes of this
  *     hook is to give mods a chance to change the configuration of the posting
- *     fields in <literal>$PHORUM["posting_fields"]</literal>.
+ *     fields in <literal>$PHORUM["post_fields"]</literal>.
  *
  * [category]
  *     Message handling
@@ -218,7 +218,7 @@ define("READONLYFIELDS", true);
  *         global $PHORUM;
  *
  *         //add the default, descriptive text to the message body
- *         $PHORUM["posting_fields"]["body"][pf_INIT] = $PHORUM["DATA"]["LANG"]["mod_foo"]["default_body_text"];
+ *         $PHORUM["post_fields"]["body"][pf_INIT] = $PHORUM["DATA"]["LANG"]["mod_foo"]["default_body_text"];
  *
  *     }
  *     </hookcode>
@@ -512,7 +512,7 @@ if ($do_attach || $do_detach) {
 
 /*
  * [hook]
- *     posting_custom_actions
+ *     posting_custom_action
  *
  * [description]
  *     This hook can be used by modules to handle (custom) data coming from the
@@ -540,7 +540,7 @@ if ($do_attach || $do_detach) {
  *     {
  *         global $PHORUM;
  *
- *         // for some reason, create an md5 signature for the original body
+ *         // for some reason, create an MD5 signature for the original body
  *         if (!empty($message["body"])
  *             $message["meta"]["mod_foo"]["body_md5"] = md5($message["body"]);
  *
