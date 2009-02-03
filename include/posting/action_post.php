@@ -101,7 +101,40 @@ if (!count($message["meta"]["attachments"])) {
     unset($message["meta"]["attachments"]);
 }
 
-// Run pre post mods.
+/*
+ * [hook]
+ *     before_post
+ *
+ * [description]
+ *     This hook can be used to change the new message data before storing it in
+ *     the database.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>include/posting/action_post.php</filename>, right before
+ *     storing a new message in the database.
+ *
+ * [input]
+ *     An array containing message data.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_before_post($message)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // Add the disclaimer to the new message body
+ *         $message["body"] .= "\n".$PHORUM["DATA"]["LANG"]["mod_foo"]["Disclaimer"];
+ *         
+ *         return $message;
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["before_post"]))
     $message = phorum_hook("before_post", $message);
 
@@ -143,7 +176,44 @@ if ($success)
 
     phorum_update_thread_info($message["thread"]);
 
-    // Run mods for after db is set but before other actions occur.
+    /*
+     * [hook]
+     *     after_message_save
+     *
+     * [description]
+     *     This hook can be used for performing actions based on what the
+     *     message contained or altering it before it is emailed to the
+     *     subscribed users. It is also useful for adding or removing 
+     *     subscriptions.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>include/posting/action_post.php</filename>, right after
+     *     storing a new message and all database updates are done.
+     *
+     * [input]
+     *     An array containing message data.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_message_save($message)
+     *     {
+     *         global $PHORUM;
+     *
+     *         // If the message was posted in a monitored forum, log the id
+     *         if (in_array($message["forum_id"], $PHORUM["mod_foo"]["monitored_forums"])) {
+     *             $PHORUM["mod_foo"]["monitored_messages"][$message["forum_id"]][] = $message["message_id"];
+     *         }
+     *
+     *         return $message;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["after_message_save"]))
         $message = phorum_hook("after_message_save", $message);
 
@@ -217,7 +287,49 @@ if ($success)
         phorum_email_moderators($message);
     }
 
-    // Run after post mods.
+    /*
+     * [hook]
+     *     after_post
+     *
+     * [description]
+     *     This hook can be used for performing actions based on what the
+     *     message contained. It is specifically useful for altering the
+     *     redirect behavior.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>include/posting/action_post.php</filename>, after all 
+     *     the posting work is done and just before the user is redirected back
+     *     to the message list page.
+     *
+     * [input]
+     *     An array containing message data.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_post($message)
+     *     {
+     *         global $PHORUM;
+     *
+     *         // remove the post count increment for the user in select forums
+     *         if (in_array($message["forum_id"], $PHORUM["mod_foo"]["forums_to_ignore"])) {
+     *             phorum_api_user_save (
+     *                 array (
+     *                     "user_id"    => $PHORUM["user"]["user_id"],
+     *                     "posts"      => $PHORUM["user"]["posts"]
+     *                     )
+     *                 );
+     *         }
+     *
+     *         return $message;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["after_post"]))
         $message = phorum_hook("after_post", $message);
 

@@ -38,7 +38,57 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
     }
 }
 
-// A hook entry for checking the data from a module.
+/*
+ * [hook]
+ *     check_post
+ *
+ * [description]
+ *     This hook can be used for modifying the message data and for running
+ *     additional checks on the data. If an error is put in
+ *     <literal>$error</literal>, Phorum will stop posting the message and show
+ *     the error to the user in the post-form.<sbr/>
+ *     <sbr/>
+ *     Beware that <literal>$error</literal> can already contain an error on
+ *     input, in case multiple modules are run for this hook. Therefore you
+ *     might want to return immediately in your hook function in case
+ *     <literal>$error</literal> is already set.<sbr/>
+ *     <sbr/>
+ *     Below is an example of how a function for this hook could look. This
+ *     example will disallow the use of the word "bar" in the message body.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In the <filename>include/posting/check_integrity.php</filename> file,
+ *     right after performing preliminary posting checks, unless these checks
+ *     have returned something bad.
+ *
+ * [input]
+ *     An array containing:
+ *     <ul>
+ *         <li>An array of the message data.</li>
+ *         <li><literal>$error</literal>, used to return an error message</li>
+ *     </ul>
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_check_post ($args)
+ *     {
+ *        list ($message, $error) = $args;
+ *        if (!empty($error)) return $args;
+ *
+ *        if (stristr($message["body"], "bar") !== false) {
+ *            return array($message, "The body may not contain 'bar'");
+ *        }
+ *
+ *        return $args;
+ *    }
+ *     </hookcode>
+ */
 if (! $error && isset($PHORUM["hooks"]["check_post"]))
     list($message, $error) =
         phorum_hook("check_post", array($message, $error));
