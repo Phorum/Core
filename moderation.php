@@ -54,7 +54,49 @@ phorum_build_common_urls();
 // make it possible to override this var in a hook
 $is_admin_user=$PHORUM["user"]["admin"];
 
-// a hook for doing stuff in moderation, i.e. logging moderator-actions
+/*
+ * [hook]
+ *     moderation
+ *
+ * [description]
+ *     This hook can be used for logging moderator actions. You can
+ *     use the <literal>$PHORUM</literal> array to retrieve additional info
+ *     like the moderating user's id and similar.<sbr/>
+ *     <sbr/>
+ *     The moderation step id is the variable <literal>$mod_step</literal>
+ *     that is used in <filename>moderation.php</filename>. Please read that
+ *     script to see what moderation steps are available and for what moderation
+ *     actions they stand.<sbr/>
+ *     <sbr/>
+ *     When checking the moderation step id for a certain step, always use
+ *     the contstants that are defined for this in 
+ *     <filename>include/constants.php</filename>. The numerical value of this
+ *     id can change between Phorum releases.
+ *
+ * [category]
+ *     Moderation
+ *
+ * [when]
+ *     At the start of <filename>moderation.php</filename>
+ *
+ * [input]
+ *     The id of the moderation step which is run (read-only).
+ *
+ * [output]
+ *     None
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_moderation ($mod_step) 
+ *     {
+ *         global $PHORUM;
+ *
+ *         // Update the last timestamp for the moderation step
+ *         $PHORUM["mod_foo"]["moderation_step_timestamps"][$mod_step] = time();
+ *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *     }
+ *     </hookcode>
+ */
 if (isset($PHORUM["hooks"]["moderation"]))
     phorum_hook("moderation",$mod_step);
 
@@ -67,8 +109,63 @@ switch ($mod_step) {
 
         $message = phorum_db_get_message($msgthd_id);
 
-        // A hook to allow modules to implement extra or different
-        // delete functionality.
+        /*
+         * [hook]
+         *     before_delete
+         *
+         * [description]
+         *     This hook allows modules to implement extra or different delete
+         *     functionality.<sbr/>
+         *     <sbr/>
+         *     The primary use of this hook would be for moving the messages
+         *     to some archive-area instead of really deleting them.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, just before deleting
+         *     the message(s)
+         *
+         * [input]
+         *     An array containing the following 5 parameters:
+         *     <ul>
+         *     <li><literal>$delete_handled</literal>:
+         *         default = <literal>false</literal>, set it to true to avoid
+         *         the real delete afterwards</li>
+         *     <li><literal>$msg_ids</literal>:
+         *         an array containing all deleted message ids</li>
+         *     <li><literal>$msgthd_id</literal>:
+         *         the msg-id or thread-id to be deleted</li>
+         *     <li><literal>$message</literal>:
+         *         an array of the data for the message retrieved with
+         *         <literal>$msgthd_id</literal></li>
+         *     <li><literal>$delete_mode</literal>:
+         *         mode of deletion, either 
+         *         <literal>PHORUM_DELETE_MESSAGE</literal> or 
+         *         <literal>PHORUM_DELETE_TREE</literal></li>
+         *     </ul>
+         *
+         * [output]
+         *     Same as input.<sbr/>
+         *     <literal>$delete_handled</literal> and 
+         *     <literal>$msg_ids</literal> are used as return data for the hook.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_before_delete($data)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Store the message data in the module's settings for
+         *         // future use.
+         *         $PHORUM["mod_foo"]["deleted_messages"][$msgthd_id] = $message;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *         
+         *         return $data;
+         *     }
+         *     </hookcode>
+         */
         $delete_handled = 0;
         if (isset($PHORUM["hooks"]["before_delete"]))
             list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
@@ -87,7 +184,42 @@ switch ($mod_step) {
             }
         }
 
-        // Run a hook for performing custom actions after cleanup.
+        /*
+         * [hook]
+         *     delete
+         *
+         * [description]
+         *     This hook can be used for cleaning up anything you may have 
+         *     created with the post_post hook or any other hook that stored 
+         *     data tied to messages.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after deleting a 
+         *     message from the database.
+         *
+         * [input]
+         *     An array of ids for messages that have been deleted (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_delete($msgthd_ids)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the deleted message ids
+         *         foreach ($msgthd_ids as $msgthd_id) {
+         *             $PHORUM["mod_foo"]["deleted_messages"][] = $msgthd_id;
+         *         }
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["delete"]))
             phorum_hook("delete", array($msgthd_id));
 
@@ -256,6 +388,41 @@ switch ($mod_step) {
 
                 phorum_db_post_message($newmessage);
             }
+
+            /*
+             * [hook]
+             *     move_thread
+             *
+             * [description]
+             *     This hook can be used for performing actions like sending 
+             *     notifications or for making log entries after moving a 
+             *     thread.
+             *
+             * [category]
+             *     Moderation
+             *
+             * [when]
+             *     In <filename>moderation.php</filename>, right after a thread
+             *     has been moved by a moderator.
+             *
+             * [input]
+             *     The id of the thread that has been moved (read-only).
+             *
+             * [output]
+             *     None
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_move_thread($msgthd_id)
+             *     {
+             *         global $PHORUM;
+             *
+             *         // Log the moved thread id
+             *         $PHORUM["mod_foo"]["moved_threads"][] = $msgthd_id;
+             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *     }
+             *     </hookcode>
+             */
             if (isset($PHORUM["hooks"]["move_thread"]))
                 phorum_hook("move_thread", $msgthd_id);
 
@@ -273,6 +440,40 @@ switch ($mod_step) {
         $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['ThreadClosedOk'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_close_thread($msgthd_id);
+
+        /*
+         * [hook]
+         *     close_thread
+         *
+         * [description]
+         *     This hook can be used for performing actions like sending 
+         *     notifications or making log entries after closing threads.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after a thread has
+         *     been closed by a moderator.
+         *
+         * [input]
+         *     The id of the thread that has been closed (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_close_thread($msgthd_id)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the closed thread id
+         *         $PHORUM["mod_foo"]["closed_threads"][] = $msgthd_id;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["close_thread"]))
             phorum_hook("close_thread", $msgthd_id);
 
@@ -288,6 +489,40 @@ switch ($mod_step) {
         $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['ThreadReopenedOk'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         phorum_db_reopen_thread($msgthd_id);
+
+        /*
+         * [hook]
+         *     reopen_thread
+         *
+         * [description]
+         *     This hook can be used for performing actions like sending 
+         *     notifications or making log entries after reopening threads.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after a thread has
+         *     been reopened by a moderator.
+         *
+         * [input]
+         *     The id of the thread that has been reopened (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_reopen_thread($msgthd_id)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the reopened thread id
+         *         $PHORUM["mod_foo"]["reopened_threads"][] = $msgthd_id;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["reopen_thread"]))
             phorum_hook("reopen_thread", $msgthd_id);
 
@@ -314,6 +549,57 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
 
+        /*
+         * [hook]
+         *     after_approve
+         *
+         * [description]
+         *     This hook can be used for performing extra actions after a
+         *     message has been approved.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right approving a message
+         *     and possibly its replies.
+         *
+         * [input]
+         *     An array containing two elements: 
+         *     <ul>
+         *     <li>The message data</li>
+         *     <li>The type of approval (either 
+         *     <literal>PHORUM_APPROVE_MESSAGE</literal> or
+         *     <literal>PHORUM_APPROVE_MESSAGE_TREE</literal>)</li>
+         *     </ul>
+         *
+         * [output]
+         *     Same as input.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_after_approve($data)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // alert the message author that their message has been
+         *         // approved
+         *         $pm_message = preg_replace(
+         *             "%message_subject%",
+         *             $data[0]["subject"],
+         *             $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageApprovedBody"]
+         *             );
+         *         phorum_db_pm_send(
+         *             $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageApprovedSubject"],
+         *             $pm_message,
+         *             $data[0]["user_id"]
+         *             );
+         *
+         *         return $data;
+         *
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["after_approve"]))
             phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
 
@@ -405,6 +691,39 @@ switch ($mod_step) {
 
         }
 
+        /*
+         * [hook]
+         *     hide_thread
+         *
+         * [description]
+         *     This hook can be used for performing actions like sending 
+         *     notifications or making log entries after hiding a message.
+         *
+         * [category]
+         *     Moderation
+         *
+         * [when]
+         *     In <filename>moderation.php</filename>, right after a message has
+         *     been hidden by a moderator.
+         *
+         * [input]
+         *     The id of the thread that has been hidden (read-only).
+         *
+         * [output]
+         *     None
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_hide_thread($msgthd_id)
+         *     {
+         *         global $PHORUM;
+         *
+         *         // Log the hidden thread id
+         *         $PHORUM["mod_foo"]["hidden_threads"][] = $msgthd_id;
+         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *     }
+         *     </hookcode>
+         */
         if (isset($PHORUM["hooks"]["hide_thread"]))
             phorum_hook("hide_thread", $msgthd_id);
 

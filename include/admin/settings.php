@@ -433,7 +433,43 @@ $row=$frm->addrow( "Use BCC in sending mails:", $frm->select_tag( "use_bcc", arr
 $row=$frm->addrow( "Ignore Admin for moderator-emails:", $frm->select_tag( "email_ignore_admin", array( "No", "Yes" ), $PHORUM["email_ignore_admin"] ) );
 $frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for this option, then the moderator-notifications and report-message emails will not be sent to the admininistrator, only to moderators" );
 
-// calling mods
+/*
+ * [hook]
+ *     admin_general
+ *
+ * [description]
+ *     This hook can be used for adding items to the form on the
+ *     "General Settings" page of the admin interface.
+ *
+ * [category]
+ *     Admin interface
+ *
+ * [when]
+ *     Right before the <literal>PhorumInputForm</literal> object is shown.
+ *
+ * [input]
+ *     The <literal>PhorumInputForm</literal> object.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_admin_general ($frm) 
+ *     {
+ *         // Add a section for the foo settings
+ *         $frm->addbreak( "Foo Module Settings" );
+ *
+ *         // Add the option to cache the bar
+ *         $row=$frm->addrow( "Enable Bar Caching:", $frm->select_tag( "mod_foo[enable_bar_caching]", array( "No", "Yes" ), $PHORUM["mod_foo"]["enable_bar_caching"] ) );
+ *         $frm->addhelp($row, "Enable Bar Caching", "If you select yes for this option, then the bar will be cached." );
+ *
+ *         // Return the modified PhorumInputForm
+ *         return $frm;
+ *
+ *     }
+ *     </hookcode>
+ */
 $frm=phorum_hook("admin_general", $frm);
 
 $frm->show();
