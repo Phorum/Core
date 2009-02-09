@@ -11,65 +11,28 @@ include(phorum_get_template('header'));
 $clientjs = phorum_get_url(PHORUM_AJAX_URL, 'client');
 
 ?>
-<script type="text/javascript" src="<?php print $clientjs ?>"></script>
 <script type="text/javascript">
 
-var state;
-var logger;
 var viewer;
 
-function init() {
-    state  = document.getElementById('state');
-    logger = document.getElementById('logger');
-    viewer = document.getElementById('viewer');
-    clearState();
-}
-
-function setLoading(status) {
-    status = status.replace(/&/g, '&amp;');
-    status = status.replace(/</g, '&lt;');
-    status = status.replace(/>/g, '&gt;');
-    status = status.replace(/"/g, '&quot;');
-    status = status.replace(/'/g, '&#039;');
-    logger.innerHTML += status+"<br/><br/>";
-}
-function clearState() {
-    state.innerHTML = '';
-    logger.innerHTML = '';
-    viewer.innerHTML = '';
-}
-function updateState(state) {
-    state.innerHTML += "<br/>request state changed to: " +
-                       state.readyState;
-}
-
 function helloworld() {
-  clearState();
   Phorum.Ajax.call({
     "call"          : "helloworld",
-    "onRequest"     : function (rb) { setLoading('request: '+rb); },
-    "onResponse"    : function (rb) { setLoading('response: '+rb); },
-    "onStateChange" : function (xhr) { updateState(xhr); },
+    "cache_id"      : "helloworld",
     "onSuccess"     : function (data) {
-      viewer.innerHTML = '<b>You have been hit by the unstoppable<br/>' +
-                         'and terrible hello world example!!<br/>' +
-                         'That must have hurt quite a bit.<br/>' +
-                         'Don\'t tell me I didn\'t warn you...</b>'+
-                         '<br/><br/>Server returned: ' + data;
+      viewer.innerHTML = 'Server returned: ' + data;
     },
-    "onFailure"     : function (error) { alert("Error: " + error); }
+    "onFailure"     : function (error) { 
+      alert("Error: " + error);
+    }
   });
 }
 
 function checkpm() {
   var id = document.getElementById('checkpm_user_id').value;
-  clearState();
   Phorum.Ajax.call({
     "call"          : "checkpm",
     "user_id"       : id,
-    "onRequest"     : function (rb) { setLoading('request: '+rb); },
-    "onResponse"    : function (rb) { setLoading('response: '+rb); },
-    "onStateChange" : function (xhr) { updateState(xhr); },
     "onFailure"     : function (error) { alert("Error: " + error); },
     "onSuccess"     : function (data) { viewer.innerHTML = 'Boolean for new PM is: ' + data; }
   });
@@ -81,7 +44,7 @@ function checkpm() {
 <?php print htmlspecialchars($clientjs) ?><br/>
 Version:
 <script type="text/javascript">
-  document.write(Phorum.Ajax.version)
+  document.write(Phorum.library_version)
 </script>
 <br/>
 <br/>
@@ -108,7 +71,8 @@ Version:
 </div>
 
 <script type="text/javascript">
-init();
+viewer = document.getElementById('viewer');
+viewer.innerHTML = '';
 </script>
 
 <?php

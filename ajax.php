@@ -38,12 +38,7 @@ require_once('./include/api/json.php');
 
 if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'client')
 {
-    header("Content-type: text/javascript");
-    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 28800) . ' GMT');
-    header('Cache-control: must-revalidate');
-    header('Pragma: cache');
-
-    include('./include/ajax/client.js.php');
+    include('./javascript.php');
     exit;
 }
 
@@ -61,6 +56,12 @@ if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'examples') {
 // ----------------------------------------------------------------------
 
 $PHORUM['ajax_args'] = array();
+
+// Check if this is a JSONP request.
+$PHORUM['ajax_jsonp'] = NULL;
+if (isset($PHORUM['args']['callback']) && isset($PHORUM['args']['_'])) {
+    $PHORUM['ajax_jsonp'] = $PHORUM['args']['callback'];
+}
 
 // JSON data based request (stored in a POST or PUT request body)
 if ($_SERVER['REQUEST_METHOD']=='POST' || $_SERVER['REQUEST_METHOD']=='PUT')
@@ -178,17 +179,26 @@ phorum_ajax_error('Unknown call "'.$ajax_call.'" in Ajax POST request');
  * This will send an error (500 HTTP status code) message to the client,
  * using UTF-8 as the character set.
  *
+ * When JSONP is used for communicating to Phorum's Ajax script, then
+ * a JSONP callback is done with {error: "error message"} as the
+ * response data. The calling client will have to handle this error.
+ *
  * @param string $message
  *     The error message to return.
  */
 function phorum_ajax_error($message)
 {
-    $message = phorum_api_json_convert_to_utf8($message);
+    global $PHORUM;
 
-    header("HTTP/1.1 500 Phorum Ajax error");
-    header("Status: 500 Phorum Ajax error");
-    header("Content-Type: text/plain; charset=UTF-8");
-    print $message;
+    if ($PHORUM['ajax_jsonp'] === NULL) {
+        header("HTTP/1.1 500 Phorum Ajax error");
+        header("Status: 500 Phorum Ajax error");
+        header("Content-Type: text/plain; charset=UTF-8");
+        print phorum_api_json_convert_to_utf8($message);
+    } else {
+        $return =  phorum_api_json_encode(array('error' => $message));
+        print $PHORUM['ajax_jsonp'] . "($return);";
+    }
     exit(1);
 }
 
@@ -198,6 +208,9 @@ function phorum_ajax_error($message)
  * The data will be sent to the client in the JSON encoding format,
  * using UTF-8 as the character set.
  *
+ * When JSONP is used for communicating to Phorum's Ajax script, then
+ * a JSONP callback is done with the JSON encoded $data as the response data.
+ *
  * @param mixed $data
  *     The data to return in the body.
  */
@@ -206,7 +219,14 @@ function phorum_ajax_return($data)
     global $PHORUM;
 
     header("Content-Type: text/plain; charset=UTF-8");
-    print phorum_api_json_encode($data);
+    $return =  phorum_api_json_encode($data);
+
+    if ($PHORUM['ajax_jsonp'] === NULL) {
+        print $return;
+    } else {
+        print $PHORUM['ajax_jsonp'] . "($return);";
+    }
+
     exit(0);
 }
 
@@ -256,6 +276,15 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
         );
     }
     $value = $PHORUM["ajax_args"][$arg];
+
+    // Handle JSON decoding if the value was JSON encoded.
+    // This is determined by the magic marker $JSON$ that can be
+    // prefixed to an argument. This encoding method is used
+    // for handling arrays in JSONP call parameters from the
+    // Phorum JavaScript library.
+    if (strlen($value) > 6 && substr($value, 0, 6) == '$JSON$') {
+        $value = phorum_api_json_decode(substr($value, 6));
+    }
 
     // Return immediately, if we don't need to do type checking.
     if (is_null($type)) {

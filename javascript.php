@@ -27,12 +27,26 @@ phorum_build_common_urls();
 // have to be added to the javascript code.
 $module_registrations = array();
 
-// Add core Phorum Ajax layer client JavaScript code.
+// Add the jQuery JavaScript library code.
+// By using a cache_key, we prevent the need for filemtime checking.
 $module_registrations[] = array(
     'module'    => 'core',
-    'source'    => 'file(include/ajax/client.js.php)',
-    'cache_key' => filemtime('./include/ajax/client.js.php') .
-                   $PHORUM['DATA']['URL']['AJAX']
+    'source'    => 'file(include/javascript/jquery-1.2.6.min.js)',
+    'cache_key' => '1.2.6.min'
+);
+
+// Add the jQuery JSON plugin.
+// By using a cache_key, we prevent the need for filemtime checking.
+$module_registrations[] = array(
+    'module'    => 'core',
+    'source'    => 'file(include/javascript/jquery.json-1.3.min.js)',
+    'cache_key' => '1.3.min'
+);
+
+// Add the Phorum JavaScript library.
+$module_registrations[] = array(
+    'module'    => 'core',
+    'source'    => 'file(include/javascript/phorum-javascript-library.php)'
 );
 
 // Add template specific javascript code, if available. The template writer
@@ -217,11 +231,7 @@ if (isset($PHORUM['args']['refresh']) ||
     empty($PHORUM['cache_javascript']) ||
     !file_exists($cache_file))
 {
-    $content =
-        "// Phorum object. Other JavaScript code for Phorum can extend\n" .
-        "// this one to implement functionality without risking name\n" .
-        "// name space collissions.\n" .
-        "Phorum = {};\n\n";
+    $content = '';
 
     foreach ($module_registrations as $id => $r)
     {

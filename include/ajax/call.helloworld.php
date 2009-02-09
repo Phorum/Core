@@ -38,6 +38,6 @@ if (!defined("PHORUM")) return;
 
 $who = phorum_ajax_getarg('who', 'string', 'world');
 
-phorum_ajax_return("hello, $who");
+phorum_ajax_return("Hello, $who!");
 
 ?>
