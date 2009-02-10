@@ -122,13 +122,13 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
             }
         }
 
-        // Clear output buffer.
-        ob_end_clean();
-
         print '</body></html>';
         exit(1);
     }
 
+    // Clear output buffer.
+    ob_end_clean();
+    
     // Restore original display_errors setting.
     @ini_set("display_errors", $orig);
 } else {
