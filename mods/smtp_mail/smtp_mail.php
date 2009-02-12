@@ -69,6 +69,28 @@ function phorum_smtp_send_messages ($data)
             // add the newly created message-id
             $mail->HeaderLine("Message-ID", $data['messageid']);
             
+            // add attachments if provided
+            if(isset($data['attachments']) && count($data['attachments'])) {
+            	/*
+            	 * Expected input is an array of
+            	 * 
+            	 * array(
+            	 * 'filename'=>'name of the file including extension',
+            	 * 'filedata'=>'plain (not encoded) content of the file',
+            	 * 'mimetype'=>'mime type of the file', (optional)
+            	 * )
+            	 * 
+            	 */
+            	
+            	foreach($data['attachments'] as $att_id => $attachment) {
+            		$att_type = (!empty($attachment['mimetype']))?$attachment['mimetype']:'application/octet-stream';
+            		$mail->AddStringAttachment($attachment['filedata'],$attachment['filename'],'base64',$att_type);
+            		
+            		// try to unset it in the original array to save memory
+            		unset($data['attachments'][$att_id]);
+            	}
+            	
+            }
             
             if(!empty($settings['bcc']) && $num_addresses > 3){
             	$bcc = 1;
@@ -85,8 +107,20 @@ function phorum_smtp_send_messages ($data)
             	} else {
             		$mail->AddAddress($address);
             		if(!$mail->Send()) {
-            			echo "There was an error sending the message.\n";
-            			echo "Error returned was ".$mail->ErrorInfo;
+            		    $error_msg  = "There was an error sending the message.";
+            		    $detail_msg = "Error returned was: ".$mail->ErrorInfo;
+            		   
+                        if (function_exists('event_logging_writelog')) {
+                            event_logging_writelog(array(
+                               "source"    => "smtp_mail",
+                               "message"   => $error_msg,
+                               "details"   => $detail_msg,
+							   "loglevel"  => EVENTLOG_LVL_ERROR,
+                               "category"  => EVENTLOG_CAT_MODULE
+                            ));
+                        }            		    
+            		    echo $error_msg."\n";
+            		    echo $detail_msg;         
             		}
    
 				    // Clear all addresses  for next loop  
@@ -97,8 +131,20 @@ function phorum_smtp_send_messages ($data)
             // bcc needs just one send call
             if($bcc) {
             		if(!$mail->Send()) {
-            			echo "There was an error sending the bcc message.\n";
-            			echo "Error returned was ".$mail->ErrorInfo;
+            		   $error_msg  = "There was an error sending the bcc message.";
+            		   $detail_msg = "Error returned was: ".$mail->ErrorInfo;
+            		   
+                       if (function_exists('event_logging_writelog')) {
+                            event_logging_writelog(array(
+                               "source"    => "smtp_mail",
+                               "message"   => $error_msg,
+                               "details"   => $detail_msg,
+							   "loglevel"  => EVENTLOG_LVL_ERROR,
+                               "category"  => EVENTLOG_CAT_MODULE
+                            ));
+                       }            		    
+            		   echo $error_msg."\n";
+            		   echo $detail_msg;
             		}
             }
             
@@ -110,7 +156,22 @@ function phorum_smtp_send_messages ($data)
             
             
         } catch (Exception $e) {
-            echo "There was a problem communicating with SMTP: " . $e->getMessage();            exit();
+            $error_msg  = "There was a problem communicating with SMTP";
+            $detail_msg = "The error returned was: ".$e->getMessage();
+            
+            if (function_exists('event_logging_writelog')) {
+                event_logging_writelog(array(
+                      "source"    => "smtp_mail",
+                      "message"   => $error_msg,
+                      "details"   => $detail_msg,
+    				  "loglevel"  => EVENTLOG_LVL_ERROR,
+                      "category"  => EVENTLOG_CAT_MODULE
+                ));
+            }
+            
+            echo $error_msg."\n";
+            echo $detail_msg;            
+            exit();
         } 
     }
 
