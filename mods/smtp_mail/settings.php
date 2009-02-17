@@ -1,6 +1,6 @@
 <?php
 /*
-* SMTP-Mail-Module v0.9
+* SMTP-Mail-Module
 * made by Thomas Seifert
 * email: thomas (at) phorum.org
 *
@@ -17,7 +17,9 @@ if(count($_POST)){
                                  'auth' => $_POST['auth'],
                                  'username' => $_POST['auth_username'],
                                  'password' => $_POST['auth_password'],
-                                 'conn' => $_POST['conn']
+                                 'conn' => $_POST['conn'],
+                                 'log_successful' => $_POST['log_successful'],
+                                 'show_errors' => $_POST['show_errors']
                                  );
 
     if (empty($error)) {
@@ -50,6 +52,13 @@ $frm->addrow("Use SMTP Auth", $frm->select_tag("auth",array(1=>'Yes',0=>'No'),$P
 $frm->addrow("SMTP Auth Username", $frm->text_box("auth_username", $PHORUM['smtp_mail']['username'], 50));
 $frm->addrow("SMTP Auth Password", $frm->text_box("auth_password", $PHORUM['smtp_mail']['password'], 50,0,true));
 
+$frm->addsubbreak("Logging / Errorhandling");
+
+$row = $frm->addrow("Show errors on screen",$frm->select_tag("show_errors",array(1=>"Yes",0=>"No"),$PHORUM['smtp_mail']['show_errors']));
+$frm->addhelp($row,"Show errors on screen","This option enables to show errors on screen (default). If disabled you should make sure that you have the Event Logging Module enabled which will log errors in email sending.");
+
+$row = $frm->addrow("Log successful mails to the Event Logging Module",$frm->select_tag("log_successful",array(0=>"No",1=>"Yes"),$PHORUM['smtp_mail']['log_successful']));
+$frm->addhelp($row,"Logging of successful emails to the Event Logging Module","This option logs successful email messages to the Event Logging Module if that is enabled too.\nErrors are logged there always (if the module is enabled).");
 $frm->show();
 
 

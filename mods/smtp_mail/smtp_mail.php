@@ -119,10 +119,21 @@ function phorum_smtp_send_messages ($data)
                                "category"  => EVENTLOG_CAT_MODULE
                             ));
                         }            		    
-            		    echo $error_msg."\n";
-            		    echo $detail_msg;         
-            		}
-   
+                        if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {
+                		    echo $error_msg."\n";
+                		    echo $detail_msg;         
+                        }
+            		} elseif(!empty($settings['log_successful'])) {
+            		      if (function_exists('event_logging_writelog')) {
+                            event_logging_writelog(array(
+                               "source"    => "smtp_mail",
+                               "message"   => "Email successfully sent",
+                               "details"   => "An email has been sent:\nTo:$address\nSubject: $subject\nBody: $message\n" ,
+							   "loglevel"  => EVENTLOG_LVL_INFO,
+                               "category"  => EVENTLOG_CAT_MODULE
+                          ));
+                        }     
+            		}   
 				    // Clear all addresses  for next loop  
 					$mail->ClearAddresses(); 
             	}
@@ -142,9 +153,23 @@ function phorum_smtp_send_messages ($data)
 							   "loglevel"  => EVENTLOG_LVL_ERROR,
                                "category"  => EVENTLOG_CAT_MODULE
                             ));
-                       }            		    
-            		   echo $error_msg."\n";
-            		   echo $detail_msg;
+                       }            	
+                       if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {	    
+                		   echo $error_msg."\n";
+                		   echo $detail_msg;
+                       }
+            		} elseif(!empty($settings['log_successful'])) {
+            		      if (function_exists('event_logging_writelog')) {
+            		        $address_join = implode(",",$addresses);
+            		          
+                            event_logging_writelog(array(
+                               "source"    => "smtp_mail",
+                               "message"   => "BCC-Email successfully sent",
+                               "details"   => "An email (bcc-mode) has been sent:\nBCC:$address_join\nSubject: $subject\nBody: $message\n" ,
+							   "loglevel"  => EVENTLOG_LVL_INFO,
+                               "category"  => EVENTLOG_CAT_MODULE
+                          ));
+                        }     
             		}
             }
             
@@ -168,9 +193,10 @@ function phorum_smtp_send_messages ($data)
                       "category"  => EVENTLOG_CAT_MODULE
                 ));
             }
-            
-            echo $error_msg."\n";
-            echo $detail_msg;            
+            if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {
+                echo $error_msg."\n";
+                echo $detail_msg;            
+            }
             exit();
         } 
     }
