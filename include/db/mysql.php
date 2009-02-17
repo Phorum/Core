@@ -1090,7 +1090,7 @@ function phorum_db_update_message($message_id, $message)
     {
         if (phorum_db_validate_field($field))
         {
-            $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_MESSAGE);
+            $custom = phorum_api_custom_field_byname($field,PHORUM_CUSTOM_FIELD_MESSAGE);
 
             if($custom === null) {
                 if (is_numeric($value) &&

@@ -595,6 +595,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
     }
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
+    
+    // some defaults
+    $PHORUM['DATA']['LOGGEDIN'] = FALSE;
+    $PHORUM['user'] = array();
 
     // Try to restore a user session.
     if (!$skipsession && phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
