@@ -92,6 +92,15 @@ $PHORUM['string_fields_message'] = array('author', 'subject', 'body', 'email');
  */
 $PHORUM['string_fields_forum'] = array('name', 'description', 'template');
 
+ /**
+ * User fields which are always strings, even if they contain numbers only.
+ */
+$PHORUM['string_fields_user'] = array('username', 'real_name', 'display_name', 
+   'password', 'password_temp', 'sessid_lt', 'sessid_st', 'email', 'email_temp',
+   'signature', 'user_language', 'user_template', 'moderator_data', 'settings_data' 
+);
+
+
 /**
  * Function call parameter $return for {@link phorum_db_interact()}.
  * Makes the function return a database connection handle.
@@ -4013,7 +4022,12 @@ function phorum_db_user_save($userdata)
                 );
             }
             $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-            $values[] = "$key = '$value'";
+            
+            if( in_array($key, $PHORUM['string_fields_user'] ) ) {
+                $values[] = "$key = '$value'";
+            } else {
+                $values[] = "$key = $value";
+            }
         }
 
         // Update the fields in the database.
