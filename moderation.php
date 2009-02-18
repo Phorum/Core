@@ -829,6 +829,32 @@ switch ($mod_step) {
             // update message count / stats
             phorum_update_thread_info($target['thread']);
             phorum_db_update_forum_stats(true);
+            
+	        /*
+	         * [hook]
+	         *     after_merge
+	         *
+	         * [description]
+	         *     This hook can be used for performing actions on
+	         *     merging threads
+	         *
+	         * [category]
+	         *     Moderation
+	         *
+	         * [when]
+	         *     In <filename>moderation.php</filename>, right after two threads have
+	         *     been merged by a moderator.
+	         *
+	         * [input]
+	         *     An array with the translated message-ids; old-message_id -> new-message_id
+	         *
+	         * [output]
+	         *     None
+	         *
+	         */            
+            
+            phorum_hook('after_merge', $msgid_translation);
+            
         } else {
             // Cancel Thread Merge
             $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
@@ -864,6 +890,31 @@ switch ($mod_step) {
            phorum_update_thread_info($_POST['thread']);
            phorum_update_thread_info($_POST['message']);
            phorum_db_update_forum_stats(true);
+           
+            /*
+             * [hook]
+             *     after_split
+             *
+             * [description]
+             *     This hook can be used for performing actions on
+             *     splitting threads
+             *
+             * [category]
+             *     Moderation
+             *
+             * [when]
+             *     In <filename>moderation.php</filename>, right after a thread has
+             *     been split by a moderator.
+             *
+             * [input]
+             *     The id of the newly created thread
+             *
+             * [output]
+             *     None
+             *
+             */                  
+           phorum_hook('after_split', $_POST['message']);               
+           
            break;
 
     default:
