@@ -526,8 +526,13 @@ function phorum_api_file_store($file)
         $file["file_data"] = base64_encode($file["file_data"]);
     }
 
+    // store the user_id if available
+    if (empty($file["user_id"]) && !empty($PHORUM["user"]["user_id"])) {
+        $file["user_id"] = $PHORUM["user"]["user_id"];
+    }
+    
     // Update the (skeleton) file record to match the real file data.
-    // This acts like a commit action for the file storage.
+    // This acts like a commit action for the file storage.    
     phorum_db_file_save ($file);
 
     return $file;
