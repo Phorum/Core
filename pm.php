@@ -482,7 +482,14 @@ if (!empty($action)) {
                         if (empty($error)) {
 
                             $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], array_keys($recipients), NULL, $_POST["keep"]);
-
+                            
+                            $pm_message = array(
+                                    'pm_message_id' => $pm_message_id,
+                                    'subject'       => $_POST['subject'],
+                                    'message'       => $_POST['message'],
+                                    'from_username' => $PHORUM['user']['display_name'],
+                                    'user_id'       => $user_id,
+                            );
                             // Show an error in case of problems.
                             if (! $pm_message_id) {
 
@@ -492,14 +499,6 @@ if (!empty($action)) {
                             } elseif (!empty($PHORUM['allow_pm_email_notify'])) {
 
                                 require_once('./include/email_functions.php');
-
-                                $pm_message = array(
-                                    'pm_message_id' => $pm_message_id,
-                                    'subject'       => $_POST['subject'],
-                                    'message'       => $_POST['message'],
-                                    'from_username' => $PHORUM['user']['display_name'],
-                                    'user_id'       => $user_id,
-                                );
 
                                 // Sort all recipients that want a notify by language.
                                 $langrcpts = array();
