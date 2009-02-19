@@ -49,20 +49,20 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 
 body
 {
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 13px;
 }
 
 input, textarea, select, td
 {
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 13px;
     border-color: #EEEEEE;
 }
 
 .input-form-th
 {
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 13px;
     padding: 3px;
     background-color: #DDDDEA;
@@ -70,7 +70,7 @@ input, textarea, select, td
 
 .input-form-td
 {
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 13px;
     padding: 3px;
     background-color: #EEEEFA;
@@ -191,7 +191,7 @@ input, textarea, select, td
 
 .PhorumInfoMessage
 {
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 13px;
     padding: 3px;
     background-color: #EEEEFA;
@@ -204,7 +204,7 @@ input, textarea, select, td
     background-image: url("./images/alert.gif");
     background-position: 5px 5px;
     background-repeat: no-repeat;
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 15px;
     padding: 12px 12px 12px 50px;
     color: #000000;
@@ -214,7 +214,7 @@ input, textarea, select, td
 
 .PhorumAdminOkMsg
 {
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 15px;
     padding: 12px;
     color: #000000;
@@ -276,7 +276,7 @@ img.question
     background-color: White;
     height: 200px;
     padding: 8px;
-    font-family: Lucida Sans Unicode, Lucida Grand, Verdana, Arial, Helvetica;
+    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
     font-size: 13px;
     overflow: scroll;
 }
