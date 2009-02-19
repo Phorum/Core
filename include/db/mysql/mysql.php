@@ -122,9 +122,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 $querytrack['count'] += 2;
                 if ($debug > 1) {
                     $querytrack['queries'][] = array(
-                        'number' => '001',
-                        'query'  => "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
-                        'time'   => '0.000'
+                        'number'     => '001',
+                        'query'      => htmlspecialchars("SET NAMES '{$PHORUM['DBCONFIG']['charset']}'"),
+                        'raw_query'  => "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
+                        'time'       => '0.000'
                     );
                 }
             }
@@ -147,17 +148,17 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         'missing sql query statement!', E_USER_ERROR
     );
 
-    // Time the query for debug level 2 and up.
-    if ($debug > 1) {
-        $t1 = array_sum(explode(' ', microtime()));
-    }
-
 
     $tries = 0;
 
     $res = false;
 
     while($res === FALSE){
+
+        // Time the query for debug level 2 and up.
+        if ($debug > 1) {
+            $t1 = microtime(true);
+        }
 
         // Execute the SQL query.
         // For queries where we are going to retrieve multiple rows, we
@@ -170,13 +171,14 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($debug) {
             $querytrack['count']++;
             if ($debug > 1) {
-                $t2 = array_sum(explode(' ', microtime()));
+                $t2 = microtime(true);
                 $time = sprintf("%0.3f", $t2 - $t1);
                 $querytrack['time'] += $time;
                 $querytrack['queries'][] = array(
-                    'number' => sprintf("%03d", $querytrack['count']),
-                    'query'  => htmlspecialchars($sql),
-                    'time'   => $time
+                    'number'    => sprintf("%03d", $querytrack['count']),
+                    'query'     => htmlspecialchars($sql),
+                    'raw_query' => $sql,
+                    'time'      => $time
                 );
             }
             $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;

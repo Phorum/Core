@@ -153,10 +153,6 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         'missing sql query statement!', E_USER_ERROR
     );
 
-    // Time the query for debug level 2 and up.
-    if ($debug > 1) {
-        $t1 = array_sum(explode(' ', microtime()));
-    }
 
     // Execute the SQL query.
 
@@ -166,8 +162,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     while($res === FALSE && $tries < 3){
 
-        error_log($querytrack['count']);
-        error_log($sql);
+        // Time the query for debug level 2 and up.
+        if ($debug > 1) {
+            $t1 = microtime(true);
+        }
 
         // For queries where we are going to retrieve multiple rows, we
         // use an unuffered query result.
@@ -183,7 +181,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($debug) {
             $querytrack['count']++;
             if ($debug > 1) {
-                $t2 = array_sum(explode(' ', microtime()));
+                $t2 = microtime(true);
                 $time = sprintf("%0.3f", $t2 - $t1);
                 $querytrack['time'] += $time;
                 $querytrack['queries'][] = array(
