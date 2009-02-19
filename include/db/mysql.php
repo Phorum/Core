@@ -701,6 +701,7 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     // then return an empty array.
     if (empty($allowed_forums)) return array();
 
+    /*
     // We need to differentiate on which key to use.
     // If selecting on a specific thread, then the best index
     // to use would be the thread_message index.
@@ -712,10 +713,10 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     {
         switch($list_type) {
             case LIST_RECENT_MESSAGES:
-                $use_key = 'new_count';
+                $use_key = 'forum_recent_messages';
                 break;
             case LIST_RECENT_THREADS:
-                $use_key = 'new_threads';
+                $use_key = 'list_page_flat';
                 break;
             case LIST_UPDATED_THREADS:
                 $use_key = 'list_page_float';
@@ -738,10 +739,11 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
         }
     }
 
+    */
+
     // Build the SQL query.
     $sql = "SELECT  *
             FROM    {$PHORUM['message_table']}
-            USE     INDEX ($use_key)
             WHERE   status=".PHORUM_STATUS_APPROVED;
 
     if (count($allowed_forums) == 1) {
@@ -764,7 +766,7 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     if ($list_type == LIST_UPDATED_THREADS) {
         $sql .= ' ORDER BY modifystamp DESC';
     } else {
-        $sql .= ' ORDER BY message_id DESC';
+        $sql .= ' ORDER BY datestamp DESC';
     }
 
     if ($length) {
@@ -850,7 +852,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
     }
 
     if (!$countonly) {
-        $sql .= ' ORDER BY thread, message_id';
+        $sql .= ' ORDER BY thread, datestamp';
     }
 
     // Retrieve and return data for counting unapproved messages.
@@ -1504,7 +1506,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
             WHERE  $forum_id_check
                    thread = $thread
                    $approvedval
-            ORDER  BY message_id";
+            ORDER  BY datestamp";
 
     if ($page > 0) {
        // Handle the page offset.
@@ -1638,7 +1640,7 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
                 thread = $thread
                 $approvedval AND
                 message_id <= $message_id
-         ORDER  BY message_id"
+         ORDER  BY datestamp"
     );
 
     return $index;
@@ -1762,7 +1764,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         $user_id = (int) $author;
         if (empty($user_id)) return $return;
 
-        // Seach for messages.
+        // Search for messages.
         $sql = "SELECT SQL_CALC_FOUND_ROWS *
                 FROM   {$PHORUM['message_table']}
                 USE    KEY(user_messages)
@@ -1770,7 +1772,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                        status=".PHORUM_STATUS_APPROVED." AND
                        moved=0
                        $forum_where
-                ORDER  BY message_id DESC
+                ORDER  BY datestamp DESC
                 LIMIT  $start, $length";
         $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql);
 
@@ -7568,22 +7570,18 @@ function phorum_db_create_tables()
            moved                    tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY (message_id),
-           KEY thread_message (thread,message_id),
-           KEY thread_forum (thread,forum_id),
            KEY special_threads (sort,forum_id),
-           KEY status_forum (status,forum_id),
-           KEY list_page_float (forum_id,parent_id,modifystamp),
-           KEY list_page_flat (forum_id,parent_id,datestamp),
-           KEY new_count (forum_id,status,moved,message_id),
-           KEY new_threads (forum_id,status,parent_id,moved,message_id),
-           KEY recent_threads (status, parent_id, message_id, forum_id),
-           KEY updated_threads (status, parent_id, modifystamp),
-           KEY dup_check (forum_id,author(50),subject,datestamp),
-           KEY forum_max_message (forum_id,message_id,status,parent_id),
            KEY last_post_time (forum_id,status,modifystamp),
-           KEY next_prev_thread (forum_id,status,thread),
+           KEY dup_check (forum_id,author(50),subject,datestamp),
            KEY recent_user_id (recent_user_id),
-           KEY user_messages (user_id, message_id)
+           KEY user_messages (user_id,message_id),
+           KEY updated_threads (status,parent_id,modifystamp),
+           KEY list_page_flat (forum_id,status,parent_id,datestamp),
+           KEY thread_date (thread,datestamp),
+           KEY list_page_float (forum_id,status,parent_id,modifystamp),
+           KEY forum_recent_messages (forum_id,status,datestamp),
+           KEY recent_threads (status,parent_id,datestamp),
+           KEY recent_messages (status,datestamp)
        ) $charset",
 
       "CREATE TABLE {$PHORUM['settings_table']} (
