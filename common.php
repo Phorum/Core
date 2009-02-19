@@ -32,7 +32,7 @@ define( "PHORUM", "5.3-dev" );
 define( "PHORUM_SCHEMA_VERSION", "2008052200");
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2008102600" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2009021901" );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -128,7 +128,7 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
 
     // Clear output buffer.
     ob_end_clean();
-    
+
     // Restore original display_errors setting.
     @ini_set("display_errors", $orig);
 } else {
@@ -595,7 +595,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
     }
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
-    
+
     // some defaults
     $PHORUM['DATA']['LOGGEDIN'] = FALSE;
     $PHORUM['user'] = array();
@@ -2022,7 +2022,7 @@ if (!function_exists('mb_substr'))
             return substr($str, $start, $length);
         } else {
             return substr($str, $start);
-        }   
+        }
     }
 }
 
