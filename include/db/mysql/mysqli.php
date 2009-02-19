@@ -120,9 +120,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 $querytrack['count'] += 2;
                 if ($debug > 1) {
                     $querytrack['queries'][] = array(
-                        'number' => '001',
-                        'query'  => "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
-                        'time'   => '0.000'
+                        'number'     => '001',
+                        'query'      => htmlspecialchars("SET NAMES '{$PHORUM['DBCONFIG']['charset']}'"),
+                        'raw_query'  => "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",
+                        'time'       => '0.000'
                     );
                 }
             }
@@ -176,9 +177,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             $time = sprintf("%0.3f", $t2 - $t1);
             $querytrack['time'] += $time;
             $querytrack['queries'][] = array(
-                'number' => sprintf("%03d", $querytrack['count']),
-                'query'  => htmlspecialchars($sql),
-                'time'   => $time
+                'number'     => sprintf("%03d", $querytrack['count']),
+                'query'      => htmlspecialchars($sql),
+                'raw_query'  => $sql,
+                'time'       => $time
             );
         }
         $GLOBALS['PHORUM']['DATA']['DBDEBUG'] = $querytrack;
