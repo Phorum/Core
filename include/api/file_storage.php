@@ -414,20 +414,23 @@ function phorum_api_file_store($file)
         }
     }
 
-    // Force the message_id and user_id to 0, depending on the
+
+    // Set user_id to current user if one was not passed in
+    if (empty($checkfile["user_id"]) && isset($PHORUM["user"]["user_id"])) {
+        $checkfile["user_id"] = $PHORUM["user"]["user_id"];
+    }
+
+
+    // Force the message_id to 0, depending on the
     // link type. Also check if the required id field (user or
     // message) is set for the used link type.
     switch ($checkfile["link"])
     {
         case PHORUM_LINK_EDITOR:
             $checkfile["message_id"] = 0;
-            $checkfile["user_id"] = 0;
             break;
         case PHORUM_LINK_USER:
             $checkfile["message_id"] = 0;
-            if (empty($checkfile["user_id"])) {
-                $checkfile["user_id"] = $PHORUM["user"]["user_id"];
-            }
             if (empty($checkfile["user_id"])) trigger_error (
                 "phorum_api_file_store(): \$file set the link type to " .
                 "PHORUM_LINK_USER, but the user_id was not set.",
@@ -435,7 +438,6 @@ function phorum_api_file_store($file)
             );
             break;
         case PHORUM_LINK_MESSAGE:
-            $checkfile["user_id"] = 0;
             if (empty($checkfile["message_id"])) trigger_error (
                 "phorum_api_file_store(): \$file set the link type to " .
                 "PHORUM_LINK_MESSAGE, but the message_id was not set.",
@@ -445,9 +447,6 @@ function phorum_api_file_store($file)
         default:
             if (empty($checkfile["message_id"])) {
                 $checkfile["message_id"] = 0;
-            }
-            if (empty($checkfile["user_id"])) {
-                $checkfile["user_id"] = 0;
             }
             break;
     }
@@ -526,11 +525,6 @@ function phorum_api_file_store($file)
         $file["file_data"] = base64_encode($file["file_data"]);
     }
 
-    // store the user_id if available
-    if (empty($file["user_id"]) && !empty($PHORUM["user"]["user_id"])) {
-        $file["user_id"] = $PHORUM["user"]["user_id"];
-    }    
-    
     // Update the (skeleton) file record to match the real file data.
     // This acts like a commit action for the file storage.
     phorum_db_file_save ($file);
@@ -1075,7 +1069,7 @@ function phorum_api_file_purge_stale($do_purge)
      */
     if (isset($GLOBALS['PHORUM']['hooks']['file_purge_stale']))
         $stale_files = phorum_hook('file_purge_stale', $stale_files);
-    
+
     // Delete the files if requested.
     if ($do_purge) {
         foreach ($stale_files as $file) {
