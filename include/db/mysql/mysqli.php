@@ -100,11 +100,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             phorum_database_error('Failed to connect to the database.');
             exit;
         }
-        
+
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
             mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-        }        
-        
+        }
+
         // putting this here for testing mainly
         // All of Phorum should work in strict mode
         if(!empty($PHORUM["DBCONFIG"]["strict_mode"])){
@@ -130,65 +130,92 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     );
 
     // Execute the SQL query.
-    // For queries where we are going to retrieve multiple rows, we
-    // use an unuffered query result.
-    if ($return === DB_RETURN_ASSOCS || $return === DB_RETURN_ROWS) {
-         $res = FALSE;
-         if (mysqli_real_query($conn, $sql) !== FALSE) {
-             $res = mysqli_use_result($conn);
-         }
-    } else {
-         $res = mysqli_query($conn, $sql);
-    }
 
-    // Execute the SQL query.
-    if ($res === FALSE)
-    {
-        // See if the $flags tell us to ignore the error.
-        $ignore_error = FALSE;
-        $errno = mysqli_errno($conn);
-        switch ($errno)
-        {
-            // Table does not exist.
-            case 1146:
-              if ($flags & DB_MISSINGTABLEOK) $ignore_error = TRUE;
-              break;
+    $tries = 0;
 
-            // Table already exists.
-            case 1050:
-              if ($flags & DB_TABLEEXISTSOK) $ignore_error = TRUE;
-              break;
+    $res = false;
 
-            // Duplicate column name.
-            case 1060:
-              if ($flags & DB_DUPFIELDNAMEOK) $ignore_error = TRUE;
-              break;
+    while($res === FALSE && $tries < 3){
 
-            // Duplicate key name.
-            case 1061:
-              if ($flags & DB_DUPKEYNAMEOK) $ignore_error = TRUE;
-              break;
-
-            // Duplicate entry for key.
-            case 1062:
-            // For MySQL server versions 5.1.15 up to 5.1.20.
-            // See bug #28842 (http://bugs.mysql.com/bug.php?id=28842)
-            case 1582:
-              if ($flags & DB_DUPKEYOK) $ignore_error = TRUE;
-              break;
+        // For queries where we are going to retrieve multiple rows, we
+        // use an unuffered query result.
+        if ($return === DB_RETURN_ASSOCS || $return === DB_RETURN_ROWS) {
+             $res = FALSE;
+             if (mysqli_real_query($conn, $sql) !== FALSE) {
+                 $res = mysqli_use_result($conn);
+             }
+        } else {
+             $res = mysqli_query($conn, $sql);
         }
 
-        // Handle this error if it's not to be ignored.
-        if (! $ignore_error)
+        // Execute the SQL query.
+        if ($res === FALSE)
         {
-            $err = mysqli_error($conn);
 
-            // RETURN: error message or NULL
-            if ($return === DB_RETURN_ERROR) return $err;
+            $errno = mysqli_errno($conn);
 
-            // Trigger an error.
-            phorum_database_error("$err ($errno): $sql");
-            exit;
+            // if we have an error due to a transactional storage engine,
+            // retry the query for those errors up to 2 more times
+            if ($tries<3 &&
+                ($errno == 1422 ||  // 1422 Explicit or implicit commit is not allowed in stored function or trigger.
+                 $errno == 1213 ||  // 1213 Deadlock found when trying to get lock; try restarting transaction
+                 $errno == 1205)) { // 1205 Lock wait timeout
+
+                $tries++;
+
+            } else {
+
+                // See if the $flags tell us to ignore the error.
+                $ignore_error = FALSE;
+
+                switch ($errno)
+                {
+                    // Table does not exist.
+                    case 1146:
+                      if ($flags & DB_MISSINGTABLEOK) $ignore_error = TRUE;
+                      break;
+
+                    // Table already exists.
+                    case 1050:
+                      if ($flags & DB_TABLEEXISTSOK) $ignore_error = TRUE;
+                      break;
+
+                    // Duplicate column name.
+                    case 1060:
+                      if ($flags & DB_DUPFIELDNAMEOK) $ignore_error = TRUE;
+                      break;
+
+                    // Duplicate key name.
+                    case 1061:
+                      if ($flags & DB_DUPKEYNAMEOK) $ignore_error = TRUE;
+                      break;
+
+                    // Duplicate entry for key.
+                    case 1062:
+                    // For MySQL server versions 5.1.15 up to 5.1.20.
+                    // See bug #28842 (http://bugs.mysql.com/bug.php?id=28842)
+                    case 1582:
+                      if ($flags & DB_DUPKEYOK) $ignore_error = TRUE;
+                      break;
+                }
+
+                // Handle this error if it's not to be ignored.
+                if (! $ignore_error)
+                {
+                    $err = mysqli_error($conn);
+
+                    // RETURN: error message or NULL
+                    if ($return === DB_RETURN_ERROR) return $err;
+
+                    // Trigger an error.
+                    phorum_database_error("$err ($errno): $sql");
+                    exit;
+                }
+
+                // break while
+                break;
+
+            }
         }
     }
 
