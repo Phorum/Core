@@ -68,7 +68,20 @@ if (!empty($group_id)){
             // older templates may send username
             $name = trim($_REQUEST["adduser"]);
             if ($name != '') {
-                $userids = phorum_api_user_search('username', $name, '=', TRUE);
+
+                if($PHORUM["display_name_source"] == "username"){
+                    $check_fields = array("username", "real_name");
+                } else {
+                    $check_fields = array("real_name", "username");
+                }
+
+                foreach($check_fields as $field){
+                    $userids = phorum_api_user_search($field, $name, '=', TRUE);
+                    if(!empty($userids)){
+                        break;
+                    }
+                }
+
                 if (!empty($userids) && count($userids) == 1) {
                     $userid = array_shift($userids);
                 }
@@ -84,6 +97,8 @@ if (!empty($group_id)){
                 phorum_api_user_save_groups($userid, $groups);
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
             }
+        } elseif (!empty($userids) && count($userids) > 1) {
+            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["DupUserFoundGroup"];
         } else {
             $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["UserNotFoundGroup"];
         }
