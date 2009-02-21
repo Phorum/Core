@@ -94,41 +94,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
       ) {
 
         if(empty($conn_read)) {
-                // loop the servers until we get a connect
-                // this could slow you down if you have a lot of downed
-                // read servers
-                while(!$conn_read && count($PHORUM['DBCONFIG']['slaves'])){
 
-                    $rand_server = mt_rand(0, count($PHORUM['DBCONFIG']['slaves']));
+            $conn_read = phorum_db_get_random_connection($PHORUM['DBCONFIG']['slaves']);
 
-                    // just in case someone did non-contiguous keys
-                    if(!empty($PHORUM['DBCONFIG']['slaves'][$rand_server])) {
-
-
-                        $server_data = $PHORUM['DBCONFIG']['slaves'][$rand_server];
-
-                        $conn_read = mysqli_connect(
-                            $server_data['server'],
-                            $server_data['user'],
-                            $server_data['password'],
-                            $server_data['name'],
-                            $server_data['port'],
-                            $server_data['socket']
-                        );
-                        if(!$conn_read){
-                            // if we could not connect, remove this server
-                            // from the array for this request.
-                            unset($PHORUM['DBCONFIG']['slaves'][$rand_server]);
-
-                            // to get the keys renumbered
-                            sort($PHORUM['DBCONFIG']['slaves']);
-                        }
-                    }
-                }
-
-                if(!empty($PHORUM['DBCONFIG']['charset'])) {
-                    mysqli_query( $conn_read,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
-                }
+            if(!empty($PHORUM['DBCONFIG']['charset'])) {
+                mysqli_query( $conn_read,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+            }
         }
 
         $conn = $conn_read;
@@ -139,14 +110,21 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         if(empty($conn_write)) {
 
-            $conn_write = mysqli_connect(
-                $PHORUM['DBCONFIG']['server'],
-                $PHORUM['DBCONFIG']['user'],
-                $PHORUM['DBCONFIG']['password'],
-                $PHORUM['DBCONFIG']['name'],
-                $PHORUM['DBCONFIG']['port'],
-                $PHORUM['DBCONFIG']['socket']
-            );
+            if (!empty($PHORUM['DBCONFIG']['masters']) &&
+                is_array($PHORUM['DBCONFIG']['masters'])) {
+                
+                $conn_write = phorum_db_get_random_connection($PHORUM['DBCONFIG']['masters']);
+
+            } else {
+                $conn_write = mysqli_connect(
+                    $PHORUM['DBCONFIG']['server'],
+                    $PHORUM['DBCONFIG']['user'],
+                    $PHORUM['DBCONFIG']['password'],
+                    $PHORUM['DBCONFIG']['name'],
+                    $PHORUM['DBCONFIG']['port'],
+                    $PHORUM['DBCONFIG']['socket']
+                    );
+            }
 
             if(!empty($PHORUM['DBCONFIG']['charset'])) {
                 mysqli_query( $conn_write,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
@@ -389,6 +367,41 @@ function phorum_db_fetch_row($res, $type)
     );
 
     return $row ? $row : NULL;
+}
+
+function phorum_db_get_random_connection(&$db_array)
+{
+    // loop the servers until we get a connect
+    // this could slow you down if you have a lot of downed servers
+    while(!$conn && count($db_array)){
+                    
+        $rand_server = mt_rand(0, count($db_array));
+                    
+        // just in case someone did non-contiguous keys
+        if(!empty($db_array[$rand_server])) {
+                        
+            $server_data = $db_array[$rand_server];
+                        
+            $conn = mysqli_connect(
+                                   $server_data['server'],
+                                   $server_data['user'],
+                                   $server_data['password'],
+                                   $server_data['name'],
+                                   $server_data['port'],
+                                   $server_data['socket']
+                                   );
+            if(!$conn){
+                // if we could not connect, remove this server
+                // from the array for this request.
+                unset($db_array[$rand_server]);
+                            
+                // to get the keys renumbered
+                sort($db_array);
+            }
+        }
+    }
+
+    return $conn;
 }
 
 ?>
