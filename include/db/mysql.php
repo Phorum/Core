@@ -95,9 +95,9 @@ $PHORUM['string_fields_forum'] = array('name', 'description', 'template');
  /**
  * User fields which are always strings, even if they contain numbers only.
  */
-$PHORUM['string_fields_user'] = array('username', 'real_name', 'display_name', 
+$PHORUM['string_fields_user'] = array('username', 'real_name', 'display_name',
    'password', 'password_temp', 'sessid_lt', 'sessid_st', 'email', 'email_temp',
-   'signature', 'user_language', 'user_template', 'moderator_data', 'settings_data' 
+   'signature', 'user_language', 'user_template', 'moderator_data', 'settings_data'
 );
 
 
@@ -4024,7 +4024,7 @@ function phorum_db_user_save($userdata)
                 );
             }
             $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
-            
+
             if( in_array($key, $PHORUM['string_fields_user'] ) ) {
                 $values[] = "$key = '$value'";
             } else {
@@ -5080,16 +5080,14 @@ function phorum_db_newflag_check($forum_ids)
 
     $sql = "select forum_id, min(message_id) as message_id
             from {$PHORUM['user_newflags_table']}
-            where user_id=".$PHORUM["user"]["user_id"]." and
-            forum_id in (".implode(",", $forum_ids).")
+            where user_id=".$PHORUM["user"]["user_id"]."
             group by forum_id";
 
     $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
 
     $sql = "select forum_id, count(*) as count
             from {$PHORUM['user_newflags_table']}
-            where user_id=".$PHORUM["user"]["user_id"]." and
-            forum_id in (".implode(",", $forum_ids).")
+            where user_id=".$PHORUM["user"]["user_id"]."
             group by forum_id";
 
     $counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
@@ -5143,8 +5141,7 @@ function phorum_db_newflag_count($forum_ids)
     // get a list of forum_ids and minimum message ids from the newflags table
     $sql = "select forum_id, min(message_id) as message_id
             from {$PHORUM['user_newflags_table']}
-            where user_id=".$PHORUM["user"]["user_id"]." and
-            forum_id in (".implode(",", $forum_ids).")
+            where user_id=".$PHORUM["user"]["user_id"]."
             group by forum_id";
 
     $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
@@ -5154,8 +5151,7 @@ function phorum_db_newflag_count($forum_ids)
             from {$PHORUM['user_newflags_table']}
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
-            status=".PHORUM_STATUS_APPROVED." and
-            {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
+            status=".PHORUM_STATUS_APPROVED."
             group by forum_id";
 
     $message_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
@@ -5167,8 +5163,7 @@ function phorum_db_newflag_count($forum_ids)
             inner join {$PHORUM['message_table']} using (message_id, forum_id)
             where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
             parent_id=0 and
-            status=".PHORUM_STATUS_APPROVED." and
-            {$PHORUM['user_newflags_table']}.forum_id in (".implode(",", $forum_ids).")
+            status=".PHORUM_STATUS_APPROVED."
             group by forum_id";
 
     $thread_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
