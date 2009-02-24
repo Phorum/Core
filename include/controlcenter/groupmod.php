@@ -98,7 +98,7 @@ if (!empty($group_id)){
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["UserAddedToGroup"];
             }
         } elseif (!empty($userids) && count($userids) > 1) {
-            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["DupUserFoundGroup"];
+            $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["DupUserFound"];
         } else {
             $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["UserNotFoundGroup"];
         }

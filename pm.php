@@ -357,11 +357,24 @@ if (!empty($action)) {
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
                     if ($to_name != '') {
-                        $to_user_ids = phorum_api_user_search(
-                            'display_name', $to_name, '=', TRUE
-                        );
-                        if (empty($to_user_ids) || count($to_user_ids) > 1) {
+
+                        if($PHORUM["display_name_source"] == "username"){
+                            $check_fields = array("username", "real_name");
+                        } else {
+                            $check_fields = array("real_name", "username");
+                        }
+
+                        foreach($check_fields as $field){
+                            $to_user_ids = phorum_api_user_search($field, $to_name, '=', TRUE);
+                            if(!empty($to_user_ids)){
+                                break;
+                            }
+                        }
+
+                        if (empty($to_user_ids)) {
                             $error = $PHORUM["DATA"]["LANG"]["UserNotFound"];
+                        } elseif(count($to_user_ids) > 1){
+                            $error = $PHORUM["DATA"]["LANG"]["DupUserFound"];
                         } else {
                             $_POST["to_id"] = array_shift($to_user_ids);
                             unset($_POST["to_name"]);
@@ -482,7 +495,7 @@ if (!empty($action)) {
                         if (empty($error)) {
 
                             $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], array_keys($recipients), NULL, $_POST["keep"]);
-                            
+
                             $pm_message = array(
                                     'pm_message_id' => $pm_message_id,
                                     'subject'       => $_POST['subject'],

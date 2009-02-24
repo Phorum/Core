@@ -133,7 +133,7 @@
         "DeleteThread"          =>      "Delete Topic",
         "DenyUser"              =>      "Deny",
         "Detach"                =>      "Delete",
-        "DupUserFoundGroup"     =>      "More than one user matches the name you entered.  Perhaps you should try the user's username instead of their real name.",
+        "DupUserFound"          =>      "More than one user matches the name you entered.  Perhaps you should try the user's username instead of their real name.",
 
         "EditBoardsettings"     =>      "Forum Settings",
         "EditFolders"           =>      "Edit Folders",
