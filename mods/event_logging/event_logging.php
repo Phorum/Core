@@ -263,7 +263,7 @@ function phorum_mod_event_logging_after_register($data)
     list ($source, $from_module) = event_logging_find_source(1);
 
     // display_name not available in this hook as it seems
-    
+
     event_logging_writelog(array(
         "message"   => "User registered for an account: " .
                        "{$data["username"]} <{$data["email"]}>.",
@@ -282,7 +282,10 @@ function phorum_mod_event_logging_failed_login($data)
         return;
     }
 
-    if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_login_failure"])
+    if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_login_failure"] ||
+        ($data["location"] == "forum" && !$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_login_failure_forum"]) ||
+        ($data["location"] == "admin" && !$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_login_failure_admin"])
+       )
         return $data;
 
     $location = ucfirst($data["location"]);
@@ -309,14 +312,14 @@ function phorum_mod_event_logging_after_login($data)
     if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_login"])
         return $data;
 
-    $displayname = "";        
-        
+    $displayname = "";
+
     if (isset($GLOBALS["PHORUM"]["user"]["username"])) {
         $username = $GLOBALS["PHORUM"]["user"]["username"];
-    
-	    if (isset($GLOBALS["PHORUM"]["user"]["display_name"])) 
-	        $displayname = $GLOBALS["PHORUM"]["user"]["display_name"];        
-        
+
+        if (isset($GLOBALS["PHORUM"]["user"]["display_name"]))
+            $displayname = $GLOBALS["PHORUM"]["user"]["display_name"];
+
         event_logging_writelog(array(
             "source"    => "forum login",
             "message"   => "User $displayname (Username: $username) logged in.",
@@ -337,14 +340,14 @@ function phorum_mod_event_logging_before_logout()
 
     if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_logout"])
         return;
-        
+
     $displayname = "";
 
     if (isset($GLOBALS["PHORUM"]["user"]["username"])) {
         $username = $GLOBALS["PHORUM"]["user"]["username"];
-        
-	    if (isset($GLOBALS["PHORUM"]["user"]["display_name"])) 
-	        $displayname = $GLOBALS["PHORUM"]["user"]["display_name"];        
+
+        if (isset($GLOBALS["PHORUM"]["user"]["display_name"]))
+            $displayname = $GLOBALS["PHORUM"]["user"]["display_name"];
 
         event_logging_writelog(array(
             "source"    => "forum login",
