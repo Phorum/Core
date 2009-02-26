@@ -29,9 +29,25 @@ Contents:
 
    Requirements for running Phorum are:
 
-   * A webserver;
-   * PHP, version 4 or above;
-   * A MySQL server, version 4 or above.
+   * A webserver
+
+   * PHP, version 5 or above.
+
+     PHP4 is over 5 years old. While there is nothing in Phorum (as of 5.1)
+     that is known not to work with PHP 4.3.0 and up, the Phorum team does not
+     currently test any Phorum code against PHP4. Therefore, you use Phorum
+     with PHP4 at your own risk. We will not shun you in the support forums for
+     using it. But, if your problem is because of PHP4, there will likely be
+     no remedy.
+
+   * A MySQL server, version 5 or above.
+
+     MySQL has discontinued active development for all version below 5.0. The
+     Phorum teams uses 5.0 for all development. MySQL 5.0.15 was the first
+     production release of the 5.0 branch. Phorum has been known to work with
+     MySQL 4.1 and some later 4.0 versions. However, there is no testing with
+     these version. It is recommended that all users upgrade to 5.0 as soon as
+     possible to get the most out of MySQL and Phorum.
 
    If you do not run your own website, but have hosted your website with
    a hosting provider, then please ask your hosting provider if your
