@@ -1421,13 +1421,16 @@ function phorum_api_user_delete($user_id)
      *
      * [example]
      *     <hookcode>
-     *     function phorum_mod_foo_user_delete($user)
+     *     function phorum_mod_foo_user_delete($user_id)
      *     {
+     *         // Get user info
+     *         $user = phorum_api_user_get($user_id);
+     *
      *         // Log user delete through syslog.
      *         openlog("Phorum", LOG_PID | LOG_PERROR, LOG_LOCAL0);
      *         syslog(LOG_NOTICE, "Delete user registration: $user[username]");
      *
-     *         return $user;
+     *         return $user_id;
      *     }
      *     </hookcode>
      */
