@@ -134,7 +134,7 @@ $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = isset($PHORUM["forum_id"]) ? $PHORUM['forum_id'] : 0;
 $PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
 // used in nearly all or all cc-panels
-$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"{$panel}\" />\n";
+$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"".htmlspecialchars($panel, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])."\" />\n";
 
 // Set the back-URL and -message.
 if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
@@ -312,11 +312,11 @@ function phorum_controlcenter_user_save($panel)
      *     that will be saved in the database. There's one difference. If you
      *     want to check a custom field, you'll also need to check the panel
      *     which you are on, because this hook is called from multiple panels.
-     *     The panel that you are on will be stored in the 
+     *     The panel that you are on will be stored in the
      *     <literal>panel</literal> field of the user data.<sbr/>
      *     <sbr/>
      *     The example hook belows demonstrates code which could be used if you
-     *     have added a custom field to the template for the option 
+     *     have added a custom field to the template for the option
      *     <literal>Edit My Profile</literal> in the control panel.
      *
      * [category]
