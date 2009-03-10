@@ -1218,6 +1218,9 @@ function phorum_get_template_file( $page )
      * [hook]
      *     get_template_file
      *
+     * [availability]
+     *     Phorum 5 >= 5.2.11
+     *
      * [description]
      *     Allow modules to have influence on the results of the
      *     phorum_get_template_file() function. This function translates
