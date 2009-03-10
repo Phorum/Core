@@ -58,6 +58,9 @@ if(isset($PHORUM['args']['panel'])){
     $panel = PHORUM_CC_SUMMARY;
 }
 
+$panel = htmlspecialchars(
+    basename($panel), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+);
 
 // Set all our URLs.
 phorum_build_common_urls();
@@ -134,7 +137,7 @@ $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = isset($PHORUM["forum_id"]) ? $PHORUM['forum_id'] : 0;
 $PHORUM["DATA"]["PROFILE"]["PANEL"] = $panel;
 // used in nearly all or all cc-panels
-$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"".htmlspecialchars($panel, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])."\" />\n";
+$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"$panel\" />\n";
 
 // Set the back-URL and -message.
 if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
@@ -150,7 +153,6 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
 }
 
 // Load the code for the current panel.
-$panel = basename($panel);
 /**
  * [hook]
  *     cc_panel
