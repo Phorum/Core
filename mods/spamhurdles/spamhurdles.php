@@ -297,17 +297,23 @@ function phorum_mod_spamhurdles_build_form($type)
         // generated captcha HTML code. Replace it with the actual value.
         $fn = $PHORUM["SPAMHURDLES"]["captcha"]["input_fieldname"];
         $fieldvalue = isset($_POST[$fn]) ? $_POST[$fn] : "";
-        $captcha = str_replace("{FIELDVALUE}", $fieldvalue, $captcha);
+        $captcha = str_replace(
+            "{FIELDVALUE}", htmlspecialchars($fieldvalue), $captcha
+        );
 
         // Replace SPOKENURL with the URL for the spoken captcha code.
         if ($conf["spoken_captcha"] && file_exists($conf["flite_location"])) {
             $url = phorum_get_url(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
-            $captcha = str_replace("{SPOKENURL}", $url, $captcha);
+            $captcha = str_replace(
+                "{SPOKENURL}", htmlspecialchars($url), $captcha
+            );
         }
 
         // Replace IMAGE with the URL for the captcha image.
         $url = phorum_get_url(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
-        $captcha = str_replace("{IMAGEURL}", $url, $captcha);
+        $captcha = str_replace(
+            "{IMAGEURL}", htmlspecialchars($url), $captcha
+        );
 
         // A extra outer div with a class assignment to make the CAPTCHA
         // look good in the Phorum 5.1 default template.
