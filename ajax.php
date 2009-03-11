@@ -20,7 +20,7 @@
 // This script is used for handling Ajax calls to the Phorum system.
 // Ajax calls can either be implemented as scripts files in
 // "./include/ajax/call.<callname>.php" or through modules that implement
-// the "ajax_call" hook.
+// the "ajax_<call>" hook.
 
 define('phorum_page', 'ajax');
 

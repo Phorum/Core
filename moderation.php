@@ -28,6 +28,11 @@ if(!phorum_check_read_common()) {
   return;
 }
 
+// CSRF protection: we do not accept posting to this script,
+// when the browser does not include a Phorum signed token
+// in the request.
+phorum_check_posting_token();
+
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 $msgthd_id = (isset($_POST["thread"])) ? (int)$_POST["thread"] : (int)$PHORUM['args'][2];

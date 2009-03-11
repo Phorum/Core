@@ -27,6 +27,11 @@ require_once("./include/format_functions.php");
 
 define("PHORUM_CONTROL_CENTER", 1);
 
+// CSRF protection: we do not accept posting to this script,
+// when the browser does not include a Phorum signed token
+// in the request.
+phorum_check_posting_token();
+
 // A user has to be logged in to use his control-center.
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));

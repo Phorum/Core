@@ -56,6 +56,11 @@ require_once('./common.php');
 
 require_once('./include/format_functions.php');
 
+// CSRF protection: we do not accept posting to this script,
+// when the browser does not include a Phorum signed token
+// in the request.
+$posting_token = phorum_check_posting_token('post');
+
 // Check if the Phorum is in read-only mode.
 if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
    && empty($PHORUM['user']['admin']) ) {
