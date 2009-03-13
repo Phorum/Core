@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2009  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -21,7 +21,7 @@ define('phorum_page','css');
 require_once('./common.php');
 
 // Set to FALSE to disable CSS compression.
-define('PHORUM_COMPRESS_CSS', TRUE);
+define('PHORUM_COMPRESS_CSS', FALSE);
 
 // Argument 1 should be the name of the css template to load.
 if(isset($PHORUM["args"]["1"])){
@@ -294,6 +294,38 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
             array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '),
             '', $content
         );
+    }
+
+    /**
+     * [hook]
+     *     css_filter
+     *
+     * [availability]
+     *     Phorum 5 >= 5.2.11
+     *
+     * [description]
+     *     This hook can be used to apply a filter to the Phorum CSS
+     *     code. This can for example be used for compressing or cleaning
+     *     up the CSS.
+     *
+     * [category]
+     *     Templating
+     *
+     * [when]
+     *     Right after the css.php script has generated a new
+     *     CSS file and right before storing that file in the cache.
+     *     The filter hook will not be run for every request to
+     *     css.php, but only in case the CSS code has
+     *     to be refreshed.
+     *
+     * [input]
+     *     The generated CSS code.
+     *
+     * [output]
+     *     The filtered CSS code.
+     */
+    if (isset($PHORUM['hooks']['css_filter'])) {
+        $content = phorum_hook('css_filter', $content);
     }
 
     if (!empty($PHORUM['cache_css'])) {
