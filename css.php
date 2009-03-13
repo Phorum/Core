@@ -296,6 +296,38 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
         );
     }
 
+    /**
+     * [hook]
+     *     css_filter
+     *
+     * [availability]
+     *     Phorum 5 >= 5.2.11
+     *
+     * [description]
+     *     This hook can be used to apply a filter to the Phorum CSS
+     *     code. This can for example be used for compressing or cleaning
+     *     up the CSS.
+     *
+     * [category]
+     *     Templating
+     *
+     * [when]
+     *     Right after the css.php script has generated a new
+     *     CSS file and right before storing that file in the cache.
+     *     The filter hook will not be run for every request to
+     *     css.php, but only in case the CSS code has
+     *     to be refreshed.
+     *
+     * [input]
+     *     The generated CSS code.
+     *
+     * [output]
+     *     The filtered CSS code.
+     */
+    if (isset($PHORUM['hooks']['css_filter'])) {
+        $content = phorum_hook('css_filter', $content);
+    }
+
     if (!empty($PHORUM['cache_css'])) {
         require_once('./include/templates.php');
         phorum_write_file($cache_file, $content);
