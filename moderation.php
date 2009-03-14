@@ -51,6 +51,35 @@ if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
     exit();
 }
 
+// if we gave the user a confirmation form and they clicked No, send them back to the message
+if(isset($_POST["confirmation"]) && $_POST["confirmation"]==$PHORUM["DATA"]["LANG"]["No"]){
+
+    if(isset($_POST["prepost"])) {
+
+        // add some additional args
+        $addcode = "";
+        if(isset($_POST['moddays']) && is_numeric($_POST['moddays'])) {
+            $addcode.="moddays=".$_POST['moddays'];
+        }
+        if(isset($_POST['onlyunapproved']) && is_numeric($_POST['onlyunapproved'])) {
+            if(!empty($addcode))
+                $addcode.=",";
+
+            $addcode.="onlyunapproved=".$_POST['onlyunapproved'];
+        }
+
+
+        $url = phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+
+    } else {
+        $message = phorum_db_get_message($msgthd_id);
+        $url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+    }
+
+    phorum_redirect_by_url($url);
+    exit();
+}
+
 
 $template="message";
 // set all our URL's
@@ -74,7 +103,7 @@ $is_admin_user=$PHORUM["user"]["admin"];
  *     actions they stand.<sbr/>
  *     <sbr/>
  *     When checking the moderation step id for a certain step, always use
- *     the contstants that are defined for this in 
+ *     the contstants that are defined for this in
  *     <filename>include/constants.php</filename>. The numerical value of this
  *     id can change between Phorum releases.
  *
@@ -92,7 +121,7 @@ $is_admin_user=$PHORUM["user"]["admin"];
  *
  * [example]
  *     <hookcode>
- *     function phorum_mod_foo_moderation ($mod_step) 
+ *     function phorum_mod_foo_moderation ($mod_step)
  *     {
  *         global $PHORUM;
  *
@@ -111,6 +140,26 @@ $invalidate_message_cache = array();
 switch ($mod_step) {
 
    case PHORUM_DELETE_MESSAGE: // this is a message delete
+
+        if(count($_GET) && empty($_POST["thread"])){
+
+            $args = array(
+                "mod_step" => PHORUM_DELETE_MESSAGE,
+                "thread"   => $msgthd_id
+            );
+
+            foreach($PHORUM["args"] as $k=>$v){
+                if(!is_numeric($k)){
+                    $args[$k] = $v;
+                }
+            }
+
+            phorum_show_confirmation_form(
+                $PHORUM["DATA"]["LANG"]["ConfirmDeleteMessage"],
+                phorum_get_url(PHORUM_MODERATION_ACTION_URL),
+                $args
+            );
+        }
 
         $message = phorum_db_get_message($msgthd_id);
 
@@ -146,14 +195,14 @@ switch ($mod_step) {
          *         an array of the data for the message retrieved with
          *         <literal>$msgthd_id</literal></li>
          *     <li><literal>$delete_mode</literal>:
-         *         mode of deletion, either 
-         *         <literal>PHORUM_DELETE_MESSAGE</literal> or 
+         *         mode of deletion, either
+         *         <literal>PHORUM_DELETE_MESSAGE</literal> or
          *         <literal>PHORUM_DELETE_TREE</literal></li>
          *     </ul>
          *
          * [output]
          *     Same as input.<sbr/>
-         *     <literal>$delete_handled</literal> and 
+         *     <literal>$delete_handled</literal> and
          *     <literal>$msg_ids</literal> are used as return data for the hook.
          *
          * [example]
@@ -166,7 +215,7 @@ switch ($mod_step) {
          *         // future use.
          *         $PHORUM["mod_foo"]["deleted_messages"][$msgthd_id] = $message;
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
-         *         
+         *
          *         return $data;
          *     }
          *     </hookcode>
@@ -194,15 +243,15 @@ switch ($mod_step) {
          *     delete
          *
          * [description]
-         *     This hook can be used for cleaning up anything you may have 
-         *     created with the post_post hook or any other hook that stored 
+         *     This hook can be used for cleaning up anything you may have
+         *     created with the post_post hook or any other hook that stored
          *     data tied to messages.
          *
          * [category]
          *     Moderation
          *
          * [when]
-         *     In <filename>moderation.php</filename>, right after deleting a 
+         *     In <filename>moderation.php</filename>, right after deleting a
          *     message from the database.
          *
          * [input]
@@ -240,6 +289,26 @@ switch ($mod_step) {
         break;
 
    case PHORUM_DELETE_TREE: // this is a message delete
+
+        if(count($_GET) && empty($_POST["thread"])){
+
+            $args = array(
+                "mod_step" => PHORUM_DELETE_TREE,
+                "thread"   => $msgthd_id
+            );
+
+            foreach($PHORUM["args"] as $k=>$v){
+                if(!is_numeric($k)){
+                    $args[$k] = $v;
+                }
+            }
+
+            phorum_show_confirmation_form(
+                $PHORUM["DATA"]["LANG"]["ConfirmDeleteThread"],
+                phorum_get_url(PHORUM_MODERATION_ACTION_URL),
+                $args
+            );
+        }
 
         $message = phorum_db_get_message($msgthd_id);
 
@@ -399,8 +468,8 @@ switch ($mod_step) {
              *     move_thread
              *
              * [description]
-             *     This hook can be used for performing actions like sending 
-             *     notifications or for making log entries after moving a 
+             *     This hook can be used for performing actions like sending
+             *     notifications or for making log entries after moving a
              *     thread.
              *
              * [category]
@@ -451,7 +520,7 @@ switch ($mod_step) {
          *     close_thread
          *
          * [description]
-         *     This hook can be used for performing actions like sending 
+         *     This hook can be used for performing actions like sending
          *     notifications or making log entries after closing threads.
          *
          * [category]
@@ -500,7 +569,7 @@ switch ($mod_step) {
          *     reopen_thread
          *
          * [description]
-         *     This hook can be used for performing actions like sending 
+         *     This hook can be used for performing actions like sending
          *     notifications or making log entries after reopening threads.
          *
          * [category]
@@ -570,10 +639,10 @@ switch ($mod_step) {
          *     and possibly its replies.
          *
          * [input]
-         *     An array containing two elements: 
+         *     An array containing two elements:
          *     <ul>
          *     <li>The message data</li>
-         *     <li>The type of approval (either 
+         *     <li>The type of approval (either
          *     <literal>PHORUM_APPROVE_MESSAGE</literal> or
          *     <literal>PHORUM_APPROVE_MESSAGE_TREE</literal>)</li>
          *     </ul>
@@ -701,7 +770,7 @@ switch ($mod_step) {
          *     hide_thread
          *
          * [description]
-         *     This hook can be used for performing actions like sending 
+         *     This hook can be used for performing actions like sending
          *     notifications or making log entries after hiding a message.
          *
          * [category]
@@ -837,7 +906,7 @@ switch ($mod_step) {
             // update message count / stats
             phorum_update_thread_info($target['thread']);
             phorum_db_update_forum_stats(true);
-            
+
             /*
              * [hook]
              *     after_merge
@@ -859,10 +928,10 @@ switch ($mod_step) {
              * [output]
              *     None
              *
-             */            
-            
-            phorum_hook('after_merge', $msgid_translation);            
-            
+             */
+
+            phorum_hook('after_merge', $msgid_translation);
+
         } else {
             // Cancel Thread Merge
             $PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['MsgMergeCancel'];
@@ -920,9 +989,9 @@ switch ($mod_step) {
              * [output]
              *     None
              *
-             */                  
-           phorum_hook('after_split', $_POST['message']);           
-           
+             */
+           phorum_hook('after_split', $_POST['message']);
+
            break;
 
     default:

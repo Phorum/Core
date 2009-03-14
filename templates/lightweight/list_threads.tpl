@@ -68,14 +68,14 @@
     {IF MODERATOR true}
         <td width="1%" class="{altclass}" nowrap="nowrap">
             {IF MESSAGES->moved}
-                <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_MESSAGE}';">{LANG->DeleteThread}</a>
+                <a title="{LANG->DeleteThread}" href="{MESSAGES->URL->DELETE_MESSAGE}">{LANG->DeleteThread}</a>
             {ELSE}
                 {IF MESSAGES->threadstart true}
                     &raquo; <a title="{LANG->MoveThread}" href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a><br />
                     &raquo; <a title="{LANG->MergeThread}" href="{MESSAGES->URL->MERGE}">{LANG->MergeThread}</a><br />
-                    &raquo; <a title="{LANG->DeleteThread}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
+                    &raquo; <a title="{LANG->DeleteThread}" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DeleteThread}</a>
                 {ELSE}
-                    &raquo; <a title="{LANG->DeleteMessage}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
+                    &raquo; <a title="{LANG->DeleteMessage}" href="{MESSAGES->URL->DELETE_MESSAGE}">{LANG->DeleteMessage}</a>
                 {/IF}
             {/IF}
         </td>

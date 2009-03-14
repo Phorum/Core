@@ -87,4 +87,60 @@ function phorum_moderator_data_remove($key)
     phorum_moderator_data_save($moderator_data);
 }
 
+/**
+ * Outputs a confirmation form.  To maintain backwards compatibility with
+ * the templates, we generate a form in code and output it using stdblock
+ *
+ * The function exits the script after displaying the form
+ *
+ * @param   string    $message  Message to display to users
+ * @param   string    $action   The URI to post the form to
+ * @param   array     $args     The hidden form values to be used in the form
+ * @return  void
+ *
+ */
+function phorum_show_confirmation_form($message, $action, $args)
+{
+    global $PHORUM;
+
+    ob_start();
+
+    ?>
+    <div style="text-align: center;">
+        <strong><?php echo htmlspecialchars($message, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?></strong>
+        <br />
+        <br />
+        <form
+            action="<?php echo htmlspecialchars($action, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
+            method="post">
+
+            <input type="hidden"
+                name="forum_id" value="<?php echo $PHORUM["forum_id"]; ?>" />
+
+            <?php foreach($args as $name=>$value){ ?>
+                <input type="hidden"
+                    name="<?php echo htmlspecialchars($name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
+                    value="<?php echo htmlspecialchars($value, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>" />
+            <?php } ?>
+
+            <?php echo $PHORUM["DATA"]["POST_VARS"]; ?>
+
+            <input type="submit"
+                name="confirmation"
+                value="<?php echo $PHORUM["DATA"]["LANG"]["Yes"]; ?>" />
+
+            <input type="submit"
+                name="confirmation"
+                value="<?php echo $PHORUM["DATA"]["LANG"]["No"]; ?>" />
+
+        </form>
+        <br />
+    </div>
+    <?php
+
+    $PHORUM["DATA"]["BLOCK_CONTENT"] = ob_get_clean();
+    phorum_output("stdblock");
+    exit();
+}
+
 ?>

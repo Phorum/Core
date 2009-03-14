@@ -83,13 +83,13 @@
             <td width="1%" class="{altclass}" nowrap="nowrap">
             <small>
                 {IF MESSAGES->moved}
-                    <a title="{LANG->DeleteMessage}" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteMessage}</a>
+                    <a title="{LANG->DeleteMessage}" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DeleteMessage}</a>
                 {ELSE}
                     {IF MESSAGES->URL->MOVE}
                         &raquo; <a href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a><br />
                     {/IF}
                     &raquo; <a href="{MESSAGES->URL->MERGE}">{LANG->MergeThread}</a><br />
-                    &raquo; <a href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
+                    &raquo; <a href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DeleteThread}</a>
                 {/IF}
             </td>
         {/IF}

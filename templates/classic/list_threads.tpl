@@ -53,10 +53,10 @@
           <br />
           <span class="PhorumListModLink">
             {IF MESSAGES->threadstart false}
-              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGES->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
+              <a class="PhorumListModLink" href="{MESSAGES->URL->DELETE_MESSAGE}">{LANG->DeleteMessage}</a>
             {/IF}
             {IF MESSAGES->threadstart true}
-              <a class="PhorumListModLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGES->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>{IF MESSAGES->URL->MOVE}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a>{/IF}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->URL->MERGE}">{LANG->MergeThread}</a>{/IF}
+              <a class="PhorumListModLink" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DeleteThread}</a>{IF MESSAGES->URL->MOVE}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->URL->MOVE}">{LANG->MoveThread}</a>{/IF}&nbsp;|&nbsp;<a class="PhorumListModLink" href="{MESSAGES->URL->MERGE}">{LANG->MergeThread}</a>{/IF}
           </span>
         {/IF}
       </td>
