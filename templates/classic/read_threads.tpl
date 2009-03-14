@@ -10,7 +10,7 @@
 {/IF}
 <div class="PhorumStdBlock">
   <div class="PhorumReadBodySubject">{MESSAGE->subject}</div>
-  <div class="PhorumReadBodyHead">{LANG->Postedby}: 
+  <div class="PhorumReadBodyHead">{LANG->Postedby}:
     <strong>
       {IF MESSAGE->URL->PROFILE}<a href="{MESSAGE->URL->PROFILE}">{/IF}
         {MESSAGE->author}
@@ -29,7 +29,7 @@
 {IF NOT PRINTVIEW}
   {IF MODERATOR true}
     <div class="PhorumReadNavBlock" style="text-align: left;">
-      <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{IF MESSAGE->threadstart true}<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>&bull;{IF TOPIC->URL->MOVE}<a class="PhorumNavLink" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>&bull;{/IF}<a class="PhorumNavLink" href="{TOPIC->URL->MERGE}">{LANG->MergeThread}</a>&bull;{IF MESSAGE->closed false}<a class="PhorumNavLink" href="{TOPIC->URL->CLOSE}">{LANG->CloseThread}</a>{ELSE}<a class="PhorumNavLink" href="{TOPIC->URL->REOPEN}">{LANG->ReopenThread}</a>{/IF}{ELSE}<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DelMessReplies}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->SPLIT}">{LANG->SplitThread}</a>{/IF}{IF MESSAGE->is_unapproved}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->APPROVE}">{LANG->ApproveMessage}</a>{ELSE}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->HIDE}">{LANG->HideMessage}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>
+      <span class="PhorumNavHeading PhorumHeadingLeft">{LANG->Moderate}:</span>&nbsp;{IF MESSAGE->threadstart true}<a class="PhorumNavLink" href="{MESSAGE->URL->DELETE_THREAD}">{LANG->DeleteThread}</a>&bull;{IF TOPIC->URL->MOVE}<a class="PhorumNavLink" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>&bull;{/IF}<a class="PhorumNavLink" href="{TOPIC->URL->MERGE}">{LANG->MergeThread}</a>&bull;{IF MESSAGE->closed false}<a class="PhorumNavLink" href="{TOPIC->URL->CLOSE}">{LANG->CloseThread}</a>{ELSE}<a class="PhorumNavLink" href="{TOPIC->URL->REOPEN}">{LANG->ReopenThread}</a>{/IF}{ELSE}<a class="PhorumNavLink" href="{MESSAGE->URL->DELETE_MESSAGE}">{LANG->DeleteMessage}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->DELETE_THREAD}">{LANG->DelMessReplies}</a>&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->SPLIT}">{LANG->SplitThread}</a>{/IF}{IF MESSAGE->is_unapproved}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->APPROVE}">{LANG->ApproveMessage}</a>{ELSE}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->HIDE}">{LANG->HideMessage}</a>{/IF}&bull;<a class="PhorumNavLink" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>
     </div>
   {/IF}
   <div class="PhorumNavBlock">
