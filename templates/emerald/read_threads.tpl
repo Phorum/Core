@@ -77,8 +77,8 @@
         {IF MODERATOR true}
             <div class="message-moderation">
                 {IF MESSAGE->threadstart false}
-                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_MESSAGE}';">{LANG->DeleteMessage}</a>
-                    <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteMessage}')) window.location='{MESSAGE->URL->DELETE_THREAD}';">{LANG->DelMessReplies}</a>
+                    <a class="icon icon-delete" href="{MESSAGE->URL->DELETE_MESSAGE}">{LANG->DeleteMessage}</a>
+                    <a class="icon icon-delete" href="{MESSAGE->URL->DELETE_THREAD}">{LANG->DelMessReplies}</a>
                     <a class="icon icon-split" href="{MESSAGE->URL->SPLIT}">{LANG->SplitThread}</a>
                 {/IF}
                 {IF MESSAGE->is_unapproved}
@@ -103,7 +103,7 @@
             {ELSE}
                 <a class="icon icon-open" href="{TOPIC->URL->REOPEN}">{LANG->ReopenThread}</a>
             {/IF}
-            <a class="icon icon-delete" href="javascript:if(window.confirm('{LANG->ConfirmDeleteThread}')) window.location='{TOPIC->URL->DELETE_THREAD}';">{LANG->DeleteThread}</a>
+            <a class="icon icon-delete" href="{TOPIC->URL->DELETE_THREAD}">{LANG->DeleteThread}</a>
             {IF TOPIC->URL->MOVE}<a class="icon icon-move" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
         </div>
     {/IF}
@@ -159,11 +159,11 @@
         {ELSEIF MESSAGES->new}
             {VAR icon "flag_red"}
             {VAR title LANG->NewMessage}
-	        {VAR alt LANG->NewMessage}
+            {VAR alt LANG->NewMessage}
         {ELSE}
             {VAR icon "comment"}
             {VAR title ""}
-	        {VAR alt ""}
+            {VAR alt ""}
         {/IF}
     {ELSEIF MESSAGES->new}
         {VAR icon "flag_red"}

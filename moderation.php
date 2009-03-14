@@ -51,6 +51,36 @@ if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
 }
 
 
+// if we gave the user a confirmation form and they clicked No, send them back to the message
+if(isset($_POST["confirmation"]) && $_POST["confirmation"]==$PHORUM["DATA"]["LANG"]["No"]){
+
+    if(isset($_POST["prepost"])) {
+
+        // add some additional args
+        $addcode = "";
+        if(isset($_POST['moddays']) && is_numeric($_POST['moddays'])) {
+            $addcode.="moddays=".$_POST['moddays'];
+        }
+        if(isset($_POST['onlyunapproved']) && is_numeric($_POST['onlyunapproved'])) {
+            if(!empty($addcode))
+                $addcode.=",";
+
+            $addcode.="onlyunapproved=".$_POST['onlyunapproved'];
+        }
+
+
+        $url = phorum_get_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+
+    } else {
+        $message = phorum_db_get_message($msgthd_id);
+        $url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+    }
+
+    phorum_redirect_by_url($url);
+    exit();
+}
+
+
 $template="message";
 // set all our URL's
 phorum_build_common_urls();
@@ -111,7 +141,25 @@ switch ($mod_step) {
 
     case PHORUM_DELETE_MESSAGE: // this is a message delete
 
+        if(count($_GET) && empty($_POST["thread"])){
 
+            $args = array(
+                "mod_step" => PHORUM_DELETE_MESSAGE,
+                "thread"   => $msgthd_id
+            );
+
+            foreach($PHORUM["args"] as $k=>$v){
+                if(!is_numeric($k)){
+                    $args[$k] = $v;
+                }
+            }
+
+            phorum_show_confirmation_form(
+                $PHORUM["DATA"]["LANG"]["ConfirmDeleteMessage"],
+                phorum_get_url(PHORUM_MODERATION_ACTION_URL),
+                $args
+            );
+        }
 
         $message = phorum_db_get_message($msgthd_id);
 
@@ -241,6 +289,26 @@ switch ($mod_step) {
         break;
 
     case PHORUM_DELETE_TREE: // this is a message delete
+
+        if(count($_GET) && empty($_POST["thread"])){
+
+            $args = array(
+                "mod_step" => PHORUM_DELETE_TREE,
+                "thread"   => $msgthd_id
+            );
+
+            foreach($PHORUM["args"] as $k=>$v){
+                if(!is_numeric($k)){
+                    $args[$k] = $v;
+                }
+            }
+
+            phorum_show_confirmation_form(
+                $PHORUM["DATA"]["LANG"]["ConfirmDeleteThread"],
+                phorum_get_url(PHORUM_MODERATION_ACTION_URL),
+                $args
+            );
+        }
 
         $message = phorum_db_get_message($msgthd_id);
 
