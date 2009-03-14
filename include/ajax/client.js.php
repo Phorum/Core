@@ -48,7 +48,7 @@ Phorum.Ajax.getXMLHttpRequest = function(req)
         -1, null
     );
     return null;
-}
+};
 
 /**
  * Execute an Ajax Phorum call.
@@ -151,7 +151,7 @@ Phorum.Ajax.call = function(req)
       }
     };
     xhr.send(json);
-}
+};
 
 // Invalidate a single cache item of the full cache.
 Phorum.Ajax.invalidateCache = function(key)
@@ -161,7 +161,7 @@ Phorum.Ajax.invalidateCache = function(key)
     } else {
         Phorum.Ajax.cache = new Array();
     }
-}
+};
 
 // Parse out javascript blocks from the data to eval them. Adding them
 // to the page using innerHTML does not invoke parsing by the browser.
@@ -186,7 +186,7 @@ Phorum.Ajax.evalJavaScript = function(data)
             cursor = end + 1;
         }
     }
-}
+};
 
 // ======================================================================
 // JSON encoder and decoder
@@ -260,7 +260,7 @@ Phorum.JSON.convert = function(params, result)
             break;
     };
     return result;
-}
+};
 
 Phorum.JSON.encode = function(params)
 {
