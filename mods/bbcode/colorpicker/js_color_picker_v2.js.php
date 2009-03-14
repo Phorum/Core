@@ -238,7 +238,7 @@ header("Content-type: text/javascript");
 					thisObj.style.zIndex = 50;
 					var img = thisObj.getElementsByTagName('IMG')[0];
                     /* Changed for Phorum editor tools */
-					img.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/colorpicker/images/tab_right_active.gif"
+					img.src = "<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/bbcode/colorpicker/images/tab_right_active.gif";
 					img.src = img.src.replace(/inactive/,'active');							
 					contentDiv.style.display='block';
 					activeColorDiv = contentDiv;
