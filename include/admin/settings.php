@@ -276,6 +276,9 @@ $frm->addhelp($row, "Allow Off Site Links", "You may not want to allow other web
 $row=$frm->addrow( "Put file name in pathinfo for file download URLs", $frm->select_tag("file_url_uses_pathinfo", array( "No", "Yes"), $PHORUM["file_url_uses_pathinfo"]) );
 $frm->addhelp($row, "Use pathinfo for file URLs", "All Phorum file downloads (for user files and forum message attachments) run through the file.php script. As a result, users who right-click a file URL and choose \"Save link as ..\" will end up in their browser with file.php as the default file name. With this option enabled however, Phorum will try to give the browser a real file name instead. This is done by putting the file name in the URL as pathinfo (which makes the download link look like /file.php/downloadfile.ext?1,2,file=3).<br/><br/>The webserver needs to support the use of pathinfo for this feature to work. So if you are unable to download files after enabling this option, your webserver probably lacks pathinfo support and you cannot use this feature.");
 
+$row=$frm->addrow( "Allow Login-Redirection to the following URLs", $frm->text_box("login_redir_urls", $PHORUM["login_redir_urls"], 75 ));
+$frm->addhelp($row, "Allow Login-Redirection to the following URLs", "Thas a security setting. Add the urls where the login redirection should work to as a comma-separated list. URLs not starting with the URLs included here, beside the phorum url and localhost are ignored. Localhost and the phorum base path are always included.<br />A full url should be like http://www.domainname.com/path or http://www.domain.com ... ");
+
 $check_img = 'Working extension detected if green: <img src="'.$PHORUM["http_path"].'/extension_check.php" style="border:1px solid black"/>';
 $ext_dir = ini_get('extension_dir');
 $row=$frm->addrow("Phorum PHP extension support", $frm->select_tag("php_phorum_extension", array("Disabled", "Enabled"), $PHORUM["php_phorum_extension"]) . $check_img);
