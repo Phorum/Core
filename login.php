@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2009  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -260,6 +260,28 @@ if (count($_POST) > 0) {
                     } else {
                         $redir = phorum_get_url( PHORUM_LIST_URL );
                     }
+                    
+                    // checking for redirection url on the same domain, 
+                    // localhost or domain defined through the settings
+                    $redir_ok = false;
+                    $check_urls = array();
+                    if(!empty($PHORUM['login_redir_urls'])) {
+                        
+                        $check_urls = explode(",",$PHORUM['login_redir_urls']);
+                    }
+                    $check_urls[]="http://localhost";
+                    $check_urls[]=$PHORUM['http_path'];
+                                        
+                    foreach($check_urls as $check_url) {
+                         // the redir-url has to start with one of these URLs
+                         if(stripos($redir,$check_url) === 0) {
+                                $redir_ok = true;
+                                break;
+                         }
+                    }
+                    if(!$redir_ok) {
+                        $redir = phorum_get_url( PHORUM_LIST_URL );
+                    }                  
 
                     /*
                      * [hook]
