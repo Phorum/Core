@@ -15,9 +15,10 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-define('phorum_page','moderation');
 
+define('phorum_page','moderation');
 include_once("./common.php");
 include_once("./include/moderation_functions.php");
 include_once("./include/thread_info.php");
@@ -32,11 +33,14 @@ if(!phorum_check_read_common()) {
 // in the request.
 phorum_check_posting_token();
 
-$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] =
+    phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-$msgthd_id = (isset($_POST["thread"])) ? (int)$_POST["thread"] : (int)$PHORUM['args'][2];
+$msgthd_id = isset($_POST["thread"])
+           ? (int)$_POST["thread"] : (int)$PHORUM['args'][2];
 
-$mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM['args'][1];
+$mod_step = isset($_POST["mod_step"])
+          ? (int)$_POST["mod_step"] : (int)$PHORUM['args'][1];
 
 if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
    phorum_return_to_list();
@@ -154,7 +158,7 @@ switch ($mod_step) {
                 }
             }
 
-            phorum_show_confirmation_form(
+            return phorum_show_confirmation_form(
                 $PHORUM["DATA"]["LANG"]["ConfirmDeleteMessage"],
                 phorum_get_url(PHORUM_MODERATION_ACTION_URL),
                 $args
@@ -303,7 +307,7 @@ switch ($mod_step) {
                 }
             }
 
-            phorum_show_confirmation_form(
+            return phorum_show_confirmation_form(
                 $PHORUM["DATA"]["LANG"]["ConfirmDeleteThread"],
                 phorum_get_url(PHORUM_MODERATION_ACTION_URL),
                 $args

@@ -140,7 +140,6 @@ function phorum_show_confirmation_form($message, $action, $args)
 
     $PHORUM["DATA"]["BLOCK_CONTENT"] = ob_get_clean();
     phorum_output("stdblock");
-    exit();
 }
 
 ?>
