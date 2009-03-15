@@ -31,19 +31,25 @@ function phorum_cache_get($type,$key,$version=NULL) {
         foreach($key as $realkey) {
             $getkey=$type."_".$realkey;
             $data = apc_fetch($getkey);
-            if ($version == NULL ||
-                ($data[1] != NULL && $data[1] == $version)) {
-                $ret[$realkey]=$data[0];
+
+            if($data !== false) {
+                if ($version == NULL ||
+                    ($data[1] != NULL && $data[1] == $version)) {
+                    $ret[$realkey]=$data[0];
+                }
             }
         }
     } else {
         $getkey=$type."_".$key;
         $data = apc_fetch($getkey);
-        if ($version == NULL || 
-            ($data[1] != NULL && $data[1] == $version)) {
-            $ret=$data[0];
+
+        if($data !== false) {
+            if ($version == NULL ||
+                ($data[1] != NULL && $data[1] == $version)) {
+                $ret=$data[0];
+            }
         }
-    }   
+    }
 
     if($ret === false || (is_array($ret) && count($ret) == 0))
         $ret=NULL;
