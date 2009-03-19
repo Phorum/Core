@@ -100,7 +100,7 @@ function phorum_update_thread_info($thread)
             phorum_cache_put('message_index',$PHORUM['forum_id']."-$thread-0",$message["meta"]["message_ids_moderator"]);
 
             // but we need to invalidate the main-message as its changed for the recent author/message
-            phorum_cache_remove('message',$thread);
+            phorum_cache_remove('message',$PHORUM["forum_id"]."-".$thread);
         }
 
         phorum_db_update_message($thread, $message);

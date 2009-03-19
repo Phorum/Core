@@ -1003,7 +1003,7 @@ switch ($mod_step) {
 // remove the affected messages from the cache if caching is enabled.
 if ($PHORUM['cache_messages']) {
     foreach($invalidate_message_cache as $message) {
-        phorum_cache_remove('message', $message["message_id"]);
+        phorum_cache_remove('message', $message['forum_id']."-".$message["message_id"]);
         phorum_db_update_forum(array('forum_id'=>$PHORUM['forum_id'],'cache_version'=>($PHORUM['cache_version']+1)));
     }
 }

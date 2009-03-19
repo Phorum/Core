@@ -258,6 +258,11 @@ if($PHORUM['cache_messages'] &&
         if($page > 1) {
             array_unshift($message_ids_page,$thread);
         }
+        
+        // need to add the forum_id to the message-id keys to make it forum dependant 
+        foreach($message_ids_page as $key => $value) {
+        	$message_ids_page[$key] = $PHORUM["forum_id"]."-".$value;
+        }
 
 
         $cache_messages = phorum_cache_get('message',$message_ids_page);
@@ -284,7 +289,7 @@ if($PHORUM['cache_messages'] &&
             // store the found messages in the cache
 
             foreach($db_messages as $mid => $message) {
-                phorum_cache_put('message',$mid,$message);
+                phorum_cache_put('message',$PHORUM["forum_id"]."-".$mid,$message);
                 $data[$mid]=$message;
                 $data['users'][] = $data[$mid]['user_id'];
             }
