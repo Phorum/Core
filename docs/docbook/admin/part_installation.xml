@@ -583,7 +583,7 @@ c:\path\to\phorum\include\templates.php on line 184</screen>
           If you have no access to the php.ini file and the system
           administrator is not willing to update it for you, you will have to
           install the SMTP module for Phorum. You can download this module
-          from the Phorum module page: &listofmodules;
+          from the Phorum &listofmodules;.
           In the settings for this module, you can specify the SMTP to use
           for sending mail. When using this module, you will completely
           bypass PHP's built-in mail system.

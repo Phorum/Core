@@ -14,7 +14,6 @@
 
     <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
     <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
-    <!ENTITY listofmodules '<ulink url="http://phorum.org/cgi-bin/trac.cgi/wiki/ListOfModules"/>'>
 ]>
 <book lang="en">
   &bookinfo;

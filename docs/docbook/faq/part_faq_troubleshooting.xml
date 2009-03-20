@@ -47,9 +47,7 @@
     <para>
       If you cannnot obtain permissions to create temporary tables, you can
       install the "Non-Temporary Search" module which you can find in our
-      on line module list:<sbr/>
-      <sbr/>
-      &listofmodules;<sbr/>
+      online &listofmodules;<sbr/>
       <sbr/>
       (warning: it will be a slow search on large data sets!)
     </para>

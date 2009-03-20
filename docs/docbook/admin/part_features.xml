@@ -490,11 +490,7 @@
         the Phorum-core. You can install them if needed for
         using their functionalities.
         <sbr />
-        Take a look at the
-        <ulink
-          url="http://trac.phorum.org/wiki/ListOfModules">
-          Modules-List
-        </ulink>
+        Take a look at the &listofmodules;
         to see the currently available modules.
       </para>
     </section>
