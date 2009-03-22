@@ -255,7 +255,11 @@ function phorum_email_user($addresses, $data)
         $phorum_major_version = substr(PHORUM, 0, strpos(PHORUM, '.'));
         $mailer = "Phorum" . $phorum_major_version;
         $mailheader ="Content-Type: text/plain; charset={$PHORUM["DATA"]["CHARSET"]}\nContent-Transfer-Encoding: {$PHORUM["DATA"]["MAILENCODING"]}\nX-Mailer: $mailer$messageid_header\n";
-
+        // adding custom headers if defined
+        if(!empty($data['custom_headers'])) {
+            $mailheader.=$data['custom_headers']."\n";
+        }
+        
         if(isset($PHORUM['use_bcc']) && $PHORUM['use_bcc'] && $num_addresses > 3){
             mail(" ", $mailsubject, $mailmessage, $mailheader."From: $from_address\nBCC: " . implode(",", $addresses));
         } else {
