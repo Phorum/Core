@@ -1,10 +1,21 @@
 <?php
-/*
-* SMTP-Mail-Module
-* made by Thomas Seifert
-* email: thomas (at) phorum.org
-*
-*/
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//   Copyright (C) 2009  Phorum Development Team                              //
+//   http://www.phorum.org                                                    //
+//                                                                            //
+//   This program is free software. You can redistribute it and/or modify     //
+//   it under the terms of either the current Phorum License (viewable at     //
+//   phorum.org) or the Phorum License that was distributed with this file    //
+//                                                                            //
+//   This program is distributed in the hope that it will be useful,          //
+//   but WITHOUT ANY WARRANTY, without even the implied warranty of           //
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     //
+//                                                                            //
+//   You should have received a copy of the Phorum License                    //
+//   along with this program.                                                 //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
 if(!defined("PHORUM")) return;
 
@@ -67,7 +78,17 @@ function phorum_smtp_send_messages ($data)
             $mail->Subject = $subject;
             
             // add the newly created message-id
-            $mail->HeaderLine("Message-ID", $data['messageid']);
+            // in phpmailer as a public var
+            $mail->MessageID=$data['messageid'];
+            
+            // add custom headers if defined
+            if(!empty($data['custom_headers'])) {
+                // custom headers in phpmailer are added one by one
+            	$custom_headers = explode("\n",$data['custom_headers']);
+            	foreach($custom_headers as $cheader) {
+            		$mail->AddCustomHeader($cheader);
+            	}
+            }
             
             // add attachments if provided
             if(isset($data['attachments']) && count($data['attachments'])) {
