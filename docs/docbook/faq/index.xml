@@ -13,7 +13,7 @@
 
   <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
   <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
-  <!ENTITY listofmodules '<ulink url="http://trac.phorum.org/wiki/ListOfModules52"/>'>
+  <!ENTITY listofmodules '<ulink url="http://trac.phorum.org/wiki/ListOfModules52">list of modules</ulink>'>
 ]>
 
 <book lang="en">
