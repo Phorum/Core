@@ -761,7 +761,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
     // if the Phorum is disabled, display a message.
-    if( !$PHORUM["user"]["admin"] ) {
+    if( empty($PHORUM["user"]["admin"]) ) {
         if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_ADMIN_ONLY && phorum_page != 'css' && phorum_page != 'javascript'){
             // set all our URL's
             phorum_build_common_urls();

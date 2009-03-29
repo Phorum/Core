@@ -50,6 +50,8 @@ function phorum_cache_get($type,$key,$version=NULL) {
                 ($data[1] != NULL && $data[1] == $version)) {
                 $ret=$data[0];
             }
+        } else {
+        	$ret = false;
         }
     }
 
