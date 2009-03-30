@@ -183,7 +183,7 @@ elseif ($do_attach && ! empty($_FILES))
          *     alternate storage system for attachments. You would need to use 
          *     the <hook>after_attach</hook> hook to complete the process as you
          *     do not yet have the <literal>file_id</literal> for the file. You
-         *     will need to use the <hook>file</hook> hook to retreive the file 
+         *     will need to use the <hook>file_retrieve</hook> hook to retreive the file 
          *     data later.
          *
          * [category]
@@ -256,7 +256,7 @@ elseif ($do_attach && ! empty($_FILES))
              *     alternate storage system for attachments. You would need to
              *     use the <hook>before_attach</hook> hook to remove the file
              *     data and in this hook it could be saved properly. You will
-             *     need to use the <hook>file</hook> hook to retreive the file
+             *     need to use the <hook>file_retrieve</hook> hook to retreive the file
              *     data later.
              *
              * [category]
