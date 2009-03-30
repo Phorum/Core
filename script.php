@@ -208,7 +208,6 @@ if ($callhook == 'external')
  *     posted messages for that day)</li>
  *     <li>forum statistics generation</li>
  *     </ul>
- *     <sbr/>
  *     Keep in mind that for using this hook, the module in which it is handled
  *     must be enabled in your admin interface. So if this hook is not running, 
  *     the containing module might be disabled.<sbr/>
@@ -220,7 +219,6 @@ if ($callhook == 'external')
  *     # cd /your/phorum/dir
  *     # php ./script.php --scheduled
  *     </hookcode>
- *     <sbr/>
  *     When creating a scheduling service entry for running this automatically,
  *     remember to change the directory as well. You might also have to use the
  *     full path to your PHP binary (<filename>/usr/bin/php</filename> or
@@ -230,7 +228,6 @@ if ($callhook == 'external')
  *     <hookcode>
  *     0 0 * * * cd /your/phorum/dir && /usr/bin/php ./script.php --scheduled
  *     </hookcode>
- *     <sbr/>
  *     Please refer to your system's documentation to see how to use your
  *     system's scheduling service.
  *
