@@ -781,7 +781,6 @@ if ($PHORUM["posting_template"] == 'posting')
      *         can be found in there, the editor is handing the first
      *         request.</li>
      *     </ul>
-     *     <sbr/>
      *     Beware: this hook function only changes message data before it is
      *     displayed in the editor. From the editor, the user can still change
      *     the data. Therefore, this hook cannot be used to control the data
