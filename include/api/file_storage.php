@@ -767,10 +767,33 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     );
     settype($file["file_id"], "int");
 
-    // Allow modules to handle the file data retrieval. The hook can use
-    // phorum_api_error_set() to return an error. Hooks should be aware
-    // that their input might not be $file, but FALSE instead, in which
-    // case they should immediately return FALSE themselves.
+    /*
+     * [hook]
+     *     file_retrieve
+     *
+     * [description]
+     *     This hook allows modules to handle the file data retrieval. The hook can use
+     *     <literal>phorum_api_error_set()</literal>  to return an error. Hooks should be aware
+     *     that their input might not be <literal>$file</literal>, but <literal>FALSE</literal>  instead, in which
+     *     case they should immediately return <literal>FALSE</literal>  themselves.
+     *
+     * [category]
+     *     File storage
+     *
+     * [when]
+     *     In
+     *     <filename>include/api/file_storage.php</filename>,
+     *     right before a file attachment is retrieved from the database.
+     *
+     * [input]
+     *     Two part array where the first element is an empty file array
+     *     and the second element is the flags variable.
+     *
+     * [output]
+     *     Same as input with file data filled in.
+     *
+     */
+    
     $file["result"]    = 0;
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;

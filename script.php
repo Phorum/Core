@@ -187,7 +187,7 @@ if ($callhook == 'external')
  *     scheduled
  *
  * [description]
- *     <hook>Scheduled</hook> hook functions are similar to
+ *     <hook>scheduled</hook> hook functions are similar to
  *     <hook>external</hook> ones, except these functions do not require any
  *     input from the command line. The modules containing this hook are invoked
  *     by running <filename>script.php</filename> with the
