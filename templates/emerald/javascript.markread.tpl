@@ -33,7 +33,7 @@ Phorum.UI.markread = function (mode, item_id)
     };
 
     // Because the "mode" is dynamic ("forums", "threads" or "messages"),
-    // we have to assign this property like this.
+    // we have to assign this property of the request like this.
     req[mode] = [item_id];
 
     // Dispatch the Ajax Phorum call.
