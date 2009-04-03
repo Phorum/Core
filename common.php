@@ -72,6 +72,74 @@ require_once( "./include/constants.php" );
 require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
+// ----------------------------------------------------------------------
+// PHP extension compatibility 
+// ----------------------------------------------------------------------
+
+// For some functionality, we are depending on PHP extensions, that
+// are not necessarily availably on any given PHP installation. To
+// work around this, we have implemented compatibility modules that
+// can be installed to provide the missing functionality in pure
+// PHP code. This will make the execution a little bit slower on
+// systems that do not have the required extension installed, but
+// it will at least make it possible to run Phorum.
+//
+// We load these special compatibility modules at an early stage, so
+// we can safely use them from the rest of the code.
+
+$compat_modules = array(
+    'mb_substr'   => 'mbstring',
+    'json_encode' => 'json',
+    'json_decode' => 'json'
+);
+$missing_compat = array();
+foreach ($compat_modules as $function => $extension) {
+    if (!function_exists($function)) {
+        $module_file = "./mods/compat_$extension/compat_$extension.php";
+        if (file_exists($module_file)) {
+            require_once($module_file);
+            if (!function_exists($function)) { ?>
+                <html><head><title>Phorum error</title></head><body>
+                <h2>Phorum Error:</h2>
+                Compatibility module compat_<?php print $extension ?>
+                does not implement function <?php print $function ?>().
+                </body></html><?php
+                exit;
+            }
+        } else {
+            if (empty($missing_compat[$extension])) {
+                $missing_compat[$extension] = array($function);
+            } else {
+                $missing_compat[$extension][] = $function;
+            }
+        }
+    }
+}
+
+if (!empty($missing_compat)) { ?>
+    <html><head><title>Phorum error</title></head><body>
+    <style type="text/css">
+    table { border-collapse: collapse; }
+    td { padding: 0.2em 1em; border: 1px solid black; }
+    </style>
+    <h2>Phorum Error: PHP extension(s) missing on your system:</h2>
+    <ul><?php
+    foreach ($missing_compat as $extension => $functions) {
+        print '<li>'.$extension.' ';
+        print ' (needed for function'.(count($functions)==1?'':'s').': ' .
+              implode(', ', $functions).')</li>';
+    } ?>
+    </ul>
+    <h2>Solution:</h2>
+    <ul>
+    <li>Install the required extensions in PHP (ask your host if you
+        do not own the system) or</li>
+    <li>download and install compatibility modules from the
+        <a href="http://www.phorum.org/downloads.php">Phorum website</a>.</li>
+    </ul>
+    <?php
+    exit;
+}
 
 // ----------------------------------------------------------------------
 // Load the database layer and setup a connection
@@ -2179,29 +2247,6 @@ function phorum_database_error($error)
     <?php
 
     exit();
-}
-
-// For safely doing substr() operations on strings that contain
-// multi-byte characters (which can happen when using UTF-8), we
-// need mb_substr(). Unfortunately, this function is part of a
-// PHP extension and we can therefore not be sure that it is
-// available in the PHP installation.
-//
-// Here we implement mb_substr() ourselves in case it is not
-// available, so we can safely use it in our code.
-if (!function_exists('mb_substr'))
-{
-    // For now, we implement mb_substr simply as substr().
-    // We need to think about adding a check for broken multi-byte
-    // characters at the end of the resulting substring.
-    function mb_substr($str, $start, $length = NULL, $encoding = NULL)
-    {
-        if ($length) {
-            return substr($str, $start, $length);
-        } else {
-            return substr($str, $start);
-        }
-    }
 }
 
 ?>

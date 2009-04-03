@@ -1,0 +1,9 @@
+title: Compatibility: json extension
+desc: This module implements a fallback for PHP's json_encode() and json_decode() functions.
+category: compatibility
+version: 1.0.0
+author: Phorum Dev Team
+url: http://www.phorum.org/
+
+compat:json_encode|json
+compat:json_decode|json

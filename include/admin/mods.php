@@ -287,7 +287,9 @@ $html = "<form id=\"modules_form\" " .
           $frm->checkbox(
               'hide_description', 1, 'hide descriptions',
               isset($_POST['hide_description']) ? 1 : 0,
-              'onchange="filter_modules(this.form)" id="hide_descriptions"'
+              'style="margin-left:1em" ' .
+              'onchange="filter_modules(this.form)" ' .
+              'id="hide_descriptions"'
           ) .
         "</div>";
 
@@ -320,25 +322,49 @@ foreach ($list['modules'] as $name => $info)
         $title.=" (version ".$info["version"].")";
     }
 
+    // Compatibility modules are handles in a special way. These are
+    // not enabled from the admin panel. Instead, they are automatically
+    // loaded when required from the start of common.php.
+    $is_compat = FALSE;
+    if (!empty($info['compat']))
+    {
+        foreach($info['compat'] as $function => $extension) {
+            if (!function_exists($function)) {
+                $is_compat = "function $function() " .
+                             "from PHP extension \"$extension\"";
+                break;
+            }
+        }
+
+        // If the compatibility module would not be loaded, then
+        // we won't bother showing it in the interface. That would
+        // probably only confuse the admins.
+        if (!$is_compat) continue;
+    }
+
     $class = $info['version_disabled']
            ? 'module_block disabled version_disabled'
-           : ($info['enabled']
+           : ($info['enabled'] || $is_compat
               ? 'module_block enabled'
               : 'module_block disabled');
-    $disabled = $info['version_disabled']
+    $disabled = $info['version_disabled'] || $is_compat
               ? ' disabled="disabled"' : '';
     $html .= "<div class=\"$class\" id=\"$id\">" .
              "<input type=\"checkbox\" name=\"$id\" id=\"cb_$id\" " .
              "onchange=\"toggle_module_status(this)\" " .
-             ($info['enabled'] ? 'checked="checked"' : '') .
+             ($is_compat || $info['enabled']
+              ? 'checked="checked"' : '') .
              $disabled . '/>' .
              "<label id=\"title_$id\" for=\"cb_$id\" class=\"module_title\">$title</label>" .
              "<div class=\"module_data\">";
 
-    if (isset($info["desc"])) {
-        $html .= "<div class=\"module_description\">" .
-                 $info['desc'] .
-                 "</div>";
+    if (isset($info['desc']) || $is_compat) {
+        $html .= '<div class="module_description">' .
+                 ($is_compat
+                  ? '<b>Automatically enabled, because ' .
+                    "$is_compat was not found on your system.</b>" : '') .
+                 ($info['desc'] ? $info['desc'] : '') .
+                 '</div>';
     }
 
     if(isset($info["author"])){

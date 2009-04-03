@@ -137,7 +137,7 @@ function phorum_api_modules_list()
                         $parts[1] = "$hook|$function";
                     }
                     $info["hooks"][]=trim($parts[1]);
-                } elseif ($parts[0]=="priority"){
+                } elseif ($parts[0]=="priority") {
                     $prio = trim($parts[1]);
                     if (preg_match('/^run\s+hook\s+(.+)\s+(before|after)\s(.+)$/i', $prio, $m)) {
                         $priorities['hook'][$m[1]][$entry][] = $m;
@@ -169,7 +169,10 @@ function phorum_api_modules_list()
                     elseif (phorum_compare_version($cur, $req) == -1) {
                         $info['version_disabled'] = true;
                     }
-
+                } elseif ($parts[0] == "compat") {
+                    list ($extension,$function) = explode('|', trim($parts[1]));
+                    if (empty($info['compat'])) $info['compat'] = array();
+                    $info['compat'][$function] = $extension;
                 } else {
                     $info[$parts[0]] = trim($parts[1]);
                 }
