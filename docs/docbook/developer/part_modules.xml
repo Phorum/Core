@@ -48,7 +48,7 @@
     <section id="modules.hacks">
       <title>Hacks</title>
       <para>
-        The moment it is neccessary to make changes to the standard Phorum
+        The moment it is necessary to make changes to the standard Phorum
         distribution files or database structure to implement some kind of
         functionality, we are talking about a hack (even if the changes
         that have to be made are accompanied by a drop in module).

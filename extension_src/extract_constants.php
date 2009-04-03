@@ -1,6 +1,6 @@
 <?php
 /**
- * This script is used to extract neccessary constants from
+ * This script is used to extract necessary constants from
  * the Phorum software.
  */
 

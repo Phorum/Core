@@ -239,7 +239,7 @@ function phorum_check_distro()
     if (! $ok) return array(
         PHORUM_SANITY_CRIT,
         "Phorum is unable to find a database layer file in the
-         directory \"include/db/\". A database layer is neccessary to
+         directory \"include/db/\". A database layer is necessary to
          connect Phorum to a database.",
         "Upload at least one database layer file to this directory.
          Which database layer to upload, depends on the database that

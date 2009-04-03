@@ -32,7 +32,7 @@ if (!defined('PHORUM')) return;
  *
  * The first two steps are combined in the function
  * {@link bbcode_api_initparser()}. This function will rebuild the
- * tag information and parse tree when neccessary by calling the
+ * tag information and parse tree when necessary by calling the
  * {@link bbcode_api_buildparser} function. The third step is
  * implemented by {@link bbcode_api_tokenize()}. The final fourth step
  * is handled by {@link bbcode_api_render()}.

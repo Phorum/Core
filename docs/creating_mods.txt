@@ -74,7 +74,7 @@ Table of contents:
  1.2 Hacks
  ---------
 
-   The moment it is neccessary to make changes to the standard Phorum
+   The moment it is necessary to make changes to the standard Phorum
    distribution files or database structure to implement some kind of
    functionality, we're talking about a hack (even if the changes
    that have to be made are accompanied by a drop in module).
@@ -967,7 +967,7 @@ Table of contents:
      currently no hook available. If that is the case, let the dev
      team know by posting a message in the development forum
      on phorum.org, explaining where and why you need an extra hook.
-     Hooks will be added as neccessary, especially while Phorum 5
+     Hooks will be added as necessary, especially while Phorum 5
      is young.
 
 

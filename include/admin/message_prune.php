@@ -662,7 +662,7 @@ function PhorumFilterRule(conf)
             // Take one cell for the match selection.
             this.match_input_td.colSpan = 1;
 
-            // Create a new query input if neccessary.
+            // Create a new query input if necessary.
             var create_new = false;
             if (this.query_input_type == null)
             {
@@ -812,7 +812,7 @@ function PhorumFilterRule(conf)
         this.match_input_td.style.padding = '5px';
         this.match_input_td.appendChild(this.match_input);
         this.container.appendChild(this.match_input_td);
-    // Will be filled and displayed when neccessary (based on fiele type).
+    // Will be filled and displayed when necessary (based on file type).
     this.query_input_td = document.createElement('td');
         this.query_input_td.style.padding = '5px';
     this.del_button_td = document.createElement('td');
