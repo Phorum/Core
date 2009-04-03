@@ -332,7 +332,7 @@ foreach ($list['modules'] as $name => $info)
              "onchange=\"toggle_module_status(this)\" " .
              ($info['enabled'] ? 'checked="checked"' : '') .
              $disabled . '/>' .
-             "<label id=\"title_$id\" for=\"cb_$id\" class=\"module_title\">$title</span>" .
+             "<label id=\"title_$id\" for=\"cb_$id\" class=\"module_title\">$title</label>" .
              "<div class=\"module_data\">";
 
     if (isset($info["desc"])) {
