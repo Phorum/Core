@@ -118,7 +118,7 @@ function phorum_mod_bbcode_quote ($data)
 
     if (!empty($GLOBALS["PHORUM"]["mod_bbcode"]["quote_hook"]))
     {
-        // Quote the author name if neccessary.
+        // Quote the author name if necessary.
         if (strpos($data[0], ' ') === FALSE &&
             strpos($data[0], '"') === FALSE &&
             strpos($data[0], ']') === FALSE) {

@@ -375,7 +375,7 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
         }
 
         // Load the upgrade file. The upgrade file should fill the
-        // $upgrade_queries array with the neccessary queries to run.
+        // $upgrade_queries array with the necessary queries to run.
         $upgrade_queries = array();
         include($upgradefile);
 
