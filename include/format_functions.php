@@ -100,7 +100,21 @@ function phorum_format_messages ($data, $author_specs = NULL)
             $body = preg_replace("/<((http|https|ftp):\/\/[a-z0-9;\/\?:@=\&\$\-_\.\+!*'\(\),~%]+?)>/i", "$1", $body);
 
             // Escape special HTML characters.
-            $body = htmlspecialchars($body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            $escaped_body = htmlspecialchars($body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+
+            if($escaped_body == ""){
+
+                if(function_exists("iconv")){
+                    // we are gonna guess and see if we get lucky
+                    $escaped_body = iconv("ISO-8859-1", $PHORUM["DATA"]["HCHARSET"], $body);
+                } else {
+                    // we let htmlspecialchars use its defaults
+                    $escaped_body = htmlspecialchars($body);
+                }
+
+            }
+
+            $body = $escaped_body;
 
             // Replace newlines with $phorum_br temporarily.
             // This way the mods know what Phorum did vs the user.
