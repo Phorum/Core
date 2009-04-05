@@ -90,8 +90,10 @@ require_once("./include/api/user.php");
 $compat_modules = array(
     'mb_substr'   => 'mbstring',
     'json_encode' => 'json',
-    'json_decode' => 'json'
+    'json_decode' => 'json',
+    'iconv'       => 'iconv'
 );
+
 $missing_compat = array();
 foreach ($compat_modules as $function => $extension) {
     if (!function_exists($function)) {
