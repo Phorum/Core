@@ -1,0 +1,9 @@
+title: Compatibility: iconv extension
+desc: This module implements a fallback for PHP's iconv() function, in case the "iconv" PHP extension is not enabled.
+function.
+category: compatibility
+version: 1.0.0
+author: Phorum Dev Team
+url: http://www.phorum.org/
+
+compat:iconv|iconv

@@ -1,0 +1,21 @@
+Module  : Compatibility: iconv extension
+Version : 1.0.0
+Author  : Phorum Dev Team
+
+This module implements a fallback for PHP's iconv() function,
+in case the "iconv" PHP extension is not enabled.
+
+Thanks to Mikołaj Jędrzejak for the implementation of his
+Convert Charset class. See: http://mikolajj.republika.pl/
+
+Install:
+--------
+
+- Unpack the archive and move the directory "compat_iconv" to the
+  directory "mods" within your Phorum installation (unless this module
+  was packaged with your Phorum release);
+
+- There is no need to enable the module manually. If your system needs
+  it, Phorum will automatically load the module.
+
+
