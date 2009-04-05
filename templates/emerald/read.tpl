@@ -82,13 +82,10 @@
                 <div class="message-moderation">
                     {IF MESSAGES->threadstart true}
                         <a class="icon icon-delete" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DelMessReplies}</a>
-                        <a class="icon icon-delete" href="{MESSAGES->URL->SPAM_THREAD}">{LANG->Spam}</a>
 
                     {ELSE}
                         <a class="icon icon-delete" href="{MESSAGES->URL->DELETE_MESSAGE}">{LANG->DeleteMessage}</a>
                         <a class="icon icon-delete" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DelMessReplies}</a>
-                        <a class="icon icon-delete" href="{MESSAGES->URL->SPAM_MESSAGE}">{LANG->Spam}</a>
-                        <a class="icon icon-delete" href="{MESSAGES->URL->SPAM_THREAD}">{LANG->Spam}</a>
                         <a class="icon icon-split" href="{MESSAGES->URL->SPLIT}">{LANG->SplitThread}</a>
                     {/IF}
                     {IF MESSAGES->is_unapproved}
