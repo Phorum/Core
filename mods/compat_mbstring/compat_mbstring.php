@@ -12,7 +12,8 @@ if (!function_exists('mb_substr'))
 
         if ($encoding === NULL) {
             global $PHORUM;
-            $encoding = $PHORUM['DATA']['CHARSET'];
+            $encoding = isset($PHORUM['DATA']['CHARSET'])
+                      ? $PHORUM['DATA']['CHARSET'] : 'utf-8';
         }
 
         // For non-UTF-8 data, we fallback to substr().
@@ -103,4 +104,5 @@ if (!function_exists('mb_substr'))
         } 
     }
 }
+
 ?>
