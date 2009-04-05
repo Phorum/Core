@@ -1,5 +1,5 @@
 title: Compatibility: mbstring extension
-desc: This module implements a fallback for PHP's mb_substr() function. This implementation is not fully compatible. It is advisable to (let) install the "mbstring" PHP extension instead.
+desc: This module implements a fallback for PHP's mb_substr() function, in case the "mbstring" PHP extension is not enabled.
 function.
 category: compatibility
 version: 1.0.0

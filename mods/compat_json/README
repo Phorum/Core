@@ -3,8 +3,8 @@ Version : 1.0.0
 Author  : Phorum Dev Team
 
 This module implements a fallback for PHP's json_encode() and
-json_decode() functions, in case PHP does not have the
-"json" extension enabled.
+json_decode() functions, in case the "json" PHP extension
+is not enabled.
 
 
 Install:
@@ -13,9 +13,6 @@ Install:
 - Unpack the archive and move the directory "compat_json" to the directory
   "mods" within your Phorum installation (unless this module was packaged
   with your Phorum release);
-
-- Login as administrator in Phorum's administrative interface and
-  go to the "Modules" section;
 
 - There is no need to enable the module manually. If your system needs
   it, Phorum will automatically load the module.
