@@ -5,6 +5,10 @@ Author  : Phorum Dev Team
 This module implements a fallback for PHP's mb_substr() function,
 in case PHP does not have the "mbstring" extension enabled.
 
+Thanks to Andreas Gohr of the docuwiki project for the implementation
+of an alternative for mb_substr(), based on the use of preg_match() with
+the "u" flag (code from inc/utf8.php).
+
 Install:
 --------
 
@@ -15,6 +19,7 @@ Install:
 - Login as administrator in Phorum's administrative interface and
   go to the "Modules" section;
 
-- Enable the module "Compatibility: mbstring extension".
+- There is no need to enable the module manually. If your system needs
+  it, Phorum will automatically load the module.
 
 

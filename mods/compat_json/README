@@ -17,5 +17,6 @@ Install:
 - Login as administrator in Phorum's administrative interface and
   go to the "Modules" section;
 
-- Enable the module "Compatibility: json extension".
+- There is no need to enable the module manually. If your system needs
+  it, Phorum will automatically load the module.
 
