@@ -477,9 +477,9 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
 
             case 'float':
-            	$dbuser[$fld] = $val === NULL ? NULL : (float) $val;
+                $dbuser[$fld] = $val === NULL ? NULL : (float) $val;
                 break;
-                
+
             case 'string':
                 $dbuser[$fld] = $val === NULL ? NULL : trim($val);
                 break;
@@ -1447,7 +1447,7 @@ function phorum_api_user_delete($user_id)
     phorum_db_user_delete($user_id);
 
     // Delete the personal user files for this user.
-    require_once('./include/api/file_storage.php');
+    require_once(dirname(__FILE__).'/file_storage.php');
     $files = phorum_api_file_list(PHORUM_LINK_USER, $user_id, 0);
     foreach ($files as $file_id => $file) {
         phorum_api_file_delete($file_id);
