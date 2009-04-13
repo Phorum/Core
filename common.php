@@ -1884,12 +1884,15 @@ function phorum_check_posting_token($target_page = NULL)
     // Generate the posting token.
     $posting_token = md5(
         ($target_page !== NULL ? $target_page : phorum_page) . '/' .
-        ($PHORUM['user']['user_id']
-         ? $PHORUM['user']['password'].'/'.$PHORUM['user']['sessid_lt']
-         : '') . '/' .
-        (isset($_SERVER['HTTP_USER_AGENT'])
-         ? $_SERVER['HTTP_USER_AGENT']
-         : '') . '/' .
+        (
+          $PHORUM['user']['user_id']
+          ? $PHORUM['user']['password'].'/'.$PHORUM['user']['sessid_lt']
+          : (
+              isset($_SERVER['HTTP_USER_AGENT'])
+              ? $_SERVER['HTTP_USER_AGENT'] 
+              : 'unknown'
+            )
+        ) . '/' .
         $PHORUM['private_key']
     );
 
