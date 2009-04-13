@@ -30,10 +30,10 @@ function phorum_mod_spamhurdles_common()
 {
     global $PHORUM;
 
-    // Check and handle automatic installation and upgrading
-    // of the database structure. Do not continue running the
-    // Spam Hurldes module in case the installation fails.
-    if (! spamhurdles_db_install()) return;
+    // Initialize the database layer. This will handle automatic installation
+    // and upgrading of the database structure. Do not continue running the
+    // Spam Hurldes module in case the initialization fails.
+    if (! spamhurdles_db_init()) return;
 
     // Garbage collection for cleaning up expired items from the database.
     if (rand(1,100) <= SPAMHURDLES_GARBAGE_COLLECTION_RATE) {
