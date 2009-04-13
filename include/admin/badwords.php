@@ -91,7 +91,7 @@ if($_GET["curr"] && $_GET["delete"]){
         Are you sure you want to delete this entry?
         <form action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
             <input type="hidden" name="module" value="<?php echo $module; ?>" />
-            <input type="hidden" name="curr" value="<?php echo $_GET['curr']; ?>" />
+            <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
             <input type="hidden" name="delete" value="1" />
             <input type="submit" name="confirm" value="Yes" />&nbsp;<input type="submit" name="confirm" value="No" />
         </form>
