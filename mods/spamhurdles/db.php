@@ -7,11 +7,19 @@ if(!defined("PHORUM")) return;
 define("SPAMHURDLES_DB_VERSION", 1);
 
 # The table name for storing spamhurdles information.
-define("SPAMHURDLES_TABLE", "{$GLOBALS["PHORUM"]["DBCONFIG"]["table_prefix"]}_spamhurdles");
+$GLOBALS['PHORUM']['spamhurdles_table'] =
+    "{$GLOBALS["PHORUM"]["DBCONFIG"]["table_prefix"]}_spamhurdles";
 
 # Check if an installation or upgrade of the database scheme is needed.
-function spamhurdles_db_install()
+function spamhurdles_db_init()
 {
+    $layerpath = "./mods/spamhurdles/db/{$GLOBALS["PHORUM"]["DBCONFIG"]["type"]}";
+
+    // Allow db layers to provide an initialization script of their own.
+    // The main goal for this script is to allow a db layer to override the
+    // $PHORUM['spamhurdles_table'] variable.
+    if (file_exists("$layerpath/db.php")) require_once("$layerpath/db.php");
+
     $version = isset($GLOBALS["PHORUM"]["mod_spamhurdles_installed"])
         ? $GLOBALS["PHORUM"]["mod_spamhurdles_installed"] : 0;
 
@@ -21,8 +29,7 @@ function spamhurdles_db_install()
         $version++;
         $settings = array( "mod_spamhurdles_installed" => $version );
 
-        $sqlfile = "./mods/spamhurdles/db/" .
-                   $GLOBALS["PHORUM"]["DBCONFIG"]["type"] . "/$version.php";
+        $sqlfile = "$layerpath/$version.php";
 
         if (! file_exists($sqlfile)) {
             print "<b>Unexpected situation on installing " .
@@ -64,8 +71,8 @@ function spamhurdles_db_install()
 # Retrieve data from the database by key.
 function spamhurdles_db_get($key)
 {
-    $sql = "SELECT data,expire_time FROM ".SPAMHURDLES_TABLE. " " .
-           "WHERE id = '" . addslashes($key) . "'";
+    $sql = "SELECT data,expire_time FROM {$GLOBALS['PHORUM']['spamhurdles_table']}
+            WHERE id = '" . addslashes($key) . "'";
 
     $record = phorum_db_interact(DB_RETURN_ROW, $sql);
 
@@ -89,7 +96,7 @@ function spamhurdles_db_put($key, $data, $ttl)
     // Try to insert a new spamhurdles record.
     $res = phorum_db_interact(
         DB_RETURN_RES,
-        "INSERT INTO ".SPAMHURDLES_TABLE."
+        "INSERT INTO {$GLOBALS['PHORUM']['spamhurdles_table']}
                 (id, data, create_time, expire_time)
          VALUES (" .
             "'".addslashes($key)."', " .
@@ -107,7 +114,7 @@ function spamhurdles_db_put($key, $data, $ttl)
     if (!$res) {
         phorum_db_interact(
             DB_RETURN_RES,
-            "UPDATE ".SPAMHURDLES_TABLE."
+            "UPDATE {$GLOBALS['PHORUM']['spamhurdles_table']}
              SET    data        = '".addslashes(serialize($data))."',
                     create_time = ".time().",
                     expire_time = ".(time() + $ttl)."
@@ -121,8 +128,8 @@ function spamhurdles_db_put($key, $data, $ttl)
 # Remove data from the database.
 function spamhurdles_db_remove($key)
 {
-    $sql = "DELETE FROM ".SPAMHURDLES_TABLE. " " .
-           "WHERE id='".addslashes($key)."'";
+    $sql = "DELETE FROM {$GLOBALS['PHORUM']['spamhurdles_table']}
+            WHERE id='".addslashes($key)."'";
 
     phorum_db_interact(DB_RETURN_RES, $sql, NULL, DB_MASTERQUERY);
 }
@@ -130,8 +137,8 @@ function spamhurdles_db_remove($key)
 # Remove expired entries from the database.
 function spamhurdles_db_remove_expired()
 {
-    $sql = "DELETE FROM ".SPAMHURDLES_TABLE. " " .
-           "WHERE expire_time < " . time();
+    $sql = "DELETE FROM {$GLOBALS['PHORUM']['spamhurdles_table']}
+            WHERE expire_time < " . time();
 
     phorum_db_interact(DB_RETURN_RES, $sql, NULL, DB_MASTERQUERY);
 }
