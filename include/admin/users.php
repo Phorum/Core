@@ -79,7 +79,7 @@ if(count($_POST))
         if (!empty($_POST["username"])) {
             $existing_user = phorum_api_user_search("username", $_POST["username"]);
             if (!empty($existing_user))
-                $error = "The user name \"$_POST[username]\" is already in use!";
+                $error = 'The user name "'.htmlspecialchars($_POST['username']).'" is already in use!';
         } else {
             $error = "You must provide a user name!";
         }
@@ -89,7 +89,7 @@ if(count($_POST))
             include('./include/email_functions.php');
             $valid_email = phorum_valid_email($_POST["email"]);
             if ($valid_email !== true)
-                $error = "The email \"$_POST[email]\" is not valid!";
+                $error = 'The email "'.htmlspecialchars($_POST[email]).'" is not valid!';
         }
 
         //check for password and password confirmation

@@ -78,7 +78,7 @@ setcookie("phorum_upgrade_available", $upgrade_available, 0,
   <body>
   <?php if ($upgrade_available) { ?>
     <div class="notify_upgrade">
-      <a target="_top" href="admin.php?module=version">New Phorum version <?php print $upgrade_available ?> available!</a>
+      <a target="_top" href="admin.php?module=version">New Phorum version <?php print htmlspecialchars($upgrade_available) ?> available!</a>
     </div>
   <?php } else { ?>
     <div class="notify_noupgrade">
