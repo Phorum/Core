@@ -7482,7 +7482,20 @@ function phorum_db_maxpacketsize()
  */
 function phorum_db_sanitychecks()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+
+    // For Phorum 5.2+, we need the "charset" option to be set
+    // in the config.php.
+    if (!isset($PHORUM['DBCONFIG']['charset'])) return array(
+        PHORUM_SANITY_CRIT,
+        "Database configuration parameter \"charset\" missing.",
+        "The option \"charset\" is missing in your database configuration.
+         This might indicate that you are using a config.php from an
+         older Phorum version, which does not yet contain this option.
+         Please, copy include/db/config.php.sample to
+         include/db/config.php and edit this new config.php. Read
+         Phorum's install.txt for installation instructions."
+    );
 
     // Retrieve the MySQL server version.
     $version = phorum_db_interact(
