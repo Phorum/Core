@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 // Find the update step that we have to run.
 $step = empty($_REQUEST["step"]) ? 0 : $_REQUEST["step"];

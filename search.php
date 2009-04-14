@@ -18,11 +18,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','search');
-require_once('./common.php');
+require_once './common.php';
 
-require_once('./include/forum_functions.php');
-require_once('./include/format_functions.php');
-require_once('./include/api/forums.php');
+require_once './include/forum_functions.php';
+require_once './include/format_functions.php';
+require_once './include/api/forums.php';
 
 if(!phorum_check_read_common()) {
   return;
@@ -347,7 +347,7 @@ $PHORUM["DATA"]["SEARCH"]["match_dates"] = $PHORUM["args"]["match_dates"];
 $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
 $PHORUM["DATA"]["SEARCH"]["match_threads"] = (int)$PHORUM["args"]["match_threads"];
 
-require_once('./include/api/forums.php');
+require_once './include/api/forums.php';
 $PHORUM["DATA"]["SEARCH"]["forum_list"] = phorum_api_forums_tree();
 if(isset($PHORUM["args"]["match_forum"])){
     $match_forum = explode(",", $PHORUM["args"]["match_forum"]);

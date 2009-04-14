@@ -36,7 +36,7 @@
 //    function phorum_mod_foo_youraddonfunction() {
 //      # Code for implementing the addon goes here.
 //      # This can of course also be an include of a script
-//      # to run, using include("./mods/foo/yourscript.php").
+//      # to run, using include "./mods/foo/yourscript.php";
 //      # ...
 //    }
 //
@@ -77,7 +77,7 @@
 
 define('phorum_page','addon');
 
-require_once('./common.php');
+require_once './common.php';
 
 // Bail out early if there are no modules enabled that implement
 // the addon hook.

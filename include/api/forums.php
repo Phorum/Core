@@ -74,6 +74,8 @@
 
 if (!defined("PHORUM")) return;
 
+defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
+
 // {{{ Constant and variable definitions
 
 /**
@@ -1462,7 +1464,7 @@ function phorum_api_forums_format($forums, $flags = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
-    require_once('./include/format_functions.php');
+    require_once PHORUM_PATH.'/include/format_functions.php';
 
     // For tracking forums for which we have to check unread messages.
     $forums_to_check = array();

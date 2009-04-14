@@ -20,13 +20,13 @@
 if (!defined("PHORUM_ADMIN")) return;
 
 // Load constants.
-require_once('./mods/bbcode/api.php');
+require_once './mods/bbcode/api.php';
 
 // Load tag descriptions.
-require_once('./mods/bbcode/builtin_tags.php');
+require_once './mods/bbcode/builtin_tags.php';
 
 // Load default settings.
-require_once('./mods/bbcode/defaults.php');
+require_once './mods/bbcode/defaults.php';
 
 // Available option sets for the bbcode tag dropdown menus.
 $options_without_editor_tools = array(
@@ -74,7 +74,7 @@ if (count($_POST))
     }
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 $frm = new PhorumInputForm ("", "post", "Save settings");
 $frm->hidden("module", "modsettings");
 $frm->hidden("mod", "bbcode");

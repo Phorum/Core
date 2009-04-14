@@ -258,7 +258,7 @@ function bbcode_api_initparser($force = FALSE)
     {
         // First, build a full list of tags by merging the builtin tags
         // with the ones that the modules provided.
-        require_once('./mods/bbcode/builtin_tags.php');
+        require_once './mods/bbcode/builtin_tags.php';
         $combinedtags = $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'];
         foreach ($tags as $tagname => $tag) {
             $combinedtags[$tagname] = $tag;

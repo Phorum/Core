@@ -19,9 +19,9 @@
 
 define('phorum_page','list');
 
-require_once('./common.php');
-require_once('./include/format_functions.php');
-require_once('./include/api/newflags.php');
+require_once './common.php';
+require_once './include/format_functions.php';
+require_once './include/api/newflags.php';
 
 // set all our common URL's
 phorum_build_common_urls();
@@ -237,7 +237,7 @@ if($rows == null)
 
         }
         // don't move this up.  We want it to be conditional.
-        require_once('./include/thread_sort.php');
+        require_once './include/thread_sort.php';
 
         $rows = phorum_sort_threads($rows);
 

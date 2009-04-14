@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/forums.php');
+require_once './include/api/forums.php';
 
 $errors = array();
 
@@ -157,7 +157,7 @@ if ($errors) {
     phorum_admin_error(join("<br/>", $errors));
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 $frm = new PhorumInputForm ("", "post");
 

@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/forums.php');
+require_once './include/api/forums.php';
 
 $error="";
 $new_forum_permission = 0;
@@ -128,7 +128,7 @@ if($error){
     phorum_admin_error($error);
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 $groups=phorum_db_get_groups(0, TRUE);
 
 /**

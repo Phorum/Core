@@ -24,8 +24,8 @@
 
 define('phorum_page', 'ajax');
 
-require_once('./common.php');
-require_once('./include/api/json.php');
+require_once './common.php';
+require_once './include/api/json.php';
 
 // Registration of some language strings that can be used by Ajax clients.
 // We put them in here, so the language tool can find them.
@@ -38,7 +38,7 @@ require_once('./include/api/json.php');
 
 if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'client')
 {
-    include('./javascript.php');
+    include './javascript.php';
     exit;
 }
 
@@ -47,7 +47,7 @@ if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'client')
 // ----------------------------------------------------------------------
 
 if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'examples') {
-    include('./include/ajax/examples.php');
+    include './include/ajax/examples.php';
     exit;
 }
 
@@ -161,7 +161,7 @@ if (isset($PHORUM['hooks'][$call_hook])) {
 
 // Check if the Ajax call has a core handler script.
 if (file_exists("./include/ajax/call.$ajax_call.php")) {
-    include("./include/ajax/call.$ajax_call.php");
+    include "./include/ajax/call.$ajax_call.php";
     exit();
 }
 

@@ -32,6 +32,8 @@
 
 if (!defined('PHORUM')) return;
 
+defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
+
 
 // {{{ Function: phorum_api_image_thumbnail()
 /**
@@ -108,7 +110,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // PHP function. Unfortunately, this function requires a file on disk
     // to process. Therefore we create a temporary file in the Phorum cache
     // for doing this.
-    require_once('./include/api/write_file.php');
+    require_once PHORUM_PATH.'/include/api/write_file.php';
     $tmpdir = $GLOBALS['PHORUM']['cache'];
     $tmpfile = $tmpdir .'/scale_image_tmp_'. md5($image . microtime());
     if (!phorum_api_write_file($tmpfile, $image)) return NULL;

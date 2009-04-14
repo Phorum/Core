@@ -40,7 +40,7 @@ if (!$dh) trigger_error("Could not open sanity checks directory",E_USER_ERROR);
 while ($file = readdir($dh)) {
     if (preg_match('/^(.+)\.php$/', $file, $m)) {
         unset($phorum_check);
-        include("$sanity_checks_dir/$file");
+        include "$sanity_checks_dir/$file";
         $func = "phorum_check_$m[1]";
         if (!isset($phorum_check)||!function_exists($func)) trigger_error(
             "$sanity_checks_dir/$file is no valid check file! " .
@@ -116,7 +116,7 @@ if ($module == "install" || $module == "upgrade") return;
 // Build the sanity checking admin page.
 // ========================================================================
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 $frm = new PhorumInputForm ("", "post", "Restart sanity checks");
 

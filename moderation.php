@@ -18,11 +18,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','moderation');
-require_once('./common.php');
+require_once './common.php';
 
-require_once('./include/moderation_functions.php');
-require_once('./include/thread_info.php');
-require_once('./include/email_functions.php');
+require_once './include/moderation_functions.php';
+require_once './include/thread_info.php';
+require_once './include/email_functions.php';
 
 if(!phorum_check_read_common()) {
   return;
@@ -231,7 +231,7 @@ switch ($mod_step) {
             phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
 
             // Delete the message attachments from the database.
-            require_once('./include/api/file_storage.php');
+            require_once './include/api/file_storage.php';
             $files=phorum_db_get_message_file_list($msgthd_id);
             foreach($files as $file_id=>$data) {
                 phorum_api_file_delete($file_id);
@@ -326,7 +326,7 @@ switch ($mod_step) {
             $msg_ids = phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
 
             // Cleanup the attachments for all deleted messages.
-            require_once('./include/api/file_storage.php');
+            require_once './include/api/file_storage.php';
             foreach($msg_ids as $id){
                 $files=phorum_db_get_message_file_list($id);
                 foreach($files as $file_id=>$data){

@@ -19,8 +19,8 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/format_functions.php');
-require_once('./include/api/file_storage.php');
+require_once './include/format_functions.php';
+require_once './include/api/file_storage.php';
 
 // Execute file purging for real?
 if (count($_POST)) {
@@ -31,7 +31,7 @@ if (count($_POST)) {
 // Retrieve a list of stale files.
 $purge_files = phorum_api_file_purge_stale(FALSE);
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 $frm = new PhorumInputForm ("", "post", count($purge_files) ? "Purge stale files now" : "Refresh screen");
 
 $frm->hidden("module", "file_purge");

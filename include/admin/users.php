@@ -19,9 +19,9 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-include('./include/format_functions.php');
-require_once('./include/api/custom_fields.php');
-require_once('./include/api/forums.php');
+require_once './include/format_functions.php';
+require_once './include/api/custom_fields.php';
+require_once './include/api/forums.php';
 
 $user_status_map = array(
     'any'                     => 'Any user status',
@@ -87,7 +87,7 @@ if(count($_POST))
 
         //check for a valid email
         if (!empty($_POST["email"])) {
-            include('./include/email_functions.php');
+            include './include/email_functions.php';
             $valid_email = phorum_valid_email($_POST["email"]);
             if ($valid_email !== true)
                 $error = 'The email "'.htmlspecialchars($_POST[email]).'" is not valid!';
@@ -247,8 +247,8 @@ if ($error) {
     phorum_admin_error($error);
 }
 
-require_once('./include/admin/PhorumInputForm.php');
-require_once('./include/profile_functions.php');
+require_once './include/admin/PhorumInputForm.php';
+require_once './include/profile_functions.php';
 
 if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
     echo "Phorum User Admin only works with the Phorum User System.";

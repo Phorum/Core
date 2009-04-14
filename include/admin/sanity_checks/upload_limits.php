@@ -24,9 +24,9 @@
 // The upload size can be limited by Apache's LimitRequestBody directive,
 // but we cannot check that one from PHP.
 
-require_once('./include/format_functions.php'); // For phorum_filesize()
-require_once('./include/upload_functions.php');
-require_once('./include/api/forums.php');
+require_once './include/format_functions.php'; // For phorum_filesize()
+require_once './include/upload_functions.php';
+require_once './include/api/forums.php';
 
 $phorum_check = "File uploading (personal files and attachments)";
 
@@ -56,7 +56,7 @@ function phorum_check_upload_limits($is_install) {
     }
 
     // Check limits for attachment uploading in forums.
-    require_once('./include/api/forums.php');
+    require_once './include/api/forums.php';
     $forums = phorum_api_forums_get(
         NULL, NULL, NULL, NULL,
         PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS

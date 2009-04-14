@@ -106,7 +106,7 @@ foreach($subscr_array as $id => $data)
     $subscr_array_final[] = $data;
 }
 
-require_once('./include/format_functions.php');
+require_once './include/format_functions.php';
 
 // Additional formatting for the recent author data.
 $recent_author_spec = array(

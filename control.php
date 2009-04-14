@@ -18,12 +18,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','control');
-require_once("./common.php");
+require_once './common.php';
 
 phorum_require_login();
 
-require_once("./include/email_functions.php");
-require_once("./include/format_functions.php");
+require_once './include/email_functions.php';
+require_once './include/format_functions.php';
 
 define("PHORUM_CONTROL_CENTER", 1);
 

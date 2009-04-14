@@ -94,7 +94,7 @@ if ( $error ) {
     phorum_admin_okmsg ( $okmsg);
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 $frm = new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "cache" );

@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','javascript');
-require_once("./common.php");
+require_once './common.php';
 
 // So we can use {URL->HTTP_PATH} in the templates.
 phorum_build_common_urls();
@@ -90,7 +90,7 @@ if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
  *             For including a static JavaScript file. The path should be
  *             absolute or relative to the Phorum install directory,
  *             e.g. "<literal>file(mods/foobar/baz.js</literal>)".
- *             Because this file is loaded using a PHP include() call,
+ *             Because this file is loaded using a PHP include call,
  *             it is possible to include PHP code in this file. Mind that
  *             this code is stored interpreted in the cache.</li>
  *         <li><b>template(&lt;template name&gt;)</b><br>
@@ -181,7 +181,7 @@ foreach ($module_registrations as $id => $r)
                 // the cached template file if required. This is the easiest
                 // way to make this work correctly for nested template files.
                 ob_start();
-                include(phorum_get_template($m[2]));
+                include phorum_get_template($m[2]);
                 $module_registrations[$id]['content'] = ob_get_contents();
                 ob_end_clean();
 
@@ -246,7 +246,7 @@ if (isset($PHORUM['args']['refresh']) ||
                 // just in case "." is not in the PHP include path.
                 $path = $r['source'][0] == '/'
                       ? $r['source'] : './'.$r['source'];
-                include($path);
+                include $path;
                 $content .= ob_get_contents();
                 ob_end_clean();
                 break;
@@ -293,7 +293,7 @@ if (isset($PHORUM['args']['refresh']) ||
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-        require_once('./include/templates.php');
+        require_once './include/templates.php';
         phorum_write_file($cache_file, $content);
     }
 
@@ -328,7 +328,7 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 header("Content-Type: text/javascript");
 header("Last-Modified: " . date("r", $last_modified));
 
-include($cache_file);
+include $cache_file;
 
 // Exit here explicitly for not giving back control to portable and
 // embedded Phorum setups.

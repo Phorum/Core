@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','css');
-require_once('./common.php');
+require_once './common.php';
 
 // Set to FALSE to disable CSS compression.
 define('PHORUM_COMPRESS_CSS', TRUE);
@@ -80,7 +80,7 @@ phorum_build_common_urls();
  *                 For including a static CSS file. The path should be
  *                 absolute or relative to the Phorum install directory,
  *                 e.g. "<literal>file(mods/foobar/baz.css)</literal>".
- *                 Because this file is loaded using a PHP include() call,
+ *                 Because this file is loaded using a PHP include call,
  *                 it is possible to include PHP code in this file. Mind that
  *                 this code is stored interpreted in the cache.</li>
  *             <li><b>template(&lt;template name&gt;)</b><br>
@@ -137,7 +137,7 @@ if (isset($PHORUM['hooks']['css_register'])) {
 // the cached template file if required. This is the easiest
 // way to make this work correctly for nested template files.
 ob_start();
-include(phorum_get_template($css));
+include phorum_get_template($css);
 $base = ob_get_contents();
 ob_end_clean();
 
@@ -204,7 +204,7 @@ foreach ($module_registrations as $id => $r)
                 // the cached template file if required. This is the easiest
                 // way to make this work correctly for nested template files.
                 ob_start();
-                include(phorum_get_template($m[2]));
+                include phorum_get_template($m[2]);
                 $module_registrations[$id]['content'] = ob_get_contents();
                 ob_end_clean();
 
@@ -264,7 +264,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
         {
             case "file":
                 ob_start();
-                include($r['source']);
+                include $r['source'];
                 $add .= ob_get_contents();
                 ob_end_clean();
                 break;
@@ -329,7 +329,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
     }
 
     if (!empty($PHORUM['cache_css'])) {
-        require_once('./include/templates.php');
+        require_once './include/templates.php';
         phorum_write_file($cache_file, $content);
     }
 
@@ -363,7 +363,7 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 header("Content-Type: text/css");
 header("Last-Modified: " . date("r", $last_modified));
 
-include($cache_file);
+include $cache_file;
 
 // Exit here explicitly for not giving back control to portable and
 // embedded Phorum setups.

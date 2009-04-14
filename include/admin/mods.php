@@ -153,7 +153,7 @@ function filter_modules(form)
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/modules.php');
+require_once './include/api/modules.php';
 
 // Retrieve a list of available modules.
 $list = phorum_api_modules_list();

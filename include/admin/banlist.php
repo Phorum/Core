@@ -111,7 +111,7 @@ if($_GET["curr"] && $_GET["delete"]){
 
 } else {
 
-    require_once('./include/admin/PhorumInputForm.php');
+    require_once './include/admin/PhorumInputForm.php';
 
     $frm = new PhorumInputForm ("", "post", $submit);
 

@@ -7422,6 +7422,6 @@ if (!file_exists($extfile)) trigger_error(
    "file $extfile on the system. Check if all Phorum files are uploaded. ",
    E_USER_ERROR
 );
-include($extfile);
+include $extfile;
 
 ?>

@@ -25,7 +25,7 @@ if(isset($PHORUM["default_forum_options"]["language"])){
 if (!file_exists("./include/lang/${lang}.php")) {
   $lang = PHORUM_DEFAULT_LANGUAGE;
     }
-    require_once("./include/lang/{$lang}.php");
+    require_once "./include/lang/{$lang}.php";
 }
 
 // HTTP Content-Type header with the charset from the default language
@@ -425,7 +425,7 @@ Phorum Status:
 <tr>
     <td valign="top">
 <?php
-        require_once('./include/admin/PhorumAdminMenu.php');
+        require_once './include/admin/PhorumAdminMenu.php';
 
         $menu = new PhorumAdminMenu("Main Menu");
 

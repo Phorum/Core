@@ -6,7 +6,7 @@ $PHORUM['DATA']['HTML_DESCRIPTION'] =
     'This page demonstrates some features of ' .
     'the Phorum Ajax layer.';
 
-include(phorum_get_template('header'));
+include phorum_get_template('header');
 
 $clientjs = phorum_get_url(PHORUM_AJAX_URL, 'client');
 
@@ -76,6 +76,6 @@ viewer.innerHTML = '';
 </script>
 
 <?php
-    include(phorum_get_template('footer'));
+    include phorum_get_template('footer');
 ?>
 

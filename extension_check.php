@@ -43,7 +43,7 @@ if (! extension_loaded('phorum')) {
 
 // Load the common Phorum code.
 define('phorum_page','extension_check');
-require_once('./common.php');
+require_once './common.php';
 
 // Flush any output so far.
 phorum_ob_clean();

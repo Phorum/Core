@@ -20,9 +20,9 @@ if (!defined("PHORUM_ADMIN")) return;
 
 define("PHORUM_INSTALL", 1);
 
-require_once('./include/api/base.php');
-require_once('./include/api/user.php');
-require_once('./include/api/custom_fields.php');
+require_once './include/api/base.php';
+require_once './include/api/user.php';
+require_once './include/api/custom_fields.php';
 
 if (!phorum_db_check_connection()){
     phorum_admin_error(
@@ -53,7 +53,7 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
     $PHORUM["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
 
     // Load and run all available checks.
-    include("./include/admin/sanity_checks.php");
+    include './include/admin/sanity_checks.php';
 
     ?>
     <h1>Checking your system</h1>
@@ -156,7 +156,7 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
     return;
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 if(count($_POST)){
 
@@ -217,7 +217,7 @@ if(count($_POST)){
         case "modules":
 
             // Retrieve a list of available modules.
-            require_once('./include/api/modules.php');
+            require_once './include/api/modules.php';
             $list = phorum_api_modules_list();
 
             // Process posted form data
@@ -496,7 +496,7 @@ switch ($step){
 
             phorum_db_post_message($test_message);
 
-            require_once('./include/thread_info.php');
+            require_once './include/thread_info.php';
 
             phorum_update_thread_info($test_message["thread"]);
 
@@ -585,7 +585,7 @@ switch ($step){
     case "modules":
 
         // Retrieve a list of available modules.
-        require_once('./include/api/modules.php');
+        require_once './include/api/modules.php';
         $list = phorum_api_modules_list();
 
         $frm = new PhorumInputForm ("", "post", "Continue ->");

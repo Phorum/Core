@@ -30,7 +30,7 @@
 // PMTODO implement pm_reply_flag functionality
 
 define('phorum_page','pm');
-require_once('./common.php');
+require_once './common.php';
 
 phorum_require_login();
 
@@ -42,8 +42,8 @@ phorum_check_posting_token();
 // set all our common URL's
 phorum_build_common_urls();
 
-require_once('./include/email_functions.php');
-require_once('./include/format_functions.php');
+require_once './include/email_functions.php';
+require_once './include/format_functions.php';
 
 // a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
@@ -166,7 +166,7 @@ $error_msg = "";
 //  Start editor       Post message         Post reply
 if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id)))
 {
-    require_once('./include/profile_functions.php');
+    require_once './include/profile_functions.php';
     $error = phorum_check_bans(array(
         array($PHORUM["user"]["username"], PHORUM_BAD_NAMES),
         array($PHORUM["user"]["email"],    PHORUM_BAD_EMAILS),
@@ -516,7 +516,7 @@ if (!empty($action)) {
                             // Do e-mail notifications on successful sending.
                             } elseif (!empty($PHORUM['allow_pm_email_notify'])) {
 
-                                require_once('./include/email_functions.php');
+                                require_once './include/email_functions.php';
 
                                 // Sort all recipients that want a notify by language.
                                 $langrcpts = array();
@@ -1172,7 +1172,7 @@ function phorum_pm_format($messages)
 {
     global $PHORUM;
 
-    require_once('./include/format_functions.php');
+    require_once './include/format_functions.php';
 
     // Reformat message so it looks like a forum message (so we can run it
     // through phorum_format_messages) and do some PM specific formatting.

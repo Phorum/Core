@@ -19,9 +19,9 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/format_functions.php');
-require_once('./include/api/forums.php');
-require_once('./include/upload_functions.php');
+require_once './include/format_functions.php';
+require_once './include/api/forums.php';
+require_once './include/upload_functions.php';
 
 $errors = array();
 
@@ -141,7 +141,7 @@ if (isset($_GET['okmsg'])) {
     phorum_admin_okmsg(htmlspecialchars($_GET['okmsg']));
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 $frm = new PhorumInputForm ("", "post");
 
 if (defined("PHORUM_DEFAULT_OPTIONS")) {

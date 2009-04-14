@@ -44,6 +44,8 @@
 // Bail out if we're not loaded from the Phorum code.
 if (!defined('PHORUM')) return;
 
+defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
+
 // ----------------------------------------------------------------------
 // Definitions
 // ----------------------------------------------------------------------
@@ -78,7 +80,7 @@ $PHORUM['pm_buddies_table']         = $prefix . '_pm_buddies';
 $PHORUM['message_tracking_table']   = $prefix . '_messages_edittrack';
 
 // For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
-require_once("./include/api/custom_fields.php");
+require_once PHORUM_PATH.'/include/api/custom_fields.php';
 
 
 /**
@@ -1276,7 +1278,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // It kind of sucks to have this here, but it is the best way
     // to ensure that thread info gets updated if messages are deleted.
     // Leave this include down here, so it is included conditionally.
-    require_once('./include/thread_info.php');
+    require_once PHORUM_PATH.'/include/thread_info.php';
     phorum_update_thread_info($thread);
 
     // We need to delete the subscriptions for the thread too.
@@ -8002,7 +8004,7 @@ if ($ext === NULL) trigger_error(
 );
 
 // Load the specific code for the PHP extension that we use.
-$extfile = "./include/db/mysql/{$ext}.php";
+$extfile = PHORUM_PATH."/include/db/mysql/{$ext}.php";
 if (!file_exists($extfile)) trigger_error(
    "The Phorum MySQL database layer is unable to find the extension " .
    "file $extfile on the system. Check if all Phorum files are uploaded " .
@@ -8010,6 +8012,6 @@ if (!file_exists($extfile)) trigger_error(
    "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
    E_USER_ERROR
 );
-include($extfile);
+include $extfile;
 
 ?>

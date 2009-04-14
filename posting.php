@@ -52,9 +52,9 @@
 // ----------------------------------------------------------------------
 
 if (! defined('phorum_page')) define('phorum_page', 'post');
-require_once('./common.php');
+require_once './common.php';
 
-require_once('./include/format_functions.php');
+require_once './include/format_functions.php';
 
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
@@ -303,9 +303,9 @@ $PHORUM["DATA"]["ERROR"] = null;
 
 // Do things that are specific for first time or followup requests.
 if ($initial) {
-    include("./include/posting/request_first.php");
+    include './include/posting/request_first.php';
 } else {
-    include("./include/posting/request_followup.php");
+    include './include/posting/request_followup.php';
 }
 
 // Store the posting mode in the form parameters, so we can remember
@@ -353,7 +353,7 @@ if ($message["message_id"]) {
 // Do ban list checks. Only check the bans on entering and
 // on finishing up. No checking is needed on intermediate requests.
 if ($initial || $finish || $preview) {
-    include("./include/posting/check_banlist.php");
+    include './include/posting/check_banlist.php';
 }
 
 // Determine the abilities that the current user has.
@@ -506,7 +506,7 @@ if (isset($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) && $PHORUM["DATA"]["
 // Only do this on entering and on finishing up.
 // No checking is needed on intermediate requests.
 if ($initial || $finish) {
-    include("./include/posting/check_permissions.php");
+    include './include/posting/check_permissions.php';
 }
 
 // Do permission checks for attachment management.
@@ -565,12 +565,12 @@ if (isset($PHORUM["hooks"]["posting_custom_action"]))
 // Only check the integrity of the data on finishing up. During the
 // editing process, the user may produce garbage as much as he likes.
 if ($finish || $preview) {
-    include("./include/posting/check_integrity.php");
+    include './include/posting/check_integrity.php';
 }
 
 // Handle cancel request.
 if ($cancel) {
-    include("./include/posting/action_cancel.php");
+    include './include/posting/action_cancel.php';
 }
 
 // Count the number and total size of active attachments
@@ -587,7 +587,7 @@ foreach ($message["attachments"] as $attachment) {
 // Attachment management. This will update the
 // $attach_count and $attach_totalsize variables.
 if ($do_attach || $do_detach) {
-    include("./include/posting/action_attachments.php");
+    include './include/posting/action_attachments.php';
 }
 
 // Handle finishing actions.
@@ -595,11 +595,11 @@ if ( !$PHORUM["DATA"]["ERROR"] && $finish )
 {
     // Posting mode
     if ($mode == "post" || $mode == "reply") {
-        include("./include/posting/action_post.php");
+        include './include/posting/action_post.php';
     }
     // Editing mode.
     elseif ($mode == "edit") {
-        include("./include/posting/action_edit.php");
+        include './include/posting/action_edit.php';
     }
     // A little safety net.
     else trigger_error(
@@ -624,7 +624,7 @@ if ($PHORUM["posting_template"] == 'posting')
     if($PHORUM["max_attachments"]){
 
         // Retrieve upload limits as imposed by the system.
-        require_once('./include/upload_functions.php');
+        require_once './include/upload_functions.php';
         $system_max_upload = phorum_get_system_max_upload();
 
         // Apply the upload limits to the max attachment size.
@@ -672,7 +672,7 @@ if ($PHORUM["posting_template"] == 'posting')
 
     // Process data for previewing.
     if ($preview) {
-        include("./include/posting/action_preview.php");
+        include './include/posting/action_preview.php';
     }
 
     // Always put the current mode in the message, so hook

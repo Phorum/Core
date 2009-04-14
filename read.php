@@ -18,11 +18,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','read');
-require_once('./common.php');
+require_once './common.php';
 
-require_once('./include/email_functions.php');
-require_once('./include/format_functions.php');
-require_once('./include/api/newflags.php');
+require_once './include/email_functions.php';
+require_once './include/format_functions.php';
+require_once './include/api/newflags.php';
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
@@ -614,7 +614,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     if($PHORUM["threaded_read"]) {
 
         // don't move this up.  We want it to be conditional.
-        require_once('./include/thread_sort.php');
+        require_once './include/thread_sort.php';
 
         // run read-threads mods
         if (isset($PHORUM["hooks"]["readthreads"]))
@@ -746,7 +746,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 	            "as_include" => true
 	        );
 	
-	        include("./posting.php");
+	        include './posting.php';
 	    }
     }
 

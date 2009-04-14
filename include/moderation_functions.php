@@ -19,7 +19,7 @@
 
 if(!defined("PHORUM")) return;
 
-require_once('./include/thread_info.php');
+require_once './include/thread_info.php';
 
 /**
  * just returns to the list and exits the program

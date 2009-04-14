@@ -21,6 +21,6 @@
 // left in for compatibility
 // will remove in 5.3 or 6.0
 
-require_once('./feed.php');
+require_once './feed.php';
 
 ?>

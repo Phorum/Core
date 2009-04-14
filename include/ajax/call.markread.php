@@ -59,7 +59,7 @@ if (!defined('PHORUM')) return;
 if (!$PHORUM['DATA']['LOGGEDIN']) ajax_return(TRUE);
 
 // Load the newflags API, which handles marking messages as read.
-require_once('./include/api/newflags.php');
+require_once './include/api/newflags.php';
 
 // Mark messages, threads and/or forums as read.
 foreach (array(

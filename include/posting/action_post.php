@@ -19,10 +19,10 @@
 
 if (!defined("PHORUM")) return;
 
-require_once('./include/thread_info.php');
-require_once('./include/email_functions.php');
-require_once('./include/api/base.php');
-require_once('./include/api/file_storage.php');
+require_once './include/thread_info.php';
+require_once './include/email_functions.php';
+require_once './include/api/base.php';
+require_once './include/api/file_storage.php';
 
 // Set some values.
 $message["moderator_post"] = $PHORUM["DATA"]["MODERATOR"] ? 1 : 0;

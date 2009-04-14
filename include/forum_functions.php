@@ -12,7 +12,7 @@ function phorum_build_forum_list() {
     $forum_picker = array();
 
     // build forum drop down data
-    require_once('./include/api/forums.php');
+    require_once './include/api/forums.php';
     $forums = phorum_api_forums_get($allowed_forums);
 
     foreach($forums as $forum){

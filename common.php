@@ -26,13 +26,13 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 // ----------------------------------------------------------------------
 
 // the Phorum version
-define( "PHORUM", "5.3-dev" );
+define( 'PHORUM', '5.3-dev' );
 
 // our database schema version in format of year-month-day-serial
-define( "PHORUM_SCHEMA_VERSION", "2008052200");
+define( 'PHORUM_SCHEMA_VERSION', '2008052200');
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2009021901" );
+define( 'PHORUM_SCHEMA_PATCHLEVEL', '2009021901' );
 
 // The required version of the Phorum PHP extension. This version is updated
 // if internal changes of Phorum require the extension library to be upgraded
@@ -40,7 +40,10 @@ define( "PHORUM_SCHEMA_PATCHLEVEL", "2009021901" );
 // important internal change  was done as the extension's version number.
 // This version number should match the one in the php_phorum.h header file
 // for the module.
-define( "PHORUM_EXTENSION_VERSION", "20071129" );
+define( 'PHORUM_EXTENSION_VERSION', '20071129' );
+
+// A reference to the Phorum installation directory.
+define('PHORUM_PATH', dirname(__FILE__));
 
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
@@ -66,11 +69,11 @@ $PHORUM = array
 );
 
 // Load all constants from ./include/constants.php
-require_once( "./include/constants.php" );
+require_once PHORUM_PATH.'/include/constants.php';
 
 // Load the API code that is required for all pages.
-require_once("./include/api/base.php");
-require_once("./include/api/user.php");
+require_once PHORUM_PATH.'/include/api/base.php';
+require_once PHORUM_PATH.'/include/api/user.php';
 
 // ----------------------------------------------------------------------
 // PHP extension compatibility 
@@ -95,24 +98,24 @@ $compat_modules = array(
 );
 
 $missing_compat = array();
-foreach ($compat_modules as $function => $extension) {
+foreach ($compat_modules as $function => $ext) {
     if (!function_exists($function)) {
-        $module_file = "./mods/compat_$extension/compat_$extension.php";
+        $module_file = PHORUM_PATH."/mods/compat_$ext/compat_$ext.php";
         if (file_exists($module_file)) {
-            require_once($module_file);
+            require_once $module_file;
             if (!function_exists($function)) { ?>
                 <html><head><title>Phorum error</title></head><body>
                 <h2>Phorum Error:</h2>
-                Compatibility module compat_<?php print $extension ?>
+                Compatibility module compat_<?php print $ext ?>
                 does not implement function <?php print $function ?>().
                 </body></html><?php
                 exit;
             }
         } else {
-            if (empty($missing_compat[$extension])) {
-                $missing_compat[$extension] = array($function);
+            if (empty($missing_compat[$ext])) {
+                $missing_compat[$ext] = array($function);
             } else {
-                $missing_compat[$extension][] = $function;
+                $missing_compat[$ext][] = $function;
             }
         }
     }
@@ -153,11 +156,11 @@ if (!empty($missing_compat)) { ?>
 // only allowed if "PHORUM_WRAPPER" is defined and if the alternative
 // configuration wasn't passed as a request parameter (which could
 // set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
-if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER")) {
+if (empty( $GLOBALS['PHORUM_ALT_DBCONFIG'] ) || $GLOBALS['PHORUM_ALT_DBCONFIG']==$_REQUEST['PHORUM_ALT_DBCONFIG'] || !defined('PHORUM_WRAPPER')) {
 
     // Backup display_errors setting.
-    $orig = ini_get("display_errors");
-    @ini_set("display_errors", 0);
+    $orig = ini_get('display_errors');
+    @ini_set('display_errors', 0);
 
     // Use output buffering so we don't get header errors if there's
     // some additional output in the database config file (e.g. a UTF-8
@@ -165,29 +168,30 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
     ob_start();
 
     // Load configuration.
-    if (! include_once( "./include/db/config.php" )) {
+    $dbconfig = PHORUM_PATH.'/include/db/config.php';
+    if (! include_once $dbconfig) {
         print '<html><head><title>Phorum error</title></head><body>';
         print '<h2>Phorum database configuration error</h2>';
 
         // No database configuration found.
-        if (!file_exists("./include/db/config.php")) { ?>
+        if (!file_exists($dbconfig)) { ?>
             Phorum has been installed on this server, but the configuration<br/>
             for the database connection has not yet been made. Please read<br/>
             <a href="docs/install.txt">docs/install.txt</a> for installation
             instructions. <?php
         } else {
-            $fp = fopen("./include/db/config.php", "r");
+            $fp = fopen($dbconfig, 'r');
             // Unable to read the configuration file.
             if (!$fp) { ?>
                 A database configuration file was found in
-                ./include/db/config.php,<br/>but Phorum was unable to read it.
+                {phorum dir}/include/db/config.php,<br/>but Phorum was unable to read it.
                 Please check the file permissions<br/>for this file. <?php
             // Unknown error.
             } else {
                 fclose($fp); ?>
                 A database configuration file was found in
-                ./include/dbconfig.php,<br/>but it could not be loaded.
-                It possibly contains one or more errors.<br/>Please check
+                {phorum dir}/include/dbconfig.php,<br/>but it could not be loaded.
+                It possibly contains one or more syntax errors.<br/>Please check
                 your configuration file. <?php
             }
         }
@@ -200,27 +204,27 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
     ob_end_clean();
 
     // Restore original display_errors setting.
-    @ini_set("display_errors", $orig);
+    @ini_set('display_errors', $orig);
 } else {
-    $PHORUM["DBCONFIG"] = $GLOBALS["PHORUM_ALT_DBCONFIG"];
+    $PHORUM['DBCONFIG'] = $GLOBALS['PHORUM_ALT_DBCONFIG'];
 }
 
 // Backward compatbility: the "mysqli" layer was merged with the "mysql"
 // layer, but people might still be using "mysqli" as their configured
 // database type.
-if ($PHORUM["DBCONFIG"]["type"] == "mysqli" &&
-    !file_exists("./include/db/mysqli.php")) {
-    $PHORUM["DBCONFIG"]["type"] = "mysql";
+if ($PHORUM['DBCONFIG']['type'] == 'mysqli' &&
+    !file_exists(PHORUM_PATH.'/include/db/mysqli.php')) {
+    $PHORUM['DBCONFIG']['type'] = 'mysql';
 }
 
 // Load the database layer.
 $PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
-require_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
+require_once PHORUM_PATH."/include/db/{$PHORUM['DBCONFIG']['type']}.php";
 
 // Try to setup a connection to the database.
 if(!phorum_db_check_connection()){
-    if(isset($PHORUM["DBCONFIG"]["down_page"])){
-        phorum_redirect_by_url($PHORUM["DBCONFIG"]["down_page"]);
+    if(isset($PHORUM['DBCONFIG']['down_page'])){
+        phorum_redirect_by_url($PHORUM['DBCONFIG']['down_page']);
         exit();
     } else {
         echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
@@ -253,21 +257,21 @@ if (defined('PHORUM_SCRIPT'))
 
 // Defaults for missing settings (these can be needed after upgrading, in
 // case the admin did not yet save a newly added Phorum setting).
-if (!isset($PHORUM["default_feed"]))   $PHORUM["default_feed"]   = "rss";
+if (!isset($PHORUM['default_feed']))   $PHORUM['default_feed']   = 'rss';
 if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = 0;
 if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = 0;
 
 // If we have no private key for signing data, generate one now,
 // but only if it's not a fresh install.
-if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM["private_key"]) || empty($PHORUM["private_key"]))) {
+if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM['private_key']) || empty($PHORUM['private_key']))) {
    $chars = "0123456789!@#$%&abcdefghijklmnopqr".
             "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
    $private_key = "";
    for ($i = 0; $i<40; $i++) {
        $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
    }
-   $PHORUM["private_key"] = $private_key;
-   phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
+   $PHORUM['private_key'] = $private_key;
+   phorum_db_update_settings(array('private_key' => $PHORUM['private_key']));
 }
 
 // Determine the caching layer to load.
@@ -286,7 +290,7 @@ if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
 // Load the caching-layer. You can specify a different one in the settings.
 // One caching layer *needs* to be loaded.
 $PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
-require_once( "./include/cache/$PHORUM[cache_layer].php" );
+require_once PHORUM_PATH."/include/cache/$PHORUM[cache_layer].php";
 
 // Try to load the Phorum PHP extension, if has been enabled in the admin.
 // As a precaution, never load it from the admin code (so the extension
@@ -320,14 +324,14 @@ if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
 // related URL's. It is loaded conditionally, to make it possible to override
 // it from the phorum PHP extension.
 if (!function_exists('phorum_get_url')) {
-    require_once("./include/phorum_get_url.php");
+    require_once PHORUM_PATH.'/include/phorum_get_url.php';
 }
 
 // Setup the template path and http path. These are put in a variable to give
 // module authors a chance to override them. This can be especially useful
 // for distibuting a module that contains a full Phorum template as well.
 // For switching, the function phorum_switch_template() can be used.
-$PHORUM['template_path'] = './templates';
+$PHORUM['template_path'] = PHORUM_PATH.'/templates';
 $PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
 
 // ----------------------------------------------------------------------
@@ -772,9 +776,9 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     }
 
-    if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( "./include/lang/$PHORUM[language].php" ) )
+    if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( PHORUM_PATH."/include/lang/$PHORUM[language].php" ) )
         $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
-    if ( !file_exists("./include/lang/$PHORUM[language].php") ) {
+    if ( !file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php") ) {
         $PHORUM["language"] = PHORUM_DEFAULT_LANGUAGE;
     }
 
@@ -786,7 +790,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // user output buffering so we don't get header errors
     // not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
-        require_once( phorum_get_template( "settings" ) );
+        require_once phorum_get_template('settings');
         $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM['template_http_path']}/{$PHORUM["template"]}";
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
@@ -796,20 +800,19 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     }
 
     $PHORUM['language'] = basename($PHORUM['language']);
-    if ( file_exists( "./include/lang/$PHORUM[language].php" ) ) {
-        require_once( "./include/lang/$PHORUM[language].php" );
+    if ( file_exists( PHORUM_PATH."/include/lang/$PHORUM[language].php" ) ) {
+        require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
     }
     // load languages for localized modules
-    if ( isset( $PHORUM["hooks"]["lang"] ) && is_array($PHORUM["hooks"]["lang"]) ) {
-        foreach( $PHORUM["hooks"]["lang"]["mods"] as $mod )
+    if (!empty($PHORUM['hooks']['lang']['mods'])) {
+        foreach( $PHORUM['hooks']['lang']['mods'] as $mod )
         {
-            // load mods for this hook
             $mod = basename($mod);
-            if ( file_exists( "./mods/$mod/lang/$PHORUM[language].php" ) ) {
-                require_once "./mods/$mod/lang/$PHORUM[language].php";
+            if ( file_exists( PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php" ) ) {
+                require_once PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php";
             }
-            elseif ( file_exists( "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php" ) ) {
-                require_once "./mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
+            elseif ( file_exists( PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php" ) ) {
+                require_once PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
             }
         }
     }
@@ -1079,8 +1082,8 @@ else {
     // strings at some point after all, for example if we reset the
     // author name in messages for deleted users to "anonymous".
     $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"]);
-    if (file_exists("./include/lang/$PHORUM[language].php")) {
-        require_once("./include/lang/$PHORUM[language].php");
+    if (file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
+        require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
     }
 }
 
@@ -1261,7 +1264,7 @@ function phorum_switch_template($template = NULL, $template_path = NULL, $templa
         $PHORUM['template_http_path'] .'/'. $PHORUM['template'];
 
     ob_start();
-    include(phorum_get_template('settings'));
+    include phorum_get_template('settings');
     ob_end_clean();
 }
 
@@ -1390,7 +1393,7 @@ function phorum_get_template_file( $page )
             // could be an incomplete or empty template.
             $postfix = '/info.php';
         } else {
-            $prefix = './mods/'.basename($module).'/templates';
+            $prefix = PHORUM_PATH.'/mods/'.basename($module).'/templates';
             $postfix = '';
         }
 
@@ -1615,7 +1618,7 @@ function phorum_output($templates) {
      *     function phorum_mod_foo_end_output()
      *     {
      *         // Some made up call to some fake statistics package.
-     *         include("/usr/share/lib/footracker.php");
+     *         include "/usr/share/lib/footracker.php";
      *         footracker_register_request();
      *     }
      *     </hookcode>
@@ -1664,7 +1667,7 @@ function phorum_get_template( $page )
 
     // Pre-process template if the output file isn't available.
     if (! file_exists($phpfile)) {
-        require_once "./include/templates.php";
+        require_once PHORUM_PATH."/include/templates.php";
         phorum_import_template($page, $tplfile, $phpfile);
     }
 
@@ -1763,17 +1766,17 @@ function phorum_hook( $hook )
             $load_cache[$mod] = 1;
 
             // Load the module file.
-            if ( file_exists("./mods/$mod/$mod.php") ) {
-                require_once "./mods/$mod/$mod.php";
-            } elseif ( file_exists("./mods/$mod.php") ) {
-                require_once "./mods/$mod.php";
+            if ( file_exists(PHORUM_PATH."/mods/$mod/$mod.php") ) {
+                require_once PHORUM_PATH."/mods/$mod/$mod.php";
+            } elseif ( file_exists(PHORUM_PATH."/mods/$mod.php") ) {
+                require_once PHORUM_PATH."/mods/$mod.php";
             }
 
             // Load the module database layer file.
             if (!empty($PHORUM['moddblayers'][$mod])) {
-                $file = "./mods/$mod/db/{$PHORUM['DBCONFIG']['type']}.php";
+                $file = PHORUM_PATH."/mods/$mod/db/{$PHORUM['DBCONFIG']['type']}.php";
                 if (file_exists($file)) {
-                    require_once($file);
+                    require_once $file;
                 }
             }
         }
@@ -1863,10 +1866,10 @@ function phorum_get_language_info()
 
     $langs = array();
 
-    $d = dir( "./include/lang" );
+    $d = dir( PHORUM_PATH.'/include/lang' );
     while ( false !== ( $entry = $d->read() ) ) {
-        if ( substr( $entry, -4 ) == ".php" && is_file( "./include/lang/$entry" ) ) {
-            @include "./include/lang/$entry";
+        if ( substr( $entry, -4 ) == ".php" && is_file( PHORUM_PATH."/include/lang/$entry" ) ) {
+            @include PHORUM_PATH."/include/lang/$entry";
             if ( !isset( $language_hide ) || empty( $language_hide ) || defined( "PHORUM_ADMIN" ) ) {
                 $langs[str_replace( ".php", "", $entry )] = $language;
             } else {
@@ -2218,7 +2221,7 @@ function phorum_database_error($error)
         case "mail":
         default:
 
-            require_once("./include/email_functions.php");
+            require_once PHORUM_PATH.'/include/email_functions.php';
 
             $data = array(
               "mailmessage" =>

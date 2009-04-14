@@ -406,7 +406,7 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
         // $upgrade_queries array with the necessary queries to run.
         $upgrade_description = NULL;
         $upgrade_queries = array();
-        include($upgradefile);
+        include $upgradefile;
 
         if (!empty($upgrade_description)) {
             $msg .= "Description: " . $upgrade_description . "<br/>";

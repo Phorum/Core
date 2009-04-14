@@ -106,7 +106,7 @@ if($_GET["curr"] && $_GET["delete"]){
     $banlists=phorum_db_get_banlists();
     $bad_words=$banlists[PHORUM_BAD_WORDS];
 
-    require_once('./include/admin/PhorumInputForm.php');
+    require_once './include/admin/PhorumInputForm.php';
 
     $frm = new PhorumInputForm ("", "post", $submit);
 

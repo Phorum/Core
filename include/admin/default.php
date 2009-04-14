@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/forums.php');
+require_once './include/api/forums.php';
 
 // Show message if set in the URL.
 if (isset($_GET['okmsg'])) {

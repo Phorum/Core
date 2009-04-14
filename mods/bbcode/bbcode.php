@@ -19,9 +19,9 @@
 
 if (!defined("PHORUM")) return;
 
-require_once('./mods/bbcode/api.php');
-require_once('./mods/bbcode/builtin_tags.php');
-require_once('./mods/bbcode/defaults.php');
+require_once PHORUM_PATH.'/mods/bbcode/api.php';
+require_once PHORUM_PATH.'/mods/bbcode/builtin_tags.php';
+require_once PHORUM_PATH.'/mods/bbcode/defaults.php';
 
 // Initialize the bbcode parser if that has not been done before.
 // This will mainly be used at install time to initialize the data.

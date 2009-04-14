@@ -25,8 +25,8 @@ if (!phorum_db_check_connection()) {
     return;
 }
 
-require_once('./include/admin/PhorumInputForm.php');
-require_once('./include/version_functions.php');
+require_once './include/admin/PhorumInputForm.php';
+require_once './include/version_functions.php';
 
 $is_module_upgrade = isset($_POST['is_module_upgrade'])
       ? ($_POST['is_module_upgrade'] ? 1 : 0)
@@ -34,7 +34,7 @@ $is_module_upgrade = isset($_POST['is_module_upgrade'])
 
 // Find and count the upgrades that have to be run.
 if ($is_module_upgrade) {
-    require_once('./include/api/modules.php');
+    require_once './include/api/modules.php';
     $upgrades = phorum_api_modules_check_updated_dblayer();
 } else {
     $upgrades = phorum_dbupgrade_getupgrades();
@@ -58,7 +58,7 @@ if ($step == 0 && !isset($_POST["sanity_checks_done"]))
     $PHORUM["real_cache"] = $PHORUM["cache"] . "/install_tmp_sanity_check_cache_dir";
 
     // Load and run all available checks.
-    include("./include/admin/sanity_checks.php");
+    include "./include/admin/sanity_checks.php";
 
     ?>
     <h1>Checking your system</h1>

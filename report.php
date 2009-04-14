@@ -18,10 +18,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','report');
-require_once('./common.php');
+require_once './common.php';
 
-require_once('./include/email_functions.php');
-require_once('./include/format_functions.php');
+require_once './include/email_functions.php';
+require_once './include/format_functions.php';
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();

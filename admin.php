@@ -26,8 +26,8 @@ define("PHORUM_ADMIN", 1);
 // the code run faster.
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-require_once('./common.php');
-require_once('./include/admin_functions.php');
+require_once './common.php';
+require_once './include/admin_functions.php';
 
 // determine absolute URI for the admin
 $PHORUM["admin_http_path"] = phorum_get_current_url(false);
@@ -75,7 +75,7 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
 
         // Check if there are updated module information files.
         // If yes, the load the information and store the data.
-        require_once('./include/api/modules.php');
+        require_once './include/api/modules.php';
         $updates = phorum_api_modules_check_updated_info();
         if (!empty($updates)) {
             phorum_api_modules_save();
@@ -97,9 +97,9 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
 
 $module = phorum_hook( "admin_pre", $module );
 ob_start();
-if($module!="help") require_once('./include/admin/header.php');
-require_once("./include/admin/$module.php");
-if($module!="help") require_once('./include/admin/footer.php');
+if($module!="help") require_once './include/admin/header.php';
+require_once "./include/admin/$module.php";
+if($module!="help") require_once './include/admin/footer.php';
 ob_end_flush();
 
 ?>

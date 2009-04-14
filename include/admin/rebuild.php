@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/forums.php');
+require_once './include/api/forums.php';
 
 $error = "";
 
@@ -53,7 +53,7 @@ if ( count( $_POST ) ) {
     }
 
     if(isset($_POST['rebuild_metadata']) && !empty($_POST['rebuild_metadata'])) {
-        require_once('./include/thread_info.php');
+        require_once './include/thread_info.php';
 
         // we need to rebuild the forumstats
         $forums = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INCLUDE_INACTIVE);
@@ -124,7 +124,7 @@ if ( count( $_POST ) ) {
     }
 
     if(isset($_POST['rebuild_forumpaths']) && !empty($_POST['rebuild_forumpaths'])) {
-        require_once('./include/api/forums.php');
+        require_once './include/api/forums.php';
         $forums = phorum_api_forums_build_path();
         unset($forums[0]);
 
@@ -160,7 +160,7 @@ if ( $error ) {
     phorum_admin_okmsg ( $okmsg);
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 $frm = &new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "rebuild" );

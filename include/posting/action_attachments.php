@@ -19,8 +19,8 @@
 
 if (!defined("PHORUM")) return;
 
-require_once('./include/api/base.php');
-require_once('./include/api/file_storage.php');
+require_once './include/api/base.php';
+require_once './include/api/file_storage.php';
 
 if ($do_detach)
 {
@@ -102,7 +102,7 @@ if ($do_detach)
 elseif ($do_attach && ! empty($_FILES))
 {
     // Find the maximum allowed attachment size.
-    require_once('./include/upload_functions.php');
+    require_once './include/upload_functions.php';
     $system_max_upload = phorum_get_system_max_upload();
     if ($PHORUM["max_attachment_size"] == 0)
         $PHORUM["max_attachment_size"] = $system_max_upload[0] / 1024;

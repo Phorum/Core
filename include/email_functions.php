@@ -19,8 +19,8 @@
 
 if (!defined("PHORUM")) return;
 
-require_once("./include/api/base.php");
-require_once("./include/api/user.php");
+require_once './include/api/base.php';
+require_once './include/api/user.php';
 
 function phorum_valid_email($email){
     global $PHORUM;
@@ -66,7 +66,7 @@ function phorum_valid_email($email){
 function phorum_email_user($addresses, $data)
 {
     global $PHORUM;
-    require_once('./include/api/mail.php');
+    require_once './include/api/mail.php';
 
     // If we have no from_address in the message data, then generate
     // from_address ourselves, based on the system_email_* settings.
@@ -301,10 +301,10 @@ function phorum_email_pm_notice($message, $langusers)
 
         if ( file_exists( "./include/lang/$language.php" ) ) {
             $mail_data['language'] = $language;
-            include( "./include/lang/$language.php" );
+            include "./include/lang/$language.php";
         } else {
             $mail_data['language'] = $PHORUM['language'];
-            include("./include/lang/{$PHORUM['language']}.php");
+            include "./include/lang/{$PHORUM['language']}.php";
         }
 
         $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['PMNotifyMessage'];
@@ -328,7 +328,7 @@ function phorum_email_notice($message)
         return;
     }
 
-    include_once("./include/format_functions.php");
+    include_once "./include/format_functions.php";
 
     $mail_users_full = phorum_api_user_list_subscribers($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
 
@@ -367,10 +367,10 @@ function phorum_email_notice($message)
 
             if ( file_exists( "./include/lang/$language.php" ) ) {
                 $mail_data['language'] = $language;
-                include( "./include/lang/$language.php" );
+                include "./include/lang/$language.php";
             } else {
                 $mail_data['language'] = $PHORUM['language'];
-                include("./include/lang/{$PHORUM['language']}.php");
+                include "./include/lang/{$PHORUM['language']}.php";
             }
             $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['NewReplyMessage'];
             $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"]['NewReplySubject'];
@@ -395,7 +395,7 @@ function phorum_email_moderators($message)
     }
     
     if (count($mail_localized_users)) {
-        include_once("./include/format_functions.php");
+        include_once "./include/format_functions.php";
         
         if($message["status"] > 0) { // just notification of a new message
             $mailsubjecttpl = 'NewUnModeratedSubject';
@@ -435,10 +435,10 @@ function phorum_email_moderators($message)
 
             if ( file_exists( "./include/lang/$language.php" ) ) {
                 $mail_data['language'] = $language;
-                include( "./include/lang/$language.php" );
+                include "./include/lang/$language.php";
             } else {
                 $mail_data['language'] = $PHORUM['language'];
-                include("./include/lang/{$PHORUM['language']}.php");
+                include "./include/lang/{$PHORUM['language']}.php";
             }
             $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"][$mail_data['mailmessagetpl']];
             $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"][$mail_data['mailsubjecttpl']];

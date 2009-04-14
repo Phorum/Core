@@ -45,7 +45,7 @@ function phorum_check_language($is_install = false) {
     if ($is_install) return array(PHORUM_SANITY_OK, NULL, NULL);
 
     // Check for the forum specific language file(s).
-    require_once('./include/api/forums.php');
+    require_once './include/api/forums.php';
     $forums = phorum_api_forums_get(
         NULL, NULL, NULL, NULL,
         PHORUM_FLAG_INCLUDE_INACTIVE

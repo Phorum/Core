@@ -20,7 +20,7 @@
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
 // need this for banlist-checks
-require_once('./include/profile_functions.php');
+require_once './include/profile_functions.php';
 
 // email-verification
 if($PHORUM['registration_control']) {

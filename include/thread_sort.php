@@ -19,7 +19,7 @@
 
 if (!defined('PHORUM')) return;
 
-require_once('./include/api/tree.php');
+require_once './include/api/tree.php';
 
 function phorum_sort_threads($rows)
 {

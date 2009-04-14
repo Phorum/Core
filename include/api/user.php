@@ -45,10 +45,12 @@
 
 if (!defined('PHORUM')) return;
 
+defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
+
 /**
  * Requires
  */
-require_once('./include/api/custom_fields.php');
+require_once PHORUM_PATH.'/include/api/custom_fields.php';
 
 
 // {{{ Constant and variable definitions
@@ -644,7 +646,7 @@ function phorum_api_user_save($user, $flags = 0)
      *         $user['real_name'] = $real_name;
      *
      *         // Some fictional external system to keep in sync.
-     *         include("../coolsys.php");
+     *         include "../coolsys.php";
      *         coolsys_save($user);
      *
      *         return $user;
@@ -1452,7 +1454,7 @@ function phorum_api_user_delete($user_id)
     phorum_db_user_delete($user_id);
 
     // Delete the personal user files for this user.
-    require_once('./include/api/file_storage.php');
+    require_once PHORUM_PATH.'/include/api/file_storage.php';
     $files = phorum_api_file_list(PHORUM_LINK_USER, $user_id, 0);
     foreach ($files as $file_id => $file) {
         phorum_api_file_delete($file_id);

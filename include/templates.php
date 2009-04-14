@@ -114,10 +114,10 @@ function phorum_import_template($page, $infile, $outfile)
     $stage1 = "<?php
       if (" . implode(" || ", $checks) . ") {
           @unlink (\"$qstage1file\");
-          include(phorum_get_template(\"$qpage\"));
+          include phorum_get_template(\"$qpage\");
           return;
       } else {
-          include(\"$qstage2file\");
+          include \"$qstage2file\";
       }
       ?>";
     phorum_write_file($stage1file, $stage1);

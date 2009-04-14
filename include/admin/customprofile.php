@@ -19,8 +19,8 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/base.php');
-require_once('./include/api/custom_fields.php');
+require_once './include/api/base.php';
+require_once './include/api/custom_fields.php';
 
 $TYPES_ARRAY = array(PHORUM_CUSTOM_FIELD_USER    => 'User',
                      PHORUM_CUSTOM_FIELD_FORUM   => 'Forum',
@@ -179,7 +179,7 @@ if ($field === NULL) {
 }
 
 // Display the custom field editor.
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 
 $frm = new PhorumInputForm ("", "post", $submit);
 $frm->hidden("module", "customprofile");

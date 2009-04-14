@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/format_functions.php');
+require_once './include/format_functions.php';
 
 // Execute file purging.
 if(count($_POST))
@@ -50,7 +50,7 @@ if(count($_POST))
             }
         }
     }
-    require_once('./include/format_functions.php');
+    require_once './include/format_functions.php';
     print "Finished purging compiled Phorum templates<br/>\n" .
           "Purged " . phorum_filesize($purged) . "<br/>";
 
@@ -58,7 +58,7 @@ if(count($_POST))
     print "DONE<br/><br/>";
 }
 
-require_once('./include/admin/PhorumInputForm.php');
+require_once './include/admin/PhorumInputForm.php';
 $frm = new PhorumInputForm ("", "post", "Purge cache");
 $frm->hidden("module", "cache_purge");
 

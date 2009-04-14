@@ -32,6 +32,8 @@
 
 if (!defined("PHORUM")) return;
 
+defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
+
 // {{{ Constant and variable definitions
 /**
  * This array describes deprecated module hook names, which have been
@@ -78,12 +80,12 @@ function phorum_api_modules_list()
     $deprecated = array();
     $problems   = array();
 
-    require_once('./include/version_functions.php');
+    require_once PHORUM_PATH.'/include/version_functions.php';
 
-    $dh = opendir("./mods");
+    $dh = opendir(PHORUM_PATH.'/mods');
     if (! $dh) trigger_error(
         "Unable to create a list of available modules: " .
-        "opendir of directory \"./mods\" failed.",
+        "opendir of directory \"{phorum dir}/mods\" failed.",
         E_USER_ERROR
     );
 
@@ -101,11 +103,11 @@ function phorum_api_modules_list()
 
         // Read in the module information.
         $lines = array();
-        if (file_exists("./mods/$entry/info.txt")) {
-            $lines = file("./mods/$entry/info.txt");
-        } elseif (is_file("./mods/$entry") && substr($entry, -4)==".php") {
+        if (file_exists(PHORUM_PATH."/mods/$entry/info.txt")) {
+            $lines = file(PHORUM_PATH."/mods/$entry/info.txt");
+        } elseif (is_file(PHORUM_PATH."/mods/$entry") && substr($entry, -4)==".php") {
             $entry = str_replace(".php", "", $entry);
-            $data = file_get_contents("./mods/$entry.php");
+            $data = file_get_contents(PHORUM_PATH."/mods/$entry.php");
             if($data = stristr($data, "/* phorum module info")){
                 $data = substr($data, 0, strpos($data, "*/"));
                 $lines = preg_split('!(\r|\n|\r\n)!', $data);
@@ -185,7 +187,7 @@ function phorum_api_modules_list()
             $info['enabled'] = 0;
         }
 
-        if (file_exists("./mods/$entry/settings.php")){
+        if (file_exists(PHORUM_PATH."/mods/$entry/settings.php")){
             $info["settings"]=true;
         } else {
             $info["settings"]=false;
@@ -518,8 +520,8 @@ function phorum_api_modules_check_updated_info($do_reset = FALSE)
         foreach ($PHORUM['mods'] as $mod => $active)
         {
             if (!$active) continue;
-            $info = "./mods/$mod/info.txt";
-            $filemod = "./mods/$mod.php";
+            $info = PHORUM_PATH."/mods/$mod/info.txt";
+            $filemod = PHORUM_PATH."/mods/$mod.php";
             if (file_exists($info)) {
                 $time = @filemtime($info);
             } elseif (file_exists($filemod)) {
@@ -588,7 +590,7 @@ function phorum_api_modules_check_updated_dblayer()
                 // Find the available db upgrade files for the module.
                 // Filter out the upgrades that have to be run.
                 $type = $PHORUM['DBCONFIG']['type'];
-                $dbdir = "./mods/$mod/db/upgrade/$type";
+                $dbdir = PHORUM_PATH."/mods/$mod/db/upgrade/$type";
                 $dir = @opendir($dbdir);
                 if ($dir) {
                     while ($entry = readdir($dir)) {

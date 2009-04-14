@@ -22,7 +22,7 @@ define('phorum_page','script');
 define('PHORUM_SCRIPT', 1);
 
 chdir(dirname(__FILE__));
-require_once('./common.php');
+require_once './common.php';
 
 // if we are running in the webserver, bail out
 if (isset($_SERVER["REMOTE_ADDR"])) {

@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 define('phorum_page','version_iframe');
-require_once('./common.php');
+require_once './common.php';
 
 // Check for new versions of the Phorum software. Only do this once by
 // issuing a cookie which remembers whether we need to upgrade or not.
@@ -29,7 +29,7 @@ require_once('./common.php');
 if (isset($_COOKIE["phorum_upgrade_available"])) {
     $upgrade_available = $_COOKIE["phorum_upgrade_available"];
 } else {
-    require_once('./include/version_functions.php');
+    require_once './include/version_functions.php';
     $releases = phorum_find_upgrades();
     if (isset($releases["stable"]) && !empty($releases["stable"]["upgrade"])) {
         $upgrade_available = $releases["stable"]["version"];

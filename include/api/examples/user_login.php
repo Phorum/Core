@@ -3,8 +3,8 @@
 
 if (!defined('PHORUM')) return;
 
-require_once('./include/api/base.php');
-require_once('./include/api/user.php');
+require_once './include/api/base.php';
+require_once './include/api/user.php';
 
 // Check the username and password.
 $user_id = phorum_api_user_authenticate(

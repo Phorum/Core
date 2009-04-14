@@ -23,7 +23,7 @@ if(count($_POST)) {
     list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 }
 
-require_once('./include/api/custom_fields.php');
+require_once './include/api/custom_fields.php';
 
 
 // need their names for the later check
