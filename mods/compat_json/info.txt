@@ -5,5 +5,5 @@ version: 1.0.0
 author: Phorum Dev Team
 url: http://www.phorum.org/
 
-compat:json_encode|json
-compat:json_decode|json
+compat:json|json_encode
+compat:json|json_decode

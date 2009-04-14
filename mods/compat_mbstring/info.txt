@@ -6,4 +6,4 @@ version: 1.0.0
 author: Phorum Dev Team
 url: http://www.phorum.org/
 
-compat:mbstring|mb_substring
+compat:mbstring|mb_substr
