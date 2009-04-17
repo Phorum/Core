@@ -386,11 +386,10 @@ if ($success)
         $PHORUM['DATA']["URL"]["REDIRECT"]=$redir_url;
         
         // clickheremsg is depending on the place we are returning to
-        $PHORUM['DATA']["URL"]["CLICKHERE"]=$redir_url;
         if ($PHORUM["redirect_after_post"] == "read") {
-            $PHORUM['DATA']['CLICKHEREMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
+            $PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
         } else {
-            $PHORUM['DATA']['CLICKHEREMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
+            $PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
         }
         
         // make it a little bit longer visible
