@@ -22,7 +22,7 @@ while (!$done) {
     }
 
     if(count($ids) > 1000 || ($done && count($ids) > 0)){
-        $res = phorum_db_interact(
+        phorum_db_interact(
             DB_RETURN_RES,
             "DELETE
              FROM      {$PHORUM['user_newflags_table']}
