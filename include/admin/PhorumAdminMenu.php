@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2009  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -56,8 +56,10 @@
                 $desc = htmlspecialchars($link["description"]);
                 $href = htmlspecialchars($_SERVER["PHP_SELF"]);
                 $title = htmlspecialchars($link["title"]);
-                $html ="<a title=\"$desc\" href=\"$href";
-                if(!empty($link["module"])) $html.="?module=$link[module]";
+                $input_args = array();
+                if(!empty($link["module"])) $input_args[]="module=$link[module]";
+                $url = phorum_admin_build_url($input_args);
+                $html ="<a title=\"$desc\" href=\"$url";
                 $html.="\">$title</a><br />";
                 echo $html;
             }

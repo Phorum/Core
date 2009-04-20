@@ -244,4 +244,27 @@ function phorum_admin_build_path_array($only_forum = NULL)
     return $paths;
 }
 
+function phorum_admin_build_url($input_args) {
+    global $PHORUM;
+    
+    $url = $PHORUM["admin_http_path"];
+    
+    if($input_args == 'base') {
+        return $url;
+    }
+    
+    if(is_array($input_args) && count($input_args)) {
+        $url .="?".implode("&amp;",$input_args);
+        // add token 
+    } elseif(!is_array($input_args) && !empty($input_args)) {
+        $url .="?".$input_args;
+        // add token 
+    } else {
+        // add token 
+    }
+    
+    
+    
+    return $url;
+}
 ?>

@@ -162,7 +162,8 @@
         }
 
         if(empty($error)) {
-            phorum_redirect_by_url("{$PHORUM["admin_http_path"]}?parent_id={$cur_folder["parent_id"]}");
+            $redir_url = phorum_admin_build_url(array('parent_id='.$cur_folder["parent_id"]));
+            phorum_redirect_by_url($redir_url);
             exit();
         }
 

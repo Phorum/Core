@@ -70,7 +70,7 @@ if(count($_POST) && $_POST['name'] != '')
           you can choose to restore the old field's configuration and
           data. You can also create a totally new field and ignore
           the deleted field. What do you want to do?<br/><br/>
-          <form action="<?php print $PHORUM["admin_http_path"] ?>" method="post">
+          <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
             <input type="hidden" name="module"
                 value="<?php print $module; ?>" />
             <input type="hidden" name="curr"
@@ -122,7 +122,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
   <div class="PhorumInfoMessage">
     Are you sure you want to delete this custom profile field?
     <br/><br/>
-    <form action="<?php print $PHORUM["admin_http_path"] ?>" method="post">
+    <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
       <input type="hidden" name="module" value="<?php print $module; ?>" />
       <input type="hidden" name="curr" value="<?php print (int) $_GET['curr']; ?>" />
       <input type="hidden" name="delete" value="1" />
@@ -240,11 +240,14 @@ if ($curr == "NEW")
             // Do not show deleted fields.
             if (!empty($item['deleted'])) continue;
 
+            $edit_url = phorum_admin_build_url(array('module=customprofile','edit=1',"curr=$key"));
+            $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key"));
+            
             print "<tr>\n";
             print "  <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
             print "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
             print "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
-            print "    <td class=\"PhorumAdminTableRow\"><a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&?edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=customprofile&curr=$key&delete=1\">Delete</a></td>\n";
+            print "    <td class=\"PhorumAdminTableRow\"><a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
             print "</tr>\n";
         }
         print "</table>\n";

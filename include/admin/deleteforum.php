@@ -60,7 +60,8 @@
         } else {
             $msg="Are you sure you want to delete $forum[name]?  All messages in this forum will be deleted";
         }
-        $msg.="<form action=\"{$PHORUM["admin_http_path"]}\" method=\"get\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"{$forum['forum_id']}\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
+        $frm_url = phorum_admin_build_url('base');
+        $msg.="<form action=\"$frm_url\" method=\"get\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"{$forum['forum_id']}\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
 
     }
 

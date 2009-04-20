@@ -55,7 +55,7 @@ if (isset($_POST['referrer'])) {
 } elseif (isset($_SERVER['HTTP_REFERER'])) {
     $referrer = $_SERVER['HTTP_REFERER'];
 } else {
-    $rererrer = "{$PHORUM["admin_http_path"]}?module=users";
+    $referrer = phorum_admin_build_url(array('module=users'));
 }
 
 if(count($_POST))
@@ -240,9 +240,10 @@ if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
 
 if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !isset($_POST['section']))
 {
-    print "<a href=\"{$PHORUM["admin_http_path"]}?module=users\">" .
-          "Show all users</a> | <a href=\"{$PHORUM["admin_http_path"]}" .
-      "?module=users&add=1\">Add User</a><br/>";
+    $users_url = phorum_admin_build_url(array('module=users'));
+    $users_add_url = phorum_admin_build_url(array('module=users','add=1'));
+    print "<a href=\"$users_url\">" .
+          "Show all users</a> | <a href=\"$users_add_url\">Add User</a><br/>";
 
     if (empty($_REQUEST["user_id"]))
     {
@@ -286,7 +287,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     $url_safe_search = '';
     foreach ($user_search_fields as $field) {
         if (isset($_REQUEST[$field])) {
-            $url_safe_search .= "&$field=" . urlencode($_REQUEST[$field]);
+            $url_safe_search .= "$field=" . urlencode($_REQUEST[$field]);
         }
     }
 
@@ -387,21 +388,24 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
         if($_REQUEST["start"]>0){
             $old_start=$_REQUEST["start"]-$display;
-            $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users$url_safe_search&start=$old_start\">Previous Page</a>";
+            $prev_url = phorum_admin_build_url(array('module=users',$url_safe_search,'start='.$old_start));
+            $nav.="<a href=\"$prev_url\">Previous Page</a>";
         }
 
         $nav.="&nbsp;&nbsp;";
 
         if($_REQUEST["start"]+$display<$total){
             $new_start=$_REQUEST["start"]+$display;
-            $nav.="<a href=\"{$PHORUM["admin_http_path"]}?module=users$url_safe_search&start=$new_start\">Next Page</a>";
+            $next_url = phorum_admin_build_url(array('module=users',$url_safe_search,'start='.$new_start));
+            $nav.="<a href=\"$next_url\">Next Page</a>";
         }
 
         $totalpages = ceil($total/$display);
         $page = ceil($_REQUEST['start']/$display) + 1;
 
+        $frm_url = phorum_admin_build_url('base');
         echo <<<EOT
-        <form name="UsersForm" action="{$PHORUM["admin_http_path"]}" method="post">
+        <form name="UsersForm" action="$frm_url" method="post">
         <input type="hidden" name="module" value="users">
         <input type="hidden" name="action" value="deleteUsers">
         <table border="0" cellspacing="1" cellpadding="0"
@@ -431,9 +435,9 @@ EOT;
             $posts = intval($user['posts']);
 
             $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
-
+            $edit_url = phorum_admin_build_url(array('module=users','user_id='.$user['user_id'],'edit=1'));
             echo "<tr>\n";
-            echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=users&user_id={$user['user_id']}&edit=1\">".(empty($PHORUM['custom_display_name']) ? htmlspecialchars($user['display_name']) : $user['display_name'])."</a></td>\n";
+            echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">".(empty($PHORUM['custom_display_name']) ? htmlspecialchars($user['display_name']) : $user['display_name'])."</a></td>\n";
             echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
             echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
             echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";

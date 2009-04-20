@@ -401,7 +401,7 @@ function hide_help()
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<form id="status-form" action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
+<form id="status-form" action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
 <input type="hidden" name="module" value="status" />
 Phorum Status:
 <select name="status" onChange="this.form.submit();">

@@ -37,7 +37,8 @@
             if(!empty($_POST["target"])){
                 phorum_redirect_by_url($_POST['target']);
             } else {
-                phorum_redirect_by_url($PHORUM["admin_http_path"]);
+                $redir_url = phorum_admin_build_url('base');
+                phorum_redirect_by_url($redir_url);
             }
             exit();
 
@@ -56,7 +57,8 @@
 
     if(count($_REQUEST)){
 
-        $frm->hidden("target", $PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]);
+        $target_url = phorum_admin_build_url($_SERVER["QUERY_STRING"]);
+        $frm->hidden("target", $target_url);
 
     }
 

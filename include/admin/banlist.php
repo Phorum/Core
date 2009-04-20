@@ -91,7 +91,7 @@
 
         <div class="PhorumInfoMessage">
             Are you sure you want to delete this entry?
-            <form action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
+            <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
                 <input type="hidden" name="module" value="<?php echo $module; ?>" />
                 <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
                 <input type="hidden" name="delete" value="1" />
@@ -216,13 +216,15 @@
                 foreach($PHORUM["banlists"] as $type => $content){
                     $t_last_string = '';
                     foreach($content as $key => $item){
+                        $edit_url = phorum_admin_build_url(array('module=banlist','edit=1',"curr=$key"));
+                        $delete_url = phorum_admin_build_url(array('module=banlist','delete=1',"curr=$key"));
                         $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
                         echo "<tr>\n";
                         echo "    <td class=\"".$ta_class."\"".($item["string"] == $t_last_string ? " style=\"color:red;\"" : "").">".htmlspecialchars($item['string'])."</td>\n";
                         echo "    <td class=\"".$ta_class."\">".$ban_types[$type]."</td>\n";
                         echo "    <td class=\"".$ta_class."\">".$match_types[$item["pcre"]]."</td>\n";
                         echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
-                        echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=banlist&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=banlist&curr=$key&delete=1\">Delete</a></td>\n";
+                        echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
                         echo "</tr>\n";
                         $t_last_string = $item["string"];
                     }
