@@ -472,7 +472,7 @@ EOT;
 // display edit form
 if (isset($_REQUEST["user_id"]))
 {
-    print "<a href=\"$referrer\">Back to the user overview</a><br/>";
+    print "<a href=\"".htmlspecialchars($referrer)."\">Back to the user overview</a><br/>";
 
     $user = phorum_api_user_get($_REQUEST["user_id"], TRUE);
 
@@ -655,7 +655,7 @@ if (isset($_REQUEST["user_id"]))
     $email = isset($user_data["email"]) ? $user_data["email"] : "";
     $admin = isset($user_data["admin"]) ? $user_data["admin"] : "";
 
-    print "<a href=\"$referrer\">Back to the user overview</a><br/>";
+    print "<a href=\"".htmlspecialchars($referrer)."\">Back to the user overview</a><br/>";
 
     $frm = new PhorumInputForm ("", "post", "Add User");
 
