@@ -2,26 +2,30 @@
 
 if(!defined("PHORUM")) return;
 
+global $PHORUM;
+
 # The database scheme version, which is used to handle
 # installation and upgrades from the module.
 define("SPAMHURDLES_DB_VERSION", 1);
 
 # The table name for storing spamhurdles information.
-$GLOBALS['PHORUM']['spamhurdles_table'] =
-    "{$GLOBALS["PHORUM"]["DBCONFIG"]["table_prefix"]}_spamhurdles";
+$PHORUM['spamhurdles_table'] =
+    "{$PHORUM["DBCONFIG"]["table_prefix"]}_spamhurdles";
 
 # Check if an installation or upgrade of the database scheme is needed.
 function spamhurdles_db_init()
 {
-    $layerpath = "./mods/spamhurdles/db/{$GLOBALS["PHORUM"]["DBCONFIG"]["type"]}";
+    global $PHORUM;
+
+    $layerpath = "./mods/spamhurdles/db/{$PHORUM["DBCONFIG"]["type"]}";
 
     // Allow db layers to provide an initialization script of their own.
     // The main goal for this script is to allow a db layer to override the
     // $PHORUM['spamhurdles_table'] variable.
     if (file_exists("$layerpath/db.php")) require_once("$layerpath/db.php");
 
-    $version = isset($GLOBALS["PHORUM"]["mod_spamhurdles_installed"])
-        ? $GLOBALS["PHORUM"]["mod_spamhurdles_installed"] : 0;
+    $version = isset($PHORUM["mod_spamhurdles_installed"])
+        ? $PHORUM["mod_spamhurdles_installed"] : 0;
 
     while ($version < SPAMHURDLES_DB_VERSION)
     {
@@ -71,10 +75,14 @@ function spamhurdles_db_init()
 # Retrieve data from the database by key.
 function spamhurdles_db_get($key)
 {
-    $sql = "SELECT data,expire_time FROM {$GLOBALS['PHORUM']['spamhurdles_table']}
-            WHERE id = '" . addslashes($key) . "'";
+    global $PHORUM;
 
-    $record = phorum_db_interact(DB_RETURN_ROW, $sql);
+    $record = phorum_db_interact(
+        DB_RETURN_ROW,
+        "SELECT data,expire_time
+         FROM   {$PHORUM['spamhurdles_table']}
+         WHERE id = '" . phorum_db_interact(DB_RETURN_QUOTED, $key) . "'"
+    );
 
     // If a record was found, then return the data in case the record
     // isn't expired. If the record is expired, then delete it from
@@ -93,14 +101,16 @@ function spamhurdles_db_get($key)
 # Store data in the database.
 function spamhurdles_db_put($key, $data, $ttl)
 {
+    global $PHORUM;
+
     // Try to insert a new spamhurdles record.
     $res = phorum_db_interact(
         DB_RETURN_RES,
-        "INSERT INTO {$GLOBALS['PHORUM']['spamhurdles_table']}
+        "INSERT INTO {$PHORUM['spamhurdles_table']}
                 (id, data, create_time, expire_time)
          VALUES (" .
-            "'".addslashes($key)."', " .
-            "'".addslashes(serialize($data))."', " .
+            "'".phorum_db_interact(DB_RETURN_QUOTED, $key)."', " .
+            "'".phorum_db_interact(DB_RETURN_QUOTED, serialize($data))."', " .
             time() . ", " .
             (time() + $ttl) .
          ")",
@@ -114,11 +124,11 @@ function spamhurdles_db_put($key, $data, $ttl)
     if (!$res) {
         phorum_db_interact(
             DB_RETURN_RES,
-            "UPDATE {$GLOBALS['PHORUM']['spamhurdles_table']}
-             SET    data        = '".addslashes(serialize($data))."',
+            "UPDATE {$PHORUM['spamhurdles_table']}
+             SET    data        = '".phorum_db_interact(DB_RETURN_QUOTED, serialize($data))."',
                     create_time = ".time().",
                     expire_time = ".(time() + $ttl)."
-             WHERE  id          = '".addslashes($key)."'",
+             WHERE  id          = '".phorum_db_interact(DB_RETURN_QUOTED, $key)."'",
             NULL,
             DB_MASTERQUERY
         );
@@ -128,19 +138,27 @@ function spamhurdles_db_put($key, $data, $ttl)
 # Remove data from the database.
 function spamhurdles_db_remove($key)
 {
-    $sql = "DELETE FROM {$GLOBALS['PHORUM']['spamhurdles_table']}
-            WHERE id='".addslashes($key)."'";
+    global $PHORUM;
 
-    phorum_db_interact(DB_RETURN_RES, $sql, NULL, DB_MASTERQUERY);
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "DELETE FROM {$PHORUM['spamhurdles_table']}
+         WHERE  id='".phorum_db_interact(DB_RETURN_QUOTED, $key)."'",
+        NULL, DB_MASTERQUERY
+    );
 }
 
 # Remove expired entries from the database.
 function spamhurdles_db_remove_expired()
 {
-    $sql = "DELETE FROM {$GLOBALS['PHORUM']['spamhurdles_table']}
-            WHERE expire_time < " . time();
+    global $PHORUM;
 
-    phorum_db_interact(DB_RETURN_RES, $sql, NULL, DB_MASTERQUERY);
+    phorum_db_interact(
+        DB_RETURN_RES, 
+        "DELETE FROM {$PHORUM['spamhurdles_table']}
+         WHERE  expire_time < " . time(),
+        NULL, DB_MASTERQUERY
+    );
 }
 
 ?>

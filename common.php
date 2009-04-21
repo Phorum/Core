@@ -2096,7 +2096,7 @@ function phorum_database_error($error)
         case "screen":
 
             $htmlbacktrace = $backtrace === NULL
-                           ? NULLL
+                           ? NULL
                            : nl2br(htmlspecialchars($backtrace, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]));
 
             print "Please try again later!" .
