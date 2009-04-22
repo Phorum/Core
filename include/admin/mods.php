@@ -253,10 +253,11 @@ if (count($list['deprecated']))
 // Just used for building form elements.
 include_once "./include/admin/PhorumInputForm.php";
 $frm = new PhorumInputForm ("", "post", "");
-
+$frm_url = phorum_admin_build_url('base');
 $html = "<form id=\"modules_form\" " .
-        "action=\"{$PHORUM['admin_http_path']}\" method=\"post\">" .
-
+        "action=\"$frm_url\" method=\"post\">" .
+        "<input type=\"hidden\" name=\"phorum_admin_token\" 
+                value=\"{$PHORUM['admin_token']}\" />".
         // Prevent the modules form from submitting when pressing enter
         // in the filter text box.
         "<input style=\"display:none\" type=\"submit\" " .
@@ -386,8 +387,8 @@ foreach ($list['modules'] as $name => $info)
     {
         $links = array();
         if ($info["settings"]) {
-            $links[] = "<a href=\"{$PHORUM["admin_http_path"]}" .
-                      "?module=modsettings&mod=$name\">" .
+        	$setting_url = phorum_admin_build_url(array('module=modsettings','mod='.$name));
+            $links[] = "<a href=\"$setting_url\">" .
                       "Edit module settings</a>";
         }
         if(isset($info["url"])){
@@ -396,7 +397,8 @@ foreach ($list['modules'] as $name => $info)
 
         foreach(array('README','INSTALL','Changelog') as $file) {
             if(file_exists("./mods/$name/$file")){
-                $links[] = "<a href=\"".$PHORUM["admin_http_path"]."?module=mods&mod=$name&info=$file\">View $file</a>";
+            	$add_url = phorum_admin_build_url(array('module=mods','mod='.$name,'info='.$file));
+                $links[] = "<a href=\"$add_url\">View $file</a>";
             }
         }
 

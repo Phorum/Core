@@ -399,7 +399,8 @@ if ($notification !== NULL) {
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<form id="status-form" action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
+<form id="status-form" action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
+<input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
 <input type="hidden" name="module" value="status" />
 Phorum Status:
 <select name="status" onChange="this.form.submit();">
@@ -420,7 +421,7 @@ Phorum Status:
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <?php
 
-    if($module!="login" && $module!="install" && $module!="upgrade"){
+    if($module!="login" && $module!="install" && $module!="upgrade" && $module!="tokenmissing"){
 ?>
 <tr>
     <td valign="top">

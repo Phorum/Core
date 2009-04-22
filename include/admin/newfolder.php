@@ -93,10 +93,7 @@ if (count($_POST))
         $okmsg = "Folder \"{$folder['name']}\" was successfully saved";
 
         // The URL to redirect to.
-        $url = $PHORUM["admin_http_path"] .
-               "?module=default" .
-               "&parent_id=$folder[parent_id]" .
-               "&okmsg=" . urlencode($okmsg);
+        $url = phorum_admin_build_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.urlencode($okmsg)));
 
         phorum_redirect_by_url($url);
         exit;

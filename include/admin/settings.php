@@ -157,11 +157,13 @@ if ( count( $_POST ) )
 
     if ( empty( $error ) ) {
         unset( $_POST["module"] );
+        unset( $_POST["phorum_admin_token"] );
+        
 
         if ( phorum_db_update_settings( $_POST ) ) {
-            $redir = $PHORUM["admin_http_path"];
+            $redir = phorum_admin_build_url('');
             if ($need_display_name_updates) {
-                $redir .= "?module=update_display_names";
+                $redir = phorum_admin_build_url(array('module=update_display_names'));
             }
             phorum_redirect_by_url($redir);
             exit();

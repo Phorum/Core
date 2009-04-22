@@ -239,11 +239,12 @@ switch ($step) {
     case 2:
 
         // Show the results.
+        $base_url = phorum_admin_build_url('base');
         $frm = new PhorumInputForm ("", "post", "Finish");
         $frm->addbreak("The upgrade is complete");
         $frm->addmessage(
               "You may want to look through the " .
-              "<a href=\"{$PHORUM["admin_http_path"]}\">the admin interface</a> " .
+              "<a href=\"$base_url\">the admin interface</a> " .
               "for any new features in this version."
         );
         $frm->show();

@@ -34,12 +34,27 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
         phorum_api_user_set_active_user(PHORUM_ADMIN_SESSION, $user_id) &&
         phorum_api_user_session_create(PHORUM_ADMIN_SESSION)) {
 
-        if(!empty($_POST["target"])){
-            phorum_redirect_by_url($_POST['target']);
-        } else {
-            phorum_redirect_by_url($PHORUM["admin_http_path"]);
-        }
-        exit();
+            // update the token and time
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
+            $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = phorum_generate_data_signature($sig_data);
+            $GLOBALS["PHORUM"]['admin_token']=$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];
+            
+            $tmp_user = array(
+                        'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
+                        'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
+            );
+            phorum_api_user_save($tmp_user);
+                
+                
+            if(!empty($_POST["target"])){
+                $target_url = phorum_admin_build_url($_POST['target']);
+                phorum_redirect_by_url($target_url);
+            } else {
+                $redir_url = phorum_admin_build_url('');
+                phorum_redirect_by_url($redir_url);
+            }
+            exit();
 
     } else {
         phorum_hook("failed_login", array(
@@ -56,8 +71,8 @@ $frm = new PhorumInputForm ("", "post");
 
 if(count($_REQUEST)){
 
-    $frm->hidden("target", $PHORUM["admin_http_path"]."?".$_SERVER["QUERY_STRING"]);
-
+        $frm->hidden("target", $_SERVER["QUERY_STRING"]);
+        
 }
 
 $frm->addrow("Username", $frm->text_box("username", "", 30));

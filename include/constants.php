@@ -65,6 +65,9 @@ define('PHORUM_DEFAULT_TEMPLATE', 'emerald');
 // phorum's default language
 define('PHORUM_DEFAULT_LANGUAGE', 'english');
 
+// time in seconds for the admin token to timeout
+define('PHORUM_ADMIN_TOKEN_TIMEOUT', 900);
+ 
 /////////////////////////////////////////
 //                                     //
 //     DO NOT EDIT BELOW THIS AREA     //

@@ -40,9 +40,9 @@ if(isset($PHORUM["bad_words"]) && count($PHORUM['bad_words'])) {
 if(count($_POST) && $_POST["string"]!=""){
 
     if($_POST["curr"]!="NEW"){
-        $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,$_POST['curr']);
+        $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'], $_POST['comments'] ,$_POST['curr']);
     } else {
-        $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,0);
+        $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'], $_POST['comments'] ,0);
     }
 
     if(!$ret){
@@ -74,6 +74,7 @@ if($curr!="NEW"){
     $submit="Add";
 }
 
+settype($comments, "string");
 settype($forum_id,"int");
 settype($string, "string");
 settype($type, "int");
@@ -89,7 +90,8 @@ if($_GET["curr"] && $_GET["delete"]){
 
     <div class="PhorumInfoMessage">
         Are you sure you want to delete this entry?
-        <form action="<?php echo $PHORUM["admin_http_path"] ?>" method="post">
+            <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
+            <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
             <input type="hidden" name="module" value="<?php echo $module; ?>" />
             <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
             <input type="hidden" name="delete" value="1" />
@@ -137,7 +139,17 @@ if($_GET["curr"] && $_GET["delete"]){
          </ul>");
 
     $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
-
+    $row = $frm->addrow(
+            'Comments',
+            $frm->textarea('comments', $comments, 50, 7)
+           );
+    $frm->addhelp($row, "Comments",
+            "This field can be used to add some comments to the ban (why you
+             created it, when you did this, when the ban can be deleted, etc.)
+             These comments will only be shown on this page and are meant as
+             a means for the administrator to do some bookkeeping."
+             );
+             
     $frm->show();
 
     echo "<hr class=\"PhorumAdminHR\" />";
@@ -152,11 +164,15 @@ if($_GET["curr"] && $_GET["delete"]){
         echo "</tr>\n";
 
         foreach($bad_words as $key => $item){
+        	
+        	$edit_url = phorum_admin_build_url(array('module=badwords','edit=1',"curr=$key"));
+            $delete_url = phorum_admin_build_url(array('module=badwords','delete=1',"curr=$key"));
+        	
             $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
             echo "<tr>\n";
             echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";
             echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
-            echo "    <td class=\"".$ta_class."\"><a href=\"{$PHORUM["admin_http_path"]}?module=badwords&curr=$key&edit=1\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"{$PHORUM["admin_http_path"]}?module=badwords&curr=$key&delete=1\">Delete</a></td>\n";
+            echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
             echo "</tr>\n";
         }
 

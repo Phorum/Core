@@ -29,6 +29,14 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 require_once './common.php';
 require_once './include/admin_functions.php';
 
+// initialized as empty
+$PHORUM['admin_token']="";
+if(!empty($_GET['phorum_admin_token'])) {
+	$PHORUM['admin_token']=$_GET['phorum_admin_token'];
+} elseif(!empty($_POST['phorum_admin_token'])) {
+	$PHORUM['admin_token']=$_POST['phorum_admin_token'];
+}
+
 // determine absolute URI for the admin
 $PHORUM["admin_http_path"] = phorum_get_current_url(false);
 
@@ -92,6 +100,29 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
             define('MODULE_DATABASE_UPGRADE', 1);
             $module = "upgrade";
         }
+        
+        // check the admin token
+        if(!empty($GLOBALS["PHORUM"]["user"]['settings_data']['admin_token']) &&
+            $PHORUM['admin_token'] != $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] ||
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] <= (time()-PHORUM_ADMIN_TOKEN_TIMEOUT)) {
+            // 900 = timeout after 15 minutes of inactivity
+            // echo "invalid token or timeout ...";
+            // var_dump($PHORUM['admin_token'],$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'],$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'],(time()-PHORUM_ADMIN_TOKEN_TIMEOUT));
+            $PHORUM['admin_token']="";
+        }
+
+        if(empty($PHORUM['admin_token'])) {
+            $module = "tokenmissing";
+        } else {
+            // update the token time
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
+            $tmp_user = array(
+                          'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
+                          'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
+            );
+            phorum_api_user_save($tmp_user);
+        }        
+        
     }
 }
 
