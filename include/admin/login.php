@@ -49,7 +49,7 @@
             if(!empty($_POST["target"])){
                 phorum_redirect_by_url($_POST['target']);
             } else {
-                $redir_url = phorum_admin_build_url('base');
+                $redir_url = phorum_admin_build_url('');
                 phorum_redirect_by_url($redir_url);
             }
             exit();
