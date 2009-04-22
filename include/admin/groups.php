@@ -243,6 +243,7 @@
         $frm_url = phorum_admin_build_url('base');
         echo "<hr class=\"PhorumAdminHR\" />";
         echo "<form action=\"$frm_url\" method=\"post\">\n";
+        echo "<input type=\"hidden\" name=\"phorum_admin_token\" value=\"{$PHORUM['admin_token']}\">\n";
         echo "<input type=\"hidden\" name=\"module\" value=\"groups\">\n";
         echo "<input type=\"hidden\" name=\"action\" value=\"deleteGroups\">\n";
         echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";

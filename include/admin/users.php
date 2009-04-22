@@ -406,6 +406,8 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         $frm_url = phorum_admin_build_url('base');
         echo <<<EOT
         <form name="UsersForm" action="$frm_url" method="post">
+        <input type="hidden" name="phorum_admin_token" value="{$PHORUM['admin_token']}">
+        
         <input type="hidden" name="module" value="users">
         <input type="hidden" name="action" value="deleteUsers">
         <table border="0" cellspacing="1" cellpadding="0"

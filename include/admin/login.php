@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2009  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -34,6 +34,18 @@
             phorum_api_user_set_active_user(PHORUM_ADMIN_SESSION, $user_id) &&
             phorum_api_user_session_create(PHORUM_ADMIN_SESSION)) {
 
+            // update the token and time
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
+            $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = phorum_generate_data_signature($sig_data);
+            
+            $tmp_user = array(
+             			'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
+                        'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
+            );
+            phorum_api_user_save($tmp_user);
+                
+                
             if(!empty($_POST["target"])){
                 phorum_redirect_by_url($_POST['target']);
             } else {

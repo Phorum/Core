@@ -254,13 +254,19 @@ function phorum_admin_build_url($input_args) {
     }
     
     if(is_array($input_args) && count($input_args)) {
-        $url .="?".implode("&amp;",$input_args);
-        // add token 
+        $url .="?".implode("&",$input_args);
+        if(!empty($PHORUM['admin_token'])) {
+            $url .="&phorum_admin_token=".$PHORUM['admin_token'];
+        }
     } elseif(!is_array($input_args) && !empty($input_args)) {
         $url .="?".$input_args;
-        // add token 
+        if(!empty($PHORUM['admin_token'])) {
+            $url .="&phorum_admin_token=".$PHORUM['admin_token'];
+        }
     } else {
-        // add token 
+        if(!empty($PHORUM['admin_token'])) {
+            $url .="?phorum_admin_token=".$PHORUM['admin_token'];
+        }
     }
     
     

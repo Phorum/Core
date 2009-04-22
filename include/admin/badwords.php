@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2007  Phorum Development Team                              //
+//   Copyright (C) 2009  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -40,9 +40,9 @@
     if(count($_POST) && $_POST["string"]!=""){
 
         if($_POST["curr"]!="NEW"){
-            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,$_POST['curr']);
+            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] , $_POST['comments'], $_POST['curr']);
         } else {
-            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] ,0);
+            $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'] , $_POST['comments'], 0);
         }
 
         if(!$ret){
@@ -73,7 +73,8 @@
         $title="Add A Bad Word";
         $submit="Add";
     }
-
+    
+    settype($comments, "string");
     settype($forum_id,"int");
     settype($string, "string");
     settype($type, "int");
@@ -90,6 +91,7 @@
         <div class="PhorumInfoMessage">
             Are you sure you want to delete this entry?
             <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
+            	<input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
                 <input type="hidden" name="module" value="<?php echo $module; ?>" />
                 <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
                 <input type="hidden" name="delete" value="1" />
@@ -137,6 +139,17 @@
              </ul>");
 
         $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
+        
+        $row = $frm->addrow(
+            'Comments',
+            $frm->textarea('comments', $comments, 50, 7)
+        );
+        $frm->addhelp($row, "Comments",
+            "This field can be used to add some comments to the ban (why you
+             created it, when you did this, when the ban can be deleted, etc.)
+             These comments will only be shown on this page and are meant as
+             a means for the administrator to do some bookkeeping."
+        );        
 
         $frm->show();
 
