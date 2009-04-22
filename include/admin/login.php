@@ -38,6 +38,7 @@
             $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
             $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
             $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = phorum_generate_data_signature($sig_data);
+            $GLOBALS["PHORUM"]['admin_token']=$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];
             
             $tmp_user = array(
              			'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
@@ -47,7 +48,8 @@
                 
                 
             if(!empty($_POST["target"])){
-                phorum_redirect_by_url($_POST['target']);
+            	$target_url = phorum_admin_build_url($_POST['target']);
+                phorum_redirect_by_url($target_url);
             } else {
                 $redir_url = phorum_admin_build_url('');
                 phorum_redirect_by_url($redir_url);
@@ -69,8 +71,7 @@
 
     if(count($_REQUEST)){
 
-        $target_url = phorum_admin_build_url($_SERVER["QUERY_STRING"]);
-        $frm->hidden("target", $target_url);
+        $frm->hidden("target", $_SERVER["QUERY_STRING"]);
 
     }
 

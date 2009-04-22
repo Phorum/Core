@@ -284,10 +284,10 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 <?php
 
     // Build the search parameters query string items.
-    $url_safe_search = '';
+    $url_safe_search_arr = array();
     foreach ($user_search_fields as $field) {
         if (isset($_REQUEST[$field])) {
-            $url_safe_search .= "$field=" . urlencode($_REQUEST[$field]);
+            $url_safe_search_arr[]= "$field=" . urlencode($_REQUEST[$field]);
         }
     }
 
@@ -388,7 +388,9 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
         if($_REQUEST["start"]>0){
             $old_start=$_REQUEST["start"]-$display;
-            $prev_url = phorum_admin_build_url(array('module=users',$url_safe_search,'start='.$old_start));
+            $input_args = array('module=users','start='.$old_start);
+            $input_args = array_merge($input_args,$url_safe_search_arr);
+            $prev_url = phorum_admin_build_url($input_args);
             $nav.="<a href=\"$prev_url\">Previous Page</a>";
         }
 
@@ -396,7 +398,9 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
         if($_REQUEST["start"]+$display<$total){
             $new_start=$_REQUEST["start"]+$display;
-            $next_url = phorum_admin_build_url(array('module=users',$url_safe_search,'start='.$new_start));
+            $input_args = array('module=users','start='.$new_start);
+            $input_args = array_merge($input_args,$url_safe_search_arr);
+            $next_url = phorum_admin_build_url($input_args);
             $nav.="<a href=\"$next_url\">Next Page</a>";
         }
 
