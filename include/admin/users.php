@@ -106,6 +106,7 @@ if(count($_POST))
         unset($user_data["password2"]);
         unset($user_data["module"]);
         unset($user_data["addUser"]);
+        unset($user_data["phorum_admin_token"]);
 
         if(empty($error)){
             $user_data["user_id"] = NULL;
@@ -210,6 +211,7 @@ if(count($_POST))
         unset($user_data["password1"]);
         unset($user_data["password2"]);
         unset($user_data["submit"]);
+        unset($user_data["phorum_admin_token"]);
 
         if (empty($error)){
             $user_data = phorum_hook("admin_users_form_save", $user_data);
