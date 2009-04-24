@@ -66,8 +66,9 @@
     define('PHORUM_DEFAULT_LANGUAGE', 'english');
     
     // time in seconds for the admin token to timeout
-    define('PHORUM_ADMIN_TOKEN_TIMEOUT', 900);    
-
+    // 30 minutes default
+    define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800);
+    
     /////////////////////////////////////////
     //                                     //
     //     DO NOT EDIT BELOW THIS AREA     //
