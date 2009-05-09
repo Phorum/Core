@@ -700,8 +700,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // Not loaded if we are running an external or scheduled script
     if (! defined('PHORUM_SCRIPT')) {
         require_once( phorum_get_template( "settings" ) );
-        $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
-        $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM["http_path"]}/templates/{$PHORUM["template"]}";
+        $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
+        $PHORUM["DATA"]["URL"]["TEMPLATE"] = htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
         $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
         $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_get_url(PHORUM_JAVASCRIPT_URL);
@@ -1169,9 +1169,9 @@ function phorum_switch_template($template = NULL, $template_path = NULL, $templa
         $PHORUM['template_http_path'] = $template_http_path;
     }
 
-    $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
+    $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
     $PHORUM["DATA"]["URL"]["TEMPLATE"] =
-        $PHORUM['template_http_path'] .'/'. $PHORUM['template'];
+        htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
 
     ob_start();
     include(phorum_get_template('settings'));
