@@ -784,7 +784,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
      *
      * [when]
      *     In
-     *     <filename>include/api/file_storage.php</filename>,
+     *     <filename>include/api/file.php</filename>,
      *     right before a file attachment is retrieved from the database.
      *
      * [input]

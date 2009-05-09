@@ -24,7 +24,7 @@ if (!defined("PHORUM")) return;
 // --------------------------------------------------------------------
 
 // Retrieve the children for the current folder.
-$forums = phorum_api_forums_get(
+$forums = $phorum->forums_get(
     NULL, $PHORUM['forum_id'], NULL, $PHORUM['vroot']
 );
 
@@ -45,7 +45,7 @@ foreach ($forums as $forum_id => $forum)
         // If inaccessible forums should be hidden on the index, then check
         // if the current user has rights to access the current forum.
         if (!$forum['folder_flag'] && $PHORUM['hide_forums'] &&
-            !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
+            !$phorum->user->check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
             continue;
         }
 
@@ -58,7 +58,7 @@ foreach ($forums as $forum_id => $forum)
 // --------------------------------------------------------------------
 
 // Format the data for the forums and folders that we gathered.
-$forums = phorum_api_forums_format($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
+$forums = $phorum->forums->format($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
 // If we are at the (v)root index page and if we only have one forum or
 // folder visible there, then directly jump to that one.

@@ -21,8 +21,6 @@ define('phorum_page','index');
 require_once './common.php';
 
 require_once './include/format_functions.php';
-require_once './include/api/forums.php';
-require_once './include/api/newflags.php';
 
 // Check if the user has read permission for the current folder.
 if (!phorum_check_read_common()) { return; }
@@ -36,7 +34,7 @@ if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
     !empty($PHORUM['user']['user_id'])) {
 
     // Mark all posts in the current forum as read.
-    phorum_api_newflags_markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
+    $phorum->newflags->markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
 
     // Redirect to a fresh list of the current forums without the mark read
     // parameters in the URL. This way we prevent users from bookmarking
