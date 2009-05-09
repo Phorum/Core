@@ -19,8 +19,7 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/api/base.php';
-require_once './include/api/file_storage.php';
+require_once './include/api/file.php';
 
 // Clean up unlinked attachments from the database.
 foreach ($message["attachments"] as $info) {

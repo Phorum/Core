@@ -19,7 +19,6 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once './include/api/base.php';
 require_once './include/api/custom_fields.php';
 
 $TYPES_ARRAY = array(PHORUM_CUSTOM_FIELD_USER    => 'User',

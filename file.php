@@ -20,9 +20,6 @@
 define('phorum_page','file');
 require_once './common.php';
 
-require_once './include/api/base.php';
-require_once './include/api/file_storage.php';
-
 // We start a buffer here, so we can catch any (warning) output
 // from being prepended to file data that we return. The file
 // API layer will handle cleaning up of the buffered data.
@@ -38,7 +35,7 @@ if (empty($PHORUM["args"]["file"])) {
 $file_id = (int) $PHORUM["args"]["file"];
 
 // Check if the file is available and if the user is allowed to read it.
-$file = phorum_api_file_check_read_access($file_id);
+$file = $phorum->file->check_read_access($file_id);
 
 // Handle file access errors.
 if ($file === FALSE)
@@ -55,7 +52,7 @@ if ($file === FALSE)
 // Access is allowed. Send the file to the browser.
 $flags = empty($PHORUM['args']['download'])
        ? 0 : PHORUM_FLAG_FORCE_DOWNLOAD;
-phorum_api_file_send($file, $flags);
+$phorum->file->send($file, $flags);
 
 // Exit here explicitly for not giving back control to portable and
 // embedded Phorum setups.

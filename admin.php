@@ -67,7 +67,7 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
 } else {
 
     // Try to restore an admin session.
-    phorum_api_user_session_restore(PHORUM_ADMIN_SESSION);
+    $phorum->user->session_restore(PHORUM_ADMIN_SESSION);
 
     if(!isset($PHORUM["user"]) || !$PHORUM["user"]["admin"]){
         // if not an admin

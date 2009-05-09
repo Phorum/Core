@@ -3,7 +3,7 @@ if(!defined("PHORUM5_CONVERSION")) return;
 
 // Phorum3 - to - Phorum5 Conversion Library
 
-require_once('./include/api/file_storage.php');
+require_once('./include/api/file.php');
 
 function phorum_convert_check_groups($link) {
     GLOBAL $CONVERT;

@@ -20,7 +20,7 @@
 if (!defined("PHORUM_ADMIN")) return;
 
 require_once './include/format_functions.php';
-require_once './include/api/file_storage.php';
+require_once './include/api/file.php';
 
 // Execute file purging for real?
 if (count($_POST)) {

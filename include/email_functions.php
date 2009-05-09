@@ -19,7 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/api/base.php';
 require_once './include/api/user.php';
 
 function phorum_valid_email($email){

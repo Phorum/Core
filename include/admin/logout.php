@@ -19,7 +19,6 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once './include/api/base.php';
 require_once './include/api/user.php';
 
 phorum_api_user_session_destroy(PHORUM_ADMIN_SESSION);

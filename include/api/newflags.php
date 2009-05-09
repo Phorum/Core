@@ -199,6 +199,9 @@ function phorum_api_newflags_format_messages($messages, $mode = PHORUM_NEWFLAGS_
 
     foreach ($messages as $id => $message)
     {
+        $messages[$id]['new'] = FALSE;
+        $messages[$id]['new_count'] = 0;
+
         // Do not handle newflags for moved message notifications.
         if ($message['moved']) continue;
 

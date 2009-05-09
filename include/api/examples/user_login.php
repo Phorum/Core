@@ -3,7 +3,6 @@
 
 if (!defined('PHORUM')) return;
 
-require_once './include/api/base.php';
 require_once './include/api/user.php';
 
 // Check the username and password.

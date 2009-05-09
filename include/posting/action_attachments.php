@@ -19,8 +19,7 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/api/base.php';
-require_once './include/api/file_storage.php';
+require_once './include/api/file.php';
 
 if ($do_detach)
 {

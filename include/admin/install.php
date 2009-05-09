@@ -20,7 +20,6 @@ if (!defined("PHORUM_ADMIN")) return;
 
 define("PHORUM_INSTALL", 1);
 
-require_once './include/api/base.php';
 require_once './include/api/user.php';
 require_once './include/api/custom_fields.php';
 

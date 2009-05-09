@@ -19,8 +19,7 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
-require_once './include/api/base.php';
-require_once './include/api/file_storage.php';
+require_once './include/api/file.php';
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMyFiles"];
 

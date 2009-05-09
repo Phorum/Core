@@ -21,8 +21,7 @@ if (!defined("PHORUM")) return;
 
 require_once './include/thread_info.php';
 require_once './include/diff_patch.php';
-require_once './include/api/base.php';
-require_once './include/api/file_storage.php';
+require_once './include/api/file.php';
 
 // Create a message which can be used by the database library.
 $dbmessage = array(

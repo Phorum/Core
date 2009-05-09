@@ -17,322 +17,18 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * This script bootstraps the Phorum web environment. It will load the
+ * Phorum API and handle tasks that are required for initializing and
+ * handling the request.
+ */
+
 // Check that this file is not loaded directly.
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
-
-// ----------------------------------------------------------------------
-// Initialize variables and constants and load required libraries
-// ----------------------------------------------------------------------
-
-// the Phorum version
-define( 'PHORUM', '5.3-dev' );
-
-// our database schema version in format of year-month-day-serial
-define( 'PHORUM_SCHEMA_VERSION', '2008052200');
-
-// our database patch level in format of year-month-day-serial
-define( 'PHORUM_SCHEMA_PATCHLEVEL', '2009021901' );
-
-// The required version of the Phorum PHP extension. This version is updated
-// if internal changes of Phorum require the extension library to be upgraded
-// for compatibility. We follow PHP's schema of using the date at which an
-// important internal change  was done as the extension's version number.
-// This version number should match the one in the php_phorum.h header file
-// for the module.
-define( 'PHORUM_EXTENSION_VERSION', '20071129' );
-
-// A reference to the Phorum installation directory.
-define('PHORUM_PATH', dirname(__FILE__));
-
-// Initialize the global $PHORUM variable, which holds all Phorum data.
-global $PHORUM;
-$PHORUM = array
-(
-    // The DATA member holds the template variables.
-    'DATA' => array
-    (
-        // For collecting query variables for a next request.
-        'GET_VARS'  => array(),
-        'POST_VARS' => '',
-    ),
-
-    // The TMP member hold template {DEFINE ..} definitions, temporary
-    // arrays and such in template code.
-    'TMP'  => array(),
-
-    // Query arguments.
-    'args' => array(),
-
-    // The active forum id.
-    'forum_id' => 0
-);
-
-// Load all constants from ./include/constants.php
-require_once PHORUM_PATH.'/include/constants.php';
-
-// Load the API code that is required for all pages.
-require_once PHORUM_PATH.'/include/api/base.php';
-require_once PHORUM_PATH.'/include/api/user.php';
-
-// ----------------------------------------------------------------------
-// PHP extension compatibility 
-// ----------------------------------------------------------------------
-
-// For some functionality, we are depending on PHP extensions, that
-// are not necessarily availably on any given PHP installation. To
-// work around this, we have implemented compatibility modules that
-// can be installed to provide the missing functionality in pure
-// PHP code. This will make the execution a little bit slower on
-// systems that do not have the required extension installed, but
-// it will at least make it possible to run Phorum.
-//
-// We load these special compatibility modules at an early stage, so
-// we can safely use them from the rest of the code.
-
-$compat_modules = array(
-    'mb_substr'   => 'mbstring',
-    'json_encode' => 'json',
-    'json_decode' => 'json',
-    'iconv'       => 'iconv'
-);
-
-$missing_compat = array();
-foreach ($compat_modules as $function => $ext) {
-    if (!function_exists($function)) {
-        $module_file = PHORUM_PATH."/mods/compat_$ext/compat_$ext.php";
-        if (file_exists($module_file)) {
-            require_once $module_file;
-            if (!function_exists($function)) { ?>
-                <html><head><title>Phorum error</title></head><body>
-                <h2>Phorum Error:</h2>
-                Compatibility module compat_<?php print $ext ?>
-                does not implement function <?php print $function ?>().
-                </body></html><?php
-                exit;
-            }
-        } else {
-            if (empty($missing_compat[$ext])) {
-                $missing_compat[$ext] = array($function);
-            } else {
-                $missing_compat[$ext][] = $function;
-            }
-        }
-    }
-}
-
-if (!empty($missing_compat)) { ?>
-    <html><head><title>Phorum error</title></head><body>
-    <style type="text/css">
-    table { border-collapse: collapse; }
-    td { padding: 0.2em 1em; border: 1px solid black; }
-    </style>
-    <h2>Phorum Error: PHP extension(s) missing on your system:</h2>
-    <ul><?php
-    foreach ($missing_compat as $extension => $functions) {
-        print '<li>'.$extension.' ';
-        print ' (needed for function'.(count($functions)==1?'':'s').': ' .
-              implode(', ', $functions).')</li>';
-    } ?>
-    </ul>
-    <h2>Solution:</h2>
-    <ul>
-    <li>Install the required extensions in PHP (ask your host if you
-        do not own the system) or</li>
-    <li>download and install compatibility modules from the
-        <a href="http://www.phorum.org/downloads.php">Phorum website</a>.</li>
-    </ul>
-    <?php
-    exit;
-}
-
-// ----------------------------------------------------------------------
-// Load the database layer and setup a connection
-// ----------------------------------------------------------------------
-
-// Get the database settings. It is possible to override the database
-// settings by defining a global variable $PHORUM_ALT_DBCONFIG which
-// overrides $PHORUM["DBCONFIG"] (from include/db/config.php). This is
-// only allowed if "PHORUM_WRAPPER" is defined and if the alternative
-// configuration wasn't passed as a request parameter (which could
-// set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
-if (empty( $GLOBALS['PHORUM_ALT_DBCONFIG'] ) || $GLOBALS['PHORUM_ALT_DBCONFIG']==$_REQUEST['PHORUM_ALT_DBCONFIG'] || !defined('PHORUM_WRAPPER')) {
-
-    // Backup display_errors setting.
-    $orig = ini_get('display_errors');
-    @ini_set('display_errors', 0);
-
-    // Use output buffering so we don't get header errors if there's
-    // some additional output in the database config file (e.g. a UTF-8
-    // byte order marker).
-    ob_start();
-
-    // Load configuration.
-    $dbconfig = PHORUM_PATH.'/include/db/config.php';
-    if (! include_once $dbconfig) {
-        print '<html><head><title>Phorum error</title></head><body>';
-        print '<h2>Phorum database configuration error</h2>';
-
-        // No database configuration found.
-        if (!file_exists($dbconfig)) { ?>
-            Phorum has been installed on this server, but the configuration<br/>
-            for the database connection has not yet been made. Please read<br/>
-            <a href="docs/install.txt">docs/install.txt</a> for installation
-            instructions. <?php
-        } else {
-            $fp = fopen($dbconfig, 'r');
-            // Unable to read the configuration file.
-            if (!$fp) { ?>
-                A database configuration file was found in
-                {phorum dir}/include/db/config.php,<br/>but Phorum was unable to read it.
-                Please check the file permissions<br/>for this file. <?php
-            // Unknown error.
-            } else {
-                fclose($fp); ?>
-                A database configuration file was found in
-                {phorum dir}/include/dbconfig.php,<br/>but it could not be loaded.
-                It possibly contains one or more syntax errors.<br/>Please check
-                your configuration file. <?php
-            }
-        }
-
-        print '</body></html>';
-        exit(1);
-    }
-
-    // Clear output buffer.
-    ob_end_clean();
-
-    // Restore original display_errors setting.
-    @ini_set('display_errors', $orig);
-} else {
-    $PHORUM['DBCONFIG'] = $GLOBALS['PHORUM_ALT_DBCONFIG'];
-}
-
-// Backward compatbility: the "mysqli" layer was merged with the "mysql"
-// layer, but people might still be using "mysqli" as their configured
-// database type.
-if ($PHORUM['DBCONFIG']['type'] == 'mysqli' &&
-    !file_exists(PHORUM_PATH.'/include/db/mysqli.php')) {
-    $PHORUM['DBCONFIG']['type'] = 'mysql';
-}
-
-// Load the database layer.
-$PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
-require_once PHORUM_PATH."/include/db/{$PHORUM['DBCONFIG']['type']}.php";
-
-// Try to setup a connection to the database.
-if(!phorum_db_check_connection()){
-    if(isset($PHORUM['DBCONFIG']['down_page'])){
-        phorum_redirect_by_url($PHORUM['DBCONFIG']['down_page']);
-        exit();
-    } else {
-        echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
-        exit();
-    }
-}
-
-
-// ----------------------------------------------------------------------
-// Load and process the Phorum settings
-// ----------------------------------------------------------------------
-
-// Load the Phorum settings from the database.
-phorum_db_load_settings();
-
-// For command line scripts, disable caching.
-// The command line user is often different from the web server
-// user, possibly causing permission problems on the cache.
-if (defined('PHORUM_SCRIPT'))
-{
-    $PHORUM['cache_banlists']   = 0;
-    $PHORUM['cache_css']        = 0;
-    $PHORUM['cache_javascript'] = 0;
-    $PHORUM['cache_layer']      = 0;
-    $PHORUM['cache_messages']   = 0;
-    $PHORUM['cache_newflags']   = 0;
-    $PHORUM['cache_rss']        = 0;
-    $PHORUM['cache_users']      = 0;
-}
-
-// Defaults for missing settings (these can be needed after upgrading, in
-// case the admin did not yet save a newly added Phorum setting).
-if (!isset($PHORUM['default_feed']))   $PHORUM['default_feed']   = 'rss';
-if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = 0;
-if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = 0;
-
-// If we have no private key for signing data, generate one now,
-// but only if it's not a fresh install.
-if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION && (!isset($PHORUM['private_key']) || empty($PHORUM['private_key']))) {
-   $chars = "0123456789!@#$%&abcdefghijklmnopqr".
-            "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-   $private_key = "";
-   for ($i = 0; $i<40; $i++) {
-       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
-   }
-   $PHORUM['private_key'] = $private_key;
-   phorum_db_update_settings(array('private_key' => $PHORUM['private_key']));
-}
-
-// Determine the caching layer to load.
-if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
-    $PHORUM['cache_layer'] = 'file';
-} else {
-    // Safeguard for wrongly selected cache-layers.
-    // Falling back to file-layer if descriptive functions aren't existing.
-    if($PHORUM['cache_layer'] == 'memcached' && !function_exists('memcache_connect')) {
-        $PHORUM['cache_layer'] = 'file';
-    } elseif($PHORUM['cache_layer'] == 'apc' && !function_exists('apc_fetch')) {
-        $PHORUM['cache_layer'] = 'file';
-    }
-}
-
-// Load the caching-layer. You can specify a different one in the settings.
-// One caching layer *needs* to be loaded.
-$PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
-require_once PHORUM_PATH."/include/cache/$PHORUM[cache_layer].php";
-
-// Try to load the Phorum PHP extension, if has been enabled in the admin.
-// As a precaution, never load it from the admin code (so the extension
-// support can be disabled at all time if something unexpected happens).
-if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
-{
-    // Load the extension library.
-    if (! extension_loaded('phorum')) {
-        @dl('phorum.so');
-    }
-
-    // Check if the version of the PHP extension matches the
-    // one required by the Phorum installation.
-    if (extension_loaded('phorum')) {
-        $ext_ver = phorum_ext_version();
-        if ($ext_ver != PHORUM_EXTENSION_VERSION) {
-            // The version does not match. Disable the extension support.
-            phorum_db_update_settings(array("php_phorum_extension" => 0));
-            print "<html><head><title>Phorum Extension Error</title></head><body>";
-            print "<h1>Phorum Extension Error</h1>" .
-                  "The Phorum PHP extension was loaded, but its version<br/>" .
-                  "does not match the Phorum version. Therefore, the<br/>" .
-                  "extension has now be disabled. Reload this page to continue.";
-            print "</body></html>";
-            exit(0);
-        }
-    }
-}
-
-// Setup phorum_get_url(): this function is used for generating all Phorum
-// related URL's. It is loaded conditionally, to make it possible to override
-// it from the phorum PHP extension.
-if (!function_exists('phorum_get_url')) {
-    require_once PHORUM_PATH.'/include/phorum_get_url.php';
-}
-
-// Setup the template path and http path. These are put in a variable to give
-// module authors a chance to override them. This can be especially useful
-// for distibuting a module that contains a full Phorum template as well.
-// For switching, the function phorum_switch_template() can be used.
-$PHORUM['template_path'] = PHORUM_PATH.'/templates';
-$PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
+// Load and instantiate the Phorum API.
+require_once dirname(__FILE__).'/include/api.php';
+$phorum = Phorum::API();
 
 // ----------------------------------------------------------------------
 // Parse and handle request data
@@ -343,19 +39,21 @@ $PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
 // the get_magic_quotes_gpc() function here. The "@" is for suppressing
 // deprecation warnings that are spawned by PHP 5.3 and higher when
 // using the get_magic_quotes_gpc() function.
-if ( function_exists('get_magic_quotes_gpc') &&
-     @get_magic_quotes_gpc() && count( $_REQUEST ) ) {
-    foreach( $_POST as $key => $value ) {
-        if ( !is_array( $value ) )
-            $_POST[$key] = stripslashes( $value );
-        else
-            $_POST[$key] = phorum_recursive_stripslashes( $value );
+if (function_exists('get_magic_quotes_gpc') &&
+    @get_magic_quotes_gpc() && count($_REQUEST)) {
+    foreach ($_POST as $key => $value) {
+        if (!is_array($value)) {
+            $_POST[$key] = stripslashes($value);
+        } else {
+            $_POST[$key] = phorum_recursive_stripslashes($value);
+        }
     }
-    foreach( $_GET as $key => $value ) {
-        if ( !is_array( $value ) )
-            $_GET[$key] = stripslashes( $value );
-        else
-            $_GET[$key] = phorum_recursive_stripslashes( $value );
+    foreach ($_GET as $key => $value) {
+        if (!is_array($value)) {
+            $_GET[$key] = stripslashes($value);
+        } else {
+            $_GET[$key] = phorum_recursive_stripslashes($value);
+        }
     }
 }
 
@@ -420,37 +118,43 @@ if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
 // This only applies to URLs that we create using phorum_get_url().
 // Scripts using data originating from standard HTML forms (e.g. search)
 // will have to use $_GET or $_POST.
-if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"]))) {
+if (!defined("PHORUM_ADMIN") &&
+    (isset($_SERVER["QUERY_STRING"]) ||
+     isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"]))) {
 
-    if(strpos($_SERVER["QUERY_STRING"], "&")!==false){
-
+    if (strpos($_SERVER["QUERY_STRING"], "&") !== FALSE)
+    {
         $PHORUM["args"] = $_GET;
-
-    } else {
-
-        $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
+    }
+    else
+    {
+        $Q_STR = empty($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"])
                ? $_SERVER["QUERY_STRING"]
                : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
 
         // ignore stuff past a #
-        if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
+        if (strstr($Q_STR, "#")) {
+            list($Q_STR, $other) = explode("#", $Q_STR, 2);
+        }
 
         // explode it on comma
         $PHORUM["args"] = $Q_STR == '' ? array() : explode( ",", $Q_STR );
 
         // check for any assigned values
-        if ( strstr( $Q_STR, "=" ) ) {
-            foreach( $PHORUM["args"] as $key => $arg ) {
-
+        if (strstr($Q_STR, "=" ))
+        {
+            foreach($PHORUM["args"] as $key => $arg)
+            {
                 // if an arg has an = create an element in args
                 // with left part as key and right part as value
-                if ( strstr( $arg, "=" ) ) {
-                    list( $var, $value ) = explode( "=", $arg, 2 );
+                if (strstr( $arg, "=" ))
+                {
+                    list($var, $value) = explode("=", $arg, 2);
                     // get rid of the numbered arg, it is useless.
-                    unset( $PHORUM["args"][$key] );
+                    unset($PHORUM["args"][$key]);
                     // add the named arg
                     // TODO: Why is urldecode() used here? IMO this can be omitted.
-                    $PHORUM["args"][$var] = urldecode( $value );
+                    $PHORUM["args"][$var] = urldecode($value);
                 }
             }
         }
@@ -466,14 +170,14 @@ if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBA
         $PHORUM['args']['download'] = empty($m[1]) ? 0 : 1;
     }
 
-    // set forum_id if not set already by a forum_id request parameter
+    // set forum_id if not already set by a forum_id request parameter
     if ( empty( $PHORUM["forum_id"] ) && isset( $PHORUM["args"][0] ) ) {
         $PHORUM["forum_id"] = ( int )$PHORUM["args"][0];
     }
 }
 
 // set the forum_id to 0 if not set by now.
-if ( empty( $PHORUM["forum_id"] ) ) $PHORUM["forum_id"] = 0;
+if (empty( $PHORUM["forum_id"])) $PHORUM["forum_id"] = 0;
 
 /*
  * [hook]
@@ -530,52 +234,69 @@ if (isset($PHORUM["hooks"]["common_pre"])) {
 
 // TODO: Do we ever need this in admin? If not, it can go inside the block.
 // stick some stuff from the settings into the DATA member
-$PHORUM["DATA"]["TITLE"] = ( isset( $PHORUM["title"] ) ) ? $PHORUM["title"] : "";
-$PHORUM["DATA"]["DESCRIPTION"] = ( isset( $PHORUM["description"] ) ) ? $PHORUM["description"] : "";
-$PHORUM["DATA"]["HTML_TITLE"] = ( !empty( $PHORUM["html_title"] ) ) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
-$PHORUM["DATA"]["HEAD_TAGS"] = ( isset( $PHORUM["head_tags"] ) ) ? $PHORUM["head_tags"] : "";
-$PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
+$PHORUM["DATA"]["TITLE"]       = isset($PHORUM["title"]) ? $PHORUM["title"] : "";
+$PHORUM["DATA"]["DESCRIPTION"] = isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
+$PHORUM["DATA"]["HTML_TITLE"]  = !empty( $PHORUM["html_title"]) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
+$PHORUM["DATA"]["HEAD_TAGS"]   = isset($PHORUM["head_tags"]) ? $PHORUM["head_tags"] : "";
+$PHORUM["DATA"]["FORUM_ID"]    = $PHORUM["forum_id"]; 
 
-if ( !defined( "PHORUM_ADMIN" ) ) {
-
-    $skipsession = false;
-
+if (!defined( "PHORUM_ADMIN" ))
+{
+    // Do not try to restore a session for CSS and JavaScript.
+    // We do not need user authentication for those.
+    $skipsession = FALSE;
     if(phorum_page == 'css' || phorum_page == 'javascript') {
-        $skipsession = true;
+        $skipsession = TRUE;
     }
 
-    // if the Phorum is disabled, display a message.
-    if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_DISABLED){
-        if(!empty($PHORUM["disabled_url"])){
+    // If the Phorum is disabled, display a message.
+    if (isset($PHORUM["status"]) && $PHORUM["status"] == PHORUM_MASTER_STATUS_DISABLED)
+    {
+        if (!empty($PHORUM["disabled_url"])) {
             header("Location: ".$PHORUM["disabled_url"]);
             exit();
         } else {
-            echo "This Phorum is currently disabled.  Please contact the web site owner at ".$PHORUM['system_email_from_address']." for more information.\n";
+            echo "This Phorum is currently administratively disabled. Please " .
+                 "contact the web site owner at ".
+                 htmlspecialchars($PHORUM['system_email_from_address'])." " .
+                 "for more information.";
             exit();
         }
     }
 
-    // checking for upgrade or new install
-    if ( !isset( $PHORUM['internal_version'] ) ) {
-        echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is a problem with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
+    // Check for upgrade or new install.
+    if (!isset( $PHORUM['internal_version']))
+    {
+        echo "<html><head><title>Phorum error</title></head><body>
+              No Phorum settings were found. Either this is a brand new
+              installation of Phorum or there is a problem with your
+              database server. If this is a new install, please
+              <a href=\"admin.php\">go to the admin page</a> to complete
+              the installation. If not, check your database server.
+              </body></html>";
         exit();
-    } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
-               !isset($PHORUM['internal_patchlevel']) ||
-               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
+    } elseif ($PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
+              !isset($PHORUM['internal_patchlevel']) ||
+              $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL) {
         if(isset($PHORUM["DBCONFIG"]["upgrade_page"])){
             phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
             exit();
+        } else {
+            echo "<html><head><title>Upgrade notification</title></head><body>
+                  It looks like you have installed a new version of
+                  Phorum.<br/>Please visit the admin page to complete
+                  the upgrade!
+                  </body></html>";
+            exit();
         }
-        echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br/>Please visit the admin page to complete the upgrade!</body></html>";
-        exit();
     }
 
-    // load the forum's settings
-    if(!empty($PHORUM["forum_id"])){
+    // Load the settings for the currently active forum.
+    if (!empty($PHORUM["forum_id"]))
+    {
+        $forum_settings = $phorum->db->get_forums($PHORUM["forum_id"]);
 
-        $forum_settings = phorum_db_get_forums( $PHORUM["forum_id"] );
-
-        if ( !isset($forum_settings[$PHORUM["forum_id"]]) )
+        if (!isset($forum_settings[$PHORUM["forum_id"]]))
         {
             /*
              * [hook]
@@ -628,68 +349,67 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
 
         $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
-
-    } elseif(isset($PHORUM["forum_id"]) && $PHORUM["forum_id"]==0){
-
+    }
+    elseif(isset($PHORUM["forum_id"]) && $PHORUM["forum_id"] == 0)
+    {
         $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] );
 
-        // some hard settings are needed if we are looking at forum_id 0
-        $PHORUM['vroot']=0;
-        $PHORUM['parent_id']=0;
-        $PHORUM['active']=1;
-        $PHORUM['folder_flag']=1;
-        $PHORUM['cache_version']=0;
-
+        // Some hard settings are needed if we are looking at forum_id 0.
+        $PHORUM['vroot'] = 0;
+        $PHORUM['parent_id'] = 0;
+        $PHORUM['active'] = 1;
+        $PHORUM['folder_flag'] = 1;
+        $PHORUM['cache_version'] = 0;
     }
 
     // handling vroots
-    if(!empty($PHORUM['vroot'])) {
-        $vroot_folders = phorum_db_get_forums($PHORUM['vroot']);
+    if (!empty($PHORUM['vroot']))
+    {
+        $vroot_folders = $phorum->db->get_forums($PHORUM['vroot']);
 
         $PHORUM["title"] = $vroot_folders[$PHORUM['vroot']]['name'];
         $PHORUM["DATA"]["TITLE"] = $PHORUM["title"];
         $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["title"];
 
         if($PHORUM['vroot'] == $PHORUM['forum_id']) {
-            // unset the forum-name if we are in the vroot-index
-            // otherwise the NAME and TITLE would be the same and still shown twice
+            // Unset the forum-name if we are in the vroot-index.
+            // Otherwise, the NAME and TITLE would be the same and still
+            // shown twice.
             unset($PHORUM['name']);
         }
     }
 
-    // stick some stuff from the settings into the DATA member
-    $PHORUM["DATA"]["NAME"] = ( isset( $PHORUM["name"] ) ) ? $PHORUM["name"] : "";
-    $PHORUM["DATA"]["HTML_DESCRIPTION"] = ( isset( $PHORUM["description"]  ) ) ? preg_replace("!\s+!", " ", $PHORUM["description"]) : "";
-    $PHORUM["DATA"]["DESCRIPTION"] = strip_tags($PHORUM["DATA"]["HTML_DESCRIPTION"]);
-    // clean up some more stuff in the description without html
-    $search_arr  = array('\'','"');
-    $replace_arr = array('','');
-    $PHORUM["DATA"]["DESCRIPTION"]=str_replace($search_arr,$replace_arr,$PHORUM["DATA"]["DESCRIPTION"]);
-    $PHORUM["DATA"]["ENABLE_PM"] = ( isset( $PHORUM["enable_pm"] ) ) ? $PHORUM["enable_pm"] : "";
-    if ( !empty( $PHORUM["DATA"]["HTML_TITLE"] ) && !empty( $PHORUM["DATA"]["NAME"] ) ) {
+    // Stick some stuff from the settings into the template DATA.
+    $PHORUM["DATA"]["NAME"] = isset($PHORUM["name"]) ? $PHORUM["name"] : "";
+    $PHORUM["DATA"]["HTML_DESCRIPTION"] = isset( $PHORUM["description"]) ? preg_replace("!\s+!", " ", $PHORUM["description"]) : "";
+    // Clean up for getting the description without html in it, so we
+    // can use it inside the HTML meta description element.
+    $PHORUM["DATA"]["DESCRIPTION"] = str_replace(
+        array('\'', '"'), array('', ''),
+        strip_tags($PHORUM["DATA"]["HTML_DESCRIPTION"])
+    );
+    $PHORUM["DATA"]["ENABLE_PM"] = isset( $PHORUM["enable_pm"]) ? $PHORUM["enable_pm"] : '';
+    if (!empty($PHORUM["DATA"]["HTML_TITLE"]) && !empty($PHORUM["DATA"]["NAME"])) {
         $PHORUM["DATA"]["HTML_TITLE"] .= PHORUM_SEPARATOR;
     }
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
 
-    // some defaults
-    $PHORUM['DATA']['LOGGEDIN'] = FALSE;
-    $PHORUM['user'] = array();
-
     // Try to restore a user session.
-    if (!$skipsession && phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
+    if (!$skipsession && $phorum->user->session_restore(PHORUM_FORUM_SESSION))
     {
-        // if the user has overridden thread settings, change it here.
-        if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
-            if ( $PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON ) {
-                $PHORUM["threaded_list"] = true;
-            } elseif ( $PHORUM["user"]["threaded_list"] == PHORUM_THREADED_OFF ) {
-                $PHORUM["threaded_list"] = false;
+        // If the user has overridden thread settings, change it here.
+        if (!isset($PHORUM['display_fixed']) || !$PHORUM['display_fixed'])
+        {
+            if ($PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON) {
+                $PHORUM["threaded_list"] = TRUE;
+            } elseif ($PHORUM["user"]["threaded_list"] == PHORUM_THREADED_OFF) {
+                $PHORUM["threaded_list"] = FALSE;
             }
-            if ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_ON ) {
+            if ($PHORUM["user"]["threaded_read"] == PHORUM_THREADED_ON) {
                 $PHORUM["threaded_read"] = 1;
-            } elseif ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_OFF ) {
+            } elseif ($PHORUM["user"]["threaded_read"] == PHORUM_THREADED_OFF) {
                 $PHORUM["threaded_read"] = 0;
-            } elseif ( $PHORUM["user"]["threaded_read"] == PHORUM_THREADED_HYBRID ) {
+            } elseif ($PHORUM["user"]["threaded_read"] == PHORUM_THREADED_HYBRID) {
                 $PHORUM["threaded_read"] = 2;
             }
         }
@@ -698,7 +418,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         if (!empty($PHORUM["enable_new_pm_count"]) &&
             !empty($PHORUM["enable_pm"])) {
             $PHORUM['user']['new_private_messages'] =
-                phorum_db_pm_checknew($PHORUM['user']['user_id']);
+                $phorum->db->pm_checknew($PHORUM['user']['user_id']);
         }
     }
 
@@ -749,69 +469,90 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
          phorum_hook("common_post_user", "");
     }
 
-    // only do those parts if the forum is not set to fixed view
-    if ( !isset( $PHORUM['display_fixed'] ) || !$PHORUM['display_fixed'] ) {
-
-        // check for a template being passed on the url
-        // only use valid template names
-        if(!empty( $PHORUM["args"]["template"] ) ) {
-            $template = basename( $PHORUM["args"]["template"] );
+    // Some code that only has to be run if the forum isn't set to fixed view.
+    if (empty($PHORUM['display_fixed']))
+    {
+        // Check for a template that is passed on the url.
+        // Only use valid template names.
+        if (!empty($PHORUM["args"]["template"])) {
+            $template = basename($PHORUM["args"]["template"]);
             if ($template != '..') {
-                $PHORUM["template"] = $template;
-                $PHORUM['DATA']['GET_VARS'][]="template=$template";
-                $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"template\" value=\"$template\" />\n";
+                $PHORUM['template'] = $template;
+                $PHORUM['DATA']['GET_VARS'][] = "template=".urlencode($template);
+                $PHORUM['DATA']['POST_VARS'] .= "<input type=\"hidden\" name=\"template\" value=\"".htmlspecialchars($template)."\" />\n";
             }
         }
 
-        // get the language file
-        if(isset( $PHORUM['user']['user_language'] ) && !empty($PHORUM['user']['user_language']) ) {
+        // User language override.
+        if (!empty($PHORUM['user']['user_language'])) {
             $PHORUM['language'] = $PHORUM['user']['user_language'];
         }
 
-        if( isset( $PHORUM['user']['user_template'] ) && !empty($PHORUM['user']['user_template']) &&
-            (!isset( $PHORUM["user_template"] ) || !empty($PHORUM['user_template']))
-        ) {
+        // User template override.
+        if (!empty($PHORUM['user']['user_template']) &&
+            (!isset($PHORUM["user_template"]) ||
+             !empty($PHORUM['user_template']))) {
             $PHORUM['template'] = $PHORUM['user']['user_template'];
         }
-
     }
 
-    if ( !isset( $PHORUM["language"] ) || empty( $PHORUM["language"] ) || !file_exists( PHORUM_PATH."/include/lang/$PHORUM[language].php" ) )
-        $PHORUM["language"] = $PHORUM["default_forum_options"]["language"];
-    if ( !file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php") ) {
-        $PHORUM["language"] = PHORUM_DEFAULT_LANGUAGE;
+    // If no language is set by now or if the language file for the
+    // configured language does not exist, then fallback to the
+    // language that is configured in the default forum settings.
+    if (empty($PHORUM["language"]) ||
+        !file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
+        $PHORUM['language'] = $PHORUM['default_forum_options']['language'];
+
+        // If the language file for the default forum settings language
+        // cannot be found, then fallback to the hard-coded default.
+        if (!file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
+            $PHORUM['language'] = PHORUM_DEFAULT_LANGUAGE;
+        }
+    }
+
+    // If the requested template does not exist, then fallback to the
+    // template that is configured in the default forum settings.
+    if (!file_exists(PHORUM_PATH."/templates/$PHORUM[template]/info.php")) {
+        $PHORUM['template'] = $PHORUM['default_forum_options']['template'];
+
+        // If the template directory for the default forum settings template
+        // cannot be found, then fallback to the hard-coded default.
+        if (!file_exists(PHORUM_PATH."/templates/$PHORUM[template]/info.php")) {
+            $PHORUM['template'] = PHORUM_DEFAULT_TEMPLATE;
+        }
     }
 
     // Use output buffering so we don't get header errors if there's
     // some additional output in the upcoming included files (e.g. UTF-8
-    // byte order markers).
+    // byte order markers or whitespace outside the php tags).
     ob_start();
 
-    // user output buffering so we don't get header errors
-    // not loaded if we are running an external or scheduled script
-    if (! defined('PHORUM_SCRIPT')) {
+    // User output buffering so we don't get header errors.
+    // Not loaded if we are running an external or scheduled script.
+    if (!defined('PHORUM_SCRIPT'))
+    {
         require_once phorum_get_template('settings');
-        $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
-        $PHORUM["DATA"]["URL"]["TEMPLATE"] = "{$PHORUM['template_http_path']}/{$PHORUM["template"]}";
+        $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
+        $PHORUM["DATA"]["URL"]["TEMPLATE"] = htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
         $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
         $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
         $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_get_url(PHORUM_JAVASCRIPT_URL);
         $PHORUM["DATA"]["URL"]["AJAX"] = phorum_get_url(PHORUM_AJAX_URL);
     }
 
+    // Load the main language file.
     $PHORUM['language'] = basename($PHORUM['language']);
-    if ( file_exists( PHORUM_PATH."/include/lang/$PHORUM[language].php" ) ) {
+    if (file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
         require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
     }
-    // load languages for localized modules
+
+    // Load language file(s) for localized modules.
     if (!empty($PHORUM['hooks']['lang']['mods'])) {
-        foreach( $PHORUM['hooks']['lang']['mods'] as $mod )
-        {
+        foreach($PHORUM['hooks']['lang']['mods'] as $mod) {
             $mod = basename($mod);
-            if ( file_exists( PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php" ) ) {
+            if (file_exists(PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php")) {
                 require_once PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php";
-            }
-            elseif ( file_exists( PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php" ) ) {
+            } elseif (file_exists(PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php")) {
                 require_once PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
             }
         }
@@ -820,11 +561,15 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // Clean up the output buffer.
     ob_end_clean();
 
-    // load the locale from the language file into the template vars
-    $PHORUM["DATA"]["LOCALE"] = ( isset( $PHORUM["locale"] ) ) ? $PHORUM["locale"] : "";
+    // Load the locale from the language file into the template vars.
+    $PHORUM["DATA"]["LOCALE"] = isset($PHORUM['locale']) ? $PHORUM['locale'] : "";
 
     // If there is no HCHARSET (used by the htmlspecialchars() calls), then
-    // use the CHARSET for it instead.
+    // use the CHARSET for it instead. The HCHARSET is implemented to work
+    // around the limitation of PHP that it does not support all charsets
+    // for the htmlspecialchars() call. For example iso-8859-9 (Turkish)
+    // is not supported, in which case the combination CHARSET=iso-8859-9
+    // with HCHARSET=iso-8859-1 can be used to prevent PHP warnings.
     if (empty($PHORUM["DATA"]["HCHARSET"])) {
         $PHORUM["DATA"]["HCHARSET"] = $PHORUM["DATA"]["CHARSET"];
     }
@@ -833,38 +578,40 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // and HTML escape the title.
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
-    // if the Phorum is disabled, display a message.
-    if( empty($PHORUM["user"]["admin"]) ) {
-        if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_ADMIN_ONLY && phorum_page != 'css' && phorum_page != 'javascript'){
-            // set all our URL's
+    // For non-admin users, check if the forum is set to
+    // read-only or administrator-only mode.
+    if (empty($PHORUM["user"]["admin"]) && isset($PHORUM['status']))
+    {
+        if ($PHORUM["status"] == PHORUM_MASTER_STATUS_ADMIN_ONLY &&
+            phorum_page != 'css' &&
+            phorum_page != 'javascript' &&
+            phorum_page != 'login') {
+
             phorum_build_common_urls();
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
+            $phorum->user->set_active_user(PHORUM_FORUM_SESSION, NULL);
 
-            $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-            $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
-            $PHORUM["DATA"]["LOGGEDIN"] = false;
+            /**
+             * @todo Not compatible with portable / embedded Phorum setups.
+             */
+            phorum_output("message");
+            exit();
 
-            if (phorum_page != 'login') {
-
-                phorum_output("message");
-                exit();
-            }
-
-        } elseif(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
-            $PHORUM["DATA"]["GLOBAL_ERROR"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
-            $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
-            $PHORUM["DATA"]["LOGGEDIN"] = false;
+        } elseif ($PHORUM['status'] == PHORUM_MASTER_STATUS_READ_ONLY) {
+            $PHORUM['DATA']['GLOBAL_ERROR'] = $PHORUM['DATA']['LANG']['ReadOnlyMessage'];
+            $phorum->user->set_active_user(PHORUM_FORUM_SESSION, NULL);
         }
     }
 
     // If moderator notifications are on and the person is a mod,
-    // lets find out if anything is new.
+    // lets find out if anything needs attention.
 
-    $PHORUM["user"]["NOTICE"]["MESSAGES"] = false;
-    $PHORUM["user"]["NOTICE"]["USERS"] = false;
-    $PHORUM["user"]["NOTICE"]["GROUPS"] = false;
+    $PHORUM["user"]["NOTICE"]["MESSAGES"] = FALSE;
+    $PHORUM["user"]["NOTICE"]["USERS"] = FALSE;
+    $PHORUM["user"]["NOTICE"]["GROUPS"] = FALSE;
 
-    if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
-
+    if ($PHORUM["DATA"]["LOGGEDIN"])
+    {
         // By default, only bug the user on the list, index and cc pages.
         // The template can override this behaviour by setting a comma
         // separated list of phorum_page names in a template define statement
@@ -875,29 +622,34 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $show_notify_for_pages = array('index','list','cc');
         }
 
-        if ( in_array(phorum_page, $show_notify_for_pages) ) {
+        // Check for moderator notifications that have to be shown.
+        if (in_array(phorum_page, $show_notify_for_pages) &&
+            !empty($PHORUM['enable_moderator_notifications'])) {
 
-            if ( $PHORUM["enable_moderator_notifications"] ) {
-                $forummodlist = phorum_api_user_check_access(
-                    PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_LIST
-                );
-                if ( count( $forummodlist ) > 0 ) {
-                    $PHORUM["user"]["NOTICE"]["MESSAGES"] = ( phorum_db_get_unapproved_list( $forummodlist, true, 0, true) > 0 );
-                    $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED );
-                }
-                if ( phorum_api_user_check_access( PHORUM_USER_ALLOW_MODERATE_USERS ) ) {
-                    $PHORUM["user"]["NOTICE"]["USERS"] = ( count( phorum_db_user_get_unapproved() ) > 0 );
-                    $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS );
-                }
-                $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
-                if (count($groups) > 0) {
-                    $PHORUM["user"]["NOTICE"]["GROUPS"] = count( phorum_db_get_group_members( array_keys( $groups ), PHORUM_USER_GROUP_UNAPPROVED ) );
-                    $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url( PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION );
-                }
+            $forummodlist = $phorum->user->check_access(
+                PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_LIST
+            );
+            if (count($forummodlist) > 0 ) {
+                $PHORUM["user"]["NOTICE"]["MESSAGES"] = ($phorum->db->get_unapproved_list($forummodlist, TRUE, 0, TRUE) > 0);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
             }
-
-            $PHORUM["user"]["NOTICE"]["SHOW"] = $PHORUM["user"]["NOTICE"]["MESSAGES"] || $PHORUM["user"]["NOTICE"]["USERS"] || $PHORUM["user"]["NOTICE"]["GROUPS"];
+            if ($phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_USERS)) {
+                $PHORUM["user"]["NOTICE"]["USERS"] = (count($phorum->db->user_get_unapproved()) > 0);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
+            }
+            $groups = $phorum->user->check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
+            if (count($groups) > 0) {
+                $PHORUM["user"]["NOTICE"]["GROUPS"] = count($phorum->db->get_group_members(array_keys($groups), PHORUM_USER_GROUP_UNAPPROVED));
+                $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
+            }
         }
+
+        // A quick template variable for deciding whether or not to show
+        // moderator notification.
+        $PHORUM["user"]["NOTICE"]["SHOW"] =
+            $PHORUM["user"]["NOTICE"]["MESSAGES"] ||
+            $PHORUM["user"]["NOTICE"]["USERS"] ||
+            $PHORUM["user"]["NOTICE"]["GROUPS"];
     }
 
     /*
@@ -1002,16 +754,15 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         phorum_hook($page_hook, "");
     }
 
-    $formatted = phorum_api_user_format(array($PHORUM['user']));
+    $formatted = $phorum->user->format(array($PHORUM['user']));
     $PHORUM['DATA']['USER'] = $formatted[0];
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
-    // used in all forms as it seems
     $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["forum_id"]}\" />\n";
 
-    if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
-        if($PHORUM["default_feed"]=="rss"){
+    if (!empty($PHORUM['use_rss'])) {
+        if($PHORUM["default_feed"] == "rss"){
             $PHORUM["DATA"]["FEED"] = $PHORUM["DATA"]["LANG"]["RSS"];
             $PHORUM["DATA"]["FEED_CONTENT_TYPE"] = "application/rss+xml";
         } else {
@@ -1020,25 +771,29 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
         }
     }
 
-    if(!empty($PHORUM['forum_path']) && !is_array($PHORUM['forum_path']))
-        $PHORUM['forum_path'] = unserialize($PHORUM['forum_path']);
-
-    $PHORUM['DATA']['BREADCRUMBS']=array();
+    $PHORUM['DATA']['BREADCRUMBS'] = array();
 
     // Add the current forum path to the breadcrumbs.
     $index_page_url_template = phorum_get_url(PHORUM_INDEX_URL, '%forum_id%');
-
-    if(empty($PHORUM['forum_path'])) {
+    if (!empty($PHORUM['forum_path']) && !is_array($PHORUM['forum_path'])) {
+        $PHORUM['forum_path'] = unserialize($PHORUM['forum_path']);
+    }
+    if (empty($PHORUM['forum_path']))
+    {
         $id = $PHORUM['forum_id'];
-        $url = empty($id)?  phorum_get_url(PHORUM_INDEX_URL) : str_replace('%forum_id%',$id,$index_page_url_template);
+        $url = empty($id)
+             ? phorum_get_url(PHORUM_INDEX_URL)
+             : str_replace('%forum_id%',$id,$index_page_url_template);
 
-        $PHORUM['DATA']['BREADCRUMBS'][]=array(
+        $PHORUM['DATA']['BREADCRUMBS'][] = array(
             'URL'  => $url,
             'TEXT' => $PHORUM['DATA']['LANG']['Home'],
             'ID'   => $id,
             'TYPE' => 'root'
         );
-    } else {
+    }
+    else
+    {
         $track = NULL;
         foreach ($PHORUM['forum_path'] as $id => $name)
         {
@@ -1055,6 +810,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             } else {
                 $url = str_replace('%forum_id%',$id,$index_page_url_template);
             }
+
             // Note: $id key is not required in general. Only used for
             // fixing up the last entry's TYPE.
             $PHORUM['DATA']['BREADCRUMBS'][$id]=array(
@@ -1065,6 +821,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             );
             $track = $id;
         }
+
         if (!$PHORUM['folder_flag']) {
             $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
             $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_get_url(PHORUM_LIST_URL, $track);
@@ -1081,7 +838,7 @@ else {
     // The admin interface is not localized, but we might need language
     // strings at some point after all, for example if we reset the
     // author name in messages for deleted users to "anonymous".
-    $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"]);
+    $PHORUM["language"] = basename($PHORUM['default_forum_options']['language']);
     if (file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
         require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
     }
@@ -1098,9 +855,13 @@ else {
 function phorum_shutdown()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Strange things happen during shutdown
     // make sure we are still in the Phorum dir
+    /**
+     * @todo Still needed when all file references are absolute?
+     */
     chdir(dirname(__FILE__));
 
     /*
@@ -1135,7 +896,7 @@ function phorum_shutdown()
     }
 
     // Shutdown the database connection.
-    phorum_db_close_connection();
+    $phorum->db->close_connection();
 }
 register_shutdown_function("phorum_shutdown");
 
@@ -1148,11 +909,11 @@ register_shutdown_function("phorum_shutdown");
 function phorum_require_login()
 {
     global $PHORUM;
-    if ( !$PHORUM["user"]["user_id"] ) {
+    if (!$PHORUM["user"]["user_id"]) {
         $url = phorum_get_url(
             PHORUM_LOGIN_URL, "redir=" . phorum_get_current_url()
         );
-        phorum_redirect_by_url( $url );
+        phorum_redirect_by_url($url);
         exit();
     }
 }
@@ -1177,17 +938,22 @@ function phorum_require_login()
 function phorum_check_read_common()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
-    $retval = true;
+    $retval = TRUE;
 
-    if ( $PHORUM["forum_id"] > 0 && !$PHORUM["folder_flag"] && !phorum_api_user_check_access( PHORUM_USER_ALLOW_READ ) ) {
+    if ($PHORUM["forum_id"] > 0 &&
+        !$PHORUM["folder_flag"] &&
+        !$phorum->user->check_access(PHORUM_USER_ALLOW_READ)) {
+
         if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
             // if they are logged in and not allowed, they don't have rights
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
         } else {
-            // check if they could read if logged in.
-            // if so, let them know to log in.
-            if ( ( empty( $PHORUM["DATA"]["POST"]["parentid"] ) && $PHORUM["reg_perms"] &PHORUM_USER_ALLOW_READ ) ) {
+            // Check if they could read if logged in.
+            // If so, let them know to log in.
+            if (empty($PHORUM["DATA"]["POST"]["parentid"]) &&
+                $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_READ) {
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginRead"];
             } else {
                 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["NoRead"];
@@ -1198,7 +964,7 @@ function phorum_check_read_common()
 
         phorum_output("message");
 
-        $retval = false;
+        $retval = FALSE;
     }
 
     return $retval;
@@ -1259,9 +1025,9 @@ function phorum_switch_template($template = NULL, $template_path = NULL, $templa
         $PHORUM['template_http_path'] = $template_http_path;
     }
 
-    $PHORUM["DATA"]["TEMPLATE"] = $PHORUM['template'];
+    $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
     $PHORUM["DATA"]["URL"]["TEMPLATE"] =
-        $PHORUM['template_http_path'] .'/'. $PHORUM['template'];
+        htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
 
     ob_start();
     include phorum_get_template('settings');
@@ -1435,6 +1201,52 @@ function phorum_get_template_file( $page )
            md5(dirname(__FILE__) . $tplfile) . ".php";
 
     return array($phpfile, $tplfile);
+}
+
+/**
+ * Returns the PHP file to include for a template file. This function will
+ * automatically compile .tpl files if no compiled template is available.
+ *
+ * If the format for the template file is <module>::<template>, then
+ * the template is loaded from the module's directory. The directory
+ * structure for storing module templates is the same as for the
+ * main templates directory, only it is stored within a module's
+ * directory:
+ *
+ * <phorum_dir>/mods/templates/<template name>/<page>.tpl
+ *
+ * @param $page - The template base name (e.g. "header", "css", etc.).
+ * @return $phpfile - The PHP file to include for showing the template.
+ */
+function phorum_get_template( $page )
+{
+    // This might for example happen if a template contains code like
+    // {INCLUDE template} instead of {INCLUDE "template"}.
+    if ($page === NULL || $page == "") {
+        print "<h1>Phorum Template Error</h1>";
+        print "phorum_get_template() was called with an empty page name.<br/>";
+        print "This might indicate a template problem.<br/>";
+        if (function_exists('debug_print_backtrace')) {
+            print "Here's a backtrace that might help finding the error:";
+            print "<pre>";
+            debug_print_backtrace();
+            print "</pre>";
+        }
+        exit(1);
+    }
+
+    list ($phpfile, $tplfile) = phorum_get_template_file($page);
+
+    // No template to pre-process.
+    if ($tplfile == NULL) return $phpfile;
+
+    // Pre-process template if the output file isn't available.
+    if (! file_exists($phpfile)) {
+        require_once PHORUM_PATH."/include/templates.php";
+        phorum_import_template($page, $tplfile, $phpfile);
+    }
+
+    return $phpfile;
 }
 
 /**
@@ -1629,106 +1441,61 @@ function phorum_output($templates) {
 }
 
 /**
- * Returns the PHP file to include for a template file. This function will
- * automatically compile .tpl files if no compiled template is available.
- *
- * If the format for the template file is <module>::<template>, then
- * the template is loaded from the module's directory. The directory
- * structure for storing module templates is the same as for the
- * main templates directory, only it is stored within a module's
- * directory:
- *
- * <phorum_dir>/mods/templates/<template name>/<page>.tpl
- *
- * @param $page - The template base name (e.g. "header", "css", etc.).
- * @return $phpfile - The PHP file to include for showing the template.
+ * Generate the URLs that are used on most pages.
  */
-function phorum_get_template( $page )
-{
-    // This might for example happen if a template contains code like
-    // {INCLUDE template} instead of {INCLUDE "template"}.
-    if ($page === NULL || $page == "") {
-        print "<h1>Phorum Template Error</h1>";
-        print "phorum_get_template() was called with an empty page name.<br/>";
-        print "This might indicate a template problem.<br/>";
-        if (function_exists('debug_print_backtrace')) {
-            print "Here's a backtrace that might help finding the error:";
-            print "<pre>";
-            debug_print_backtrace();
-            print "</pre>";
-        }
-        exit(1);
-    }
-
-    list ($phpfile, $tplfile) = phorum_get_template_file($page);
-
-    // No template to pre-process.
-    if ($tplfile == NULL) return $phpfile;
-
-    // Pre-process template if the output file isn't available.
-    if (! file_exists($phpfile)) {
-        require_once PHORUM_PATH."/include/templates.php";
-        phorum_import_template($page, $tplfile, $phpfile);
-    }
-
-    return $phpfile;
-}
-
-// creates URLs used on most pages
 function phorum_build_common_urls()
 {
     global $PHORUM;
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_get_url( PHORUM_BASE_URL );
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_get_url(PHORUM_BASE_URL);
     $GLOBALS["PHORUM"]["DATA"]["URL"]["HTTP_PATH"] = $PHORUM['http_path'];
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url( PHORUM_LIST_URL );
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL);
 
-    // those links are only needed in forums, not in folders
-    if(isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url( PHORUM_POSTING_URL );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url( PHORUM_SUBSCRIBE_URL );
+    // These links are only needed in forums, not in folders.
+    if (isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url(PHORUM_POSTING_URL);
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url(PHORUM_SUBSCRIBE_URL);
     }
 
-    // those are general urls, needed nearly everywhere
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url( PHORUM_SEARCH_URL );
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url(PHORUM_SEARCH_URL);
 
+    // Find the id for the index.
     $index_id=-1;
-    // in a folder
 
-    if( $PHORUM['folder_flag'] && phorum_page != 'index'
-    && ($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id'])) {
-        // folder where we usually don't show the index-link but on
-        // additional pages like search and login its shown
-        $index_id=$PHORUM['forum_id'];
+    // A folder where we usually don't show the index-link but on
+    // additional pages like search and login it is shown.
+    if ($PHORUM['folder_flag'] && phorum_page != 'index' &&
+        ($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id'])) {
 
-    } elseif( ( $PHORUM['folder_flag'] &&
-    ($PHORUM['forum_id'] != 0 && $PHORUM['vroot'] != $PHORUM['forum_id'])) ||
-    (!$PHORUM['folder_flag'] && $PHORUM['active'])) {
-        // either a folder where the link should be shown (not vroot or root)
-        // or an active forum where the link should be shown
+        $index_id = $PHORUM['forum_id'];
 
+    // Either a folder where the link should be shown (not vroot or root)
+    // or an active forum where the link should be shown.
+    } elseif (($PHORUM['folder_flag'] &&
+              ($PHORUM['forum_id'] != 0 && $PHORUM['vroot'] != $PHORUM['forum_id'])) ||
+              (!$PHORUM['folder_flag'] && $PHORUM['active'])) {
+
+        // Go to root or vroot.
         if (isset($PHORUM["index_style"]) && $PHORUM["index_style"] == PHORUM_INDEX_FLAT) {
-            // go to root or vroot
-            $index_id=$PHORUM["vroot"]; // vroot is either 0 (root) or another id
-
+            // vroot is either 0 (root) or another id
+            $index_id = $PHORUM["vroot"];
+        // Go to the parent folder.
         } else {
-            // go to parent
-            $index_id=$PHORUM["parent_id"]; // parent_id is always set now
-
+            $index_id=$PHORUM["parent_id"];
         }
-
     }
-    if($index_id > -1) {
+
+    if ($index_id > -1) {
         // check if its the full root, avoid adding an id in this case (SE-optimized ;))
         if (!empty($index_id))
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL, $index_id );
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url(PHORUM_INDEX_URL, $index_id);
         else
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url( PHORUM_INDEX_URL );
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url(PHORUM_INDEX_URL);
     }
 
     // these urls depend on the login-status of a user
-    if ( $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ) {
+    if ($GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"]) {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL, "logout=1" );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_CONTROLCENTER_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
@@ -1738,26 +1505,36 @@ function phorum_build_common_urls()
     }
 }
 
-// calls phorum mod functions
-function phorum_hook( $hook )
+/**
+ * Run a Phorum hook.
+ *
+ * This function will check what modules to implement the requested
+ * hook. Those modules are loaded and the module hook functions are called.
+ *
+ * @param string $hook
+ *     The name of the hook.
+ *
+ * @param mixed
+ *     Extra arguments that will be passed on to the hook functions.
+ */
+function phorum_hook($hook)
 {
     global $PHORUM;
 
-    // keep track of modules that we have already loaded at
-    // earlier calls to the phorum_hook() function
+    // Keep track of modules that we have already loaded at
+    // earlier calls to the phorum_hook() function.
     static $load_cache = array();
 
-    // get arguments passed to the function
+    // Retrieve the arguments that were passed to the function.
     $args = func_get_args();
 
-    // shift off hook name
+    // Shift off the hook name.
     array_shift($args);
 
-    if ( isset( $PHORUM["hooks"][$hook] ) &&
-         is_array($PHORUM["hooks"][$hook])) {
-
-        // load mods for this hook
-        foreach( $PHORUM["hooks"][$hook]["mods"] as $mod )
+    if (!empty($PHORUM['hooks'][$hook]))
+    {
+        // Load the modules for this hook.
+        foreach ($PHORUM['hooks'][$hook]['mods'] as $mod)
         {
             $mod = basename($mod);
 
@@ -1766,9 +1543,9 @@ function phorum_hook( $hook )
             $load_cache[$mod] = 1;
 
             // Load the module file.
-            if ( file_exists(PHORUM_PATH."/mods/$mod/$mod.php") ) {
+            if (file_exists(PHORUM_PATH."/mods/$mod/$mod.php")) {
                 require_once PHORUM_PATH."/mods/$mod/$mod.php";
-            } elseif ( file_exists(PHORUM_PATH."/mods/$mod.php") ) {
+            } elseif (file_exists(PHORUM_PATH."/mods/$mod.php")) {
                 require_once PHORUM_PATH."/mods/$mod.php";
             }
 
@@ -1782,32 +1559,39 @@ function phorum_hook( $hook )
         }
 
         $called = array();
-
-        foreach( $PHORUM["hooks"][$hook]["funcs"] as $func ) {
-
-            // don't call a function twice in case it gets
-            // put into the hook twice somehow
-            if(isset($called[$func])) continue;
-            $called[$func] = true;
+        foreach ($PHORUM["hooks"][$hook]["funcs"] as $func)
+        {
+            // Do not call a function twice (in case it is configured twice
+            // for the same hook in the module info).
+            if (isset($called[$func])) continue;
+            $called[$func] = TRUE;
 
             // call functions for this hook
-            if ( function_exists( $func ) ) {
-                if(count($args)){
-                    $args[0] = call_user_func_array( $func, $args );
+            if (function_exists($func)) {
+                if (count($args)) {
+                    $args[0] = call_user_func_array($func, $args);
                 } else {
-                    call_user_func( $func );
+                    call_user_func($func);
                 }
             }
         }
     }
 
-    if(isset($args[0])){
+    if (isset($args[0])) {
         return $args[0];
     }
 }
 
-// HTML encodes a string
-function phorum_html_encode( $string )
+/**
+ * Encode a string as HTML entities.
+ *
+ * @param string $string
+ *     The string to encode.
+ *
+ * @return string
+ *     The encoded string.
+ */
+function phorum_html_encode($string)
 {
     $ret_string = "";
     $len = strlen( $string );
@@ -1818,37 +1602,56 @@ function phorum_html_encode( $string )
     return $ret_string;
 }
 
-// removes slashes from all array-entries
-function phorum_recursive_stripslashes( $array )
+/**
+ * Recursively remove slashes from array elements.  
+ *
+ * @param array $array
+ *     The data array to modify.
+ *
+ * @return array
+ *     The modified data array.
+ */
+function phorum_recursive_stripslashes($array)
 {
-    if ( !is_array( $array ) ) {
+    if (!is_array($array)) {
         return $array;
     } else {
-        foreach( $array as $key => $value ) {
-            if ( !is_array( $value ) )
-                $array[$key] = stripslashes( $value );
-            else
-                $array[$key] = phorum_recursive_stripslashes( $value );
+        foreach($array as $key => $value) {
+            if (!is_array($value)) {
+                $array[$key] = stripslashes($value);
+            } else {
+                $array[$key] = phorum_recursive_stripslashes($value);
+            }
         }
     }
     return $array;
 }
 
-// returns the available templates as an array
+/**
+ * Returns a list of available templates.
+ *
+ * @return array
+ *     An array of templates. The keys in the array are the template
+ *     id's by which they are referenced internally. The values contain
+ *     the description + version of the template.
+ */
+ 
 function phorum_get_template_info()
 {
     global $PHORUM;
 
     $tpls = array();
 
-    $d = dir( $PHORUM['template_path'] );
-    while ( false !== ( $entry = $d->read() ) ) {
-        if ( $entry != "." && $entry != ".." && file_exists($PHORUM['template_path'].'/'.$entry.'/info.php' ) ) {
+    $d = dir($PHORUM['template_path']);
+    while (FALSE !== ($entry = $d->read())) {
+        if ($entry != '.' && $entry != '..' &&
+            file_exists($PHORUM['template_path'].'/'.$entry.'/info.php')) {
+
             include $PHORUM['template_path'].'/'.$entry.'/info.php';
-            if ( !isset( $template_hide ) || empty( $template_hide ) || defined( "PHORUM_ADMIN" ) ) {
+            if (!isset($template_hide) || empty($template_hide) || defined('PHORUM_ADMIN')) {
                 $tpls[$entry] = "$name $version";
             } else {
-                unset( $template_hide );
+                unset($template_hide);
             }
         }
     }
@@ -1856,24 +1659,33 @@ function phorum_get_template_info()
     return $tpls;
 }
 
-// returns the available languages as an array
+/**
+ * Returns a list of available languages.
+ *
+ * @return array
+ *     An array of languages. The keys in the array are the language
+ *     id's by which they are referenced internally. The values contain
+ *     the description of the language.
+ */
 function phorum_get_language_info()
 {
-    // to make some language-files happy which are using $PHORUM-variables
-    // don't make this really global
-    // included language file would override real language this way
+    // To make some language-files happy which are using $PHORUM-variables.
+    // We don't make this really global, otherwise the included language
+    // file would override real language.
     $PHORUM = $GLOBALS['PHORUM'];
 
     $langs = array();
 
-    $d = dir( PHORUM_PATH.'/include/lang' );
-    while ( false !== ( $entry = $d->read() ) ) {
-        if ( substr( $entry, -4 ) == ".php" && is_file( PHORUM_PATH."/include/lang/$entry" ) ) {
+    $d = dir(PHORUM_PATH.'/include/lang');
+    while (FALSE !== ($entry = $d->read())) {
+        if (substr($entry, -4) == ".php" && is_file(PHORUM_PATH."/include/lang/$entry")) {
+            ob_start();
             @include PHORUM_PATH."/include/lang/$entry";
-            if ( !isset( $language_hide ) || empty( $language_hide ) || defined( "PHORUM_ADMIN" ) ) {
-                $langs[str_replace( ".php", "", $entry )] = $language;
+            ob_end_clean(); // Eat possible extra output like UTF-8 BOM and whitespace outside PHP tags.
+            if (!isset($language_hide) || empty($language_hide) || defined('PHORUM_ADMIN')) {
+                $langs[str_replace(".php", "", $entry)] = $language;
             } else {
-                unset( $language_hide );
+                unset($language_hide);
             }
         }
     }
@@ -1883,7 +1695,13 @@ function phorum_get_language_info()
     return $langs;
 }
 
-function phorum_redirect_by_url( $redir_url )
+/**
+ * Redirect the browser to a different page.
+ *
+ * @param string $redir_url
+ *     The URL to redirect to.
+ */
+function phorum_redirect_by_url($redir_url)
 {
     // Some browsers strip the anchor from the URL in case we redirect
     // from a POSTed page :-/. So here we wrap the redirect,
@@ -1895,43 +1713,54 @@ function phorum_redirect_by_url( $redir_url )
         );
     }
 
-    // check for response splitting and valid http(s) URLs
+    // Check for response splitting and valid http(s) URLs.
     if(preg_match("/\s/", $redir_url) || !preg_match("!^https?://!i", $redir_url)){
         $redir_url = phorum_get_url(PHORUM_INDEX_URL);
     }
 
-    if ( stristr( $_SERVER['SERVER_SOFTWARE'], "Microsoft-IIS" ) ) {
-        // the ugly IIS-hack to avoid crashing IIS
+    // An ugly IIS-hack to avoid crashing IIS servers.
+    if (isset($_SERVER['SERVER_SOFTWARE']) &&
+        stristr($_SERVER['SERVER_SOFTWARE'], "Microsoft-IIS")) {
         print "<html><head>\n<title>Redirecting ...</title>\n";
         print "<meta http-equiv=\"refresh\" content=\"0; URL=$redir_url\">";
         print "</head>\n";
         print "<body><a href=\"$redir_url\">Redirecting ...</a></body>\n";
         print "</html>";
-    } else {
-        // our standard-way
+    }
+    // Standard redirection.
+    else {
         header( "Location: $redir_url" );
     }
+
     exit(0);
 }
 
-// might remove these, might not.  Need it for debugging.
-function print_var( $var, $admin_only = FALSE )
+/**
+ * Dump the contents of a variable on screen.
+ * This is mainly a debugging tool.
+ *
+ * @param mixed $var
+ *     The variable to dump on screen.
+ *
+ * @param boolean $admin_only
+ *     If true, the the dump is only done if the active Phorum
+ *     user is an administrator.
+ */
+function print_var($var, $admin_only = FALSE)
 {
     if ($admin_only && ! $GLOBALS["PHORUM"]["user"]["admin"]) return;
 
-    if(PHP_SAPI!="cli"){
-        echo "<pre>";
-    }
-    echo "\n";
-    echo "type:  ".gettype($var)."\n";
-    echo "value: ";
-    $val = print_r($var, true);
-    echo trim(str_replace("\n", "\n       ", $val));
-    if(PHP_SAPI!="cli"){
-        echo "\n</pre>";
-    }
-    echo "\n";
+    if (PHP_SAPI != "cli") echo "<pre>";
 
+    echo "\n";
+    echo "type: " . gettype($var) . "\n";
+    echo "value: ";
+    $val = print_r($var, TRUE);
+    echo trim(str_replace("\n", "\n       ", $val));
+
+    if (PHP_SAPI != "cli") echo "\n</pre>";
+
+    echo "\n";
 }
 
 /**
@@ -1954,7 +1783,7 @@ function phorum_generate_data_signature($data)
  *
  * @param $data The signed data.
  * @param $signature The signature for the data.
- * @return True in case the signature is okay, false otherwise.
+ * @return TRUE in case the signature is okay, FALSE otherwise.
  */
 function phorum_check_data_signature($data, $signature)
 {
@@ -2076,9 +1905,11 @@ function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}")
     return $backtrace;
 }
 
+/**
+ * Clear out all output that PHP buffered up to now.
+ */
 function phorum_ob_clean()
 {
-    // Clear out all output that PHP buffered up to now.
     for(;;) {
         $status = ob_get_status();
         if (!$status ||
