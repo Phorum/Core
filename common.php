@@ -668,8 +668,8 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $template = basename( $PHORUM["args"]["template"] );
             if ($template != '..') {
                 $PHORUM["template"] = $template;
-                $PHORUM['DATA']['GET_VARS'][]="template=$template";
-                $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"template\" value=\"$template\" />\n";
+                $PHORUM['DATA']['GET_VARS'][]="template=".urlencode($template);
+                $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"template\" value=\"".htmlspecialchars($template)."\" />\n";
             }
         }
 
