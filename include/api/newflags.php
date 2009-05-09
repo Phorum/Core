@@ -346,7 +346,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         foreach ($threads as $thread)
         {
             // In case this was no thread or broken thread data.
-            if ($thread['parent'] != 0 ||
+            if ($thread['parent_id'] != 0 ||
                 empty($thread['meta']['message_ids'])) continue;
 
             // Fetch the user's newflags for the thread's forum, so we
