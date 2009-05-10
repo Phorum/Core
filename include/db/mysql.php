@@ -5011,8 +5011,8 @@ function phorum_db_newflag_allread($forum_id=0)
     // Set this message_id as the min-id for the forum.
     if ($max_id) {
         phorum_db_newflag_add_min_id(array(array(
-            'min_id' => $max_id,
-            'forum'  => $forum_id
+            'min_id'   => $max_id,
+            'forum_id' => $forum_id
         )));
     }
 }
@@ -5049,7 +5049,8 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
          FROM   {$PHORUM['user_newflags_table']}
          WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                 forum_id = $forum_id
-         ORDER  BY message_id ASC","message_id"
+         ORDER  BY message_id ASC",
+        0
     );
     
     // select the min_id
@@ -5060,11 +5061,8 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
          WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                 forum_id = $forum_id"
     );
+    $newflags['min_id'] = $min_id;
     
-    $newflags['min_id']=$min_id;
-    
-    
-
     return $newflags;
 }
 // }}}
@@ -5358,7 +5356,7 @@ function phorum_db_newflag_add_min_id($min_ids)
  *       "id" containing a message_id. This notation can be used to mark
  *       messages read in other forums than te active one.
  */
-function phorum_db_newflag_add_read($message_ids, $current_min_id)
+function phorum_db_newflag_add_read($message_ids)
 {
     global $PHORUM;
 
@@ -5382,7 +5380,7 @@ function phorum_db_newflag_add_read($message_ids, $current_min_id)
     foreach ($message_ids as $id => $data)
     {
         if (is_array($data)) {
-            $forum_id   = (int)$data['forum'];
+            $forum_id   = (int)$data['forum_id'];
             $message_id = (int)$data['id'];
         } else {
             $forum_id   = (int)$PHORUM['forum_id'];
@@ -5477,8 +5475,8 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
         // Set this message_id as the min-id for the forum.
         if ($min_id) {
             phorum_db_newflag_add_min_id(array(array(
-                'min_id' => $min_id,
-                'forum'  => $forum_id
+                'min_id'   => $min_id,
+                'forum_id' => $forum_id
             )));
         }
     }
