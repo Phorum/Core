@@ -82,6 +82,7 @@ $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
     "jpe"  => "image/jpeg",
     "tiff" => "image/tiff",
     "tif"  => "image/tiff",
+    "bmp"  => "image/x-ms-bmp",
     "xml"  => "text/xml",
     "mpeg" => "video/mpeg",
     "mpg"  => "video/mpeg",
@@ -774,10 +775,12 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
      *     file_retrieve
      *
      * [description]
-     *     This hook allows modules to handle the file data retrieval. The hook can use
-     *     <literal>phorum_api_error_set()</literal>  to return an error. Hooks should be aware
-     *     that their input might not be <literal>$file</literal>, but <literal>FALSE</literal>  instead, in which
-     *     case they should immediately return <literal>FALSE</literal>  themselves.
+     *     This hook allows modules to handle the file data retrieval.
+     *     The hook can use <literal>phorum_api_error_set()</literal>
+     *     to return an error. Hooks should be aware that their input might
+     *     not be <literal>$file</literal>, but <literal>FALSE</literal>
+     *     instead, in which case they should immediately return
+     *     <literal>FALSE</literal> themselves.
      *
      * [category]
      *     File storage
@@ -792,7 +795,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
      *     and the second element is the flags variable.
      *
      * [output]
-     *     Same as input with file data filled in.
+     *     Same as input with file_data filled in.
      *
      */
     
@@ -821,6 +824,17 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         // Phorum stores the files in base64 format in the database, to
         // prevent problems with dumping and restoring databases.
         $file["file_data"] = base64_decode($dbfile["file_data"]);
+    }
+
+    // If the file is not requested for downloading, then check if it is
+    // safe for the browser to view this file. If it is not, then
+    // enable the force download flag to make sure that the browser will
+    // download the file.
+    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD))
+    {
+        if (phorum_api_file_browser_sniffs_html($file)) {
+            $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
+        }
     }
 
     // Set the MIME type information if it was not set by a module.
@@ -1106,6 +1120,88 @@ function phorum_api_file_purge_stale($do_purge)
     }
 
     return $stale_files;
+}
+// }}}
+
+// ------------------------------------------------------------------------
+// File security checking
+// ------------------------------------------------------------------------
+
+// {{{ Function: phorum_api_file_browser_sniffs_html()
+/**
+ * Check if MIME-sniffing in the user's browser could qualify the file's
+ * contents as HTML code.
+ *
+ * @param array $file
+ *     An array, containing information for the file.
+ *     This array has to contain at least the file_data field.
+ *
+ * @return boolean
+ *     TRUE if the browser might qualify the file as HTML code,
+ *     FALSE otherwise.
+ */
+function phorum_api_file_browser_sniffs_html($file)
+{
+    if (!isset($file['file_data'])) trigger_error(
+        "phorum_api_file_browser_sniffs_html(): \$file parameter needs a " .
+        "\"file_data\" field.",
+        E_USER_ERROR
+    );
+
+    // Based on info from:
+    // http://webblaze.cs.berkeley.edu/2009/content-sniffing/
+    //
+    // Sniffing buffer in various browsers:
+    // - MSIE7 = 256 Bytes
+    // - FF3 & Safari 3.1 = 1024 Bytes
+    // - Google Chrome & HTML5 spec = 512 Bytes
+    // A conservative approach requires checking of 1024 Bytes.
+    //
+    // The trim() call is used, because some browser checks
+    // look at the first non-whitespace byte of the file data.
+    //
+    $chunk = trim(substr($file['file_data'], 0, 1024));
+
+    if (preg_match('/
+        ^<!|              # FF3            CHROME HTML5
+        ^<?|              # FF3
+        <html|            # FF3 IE7 SAF3.1 CHROME HTML5
+        <script|          # FF3 IE7 SAF3.1 CHROME HTML5
+        <title|           # FF3 IE7 SAF3.1 CHROME
+        <body|            # FF3 IE7        CHROME
+        <head|            # FF3 IE7        CHROME HTML5
+        <plaintext|       #     IE7
+        <table|           # FF3 IE7        CHROME
+        <img|             # FF3 IE7
+        <pre|             # FF3 IE7
+        text\/html|       #         SAF3.1
+        <a|               # FF3 IE7 SAF3.1 CHROME
+        ^<frameset|       # FF3
+        ^<iframe|         # FF3            CHROME
+        ^<link|           # FF3
+        ^<base|           # FF3
+        ^<style|          # FF3            CHROME
+        ^<div|            # FF3            CHROME
+        ^<p|              # FF3            CHROME
+        ^<font|           # FF3            CHROME
+        ^<applet|         # FF3
+        ^<meta|           # FF3
+        ^<center|         # FF3
+        ^<form|           # FF3
+        ^<isindex|        # FF3
+        ^<h1|             # FF3            CHROME
+        ^<h2|             # FF3
+        ^<h3|             # FF3
+        ^<h4|             # FF3
+        ^<h5|             # FF3
+        ^<h6|             # FF3
+        ^<b|              # FF3            CHROME
+        ^<br              #                CHROME
+        /xi', $chunk)) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 // }}}
 

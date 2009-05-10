@@ -259,6 +259,11 @@ if (!$phorum->db->check_connection())
 // Other initialization tasks
 // ----------------------------------------------------------------------
 
+// Set the anonymous user as our initial user.
+// Authentication / session handling will override this
+// later on when appropriate.
+$phorum->user->set_active_user(PHORUM_FORUM_SESSION, NULL);
+
 // Load the Phorum settings from the database.
 $phorum->db->load_settings();
 

@@ -505,8 +505,7 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // Are we handling the active Phorum user? Then refresh the user data.
-    if (isset($PHORUM['user']) &&
-        $PHORUM['user']['user_id'] == $dbuser['user_id']) {
+    if ($PHORUM['user']['user_id'] == $dbuser['user_id']) {
         $PHORUM['user'] = phorum_api_user_get($user['user_id'], TRUE, TRUE);
     }
 
