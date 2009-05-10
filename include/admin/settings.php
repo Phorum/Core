@@ -281,11 +281,6 @@ $frm->addhelp($row, "Use pathinfo for file URLs", "All Phorum file downloads (fo
 $row=$frm->addrow( "Allow Login-Redirection to the following URLs", $frm->text_box("login_redir_urls", $PHORUM["login_redir_urls"], 75 ));
 $frm->addhelp($row, "Allow Login-Redirection to the following URLs", "The login.php script can be called with a \"redir=&lt;url&gt;\" parameter, to let it redirect to an URL of choice after logging in. For security reasons, only redirects to localhost and to the Phorum URL are allowed. I you want to allow Phorum to redirect to a different URL, then enter that URL here. Multiple URLs can be provided as a comma separated list. Redirects to URLs not starting with the URLs listed here, besides the Phorum URL and localhost, are ignored.<br /><br />A full URL should be like http://www.domainname.com/path or http://www.domain.com ... ");
 
-$check_img = 'Working extension detected if green: <img src="'.$PHORUM["http_path"].'/extension_check.php" style="border:1px solid black"/>';
-$ext_dir = ini_get('extension_dir');
-$row=$frm->addrow("Phorum PHP extension support", $frm->select_tag("php_phorum_extension", array("Disabled", "Enabled"), $PHORUM["php_phorum_extension"]) . $check_img);
-$frm->addhelp($row, "Phorum PHP extension support", "For very busy Phorum web sites, a special PHP extension can be installed for speeeding up some time and memory consuming Phorum tasks. This extension needs to be installed in the global PHP extensions directory (".htmlspecialchars($ext_dir)."), so you either need to be the system administrator yourself or have to get help from a willing administrator.<br/><br/>The extension source can be found in the directory \"extension_src\" in the Phorum package. See the README file in that directory for compilation and installation instructions.<br/><br/>If the extension is successfully installed, then you will see a green square in the option line. If you see a red square, then there is no use in enabling this option, because Phorum was unable to detect a working extension in that case.<br/><br/>Most people can keep this option set to disabled.");
-
 $frm->addbreak( "HTML Settings" );
 
 $row=$frm->addrow( "Phorum HTML Title", $frm->text_box( "html_title", $PHORUM["html_title"], 50 ) );
