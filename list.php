@@ -558,16 +558,6 @@ if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
 
 }
 
-// updating new-info for first visit (last message on first page is first new)
-$newflags = phorum_api_newflags_by_forum($PHORUM['forum_id']);
-if ($PHORUM['user']['user_id'] &&
-    $newflags['min_id'] == 0 && !isset($newflags[$min_id]) && $min_id != 0) {
-    // setting it as min-id
-    // set it -1 as the comparison is "post newer than min_id"
-    $min_id--;
-    phorum_api_newflags_markread($min_id, PHORUM_MARKREAD_MESSAGES);
-}
-
 // include the correct template
 if ($PHORUM["threaded_list"]){
     $template = "list_threads";

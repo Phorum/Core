@@ -5175,8 +5175,8 @@ function phorum_db_newflag_count($forum_ids)
     foreach($forum_ids as $forum_id){
 
         if(empty($list[$forum_id])){
-
-            $new_checks[$forum_id] = array("messages"=>0, "threads"=>0);
+            // no newflags for this user and forum, make it -1 for later processing
+            $new_checks[$forum_id] = array("messages"=>-1, "threads"=>-1);
 
         } else {
 
