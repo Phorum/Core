@@ -5010,12 +5010,10 @@ function phorum_db_newflag_allread($forum_id=0)
 
     // Set this message_id as the min-id for the forum.
     if ($max_id) {
-        phorum_db_newflag_add_min_id(array(
-            0 => array(
-              'min_id'    => $max_id,
-              'forum' => $forum_id
-            )
-        ));
+        phorum_db_newflag_add_min_id(array(array(
+            'min_id' => $max_id,
+            'forum'  => $forum_id
+        )));
     }
 }
 // }}}
@@ -5312,31 +5310,34 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
 // }}}
 
 
-function phorum_db_newflag_add_min_id($min_ids) {
+function phorum_db_newflag_add_min_id($min_ids)
+{
     global $PHORUM;
     
+    $user_id = $PHORUM['user']['user_id'];
     
-    $user_id=$PHORUM['user']['user_id'];
-    
-    foreach ($message_ids as $id => $data) {
+    foreach ($min_ids as $min_id)
+    {
+        settype($min_id['forum_id'], 'int');
+        settype($min_id['min_id'], 'int');
+
         // We ignore duplicate record errors here.
-        phorum_db_interact(
+        $res = phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['user_min_id_table']}
                     (user_id, forum_id, min_id)
-             VALUES ($user_id, {$data['forum_id']}, {$data['min_id']})",
+             VALUES ($user_id, {$min_id['forum_id']}, {$min_id['min_id']})",
             NULL,
             DB_DUPKEYOK | DB_MASTERQUERY
         );    
         if (!$res) {
-            // no res returned, therefore that key probably exists already
+            // No res returned, therefore that key probably exists already.
             phorum_db_interact(
                 DB_RETURN_RES,
                 "UPDATE {$PHORUM['user_min_id_table']}
-                 SET min_id = {$data['min_id']}
-                 WHERE user_id  = $user_id 
-                   AND forum_id = {$data['forum_id']}
-                ",
+                 SET    min_id = {$min_id['min_id']}
+                 WHERE  user_id  = $user_id AND
+                        forum_id = {$min_id['forum_id']}",
                 NULL,
                 DB_MASTERQUERY
             );  
@@ -5357,7 +5358,7 @@ function phorum_db_newflag_add_min_id($min_ids) {
  *       "id" containing a message_id. This notation can be used to mark
  *       messages read in other forums than te active one.
  */
-function phorum_db_newflag_add_read($message_ids,$current_min_id)
+function phorum_db_newflag_add_read($message_ids, $current_min_id)
 {
     global $PHORUM;
 
@@ -5375,20 +5376,18 @@ function phorum_db_newflag_add_read($message_ids,$current_min_id)
         phorum_db_newflag_delete($num_end - PHORUM_MAX_READ_COUNT_PER_FORUM);
     }
 
+    $user_id = $PHORUM['user']['user_id'];
+
     // Insert newflags.
     foreach ($message_ids as $id => $data)
     {
         if (is_array($data)) {
-            $user_id    = $PHORUM['user']['user_id'];
             $forum_id   = (int)$data['forum'];
             $message_id = (int)$data['id'];
         } else {
-            $user_id    = $PHORUM['user']['user_id'];
-            $forum_id   = $PHORUM['forum_id'];
+            $forum_id   = (int)$PHORUM['forum_id'];
             $message_id = (int)$data;
         }
-        
-        
 
         // We ignore duplicate record errors here.
         phorum_db_interact(
@@ -5477,12 +5476,10 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
     
         // Set this message_id as the min-id for the forum.
         if ($min_id) {
-            phorum_db_newflag_add_min_id(array(
-                0 => array(
-                  'min_id'    => $min_id,
-                  'forum' => $forum_id
-                )
-            ));
+            phorum_db_newflag_add_min_id(array(array(
+                'min_id' => $min_id,
+                'forum'  => $forum_id
+            )));
         }
     }
 }
