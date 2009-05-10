@@ -73,6 +73,7 @@ define("PHORUM_FLAG_FORCE_DOWNLOAD",   8);
 $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
 (
     "pdf"  => "application/pdf",
+    "ps"   => "application/postscript",
     "doc"  => "application/msword",
     "xls"  => "application/vnd.ms-excel",
     "gif"  => "image/gif",
@@ -80,10 +81,12 @@ $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
     "jpg"  => "image/jpeg",
     "jpeg" => "image/jpeg",
     "jpe"  => "image/jpeg",
+    "bmp"  => "image/x-ms-bmp",
     "tiff" => "image/tiff",
     "tif"  => "image/tiff",
-    "bmp"  => "image/x-ms-bmp",
     "xml"  => "text/xml",
+    "html" => "text/html",
+    "txt"  => "text/plain",
     "mpeg" => "video/mpeg",
     "mpg"  => "video/mpeg",
     "mpe"  => "video/mpeg",
@@ -1164,7 +1167,7 @@ function phorum_api_file_browser_sniffs_html($file)
 
     if (preg_match('/
         ^<!|              # FF3            CHROME HTML5
-        ^<?|              # FF3
+        ^<\?|             # FF3
         <html|            # FF3 IE7 SAF3.1 CHROME HTML5
         <script|          # FF3 IE7 SAF3.1 CHROME HTML5
         <title|           # FF3 IE7 SAF3.1 CHROME
