@@ -346,7 +346,9 @@ $PHORUM["DATA"]["SEARCH"]["match_threads"] = (int)$PHORUM["args"]["match_threads
 
 $PHORUM["DATA"]["SEARCH"]["forum_list"] = phorum_build_forum_list();
 if(isset($PHORUM["args"]["match_forum"])){
-    $match_forum = explode(",", $PHORUM["args"]["match_forum"]);
+    $match_forum = is_array($PHORUM['args']['match_forum'])
+                 ? $PHORUM['args']['match_forum']
+                 : explode(",", $PHORUM["args"]["match_forum"]);
     foreach($PHORUM["DATA"]["SEARCH"]["forum_list"] as $key=>$list_item){
         if(in_array($list_item["forum_id"], $match_forum)){
             $PHORUM["DATA"]["SEARCH"]["forum_list"][$key]["selected"] = true;
