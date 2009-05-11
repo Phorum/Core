@@ -76,6 +76,19 @@ $PHORUM['API']['url_patterns'] = array
 
 // }}}
 
+// {{{ Function phorum_api_url()
+/**
+ * Shortcut function for pohrum_api_url_get().
+ * This makes it possible to do $phorum->url(...) instead of
+ * having to write $phorum->url->get(...).
+ */
+function phorum_api_url()
+{
+    $argv = func_get_args();
+    return call_user_func_array('phorum_api_url_get', $argv);
+}
+// }}}
+
 // {{{ Function: phorum_api_url_get()
 /**
  * Generate a Phorum URL.

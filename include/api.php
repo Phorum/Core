@@ -127,11 +127,11 @@ class Phorum
         if (!function_exists($function))
         {
             // Check for an API layer, named $what.
-            // Check if the function prefix{$what}_get() exists.
+            // Check if the function prefix{$what}() exists.
             // If yes, then we'll redirect to that function.
             // E.g. $phorum->url() will be handled by $phorum->url()
             $this->$what; // forces loading the layer.
-            $function = $this->func_prefix.$what.'_get';
+            $function = $this->func_prefix.$what;
 
             // Out of luck.
             if (!function_exists($function)) trigger_error(
