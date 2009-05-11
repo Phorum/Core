@@ -143,7 +143,8 @@ function phorum_api_file_get_mimetype($filename)
  */
 function phorum_api_file_check_write_access($file)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
+    $phorum = Phorum::API();
 
     // Reset error storage.
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
@@ -245,7 +246,7 @@ function phorum_api_file_check_write_access($file)
                 return phorum_api_error_set(
                     PHORUM_ERRNO_NOACCESS,
                     str_replace(
-                        '%size%', phorum_filesize($max_upload),
+                        '%size%', $phorum->format->filesize($max_upload),
                         $PHORUM["DATA"]["LANG"]["AttachFileSize"]
                     )
                 );
@@ -309,7 +310,7 @@ function phorum_api_file_check_write_access($file)
  *         </ul>
  *     </li>
  *     <li>user_id: The user to link a file to. If none is provided, then
-           the user_id of the active Phorum user will be used.</li>
+ *         the user_id of the active Phorum user will be used.</li>
  *     <li>message_id: The message to link a file to or 0 if it's no
  *         message attachment.</li>
  *     </ul>

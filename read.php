@@ -591,11 +591,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             }
         }
 
-        if($PHORUM["max_attachments"]>0 && isset($row["meta"]["attachments"])){
+        if ($PHORUM["max_attachments"]>0 && isset($row["meta"]["attachments"]))
+        {
             $row["attachments"]=$row["meta"]["attachments"];
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
-                $row["attachments"][$key]["size"] = phorum_filesize($file["size"]);
+                $row["attachments"][$key]["size"] = $phorum->format->filesize($file["size"]);
                 $row["attachments"][$key]["name"] = htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $safe_file = preg_replace('/[^\w\_\-\.]/', '_', $file['name']);
                 $safe_file = preg_replace('/_+/', '_', $safe_file);

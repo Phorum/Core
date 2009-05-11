@@ -52,7 +52,7 @@ if(count($_POST))
     }
     require_once './include/format_functions.php';
     print "Finished purging compiled Phorum templates<br/>\n" .
-          "Purged " . phorum_filesize($purged) . "<br/>";
+          "Purged " . $phorum->format->filesize($purged) . "<br/>";
 
     print "<br/>";
     print "DONE<br/><br/>";

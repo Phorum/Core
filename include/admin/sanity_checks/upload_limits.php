@@ -24,7 +24,6 @@
 // The upload size can be limited by Apache's LimitRequestBody directive,
 // but we cannot check that one from PHP.
 
-require_once './include/format_functions.php'; // For phorum_filesize()
 require_once './include/upload_functions.php';
 require_once './include/api/forums.php';
 
@@ -108,12 +107,14 @@ function phorum_check_upload_limits($is_install) {
 // again.
 function phorum_single_check_upload_limits ($howmuch, $what, $maxphp, $maxdb)
 {
+    $phorum = Phorum::API();
+
     // Check PHP limits.
     if (!empty($maxphp) && $howmuch > $maxphp) return array(
         PHORUM_SANITY_WARN,
         "You have configured ".htmlspecialchars($what)." to ".
-         phorum_filesize($howmuch).". Your PHP installation only
-         supports ".phorum_filesize($maxphp).". Your users might
+         $phorum->format->filesize($howmuch).". Your PHP installation only
+         supports ".$phorum->format->filesize($maxphp).". Your users might
          have problems with uploading their files because of this.",
         "Raise the options post_max_size and upload_max_filesize in your
          php.ini file to match the Max File Size option or lower this
@@ -124,9 +125,9 @@ function phorum_single_check_upload_limits ($howmuch, $what, $maxphp, $maxdb)
     if (!empty($maxdb) && $howmuch > $maxdb) return array(
         PHORUM_SANITY_WARN,
         "You have configured ".htmlspecialchars($what)." to ".
-         phorum_filesize($howmuch).". Your database only supports ".
-         phorum_filesize($maxdb).". Your users might have problems with
-         uploading their files because of this.",
+         $phorum->format->filesize($howmuch).". Your database only supports ".
+         $phorum->format->filesize($maxdb).". Your users might have problems
+         with uploading their files because of this.",
         "Configure your database to allow larger packets or lower the
          Max File Size configuration option for your forums."
     );

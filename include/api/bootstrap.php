@@ -428,4 +428,8 @@ function phorum_relative_date($ts) {
     return Phorum::API()->format->relative_date($ts);
 }
 
+function phorum_filesize($sz) {
+    return Phorum::API()->format->filesize($sz);
+}
+
 ?>

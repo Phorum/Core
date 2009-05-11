@@ -442,9 +442,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
                 }
             }
         }
-
     }
-
 }
 
 // run list mods
@@ -455,7 +453,6 @@ if (isset($PHORUM["hooks"]["list"]))
 // the messages to make it a little more similar to the view in read.php
 if ($bodies_in_list)
 {
-
     if($PHORUM["max_attachments"]>0) {
         $attachment_url_template = $phorum->url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
     }
@@ -501,7 +498,7 @@ if ($bodies_in_list)
             $row["attachments"]=$row["meta"]["attachments"];
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
-                $row["attachments"][$key]["size"]=phorum_filesize($file["size"]);
+                $row["attachments"][$key]["size"]=$phorum->format->filesize($file["size"]);
                 $row["attachments"][$key]["name"]=htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
                 $row["attachments"][$key]["url"] =str_replace(array('%file_id%','%file_name%'),array($file['file_id'],urlencode($file['name'])),$attachment_url_template);
             }

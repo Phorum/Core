@@ -165,7 +165,7 @@ elseif ($do_attach && ! empty($_FILES))
             ($file["size"] + $attach_totalsize) > $PHORUM["max_totalattachment_size"]*1024) {
             $PHORUM["DATA"]["ERROR"] = str_replace(
                 '%size%',
-                phorum_filesize($PHORUM["max_totalattachment_size"] * 1024),
+                $phorum->format->filesize($PHORUM["max_totalattachment_size"] * 1024),
                 $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]
             );
             break;

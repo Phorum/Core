@@ -151,4 +151,27 @@ function phorum_api_format_relative_date($time)
 }
 // }}}
 
+// {{{ Function: phorum_api_format_filesize()
+/**
+ * Formats a file size in bytes to a human readable format. Human
+ * readable formats are MB (MegaByte), KB (KiloByte) and byte.
+ *
+ * @param integer bytes
+ *     The number of bytes.
+ *
+ * @param string
+ *     The formatted size.
+ */
+function phorum_api_format_filesize($bytes)
+{
+    if ($bytes >= 1024*1024) {
+        return round($bytes/1024/1024, 2) . "&nbsp;MB";
+    } elseif ($bytes >= 1024) {
+        return round($bytes/1024, 1) . "&nbsp;KB";
+    } else {
+        return $bytes . ($bytes == 1 ? "&nbsp;byte" : "&nbsp;bytes");
+    }
+}
+// }}}
+
 ?>

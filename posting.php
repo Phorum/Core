@@ -643,12 +643,12 @@ if ($PHORUM["posting_template"] == 'posting')
         }
         if ($PHORUM["max_attachment_size"]) {
             $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
-            $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_filesize($PHORUM["max_attachment_size"] * 1024);
+            $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = $phorum->format->filesize($PHORUM["max_attachment_size"] * 1024);
             $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]);
         }
         if ($PHORUM["max_totalattachment_size"] && $PHORUM["max_attachments"]>1) {
             $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
-            $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_filesize($PHORUM["max_totalattachment_size"] * 1024);
+            $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = $phorum->format->filesize($PHORUM["max_totalattachment_size"] * 1024);
             $PHORUM["DATA"]["EXPLAIN_ATTACH_TOTALFILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]);
         }
         if ($PHORUM["max_attachments"] && $PHORUM["max_attachments"]>1) {
@@ -738,7 +738,7 @@ if ($PHORUM["posting_template"] == 'posting')
                     }
 
                     $message[$var][$nr]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                    $message[$var][$nr]["size"] = phorum_filesize(round($data["size"]));
+                    $message[$var][$nr]["size"] = $phorum->format->filesize(round($data["size"]));
                 }
             }
         } elseif ($var == "author") {

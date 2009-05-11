@@ -145,16 +145,19 @@ function phorum_cache_clear() {
 /*
  * Purges stale entries from the cache (mainly used by the admin panel)
  */
-function phorum_cache_purge($full = false) {
+function phorum_cache_purge($full = false)
+{
+    $phorum = Phorum::API();
     list ($total, $purged, $dummy) =
       phorum_cache_purge_recursive($GLOBALS['PHORUM']['real_cache'], "", 0, 0, $full);
 
     // Return a report about the purging action.
     require_once('./include/format_functions.php');
     return "Finished purging the file based data cache<br/>\n" .
-           "Purged " . phorum_filesize($purged) . " of " .
-           phorum_filesize($total) . "<br/>\n";
+           "Purged " . $phorum->format->filesize($purged) . " of " .
+           $phorum->format->filesize($total) . "<br/>\n";
 }
+
 function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
     if (!is_dir("$dir/$subdir")) return array($total, $purged, false);
     $dh = opendir ("$dir/$subdir");

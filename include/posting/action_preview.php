@@ -46,7 +46,7 @@ if ($attach_count)
         $previewmessage["attachments"][$nr]["download_url"] =
             $phorum->url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
         $previewmessage["attachments"][$nr]["size"] =
-            phorum_filesize($data["size"]);
+            $phorum->format->filesize($data["size"]);
     }
 }
 

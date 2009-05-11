@@ -83,7 +83,7 @@ $files = phorum_db_get_user_file_list($PHORUM["user"]["user_id"]);
 $total_size=0;
 
 foreach($files as $key => $file) {
-    $files[$key]["filesize"] = phorum_filesize($file["filesize"]);
+    $files[$key]["filesize"] = $phorum->format->filesize($file["filesize"]);
     $files[$key]["raw_dateadded"]=$file["add_datetime"];
     $files[$key]["dateadded"]=$phorum->format->date($PHORUM["short_date_time"], $file["add_datetime"]);
 
@@ -95,7 +95,7 @@ foreach($files as $key => $file) {
 $template = "cc_files";
 
 if($PHORUM["max_file_size"]){
-    $PHORUM["DATA"]["FILE_SIZE_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileSizeLimits"] . ' ' . phorum_filesize($PHORUM["max_file_size"]*1024);
+    $PHORUM["DATA"]["FILE_SIZE_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileSizeLimits"] . ' ' . $phorum->format->filesize($PHORUM["max_file_size"]*1024);
 }
 
 if($PHORUM["file_types"]){
@@ -103,12 +103,12 @@ if($PHORUM["file_types"]){
 }
 
 if($PHORUM["file_space_quota"]){
-    $PHORUM["DATA"]["FILE_QUOTA_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileQuotaLimits"] . ' ' . phorum_filesize($PHORUM["file_space_quota"]*1024);;
+    $PHORUM["DATA"]["FILE_QUOTA_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileQuotaLimits"] . ' ' . $phorum->format->filesize($PHORUM["file_space_quota"]*1024);;
 }
 
 $PHORUM["DATA"]["FILES"] = $files;
 
 $PHORUM["DATA"]["TOTAL_FILES"] = count($files);
-$PHORUM["DATA"]["TOTAL_FILE_SIZE"] = phorum_filesize($total_size);
+$PHORUM["DATA"]["TOTAL_FILE_SIZE"] = $phorum->format->filesize($total_size);
 
 ?>
