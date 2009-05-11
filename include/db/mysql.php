@@ -5143,76 +5143,107 @@ function phorum_db_newflag_count($forum_ids)
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
-    // get a list of forum_ids and minimum message ids from the newflags table
-    $sql = "select forum_id, min_id as message_id
-            from {$PHORUM['user_min_id_table']}
-            where user_id=".$PHORUM["user"]["user_id"];
+    // TODO this code doesn't work fully correct when the user
+    // visited a forum without reading any messages. In that case,
+    // min_id will be set, but no messages are read. That forces
+    // the code below to set nr of new messages to 0.
+    // $new_checks[$forum_id]["messages"] = 0;
 
-    $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+    $user_id = $PHORUM['user']['user_id'];
 
-    // get the total number of messages the user has read in each forum
-    $sql = "select {$PHORUM['user_newflags_table']}.forum_id, count(*) as count
-            from {$PHORUM['user_newflags_table']}
-            inner join {$PHORUM['message_table']} using (message_id, forum_id)
-            where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
-            status=".PHORUM_STATUS_APPROVED."
-            group by forum_id";
+    // Get a list of forum_ids and minimum message ids from the min_id table.
+    $min_ids = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT forum_id, min_id AS message_id
+         FROM   {$PHORUM['user_min_id_table']}
+         WHERE  user_id = $user_id",
+        'forum_id'
+    );
 
-    $message_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+    // Get the total number of messages the user has read in each forum.
+    $message_counts = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT {$PHORUM['user_newflags_table']}.forum_id,
+                count(*) AS count 
+         FROM   {$PHORUM['user_newflags_table']}
+                INNER JOIN {$PHORUM['message_table']}
+                USING (message_id, forum_id)
+         WHERE  {$PHORUM['user_newflags_table']}.user_id = $user_id AND
+                status = ".PHORUM_STATUS_APPROVED."
+         GROUP  BY forum_id",
+        'forum_id'
+    );
 
-
-    // get the number of threads the user has read in each forum
-    $sql = "select {$PHORUM['user_newflags_table']}.forum_id, count(*) as count
-            from {$PHORUM['user_newflags_table']}
-            inner join {$PHORUM['message_table']} using (message_id, forum_id)
-            where {$PHORUM['user_newflags_table']}.user_id=".$PHORUM["user"]["user_id"]." and
-            parent_id=0 and
-            status=".PHORUM_STATUS_APPROVED."
-            group by forum_id";
-
-    $thread_counts = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+    // Get the number of threads the user has read in each forum.
+    $thread_counts = phorum_db_interact(
+        DB_RETURN_ASSOCS,
+        "SELECT {$PHORUM['user_newflags_table']}.forum_id,
+                count(*) AS count
+         FROM   {$PHORUM['user_newflags_table']}
+                INNER JOIN {$PHORUM['message_table']}
+                USING (message_id, forum_id)
+         WHERE  {$PHORUM['user_newflags_table']}.user_id = $user_id AND
+                status = ".PHORUM_STATUS_APPROVED."
+         GROUP  BY forum_id",
+        'forum_id'
+    );
 
     $new_checks = array();
 
-    foreach($forum_ids as $forum_id){
-
-        if(empty($list[$forum_id])){
-            // no newflags for this user and forum, make it -1 for later processing
+    foreach ($forum_ids as $forum_id)
+    {
+        if (empty($min_ids[$forum_id]))
+        {
+            // No newflags for this user and forum.
+            // Make it -1 for later processing
             $new_checks[$forum_id] = array("messages"=>-1, "threads"=>-1);
-
-        } else {
-
-            if(empty($message_counts[$forum_id])){
-
+        }
+        else
+        {
+            if (empty($message_counts[$forum_id]))
+            {
                 $new_checks[$forum_id]["messages"] = 0;
-
-            } else {
-
+            }
+            else
+            {
                 // check for new messages
                 $sql = "select count(*) as count from {$PHORUM['message_table']}
                         where forum_id=".$forum_id." and
-                        message_id>=".$list[$forum_id]["message_id"]." and
+                        message_id>=".$min_ids[$forum_id]["message_id"]." and
                         status=".PHORUM_STATUS_APPROVED." and
                         moved=0";
 
-                list($count) = phorum_db_interact(DB_RETURN_ROW, $sql);
+                list ($count) = phorum_db_interact(
+                    DB_RETURN_ROW,
+                    "SELECT count(*) as count
+                     FROM   {$PHORUM['message_table']}
+                     WHERE  forum_id = $forum_id AND
+                            message_id>={$min_ids[$forum_id]['message_id']} AND 
+                            status = ".PHORUM_STATUS_APPROVED." AND
+                            moved = 0",
+                    $sql
+                );
 
-                $new_checks[$forum_id]["messages"] = max(0, $count - $message_counts[$forum_id]["count"]);
+                $new_checks[$forum_id]["messages"] =
+                    max(0, $count - $message_counts[$forum_id]["count"]);
             }
 
-            // no this is not a typo
-            // we need to calculate their thread count if they have ANY read messages
-            // in the table.  the only way to do that is to see if message count was set
-            if(empty($message_counts[$forum_id])){
+// TODO maurice got up to here, checking the code.
 
+            // No this is not a typo.
+            // We need to calculate their thread count if they have ANY
+            // read messages in the table. The only way to do that is to
+            // see if message count was set.
+            if (empty($message_counts[$forum_id]))
+            {
                 $new_checks[$forum_id]["threads"] = 0;
-
-            } else {
-
+            }
+            else
+            {
                 // check for new threads
                 $sql = "select count(*) as count from {$PHORUM['message_table']}
                         where forum_id=".$forum_id." and
-                        message_id>=".$list[$forum_id]["message_id"]." and
+                        message_id>=".$min_ids[$forum_id]["message_id"]." and
                         parent_id=0 and
                         status=".PHORUM_STATUS_APPROVED." and
                         moved=0";

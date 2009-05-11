@@ -370,8 +370,8 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
                 if (empty($newflags) ||
                     (!isset($newflags[$mid]) && $mid > $newflags['min_id'])) {
                     $markread[] = array(
-                        'id'    => $mid,
-                        'forum' => $forum_id
+                        'id'       => $mid,
+                        'forum_id' => $forum_id
                     );
                 }
             }
@@ -394,8 +394,8 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         foreach ($messages as $message)
         {
             $markread[] = array(
-                'id'    => $message['message_id'],
-                'forum' => $message['forum_id']
+                'id'       => $message['message_id'],
+                'forum_id' => $message['forum_id']
             );
 
             $processed_forum_ids[$message['forum_id']] = $message['forum_id'];
