@@ -30,18 +30,6 @@
 // Initialize variables and constants
 // ----------------------------------------------------------------------
 
-// the Phorum version
-define( 'PHORUM', '5.3-dev' );
-
-// our database schema version in format of year-month-day-serial
-define( 'PHORUM_SCHEMA_VERSION', '2009051001');
-
-// our database patch level in format of year-month-day-serial
-define( 'PHORUM_SCHEMA_PATCHLEVEL', '2009021901' );
-
-// A reference to the Phorum installation directory.
-define('PHORUM_PATH', $phorum->getPath());
-
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
 $PHORUM = array
@@ -73,15 +61,14 @@ $PHORUM = array
     'API' => array()
 );
 
-// Load all constants from ./include/constants.php
-require_once PHORUM_PATH.'/include/constants.php';
-
 // Load all API constants from ./include/api/constants.php
-require_once PHORUM_PATH.'/include/api/constants.php';
+require_once $phorum->getPath('include/api/constants.php');
 
-// Scripts should define the "phorum_page" constant, but we'll help out
-// script authors that forget to do so here, to prevent PHP warnings
-// later on.
+// Load all constants from ./include/constants.php
+require_once $phorum->getPath('include/constants.php');
+
+// Scripts should define the "phorum_page" constant, but we'll help out script
+// authors that forget to do so here, to prevent PHP warnings later on.
 defined('phorum_page') or define('phorum_page', 'unknown');
 
 // ----------------------------------------------------------------------

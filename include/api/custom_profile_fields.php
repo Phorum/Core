@@ -42,8 +42,6 @@
 
 if (!defined('PHORUM')) return;
 
-defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
-
 require_once PHORUM_PATH.'/include/api/custom_fields.php';
 
 // {{{ Function: phorum_api_custom_profile_field_configure

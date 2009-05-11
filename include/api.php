@@ -18,8 +18,24 @@ class Phorum
     private static $nodes = array();
     private static $booted = array();
 
+    /**
+     * Generate a full file system path to a Phorum file.
+     *
+     * @param string $file
+     *     The file path, relative to the Phorum root.
+     *
+     * @param string
+     *     The absolute file system path to the file.
+     */
     public function getPath($file = '')
     {
+        // The Phorum installation path.
+        // We cannot used the PHORUM_PATH constant from constants.php,
+        // because include/api/constants.php might not be loaded yet.
+        if (empty($this->phorum_path)) {
+            $this->phorum_path = realpath(dirname(__FILE__).'/../');
+        }
+
         return $this->phorum_path . ($file == '' ? '' : '/') . $file;
     }
 
@@ -40,9 +56,6 @@ class Phorum
      */
     public function __construct($node_path = NULL, $func_prefix = NULL)
     {
-        // The Phorum installation path.
-        $this->phorum_path = realpath(dirname(__FILE__).'/../');
-
         // The filesystem path for the constructed API node.
         if ($node_path === NULL) $node_path = 'include/api';
         $this->node_path = $node_path;
@@ -73,6 +86,16 @@ class Phorum
         );
     }
 
+    /**
+     * Magic method for automatically initializing Phorum API nodes
+     * when they are accessed for the first time.
+     *
+     * @param string $what
+     *     The name of the API node (e.g. "user", "file").
+     *
+     * @return Phorum $node
+     *     The Phorum node object for the requested node name.
+     */
     public function __get($what)
     {
         $what = basename($what);
@@ -86,6 +109,18 @@ class Phorum
         }
     }
 
+    /**
+     * Magic method for calling Phorum API functions.
+     *
+     * @param string $what
+     *     The name of the function to call.
+     *
+     * @param array
+     *     An array of arguments for the function call.
+     * 
+     * @return mixed
+     *     The return value of the function call.
+     */
     public function __call($what, $args)
     {
         $function = $this->func_prefix.$what;

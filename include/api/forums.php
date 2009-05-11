@@ -74,9 +74,7 @@
 
 if (!defined("PHORUM")) return;
 
-defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
-
-// {{{ Constant and variable definitions
+// {{{ Variable definitions
 
 /**
  * The FFLD_* definitions indicate the position of the configation
@@ -85,59 +83,6 @@ defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
 define('FFLD_MS',      0);
 define('FFLD_TYPE',    1);
 define('FFLD_DEFAULT', 2);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_save()}
- * that it should not save the settings to the database, but only prepare
- * the data and return the prepared data array.
- */
-define('PHORUM_FLAG_PREPARE', 1);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_save()}
- * that the provided data have to be stored in the default settings.
- */
-define('PHORUM_FLAG_DEFAULTS', 2);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_get()}
- * that the return data should only contain forums from which the settings
- * can be inherited by another forum or folder.
- */
-define('PHORUM_FLAG_INHERIT_MASTERS', 4);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_get()}
- * that the return data should only contain folders.
- */
-define('PHORUM_FLAG_FOLDERS', 8);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_get()}
- * that the return data should only contain forums.
- */
-define('PHORUM_FLAG_FORUMS', 16);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_get()}
- * that the return data should contain inactive forums as well
- * (for these the "active" field is set to zero).
- */
-define('PHORUM_FLAG_INCLUDE_INACTIVE', 32);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_tree()}
- * to include empty folders in the tree.
- */
-define('PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS', 64);
-
-/**
- * Function call flag, which tells {@link phorum_api_forums_format()}
- * to add information about unread messages to the formatted data.
- */
-define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);
-
-
 
 /**
  * This array describes folder data fields. It is mainly used internally

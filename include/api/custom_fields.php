@@ -37,41 +37,10 @@
 
 if (!defined('PHORUM')) return;
 
-// {{{ Constant and variable definitions
-
 // Reserved custom field names.
 $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
     'panel', 'name', 'value', 'error'
 );
-
-/**
- * The maximum size that can be used for storing data for a single
- * custom field. This value depends on the type of field that is used
- * in the database for storing custom field data. If you need a higher
- * value for this, then mind that the custom fields table needs to be
- * altered as wel.
- */
-define('PHORUM_MAX_CPLENGTH', 65000);
-
-/**
- * The custom field type that indicates that a custom field
- * is linked to the users.
- */
-define('PHORUM_CUSTOM_FIELD_USER',1);
-
-/**
- * The custom field type that indicates that a custom field
- * is linked to the forums.
- */
-define('PHORUM_CUSTOM_FIELD_FORUM',2);
-
-/**
- * The custom field type that indicates that a custom field
- * is linked to the messages.
- */
-define('PHORUM_CUSTOM_FIELD_MESSAGE',3);
-
-// }}}
 
 // {{{ Function: phorum_api_custom_field_configure
 /**

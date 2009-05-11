@@ -36,35 +36,7 @@
 
 if (!defined("PHORUM")) return;
 
-defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
-
-// {{{ Constant and variable definitions
-
-/**
- * Function call flag, which tells {@link phorum_api_file_retrieve()}
- * that the retrieved Phorum file data has to be returned to the caller.
- */
-define("PHORUM_FLAG_GET",              1);
-
-/**
- * Function call flag, which tells {@link phorum_api_file_retrieve()}
- * that the retrieved Phorum file can be sent to the browser directly.
- */
-define("PHORUM_FLAG_SEND",             2);
-
-/**
- * Function call flag, which tells the function to skip any
- * permission checks.
- */
-define("PHORUM_FLAG_IGNORE_PERMS",     4);
-
-/**
- * Function call flag, which tells {@link phorum_api_file_retrieve()}
- * to force a download by the browser by sending an application/octet-stream
- * Content-Type header. This flag will only have effect if the
- * {@link PHORUM_FLAG_SEND} flag is set as well.
- */
-define("PHORUM_FLAG_FORCE_DOWNLOAD",   8);
+// {{{ Variable definitions
 
 /**
  * A mapping of file extensions to their MIME types.

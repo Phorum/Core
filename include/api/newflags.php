@@ -33,51 +33,6 @@
 
 if (!defined('PHORUM')) return;
 
-// {{{ Constants
-/**
- * Function call flag, which tells {@link phorum_api_newflags_format_messages}
- * that the newflags have to be processed in threaded mode. This means that the
- * newflag will be set for thread starter messages in the message list that
- * have at least one new message in their thread.
- */
-define('PHORUM_NEWFLAGS_BY_THREAD', 1);
-
-/**
- * Function call flag, which tells {@link phorum_api_newflags_format_messages}
- * that the newflags have to be processed in single message mode. This means
- * that the newflag will be set for all messages that are new.
- */
-define('PHORUM_NEWFLAGS_BY_MESSAGE', 2);
-
-/**
- * Function call flag, which tells {@link phorum_api_newflags_format_messages}
- * that the newflags have to be added in single message mode (see
- * {@link PHORUM_NEWFLAGS_MESSAGE}, except for sticky messages, which have
- * to be added in threaded mode. This mode is useful for the list page,
- * where sticky threads are always displayed collapsed, even if the list page
- * view is threaded.
- */
-define('PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY', 3);
-
-/**
- * Function call flag, which tells {@link phorum_api_newflags_markread()}
- * that a single messages have to be marked read. }
- */
-define('PHORUM_MARKREAD_MESSAGES', 1);
-
-/**
- * Function call flag, which tells {@link phorum_api_newflags_markread()}
- * that threads have to be marked read. }
- */
-define('PHORUM_MARKREAD_THREADS', 2);
-
-/**
- * Function call flag, which tells {@link phorum_api_newflags_markread()}
- * that full forums have to be marked read. }
- */
-define('PHORUM_MARKREAD_FORUMS', 3);
-// }}}
-
 // {{{ Function: phorum_api_newflags_by_forum()
 /**
  * Retrieve newflags data for a forum for the active Phorum user.

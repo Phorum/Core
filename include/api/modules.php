@@ -32,9 +32,7 @@
 
 if (!defined("PHORUM")) return;
 
-defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
-
-// {{{ Constant and variable definitions
+// {{{ Variable definitions
 /**
  * This array describes deprecated module hook names, which have been
  * replaced by new hook names. For backward compatibility, the mods

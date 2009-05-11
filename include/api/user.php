@@ -53,6 +53,8 @@ require_once PHORUM_PATH.'/include/api/custom_fields.php';
  */
 global $PHORUM;
 
+// {{{ Variable definitions
+
 /**
  * This array describes user data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
@@ -104,6 +106,8 @@ $PHORUM['API']['user_fields'] = array
     'group_permissions'      => NULL,
     'permissions'            => NULL,
 );
+
+// }}}
 
 // ----------------------------------------------------------------------
 // Handling user data.

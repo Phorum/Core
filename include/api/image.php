@@ -32,9 +32,6 @@
 
 if (!defined('PHORUM')) return;
 
-defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
-
-
 // {{{ Function: phorum_api_image_thumbnail()
 /**
  * Create an image thumbnail.
