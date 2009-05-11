@@ -224,7 +224,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
 
         editor_tools_register_help(
             $description,
-            $phorum->url->get(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
+            $phorum->url(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
         );
     }
 

@@ -22,7 +22,7 @@ if (!defined("PHORUM_CONTROL_CENTER")) return;
 require_once './include/api/file.php';
 
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
-    phorum_redirect_by_url($phorum->url->get(PHORUM_CONTROLCENTER_URL));
+    phorum_redirect_by_url($phorum->url(PHORUM_CONTROLCENTER_URL));
     exit();
 }
 
@@ -134,12 +134,12 @@ foreach($mod_forums as $forum => $rest) {
         if ($checkvar)
             $checkvar = 0;
         $rows[$key]['forum_id'] = $forum;
-        $rows[$key]["URL"]["READ"] = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $forum, $row["thread"], $row['message_id']);
+        $rows[$key]["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $forum, $row["thread"], $row['message_id']);
         // we need to fake the forum_id here
         $PHORUM["forum_id"] = $forum;
-        $rows[$key]["URL"]["APPROVE_MESSAGE"] = $phorum->url->get(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
-        $rows[$key]["URL"]["APPROVE_TREE"] = $phorum->url->get(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
-        $rows[$key]["URL"]["DELETE"] = $phorum->url->get(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
+        $rows[$key]["URL"]["APPROVE_MESSAGE"] = $phorum->url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
+        $rows[$key]["URL"]["APPROVE_TREE"] = $phorum->url(PHORUM_MODERATION_URL, PHORUM_APPROVE_MESSAGE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
+        $rows[$key]["URL"]["DELETE"] = $phorum->url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, $row["message_id"], "prepost=1", "old_forum=" . $oldforum,"onlyunapproved=".$showwaiting,"moddays=".$moddays);
         $PHORUM["forum_id"] = $oldforum;
         $rows[$key]["raw_short_datestamp"] = $row["datestamp"];
         $rows[$key]["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);

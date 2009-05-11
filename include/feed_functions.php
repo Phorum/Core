@@ -45,7 +45,7 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
             $date = date("r", $message["datestamp"]);
         }
 
-        $url = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
+        $url = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
 
         $category = $forums[$message["forum_id"]]["name"];
 
@@ -112,7 +112,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
             }
         }
 
-        $url = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
+        $url = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
 
         $category = $forums[$message["forum_id"]]["name"];
 
@@ -171,7 +171,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
 
         }
 
-        $url = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
+        $url = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
 
         $body = phorum_strip_body($message["body"]);
         $body = substr($body, 0, 200);
@@ -214,7 +214,7 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
             "category" => $forums[$message["forum_id"]]["name"],
             "created" => phorum_date($PHORUM['short_date'], $message["datestamp"]),
             "modified" => phorum_date($PHORUM['short_date'], $message["modifystamp"]),
-            "url" => $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]),
+            "url" => $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]),
             "description" => $message["body"]
         );
 

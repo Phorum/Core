@@ -75,14 +75,14 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
 
 // No forum id was set. Take the user back to the index.
 if(!isset($PHORUM["forum_id"])){
-    $dest_url = $phorum->url->get(PHORUM_INDEX_URL);
+    $dest_url = $phorum->url(PHORUM_INDEX_URL);
     phorum_redirect_by_url($dest_url);
     exit();
 }
 // Somehow we got to a folder in posting.php. Take the
 // user back to the folder.
 if($PHORUM["folder_flag"]) {
-    $dest_url = $phorum->url->get(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -296,7 +296,7 @@ $do_attach = count($_FILES) ? true : false;
 
 // Set all our URL's
 phorum_build_common_urls();
-$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url->get(PHORUM_POSTING_ACTION_URL);
+$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_POSTING_ACTION_URL);
 
 // Keep track of errors.
 $PHORUM["DATA"]["ERROR"] = null;

@@ -304,14 +304,14 @@ function phorum_mod_spamhurdles_build_form($type)
 
         // Replace SPOKENURL with the URL for the spoken captcha code.
         if ($conf["spoken_captcha"] && file_exists($conf["flite_location"])) {
-            $url = $phorum->url->get(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
+            $url = $phorum->url(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
             $captcha = str_replace(
                 "{SPOKENURL}", htmlspecialchars($url), $captcha
             );
         }
 
         // Replace IMAGE with the URL for the captcha image.
-        $url = $phorum->url->get(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
+        $url = $phorum->url(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
         $captcha = str_replace(
             "{IMAGEURL}", htmlspecialchars($url), $captcha
         );

@@ -129,7 +129,7 @@ class Phorum
             // Check for an API layer, named $what.
             // Check if the function prefix{$what}_get() exists.
             // If yes, then we'll redirect to that function.
-            // E.g. $phorum->url() will be handled by $phorum->url->get()
+            // E.g. $phorum->url() will be handled by $phorum->url()
             $this->$what; // forces loading the layer.
             $function = $this->func_prefix.$what.'_get';
 

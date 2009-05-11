@@ -125,7 +125,7 @@ function phorum_mod_smileys_editor_tool_plugin()
     // Register the smileys help page.
     editor_tools_register_help(
         $description,
-        $phorum->url->get(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
+        $phorum->url(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
     );
 }
 

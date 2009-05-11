@@ -75,8 +75,8 @@ foreach($subscr_array as $id => $data)
     $data['raw_lastpost'] = $data['modifystamp'];
     $data['lastpost'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
 
-    $data["URL"]["READ"] = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
-    $data["URL"]["NEWPOST"] = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");
+    $data["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
+    $data["URL"]["NEWPOST"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");
 
     // Check if there are new messages for the current thread.
     if (! isset($PHORUM['user']['newinfo'][$data["forum_id"]])) {

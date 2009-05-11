@@ -592,7 +592,7 @@ Table of contents:
    or
 
       $phorum = Phorum::API();
-      $url = $phorum->url->get(PHORUM_PROFILE_URL, 17);
+      $url = $phorum->url(PHORUM_PROFILE_URL, 17);
 
    The argument list that this function takes, depends on the first
    argument which tells Phorum what kind of URL has to be built.

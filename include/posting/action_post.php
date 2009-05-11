@@ -344,7 +344,7 @@ if ($success)
         // or to the thread starter in case the new message is not viewable.
         if (isset($top_parent)) {
             if ($not_viewable) {
-                $redir_url = $phorum->url->get(
+                $redir_url = $phorum->url(
                     PHORUM_READ_URL, $message["thread"]
                 );
             } else {
@@ -352,12 +352,12 @@ if ($success)
                 $pages = ceil(($top_parent["thread_count"]+1) / $readlen);
 
                 if ($pages > 1) {
-                    $redir_url = $phorum->url->get(
+                    $redir_url = $phorum->url(
                         PHORUM_READ_URL, $message["thread"],
                         $message["message_id"], "page=$pages"
                     );
                 } else {
-                    $redir_url = $phorum->url->get(
+                    $redir_url = $phorum->url(
                         PHORUM_READ_URL, $message["thread"],
                         $message["message_id"]
                     );
@@ -368,13 +368,13 @@ if ($success)
         // the forum's message list in case the new message is not viewable.
         } else {
             $redir_url = $not_viewable
-                       ? $phorum->url->get(PHORUM_LIST_URL)
-                       : $phorum->url->get(PHORUM_READ_URL, $message["thread"]);
+                       ? $phorum->url(PHORUM_LIST_URL)
+                       : $phorum->url(PHORUM_READ_URL, $message["thread"]);
         }
     }
     else
     {
-        $redir_url = $phorum->url->get(PHORUM_LIST_URL);
+        $redir_url = $phorum->url(PHORUM_LIST_URL);
     }
 
     if ($message["status"] > 0) {

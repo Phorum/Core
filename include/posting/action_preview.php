@@ -42,9 +42,9 @@ if ($attach_count)
     // Create the URL and formatted size for attachment files.
     foreach ($previewmessage["attachments"] as $nr => $data) {
         $previewmessage["attachments"][$nr]["url"] =
-            $phorum->url->get(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']));
+            $phorum->url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']));
         $previewmessage["attachments"][$nr]["download_url"] =
-            $phorum->url->get(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
+            $phorum->url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
         $previewmessage["attachments"][$nr]["size"] =
             phorum_filesize($data["size"]);
     }

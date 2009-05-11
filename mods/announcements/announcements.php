@@ -109,7 +109,7 @@ function phorum_setup_announcements ()
                 $message["new"] = $new
                                 ? $PHORUM["DATA"]["LANG"]["newflag"]
                                 : NULL;
-                $message["URL"]["NEWPOST"] = $phorum->url->get(
+                $message["URL"]["NEWPOST"] = $phorum->url(
                     PHORUM_FOREIGN_READ_URL,
                     $message["forum_id"],
                     $message["thread"],
@@ -127,7 +127,7 @@ function phorum_setup_announcements ()
         $message["lastpost"] = phorum_date($PHORUM["short_date_time"], $message["modifystamp"]);
         $message["raw_datestamp"] = $message["datestamp"];
         $message["datestamp"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
-        $message["URL"]["READ"] = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
+        $message["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
         $PHORUM["DATA"]["ANNOUNCEMENTS"][] = $message;
     }
 

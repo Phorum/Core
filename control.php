@@ -34,13 +34,13 @@ phorum_check_posting_token();
 
 // A user has to be logged in to use his control-center.
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-    phorum_redirect_by_url($phorum->url->get(PHORUM_LIST_URL));
+    phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
     exit();
 }
 
 // If the user is not fully logged in, send him to the login page.
 if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    phorum_redirect_by_url($phorum->url->get(PHORUM_LOGIN_URL, "redir=".PHORUM_CONTROLCENTER_URL));
+    phorum_redirect_by_url($phorum->url(PHORUM_LOGIN_URL, "redir=".PHORUM_CONTROLCENTER_URL));
     exit();
 }
 
@@ -68,20 +68,20 @@ $panel = htmlspecialchars(
 phorum_build_common_urls();
 
 // Generate the control panel URLs.
-$PHORUM['DATA']['URL']['CC0'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUMMARY);
-$PHORUM['DATA']['URL']['CC1'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS);
-$PHORUM['DATA']['URL']['CC2'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_FORUMS);
-$PHORUM['DATA']['URL']['CC3'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERINFO);
-$PHORUM['DATA']['URL']['CC4'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SIGNATURE);
-$PHORUM['DATA']['URL']['CC5'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL);
-$PHORUM['DATA']['URL']['CC6'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_BOARD);
-$PHORUM['DATA']['URL']['CC7'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PASSWORD);
-$PHORUM['DATA']['URL']['CC8'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
-$PHORUM['DATA']['URL']['CC9'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_FILES);
-$PHORUM['DATA']['URL']['CC10'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
-$PHORUM['DATA']['URL']['CC14'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PRIVACY);
-$PHORUM['DATA']['URL']['CC15'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
-$PHORUM['DATA']['URL']['CC16'] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
+$PHORUM['DATA']['URL']['CC0'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUMMARY);
+$PHORUM['DATA']['URL']['CC1'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS);
+$PHORUM['DATA']['URL']['CC2'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_FORUMS);
+$PHORUM['DATA']['URL']['CC3'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERINFO);
+$PHORUM['DATA']['URL']['CC4'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SIGNATURE);
+$PHORUM['DATA']['URL']['CC5'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL);
+$PHORUM['DATA']['URL']['CC6'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_BOARD);
+$PHORUM['DATA']['URL']['CC7'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PASSWORD);
+$PHORUM['DATA']['URL']['CC8'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
+$PHORUM['DATA']['URL']['CC9'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_FILES);
+$PHORUM['DATA']['URL']['CC10'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
+$PHORUM['DATA']['URL']['CC14'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PRIVACY);
+$PHORUM['DATA']['URL']['CC15'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
+$PHORUM['DATA']['URL']['CC16'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
 
 // Determine if the user files functionality is available.
 $PHORUM["DATA"]["MYFILES"] = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]);
@@ -101,7 +101,7 @@ $PHORUM['DATA']['SHOW_EMAIL_HIDE'] = empty($PHORUM['hide_email_addr']) ? 1 : 0;
 $PHORUM['DATA']['SHOW_PM_EMAIL_NOTIFY'] = !empty($PHORUM["allow_pm_email_notify"]);
 
 // The form action for the common form.
-$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL);
+$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL);
 
 // fill the breadcrumbs-info
 $PHORUM['DATA']['BREADCRUMBS'][]=array(
@@ -143,13 +143,13 @@ $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"$pa
 
 // Set the back-URL and -message.
 if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
-    $PHORUM['DATA']['URL']['BACK'] = $phorum->url->get(PHORUM_LIST_URL);
+    $PHORUM['DATA']['URL']['BACK'] = $phorum->url(PHORUM_LIST_URL);
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BacktoForum'];
 } else {
     if(isset($PHORUM['forum_id'])) {
-        $PHORUM['DATA']['URL']['BACK'] = $phorum->url->get(PHORUM_INDEX_URL,$PHORUM['forum_id']);
+        $PHORUM['DATA']['URL']['BACK'] = $phorum->url(PHORUM_INDEX_URL,$PHORUM['forum_id']);
     } else {
-        $PHORUM['DATA']['URL']['BACK'] = $phorum->url->get(PHORUM_INDEX_URL);
+        $PHORUM['DATA']['URL']['BACK'] = $phorum->url(PHORUM_INDEX_URL);
     }
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BackToForumList'];
 }

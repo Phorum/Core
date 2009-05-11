@@ -35,7 +35,7 @@ if(!empty($PHORUM["args"][1])){
 }
 
 if(empty($PHORUM["args"][1]) || empty($profile_id)){
-    phorum_redirect_by_url($phorum->url->get(PHORUM_INDEX_URL));
+    phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
     exit();
 }
 
@@ -43,7 +43,7 @@ $user = phorum_api_user_get($profile_id, TRUE);
 
 if(!is_array($user) || $user["active"]==0) {
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["UnknownUser"];
-    $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_LIST_URL);
+    $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_LIST_URL);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
     // have to include the header here for the Redirect
@@ -98,12 +98,12 @@ if( $PHORUM["track_user_activity"] &&
 
 $PHORUM["DATA"]["PROFILE"]["posts"] = number_format($PHORUM["DATA"]["PROFILE"]["posts"], 0, "", $PHORUM["thous_sep"]);
 
-$PHORUM["DATA"]["PROFILE"]["URL"]["PM"] = $phorum->url->get(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
-$PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = $phorum->url->get(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
+$PHORUM["DATA"]["PROFILE"]["URL"]["PM"] = $phorum->url(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
+$PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = $phorum->url(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
 $PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"]);
 // unset($PHORUM["DATA"]["PROFILE"]["signature"]);
 
-$PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = $phorum->url->get(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");
+$PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = $phorum->url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");
 
 $PHORUM["DATA"]["PROFILE"]["username"] =
     htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);

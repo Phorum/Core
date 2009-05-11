@@ -303,7 +303,7 @@ if (isset($message["subscription"]))
 $PHORUM["posting_template"] = "message";
 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["MsgModEdited"];
 $PHORUM['DATA']["BACKMSG"] = $PHORUM['DATA']["LANG"]["BackToThread"];
-$PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url->get(
+$PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(
     PHORUM_READ_URL,
     $message["thread"],
     $message["message_id"]

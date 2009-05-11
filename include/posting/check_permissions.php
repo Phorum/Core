@@ -31,7 +31,7 @@ if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPI
             ($mode == "post" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_NEW_TOPIC) ) {
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginPost"];
             $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
-            $PHORUM["DATA"]["URL"]["CLICKHERE"] = $phorum->url->get(PHORUM_LOGIN_URL);
+            $PHORUM["DATA"]["URL"]["CLICKHERE"] = $phorum->url(PHORUM_LOGIN_URL);
         } else {
             $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
@@ -52,7 +52,7 @@ if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPI
         if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
         $phorum->url; // Make sure the URL API layer code is loaded.
         $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
-        $url = $phorum->url->get(PHORUM_LOGIN_URL, "redir=$redir");
+        $url = $phorum->url(PHORUM_LOGIN_URL, "redir=$redir");
 
         $PHORUM["DATA"]["URL"]["CLICKHERE"] = $url;
         $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
@@ -72,7 +72,7 @@ if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPI
         $phorum->url; // Make sure the URL API layer code is loaded.
         $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
 
-        phorum_redirect_by_url($phorum->url->get(PHORUM_LOGIN_URL,"redir=$redir"));
+        phorum_redirect_by_url($phorum->url(PHORUM_LOGIN_URL,"redir=$redir"));
         exit();
 
     }
@@ -113,7 +113,7 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
         }
     }
     if (! $origmessage) {
-        phorum_redirect_by_url($phorum->url->get(PHORUM_INDEX_URL));
+        phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
         exit();
     }
 
@@ -187,7 +187,7 @@ if ($mode == "reply")
 
         // In other cases, redirect users that are replying to
         // unapproved messages to the message list.
-        phorum_redirect_by_url($phorum->url->get(PHORUM_LIST_URL));
+        phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
         exit;
     }
     

@@ -29,9 +29,9 @@ function phorum_return_to_list()
     global $PHORUM;
     $phorum = Phorum::API();
     if(!empty($PHORUM["forum_id"])){
-        phorum_redirect_by_url($phorum->url->get(PHORUM_LIST_URL));
+        phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
     }else{
-        phorum_redirect_by_url($phorum->url->get(PHORUM_INDEX_URL));
+        phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
     }
     exit();
 }

@@ -61,7 +61,7 @@
 //   or
 //
 //   $phorum = Phorum::API();
-//   $url = $phorum->url->get(PHORUM_ADDON_URL, "module=foo");
+//   $url = $phorum->url(PHORUM_ADDON_URL, "module=foo");
 //
 //
 // IMPLEMENTING MULTIPLE ADDON ACTIONS:
@@ -82,7 +82,7 @@
 //   or
 //
 //   $phorum = Phorum::API();
-//   $url = $phorum->url->get(PHORUM_ADDON_URL, "module=foo", "action=bar");
+//   $url = $phorum->url(PHORUM_ADDON_URL, "module=foo", "action=bar");
 //
 
 define('phorum_page','addon');

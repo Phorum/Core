@@ -51,7 +51,7 @@ else{
 }
 
 if (!$perm) {
-    phorum_redirect_by_url($phorum->url->get(PHORUM_CONTROLCENTER_URL));
+    phorum_redirect_by_url($phorum->url(PHORUM_CONTROLCENTER_URL));
     exit();
 }
 
@@ -125,28 +125,28 @@ if (!empty($group_id)){
     $PHORUM["DATA"]["GROUP"]["id"] = $group_id;
     $PHORUM["DATA"]["GROUP"]["name"] = $group[$group_id]["name"];
     $PHORUM["DATA"]["USERS"] = array();
-    $PHORUM["DATA"]["GROUP"]["URL"]["VIEW"] = $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id);
+    $PHORUM["DATA"]["GROUP"]["URL"]["VIEW"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id);
 
     $PHORUM["DATA"]["FILTER"] = array();
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowAll"],
         "enable" => $filter == "all",
-        "url" => $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id),
+        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id),
         "id" => "all");
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowApproved"],
         "enable" => $filter == PHORUM_USER_GROUP_APPROVED,
-        "url" => $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_APPROVED),
+        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_APPROVED),
         "id" => PHORUM_USER_GROUP_APPROVED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowGroupModerator"],
         "enable" => $filter == PHORUM_USER_GROUP_MODERATOR,
-        "url" => $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_MODERATOR),
+        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_MODERATOR),
         "id" => PHORUM_USER_GROUP_MODERATOR);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowSuspended"],
         "enable" => $filter == PHORUM_USER_GROUP_SUSPENDED,
-        "url" => $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_SUSPENDED),
+        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_SUSPENDED),
         "id" => PHORUM_USER_GROUP_SUSPENDED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowUnapproved"],
         "enable" => $filter != "all" && $filter == PHORUM_USER_GROUP_UNAPPROVED,
-        "url" => $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
+        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
         "id" => PHORUM_USER_GROUP_UNAPPROVED);
     $PHORUM["DATA"]["STATUS_OPTIONS"] = array();
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => "remove", "name" => "&lt; " . $PHORUM["DATA"]["LANG"]["RemoveFromGroup"] . " &gt;");
@@ -183,7 +183,7 @@ if (!empty($group_id)){
             "statustext" => $statustext,
             "disabled" => $disabled,
             "flag" => ($status < PHORUM_USER_GROUP_APPROVED),
-            "url" => $phorum->url->get(PHORUM_PROFILE_URL, $userid)
+            "url" => $phorum->url(PHORUM_PROFILE_URL, $userid)
             );
     }
 
@@ -223,8 +223,8 @@ else{
             "name" => $groupname,
             "unapproved" => count($members),
             "URL" => array(
-                "VIEW" => $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
-                "UNAPPROVED" => $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
+                "VIEW" => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
+                "UNAPPROVED" => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
             )
         );
     }

@@ -47,7 +47,7 @@ if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
 // because moderation action can vary so much, the only safe bet is to send them
 // to the referrer if they are not fully logged in
 if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    phorum_redirect_by_url($phorum->url->get(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]));
+    phorum_redirect_by_url($phorum->url(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]));
     exit();
 }
 
@@ -69,11 +69,11 @@ if(isset($_POST["confirmation"]) && $_POST["confirmation"]==$PHORUM["DATA"]["LAN
         }
 
 
-        $url = $phorum->url->get(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+        $url = $phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
 
     } else {
         $message = phorum_db_get_message($msgthd_id);
-        $url = $phorum->url->get(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+        $url = $phorum->url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
     }
 
     phorum_redirect_by_url($url);
@@ -156,7 +156,7 @@ switch ($mod_step) {
 
             phorum_show_confirmation_form(
                 $PHORUM["DATA"]["LANG"]["ConfirmDeleteMessage"],
-                $phorum->url->get(PHORUM_MODERATION_ACTION_URL),
+                $phorum->url(PHORUM_MODERATION_ACTION_URL),
                 $args
             );
         }
@@ -282,7 +282,7 @@ switch ($mod_step) {
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
         }
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -305,7 +305,7 @@ switch ($mod_step) {
 
             phorum_show_confirmation_form(
                 $PHORUM["DATA"]["LANG"]["ConfirmDeleteThread"],
-                $phorum->url->get(PHORUM_MODERATION_ACTION_URL),
+                $phorum->url(PHORUM_MODERATION_ACTION_URL),
                 $args
             );
         }
@@ -372,7 +372,7 @@ switch ($mod_step) {
 
                 $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
             }
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -384,7 +384,7 @@ switch ($mod_step) {
 
         $message = phorum_db_get_message($msgthd_id);
 
-        $PHORUM['DATA']['URL']["ACTION"]=$phorum->url->get(PHORUM_MODERATION_ACTION_URL);
+        $PHORUM['DATA']['URL']["ACTION"]=$phorum->url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_MOVE;
@@ -697,7 +697,7 @@ switch ($mod_step) {
                     $addcode.=",";
                 $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
             }
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -742,7 +742,7 @@ switch ($mod_step) {
 
                 $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
             }
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -809,7 +809,7 @@ switch ($mod_step) {
 
         $PHORUM['DATA']['OKMSG']="$num_hidden ".$PHORUM['DATA']['LANG']['MsgHiddenOk'];
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -818,7 +818,7 @@ switch ($mod_step) {
    case PHORUM_MERGE_THREAD: // this is the first step of a thread merge
 
         $template="merge_form";
-        $PHORUM['DATA']['URL']["ACTION"]     = $phorum->url->get(PHORUM_MODERATION_ACTION_URL);
+        $PHORUM['DATA']['URL']["ACTION"]     = $phorum->url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"] = $msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"]  = PHORUM_DO_THREAD_MERGE;
@@ -945,7 +945,7 @@ switch ($mod_step) {
 
    case PHORUM_SPLIT_THREAD: // this is the first step of a thread split
 
-           $PHORUM['DATA']['URL']["ACTION"]=$phorum->url->get(PHORUM_MODERATION_ACTION_URL);
+           $PHORUM['DATA']['URL']["ACTION"]=$phorum->url(PHORUM_MODERATION_ACTION_URL);
            $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
            $message =phorum_db_get_message($msgthd_id);
            $PHORUM['DATA']["FORM"]["thread_id"]=$message["thread"];

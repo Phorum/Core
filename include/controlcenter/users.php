@@ -20,7 +20,7 @@
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
 if (!$PHORUM["DATA"]["USER_MODERATOR"]) {
-    phorum_redirect_by_url($phorum->url->get(PHORUM_CONTROLCENTER_URL));
+    phorum_redirect_by_url($phorum->url(PHORUM_CONTROLCENTER_URL));
     exit();
 }
 
@@ -79,7 +79,7 @@ if(empty($users)){
 
     $PHORUM["DATA"]["USERS"]=$users;
 
-    $PHORUM["DATA"]["ACTION"]=$phorum->url->get( PHORUM_CONTROLCENTER_ACTION_URL );
+    $PHORUM["DATA"]["ACTION"]=$phorum->url( PHORUM_CONTROLCENTER_ACTION_URL );
     $PHORUM["DATA"]["FORUM_ID"]=$PHORUM["forum_id"];
 
     $template = "cc_users";

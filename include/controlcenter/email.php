@@ -73,7 +73,7 @@ if ( count( $_POST ) ) {
             'username'      => $PHORUM['DATA']['PROFILE']['username'],
             'newmail'       => $_POST['email'],
             'mailcode'      => $conf_code,
-            'cc_url'        => $phorum->url->get(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
+            'cc_url'        => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
             );
             phorum_email_user(array($_POST['email']),$maildata);
 

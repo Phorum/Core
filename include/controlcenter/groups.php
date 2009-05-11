@@ -55,7 +55,7 @@ if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0)
 $template = "cc_groups";
 $PHORUM['DATA']['Groups'] = phorum_readable_groups();
 $PHORUM['DATA']['JOINGROUP'] = phorum_joinable_groups();
-$PHORUM["DATA"]["GROUP"]["url"] = $phorum->url->get(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
+$PHORUM["DATA"]["GROUP"]["url"] = $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ViewJoinGroups"];
 

@@ -64,9 +64,9 @@ function phorum_build_forum_list() {
             // Skip empty folders.
             if (empty($forums[$forum['forum_id']]['childcount'])) continue;
 
-            $url = $phorum->url->get(PHORUM_INDEX_URL, $forum["forum_id"]);
+            $url = $phorum->url(PHORUM_INDEX_URL, $forum["forum_id"]);
         } else {
-            $url = $phorum->url->get(PHORUM_LIST_URL, $forum["forum_id"]);
+            $url = $phorum->url(PHORUM_LIST_URL, $forum["forum_id"]);
         }
 
         $indent = count($forum["forum_path"]) - 2;

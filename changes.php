@@ -33,7 +33,7 @@ if(!phorum_check_read_common()) {
 
 // somehow we got to a folder
 if($PHORUM["folder_flag"]){
-    $dest_url = $phorum->url->get(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -41,7 +41,7 @@ if($PHORUM["folder_flag"]){
 if(isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])){
     $message_id = $PHORUM["args"][1];
 } else {
-    $dest_url = $phorum->url->get(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -49,7 +49,7 @@ if(isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])){
 $message = phorum_db_get_message($message_id);
 
 if(empty($message)){
-    $dest_url = $phorum->url->get(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -62,7 +62,7 @@ if(count($edit_tracks)==0 ||
    $PHORUM["track_edits"] == PHORUM_EDIT_TRACK_OFF ||
    ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_MODERATOR && !$PHORUM["DATA"]["MODERATOR"] ) ) {
 
-    $dest_url = $phorum->url->get(PHORUM_READ_URL, $message["thread"], $message_id);
+    $dest_url = $phorum->url(PHORUM_READ_URL, $message["thread"], $message_id);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -183,7 +183,7 @@ $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ChangeHistory"];
 $PHORUM["DATA"]["DESCRIPTION"] = "";
 
 $PHORUM["DATA"]["MESSAGE"]["subject"] = htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-$PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = $phorum->url->get(PHORUM_READ_URL, $message["thread"], $message_id);
+$PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = $phorum->url(PHORUM_READ_URL, $message["thread"], $message_id);
 
 $PHORUM["DATA"]["CHANGES"] = $message_hist;
 

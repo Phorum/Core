@@ -59,14 +59,14 @@ foreach($forums as $forum_id => $forum)
 {
     if ($forum["folder_flag"])
     {
-        $visit_url = $phorum->url->get(PHORUM_INDEX_URL, $forum['forum_id']);
+        $visit_url = $phorum->url(PHORUM_INDEX_URL, $forum['forum_id']);
         $type="folder";
         $folder_edit_url = phorum_admin_build_url(array('module=editfolder',"forum_id=$forum_id"));
         $folder_delete_url = phorum_admin_build_url(array('module=deletefolder',"forum_id=$forum_id"));
         $actions="<a href=\"$folder_edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$folder_delete_url\">Delete</a>&nbsp;&#149;&nbsp;<a href=\"$visit_url\">Visit</a>";
         $mainurl=phorum_admin_build_url(array('module=default',"parent_id=$forum_id"));
     } else {
-        $visit_url = $phorum->url->get(PHORUM_LIST_URL, $forum['forum_id']);
+        $visit_url = $phorum->url(PHORUM_LIST_URL, $forum['forum_id']);
         $type="forum";
         $forum_edit_url = phorum_admin_build_url(array('module=editforum',"forum_id=$forum_id"));
         $forum_delete_url = phorum_admin_build_url(array('module=deleteforum',"forum_id=$forum_id"));

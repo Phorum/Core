@@ -11,7 +11,7 @@ $PHORUM['DATA']['HTML_DESCRIPTION'] =
 include phorum_get_template('header');
 
 $phorum = Phorum::API();
-$clientjs = $phorum->url->get(PHORUM_AJAX_URL, 'client');
+$clientjs = $phorum->url(PHORUM_AJAX_URL, 'client');
 
 ?>
 <script type="text/javascript">

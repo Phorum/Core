@@ -1264,7 +1264,7 @@ $url = phorum_api_url_get(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           <example>
             <programlisting><![CDATA[
 $phorum = Phorum::API();
-$url = $phorum->url->get(PHORUM_PROFILE_URL, 17); ]]></programlisting>
+$url = $phorum->url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           </example>
           The argument list that this function takes, depends on the first
           argument which tells Phorum what URL type has to be built.
