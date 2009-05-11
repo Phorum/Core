@@ -5053,7 +5053,7 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
         0
     );
     
-    // select the min_id
+    // Select the forum's min_id for the current user.
     $min_id = phorum_db_interact(
         DB_RETURN_VALUE,
         "SELECT min_id
@@ -5061,6 +5061,17 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
          WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                 forum_id = $forum_id"
     );
+
+    // Initialize the forum's min_id for the current user in case
+    // no min_id is available in the database yet.
+    if ($min_id === NULL) {
+        phorum_db_newflag_add_min_id(array(array(
+            'min_id'   => 0,
+            'forum_id' => $forum_id
+        )));
+        $min_id = 0;
+    }   
+
     $newflags['min_id'] = $min_id;
     
     return $newflags;
@@ -5126,6 +5137,7 @@ function phorum_db_newflag_check($forum_ids)
 }
 // }}}
 
+
 // {{{ Function: phorum_db_newflag_count()
 /**
  * Gets a count of new messages and threads for the forum ids given
@@ -5142,12 +5154,6 @@ function phorum_db_newflag_count($forum_ids)
     global $PHORUM;
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
-
-    // TODO this code doesn't work fully correct when the user
-    // visited a forum without reading any messages. In that case,
-    // min_id will be set, but no messages are read. That forces
-    // the code below to set nr of new messages to 0.
-    // $new_checks[$forum_id]["messages"] = 0;
 
     $user_id = $PHORUM['user']['user_id'];
 
@@ -5183,6 +5189,7 @@ function phorum_db_newflag_count($forum_ids)
                 INNER JOIN {$PHORUM['message_table']}
                 USING (message_id, forum_id)
          WHERE  {$PHORUM['user_newflags_table']}.user_id = $user_id AND
+                parent_id = 0 AND
                 status = ".PHORUM_STATUS_APPROVED."
          GROUP  BY forum_id",
         'forum_id'
@@ -5195,72 +5202,51 @@ function phorum_db_newflag_count($forum_ids)
         if (empty($min_ids[$forum_id]))
         {
             // No newflags for this user and forum.
-            // Make it -1 for later processing
-            $new_checks[$forum_id] = array("messages"=>-1, "threads"=>-1);
+            // Make it -1 for later processing. The calling code should
+            // use the forum's thread_count and message_count in this case.
+            $new_checks[$forum_id] = array('messages' => -1, 'threads' => -1);
         }
         else
         {
-            if (empty($message_counts[$forum_id]))
-            {
-                $new_checks[$forum_id]["messages"] = 0;
-            }
-            else
-            {
-                // check for new messages
-                $sql = "select count(*) as count from {$PHORUM['message_table']}
-                        where forum_id=".$forum_id." and
-                        message_id>=".$min_ids[$forum_id]["message_id"]." and
-                        status=".PHORUM_STATUS_APPROVED." and
-                        moved=0";
-
-                list ($count) = phorum_db_interact(
-                    DB_RETURN_ROW,
-                    "SELECT count(*) as count
-                     FROM   {$PHORUM['message_table']}
-                     WHERE  forum_id = $forum_id AND
-                            message_id>={$min_ids[$forum_id]['message_id']} AND 
-                            status = ".PHORUM_STATUS_APPROVED." AND
-                            moved = 0",
-                    $sql
-                );
-
+            // Find the number of new messages.
+            $count = phorum_db_interact(
+                DB_RETURN_VALUE,
+                "SELECT count(*) AS count
+                 FROM   {$PHORUM['message_table']}
+                 WHERE  forum_id = $forum_id AND
+                        message_id > {$min_ids[$forum_id]['message_id']} AND 
+                        status = ".PHORUM_STATUS_APPROVED." AND
+                        moved = 0"
+            );
+            if (isset($message_counts[$forum_id]["count"])) {
                 $new_checks[$forum_id]["messages"] =
                     max(0, $count - $message_counts[$forum_id]["count"]);
+            } else {
+                $new_checks[$forum_id]["messages"] =
+                    max(0, $count);
             }
 
-// TODO maurice got up to here, checking the code.
-
-            // No this is not a typo.
-            // We need to calculate their thread count if they have ANY
-            // read messages in the table. The only way to do that is to
-            // see if message count was set.
-            if (empty($message_counts[$forum_id]))
-            {
-                $new_checks[$forum_id]["threads"] = 0;
-            }
-            else
-            {
-                // check for new threads
-                $sql = "select count(*) as count from {$PHORUM['message_table']}
-                        where forum_id=".$forum_id." and
-                        message_id>=".$min_ids[$forum_id]["message_id"]." and
-                        parent_id=0 and
-                        status=".PHORUM_STATUS_APPROVED." and
-                        moved=0";
-
-                list($count) = phorum_db_interact(DB_RETURN_ROW, $sql);
-
-                if(isset($thread_counts[$forum_id]["count"])){
-                    $new_checks[$forum_id]["threads"] = max(0, $count - $thread_counts[$forum_id]["count"]);
-                } else {
-                    $new_checks[$forum_id]["threads"] = max(0, $count);
-                }
+            // Find the number of new threads.
+            $count = phorum_db_interact(
+                DB_RETURN_VALUE,
+                "SELECT count(*) AS count
+                 FROM   {$PHORUM['message_table']}
+                 WHERE  forum_id = $forum_id AND
+                        message_id > {$min_ids[$forum_id]["message_id"]} AND
+                        parent_id = 0 AND
+                        status = ".PHORUM_STATUS_APPROVED." AND
+                        moved = 0"
+            );
+            if (isset($thread_counts[$forum_id]["count"])) {
+                $new_checks[$forum_id]["threads"] =
+                    max(0, $count - $thread_counts[$forum_id]["count"]);
+            } else {
+                $new_checks[$forum_id]["threads"] = max(0, $count);
             }
         }
     }
 
     return $new_checks;
-
 }
 // }}}
 

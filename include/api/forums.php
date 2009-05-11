@@ -1527,10 +1527,12 @@ function phorum_api_forums_format($forums, $flags = 0)
             }
 
             // Some number formatting.
+            $forum['raw_message_count'] = $forum['message_count'];
             $forum['message_count'] = number_format(
                 $forum['message_count'], 0,
                 $PHORUM['dec_sep'], $PHORUM['thous_sep']
             );
+            $forum['raw_thread_count'] = $forum['thread_count'];
             $forum['thread_count'] = number_format(
                 $forum['thread_count'], 0,
                 $PHORUM['dec_sep'], $PHORUM['thous_sep']
@@ -1556,14 +1558,17 @@ function phorum_api_forums_format($forums, $flags = 0)
 
         foreach ($forums_to_check as $forum_id)
         {
+            $forum = $forums[$forum_id];
+
             // -1 indicates that no newflags were stored for this user
-            // therefore make all messages and threads "unread"
-            if($new_info[$forum_id]['messages'] == -1) {
+            // Therefore make all messages and threads "unread".
+            if ($new_info[$forum_id]['messages'] == -1) {
                 $new_info[$forum_id] = array(
-                                      'messages' => $forum['message_count'],
-                                      'threads'  => $forum['thread_count'],
-                                      );
+                    'messages' => $forum['raw_message_count'],
+                    'threads'  => $forum['raw_thread_count'],
+                );
             }
+
             $forums[$forum_id]['new_messages'] = number_format(
                 $new_info[$forum_id]['messages'], 0,
                 $PHORUM['dec_sep'], $PHORUM['thous_sep']

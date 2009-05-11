@@ -557,14 +557,7 @@ if (isset($PHORUM['use_rss']) && $PHORUM['use_rss'])
     $PHORUM["DATA"]["URL"]["FEED"] = phorum_get_url(PHORUM_FEED_URL, $PHORUM['forum_id'], 'replies=1', 'type='.$PHORUM['default_feed']);
 
 }
-// updating new-info for first visit (last message on first page is first new)
-$newflags = phorum_api_newflags_by_forum($PHORUM['forum_id']);
-if ($PHORUM['user']['user_id'] && 
-   (!isset($newflags['min_id']) || empty($newflags['min_id']))) {
-    // setting it as min-id
-    phorum_db_newflag_add_min_id(array(0=>array('min_id'=>1,'forum_id'=>$PHORUM['forum_id'])));
-}
-     
+
 // include the correct template
 if ($PHORUM["threaded_list"]){
     $template = "list_threads";
