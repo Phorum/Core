@@ -578,7 +578,7 @@ Table of contents:
  2.6 Creating custom URLs
  -------------------------
 
-   Phorum uses the function phorum_get_url() to consistenly build URLs
+   Phorum uses the function phorum_api_url_get() to consistenly build URLs
    that point to parts of Phorum. It is recommended that you use this
    function as well when creating links yourself, so special features
    and future changes will automatically be incorporated in the links
@@ -587,7 +587,12 @@ Table of contents:
    Here's an example of building an URL, which will open the profile
    for the user with user_id = 17:
 
-      $url = phorum_get_url(PHORUM_PROFILE_URL, 17);
+      $url = phorum_api_url_get(PHORUM_PROFILE_URL, 17);
+
+   or
+
+      $phorum = Phorum::API();
+      $url = $phorum->url->get(PHORUM_PROFILE_URL, 17);
 
    The argument list that this function takes, depends on the first
    argument which tells Phorum what kind of URL has to be built.
@@ -595,7 +600,7 @@ Table of contents:
    be used.
 
    If you need to build a custom URL to link to your own module, you
-   can use phorum_get_url() as well. The way to go is simple. You
+   can use phorum_api_url_get() as well. The way to go is simple. You
    need to use PHORUM_CUSTOM_URL as the first argument and add all
    URL building parameters to it.
 
@@ -608,7 +613,7 @@ Table of contents:
    file "myfile.php". The URL has to have the forum_id in it and
    needs to contain the additional parameter "foo=bar":
 
-      $url = phorum_get_url(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar");
+      $url = phorum_api_url_get(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar");
 
 
  2.7 Implementing settings for your module

@@ -18,10 +18,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements utility functions for handling output.
+ * This script implements utility functions for handling output buffering.
  *
  * @package    PhorumAPI
- * @subpackage Output
+ * @subpackage Tools
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

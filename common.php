@@ -115,7 +115,7 @@ if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
 }
 
 // Look for and parse the QUERY_STRING.
-// This only applies to URLs that we create using phorum_get_url().
+// This only applies to URLs that we create using phorum_api_url_get().
 // Scripts using data originating from standard HTML forms (e.g. search)
 // will have to use $_GET or $_POST.
 if (!defined("PHORUM_ADMIN") &&
@@ -344,7 +344,7 @@ if (!defined( "PHORUM_ADMIN" ))
                 phorum_hook("common_no_forum", "");
             }
 
-            phorum_redirect_by_url( phorum_get_url( PHORUM_INDEX_URL ) );
+            phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
             exit();
         }
 
@@ -534,10 +534,10 @@ if (!defined( "PHORUM_ADMIN" ))
         require_once phorum_get_template('settings');
         $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
-        $PHORUM["DATA"]["URL"]["CSS"] = phorum_get_url(PHORUM_CSS_URL, "css");
-        $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_get_url(PHORUM_CSS_URL, "css_print");
-        $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_get_url(PHORUM_JAVASCRIPT_URL);
-        $PHORUM["DATA"]["URL"]["AJAX"] = phorum_get_url(PHORUM_AJAX_URL);
+        $PHORUM["DATA"]["URL"]["CSS"] = $phorum->url(PHORUM_CSS_URL, "css");
+        $PHORUM["DATA"]["URL"]["CSS_PRINT"] = $phorum->url(PHORUM_CSS_URL, "css_print");
+        $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = $phorum->url(PHORUM_JAVASCRIPT_URL);
+        $PHORUM["DATA"]["URL"]["AJAX"] = $phorum->url(PHORUM_AJAX_URL);
     }
 
     // Load the main language file.
@@ -631,16 +631,16 @@ if (!defined( "PHORUM_ADMIN" ))
             );
             if (count($forummodlist) > 0 ) {
                 $PHORUM["user"]["NOTICE"]["MESSAGES"] = ($phorum->db->get_unapproved_list($forummodlist, TRUE, 0, TRUE) > 0);
-                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
             }
             if ($phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_USERS)) {
                 $PHORUM["user"]["NOTICE"]["USERS"] = (count($phorum->db->user_get_unapproved()) > 0);
-                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
             }
             $groups = $phorum->user->check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
             if (count($groups) > 0) {
                 $PHORUM["user"]["NOTICE"]["GROUPS"] = count($phorum->db->get_group_members(array_keys($groups), PHORUM_USER_GROUP_UNAPPROVED));
-                $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
             }
         }
 
@@ -774,7 +774,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM['DATA']['BREADCRUMBS'] = array();
 
     // Add the current forum path to the breadcrumbs.
-    $index_page_url_template = phorum_get_url(PHORUM_INDEX_URL, '%forum_id%');
+    $index_page_url_template = $phorum->url(PHORUM_INDEX_URL, '%forum_id%');
     if (!empty($PHORUM['forum_path']) && !is_array($PHORUM['forum_path'])) {
         $PHORUM['forum_path'] = unserialize($PHORUM['forum_path']);
     }
@@ -782,7 +782,7 @@ if (!defined( "PHORUM_ADMIN" ))
     {
         $id = $PHORUM['forum_id'];
         $url = empty($id)
-             ? phorum_get_url(PHORUM_INDEX_URL)
+             ? $phorum->url(PHORUM_INDEX_URL)
              : str_replace('%forum_id%',$id,$index_page_url_template);
 
         $PHORUM['DATA']['BREADCRUMBS'][] = array(
@@ -806,7 +806,7 @@ if (!defined( "PHORUM_ADMIN" ))
             }
 
             if(empty($id)) {
-                $url = phorum_get_url(PHORUM_INDEX_URL);
+                $url = $phorum->url(PHORUM_INDEX_URL);
             } else {
                 $url = str_replace('%forum_id%',$id,$index_page_url_template);
             }
@@ -824,7 +824,7 @@ if (!defined( "PHORUM_ADMIN" ))
 
         if (!$PHORUM['folder_flag']) {
             $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
-            $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_get_url(PHORUM_LIST_URL, $track);
+            $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = $phorum->url(PHORUM_LIST_URL, $track);
         }
     }
 }
@@ -909,8 +909,10 @@ register_shutdown_function("phorum_shutdown");
 function phorum_require_login()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
+
     if (!$PHORUM["user"]["user_id"]) {
-        $url = phorum_get_url(
+        $url = $phorum->url(
             PHORUM_LOGIN_URL, "redir=" . phorum_get_current_url()
         );
         phorum_redirect_by_url($url);
@@ -1446,19 +1448,20 @@ function phorum_output($templates) {
 function phorum_build_common_urls()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_get_url(PHORUM_BASE_URL);
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = $phorum->url(PHORUM_BASE_URL);
     $GLOBALS["PHORUM"]["DATA"]["URL"]["HTTP_PATH"] = $PHORUM['http_path'];
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL);
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = $phorum->url(PHORUM_LIST_URL);
 
     // These links are only needed in forums, not in folders.
     if (isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_get_url(PHORUM_POSTING_URL);
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_get_url(PHORUM_SUBSCRIBE_URL);
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = $phorum->url(PHORUM_POSTING_URL);
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = $phorum->url(PHORUM_SUBSCRIBE_URL);
     }
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_get_url(PHORUM_SEARCH_URL);
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = $phorum->url(PHORUM_SEARCH_URL);
 
     // Find the id for the index.
     $index_id=-1;
@@ -1489,19 +1492,19 @@ function phorum_build_common_urls()
     if ($index_id > -1) {
         // check if its the full root, avoid adding an id in this case (SE-optimized ;))
         if (!empty($index_id))
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url(PHORUM_INDEX_URL, $index_id);
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = $phorum->url(PHORUM_INDEX_URL, $index_id);
         else
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_get_url(PHORUM_INDEX_URL);
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = $phorum->url(PHORUM_INDEX_URL);
     }
 
     // these urls depend on the login-status of a user
     if ($GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"]) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL, "logout=1" );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_CONTROLCENTER_URL );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = $phorum->url( PHORUM_LOGIN_URL, "logout=1" );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = $phorum->url( PHORUM_CONTROLCENTER_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = $phorum->url( PHORUM_PM_URL );
     } else {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_REGISTER_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = $phorum->url( PHORUM_LOGIN_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = $phorum->url( PHORUM_REGISTER_URL );
     }
 }
 
@@ -1703,11 +1706,13 @@ function phorum_get_language_info()
  */
 function phorum_redirect_by_url($redir_url)
 {
+    $phorum = Phorum::API();
+
     // Some browsers strip the anchor from the URL in case we redirect
     // from a POSTed page :-/. So here we wrap the redirect,
     // to work around that problem.
     if (count($_POST) && strstr($redir_url, "#")) {
-        $redir_url = phorum_get_url(
+        $redir_url = $phorum->url(
             PHORUM_REDIRECT_URL,
             'phorum_redirect_to=' . urlencode($redir_url)
         );
@@ -1715,7 +1720,7 @@ function phorum_redirect_by_url($redir_url)
 
     // Check for response splitting and valid http(s) URLs.
     if(preg_match("/\s/", $redir_url) || !preg_match("!^https?://!i", $redir_url)){
-        $redir_url = phorum_get_url(PHORUM_INDEX_URL);
+        $redir_url = $phorum->url(PHORUM_INDEX_URL);
     }
 
     // An ugly IIS-hack to avoid crashing IIS servers.

@@ -5,6 +5,7 @@ if(!defined("PHORUM")) return;
 function phorum_setup_announcements ()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // This variable will be used to store the formatted announcements.
     $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = '';
@@ -108,7 +109,7 @@ function phorum_setup_announcements ()
                 $message["new"] = $new
                                 ? $PHORUM["DATA"]["LANG"]["newflag"]
                                 : NULL;
-                $message["URL"]["NEWPOST"] = phorum_get_url(
+                $message["URL"]["NEWPOST"] = $phorum->url->get(
                     PHORUM_FOREIGN_READ_URL,
                     $message["forum_id"],
                     $message["thread"],
@@ -126,7 +127,7 @@ function phorum_setup_announcements ()
         $message["lastpost"] = phorum_date($PHORUM["short_date_time"], $message["modifystamp"]);
         $message["raw_datestamp"] = $message["datestamp"];
         $message["datestamp"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
-        $message["URL"]["READ"] = phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
+        $message["URL"]["READ"] = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
         $PHORUM["DATA"]["ANNOUNCEMENTS"][] = $message;
     }
 

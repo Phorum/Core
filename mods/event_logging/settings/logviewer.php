@@ -310,7 +310,7 @@ foreach ($logs as $loginfo)
     // the URL that points to that message.
     $message_url = NULL;
     if ($loginfo["message_id"] !== NULL && $loginfo["message_id"] > 0) {
-        $message_url = phorum_get_url(
+        $message_url = $phorum->url->get(
             PHORUM_FOREIGN_READ_URL,
             $loginfo["forum_id"],
             $loginfo["thread_id"],
@@ -360,7 +360,7 @@ foreach ($logs as $loginfo)
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '') .
-                '&nbsp;[&nbsp;<a target="_new" href="'.phorum_get_url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp]'
+                '&nbsp;[&nbsp;<a target="_new" href="'.$phorum->url->get(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp]'
              : "Anonymous user") . '<br/>' .
             'User IP address = <a title="Extend filter using this IP address" href="'.$filter_base.'&ip='.urlencode($loginfo["ip"]).'">'. $loginfo["ip"] . '</a>' .
             ($loginfo["hostname"] !== NULL

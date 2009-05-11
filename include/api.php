@@ -124,11 +124,22 @@ class Phorum
     public function __call($what, $args)
     {
         $function = $this->func_prefix.$what;
-        if (!function_exists($function)) trigger_error(
-            "Phorum API file \"{$this->node_file}\" does not implement " .
-            "API function $function()",
-            E_USER_ERROR
-        );
+        if (!function_exists($function))
+        {
+            // Check for an API layer, named $what.
+            // Check if the function prefix{$what}_get() exists.
+            // If yes, then we'll redirect to that function.
+            // E.g. $phorum->url() will be handled by $phorum->url->get()
+            $this->$what; // forces loading the layer.
+            $function = $this->func_prefix.$what.'_get';
+
+            // Out of luck.
+            if (!function_exists($function)) trigger_error(
+                "Phorum API file \"{$this->node_file}\" does not implement " .
+                "API function $function()",
+                E_USER_ERROR
+            );
+        }
 
         return call_user_func_array($function, $args);
     }

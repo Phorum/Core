@@ -1133,6 +1133,7 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
 function phorum_api_forums_tree($vroot = NULL, $flags = 0)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     if ($vroot === NULL) {
         $vroot = isset($PHORUM['vroot']) ? $PHORUM['vroot'] : 0;
@@ -1232,9 +1233,9 @@ function phorum_api_forums_tree($vroot = NULL, $flags = 0)
             // Skip empty folders.
             if (empty($forums[$forum['forum_id']]['childcount'])) continue;
 
-            $url = phorum_get_url(PHORUM_INDEX_URL, $forum["forum_id"]);
+            $url = $phorum->url->get(PHORUM_INDEX_URL, $forum["forum_id"]);
         } else {
-            $url = phorum_get_url(PHORUM_LIST_URL, $forum["forum_id"]);
+            $url = $phorum->url->get(PHORUM_LIST_URL, $forum["forum_id"]);
         }
 
         // Add the indent level for the node.
@@ -1408,6 +1409,7 @@ function phorum_api_forums_get_inherit_id_options($forum_id = NULL)
 function phorum_api_forums_format($forums, $flags = 0)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    $phorum = Phorum::API();
 
     require_once PHORUM_PATH.'/include/format_functions.php';
 
@@ -1424,17 +1426,17 @@ function phorum_api_forums_format($forums, $flags = 0)
             // was in use.
             $forum['URL']['INDEX'] =
             $forum['URL']['LIST'] =
-                phorum_get_url(PHORUM_INDEX_URL, $forum_id);
+                $phorum->url->get(PHORUM_INDEX_URL, $forum_id);
         }
         // Setup template data for forums.
         else
         {
             // A URL for the message list for this forum.
-            $forum['URL']['LIST'] = phorum_get_url(PHORUM_LIST_URL, $forum_id);
+            $forum['URL']['LIST'] = $phorum->url->get(PHORUM_LIST_URL, $forum_id);
 
             // A "mark forum read" URL for authenticated users.
             if ($PHORUM['user']['user_id']) {
-                $forum['URL']['MARK_READ'] = phorum_get_url(
+                $forum['URL']['MARK_READ'] = $phorum->url->get(
                     PHORUM_INDEX_URL,
                     $forum_id,
                     'markread',
@@ -1444,7 +1446,7 @@ function phorum_api_forums_format($forums, $flags = 0)
 
             // A URL to the syndication feed.
             if (!empty($PHORUM['use_rss'])) {
-                $forum['URL']['FEED'] = phorum_get_url(
+                $forum['URL']['FEED'] = $phorum->url->get(
                     PHORUM_FEED_URL,
                     $forum_id,
                     'type='.$PHORUM['default_feed']

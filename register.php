@@ -247,7 +247,7 @@ if (count($_POST)) {
                 // Send a message to the new user in case email verification is required.
                 if ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH ||
                     $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL) {
-                    $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
+                    $verify_url = $phorum->url->get(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
                     // make the link an anchor tag for AOL users
                     if (preg_match("!aol\.com$!i", $userdata["email"])) {
                         $verify_url = "<a href=\"$verify_url\">$verify_url</a>";
@@ -275,7 +275,7 @@ if (count($_POST)) {
                                 $PHORUM['title'],
                                 $userdata['username'],
                                 $verify_url,
-                                phorum_get_url(PHORUM_LOGIN_URL)
+                                $phorum->url->get(PHORUM_LOGIN_URL)
                             ),
                             $PHORUM['DATA']['LANG']['VerifyRegEmailBody']
                         ), 72);
@@ -297,7 +297,7 @@ if (count($_POST)) {
                 }
 
                 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
-                $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_get_url(PHORUM_LOGIN_URL);
+                $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url->get(PHORUM_LOGIN_URL);
 
                 /*
                  * [hook]
@@ -392,7 +392,7 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
     $PHORUM['DATA']['DESCRIPTION'] = '';
 
     # Setup static template data.
-    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_REGISTER_ACTION_URL );
+    $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url->get( PHORUM_REGISTER_ACTION_URL );
     $PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
     $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
 
@@ -410,7 +410,7 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
     $PHORUM["DATA"]["HTML_DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["OpenIDCompleteExplain"];
     $PHORUM['DATA']['DESCRIPTION'] = '';
 
-    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_REGISTER_ACTION_URL );
+    $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url->get( PHORUM_REGISTER_ACTION_URL );
 
     $PHORUM["DATA"]["OPENID"]["open_id"] = htmlspecialchars($_SESSION["open_id"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 

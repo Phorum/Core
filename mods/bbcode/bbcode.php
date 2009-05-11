@@ -173,6 +173,7 @@ function phorum_mod_bbcode_posting_custom_action($message)
 function phorum_mod_bbcode_editor_tool_plugin()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     $lang = $PHORUM['DATA']['LANG']['mod_bbcode'];
 
@@ -223,7 +224,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
 
         editor_tools_register_help(
             $description,
-            phorum_get_url(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
+            $phorum->url->get(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
         );
     }
 

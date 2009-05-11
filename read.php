@@ -34,7 +34,7 @@ if (!phorum_check_read_common()) {
 
 // somehow we got to a folder
 if ($PHORUM["folder_flag"]) {
-    $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    $dest_url = $phorum->url->get(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -55,7 +55,7 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
 // setup some stuff based on the url passed
 if(empty($PHORUM["args"][1])) {
     // we have no thread-id given, redirect to the index
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+    phorum_redirect_by_url($phorum->url->get(PHORUM_LIST_URL));
     exit();
 } elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
     $thread = (int)$PHORUM["args"][1];
@@ -95,7 +95,7 @@ if(empty($PHORUM["args"][1])) {
                 // Could be called from list too, in which case we need
                 // to redirect back to the list.
                 if(isset($PHORUM["args"][3]) && $PHORUM["args"][3] == "list") {
-                    $dest_url = phorum_get_url(PHORUM_LIST_URL);
+                    $dest_url = $phorum->url->get(PHORUM_LIST_URL);
                     phorum_redirect_by_url($dest_url);
                 }
                 break;
@@ -110,9 +110,9 @@ if(empty($PHORUM["args"][1])) {
                 if ($new_message) {
                     if ($PHORUM['threaded_read'] == 0) { // get new page
                         $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
-                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
+                        $dest_url=$phorum->url->get(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
                     } else { // for threaded
-                        $dest_url=phorum_get_url(PHORUM_READ_URL,$thread,$new_message);
+                        $dest_url=$phorum->url->get(PHORUM_READ_URL,$thread,$new_message);
                     }
                 }
                 break;
@@ -121,10 +121,10 @@ if(empty($PHORUM["args"][1])) {
 
         if(empty($dest_url)) {
             if($thread > 0) {
-                $dest_url = phorum_get_url(PHORUM_READ_URL, $thread);
+                $dest_url = $phorum->url->get(PHORUM_READ_URL, $thread);
             } else{
                 // we are either at the top or the bottom, go back to the list.
-                $dest_url = phorum_get_url(PHORUM_LIST_URL);
+                $dest_url = $phorum->url->get(PHORUM_LIST_URL);
             }
         }
 
@@ -159,7 +159,7 @@ if(!$PHORUM["threaded_read"]) {
 
 // fill the breadcrumbs-info
 $PHORUM['DATA']['BREADCRUMBS'][]=array(
-    'URL'=>$page > 1 ? phorum_get_url(PHORUM_READ_URL, $thread) : '',
+    'URL'=>$page > 1 ? $phorum->url->get(PHORUM_READ_URL, $thread) : '',
     'TEXT'=>$PHORUM['DATA']['LANG']['Thread'],
     'ID'=>$message_id,
     'TYPE'=>'message'
@@ -321,30 +321,30 @@ if($page>1 && !isset($data[$thread])){
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // setup the url-templates needed later
-    $read_url_template_thread = phorum_get_url(PHORUM_READ_URL, '%thread_id%');
-    $read_url_template_both   = phorum_get_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
-    $read_page_url_template   = phorum_get_url(PHORUM_READ_URL, '%thread_id%','page=%page_num%');
-    $edit_url_template        = phorum_get_url(PHORUM_POSTING_URL, '%action_id%', '%message_id%');
-    $reply_url_template       = phorum_get_url(PHORUM_REPLY_URL, '%thread_id%', '%message_id%');
-    $reply_url_template_quote = phorum_get_url(PHORUM_REPLY_URL, '%thread_id%', '%message_id%','quote=1');
+    $read_url_template_thread = $phorum->url->get(PHORUM_READ_URL, '%thread_id%');
+    $read_url_template_both   = $phorum->url->get(PHORUM_READ_URL, '%thread_id%','%message_id%');
+    $read_page_url_template   = $phorum->url->get(PHORUM_READ_URL, '%thread_id%','page=%page_num%');
+    $edit_url_template        = $phorum->url->get(PHORUM_POSTING_URL, '%action_id%', '%message_id%');
+    $reply_url_template       = $phorum->url->get(PHORUM_REPLY_URL, '%thread_id%', '%message_id%');
+    $reply_url_template_quote = $phorum->url->get(PHORUM_REPLY_URL, '%thread_id%', '%message_id%','quote=1');
     if($PHORUM["track_edits"]) {
-        $changes_url_template = phorum_get_url(PHORUM_CHANGES_URL, '%message_id%');
+        $changes_url_template = $phorum->url->get(PHORUM_CHANGES_URL, '%message_id%');
     }
     if($PHORUM['DATA']['LOGGEDIN']) {
-        $follow_url_template  = phorum_get_url(PHORUM_FOLLOW_URL, '%thread_id%');
+        $follow_url_template  = $phorum->url->get(PHORUM_FOLLOW_URL, '%thread_id%');
         if ($PHORUM["enable_pm"]) {
-            $pm_url_template = phorum_get_url(PHORUM_PM_URL, "page=send", "message_id=%message_id%");
+            $pm_url_template = $phorum->url->get(PHORUM_PM_URL, "page=send", "message_id=%message_id%");
         }
-        $report_url_template = phorum_get_url(PHORUM_REPORT_URL, '%message_id%');
+        $report_url_template = $phorum->url->get(PHORUM_REPORT_URL, '%message_id%');
     }
 
     if($PHORUM["DATA"]["MODERATOR"]) {
-            $edit_url_template          = phorum_get_url(PHORUM_POSTING_URL, "moderation", '%message_id%');
-            $moderation_url_template    = phorum_get_url(PHORUM_MODERATION_URL, '%action_id%', '%message_id%');
+            $edit_url_template          = $phorum->url->get(PHORUM_POSTING_URL, "moderation", '%message_id%');
+            $moderation_url_template    = $phorum->url->get(PHORUM_MODERATION_URL, '%action_id%', '%message_id%');
     }
     if($PHORUM["max_attachments"]>0) {
-        $attachment_url_template = phorum_get_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
-        $attachment_download_url_template = phorum_get_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%', 'download=1');
+        $attachment_url_template = $phorum->url->get(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
+        $attachment_download_url_template = $phorum->url->get(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%', 'download=1');
     }
 
     $fetch_user_ids = null;
@@ -367,20 +367,20 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // build URL's that apply only here.
     if($PHORUM["float_to_top"]) {
-        $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = phorum_get_url(PHORUM_READ_URL, $data[$thread]["modifystamp"], "older");
-        $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = phorum_get_url(PHORUM_READ_URL, $data[$thread]["modifystamp"], "newer");
+        $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = $phorum->url->get(PHORUM_READ_URL, $data[$thread]["modifystamp"], "older");
+        $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = $phorum->url->get(PHORUM_READ_URL, $data[$thread]["modifystamp"], "newer");
     } else{
-        $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "older");
-        $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "newer");
+        $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = $phorum->url->get(PHORUM_READ_URL, $thread, "older");
+        $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = $phorum->url->get(PHORUM_READ_URL, $thread, "newer");
     }
 
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
-        $PHORUM["DATA"]["URL"]["MARKTHREADREAD"] = phorum_get_url(PHORUM_READ_URL, $thread, "markthreadread");
+        $PHORUM["DATA"]["URL"]["MARKTHREADREAD"] = $phorum->url->get(PHORUM_READ_URL, $thread, "markthreadread");
     }
     if($PHORUM["threaded_read"]) {
-        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, $message_id, "printview");
+        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = $phorum->url->get(PHORUM_READ_URL, $thread, $message_id, "printview");
     } else {
-        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = phorum_get_url(PHORUM_READ_URL, $thread, "printview",'page='.$page);
+        $PHORUM["DATA"]["URL"]["PRINTVIEW"] = $phorum->url->get(PHORUM_READ_URL, $thread, "printview",'page='.$page);
     }
     $thread_is_closed = (bool)$data[$thread]["closed"];
 
@@ -692,7 +692,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // add feed url
     if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
         // one for the page-links
-        $PHORUM["DATA"]["URL"]["FEED"] = phorum_get_url( PHORUM_FEED_URL, $PHORUM["forum_id"], $thread, "type=".$PHORUM["default_feed"] );
+        $PHORUM["DATA"]["URL"]["FEED"] = $phorum->url->get( PHORUM_FEED_URL, $PHORUM["forum_id"], $thread, "type=".$PHORUM["default_feed"] );
 
         // and again for the header-links
         $PHORUM['DATA']['FEEDS'] = array(array(
@@ -756,7 +756,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 } elseif($toforum=phorum_check_moved_message($thread)) { // is it a moved thread?
 
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessage"];
-    $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
+    $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url->get(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessageTo"];
 
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
@@ -774,7 +774,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 }
 
 // find out if the given thread has been moved to another forum
-function phorum_check_moved_message($thread) {
+function phorum_check_moved_message($thread)
+{
     $forum_id=$GLOBALS['PHORUM']['forum_id'];
     $message=phorum_db_get_message($thread,'message_id',true);
 

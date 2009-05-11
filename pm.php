@@ -47,7 +47,7 @@ require_once './include/format_functions.php';
 
 // a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+    phorum_redirect_by_url($phorum->url->get(PHORUM_LIST_URL));
     exit();
 }
 
@@ -62,7 +62,7 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
     }
     $redir = urlencode(call_user_func_array('phorum_get_url', $args));
 
-    phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir"));
+    phorum_redirect_by_url($phorum->url->get(PHORUM_LOGIN_URL, "redir=$redir"));
     exit();
 }
 
@@ -211,8 +211,8 @@ if (isset($_POST['close_message'])) {
     $action = '';
 }
 
-if (!empty($action)) {
-
+if (!empty($action))
+{
     // Utility function to check if a foldername already exists.
     // No extreme checking with locking here. Technically
     // speaking duplicate foldernames will work. It's just
@@ -633,7 +633,6 @@ if (!empty($action)) {
         phorum_redirect_by_url($redir_url);
         exit();
     }
-
 }
 
 // ------------------------------------------------------------------------
@@ -708,7 +707,7 @@ switch ($page) {
             );
 
             $buddy["URL"]["PROFILE"] =
-                phorum_get_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]);
+                $phorum->url->get(PHORUM_PROFILE_URL, $buddy_user["user_id"]);
 
             if (!$buddy_user['hide_activity']) {
               $buddy["raw_date_last_active"] = $buddy_user["date_last_active"];
@@ -1014,7 +1013,7 @@ switch ($page) {
                 if (phorum_api_user_check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
 
                     // get url to the message board thread
-                    $origurl = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+                    $origurl = $phorum->url->get(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
                     // Get the data for the user that we reply to.
                     $user = phorum_api_user_get($message["user_id"]);
@@ -1131,23 +1130,23 @@ foreach($pm_folders as $id => $data)
     $pm_folders[$id]["is_outgoing"] = $id == PHORUM_PM_OUTBOX;
     $pm_folders[$id]["id"] = $id;
     $pm_folders[$id]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    $pm_folders[$id]["url"] = phorum_get_url(PHORUM_PM_URL, "page=list", "folder_id=$id");
+    $pm_folders[$id]["url"] = $phorum->url->get(PHORUM_PM_URL, "page=list", "folder_id=$id");
 
     if (!$pm_folders[$id]["is_special"]) {
         $pm_userfolders[$id] = $pm_folders[$id];
     }
 }
 
-$PHORUM["DATA"]["URL"]["PM_FOLDERS"] = phorum_get_url(PHORUM_PM_URL, "page=folders");
-$PHORUM["DATA"]["URL"]["PM_SEND"] = phorum_get_url(PHORUM_PM_URL, "page=send");
-$PHORUM["DATA"]["URL"]["BUDDIES"] = phorum_get_url(PHORUM_PM_URL, "page=buddies");
+$PHORUM["DATA"]["URL"]["PM_FOLDERS"] = $phorum->url->get(PHORUM_PM_URL, "page=folders");
+$PHORUM["DATA"]["URL"]["PM_SEND"] = $phorum->url->get(PHORUM_PM_URL, "page=send");
+$PHORUM["DATA"]["URL"]["BUDDIES"] = $phorum->url->get(PHORUM_PM_URL, "page=buddies");
 
 $PHORUM["DATA"]["PM_FOLDERS"] = $pm_folders;
 $PHORUM["DATA"]["PM_USERFOLDERS"] = count($pm_userfolders) ? $pm_userfolders : 0;
 
 
 // Set some default template data.
-$PHORUM["DATA"]["URL"]["ACTION"]=phorum_get_url( PHORUM_PM_ACTION_URL );
+$PHORUM["DATA"]["URL"]["ACTION"]=$phorum->url->get( PHORUM_PM_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
 $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
@@ -1171,6 +1170,7 @@ if ($error_msg) {
 function phorum_pm_format($messages)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     require_once './include/format_functions.php';
 
@@ -1187,7 +1187,7 @@ function phorum_pm_format($messages)
             $folder_id = $message['pm_folder_id']
                        ? $message['pm_folder_id']
                        : $message['special_folder'];
-            $messages[$id]["URL"]["READ"] = phorum_get_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
+            $messages[$id]["URL"]["READ"] = $phorum->url->get(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
         }
 
         // The datestamp is only available for already posted messages.
@@ -1203,7 +1203,7 @@ function phorum_pm_format($messages)
         $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
         $messages[$id]["email"] = "";
 
-        $messages[$id]["URL"]["PROFILE"] = phorum_get_url(PHORUM_PROFILE_URL, $message["user_id"]);
+        $messages[$id]["URL"]["PROFILE"] = $phorum->url->get(PHORUM_PROFILE_URL, $message["user_id"]);
 
         $messages[$id]["recipient_count"] = 0;
         $messages[$id]["receive_count"] = 0;
@@ -1225,7 +1225,7 @@ function phorum_pm_format($messages)
                          ? htmlspecialchars($rcpt["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                          : $rcpt["display_name"]);
                     $messages[$id]["recipients"][$rcpt_id]["URL"]["PROFILE"] =
-                        phorum_get_url(PHORUM_PROFILE_URL, $rcpt_id);
+                        $phorum->url->get(PHORUM_PROFILE_URL, $rcpt_id);
                 }
             }
 

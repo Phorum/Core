@@ -40,9 +40,9 @@ if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
     // parameters in the URL. This way we prevent users from bookmarking
     // the mark read URL.
     if (!empty($PHORUM["args"][2])) {
-        $dest_url = phorum_get_url(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
+        $dest_url = $phorum->url->get(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
     } else {
-        $dest_url = phorum_get_url(PHORUM_INDEX_URL);
+        $dest_url = $phorum->url->get(PHORUM_INDEX_URL);
     }
     phorum_redirect_by_url($dest_url);
     exit();
@@ -51,7 +51,7 @@ if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
 // Somehow we arrived at a forum instead of a folder.
 // Redirect the user to the message list for that forum.
 if (!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"] == 0) {
-    $dest_url = phorum_get_url(PHORUM_LIST_URL);
+    $dest_url = $phorum->url->get(PHORUM_LIST_URL);
     phorum_redirect_by_url($dest_url);
     exit();
 }
@@ -62,13 +62,13 @@ if (!empty($PHORUM['use_rss']))
 {
     // Add the feed for new threads.
     $PHORUM['DATA']['FEEDS'][] = array(
-        'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
+        'URL' => $phorum->url->get(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
         'TITLE' => $PHORUM['DATA']['FEED'] . ' ('. strtolower($PHORUM['DATA']['LANG']['Threads']) . ')'
     );
 
     // Add the feed for new threads and their replies.
     $PHORUM['DATA']['FEEDS'][] = array(
-        'URL' => phorum_get_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
+        'URL' => $phorum->url->get(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
         'TITLE' => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
     );
 }

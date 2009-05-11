@@ -61,7 +61,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
     if (isset($_SERVER["HTTP_REFERER"]) && !empty($_SERVER['HTTP_REFERER'])) {
         $url = $_SERVER["HTTP_REFERER"];
     } else {
-        $url = phorum_get_url(PHORUM_LIST_URL);
+        $url = $phorum->url->get(PHORUM_LIST_URL);
     }
 
     // Strip the session id from the URL in case URI auth is in use.
@@ -160,7 +160,7 @@ if (count($_POST) > 0) {
                 phorum_api_user_save($tmp_user);
 
                 // Mail the new confirmation code to the user.
-                $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
+                $verify_url = $phorum->url->get(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
                 $maildata["mailsubject"] = $PHORUM['DATA']['LANG']["VerifyRegEmailSubject"];
 
                 // The mailmessage can be composed in two different ways.
@@ -183,7 +183,7 @@ if (count($_POST) > 0) {
                             $PHORUM['title'],
                             $user['username'],
                             $verify_url,
-                            phorum_get_url(PHORUM_LOGIN_URL)
+                            $phorum->url->get(PHORUM_LOGIN_URL)
                         ),
                         $PHORUM['DATA']['LANG']['VerifyRegEmailBody']
                     ), 72);
@@ -240,7 +240,7 @@ if (count($_POST) > 0) {
                             $PHORUM['title'],
                             $user[username],
                             $newpass,
-                            phorum_get_url(PHORUM_LOGIN_URL)
+                            $phorum->url->get(PHORUM_LOGIN_URL)
                         ),
                         $PHORUM['DATA']['LANG']["LostPassEmailBody"]
                     ), 72);
@@ -322,7 +322,7 @@ if (count($_POST) > 0) {
                     // Determine the URL to redirect the user to.
                     // If redir is a number, it is a URL constant.
                     if(is_numeric($_POST["redir"])){
-                        $redir = phorum_get_url((int)$_POST["redir"]);
+                        $redir = $phorum->url->get((int)$_POST["redir"]);
                     }
                     // Redirecting to the registration or login page is a
                     // little weird, so we just go to the list page if we came
@@ -331,7 +331,7 @@ if (count($_POST) > 0) {
                         $redir = $_POST["redir"];
                     // By default, we redirect to the list page.
                     } else {
-                        $redir = phorum_get_url( PHORUM_LIST_URL );
+                        $redir = $phorum->url->get( PHORUM_LIST_URL );
                     }
                     
                     // checking for redirection url on the same domain, 
@@ -353,7 +353,7 @@ if (count($_POST) > 0) {
                          }
                     }
                     if(!$redir_ok) {
-                        $redir = phorum_get_url( PHORUM_LIST_URL );
+                        $redir = $phorum->url->get(PHORUM_LIST_URL);
                     }   
 
                     /*
@@ -493,14 +493,14 @@ if (!empty( $PHORUM["args"]["redir"])) {
 } elseif (!empty( $_REQUEST["redir"])) {
     $redir = htmlspecialchars($_REQUEST["redir"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 } elseif (!empty( $_SERVER["HTTP_REFERER"])) {
-    $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
+    $base = strtolower($phorum->url->base());
     $len = strlen($base);
     if (strtolower(substr($_SERVER["HTTP_REFERER"],0,$len)) == $base) {
         $redir = htmlspecialchars($_SERVER["HTTP_REFERER"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }
 }
 if (! isset($redir)) {
-    $redir = phorum_get_url(PHORUM_LIST_URL);
+    $redir = $phorum->url->get(PHORUM_LIST_URL);
 }
 
 // fill the breadcrumbs-info.
@@ -517,8 +517,8 @@ $PHORUM['DATA']['DESCRIPTION'] = '';
 
 // Setup template data.
 $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
-$PHORUM["DATA"]["URL"]["REGISTER"] = phorum_get_url( PHORUM_REGISTER_URL );
-$PHORUM["DATA"]["URL"]["ACTION"] = phorum_get_url( PHORUM_LOGIN_ACTION_URL );
+$PHORUM["DATA"]["URL"]["REGISTER"] = $phorum->url->get( PHORUM_REGISTER_URL );
+$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url->get( PHORUM_LOGIN_ACTION_URL );
 $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
 $PHORUM["DATA"]["LOGIN"]["username"] = (!empty($_POST["username"])) ? htmlspecialchars( $_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ) : "";
 $PHORUM["DATA"]["ERROR"] = $error;
@@ -526,7 +526,7 @@ $PHORUM["DATA"]["OKMSG"] = $okmsg;
 
 $PHORUM["DATA"]["OPENID"] = $PHORUM["open_id"];
 if($PHORUM["open_id"]){
-    $PHORUM["DATA"]["URL"]["open_id"] = phorum_get_url(PHORUM_OPENID_URL);
+    $PHORUM["DATA"]["URL"]["open_id"] = $phorum->url->get(PHORUM_OPENID_URL);
 }
 
 $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";

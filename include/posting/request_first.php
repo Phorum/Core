@@ -56,7 +56,7 @@ if ($mode != "post")
         }
     }
     if (! $dbmessage) {
-        phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
+        phorum_redirect_by_url($phorum->url->get(PHORUM_LIST_URL));
         exit;
     }
 }

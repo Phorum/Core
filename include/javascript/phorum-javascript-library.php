@@ -155,7 +155,7 @@ Phorum.Ajax =
 {
     // The URL that we can use to access the Phorum Ajax layer script.
     // The 'callback=?' part is a special placeholder for jQuery's JSONP code.
-    URL: '<?php print phorum_get_url(PHORUM_AJAX_URL, 'callback=?') ?>',
+    URL: '<?php print Phorum::API()->url->get(PHORUM_AJAX_URL,'callback=?')?>',
 
     /**
      * Execute an Ajax Phorum call.

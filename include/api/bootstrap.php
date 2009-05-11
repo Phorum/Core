@@ -314,14 +314,6 @@ if (extension_loaded('phorum')) {
     exit(0);
 }
 
-// Setup phorum_get_url(): this function is used for generating all Phorum
-// related URL's.
-/**
- * @todo move this functionality to an API and provide a fallback
- *       phorum_get_url() function for backward compatibility.
- */
-require_once PHORUM_PATH.'/include/phorum_get_url.php';
-
 // Setup the template path and http path. These are put in a variable to give
 // module authors a chance to override them. This can be especially useful
 // for distibuting a module that contains a full Phorum template as well.
@@ -398,6 +390,25 @@ function phorum_api_strerror()
     } else {
         return $GLOBALS["PHORUM"]["API"]["error"];
     }
+}
+
+# ----------------------------------------------------------------------
+# Backward compatibility
+# ----------------------------------------------------------------------
+
+// The URL related functions have been replaced with the Phorum URL API
+// function (phorum_api_url_*).
+
+function phorum_get_url()
+{
+    Phorum::API()->url; // make sure the URL API layer code is loaded.
+    $argv = func_get_args();
+    return call_user_func_array('phorum_api_url_get', $argv);
+}
+
+function phorum_get_current_url($include_query_string = TRUE)
+{
+    return Phorum::API()->url->current($include_query_string);
 }
 
 ?>

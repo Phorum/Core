@@ -49,6 +49,7 @@ if (!defined("PHORUM")) return;
 function phorum_format_messages ($data, $author_specs = NULL)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Prepare author specs.
     if ($author_specs === NULL) $author_specs = array();
@@ -85,7 +86,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
     $phorum_br = '<phorum break>';
 
     // prepare url-templates used later on
-    $profile_url_template = phorum_get_url(PHORUM_PROFILE_URL, '%spec_data%');
+    $profile_url_template = $phorum->url->get(PHORUM_PROFILE_URL, '%spec_data%');
 
     // Apply Phorum's formatting rules to all messages.
     foreach( $data as $key => $message )

@@ -93,15 +93,15 @@ if(!empty($cache)){
             $thread_start = $messages[$thread];
         }
 
-        $feed_url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $PHORUM["forum_id"], $thread, $thread);
+        $feed_url = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $PHORUM["forum_id"], $thread, $thread);
         $feed_title = strip_tags($thread_start["subject"]);
         $feed_description = strip_tags($thread_start["body"]);
     } elseif($PHORUM["forum_id"]){
-        $feed_url = phorum_get_url(PHORUM_LIST_URL);
+        $feed_url = $phorum->url->get(PHORUM_LIST_URL);
         $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]." - ".$PHORUM["DATA"]["NAME"]);
         $feed_description = strip_tags($PHORUM["DATA"]["DESCRIPTION"]);
     } else {
-        $feed_url = phorum_get_url(PHORUM_INDEX_URL);
+        $feed_url = $phorum->url->get(PHORUM_INDEX_URL);
         $feed_title = strip_tags($PHORUM["DATA"]["TITLE"]);
         $feed_description = (!empty($PHORUM["description"])) ? $PHORUM["description"] : "";
     }

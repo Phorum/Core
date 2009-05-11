@@ -3,6 +3,7 @@
 function phorum_build_forum_list() {
 
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Check what forums the current user can read.
     $allowed_forums = phorum_api_user_check_access(
@@ -63,9 +64,9 @@ function phorum_build_forum_list() {
             // Skip empty folders.
             if (empty($forums[$forum['forum_id']]['childcount'])) continue;
 
-            $url = phorum_get_url(PHORUM_INDEX_URL, $forum["forum_id"]);
+            $url = $phorum->url->get(PHORUM_INDEX_URL, $forum["forum_id"]);
         } else {
-            $url = phorum_get_url(PHORUM_LIST_URL, $forum["forum_id"]);
+            $url = $phorum->url->get(PHORUM_LIST_URL, $forum["forum_id"]);
         }
 
         $indent = count($forum["forum_path"]) - 2;

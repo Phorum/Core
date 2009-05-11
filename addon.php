@@ -54,9 +54,14 @@
 // ---------------------------
 //
 // If you want to link to the addon script, then always use the
-// phorum_get_url() function for generating the URL to link to.
+// phorum_api_url_get() function for generating the URL to link to.
 //
-//   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo");
+//   $url = phorum_api_url_get(PHORUM_ADDON_URL, "module=foo");
+//
+//   or
+//
+//   $phorum = Phorum::API();
+//   $url = $phorum->url->get(PHORUM_ADDON_URL, "module=foo");
 //
 //
 // IMPLEMENTING MULTIPLE ADDON ACTIONS:
@@ -72,7 +77,12 @@
 // to see what action to perform. Generating an URL for this example
 // would look like this:
 //
-//   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo", "action=bar");
+//   $url = phorum_api_url_get(PHORUM_ADDON_URL, "module=foo", "action=bar");
+//
+//   or
+//
+//   $phorum = Phorum::API();
+//   $url = $phorum->url->get(PHORUM_ADDON_URL, "module=foo", "action=bar");
 //
 
 define('phorum_page','addon');

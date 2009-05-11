@@ -87,6 +87,8 @@ function phorum_mod_smileys_format_fixup($data)
 function phorum_mod_smileys_editor_tool_plugin()
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    $phorum = Phorum::API();
+
     $lang = $PHORUM["DATA"]["LANG"]["mod_smileys"];
 
     // Register the smiley tool button for the message body.
@@ -123,7 +125,7 @@ function phorum_mod_smileys_editor_tool_plugin()
     // Register the smileys help page.
     editor_tools_register_help(
         $description,
-        phorum_get_url(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
+        $phorum->url->get(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
     );
 }
 

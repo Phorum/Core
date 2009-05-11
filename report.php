@@ -65,11 +65,11 @@ if(is_array($message) && count($message)) {
                 "raw_date"    => $message["datestamp"],
                 "date"        => phorum_date($PHORUM["short_date_time"], $message["datestamp"]),
                 "explanation" => wordwrap($_POST["explanation"], 72),
-                "url"         => phorum_get_url(PHORUM_READ_URL, $message["thread"], $message_id),
-                "delete_url"  => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
-                "hide_url"    => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
-                "edit_url"    => phorum_get_url(PHORUM_POSTING_URL, 'moderation', $message_id),
-                "reporter_url"=> phorum_get_url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
+                "url"         => $phorum->url->get(PHORUM_READ_URL, $message["thread"], $message_id),
+                "delete_url"  => $phorum->url->get(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
+                "hide_url"    => $phorum->url->get(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
+                "edit_url"    => $phorum->url->get(PHORUM_POSTING_URL, 'moderation', $message_id),
+                "reporter_url"=> $phorum->url->get(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
                 "message"     => $message
                 );
 
@@ -87,7 +87,7 @@ if(is_array($message) && count($message)) {
 
                 phorum_email_user($mail_users, $mail_data);
 
-                $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
+                $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url->get(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
                 $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
                 $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["ReportPostSuccess"];
                 $template="message";
@@ -107,7 +107,7 @@ if(is_array($message) && count($message)) {
     $PHORUM["DATA"]["PostBody"] = $message["body"];
     $PHORUM["DATA"]["raw_PostDate"] = $message["datestamp"];
     $PHORUM["DATA"]["PostDate"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
-    $PHORUM["DATA"]["ReportURL"] = phorum_get_url(PHORUM_REPORT_URL, $message_id);
+    $PHORUM["DATA"]["ReportURL"] = $phorum->url->get(PHORUM_REPORT_URL, $message_id);
 
     // if the report was not successfully sent, keep whatever explanation they gave already
     if (isset($_POST["explanation"]) && !$report) {

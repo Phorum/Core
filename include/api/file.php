@@ -560,6 +560,7 @@ function phorum_api_file_store($file)
 function phorum_api_file_check_read_access($file_id, $flags = 0)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     settype($file_id, "int");
 
@@ -637,7 +638,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         preg_match($matchhost, $_SERVER["HTTP_REFERER"])) {
 
         // Generate the base URL for the Phorum.
-        $base = strtolower(phorum_get_url(PHORUM_BASE_URL));
+        $base = strtolower($phorum->url->get(PHORUM_BASE_URL));
 
         // Strip query string from the base URL. We mainly want to
         // check if the location matches the Phorum location.
