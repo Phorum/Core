@@ -47,8 +47,7 @@ require_once './include/format_functions.php';
 
 // a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-    phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
-    exit();
+    $phorum->redirect(PHORUM_LIST_URL);
 }
 
 // if the user is not fully logged in, send him to the login page
@@ -60,10 +59,10 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
         if (in_array("$k=$v", $PHORUM["DATA"]["GET_VARS"])) continue;
         if(is_numeric($k)) $args[] = $v; else $args[] = "$k=$v";
     }
-    $redir = urlencode(call_user_func_array('phorum_get_url', $args));
+    $phorum->url; // To make sure the URL API layer is loaded.
+    $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
 
-    phorum_redirect_by_url($phorum->url(PHORUM_LOGIN_URL, "redir=$redir"));
-    exit();
+    $phorum->redirect(PHORUM_LOGIN_URL, "redir=$redir");
 }
 
 // If private messages are disabled, just show a simple error message.
@@ -628,10 +627,10 @@ if (!empty($action))
         if (!empty($pm_id)) $args[]  = "pm_id=" . $pm_id;
         if (!empty($redirect_message)) $args[] = "okmsg=" . $redirect_message;
 
-        $redir_url = call_user_func_array('phorum_get_url', $args);
+        $phorum->url; // To make sure the URL API layer is loaded.
+        $redir_url = call_user_func_array('phorum_api_url_get', $args);
 
-        phorum_redirect_by_url($redir_url);
-        exit();
+        $phorum->redirect($redir_url);
     }
 }
 

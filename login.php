@@ -26,8 +26,8 @@ require_once './include/email_functions.php';
 // Handle logout
 // ----------------------------------------------------------------------------
 
-if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
-
+if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
+{
     /*
      * [hook]
      *     before_logout
@@ -109,8 +109,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
     if (isset($PHORUM["hooks"]["after_logout"]))
         $url = phorum_hook("after_logout", $url);
 
-    phorum_redirect_by_url($url);
-    exit();
+    $phorum->redirect($url);
 }
 
 // ----------------------------------------------------------------------------
@@ -399,8 +398,7 @@ if (count($_POST) > 0) {
                     if (isset($PHORUM["hooks"]["after_login"]))
                         $redir = phorum_hook("after_login", $redir);
 
-                    phorum_redirect_by_url($redir);
-                    exit();
+                    $phorum->redirect($redir);
                 }
             }
 

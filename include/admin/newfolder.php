@@ -95,7 +95,7 @@ if (count($_POST))
         // The URL to redirect to.
         $url = phorum_admin_build_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.urlencode($okmsg)));
 
-        phorum_redirect_by_url($url);
+        $phorum->redirect($url);
         exit;
     }
 }

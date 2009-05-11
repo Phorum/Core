@@ -378,7 +378,7 @@ if ($success)
     }
 
     if ($message["status"] > 0) {
-        phorum_redirect_by_url($redir_url);
+        $phorum->redirect($redir_url);
     } else {
         // give a message about this being a moderated forum before redirecting        
         $PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];

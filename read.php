@@ -34,9 +34,7 @@ if (!phorum_check_read_common()) {
 
 // somehow we got to a folder
 if ($PHORUM["folder_flag"]) {
-    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL, $PHORUM['forum_id']);
 }
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
@@ -55,7 +53,7 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
 // setup some stuff based on the url passed
 if(empty($PHORUM["args"][1])) {
     // we have no thread-id given, redirect to the index
-    phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
+    $phorum->redirect(PHORUM_LIST_URL);
     exit();
 } elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
     $thread = (int)$PHORUM["args"][1];
@@ -95,8 +93,7 @@ if(empty($PHORUM["args"][1])) {
                 // Could be called from list too, in which case we need
                 // to redirect back to the list.
                 if(isset($PHORUM["args"][3]) && $PHORUM["args"][3] == "list") {
-                    $dest_url = $phorum->url(PHORUM_LIST_URL);
-                    phorum_redirect_by_url($dest_url);
+                    $phorum->redirect(PHORUM_LIST_URL);
                 }
                 break;
 
@@ -128,8 +125,7 @@ if(empty($PHORUM["args"][1])) {
             }
         }
 
-        phorum_redirect_by_url($dest_url);
-        exit();
+        $phorum->redirect($dest_url);
     }
 
     $thread = (int)$PHORUM["args"][1];

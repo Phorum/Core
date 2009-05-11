@@ -29,9 +29,7 @@ if(!phorum_check_read_common()) {
 
 // somehow we got to a folder
 if($PHORUM["folder_flag"] || empty($PHORUM["forum_id"])){
-    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
 }
 
 if(isset($PHORUM["args"][1])){
@@ -41,7 +39,7 @@ if(isset($PHORUM["args"][1])){
 }
 
 if(empty($thread)) {
-    phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
+    $phorum->redirect(PHORUM_LIST_URL);
     exit();
 }
 

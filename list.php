@@ -32,16 +32,12 @@ if (!phorum_check_read_common()) {
 
 // No forum_id in the request.
 if (empty($PHORUM["forum_id"])){
-    $dest_url = $phorum->url(PHORUM_INDEX_URL);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL);
 }
 
 // Somehow we got to a folder in list.php.
 if ($PHORUM["folder_flag"]){
-    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
 }
 
 // Handle "mark read" clicks.
@@ -54,9 +50,7 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' &&
     // Redirect to a fresh list of the current folder without the mark read
     // parameters in the URL. This way we prevent users from bookmarking
     // the mark read URL.
-    $dest_url = $phorum->url(PHORUM_LIST_URL);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_LIST_URL);
 }
 
 // figure out what page we are on
@@ -199,9 +193,7 @@ if($rows == null)
 
     // redirect if invalid page
     if(count($rows) < 1 && $offset > 0){
-        $dest_url = $phorum->url(PHORUM_LIST_URL);
-        phorum_redirect_by_url($dest_url);
-        exit();
+        $phorum->redirect(PHORUM_LIST_URL);
     }
 
     if ($PHORUM["threaded_list"]){

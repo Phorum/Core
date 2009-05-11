@@ -141,7 +141,7 @@ if (!empty($PHORUM['jump_on_single_forum']) &&
     $forum = array_pop($PHORUM['DATA']['FORUMS']);
     $url = $forum['folder_flag']
          ? $forum['URL']['INDEX'] : $forum['URL']['LIST'];
-    phorum_redirect_by_url($url);
+    $phorum->redirect($url);
     exit;
 }
 

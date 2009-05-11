@@ -27,9 +27,9 @@ require_once './common.php';
 
 if (isset($PHORUM["args"]["phorum_redirect_to"])) {
     $redir = urldecode($PHORUM["args"]["phorum_redirect_to"]);
-    phorum_redirect_by_url($redir);
+    $phorum->redirect($redir);
 } else {
-    header("Location: index.php");
+    $phorum->redirect(PHORUM_INDEX_URL);
 }
 
 ?>

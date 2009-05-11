@@ -279,8 +279,7 @@ if (!defined( "PHORUM_ADMIN" ))
               !isset($PHORUM['internal_patchlevel']) ||
               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL) {
         if(isset($PHORUM["DBCONFIG"]["upgrade_page"])){
-            phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
-            exit();
+            $phorum->redirect($PHORUM["DBCONFIG"]["upgrade_page"]);
         } else {
             echo "<html><head><title>Upgrade notification</title></head><body>
                   It looks like you have installed a new version of
@@ -344,7 +343,7 @@ if (!defined( "PHORUM_ADMIN" ))
                 phorum_hook("common_no_forum", "");
             }
 
-            phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
+            $phorum->redirect(PHORUM_INDEX_URL);
             exit();
         }
 
@@ -912,11 +911,10 @@ function phorum_require_login()
     $phorum = Phorum::API();
 
     if (!$PHORUM["user"]["user_id"]) {
-        $url = $phorum->url(
-            PHORUM_LOGIN_URL, "redir=" . phorum_get_current_url()
+        $phorum->redirect(
+            PHORUM_LOGIN_URL,
+            "redir=" . $phorum->url->current()
         );
-        phorum_redirect_by_url($url);
-        exit();
     }
 }
 
@@ -1696,48 +1694,6 @@ function phorum_get_language_info()
     asort($langs, SORT_STRING);
 
     return $langs;
-}
-
-/**
- * Redirect the browser to a different page.
- *
- * @param string $redir_url
- *     The URL to redirect to.
- */
-function phorum_redirect_by_url($redir_url)
-{
-    $phorum = Phorum::API();
-
-    // Some browsers strip the anchor from the URL in case we redirect
-    // from a POSTed page :-/. So here we wrap the redirect,
-    // to work around that problem.
-    if (count($_POST) && strstr($redir_url, "#")) {
-        $redir_url = $phorum->url(
-            PHORUM_REDIRECT_URL,
-            'phorum_redirect_to=' . urlencode($redir_url)
-        );
-    }
-
-    // Check for response splitting and valid http(s) URLs.
-    if(preg_match("/\s/", $redir_url) || !preg_match("!^https?://!i", $redir_url)){
-        $redir_url = $phorum->url(PHORUM_INDEX_URL);
-    }
-
-    // An ugly IIS-hack to avoid crashing IIS servers.
-    if (isset($_SERVER['SERVER_SOFTWARE']) &&
-        stristr($_SERVER['SERVER_SOFTWARE'], "Microsoft-IIS")) {
-        print "<html><head>\n<title>Redirecting ...</title>\n";
-        print "<meta http-equiv=\"refresh\" content=\"0; URL=$redir_url\">";
-        print "</head>\n";
-        print "<body><a href=\"$redir_url\">Redirecting ...</a></body>\n";
-        print "</html>";
-    }
-    // Standard redirection.
-    else {
-        header( "Location: $redir_url" );
-    }
-
-    exit(0);
 }
 
 /**

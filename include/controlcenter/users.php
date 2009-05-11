@@ -20,7 +20,7 @@
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
 if (!$PHORUM["DATA"]["USER_MODERATOR"]) {
-    phorum_redirect_by_url($phorum->url(PHORUM_CONTROLCENTER_URL));
+    $phorum->redirect(PHORUM_CONTROLCENTER_URL);
     exit();
 }
 

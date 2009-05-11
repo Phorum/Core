@@ -90,8 +90,7 @@ if (count($_POST))
             $url = phorum_admin_build_url(array('module=default',"parent_id=$forum[parent_id]"));
         }
 
-        phorum_redirect_by_url($url);
-        exit;
+        $phorum->redirect($url);
     }
     extract($forum);
 }

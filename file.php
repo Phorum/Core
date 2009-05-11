@@ -29,8 +29,7 @@ ob_start();
 // If this argument is missing, we redirect the user back to
 // the message list for the forum.
 if (empty($PHORUM["args"]["file"])) {
-    phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
-    exit();
+    $phorum->redirect(PHORUM_LIST_URL);
 }
 $file_id = (int) $PHORUM["args"]["file"];
 

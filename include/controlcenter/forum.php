@@ -84,8 +84,7 @@ if ( count( $_POST ) ) {
     // reflect the new template.
     if (empty($error) && !empty($_POST["user_template"]) &&
         $oldtemplate != $_POST["user_template"]) {
-        phorum_redirect_by_url($PHORUM['DATA']['URL']['CC6']);
-        exit();
+        $phorum->redirect($PHORUM['DATA']['URL']['CC6']);
     }
 }
 

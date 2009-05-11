@@ -48,7 +48,8 @@ $PHORUM["DATA"]["SEARCH"]["showresults"] = false;
 $PHORUM["DATA"]["SEARCH"]["safe_search"] = "";
 $PHORUM["DATA"]["SEARCH"]["safe_author"] = "";
 
-function phorum_search_check_valid_vars() {
+function phorum_search_check_valid_vars()
+{
     global $PHORUM;
     $retval=true;
 
@@ -149,8 +150,7 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
     $search_url = call_user_func_array('phorum_api_url_get', $url_parameters);
 
     if (!empty($PHORUM["skip_intermediate_search_page"])) {
-        phorum_redirect_by_url($search_url);
-        exit(0);
+        $phorum->redirect($search_url);
     } else {
         $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["SearchRunning"];
         $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToSearch"];
@@ -181,8 +181,7 @@ if(!isset($PHORUM["args"]["match_threads"])) $PHORUM["args"]["match_threads"]=FA
 settype($PHORUM["args"]["match_threads"], "bool");
 
 if(!phorum_search_check_valid_vars()) {
-    $redir_url = $phorum->url(PHORUM_LIST_URL);
-    phorum_redirect_by_url($redir_url);
+    $phorum->redirect(PHORUM_LIST_URL);
 }
 
 // Check what forums the current user can read.

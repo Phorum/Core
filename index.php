@@ -40,20 +40,16 @@ if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
     // parameters in the URL. This way we prevent users from bookmarking
     // the mark read URL.
     if (!empty($PHORUM["args"][2])) {
-        $dest_url = $phorum->url(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
+        $phorum->redirect(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
     } else {
-        $dest_url = $phorum->url(PHORUM_INDEX_URL);
+        $phorum->redirect(PHORUM_INDEX_URL);
     }
-    phorum_redirect_by_url($dest_url);
-    exit();
 }
 
 // Somehow we arrived at a forum instead of a folder.
 // Redirect the user to the message list for that forum.
 if (!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"] == 0) {
-    $dest_url = $phorum->url(PHORUM_LIST_URL);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_LIST_URL);
 }
 
 // Setup the syndication feed URLs for this folder.

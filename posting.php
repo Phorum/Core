@@ -75,16 +75,12 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
 
 // No forum id was set. Take the user back to the index.
 if(!isset($PHORUM["forum_id"])){
-    $dest_url = $phorum->url(PHORUM_INDEX_URL);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL);
 }
 // Somehow we got to a folder in posting.php. Take the
 // user back to the folder.
 if($PHORUM["folder_flag"]) {
-    $dest_url = $phorum->url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
-    phorum_redirect_by_url($dest_url);
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
 }
 
 // ----------------------------------------------------------------------

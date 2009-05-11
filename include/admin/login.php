@@ -48,10 +48,10 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
                 
             if(!empty($_POST["target"])){
                 $target_url = phorum_admin_build_url($_POST['target']);
-                phorum_redirect_by_url($target_url);
+                $phorum->redirect($target_url);
             } else {
                 $redir_url = phorum_admin_build_url('');
-                phorum_redirect_by_url($redir_url);
+                $phorum->redirect($redir_url);
             }
             exit();
 

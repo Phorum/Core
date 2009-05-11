@@ -40,7 +40,7 @@
                    );
                    phorum_api_user_save($tmp_user);  
                                     
-                   phorum_redirect_by_url($PHORUM['http_path']);
+                   $phorum->redirect($PHORUM['http_path']);
                    
                } elseif(!empty($_POST['continue'])) {
                    
@@ -50,7 +50,7 @@
                        $url = phorum_admin_build_url('');
                    }
                 
-                   phorum_redirect_by_url($url);
+                   $phorum->redirect($url);
                }
                exit();
            }

@@ -22,8 +22,7 @@ if (!defined("PHORUM_CONTROL_CENTER")) return;
 require_once './include/api/file.php';
 
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
-    phorum_redirect_by_url($phorum->url(PHORUM_CONTROLCENTER_URL));
-    exit();
+    $phorum->redirect(PHORUM_CONTROLCENTER_URL);
 }
 
 // the number of days to show

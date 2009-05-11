@@ -72,9 +72,7 @@ if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPI
         $phorum->url; // Make sure the URL API layer code is loaded.
         $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
 
-        phorum_redirect_by_url($phorum->url(PHORUM_LOGIN_URL,"redir=$redir"));
-        exit();
-
+        $phorum->redirect(PHORUM_LOGIN_URL,"redir=$redir");
     }
 }
 
@@ -113,8 +111,7 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
         }
     }
     if (! $origmessage) {
-        phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
-        exit();
+        $phorum->redirect(PHORUM_INDEX_URL);
     }
 
     // Copy read-only information for editing messages.
@@ -187,8 +184,7 @@ if ($mode == "reply")
 
         // In other cases, redirect users that are replying to
         // unapproved messages to the message list.
-        phorum_redirect_by_url($phorum->url(PHORUM_LIST_URL));
-        exit;
+        $phorum->redirect(PHORUM_LIST_URL);
     }
     
     // closed topic, show a message

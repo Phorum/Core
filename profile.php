@@ -35,8 +35,7 @@ if(!empty($PHORUM["args"][1])){
 }
 
 if(empty($PHORUM["args"][1]) || empty($profile_id)){
-    phorum_redirect_by_url($phorum->url(PHORUM_INDEX_URL));
-    exit();
+    $phorum->redirect(PHORUM_INDEX_URL);
 }
 
 $user = phorum_api_user_get($profile_id, TRUE);

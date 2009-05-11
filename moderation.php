@@ -44,11 +44,10 @@ if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
 }
 
 // If the user is not fully logged in, send him to the login page.
-// because moderation action can vary so much, the only safe bet is to send them
-// to the referrer if they are not fully logged in
+// because moderation action can vary so much, the only safe bet is to send
+// them to the referrer if they are not fully logged in
 if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    phorum_redirect_by_url($phorum->url(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]));
-    exit();
+    $phorum->redirect(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]);
 }
 
 // if we gave the user a confirmation form and they clicked No, send them back to the message
@@ -76,8 +75,7 @@ if(isset($_POST["confirmation"]) && $_POST["confirmation"]==$PHORUM["DATA"]["LAN
         $url = $phorum->url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
     }
 
-    phorum_redirect_by_url($url);
-    exit();
+    $phorum->redirect($url);
 }
 
 

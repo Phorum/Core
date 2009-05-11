@@ -223,8 +223,7 @@ $phorum->db = new Phorum(
 if (!$phorum->db->check_connection())
 {
     if(isset($PHORUM['DBCONFIG']['down_page'])){
-        phorum_redirect_by_url($PHORUM['DBCONFIG']['down_page']);
-        exit();
+        $phorum->redirect($PHORUM['DBCONFIG']['down_page']);
     } else {
         echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
         exit();
@@ -409,6 +408,11 @@ function phorum_get_url()
 function phorum_get_current_url($include_query_string = TRUE)
 {
     return Phorum::API()->url->current($include_query_string);
+}
+
+function phorum_redirect_by_url($url)
+{
+    return Phorum::API()->redirect($url);
 }
 
 ?>

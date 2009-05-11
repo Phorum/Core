@@ -22,7 +22,7 @@ require_once './common.php';
 require_once './include/api/user.php';
 
 if(empty($PHORUM["open_id"])){
-    phorum_redirect_by_url($phorum->url(PHORUM_URL_LOGIN));
+    $phorum->redirect(PHORUM_URL_LOGIN);
 }
 
 define("PHORUM_OPENID_ERROR_INVALID", 1);
@@ -135,7 +135,7 @@ if(isset($_POST["openid"])){
     if ($response->status == Auth_OpenID_CANCEL) {
 
         // This means the authentication was cancelled.
-        phorum_redirect_by_url($phorum->url(PHORUM_URL_LOGIN));
+        $phorum->redirect(PHORUM_URL_LOGIN);
 
     } else if ($response->status == Auth_OpenID_FAILURE) {
 
@@ -214,7 +214,7 @@ if(isset($_POST["openid"])){
                 );
             }
 
-            phorum_redirect_by_url($phorum->url(PHORUM_URL_INDEX));
+            $phorum->redirect(PHORUM_URL_INDEX);
 
         }
 
