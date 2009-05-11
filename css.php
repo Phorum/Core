@@ -126,7 +126,7 @@ phorum_build_common_urls();
  */
 $module_registrations = array();
 if (isset($PHORUM['hooks']['css_register'])) {
-    $res = phorum_hook('css_register', array(
+    $res = $phorum->modules->hook('css_register', array(
         'css'      => $css,
         'register' => $module_registrations)
     );
@@ -325,7 +325,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
      *     The filtered CSS code.
      */
     if (isset($PHORUM['hooks']['css_filter'])) {
-        $content = phorum_hook('css_filter', $content);
+        $content = $phorum->modules->hook('css_filter', $content);
     }
 
     if (!empty($PHORUM['cache_css'])) {

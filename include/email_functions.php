@@ -20,6 +20,7 @@
 if (!defined("PHORUM")) return;
 
 require_once './include/api/user.php';
+require_once './include/api/mail.php';
 
 function phorum_valid_email($email){
     global $PHORUM;
@@ -65,7 +66,7 @@ function phorum_valid_email($email){
 function phorum_email_user($addresses, $data)
 {
     global $PHORUM;
-    require_once './include/api/mail.php';
+    $phorum = Phorum::API();
 
     // If we have no from_address in the message data, then generate
     // from_address ourselves, based on the system_email_* settings.
@@ -130,8 +131,11 @@ function phorum_email_user($addresses, $data)
      *     }
      *     </hookcode>
      */
-    if (isset($PHORUM["hooks"]["email_user_start"]))
-        list($addresses,$data)=phorum_hook("email_user_start",array($addresses,$data));
+    if (isset($PHORUM["hooks"]["email_user_start"])) {
+        list ($addresses,$data) = $phorum->modules->hook(
+            "email_user_start",array($addresses,$data)
+        );
+    }
 
     // Clear some variables that are meant for use by the email_user_start hook.
     unset($data['mailmessagetpl']);
@@ -247,7 +251,7 @@ function phorum_email_user($addresses, $data)
             'messageid'  => $messageid
         );
 
-        $send_messages = phorum_hook("send_mail", $hook_data);
+        $send_messages = $phorum->modules->hook("send_mail", $hook_data);
     }
 
     if($send_messages != 0 && $num_addresses > 0){

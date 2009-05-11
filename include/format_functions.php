@@ -183,12 +183,14 @@ function phorum_format_messages ($data, $author_specs = NULL)
     }
 
     // A hook for module writers to apply custom message formatting.
-    if (isset($PHORUM["hooks"]["format"]))
-        $data = phorum_hook("format", $data);
+    if (isset($PHORUM["hooks"]["format"])) {
+        $data = $phorum->modules->hook("format", $data);
+    }
 
     // A hook for module writers for doing post formatting fixups.
-    if (isset($PHORUM["hooks"]["format_fixup"]))
-        $data = phorum_hook("format_fixup", $data);
+    if (isset($PHORUM["hooks"]["format_fixup"])) {
+        $data = $phorum->modules->hook("format_fixup", $data);
+    }
 
     // Clean up after the mods are done.
     foreach( $data as $key => $message ) {

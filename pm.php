@@ -478,7 +478,7 @@ if (!empty($action))
 
                                 if (isset($PHORUM["hooks"]["pm_checkmailboxsize"]))
                                     list($user,$current_count,$max_allowed_message_count) =
-                                         phorum_hook("pm_checkmailboxsize", array($user,$current_count,$max_allowed_message_count));
+                                         $phorum->modules->hook("pm_checkmailboxsize", array($user,$current_count,$max_allowed_message_count));
 
                                 if ($current_count['total'] >= $max_allowed_message_count) {
                                     if ($user['user_id'] == $PHORUM["user"]["user_id"]) {
@@ -534,7 +534,7 @@ if (!empty($action))
                             }
 
                             if (isset($PHORUM["hooks"]["pm_sent"]))
-                                phorum_hook("pm_sent", $pm_message, array_keys($recipients));
+                                $phorum->modules->hook("pm_sent", $pm_message, array_keys($recipients));
                         }
 
                         // Invalidate user cache, to update message counts.
@@ -572,7 +572,7 @@ if (!empty($action))
                 foreach($_POST["checked"] as $buddy_user_id) {
                     phorum_db_pm_buddy_delete($buddy_user_id);
                     if (isset($PHORUM["hooks"]["buddy_delete"]))
-                        phorum_hook("buddy_delete", $buddy_user_id);
+                        $phorum->modules->hook("buddy_delete", $buddy_user_id);
                 }
             }
 
@@ -598,7 +598,7 @@ if (!empty($action))
                 if (phorum_db_pm_buddy_add($buddy_user_id)) {
                     $okmsg = $PHORUM["DATA"]["LANG"]["BuddyAddSuccess"];
                     if (isset($PHORUM["hooks"]["buddy_add"]))
-                        phorum_hook("buddy_add", $buddy_user_id);
+                        $phorum->modules->hook("buddy_add", $buddy_user_id);
                 } else {
                     $error = $PHORUM["DATA"]["LANG"]["BuddyAddFail"];
                 }
@@ -683,7 +683,7 @@ switch ($page) {
         if (count($buddy_list)) {
             $buddy_users = phorum_api_user_get(array_keys($buddy_list));
             if (isset($PHORUM["hooks"]["read_user_info"]))
-                $buddy_users = phorum_hook("read_user_info", $buddy_users);
+                $buddy_users = $phorum->modules->hook("read_user_info", $buddy_users);
         } else {
             $buddy_users = array();
         }
@@ -772,7 +772,7 @@ switch ($page) {
          *     </hookcode>
          */
         if (isset($PHORUM['hooks']['buddy_list'])) {
-            $buddies = phorum_hook('buddy_list', $buddies);
+            $buddies = $phorum->modules->hook('buddy_list', $buddies);
         }
 
         $PHORUM["DATA"]["USERTRACK"] = $PHORUM["track_user_activity"];
@@ -842,7 +842,7 @@ switch ($page) {
              *     </hookcode>
              */
             if (isset($PHORUM['hooks']['pm_list'])) {
-                $list = phorum_hook('pm_list', $list);
+                $list = $phorum->modules->hook('pm_list', $list);
             }
 
             // Setup template variables.
@@ -917,7 +917,7 @@ switch ($page) {
              *     </hookcode>
              */
             if (isset($PHORUM['hooks']['pm_read'])) {
-                $message = phorum_hook('pm_read', $message);
+                $message = $phorum->modules->hook('pm_read', $message);
             }
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
@@ -1250,6 +1250,7 @@ function phorum_pm_format($messages)
 function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreplyto = NULL)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Build the reply subject.
     if (substr($message["subject"], 0, 3) != "Re:") {
@@ -1265,7 +1266,7 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
     // TODO (maybe it's handled already, but that would only be by accident).
 
     if (isset($PHORUM["hooks"]["quote"]))
-        $quote = phorum_hook("quote", array($author, $message["message"], $orig_author_id));
+        $quote = $phorum->modules->hook("quote", array($author, $message["message"], $orig_author_id));
 
     if (empty($quote) || is_array($quote))
     {

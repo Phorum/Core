@@ -89,9 +89,10 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
  *    }
  *     </hookcode>
  */
-if (! $error && isset($PHORUM["hooks"]["check_post"]))
+if (! $error && isset($PHORUM["hooks"]["check_post"])) {
     list($message, $error) =
-        phorum_hook("check_post", array($message, $error));
+        $phorum->modules->hook("check_post", array($message, $error));
+}
 
 // Data integrity checks for all messages.
 if (! $error)

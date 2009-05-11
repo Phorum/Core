@@ -106,7 +106,7 @@ if (function_exists('get_magic_quotes_gpc') &&
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["parse_request"])) {
-    phorum_hook("parse_request");
+    $phorum->modules->hook("parse_request");
 }
 
 // Get the forum id if set using a request parameter.
@@ -225,7 +225,7 @@ if (empty( $PHORUM["forum_id"])) $PHORUM["forum_id"] = 0;
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["common_pre"])) {
-    phorum_hook("common_pre", "");
+    $phorum->modules->hook("common_pre", "");
 }
 
 // ----------------------------------------------------------------------
@@ -340,7 +340,7 @@ if (!defined( "PHORUM_ADMIN" ))
              *     </hookcode>
              */
             if (isset($PHORUM["hooks"]["common_no_forum"])) {
-                phorum_hook("common_no_forum", "");
+                $phorum->modules->hook("common_no_forum", "");
             }
 
             $phorum->redirect(PHORUM_INDEX_URL);
@@ -465,7 +465,7 @@ if (!defined( "PHORUM_ADMIN" ))
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["common_post_user"])) {
-         phorum_hook("common_post_user", "");
+         $phorum->modules->hook("common_post_user", "");
     }
 
     // Some code that only has to be run if the forum isn't set to fixed view.
@@ -686,7 +686,7 @@ if (!defined( "PHORUM_ADMIN" ))
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["common"])) {
-        phorum_hook("common", "");
+        $phorum->modules->hook("common", "");
     }
 
     /*
@@ -750,7 +750,7 @@ if (!defined( "PHORUM_ADMIN" ))
      */
     $page_hook = 'page_'.phorum_page;
     if (isset($PHORUM["hooks"][$page_hook])) {
-        phorum_hook($page_hook, "");
+        $phorum->modules->hook($page_hook, "");
     }
 
     $formatted = $phorum->user->format(array($PHORUM['user']));
@@ -891,7 +891,7 @@ function phorum_shutdown()
      *     No output.
      */
     if (isset($PHORUM["hooks"]["shutdown"])) {
-        phorum_hook("shutdown");
+        $phorum->modules->hook("shutdown");
     }
 
     // Shutdown the database connection.
@@ -1050,6 +1050,7 @@ function phorum_switch_template($template = NULL, $template_path = NULL, $templa
 function phorum_get_template_file( $page )
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     $page = basename($page);
 
@@ -1118,7 +1119,7 @@ function phorum_get_template_file( $page )
     $tplbase = NULL;
     $template = NULL;
     if (isset($GLOBALS["PHORUM"]["hooks"]["get_template_file"])) {
-        $res = phorum_hook("get_template_file", array(
+        $res = $phorum->modules->hook("get_template_file", array(
             'page'   => $page,
             'source' => NULL
         ));
@@ -1256,7 +1257,9 @@ function phorum_get_template( $page )
  *     If string, that template is included.
  *     If array, all the templates are included in the order of the array.
  */
-function phorum_output($templates) {
+function phorum_output($templates)
+{
+    $phorum = Phorum::API();
 
     if(!is_array($templates)){
         $templates = array($templates);
@@ -1305,7 +1308,7 @@ function phorum_output($templates) {
      *     </hookcode>
      */
     if (isset($GLOBALS["PHORUM"]["hooks"]["start_output"])) {
-        phorum_hook("start_output");
+        $phorum->modules->hook("start_output");
     }
 
     // Copy only what we need into the current scope. We do this at
@@ -1356,7 +1359,7 @@ function phorum_output($templates) {
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["after_header"])) {
-        phorum_hook("after_header");
+        $phorum->modules->hook("after_header");
     }
 
     foreach($templates as $template){
@@ -1397,7 +1400,7 @@ function phorum_output($templates) {
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["before_footer"])) {
-        phorum_hook("before_footer");
+        $phorum->modules->hook("before_footer");
     }
 
     include phorum_get_template("footer");
@@ -1436,7 +1439,7 @@ function phorum_output($templates) {
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["end_output"])) {
-        phorum_hook("end_output");
+        $phorum->modules->hook("end_output");
     }
 }
 
@@ -1503,83 +1506,6 @@ function phorum_build_common_urls()
     } else {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = $phorum->url( PHORUM_LOGIN_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = $phorum->url( PHORUM_REGISTER_URL );
-    }
-}
-
-/**
- * Run a Phorum hook.
- *
- * This function will check what modules to implement the requested
- * hook. Those modules are loaded and the module hook functions are called.
- *
- * @param string $hook
- *     The name of the hook.
- *
- * @param mixed
- *     Extra arguments that will be passed on to the hook functions.
- */
-function phorum_hook($hook)
-{
-    global $PHORUM;
-
-    // Keep track of modules that we have already loaded at
-    // earlier calls to the phorum_hook() function.
-    static $load_cache = array();
-
-    // Retrieve the arguments that were passed to the function.
-    $args = func_get_args();
-
-    // Shift off the hook name.
-    array_shift($args);
-
-    if (!empty($PHORUM['hooks'][$hook]))
-    {
-        // Load the modules for this hook.
-        foreach ($PHORUM['hooks'][$hook]['mods'] as $mod)
-        {
-            $mod = basename($mod);
-
-            // Check if the module file is not yet loaded.
-            if (isset($load_cache[$mod])) continue;
-            $load_cache[$mod] = 1;
-
-            // Load the module file.
-            if (file_exists(PHORUM_PATH."/mods/$mod/$mod.php")) {
-                require_once PHORUM_PATH."/mods/$mod/$mod.php";
-            } elseif (file_exists(PHORUM_PATH."/mods/$mod.php")) {
-                require_once PHORUM_PATH."/mods/$mod.php";
-            }
-
-            // Load the module database layer file.
-            if (!empty($PHORUM['moddblayers'][$mod])) {
-                $file = PHORUM_PATH."/mods/$mod/db/{$PHORUM['DBCONFIG']['type']}.php";
-                if (file_exists($file)) {
-                    require_once $file;
-                }
-            }
-        }
-
-        $called = array();
-        foreach ($PHORUM["hooks"][$hook]["funcs"] as $func)
-        {
-            // Do not call a function twice (in case it is configured twice
-            // for the same hook in the module info).
-            if (isset($called[$func])) continue;
-            $called[$func] = TRUE;
-
-            // call functions for this hook
-            if (function_exists($func)) {
-                if (count($args)) {
-                    $args[0] = call_user_func_array($func, $args);
-                } else {
-                    call_user_func($func);
-                }
-            }
-        }
-    }
-
-    if (isset($args[0])) {
-        return $args[0];
     }
 }
 
@@ -1876,9 +1802,9 @@ function phorum_database_error($error)
     global $PHORUM;
     $phorum = Phorum::API();
 
-    // Flush output that we buffered so far (for displaying a
+    // Clear any output that we buffered so far (for displaying a
     // clean page in the admin interface).
-    $phorum->buffer->flush();
+    $phorum->buffer->clear();
 
     /*
      * [hook]
@@ -1931,7 +1857,7 @@ function phorum_database_error($error)
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["database_error"])) {
-        phorum_hook("database_error", $error);
+        $phorum->modules->hook("database_error", $error);
     }
 
     // Find out what type of error handling is required.

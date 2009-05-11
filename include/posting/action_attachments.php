@@ -86,9 +86,11 @@ if ($do_detach)
              *     }
              *     </hookcode>
              */
-            if (isset($PHORUM["hooks"]["after_detach"]))
-                list($message,$info) =
-                    phorum_hook("after_detach", array($message,$info));
+            if (isset($PHORUM["hooks"]["after_detach"])) {
+                list($message,$info) = $phorum->modules->hook(
+                    "after_detach", array($message,$info)
+                );
+            }
 
             $attach_count--;
 
@@ -217,9 +219,11 @@ elseif ($do_attach && ! empty($_FILES))
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["before_attach"]))
-            list($message, $file) =
-                phorum_hook("before_attach", array($message, $file));
+        if (isset($PHORUM["hooks"]["before_attach"])) {
+            list($message, $file) = $phorum->modules->hook(
+                "before_attach", array($message, $file)
+            );
+        }
 
         // Store the file. We add it using message_id 0 (zero). Only when
         // the message gets saved definitely, the message_id will be updated
@@ -290,9 +294,11 @@ elseif ($do_attach && ! empty($_FILES))
              *     }
              *     </hookcode>
              */
-            if (isset($PHORUM["hooks"]["after_attach"]))
-                list($message, $new_attachment) =
-                    phorum_hook("after_attach", array($message, $new_attachment));
+            if (isset($PHORUM["hooks"]["after_attach"])) {
+                list($message, $new_attachment) = $phorum->modules->hook(
+                    "after_attach", array($message, $new_attachment)
+                );
+            }
 
             // Add the attachment to the message.
             $message['attachments'][] = $new_attachment;

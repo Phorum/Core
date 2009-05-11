@@ -96,6 +96,7 @@ function phorum_api_url()
 function phorum_api_url_get()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     $argv = func_get_args();
 
@@ -262,7 +263,7 @@ function phorum_api_url_get()
      */
     if (isset($PHORUM['hooks']['url_build'])) {
         $query_items = explode(',', $query_string);
-        $url = phorum_hook(
+        $url = $phorum->modules->hook(
             'url_build', NULL,
             $name, $query_items, $suffix, $pathinfo
         );

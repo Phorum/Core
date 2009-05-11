@@ -435,7 +435,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $user_info=phorum_api_user_get($fetch_user_ids);
         // hook to modify user info
         if (isset($PHORUM["hooks"]["read_user_info"]))
-            $user_info = phorum_hook("read_user_info", $user_info);
+            $user_info = $phorum->modules->hook("read_user_info", $user_info);
     }
 
     // URLS which are common for the thread
@@ -614,7 +614,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // run read-threads mods
         if (isset($PHORUM["hooks"]["readthreads"]))
-            $messages = phorum_hook("readthreads", $messages);
+            $messages = $phorum->modules->hook("readthreads", $messages);
 
         $messages = phorum_sort_threads($messages);
 
@@ -645,7 +645,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // run read mods
     if (isset($PHORUM["hooks"]["read"]))
-        $messages = phorum_hook("read", $messages);
+        $messages = $phorum->modules->hook("read", $messages);
 
     // increment viewcount if enabled
     if($PHORUM['count_views'] &&

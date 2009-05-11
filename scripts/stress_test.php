@@ -50,7 +50,7 @@ require_once('./common.php');
 require_once('./include/thread_info.php');
 
 // Make sure that the output is not buffered.
-$phorum->buffer->flush();
+$phorum->buffer->clear();
 
 print "\n";
 print "Phorum stress testing tool\n";

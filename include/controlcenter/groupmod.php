@@ -55,7 +55,8 @@ if (!$perm) {
 }
 
 // figure out what the user is trying to do, in this case we have a group to list (and maybe some commands)
-if (!empty($group_id)){
+if (!empty($group_id))
+{
     // if adding a new user to the group
     if (isset($_REQUEST["adduser"])){
 
@@ -187,7 +188,7 @@ if (!empty($group_id)){
     }
 
     if (isset($PHORUM["hooks"]["user_list"]))
-        $PHORUM["DATA"]["USERS"] = phorum_hook("user_list", $PHORUM["DATA"]["USERS"]);
+        $PHORUM["DATA"]["USERS"] = $phorum->modules->hook("user_list", $PHORUM["DATA"]["USERS"]);
 
     // if the option to build a dropdown list is enabled, build the list of members that could be added
     if ($PHORUM["enable_dropdown_userlist"]){

@@ -143,7 +143,7 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
      *     The possibly updated array of parameters.
      */
     if (isset($PHORUM["hooks"]["search_redirect"])) {
-        $url_parameters = phorum_hook("search_redirect", $url_parameters);
+        $url_parameters = $phorum->modules->hook("search_redirect", $url_parameters);
     }
 
     $phorum->url; // make sure the URL layer is loaded.
@@ -230,7 +230,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
     );
 
     if (isset($PHORUM["hooks"]["search_action"]))
-        $search_request_data = phorum_hook('search_action',$search_request_data);
+        $search_request_data = $phorum->modules->hook('search_action',$search_request_data);
 
     // only continue if our hook was either not run or didn't return a stop request
     if($search_request_data['continue']) {
@@ -323,7 +323,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         }
 
         if (isset($PHORUM["hooks"]["search"]))
-            $arr["rows"] = phorum_hook("search", $arr["rows"]);
+            $arr["rows"] = $phorum->modules->hook("search", $arr["rows"]);
 
         $PHORUM["DATA"]["MATCHES"] = $arr["rows"];
 
@@ -337,7 +337,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
     $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
 
     if (isset($PHORUM["hooks"]["search_start"]))
-        $PHORUM['args'] = phorum_hook('search_start',$PHORUM['args']);
+        $PHORUM['args'] = $phorum->modules->hook('search_start',$PHORUM['args']);
 }
 
 $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_SEARCH_ACTION_URL);
@@ -418,7 +418,7 @@ $PHORUM["DATA"]["DESCRIPTION"] = "";
  */
 $template = 'search';
 if (isset($PHORUM["hooks"]["search_output"])) {
-    $template = phorum_hook("search_output", $template);
+    $template = $phorum->modules->hook("search_output", $template);
     if ($template === NULL) return;
 }
 

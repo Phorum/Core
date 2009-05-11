@@ -146,6 +146,6 @@ if (count($filtered_hooks["mods"]) > 1) trigger_error(
 
 // Run the hook function.
 $PHORUM["hooks"]["addon"] = $filtered_hooks;
-phorum_hook("addon");
+$phorum->modules->hook("addon");
 
 ?>

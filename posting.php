@@ -223,8 +223,9 @@ define("READONLYFIELDS", true);
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["posting_init"]))
-    phorum_hook("posting_init", "");
+if (isset($PHORUM["hooks"]["posting_init"])) {
+    $phorum->modules->hook("posting_init", "");
+}
 
 // Is this an initial request?
 $initial = ! isset($_POST["message_id"]);
@@ -465,8 +466,9 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["posting_permissions"]))
-    phorum_hook("posting_permissions");
+if (isset($PHORUM["hooks"]["posting_permissions"])) {
+    $phorum->modules->hook("posting_permissions");
+}
 
 // Show special sort options in the editor? These only are
 // honoured for the thread starter messages, so we check the
@@ -555,8 +557,9 @@ if ($do_attach || $do_detach) {
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["posting_custom_action"]))
-    $message = phorum_hook("posting_custom_action", $message);
+if (isset($PHORUM["hooks"]["posting_custom_action"])) {
+    $message = $phorum->modules->hook("posting_custom_action", $message);
+}
 
 // Only check the integrity of the data on finishing up. During the
 // editing process, the user may produce garbage as much as he likes.
@@ -819,8 +822,9 @@ if ($PHORUM["posting_template"] == 'posting')
      *     }
      *     </hookcode>
      */
-    if (isset($PHORUM["hooks"]["before_editor"]))
-        $message = phorum_hook("before_editor", $message);
+    if (isset($PHORUM["hooks"]["before_editor"])) {
+        $message = $phorum->modules->hook("before_editor", $message);
+    }
 
     // Make the message data available to the template engine.
     $PHORUM["DATA"]["POSTING"] = $message;
@@ -852,6 +856,7 @@ if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
 function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // If we have a user linked to the current message, then get the
     // user data from the database, if it has to be applied as

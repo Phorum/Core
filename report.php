@@ -83,7 +83,7 @@ if(is_array($message) && count($message)) {
                 }
 
                 if (isset($PHORUM["hooks"]["report"]))
-                    $mail_data = phorum_hook("report", $mail_data);
+                    $mail_data = $phorum->modules->hook("report", $mail_data);
 
                 phorum_email_user($mail_users, $mail_data);
 

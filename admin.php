@@ -126,11 +126,12 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
     }
 }
 
-$module = phorum_hook( "admin_pre", $module );
-ob_start();
-if($module!="help") require_once './include/admin/header.php';
+$module = $phorum->modules->hook("admin_pre", $module);
+
+$phorum->buffer->start();
+if ($module!="help") require_once './include/admin/header.php';
 require_once "./include/admin/$module.php";
-if($module!="help") require_once './include/admin/footer.php';
-ob_end_flush();
+if ($module!="help") require_once './include/admin/footer.php';
+$phorum->buffer->flush();
 
 ?>

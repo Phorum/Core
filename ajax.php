@@ -156,7 +156,7 @@ $ajax_call = basename($PHORUM['ajax_args']['call']);
  */
 $call_hook = 'ajax_' . $ajax_call;
 if (isset($PHORUM['hooks'][$call_hook])) {
-    phorum_hook($call_hook, $PHORUM['ajax_args']);
+    $phorum->modules->hook($call_hook, $PHORUM['ajax_args']);
 }
 
 // Check if the Ajax call has a core handler script.

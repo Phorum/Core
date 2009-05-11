@@ -230,7 +230,7 @@ if(count($_POST))
         unset($user_data["phorum_admin_token"]); 
 
         if (empty($error)){
-            $user_data = phorum_hook("admin_users_form_save", $user_data);
+            $user_data = $phorum->modules->hook("admin_users_form_save", $user_data);
             if (isset($user_data["error"])) {
                 $error = $user_data["error"];
                 unset($user_data["error"]);
@@ -557,7 +557,7 @@ if (isset($_REQUEST["user_id"]))
             }
         }
 
-        phorum_hook("admin_users_form", $frm, $user);
+        $phorum->modules->hook("admin_users_form", $frm, $user);
 
         $frm->show();
 

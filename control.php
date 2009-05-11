@@ -201,7 +201,7 @@ $hook_info = array(
     'okmsg'    => NULL
 );
 if (isset($PHORUM['hooks']['cc_panel'])) {
-    $hook_info = phorum_hook('cc_panel', $hook_info);
+    $hook_info = $phorum->modules->hook('cc_panel', $hook_info);
 }
 
 // Retrieve template, error and okmsg info from the module info.
@@ -258,6 +258,8 @@ phorum_output($template);
 function phorum_controlcenter_user_save($panel)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
+
     $error = "";
     $okmsg = "";
 
@@ -306,7 +308,7 @@ function phorum_controlcenter_user_save($panel)
 
     // Run a hook, so module writers can update and check the userdata.
     if (isset($PHORUM["hooks"]["cc_save_user"]))
-        $userdata = phorum_hook("cc_save_user", $userdata);
+        $userdata = $phorum->modules->hook("cc_save_user", $userdata);
 
     // Set $error, in case the cc_save_user hook did set an error.
     if (isset($userdata['error'])) {

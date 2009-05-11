@@ -52,7 +52,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
      */
 
     if (isset($PHORUM["hooks"]["before_logout"]))
-        phorum_hook("before_logout");
+        $phorum->modules->hook("before_logout");
 
     phorum_api_user_session_destroy(PHORUM_FORUM_SESSION);
 
@@ -107,7 +107,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["after_logout"]))
-        $url = phorum_hook("after_logout", $url);
+        $url = $phorum->modules->hook("after_logout", $url);
 
     $phorum->redirect($url);
 }
@@ -396,7 +396,7 @@ if (count($_POST) > 0) {
                      *     </hookcode>
                      */
                     if (isset($PHORUM["hooks"]["after_login"]))
-                        $redir = phorum_hook("after_login", $redir);
+                        $redir = $phorum->modules->hook("after_login", $redir);
 
                     $phorum->redirect($redir);
                 }
@@ -470,7 +470,7 @@ if (count($_POST) > 0) {
              */
             // TODO API: move to user API.
             if (isset($PHORUM["hooks"]["failed_login"]))
-                phorum_hook("failed_login", array(
+                $phorum->modules->hook("failed_login", array(
                     "username" => $_POST["username"],
                     "password" => $_POST["password"],
                     "location" => "forum"

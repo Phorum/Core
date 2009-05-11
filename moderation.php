@@ -129,14 +129,14 @@ $is_admin_user=$PHORUM["user"]["admin"];
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["moderation"]))
-    phorum_hook("moderation",$mod_step);
-
+if (isset($PHORUM["hooks"]["moderation"])) {
+    $phorum->modules->hook("moderation", $mod_step);
+}
 
 $invalidate_message_cache = array();
 
-switch ($mod_step) {
-
+switch ($mod_step)
+{
    case PHORUM_DELETE_MESSAGE: // this is a message delete
 
         if(count($_GET) && empty($_POST["thread"])){
@@ -220,7 +220,7 @@ switch ($mod_step) {
          */
         $delete_handled = 0;
         if (isset($PHORUM["hooks"]["before_delete"]))
-            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
+            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = $phorum->modules->hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
 
         // Handle the delete action, unless a module already handled it.
         if (!$delete_handled) {
@@ -272,8 +272,9 @@ switch ($mod_step) {
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["delete"]))
-            phorum_hook("delete", array($msgthd_id));
+        if (isset($PHORUM["hooks"]["delete"])) {
+            $phorum->modules->hook("delete", array($msgthd_id));
+        }
 
         $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
@@ -316,7 +317,7 @@ switch ($mod_step) {
         // delete functionality.
         $delete_handled = 0;
         if (isset($PHORUM["hooks"]["before_delete"]))
-            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
+            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = $phorum->modules->hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
 
         if(!$delete_handled) {
 
@@ -351,8 +352,9 @@ switch ($mod_step) {
         $nummsgs=count($msg_ids);
 
         // Run a hook for performing custom actions after cleanup.
-        if (isset($PHORUM["hooks"]["delete"]))
-            phorum_hook("delete", $msg_ids);
+        if (isset($PHORUM["hooks"]["delete"])) {
+            $phorum->modules->hook("delete", $msg_ids);
+        }
 
         $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
         if(isset($PHORUM['args']['old_forum']) && !empty($PHORUM['args']['old_forum'])) {
@@ -495,8 +497,9 @@ switch ($mod_step) {
              *     }
              *     </hookcode>
              */
-            if (isset($PHORUM["hooks"]["move_thread"]))
-                phorum_hook("move_thread", $msgthd_id);
+            if (isset($PHORUM["hooks"]["move_thread"])) {
+                $phorum->modules->hook("move_thread", $msgthd_id);
+            }
 
             foreach ($message['meta']['message_ids'] as $message_id) {
                 $invalidate_message_cache[] = array(
@@ -546,8 +549,9 @@ switch ($mod_step) {
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["close_thread"]))
-            phorum_hook("close_thread", $msgthd_id);
+        if (isset($PHORUM["hooks"]["close_thread"])) {
+            $phorum->modules->hook("close_thread", $msgthd_id);
+        }
 
         $invalidate_message_cache[] = array(
             "message_id" => $msgthd_id,
@@ -595,8 +599,9 @@ switch ($mod_step) {
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["reopen_thread"]))
-            phorum_hook("reopen_thread", $msgthd_id);
+        if (isset($PHORUM["hooks"]["reopen_thread"])) {
+            $phorum->modules->hook("reopen_thread", $msgthd_id);
+        }
 
         $invalidate_message_cache[] = array(
             "message_id" => $msgthd_id,
@@ -672,8 +677,9 @@ switch ($mod_step) {
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["after_approve"]))
-            phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
+        if (isset($PHORUM["hooks"]["after_approve"])) {
+            $phorum->modules->hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
+        }
 
         if($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
           phorum_email_notice($old_message);
@@ -724,8 +730,9 @@ switch ($mod_step) {
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
 
-        if (isset($PHORUM["hooks"]["after_approve"]))
-            phorum_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
+        if (isset($PHORUM["hooks"]["after_approve"])) {
+            $phorum->modules->hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
+        }
 
         $PHORUM['DATA']['OKMSG']="$num_approved ".$PHORUM['DATA']['LANG']['MsgApprovedOk'];
         if(isset($PHORUM['args']["prepost"])) {
@@ -796,8 +803,9 @@ switch ($mod_step) {
          *     }
          *     </hookcode>
          */
-        if (isset($PHORUM["hooks"]["hide_thread"]))
-            phorum_hook("hide_thread", $msgthd_id);
+        if (isset($PHORUM["hooks"]["hide_thread"])) {
+            $phorum->modules->hook("hide_thread", $msgthd_id);
+        }
 
         // updating the thread-info
         phorum_update_thread_info($old_message['thread']);
@@ -928,7 +936,7 @@ switch ($mod_step) {
              *
              */
 
-            phorum_hook('after_merge', $msgid_translation);
+            $phorum->modules->hook('after_merge', $msgid_translation);
 
         } else {
             // Cancel Thread Merge
@@ -988,7 +996,7 @@ switch ($mod_step) {
              *     None
              *
              */
-           phorum_hook('after_split', $_POST['message']);
+           $phorum->modules->hook('after_split', $_POST['message']);
 
            break;
 

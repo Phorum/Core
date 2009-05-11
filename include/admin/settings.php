@@ -470,7 +470,7 @@ $frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for 
  *     }
  *     </hookcode>
  */
-$frm=phorum_hook("admin_general", $frm);
+$frm=$phorum->modules->hook("admin_general", $frm);
 
 $frm->show();
 

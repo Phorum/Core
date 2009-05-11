@@ -219,7 +219,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
 
         // A hook to allow modules to implement extra or different
         // delete functionality.
-        list($handled, $delids, $msgid, $msg, $delmode) = phorum_hook(
+        list($handled, $delids, $msgid, $msg, $delmode) = $phorum->modules->hook(
             "before_delete",
             array(false, 0, $msg["message_id"], $msg, $delmode)
         );
@@ -257,7 +257,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
         }
 
         // Run a hook for performing custom actions after cleanup.
-        phorum_hook("delete", $delids);
+        $phorum->modules->hook("delete", $delids);
 
         // Keep track of deleted messages ids for counting the deleted
         // messages at the end. We can't simply add the number of messages

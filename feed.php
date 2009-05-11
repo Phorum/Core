@@ -79,7 +79,7 @@ if(!empty($cache)){
 
     // run read hooks to get everything formatted
     if (isset($PHORUM["hooks"]["read"]))
-        $messages = phorum_hook("read", $messages);
+        $messages = $phorum->modules->hook("read", $messages);
 
     $messages = phorum_format_messages($messages);
 

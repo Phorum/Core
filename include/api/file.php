@@ -332,6 +332,7 @@ function phorum_api_file_check_write_access($file)
 function phorum_api_file_store($file)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+    $phorum = Phorum::API();
 
     // Check if we really got an array argument for $file.
     if (!is_array($file)) trigger_error(
@@ -472,7 +473,7 @@ function phorum_api_file_store($file)
     // FALSE themselves.
     if (isset($PHORUM["hooks"]["file_store"]))
     {
-        $hook_result = phorum_hook("file_store", $file);
+        $hook_result = $phorum->modules->hook("file_store", $file);
 
         // Return if a module returned an error.
         if ($hook_result === FALSE)
@@ -595,7 +596,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // FALSE instead, in which case they should immediately return
     // FALSE themselves.
     if (isset($PHORUM["hooks"]["file_check_read_access"])) {
-        $file = phorum_hook("file_check_read_access", $file, $flags);
+        $file = $phorum->modules->hook("file_check_read_access", $file, $flags);
         if ($file === FALSE) return FALSE;
     }
 
@@ -780,7 +781,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
     if (isset($PHORUM["hooks"]["file_retrieve"])) {
-        list($file,$flags) = phorum_hook("file_retrieve", array($file,$flags));
+        list($file,$flags) = $phorum->modules->hook("file_retrieve", array($file,$flags));
         if ($file === FALSE) return FALSE;
 
         // If a module sent the file data to the browser, then we are done.
@@ -820,7 +821,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     }
 
     // Allow for post processing on the retrieved file.
-    list($file,$flags) = phorum_hook("file_after_retrieve", array($file,$flags));
+    list($file,$flags) = $phorum->modules->hook("file_after_retrieve", array($file,$flags));
 
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
@@ -830,7 +831,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         ini_set("output_handler", "");
 
         // Get rid of any buffered output so far.
-        $phorum->buffer->flush();
+        $phorum->buffer->clear();
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
             header("Content-Type: application/octet-stream");
@@ -872,6 +873,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 function phorum_api_file_check_delete_access($file_id)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     settype($file_id, "int");
 
@@ -969,6 +971,7 @@ function phorum_api_file_check_delete_access($file_id)
 function phorum_api_file_delete($file)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+    $phorum = Phorum::API();
 
     // Find the file_id parameter to use.
     if (is_array($file)) {
@@ -988,7 +991,7 @@ function phorum_api_file_delete($file)
     // non existent file. Therefore modules should accept that case
     // as well, without throwing errors.
     if (isset($PHORUM["hooks"]["file_delete"]))
-        phorum_hook("file_delete", $file_id);
+        $phorum->modules->hook("file_delete", $file_id);
 
     // Delete the file from the Phorum database.
     phorum_db_file_delete($file_id);
@@ -1046,6 +1049,8 @@ function phorum_api_file_list($link_type = NULL, $user_id = NULL, $message_id = 
  */
 function phorum_api_file_purge_stale($do_purge)
 {
+    $phorum = Phorum::API();
+
     $stale_files = phorum_db_list_stale_files();
 
     /**
@@ -1087,7 +1092,7 @@ function phorum_api_file_purge_stale($do_purge)
      *     considered to be stale.
      */
     if (isset($GLOBALS['PHORUM']['hooks']['file_purge_stale']))
-        $stale_files = phorum_hook('file_purge_stale', $stale_files);
+        $stale_files = $phorum->modules->hook('file_purge_stale', $stale_files);
 
     // Delete the files if requested.
     if ($do_purge) {

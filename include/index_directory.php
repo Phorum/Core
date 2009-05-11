@@ -83,7 +83,7 @@ if (empty($forums)) {
 
 // Run the "index" hook. This one is documented in index_flat.php.
 if (isset($PHORUM['hooks']['index'])) {
-    $forums = phorum_hook('index', $forums);
+    $forums = $phorum->modules->hook('index', $forums);
 }
 
 // Build the template folders array.

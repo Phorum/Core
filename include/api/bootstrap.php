@@ -395,8 +395,10 @@ function phorum_api_strerror()
 # Backward compatibility
 # ----------------------------------------------------------------------
 
-// The URL related functions have been replaced with the Phorum URL API
-// function (phorum_api_url_*).
+// These are functions that existed in Phorum, before their functionality
+// was moved to the API layers. These functions are provided to allow
+// modules to use the old function calls. These deprecated functions might
+// be removed from future versions of Phorum.
 
 function phorum_get_url()
 {
@@ -413,6 +415,13 @@ function phorum_get_current_url($include_query_string = TRUE)
 function phorum_redirect_by_url($url)
 {
     return Phorum::API()->redirect($url);
+}
+
+function phorum_hook()
+{
+    Phorum::API()->modules; // make sure the Modules API layer code is loaded.
+    $argv = func_get_args();
+    return call_user_func_array('phorum_api_modules_hook', $argv);
 }
 
 ?>

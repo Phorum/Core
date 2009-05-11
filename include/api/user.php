@@ -174,6 +174,7 @@ $PHORUM['API']['user_fields'] = array
 function phorum_api_user_save($user, $flags = 0)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // $user must be an array.
     if (!is_array($user)) {
@@ -423,7 +424,7 @@ function phorum_api_user_save($user, $flags = 0)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_save'])) {
-        $dbuser = phorum_hook('user_save', $dbuser);
+        $dbuser = $phorum->modules->hook('user_save', $dbuser);
     }
 
     /**
@@ -480,7 +481,7 @@ function phorum_api_user_save($user, $flags = 0)
                 $orig_status == PHORUM_USER_PENDING_EMAIL ||
                 $orig_status == PHORUM_USER_PENDING_MOD) {
 
-                $dbuser = phorum_hook('user_register', $dbuser);
+                $dbuser = $phorum->modules->hook('user_register', $dbuser);
             }
         }
     }
@@ -535,6 +536,9 @@ function phorum_api_user_save($user, $flags = 0)
  */
 function phorum_api_user_save_raw($user)
 {
+    global $PHORUM;
+    $phorum = Phorum::API();
+
     if (empty($user['user_id'])) {
         trigger_error(
             'phorum_api_user_save_raw(): the user_id field cannot be empty',
@@ -545,7 +549,7 @@ function phorum_api_user_save_raw($user)
 
     // This hook is documented in phorum_api_user_save().
     if (isset($PHORUM['hooks']['user_save'])) {
-        $user = phorum_hook('user_save', $user);
+        $user = $phorum->modules->hook('user_save', $user);
     }
 
     // Store the data in the database.
@@ -553,7 +557,7 @@ function phorum_api_user_save_raw($user)
 
     // Invalidate the cache for the user, unless we are only updating
     // user activity tracking fields.
-    if (!empty($GLOBALS['PHORUM']['cache_users']))
+    if (!empty($PHORUM['cache_users']))
     {
         // Count the number of activity tracking fields in the data.
         $count = 1; // count user_id as an activity tracking field
@@ -620,7 +624,7 @@ function phorum_api_user_save_settings($settings)
     ));
 
     // If user caching is enabled, we remove the user from the cache.
-    if (!empty($GLOBALS['PHORUM']['cache_users'])) {
+    if (!empty($PHORUM['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
 }
@@ -655,7 +659,8 @@ function phorum_api_user_save_settings($settings)
  */
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+    $phorum = Phorum::API();
 
     if (!is_array($user_id)) {
         $user_ids = array($user_id);
@@ -807,7 +812,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_get'])) {
-        $users = phorum_hook('user_get', $users, $detailed);
+        $users = $phorum->modules->hook('user_get', $users, $detailed);
     }
 
     // Return the results.
@@ -833,9 +838,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
  */
 function phorum_api_user_get_setting($name)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
-
-
+    global $PHORUM;
 
     // No settings available at all?
     if (empty($PHORUM['user']['settings_data'])) return NULL;
@@ -879,7 +882,7 @@ function phorum_api_user_get_setting($name)
  */
 function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $flags = PHORUM_FLAG_HTML)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($fallback === NULL) {
         $fallback = $PHORUM['DATA']['LANG']['AnonymousUser'];
@@ -1081,6 +1084,9 @@ function phorum_api_user_search_custom_profile_field($field_id, $value, $operato
  */
 function phorum_api_user_list($type = PHORUM_GET_ALL)
 {
+    global $PHORUM;
+    $phorum = Phorum::API();
+
     // Retrieve a list of users from the database.
     $list = phorum_db_user_get_list($type);
 
@@ -1118,6 +1124,8 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *     <hookcode>
      *     function phorum_mod_foo_user_list($users)
      *     {
+     *         global $PHORUM;
+     *
      *         // Only run this hook code for authenticated users.
      *         if (empty($PHORUM["user"]["user_id"])) return $users;
      *
@@ -1127,7 +1135,7 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *         if (empty($buddies)) return $users;
      *
      *         // Flag buddies in the user list.
-     *         $langstr = $GLOBALS["PHORUM"]["DATA"]["LANG"]["Buddy"];
+     *         $langstr = $PHORUM["DATA"]["LANG"]["Buddy"];
      *         foreach ($buddies as $user_id => $info) {
      *             $users[$user_id]["display_name"] .= " ($langstr)";
      *         }
@@ -1136,8 +1144,8 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *     }
      *     </hookcode>
      */
-    if (isset($GLOBALS['PHORUM']['hooks']['user_list'])) {
-        $list = phorum_hook('user_list', $list);
+    if (isset($PHORUM['hooks']['user_list'])) {
+        $list = $phorum->modules->hook('user_list', $list);
     }
 
     return $list;
@@ -1155,8 +1163,10 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
  */
 function phorum_api_user_increment_posts($user_id = NULL)
 {
+    global $PHORUM;
+
     if (empty($user_id)) {
-        $user_id = $GLOBALS["PHORUM"]["user"]["user_id"];
+        $user_id = $PHORUM["user"]["user_id"];
     }
     settype($user_id, "int");
 
@@ -1173,6 +1183,9 @@ function phorum_api_user_increment_posts($user_id = NULL)
  */
 function phorum_api_user_delete($user_id)
 {
+    global $PHORUM;
+    $phorum = Phorum::API();
+
     settype($user_id, "int");
 
     /**
@@ -1209,12 +1222,12 @@ function phorum_api_user_delete($user_id)
      *     }
      *     </hookcode>
      */
-    if (isset($GLOBALS['PHORUM']['hooks']['user_delete'])) {
-        phorum_hook('user_delete', $user_id);
+    if (isset($PHORUM['hooks']['user_delete'])) {
+        $phorum->modules->hook('user_delete', $user_id);
     }
 
     // If user caching is enabled, we remove the user from the cache.
-    if (!empty($GLOBALS['PHORUM']['cache_users'])) {
+    if (!empty($PHORUM['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
 
@@ -1297,7 +1310,8 @@ function phorum_api_user_format($users)
  */
 function phorum_api_user_authenticate($type, $username, $password)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+    $phorum = Phorum::API();
 
     $user_id = NULL;
 
@@ -1377,7 +1391,7 @@ function phorum_api_user_authenticate($type, $username, $password)
     if (isset($PHORUM['hooks']['user_authenticate']))
     {
         // Run the hook.
-        $authinfo = phorum_hook('user_authenticate', array(
+        $authinfo = $phorum->modules->hook('user_authenticate', array(
             'type'     => $type,
             'username' => $username,
             'password' => $password,
@@ -1497,10 +1511,11 @@ function phorum_api_user_authenticate($type, $username, $password)
 function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Reset error storage.
-    $GLOBALS['PHORUM']['API']['errno'] = NULL;
-    $GLOBALS['PHORUM']['API']['error'] = NULL;
+    $PHORUM['API']['errno'] = NULL;
+    $PHORUM['API']['error'] = NULL;
 
     // Determine what user to use.
     if ($user !== NULL)
@@ -1608,7 +1623,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
                            ? 0 : $PHORUM['forum_id'];
 
         // Update the user data in the database.
-        phorum_api_user_save_raw(array(
+        $phorum_api_user_save_raw(array(
             'user_id'           => $user['user_id'],
             'date_last_active'  => $date_last_active,
             'last_active_forum' => $last_active_forum
@@ -1709,7 +1724,8 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
  */
 function phorum_api_user_session_create($type, $reset = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+    $phorum = Phorum::API();
 
     /**
      * [hook]
@@ -1742,6 +1758,8 @@ function phorum_api_user_session_create($type, $reset = 0)
      *     <hookcode>
      *     function phorum_mod_foo_user_session_create($type)
      *     {
+     *         global $PHORUM;
+     *
      *         // Let Phorum handle admin sessions on its own.
      *         if ($type == PHORUM_ADMIN_SESSION) return $type;
      *
@@ -1755,7 +1773,7 @@ function phorum_api_user_session_create($type, $reset = 0)
      *         // PHP session data. The user_id is really the only thing
      *         // that needs to be remembered for a Phorum session, because
      *         // all other data for the user is stored in the database.
-     *         $phorum_user_id = $GLOBALS["PHORUM"]["user"]["user_id"];
+     *         $phorum_user_id = $PHORUM["user"]["user_id"];
      *         $_SESSION['phorum_user_id'] = $phorum_user_id;
      *
      *         // Tell Phorum not to run its own session initialization code.
@@ -1767,14 +1785,14 @@ function phorum_api_user_session_create($type, $reset = 0)
      *     of how to let Phorum pick up this PHP based session.
      */
     if (isset($PHORUM['hooks']['user_session_create'])) {
-        if (phorum_hook('user_session_create', $type) === NULL) {
+        if ($phorum->modules->hook('user_session_create', $type) === NULL) {
             return TRUE;
         }
     }
 
     // Reset error storage.
-    $GLOBALS['PHORUM']['API']['errno'] = NULL;
-    $GLOBALS['PHORUM']['API']['error'] = NULL;
+    $PHORUM['API']['errno'] = NULL;
+    $PHORUM['API']['error'] = NULL;
 
     // Check if we have a valid session type.
     if ($type != PHORUM_FORUM_SESSION &&
@@ -1798,7 +1816,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     }
 
     // Check if the user is activated.
-    if ($GLOBALS['PHORUM']['user']['active'] != PHORUM_USER_ACTIVE) {
+    if ($PHORUM['user']['active'] != PHORUM_USER_ACTIVE) {
         return phorum_api_error_set(
             PHORUM_ERRNO_NOACCESS,
             'The user is not (yet) activated (user id '.$user['user_id'].')'
@@ -1809,7 +1827,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // This is also checked from phorum_api_user_set_active_user(), but
     // one can never be too sure about this.
     if ($type == PHORUM_ADMIN_SESSION &&
-        empty($GLOBALS['PHORUM']['user']['admin'])) {
+        empty($PHORUM['user']['admin'])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_NOACCESS,
             'The user is not an administrator (user id '.$user['user_id'].')'
@@ -1827,7 +1845,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Retrieve or generate required session id(s).
     // ----------------------------------------------------------------------
 
-    $user = $GLOBALS['PHORUM']['user'];
+    $user = $PHORUM['user'];
 
     // Generate a long term session id. This one is used by all session types.
     // Create a new long term session id if no session id is available yet or
@@ -1844,7 +1862,7 @@ function phorum_api_user_session_create($type, $reset = 0)
             'user_id'   => $user['user_id'],
             'sessid_lt' => $sessid_lt,
         ));
-        $GLOBALS['PHORUM']['user']['sessid_lt'] = $sessid_lt;
+        $PHORUM['user']['sessid_lt'] = $sessid_lt;
     } else {
         $sessid_lt = $user['sessid_lt'];
     }
@@ -1888,8 +1906,8 @@ function phorum_api_user_session_create($type, $reset = 0)
                 'sessid_st'         => $sessid_st,
                 'sessid_st_timeout' => $timeout
             ));
-            $GLOBALS['PHORUM']['user']['sessid_st'] = $sessid_st;
-            $GLOBALS['PHORUM']['user']['sessid_st_timeout'] = $timeout;
+            $PHORUM['user']['sessid_st'] = $sessid_st;
+            $PHORUM['user']['sessid_st_timeout'] = $timeout;
         }
     }
 
@@ -1903,7 +1921,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Route the required session id(s) to the user.
     // ----------------------------------------------------------------------
 
-    $user = $GLOBALS['PHORUM']['user'];
+    $user = $PHORUM['user'];
 
     if ($type == PHORUM_FORUM_SESSION)
     {
@@ -1920,12 +1938,12 @@ function phorum_api_user_session_create($type, $reset = 0)
             );
         } else {
             // Add the session id to the URL building GET variables.
-            $GLOBALS['PHORUM']['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] =
+            $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] =
                 PHORUM_SESSION_LONG_TERM . '=' .
                 urlencode($user['user_id'].':'.$sessid_lt);
 
             // Add the session id to the form POST variables.
-            $GLOBALS['PHORUM']['DATA']['POST_VARS'] .=
+            $PHORUM['DATA']['POST_VARS'] .=
                 '<input type="hidden" name="'.PHORUM_SESSION_LONG_TERM.'" ' .
                 'value="'.$user['user_id'].':'.$sessid_lt.'" />';
         }
@@ -1982,7 +2000,8 @@ function phorum_api_user_session_create($type, $reset = 0)
  */
 function phorum_api_user_session_restore($type)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+    $phorum = Phorum::API();
 
     // ----------------------------------------------------------------------
     // Determine which session cookie(s) to check.
@@ -2133,7 +2152,7 @@ function phorum_api_user_session_restore($type)
         PHORUM_SESSION_ADMIN      => NULL
     );
     if (isset($PHORUM['hooks']['user_session_restore'])) {
-        $hook_sessions = phorum_hook('user_session_restore', $hook_sessions);
+        $hook_sessions = $phorum->modules->hook('user_session_restore', $hook_sessions);
     }
 
     $real_cookie = FALSE;
@@ -2253,7 +2272,7 @@ function phorum_api_user_session_restore($type)
     // authentication) and update the "use_cookies" setting accordingly.
     if ($check_session[PHORUM_SESSION_LONG_TERM] == 2 && ! $real_cookie) {
         $check_session[PHORUM_SESSION_SHORT_TERM] = 0;
-        $GLOBALS['PHORUM']['use_cookies'] = PHORUM_NO_COOKIES;
+        $PHORUM['use_cookies'] = PHORUM_NO_COOKIES;
     }
 
     // ----------------------------------------------------------------------
@@ -2331,7 +2350,8 @@ function phorum_api_user_session_restore($type)
  */
 function phorum_api_user_session_destroy($type)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+    $phorum = Phorum::API();
 
     /**
      * [hook]
@@ -2392,7 +2412,7 @@ function phorum_api_user_session_destroy($type)
      */
     $do_phorum_destroy_session = TRUE;
     if (isset($PHORUM['hooks']['user_session_destroy'])) {
-        if (phorum_hook('user_session_destroy', $type) === NULL) {
+        if ($phorum->modules->hook('user_session_destroy', $type) === NULL) {
             $do_phorum_destroy_session = FALSE;
         }
     }
@@ -2491,7 +2511,9 @@ function phorum_api_user_get_groups($user_id)
  */
 function phorum_api_user_save_groups($user_id, $groups)
 {
-    if (!empty($GLOBALS["PHORUM"]['cache_users'])) {
+    global $PHORUM;
+
+    if (!empty($PHORUM['cache_users'])) {
         phorum_cache_remove('user', $user_id);
     }
 
@@ -2565,7 +2587,7 @@ function phorum_api_user_save_groups($user_id, $groups)
  */
 function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Prepare the array of forum ids to check.
     $forum_access = array();
@@ -2726,7 +2748,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
  */
 function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Prepare the user to check the access for.
     if (empty($user)) {
@@ -2843,7 +2865,7 @@ function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
  */
 function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, $for_mail = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
 

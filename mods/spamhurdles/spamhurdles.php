@@ -662,9 +662,9 @@ function spamhurdle_blockerror()
     $PHORUM["DATA"]["ERROR"] =
         $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["BlockError"];
     include phorum_get_template("header");
-    phorum_hook("after_header");
+    $phorum->modules->hook("after_header");
     include phorum_get_template("message");
-    phorum_hook("before_footer");
+    $phorum->modules->hook("before_footer");
     include phorum_get_template("footer");
     exit(0);
 }

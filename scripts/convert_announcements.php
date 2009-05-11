@@ -8,7 +8,7 @@ chdir(dirname(__FILE__) . "/..");
 require_once('./common.php');
 
 // Make sure that the output is not buffered.
-$phorum->buffer->flush();
+$phorum->buffer->clear();
 
 // init module
 $PHORUM["mod_announcements"] = array(

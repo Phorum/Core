@@ -123,8 +123,8 @@ if (count($_POST)) {
     }
 
     // Create user if no errors have been encountered.
-    if (empty($error)) {
-
+    if (empty($error))
+    {
         // Setup the default userdata to store.
         $userdata = array(
             'username'   => NULL,
@@ -218,7 +218,7 @@ if (count($_POST)) {
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["before_register"]))
-            $userdata = phorum_hook("before_register", $userdata);
+            $userdata = $phorum->modules->hook("before_register", $userdata);
 
         // Set $error, in case the before_register hook did set an error.
         if (isset($userdata['error'])) {
@@ -339,7 +339,7 @@ if (count($_POST)) {
                  */
                 if (isset($PHORUM["hooks"]["after_register"])) {
                     $userdata["user_id"] = $user_id;
-                    phorum_hook("after_register",$userdata);
+                    $phorum->modules->hook("after_register",$userdata);
                 }
 
                 phorum_output("message");

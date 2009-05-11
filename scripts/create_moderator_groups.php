@@ -18,7 +18,7 @@ require_once('./common.php');
 require_once('./include/api/forums.php');
 
 // Make sure that the output is not buffered.
-$phorum->buffer->flush();
+$phorum->buffer->clear();
 
 print "\nCreate forum moderator groups ...\n";
 

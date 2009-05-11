@@ -80,13 +80,16 @@ if ($mode == "reply" || $mode == "quote")
         // author is a registered user. The author field could be used
         // directly, but it can contain HTML formatting code, in case
         // some module uses the custom display name functionality.
-        $author = phorum_api_user_get_display_name(
+        $author = $phorum->user->get_display_name(
             $dbmessage["user_id"], $dbmessage['author'], PHORUM_FLAG_PLAINTEXT
         );
 
         $quoted = 0;
         if (isset($PHORUM["hooks"]["quote"])) {
-            $quoted = phorum_hook("quote", array($author, $dbmessage["body"], $dbmessage["user_id"]));
+            $quoted = $phorum->modules->hook(
+                "quote",
+                array($author, $dbmessage["body"], $dbmessage["user_id"])
+            );
         }
 
         if (empty($quoted) || is_array($quoted))

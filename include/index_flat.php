@@ -196,7 +196,9 @@ if (!empty($PHORUM['jump_on_single_forum']) &&
  *     </hookcode>
  */
 if (isset($PHORUM['hooks']['index'])) {
-    $PHORUM['DATA']['FORUMS'] = phorum_hook('index', $PHORUM['DATA']['FORUMS']);
+    $PHORUM['DATA']['FORUMS'] = $phorum->modules->hook(
+        'index', $PHORUM['DATA']['FORUMS']
+    );
 }
 
 // Display the page.

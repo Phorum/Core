@@ -134,8 +134,9 @@ if (!count($message["meta"]["attachments"])) {
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["before_post"]))
-    $message = phorum_hook("before_post", $message);
+if (isset($PHORUM["hooks"]["before_post"])) {
+    $message = $phorum->modules->hook("before_post", $message);
+}
 
 // Keep a copy of the message we have got now.
 $message_copy = $message;
@@ -213,8 +214,9 @@ if ($success)
      *     }
      *     </hookcode>
      */
-    if (isset($PHORUM["hooks"]["after_message_save"]))
-        $message = phorum_hook("after_message_save", $message);
+    if (isset($PHORUM["hooks"]["after_message_save"])) {
+        $message = $phorum->modules->hook("after_message_save", $message);
+    }
 
 
     // Subscribe user to the thread if requested. When replying, this
@@ -261,9 +263,9 @@ if ($success)
     if ($PHORUM["DATA"]["LOGGEDIN"])
     {
         // Mark own message read.
-        phorum_db_newflag_add_read(array(0=>array(
-            "id"    => $message["message_id"],
-            "forum" => $message["forum_id"],
+        phorum_db_newflag_add_read(array(array(
+            'id'       => $message['message_id'],
+            'forum_id' => $message['forum_id'],
         )));
 
         // Increase the user's post count.
@@ -329,8 +331,9 @@ if ($success)
      *     }
      *     </hookcode>
      */
-    if (isset($PHORUM["hooks"]["after_post"]))
-        $message = phorum_hook("after_post", $message);
+    if (isset($PHORUM["hooks"]["after_post"])) {
+        $message = $phorum->modules->hook("after_post", $message);
+    }
 
     // Posting is completed. Take the user back to the forum.
     if ($PHORUM["redirect_after_post"] == "read")

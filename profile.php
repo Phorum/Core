@@ -117,8 +117,11 @@ if (empty($PHORUM["custom_display_name"])) {
         htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 }
 
-if (isset($PHORUM["hooks"]["profile"]))
-    $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
+if (isset($PHORUM["hooks"]["profile"])) {
+    $PHORUM["DATA"]["PROFILE"] = $phorum->modules->hook(
+        "profile", $PHORUM["DATA"]["PROFILE"]
+    );
+}
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UserProfile"];
 $PHORUM["DATA"]["DESCRIPTION"] = "";

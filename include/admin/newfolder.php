@@ -221,7 +221,7 @@ $frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info()
 
 $frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language, $disabled_form_input));
 
-phorum_hook("admin_editfolder_form", $frm, $forum_settings);
+$phorum->modules->hook("admin_editfolder_form", $frm, $forum_settings);
 
 $frm->show();
 

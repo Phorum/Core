@@ -167,8 +167,9 @@ if (!count($dbmessage["meta"]["attachments"])) {
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["before_edit"]))
-    $dbmessage = phorum_hook("before_edit", $dbmessage);
+if (isset($PHORUM["hooks"]["before_edit"])) {
+    $dbmessage = $phorum->modules->hook("before_edit", $dbmessage);
+}
 
 phorum_db_update_message($message["message_id"], $dbmessage);
 
@@ -216,8 +217,9 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *     }
  *     </hookcode>
  */
-if (isset($PHORUM["hooks"]["after_edit"]))
-    phorum_hook("after_edit", $dbmessage);
+if (isset($PHORUM["hooks"]["after_edit"])) {
+    $phorum->modules->hook("after_edit", $dbmessage);
+}
 
 // remove the message from the cache if caching is enabled
 // no need to clear the thread-index as the message has only been changed

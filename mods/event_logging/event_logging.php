@@ -231,8 +231,8 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     // user that the problem was logged.
     if ($loglevel == EVENTLOG_LVL_ALERT)
     {
-        // Flush any buffered output so far.
-        $phorum->buffer->flush();
+        // Clear any buffered output so far.
+        $phorum->buffer->clear();
 
         // Notify the user and exit.
         print "An error occurred in the application.<br/>" .

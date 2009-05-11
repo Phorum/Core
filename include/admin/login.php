@@ -56,7 +56,10 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
             exit();
 
     } else {
-        phorum_hook("failed_login", array(
+        /**
+         * TODO Move to User API.
+         */
+        $phorum->modules->hook("failed_login", array(
             "username" => $_POST["username"],
             "password" => $_POST["password"],
             "location" => "admin"

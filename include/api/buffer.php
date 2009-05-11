@@ -37,11 +37,19 @@ function phorum_api_buffer_start()
 }
 
 /**
+ * Stop the output buffer and flush the buffered contents to the browser.
+ */
+function phorum_api_buffer_flush()
+{
+    ob_end_flush();
+}
+
+/**
  * Stop the output buffer and return the buffered contents.
  *
  * @return string
  */
-function phorum_api_buffer_stop()
+function phorum_api_buffer_get()
 {
     $content = ob_get_contents();
     ob_end_clean();
@@ -51,7 +59,7 @@ function phorum_api_buffer_stop()
 /**
  * Clear out all output that PHP buffered up to now.
  */
-function phorum_api_buffer_flush()
+function phorum_api_buffer_clear()
 {
     // Clear out all output that PHP buffered up to now.
     for(;;) {

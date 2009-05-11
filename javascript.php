@@ -132,7 +132,7 @@ if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
  *     argument, possibly extended with one or more registrations.
  */
 if (isset($PHORUM['hooks']['javascript_register'])) {
-    $module_registrations = phorum_hook(
+    $module_registrations = $phorum->modules->hook(
         'javascript_register', $module_registrations
     );
 }
@@ -289,7 +289,7 @@ if (isset($PHORUM['args']['refresh']) ||
      *     The filtered JavaScript code.
      */
     if (isset($PHORUM['hooks']['javascript_filter'])) {
-        $content = phorum_hook('javascript_filter', $content);
+        $content = $phorum->modules->hook('javascript_filter', $content);
     }
 
     if (!empty($PHORUM['cache_javascript'])) {

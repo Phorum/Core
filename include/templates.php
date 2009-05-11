@@ -548,7 +548,7 @@ function phorum_import_template_pass2($template)
                 }
 
                 // Build the replacement string.
-                $repl = "<?php if(isset(\$PHORUM['hooks'][$hook])) phorum_hook($hook";
+                $repl = "<?php if(isset(\$PHORUM['hooks'][$hook])) Phorum::API()->modules->hook($hook";
                 if (count($hookargs) == 1) {
                     $repl .= "," . $hookargs[0];
                 } elseif (count($hookargs) > 1) {
