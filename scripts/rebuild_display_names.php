@@ -10,10 +10,10 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 }
 
 define("PHORUM_ADMIN", 1);
-define('phorum_page', 'rebuild_real_names');
+define('phorum_page', 'rebuild_display_names');
 
-chdir(dirname(__FILE__) . "/..");
-require_once('./common.php');
+require_once(dirname(__FILE__).'/../include/api.php');
+$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();

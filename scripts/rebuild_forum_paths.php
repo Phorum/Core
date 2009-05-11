@@ -10,21 +10,20 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 
 define('phorum_page', 'rebuild_forum_paths');
 
-chdir(dirname(__FILE__) . "/..");
-require_once('./common.php');
-require_once('./include/api/forums.php');
+require_once(dirname(__FILE__).'/../include/api.php');
+$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();
 
 print "\nRebuilding forum path info ...\n";
 
-$forums = phorum_api_forums_build_path();
+$forums = $phorum->forums->build_path();
 unset($forums[0]);
 
 foreach($forums as $fid => $forumpath)
 {
-    phorum_db_update_forum(array(
+    $phorum->db->update_forum(array(
         'forum_id'   => $fid,
         'forum_path' => $forumpath
     ));

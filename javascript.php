@@ -293,8 +293,7 @@ if (isset($PHORUM['args']['refresh']) ||
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-        require_once './include/templates.php';
-        phorum_write_file($cache_file, $content);
+        $phorum->write_file($cache_file, $content);
     }
 
     // Send the JavaScript to the browser.

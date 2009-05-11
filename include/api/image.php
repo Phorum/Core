@@ -82,6 +82,8 @@ if (!defined('PHORUM')) return;
  */
 function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $method = NULL)
 {
+    $phorum = Phorum::API();
+
     // Reset error storage.
     $GLOBALS['PHORUM']['API']['errno'] = NULL;
     $GLOBALS['PHORUM']['API']['error'] = NULL;
@@ -107,10 +109,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // PHP function. Unfortunately, this function requires a file on disk
     // to process. Therefore we create a temporary file in the Phorum cache
     // for doing this.
-    require_once PHORUM_PATH.'/include/api/write_file.php';
     $tmpdir = $GLOBALS['PHORUM']['cache'];
     $tmpfile = $tmpdir .'/scale_image_tmp_'. md5($image . microtime());
-    if (!phorum_api_write_file($tmpfile, $image)) return NULL;
+    if (!$phorum->write_file($tmpfile, $image)) return NULL;
 
     // Get the image information and clean up the temporary file.
     $file_info = getimagesize($tmpfile);

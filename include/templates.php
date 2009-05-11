@@ -55,6 +55,7 @@ define("PHORUM_DEPRECATED", "[Template statement \"%\" has been deprecated; Plea
 function phorum_import_template($page, $infile, $outfile)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Some backward compatibility for renamed template files.
     // Fall back to the deprecated template file if the new one is
@@ -120,10 +121,10 @@ function phorum_import_template($page, $infile, $outfile)
           include \"$qstage2file\";
       }
       ?>";
-    phorum_write_file($stage1file, $stage1);
+    $phorum->write_file($stage1file, $stage1);
 
     // Output file for stage 2. This file contains the compiled template.
-    phorum_write_file($stage2file, $template);
+    $phorum->write_file($stage2file, $template);
 }
 
 /**
@@ -795,42 +796,6 @@ function phorum_read_file($file)
     fclose($fp);
 
     return $data;
-}
-
-/**
- * Writes a file do disk, with thorough error checking.
- *
- * @param $file - The filename of the file to write the data to.
- * @param $data - The data to put in the file.
- */
-function phorum_write_file($file, $data)
-{
-    // Write the data to the file.
-    if (! $fp = fopen($file, "w")) trigger_error(
-        "phorum_write_file: failed to write to file " .
-        "\"" . htmlspecialchars($file) . "\". This is probably caused by " .
-        "the file permissions on your Phorum cache directory",
-        E_USER_ERROR
-    );
-    fputs($fp, $data);
-    if (! fclose($fp)) trigger_error(
-        "phorum_write_file: error on closing the file " .
-        "\"" . htmlspecialchars($file) . "\". Is your disk full?",
-        E_USER_ERROR
-    );
-
-    // A special check on the created outputfile. We have seen strange
-    // things happen on Windows2000 where the webserver could not read
-    // the file it just had written :-/
-    if (! $fp = fopen($file, "r")) trigger_error(
-        "Failed to write a usable compiled template to the file " .
-        "\"" . htmlspecialchars($outfile) . "\". The file was created " .
-        "successfully, but it could not be read by the webserver " .
-        "afterwards. This is probably caused by the filepermissions " .
-        "on your cache directory.",
-        E_USER_ERROR
-    );
-    fclose($fp);
 }
 
 ?>

@@ -329,8 +329,7 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
     }
 
     if (!empty($PHORUM['cache_css'])) {
-        require_once './include/templates.php';
-        phorum_write_file($cache_file, $content);
+        $phorum->write_file($cache_file, $content);
     }
 
     // Send the CSS to the browser.

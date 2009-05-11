@@ -18,8 +18,8 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_postcount');
 
-chdir(dirname(__FILE__) . "/..");
-require_once('./common.php');
+require_once(dirname(__FILE__).'/../include/api.php');
+$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();
@@ -30,7 +30,7 @@ if (! ini_get('safe_mode')) {
 }
 
 print "\nCounting the posts for all users ...\n";
-$postcounts = phorum_db_interact(
+$postcounts = $phorum->db->interact(
     DB_RETURN_ROWS,
     "SELECT user_id, count(*)
      FROM   {$PHORUM["message_table"]}
@@ -44,7 +44,7 @@ $count_total = count($postcounts);
 $size = strlen($count_total);
 $count = 0;
 foreach ($postcounts as $row) {
-    phorum_api_user_save_raw(array(
+    $phorum->user->save_raw(array(
         "user_id" => $row[0],
         "posts"   => $row[1]
     ));

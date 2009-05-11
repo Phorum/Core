@@ -14,9 +14,10 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 define('phorum_page', 'rebuild_thread_info');
 define('PHORUM_ADMIN', 1);
 
-chdir(dirname(__FILE__) . "/..");
-require_once('./common.php');
-require_once('./include/thread_info.php');
+require_once(dirname(__FILE__).'/../include/api.php');
+$phorum = Phorum::API();
+
+require_once(PHORUM_PATH.'/include/thread_info.php');
 
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();
@@ -34,7 +35,7 @@ mysql_query( "SET NAMES 'utf8'", $conn);
 mysql_query( "SET CHARACTER SET utf8", $conn);
 */
 
-$count_total = phorum_db_interact(
+$count_total = $phorum->db->interact(
     DB_RETURN_VALUE,
     "SELECT count(*)
      FROM   {$PHORUM["message_table"]}
@@ -42,7 +43,7 @@ $count_total = phorum_db_interact(
             message_id = thread"
 );
 
-$res = phorum_db_interact(
+$res = $phorum->db->interact(
     DB_RETURN_RES,
     "SELECT message_id, forum_id
      FROM   {$PHORUM["message_table"]}
@@ -52,7 +53,7 @@ $res = phorum_db_interact(
 
 $size = strlen($count_total);
 $count = 0;
-while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
+while ($row = $phorum->db->fetch_row($res, DB_RETURN_ROW)) {
     $PHORUM['forum_id'] = $row[1];
     phorum_update_thread_info($row[0]);
 

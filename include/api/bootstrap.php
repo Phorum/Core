@@ -432,4 +432,12 @@ function phorum_filesize($sz) {
     return Phorum::API()->format->filesize($sz);
 }
 
+function phorum_ob_clean() {
+    return Phorum::API()->output->clear();
+}
+
+function phorum_write_file($file, $data) {
+    return Phorum::API()->write_file($file, $data);
+}
+
 ?>

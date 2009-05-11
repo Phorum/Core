@@ -9,8 +9,8 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
 define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_forum_stats');
 
-chdir(dirname(__FILE__) . "/..");
-require_once('./common.php');
+require_once(dirname(__FILE__).'/../include/api.php');
+$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();
@@ -22,8 +22,7 @@ if (! ini_get('safe_mode')) {
 
 print "\nRebuild forum stats ...\n";
 
-require_once('./include/api/forums.php');
-$forums = phorum_api_forums_get(
+$forums = $phorum->forums->get(
     NULL, NULL, NULL, NULL,
     PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS
 );
@@ -35,7 +34,7 @@ $count = 0;
 foreach ($forums as $fid => $fdata)
 {
     $PHORUM['forum_id'] = $fid;
-    phorum_db_update_forum_stats(true);
+    $phorum->db->update_forum_stats(true);
 
     $count ++;
 
