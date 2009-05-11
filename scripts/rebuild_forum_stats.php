@@ -13,7 +13,7 @@ chdir(dirname(__FILE__) . "/..");
 require_once('./common.php');
 
 // Make sure that the output is not buffered.
-phorum_ob_clean();
+$phorum->buffer->flush();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);

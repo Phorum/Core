@@ -18,8 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements utility functions for working with the
- * PHP output buffer.
+ * This script implements utility functions for handling output.
  *
  * @package    PhorumAPI
  * @subpackage Output
@@ -63,4 +62,5 @@ function phorum_api_buffer_flush()
         ob_end_clean();
     }
 }
+
 ?>

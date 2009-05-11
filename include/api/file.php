@@ -715,6 +715,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
 function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+    $phorum = Phorum::API();
 
     // Reset error storage.
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
@@ -828,7 +829,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         ini_set("output_handler", "");
 
         // Get rid of any buffered output so far.
-        phorum_ob_clean();
+        $phorum->buffer->flush();
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
             header("Content-Type: application/octet-stream");

@@ -15,7 +15,7 @@ require_once('./common.php');
 require_once('./include/api/forums.php');
 
 // Make sure that the output is not buffered.
-phorum_ob_clean();
+$phorum->buffer->flush();
 
 print "\nRebuilding forum path info ...\n";
 

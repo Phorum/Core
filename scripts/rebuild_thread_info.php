@@ -19,7 +19,7 @@ require_once('./common.php');
 require_once('./include/thread_info.php');
 
 // Make sure that the output is not buffered.
-phorum_ob_clean();
+$phorum->buffer->flush();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);

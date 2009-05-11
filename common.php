@@ -1906,20 +1906,6 @@ function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}")
 }
 
 /**
- * Clear out all output that PHP buffered up to now.
- */
-function phorum_ob_clean()
-{
-    for(;;) {
-        $status = ob_get_status();
-        if (!$status ||
-            $status['name'] == 'ob_gzhandler' ||
-            !$status['del']) break;
-        ob_end_clean();
-    }
-}
-
-/**
  * Database error handling function.
  *
  * @param $error - The error message.
@@ -1927,10 +1913,11 @@ function phorum_ob_clean()
 function phorum_database_error($error)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).
-    phorum_ob_clean();
+    $phorum->buffer->flush();
 
     /*
      * [hook]

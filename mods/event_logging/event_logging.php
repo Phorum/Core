@@ -133,6 +133,7 @@ function phorum_mod_event_logging_resume() {
 function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 {
     $PHORUM = $GLOBALS["PHORUM"];
+    $phorum = Phorum::API();
 
     // Check for suspended logging.
     if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"])) {
@@ -231,7 +232,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     if ($loglevel == EVENTLOG_LVL_ALERT)
     {
         // Flush any buffered output so far.
-        phorum_ob_clean();
+        $phorum->buffer->flush();
 
         // Notify the user and exit.
         print "An error occurred in the application.<br/>" .
