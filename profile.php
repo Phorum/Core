@@ -72,7 +72,7 @@ $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = $PHORUM["forum_id"];
 
 $PHORUM["DATA"]["PROFILE"]["raw_date_added"]=$PHORUM["DATA"]["PROFILE"]["date_added"];
-$PHORUM["DATA"]["PROFILE"]["date_added"]=phorum_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
+$PHORUM["DATA"]["PROFILE"]["date_added"]=$phorum->format->date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
 
 if( (empty($PHORUM['hide_email_addr']) && !$user['hide_email']) ||
     !empty($PHORUM["user"]["admin"]) ||
@@ -90,7 +90,7 @@ if( $PHORUM["track_user_activity"] &&
      !$user["hide_activity"])){
 
     $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];
-    $PHORUM["DATA"]["PROFILE"]["date_last_active"]=phorum_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
+    $PHORUM["DATA"]["PROFILE"]["date_last_active"]=$phorum->format->date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 } else {
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }

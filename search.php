@@ -264,7 +264,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
                 $arr["rows"][$key]["short_body"] = substr($body, 0, 400);
             }
             $arr["rows"][$key]["raw_datestamp"] = $row["datestamp"];
-            $arr["rows"][$key]["datestamp"] = phorum_relative_date($row["datestamp"]);
+            $arr["rows"][$key]["datestamp"] = $phorum->format->relative_date($row["datestamp"]);
             $forum_ids[$row["forum_id"]] = $row["forum_id"];
 
             $match_number++;

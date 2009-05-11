@@ -85,7 +85,7 @@ $total_size=0;
 foreach($files as $key => $file) {
     $files[$key]["filesize"] = phorum_filesize($file["filesize"]);
     $files[$key]["raw_dateadded"]=$file["add_datetime"];
-    $files[$key]["dateadded"]=phorum_date($PHORUM["short_date_time"], $file["add_datetime"]);
+    $files[$key]["dateadded"]=$phorum->format->date($PHORUM["short_date_time"], $file["add_datetime"]);
 
     $files[$key]["url"]=$phorum->url(PHORUM_FILE_URL, "file=$key", "filename=".urlencode($file['filename']));
 

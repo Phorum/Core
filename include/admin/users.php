@@ -462,7 +462,7 @@ EOT;
             echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
             echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
             echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";
-            echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_last_active']) ? phorum_date($PHORUM['short_date'], intval($user['date_last_active'])) : "&nbsp;")."</td>\n";
+            echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_last_active']) ? $phorum->format->date($PHORUM['short_date'], intval($user['date_last_active'])) : "&nbsp;")."</td>\n";
             echo "    <td class=\"".$ta_class."\"><input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
             echo "</tr>\n";
         }
@@ -533,9 +533,9 @@ if (isset($_REQUEST["user_id"]))
 
         $frm->addrow("Forum posts",$user["posts"]);
 
-        $frm->addrow("Registration Date", phorum_date($PHORUM['short_date_time'] ,$user['date_added']));
+        $frm->addrow("Registration Date", $phorum->format->date($PHORUM['short_date_time'] ,$user['date_added']));
 
-        $row=$frm->addrow("Date last active", phorum_date($PHORUM['short_date_time'] ,$user['date_last_active']));
+        $row=$frm->addrow("Date last active", $phorum->format->date($PHORUM['short_date_time'] ,$user['date_last_active']));
 
         $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $user["admin"]));
 

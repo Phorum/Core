@@ -465,7 +465,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         if($row["user_id"] && isset($user_info[$row["user_id"]])){
             if(is_numeric($user_info[$row["user_id"]]["date_added"])){
                 $user_info[$row["user_id"]]["raw_date_added"] = $user_info[$row["user_id"]]["date_added"];
-                $user_info[$row["user_id"]]["date_added"] = phorum_relative_date($user_info[$row["user_id"]]["date_added"]);
+                $user_info[$row["user_id"]]["date_added"] = $phorum->format->relative_date($user_info[$row["user_id"]]["date_added"]);
             }
             if(strlen($user_info[$row["user_id"]]["posts"])>3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
                 $user_info[$row["user_id"]]["posts"] = number_format($user_info[$row["user_id"]]["posts"], 0, "", $PHORUM["thous_sep"]);
@@ -516,9 +516,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // this stuff is used in threaded and non threaded.
         $row["raw_short_datestamp"] = $row["datestamp"];
-        $row["short_datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+        $row["short_datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $row["datestamp"]);
         $row["raw_datestamp"] = $row["datestamp"];
-        $row["datestamp"] = phorum_date($PHORUM["long_date_time"], $row["datestamp"]);
+        $row["datestamp"] = $phorum->format->date($PHORUM["long_date_time"], $row["datestamp"]);
 
         $row["URL"]["READ"]   = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$read_url_template_both);
         $row["URL"]["REPLY"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template);
@@ -566,7 +566,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             if (!empty($row['meta']['edit_count']))
             {
                 $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
-                $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
+                $editmessage = str_replace ("%lastedit%", $phorum->format->date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
                 $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'], $editmessage);
                 $row["body"].="\n\n\n\n$editmessage";
                 if($row['meta']['edit_count'] > 0 && ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_ON || ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_MODERATOR && $PHORUM["DATA"]["MODERATOR"] ) ) ) {

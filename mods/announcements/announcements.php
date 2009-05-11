@@ -124,9 +124,9 @@ function phorum_setup_announcements ()
         }
 
         // Setup template data for the message.
-        $message["lastpost"] = phorum_date($PHORUM["short_date_time"], $message["modifystamp"]);
+        $message["lastpost"] = $phorum->format->date($PHORUM["short_date_time"], $message["modifystamp"]);
         $message["raw_datestamp"] = $message["datestamp"];
-        $message["datestamp"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
+        $message["datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $message["datestamp"]);
         $message["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
         $PHORUM["DATA"]["ANNOUNCEMENTS"][] = $message;
     }

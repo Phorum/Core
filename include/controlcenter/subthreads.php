@@ -70,10 +70,10 @@ foreach($subscr_array as $id => $data)
 {
     $data['forum'] = $forums[$data['forum_id']]['name'];
     $data['raw_datestamp'] = $data["modifystamp"];
-    $data['datestamp'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
+    $data['datestamp'] = $phorum->format->date($PHORUM["short_date_time"], $data["modifystamp"]);
 
     $data['raw_lastpost'] = $data['modifystamp'];
-    $data['lastpost'] = phorum_date($PHORUM["short_date_time"], $data["modifystamp"]);
+    $data['lastpost'] = $phorum->format->date($PHORUM["short_date_time"], $data["modifystamp"]);
 
     $data["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
     $data["URL"]["NEWPOST"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");

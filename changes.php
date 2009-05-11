@@ -76,7 +76,7 @@ foreach($diffs as $diff_info){
                                   ? htmlspecialchars($message["author"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                                   : $message["author"];
         $this_version["user_id"] = $message["user_id"];
-        $this_version["date"] = phorum_date($PHORUM["long_date_time"], $message["datestamp"]);
+        $this_version["date"] = $phorum->format->date($PHORUM["long_date_time"], $message["datestamp"]);
         $this_version["original"] = true;
     } else {
 
@@ -86,7 +86,7 @@ foreach($diffs as $diff_info){
                                   ? htmlspecialchars($edit_user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                                   : $edit_user["display_name"];
         $this_version["user_id"] = $diff_info["user_id"];
-        $this_version["date"] = phorum_date($PHORUM["long_date_time"], $diff_info["time"]);
+        $this_version["date"] = $phorum->format->date($PHORUM["long_date_time"], $diff_info["time"]);
         $this_version["original"] = false;
     }
 

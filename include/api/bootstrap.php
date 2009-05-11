@@ -400,28 +400,32 @@ function phorum_api_strerror()
 // modules to use the old function calls. These deprecated functions might
 // be removed from future versions of Phorum.
 
-function phorum_get_url()
-{
+function phorum_get_url() {
     Phorum::API()->url; // make sure the URL API layer code is loaded.
     $argv = func_get_args();
     return call_user_func_array('phorum_api_url_get', $argv);
 }
 
-function phorum_get_current_url($include_query_string = TRUE)
-{
+function phorum_get_current_url($include_query_string = TRUE) {
     return Phorum::API()->url->current($include_query_string);
 }
 
-function phorum_redirect_by_url($url)
-{
+function phorum_redirect_by_url($url) {
     return Phorum::API()->redirect($url);
 }
 
-function phorum_hook()
-{
+function phorum_hook() {
     Phorum::API()->modules; // make sure the Modules API layer code is loaded.
     $argv = func_get_args();
     return call_user_func_array('phorum_api_modules_hook', $argv);
+}
+
+function phorum_date($picture, $ts) {
+    return Phorum::API()->format->date($picture, $ts);
+}
+
+function phorum_relative_date($ts) {
+    return Phorum::API()->format->relative_date($ts);
 }
 
 ?>

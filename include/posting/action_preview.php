@@ -104,7 +104,7 @@ if ($mode != "edit") {
 
 // Format datestamp.
 $previewmessage["raw_datestamp"] = $previewmessage["datestamp"];
-$previewmessage["datestamp"] = phorum_date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
+$previewmessage["datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
 
 $PHORUM["DATA"]["PREVIEW"] = $previewmessage;
 

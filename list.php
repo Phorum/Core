@@ -213,7 +213,7 @@ if($rows == null)
             }
 
             $rows[$key]["raw_datestamp"] = $row["datestamp"];
-            $rows[$key]["datestamp"] = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+            $rows[$key]["datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $row["datestamp"]);
 
             $rows[$key]["URL"]["READ"] = str_replace(array('%thread_id%','%message_id%'),
                                                      array($row['thread'],$row['message_id']),
@@ -247,8 +247,8 @@ if($rows == null)
             $rows[$key]["raw_lastpost"]   = $row["modifystamp"];
             $rows[$key]["raw_datestamp"]  = $row["datestamp"];
 
-            $rows[$key]["lastpost"]       = phorum_date($PHORUM["short_date_time"], $row["modifystamp"]);
-            $rows[$key]["datestamp"]      = phorum_date($PHORUM["short_date_time"], $row["datestamp"]);
+            $rows[$key]["lastpost"]       = $phorum->format->date($PHORUM["short_date_time"], $row["modifystamp"]);
+            $rows[$key]["datestamp"]      = $phorum->format->date($PHORUM["short_date_time"], $row["datestamp"]);
 
             $rows[$key]["URL"]["READ"]    = str_replace('%thread_id%',$row['thread'],$read_url_template);
             $rows[$key]["URL"]["NEWPOST"] = str_replace('%thread_id%',$row['thread'],$newpost_url_template);
@@ -490,7 +490,7 @@ if ($bodies_in_list)
         // add the edited-message to a post if its edited
         if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
             $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
-            $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
+            $editmessage = str_replace ("%lastedit%", $phorum->format->date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
             $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
             $row["body"].="\n\n\n\n$editmessage";
         }

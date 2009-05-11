@@ -330,10 +330,10 @@ foreach ($logs as $loginfo)
           <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'"/>
         </td>
         <td valign="left" style="white-space:nowrap; font-size: 10px">'.
-          phorum_date($PHORUM['short_date'], $loginfo["datestamp"]).
+          $phorum->format->date($PHORUM['short_date'], $loginfo["datestamp"]).
        '</td>
         <td valign="left" style="white-space:nowrap; font-size: 10px">'.
-          phorum_date($PHORUM['short_time'], $loginfo["datestamp"]).
+          $phorum->format->date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
           <a title="Extend filter using this source" href="'.$filter_base.'&source='.urlencode($loginfo["source"]).'">'.htmlspecialchars($loginfo["source"]).'</a>

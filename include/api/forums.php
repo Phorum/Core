@@ -1463,7 +1463,7 @@ function phorum_api_forums_format($forums, $flags = 0)
             // Format the last post time, unless no messages were posted at all.
             if ($forum['message_count'] > 0)
             {
-                $forum['last_post'] = phorum_date(
+                $forum['last_post'] = $phorum->format->date(
                     $PHORUM['long_date_time'],
                     $forum['last_post_time']
                 );

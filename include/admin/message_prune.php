@@ -1048,7 +1048,7 @@ if (isset($messages) && is_array($messages))
           <td valign="top" style="width:100%;border-bottom:1px dashed #ccc">
             <span style="float:right">
               <?php print htmlspecialchars($data["author"]) ?>
-              <?php print phorum_date($PHORUM['short_date'], $data["datestamp"]) ?>
+              <?php print $phorum->format->date($PHORUM['short_date'], $data["datestamp"]) ?>
             </span>
             <img align="top"
                  title="<?php print $alt ?>" alt="<?php print $alt ?>"
@@ -1066,7 +1066,7 @@ if (isset($messages) && is_array($messages))
                         htmlspecialchars($data["user_username"]) .
                         "\" (user_id ".$data["user_id"].")<br/>";
               }
-              print "Date and time: " . phorum_date($PHORUM['short_date_time'], $data["datestamp"]) . "<br/>";
+              print "Date and time: " . $phorum->format->date($PHORUM['short_date_time'], $data["datestamp"]) . "<br/>";
               // Might not be available (for announcements).
               // I won't put a lot of stuff in here for handling announcements,
               // because 5.2 handles them differently than 5.1.
@@ -1077,7 +1077,7 @@ if (isset($messages) && is_array($messages))
                   print "Messages in this thread: {$data["thread_count"]}<br/>";
                   if ($data["thread_count"] > 1) {
                       print "Thread's last post: " .
-                            phorum_date($PHORUM['short_date_time'], $data["thread_modifystamp"]) . "<br/>";
+                            $phorum->format->date($PHORUM['short_date_time'], $data["thread_modifystamp"]) . "<br/>";
                   }
               }
               ?>

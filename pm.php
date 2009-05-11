@@ -710,7 +710,7 @@ switch ($page) {
 
             if (!$buddy_user['hide_activity']) {
               $buddy["raw_date_last_active"] = $buddy_user["date_last_active"];
-              $buddy["date_last_active"] = phorum_date($PHORUM["short_date_time"], $buddy_user["date_last_active"]);
+              $buddy["date_last_active"] = $phorum->format->date($PHORUM["short_date_time"], $buddy_user["date_last_active"]);
             } else {
               $buddy["date_last_active"] = "-";
             }
@@ -1192,7 +1192,7 @@ function phorum_pm_format($messages)
         // The datestamp is only available for already posted messages.
         if (isset($message['datestamp'])) {
             $messages[$id]["raw_date"] = $message["datestamp"];
-            $messages[$id]["date"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
+            $messages[$id]["date"] = $phorum->format->date($PHORUM["short_date_time"], $message["datestamp"]);
         }
 
         if (isset($message['meta']) && !is_array($message['meta'])) {

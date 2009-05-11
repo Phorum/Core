@@ -148,7 +148,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
 
     $buffer = "<div id=\"phorum_feed\">\n";
     $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</div>\n";
-    $buffer.= "    <div id=\"phorum_feed_date\">".htmlspecialchars(phorum_date($PHORUM['long_date'], time()), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
+    $buffer.= "    <div id=\"phorum_feed_date\">".htmlspecialchars($phorum->format->date($PHORUM['long_date'], time()), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
     $buffer.= "    <ul>\n";
 
     foreach($messages as $message) {
@@ -195,7 +195,7 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
 
     $feed["title"] = $feed_title;
     $feed["description"] = $feed_description;
-    $feed["modified"] = phorum_date($PHORUM['short_date'], time());
+    $feed["modified"] = $phorum->format->date($PHORUM['short_date'], time());
 
     // Lookup the plain text usernames for the authenticated authors.
     $users = $messages['users'];
@@ -212,8 +212,8 @@ function phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_d
             "title" => strip_tags($message["subject"]),
             "author" => $author,
             "category" => $forums[$message["forum_id"]]["name"],
-            "created" => phorum_date($PHORUM['short_date'], $message["datestamp"]),
-            "modified" => phorum_date($PHORUM['short_date'], $message["modifystamp"]),
+            "created" => $phorum->format->date($PHORUM['short_date'], $message["datestamp"]),
+            "modified" => $phorum->format->date($PHORUM['short_date'], $message["modifystamp"]),
             "url" => $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]),
             "description" => $message["body"]
         );
