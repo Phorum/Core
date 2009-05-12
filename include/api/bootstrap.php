@@ -444,4 +444,8 @@ function phorum_write_file($file, $data) {
     return Phorum::API()->write_file($file, $data);
 }
 
+function phorum_format_messages($messages, $author_spec = NULL) {
+    return Phorum::API()->message->format($messages, $author_spec);
+}
+
 ?>
