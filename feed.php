@@ -20,7 +20,6 @@
 define("phorum_page", "feed");
 require_once './common.php';
 
-require_once './include/format_functions.php';
 require_once './include/feed_functions.php';
 
 // somehow we got to a folder
@@ -78,10 +77,11 @@ if(!empty($cache)){
     unset($messages["users"]);
 
     // run read hooks to get everything formatted
-    if (isset($PHORUM["hooks"]["read"]))
+    if (isset($PHORUM["hooks"]["read"])) {
         $messages = $phorum->modules->hook("read", $messages);
+    }
 
-    $messages = phorum_format_messages($messages);
+    $messages = $phorum->message->format($messages);
 
     // set up the feed specifics based on the info we are getting
     if($thread && $PHORUM["forum_id"]){

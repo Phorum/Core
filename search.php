@@ -21,8 +21,6 @@ define('phorum_page','search');
 require_once './common.php';
 
 require_once './include/forum_functions.php';
-require_once './include/format_functions.php';
-require_once './include/api/forums.php';
 
 if(!phorum_check_read_common()) {
   return;
@@ -185,7 +183,7 @@ if(!phorum_search_check_valid_vars()) {
 }
 
 // Check what forums the current user can read.
-$allowed_forums = phorum_api_user_check_access(
+$allowed_forums = $phorum->user->check_access(
     PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
 );
 
@@ -246,12 +244,12 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
         $match_number = $start + 1;
 
-        $forums = phorum_api_forums_by_vroot(
+        $forums = $phorum->forums->by_vroot(
             $PHORUM["vroot"], PHORUM_FLAG_INCLUDE_INACTIVE
         );
 
         if (!$raw_body)
-            $arr["rows"] = phorum_format_messages($arr["rows"]);
+            $arr["rows"] = $phorum->message->format($arr["rows"]);
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;
@@ -348,7 +346,7 @@ $PHORUM["DATA"]["SEARCH"]["match_forum"] = $PHORUM["args"]["match_forum"];
 $PHORUM["DATA"]["SEARCH"]["match_threads"] = (int)$PHORUM["args"]["match_threads"];
 
 require_once './include/api/forums.php';
-$PHORUM["DATA"]["SEARCH"]["forum_list"] = phorum_api_forums_tree();
+$PHORUM["DATA"]["SEARCH"]["forum_list"] = $phorum->forums->tree();
 if (isset($PHORUM["args"]["match_forum"])) {
     $match_forum = is_array($PHORUM['args']['match_forum'])
                  ? $PHORUM['args']['match_forum']
@@ -369,7 +367,7 @@ $PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["
 
 if ($PHORUM["args"]["match_type"] == "USER_ID")
 {
-    $search_user = phorum_api_user_get((int)$phorum_author);
+    $search_user = $phorum->user->get((int)$phorum_author);
     if (!$search_user) {
         $search_name = $PHORUM["DATA"]["LANG"]["AnonymousUser"];
     } else {

@@ -20,7 +20,6 @@
 if (!defined("PHORUM")) return;
 
 require_once './include/thread_info.php';
-require_once './include/diff_patch.php';
 require_once './include/api/file.php';
 
 // Create a message which can be used by the database library.
@@ -66,13 +65,14 @@ $dbmessage["meta"]["show_signature"] = $message["show_signature"];
 
 // we are doing the diffs here to know about changes for edit-counts
 // $origmessage loaded in check_permissions
-$diff_body    = phorum_diff( $origmessage["body"], $message["body"]);
-$diff_subject = phorum_diff($origmessage["subject"], $message["subject"]);
-
+$diff_body    = $phorum->diff($origmessage["body"], $message["body"]);
+$diff_subject = $phorum->diff($origmessage["subject"], $message["subject"]);
 
 if(!empty($diff_body) || !empty($diff_subject))
 {
-    $name = phorum_api_user_get_display_name($PHORUM["user"]["user_id"], NULL, PHORUM_FLAG_PLAINTEXT);
+    $name = phorum_api_user_get_display_name(
+        $PHORUM["user"]["user_id"], NULL, PHORUM_FLAG_PLAINTEXT
+    );
 
     $dbmessage["meta"]["edit_count"] = isset($message["meta"]["edit_count"])
                                      ? $message["meta"]["edit_count"]+1 : 1;
@@ -84,17 +84,15 @@ if(!empty($diff_body) || !empty($diff_subject))
     if(!empty($PHORUM["track_edits"])){
 
         $edit_data = array(
-            "diff_body" => $diff_body,
+            "diff_body"    => $diff_body,
             "diff_subject" => $diff_subject,
-            "time" => $dbmessage["meta"]["edit_date"],
-            "user_id" => $PHORUM["user"]["user_id"],
-            "message_id" => $dbmessage['message_id'],
+            "time"         => $dbmessage["meta"]["edit_date"],
+            "user_id"      => $PHORUM["user"]["user_id"],
+            "message_id"   => $dbmessage['message_id'],
         );
 
         phorum_db_add_message_edit($edit_data);
-
     }
-
 }
 
 

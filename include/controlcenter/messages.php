@@ -31,7 +31,7 @@ if (isset($_POST['moddays']) && is_numeric($_POST['moddays'])) {
 } elseif(isset($PHORUM['args']['moddays']) && !empty($PHORUM["args"]['moddays']) && is_numeric($PHORUM["args"]['moddays'])) {
     $moddays = (int)$PHORUM['args']['moddays'];
 } else {
-    $moddays=phorum_api_user_get_setting("cc_messages_moddays");
+    $moddays=$phorum->user->get_setting("cc_messages_moddays");
 }
 if ($moddays === NULL) {
     $moddays = 2;
@@ -43,7 +43,7 @@ if (isset($_POST['onlyunapproved']) && is_numeric($_POST['onlyunapproved'])) {
 } elseif(isset($PHORUM['args']['onlyunapproved']) && !empty($PHORUM["args"]['onlyunapproved']) && is_numeric($PHORUM["args"]['onlyunapproved'])) {
     $showwaiting = (int)$PHORUM['args']['onlyunapproved'];
 } else {
-    $showwaiting = phorum_api_user_get_setting('cc_messages_onlyunapproved');
+    $showwaiting = $phorum->user->get_setting('cc_messages_onlyunapproved');
 }
 if (empty($showwaiting)) {
     $showwaiting = 0;
@@ -52,7 +52,7 @@ $PHORUM['DATA']['SELECTED'] = $moddays;
 $PHORUM['DATA']['SELECTED_2'] = $showwaiting?true:false;
 
 // Store current selection for the user.
-phorum_api_user_save_settings(array(
+$phorum->user->save_settings(array(
     "cc_messages_moddays"        => $moddays,
     "cc_messages_onlyunapproved" => $showwaiting
 ));
@@ -61,7 +61,7 @@ phorum_api_user_save_settings(array(
 $numunapproved = 0;
 $oldforum = $PHORUM['forum_id'];
 
-$mod_forums = phorum_api_user_check_access(
+$mod_forums = $phorum->user->check_access(
     PHORUM_USER_ALLOW_MODERATE_MESSAGES,
     PHORUM_ACCESS_LIST
 );
@@ -97,8 +97,8 @@ if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
                 // Delete the message attachments from the database.
                 $files=phorum_db_get_message_file_list($msgthd_id);
                 foreach($files as $file_id=>$data) {
-                    if (phorum_api_file_check_delete_access($file_id)) {
-                        phorum_api_file_delete($file_id);
+                    if ($phorum->file->check_delete_access($file_id)) {
+                        $phorum->file->delete($file_id);
                     }
                 }
             }
@@ -146,8 +146,7 @@ foreach($mod_forums as $forum => $rest) {
         $rows[$key]["short_datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $row["datestamp"]);
     }
 
-    require_once './include/format_functions.php';
-    $rows = phorum_format_messages($rows);
+    $rows = $phorum->message->format($rows);
     $PHORUM['DATA']['PREPOST'] = array_merge($PHORUM['DATA']['PREPOST'], $rows);
 }
 

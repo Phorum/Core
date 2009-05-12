@@ -43,7 +43,6 @@ phorum_check_posting_token();
 phorum_build_common_urls();
 
 require_once './include/email_functions.php';
-require_once './include/format_functions.php';
 
 // a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
@@ -148,7 +147,7 @@ if (isset($_POST["checked"])) {
 $recipients = array();
 if (isset($_POST["recipients"]) && is_array($_POST["recipients"])) {
     foreach ($_POST["recipients"] as $id => $dummy) {
-        $user = phorum_api_user_get($id);
+        $user = $phorum->user->get($id);
         if ($user && $user["active"] == 1) {
             $recipients[$id] = $user;
         }
@@ -369,7 +368,7 @@ if (!empty($action))
                         }
 
                         foreach($check_fields as $field){
-                            $to_user_ids = phorum_api_user_search($field, $to_name, '=', TRUE);
+                            $to_user_ids = $phorum->user->search($field, $to_name, '=', TRUE);
                             if(!empty($to_user_ids)){
                                 break;
                             }
@@ -388,7 +387,7 @@ if (!empty($action))
 
                 // Add a recipient by id.
                 if (isset($_POST["to_id"]) && is_numeric($_POST["to_id"])) {
-                    $user = phorum_api_user_get($_POST["to_id"]);
+                    $user = $phorum->user->get($_POST["to_id"]);
                     if ($user && $user["active"] == PHORUM_USER_ACTIVE) {
                         $recipients[$user["user_id"]] = $user;
                     } else {
@@ -681,7 +680,7 @@ switch ($page) {
         // Retrieve a list of users that are buddies for the current user.
         $buddy_list = phorum_db_pm_buddy_list(NULL, true);
         if (count($buddy_list)) {
-            $buddy_users = phorum_api_user_get(array_keys($buddy_list));
+            $buddy_users = $phorum->user->get(array_keys($buddy_list));
             if (isset($PHORUM["hooks"]["read_user_info"]))
                 $buddy_users = $phorum->modules->hook("read_user_info", $buddy_users);
         } else {
@@ -967,7 +966,7 @@ switch ($page) {
             if (isset($PHORUM["args"]["to_id"])) {
                 foreach (explode(":", $PHORUM["args"]["to_id"]) as $rcpt_id) {
                     settype($rcpt_id, "int");
-                    $user = phorum_api_user_get($rcpt_id);
+                    $user = $phorum->user->get($rcpt_id);
                     if ($user) {
                         $msg["recipients"][$rcpt_id] = array(
                             "display_name" => $user["display_name"],
@@ -1009,13 +1008,13 @@ switch ($page) {
 
                 $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
 
-                if (phorum_api_user_check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
+                if ($phorum->user->check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
 
                     // get url to the message board thread
                     $origurl = $phorum->url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
                     // Get the data for the user that we reply to.
-                    $user = phorum_api_user_get($message["user_id"]);
+                    $user = $phorum->user->get($message["user_id"]);
 
                     $msg["subject"] = $message["subject"];
                     $msg["message"] = $message["body"];
@@ -1076,7 +1075,7 @@ switch ($page) {
         if ($PHORUM["DATA"]["SHOW_USERSELECTION"] && $PHORUM["enable_dropdown_userlist"])
         {
             $allusers = array();
-            $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
+            $userlist = $phorum->user->list(PHORUM_GET_ACTIVE);
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
                 $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
@@ -1174,7 +1173,7 @@ function phorum_pm_format($messages)
     require_once './include/format_functions.php';
 
     // Reformat message so it looks like a forum message (so we can run it
-    // through phorum_format_messages) and do some PM specific formatting.
+    // through phorum_api_message_format()) and do some PM specific formatting.
     foreach ($messages as $id => $message)
     {
         // The formatting code expects a message id.
@@ -1234,7 +1233,7 @@ function phorum_pm_format($messages)
     }
 
     // Run the messages through the standard formatting code.
-    $messages = phorum_format_messages($messages);
+    $messages = $phorum->message->format($messages);
 
     // Reformat message back to a private message.
     foreach ($messages as $id => $message)
@@ -1258,7 +1257,7 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
     }
 
     // Lookup the plain text name that we have to use for the author that we reply to.
-    $author = phorum_api_user_get_display_name($orig_author_id, '', PHORUM_FLAG_PLAINTEXT);
+    $author = $phorum->user->get_display_name($orig_author_id, '', PHORUM_FLAG_PLAINTEXT);
 
     // TODO we'll have to handle anonymous users in the PM box. Those are
     // TODO users which sent a PM to somebody, but signed out afterwards.

@@ -20,9 +20,6 @@
 define('phorum_page','changes');
 require_once './common.php' ;
 
-require_once './include/format_functions.php';
-require_once './include/diff_patch.php';
-
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
 
@@ -48,7 +45,7 @@ if (empty($message)) {
     $phorum->redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
 }
 
-$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] = $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 $edit_tracks = phorum_db_get_message_edits($message_id);
 
@@ -80,7 +77,7 @@ foreach($diffs as $diff_info){
         $this_version["original"] = true;
     } else {
 
-        $edit_user = phorum_api_user_get($diff_info['user_id']);
+        $edit_user = $phorum->user->get($diff_info['user_id']);
 
         $this_version["username"] = empty($PHORUM['custom_display_name'])
                                   ? htmlspecialchars($edit_user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
@@ -98,8 +95,8 @@ foreach($diffs as $diff_info){
     // body diffs
     if(isset($diff_info['diff_body']) && !empty($diff_info['diff_body'])){
 
-        $colored_body = phorum_unpatch_color($prev_body, $diff_info['diff_body']);
-        $prev_body = phorum_unpatch($prev_body, $diff_info['diff_body']);
+        $colored_body = $phorum->diff->unpatch_color($prev_body, $diff_info['diff_body']);
+        $prev_body = $phorum->diff->unpatch($prev_body, $diff_info['diff_body']);
 
         $colored_body = htmlspecialchars($colored_body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         $colored_body = str_replace(
@@ -117,24 +114,8 @@ foreach($diffs as $diff_info){
         $this_version["colored_body"] = nl2br($prev_body);
     }
 
-    //print "DEBUG<br />".$this_version["colored_body"]."<br />---<br />$prev_body<br />\n";
-    // subject diffs
-    /*if(!empty($prev_diff_subject)){
-        $colored_subject = phorum_unpatch_color($prev_subject, $prev_diff_subject);
-        $colored_subject = htmlspecialchars($colored_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-        $colored_subject = str_replace(
-        array("[phorum addition]", "[phorum removal]", "[/phorum addition]", "[/phorum removal]"),
-        array("<span class=\"addition\">", "<span class=\"removal\">", "</span>", "</span>"),
-        $colored_subject);
-        $colored_subject = nl2br($colored_subject);
-
-        $message_hist[count($message_hist)-1]["colored_subject"] = $colored_subject;
-        $prev_subject = phorum_unpatch($prev_subject, $prev_diff_subject);
-        $this_version["colored_subject"] = $prev_subject;
-    } else {
-        $prev_subject = $message["subject"];
-        $this_version["colored_subject"] = $message["subject"];
-    }*/
+    $this_version['colored_body'] =
+        $phorum->format->censor($this_version['colored_body']);
 
     // only happens in first loop
     if($prev_subject == -1) {
@@ -144,8 +125,8 @@ foreach($diffs as $diff_info){
     // subject diffs
     if(isset($diff_info['diff_subject']) && !empty($diff_info['diff_subject'])){
 
-        $colored_subject = phorum_unpatch_color($prev_subject, $diff_info['diff_subject']);
-        $prev_subject = phorum_unpatch($prev_subject, $diff_info['diff_subject']);
+        $colored_subject = $phorum->diff->unpatch_color($prev_subject, $diff_info['diff_subject']);
+        $prev_subject = $phorum->diff->unpatch($prev_subject, $diff_info['diff_subject']);
 
         $colored_subject = htmlspecialchars($colored_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         $colored_subject = str_replace(
@@ -163,11 +144,13 @@ foreach($diffs as $diff_info){
         $this_version["colored_subject"] = nl2br($prev_subject);
     }
 
+    $this_version['colored_subject'] =
+        $phorum->format->censor($this_version['colored_subject']);
+
     // no nl2br for subject
     //$this_version["colored_subject"] = nl2br($this_version["colored_subject"]);
 
     $message_hist[] = $this_version;
-
 }
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ChangeHistory"];
@@ -180,6 +163,5 @@ $PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = $phorum->url(PHORUM_READ_URL, $messa
 $PHORUM["DATA"]["CHANGES"] = $message_hist;
 
 phorum_output("changes");
-
 
 ?>

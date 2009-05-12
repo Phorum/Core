@@ -177,7 +177,7 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_ARGS          => array('quote' => ''),
         BBCODE_INFO_CALLBACK      => 'bbcode_quote_handler',
         // This one not enabled now, because this is also taken care of
-        // in include/format_functions.php.
+        // in phorum_api_message_format()
         //BBCODE_INFO_STRIPBREAK    => TRUE
 
     ),
@@ -193,7 +193,7 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_REPLACEOPEN   => '<pre class="bbcode">',
         BBCODE_INFO_REPLACECLOSE  => '</pre>',
         // This one not enabled now, because this is also taken care of
-        // in include/format_functions.php.
+        // in phorum_api_message_format()
         //BBCODE_INFO_STRIPBREAK    => TRUE
     ),
 

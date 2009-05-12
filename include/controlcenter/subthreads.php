@@ -22,16 +22,16 @@ if (!defined("PHORUM_CONTROL_CENTER")) return;
 // remove threads fromlist
 if(isset($_POST["delthreads"])){
     foreach($_POST["delthreads"] as $thread){
-        phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
+        $phorum->user->unsubscribe($PHORUM['user']['user_id'], $thread);
     }
 }
 
 // change any email settings
-if(isset($_POST["sub_type"])){
-    foreach($_POST["sub_type"] as $thread=>$type){
-        if($type!=$_POST["old_sub_type"][$thread]){
-            phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
-            phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $_POST["thread_forum_id"][$thread], $type );
+if (isset($_POST["sub_type"])) {
+    foreach ($_POST["sub_type"] as $thread => $type) {
+        if ($type != $_POST["old_sub_type"][$thread]) {
+            $phorum->user->unsubscribe($PHORUM['user']['user_id'], $thread);
+            $phorum->user->subscribe($PHORUM['user']['user_id'], $thread, $_POST["thread_forum_id"][$thread], $type);
         }
     }
 }
@@ -42,7 +42,7 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
 } elseif(isset($PHORUM['args']['subdays']) && !empty($PHORUM["args"]['subdays']) && is_numeric($PHORUM["args"]['subdays'])) {
     $subdays = $PHORUM['args']['subdays'];
 } else {
-    $subdays = phorum_api_user_get_setting('cc_subscriptions_subdays');
+    $subdays = $phorum->user->get_setting('cc_subscriptions_subdays');
 }
 if ($subdays === NULL) {
     $subdays = 2;
@@ -50,7 +50,7 @@ if ($subdays === NULL) {
 $PHORUM['DATA']['SELECTED'] = $subdays;
 
 // Store current selection for the user.
-phorum_api_user_save_settings(array("cc_subscriptions_subdays" => $subdays));
+$phorum->user->save_settings(array("cc_subscriptions_subdays" => $subdays));
 
 // reading all forums for the current vroot
 $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
@@ -58,7 +58,7 @@ $forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
 // reading all subscriptions to messages in the current vroot.
 $forum_ids = array($PHORUM["vroot"]);
 foreach ($forums as $forum) { $forum_ids[] = $forum["forum_id"]; }
-$subscr_array = phorum_api_user_list_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
+$subscr_array = $phorum->user->list_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
 
 // storage for newflags
 $PHORUM['user']['newinfo'] = array();
@@ -106,8 +106,6 @@ foreach($subscr_array as $id => $data)
     $subscr_array_final[] = $data;
 }
 
-require_once './include/format_functions.php';
-
 // Additional formatting for the recent author data.
 $recent_author_spec = array(
     "recent_user_id",        // user_id
@@ -117,7 +115,8 @@ $recent_author_spec = array(
     "RECENT_AUTHOR_PROFILE"  // target author profile URL field
 );
 
-$subscr_array_final = phorum_format_messages($subscr_array_final, array($recent_author_spec));
+$subscr_array_final = $phorum->message->format(
+    $subscr_array_final, array($recent_author_spec));
 
 $count = 0;
 foreach ($subscr_array_final as $id => $message) {

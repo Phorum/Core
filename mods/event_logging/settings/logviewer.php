@@ -2,8 +2,6 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/format_functions.php');
-
 $strings = $PHORUM["DATA"]["MOD_EVENT_LOGGING"];
 
 // Merge $_GET with $_POST. We could use $_REQUEST, but that one might have

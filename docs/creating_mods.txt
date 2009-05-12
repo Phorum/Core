@@ -1504,8 +1504,8 @@ Table of contents:
    ----------------------------------------------------------------------------
    format
 
-   Where  : phorum_format_messages() in include/format_functions.php
-   When   : Everytime phorum_format_messages() is called for formatting
+   Where  : phorum_api_message_format()
+   When   : Everytime phorum_api_message_format() is called for formatting
             a message, just before it is sent to the templates.
    Input  : Array of messages.
    Return : Same as Input

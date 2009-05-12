@@ -1411,8 +1411,6 @@ function phorum_api_forums_format($forums, $flags = 0)
     $PHORUM = $GLOBALS['PHORUM'];
     $phorum = Phorum::API();
 
-    require_once PHORUM_PATH.'/include/format_functions.php';
-
     // For tracking forums for which we have to check unread messages.
     $forums_to_check = array();
 

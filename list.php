@@ -20,8 +20,6 @@
 define('phorum_page','list');
 
 require_once './common.php';
-require_once './include/format_functions.php';
-require_once './include/api/newflags.php';
 
 // set all our common URL's
 phorum_build_common_urls();
@@ -45,7 +43,7 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' &&
     $PHORUM['user']['user_id']) {
 
     // Mark all posts in the current forum as read.
-    phorum_api_newflags_markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
+    $phorum->newflags->markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
 
     // Redirect to a fresh list of the current folder without the mark read
     // parameters in the URL. This way we prevent users from bookmarking
@@ -62,12 +60,12 @@ if (empty($PHORUM["args"]["page"]) || !is_numeric($PHORUM["args"]["page"]) || $P
 $offset=$page-1;
 
 // Check if the current user is allowed to moderate messages.
-$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] = $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Find out how many forums this user can moderate. If the user can moderate
 // more than one forum, then we will present the move message moderation link.
 if ($PHORUM["DATA"]["MODERATOR"]) {
-    $modforums = phorum_api_user_check_access(
+    $modforums = $phorum->user->check_access(
         PHORUM_USER_ALLOW_MODERATE_MESSAGES,
         PHORUM_ACCESS_LIST
     );
@@ -397,7 +395,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         $mode = $PHORUM['threaded_list']
               ? PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY
               : PHORUM_NEWFLAGS_BY_THREAD;
-        $rows = phorum_api_newflags_format_messages($rows, $mode, FALSE);
+        $rows = $phorum->newflags->format_messages($rows, $mode, FALSE);
     }
 
     foreach ($rows as $key => $row)
@@ -517,7 +515,7 @@ $recent_author_spec = array(
 );
 
 // format messages
-$rows = phorum_format_messages($rows, array($recent_author_spec));
+$rows = $phorum->message->format($rows, array($recent_author_spec));
 
 // set up the data
 $PHORUM["DATA"]["MESSAGES"] = $rows;

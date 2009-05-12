@@ -21,7 +21,6 @@ define('phorum_page','report');
 require_once './common.php';
 
 require_once './include/email_functions.php';
-require_once './include/format_functions.php';
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
@@ -100,7 +99,7 @@ if(is_array($message) && count($message)) {
     }
 
     // format message
-    list($message) = phorum_format_messages(array($message));
+    list($message) = $phorum->message->format(array($message));
 
     $PHORUM["DATA"]["PostSubject"] = $message["subject"];
     $PHORUM["DATA"]["PostAuthor"] = $message["author"];

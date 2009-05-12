@@ -54,8 +54,6 @@
 if (! defined('phorum_page')) define('phorum_page', 'post');
 require_once './common.php';
 
-require_once './include/format_functions.php';
-
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.

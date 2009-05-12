@@ -152,7 +152,6 @@ function phorum_cache_purge($full = false)
       phorum_cache_purge_recursive($GLOBALS['PHORUM']['real_cache'], "", 0, 0, $full);
 
     // Return a report about the purging action.
-    require_once('./include/format_functions.php');
     return "Finished purging the file based data cache<br/>\n" .
            "Purged " . $phorum->format->filesize($purged) . " of " .
            $phorum->format->filesize($total) . "<br/>\n";

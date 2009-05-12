@@ -20,8 +20,6 @@
 define('phorum_page','index');
 require_once './common.php';
 
-require_once './include/format_functions.php';
-
 // Check if the user has read permission for the current folder.
 if (!phorum_check_read_common()) { return; }
 

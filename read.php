@@ -21,7 +21,6 @@ define('phorum_page','read');
 require_once './common.php';
 
 require_once './include/email_functions.php';
-require_once './include/format_functions.php';
 require_once './include/api/newflags.php';
 
 // set all our URL's ... we need these earlier
@@ -37,13 +36,15 @@ if ($PHORUM["folder_flag"]) {
     $phorum->redirect(PHORUM_INDEX_URL, $PHORUM['forum_id']);
 }
 
-$PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+$PHORUM["DATA"]["MODERATOR"] = $phorum->user->check_access(
+    PHORUM_USER_ALLOW_MODERATE_MESSAGES
+);
 
 // Find out how many forums this user can moderate.
 // If the user can moderate more than one forum, then
 // present the move message moderation link.
 if ($PHORUM["DATA"]["MODERATOR"]) {
-    $modforums = phorum_api_user_check_access(
+    $modforums = $phorum->user->check_access(
         PHORUM_USER_ALLOW_MODERATE_MESSAGES,
         PHORUM_ACCESS_LIST
     );
@@ -85,7 +86,7 @@ if(empty($PHORUM["args"][1])) {
                 $thread = (int) $PHORUM['args'][1];
 
                 if ($PHORUM['user']['user_id']) {
-                    phorum_api_newflags_markread(
+                    $phorum->newflags->markread(
                         $thread, PHORUM_MARKREAD_THREADS
                     );
                 }
@@ -102,7 +103,7 @@ if(empty($PHORUM["args"][1])) {
                 $thread = (int)$PHORUM["args"][1];
 
                 // Find the first unread message_id.
-                $new_message = phorum_api_newflags_firstunread($thread);
+                $new_message = $phorum->newflags->firstunread($thread);
 
                 if ($new_message) {
                     if ($PHORUM['threaded_read'] == 0) { // get new page
@@ -432,7 +433,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     // fetch_user_ids filled from phorum_db_get_messages
     if(isset($fetch_user_ids) && count($fetch_user_ids)){
-        $user_info=phorum_api_user_get($fetch_user_ids);
+        $user_info=$phorum->user->get($fetch_user_ids);
         // hook to modify user info
         if (isset($PHORUM["hooks"]["read_user_info"]))
             $user_info = $phorum->modules->hook("read_user_info", $user_info);
@@ -449,7 +450,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     // Add information about new messages to the thread.
-    $data = phorum_api_newflags_format_messages($data, PHORUM_NEWFLAGS_BY_MESSAGE);
+    $data = $phorum->newflags->format_messages($data, PHORUM_NEWFLAGS_BY_MESSAGE);
 
     // main loop for template setup
     $messages = array();
@@ -506,8 +507,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // allow editing only if logged in, allowed for forum, the thread is open,
         // its the same user, and its within the time restriction
-        if($PHORUM["user"]["user_id"]==$row["user_id"] && phorum_api_user_check_access(PHORUM_USER_ALLOW_EDIT) &&
-            !$thread_is_closed &&($PHORUM["user_edit_timelimit"] == 0 || $row["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())) {
+        if($PHORUM["user"]["user_id"]==$row["user_id"] &&
+           $phorum->user->check_access(PHORUM_USER_ALLOW_EDIT) &&
+           !$thread_is_closed &&
+           ($PHORUM["user_edit_timelimit"] == 0 ||
+            $row["datestamp"] + ($PHORUM["user_edit_timelimit"] * 60) >= time())) {
             $row["edit"]=1;
             if(!$PHORUM["DATA"]["MODERATOR"]) {
                 $row["URL"]["EDIT"] = str_replace(array('%action_id%','%message_id%'),array("edit", $row["message_id"]),$edit_url_template);
@@ -661,7 +665,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     // format messages
-    $messages = phorum_format_messages($messages);
+    $messages = $phorum->message->format($messages);
 
     // set up the data
 
@@ -712,7 +716,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     if($PHORUM["DATA"]["LOGGEDIN"] && count($read_messages)) {
-        phorum_api_newflags_markread($read_messages, PHORUM_MARKREAD_MESSAGES);
+        $phorum->newflags->markread($read_messages, PHORUM_MARKREAD_MESSAGES);
     }
 
     // {REPLY_ON_READ} is set when message replies are done on

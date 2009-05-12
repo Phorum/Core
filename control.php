@@ -23,7 +23,6 @@ require_once './common.php';
 phorum_require_login();
 
 require_once './include/email_functions.php';
-require_once './include/format_functions.php';
 
 define("PHORUM_CONTROL_CENTER", 1);
 
@@ -85,9 +84,9 @@ $PHORUM['DATA']['URL']['CC16'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel="
 $PHORUM["DATA"]["MYFILES"] = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]);
 
 // Determine if the user is a moderator.
-$PHORUM["DATA"]["MESSAGE_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANY);
-$PHORUM["DATA"]["USER_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANY);
-$PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_ANY);
+$PHORUM["DATA"]["MESSAGE_MODERATOR"] = $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANY);
+$PHORUM["DATA"]["USER_MODERATOR"] = $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANY);
+$PHORUM["DATA"]["GROUP_MODERATOR"] = $phorum->user->check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_ANY);
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 
 // If global email hiding is not enabled, then give the user a chance
@@ -117,7 +116,7 @@ unset($user["permissions"]);
 
 // Fake a message here so we can run the sig through format_message.
 $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
-$fake_messages = phorum_format_messages( $fake_messages );
+$fake_messages = $phorum->message->format($fake_messages);
 $user["signature_formatted"] = $fake_messages[0]["body"];
 
 // Format the user signature using standard message body formatting
@@ -315,7 +314,7 @@ function phorum_controlcenter_user_save($panel)
         $error=$userdata['error'];
         unset($userdata['error']);
     // Try to update the userdata in the database.
-    } elseif (!phorum_api_user_save($userdata)) {
+    } elseif (!$phorum->user->save($userdata)) {
         // Updating the user failed.
         $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
     } else {
@@ -323,20 +322,23 @@ function phorum_controlcenter_user_save($panel)
         $okmsg = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
 
         // Let the userdata be reloaded.
-        phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, $userdata["user_id"]);
+        $phorum->user->set_active_user(
+            PHORUM_FORUM_SESSION,
+            $userdata["user_id"]
+        );
 
         // If a new password was set, then reset all session id(s), so
         // other computers or browser will lose any active session that
         // they are running.
         if (isset($userdata["password"]) && $userdata["password"] != '') {
-            phorum_api_user_session_create(
+            $phorum->user->session_create(
                 PHORUM_FORUM_SESSION,
                 PHORUM_SESSID_RESET_ALL
             );
         }
 
         // Copy data from the updated user back into the user template data.
-        $formatted = phorum_api_user_format(array($PHORUM['user']));
+        $formatted = $phorum->user->format(array($PHORUM['user']));
         foreach ($formatted[0] as $key => $val) {
             $PHORUM['DATA']['USER'][$key] = $val;
         }

@@ -19,7 +19,6 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once './include/format_functions.php';
 require_once './include/api/custom_fields.php';
 require_once './include/api/forums.php';
 

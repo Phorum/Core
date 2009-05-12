@@ -19,8 +19,6 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-require_once './include/format_functions.php';
-
 // Execute file purging.
 if(count($_POST))
 {
@@ -50,7 +48,6 @@ if(count($_POST))
             }
         }
     }
-    require_once './include/format_functions.php';
     print "Finished purging compiled Phorum templates<br/>\n" .
           "Purged " . $phorum->format->filesize($purged) . "<br/>";
 

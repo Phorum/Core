@@ -52,15 +52,15 @@ $message=phorum_db_get_message($thread);
 # that were sent out before this change.
 if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     // we are removing a message from the follow list
-    phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
+    $phorum->user->unsubscribe( $PHORUM['user']['user_id'], $thread );
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["RemoveFollowed"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=$phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $template="message";
 } elseif(isset($PHORUM["args"]["noemail"])){
     // we are stopping emails for this thread
-    phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
-    phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], PHORUM_SUBSCRIPTION_BOOKMARK );
+    $phorum->user->unsubscribe( $PHORUM['user']['user_id'], $thread );
+    $phorum->user->subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], PHORUM_SUBSCRIPTION_BOOKMARK );
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["NoMoreEmails"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=$phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
@@ -68,17 +68,15 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 } elseif(!empty($_POST)) {
     // the user has submitted the form
     $type = (!empty($PHORUM["allow_email_notify"]) && isset($_POST["send_email"])) ? PHORUM_SUBSCRIPTION_MESSAGE : PHORUM_SUBSCRIPTION_BOOKMARK;
-    phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], $type );
-    $PHORUM["DATA"]["URL"]["REDIRECT"]=$phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
+    $phorum->user->subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], $type );
+    $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["BookmarkedThread"];
     $template="message";
 } else {
     // we are following a new thread
 
-    require_once './include/format_functions.php';
-    $messages = phorum_format_messages(array(1=>$message));
-    $message = $messages[1];
+    list($messages) = $phorum->message->format(array($message));
 
     $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_FOLLOW_ACTION_URL);
     $PHORUM["DATA"]["SUBJECT"]       = $message["subject"];

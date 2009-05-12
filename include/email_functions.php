@@ -334,8 +334,6 @@ function phorum_email_notice($message)
         return;
     }
 
-    include_once "./include/format_functions.php";
-
     $mail_users_full = phorum_api_user_list_subscribers($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
 
     if (count($mail_users_full)) {
@@ -401,9 +399,8 @@ function phorum_email_moderators($message)
         $mail_localized_users[$lang][]=$user['email'];
     }
     
-    if (count($mail_localized_users)) {
-        include_once "./include/format_functions.php";
-        
+    if (count($mail_localized_users))
+    {
         if($message["status"] > 0) { // just notification of a new message
             $mailsubjecttpl = 'NewUnModeratedSubject';
             $mailmessagetpl = 'NewUnModeratedMessage';
