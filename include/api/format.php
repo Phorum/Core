@@ -231,7 +231,7 @@ function phorum_api_format_censor_compile()
                 $parts[] = "\b".preg_quote($word['string'],'/').
                             "(ing|ed|s|er|es)*\b";
             }
-            $search = '/' . implode('|', $parts) . '/';
+            $search = '/' . implode('|', $parts) . '/i';
         } else {
             $search = NULL;
         }
