@@ -138,8 +138,6 @@ if(empty($PHORUM["args"][1])) {
     }
 }
 
-//timing_mark("before database");
-
 // determining the page if page isn't given and message_id != thread
 $page=0;
 if(!$PHORUM["threaded_read"]) {
@@ -312,8 +310,6 @@ if($page>1 && !isset($data[$thread])){
     $data["users"][]=$first_message["user_id"];
     $data[$first_message["message_id"]] = $first_message;
 }
-
-//timing_mark("after database");
 
 if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
@@ -787,8 +783,5 @@ function phorum_check_moved_message($thread)
     }
     return $ret;
 }
-
-//timing_mark("end");
-//timing_print();
 
 ?>

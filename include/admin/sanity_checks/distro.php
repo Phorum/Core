@@ -131,6 +131,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/api/message.php',
     'include/api/modules.php',
     'include/api/newflags.php',
+    'include/api/profiler.php',
     'include/api/redirect.php',
     'include/api/tree.php',
     'include/api/url.php',
@@ -177,6 +178,7 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array(
     'include/index_flat.php',
     'include/index_classic.php',
     'include/index_directory.php',
+    'include/timing.php',
 );
 
 // A list of database layer files that ship with Phorum.
