@@ -415,7 +415,13 @@ switch ($step){
             "mod_announcements" => array('module'=>'modsettings','mod'=>'announcements','forum_id'=>1,'pages'=>array('index'=>'1','list'=>'1'),'number_to_show'=>5,'only_show_unread'=>NULL,'days_to_show'=>0),
             "open_id" => 0
             );
-
+            // check for the fileinfo extension 
+            if(function_exists("finfo_open")) {
+                $settings['file_fileinfo_ext']=1;
+            } else {
+                $settings['file_fileinfo_ext']=0;
+            }
+            
             phorum_db_update_settings($settings);
 
             // posting forum and test-message
