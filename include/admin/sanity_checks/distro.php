@@ -165,6 +165,17 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'versioncheck.php',
 );
 
+// A list of files that were removed from the distro. For these files,
+// we check if they are removed from the Phorum directory as well.
+// If not (which might happen after an upgrade path), then a fatal
+// sanity check error is generated to notice that these files must
+// be removed.
+$GLOBALS["PHORUM"]["deprecated_distro"] = array(
+    'post.'.PHORUM_FILE_EXTENSION,
+    'include/phorum_get_url.php',
+    'include/format_functions.php',
+);
+
 // A list of database layer files that ship with Phorum.
 $GLOBALS["PHORUM"]["distro_dblayers"] = array(
     "mysql.php",
@@ -331,6 +342,34 @@ function phorum_check_distro()
          language file(s): " . implode(", ", $PHORUM["distro_languages"])
     );
 
+    // ------------------------------------------------------------------
+    // Check if there are deprecated files in the Phorum tree.
+    // ------------------------------------------------------------------
+
+    foreach ($PHORUM["deprecated_distro"] as $file)
+    {
+        // Check availability.
+        if (file_exists($file)) {
+            $errors[] = "deprecated: $file";
+            continue;
+        }
+    }
+
+    if (count($errors)) return array(
+        PHORUM_SANITY_CRIT,
+        "One or more files in your Phorum tree are no longer part of
+         the Phorum distribution. Please, remove the following file(s)
+         from your Phorum installation:<br/>" .
+         "<ul><li>" . implode("</li>\n<li>", $errors) . "</li></ul>",
+        "This could happen after installing a newer version of Phorum
+         on top of an existing Phorum installation. In this newer version,
+         some files might no longer be in use. To prevent conflicts,
+         it is best to remove these files from your Phorum installation
+         directory."
+    );
+
+
+    // All checks were OK.
     return array (PHORUM_SANITY_OK, NULL, NULL);
 }
 ?>
