@@ -63,6 +63,9 @@ Phorum 5.2 -> Phorum 5.3:
   * DOC TODO: the custom profile fields were transferred to custom fields,
     which can be added to users, forums and messages.
 
+  * API file include/api/file_storage.php has been renamed to
+    include/api/file.php.
+
 
   Database layer code
   -------------------

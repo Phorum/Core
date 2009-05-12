@@ -121,7 +121,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/api/examples/user_auth_module.php',
     'include/api/examples/user_login.php',
     'include/api/file.php',
-    'include/api/file_storage.php',
     'include/api/format.php',
     'include/api/forums.php',
     'include/api/http_get.php',
@@ -172,13 +171,14 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
 // sanity check error is generated to notice that these files must
 // be removed.
 $GLOBALS["PHORUM"]["deprecated_distro"] = array(
-    'post.'.PHORUM_FILE_EXTENSION,
-    'include/phorum_get_url.php',
-    'include/format_functions.php',
-    'include/index_flat.php',
-    'include/index_classic.php',
-    'include/index_directory.php',
-    'include/timing.php',
+    'post.'.PHORUM_FILE_EXTENSION,   // deprecated by the posting.php script
+    'include/api/file_storage.php',  // renamed to include/api/file.php
+    'include/phorum_get_url.php',    // moved to URL API
+    'include/format_functions.php',  // moved to Message and Format API
+    'include/index_flat.php',        // renamed to include/index/flat.php
+    'include/index_classic.php',     // renamed to include/index/flat.php
+    'include/index_directory.php',   // renamed to include/index/directory.php
+    'include/timing.php',            // moved to Profiler API
 );
 
 // A list of database layer files that ship with Phorum.
