@@ -1623,7 +1623,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
                            ? 0 : $PHORUM['forum_id'];
 
         // Update the user data in the database.
-        $phorum_api_user_save_raw(array(
+        phorum_api_user_save_raw(array(
             'user_id'           => $user['user_id'],
             'date_last_active'  => $date_last_active,
             'last_active_forum' => $last_active_forum
