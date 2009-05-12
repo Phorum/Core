@@ -156,10 +156,8 @@ foreach($diffs as $diff_info){
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ChangeHistory"];
 // unset default description
 $PHORUM["DATA"]["DESCRIPTION"] = "";
-
 $PHORUM["DATA"]["MESSAGE"]["subject"] = htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 $PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = $phorum->url(PHORUM_READ_URL, $message["thread"], $message_id);
-
 $PHORUM["DATA"]["CHANGES"] = $message_hist;
 
 phorum_output("changes");
