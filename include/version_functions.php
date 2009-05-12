@@ -19,14 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-// The internal_patchlevel can be unset, because this setting was
-// added in 5.2. When upgrading from 5.1, this settings is not yet
-// available. To make things work, we'll fake a value for this
-// setting which will always be lower than the available patch ids.
-if (!isset($PHORUM["internal_patchlevel"])) {
-    $PHORUM["internal_patchlevel"] = "1111111111";
-}
-
 /**
  * Parses a Phorum version number.
  *

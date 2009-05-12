@@ -54,7 +54,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
     if (isset($PHORUM["hooks"]["before_logout"]))
         $phorum->modules->hook("before_logout");
 
-    phorum_api_user_session_destroy(PHORUM_FORUM_SESSION);
+    $phorum->user->session_destroy(PHORUM_FORUM_SESSION);
 
     // Determine the URL to redirect the user to. The hook "after_logout"
     // can be used by module writers to set a custom redirect URL.
@@ -137,11 +137,11 @@ if (count($_POST) > 0) {
         }
 
         // Is the email address available in the database?
-        elseif ($uid = phorum_api_user_search("email", $_POST["lostpass"])) {
+        elseif ($uid = $phorum->user->search("email", $_POST["lostpass"])) {
 
             // An existing user id was found for the entered email
             // address. Retrieve the user.
-            $user = phorum_api_user_get($uid);
+            $user = $phorum->user->get($uid);
 
             $tmp_user=array();
 
@@ -156,7 +156,7 @@ if (count($_POST) > 0) {
                 // Generate and store a new email confirmation code.
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = substr(md5(microtime()), 0, 8);
-                phorum_api_user_save($tmp_user);
+                $phorum->user->save($tmp_user);
 
                 // Mail the new confirmation code to the user.
                 $verify_url = $phorum->url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
@@ -210,13 +210,13 @@ if (count($_POST) > 0) {
 
                 // Generate and store a new password for the user.
                 require_once './include/profile_functions.php';
-                $newpass = phorum_gen_password();
+                $newpass = $phorum->generate->password();
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = $newpass;
-                phorum_api_user_save($tmp_user);
+                $phorum->user->save($tmp_user);
 
                 // Mail the new password.
-                $user = phorum_api_user_get($uid);
+                $user = $phorum->user->get($uid);
                 $maildata = array();
 
                 // The mailmessage can be composed in two different ways.
@@ -237,7 +237,7 @@ if (count($_POST) > 0) {
                         ),
                         array(
                             $PHORUM['title'],
-                            $user[username],
+                            $user['username'],
                             $newpass,
                             $phorum->url(PHORUM_LOGIN_URL)
                         ),
@@ -294,7 +294,7 @@ if (count($_POST) > 0) {
             }
 
             // Check if the login credentials are right.
-            $user_id = phorum_api_user_authenticate(
+            $user_id = $phorum->user->authenticate(
                 PHORUM_FORUM_SESSION,
                 trim($_POST["username"]),
                 trim($_POST["password"])
@@ -307,7 +307,7 @@ if (count($_POST) > 0) {
                 // and start a Phorum user session. Because this is a fresh
                 // login, we can enable the short term session and we request
                 // refreshing of the session id(s).
-                if (phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, $user_id, PHORUM_FLAG_SESSION_ST) && phorum_api_user_session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
+                if ($phorum->user->set_active_user(PHORUM_FORUM_SESSION, $user_id, PHORUM_FLAG_SESSION_ST) && $phorum->user->session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
 
                     // Destroy the temporary cookie that is used for testing
                     // for cookie compatibility.

@@ -263,18 +263,20 @@ if (!isset($PHORUM['default_feed']))   $PHORUM['default_feed']   = 'rss';
 if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = FALSE;
 if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = FALSE;
 
+// The internal_patchlevel can be unset, because this setting was
+// added in 5.2. When upgrading from 5.1, this settings is not yet
+// available. To make things work, we'll fake a value for this
+// setting which will always be lower than the available patch ids.
+if (!isset($PHORUM["internal_patchlevel"])) {
+    $PHORUM["internal_patchlevel"] = "1111111111";
+}
+
 // If we have no private key for signing data, generate one now,
-// but only if it's not a fresh install.
+// but only if we are not in the middle of a fresh install.
 if (isset($PHORUM['internal_version']) &&
     $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION &&
     (!isset($PHORUM['private_key']) || empty($PHORUM['private_key']))) {
-   $chars = "0123456789!@#$%&abcdefghijklmnopqr".
-            "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-   $private_key = "";
-   for ($i = 0; $i<40; $i++) {
-       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
-   }
-   $PHORUM['private_key'] = $private_key;
+   $PHORUM['private_key'] = $phorum->generate->key();
    $phorum->db->update_settings(array('private_key' => $PHORUM['private_key']));
 }
 
