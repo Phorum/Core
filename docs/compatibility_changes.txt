@@ -49,8 +49,8 @@ Phorum 5.2 -> Phorum 5.3:
     values to use are PHORUM_INDEX_DIRECTORY and PHORUM_INDEX_FLAT.
 
     Along with this change, the index scripts were renamed:
-    include/index_classic.php -> include/index_directory.php
-    include/index_new.php     -> include/index_flat.php
+    include/index_classic.php -> include/index/directory.php
+    include/index_new.php     -> include/index/flat.php
 
     And the related template files:
     index_classic.tpl         -> index_directory.tpl

@@ -158,8 +158,8 @@ if (!empty($PHORUM['jump_on_single_forum']) &&
  *
  * [when]
  *     Just before the index page is shown. The hook can be called from
- *     either <filename>include/index_flat.php</filename> or
- *     <filename>include/index_directory.php</filename>, based on the
+ *     either <filename>include/index/flat.php</filename> or
+ *     <filename>include/index/directory.php</filename>, based on the
  *     value of the <literal>$PHORUM["index_style"]</literal> setting
  *     variable.
  *

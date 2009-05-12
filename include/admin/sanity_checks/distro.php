@@ -86,8 +86,8 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/controlcenter/users.php',
     'include/email_functions.php',
     'include/feed_functions.php',
-    'include/index_directory.php',
-    'include/index_flat.php',
+    'include/index/directory.php',
+    'include/index/flat.php',
     'include/javascript/phorum-javascript-library.php',
     'include/javascript/jquery.json-1.3.min.js',
     'include/javascript/jquery-1.2.6.min.js',
@@ -174,6 +174,9 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array(
     'post.'.PHORUM_FILE_EXTENSION,
     'include/phorum_get_url.php',
     'include/format_functions.php',
+    'include/index_flat.php',
+    'include/index_classic.php',
+    'include/index_directory.php',
 );
 
 // A list of database layer files that ship with Phorum.

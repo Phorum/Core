@@ -81,7 +81,7 @@ if (empty($forums)) {
     return;
 }
 
-// Run the "index" hook. This one is documented in index_flat.php.
+// Run the "index" hook. This one is documented in include/index/flat.php.
 if (isset($PHORUM['hooks']['index'])) {
     $forums = $phorum->modules->hook('index', $forums);
 }

@@ -71,12 +71,12 @@ if (!empty($PHORUM['use_rss']))
 switch ($PHORUM['index_style'])
 {
     case PHORUM_INDEX_FLAT:
-        require_once './include/index_flat.php';
+        require_once './include/index/flat.php';
         break;
 
     case PHORUM_INDEX_DIRECTORY:
     default: // Should not happen
-        require_once './include/index_directory.php';
+        require_once './include/index/directory.php';
         break;
 }
 
