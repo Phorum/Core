@@ -174,4 +174,64 @@ function phorum_api_format_filesize($bytes)
 }
 // }}}
 
+// {{{ Function: phorum_api_format_strip()
+/**
+ * Strips HTML <tags> and BBcode [tags] from the body.
+ *
+ * @param string body
+ *     The block of body text to strip.
+ *
+ * @return string
+ *     The stripped body.
+ */
+function phorum_api_format_strip($body)
+{
+    // Strip HTML <tags>
+    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
+
+    // Strip BB Code [tags]
+    $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+
+    // Handle censoring.
+    $stripped = phorum_api_format_censor($stripped);
+
+    return $stripped;
+}
+// }}}
+
+// {{{ Function: phorum_api_format_censor
+/**
+ * Handle replacing bad words with the string from the
+ * PHORUM_BADWORD_REPLACE constant.
+ *
+ * @param string $str
+ *     The string in which to replace the bad words.
+ *
+ * @param string $str
+ *     The possibly modifed string.
+ */
+function phorum_api_format_censor($str)
+{
+    $phorum = Phorum::API();
+    static $badwords = NULL;
+    
+    if (!is_array($badwords)) {
+        $badwords = $phorum->ban->list(PHORUM_BAD_WORDS);
+    }
+    
+    // Do string replacements if there are bad words configured.
+    if (!empty($badwords))
+    {
+        $words = array();
+        foreach ($badwords as $badword) {
+            $words[] = "/\b".preg_quote($badword['string'],'/').
+                       "(ing|ed|s|er|es)*\b/i";
+        }
+        $str = preg_replace($words, PHORUM_BADWORD_REPLACE, $str);
+    }
+
+    return $str;
+}
+// }}}
+
 ?>

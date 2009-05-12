@@ -260,7 +260,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
             // strip HTML & BB Code
             if(!$raw_body) {
-                $body = phorum_strip_body($arr["rows"][$key]["body"]);
+                $body = $phorum->format->strip($arr["rows"][$key]["body"]);
                 $arr["rows"][$key]["short_body"] = substr($body, 0, 400);
             }
             $arr["rows"][$key]["raw_datestamp"] = $row["datestamp"];

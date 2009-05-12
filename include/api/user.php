@@ -1245,10 +1245,11 @@ function phorum_api_user_delete($user_id)
 
 // {{{ Function: phorum_api_user_format()
 /*
- * This function handles preparing user data * for use in the templates.
+ * This function handles preparing user data for use in the templates.
  *
- * @param mixed $users
- *     An array of user data records to format.
+ * @param array $users
+ *     An array of users that have to be formatted.
+ *     Each user is an array on its own, containing the user data.
  *
  * @return array
  *     The same as the $users argument array, with formatting applied.

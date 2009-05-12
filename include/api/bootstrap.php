@@ -432,6 +432,10 @@ function phorum_filesize($sz) {
     return Phorum::API()->format->filesize($sz);
 }
 
+function phorum_strip_body($body) {
+    return Phorum::API()->format->strip($body);
+}
+
 function phorum_ob_clean() {
     return Phorum::API()->output->clear();
 }
