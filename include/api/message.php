@@ -149,11 +149,15 @@ function phorum_api_message_format($messages, $author_specs = NULL)
     if ($author_specs === NULL) $author_specs = array();
     $author_specs[] = array("user_id","author","email","author","PROFILE");
 
+    // Prepare censoring replacements.
+    list ($censor_search, $censor_replace) = $phorum->format->censor_compile();
+
+    // Prepare the profile URL template. This is used to prevent
+    // having to call the $phorum->url() function over and over again. 
+    $profile_url_template = $phorum->url(PHORUM_PROFILE_URL, '%spec_data%');
+
     // A special <br> tag to keep track of breaks that are added by phorum.
     $phorum_br = '<phorum break>';
-
-    // prepare url-templates used later on
-    $profile_url_template = $phorum->url(PHORUM_PROFILE_URL, '%spec_data%');
 
     // Apply Phorum's formatting rules to all messages.
     foreach($messages as $id => $message)
@@ -203,7 +207,9 @@ function phorum_api_message_format($messages, $author_specs = NULL)
             $body = str_replace("\n", "$phorum_br\n", $body);
 
             // Censor bad words in the body.
-            $body = $phorum->format->censor($body);
+            if ($censor_search !== NULL) {
+                $body = preg_replace($censor_search, $censor_replace, $body);
+            }
 
             $messages[$id]['body'] = $body;
         }
@@ -213,9 +219,10 @@ function phorum_api_message_format($messages, $author_specs = NULL)
         // -----------------------------------------------------------------
 
         // Censor bad words in the subject.
-        if (isset($message['subject'])) {
-            $messages[$id]['subject'] =
-                $phorum->format->censor($message['subject']);
+        if (isset($message['subject']) && $censor_search !== NULL) {
+            $messages[$id]['subject'] = preg_replace(
+                $censor_search, $censor_replace, $message['subject']
+            );
         }
 
         // Escape special HTML characters. 
@@ -274,9 +281,11 @@ function phorum_api_message_format($messages, $author_specs = NULL)
                 $messages[$id][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
             }
 
-            $messages[$id][$spec[3]] = $phorum->format->censor(
-                $messages[$id][$spec[3]]
-            );
+            if ($censor_search !== NULL) {
+                $messages[$id][$spec[3]] = preg_replace(
+                    $censor_search, $censor_replace, $messages[$id][$spec[3]]
+                );
+            }
         }
     }
 
@@ -318,7 +327,7 @@ function phorum_api_message_format($messages, $author_specs = NULL)
             );
 
             // Normalize the Phorum line breaks that are left.
-            $data[$id]['body'] = str_replace(
+            $messages[$id]['body'] = str_replace(
                 $phorum_br, "<br />", $message['body']
             );
         }
