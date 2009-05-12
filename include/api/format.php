@@ -21,7 +21,7 @@
  * This script implements utility functions for formatting data.
  *
  * @package    PhorumAPI
- * @subpackage Tools
+ * @subpackage Formatting
  * @copyright  2007, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
