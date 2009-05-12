@@ -822,7 +822,22 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 
     // Set the MIME type information if it was not set by a module.
     if ($file["mime_type"] === NULL) {
-        $file["mime_type"] = phorum_api_file_get_mimetype($file["filename"]);
+    	
+        // retrieve the mime-type using the fileinfo extension if its available and enabled
+    	if(function_exists("finfo_open") && (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext']))) {
+    		
+            $finfo = finfo_open(FILEINFO_MIME); 
+            $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
+            finfo_close($finfo);
+	        if ($file["mime_type"] === false) return phorum_api_error_set(
+	            PHORUM_ERRNO_ERROR,
+	            "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
+	            "fileinfo-extension"
+	        );
+	            
+    	} else {
+            $file["mime_type"] = phorum_api_file_get_mimetype($file["filename"]);
+    	}
     }
 
     // If the file is not requested for downloading, then check if it is
