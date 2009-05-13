@@ -355,17 +355,19 @@ if ($initial || $finish || $preview) {
 // Is the forum running in a moderated state?
 $PHORUM["DATA"]["MODERATED"] =
     $PHORUM["moderation"] == PHORUM_MODERATE_ON &&
-    !phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+    !$phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Does the user have administrator permissions?
 $PHORUM["DATA"]["ADMINISTRATOR"] = $PHORUM["user"]["admin"];
 
 // Does the user have moderator permissions?
 $PHORUM["DATA"]["MODERATOR"] =
-    phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+    $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Ability: Do we allow attachments?
-$PHORUM["DATA"]["ATTACHMENTS"] = $PHORUM["max_attachments"] > 0 && phorum_api_user_check_access(PHORUM_USER_ALLOW_ATTACH);
+$PHORUM["DATA"]["ATTACHMENTS"] =
+    $PHORUM["max_attachments"] > 0 &&
+    $phorum->user->check_access(PHORUM_USER_ALLOW_ATTACH);
 
 // What options does this user have for a message?
 $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
@@ -447,6 +449,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *     function phorum_mod_foo_posting_permissions ()
  *     {
  *         global $PHORUM;
+ *         $phorum = Phorum::API();
  *
  *         // get the previously stored id for the "sticky_allowed" group
  *         $mod_foo_group_id = $PHORUM["mod_foo"]["sticky_allowed_group_id"];
@@ -455,7 +458,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *         // group, if the option has not already been enabled.
  *         if (!$PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"])
  *         {
- *             $is_in_group = phorum_api_user_check_group_access(
+ *             $is_in_group = $phorum->user->check_group_access(
  *                 PHORUM_USER_GROUP_APPROVED,
  *                 $mod_foo_group_id
  *             );
@@ -863,7 +866,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
     if (($PHORUM["post_fields"]["email"][pf_READONLY] ||
          $PHORUM["post_fields"]["author"][pf_READONLY]) &&
          !empty($db["user_id"])) {
-        $user_info = phorum_api_user_get($db["user_id"]);
+        $user_info = $phorum->user->get($db["user_id"]);
         $user_info["author"] = $user_info["display_name"];
     }
 
@@ -882,7 +885,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                 break;
 
             case "subscription":
-                $type = phorum_api_user_get_subscription(
+                $type = $phorum->user->get_subscription(
                     $db["user_id"], $db["forum_id"], $db["thread"]);
                 switch ($type) {
                     case NULL:

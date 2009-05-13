@@ -20,8 +20,8 @@
 if (!defined("PHORUM")) return;
 
 // Check if the user is allowed to post a new message or a reply.
-if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
-    ($mode == "reply" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_REPLY)) ) {
+if( ($mode == "post" && !$phorum->user->check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
+    ($mode == "reply" && !$phorum->user->check_access(PHORUM_USER_ALLOW_REPLY)) ) {
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
         // If users are logged in and can't post, they don't have rights to do so.
         $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
@@ -203,7 +203,7 @@ if ($mode == "edit")
     $timelim = $PHORUM["user_edit_timelimit"];
     $useredit =
         $message["user_id"] == $PHORUM["user"]["user_id"] &&
-        phorum_api_user_check_access(PHORUM_USER_ALLOW_EDIT) &&
+        $phorum->user->check_access(PHORUM_USER_ALLOW_EDIT) &&
         ! empty($top_parent) &&
         ! $top_parent["closed"] &&
         (! $timelim || $message["datestamp"] + ($timelim * 60) >= time());

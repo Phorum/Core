@@ -32,8 +32,8 @@ if ($do_detach)
             // can be deleted immediately. Linked attachments should
             // be kept in the db, in case the users clicks "Cancel".
             if (! $info["linked"]) {
-                if (phorum_api_file_check_delete_access($info["file_id"])) {
-                    phorum_api_file_delete($info["file_id"]);
+                if ($phorum->file->check_delete_access($info["file_id"])) {
+                    $phorum->file->delete($info["file_id"]);
                 }
                 unset($message["attachments"][$id]);
             } else {
@@ -151,7 +151,7 @@ elseif ($do_attach && ! empty($_FILES))
 
         // Let the file storage API run some upload access checks
         // (maximum attachment file size and file type).
-        if (!phorum_api_file_check_write_access(array(
+        if (!$phorum->file->check_write_access(array(
             "link"       => PHORUM_LINK_EDITOR,
             "filename"   => $file["name"],
             "filesize"   => $file["size"]
@@ -230,7 +230,7 @@ elseif ($do_attach && ! empty($_FILES))
         // to link the file to the forum message. This is mainly done so we
         // can support attachments for new messages, which do not yet have
         // a message_id assigned.
-        $file = phorum_api_file_store(array(
+        $file = $phorum->file->store(array(
             "filename"   => $file["name"],
             "file_data"  => $file["data"],
             "filesize"   => $file["size"],

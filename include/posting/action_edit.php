@@ -20,7 +20,6 @@
 if (!defined("PHORUM")) return;
 
 require_once './include/thread_info.php';
-require_once './include/api/file.php';
 
 // Create a message which can be used by the database library.
 $dbmessage = array(
@@ -70,7 +69,7 @@ $diff_subject = $phorum->diff($origmessage["subject"], $message["subject"]);
 
 if(!empty($diff_body) || !empty($diff_subject))
 {
-    $name = phorum_api_user_get_display_name(
+    $name = $phorum->user->get_display_name(
         $PHORUM["user"]["user_id"], NULL, PHORUM_FLAG_PLAINTEXT
     );
 
@@ -106,7 +105,7 @@ foreach ($message["attachments"] as $info)
         // Because there might be inconsistencies in the list due to going
         // backward in the browser after deleting attachments, a check is
         // needed to see if the attachments are really in the database.
-        if (! phorum_api_file_exists($info["file_id"])) continue;
+        if (! $phorum->file->exists($info["file_id"])) continue;
 
         $dbmessage["meta"]["attachments"][] = array(
             "file_id" => $info["file_id"],
@@ -120,8 +119,8 @@ foreach ($message["attachments"] as $info)
             PHORUM_LINK_MESSAGE
         );
     } else {
-        if (phorum_api_file_check_delete_access($info["file_id"])) {
-            phorum_api_file_delete($info["file_id"]);
+        if ($phorum->file->check_delete_access($info["file_id"])) {
+            $phorum->file->delete($info["file_id"]);
         }
     }
 }
@@ -286,12 +285,12 @@ if (isset($message["subscription"]))
     }
 
     if ($subscribe_type === NULL) {
-        phorum_api_user_unsubscribe(
+        $phorum->user->unsubscribe(
             $message["user_id"],
             $message["thread"]
         );
     } else {
-        phorum_api_user_subscribe(
+        $phorum->user->subscribe(
             $message["user_id"],
             $message["thread"],
             $PHORUM["forum_id"],

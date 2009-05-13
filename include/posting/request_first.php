@@ -141,7 +141,7 @@ if (($mode == "post" || $mode == "reply" || $mode == "quote") && $PHORUM["DATA"]
 // lose the follow mode on posting the reply.
 if ($mode == "reply" && $PHORUM["DATA"]["LOGGEDIN"])
 {
-    $type = phorum_api_user_get_subscription(
+    $type = $phorum->user->get_subscription(
         $PHORUM["user"]["user_id"], $message["forum_id"], $message["thread"]);
 
     switch ($type) {

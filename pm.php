@@ -1170,8 +1170,6 @@ function phorum_pm_format($messages)
     global $PHORUM;
     $phorum = Phorum::API();
 
-    require_once './include/format_functions.php';
-
     // Reformat message so it looks like a forum message (so we can run it
     // through phorum_api_message_format()) and do some PM specific formatting.
     foreach ($messages as $id => $message)

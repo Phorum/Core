@@ -19,13 +19,11 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/api/file.php';
-
 // Clean up unlinked attachments from the database.
 foreach ($message["attachments"] as $info) {
     if (! $info["linked"]) {
-        if (phorum_api_file_check_delete_access($info["file_id"])) {
-            phorum_api_file_delete($info["file_id"]);
+        if ($phorum->file->check_delete_access($info["file_id"])) {
+            $phorum->file->delete($info["file_id"]);
         }
     }
 }

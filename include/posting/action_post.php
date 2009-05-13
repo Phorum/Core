@@ -21,7 +21,6 @@ if (!defined("PHORUM")) return;
 
 require_once './include/thread_info.php';
 require_once './include/email_functions.php';
-require_once './include/api/file.php';
 
 // Set some values.
 $message["moderator_post"] = $PHORUM["DATA"]["MODERATOR"] ? 1 : 0;
@@ -88,7 +87,7 @@ $message["msgid"] = md5(uniqid(rand())) . ".$suffix";
 // a check is needed to see if the attachments are really in the database.
 $message["meta"]["attachments"] = array();
 foreach ($message["attachments"] as $info) {
-    if ($info["keep"] && phorum_api_file_exists($info["file_id"])) {
+    if ($info["keep"] && $phorum->file->exists($info["file_id"])) {
         $message["meta"]["attachments"][] = array(
             "file_id"   => $info["file_id"],
             "name"      => $info["name"],
@@ -157,8 +156,8 @@ if ($success)
                 PHORUM_LINK_MESSAGE
             );
         } else {
-            if (phorum_api_file_check_delete_access($info["file_id"])) {
-                phorum_api_file_delete($info["file_id"]);
+            if ($phorum->file->check_delete_access($info["file_id"])) {
+                $phorum->file->delete($info["file_id"]);
             }
         }
     }
@@ -247,14 +246,14 @@ if ($success)
     }
 
     if ($subscribe_type !== NULL) {
-        phorum_api_user_subscribe(
+        $phorum->user->subscribe(
             $message["user_id"],
             $message["thread"],
             $PHORUM["forum_id"],
             $subscribe_type
         );
     } elseif ($mode == 'reply') {
-        phorum_api_user_unsubscribe(
+        $phorum->user->unsubscribe(
             $message["user_id"],
             $message["thread"]
         );
@@ -269,7 +268,7 @@ if ($success)
         )));
 
         // Increase the user's post count.
-        phorum_api_user_increment_posts();
+        $phorum->user->increment_posts();
     }
 
     // Actions for messages which are approved.
@@ -316,10 +315,11 @@ if ($success)
      *     function phorum_mod_foo_after_post($message)
      *     {
      *         global $PHORUM;
+     *         $phorum = Phorum::API();
      *
      *         // remove the post count increment for the user in select forums
      *         if (in_array($message["forum_id"], $PHORUM["mod_foo"]["forums_to_ignore"])) {
-     *             phorum_api_user_save (
+     *             $phorum->user->save (
      *                 array (
      *                     "user_id"    => $PHORUM["user"]["user_id"],
      *                     "posts"      => $PHORUM["user"]["posts"]
