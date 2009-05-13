@@ -471,27 +471,30 @@ if (!defined( "PHORUM_ADMIN" ))
     // Some code that only has to be run if the forum isn't set to fixed view.
     if (empty($PHORUM['display_fixed']))
     {
-        // Check for a template that is passed on the url.
-        // Only use valid template names.
-        if (!empty($PHORUM["args"]["template"])) {
-            $template = basename($PHORUM["args"]["template"]);
-            if ($template != '..') {
-                $PHORUM['template'] = $template;
-                $PHORUM['DATA']['GET_VARS'][] = "template=".urlencode($template);
-                $PHORUM['DATA']['POST_VARS'] .= "<input type=\"hidden\" name=\"template\" value=\"".htmlspecialchars($template)."\" />\n";
-            }
-        }
-
-        // User language override.
-        if (!empty($PHORUM['user']['user_language'])) {
-            $PHORUM['language'] = $PHORUM['user']['user_language'];
-        }
-
         // User template override.
         if (!empty($PHORUM['user']['user_template']) &&
             (!isset($PHORUM["user_template"]) ||
              !empty($PHORUM['user_template']))) {
             $PHORUM['template'] = $PHORUM['user']['user_template'];
+        }
+
+        // Check for a template that is passed on through request parameters.
+        // Only use valid template names.
+        $template = NULL;
+        if (!empty($PHORUM["args"]["template"])) {
+            $template = basename($PHORUM["args"]["template"]);
+        } elseif (!empty($_POST['template'])) {
+            $template = basename($_POST['template']);
+        }
+        if ($template !== NULL && $template != '..') {
+            $PHORUM['template'] = $template;
+            $PHORUM['DATA']['GET_VARS'][] = "template=".urlencode($template);
+            $PHORUM['DATA']['POST_VARS'] .= "<input type=\"hidden\" name=\"template\" value=\"".htmlspecialchars($template)."\" />\n";
+        }
+
+        // User language override.
+        if (!empty($PHORUM['user']['user_language'])) {
+            $PHORUM['language'] = $PHORUM['user']['user_language'];
         }
     }
 
