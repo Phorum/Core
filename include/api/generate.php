@@ -74,6 +74,15 @@ function phorum_api_generate_password($charpart = 4, $numpart = 3)
 // }}}
 
 // {{{ Function: phorum_api_generate_key()
+/**
+ * Generate a key.
+ *
+ * @param integer $size
+ *     The number of characters in the key.
+ *
+ * @return string
+ *     The generated key.
+ */
 function phorum_api_generate_key($size = 40)
 {
    $chars = '0123456789!@#$%&abcdefghijklmnopqr'.
