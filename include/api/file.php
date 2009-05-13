@@ -820,9 +820,10 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     if ($file["mime_type"] === NULL) {
         
         // retrieve the mime-type using the fileinfo extension if its available and enabled
-        if(function_exists("finfo_open") && (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext']))) {
-            
-            $finfo = finfo_open(FILEINFO_MIME); 
+    	if(function_exists("finfo_open") && 
+           (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext'])) &&
+           $finfo = @finfo_open(FILEINFO_MIME)) {
+           	
             $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
             finfo_close($finfo);
             if ($file["mime_type"] === false) return phorum_api_error_set(
