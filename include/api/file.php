@@ -820,13 +820,22 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         $file["file_data"] = base64_decode($dbfile["file_data"]);
     }
 
+    $mime_type_verified = false;
     // Set the MIME type information if it was not set by a module.
     if ($file["mime_type"] === NULL) {
     	
+        $extension_mime_type = phorum_api_file_get_mimetype($file["filename"]);
+        
+        // mime magic file in case its needed
+        if(!empty($PHORUM['mime_magic_file'])) {
+            $mime_magic_file = $PHORUM['mime_magic_file']; 
+        } else {
+            $mime_magic_file = NULL;
+        }
         // retrieve the mime-type using the fileinfo extension if its available and enabled
     	if(function_exists("finfo_open") && 
     	   (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext'])) &&
-    	   $finfo = @finfo_open(FILEINFO_MIME)) {
+    	   $finfo = @finfo_open(FILEINFO_MIME,$mime_magic_file)) {
     		
             $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
             finfo_close($finfo);
@@ -835,9 +844,14 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 	            "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
 	            "fileinfo-extension"
 	        );
-	            
+	        // extension mime-type doesn't fit the signature mime-type
+	        // make it a download then
+	        if($extension_mime_type != $file["mime_type"]) {
+	            $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
+	        }
+	        $mime_type_verified = true;
     	} else {
-            $file["mime_type"] = phorum_api_file_get_mimetype($file["filename"]);
+            $file["mime_type"] = $extension_mime_type;
     	}
     }
 
@@ -847,7 +861,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // download the file.
     if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD))
     {
-        if (phorum_api_file_browser_sniffs_html($file)) {
+        if ($mime_type_verified === false && phorum_api_file_browser_sniffs_html($file)) {
             $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
         }
     }
