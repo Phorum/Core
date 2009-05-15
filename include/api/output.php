@@ -28,6 +28,9 @@
 
 if (!defined('PHORUM')) return;
 
+// The date format to use in HTTP headers.
+define('HTTPDATE', 'D, d M Y H:i:s \G\M\T');
+
 // {{{ Function: phorum_api_output_last_modify_time()
 /**
  * Check if an If-Modified-Since header is in the request. If yes, then
@@ -79,7 +82,28 @@ function phorum_api_output_cache_max_age($max_age)
     settype($max_age, 'int');    
 
     header('Cache-Control: max-age='.$max_age);
-    header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time()+$max_age));
+    header('Expires: ' . gmdate(HTTPDATE, time()+$max_age));
+}
+// }}}
+
+// {{{ Function: phorum_api_output_cache_disable()
+/**
+ * Send headers to tell the browser that the output should not be cached.
+ */
+function phorum_api_output_cache_disable()
+{
+    // Set an expire date in the past.
+    header('Expires: ' . gmdate(HTTPDATE, time() - 99999));
+
+    // Always modified by now.
+    header('Last-Modified: ' . gmdate(HTTPDATE, time()));
+
+    // HTTP/1.1
+    header('cache-Control: no-store, no-cache, must-revalidate');
+    header('cache-Control: post-check=0, pre-check=0', FALSE);
+
+    // HTTP/1.0
+    header('Pragma: no-cache');
 }
 // }}}
 
