@@ -71,6 +71,7 @@ define("PHORUM_FLAG_FORCE_DOWNLOAD",   8);
 $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
 (
     "pdf"  => "application/pdf",
+    "ps"   => "application/postscript",
     "doc"  => "application/msword",
     "xls"  => "application/vnd.ms-excel",
     "gif"  => "image/gif",
@@ -796,7 +797,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     $file["result"]    = 0;
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
-    if (isset($PHORUM["hooks"]["file_retrieve"])) {    	
+    if (isset($PHORUM["hooks"]["file_retrieve"])) {     
         list($file,$flags) = phorum_hook("file_retrieve", array($file,$flags));
         if ($file === FALSE) return FALSE;
 
@@ -822,8 +823,8 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 
     $mime_type_verified = false;
     // Set the MIME type information if it was not set by a module.
-    if ($file["mime_type"] === NULL) {
-    	
+    if ($file["mime_type"] === NULL)
+    {
         $extension_mime_type = phorum_api_file_get_mimetype($file["filename"]);
         
         // mime magic file in case its needed
@@ -833,26 +834,26 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             $mime_magic_file = NULL;
         }
         // retrieve the mime-type using the fileinfo extension if its available and enabled
-    	if(function_exists("finfo_open") && 
-    	   (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext'])) &&
-    	   $finfo = @finfo_open(FILEINFO_MIME,$mime_magic_file)) {
-    		
+        if(function_exists("finfo_open") && 
+           (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext'])) &&
+           $finfo = @finfo_open(FILEINFO_MIME,$mime_magic_file)) {
+            
             $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
             finfo_close($finfo);
-	        if ($file["mime_type"] === false) return phorum_api_error_set(
-	            PHORUM_ERRNO_ERROR,
-	            "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
-	            "fileinfo-extension"
-	        );
-	        // extension mime-type doesn't fit the signature mime-type
-	        // make it a download then
-	        if($extension_mime_type != $file["mime_type"]) {
-	            $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
-	        }
-	        $mime_type_verified = true;
-    	} else {
+            if ($file["mime_type"] === false) return phorum_api_error_set(
+                PHORUM_ERRNO_ERROR,
+                "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
+                "fileinfo-extension"
+            );
+            // extension mime-type doesn't fit the signature mime-type
+            // make it a download then
+            if($extension_mime_type != $file["mime_type"]) {
+                $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
+            }
+            $mime_type_verified = true;
+        } else {
             $file["mime_type"] = $extension_mime_type;
-    	}
+        }
     }
 
     // If the file is not requested for downloading, then check if it is
@@ -861,7 +862,8 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // download the file.
     if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD))
     {
-        if ($mime_type_verified === false && phorum_api_file_browser_sniffs_html($file)) {
+        if ($mime_type_verified === false &&
+            phorum_api_file_browser_sniffs_html($file)) {
             $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
         }
     }
@@ -872,19 +874,44 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
     {
+        // Get rid of any buffered output so far.
+        phorum_ob_clean();
+
         // Avoid using any output compression or handling on the sent data.
         ini_set("zlib.output_compression", "0");
         ini_set("output_handler", "");
 
-        // Get rid of any buffered output so far.
-        phorum_ob_clean();
+        $time = (int)$file['add_datetime'];
+
+        // Handle client side caching.
+        if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))
+        {
+            $header = preg_replace('/;.*$/','',$_SERVER['HTTP_IF_MODIFIED_SINCE']);
+            $modified_since = strtotime($header);
+
+            if ($modified_since >= $time)
+            {
+                $proto = empty($_SERVER['SERVER_PROTOCOL'])
+                       ? 'HTTP/1.0' : $_SERVER['SERVER_PROTOCOL'];
+                header("$proto 304 Not Modified");
+                header('Status: 304');
+                exit(0);
+            }
+        }
+        header("Last-Modified: " . date("r", $time));
+        header('Cache-Control: max-age=5184000'); // 60 days
+        header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time()+5184000));
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
             header("Content-Type: application/octet-stream");
+            header("Content-Disposition: attachment; filename=\"{$file["filename"]}\"");
         } else {
             header("Content-Type: " . $file["mime_type"]);
+            header("Content-Disposition: filename=\"{$file["filename"]}\"");
         }
-        header("Content-Disposition: filename=\"{$file["filename"]}\"");
+
+        header('Content-Length: ' . strlen($file['file_data']));
+
         print $file["file_data"];
 
         return NULL;
@@ -1188,40 +1215,40 @@ function phorum_api_file_browser_sniffs_html($file)
 
     if (preg_match('/
         ^<!|              # FF3            CHROME HTML5
-        ^<?|              # FF3
+        ^<\?|             # FF3
         <html|            # FF3 IE7 SAF3.1 CHROME HTML5
         <script|          # FF3 IE7 SAF3.1 CHROME HTML5
         <title|           # FF3 IE7 SAF3.1 CHROME
         <body|            # FF3 IE7        CHROME
         <head|            # FF3 IE7        CHROME HTML5
         <plaintext|       #     IE7
-        <table|           # FF3 IE7        CHROME
-        <img|             # FF3 IE7
-        <pre|             # FF3 IE7
+        <table[ >]|       # FF3 IE7        CHROME
+        <img[ >]|         # FF3 IE7
+        <pre[ >]|         # FF3 IE7
         text\/html|       #         SAF3.1
-        <a|               # FF3 IE7 SAF3.1 CHROME
-        ^<frameset|       # FF3
-        ^<iframe|         # FF3            CHROME
-        ^<link|           # FF3
-        ^<base|           # FF3
-        ^<style|          # FF3            CHROME
-        ^<div|            # FF3            CHROME
-        ^<p|              # FF3            CHROME
-        ^<font|           # FF3            CHROME
-        ^<applet|         # FF3
-        ^<meta|           # FF3
-        ^<center|         # FF3
-        ^<form|           # FF3
-        ^<isindex|        # FF3
-        ^<h1|             # FF3            CHROME
-        ^<h2|             # FF3
-        ^<h3|             # FF3
-        ^<h4|             # FF3
-        ^<h5|             # FF3
-        ^<h6|             # FF3
-        ^<b|              # FF3            CHROME
-        ^<br              #                CHROME
-        /xi', $chunk)) {
+        <a[ >]|           # FF3 IE7 SAF3.1 CHROME
+        ^<frameset[ >]|   # FF3
+        ^<iframe[ >]|     # FF3            CHROME
+        ^<link[ >]|       # FF3
+        ^<base[ >]|       # FF3
+        ^<style[ >]|      # FF3            CHROME
+        ^<div[ >]|        # FF3            CHROME
+        ^<p[ >]|          # FF3            CHROME
+        ^<font[ >]|       # FF3            CHROME
+        ^<applet[ >]|     # FF3
+        ^<meta[ >]|       # FF3
+        ^<center[ >]|     # FF3
+        ^<form[ >]|       # FF3
+        ^<isindex[ >]|    # FF3
+        ^<h1[ >]|         # FF3            CHROME
+        ^<h2[ >]|         # FF3
+        ^<h3[ >]|         # FF3
+        ^<h4[ >]|         # FF3
+        ^<h5[ >]|         # FF3
+        ^<h6[ >]|         # FF3
+        ^<b[ >]|          # FF3            CHROME
+        ^<br[ >]          #                CHROME
+        /xi', $chunk, $m)) {
         return TRUE;
     } else {
         return FALSE;
