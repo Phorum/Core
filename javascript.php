@@ -311,22 +311,12 @@ $last_modified = @filemtime($cache_file);
 
 // Check if a If-Modified-Since header is in the request. If yes, then
 // check if the JavaScript code has changed, based on the filemtime() data from
-// above. If nothing changed, then we can return a 304 header, to tell the
+// above. If nothing changed, then we return a 304 header, to tell the
 // browser to use the cached data.
-if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-    $header = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
-    $if_modified_since = strtotime($header);
-
-    if ($if_modified_since >= $last_modified) {
-        header("HTTP/1.0 304 Not Modified");
-        exit(0);
-    }
-}
+$phorum->output->last_modify_time($last_modified);
 
 // Send the JavaScript to the browser.
 header("Content-Type: text/javascript");
-header("Last-Modified: " . date("r", $last_modified));
-
 include $cache_file;
 
 // Exit here explicitly for not giving back control to portable and
