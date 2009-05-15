@@ -797,33 +797,30 @@ function phorum_api_forums_save($data, $flags = 0)
 function phorum_api_forums_update_path($forum, $recurse = TRUE)
 {
     // Check if the parent_id is valid.
-    if ($forum['parent_id'] != 0)
-    {
-        $parent = phorum_api_forums_get(
-            $forum['parent_id'], PHORUM_FLAG_INCLUDE_INACTIVE
+    $parent = phorum_api_forums_get(
+        $forum['parent_id'], PHORUM_FLAG_INCLUDE_INACTIVE
+    );
+
+    // Check if the parent was found.
+    if ($parent === NULL) {
+        trigger_error(
+            'phorum_api_forums_save(): parent_id ' .
+            $forum['parent_id'] . ' point to a folder that does ' .
+            'not exist.',
+            E_USER_ERROR
         );
+        return NULL;
+    }
 
-        // Check if the parent was found.
-        if ($parent === NULL) {
-            trigger_error(
-                'phorum_api_forums_save(): parent_id ' .
-                $forum['parent_id'] . ' point to a folder that does ' .
-                'not exist.',
-                E_USER_ERROR
-            );
-            return NULL;
-        }
-
-        // Check if the parent is a folder.
-        if (!$parent['folder_flag']) {
-            trigger_error(
-                'phorum_api_forums_save(): parent_id ' .
-                $forum['parent_id'] . ' does not point to a folder. ' .
-                'You can only put forums/folders inside folders.',
-                E_USER_ERROR
-            );
-            return NULL;
-        }
+    // Check if the parent is a folder.
+    if (!$parent['folder_flag']) {
+        trigger_error(
+            'phorum_api_forums_save(): parent_id ' .
+            $forum['parent_id'] . ' does not point to a folder. ' .
+            'You can only put forums/folders inside folders.',
+            E_USER_ERROR
+        );
+        return NULL;
     }
 
     // If this is not a vroot folder, then the $forum needs to inherit
