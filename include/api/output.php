@@ -28,6 +28,7 @@
 
 if (!defined('PHORUM')) return;
 
+// {{{ Function: phorum_api_output_last_modify_time()
 /**
  * Check if an If-Modified-Since header is in the request. If yes, then
  * check if the provided content modification time lies before the time
@@ -63,7 +64,9 @@ function phorum_api_output_last_modify_time($last_modified)
     // on the next request to bootstrap this client side caching mechanism.
     header("Last-Modified: " . date("r", $last_modified));
 }
+// }}}
 
+// {{{ Function: phorum_api_output_cache_max_age()
 /**
  * Send headers to tell the browser that the output can be cached
  * and for how long.
@@ -78,4 +81,6 @@ function phorum_api_output_cache_max_age($max_age)
     header('Cache-Control: max-age='.$max_age);
     header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time()+$max_age));
 }
+// }}}
+
 ?>
