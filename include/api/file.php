@@ -861,14 +861,13 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // enable the force download flag to make sure that the browser will
     // download the file.
     $safe_to_cache = TRUE;
-    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD))
+    $safe_to_view  = TRUE;
+    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD) && !$mime_type_verified)
     {
-        if ($mime_type_verified === FALSE) {
-            list ($safe_to_view, $safe_to_cache) =
-                phorum_api_file_safe_to_view($file);
-            if (!$safe_to_view) {
-                $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
-            }
+        list ($safe_to_view, $safe_to_cache) =
+            phorum_api_file_safe_to_view($file);
+        if (!$safe_to_view) {
+            $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
         }
     }
 
