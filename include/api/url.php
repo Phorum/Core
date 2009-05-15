@@ -28,9 +28,9 @@
 
 if (!defined('PHORUM')) return;
 
-global $PHORUM;
-
 // {{{ Variable definitions
+
+global $PHORUM;
 
 /**
  * Descriptions of standard Phorum page URL types and their options.

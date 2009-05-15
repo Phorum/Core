@@ -57,8 +57,6 @@ $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
     "tiff" => "image/tiff",
     "tif"  => "image/tiff",
     "xml"  => "text/xml",
-    "html" => "text/html",
-    "txt"  => "text/plain",
     "mpeg" => "video/mpeg",
     "mpg"  => "video/mpeg",
     "mpe"  => "video/mpeg",
@@ -806,73 +804,103 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     }
 
     // Set the MIME type information if it was not set by a module.
-    if ($file["mime_type"] === NULL) {
-        
+    $mime_type_verified = FALSE;
+    if ($file["mime_type"] === NULL)
+    {
+        // Determine the MIME type based on the file extension using
+        // the MIME types as defined in the Phorum API code.
         $extension_mime_type = phorum_api_file_get_mimetype($file["filename"]);
         
-        // mime magic file in case its needed
+        // The MIME magic file to use for the fileinfo extension.
         if(!empty($PHORUM['mime_magic_file'])) {
             $mime_magic_file = $PHORUM['mime_magic_file']; 
         } else {
             $mime_magic_file = NULL;
         }
-        // retrieve the mime-type using the fileinfo extension if its available and enabled
-        if(function_exists("finfo_open") && 
-           (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext'])) &&
-           $finfo = @finfo_open(FILEINFO_MIME,$mime_magic_file)) {
+
+        // Retrieve the MIME-type using the fileinfo extension if
+        // it is available and enabled.
+        if (function_exists("finfo_open") && 
+            (!isset($PHORUM['file_fileinfo_ext']) ||
+             !empty($PHORUM['file_fileinfo_ext'])) &&
+            $finfo = @finfo_open(FILEINFO_MIME, $mime_magic_file)) {
             
-            $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
+            $file["mime_type"] = finfo_buffer($finfo, $file['file_data']);
             finfo_close($finfo);
-            if ($file["mime_type"] === false) return phorum_api_error_set(
+            if ($file["mime_type"] === FALSE) return phorum_api_error_set(
                 PHORUM_ERRNO_ERROR,
-                "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
-                "fileinfo-extension"
+                "The mime-type of file {$file["file_id"]} couldn't be " .
+                "determined through the fileinfo-extension"
             );
-            // extension mime-type doesn't fit the signature mime-type
-            // make it a download then
-            if($extension_mime_type != $file["mime_type"]) {
+            // The MIME-type for the file extension doesn't fit the
+            // MIME-type as determined by the file's magic signature.
+            // Because it is not safe to view this file in a browser,
+            // we force a download.
+            if ($extension_mime_type != $file["mime_type"]) {
                 $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
             }
-            $mime_type_verified = true;
-        } else {
+            $mime_type_verified = TRUE;
+        }
+        else {
             $file["mime_type"] = $extension_mime_type;
         }
     }
-    
-    
 
     // If the file is not requested for downloading, then check if it is
     // safe for the browser to view this file. If it is not, then
     // enable the force download flag to make sure that the browser will
     // download the file.
-    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD))
-    {
-        if ($mime_type_verified === false && phorum_api_file_browser_sniffs_html($file)) {
+    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD)) {
+        if ($mime_type_verified === FALSE &&
+            phorum_api_file_browser_sniffs_html($file)) {
             $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
         }
     }
     
-    
     // Allow for post processing on the retrieved file.
-    list($file,$flags) = $phorum->modules->hook("file_after_retrieve", array($file,$flags));
+    /**
+     * @todo document the file_after_retrieve hook.
+     */
+    if (!empty($PHORUM['hooks']['file_after_retrieve'])) {
+        list($file, $flags) = $phorum->modules->hook(
+            "file_after_retrieve", array($file, $flags)
+        );
+    }
 
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
     {
+        $time = (int)$file['add_datetime'];
+
+        // Check if a If-Modified-Since header is in the request. If yes,
+        // then check if the file has changed, based on the date from
+        // the file data. If nothing changed, then we return a 304 header,
+        // to tell the browser to use the cached data.
+        $phorum->output->last_modify_time($time);
+
+        // Send caching headers, so files can be cached by the browser.
+        $phorum->output->cache_max_age(3600 * 24 * 60);
+
         // Avoid using any output compression or handling on the sent data.
-        ini_set("zlib.output_compression", "0");
-        ini_set("output_handler", "");
+        ini_set('zlib.output_compression', '0');
+        ini_set('output_handler', '');
 
         // Get rid of any buffered output so far.
         $phorum->buffer->clear();
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
-            header("Content-Type: application/octet-stream");
+            $disposition = 'attachment; ';
+            $type = 'application/octet-stream';
         } else {
-            header("Content-Type: " . $file["mime_type"]);
+            $disposition = '';
+            $type = $file['mime_type'];
         }
-        header("Content-Disposition: filename=\"{$file["filename"]}\"");
-        print $file["file_data"];
+        header("Content-Disposition: " .
+               "{$disposition}filename=\"{$file['filename']}\"");
+
+        header("Content-Type: $type");
+        header('Content-Length: ' . strlen($file['file_data']));
+        print $file['file_data'];
 
         return NULL;
     }
