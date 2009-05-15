@@ -870,9 +870,16 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // In "send" mode, we directly send the file contents to the browser.
     if ($flags & PHORUM_FLAG_SEND)
     {
+        // Avoid using any output compression or handling on the sent data.
+        ini_set('zlib.output_compression', '0');
+        ini_set('output_handler', '');
+
+        // Get rid of any buffered output so far (there shouldn't be any).
+        $phorum->buffer->clear();
+
         $time = (int)$file['add_datetime'];
 
-        // Check if a If-Modified-Since header is in the request. If yes,
+        // Check if an If-Modified-Since header is in the request. If yes,
         // then check if the file has changed, based on the date from
         // the file data. If nothing changed, then we return a 304 header,
         // to tell the browser to use the cached data.
@@ -880,13 +887,6 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 
         // Send caching headers, so files can be cached by the browser.
         $phorum->output->cache_max_age(3600 * 24 * 60);
-
-        // Avoid using any output compression or handling on the sent data.
-        ini_set('zlib.output_compression', '0');
-        ini_set('output_handler', '');
-
-        // Get rid of any buffered output so far.
-        $phorum->buffer->clear();
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
             $disposition = 'attachment; ';
@@ -1214,32 +1214,32 @@ function phorum_api_file_browser_sniffs_html($file)
         <body|            # FF3 IE7        CHROME
         <head|            # FF3 IE7        CHROME HTML5
         <plaintext|       #     IE7
-        <table|           # FF3 IE7        CHROME
-        <img|             # FF3 IE7
-        <pre|             # FF3 IE7
+        <table[ >]|       # FF3 IE7        CHROME
+        <img[ >]|         # FF3 IE7
+        <pre[ >]|         # FF3 IE7
         text\/html|       #         SAF3.1
-        <a|               # FF3 IE7 SAF3.1 CHROME
-        ^<frameset|       # FF3
-        ^<iframe|         # FF3            CHROME
-        ^<link|           # FF3
-        ^<base|           # FF3
-        ^<style|          # FF3            CHROME
-        ^<div|            # FF3            CHROME
-        ^<p|              # FF3            CHROME
-        ^<font|           # FF3            CHROME
-        ^<applet|         # FF3
-        ^<meta|           # FF3
-        ^<center|         # FF3
-        ^<form|           # FF3
-        ^<isindex|        # FF3
-        ^<h1|             # FF3            CHROME
-        ^<h2|             # FF3
-        ^<h3|             # FF3
-        ^<h4|             # FF3
-        ^<h5|             # FF3
-        ^<h6|             # FF3
-        ^<b|              # FF3            CHROME
-        ^<br              #                CHROME
+        <a[ >]|           # FF3 IE7 SAF3.1 CHROME
+        ^<frameset[ >]|   # FF3
+        ^<iframe[ >]|     # FF3            CHROME
+        ^<link[ >]|       # FF3
+        ^<base[ >]|       # FF3
+        ^<style[ >]|      # FF3            CHROME
+        ^<div[ >]|        # FF3            CHROME
+        ^<p[ >]|          # FF3            CHROME
+        ^<font[ >]|       # FF3            CHROME
+        ^<applet[ >]|     # FF3
+        ^<meta[ >]|       # FF3
+        ^<center[ >]|     # FF3
+        ^<form[ >]|       # FF3
+        ^<isindex[ >]|    # FF3
+        ^<h1[ >]|         # FF3            CHROME
+        ^<h2[ >]|         # FF3
+        ^<h3[ >]|         # FF3
+        ^<h4[ >]|         # FF3
+        ^<h5[ >]|         # FF3
+        ^<h6[ >]|         # FF3
+        ^<b[ >]|          # FF3            CHROME
+        ^<br[ >]          #                CHROME
         /xi', $chunk)) {
         return TRUE;
     } else {
