@@ -821,7 +821,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         $file["file_data"] = base64_decode($dbfile["file_data"]);
     }
 
-    $mime_type_verified = false;
+    $mime_type_verified = FALSE;
     // Set the MIME type information if it was not set by a module.
     if ($file["mime_type"] === NULL)
     {
@@ -840,7 +840,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             
             $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
             finfo_close($finfo);
-            if ($file["mime_type"] === false) return phorum_api_error_set(
+            if ($file["mime_type"] === FALSE) return phorum_api_error_set(
                 PHORUM_ERRNO_ERROR,
                 "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
                 "fileinfo-extension"
@@ -850,7 +850,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             if($extension_mime_type != $file["mime_type"]) {
                 $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
             }
-            $mime_type_verified = true;
+            $mime_type_verified = TRUE;
         } else {
             $file["mime_type"] = $extension_mime_type;
         }
@@ -860,11 +860,15 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // safe for the browser to view this file. If it is not, then
     // enable the force download flag to make sure that the browser will
     // download the file.
+    $safe_to_cache = TRUE;
     if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD))
     {
-        if ($mime_type_verified === false &&
-            phorum_api_file_browser_sniffs_html($file)) {
-            $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
+        if ($mime_type_verified === FALSE) {
+            list ($safe_to_view, $safe_to_cache) =
+                phorum_api_file_safe_to_view($file);
+            if (!$safe_to_view) {
+                $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
+            }
         }
     }
 
@@ -884,23 +888,38 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         $time = (int)$file['add_datetime'];
 
         // Handle client side caching.
-        if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))
+        if ($safe_to_cache)
         {
-            $header = preg_replace('/;.*$/','',$_SERVER['HTTP_IF_MODIFIED_SINCE']);
-            $modified_since = strtotime($header);
-
-            if ($modified_since >= $time)
+            if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))
             {
-                $proto = empty($_SERVER['SERVER_PROTOCOL'])
-                       ? 'HTTP/1.0' : $_SERVER['SERVER_PROTOCOL'];
-                header("$proto 304 Not Modified");
-                header('Status: 304');
-                exit(0);
+                $header = preg_replace('/;.*$/','',$_SERVER['HTTP_IF_MODIFIED_SINCE']);
+                $modified_since = strtotime($header);
+
+                if ($modified_since >= $time)
+                {
+                    $proto = empty($_SERVER['SERVER_PROTOCOL'])
+                           ? 'HTTP/1.0' : $_SERVER['SERVER_PROTOCOL'];
+                    header("$proto 304 Not Modified");
+                    header('Status: 304');
+                    exit(0);
+                }
             }
+            header("Last-Modified: " . gmdate('D, d M Y H:i:s \G\M\T', $time));
+            header('Cache-Control: max-age=5184000'); // 60 days
+            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time()+5184000));
         }
-        header("Last-Modified: " . date("r", $time));
-        header('Cache-Control: max-age=5184000'); // 60 days
-        header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time()+5184000));
+        else
+        {
+            // Expire in the past.
+            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() - 99999));
+            // Always modified.
+            header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', time()));
+            // HTTP/1.1
+            header('cache-Control: no-store, no-cache, must-revalidate');
+            header('cache-Control: post-check=0, pre-check=0', FALSE); 
+            // HTTP/1.0
+            header('Pragma: no-cache'); 
+        }
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
             header("Content-Type: application/octet-stream");
@@ -1178,10 +1197,12 @@ function phorum_api_file_purge_stale($do_purge)
 // File security checking
 // ------------------------------------------------------------------------
 
-// {{{ Function: phorum_api_file_browser_sniffs_html()
+// {{{ Function: phorum_api_file_safe_to_view()
 /**
- * Check if MIME-sniffing in the user's browser could qualify the file's
- * contents as HTML code.
+ * Check if the file is safe to view in the browser.
+ *
+ * This will emulate MIME-sniffing as done by browsers to see if
+ * the file could be interpreted as an HTML file by the browser.
  *
  * @param array $file
  *     An array, containing information for the file.
@@ -1190,14 +1211,20 @@ function phorum_api_file_purge_stale($do_purge)
  * @return boolean
  *     TRUE if the browser might qualify the file as HTML code,
  *     FALSE otherwise.
+ *
+ * @return boolean
+ *     TRUE if it is safe to cache the file in the browser, FALSE otherwise.
  */
-function phorum_api_file_browser_sniffs_html($file)
+function phorum_api_file_safe_to_view($file)
 {
     if (!isset($file['file_data'])) trigger_error(
-        "phorum_api_file_browser_sniffs_html(): \$file parameter needs a " .
+        "phorum_api_file_safe_to_view(): \$file parameter needs a " .
         "\"file_data\" field.",
         E_USER_ERROR
     );
+
+    $safe_to_cache = TRUE;
+    $safe_to_view  = TRUE;
     
     // Based on info from:
     // http://webblaze.cs.berkeley.edu/2009/content-sniffing/
@@ -1249,10 +1276,21 @@ function phorum_api_file_browser_sniffs_html($file)
         ^<b[ >]|          # FF3            CHROME
         ^<br[ >]          #                CHROME
         /xi', $chunk, $m)) {
-        return TRUE;
-    } else {
-        return FALSE;
+
+        $safe_to_view = FALSE;
+
+        // The file could be interpreted as HTML by the browser.
+        // As an additional check, we check if MSIE 6 or lower is in use.
+        // For those, it is not safe to cache the file. In some cases,
+        // they could interpret the file from cache, even when we tell
+        // the browser that the file should be downloaded.
+        if (!empty($_SERVER['HTTP_USER_AGENT']) &&
+            preg_match('/MSIE [654]\D/', $_SERVER['HTTP_USER_AGENT'])) {
+            $safe_to_cache = FALSE;
+        }
     }
+
+    return array($safe_to_view, $safe_to_cache);
 }
 // }}}
 
