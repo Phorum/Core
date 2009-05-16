@@ -337,9 +337,9 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
     }
 
     if ($forum_ids === NULL || is_array($forum_ids)) {
-      return $forums;
+        return $forums;
     } else {
-      return isset($forums[$forum_ids]) ? $forums[$forum_ids] : NULL;
+        return isset($forums[$forum_ids]) ? $forums[$forum_ids] : NULL;
     }
 }
 // }}}

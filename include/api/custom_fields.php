@@ -459,20 +459,22 @@ function phorum_api_custom_field_checkconfig()
  *
  * @return array
  *     Returns the input array with the custom fields added.
- *     
  */
-function phorum_api_custom_field_apply($custom_field_type=NULL,$data_array)
+function phorum_api_custom_field_apply($custom_field_type = NULL, $data_array)
 {
     global $PHORUM;
     
-    if($custom_field_type === NULL) {
+    if ($custom_field_type === NULL) {
         return phorum_api_error_set(
 	        PHORUM_ERRNO_INVALIDINPUT,
 	        "No custom field type given to function phorum_api_custom_field_apply."
         );    
     }
 
-    $custom_fields = phorum_db_get_custom_fields($custom_field_type,array_keys($data_array));
+    $custom_fields = phorum_db_get_custom_fields(
+        $custom_field_type,
+        array_keys($data_array)
+    );
 
     // Add custom fields to the forums
     foreach ($custom_fields as $id => $fields)
@@ -487,6 +489,8 @@ function phorum_api_custom_field_apply($custom_field_type=NULL,$data_array)
             $data_array[$id][$fieldname] = $fielddata;
         }
     }
+
+    return $data_array;
 }
 // }}}
 
