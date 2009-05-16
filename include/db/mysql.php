@@ -61,7 +61,7 @@ $prefix = $PHORUM['DBCONFIG']['table_prefix'];
  */
 $PHORUM['message_table']            = $prefix . '_messages';
 $PHORUM['user_newflags_table']      = $prefix . '_user_newflags';
-$PHORUM['user_min_id_table']        = $prefix . '_user_min_id';
+$PHORUM['user_newflags_min_id_table']= $prefix . '_user_min_id';
 $PHORUM['subscribers_table']        = $prefix . '_subscribers';
 $PHORUM['files_table']              = $prefix . '_files';
 $PHORUM['search_table']             = $prefix . '_search';
@@ -4495,6 +4495,7 @@ function phorum_db_user_delete($user_id)
     $tables = array (
         $PHORUM['user_table'],
         $PHORUM['user_permissions_table'],
+        $PHORUM['user_newflags_min_id_table'],
         $PHORUM['user_newflags_table'],
         $PHORUM['subscribers_table'],
         $PHORUM['user_group_xref_table'],
@@ -5041,7 +5042,7 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
     $min_id = phorum_db_interact(
         DB_RETURN_VALUE,
         "SELECT min_id
-         FROM   {$PHORUM['user_min_id_table']}
+         FROM   {$PHORUM['user_newflags_min_id_table']}
          WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                 forum_id = $forum_id"
     );
@@ -5080,7 +5081,7 @@ function phorum_db_newflag_check($forum_ids)
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
     $sql = "select forum_id, min_id as message_id
-            from {$PHORUM['user_min_id_table']}
+            from {$PHORUM['user_newflags_min_id_table']}
             where user_id=".$PHORUM["user"]["user_id"];
 
     $list = phorum_db_interact(DB_RETURN_ASSOCS, $sql, "forum_id");
@@ -5145,7 +5146,7 @@ function phorum_db_newflag_count($forum_ids)
     $min_ids = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT forum_id, min_id AS message_id
-         FROM   {$PHORUM['user_min_id_table']}
+         FROM   {$PHORUM['user_newflags_min_id_table']}
          WHERE  user_id = $user_id",
         'forum_id'
     );
@@ -5258,7 +5259,7 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
     $min_message_id = phorum_db_interact(
         DB_RETURN_VALUE,
         "SELECT  min_id
-         FROM    {$PHORUM['user_min_id_table']}
+         FROM    {$PHORUM['user_newflags_min_id_table']}
          WHERE   user_id  = {$PHORUM['user']['user_id']} AND
                  forum_id = {$forum_id}"
     );
@@ -5323,7 +5324,7 @@ function phorum_db_newflag_add_min_id($min_ids)
         // We ignore duplicate record errors here.
         $res = phorum_db_interact(
             DB_RETURN_RES,
-            "INSERT INTO {$PHORUM['user_min_id_table']}
+            "INSERT INTO {$PHORUM['user_newflags_min_id_table']}
                     (user_id, forum_id, min_id)
              VALUES ($user_id, {$min_id['forum_id']}, {$min_id['min_id']})",
             NULL,
@@ -5333,7 +5334,7 @@ function phorum_db_newflag_add_min_id($min_ids)
             // No res returned, therefore that key probably exists already.
             phorum_db_interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['user_min_id_table']}
+                "UPDATE {$PHORUM['user_newflags_min_id_table']}
                  SET    min_id = {$min_id['min_id']}
                  WHERE  user_id  = $user_id AND
                         forum_id = {$min_id['forum_id']}",
@@ -7851,7 +7852,7 @@ function phorum_db_create_tables()
            KEY message_id (message_id)
        ) $charset",
     
-       "CREATE TABLE {$PHORUM['user_min_id_table']} (
+       "CREATE TABLE {$PHORUM['user_newflags_min_id_table']} (
            user_id               INT UNSIGNED NOT NULL ,
            forum_id              INT UNSIGNED NOT NULL ,
            min_id                INT UNSIGNED NOT NULL ,
