@@ -445,4 +445,49 @@ function phorum_api_custom_field_checkconfig()
 }
 // }}}
 
+
+// {{{ Function: phorum_api_custom_field_apply()
+/**
+ * Retrieve custom fields and add/apply them to the given array
+ *
+ * @param int $custom_field_type
+ *     The type of the custom fields to retrieve for the input array
+ *
+ * @param array $data_array
+ *     The data array where the custom fields should be added to.
+ *     Keys should be the ids to retrieve custom fields for.
+ *
+ * @return array
+ *     Returns the input array with the custom fields added.
+ *     
+ */
+function phorum_api_custom_field_apply($custom_field_type=NULL,$data_array)
+{
+    global $PHORUM;
+    
+    if($custom_field_type === NULL) {
+        return phorum_api_error_set(
+	        PHORUM_ERRNO_INVALIDINPUT,
+	        "No custom field type given to function phorum_api_custom_field_apply."
+        );    
+    }
+
+    $custom_fields = phorum_db_get_custom_fields($custom_field_type,array_keys($data_array));
+
+    // Add custom fields to the forums
+    foreach ($custom_fields as $id => $fields)
+    {
+        // Skip custom fields for entries which are not in our
+        // $data_array array. This should not happen, but it could
+        // happen in case some orphan custom fields
+        // are lingering in the database.
+        if (!isset($data_array[$id])) continue;
+
+        foreach($fields as $fieldname => $fielddata) {
+            $data_array[$id][$fieldname] = $fielddata;
+        }
+    }
+}
+// }}}
+
 ?>

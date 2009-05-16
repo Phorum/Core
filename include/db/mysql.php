@@ -2182,22 +2182,6 @@ function phorum_db_get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NUL
        'forum_id'
     );
 
-    $forum_custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_FORUM,$forum_ids);
-
-    // Add custom fields to the forums
-    foreach ($forum_custom_fields as $forumid => $fields)
-    {
-        // Skip custom fields for forums which are not in our
-        // $forums array. This should not happen, but it could
-        // happen in case some orphan custom fields
-        // are lingering in the database.
-        if (!isset($forums[$forumid])) continue;
-
-        foreach($fields as $fieldname => $fielddata) {
-            $forums[$forumid][$fieldname] = $fielddata;
-        }
-    }
-
     return $forums;
 }
 // }}}

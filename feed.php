@@ -29,9 +29,9 @@ if(!empty($PHORUM["folder_flag"]) && $PHORUM["forum_id"] != $PHORUM["vroot"]){
 
 // get forums this user can read if no forum_id passed
 if(empty($PHORUM["forum_id"])){
-    $forums = phorum_db_get_forums();
+    $forums = $phorum->forums->get();
 } elseif($PHORUM["forum_id"]==$PHORUM["vroot"]){
-    $forums = phorum_db_get_forums($PHORUM["forum_id"]);
+    $forums = $phorum->forums->get($PHORUM["forum_id"]);
 } else {
     // its cheap to copy this even though there is more than needed in it
     $forums[$PHORUM["forum_id"]] = $PHORUM;

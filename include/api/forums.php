@@ -305,6 +305,9 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
 
         $forums[$id] = $filtered;
     }
+    
+    // retrieve and apply the custom fields for forums
+    $forums = phorum_api_custom_field_apply(PHORUM_CUSTOM_FIELD_FORUM,$forums);
 
     // If forum_id 0 (zero) is requested, then we create a fake folder
     // record. This is the root folder, which does not correspond to an

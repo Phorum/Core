@@ -53,7 +53,7 @@ $PHORUM['DATA']['SELECTED'] = $subdays;
 $phorum->user->save_settings(array("cc_subscriptions_subdays" => $subdays));
 
 // reading all forums for the current vroot
-$forums = phorum_db_get_forums(0, NULL, $PHORUM["vroot"]);
+$forums= $phorum->forums->get(0, NULL, NULL, $PHORUM['vroot']);
 
 // reading all subscriptions to messages in the current vroot.
 $forum_ids = array($PHORUM["vroot"]);

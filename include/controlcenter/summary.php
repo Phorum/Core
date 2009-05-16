@@ -51,10 +51,12 @@ $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["PersProfile"];
 function phorum_readable_permissions()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
+    
     $newperms = array();
 
-    if (isset($PHORUM["user"]["permissions"])) {
-        $forums = phorum_db_get_forums(array_keys($PHORUM["user"]["permissions"]));
+    if (isset($PHORUM["user"]["permissions"])) {        
+        $forums = $phorum->forums->get(array_keys($PHORUM["user"]["permissions"]));
 
         foreach($PHORUM["user"]["permissions"] as $forum => $perms) {
             if(isset($forums[$forum])) {

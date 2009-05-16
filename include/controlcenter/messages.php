@@ -19,8 +19,6 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
-require_once './include/api/file.php';
-
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
     $phorum->redirect(PHORUM_CONTROLCENTER_URL);
 }
@@ -115,7 +113,7 @@ if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
 $PHORUM['DATA']['PREPOST'] = array();
 
 if ($gotforums)
-    $foruminfo = phorum_db_get_forums($mod_forums, NULL, $PHORUM['vroot']);
+    $foruminfo = $phorum->forums->get($mod_forums, NULL, NULL, $PHORUM['vroot']);
 else
     $foruminfo = array();
 
