@@ -226,6 +226,8 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  */
 function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id = NULL, $vroot = NULL, $flags = 0)
 {
+    $phorum = Phorum::API();
+
     // We might get an $inherit_id parameter that is NULL or -1, since we
     // present the database value NULL as -1 from this API (because using
     // NULL values in a form isn't really an option.
@@ -307,7 +309,7 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
     }
     
     // retrieve and apply the custom fields for forums
-    $forums = phorum_api_custom_field_apply(PHORUM_CUSTOM_FIELD_FORUM,$forums);
+    $forums = $phorum->custom_field->apply(PHORUM_CUSTOM_FIELD_FORUM,$forums);
 
     // If forum_id 0 (zero) is requested, then we create a fake folder
     // record. This is the root folder, which does not correspond to an
