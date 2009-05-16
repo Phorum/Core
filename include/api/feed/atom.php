@@ -58,8 +58,9 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
     global $PHORUM;
     $phorum = Phorum::API();
 
-    $selfurl     = htmlspecialchars($phorum->url->current(), ENT_COMPAT, $hcharset);
     $hcharset    = $PHORUM['DATA']['HCHARSET'];
+
+    $selfurl     = htmlspecialchars($phorum->url->current(), ENT_COMPAT, $hcharset);
     $url         = htmlspecialchars($url, ENT_COMPAT, $hcharset);
     $title       = htmlspecialchars($title, ENT_COMPAT, $hcharset);
     $description = htmlspecialchars($description, ENT_COMPAT, $hcharset);
