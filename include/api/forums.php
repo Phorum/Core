@@ -1402,6 +1402,10 @@ function phorum_api_forums_get_inherit_id_options($forum_id = NULL)
  * @param array
  *     The same as the $forums argument array, with formatting applied
  *     and template variables added.
+ *
+ * @todo Either move the forum newflags formatting code to the newflags API
+ *       or push the message formatting code from the newflags API to
+ *       the message API. Now we have two methodolgies in place.
  */
 function phorum_api_forums_format($forums, $flags = 0)
 {
