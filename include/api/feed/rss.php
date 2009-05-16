@@ -1,0 +1,146 @@
+<?php
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//   Copyright (C) 2009  Phorum Development Team                              //
+//   http://www.phorum.org                                                    //
+//                                                                            //
+//   This program is free software. You can redistribute it and/or modify     //
+//   it under the terms of either the current Phorum License (viewable at     //
+//   phorum.org) or the Phorum License that was distributed with this file    //
+//                                                                            //
+//   This program is distributed in the hope that it will be useful,          //
+//   but WITHOUT ANY WARRANTY, without even the implied warranty of           //
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     //
+//                                                                            //
+//   You should have received a copy of the Phorum License                    //
+//   along with this program.                                                 //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * This script implements the RSS output adapter for Phorum.
+ *
+ * @package    PhorumAPI
+ * @subpackage Feed
+ * @copyright  2009, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
+ */
+
+/**
+ * This function implements the RSS output adapter for the Feed API.
+ *
+ * @param array $messages
+ *     An array of messages to include in the feed.
+ *
+ * @param array $forums
+ *     An array of related forums.
+ *
+ * @param string $url
+ *     The URL that points to the feed's target.
+ *
+ * @param string $title
+ *     The title to use for the feed.
+ *
+ * @param string $description
+ *     The description to use for the feed.
+ *
+ * @param bool $replies
+ *     Whether or not this is a feed that includes reply messages.
+ *     If not, then it will only contain thread starter messages.
+ *
+ * @return array
+ *     An array containing two elements:
+ *     - The generated feed data (RSS XML).
+ *     - The Content-Type header to use for the feed.
+ */
+function phorum_api_feed_rss($messages, $forums, $url, $title, $description, $replies)
+{
+    global $PHORUM;
+    $phorum = Phorum::API();
+
+    $hcharset    = $PHORUM['DATA']['HCHARSET'];
+    $url         = htmlspecialchars($url, ENT_COMPAT, $hcharset);
+    $title       = htmlspecialchars($title, ENT_COMPAT, $hcharset);
+    $description = htmlspecialchars($description, ENT_COMPAT, $hcharset);
+    $builddate   = htmlspecialchars(date('r'), ENT_COMPAT, $hcharset);
+    $generator   = htmlspecialchars('Phorum '.PHORUM, ENT_COMPAT, $hcharset);
+
+    $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
+    $buffer.= "<rss version=\"2.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
+    $buffer.= " <channel>\n";
+    $buffer.= "  <title>$title</title>\n";
+    $buffer.= "  <description>$description</description>\n";
+    $buffer.= "  <link>$url</link>\n";
+    $buffer.= "  <lastBuildDate>$builddate</lastBuildDate>\n";
+    $buffer.= "  <generator>$generator</generator>\n";
+
+    // Lookup the plain text usernames for the authenticated authors.
+    $users = $messages['users'];
+    unset($messages['users']);
+    unset($users[0]);
+    $users = $phorum->user->get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+
+    foreach ($messages as $message)
+    {
+        // Include information about the number of replies to threads.
+        $title = strip_tags($message['subject']);
+        if (!$replies)
+        {
+            $lang = $PHORUM['DATA']['LANG'];
+            switch ($message['thread_count']) 
+            {
+                case 1: $title .= " ({$lang['noreplies']})"; break;
+                case 2: $title .= " (1 {$lang['reply']})"; break;
+                default:
+                    $replies = $message['thread_count'] - 1;
+                    $title .= " ($replies {$lang['replies']})";
+            }
+
+            $date = date('r', $message['modifystamp']);
+        }
+        else
+        {
+            $date = date('r', $message['datestamp']);
+        }
+
+        // Generate the URL for reading the message.
+        $url = htmlspecialchars($phorum->url(
+            PHORUM_FOREIGN_READ_URL,
+            $message["forum_id"], $message["thread"], $message["message_id"]
+        ));
+
+        // The forum in which the message is stored is used as the category.
+        $category = htmlspecialchars(
+            $forums[$message['forum_id']]['name'], ENT_COMPAT, $hcharset
+        );
+
+        // Format the author.
+        $author = !empty($users[$message['user_id']])
+                ? $users[$message['user_id']]
+                : $message['author'];
+        $author = htmlspecialchars($author, ENT_COMPAT, $hcharset);
+
+        // Strip unprintable characters from the message body.
+        $body = strtr($message['body'],
+            "\001\002\003\004\005\006\007\010\013\014\016\017\020\021" .
+            "\022\023\024\025\026\027\030\031\032\033\034\035\036\037",
+            "????????????????????????????"
+        );
+
+        $buffer.= "  <item>\n";
+        $buffer.= "   <guid>$url</guid>\n";
+        $buffer.= "   <title>$title</title>\n";
+        $buffer.= "   <link>$url</link>\n";
+        $buffer.= "   <description><![CDATA[$body]]></description>\n";
+        $buffer.= "   <dc:creator>$author</dc:creator>\n";
+        $buffer.= "   <category>$category</category>\n";
+        $buffer.= "   <pubDate>$date</pubDate>\n";
+        $buffer.= "  </item>\n";
+    }
+
+    $buffer.= " </channel>\n";
+    $buffer.= "</rss>\n";
+
+    return array($buffer, 'application/xml');
+}
+?>
