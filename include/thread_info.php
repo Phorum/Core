@@ -36,7 +36,7 @@ function phorum_update_thread_info($thread)
 {
     global $PHORUM;
 
-    $messages=phorum_db_get_messages($thread,0,1,1);
+    $messages=phorum_db_get_messages($thread,0,1,1,false);
     //these are not needed here
     unset($messages['users']);
 

@@ -1480,11 +1480,15 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
  *     This value can be set to true to specify that the message should be retrieved
  *     from the master (aka write-server) in case replication is used
  *
+ * @param boolean $get_custom_fields
+ *     This value can be set to false to specify that no custom fields should be 
+ *     retrieved for the message, avoids another query and therefore speed up things
+ *
  * @return array
  *     An array of messages, indexed by message_id. One special key "users"
  *     is set too. This one contains an array of all involved user_ids.
  */
-function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $write_server = FALSE)
+function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $write_server = FALSE,$get_custom_fields = true)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1572,7 +1576,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
         }
     }
 
-    if(count($messages)) {
+    if(count($messages) && $get_custom_fields) {
         // get custom fields
         $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages),$flags);
 
