@@ -31,7 +31,7 @@
  * with the user API documentation.
  *
  * @package    PhorumAPI
- * @subpackage UserAPI
+ * @subpackage User
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *

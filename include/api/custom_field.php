@@ -30,7 +30,7 @@
  * API calls.
  *
  * @package    PhorumAPI
- * @subpackage CustomFieldAPI
+ * @subpackage CustomField
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

@@ -34,7 +34,7 @@
  * to use the Custom Fields API right away instead of this one.
  *
  * @package    PhorumAPI
- * @subpackage CustomProfileFieldAPI
+ * @subpackage CustomProfileField
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  * @deprecated Superceded by the more generic Custom Fields API.

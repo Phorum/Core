@@ -25,7 +25,7 @@
  * and deactivating them and to call hook functions from those modules.
  *
  * @package    PhorumAPI
- * @subpackage ModulesAPI
+ * @subpackage Modules
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

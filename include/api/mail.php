@@ -25,7 +25,7 @@
  * will be tranferred to this API layer.
  *
  * @package    PhorumAPI
- * @subpackage MailAPI
+ * @subpackage Mail
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

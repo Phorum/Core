@@ -23,7 +23,7 @@
  * The message API is used for managing messages and user related data.
  *
  * @package    PhorumAPI
- * @subpackage MessageAPI
+ * @subpackage Message
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

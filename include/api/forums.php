@@ -65,7 +65,7 @@
  *     developer docbook.
  *
  * @package    PhorumAPI
- * @subpackage ForumsAPI
+ * @subpackage Forums
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *

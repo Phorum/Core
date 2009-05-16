@@ -26,7 +26,7 @@
  * other charsets as well, charset conversion is needed in some cases.
  *
  * @package    PhorumAPI
- * @subpackage JSONAPI
+ * @subpackage JSON
  * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */

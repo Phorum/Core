@@ -26,7 +26,7 @@
  * message that is marked read for the forum are considered read implicitly.
  *
  * @package    PhorumAPI
- * @subpackage NewflagsAPI
+ * @subpackage Newflags
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
