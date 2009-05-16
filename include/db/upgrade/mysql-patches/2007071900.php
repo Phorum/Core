@@ -3,9 +3,8 @@ if(!defined("PHORUM_ADMIN")) return;
 
 // Refresh all forum statistics for making bringing thread_count up to date.
 require_once('./include/api/forums.php');
-$forums = phorum_api_forums_get(
-    NULL, NULL, NULL, NULL,
-    PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS
+$forums = phorum_db_get_forums(
+    NULL, NULL, NULL, NULL,false,2,true
 );
 foreach ($forums as $forum) {
     $GLOBALS["PHORUM"]["forum_id"] = $forum["forum_id"];
