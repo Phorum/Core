@@ -261,7 +261,6 @@ define("PHORUM_SANITY_SKIP", $i++);
 
 // ----------------------------------------------------------------------
 // Error handling related
-// phorum_api_error_set(), phorum_api_errno(), phorum_api_strerror()
 // ----------------------------------------------------------------------
 
 /**
@@ -305,7 +304,6 @@ $PHORUM["API"]["errormessages"] = array(
 
 // ----------------------------------------------------------------------
 // User API related
-// phorum_api_user_*
 // ----------------------------------------------------------------------
 
 /**
@@ -545,7 +543,6 @@ define("PHORUM_SUBSCRIPTION_BOOKMARK", 2);
 
 // ----------------------------------------------------------------------
 // Custom field API related
-// phorum_api_custom_field_*
 // ----------------------------------------------------------------------
 
 /**
@@ -577,7 +574,6 @@ define('PHORUM_CUSTOM_FIELD_MESSAGE', 3);
 
 // ----------------------------------------------------------------------
 // File API related
-// phorum_api_file_*
 // ----------------------------------------------------------------------
 
 /**
@@ -608,7 +604,6 @@ define("PHORUM_FLAG_FORCE_DOWNLOAD", 8);
 
 // ----------------------------------------------------------------------
 // Forum API related
-// phorum_api_forum_*
 // ----------------------------------------------------------------------
 
 /**
@@ -664,7 +659,6 @@ define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);
 
 // ----------------------------------------------------------------------
 // Newflags API related
-// phorum_api_newflags_*
 // ----------------------------------------------------------------------
 
 /**
@@ -694,20 +688,43 @@ define('PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY', 3);
 
 /**
  * Function call flag, which tells {@link phorum_api_newflags_markread()}
- * that a single messages have to be marked read. }
+ * that a single messages have to be marked read.
  */
 define('PHORUM_MARKREAD_MESSAGES', 1);
 
 /**
  * Function call flag, which tells {@link phorum_api_newflags_markread()}
- * that threads have to be marked read. }
+ * that threads have to be marked read.
  */
 define('PHORUM_MARKREAD_THREADS', 2);
 
 /**
  * Function call flag, which tells {@link phorum_api_newflags_markread()}
- * that full forums have to be marked read. }
+ * that full forums have to be marked read.
  */
 define('PHORUM_MARKREAD_FORUMS', 3);
+
+// ----------------------------------------------------------------------
+// Feed API related
+// ----------------------------------------------------------------------
+
+/**
+ * Function call flag, which tells {@link phorum_api_feed()} that 
+ * a feed has to be generated for all (readable) forums in the
+ * current (v)root.
+ */
+define('PHORUM_FEED_VROOT', 0);
+
+/**
+ * Function call flag, which tells {@link phorum_api_feed()} that 
+ * a feed has to be generated for a single forum.
+ */
+define('PHORUM_FEED_FORUM', 1);
+
+/**
+ * Function call flag, which tells {@link phorum_api_feed()} that 
+ * a feed has to be generated for a single thread.
+ */
+define('PHORUM_FEED_THREAD', 2);
 
 ?>
