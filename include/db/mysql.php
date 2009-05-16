@@ -1453,7 +1453,7 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
     }
 
     if (! $multiple) {
-        $return = array_shift($return);
+        $return = empty($return) ? NULL : array_shift($return);
     }
 
     return $return;
