@@ -42,7 +42,7 @@
 
 if (!defined('PHORUM')) return;
 
-require_once PHORUM_PATH.'/include/api/custom_fields.php';
+require_once PHORUM_PATH.'/include/api/custom_field.php';
 
 // {{{ Function: phorum_api_custom_profile_field_configure
 /**
@@ -94,13 +94,9 @@ require_once PHORUM_PATH.'/include/api/custom_fields.php';
  */
 function phorum_api_custom_profile_field_configure($field)
 {
-    global $PHORUM;
-
+    $phorum = Phorum::API();
     $field['type'] = PHORUM_CUSTOM_FIELD_USER;
-
-    $field = phorum_api_custom_field_configure($field);
-
-    return $field;
+    return $phorum->custom_field->configure($field);
 }
 // }}}
 
@@ -123,9 +119,8 @@ function phorum_api_custom_profile_field_configure($field)
  */
 function phorum_api_custom_profile_field_byname($name)
 {
-    $return = phorum_api_custom_field_byname($name,PHORUM_CUSTOM_FIELD_USER);
-
-    return $return;
+    $phorum = Phorum::API();
+    return $phorum->custom_field->byname($name,PHORUM_CUSTOM_FIELD_USER);
 }
 // }}}
 
@@ -147,9 +142,8 @@ function phorum_api_custom_profile_field_byname($name)
  */
 function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
 {
-    $return = phorum_api_custom_field_delete($id, PHORUM_CUSTOM_FIELD_USER, $hard_delete);
-
-    return $return;
+    $phorum = Phorum::API();
+    return $phorum->custom_field->delete($id, PHORUM_CUSTOM_FIELD_USER, $hard_delete);
 }
 // }}}
 
@@ -172,9 +166,8 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
  */
 function phorum_api_custom_profile_field_restore($id)
 {
-    $return = phorum_api_custom_field_restore($id, PHORUM_CUSTOM_FIELD_USER);
-
-    return $return;
+    $phorum = Phorum::API();
+    return $phorum->custom->field_restore($id, PHORUM_CUSTOM_FIELD_USER);
 }
 // }}}
 
@@ -190,7 +183,8 @@ function phorum_api_custom_profile_field_restore($id)
  */
 function phorum_api_custom_profile_field_checkconfig()
 {
-    phorum_api_custom_field_checkconfig();
+    $phorum = Phorum::API();
+    return $phorum->custom_field->checkconfig();
 }
 // }}}
 

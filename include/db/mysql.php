@@ -80,11 +80,6 @@ $PHORUM['pm_xref_table']            = $prefix . '_pm_xref';
 $PHORUM['pm_buddies_table']         = $prefix . '_pm_buddies';
 $PHORUM['message_tracking_table']   = $prefix . '_messages_edittrack';
 
-
-// For pulling in the constant PHORUM_CUSTOM_FIELD_USER.
-require_once PHORUM_PATH.'/include/api/custom_fields.php';
-
-
 /**
  * Message fields which are always strings, even if they contain numbers only.
  * Used in post-message and update-message, otherwise strange things happen.
@@ -1091,6 +1086,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
 function phorum_db_update_message($message_id, $message)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    $phorum = Phorum::API();
 
     settype($message_id, 'int');
 
@@ -1105,7 +1101,7 @@ function phorum_db_update_message($message_id, $message)
     {
         if (phorum_db_validate_field($field))
         {
-            $custom = phorum_api_custom_field_byname($field,PHORUM_CUSTOM_FIELD_MESSAGE);
+            $custom = $phorum->custom_field->byname($field,PHORUM_CUSTOM_FIELD_MESSAGE);
 
             if($custom === null) {
                 if (is_numeric($value) &&
@@ -2507,6 +2503,7 @@ function phorum_db_reopen_thread($thread_id)
 function phorum_db_add_forum($forum)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    $phorum = Phorum::API();
 
     // check for fields that must be set for mysql strict mode
     if(empty($forum["description"])) $forum["description"] = "";
@@ -2526,7 +2523,7 @@ function phorum_db_add_forum($forum)
              *       (define the real fields like for the users?)
              */
 
-            $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
+            $custom = $phorum->custom_field->byname($key,PHORUM_CUSTOM_FIELD_FORUM);
 
             if($custom === NULL) {
                 if (is_numeric($value) &&
@@ -2582,6 +2579,7 @@ function phorum_db_add_forum($forum)
 function phorum_db_update_forum($forum)
 {
     $PHORUM = $GLOBALS['PHORUM'];
+    $phorum = Phorum::API();
 
     // Check if the forum_id is set.
     if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
@@ -2610,7 +2608,7 @@ function phorum_db_update_forum($forum)
     {
         if (phorum_db_validate_field($key))
         {
-            $custom = phorum_api_custom_field_byname($key,PHORUM_CUSTOM_FIELD_FORUM);
+            $custom = $phorum->custom_field->byname($key,PHORUM_CUSTOM_FIELD_FORUM);
 
             if($custom === null) {
                 if ($key == 'forum_path') {
@@ -4069,6 +4067,7 @@ function phorum_db_user_save($userdata)
 function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // Update custom  fields for the object.
     if (isset($customfield_data))
@@ -4076,7 +4075,7 @@ function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data
         // Insert new custom profile fields.
         foreach ($customfield_data as $name => $val)
         {
-            $custom = phorum_api_custom_field_byname($name,$field_type);
+            $custom = $phorum->custom_field->byname($name,$field_type);
 
             // Arrays and NULL values are left untouched.
             // Other values are truncated to their configured field length.

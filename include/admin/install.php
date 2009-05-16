@@ -21,7 +21,6 @@ if (!defined("PHORUM_ADMIN")) return;
 define("PHORUM_INSTALL", 1);
 
 require_once './include/api/user.php';
-require_once './include/api/custom_fields.php';
 
 if (!phorum_db_check_connection()){
     phorum_admin_error(

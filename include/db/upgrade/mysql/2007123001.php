@@ -1,8 +1,6 @@
 <?php
 if(!defined("PHORUM_ADMIN")) return;
 
-require_once('./include/api/custom_fields.php');
-
 if(!empty($PHORUM['DBCONFIG']['charset'])) {
     $charset_str = " DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
 } else {

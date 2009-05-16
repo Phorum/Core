@@ -23,9 +23,6 @@ if(count($_POST)) {
     list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 }
 
-require_once './include/api/custom_fields.php';
-
-
 // need their names for the later check
 $profile_field_names=array();
 if(is_array($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {

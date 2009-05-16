@@ -20,7 +20,6 @@
 define('phorum_page','register');
 require_once './common.php';
 
-require_once './include/api/custom_fields.php';
 require_once './include/profile_functions.php';
 require_once './include/email_functions.php';
 
@@ -34,7 +33,7 @@ if (isset($PHORUM["args"]["approve"])) {
     // Extract registration validation code and user_id.
     $tmp_pass=md5(substr($PHORUM["args"]["approve"], 0, 8));
     $user_id = (int)substr($PHORUM["args"]["approve"], 8);
-    $user_id = phorum_api_user_search(
+    $user_id = $phorum->user->search(
         array("user_id", "password_temp"),
         array($user_id,  $tmp_pass),
         array("=",       "=")
@@ -43,7 +42,7 @@ if (isset($PHORUM["args"]["approve"])) {
     // Validation code correct.
     if ($user_id) {
 
-        $user = phorum_api_user_get($user_id);
+        $user = $phorum->user->get($user_id);
 
         $moduser=array();
 
@@ -68,7 +67,7 @@ if (isset($PHORUM["args"]["approve"])) {
 
             // Save the new user active status.
             $moduser["user_id"] = $user_id;
-            phorum_api_user_save($moduser);
+            $phorum->user->save($moduser);
         }
 
     // Validation code incorrect.
@@ -107,9 +106,9 @@ if (count($_POST)) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }
     // Check if the username and email address don't already exist.
-    elseif(phorum_api_user_search("username", $_POST["username"])) {
+    elseif($phorum->user->search("username", $_POST["username"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
-    } elseif (phorum_api_user_search("email", $_POST["email"])){
+    } elseif ($phorum->user->search("email", $_POST["email"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
 
@@ -230,7 +229,7 @@ if (count($_POST)) {
         {
             // Add the user to the database.
             $userdata["user_id"] = NULL;
-            $user_id = phorum_api_user_save($userdata);
+            $user_id = $phorum->user->save($userdata);
 
             if ($user_id)
             {

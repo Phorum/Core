@@ -113,7 +113,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/api/bootstrap.php',
     'include/api/buffer.php',
     'include/api/constants.php',
-    'include/api/custom_fields.php',
+    'include/api/custom_field.php',
     'include/api/custom_profile_fields.php',
     'include/api/diff.php',
     'include/api/examples/file_delete.php',

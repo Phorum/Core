@@ -43,17 +43,9 @@
 
 if (!defined('PHORUM')) return;
 
-/**
- * Requires
- */
-require_once PHORUM_PATH.'/include/api/custom_fields.php';
-
-/**
- * Initialize the variables that are used by the user API layer.
- */
-global $PHORUM;
-
 // {{{ Variable definitions
+
+global $PHORUM;
 
 /**
  * This array describes user data fields. It is mainly used internally
@@ -228,7 +220,7 @@ function phorum_api_user_save($user, $flags = 0)
         if (!array_key_exists($fld, $PHORUM['API']['user_fields']))
         {
         	/** 
-        	 * @todo readd this later once the reverse array is available for
+        	 * @todo read this later once the reverse array is available for
         	 *       a quick isset check 
         	 */
             /*$custom = phorum_api_custom_field_byname($fld, PHORUM_CUSTOM_FIELD_USER);
