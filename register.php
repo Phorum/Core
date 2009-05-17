@@ -20,7 +20,6 @@
 define('phorum_page','register');
 require_once './common.php';
 
-require_once './include/profile_functions.php';
 require_once './include/email_functions.php';
 
 // set all our URL's
@@ -114,7 +113,7 @@ if (count($_POST)) {
 
     // Check banlists.
     if (empty($error)) {
-        $error = phorum_check_bans(array(
+        $error = $phorum->ban->check_multi(array(
             array($_POST["username"], PHORUM_BAD_NAMES),
             array($_POST["email"],    PHORUM_BAD_EMAILS),
             array(NULL,               PHORUM_BAD_IPS),

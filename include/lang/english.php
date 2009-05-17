@@ -166,7 +166,7 @@
         "ErrOriginalPassword"   =>      "The original password you entered does not match the one on record",
         "ErrUserAddUpdate"      =>      "User not added/updated.  Unknown error.",
         "ErrRequired"           =>      "Please fill in all required fields.",
-        "ErrBannedContent"      =>      'A word you have used in your post has been banned from use. Please use a different word or contact the forum administrators.',
+        "ErrBannedContent"      =>      'The word "%name%" you have used in your post has been banned from use. Please use a different word or contact the forum administrators.',
         "ErrBannedIP"           =>      "Your IP address, domain or ISP has been blocked. Please contact the forum administrators.",
         "ErrBannedName"         =>      'The (user)name "%name%" has been banned from use. Please use a different name or contact the forum administrators.',
         "ErrBannedEmail"        =>      'The e-mail address "%name%" has been banned from use. Please use a different email address or contact the forum administrators.',

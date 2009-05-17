@@ -19,9 +19,6 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
-// need this for banlist-checks
-require_once './include/profile_functions.php';
-
 // email-verification
 if($PHORUM['registration_control']) {
     //$PHORUM['DATA']['PROFILE']['email_temp']="email_address@bogus.com|bla";
@@ -40,7 +37,7 @@ if ( count( $_POST ) ) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif ($PHORUM['user']['email'] != $_POST["email"] && phorum_api_user_search("email", $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmailExists"];
-    } elseif (!phorum_check_ban_lists($_POST["email"], PHORUM_BAD_EMAILS)) {
+    } elseif (!$phorum->ban->check($_POST["email"], PHORUM_BAD_EMAILS)) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBannedEmail"];
     } elseif (isset($PHORUM['DATA']['PROFILE']['email_temp_part']) && !empty($_POST['email_verify_code']) && $PHORUM['DATA']['PROFILE']['email_temp_part']."|".$_POST['email_verify_code'] != $PHORUM['DATA']['PROFILE']['email_temp']) {
         $error = $PHORUM['DATA']['LANG']['ErrWrongMailcode'];

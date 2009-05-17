@@ -164,8 +164,7 @@ $error_msg = "";
 //  Start editor       Post message         Post reply
 if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id)))
 {
-    require_once './include/profile_functions.php';
-    $error = phorum_check_bans(array(
+    $error = $phorum->ban->check_multi(array(
         array($PHORUM["user"]["username"], PHORUM_BAD_NAMES),
         array($PHORUM["user"]["email"],    PHORUM_BAD_EMAILS),
         array($user_id,                    PHORUM_BAD_USERID),
