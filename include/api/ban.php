@@ -28,23 +28,39 @@
 
 if (!defined('PHORUM')) return;
 
+// {{{ Variable definitions
+
+global $PHORUM;
+
+/**
+ * A maping from ban type -> error message to return on match.
+ */
+$PHORUM['API']['ban']['type2error'] = array(
+    PHORUM_BAD_NAMES      => 'ErrBannedName',
+    PHORUM_BAD_EMAILS     => 'ErrBannedEmail',
+    PHORUM_BAD_USERID     => 'ErrBannedUser',
+    PHORUM_BAD_IPS        => 'ErrBannedIP',
+    PHORUM_BAD_SPAM_WORDS => 'ErrBannedContent'
+);
+
+// }}}
+
 // {{{ Function: phorum_api_ban_list()
 /**
- * Retrieve all ban lists for the current forum or a specific
- * ban list by providing the $type parameter.
+ * Retrieve all or a specific ban list for the current forum.
  *
  * The id of the current forum is taken from $PHORUM['forum_id'].
  *
- * @param integer $type
- *     The type of ban list to return. If $type is omitted, then all
+ * @param integer|NULL $type
+ *     The type of ban list to return. If $type is NULL (default), then all
  *     ban lists are returned. The available types are identified by
  *     the following constants:
- *     - PHORUM_BAD_IPS
- *     - PHORUM_BAD_NAMES
- *     - PHORUM_BAD_EMAILS
- *     - PHORUM_BAD_WORDS
- *     - PHORUM_BAD_USERID
- *     - PHORUM_BAD_SPAM_WORDS
+ *     - {@link PHORUM_BAD_IPS}
+ *     - {@link PHORUM_BAD_NAMES}
+ *     - {@link PHORUM_BAD_EMAILS}
+ *     - {@link PHORUM_BAD_WORDS}
+ *     - {@link PHORUM_BAD_USERID}
+ *     - {@link PHORUM_BAD_SPAM_WORDS}
  *
  * @return array
  *     The array of ban list items.
@@ -110,6 +126,64 @@ function phorum_api_ban_list($type = NULL)
 
     // Return all ban lists.
     return $loaded_banlists[$PHORUM['forum_id']];
+}
+// }}}
+
+// {{{ Function: phorum_api_ban_evaluate()
+/**
+ * Evaluate a value against the ban list for the current forum
+ * to see if there is a match.
+ *
+ * The id of the current forum is taken from $PHORUM['forum_id'].
+ *
+ * @param mixed $value
+ *     The value to check.
+ *
+ * @param integer $type
+ *     The type of banlist to check against. This is one of:
+ *     - {@link PHORUM_BAD_NAMES}
+ *     - {@link PHORUM_BAD_EMAILS}
+ *     - {@link PHORUM_BAD_USERID}
+ *     - {@link PHORUM_BAD_IPS}
+ *     - {@link PHORUM_BAD_SPAM_WORDS}
+ *
+ * @return bool
+ *     TRUE in case the value matches the banlist, FALSE otherwise.
+ */
+function phorum_api_ban_match($value, $type)
+{
+    // Retrieve the ban list for the requisted type of ban.
+    $list = phorum_api_ban_list($type);
+    if (empty($list)) return FALSE;
+
+    $value = trim($value);
+    if ($value == '') return FALSE;
+
+    foreach ($list as $item)
+    {
+        if ($item['string'] != '') continue;
+
+        // Handle regular expression matching.
+        if ($item['pcre']) {
+            if (@preg_match('/\b'.$item['string'].'\b/i', $value)) {
+                return TRUE;
+            }
+        }
+        // Handle matching a user id (which must always be an exact match).
+        elseif ($type == PHORUM_BAD_USERID) {
+            if ($value == $item['string']) {
+                return TRUE
+            }
+        }
+        // Handle partial string matching.
+        else {
+            if (stristr($value, $item['string'])) {
+                retrn TRUE;
+            }
+        }
+    }
+
+    return FALSE;
 }
 // }}}
 
