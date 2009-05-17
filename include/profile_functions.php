@@ -19,33 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-
-function phorum_gen_password($charpart=4, $numpart=3)
-{
-    $vowels = array("a", "e", "i", "o", "u");
-    $cons = array("b", "c", "d", "g", "h", "j", "k", "l", "m", "n", "p", "r", "s", "t", "u", "v", "w", "tr", "cr", "br", "fr", "th", "dr", "ch", "ph", "wr", "st", "sp", "sw", "pr", "sl", "cl");
-
-    $num_vowels = count($vowels);
-    $num_cons = count($cons);
-
-    $password="";
-
-    for($i = 0; $i < $charpart; $i++){
-        $password .= $cons[mt_rand(0, $num_cons - 1)] . $vowels[mt_rand(0, $num_vowels - 1)];
-    }
-
-    $password = substr($password, 0, $charpart);
-
-    if($numpart){
-        $max=(int)str_pad("", $numpart, "9");
-        $min=(int)str_pad("1", $numpart, "0");
-
-        $num=(string)mt_rand($min, $max);
-    }
-
-    return strtolower($password.$num);
-}
-
 // ----------------------------------------------------------------------------
 // Banlist checking
 // ----------------------------------------------------------------------------
