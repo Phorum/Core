@@ -85,7 +85,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/controlcenter/user.php',
     'include/controlcenter/users.php',
     'include/email_functions.php',
-    'include/feed_functions.php',
     'include/index/directory.php',
     'include/index/flat.php',
     'include/javascript/phorum-javascript-library.php',
@@ -170,7 +169,8 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
 // If not (which might happen after an upgrade path), then a fatal
 // sanity check error is generated to notice that these files must
 // be removed.
-$GLOBALS["PHORUM"]["deprecated_distro"] = array(
+$GLOBALS["PHORUM"]["deprecated_distro"] = array
+(
     'post.'.PHORUM_FILE_EXTENSION,   // deprecated by the posting.php script
     'include/api/file_storage.php',  // renamed to include/api/file.php
     'include/phorum_get_url.php',    // moved to URL API
@@ -179,6 +179,7 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array(
     'include/index_classic.php',     // renamed to include/index/flat.php
     'include/index_directory.php',   // renamed to include/index/directory.php
     'include/timing.php',            // moved to Profiler API
+    'include/feed_functions.php',    // moved to Feed API
 );
 
 // A list of database layer files that ship with Phorum.
