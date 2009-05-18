@@ -24,7 +24,7 @@ if (!defined("PHORUM")) return;
 // --------------------------------------------------------------------
 
 // Retrieve the children for the current folder.
-$forums = $phorum->forums_get(
+$forums = $phorum->forums->get(
     NULL, $PHORUM['forum_id'], NULL, $PHORUM['vroot']
 );
 
