@@ -126,7 +126,7 @@ if ( count( $_POST ) )
 
                 // check user open id field
 
-                $field = phorum_api_custom_field_byname("open_id", PHORUM_CUSTOM_FIELD_USER);
+                $field = $phorum->custom_field->byname("open_id", PHORUM_CUSTOM_FIELD_USER);
                 if($value==true){
                     if(empty($field)){
                         $open_id_field = array(
