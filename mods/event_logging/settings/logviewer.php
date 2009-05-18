@@ -33,8 +33,11 @@ $pagelengths = array(
 
 // The base URL for creating URL's to the filter page. This will be used
 // later on, for making parts of the output clickable for adjusting the filter.
-$filter_base = "{$PHORUM["admin_http_path"]}?module=modsettings&mod=event_logging&el_action=filter";
-
+$filter_base = phorum_admin_build_url(array(
+    'module=modsettings',
+    'mod=event_logging',
+    'el_action=filter'
+)); 
 
 $show_loglevel = array();
 $show_categories = array();
@@ -226,6 +229,36 @@ for (var i = 0; i < buttons.length; i++) {
         };
 
         container.appendChild(newbutton);
+
+        var newdropdown = document.createElement('select');
+        newdropdown.name = 'download';
+        newdropdown.onchange = function () {
+          if (this.selectedIndex > 0) {
+            document.forms[1].el_action.value = "download";
+            var newhidden = document.createElement('input');
+            newhidden.type = "hidden";
+            newhidden.name = "download_type";
+            newhidden.value = this.options[this.selectedIndex].value;
+            container.appendChild(newhidden);
+            document.forms[1].submit();
+            this.selectedIndex = 0;
+            document.forms[1].el_action.value = "filter";
+          }
+        }
+        newdropdown.style.marginLeft = '5px';
+        var newdropdown_opthead = document.createElement('option');
+        newdropdown_opthead.appendChild(document.createTextNode("Download events as:"));
+        var newdropdown_op1 = document.createElement('option');
+        newdropdown_op1.value = 'html';
+        newdropdown_op1.appendChild(document.createTextNode("HTML"));
+        var newdropdown_op2 = document.createElement('option');
+        newdropdown_op2.value = 'text';
+        newdropdown_op2.appendChild(document.createTextNode("Text"));
+        newdropdown.appendChild(newdropdown_opthead);
+        newdropdown.appendChild(newdropdown_op1);
+        newdropdown.appendChild(newdropdown_op2);
+        container.appendChild(newdropdown);        
+        
         break;
     }
 }
