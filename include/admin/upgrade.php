@@ -239,7 +239,7 @@ switch ($step) {
     case 2:
 
         // Show the results.
-        $base_url = phorum_admin_build_url('base');
+        $base_url = phorum_admin_build_url('');
         $frm = new PhorumInputForm ("", "post", "Finish");
         $frm->addbreak("The upgrade is complete");
         $frm->addmessage(
