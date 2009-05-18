@@ -1,6 +1,26 @@
 Changelog:
 ----------
 
+2009-05-19 v1.0.5
+
+    - An option was added to download the event logs as HTML or TXT.
+      Thanks to Joe Curia (a.k.a. Azumandias) for providing us with
+      the patch for this feature.
+
+    - Implemented automatic cleanup of old event logs. Previously,
+      the event log was only cleaned up when the admin opened the
+      log viewer in the admin interface. Because admins sometimes
+      enable the module and don't look at it for a long while, the
+      log table can grow pretty large.
+
+      This could have some user impact, because cleaning up the
+      logs has to be done within a user's page load. Under normal
+      circumstances however, the user should not be aware of any
+      delay due to this change. If admins do experience issues with
+      this change, then please let us know. We will then extend the
+      automatic cleanup (e.g. by only doing automatic cleanups in
+      the page load of an administrator or moderator user).
+
 2008-03-08 v1.0.4
 
     - Made the JOIN queries work in all MySQL server versions by fully

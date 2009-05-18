@@ -11,6 +11,9 @@ if (! defined("PHORUM")) return;
 // A define that other scripts can use to see if event logging was loaded.
 define('EVENT_LOGGING', TRUE);
 
+// The chance (in %) that garbage collection is run on a user's request.
+define('EVENT_LOGGING_GC_SPLAY', 5);
+
 $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["LOOPLOCK"] = 0;
 $GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"]  = 0;
 
@@ -681,5 +684,41 @@ function phorum_mod_event_logging_after_approve($data)
     return $data;
 }
 
+// ----------------------------------------------------------------------
+// Automatic log cleanup
+// ----------------------------------------------------------------------
+
+// To prevent log cleanup from blocking the main page, we use this
+// addon implementation to put the processing behind a 1x1 transparent
+// image that we can include in the page. This way, the user's request
+// won't be stalling because of the cleanup process.
+//
+// Whether or not the image in included on the page is determined from
+// the before_footer hook.
+
+function phorum_mod_event_logging_addon()
+{
+    // This function takes care of cleaning up the garbage.
+    event_logging_countlogs();
+
+    // Display a 1x1 transparent gif image.
+    header("Content-type: image/gif");
+    print "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x91\x00\x00" .
+          "\x00\x66\x99\x00\x00\x00\x00\x00\x00\x00\x00\x00\x21" .
+          "\xf9\x04\x09\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01" .
+          "\x00\x01\x00\x00\x08\x04\x00\x01\x04\x04\x00\x3b";
+}
+
+// Garbage collection is started by including the pixel from the
+// addon hook in the page. We do not want to run garbage collection
+// on every request, so here we spread those runs randomly.
+function phorum_mod_event_logging_before_footer()
+{
+    $rand = rand(1,100);
+    if ($rand <= EVENT_LOGGING_GC_SPLAY) {
+        $img_url = phorum_get_url(PHORUM_ADDON_URL, 'module=event_logging'); 
+        print '<img src="'.$img_url.'" width="1" height="1" />';
+    }
+}
 
 ?>
