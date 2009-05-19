@@ -3,6 +3,9 @@
  * This script implements a one-object-wraps-all class, which provides
  * access to all Phorum API functionality, by means of autoloading the
  * required implementation files and calling the API functions.
+ *
+ * @todo Check all trigger_error calls to see if we escaped all
+ *       variables using htmlspecialchars().
  */
 
 /**

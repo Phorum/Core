@@ -395,7 +395,7 @@ if($PHORUM['DATA']['LOGGEDIN']) {
         $mode = $PHORUM['threaded_list']
               ? PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY
               : PHORUM_NEWFLAGS_BY_THREAD;
-        $rows = $phorum->newflags->format_messages($rows, $mode, FALSE);
+        $rows = $phorum->newflags->apply_to_messages($rows, $mode, FALSE);
     }
 
     foreach ($rows as $key => $row)

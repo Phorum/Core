@@ -1407,10 +1407,6 @@ function phorum_api_forums_get_inherit_id_options($forum_id = NULL)
  * @param array
  *     The same as the $forums argument array, with formatting applied
  *     and template variables added.
- *
- * @todo Either move the forum newflags formatting code to the newflags API
- *       or push the message formatting code from the newflags API to
- *       the message API. Now we have two methodolgies in place.
  */
 function phorum_api_forums_format($forums, $flags = 0)
 {
@@ -1496,49 +1492,17 @@ function phorum_api_forums_format($forums, $flags = 0)
         $forums[$forum_id] = $forum;
     }
 
-    // If no unread message info has to be added, we are done.
-    if (!($flags & PHORUM_FLAG_ADD_UNREAD_INFO) ||
-         $PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_NOCOUNT ||
-        !$PHORUM['user']['user_id'] ||
-        empty($forums_to_check)) return $forums;
-
     // Add unread message information.
-    if ($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_COUNT)
-    {
-        $new_info = phorum_db_newflag_count($forums_to_check);
+    if ($flags & PHORUM_FLAG_ADD_UNREAD_INFO &&
+        $PHORUM['show_new_on_index'] != PHORUM_NEWFLAGS_NOCOUNT && 
+        $PHORUM['user']['user_id'] &&
+        !empty($forums_to_check)) {
 
-        foreach ($forums_to_check as $forum_id)
-        {
-            $forum = $forums[$forum_id];
-
-            // -1 indicates that no newflags were stored for this user
-            // Therefore make all messages and threads "unread".
-            if ($new_info[$forum_id]['messages'] == -1) {
-                $new_info[$forum_id] = array(
-                    'messages' => $forum['raw_message_count'],
-                    'threads'  => $forum['raw_thread_count'],
-                );
-            }
-
-            $forums[$forum_id]['new_messages'] = number_format(
-                $new_info[$forum_id]['messages'], 0,
-                $PHORUM['dec_sep'], $PHORUM['thous_sep']
-            );
-            $forums[$forum_id]['new_threads'] = number_format(
-                $new_info[$forum_id]['threads'], 0,
-                $PHORUM['dec_sep'], $PHORUM['thous_sep']
-            );
-        }
-    }
-    elseif($PHORUM['show_new_on_index'] == PHORUM_NEWFLAGS_CHECK)
-    {
-        $new_info = phorum_db_newflag_check($forums_to_check);
-
-        foreach ($forums_to_check as $forum_id)
-        {
-            $has_new = empty($new_info[$forum_id]) ? FALSE : TRUE;
-            $forums[$forum_id]['new_message_check'] = $has_new;
-        }
+        $forums = $phorum->newflags->apply_to_forums(
+            $forums,
+            $PHORUM['show_new_on_index'],
+            $forums_to_check
+        );
     }
 
     return $forums;

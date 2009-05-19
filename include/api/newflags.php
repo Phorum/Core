@@ -115,9 +115,147 @@ function phorum_api_newflags_by_forum($forum)
 }
 // }}}
 
-// {{{ Function: phorum_api_newflags_format_messages()
+// {{{ Function: phorum_api_newflags_apply_to_forums()
+/**
+ * Add newflag info for the active Phorum user to a list of forums.
+ *
+ * There are three modes available for adding newflags to the forums.
+ *
+ * - {@link PHORUM_NEWFLAGS_NOCOUNT}: This mode is mainly implemented
+ *   for completeness, to match the possible settings for newflags on the
+ *   Phorum index page. When this mode is used, then no checks are
+ *   done at all and the array of forums is returned unmodified.
+ *
+ * - {@link PHORUM_NEWFLAGS_COUNT}: Count the number of new messages
+ *   for each forum. Two elements are added to the forum data:
+ *   "new_messages" and "new_threads", which respectively indicate the
+ *   number of new messages and new threads for the forum.
+ *
+ * - {@link PHORUM_NEWFLAGS_CHECK}: Only check if there are any new
+ *   messages available for each forum. A boolean element
+ *   "new_message_check" is added to the forum data. When this element
+ *   is TRUE, then one or more new messages are available.
+ *
+ * @param array $forums
+ *     An array of forums for which to add new thread/message information.
+ *     If there are folders in this array, then these will be silently
+ *     ignored.
+ *
+ * @param integer $mode
+ *     The formatting mode. This is either {@link PHORUM_NEWFLAGS_COUNT}
+ *     or {@link PHORUM_NEWFLAGS_CHECK}. The mode
+ *     {@link PHORUM_NEWFLAGS_NOCOUNT} is also implemented, but one should
+ *     avoid calling this API function for that mode, because nothing
+ *     is done for it.
+ *
+ * @param array|NULL $forum_ids
+ *     An array of forum_ids for which the newflags have to be checked.
+ *     If this parameter is NULL (the default), then this function will
+ *     extract the forum_ids to check for from the $forums parameter.
+ *
+ * @return array
+ *     The modified array of forums.
+ */
+function phorum_api_newflags_apply_to_forums($forums, $mode = PHORUM_NEWFLAGS_COUNT, $forum_ids = NULL)
+{
+    global $PHORUM;
+
+    // No newflags for anonymous users.
+    if (!$PHORUM['user']['user_id']) return $forums;
+
+    // NOOP mode. One should avoid calling this function with this mode,
+    // but it could happen in case the caller is using the value of
+    // the setting $PHORUM['show_new_on_index']. So here we act all
+    // friendly, by not complaining about the useless call and by returning
+    // the $forums array unmodified.
+    if ($mode == PHORUM_NEWFLAGS_NOCOUNT) return $forums;
+
+    // First pass:
+    // Create a list of forum_ids for the forums in the $forums parameter
+    // (to skip the folders that might be in here). Alternatively, the list
+    // of forum_ids to run the new message check for can be provided as a
+    // function call parameter, in which case we can skip this first pass.
+    if (empty($forum_ids)) {
+        $forum_ids = array();
+        foreach ($forums as $forum) {
+            if (empty($forum['folder_flag'])) {
+                $forum_ids[] = $forum['forum_id'];
+            }
+        }
+    }
+
+    // If no forums were found in the list, then we are done.
+    if (empty($forum_ids)) return $forums;
+
+    // Second pass:
+    // Count new threads and messages for each forum.
+    if ($mode == PHORUM_NEWFLAGS_COUNT)
+    {
+        $new_info = phorum_db_newflag_count($forum_ids);
+        foreach ($forum_ids as $forum_id)
+        {
+            $forum = $forums[$forum_id];
+
+            // -1 indicates that no newflags were stored for this user
+            // Therefore make all messages and threads "unread".
+            if ($new_info[$forum_id]['messages'] == -1) {
+                $new_info[$forum_id] = array(
+                    'messages' => $forum['raw_message_count'],
+                    'threads'  => $forum['raw_thread_count'],
+                );
+            }
+
+            $forums[$forum_id]['new_messages'] = number_format(
+                $new_info[$forum_id]['messages'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+            $forums[$forum_id]['new_threads'] = number_format(
+                $new_info[$forum_id]['threads'], 0,
+                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            );
+        }
+    }
+    // Only check if there are any new messages for each forum.
+    elseif ($mode == PHORUM_NEWFLAGS_CHECK)
+    {
+        $new_info = phorum_db_newflag_check($forum_ids);
+
+        foreach ($forum_ids as $forum_id)
+        {
+            $forums[$forum_id]['new_message_check'] =
+                empty($new_info[$forum_id]) ? FALSE : TRUE;
+        }
+    }
+    // Illegal mode requested.
+    else trigger_error(
+        'phorum_api_newflags_apply_to_forums(): Illegal $mode parameter ' .
+        '"'.htmlspecialchars($mode).'" used.'
+    );
+
+    return $forums;
+}
+// }}}
+
+// {{{ Function: phorum_api_newflags_apply_to_messages()
 /**
  * Add newflag info for the active Phorum user to a list of messages.
+ *
+ * There are three modes available for adding newflags to the forums.
+ *
+ * - {@link PHORUM_NEWFLAGS_BY_THREAD}: the newflags are processed
+ *   in threaded mode. This means that the newflag will be set for
+ *   thread starter messages in the message list that have at least
+ *   one new message in their thread.
+ *
+ * - {@link PHORUM_NEWFLAGS_BY_MESSAGE}: the newflags are processed
+ *   in single message mode. This means that the newflag will be set
+ *   for all new messages in the message list.
+ *
+ * - {@link PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY}: the newflags are processed
+ *   in single message mode for all but the sticky messages in the
+ *   message list. The sticky messages are processed in threaded mode.
+ *   This is useful for the list page, where sticky threads are always
+ *   displayed collapsed, even if the list page view is threaded.
  *
  * In the message data for messages that should have the new flag enabled,
  * a field $msg["new"] is added. This field is initialized to the language
@@ -142,7 +280,7 @@ function phorum_api_newflags_by_forum($forum)
  * @return array $messages
  *     The possibly modified array of messages.
  */
-function phorum_api_newflags_format_messages($messages, $mode = PHORUM_NEWFLAGS_BY_MESSAGE, $fullcount = FALSE)
+function phorum_api_newflags_apply_to_messages($messages, $mode = PHORUM_NEWFLAGS_BY_MESSAGE, $fullcount = FALSE)
 {
     global $PHORUM;
 

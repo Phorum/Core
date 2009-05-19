@@ -659,7 +659,7 @@ define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);
 // ----------------------------------------------------------------------
 
 /**
- * Function call flag, which tells {@link phorum_api_newflags_format_messages}
+ * Function call flag, which tells {@link phorum_api_newflags_apply_to_messages}
  * that the newflags have to be processed in threaded mode. This means that the
  * newflag will be set for thread starter messages in the message list that
  * have at least one new message in their thread.
@@ -667,14 +667,14 @@ define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);
 define('PHORUM_NEWFLAGS_BY_THREAD', 1);
 
 /**
- * Function call flag, which tells {@link phorum_api_newflags_format_messages}
+ * Function call flag, which tells {@link phorum_api_newflags_apply_to_messages}
  * that the newflags have to be processed in single message mode. This means
  * that the newflag will be set for all messages that are new.
  */
 define('PHORUM_NEWFLAGS_BY_MESSAGE', 2);
 
 /**
- * Function call flag, which tells {@link phorum_api_newflags_format_messages}
+ * Function call flag, which tells {@link phorum_api_newflags_apply_to_messages}
  * that the newflags have to be added in single message mode (see
  * {@link PHORUM_NEWFLAGS_MESSAGE}, except for sticky messages, which have
  * to be added in threaded mode. This mode is useful for the list page,
