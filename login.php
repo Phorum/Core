@@ -209,7 +209,6 @@ if (count($_POST) > 0) {
             } else {
 
                 // Generate and store a new password for the user.
-                require_once './include/profile_functions.php';
                 $newpass = $phorum->generate->password();
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = $newpass;
