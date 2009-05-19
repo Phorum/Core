@@ -1230,7 +1230,7 @@ function phorum_pm_format($messages)
     }
 
     // Run the messages through the standard formatting code.
-    $messages = $phorum->message->format($messages);
+    $messages = $phorum->format->messages($messages);
 
     // Reformat message back to a private message.
     foreach ($messages as $id => $message)

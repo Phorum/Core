@@ -144,7 +144,7 @@ foreach($mod_forums as $forum => $rest) {
         $rows[$key]["short_datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $row["datestamp"]);
     }
 
-    $rows = $phorum->message->format($rows);
+    $rows = $phorum->format->message($rows);
     $PHORUM['DATA']['PREPOST'] = array_merge($PHORUM['DATA']['PREPOST'], $rows);
 }
 

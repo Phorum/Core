@@ -76,7 +76,7 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 } else {
     // we are following a new thread
 
-    list($messages) = $phorum->message->format(array($message));
+    list($messages) = $phorum->format->messages(array($message));
 
     $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_FOLLOW_ACTION_URL);
     $PHORUM["DATA"]["SUBJECT"]       = $message["subject"];

@@ -515,7 +515,7 @@ $recent_author_spec = array(
 );
 
 // format messages
-$rows = $phorum->message->format($rows, array($recent_author_spec));
+$rows = $phorum->format->messages($rows, array($recent_author_spec));
 
 // set up the data
 $PHORUM["DATA"]["MESSAGES"] = $rows;

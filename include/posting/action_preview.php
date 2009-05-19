@@ -61,7 +61,7 @@ if (($mode == "post" || $mode == "reply") &&
 }
 
 // Format the message using the default formatting.
-list($previewmessage) = $phorum->message->format(array($previewmessage));
+list($previewmessage) = $phorum->format->messages(array($previewmessage));
 
 // Recount the number of attachments. Formatting mods might have changed
 // the number of attachments we have to display using default formatting.

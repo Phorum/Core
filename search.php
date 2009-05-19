@@ -249,7 +249,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         );
 
         if (!$raw_body)
-            $arr["rows"] = $phorum->message->format($arr["rows"]);
+            $arr["rows"] = $phorum->format->messages($arr["rows"]);
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["number"] = $match_number;

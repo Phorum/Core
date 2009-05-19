@@ -191,7 +191,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
         }
 
         // Apply formatting to the messages.
-        $messages = $phorum->message->format($messages);
+        $messages = $phorum->format->messages($messages);
 
         // Put the array of users back in the messages array.
         $messages['users'] = $users;

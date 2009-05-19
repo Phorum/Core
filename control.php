@@ -116,7 +116,7 @@ unset($user["permissions"]);
 
 // Fake a message here so we can run the sig through format_message.
 $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
-$fake_messages = $phorum->message->format($fake_messages);
+$fake_messages = $phorum->format->messages($fake_messages);
 $user["signature_formatted"] = $fake_messages[0]["body"];
 
 // Format the user signature using standard message body formatting

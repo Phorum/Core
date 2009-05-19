@@ -99,7 +99,7 @@ if(is_array($message) && count($message)) {
     }
 
     // format message
-    list($message) = $phorum->message->format(array($message));
+    list($message) = $phorum->format->messages(array($message));
 
     $PHORUM["DATA"]["PostSubject"] = $message["subject"];
     $PHORUM["DATA"]["PostAuthor"] = $message["author"];

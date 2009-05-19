@@ -661,7 +661,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     // format messages
-    $messages = $phorum->message->format($messages);
+    $messages = $phorum->format->messages($messages);
 
     // set up the data
 

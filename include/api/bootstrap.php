@@ -480,7 +480,7 @@ function phorum_write_file($file, $data) {
  * @deprecated Replaced by {@link phorum_api_format_messages()}.
  */
 function phorum_format_messages($messages, $author_spec = NULL) {
-    return Phorum::API()->message->format($messages, $author_spec);
+    return Phorum::API()->format->messages($messages, $author_spec);
 }
 
 /**

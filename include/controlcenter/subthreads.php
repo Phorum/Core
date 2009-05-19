@@ -115,7 +115,7 @@ $recent_author_spec = array(
     "RECENT_AUTHOR_PROFILE"  // target author profile URL field
 );
 
-$subscr_array_final = $phorum->message->format(
+$subscr_array_final = $phorum->format->messages(
     $subscr_array_final, array($recent_author_spec));
 
 $count = 0;
