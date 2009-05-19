@@ -196,4 +196,73 @@ function phorum_api_mail_encode_header($string)
 }
 // }}}
 
+// {{{ Function: phorum_api_mail_check_address()
+/**
+ * Check if an email address is valid.
+ *
+ * There are three checks available.
+ *
+ * - A check on the syntax of the email address;
+ * - A check to see if an MX DNS record exists for the domain in the address;
+ * - A check to see if we can connect to the mailhost on the SMTP port
+ *   in case no MX records are available for the domain name.
+ *
+ * The MX DNS check and the connection test will only be performed
+ * when the setting "dns_lookup" is enabled for Phorum.
+ *
+ * @param string $address
+ *     The email address to check.
+ *
+ * @return bool
+ *     FALSE in case the email address is not valid, TRUE otherwise. 
+ */
+function phorum_api_mail_check_address($address)
+{
+    global $PHORUM;
+
+    $address = trim($address);
+
+    // Do a syntax check on the email address.
+    // Don't even try to read this one. Your head will explode.
+    if (preg_match('/
+        ^([a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+
+        (\.[a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+)*) @
+        (((([-a-z0-9]*[a-z0-9])?)|(#[0-9]+)|(\[((([01]?[0-9]{0,2})|
+        (2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|
+        (2(([0-4][0-9])|(5[0-5]))))\]))\.)*
+        ((([-a-z0-9]*[a-z0-9])?)|(#[0-9]+)|(\[((([01]?[0-9]{0,2})|
+        (2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|
+        (2(([0-4][0-9])|(5[0-5]))))\]))$/xi', $address))
+    {
+        // If no DNS lookups are performed, the we are done. The
+        // mail address is valid.
+        if (empty($PHORUM['dns_lookup'])) return TRUE; 
+
+        // If the PHP function checkdnsrr() is not available, then
+        // we cannot run the DNS lookup. This might be the case
+        // if we are running on a Windows system here.
+        if (!function_exists('checkdnsrr')) return TRUE;
+
+        // Grab the domain name from the mail address.
+        $domain = preg_replace('/^.*@/', '', $address);
+
+        // Check if a mailserver is configured for the domain.
+        // If yes, then this is probably a valid mail domain.
+        if (checkdnsrr($domain, "MX")) return TRUE;
+
+        // Some hosts do not have an MX record, but accept mail
+        // themselves. We check for such host by trying to setup a
+        // network socket connection to the SMTP port on the host.
+        ini_set('default_socket_timeout', 10); // default of 60 is too long
+        if ($sock = @fsockopen($domain, 25)) {
+            fclose($sock);
+            return TRUE;
+        }
+    }
+
+    // If we fall through to here, then the address did not validate.
+    return FALSE;
+}
+// }}}
+
 ?>
