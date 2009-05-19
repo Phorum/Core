@@ -1,7 +1,4 @@
 <?php
-/**
- * @todo move all constants out of include/constants.php to this one.
- */
 
 global $PHORUM;
 
