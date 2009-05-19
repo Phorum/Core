@@ -29,6 +29,9 @@
  * @subpackage Newflags
  * @copyright  2008, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
+ *
+ * @todo Implement phorum_api_newflags_markunread(). This one might require
+ *       some smart database updates, but it would be a nice feature to offer.
  */
 
 if (!defined('PHORUM')) return;
