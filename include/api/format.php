@@ -19,6 +19,9 @@
 
 /**
  * This script implements utility functions for formatting data.
+ * Some basic formatting routines are implemented directly in this file.
+ * Larger formatting routines are stored in the subdirectory "format"
+ * below this file's directory.
  *
  * @package    PhorumAPI
  * @subpackage Formatting
@@ -187,7 +190,7 @@ function phorum_api_format_relative_date($time)
  * @param integer bytes
  *     The number of bytes.
  *
- * @param string
+ * @return string
  *     The formatted size.
  */
 function phorum_api_format_filesize($bytes)
@@ -204,18 +207,18 @@ function phorum_api_format_filesize($bytes)
 
 // {{{ Function: phorum_api_format_strip()
 /**
- * Strips HTML <tags> and BBcode [tags] from the body.
+ * Strips HTML <tags> and BBcode [tags] from a string.
  *
- * @param string body
- *     The block of body text to strip.
+ * @param string $str
+ *     The string to strip.
  *
  * @return string
- *     The stripped body.
+ *     The stripped string.
  */
-function phorum_api_format_strip($body)
+function phorum_api_format_strip($str)
 {
     // Strip HTML <tags>
-    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
+    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $str);
 
     // Strip BB Code [tags]
     $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
@@ -224,70 +227,6 @@ function phorum_api_format_strip($body)
     $stripped = phorum_api_format_censor($stripped);
 
     return $stripped;
-}
-// }}}
-
-// {{{ Function: phorum_api_format_censor_compile()
-/**
- * Compile the search and replace arguments that have to be used
- * to handle censor word replacements.
- *
- * This is implemented as a separate call, so formatting code
- * can load the compiled arguments, to call preg_replace() on
- * data on its own. This saves a lot of function calls, which
- * improves the overall speed.
- *
- * @return string $search
- *     The regular expression that is used for searching for bad words.
- *     If no bad words have been configured, then NULL is returned.
- *
- * @return string $replace
- *     The string to replace bad words with.
- *     This is the PHORUM_BAD_WORDS constant. We pushed it in here, in
- *     case we want to make this variable in the future.
- */
-function phorum_api_format_censor_compile()
-{
-    static $search = '';
-    
-    // Load the badwords and compile the replacement regexp.
-    if ($search === '') {
-        $words = Phorum::API()->ban->list(PHORUM_BAD_WORDS);
-        if (!empty($words)) {
-            $parts = array();
-            foreach ($words as $word) {
-                $parts[] = "\b".preg_quote($word['string'],'/').
-                            "(ing|ed|s|er|es)*\b";
-            }
-            $search = '/' . implode('|', $parts) . '/i';
-        } else {
-            $search = NULL;
-        }
-    }
-
-    return array($search, PHORUM_BADWORD_REPLACE);
-}
-// }}}
-
-// {{{ Function: phorum_api_format_censor
-/**
- * Handle replacing bad words with the string from the
- * PHORUM_BADWORD_REPLACE constant.
- *
- * @param string $str
- *     The string in which to replace the bad words.
- *
- * @param string $str
- *     The possibly modifed string.
- */
-function phorum_api_format_censor($str)
-{
-    list ($search, $replace) = phorum_api_format_censor_compile();
-    if ($search !== NULL) {
-        $str = preg_replace($search, $replace, $str);
-    }
-
-    return $str;
 }
 // }}}
 
