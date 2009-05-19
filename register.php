@@ -99,7 +99,8 @@ if (count($_POST)) {
     // Check if all required fields are filled and valid.
     if (!isset($_POST["username"]) || empty($_POST['username'])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
-    } elseif (!isset($_POST["email"]) || !phorum_valid_email($_POST["email"])) {
+    } elseif (!isset($_POST["email"]) ||
+              !$phorum->mail->check_address($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif (empty($_POST["open_id"]) && (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];

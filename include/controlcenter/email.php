@@ -33,7 +33,7 @@ if ( count( $_POST ) ) {
 
     if ( empty( $_POST["email"] ) ) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRequired"];
-    } elseif (!phorum_valid_email( $_POST["email"])) {
+    } elseif (!$phorum->mail->check_address( $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif ($PHORUM['user']['email'] != $_POST["email"] && phorum_api_user_search("email", $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmailExists"];

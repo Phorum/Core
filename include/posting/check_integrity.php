@@ -19,7 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-// For phorum_valid_email()
 require_once './include/email_functions.php';
 
 $error = false;
@@ -102,7 +101,7 @@ if (! $error)
     } elseif (!isset($message["body"]) || trim($message["body"]) == '') {
         $error = $PHORUM["DATA"]["LANG"]["ErrBody"];
     } elseif (!empty($message["email"]) &&
-              !phorum_valid_email($message["email"])) {
+              !$phorum->mail->check_address($message["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif (strlen($message["body"]) > 64000) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBodyTooLarge"];

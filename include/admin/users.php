@@ -86,7 +86,7 @@ if(count($_POST))
         //check for a valid email
         if (!empty($_POST["email"])) {
             include './include/email_functions.php';
-            $valid_email = $phorum->email->check_address($_POST["email"]);
+            $valid_email = $phorum->mail->check_address($_POST["email"]);
             if ($valid_email !== true)
                 $error = 'The email "'.htmlspecialchars($_POST[email]).'" is not valid!';
         }
