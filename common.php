@@ -756,7 +756,7 @@ if (!defined( "PHORUM_ADMIN" ))
         $phorum->modules->hook($page_hook, "");
     }
 
-    $formatted = $phorum->user->format(array($PHORUM['user']));
+    $formatted = $phorum->format->users(array($PHORUM['user']));
     $PHORUM['DATA']['USER'] = $formatted[0];
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];

@@ -338,7 +338,7 @@ function phorum_controlcenter_user_save($panel)
         }
 
         // Copy data from the updated user back into the user template data.
-        $formatted = $phorum->user->format(array($PHORUM['user']));
+        $formatted = $phorum->format->users(array($PHORUM['user']));
         foreach ($formatted[0] as $key => $val) {
             $PHORUM['DATA']['USER'][$key] = $val;
         }
