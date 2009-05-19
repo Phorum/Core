@@ -223,16 +223,15 @@ function phorum_api_mail_check_address($address)
     $address = trim($address);
 
     // Do a syntax check on the email address.
-    // Don't even try to read this one. Your head will explode.
-    if (preg_match('/
-        ^([a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+
-        (\.[a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+)*) @
-        (((([-a-z0-9]*[a-z0-9])?)|(#[0-9]+)|(\[((([01]?[0-9]{0,2})|
-        (2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|
-        (2(([0-4][0-9])|(5[0-5]))))\]))\.)*
-        ((([-a-z0-9]*[a-z0-9])?)|(#[0-9]+)|(\[((([01]?[0-9]{0,2})|
-        (2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|
-        (2(([0-4][0-9])|(5[0-5]))))\]))$/xi', $address))
+    // Don't even try to read this one. Your head will hurt.
+    $userblock = '[a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+';
+    $hostblock = '((([-a-z0-9]*[a-z0-9])?)|' .
+                 '(\#[0-9]+)|(\[((([01]?[0-9]{0,2})|' .
+                 '(2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|' .
+                 '(2(([0-4][0-9])|(5[0-5]))))\]))';
+    if (preg_match(
+        "/^{$userblock}(\.$userblock)*@($hostblock\.)*$hostblock$/i", $address
+    ))
     {
         // If no DNS lookups are performed, the we are done. The
         // mail address is valid.
