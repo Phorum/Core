@@ -102,10 +102,11 @@ class Phorum
     public function __get($what)
     {
         $what = basename($what);
+        $cacheid = $this->node_path . '/' . $what;
         if (isset(Phorum::$nodes[$what])) {
             return $this->$what = Phorum::$nodes[$what];
         } else {
-            return Phorum::$nodes[$what] = $this->$what = new Phorum(
+            return Phorum::$nodes[$cacheid] = $this->$what = new Phorum(
                 $this->node_path . '/' . $what,
                 $this->func_prefix . $what . '_'
             );

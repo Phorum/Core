@@ -150,7 +150,7 @@ function phorum_api_message_format($messages, $author_specs = NULL)
     $author_specs[] = array("user_id","author","email","author","PROFILE");
 
     // Prepare censoring replacements.
-    list ($censor_search, $censor_replace) = $phorum->format->censor_compile();
+    list ($censor_search, $censor_replace) = $phorum->format->censor->compile();
 
     // Prepare the profile URL template. This is used to prevent
     // having to call the $phorum->url() function over and over again. 

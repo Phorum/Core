@@ -101,7 +101,7 @@ foreach ($folders as $folder_id => $dummy)
 // --------------------------------------------------------------------
 
 // Format the data for the forums and folders that we gathered.
-$forums = $phorum->forums->format($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
+$forums = $phorum->format->forums($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
 // Build the ordered list of folders and forums for the template.
 // Filter out empty folders.

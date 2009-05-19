@@ -58,7 +58,7 @@ foreach ($forums as $forum_id => $forum)
 // --------------------------------------------------------------------
 
 // Format the data for the forums and folders that we gathered.
-$forums = $phorum->forums->format($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
+$forums = $phorum->format->forums($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
 // If we are at the (v)root index page and if we only have one forum or
 // folder visible there, then directly jump to that one.
