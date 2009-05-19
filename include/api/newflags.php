@@ -162,6 +162,7 @@ function phorum_api_newflags_by_forum($forum)
 function phorum_api_newflags_apply_to_forums($forums, $mode = PHORUM_NEWFLAGS_COUNT, $forum_ids = NULL)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // No newflags for anonymous users.
     if (!$PHORUM['user']['user_id']) return $forums;
@@ -208,13 +209,12 @@ function phorum_api_newflags_apply_to_forums($forums, $mode = PHORUM_NEWFLAGS_CO
                 );
             }
 
-            $forums[$forum_id]['new_messages'] = number_format(
-                $new_info[$forum_id]['messages'], 0,
-                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+            $forums[$forum_id]['new_messages'] = $phorum->format->number(
+                $new_info[$forum_id]['messages']
             );
-            $forums[$forum_id]['new_threads'] = number_format(
-                $new_info[$forum_id]['threads'], 0,
-                $PHORUM['dec_sep'], $PHORUM['thous_sep']
+
+            $forums[$forum_id]['new_threads'] = $phorum->format->number(
+                $new_info[$forum_id]['threads']
             );
         }
     }

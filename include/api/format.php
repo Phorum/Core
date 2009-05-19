@@ -28,6 +28,34 @@
 
 if (!defined('PHORUM')) return;
 
+// {{{ Function: phorum_api_format_number()
+/**
+ * Format a number according to the specified number format from
+ * the Phorum language file.
+ *
+ * The related variables from the language file are:
+ * - $PHORUM['dec_sep']: the separator to use before the decimals
+ * - $PHORUM['thous_sep']: the separator to use between grouped thousands
+ *
+ * @param integer|float $number
+ *     The number to format.
+ *
+ * @param integer $decimals
+ *     The number of decimals to use in the formatted string (default is 0).
+ *
+ * @return string
+ *     The formatted number.
+ */
+function phorum_api_format_number($number, $decimals = 0)
+{
+    global $PHORUM;
+    return number_format(
+        $number, $decimals,
+        $PHORUM['dec_sep'], $PHORUM['thous_sep']
+    );  
+}
+// }}}
+
 // {{{ Function: phorum_api_format_date()
 /**
  * Formats an epoch timestamp to a date/time for displaying on screen.
