@@ -450,4 +450,8 @@ function phorum_format_messages($messages, $author_spec = NULL) {
     return Phorum::API()->message->format($messages, $author_spec);
 }
 
+function phorum_valid_email($address) {
+    return Phorum::API()->mail->check_address($address);
+}
+
 ?>

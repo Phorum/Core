@@ -22,44 +22,6 @@ if (!defined("PHORUM")) return;
 require_once './include/api/user.php';
 require_once './include/api/mail.php';
 
-function phorum_valid_email($email){
-    global $PHORUM;
-
-    $ret = false;
-
-    $email = trim($email);
-
-    if(preg_match('/^([a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+(\.[a-z0-9\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+)*)@(((([-a-z0-9]*[a-z0-9])?)|(#[0-9]+)|(\[((([01]?[0-9]{0,2})|(2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|(2(([0-4][0-9])|(5[0-5]))))\]))\.)*((([-a-z0-9]*[a-z0-9])?)|(#[0-9]+)|(\[((([01]?[0-9]{0,2})|(2(([0-4][0-9])|(5[0-5]))))\.){3}(([01]?[0-9]{0,2})|(2(([0-4][0-9])|(5[0-5]))))\]))$/i', $email)){
-        if(!$PHORUM["dns_lookup"]){
-            // format is valid
-            // don't look up mail server
-            $ret = true;
-        } elseif(function_exists('checkdnsrr')) {
-
-            $fulldomain = substr(strstr($email, "@"), 1).".";
-            // check if a mailserver exists for the domain
-            if(checkdnsrr($fulldomain, "MX")) {
-                $ret = true;
-            }
-
-            // some hosts don't have an MX record, but accept mail themselves
-            if(!$ret){
-                // default timeout of 60 seconds makes the user way too long
-                // in case of problems.
-                ini_set('default_socket_timeout', 10);
-                if(@fsockopen($fulldomain, 25)){
-                    $ret = true;
-                }
-            }
-        } else {
-            // bah, you must be using windows and we can't run real checks
-            $ret = true;
-        }
-    }
-
-    return $ret;
-}
-
 /**
  * function for sending email to users, gets addresses-array and data-array
  */
