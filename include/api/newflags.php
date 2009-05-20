@@ -32,6 +32,9 @@
  *
  * @todo Implement phorum_api_newflags_markunread(). This one might require
  *       some smart database updates, but it would be a nice feature to offer.
+ *
+ * @todo Make the $mode parameter for the phorum_api_newflags_apply_to_...
+ *       functions the same for consistency.
  */
 
 if (!defined('PHORUM')) return;
