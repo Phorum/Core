@@ -29,6 +29,9 @@
  *
  * @todo Check all trigger_error calls to see if we escaped all
  *       variables using htmlspecialchars().
+ *
+ * @todo Extend the Phorum::API() singleton documentation, to explain
+ *       that this singleton is the API entry point.
  */
 
 /**
@@ -41,8 +44,7 @@ class Phorum
     private $node_file;
     private $node_path;
 
-    private static $nodes = array();
-    private static $booted = array();
+    private static $instance;
 
     /**
      * Generate a full file system path to a Phorum file.
@@ -70,6 +72,10 @@ class Phorum
      *
      * Creates a node in the Phorum API routing tree.
      *
+     * This method is defined as a private method, to enforce the
+     * singleton design pattern. To grab an instance of the Phorum
+     * class, one should call the {@link Phorum::API()} static method.
+     *
      * @param array $node_path
      *     The fileystem path for the constructed API node.
      *     There is no need to call this parameter directly.
@@ -80,7 +86,7 @@ class Phorum
      *     There is no need to call this parameter directly.
      *     It is used internally by the Phorum object to create subnodes.
      */
-    public function __construct($node_path = NULL, $func_prefix = NULL)
+    private function __construct($node_path = NULL, $func_prefix = NULL)
     {
         // The filesystem path for the constructed API node.
         if ($node_path === NULL) $node_path = 'include/api';
@@ -113,6 +119,12 @@ class Phorum
     }
 
     /**
+     * This method is defined as private to prevent cloning of the
+     * Phorum API object.
+     */
+    private function __clone() { }
+
+    /**
      * Magic method for automatically initializing Phorum API nodes
      * when they are accessed for the first time.
      *
@@ -125,15 +137,10 @@ class Phorum
     public function __get($what)
     {
         $what = basename($what);
-        $cacheid = $this->node_path . '/' . $what;
-        if (isset(Phorum::$nodes[$what])) {
-            return $this->$what = Phorum::$nodes[$what];
-        } else {
-            return Phorum::$nodes[$cacheid] = $this->$what = new Phorum(
-                $this->node_path . '/' . $what,
-                $this->func_prefix . $what . '_'
-            );
-        }
+        return $this->$what = new Phorum(
+            $this->node_path . '/' . $what,
+            $this->func_prefix . $what . '_'
+        );
     }
 
     /**
@@ -184,9 +191,8 @@ class Phorum
      */
     public function API ()
     {
-        static $instance;
-        if (!isset($instance)) $instance = new Phorum();
-        return $instance;
+        if (!isset(Phorum::$instance)) Phorum::$instance = new Phorum();
+        return Phorum::$instance;
     }
 }
 
