@@ -35,9 +35,11 @@
  *
  * @package    PhorumAPI
  * @subpackage CustomProfileField
- * @copyright  2008, Phorum Development Team
+ * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  * @deprecated Superceded by the more generic Custom Fields API.
+ *
+ * @todo Move to custom profile field functionality to depcrecated.php.
  */
 
 if (!defined('PHORUM')) return;
@@ -160,9 +162,9 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
  *
  * @return bool
  *     TRUE if the restore was successfull or FALSE if there was an error.
- *     The functions {@link phorum_api_strerror()} and
- *     {@link phorum_api_errno()} can be used to retrieve information about
- *     the error that occurred.
+ *     The functions {@link phorum_api_error_message()} and
+ *     {@link phorum_api_error_code()} can be used to retrieve information
+ *     about the error that occurred.
  */
 function phorum_api_custom_profile_field_restore($id)
 {

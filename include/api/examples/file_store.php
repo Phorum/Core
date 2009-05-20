@@ -14,6 +14,6 @@ $file = array(
 
 if (!phorum_api_file_check_write_access($file) ||
     !phorum_api_file_store($file)) {
-    die("Storing the file failed. The error was: " . phorum_api_strerror());
+    die("Storing the file failed. The error was: " . phorum_api_error_message());
 }
 ?>

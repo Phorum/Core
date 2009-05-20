@@ -66,7 +66,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Forums
- * @copyright  2008, Phorum Development Team
+ * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
  * @todo Implement PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS flag.

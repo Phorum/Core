@@ -19,16 +19,14 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
-require_once './include/api/file.php';
-
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMyFiles"];
 
 // First a basic write access check for user files in general, so we
 // can tell the user that personal files are not allowed. Specific checks
 // for newly uploaded files are done below here.
-if (!phorum_api_file_check_write_access(array("link" => PHORUM_LINK_USER))) {
+if (!$phorum->file->check_write_access(array("link" => PHORUM_LINK_USER))) {
     $template = "message";
-    $PHORUM["DATA"]["ERROR"] = phorum_api_strerror();
+    $PHORUM["DATA"]["ERROR"] = $phorum->error->message();
     return;
 }
 
@@ -53,9 +51,9 @@ if (!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"]))
     );
 
     // Store the file.
-    if (!phorum_api_file_check_write_access($file) ||
-        !phorum_api_file_store($file)) {
-        $PHORUM["DATA"]["ERROR"] = phorum_api_strerror();
+    if (!$phorum->file->check_write_access($file) ||
+        !$phorum->file->store($file)) {
+        $PHORUM["DATA"]["ERROR"] = $phorum->error->message();
     } else {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["FileAdded"];
     }
@@ -68,8 +66,8 @@ if (!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"]))
 elseif (!empty($_POST["delete"]))
 {
     foreach($_POST["delete"] as $file_id){
-        if (phorum_api_file_check_delete_access($file_id)) {
-            phorum_api_file_delete($file_id);
+        if ($phorum->file->check_delete_access($file_id)) {
+            $phorum->file->delete($file_id);
         }
     }                
 }

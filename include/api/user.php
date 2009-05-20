@@ -32,7 +32,7 @@
  *
  * @package    PhorumAPI
  * @subpackage User
- * @copyright  2008, Phorum Development Team
+ * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
  * @example    user_auth_module.php Authentication override module example
@@ -1465,8 +1465,8 @@ function phorum_api_user_authenticate($type, $username, $password)
  *     or FALSE if the anonymous user was set (either because that was
  *     requested or because setting the real user failed). If setting a
  *     real user as the active user failed, the functions
- *     {@link phorum_api_strerror()} and {@link phorum_api_errno()} can be
- *     used to retrieve information about the error which occurred.
+ *     {@link phorum_api_error_message()} and {@link phorum_api_error_code()}
+ *     can be used to retrieve information about the error which occurred.
  */
 function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 {
@@ -1486,7 +1486,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
             // missing, then we fall back to the anonymous user.
             if (!isset($user['user_id']) ||
                 !isset($user['active'])) {
-                phorum_api_error_set(
+                $phorum->error(
                     PHORUM_ERRNO_ERROR,
                     'phorum_api_user_set_active_user(): ' .
                     'user record seems incomplete'
@@ -1510,7 +1510,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 
         // Fall back to the anonymous user if the user is not activated.
         if ($user && $user['active'] != PHORUM_USER_ACTIVE) {
-            phorum_api_error_set(
+            $phorum->error(
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
                 'the user is not active'
@@ -1521,7 +1521,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
         // Fall back to the anonymous user if the user does not have
         // admin rights, while an admin setup was requested.
         if ($type == PHORUM_ADMIN_SESSION && $user && empty($user['admin'])) {
-            phorum_api_error_set(
+            $phorum->error(
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
                 'the user is not an administrator'
@@ -1679,8 +1679,8 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
  * @return boolean
  *     TRUE in case the session was initialized successfully.
  *     Otherwise, FALSE will be returned. The functions
- *     {@link phorum_api_strerror()} and {@link phorum_api_errno()} can be
- *     used to retrieve information about the error which occurred.
+ *     {@link phorum_api_error_message()} and {@link phorum_api_error_code()}
+ *     can be used to retrieve information about the error which occurred.
  */
 function phorum_api_user_session_create($type, $reset = 0)
 {
@@ -1777,7 +1777,7 @@ function phorum_api_user_session_create($type, $reset = 0)
 
     // Check if the user is activated.
     if ($PHORUM['user']['active'] != PHORUM_USER_ACTIVE) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_NOACCESS,
             'The user is not (yet) activated (user id '.$user['user_id'].')'
         );
@@ -1788,7 +1788,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // one can never be too sure about this.
     if ($type == PHORUM_ADMIN_SESSION &&
         empty($PHORUM['user']['admin'])) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_NOACCESS,
             'The user is not an administrator (user id '.$user['user_id'].')'
         );

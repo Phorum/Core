@@ -42,7 +42,7 @@ if(count($_POST) && $_POST['name'] != '')
       // Handle restoring a deleted field.
       if (isset($_POST["restore"])) {
         if ($phorum->custom_field->restore($check["id"],$_POST['type']) === FALSE) {
-            phorum_admin_error(phorum_api_strerror());
+            phorum_admin_error($phorum->error->message());
         } else {
             phorum_admin_okmsg("The custom field " .
                                "\"{$check["name"]}\" has been restored.");
@@ -112,7 +112,7 @@ if(count($_POST) && $_POST['name'] != '')
         $field = $phorum->custom_field->configure($field);
 
         if ($field === FALSE) {
-            $error = phorum_api_strerror();
+            $error = $phorum->error->message();
             $action = $_POST['curr'] == 'NEW' ? "create" : "update";
             phorum_admin_error("Failed to $action custom field: ".$error);
         } else {

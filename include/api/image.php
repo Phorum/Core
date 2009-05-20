@@ -26,7 +26,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Tools
- * @copyright  2008, Phorum Development Team
+ * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -66,7 +66,7 @@ if (!defined('PHORUM')) return;
  *
  * @return mixed
  *     NULL is returned in case creating the thumbnail failed. The function
- *     {@link phorum_api_strerror()} can be used to retrieve information
+ *     {@link phorum_api_error_message()} can be used to retrieve information
  *     about the error that occurred.
  *
  *     An array is returned in case creating the thumbnail did work.
@@ -100,7 +100,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
     // Check if PHP supports the getimagesize() function. I think it
     // always should, but let's check it to be sure.
-    if (!function_exists('getimagesize')) return phorum_api_error_set(
+    if (!function_exists('getimagesize')) return $phorum->error(
         PHORUM_ERRNO_ERROR,
         'Your PHP installation lacks "getimagesize()" support'
     );
@@ -116,7 +116,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // Get the image information and clean up the temporary file.
     $file_info = getimagesize($tmpfile);
     @unlink($tmpfile);
-    if ($file_info === FALSE) return phorum_api_error_set(
+    if ($file_info === FALSE) return $phorum->error(
         PHORUM_ERRNO_ERROR,
         'Running getimagesize() on the image data failed'
     );
@@ -130,13 +130,13 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     if (substr($img['cur_mime'], 0, 6) == 'image/') {
         $type = substr($img['cur_mime'], 6);
         if ($type != 'jpeg' && $type != 'gif' && $type != 'png') {
-            return phorum_api_error_set(
+            return $phorum->error(
                 PHORUM_ERRNO_ERROR,
                 "Scaling image type \"{$img['cur_mime']}\" is not supported"
             );
         }
     } else {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_ERROR,
             'The file does not appear to be an image'
         );
@@ -362,21 +362,21 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // -----------------------------------------------------------------
 
     // Return error if one was set.
-    if ($error) return phorum_api_error_set(
+    if ($error) return $phorum->error(
         PHORUM_ERRNO_ERROR,
         $error
     );
 
     // Catch illegal methods
     if ($method !== NULL) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_ERROR,
             'Illegal scaling method: ' . $method
         );
     }
 
     // If we get here, then we were totally out of luck.
-    return phorum_api_error_set(
+    return $phorum->error(
         PHORUM_ERRNO_ERROR,
         'No working image scaling method found'
     );

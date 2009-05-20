@@ -31,7 +31,7 @@
  *
  * @package    PhorumAPI
  * @subpackage CustomField
- * @copyright  2008, Phorum Development Team
+ * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -100,6 +100,7 @@ $GLOBALS['PHORUM']['API']['cpf_reserved'] = array(
 function phorum_api_custom_field_configure($field)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     // The available fields and their defaults. NULL indicates a mandatory
     // field. The field "id" can be NULL though, when creating a new
@@ -142,7 +143,7 @@ function phorum_api_custom_field_configure($field)
 
     // Check the custom field name.
     if (!preg_match('/^[a-z][\w_]*$/i', $field['name'])) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_INVALIDINPUT,
             'Field names can only contain letters, numbers and ' .
             'underscores (_) and they must start with a letter.'
@@ -154,7 +155,7 @@ function phorum_api_custom_field_configure($field)
     // already used as a user data field.
     if (in_array($field['name'], $PHORUM['API']['cpf_reserved']) ||
         isset($GLOBALS['PHORUM']['API']['user_fields'][$field['name']])) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_INVALIDINPUT,
             "The name \"{$field['name']}\" is reserved for internal use " .
             'by Phorum. Please choose a different name for your custom field.'
@@ -163,7 +164,7 @@ function phorum_api_custom_field_configure($field)
 
     // Check the bounds for the field length.
     if ($field['length'] > PHORUM_MAX_CPLENGTH) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_INVALIDINPUT,
             "The length \"{$field['length']}\" for the custom " .
             'field is too large. The maximum length that can be used ' .
@@ -171,7 +172,7 @@ function phorum_api_custom_field_configure($field)
         );
     }
     if ($field['length'] <= 0) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_INVALIDINPUT,
             "The length for the custom field must be above zero."
         );
@@ -180,7 +181,7 @@ function phorum_api_custom_field_configure($field)
     // For new fields, check if the name isn't already in use.
     if ($field['id'] === NULL &&
         phorum_api_custom_field_byname($field['name'], $field['type'])) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_INVALIDINPUT,
             "A custom field with the name \"{$field['name']}\" " .
             'already exists. Please choose a different name for your ' .
@@ -191,7 +192,7 @@ function phorum_api_custom_field_configure($field)
     // For existing fields, check if the field id really exists.
     if ($field['id'] !== NULL &&
         !isset($PHORUM['PROFILE_FIELDS'][$field['type']][$field['id']])) {
-        return phorum_api_error_set(
+        return $phorum->error(
             PHORUM_ERRNO_INVALIDINPUT,
             "A custom field with id \"{$field['id']}\" does not " .
             'exist. Maybe the field was deleted before you updated its ' .
@@ -338,12 +339,14 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
  *
  * @return bool
  *     TRUE if the restore was successfull or FALSE if there was an error.
- *     The functions {@link phorum_api_strerror()} and
- *     {@link phorum_api_errno()} can be used to retrieve information about
- *     the error that occurred.
+ *     The functions {@link phorum_api_error_message()} and
+ *     {@link phorum_api_error_code()} can be used to retrieve information
+ *     about the error that occurred.
  */
 function phorum_api_custom_field_restore($id,$type)
 {
+    $phorum = Phorum::API();
+
     settype($id, "int");
 
     if (isset($GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]))
@@ -356,7 +359,7 @@ function phorum_api_custom_field_restore($id,$type)
             'PROFILE_FIELDS' => $GLOBALS["PHORUM"]['PROFILE_FIELDS']
         ));
     }
-    else return phorum_api_error_set(
+    else return $phorum->error(
         PHORUM_ERRNO_NOTFOUND,
         "Unable to restore custom field $id: no configuration found."
     );
@@ -463,9 +466,10 @@ function phorum_api_custom_field_checkconfig()
 function phorum_api_custom_field_apply($custom_field_type = NULL, $data_array)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
     
     if ($custom_field_type === NULL) {
-        return phorum_api_error_set(
+        return $phorum->error(
 	        PHORUM_ERRNO_INVALIDINPUT,
 	        "No custom field type given to function phorum_api_custom_field_apply."
         );    

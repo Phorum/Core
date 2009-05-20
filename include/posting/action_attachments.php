@@ -156,7 +156,7 @@ elseif ($do_attach && ! empty($_FILES))
             "filename"   => $file["name"],
             "filesize"   => $file["size"]
         ))) {
-            $PHORUM["DATA"]["ERROR"] = phorum_api_strerror();
+            $PHORUM["DATA"]["ERROR"] = $phorum->error->message();
             break;
         }
 

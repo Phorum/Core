@@ -22,7 +22,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Output
- * @copyright  2008, Phorum Development Team
+ * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
