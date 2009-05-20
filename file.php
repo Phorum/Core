@@ -39,7 +39,7 @@ $file = $phorum->file->check_read_access($file_id);
 // Handle file access errors.
 if ($file === FALSE)
 {
-    $PHORUM["DATA"]["ERROR"] = phorum_api_strerror();
+    $PHORUM["DATA"]["ERROR"] = $phorum->error->message();
 
     phorum_build_common_urls();
 
