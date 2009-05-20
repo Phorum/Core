@@ -1,4 +1,30 @@
 <?php
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//   Copyright (C) 2009  Phorum Development Team                              //
+//   http://www.phorum.org                                                    //
+//                                                                            //
+//   This program is free software. You can redistribute it and/or modify     //
+//   it under the terms of either the current Phorum License (viewable at     //
+//   phorum.org) or the Phorum License that was distributed with this file    //
+//                                                                            //
+//   This program is distributed in the hope that it will be useful,          //
+//   but WITHOUT ANY WARRANTY, without even the implied warranty of           //
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                     //
+//                                                                            //
+//   You should have received a copy of the Phorum License                    //
+//   along with this program.                                                 //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * This script defines all the constants that are used by Phorum.
+ *
+ * @package PhorumAPI
+ * @subpackage Core
+ * @copyright  2009, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
+ */
 
 global $PHORUM;
 
@@ -285,19 +311,6 @@ define("PHORUM_ERRNO_INTEGRITY", 4);
  * An errno value, which indicates invalid input data.
  */
 define("PHORUM_ERRNO_INVALIDINPUT", 5);
-
-// Error information is stored in these variables.
-$PHORUM['API']['errno'] = NULL;
-$PHORUM['API']['error'] = NULL;
-
-// A mapping of Phorum errno values to a human readable counter part.
-$PHORUM["API"]["errormessages"] = array(
-    PHORUM_ERRNO_ERROR        => "An error occurred.",
-    PHORUM_ERRNO_NOACCESS     => "Permisison denied.",
-    PHORUM_ERRNO_NOTFOUND     => "Not found.",
-    PHORUM_ERRNO_INTEGRITY    => "Database integrity problem detected.",
-    PHORUM_ERRNO_INVALIDINPUT => "Invalid input.",
-);
 
 // ----------------------------------------------------------------------
 // User API related
