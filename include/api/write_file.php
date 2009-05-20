@@ -54,7 +54,7 @@ if (!defined("PHORUM")) return;
 function phorum_api_write_file($file, $data)
 {
     global $PHORUM;
-    $phorum = Phorum::API;
+    $phorum = Phorum::API();
 
     // Reset error storage.
     $PHORUM['API']['errno'] = NULL;
