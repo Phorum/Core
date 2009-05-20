@@ -24,6 +24,11 @@
  * The variable $phorum is set by include/api.php. We need to
  * do this, because this code is included during initialization of
  * the Phorum object, so we cannot yet access the object otherwise.
+ *
+ * @package    PhorumAPI
+ * @subpackage Core
+ * @copyright  2009, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
 // ----------------------------------------------------------------------
@@ -58,7 +63,12 @@ $PHORUM = array
     'user'     => array(),
 
     // Storage space for internal API data. 
-    'API' => array()
+    'API' => array
+    (
+        // Initialize data for the ErrorHandling API.
+        'errno' => NULL,
+        'error' => NULL
+    )
 );
 
 // Load all API constants from ./include/api/constants.php
@@ -67,6 +77,9 @@ require_once $phorum->getPath('include/api/constants.php');
 // Scripts should define the "phorum_page" constant, but we'll help out script
 // authors that forget to do so here, to prevent PHP warnings later on.
 defined('phorum_page') or define('phorum_page', 'unknown');
+
+// Load function definitions for deprecated functions.
+require_once $phorum->getPath('include/api/deprecated.php');
 
 // ----------------------------------------------------------------------
 // PHP extension compatibility 
@@ -321,173 +334,5 @@ if (extension_loaded('phorum')) {
 // For switching, the function phorum_switch_template() can be used.
 $PHORUM['template_path'] = PHORUM_PATH.'/templates';
 $PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
-
-// ----------------------------------------------------------------------
-// Error handling functionality
-// ----------------------------------------------------------------------
-
-/**
- * Set a Phorum API error.
- *
- * @param integer $errno
- *     The errno value for the error that occurred. There are several
- *     specific errno values available, but for a generic error message
- *     that does not need a specific errno, {@link PHORUM_ERRNO_ERROR} can be
- *     used.
- *
- * @param string $error
- *     This is the error message, describing the error that occurred.
- *     if this parameter is omitted or NULL, then the message will be
- *     set to a generic message for the {@link $errno} that was used.
- *
- * @return bool
- *     This function will always return FALSE as its return value,
- *     so a construction like "return phorum_api_error_set(...)" can
- *     be used for setting an error and returning FALSE at the same time.
- */
-function phorum_api_error_set($errno, $error = NULL)
-{
-    if ($error === NULL) {
-        if (isset($GLOBALS["PHORUM"]["API"]["errormessages"][$errno])) {
-            $error = $GLOBALS["PHORUM"]["API"]["errormessages"][$errno];
-        } else {
-            $error = "Unknown errno value ($errno).";
-        }
-    }
-
-    $GLOBALS["PHORUM"]["API"]["errno"] = $errno;
-    $GLOBALS["PHORUM"]["API"]["error"] = $error;
-
-    return FALSE;
-}
-
-/**
- * Retrieve the error code for the last Phorum API function that was called.
- *
- * @return mixed
- *     The error code or NULL if no error was set.
- */
-function phorum_api_errno()
-{
-    global $PHORUM;
-
-    if ($PHORUM["API"]["errno"] === NULL) {
-        return NULL;
-    } else {
-        return $PHORUM["API"]["errno"];
-    }
-}
-
-/**
- * Retrieve the error message for the last Phorum API function that was called.
- *
- * @return mixed
- *     The error message or NULL if no error was set.
- */
-function phorum_api_strerror()
-{
-    if ($GLOBALS["PHORUM"]["API"]["error"] === NULL) {
-        return NULL;
-    } else {
-        return $GLOBALS["PHORUM"]["API"]["error"];
-    }
-}
-
-# ----------------------------------------------------------------------
-# Backward compatibility
-# ----------------------------------------------------------------------
-
-// These are functions that existed in Phorum, before their functionality
-// was moved to the API layers. These functions are provided to allow
-// modules to use the old function calls. These deprecated functions might
-// be removed from future versions of Phorum.
-
-/**
- * @deprecated Replaced by {@link phorum_api_url()}.
- */
-function phorum_get_url() {
-    Phorum::API()->url; // make sure the URL API layer code is loaded.
-    $argv = func_get_args();
-    return call_user_func_array('phorum_api_url_get', $argv);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_url_current()}.
- */
-function phorum_get_current_url($include_query_string = TRUE) {
-    return Phorum::API()->url->current($include_query_string);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_url_redirect()}.
- */
-function phorum_redirect_by_url($url) {
-    return Phorum::API()->redirect($url);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_modules_hook()}.
- */
-function phorum_hook() {
-    Phorum::API()->modules; // make sure the Modules API layer code is loaded.
-    $argv = func_get_args();
-    return call_user_func_array('phorum_api_modules_hook', $argv);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_format_date()}.
- */
-function phorum_date($picture, $ts) {
-    return Phorum::API()->format->date($picture, $ts);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_format_relative_date()}.
- */
-function phorum_relative_date($ts) {
-    return Phorum::API()->format->relative_date($ts);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_format_filesize()}.
- */
-function phorum_filesize($sz) {
-    return Phorum::API()->format->filesize($sz);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_format_strip()}.
- */
-function phorum_strip_body($body) {
-    return Phorum::API()->format->strip($body);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_buffer_clear()}.
- */
-function phorum_ob_clean() {
-    return Phorum::API()->output->clear();
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_write_file()}.
- */
-function phorum_write_file($file, $data) {
-    return Phorum::API()->write_file($file, $data);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_format_messages()}.
- */
-function phorum_format_messages($messages, $author_spec = NULL) {
-    return Phorum::API()->format->messages($messages, $author_spec);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_mail_check_address()}.
- */
-function phorum_valid_email($address) {
-    return Phorum::API()->mail->check_address($address);
-}
 
 ?>
