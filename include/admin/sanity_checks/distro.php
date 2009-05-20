@@ -112,12 +112,12 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/api/buffer.php',
     'include/api/constants.php',
     'include/api/custom_field.php',
-    'include/api/custom_profile_fields.php',
     'include/api/diff.php',
     'include/api/examples/file_delete.php',
     'include/api/examples/file_store.php',
     'include/api/examples/user_auth_module.php',
     'include/api/examples/user_login.php',
+    'include/api/error.php',
     'include/api/file.php',
     'include/api/format.php',
     'include/api/forums.php',
@@ -172,6 +172,7 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
 (
     'post.'.PHORUM_FILE_EXTENSION,   // deprecated by the posting.php script
     'include/api/file_storage.php',  // renamed to include/api/file.php
+    'include/api/custom_profile_fields.php', // Moved to CustomField API
     'include/phorum_get_url.php',    // moved to URL API
     'include/format_functions.php',  // moved to Message and Format API
     'include/index_flat.php',        // renamed to include/index/flat.php

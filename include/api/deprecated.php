@@ -142,3 +142,50 @@ function phorum_valid_email($address) {
     return Phorum::API()->mail->check_address($address);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_custom_field_configure()}.
+ */
+function phorum_api_custom_profile_field_configure($field)
+{
+    $phorum = Phorum::API();
+    $field['type'] = PHORUM_CUSTOM_FIELD_USER;
+    return $phorum->custom_field->configure($field);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_custom_field_byname()}.
+ */
+function phorum_api_custom_profile_field_byname($name)
+{
+    $phorum = Phorum::API();
+    return $phorum->custom_field->byname($name,PHORUM_CUSTOM_FIELD_USER);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_custom_field_delete()}.
+ */
+function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
+{
+    $phorum = Phorum::API();
+    return $phorum->custom_field->delete($id, PHORUM_CUSTOM_FIELD_USER, $hard_delete);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_custom_field_restore()}.
+ */
+function phorum_api_custom_profile_field_restore($id)
+{
+    $phorum = Phorum::API();
+    return $phorum->custom->field_restore($id, PHORUM_CUSTOM_FIELD_USER);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_custom_field_checkconfig()}.
+ */
+function phorum_api_custom_profile_field_checkconfig()
+{
+    $phorum = Phorum::API();
+    return $phorum->custom_field->checkconfig();
+}
+
+?>
