@@ -474,7 +474,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
 
         // Keep track of unread messages that we have to mark as read.
-        if (isset($row['new'])) {
+        // When we are in thraded mode, then we only have to mark the
+        // currently viewed message as read. While hybrid mode is a 
+        // form of threaded reading too, we have to mark all the messages
+        // read since they are all visible.
+        if (isset($row['new']) &&
+            ($PHORUM['threaded_read'] != PHORUM_THREADED_ON ||
+             $row['message_id'] == $message_id)) {
             $read_messages[] = $row['message_id'];
         }
 
