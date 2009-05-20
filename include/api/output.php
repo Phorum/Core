@@ -28,7 +28,9 @@
 
 if (!defined('PHORUM')) return;
 
-// The date format to use in HTTP headers.
+/**
+ * The date format to use in HTTP headers.
+ */
 define('HTTPDATE', 'D, d M Y H:i:s \G\M\T');
 
 // {{{ Function: phorum_api_output_last_modify_time()

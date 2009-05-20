@@ -29,7 +29,7 @@
 if (!defined('PHORUM')) return;
 
 // {{{ Function: phorum_api_format_users()
-/*
+/**
  * This function handles preparing user data for use in the templates.
  *
  * @param array $users

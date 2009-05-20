@@ -71,15 +71,19 @@ $PHORUM = array
     )
 );
 
-// Load all API constants from ./include/api/constants.php
+/**
+ * Load function definitions for deprecated Phorum functions.
+ */
+require_once $phorum->getPath('include/api/deprecated.php');
+
+/**
+ * Load all Phorum API constants.
+ */
 require_once $phorum->getPath('include/api/constants.php');
 
 // Scripts should define the "phorum_page" constant, but we'll help out script
 // authors that forget to do so here, to prevent PHP warnings later on.
 defined('phorum_page') or define('phorum_page', 'unknown');
-
-// Load function definitions for deprecated functions.
-require_once $phorum->getPath('include/api/deprecated.php');
 
 // ----------------------------------------------------------------------
 // PHP extension compatibility 

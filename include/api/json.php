@@ -29,11 +29,23 @@
  * @subpackage JSON
  * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
+ *
+ * @todo We convert data to UTF-8 when encoding JSON. I guess that we
+ *       should do a decode for the JSON decoding function too.
  */
 
 if (!defined('PHORUM')) return;
 
 // {{{ Function: phorum_api_json_encode()
+/**
+ * Encode a PHP variable into a JSON structure.
+ *
+ * @param mixed $var
+ *     The PHP variable to encode.
+ *
+ * @return string
+ *     The JSON encoded representation of the PHP variable.
+ */
 function phorum_api_json_encode($var)
 {
     global $PHORUM;
@@ -47,14 +59,31 @@ function phorum_api_json_encode($var)
 // }}}
 
 // {{{ Function phorum_api_json_decode()
-function phorum_api_json_decode($var)
+/**
+ * Decode a JSON encoded structure into a PHP variable.
+ *
+ * @param string $json
+ *     The JSON structure to decode.
+ *
+ * @return string
+ *     The PHP variable representation of the JSON structure.
+ */
+function phorum_api_json_decode($json)
 {
-    global $PHORUM;
-    return json_decode($var, TRUE);
+    return json_decode($json, TRUE);
 }
 // }}}
 
 // {{{ Function: phorum_api_json_convert_to_utf8()
+/**
+ * A helper function that converts a PHP variable to UTF-8.
+ *
+ * @param mixed $var
+ *     The variable to convert to UTF-8.
+ *
+ * @return mixed
+ *     The converted variable.
+ */
 function phorum_api_json_convert_to_utf8($var)
 {
     global $PHORUM;

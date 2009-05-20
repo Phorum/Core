@@ -1193,12 +1193,12 @@ function phorum_api_file_purge_stale($do_purge)
  *     An array, containing information for the file.
  *     This array has to contain at least the file_data field.
  *
- * @return boolean
- *     TRUE if the browser might qualify the file as HTML code,
- *     FALSE otherwise.
- *
- * @return boolean
- *     TRUE if it is safe to cache the file in the browser, FALSE otherwise.
+ * @return array
+ *     An array containing two elements:
+ *     - TRUE if the browser might qualify the file as HTML code,
+ *       FALSE otherwise.
+ *     - TRUE if it is safe to cache the file in the browser,
+ *       FALSE otherwise.
  */
 function phorum_api_file_safe_to_view($file)
 {

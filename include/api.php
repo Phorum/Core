@@ -36,6 +36,9 @@
 
 /**
  * The Phorum API call router.
+ *
+ * @package    PhorumAPI
+ * @subpackage Core
  */
 class Phorum
 {

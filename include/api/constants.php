@@ -32,16 +32,24 @@ global $PHORUM;
 // Basic definitions.
 // ----------------------------------------------------------------------
 
-// the Phorum version
+/**
+ * The Phorum version.
+ */
 define( 'PHORUM', '5.3-dev' );
 
-// our database schema version in format of year-month-day-serial
+/**
+ * Our database schema version in the format of year-month-day-serial.
+ */
 define( 'PHORUM_SCHEMA_VERSION', '2009051900');
 
-// our database patch level in format of year-month-day-serial
+/**
+ * Our database patch level in the format of year-month-day-serial.
+ */
 define( 'PHORUM_SCHEMA_PATCHLEVEL', '2009021901' );
 
-// A reference to the Phorum installation directory.
+/**
+ * A reference to the Phorum installation directory.
+ */
 define('PHORUM_PATH', realpath(dirname(__FILE__).'/../..'));
 
 // ----------------------------------------------------------------------
@@ -55,50 +63,79 @@ define('PHORUM_PATH', realpath(dirname(__FILE__).'/../..'));
 // very often.  Things that are likely to be changed
 // by most admins should go in the admin.
 
+/**
+ * The extension that is used for the front end Phorum scripts
+ * (index, list, read, pm, etc.).
+ */
 define("PHORUM_FILE_EXTENSION", "php");
 
-// The maximum number of messages that Phorum will remember as being
-// read, per forum per user. Phorum will trim off older read flags
-// if this limit is hit.
+/**
+ * The maximum number of messages that Phorum will remember as being
+ * read, per forum per user. Phorum will trim off older read flags
+ * if this limit is hit.
+ */
 define("PHORUM_MAX_READ_COUNT_PER_FORUM", 1000);
 
-// can moderators view email addresses
+/**
+ * Whether or not moderators can view email addresses.
+ */
 define("PHORUM_MOD_EMAIL_VIEW", true);
 
-// can moderators view user's ip
+/**
+ * Whether or not moderators can view user IP addresses.
+ */
 define("PHORUM_MOD_IP_VIEW", true);
 
-// change the author's name on deleting the user
+/**
+ * Change the author's name (to "Anonymous") on deleting the user.
+ */
 define("PHORUM_DELETE_CHANGE_AUTHOR", true);
 
-// enforce the use of only unregistered names for unregistered users
+/**
+ * Enforce the use of only unregistered names for unregistered users.
+ */
 define("PHORUM_ENFORCE_UNREGISTERED_NAMES", true);
 
-// maximum time in seconds for having the message editor open
-// this is used in determining stale attachment files
+/**
+ * The maximum time that a user can keep the message editor open.
+ * This is used for determining stale attachment files.
+ */
 define("PHORUM_MAX_EDIT_TIME", 86400);
 
-// string used to separate things like items in the title tag.
+/**
+ * A string used to separate things like items in the title tag.
+ */
 define("PHORUM_SEPARATOR", " :: ");
 
-// default TTL for cache-data if not specified different
+/**
+ * The default TTL for cache-data if not specified otherwise.
+ */
 define('PHORUM_CACHE_DEFAULT_TTL', 3600);
 
-// split-variable for file-based cache
+/**
+ * Split-variable for the file-based caching layer.
+ */
 define('PHORUM_CACHE_SPLIT',4);
 
-// the replace string for masking bad words.
+/**
+ * The replacement string for masking bad words.
+ */
 define('PHORUM_BADWORD_REPLACE', '@#$%&');
 
-// phorum's default template
+/**
+ * Phorum's default template.
+ */
 define('PHORUM_DEFAULT_TEMPLATE', 'emerald');
 
-// phorum's default language
+/**
+ * Phorum's default language.
+ */
 define('PHORUM_DEFAULT_LANGUAGE', 'english');
 
-// time in seconds for the admin token to timeout
-// 30 minutes default
-define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800);
+/**
+ * The time in seconds for the admin token to timeout.
+ */
+define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800); // 30 minutes
  
 // ----------------------------------------------------------------------
 // Constants that should stay the same and which have not been

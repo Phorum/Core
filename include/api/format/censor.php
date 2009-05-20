@@ -38,14 +38,13 @@ if (!defined('PHORUM')) return;
  * data on its own. This saves a lot of function calls, which
  * improves the overall speed.
  *
- * @return string $search
- *     The regular expression that is used for searching for bad words.
- *     If no bad words have been configured, then NULL is returned.
- *
- * @return string $replace
- *     The string to replace bad words with.
- *     This is the PHORUM_BAD_WORDS constant. We pushed it in here, in
- *     case we want to make this variable in the future.
+ * @return array
+ *     An array containing two elements:
+ *     - The regular expression that is used for searching for bad words.
+ *       If no bad words have been configured, then NULL is returned.
+ *     - The string to replace bad words with.
+ *       This is the PHORUM_BAD_WORDS constant. We pushed it in here, in
+ *       case we want to make this variable in the future.
  */
 function phorum_api_format_censor_compile()
 {
