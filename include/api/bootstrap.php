@@ -47,6 +47,9 @@ $PHORUM = array
         // For collecting query variables for a next request.
         'GET_VARS'  => array(),
         'POST_VARS' => '',
+
+        // For adding extra tags to the <head> section.
+        'HEAD_TAGS' => ''
     ),
 
     // The TMP member hold template {DEFINE ..} definitions, temporary

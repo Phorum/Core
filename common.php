@@ -101,7 +101,7 @@ if (function_exists('get_magic_quotes_gpc') &&
  *         $PHORUM_CUSTOM_QUERY_STRING = "1,some,phorum,query=string";
  *
  *         // Override the forum_id.
- *         $_SERVER['forum_id'] = "1234";
+ *         $_REQUEST['forum_id'] = "1234";
  *     }
  *     </hookcode>
  */
@@ -110,7 +110,7 @@ if (isset($PHORUM["hooks"]["parse_request"])) {
 }
 
 // Get the forum id if set using a request parameter.
-if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
+if (isset($_REQUEST["forum_id"]) && is_numeric($_REQUEST["forum_id"])) {
     $PHORUM["forum_id"] = $_REQUEST["forum_id"];
 }
 
@@ -232,16 +232,22 @@ if (isset($PHORUM["hooks"]["common_pre"])) {
 // Setup data for standard (not admin) pages
 // ----------------------------------------------------------------------
 
-// TODO: Do we ever need this in admin? If not, it can go inside the block.
-// stick some stuff from the settings into the DATA member
-$PHORUM["DATA"]["TITLE"]       = isset($PHORUM["title"]) ? $PHORUM["title"] : "";
-$PHORUM["DATA"]["DESCRIPTION"] = isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
-$PHORUM["DATA"]["HTML_TITLE"]  = !empty( $PHORUM["html_title"]) ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
-$PHORUM["DATA"]["HEAD_TAGS"]   = isset($PHORUM["head_tags"]) ? $PHORUM["head_tags"] : "";
-$PHORUM["DATA"]["FORUM_ID"]    = $PHORUM["forum_id"]; 
-
 if (!defined( "PHORUM_ADMIN" ))
 {
+    $PHORUM["DATA"]["TITLE"] =
+        isset($PHORUM["title"]) ? $PHORUM["title"] : "";
+
+    $PHORUM["DATA"]["DESCRIPTION"] =
+        isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
+
+    $PHORUM["DATA"]["HTML_TITLE"] = !empty($PHORUM["html_title"])
+        ? $PHORUM["html_title"] : $PHORUM["DATA"]["TITLE"];
+
+    $PHORUM["DATA"]["HEAD_TAGS"] = isset($PHORUM["head_tags"])
+        ? $PHORUM["head_tags"] : "";
+
+    $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"]; 
+
     // Do not try to restore a session for CSS and JavaScript.
     // We do not need user authentication for those.
     $skipsession = FALSE;
@@ -253,8 +259,7 @@ if (!defined( "PHORUM_ADMIN" ))
     if (isset($PHORUM["status"]) && $PHORUM["status"] == PHORUM_MASTER_STATUS_DISABLED)
     {
         if (!empty($PHORUM["disabled_url"])) {
-            header("Location: ".$PHORUM["disabled_url"]);
-            exit();
+            $phorum->redirect($PHORUM['disabled_url']);
         } else {
             echo "This Phorum is currently administratively disabled. Please " .
                  "contact the web site owner at ".
@@ -349,6 +354,10 @@ if (!defined( "PHORUM_ADMIN" ))
 
         $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
     }
+    /**
+     * @todo No need to setup forum_id 0. The forums API knows about
+     *       forum_id = 0.
+     */
     elseif(isset($PHORUM["forum_id"]) && $PHORUM["forum_id"] == 0)
     {
         $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] );
