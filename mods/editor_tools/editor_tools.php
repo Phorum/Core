@@ -130,6 +130,7 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
  */
 function phorum_mod_editor_tools_before_editor($data)
 {
+    global $PHORUM;
     if (empty($PHORUM['DATA']['PRINTVIEW'])) {
         $PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"] = true;
     }
