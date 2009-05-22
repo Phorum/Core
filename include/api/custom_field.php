@@ -419,7 +419,7 @@ function phorum_api_custom_field_checkconfig()
 
             // Some default values.
             if (!array_key_exists('length', $config)) {
-                $PHORUM['PzROFILE_FIELDS'][$type][$id]['length'] = 255;
+                $PHORUM['PROFILE_FIELDS'][$type][$id]['length'] = 255;
             }
             if (!array_key_exists('html_disabled', $config)) {
                 $PHORUM['PROFILE_FIELDS'][$type][$id]['html_disabled'] = TRUE;
