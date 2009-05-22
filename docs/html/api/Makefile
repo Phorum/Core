@@ -1,15 +1,16 @@
-FILES="include/api.php"
+FILES="include/api.php,include/db/mysql.php"
 DIRECTORIES="include/api"
 
 all:
 	(cd ../../..; phpdoc \
 	       -f $(FILES) \
 	       -d $(DIRECTORIES) \
-         -i include/api/examples/file_delete.php,include/api/examples/file_store.php,include/api/examples/user_auth_module.php,include/api/examples/user_login.php \
 	       -t docs/html/api \
 	       -ti "Phorum API Documentation" \
 	       -o HTML:frames:phphtmllib -dn PhorumAPI)
-	cp index.html.custom index.html
+
+	cat index.html | sed -e 's/120,\*/90,\*/' -e 's/25%,\*/320,\*/' > index2.html
+	mv index2.html index.html
 
 clean:
 	/bin/rm -f *.html
