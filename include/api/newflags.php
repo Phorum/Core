@@ -32,9 +32,6 @@
  *
  * @todo Implement phorum_api_newflags_markunread(). This one might require
  *       some smart database updates, but it would be a nice feature to offer.
- *
- * @todo Make the $mode parameter for the phorum_api_newflags_apply_to_...
- *       functions the same for consistency.
  */
 
 if (!defined('PHORUM')) return;
@@ -125,34 +122,21 @@ function phorum_api_newflags_by_forum($forum)
 /**
  * Add newflag info for the active Phorum user to a list of forums.
  *
- * There are three modes available for adding newflags to the forums.
- *
- * - {@link PHORUM_NEWFLAGS_NOCOUNT}: This mode is mainly implemented
- *   for completeness, to match the possible settings for newflags on the
- *   Phorum index page. When this mode is used, then no checks are
- *   done at all and the array of forums is returned unmodified.
- *
- * - {@link PHORUM_NEWFLAGS_COUNT}: Count the number of new messages
- *   for each forum. Two elements are added to the forum data:
- *   "new_messages" and "new_threads", which respectively indicate the
- *   number of new messages and new threads for the forum.
- *
- * - {@link PHORUM_NEWFLAGS_CHECK}: Only check if there are any new
- *   messages available for each forum. A boolean element
- *   "new_message_check" is added to the forum data. When this element
- *   is TRUE, then one or more new messages are available.
- *
  * @param array $forums
  *     An array of forums for which to add new thread/message information.
  *     If there are folders in this array, then these will be silently
  *     ignored.
  *
  * @param integer $mode
- *     The formatting mode. This is either {@link PHORUM_NEWFLAGS_COUNT}
- *     or {@link PHORUM_NEWFLAGS_CHECK}. The mode
- *     {@link PHORUM_NEWFLAGS_NOCOUNT} is also implemented, but one should
- *     avoid calling this API function for that mode, because nothing
- *     is done for it.
+ *     - {@link PHORUM_NEWFLAGS_COUNT}: Count the number of new messages
+ *       for each forum. Two elements are added to the forum data:
+ *       "new_messages" and "new_threads", which respectively indicate the
+ *       number of new messages and new threads for the forum.
+ *
+ *     - {@link PHORUM_NEWFLAGS_CHECK}: Only check if there are any new
+ *       messages available for each forum. A boolean element
+ *       "new_message_check" is added to the forum data. When this element
+ *       is TRUE, then one or more new messages are available.
  *
  * @param array|NULL $forum_ids
  *     An array of forum_ids for which the newflags have to be checked.
@@ -246,47 +230,42 @@ function phorum_api_newflags_apply_to_forums($forums, $mode = PHORUM_NEWFLAGS_CO
 /**
  * Add newflag info for the active Phorum user to a list of messages.
  *
- * There are three modes available for adding newflags to the forums.
- *
- * - {@link PHORUM_NEWFLAGS_BY_THREAD}: the newflags are processed
- *   in threaded mode. This means that the newflag will be set for
- *   thread starter messages in the message list that have at least
- *   one new message in their thread.
- *
- * - {@link PHORUM_NEWFLAGS_BY_MESSAGE}: the newflags are processed
- *   in single message mode. This means that the newflag will be set
- *   for all new messages in the message list.
- *
- * - {@link PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY}: the newflags are processed
- *   in single message mode for all but the sticky messages in the
- *   message list. The sticky messages are processed in threaded mode.
- *   This is useful for the list page, where sticky threads are always
- *   displayed collapsed, even if the list page view is threaded.
- *
- * In the message data for messages that should have the new flag enabled,
- * a field $msg["new"] is added. This field is initialized to the language
- * variable {LANG->newflag}.
- *
  * @param array $messages
- *     An array of messages to process.
+ *     An array of messages for which to add new thread/message information.
+ *
+ * @param integer $message_type
+ *     - {@link PHORUM_NEWFLAGS_BY_MESSAGE} (default): the newflags are
+ *       processed by message. This means that new message information will
+ *       be set for all new messages from the {@link $messages} array.
+ *
+ *     - {@link PHORUM_NEWFLAGS_BY_THREAD}: the newflags are processed
+ *       by thread. This means that the newflag information will be set for
+ *       thread starter messages in the {@link $messages} array that have
+ *       at least one new message in their thread.
+ *
+ *     - {@link PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY}: the newflags are
+ *       processed by message, except for the sticky messages in the
+ *       message list. The sticky messages are processed by thread.
+ *       This is useful for the list page, where sticky threads are always
+ *       displayed collapsed, even if the list page view is threaded.
  *
  * @param integer $mode
- *     The mode in which to add newflags. Possible values are:
- *     {@link PHORUM_NEWFLAGS_BY_THREAD},
- *     {@link PHORUM_NEWFLAGS_BY_MESSAGE},
- *     {@link PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY}
+ *     - {@link PHORUM_NEWFLAGS_CHECK} (default): Only check if there are
+ *       any new messages available for each message or thread.
+ *       In the message data for messages or threads that should have the
+ *       new flag enabled, a field "new" is added to the message data.
+ *       This field is initialized to the language variable {LANG->newflag}.
  *
- * @param boolean $fullcount
- *     This parameter only acts on newflags that are processed by thread.
- *     If it is set to a true value, then instead of checking if there
- *     is any new message in a thread, the function will count how many
- *     new messages are available exactly. This total count will be
- *     put in the variable $msg["new_count"].
+ *     - {@link PHORUM_NEWFLAGS_COUNT}: This parameter only acts on newflags
+ *       that are processed by thread. Instead of checking if there
+ *       is any new message in a thread, the function will count how many
+ *       new messages are available exactly. This total count will be
+ *       put in the message data field "new_count".
  *
  * @return array $messages
  *     The possibly modified array of messages.
  */
-function phorum_api_newflags_apply_to_messages($messages, $mode = PHORUM_NEWFLAGS_BY_MESSAGE, $fullcount = FALSE)
+function phorum_api_newflags_apply_to_messages($messages, $message_type = PHORUM_NEWFLAGS_BY_MESSAGE, $mode = PHORUM_NEWFLAGS_CHECK)
 {
     global $PHORUM;
 
@@ -318,8 +297,8 @@ function phorum_api_newflags_apply_to_messages($messages, $mode = PHORUM_NEWFLAG
         if (empty($newflags)) continue;
 
         $new = 0;
-        if ($mode == PHORUM_NEWFLAGS_BY_THREAD ||
-            ($mode == PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY &&
+        if ($message_type == PHORUM_NEWFLAGS_BY_THREAD ||
+            ($message_type == PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY &&
              $message['sort'] == PHORUM_SORT_STICKY))
         {
             // Is this really a thread starter message?
@@ -329,7 +308,7 @@ function phorum_api_newflags_apply_to_messages($messages, $mode = PHORUM_NEWFLAG
             foreach ($message['meta']['message_ids'] as $mid) {
                 if (!isset($newflags[$mid]) && $mid > $newflags['min_id']) {
                     $new++;
-                    if (!$fullcount) break;
+                    if ($mode != PHORUM_NEWFLAGS_COUNT) break;
                 }
             }
         }
@@ -344,7 +323,9 @@ function phorum_api_newflags_apply_to_messages($messages, $mode = PHORUM_NEWFLAG
         // Add newflag information to the message if needed.
         if ($new) {
             $messages[$id]['new'] = $PHORUM['DATA']['LANG']['newflag'];
-            if ($fullcount) $messages[$id]['new_count'] = $new;
+            if ($mode == PHORUM_NEWFLAGS_COUNT) {
+                $messages[$id]['new_count'] = $new;
+            }
         }
     }
 

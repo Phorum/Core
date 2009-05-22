@@ -446,7 +446,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     // Add information about new messages to the thread.
-    $data = $phorum->newflags->apply_to_messages($data, PHORUM_NEWFLAGS_BY_MESSAGE);
+    $data = $phorum->newflags->apply_to_messages($data);
 
     // main loop for template setup
     $messages = array();

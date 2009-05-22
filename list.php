@@ -392,10 +392,10 @@ if($PHORUM['DATA']['LOGGEDIN']) {
 
     // Add newflags to the messages for authenticated users.
     if ($PHORUM['user']['user_id']) {
-        $mode = $PHORUM['threaded_list']
+        $message_type = $PHORUM['threaded_list']
               ? PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY
               : PHORUM_NEWFLAGS_BY_THREAD;
-        $rows = $phorum->newflags->apply_to_messages($rows, $mode, FALSE);
+        $rows = $phorum->newflags->apply_to_messages($rows, $message_type);
     }
 
     foreach ($rows as $key => $row)
