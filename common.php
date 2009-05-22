@@ -298,9 +298,9 @@ if (!defined( "PHORUM_ADMIN" ))
     // Load the settings for the currently active forum.
     if (!empty($PHORUM["forum_id"]))
     {
-        $forum_settings = $phorum->db->get_forums($PHORUM["forum_id"]);
+        $forum_settings = $phorum->forums->get($PHORUM["forum_id"],null,null,null,PHORUM_FLAG_INCLUDE_INACTIVE);
 
-        if (!isset($forum_settings[$PHORUM["forum_id"]]))
+        if ($forum_settings === NULL)
         {
             /*
              * [hook]
@@ -352,7 +352,7 @@ if (!defined( "PHORUM_ADMIN" ))
             exit();
         }
 
-        $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
+        $PHORUM = array_merge( $PHORUM, $forum_settings );
     }
     /**
      * @todo No need to setup forum_id 0. The forums API knows about
