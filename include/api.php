@@ -30,6 +30,10 @@
  * @todo Check all trigger_error calls to see if we escaped all
  *       variables using htmlspecialchars().
  *
+ * @todo Write examples for API calls inline in the API call documentation.
+ *       Examples that are in separate files (like the user API examples
+ *       that we have now) are not practical.
+ *
  * @todo Extend the Phorum::API() singleton documentation, to explain
  *       that this singleton is the API entry point.
  */

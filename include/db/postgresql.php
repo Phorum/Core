@@ -7097,7 +7097,7 @@ function phorum_db_create_tables()
       "CREATE INDEX {$PHORUM['user_permissions_table']}_forum_id on  {$PHORUM['user_permissions_table']} (forum_id,permission)",
 
       // When creating extra fields, then mind to update the file
-      // include/api/custom_profile_fields.php script too (it contains a
+      // include/api/custom_field.php script too (it contains a
       // list of reserved names for custom profile fields).
       "CREATE TABLE {$PHORUM['user_table']} (
            user_id                  bigserial      NOT NULL,
