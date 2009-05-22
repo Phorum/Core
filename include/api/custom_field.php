@@ -387,7 +387,7 @@ function phorum_api_custom_field_checkconfig()
                $new_fields = array(PHORUM_CUSTOM_FIELD_USER => $PHORUM['PROFILE_FIELDS']);
                $PHORUM['PROFILE_FIELDS']=$new_fields;
            } else {
-               $first = array_shift($PHORUM['PROFILE_FIELDS']);
+               $first = current($PHORUM['PROFILE_FIELDS']);
                if(isset($first['name'])) {
                     $new_fields = array(PHORUM_CUSTOM_FIELD_USER => $PHORUM['PROFILE_FIELDS']);
                     $PHORUM['PROFILE_FIELDS']=$new_fields;
@@ -419,7 +419,7 @@ function phorum_api_custom_field_checkconfig()
 
             // Some default values.
             if (!array_key_exists('length', $config)) {
-                $PHORUM['PROFILE_FIELDS'][$type][$id]['length'] = 255;
+                $PHORUM['PzROFILE_FIELDS'][$type][$id]['length'] = 255;
             }
             if (!array_key_exists('html_disabled', $config)) {
                 $PHORUM['PROFILE_FIELDS'][$type][$id]['html_disabled'] = TRUE;
