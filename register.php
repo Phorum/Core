@@ -267,12 +267,14 @@ if (count($_POST)) {
                             array(
                                 '%title%',
                                 '%username%',
+                                '%display_name%',
                                 '%verify_url%',
                                 '%login_url%'
                             ),
                             array(
                                 $PHORUM['title'],
                                 $userdata['username'],
+                                $userdata['display_name'],
                                 $verify_url,
                                 $phorum->url(PHORUM_LOGIN_URL)
                             ),
@@ -287,9 +289,37 @@ if (count($_POST)) {
                         $lang = $PHORUM['DATA']['LANG'];
 
                         $maildata["mailmessage"] =
-                           wordwrap($lang['VerifyRegEmailBody1'], 72).
+                           wordwrap(str_replace(
+                            array(
+                                '%title%',
+                                '%username%',
+                                '%display_name%',
+                                '%verify_url%',
+                                '%login_url%'
+                            ),
+                            array(
+                                $PHORUM['title'],
+                                $userdata['username'],
+                                $userdata['display_name'],
+                                $verify_url,
+                                $phorum->url(PHORUM_LOGIN_URL)
+                            ),$lang['VerifyRegEmailBody1']), 72).
                            "\n\n$verify_url\n\n".
-                           wordwrap($lang['VerifyRegEmailBody2'], 72);
+                           wordwrap(str_replace(
+                            array(
+                                '%title%',
+                                '%username%',
+                                '%display_name%',
+                                '%verify_url%',
+                                '%login_url%'
+                            ),
+                            array(
+                                $PHORUM['title'],
+                                $userdata['username'],
+                                $userdata['display_name'],
+                                $verify_url,
+                                $phorum->url(PHORUM_LOGIN_URL)
+                            ),$lang['VerifyRegEmailBody2']), 72);
                     }
 
                     phorum_email_user(array($userdata["email"]), $maildata);
