@@ -230,6 +230,8 @@ if (count($_POST)) {
             // Add the user to the database.
             $userdata["user_id"] = NULL;
             $user_id = $phorum->user->save($userdata);
+            // fetch the fresh user
+            $user_new = $phorum->user->get($user_id);
 
             if ($user_id)
             {
@@ -273,8 +275,8 @@ if (count($_POST)) {
                             ),
                             array(
                                 $PHORUM['title'],
-                                $userdata['username'],
-                                $userdata['display_name'],
+                                $user_new['username'],
+                                $user_new['display_name'],
                                 $verify_url,
                                 $phorum->url(PHORUM_LOGIN_URL)
                             ),
@@ -299,8 +301,8 @@ if (count($_POST)) {
                             ),
                             array(
                                 $PHORUM['title'],
-                                $userdata['username'],
-                                $userdata['display_name'],
+                                $user_new['username'],
+                                $user_new['display_name'],
                                 $verify_url,
                                 $phorum->url(PHORUM_LOGIN_URL)
                             ),$lang['VerifyRegEmailBody1']), 72).
@@ -315,8 +317,8 @@ if (count($_POST)) {
                             ),
                             array(
                                 $PHORUM['title'],
-                                $userdata['username'],
-                                $userdata['display_name'],
+                                $user_new['username'],
+                                $user_new['display_name'],
                                 $verify_url,
                                 $phorum->url(PHORUM_LOGIN_URL)
                             ),$lang['VerifyRegEmailBody2']), 72);
