@@ -34,7 +34,7 @@
         <br />
       {/IF}
     </div>
-
+{IF OPENID}
   <div align="center" style="margin-top: 30px;">
     <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->OpenIDLogin}</div>
     <div align="center" class="PhorumStdBlock PhorumNarrowBlock">
@@ -54,7 +54,7 @@
         <br />
     </div>
   </div>
-
+{/IF}
   <div align="center" style="margin-top: 30px;">
     <form action="{URL->ACTION}" method="post" style="display: inline;">
       {POST_VARS}
