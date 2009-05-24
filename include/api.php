@@ -27,9 +27,6 @@
  * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
- * @todo Check all trigger_error calls to see if we escaped all
- *       variables using htmlspecialchars().
- *
  * @todo Write examples for API calls inline in the API call documentation.
  *       Examples that are in separate files (like the user API examples
  *       that we have now) are not practical.

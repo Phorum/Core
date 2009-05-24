@@ -234,7 +234,8 @@ function phorum_api_modules_enable($module)
 
     // Check if the module is valid.
     if (!isset($PHORUM["API"]["mods_modules"][$module])) trigger_error(
-        "Unable to enable module \"$module\": no such module available.",
+        'Unable to enable module "'.htmlspecialchars($module).'": ' .
+        'no such module available.',
         E_USER_ERROR
     );
 

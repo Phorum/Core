@@ -61,6 +61,7 @@ function phorum_api_newflags_by_forum($forum)
 
     // If a forum_id was provided as the argument, then load the forum info.
     if (!is_array($forum)) {
+        settype($forum, 'int');
         $forums = phorum_db_get_forums($forum);
         if (empty($forums)) trigger_error(
             'phorum_api_newflags_by_forum(): unknown forum_id ' . $forum

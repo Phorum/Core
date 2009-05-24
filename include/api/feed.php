@@ -67,6 +67,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
 
     settype($id, 'int');
     settype($count, 'int');
+    settype($source_type, 'int');
     $replies = $replies ? 1 : 0;
 
     $adapter = basename($adapter);

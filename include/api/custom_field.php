@@ -128,8 +128,8 @@ function phorum_api_custom_field_configure($field)
             $field[$f] = $default;
         }
         elseif ($f != 'id' && $field[$f] === NULL) trigger_error(
-            'phorum_api_custom_field_configure(): Field $f in ' .
-            "\$field parameter cannot be NULL",
+            "phorum_api_custom_field_configure(): Field $f in " .
+            '\$field parameter cannot be NULL",
             E_USER_ERROR
         );
     }

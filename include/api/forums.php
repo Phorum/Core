@@ -810,8 +810,8 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
     if ($parent === NULL) {
         trigger_error(
             'phorum_api_forums_save(): parent_id ' .
-            $forum['parent_id'] . ' point to a folder that does ' .
-            'not exist.',
+            htmlspecialchars($forum['parent_id']) . ' points to a folder ' .
+            'that does not exist.',
             E_USER_ERROR
         );
         return NULL;
@@ -821,8 +821,8 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
     if (!$parent['folder_flag']) {
         trigger_error(
             'phorum_api_forums_save(): parent_id ' .
-            $forum['parent_id'] . ' does not point to a folder. ' .
-            'You can only put forums/folders inside folders.',
+            htmlspecialchars($forum['parent_id']) . ' does not point to ' .
+            'a folder. You can only put forums/folders inside folders.',
             E_USER_ERROR
         );
         return NULL;
@@ -847,8 +847,8 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
         if ($vroot === NULL) {
             trigger_error(
                 'phorum_api_forums_save(): vroot ' .
-                $forum['vroot'] . ' point to a folder that does ' .
-                'not exist.',
+                htmlspecialchars($forum['vroot']) . ' points to a folder ' .
+                'that does not exist.',
                 E_USER_ERROR
             );
             return NULL;
@@ -858,8 +858,8 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
         if (!$vroot['folder_flag']) {
             trigger_error(
                 'phorum_api_forums_save(): vroot ' .
-                $forum['vroot'] . ' does not point to a folder. ' .
-                'Only folders can be vroots.',
+                htmlspecialchars($forum['vroot']) . ' does not point ' .
+                'to a folder. Only folders can be vroots.',
                 E_USER_ERROR
             );
             return NULL;
@@ -869,8 +869,8 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
         if ($vroot['vroot'] != $vroot['forum_id']) {
             trigger_error(
                 'phorum_api_forums_save(): vroot ' .
-                $forum['vroot'] . ' points to a folder that is  not ' .
-                'setup as a vroot folder.',
+                htmlspecialchars($forum['vroot']) . ' points to a folder ' .
+                'that is  not setup as a vroot folder.',
                 E_USER_ERROR
             );
             return NULL;
@@ -1065,8 +1065,8 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
 
         default:
             trigger_error(
-                "phorum_api_forums_change_order(): " .
-                "Illegal \$movement parameter \"$movement\" used",
+                'phorum_api_forums_change_order(): Illegal $movement ' .
+                'parameter "'.htmlspecialchars($movement) . '" used',
                 E_USER_ERROR
             );
     }

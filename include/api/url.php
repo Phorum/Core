@@ -106,7 +106,7 @@ function phorum_api_url_get()
     $add_forum_id = false;
     $add_get_vars = true;
 
-    $type = array_shift($argv);
+    $type = (int) array_shift($argv);
 
     if (!isset($PHORUM['API']['url_patterns'][$type]))
     {

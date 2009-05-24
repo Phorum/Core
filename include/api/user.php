@@ -180,7 +180,8 @@ function phorum_api_user_save($user, $flags = 0)
     // We need at least the user_id field.
     if (!array_key_exists('user_id', $user)) {
         trigger_error(
-            'phorum_api_user_save(): missing field "user_id" in user data array',
+            'phorum_api_user_save(): missing field "user_id" ' .
+            'in user data array',
             E_USER_ERROR
         );
         return NULL;
