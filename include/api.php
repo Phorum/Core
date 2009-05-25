@@ -161,7 +161,7 @@ class Phorum
      */
     public function __call($what, $args)
     {
-        $function = $this->func_prefix.$what;
+        $function = $this->func_prefix . $what;
         if (!function_exists($function))
         {
             // Check for an API layer, named $what.
@@ -170,7 +170,7 @@ class Phorum
             // E.g. $phorum->url() will be handled by phorum_api_url()
             // from the include/api/url.php API library file.
             $this->$what; // forces loading the layer.
-            $function = $this->func_prefix.$what;
+            $function = $this->func_prefix . $what;
 
             // Out of luck.
             if (!function_exists($function)) trigger_error(
@@ -181,6 +181,15 @@ class Phorum
         }
 
         return call_user_func_array($function, $args);
+    }
+
+    /**
+     * Generate a full API function name based on a method for this object.
+     * Used in the phorum_api_error_backtrace() function.
+     */
+    public function getFunctionName($what)
+    {
+        return $this->func_prefix . $what;
     }
 
     /**

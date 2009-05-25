@@ -465,7 +465,7 @@ function phorum_mod_event_logging_database_error($error)
     $PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"]++;
 
     // Construct a backtrace.
-    $backtrace = $phorum->error->backtrace(7);
+    $backtrace = $phorum->error->backtrace(3);
 
     list ($source, $from_module) = event_logging_find_source(4);
 
