@@ -18,9 +18,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements timing and memory profiling tools. These are
- * not actively used in the Phorum core, but they are used by developers
- * for profiling the Phorum code.
+ * This script implements development tools. These are generally not actively
+ * used in the Phorum core, but they are used by developers during
+ * development.
  *
  * @package    PhorumAPI
  * @subpackage Development
@@ -30,7 +30,7 @@
 
 if (!defined('PHORUM')) return;
 
-// {{{ Function: phorum_api_profiler_start()
+// {{{ Function: phorum_api_dev_profiler_start()
 /**
  * Start a profiling run.
  *
@@ -38,7 +38,7 @@ if (!defined('PHORUM')) return;
  *     Optional: a key name for the profile run. Using this parameter,
  *     multiple profiling runs can coexist. The default key is "default".
  */
-function phorum_api_profiler_start($key="default")
+function phorum_api_dev_profiler_start($key="default")
 {
     global $PHORUM;
     $PHORUM['API']['profiler_t'][$key] = array(
@@ -50,14 +50,14 @@ function phorum_api_profiler_start($key="default")
 }
 // }}}
 
-// {{{ Function: phorum_api_profiler_mark()
+// {{{ Function: phorum_api_dev_profiler_mark()
 /**
  * Place a profiling marker.
  *
  * When doing this, the time and memory usage are recorded with an
  * arbitrary string as the description.
  * When no profiling run is started for the $key, then this function
- * will implicitly call phorum_api_profiler_start().
+ * will implicitly call phorum_api_dev_profiler_start().
  *
  * @param string $mark
  *     A name for the profiling marker.
@@ -66,18 +66,18 @@ function phorum_api_profiler_start($key="default")
  *     Optional: the key name for the profiler run.
  *     The default key is "default".
  */
-function phorum_api_profiler_mark($mark, $key = 'default')
+function phorum_api_dev_profiler_mark($mark, $key = 'default')
 {
     global $PHORUM;
     if (empty($PHORUM['API']['profiler_t'][$key])) {
-        phorum_api_profiler_start($key);
+        phorum_api_dev_profiler_start($key);
     }
     $PHORUM['API']['profiler_t'][$key][$mark] = microtime(TRUE);
     $PHORUM['API']['profiler_m'][$key][$mark] = memory_get_usage();
 }
 // }}}
 
-// {{{ Function: phorum_api_profiler_print()
+// {{{ Function: phorum_api_dev_profiler_print()
 /**
  * Print out (html) information about a profiling run.
  *
@@ -85,11 +85,11 @@ function phorum_api_profiler_mark($mark, $key = 'default')
  *     Optional: the key name for the profiler run.
  *     The default key is "default".
  */
-function phorum_api_profiler_print($key = 'default')
+function phorum_api_dev_profiler_print($key = 'default')
 {
     global $PHORUM;
 
-    phorum_api_profiler_mark('END');
+    phorum_api_dev_profiler_mark('END');
 
     print
        '<table border="1" cellspacing="0" cellpadding="2">
@@ -133,6 +133,44 @@ function phorum_api_profiler_print($key = 'default')
         $lastmem = $thismem;
     }
     print '</table>';
+}
+// }}}
+
+// {{{ Function: phorum_api_dev_dump()
+/**
+ * Dump the contents of a variable on screen.
+ * This is primarily a debugging tool.
+ *
+ * @param mixed $var
+ *     The variable to dump on screen.
+ *
+ * @param boolean $admin_only
+ *     If TRUE (default), the the dump is only done if the active Phorum
+ *     user is an administrator. Otherwise, all users will see the dump.
+ */
+function phorum_api_dev_dump($var, $admin_only = TRUE)
+{
+    global $PHORUM;
+
+    if ($admin_only && ! $PHORUM["user"]["admin"]) return;
+
+    if (PHP_SAPI != "cli") print "<pre>";
+
+    print "\n";
+    print "type: " . gettype($var) . "\n";
+    print "value: ";
+    $val = print_r($var, TRUE);
+    $formatted = trim(str_replace("\n", "\n       ", $val));
+
+    if (PHP_SAPI == "cli") {
+        print $formatted;
+    } else {
+        print htmlspecialchars($formatted);
+    }
+
+    if (PHP_SAPI != "cli") print "\n</pre>";
+
+    print "\n";
 }
 // }}}
 

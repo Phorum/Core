@@ -208,7 +208,7 @@ foreach($forums as $forumid => $forumdata) {
               $count++;
             } else {
               print "Error in message: ".$CONVERT['lbr'];
-              print_var($newmessage);
+              $phorum->dev->dump($newmessage);
               print $CONVERT['lbr'];
             }
         }

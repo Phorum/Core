@@ -1635,34 +1635,6 @@ function phorum_get_language_info()
 }
 
 /**
- * Dump the contents of a variable on screen.
- * This is mainly a debugging tool.
- *
- * @param mixed $var
- *     The variable to dump on screen.
- *
- * @param boolean $admin_only
- *     If true, the the dump is only done if the active Phorum
- *     user is an administrator.
- */
-function print_var($var, $admin_only = FALSE)
-{
-    if ($admin_only && ! $GLOBALS["PHORUM"]["user"]["admin"]) return;
-
-    if (PHP_SAPI != "cli") echo "<pre>";
-
-    echo "\n";
-    echo "type: " . gettype($var) . "\n";
-    echo "value: ";
-    $val = print_r($var, TRUE);
-    echo trim(str_replace("\n", "\n       ", $val));
-
-    if (PHP_SAPI != "cli") echo "\n</pre>";
-
-    echo "\n";
-}
-
-/**
  * Generates an MD5 signature for a piece of data using Phorum's secret
  * private key. This can be used to sign data which travels an unsafe path
  * (for example data that is sent to a user's browser and then back to

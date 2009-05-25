@@ -68,13 +68,11 @@ $gotforums = (count($mod_forums) > 0);
 
 if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
 {
-    //print_var($_POST['deleteids']);
     $deleteids = $_POST['deleteids'];
     foreach($deleteids as $did => $did_var) {
         $deleteids[$did] = (int)$did_var;
     }
     $delete_messages = phorum_db_get_message(array_keys($deleteids),'message_id',true);
-    //print_var($delete_messages);
     foreach($deleteids as $msgthd_id => $doit) {
 
         // A hook to allow modules to implement extra or different

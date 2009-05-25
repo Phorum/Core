@@ -642,7 +642,7 @@ HELP;
     $PHORUM['STORE']['DEPRECATED'] = $DEPRECATED;
 
     if (TOKEN_DEBUGGER){
-        print_var($PHORUM);
+        Phorum::API()->dump($PHORUM);
     }
     return $PHORUM;
 }

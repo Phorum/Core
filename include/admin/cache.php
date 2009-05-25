@@ -74,8 +74,6 @@ if ( count( $_POST ) ) {
     if ( empty( $error ) ) {
         unset( $_POST["module"] );
 
-        //print_var($new_settings);
-
         if ( phorum_db_update_settings( $new_settings ) ) {
             $okmsg = "Settings updated";
             // reset those to the global array
