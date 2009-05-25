@@ -1757,54 +1757,6 @@ function phorum_check_posting_token($target_page = NULL)
 }
 
 /**
- * Generate a debug back trace.
- *
- * @param $skip       - The amount of back trace levels to skip. The call
- *                      to this function is skipped by default, so you don't
- *                      have to count that in.
- * @param $hidepath   - NULL to not hide paths or a string to replace the
- *                      Phorum path with.
- *
- * @return $backtrace - The back trace in text format or NULL if no back trace
- *                      was generated.
- */
-function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}")
-{
-    // Allthough Phorum 4.3.0 is the required PHP version
-    // for Phorum at the time of writing, people might still be running
-    // Phorum on older PHP versions. For those people, we'll skip
-    // creation of a back trace.
-
-    $backtrace = NULL;
-
-    if (function_exists("debug_backtrace"))
-    {
-        $bt = debug_backtrace();
-        $mypath = dirname(__FILE__);
-        $backtrace = '';
-
-        foreach ($bt as $id => $step)
-        {
-            // Don't include the call to this function.
-            if ($id == 0) continue;
-
-            // Skip the required number of steps.
-            if ($id <= $skip) continue;
-
-            if ($hidepath !== NULL && isset($step["file"])) {
-                $file = str_replace($mypath, $hidepath, $step["file"]);
-            }
-            $backtrace .= "Function " . $step["function"] . " called" .
-                          (!empty($step["line"])
-                           ? " at\n" .  $file . ":" . $step["line"]
-                           : "") . "\n----\n";
-        }
-    }
-
-    return $backtrace;
-}
-
-/**
  * Database error handling function.
  *
  * @param $error - The error message.
@@ -1879,7 +1831,7 @@ function phorum_database_error($error)
 
     // Create a backtrace report, so it's easier to find out where a problem
     // is coming from.
-    $backtrace = phorum_generate_backtrace(0);
+    $backtrace = $phorum->error->backtrace(1);
 
     // Start the error page.
     ?>

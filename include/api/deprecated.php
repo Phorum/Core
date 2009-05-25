@@ -145,8 +145,7 @@ function phorum_valid_email($address) {
 /**
  * @deprecated Replaced by {@link phorum_api_custom_field_configure()}.
  */
-function phorum_api_custom_profile_field_configure($field)
-{
+function phorum_api_custom_profile_field_configure($field) {
     $phorum = Phorum::API();
     $field['type'] = PHORUM_CUSTOM_FIELD_USER;
     return $phorum->custom_field->configure($field);
@@ -155,8 +154,7 @@ function phorum_api_custom_profile_field_configure($field)
 /**
  * @deprecated Replaced by {@link phorum_api_custom_field_byname()}.
  */
-function phorum_api_custom_profile_field_byname($name)
-{
+function phorum_api_custom_profile_field_byname($name) {
     $phorum = Phorum::API();
     return $phorum->custom_field->byname($name,PHORUM_CUSTOM_FIELD_USER);
 }
@@ -164,8 +162,7 @@ function phorum_api_custom_profile_field_byname($name)
 /**
  * @deprecated Replaced by {@link phorum_api_custom_field_delete()}.
  */
-function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
-{
+function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE) {
     $phorum = Phorum::API();
     return $phorum->custom_field->delete($id, PHORUM_CUSTOM_FIELD_USER, $hard_delete);
 }
@@ -173,8 +170,7 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
 /**
  * @deprecated Replaced by {@link phorum_api_custom_field_restore()}.
  */
-function phorum_api_custom_profile_field_restore($id)
-{
+function phorum_api_custom_profile_field_restore($id) {
     $phorum = Phorum::API();
     return $phorum->custom->field_restore($id, PHORUM_CUSTOM_FIELD_USER);
 }
@@ -182,10 +178,18 @@ function phorum_api_custom_profile_field_restore($id)
 /**
  * @deprecated Replaced by {@link phorum_api_custom_field_checkconfig()}.
  */
-function phorum_api_custom_profile_field_checkconfig()
-{
+function phorum_api_custom_profile_field_checkconfig() {
     $phorum = Phorum::API();
     return $phorum->custom_field->checkconfig();
 }
+
+/**
+ * @deprecated Replaced by {@link phorum_api_error_backtrace()}.
+ */
+function phorum_generate_backtrace($skip = 0, $hidepath = "{path to Phorum}") {
+    $phorum = Phorum::API();
+    return $phorum->error->backtrace($skip, $hidepath);
+}
+
 
 ?>
