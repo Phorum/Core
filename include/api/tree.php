@@ -63,13 +63,13 @@ if (!defined('PHORUM')) return;
  *     The name of the node field that holds the unique node identifier
  *     of the node's parent.
  *
- * @param NULL $branch_id_fld
+ * @param string|NULL $branch_id_fld
  *     The name of the node field that holds the unique node identifier
  *     of the node's branch or NULL to not use branches (branches are
  *     used for fixing tree hierarchy inconsistencies and are not
  *     required).
  *
- * @param mixed $reverse_from_indent_level
+ * @param integer|NULL $reverse_from_indent_level
  *     This parameter can be used to add nodes in reverse order to the
  *     tree from the given indent level on. NULL (the default) indicates
  *     that only standard tree ordering is used.
@@ -82,11 +82,11 @@ if (!defined('PHORUM')) return;
  *     indent_cnt fields will be 0, 10, 20, etc. for indention levels
  *     0, 1, 2, etc.
  *
- * @param mixed $cut_fld
+ * @param integer|NULL $cut_fld
  *     Sometimes, it is useful to wrap very long words in a field (e.g.
  *     the subject field in a forum posting) to prevent those from
  *     breaking page layout. This field can be set to the name of the field
- *     that has to be cut.
+ *     that has to be cut. If not cutting is required, then NULL can be used.
  *
  * @param int $cut_min
  *     The minimum length that is used for splitting up long words for the
