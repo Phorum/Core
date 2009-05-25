@@ -42,14 +42,21 @@ $PHORUM = array
     // The DATA member holds the template variables.
     'DATA' => array
     (
-        'LOGGEDIN'  => FALSE,
+        'LOGGEDIN'     => FALSE,
 
         // For collecting query variables for a next request.
-        'GET_VARS'  => array(),
-        'POST_VARS' => '',
+        'GET_VARS'     => array(),
+        'POST_VARS'    => '',
 
         // For adding extra tags to the <head> section.
-        'HEAD_TAGS' => ''
+        'HEAD_TAGS'    => '',
+
+        // Normally set from the language files. We provide some initial
+        // values here, in case we need access to these variables
+        // before the language file is loaded.
+        'CHARSET'      => 'UTF-8',
+        'HCHARSET'     => '',
+        'MAILENCODING' => '8bit'
     ),
 
     // The TMP member hold template {DEFINE ..} definitions, temporary

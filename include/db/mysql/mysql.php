@@ -108,12 +108,18 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         );
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
-            phorum_database_error('Failed to connect to the database.');
+            Phorum::API()->error(
+                PHORUM_ERRNO_DATABASE,
+                'Failed to connect to the database.'
+            );
             exit;
         }
         if (mysql_select_db($PHORUM['DBCONFIG']['name'], $conn) === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
-            phorum_database_error('Failed to select the database.');
+            Phorum::API()->error(
+                PHORUM_ERRNO_DATABASE,
+                'Failed to select the database.'
+            );
             exit;
         }
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
@@ -243,7 +249,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                     if ($return === DB_RETURN_ERROR) return $err;
 
                     // Trigger an error.
-                    phorum_database_error("$err ($errno): $sql");
+                    Phorum::API()->error(
+                        PHORUM_ERRNO_DATABASE,
+                        "$err ($errno): $sql"
+                    );
                     exit;
                 }
 

@@ -349,6 +349,11 @@ define("PHORUM_ERRNO_INTEGRITY", 4);
  */
 define("PHORUM_ERRNO_INVALIDINPUT", 5);
 
+/**
+ * An errno value, which indicates that a database error occurred.
+ */
+define("PHORUM_ERRNO_DATABASE", 6);
+
 // ----------------------------------------------------------------------
 // User API related
 // ----------------------------------------------------------------------

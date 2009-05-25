@@ -193,4 +193,11 @@ function print_var($var, $admin_only = TRUE) {
     return Phorum::API()->dev->dump($var, $admin_only);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_error_database()}.
+ */
+function phorum_database_error($error) {
+    return Phorum::API()->error->database($error);
+}
+
 ?>

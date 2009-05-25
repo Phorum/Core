@@ -81,7 +81,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
-            phorum_database_error('Failed to connect to the database.');
+            Phorum::API()->error(
+                PHORUM_ERRNO_DATABASE,
+                'Failed to connect to the database.'
+            );
             exit;
         }
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
@@ -170,7 +173,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             if ($return === DB_RETURN_ERROR) return $errmsg;     
 
             // Trigger an error.
-            phorum_database_error("$errmsg ($errno): $sql");
+            Phorum::API()->error(
+                PHORUM_ERRNO_DATABASE,
+                "$errmsg ($errno): $sql"
+            );
             exit;
         }
     }
@@ -268,11 +274,17 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     elseif ($return === DB_RETURN_NEWID) {
         $res = pg_exec($conn, "SELECT LASTVAL()");
         if ($res === FALSE) {
-            phorum_database_error('Failed to get a LASTVAL() result.');
+            Phorum::API()->error(
+                PHORUM_ERRNO_DATABASE,
+                'Failed to get a LASTVAL() result.'
+            );
         }
         $row = pg_fetch_row($res);
         if ($row === FALSE) {
-            phorum_database_error('No rows returned from LASTVAL().');
+            Phorum::API()->error(
+                PHORUM_ERRNO_DATABASE,
+                'No rows returned from LASTVAL().'
+            );
         }
         return $row[0];
     }
