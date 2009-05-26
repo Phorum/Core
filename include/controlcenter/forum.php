@@ -24,7 +24,7 @@ function phorum_cc_get_language_info()
     global $PHORUM;
     $phorum = Phorum::API();
 
-    $langs = $phorum->language->list();
+    $langs = $phorum->lang->list();
     $f_langs = array();
     $profile = $PHORUM['DATA']['PROFILE'];
     if ( !isset( $profile['user_language'] ) )

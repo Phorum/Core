@@ -28,7 +28,7 @@
 
 if (!defined("PHORUM")) return;
 
-// {{{ Function: phorum_api_language_list()
+// {{{ Function: phorum_api_lang_list()
 /**
  * Retrieve a list of all available languages.
  *
@@ -43,7 +43,7 @@ if (!defined("PHORUM")) return;
  *     id's by which they are referenced internally. The values contain
  *     the names of the languages.
  */
-function phorum_api_language_list($include_hidden = FALSE)
+function phorum_api_lang_list($include_hidden = FALSE)
 {
     // To make some language-files happy which are using $PHORUM-variables.
     // We don't make this really global, otherwise the included language
@@ -69,7 +69,7 @@ function phorum_api_language_list($include_hidden = FALSE)
             ob_end_clean();
 
             if (!$language) trigger_error(
-                "phorum_api_language_list(): Language file include/lang/" .
+                "phorum_api_lang_list(): Language file include/lang/" .
                 htmlspecialchars($entry) . " does not set the \$language " .
                 "variable.",
                 E_USER_ERROR
