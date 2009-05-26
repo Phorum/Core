@@ -32,7 +32,7 @@
 define('phorum_page','pm');
 require_once './common.php';
 
-phorum_require_login();
+$phorum->request->require_login();
 
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token

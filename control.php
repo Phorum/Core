@@ -20,7 +20,7 @@
 define('phorum_page','control');
 require_once './common.php';
 
-phorum_require_login();
+$phorum->request->require_login();
 
 require_once './include/email_functions.php';
 

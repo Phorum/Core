@@ -20,7 +20,7 @@
 define('phorum_page','subscribe');
 require_once './common.php';
 
-phorum_require_login();
+$phorum->request->require_login();
 
 // checking read-permissions
 if(!phorum_check_read_common()) {

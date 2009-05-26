@@ -304,4 +304,25 @@ function phorum_api_request_check_token($target_page = NULL)
 }
 // }}}
 
+// {{{ Function: phorum_api_request_require_login()
+/**
+ * Require that the user is logged in.
+ *
+ * A check is done to see if the user is logged in.
+ * If not, then the user is redirected to the login page.
+ */
+function phorum_api_request_require_login()
+{
+    global $PHORUM;
+    $phorum = Phorum::API();
+
+    if (!$PHORUM["user"]["user_id"]) {
+        $phorum->redirect(
+            PHORUM_LOGIN_URL,
+            "redir=" . $phorum->url->current()
+        );
+    }
+}
+// }}}
+
 ?>
