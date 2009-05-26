@@ -1409,40 +1409,4 @@ function phorum_get_template_info()
     return $tpls;
 }
 
-/**
- * Returns a list of available languages.
- *
- * @return array
- *     An array of languages. The keys in the array are the language
- *     id's by which they are referenced internally. The values contain
- *     the description of the language.
- */
-function phorum_get_language_info()
-{
-    // To make some language-files happy which are using $PHORUM-variables.
-    // We don't make this really global, otherwise the included language
-    // file would override real language.
-    $PHORUM = $GLOBALS['PHORUM'];
-
-    $langs = array();
-
-    $d = dir(PHORUM_PATH.'/include/lang');
-    while (FALSE !== ($entry = $d->read())) {
-        if (substr($entry, -4) == ".php" && is_file(PHORUM_PATH."/include/lang/$entry")) {
-            ob_start();
-            @include PHORUM_PATH."/include/lang/$entry";
-            ob_end_clean(); // Eat possible extra output like UTF-8 BOM and whitespace outside PHP tags.
-            if (!isset($language_hide) || empty($language_hide) || defined('PHORUM_ADMIN')) {
-                $langs[str_replace(".php", "", $entry)] = $language;
-            } else {
-                unset($language_hide);
-            }
-        }
-    }
-
-    asort($langs, SORT_STRING);
-
-    return $langs;
-}
-
 ?>

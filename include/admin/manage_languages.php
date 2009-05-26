@@ -52,7 +52,7 @@ if ($action == 'download_lang')
 
 // Handle updating a language.
 if ($action == 'update_lang') {
-    $langinfo = phorum_get_language_info();
+    $langinfo = $phorum->language->list(TRUE);
     return phorum_generate_language_file($language, $langinfo[$language], false);
 }
 
@@ -103,7 +103,7 @@ $frm->hidden("module", "manage_languages");
 $frm->hidden("action", "update_lang");
 $frm->addbreak("Update existing language file");
 $frm->addrow("Generate updated version of an existing language file",
-             $frm->select_tag("language", phorum_get_language_info(), $language, 0));
+    $frm->select_tag("language", $phorum->language->list(), $language, 0));
 $frm->show();
 
 

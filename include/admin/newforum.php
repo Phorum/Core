@@ -272,7 +272,7 @@ $frm->addrow("Fixed Display-Settings (user can't override them)", $frm->select_t
 
 $frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template, $disabled_form_input));
 
-$frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language, $disabled_form_input));
+$frm->addrow("Language", $frm->select_tag("language", $phorum->language->list(TRUE), $language, $disabled_form_input));
 
 $frm->addrow("List View", $frm->select_tag("threaded_list", array("Flat", "Threaded"), $threaded_list, $disabled_form_input));
 $frm->addrow("Read View", $frm->select_tag("threaded_read", array("Flat", "Threaded", "Hybrid"), $threaded_read, $disabled_form_input));

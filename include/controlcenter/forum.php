@@ -22,7 +22,9 @@ if (!defined("PHORUM_CONTROL_CENTER")) return;
 function phorum_cc_get_language_info()
 {
     global $PHORUM;
-    $langs = phorum_get_language_info();
+    $phorum = Phorum::API();
+
+    $langs = $phorum->language->list();
     $f_langs = array();
     $profile = $PHORUM['DATA']['PROFILE'];
     if ( !isset( $profile['user_language'] ) )

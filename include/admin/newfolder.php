@@ -219,7 +219,7 @@ $frm->addbreak("Display Settings");
 
 $frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template, $disabled_form_input));
 
-$frm->addrow("Language", $frm->select_tag("language", phorum_get_language_info(), $language, $disabled_form_input));
+$frm->addrow("Language", $frm->select_tag("language", $phorum->language->list(TRUE), $language, $disabled_form_input));
 
 $phorum->modules->hook("admin_editfolder_form", $frm, $forum_settings);
 
