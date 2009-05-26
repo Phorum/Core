@@ -36,7 +36,7 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
             // update the token and time
             $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
             $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
-            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = phorum_generate_data_signature($sig_data);
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = $phorum->sign($sig_data);
             $GLOBALS["PHORUM"]['admin_token']=$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];
             
             $tmp_user = array(

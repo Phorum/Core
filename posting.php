@@ -708,7 +708,7 @@ if ($PHORUM["posting_template"] == 'posting')
         }
 
         if ($signval !== NULL) {
-            $signature = phorum_generate_data_signature($signval);
+            $signature = $phorum->sign($signval);
             $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
                        'value="' . htmlspecialchars($signature, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . "\" />\n";
         }
