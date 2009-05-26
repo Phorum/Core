@@ -110,10 +110,11 @@ if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
 
 $PHORUM['DATA']['PREPOST'] = array();
 
-if ($gotforums)
+if ($gotforums) {
     $foruminfo = $phorum->forums->get($mod_forums, NULL, NULL, $PHORUM['vroot']);
-else
+} else {
     $foruminfo = array();
+}
 
 foreach($mod_forums as $forum => $rest) {
 
@@ -142,7 +143,7 @@ foreach($mod_forums as $forum => $rest) {
         $rows[$key]["short_datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $row["datestamp"]);
     }
 
-    $rows = $phorum->format->message($rows);
+    $rows = $phorum->format->messages($rows);
     $PHORUM['DATA']['PREPOST'] = array_merge($PHORUM['DATA']['PREPOST'], $rows);
 }
 
