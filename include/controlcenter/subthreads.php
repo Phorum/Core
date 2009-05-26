@@ -53,11 +53,13 @@ $PHORUM['DATA']['SELECTED'] = $subdays;
 $phorum->user->save_settings(array("cc_subscriptions_subdays" => $subdays));
 
 // reading all forums for the current vroot
-$forums= $phorum->forums->get(0, NULL, NULL, $PHORUM['vroot']);
+$forums= $phorum->forums->by_vroot($PHORUM['vroot']);
 
 // reading all subscriptions to messages in the current vroot.
 $forum_ids = array($PHORUM["vroot"]);
-foreach ($forums as $forum) { $forum_ids[] = $forum["forum_id"]; }
+foreach ($forums as $forum) {
+    $forum_ids[] = $forum["forum_id"];
+}
 $subscr_array = $phorum->user->list_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
 
 // storage for newflags
