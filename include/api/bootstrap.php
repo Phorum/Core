@@ -39,7 +39,7 @@
 global $PHORUM;
 $PHORUM = array
 (
-    // The DATA member holds the template variables.
+    // The DATA member holds template variables.
     'DATA' => array
     (
         'LOGGEDIN'     => FALSE,
@@ -63,7 +63,7 @@ $PHORUM = array
     // arrays and such in template code.
     'TMP'  => array(),
 
-    // Query arguments.
+    // Query arguments (this array is filled by phorum_api_request_parse()).
     'args' => array(),
 
     // The active forum id.
@@ -262,7 +262,7 @@ if (!$phorum->db->check_connection())
 // ----------------------------------------------------------------------
 
 // Set the anonymous user as our initial user.
-// Authentication / session handling will override this
+// Authentication / session handling can override this
 // later on when appropriate.
 $phorum->user->set_active_user(PHORUM_FORUM_SESSION, NULL);
 
@@ -284,12 +284,6 @@ if (defined('PHORUM_SCRIPT'))
     $PHORUM['cache_users']      = FALSE;
 }
 
-// Defaults for missing settings (these can be needed after upgrading, in
-// case the admin did not yet save a newly added Phorum setting).
-if (!isset($PHORUM['default_feed']))   $PHORUM['default_feed']   = 'rss';
-if (!isset($PHORUM['cache_newflags'])) $PHORUM['cache_newflags'] = FALSE;
-if (!isset($PHORUM['cache_messages'])) $PHORUM['cache_messages'] = FALSE;
-
 // The internal_patchlevel can be unset, because this setting was
 // added in 5.2. When upgrading from 5.1, this settings is not yet
 // available. To make things work, we'll fake a value for this
@@ -302,20 +296,22 @@ if (!isset($PHORUM["internal_patchlevel"])) {
 // but only if we are not in the middle of a fresh install.
 if (isset($PHORUM['internal_version']) &&
     $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION &&
-    (!isset($PHORUM['private_key']) || empty($PHORUM['private_key']))) {
+    empty($PHORUM['private_key'])) {
    $PHORUM['private_key'] = $phorum->generate->key();
    $phorum->db->update_settings(array('private_key' => $PHORUM['private_key']));
 }
 
 // Determine the caching layer to load.
-if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
+if (!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
     $PHORUM['cache_layer'] = 'file';
 } else {
     // Safeguard for wrongly selected cache-layers.
     // Falling back to file-layer if descriptive functions aren't existing.
-    if($PHORUM['cache_layer'] == 'memcached' && !function_exists('memcache_connect')) {
+    if ($PHORUM['cache_layer'] == 'memcached' &&
+        !function_exists('memcache_connect')) {
         $PHORUM['cache_layer'] = 'file';
-    } elseif($PHORUM['cache_layer'] == 'apc' && !function_exists('apc_fetch')) {
+    } elseif ($PHORUM['cache_layer'] == 'apc' &&
+        !function_exists('apc_fetch')) {
         $PHORUM['cache_layer'] = 'file';
     }
 }

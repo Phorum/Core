@@ -333,7 +333,8 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
                 'description'   => $PHORUM['description'],
                 'forum_path'    => array(0 => $PHORUM['title']),
                 'template'      => $template,
-                'language'      => $language
+                'language'      => $language,
+                'cache_version' => 0
             );
         }
     }
