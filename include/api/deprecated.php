@@ -207,4 +207,11 @@ function phorum_html_encode($string) {
     return Phorum::API()->format->html_encode($string);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_output()}.
+ */
+function phorum_output($templates) {
+    return Phorum::API()->output($templates);
+}
+
 ?>

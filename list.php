@@ -552,6 +552,6 @@ if ($PHORUM["threaded_list"]){
     $template = "list";
 }
 
-phorum_output($template);
+$phorum->output($template);
 
 ?>

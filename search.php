@@ -154,7 +154,7 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
         $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToSearch"];
         $PHORUM["DATA"]["URL"]["REDIRECT"]=$search_url;
         $PHORUM["DATA"]["REDIRECT_TIME"]=1;
-        phorum_output("message");
+        $phorum->output("message");
         return;
     }
 }
@@ -420,6 +420,6 @@ if (isset($PHORUM["hooks"]["search_output"])) {
     if ($template === NULL) return;
 }
 
-phorum_output($template);
+$phorum->output($template);
 
 ?>

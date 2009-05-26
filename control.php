@@ -245,7 +245,7 @@ if ($error_msg) { // Possibly set from the panel include file.
 }
 
 // Display the control panel page.
-phorum_output($template);
+$phorum->output($template);
 
 // ============================================================================
 

@@ -262,6 +262,7 @@ function phorum_api_request_stripslashes($array)
 function phorum_api_request_check_token($target_page = NULL)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     if ($target_page === NULL) $target_page = phorum_page;
 
@@ -294,7 +295,7 @@ function phorum_api_request_check_token($target_page = NULL)
                 'Possible hack attempt detected. ' .
                 'The posted form data was rejected.';
             phorum_build_common_urls();
-            phorum_output("message");
+            $phorum->output("message");
             exit();
         }
     }

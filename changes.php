@@ -160,6 +160,6 @@ $PHORUM["DATA"]["MESSAGE"]["subject"] = htmlspecialchars($message["subject"], EN
 $PHORUM["DATA"]["MESSAGE"]["URL"]["READ"] = $phorum->url(PHORUM_READ_URL, $message["thread"], $message_id);
 $PHORUM["DATA"]["CHANGES"] = $message_hist;
 
-phorum_output("changes");
+$phorum->output("changes");
 
 ?>

@@ -127,7 +127,7 @@ phorum_build_common_urls();
 // A message to show if there are no visible forums at all.
 if (empty($PHORUM['DATA']['FORUMS'])) {
     $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['NoForums'];
-    phorum_output('message');
+    $phorum->output('message');
     return;
 }
 
@@ -202,6 +202,6 @@ if (isset($PHORUM['hooks']['index'])) {
 }
 
 // Display the page.
-phorum_output('index_flat');
+$phorum->output('index_flat');
 
 ?>

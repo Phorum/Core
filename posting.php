@@ -65,7 +65,7 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
     if(!(isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"])){
         phorum_build_common_urls();
         // Only show header and footer when not included in another page.
-        phorum_output("message");
+        $phorum->output("message");
     }
     return;
 }
@@ -844,7 +844,7 @@ if ($PHORUM["posting_template"] == 'posting')
 if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
     $templates[] = $PHORUM["posting_template"];
 } else {
-    phorum_output( $PHORUM["posting_template"] );
+    $phorum->output( $PHORUM["posting_template"] );
 }
 
 // ----------------------------------------------------------------------

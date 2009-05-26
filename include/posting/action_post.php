@@ -396,7 +396,7 @@ if ($success)
         
         // make it a little bit longer visible
         $PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
-        phorum_output('message');
+        $phorum->output('message');
         exit(0);
     }
 

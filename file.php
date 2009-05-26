@@ -43,7 +43,7 @@ if ($file === FALSE)
 
     phorum_build_common_urls();
 
-    phorum_output("message");
+    $phorum->output("message");
     return;
 }
 

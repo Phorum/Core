@@ -74,7 +74,7 @@ if (isset($PHORUM["args"]["approve"])) {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
     }
 
-    phorum_output("message");
+    $phorum->output("message");
     return;
 
 }
@@ -373,7 +373,7 @@ if (count($_POST)) {
                     $phorum->modules->hook("after_register",$userdata);
                 }
 
-                phorum_output("message");
+                $phorum->output("message");
                 return;
 
             // Adding the user to the database failed.
@@ -428,7 +428,7 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
     $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
 
     // Display the registration page.
-    phorum_output("register");
+    $phorum->output("register");
 
 } else {
 
@@ -457,7 +457,7 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
         $PHORUM["DATA"]["OPENID"]["email"] = $_POST["email"];
     }
 
-    phorum_output("openid_register");
+    $phorum->output("openid_register");
 
 
 }

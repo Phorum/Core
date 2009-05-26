@@ -121,7 +121,7 @@ if(isset($_POST["openid"])){
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["OpenIDUnknown"];
     }
 
-    phorum_output("message");
+    $phorum->output("message");
 
 } else {
 
@@ -141,7 +141,7 @@ if(isset($_POST["openid"])){
 
         // Authentication failed; display the error message.
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["OpenIDUnknown"];
-        phorum_output("message");
+        $phorum->output("message");
 
     } else if ($response->status == Auth_OpenID_SUCCESS) {
 
@@ -200,7 +200,7 @@ if(isset($_POST["openid"])){
                 $PHORUM["DATA"]["OPENID"]["email"] = $sreg["email"];
             }
 
-            phorum_output("openid_register");
+            $phorum->output("openid_register");
 
         } else {
 

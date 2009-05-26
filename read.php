@@ -199,7 +199,7 @@ if($PHORUM['cache_messages'] &&
             $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
             $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-            phorum_output("message");
+            $phorum->output("message");
             return;
         }
 
@@ -753,7 +753,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 	    }
     }
 
-    phorum_output($templates);
+    $phorum->output($templates);
 
 
 } elseif($toforum=phorum_check_moved_message($thread)) { // is it a moved thread?
@@ -764,7 +764,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     // have to include the header here for the Redirect
-    phorum_output("message");
+    $phorum->output("message");
 
 } else { // message not found
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["MessageNotFound"];
@@ -773,7 +773,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars($PHORUM["DATA"]["HTML_TITLE"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     // have to include the header here for the Redirect
-    phorum_output("message");
+    $phorum->output("message");
 }
 
 // find out if the given thread has been moved to another forum

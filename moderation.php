@@ -1019,6 +1019,6 @@ if(!isset($PHORUM['DATA']['BACKMSG'])) {
     $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
 }
 
-phorum_output($template);
+$phorum->output($template);
 
 ?>

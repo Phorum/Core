@@ -103,6 +103,7 @@ function phorum_moderator_data_remove($key)
 function phorum_show_confirmation_form($message, $action, $args)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     ob_start();
 
@@ -140,7 +141,7 @@ function phorum_show_confirmation_form($message, $action, $args)
     <?php
 
     $PHORUM["DATA"]["BLOCK_CONTENT"] = ob_get_clean();
-    phorum_output("stdblock");
+    $phorum->output("stdblock");
     exit();
 }
 

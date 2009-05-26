@@ -67,7 +67,7 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
 // If private messages are disabled, just show a simple error message.
 if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];
-    phorum_output("stdblock");
+    $phorum->output("stdblock");
     return;
 }
 
@@ -174,7 +174,7 @@ if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id))
     // Show an error in case we encountered a ban.
     if (! empty($error)) {
         $PHORUM["DATA"]["ERROR"] = $error;
-        phorum_output("message");
+        $phorum->output("message");
         return;
     }
 }
@@ -1153,9 +1153,9 @@ $PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
 if ($error_msg) {
     $PHORUM["DATA"]["ERROR"] = $error_msg;
     unset($PHORUM["DATA"]["MESSAGE"]);
-    phorum_output("message");
+    $phorum->output("message");
 } else {
-    phorum_output("pm");
+    $phorum->output("pm");
 }
 
 

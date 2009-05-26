@@ -121,6 +121,6 @@ if(is_array($message) && count($message)) {
     $template='message';
 }
 
-phorum_output($template);
+$phorum->output($template);
 
 ?>

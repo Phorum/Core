@@ -532,6 +532,6 @@ $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$r
 $PHORUM["DATA"]["FOCUS_TO_ID"] = empty($_POST["username"]) ? "username" : "password";
 
 // Display the page.
-phorum_output($template);
+$phorum->output($template);
 
 ?>

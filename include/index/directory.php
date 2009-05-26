@@ -77,7 +77,7 @@ phorum_build_common_urls();
 // A message to show if there are no visible forums or folders at all.
 if (empty($forums)) {
     $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['NoForums'];
-    phorum_output('message');
+    $phorum->output('message');
     return;
 }
 
@@ -99,6 +99,6 @@ foreach ($forum_ids as $forum_id) {
 }
 
 // Display the page.
-phorum_output("index_directory");
+$phorum->output("index_directory");
 
 ?>

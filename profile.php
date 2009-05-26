@@ -45,7 +45,7 @@ if(!is_array($user) || $user["active"]==0) {
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
     // have to include the header here for the Redirect
-    phorum_output("message");
+    $phorum->output("message");
     return;
 }
 
@@ -135,6 +135,6 @@ $PHORUM['DATA']['BREADCRUMBS'][]=array(
 // set all our URL's
 phorum_build_common_urls();
 
-phorum_output($template);
+$phorum->output($template);
 
 ?>

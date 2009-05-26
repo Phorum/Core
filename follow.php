@@ -96,7 +96,7 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 // set all our common URL's
 phorum_build_common_urls();
 
-phorum_output($template);
+$phorum->output($template);
 
 
 ?>
