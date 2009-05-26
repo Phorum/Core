@@ -37,7 +37,7 @@ phorum_require_login();
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.
-phorum_check_posting_token();
+$phorum->request->check_token();
 
 // set all our common URL's
 phorum_build_common_urls();
