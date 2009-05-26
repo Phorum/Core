@@ -195,7 +195,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
                      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) )
             {
                 $messages[$id][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                $email_url = phorum_html_encode("mailto:".$message[$spec[2]]);
+                $email_url = $phorum->format->html_encode("mailto:".$message[$spec[2]]);
                 $messages[$id]["URL"]["PROFILE"] = $email_url;
             }
             // For an anonymous user that did not leave an e-mail address.

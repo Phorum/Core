@@ -200,4 +200,11 @@ function phorum_database_error($error) {
     return Phorum::API()->error->database($error);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_format_html_encode()}.
+ */
+function phorum_html_encode($string) {
+    return Phorum::API()->format->html_encode($string);
+}
+
 ?>

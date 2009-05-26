@@ -1358,26 +1358,6 @@ function phorum_build_common_urls()
 }
 
 /**
- * Encode a string as HTML entities.
- *
- * @param string $string
- *     The string to encode.
- *
- * @return string
- *     The encoded string.
- */
-function phorum_html_encode($string)
-{
-    $ret_string = "";
-    $len = strlen( $string );
-    for( $x = 0;$x < $len;$x++ ) {
-        $ord = ord( $string[$x] );
-        $ret_string .= "&#$ord;";
-    }
-    return $ret_string;
-}
-
-/**
  * Returns a list of available templates.
  *
  * @return array

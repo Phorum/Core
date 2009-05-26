@@ -230,4 +230,27 @@ function phorum_api_format_strip($str)
 }
 // }}}
 
+// {{{ Function: phorum_api_format_html_encode()
+/**
+ * Encode a string as HTML entities.
+ *
+ * @param string $string
+ *     The string to encode.
+ *
+ * @return string
+ *     The encoded string.
+ */
+function phorum_api_format_html_encode($string)
+{
+    $encoded = "";
+    $len = strlen($string);
+    for ($x = 0; $x<$len; $x++) {
+        $ord = ord($string[$x]);
+        $encoded .= "&#$ord;";
+    }
+    return $encoded;
+}
+// }}}
+
+
 ?>

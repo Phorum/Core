@@ -77,7 +77,7 @@ if( (empty($PHORUM['hide_email_addr']) && !$user['hide_email']) ||
     !empty($PHORUM["user"]["admin"]) ||
     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ){
-    $PHORUM["DATA"]["PROFILE"]["email"]=phorum_html_encode($user["email"]);
+    $PHORUM["DATA"]["PROFILE"]["email"]=$phorum->format->html_encode($user["email"]);
 } else {
     $PHORUM["DATA"]["PROFILE"]["email"] = $PHORUM["DATA"]["LANG"]["Hidden"];
 }   
