@@ -1094,36 +1094,4 @@ function phorum_build_common_urls()
     }
 }
 
-/**
- * Returns a list of available templates.
- *
- * @return array
- *     An array of templates. The keys in the array are the template
- *     id's by which they are referenced internally. The values contain
- *     the description + version of the template.
- */
- 
-function phorum_get_template_info()
-{
-    global $PHORUM;
-
-    $tpls = array();
-
-    $d = dir($PHORUM['template_path']);
-    while (FALSE !== ($entry = $d->read())) {
-        if ($entry != '.' && $entry != '..' &&
-            file_exists($PHORUM['template_path'].'/'.$entry.'/info.php')) {
-
-            include $PHORUM['template_path'].'/'.$entry.'/info.php';
-            if (!isset($template_hide) || empty($template_hide) || defined('PHORUM_ADMIN')) {
-                $tpls[$entry] = "$name $version";
-            } else {
-                unset($template_hide);
-            }
-        }
-    }
-
-    return $tpls;
-}
-
 ?>

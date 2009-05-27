@@ -46,7 +46,9 @@ function phorum_cc_get_language_info()
 function phorum_cc_get_template_info()
 {
     global $PHORUM;
-    $langs = phorum_get_template_info();
+    $phorum = Phorum::API();
+
+    $langs = $phorum->template->list();
     $profile = $PHORUM['DATA']['PROFILE'];
 
     $f_langs = array();

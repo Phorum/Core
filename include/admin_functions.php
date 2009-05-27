@@ -30,7 +30,6 @@ function phorum_admin_okmsg($error)
 {
     echo "<div class=\"PhorumAdminOkMsg\">$error</div>\n";
 }
-// phorum_get_template_info moved to common.php (used in the cc too)
 
 function phorum_get_folder_info()
 {

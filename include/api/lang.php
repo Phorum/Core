@@ -37,6 +37,8 @@ if (!defined("PHORUM")) return;
  *
  * @param bool $include_hidden
  *     Whether or not to include hidden languages in the language list.
+ *     Languages can be hidden by setting the variable $language_hide
+ *     to a true value in the language PHP file.
  *
  * @return array
  *     An array of languages. The keys in the array are the language
@@ -81,6 +83,7 @@ function phorum_api_lang_list($include_hidden = FALSE)
             }
         }
     }
+    closedir($dh);
 
     asort($languages, SORT_STRING);
 

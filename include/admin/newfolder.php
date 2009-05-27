@@ -217,7 +217,7 @@ $row = $frm->addrow(
 
 $frm->addbreak("Display Settings");
 
-$frm->addrow("Template", $frm->select_tag("template", phorum_get_template_info(), $template, $disabled_form_input));
+$frm->addrow("Template", $frm->select_tag("template", $phorum->template->list(TRUE), $template, $disabled_form_input));
 
 $frm->addrow("Language", $frm->select_tag("language", $phorum->lang->list(TRUE), $language, $disabled_form_input));
 
