@@ -334,7 +334,9 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
                 'forum_path'    => array(0 => $PHORUM['title']),
                 'template'      => $template,
                 'language'      => $language,
-                'cache_version' => 0
+                'cache_version' => 0,
+                'reg_perms'     => 0,
+                'pub_perms'     => 0
             );
         }
     }
