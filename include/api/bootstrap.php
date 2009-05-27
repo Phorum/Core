@@ -258,6 +258,66 @@ if (!$phorum->db->check_connection())
 }
 
 // ----------------------------------------------------------------------
+// Register the Phorum shutdown function
+// ----------------------------------------------------------------------
+
+/**
+ * The Phorum shutdown function, which will always be called when a
+ * Phorum script ends.
+ */
+function phorum_shutdown()
+{
+    global $PHORUM;
+    $phorum = Phorum::API();
+
+    // Strange things happen during shutdown
+    // Make sure that we are in the Phorum dir.
+    /**
+     * @todo Still needed now we include files using absolute paths?
+     */
+    $working_dir = getcwd();
+    chdir(PHORUM_PATH);
+
+    /*
+     * [hook]
+     *     phorum_shutdown
+     *
+     * [description]
+     *     This hook gives modules a chance to easily hook into
+     *     PHP's <phpfunc>register_shutdown_function</phpfunc>
+     *     functionality.<sbr/>
+     *     <sbr/>
+     *     Code that you put in a phorum_shutdown hook will be run after
+     *     running a Phorum script finishes. This hook can be considered
+     *     an expert hook. Only use it if you really need it and if you
+     *     are aware of implementation details of PHP's shutdown
+     *     functionality.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After running a Phorum script finishes.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($PHORUM["hooks"]["shutdown"])) {
+        $phorum->modules->hook("shutdown");
+    }
+
+    // Shutdown the database connection.
+    $phorum->db->close_connection();
+
+    chdir($working_dir);
+}
+
+register_shutdown_function('phorum_shutdown');
+
+// ----------------------------------------------------------------------
 // Other initialization tasks
 // ----------------------------------------------------------------------
 
