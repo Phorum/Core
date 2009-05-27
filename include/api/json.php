@@ -29,9 +29,6 @@
  * @subpackage JSON
  * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
- *
- * @todo We convert data to UTF-8 when encoding JSON. I guess that we
- *       should do a decode for the JSON decoding function too.
  */
 
 if (!defined('PHORUM')) return;
@@ -39,6 +36,9 @@ if (!defined('PHORUM')) return;
 // {{{ Function: phorum_api_json_encode()
 /**
  * Encode a PHP variable into a JSON structure.
+ *
+ * JSON data is always UTF-8. In case Phorum is not using UTF-8 as the
+ * default charset, the data is converted to UTF-8 automatically.
  *
  * @param mixed $var
  *     The PHP variable to encode.
@@ -51,7 +51,7 @@ function phorum_api_json_encode($var)
     global $PHORUM;
 
     if (strtoupper($PHORUM['DATA']['CHARSET']) != 'UTF-8') {
-        $var = phorum_api_json_convert_to_utf8($var);
+        $var = Phorum::API()->charset->convert_to_utf8($var);
     }
 
     return json_encode($var);
@@ -62,6 +62,10 @@ function phorum_api_json_encode($var)
 /**
  * Decode a JSON encoded structure into a PHP variable.
  *
+ * JSON data is always UTF-8. In case Phorum is not using UTF-8 as the
+ * default charset, the data is converted from UTF-8 back to Phorum's
+ * charset automatically.
+ *
  * @param string $json
  *     The JSON structure to decode.
  *
@@ -70,90 +74,16 @@ function phorum_api_json_encode($var)
  */
 function phorum_api_json_decode($json)
 {
-    return json_decode($json, TRUE);
-}
-// }}}
-
-// {{{ Function: phorum_api_json_convert_to_utf8()
-/**
- * A helper function that converts a PHP variable to UTF-8.
- *
- * @param mixed $var
- *     The variable to convert to UTF-8.
- *
- * @return mixed
- *     The converted variable.
- */
-function phorum_api_json_convert_to_utf8($var)
-{
     global $PHORUM;
 
-    // Don't convert if Phorum is in UTF-8 mode already.
-    if (strtoupper($PHORUM['DATA']['CHARSET']) == 'UTF-8') return $var;
+    $var = json_decode($json, TRUE);
 
-    // This character map is used to fix differences between ISO-8859-1 and
-    // Windows-1252. The 1252 characters sometimes get in messages when users
-    // cut-and-paste from Word and for some reason these are not handled
-    // by the iconv() conversion. Thanks to Aidan Kehoe for posting this
-    // map in the PHP manual pages (http://www.php.net/utf8_encode).
+    if (strtoupper($PHORUM['DATA']['CHARSET']) != 'UTF-8') {
+        $var = Phorum::API()->charset->convert_from_utf8($var);
+    }
 
-    static $cp1252_map = array
-    (
-        "\xc2\x80" => "\xe2\x82\xac", /* EURO SIGN */
-        "\xc2\x82" => "\xe2\x80\x9a", /* SINGLE LOW-9 QUOTATION MARK */
-        "\xc2\x83" => "\xc6\x92",     /* LATIN SMALL LETTER F WITH HOOK */
-        "\xc2\x84" => "\xe2\x80\x9e", /* DOUBLE LOW-9 QUOTATION MARK */
-        "\xc2\x85" => "\xe2\x80\xa6", /* HORIZONTAL ELLIPSIS */
-        "\xc2\x86" => "\xe2\x80\xa0", /* DAGGER */
-        "\xc2\x87" => "\xe2\x80\xa1", /* DOUBLE DAGGER */
-        "\xc2\x88" => "\xcb\x86",     /* MODIFIER LETTER CIRCUMFLEX ACCENT */
-        "\xc2\x89" => "\xe2\x80\xb0", /* PER MILLE SIGN */
-        "\xc2\x8a" => "\xc5\xa0",     /* LATIN CAPITAL LETTER S WITH CARON */
-        "\xc2\x8b" => "\xe2\x80\xb9", /* SINGLE LEFT-POINTING ANGLE QUOTATION */
-        "\xc2\x8c" => "\xc5\x92",     /* LATIN CAPITAL LIGATURE OE */
-        "\xc2\x8e" => "\xc5\xbd",     /* LATIN CAPITAL LETTER Z WITH CARON */
-        "\xc2\x91" => "\xe2\x80\x98", /* LEFT SINGLE QUOTATION MARK */
-        "\xc2\x92" => "\xe2\x80\x99", /* RIGHT SINGLE QUOTATION MARK */
-        "\xc2\x93" => "\xe2\x80\x9c", /* LEFT DOUBLE QUOTATION MARK */
-        "\xc2\x94" => "\xe2\x80\x9d", /* RIGHT DOUBLE QUOTATION MARK */
-        "\xc2\x95" => "\xe2\x80\xa2", /* BULLET */
-        "\xc2\x96" => "\xe2\x80\x93", /* EN DASH */
-        "\xc2\x97" => "\xe2\x80\x94", /* EM DASH */
-        "\xc2\x98" => "\xcb\x9c",     /* SMALL TILDE */
-        "\xc2\x99" => "\xe2\x84\xa2", /* TRADE MARK SIGN */
-        "\xc2\x9a" => "\xc5\xa1",     /* LATIN SMALL LETTER S WITH CARON */
-        "\xc2\x9b" => "\xe2\x80\xba", /* SINGLE RIGHT-POINTING ANGLE QUOTATION*/
-        "\xc2\x9c" => "\xc5\x93",     /* LATIN SMALL LIGATURE OE */
-        "\xc2\x9e" => "\xc5\xbe",     /* LATIN SMALL LETTER Z WITH CARON */
-        "\xc2\x9f" => "\xc5\xb8"      /* LATIN CAPITAL LETTER Y WITH DIAERESIS*/
-    );
-
-   if (is_array($var))
-   {
-       $new = array();
-       foreach ($var as $k => $v) {
-           $new[phorum_api_json_convert_to_utf8($k)] =
-               phorum_api_json_convert_to_utf8($v);
-       }
-       $var = $new;
-   }
-   elseif (is_object($var))
-   {
-       $vars = get_class_vars(get_class($var));
-       foreach ($vars as $property => $value) {
-           $var->$property = phorum_api_json_convert_to_utf8($value);
-       }
-   }
-   elseif (is_string($var))
-   {
-       // Fix for characters that do not survive the UTF-8 conversion somehow.
-       $var = strtr($var, $cp1252_map);
-
-       // Convert to UTF-8.
-       $var = iconv($PHORUM['DATA']['CHARSET'], 'UTF-8', $var);
-   }
-   return $var;
+    return $var;
 }
-//}}}
+// }}}
 
 ?>
