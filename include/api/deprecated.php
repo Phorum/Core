@@ -214,4 +214,13 @@ function phorum_output($templates) {
     return Phorum::API()->output($templates);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_template_set()}.
+ */
+function phorum_switch_template($template = NULL, $template_path = NULL, $template_http_path = NULL) {
+    return Phorum::API()->template->set(
+        $template, $template_path, $template_http_path
+    );
+}
+
 ?>
