@@ -33,6 +33,8 @@
  *
  * @todo Extend the Phorum::API() singleton documentation, to explain
  *       that this singleton is the API entry point.
+ *
+ * @todo Normalize authorization functionality.
  */
 
 /**
