@@ -21,7 +21,7 @@
  * This script implements utility functions for handling output buffering.
  *
  * @package    PhorumAPI
- * @subpackage Tools
+ * @subpackage Output
  * @copyright  2009, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
