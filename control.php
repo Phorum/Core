@@ -19,27 +19,16 @@
 
 define('phorum_page','control');
 require_once './common.php';
-
-$phorum->request->require_login();
-
 require_once './include/email_functions.php';
 
-define("PHORUM_CONTROL_CENTER", 1);
+$phorum->request->require_login(TRUE);
 
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.
 $phorum->request->check_token();
 
-// A user has to be logged in to use his control-center.
-if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-    $phorum->redirect(PHORUM_LIST_URL);
-}
-
-// If the user is not fully logged in, send him to the login page.
-if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    $phorum->redirect(PHORUM_LOGIN_URL, "redir=".PHORUM_CONTROLCENTER_URL);
-}
+define("PHORUM_CONTROL_CENTER", 1);
 
 $error_msg = false;
 $error = "";

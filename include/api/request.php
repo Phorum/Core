@@ -310,16 +310,34 @@ function phorum_api_request_check_token($target_page = NULL)
  *
  * A check is done to see if the user is logged in.
  * If not, then the user is redirected to the login page.
+ *
+ * @param bool $tight_security
+ *     When this parameter has a true value (default is FALSE),
+ *     then a tight security check is done. This means that a check
+ *     is done to see if a short term session is active. An available
+ *     long term session is not good enough in this case.
+ *
+ *     Tight Security is an option that can be enabled from Phorum's
+ *     admin interface.
  */
-function phorum_api_request_require_login()
+function phorum_api_request_require_login($tight_security = FALSE)
 {
     global $PHORUM;
     $phorum = Phorum::API();
 
-    if (!$PHORUM["user"]["user_id"]) {
+    // Check if we have an authenticated user.
+    if (!$PHORUM['user']['user_id']) {
         $phorum->redirect(
             PHORUM_LOGIN_URL,
-            "redir=" . $phorum->url->current()
+            'redir=' . urlencode($phorum->url->current())
+        );
+    }
+
+    // Handle tight security.
+    if ($tight_security && !$PHORUM['DATA']['FULLY_LOGGEDIN']) { 
+        $phorum->redirect(
+            PHORUM_LOGIN_URL,
+            'redir=' . urlencode($phorum->url->current())
         );
     }
 }

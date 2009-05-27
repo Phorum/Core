@@ -32,7 +32,7 @@
 define('phorum_page','pm');
 require_once './common.php';
 
-$phorum->request->require_login();
+$phorum->request->require_login(TRUE);
 
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
@@ -43,26 +43,6 @@ $phorum->request->check_token();
 phorum_build_common_urls();
 
 require_once './include/email_functions.php';
-
-// a user has to be logged in to use the private messages system
-if (!$PHORUM["DATA"]["LOGGEDIN"]) {
-    $phorum->redirect(PHORUM_LIST_URL);
-}
-
-// if the user is not fully logged in, send him to the login page
-if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
-
-    // Construct the URL to redirect to after logging in.
-    $args = array(PHORUM_PM_URL);
-    foreach ($PHORUM["args"] as $k => $v) {
-        if (in_array("$k=$v", $PHORUM["DATA"]["GET_VARS"])) continue;
-        if(is_numeric($k)) $args[] = $v; else $args[] = "$k=$v";
-    }
-    $phorum->url; // To make sure the URL API layer is loaded.
-    $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
-
-    $phorum->redirect(PHORUM_LOGIN_URL, "redir=$redir");
-}
 
 // If private messages are disabled, just show a simple error message.
 if (! $PHORUM["enable_pm"]) {
