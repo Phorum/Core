@@ -177,27 +177,83 @@ define('DB_RETURN_ERROR',   10);
  */
 define('DB_CLOSE_CONN',     11);
 
-/**#@+
- * Constant for the phorum_db_interact() function call $flags parameter.
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that a connection failure is not a fatal error. Instead,
+ * the function will return FALSE on error.
  */
 define('DB_NOCONNECTOK',     1);
-define('DB_MISSINGTABLEOK',  2);
-define('DB_DUPFIELDNAMEOK',  4);
-define('DB_DUPKEYNAMEOK',    8);
-define('DB_DUPKEYOK',       16);
-define('DB_TABLEEXISTSOK',  32);
-define('DB_GLOBALQUERY',    64);
-define('DB_MASTERQUERY',   128);
-/**#@-*/
 
-/**#@+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that missing table errors are not fatal errors. Instead,
+ * the function will return FALSE on error.
+ */
+define('DB_MISSINGTABLEOK',  2);
+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that duplicate field errors are not fatal errors. Instead,
+ * the function will return FALSE on error.
+ */
+define('DB_DUPFIELDNAMEOK',  4);
+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that duplicate key name errors are not fatal errors. Instead,
+ * the function will return FALSE on error.
+ */
+define('DB_DUPKEYNAMEOK',    8);
+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that duplicate key errors are not fatal errors. Instead,
+ * the function will return FALSE on error.
+ */
+define('DB_DUPKEYOK',       16);
+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that table exist errors are not fatal errors. Instead,
+ * the function will return FALSE on error.
+ */
+define('DB_TABLEEXISTSOK',  32);
+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter.
+ * This flag is not in use by the Phorum core code. It is in use for
+ * some specialized proprietary db setup.
+ */
+define('DB_GLOBALQUERY',    64);
+
+/**
+ * Constant for the phorum_db_interact() function call $flags parameter
+ * that indicates that this query has to be run on a cluster master
+ * server. This is used by the include/db/mysqli_replication.php database
+ * backend.
+ */
+define('DB_MASTERQUERY',   128);
+
+/**
  * Constant for the phorum_db_get_recent_messages() function call
- * $list_type parameter.
+ * $list_type parameter that indicates that recent message have to
+ * be returned.
  */
 define('LIST_RECENT_MESSAGES',   0);
+
+/**
+ * Constant for the phorum_db_get_recent_messages() function call
+ * $list_type parameter that indicates that recent new threads have to
+ * be returned.
+ */
 define('LIST_RECENT_THREADS',    1);
+
+/**
+ * Constant for the phorum_db_get_recent_messages() function call
+ * $list_type parameter that indicates that recently updated threads
+ * (i.e. where new replies have been posted) have to be returned.
+ */
 define('LIST_UPDATED_THREADS',   2);
-/**#@-*/
 
 // }}}
 
