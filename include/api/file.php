@@ -570,7 +570,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     $GLOBALS["PHORUM"]["API"]["error"] = NULL;
 
     // Check if the active user has read access for the active forum_id.
-    if (!$flags & PHORUM_FLAG_IGNORE_PERMS && !phorum_check_read_common()) {
+    if (!($flags & PHORUM_FLAG_IGNORE_PERMS) && !phorum_check_read_common()) {
         return $phorum->error(
             PHORUM_ERRNO_NOACCESS,
             "Read permission for file (id $file_id) denied."
