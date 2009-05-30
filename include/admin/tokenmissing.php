@@ -19,24 +19,20 @@
 
     // don't allow this page to be loaded directly
     if(!defined("PHORUM_ADMIN")) exit();
-    $targetargs = $_SERVER['QUERY_STRING'];
-    $target_html = htmlspecialchars(phorum_admin_build_url($targetargs));
-    $targs_html = htmlspecialchars($targetargs);
-    $post_url = phorum_admin_build_url('base');
-    
+
     if(count($_POST)) {
         if(!empty($_POST['phorum_admin_token']) && 
-            $_POST['phorum_admin_token'] == $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] &&
-            time()-PHORUM_ADMIN_TOKEN_TIMEOUT < $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time']
+            $_POST['phorum_admin_token'] == $PHORUM["user"]['settings_data']['admin_token'] &&
+            time()-PHORUM_ADMIN_TOKEN_TIMEOUT < $PHORUM["user"]['settings_data']['admin_token_time']
            ) {
 
                if(!empty($_POST['cancel'])) {
                     
-                   $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = "";
+                   $PHORUM["user"]['settings_data']['admin_token'] = "";
 
                    $tmp_user = array(
-             			'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
-                		'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
+                       'user_id'=>$PHORUM["user"]['user_id'],
+                       'settings_data'=>$PHORUM["user"]['settings_data']
                    );
                    phorum_api_user_save($tmp_user);  
                                     
@@ -56,18 +52,42 @@
            }
     }
 
-    // update the token and time
-    $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
-    $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
-    $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = $phorum->sign($sig_data);
-
-    $tmp_user = array(
-             	'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
-                'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
+    // We have no token or our token expired.
+    // Generate a fresh token.
+    $admin_token_time = time();
+    $admin_token = $phorum->sign(
+        $PHORUM['user']['user_id'].
+        microtime().
+        $PHORUM['user']['username'].
+        $PHORUM['user']['sessid_st']
     );
-    phorum_api_user_save($tmp_user);
-    
-    
+    $phorum->user->save_settings(array(
+        'admin_token_time' => $admin_token_time,
+        'admin_token'      => $admin_token
+    ));
+    $PHORUM['admin_token'] = $admin_token;
+
+    // If there are no POST or GET variables in the request, besides
+    // "module" and/or "phorum_admin_token", then we can safely load
+    // the requested admin page, without bugging the admin about the
+    // token timeout.
+    $post = $_POST; unset($post['module']); unset($post['phorum_admin_token']);
+    $get  = $_GET;  unset($get['module']);  unset($get['phorum_admin_token']);
+    if (empty($post) && empty($get)) {
+        $module = '';
+        if (isset($_POST['module'])) {
+            $module = basename($_POST['module']);
+        } elseif (isset($_GET['module'])) {
+            $module = basename($_GET['module']);
+        }
+        $url = phorum_admin_build_url('module='.urlencode($module));
+        $phorum->redirect($url);
+    }
+
+    $targetargs = $_SERVER['QUERY_STRING'];
+    $target_html = htmlspecialchars(phorum_admin_build_url($targetargs));
+    $targs_html = htmlspecialchars($targetargs);
+    $post_url = phorum_admin_build_url('base');
 ?>
 You are accessing the admin after a security timeout.<br /><br />
 The requested URL was: 
@@ -77,7 +97,7 @@ Please click on <strong>continue</strong> to go to this URL or on <strong>cancel
 <br /><br />
 <form action="<?php echo $post_url;?>" method="POST">
 <input type="hidden" name="module" value="tokenmissing" />
-<input type="hidden" name="phorum_admin_token" value="<?php echo $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];?>" />
+<input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM["user"]['settings_data']['admin_token'];?>" />
 <input type="hidden" name="target" value="<?php echo $targs_html;?>" />
 <input type="submit" name="cancel" value="cancel" />
 <input type="submit" name="continue" value="continue" />
