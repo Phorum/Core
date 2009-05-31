@@ -6,9 +6,6 @@
     {IF ERROR}
       <div class="PhorumUserError">{ERROR}</div>
     {/IF}
-    {IF MESSAGE}
-      <div class="PhorumFloatingText">{MESSAGE}</div>
-    {/IF}
     {IF OKMSG}
         <div class="PhorumFloatingText">{OKMSG}</div>
         {IF URL->CLICKHERE}
