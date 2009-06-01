@@ -67,10 +67,12 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/admin/status.php',
     'include/admin/upgrade.php',
     'include/admin/version.php',
+
     'include/ajax/call.checkpm.php',
     'include/ajax/examples.php',
     'include/ajax/call.markread.php',
     'include/ajax/call.helloworld.php',
+
     'include/controlcenter/email.php',
     'include/controlcenter/files.php',
     'include/controlcenter/forum.php',
@@ -84,6 +86,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/controlcenter/summary.php',
     'include/controlcenter/user.php',
     'include/controlcenter/users.php',
+
     'include/email_functions.php',
     'include/index/directory.php',
     'include/index/flat.php',
@@ -91,6 +94,11 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/javascript/jquery.json-1.3.min.js',
     'include/javascript/jquery-1.2.6.min.js',
     'include/moderation_functions.php',
+    'include/thread_info.php',
+    'include/thread_sort.php',
+    'include/upload_functions.php',
+    'include/version_functions.php',
+
     'include/posting/action_attachments.php',
     'include/posting/action_cancel.php',
     'include/posting/action_edit.php',
@@ -101,38 +109,55 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/posting/check_permissions.php',
     'include/posting/request_first.php',
     'include/posting/request_followup.php',
-    'include/thread_info.php',
-    'include/thread_sort.php',
-    'include/upload_functions.php',
-    'include/version_functions.php',
-    'include/api.php',
-    'include/api/ban.php',
-    'include/api/bootstrap.php',
-    'include/api/buffer.php',
-    'include/api/constants.php',
-    'include/api/custom_field.php',
-    'include/api/diff.php',
-    'include/api/examples/file_delete.php',
-    'include/api/examples/file_store.php',
-    'include/api/examples/user_auth_module.php',
-    'include/api/examples/user_login.php',
-    'include/api/error.php',
-    'include/api/file.php',
-    'include/api/format.php',
-    'include/api/forums.php',
-    'include/api/http_get.php',
-    'include/api/image.php',
-    'include/api/json.php',
-    'include/api/mail.php',
-    'include/api/message.php',
-    'include/api/modules.php',
-    'include/api/newflags.php',
-    'include/api/profiler.php',
-    'include/api/redirect.php',
-    'include/api/tree.php',
-    'include/api/url.php',
-    'include/api/user.php',
+
+    'include/api/template.php',
+    'include/api/output.php',
     'include/api/write_file.php',
+    'include/api/deprecated.php',
+    'include/api/bootstrap.php',
+    'include/api/custom_field.php',
+    'include/api/redirect.php',
+    'include/api/file.php',
+    'include/api/error/backtrace.php',
+    'include/api/error/database.php',
+    'include/api/error.php',
+    'include/api/ban.php',
+    'include/api/buffer.php',
+    'include/api/feed/atom.php',
+    'include/api/feed/html.php',
+    'include/api/feed/rss.php',
+    'include/api/feed/js.php',
+    'include/api/forums.php',
+    'include/api/newflags.php',
+    'include/api/format.php',
+    'include/api/image.php',
+    'include/api/sign.php',
+    'include/api/url.php',
+    'include/api/examples/file_store.php',
+    'include/api/examples/user_login.php',
+    'include/api/examples/file_delete.php',
+    'include/api/examples/user_auth_module.php',
+    'include/api/diff.php',
+    'include/api/constants.php',
+    'include/api/message.php',
+    'include/api/template/compile.php',
+    'include/api/modules.php',
+    'include/api/mail.php',
+    'include/api/user.php',
+    'include/api/tree.php',
+    'include/api/feed.php',
+    'include/api/json.php',
+    'include/api/dev.php',
+    'include/api/charset.php',
+    'include/api/format/forums.php',
+    'include/api/format/messages.php',
+    'include/api/format/censor.php',
+    'include/api/format/users.php',
+    'include/api/lang.php',
+    'include/api/generate.php',
+    'include/api/read_file.php',
+    'include/api/request.php',
+    'include/api/http_get.php',
 
     'admin.'.PHORUM_FILE_EXTENSION,
     'ajax.'.PHORUM_FILE_EXTENSION,
@@ -169,18 +194,24 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
 // be removed.
 $GLOBALS["PHORUM"]["deprecated_distro"] = array
 (
-    'post.'.PHORUM_FILE_EXTENSION,   // deprecated by the posting.php script
-    'include/api/file_storage.php',  // renamed to include/api/file.php
-    'include/api/custom_profile_fields.php', // Moved to CustomField API
-    'include/phorum_get_url.php',    // moved to URL API
-    'include/format_functions.php',  // moved to Message and Format API
-    'include/index_flat.php',        // renamed to include/index/flat.php
-    'include/index_classic.php',     // renamed to include/index/flat.php
-    'include/index_directory.php',   // renamed to include/index/directory.php
-    'include/timing.php',            // moved to Profiler API
-    'include/feed_functions.php',    // moved to Feed API
-    'include/profile_functions.php', // moved to Ban API
-    'include/templates.php',         // moved to include/api/template.php
+    'critical' => array
+    (
+      'post.'.PHORUM_FILE_EXTENSION,   // deprecated by the posting.php script
+    ),
+    'warning' => array
+    (
+      'include/api/file_storage.php',  // renamed to include/api/file.php
+      'include/api/custom_profile_fields.php', // Moved to CustomField API
+      'include/phorum_get_url.php',    // moved to URL API
+      'include/format_functions.php',  // moved to Message and Format API
+      'include/index_flat.php',        // renamed to include/index/flat.php
+      'include/index_classic.php',     // renamed to include/index/flat.php
+      'include/index_directory.php',   // renamed to include/index/directory.php
+      'include/timing.php',            // moved to Profiler API
+      'include/feed_functions.php',    // moved to Feed API
+      'include/profile_functions.php', // moved to Ban API
+      'include/templates.php',         // moved to include/api/template.php
+    )
 );
 
 // A list of database layer files that ship with Phorum.
@@ -353,20 +384,35 @@ function phorum_check_distro()
     // Check if there are deprecated files in the Phorum tree.
     // ------------------------------------------------------------------
 
-    foreach ($PHORUM["deprecated_distro"] as $file)
-    {
-        // Check availability.
-        if (file_exists($file)) {
-            $errors[] = "deprecated: $file";
-            continue;
+    $warning  = 0;
+    $critical = 0;
+    foreach ($PHORUM['deprecated_distro'] as $type => $files) {
+        foreach ($files as $file)
+        {
+            if (file_exists($file))
+            {
+                if ($type == 'critical') {
+                    $critical ++;
+                    $color = 'red';
+                } else {
+                    $warning ++;
+                    $color = 'darkorange';
+                }
+                $errors[] = '<span style="color:'.$color.'">' .
+                            $file .
+                            '</span>';
+            }
         }
     }
 
     if (count($errors)) return array(
-        PHORUM_SANITY_CRIT,
+        $critical ? PHORUM_SANITY_CRIT : PHORUM_SANITY_WARN,
         "One or more files in your Phorum tree are no longer part of
          the Phorum distribution. Please, remove the following file(s)
-         from your Phorum installation:<br/>" .
+         from your Phorum installation" .
+        ($warning && $critical 
+         ? ' (the ones in red are highly recommended for removal)' : '') .
+        ":<br/>" .
          "<ul><li>" . implode("</li>\n<li>", $errors) . "</li></ul>",
         "This could happen after installing a newer version of Phorum
          on top of an existing Phorum installation. In this newer version,
