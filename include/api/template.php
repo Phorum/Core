@@ -129,13 +129,251 @@ function phorum_api_template_set($template = NULL, $template_path = NULL, $templ
         $PHORUM['template_http_path'] = $template_http_path;
     }
 
+    // Apply defaults when needed.
+    if (empty($PHORUM['template_path'])) {
+        $PHORUM['template_path'] = PHORUM_PATH.'/templates';
+    }
+    if (empty($PHORUM['template_http_path'])) {
+        $PHORUM['template_path'] = $PHORUM['http_path'].'/templates';
+    }
+
+    // Setup related template data.
     $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
     $PHORUM["DATA"]["URL"]["TEMPLATE"] =
         htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
 
+    // Load the settings file for the configured template.
     ob_start();
     include phorum_get_template('settings');
     ob_end_clean();
+}
+// }}}
+
+// {{{ Function: phorum_api_template()
+/**
+ * Get the name of the PHP file to include for rendering a given template.
+ *
+ * If the format for $template is <module>::<template>, then
+ * the template is loaded from the module's template directory. The
+ * directory structure for storing module templates is the same as for the
+ * main templates directory, only it is stored within a module's
+ * directory:
+ *
+ *   <phorum_dir>/mods/templates/<template name>/<page>.tpl
+ *
+ * @param string $page
+ *     The name of the temlate to compile (e.g. "header", "css",
+ *     "somemod::template", etc.).
+ *
+ * @return string
+ *     The name of the PHP file to include for rendering the template.
+ */
+function phorum_api_template($page)
+{
+    $phorum = Phorum::API();
+
+    // This might for example happen if a template contains code like
+    // {INCLUDE template} instead of {INCLUDE "template"}.
+    if ($page === NULL || $page == "") {
+        print "<html><head><title>Phorum Template Error</title><body>";
+        print "<h1>Phorum Template Error</h1>";
+        print "phorum_get_template() was called with an empty page name.<br/>";
+        print "This might indicate a template problem.<br/>";
+        if (function_exists('debug_print_backtrace')) {
+            print "Here's a backtrace that might help finding the error:";
+            print "<pre>";
+            print $phorum->error->backtrace();
+            print "</pre>";
+        }
+        print "</body></html>";
+        exit(1);
+    }
+
+    list ($phpfile, $tplfile) = phorum_api_template_resolve($page); 
+
+    // No template to process. This will happen in case a .php file
+    // is used for defining the template instead of a .tpl file.
+    if (empty($tplfile)) return $phpfile;
+
+    // Compile the template if the output PHP file is not available.
+    if (!file_exists($phpfile)) {
+        $phorum->template->compile($page, $tplfile, $phpfile);
+    }
+
+    return $phpfile;
+}
+// }}}
+
+// {{{ Function: phorum_api_template_resolve()
+/**
+ * Resolve the input and output files to use for a given template.
+ *
+ * @param string $page
+ *     The template name (e.g. "header", "css", "foobar::frontpage", etc.).
+ *
+ * @return array
+ *     This function returns an array, containing two elements:
+ *     - The PHP file to include for rendering the template.
+ *     - The file to use as the template source. When there is no
+ *       pre-processing required for compiling the template source
+ *       into the rendering PHP include file, then this value will
+ *       be NULL.
+ */
+function phorum_api_template_resolve($page)
+{
+    global $PHORUM;
+    $phorum = Phorum::API();
+
+    $page = basename($page);
+
+    /*
+     * [hook]
+     *     get_template_file
+     *
+     * [availability]
+     *     Phorum 5 >= 5.2.11
+     *
+     * [description]
+     *     Allow modules to have influence on the results of the
+     *     phorum_get_template_file() function. This function translates
+     *     a page name (e.g. <literal>list</literal>) into a filename
+     *     to use as the template source for that page (e.g.
+     *      <filename>/path/to/phorum/templates/emerald/list.tpl</filename>).
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     At the start of the phorum_get_template_file() function
+     *     from <filename>common.php</filename>.
+     *
+     * [input]
+     *     An array containing two elements:
+     *     <ul>
+     *       <li>page:
+     *           The page that was requested.</li>
+     *       <li>source:
+     *           The file that has to be used as the source for the page.
+     *           This one is initialized as NULL.</li>
+     *     </ul>
+     *
+     * [output]
+     *     Same as input. Modules can override either or both of the array
+     *     elements. When the "source" element is set after running the
+     *     hook, then the file named in this element is directly used as
+     *     the template source. It must end in either ".php" or ".tpl" to
+     *     be accepted as a template source. Phorum does not do any additional
+     *     checking on this source file name. It is the module's duty to
+     *     provide a correct source file name.<sbr/>
+     *     Otherwise, the template source file is determined based on
+     *     the value of the "page" element, following the standard
+     *     Phorum template resolving rules.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_get_template_file($data)
+     *     {
+     *         // Override the "index_new" template with a custom
+     *         // template from the "foo" module.
+     *         if ($data['page'] == 'index_new') {
+     *             $data['page'] = 'foo::index_new';
+     *         }
+     *
+     *         // Point the "pm" template directly at a custom PHP script.
+     *         if ($data['page'] == 'pm') {
+     *             $data['source'] = './mods/foo/pm_output_handler.php';
+     *         }
+     *
+     *         return $data;
+     *     }
+     *     </hookcode>
+     */
+    $tplbase = NULL;
+    $template = NULL;
+    if (isset($GLOBALS["PHORUM"]["hooks"]["get_template_file"])) {
+        $res = $phorum->modules->hook("get_template_file", array(
+            'page'   => $page,
+            'source' => NULL
+        ));
+        if ($res['source'] !== NULL && strlen($res['source']) > 4)
+        {
+            // PHP source can be returned right away. These will be included
+            // directly by the template handling code.
+            if (substr($res['source'], -4, 4) == '.php') {
+                return array($res['source'], NULL);
+            }
+            // For .tpl files, we continue running this function, because
+            // a cache file name has to be compiled for storing the
+            // compiled template data.
+            if (substr($res['source'], -4, 4) == '.tpl') {
+                $tplbase = substr($res['source'], 0, -4);
+            }
+        }
+        $page = basename($res['page']);
+        $template = 'set_from_module';
+    }
+
+    // No template source set by a module? Then continue by finding
+    // a template based on the provided template page name.
+    if ($tplbase === NULL)
+    {
+        // Check for a module reference in the page name.
+        $fullpage = $page;
+        $module = NULL;
+        if (($pos = strpos($fullpage, "::", 1)) !== FALSE) {
+            $module = substr($fullpage, 0, $pos);
+            $page = substr($fullpage, $pos+2);
+        }
+
+        if ($module === NULL) {
+            $prefix = $PHORUM['template_path'];
+            // The postfix is used for checking if the template directory
+            // contains at least the mandatory info.php file. Otherwise, it
+            // could be an incomplete or empty template.
+            $postfix = '/info.php';
+        } else {
+            $prefix = PHORUM_PATH.'/mods/'.basename($module).'/templates';
+            $postfix = '';
+        }
+
+        // If no user template is set or if the template cannot be found,
+        // fallback to the configured default template. If that one can also
+        // not be found, then fallback to the hard-coded default template.
+        if (empty($PHORUM["template"]) ||
+            !file_exists("$prefix/{$PHORUM['template']}$postfix"))
+        {
+            $template = $PHORUM["default_forum_options"]["template"];
+            if ($template != PHORUM_DEFAULT_TEMPLATE &&
+                !file_exists("$prefix/$template$postfix")) {
+                $template = PHORUM_DEFAULT_TEMPLATE;
+            }
+
+            // If we're not handling a module template, then we can change the
+            // global template to remember the fallback template and to make
+            // sure that {URL->TEMPLATE} and {TEMPLATE} aren't pointing to a
+            // non-existent template in the end..
+            if ($module === NULL) { $PHORUM["template"] = $template; }
+        } else {
+            $template = $PHORUM['template'];
+        }
+
+        $tplbase = "$prefix/$template/$page";
+
+        // check for straight PHP file
+        if (file_exists("$tplbase.php")) {
+            return array("$tplbase.php", NULL);
+        }
+    }
+
+    // Build the compiled template and template input file names.
+    $tplfile = "$tplbase.tpl";
+    $safetemplate = str_replace(array("-",":"), array("_","_"), $template);
+    if (isset($module)) $page = "$module::$page";
+    $safepage = str_replace(array("-",":"), array("_","_"), $page);
+    $phpfile = "{$PHORUM["cache"]}/tpl-$safetemplate-$safepage-" .
+           md5(dirname(__FILE__) . $tplfile) . ".php";
+
+    return array($phpfile, $tplfile);
 }
 // }}}
 

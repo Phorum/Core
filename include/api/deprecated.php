@@ -223,4 +223,18 @@ function phorum_switch_template($template = NULL, $template_path = NULL, $templa
     );
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_template()}.
+ */
+function phorum_get_template($template) {
+    return Phorum::API()->template($template);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_template_resolve()}.
+ */
+function phorum_get_template_file($template) {
+    return Phorum::API()->template->resolve($template);
+}
+
 ?>
