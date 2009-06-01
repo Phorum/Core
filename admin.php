@@ -94,12 +94,9 @@
                 $module = "tokenmissing";
             } else {
                 // update the token time
-                $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
-                $tmp_user = array(
-                			'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
-                            'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
-                            );            
-                phorum_api_user_save($tmp_user);                            
+                $phorum->user->save_settings(array(
+                    'admin_token_time' => time()
+                ));
             }
         }
 
