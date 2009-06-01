@@ -658,14 +658,18 @@ function do_spamhurdle($hurdle)
 function spamhurdle_blockerror()
 {
     global $PHORUM;
+    $phorum = Phorum::API();
+
     phorum_build_common_urls();
+
     $PHORUM["DATA"]["ERROR"] =
         $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["BlockError"];
-    include phorum_get_template("header");
+
+    include $phorum->template("header");
     $phorum->modules->hook("after_header");
-    include phorum_get_template("message");
+    include $phorum->template("message");
     $phorum->modules->hook("before_footer");
-    include phorum_get_template("footer");
+    include $phorum->template("footer");
     exit(0);
 }
 

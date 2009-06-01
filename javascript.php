@@ -181,14 +181,14 @@ foreach ($module_registrations as $id => $r)
                 // the cached template file if required. This is the easiest
                 // way to make this work correctly for nested template files.
                 ob_start();
-                include phorum_get_template($m[2]);
+                include $phorum->template($m[2]);
                 $module_registrations[$id]['content'] = ob_get_contents();
                 ob_end_clean();
 
                 // We use the mtime of the compiled template as the cache
                 // key if no specific cache key was set.
                 if (!isset($r['cache_key'])) {
-                    list ($php, $tpl) = phorum_get_template_file($m[2]);
+                    list ($php, $tpl) = $phorum->template->resolve($m[2]);
                     $mtime = @filemtime($php);
                     $r['cache_key'] = $mtime;
                     $module_registrations[$id]['cache_key'] = $mtime;

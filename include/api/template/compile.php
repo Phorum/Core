@@ -137,7 +137,7 @@ function phorum_api_template_compile($page, $infile, $outfile)
     $stage1 = "<?php
       if (" . implode(" || ", $checks) . ") {
           @unlink (\"$qstage1file\");
-          include phorum_get_template(\"$qpage\");
+          include Phorum::API()->template(\"$qpage\");
           return;
       } else {
           include \"$qstage2file\";
@@ -208,7 +208,7 @@ function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = 
         if ($only_once && isset($include_once[$page])) {
             $replace = '';
         } else {
-            list ($subout, $subin) = phorum_get_template_file($page);
+            list ($subout, $subin) = $phorum->template->resolve($page);
             if ($subin == NULL) {
                 $replace = $phorum->read_file($subout);
             } else {
@@ -343,8 +343,10 @@ function phorum_api_template_compile_pass2($template)
                 }
                 $variable = array_shift($tokens);
 
-                list ($value,$type) = phorum_api_template_compile_val2php($loopvars, $variable);
-                $repl = "<?php $include phorum_get_template($value); ?>";
+                list ($value,$type) = phorum_api_template_compile_val2php(
+                    $loopvars, $variable
+                );
+                $repl = "<?php $include Phorum::API()->template($value); ?>";
                 break;
 
             case "include_var":

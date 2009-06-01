@@ -142,11 +142,11 @@ function phorum_mod_bbcode_quote ($data)
 // appropriate place for this to work.
 function phorum_mod_bbcode_tpl_editor_disable_bbcode()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"]))
         return;
 
-    include(phorum_get_template('bbcode::disable_option'));
+    include Phorum::API()->template('bbcode::disable_option');
 }
 
 // Process "Disable BBcode" option from the message form.

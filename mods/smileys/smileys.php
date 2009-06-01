@@ -163,11 +163,11 @@ function phorum_mod_smileys_addon()
 // appropriate place for this to work.
 function phorum_mod_smileys_tpl_editor_disable_smileys()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     if (empty($PHORUM["mod_smileys"]["allow_disable_per_post"]))
         return;
 
-    include(phorum_get_template('smileys::disable_option'));
+    include(Phorum::API()->template('smileys::disable_option'));
 }
 
 // Process "Disable smileys" option from the message form.

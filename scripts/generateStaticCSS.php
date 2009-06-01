@@ -35,7 +35,7 @@ if(is_dir($filename)) {
 echo "Generating static CSS-file for Forum ".$PHORUM['forum_id']."\n";
 
 ob_start();
-include phorum_get_template('css');
+include $phorum->template('css');
 $css_str=ob_get_contents();
 ob_end_clean();
 

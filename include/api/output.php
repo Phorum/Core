@@ -104,7 +104,7 @@ function phorum_api_output($templates)
         'hooks'  => $GLOBALS['PHORUM']['hooks']
     );
 
-    include phorum_get_template('header');
+    include $phorum->template('header');
 
     /*
      * [hook]
@@ -147,7 +147,7 @@ function phorum_api_output($templates)
     }
 
     foreach($templates as $template){
-        include phorum_get_template($template);
+        include $phorum->template($template);
     }
 
     /*
@@ -187,7 +187,7 @@ function phorum_api_output($templates)
         $phorum->modules->hook('before_footer');
     }
 
-    include phorum_get_template('footer');
+    include $phorum->template('footer');
 
     /*
      * [hook]

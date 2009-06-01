@@ -378,7 +378,7 @@ if (!defined( "PHORUM_ADMIN" ))
     // Not loaded if we are running an external or scheduled script.
     if (!defined('PHORUM_SCRIPT'))
     {
-        require_once phorum_get_template('settings');
+        include $phorum->template('settings');
         $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
         $PHORUM["DATA"]["URL"]["CSS"] = $phorum->url(PHORUM_CSS_URL, "css");

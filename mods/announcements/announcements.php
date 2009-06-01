@@ -142,7 +142,7 @@ function phorum_setup_announcements ()
 
     // Build the announcements code.
     ob_start();
-    include phorum_get_template("announcements::announcements");
+    include $phorum->template("announcements::announcements");
     $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = ob_get_contents();
     ob_end_clean();
 }

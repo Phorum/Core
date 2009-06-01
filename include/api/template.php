@@ -118,6 +118,7 @@ function phorum_api_template_list($include_hidden = FALSE)
 function phorum_api_template_set($template = NULL, $template_path = NULL, $template_http_path = NULL)
 {
     global $PHORUM;
+    $phorum = Phorum::API();
 
     if ($template !== NULL) {
         $PHORUM['template'] = basename($template);
@@ -144,7 +145,7 @@ function phorum_api_template_set($template = NULL, $template_path = NULL, $templ
 
     // Load the settings file for the configured template.
     ob_start();
-    include phorum_get_template('settings');
+    include $phorum->template('settings');
     ob_end_clean();
 }
 // }}}
@@ -177,7 +178,7 @@ function phorum_api_template($page)
     if ($page === NULL || $page == "") {
         print "<html><head><title>Phorum Template Error</title><body>";
         print "<h1>Phorum Template Error</h1>";
-        print "phorum_get_template() was called with an empty page name.<br/>";
+        print "phorum_api_template() was called with an empty page name.<br/>";
         print "This might indicate a template problem.<br/>";
         if (function_exists('debug_print_backtrace')) {
             print "Here's a backtrace that might help finding the error:";
@@ -235,7 +236,7 @@ function phorum_api_template_resolve($page)
      *
      * [description]
      *     Allow modules to have influence on the results of the
-     *     phorum_get_template_file() function. This function translates
+     *     phorum_api_template_resolve() function. This function translates
      *     a page name (e.g. <literal>list</literal>) into a filename
      *     to use as the template source for that page (e.g.
      *      <filename>/path/to/phorum/templates/emerald/list.tpl</filename>).
@@ -244,8 +245,8 @@ function phorum_api_template_resolve($page)
      *     Page output
      *
      * [when]
-     *     At the start of the phorum_get_template_file() function
-     *     from <filename>common.php</filename>.
+     *     At the start of the api_template_resolve() function
+     *     from <filename>include/api/template.php</filename>.
      *
      * [input]
      *     An array containing two elements:
