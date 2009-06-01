@@ -250,8 +250,7 @@ Contents:
 
    Warning:
    fopen(/tmp/tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
-   failed to open stream: Permission denied in
-   /path/to/phorum/include/templates.php on line 184
+   failed to open stream: Permission denied in ...
 
    If you change the the Cache Directory, the best bet is to set it
    to ./cache and make that dir (that is already there in the Phorum dir)
@@ -275,8 +274,7 @@ Contents:
 
    Warning:
    fopen(c:\windows\temp\tpl-default-header-a72fb9dd209153aa9b07d3eb3871.php):
-   failed to open stream: Permission denied in
-   c:\path\to\phorum\include\templates.php on line 184
+   failed to open stream: Permission denied in ...
 
    You will need to change the Cache Directory. The Phorum team is not
    very familiar with Windows as a web server platform. We can only tell

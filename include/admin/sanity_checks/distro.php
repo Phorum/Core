@@ -101,7 +101,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/posting/check_permissions.php',
     'include/posting/request_first.php',
     'include/posting/request_followup.php',
-    'include/templates.php',
     'include/thread_info.php',
     'include/thread_sort.php',
     'include/upload_functions.php',
@@ -181,6 +180,7 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
     'include/timing.php',            // moved to Profiler API
     'include/feed_functions.php',    // moved to Feed API
     'include/profile_functions.php', // moved to Ban API
+    'include/templates.php',         // moved to include/api/template.php
 );
 
 // A list of database layer files that ship with Phorum.

@@ -519,8 +519,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
           <screen>
 Warning:
 fopen(/tmp/tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
-failed to open stream: permission denied in
-/path/to/phorum/include/templates.php on line 184</screen>
+failed to open stream: permission denied in ...</screen>
           If you want to change the cache directory settings, we advise
           you to change it to <filename>./cache</filename> (this directory
           is already in the Phorum directory).
@@ -556,8 +555,7 @@ shell&gt; <literal>chmod 777 cache</literal></screen>
           <screen>
 Warning:
 fopen(c:\windows\temp\tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
-failed to open stream: permission denied in
-c:\path\to\phorum\include\templates.php on line 184</screen>
+failed to open stream: permission denied in ...</screen>
           In that case, you will have to change the cache directory
           setting to point to a valid location. We advise you to change
           it to <filename>./cache</filename> (this directory is already
