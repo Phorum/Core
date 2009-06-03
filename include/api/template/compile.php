@@ -191,6 +191,8 @@ function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = 
     preg_match_all("/\{include\s+(.+?)\}/is", $template, $matches);
     for ($i=0; $i<count($matches[0]); $i++)
     {
+        $tokens = phorum_api_template_compile_tokenize($matches[1][$i]);
+
         // Find out if we have a static value for the include statement.
         // Dynamic values are handled in pass 2.
         $only_once = false;
@@ -198,7 +200,8 @@ function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = 
             $only_once = true;
             array_shift($tokens);
         }
-        list ($page, $type) = phorum_api_template_compile_val2php(NULL,$tokens[0]);
+        list ($page, $type) =
+            phorum_api_template_compile_val2php(NULL, $tokens[0]);
         if ($type == "variable" || $type == "constant") continue;
 
         // Since $value contains PHP code now, we have to resolve that
