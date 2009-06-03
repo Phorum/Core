@@ -211,7 +211,7 @@ if ($ncount)
     {
         print ".";
         $PHORUM["user"]["user_id"] = $user_id;
-        phorum_db_newflag_add_read($markread);
+        $phorum->newflags->markread($markread, PHORUM_MARKREAD_MESSAGES);
     }
     print "\n";
 }
