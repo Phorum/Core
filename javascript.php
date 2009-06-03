@@ -28,19 +28,25 @@ phorum_build_common_urls();
 $module_registrations = array();
 
 // Add the jQuery JavaScript library code.
-// By using a cache_key, we prevent the need for filemtime checking.
 $module_registrations[] = array(
     'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery-1.2.6.min.js)',
-    'cache_key' => '1.2.6.min'
+    'source'    => 'file(include/javascript/jquery-1.3.2.min.js)',
+    'cache_key' => '1.3.2.min'
 );
 
 // Add the jQuery JSON plugin.
-// By using a cache_key, we prevent the need for filemtime checking.
 $module_registrations[] = array(
     'module'    => 'core',
     'source'    => 'file(include/javascript/jquery.json-1.3.min.js)',
     'cache_key' => '1.3.min'
+);
+
+
+// Add the jQuery bgiframe plugin.
+$module_registrations[] = array(
+    'module'    => 'core',
+    'source'    => 'file(include/javascript/jquery.bgiframe-2.1.1.min.js)',
+    'cache_key' => '2.1.1.min'
 );
 
 // Add the Phorum JavaScript library.
