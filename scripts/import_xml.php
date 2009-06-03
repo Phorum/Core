@@ -11,8 +11,7 @@ if(empty($opts["f"])){
     help("Filename is required");
 }
 
-if(!file_exists($opts["f"])){
-    help($opts["f"]." not found");
+if(!file_exists($opts["f"])){ help($opts["f"]." not found");
 }
 
 $fp = fopen($opts["f"], "r");
@@ -30,8 +29,6 @@ chdir(dirname(dirname(__FILE__)));
 require_once "./common.php";
 
 include_once "./include/api/forums.php";
-include_once "./include/api/user.php";
-include_once "./include/thread_info.php";
 
 chdir($pwd);
 
@@ -364,7 +361,7 @@ foreach($xml as $type => $data) {
 
                 }
 
-                phorum_update_thread_info($thread);
+                $phorum->thread->update_metadata($thread);
 
                 $done++;
                 progress($done, count($data->topic));

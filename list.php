@@ -226,10 +226,8 @@ if($rows == null)
             $rows[$key]["new"] = "";
 
         }
-        // don't move this up.  We want it to be conditional.
-        require_once './include/thread_sort.php';
 
-        $rows = phorum_sort_threads($rows);
+        $rows = $phorum->thread->sort($rows);
 
     } else {
 

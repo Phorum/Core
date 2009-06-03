@@ -19,8 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/thread_info.php';
-
 // Create a message which can be used by the database library.
 $dbmessage = array(
     "message_id"    => $message["message_id"],
@@ -254,7 +252,7 @@ if (! $message["parent_id"] &&
 }
 
 // Update thread info.
-phorum_update_thread_info($message['thread']);
+$phorum->thread->update_metadata($message['thread']);
 
 // Update thread subscription.
 if (isset($message["subscription"]))

@@ -21,7 +21,6 @@ define('phorum_page','moderation');
 require_once './common.php';
 
 require_once './include/moderation_functions.php';
-require_once './include/thread_info.php';
 require_once './include/email_functions.php';
 
 if(!phorum_check_read_common()) {
@@ -621,7 +620,7 @@ switch ($mod_step)
         phorum_db_update_message($msgthd_id, $newpost);
 
         // updating the thread-info
-        phorum_update_thread_info($old_message['thread']);
+        $phorum->thread->update_metadata($old_message['thread']);
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
@@ -725,7 +724,7 @@ switch ($mod_step)
         }
 
         // updating the thread-info
-        phorum_update_thread_info($old_message['thread']);
+        $phorum->thread->update_metadata($old_message['thread']);
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
@@ -808,7 +807,7 @@ switch ($mod_step)
         }
 
         // updating the thread-info
-        phorum_update_thread_info($old_message['thread']);
+        $phorum->thread->update_metadata($old_message['thread']);
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "-$num_hidden");
@@ -910,7 +909,7 @@ switch ($mod_step)
             // change forum_id for the following calls to update the right forum
             $PHORUM["forum_id"] =$target['forum_id'];
             // update message count / stats
-            phorum_update_thread_info($target['thread']);
+            $phorum->thread->update_metadata($target['thread']);
             phorum_db_update_forum_stats(true);
 
             /*
@@ -970,8 +969,8 @@ switch ($mod_step)
            settype($_POST['thread'], "int");
            phorum_db_split_thread($_POST['message'],$_POST['forum_id']);
            // update message count / stats
-           phorum_update_thread_info($_POST['thread']);
-           phorum_update_thread_info($_POST['message']);
+           $phorum->thread->update_metadata($_POST['thread']);
+           $phorum->thread->update_metadata($_POST['message']);
            phorum_db_update_forum_stats(true);
 
             /*

@@ -108,7 +108,6 @@ $CONVERT['attachmentdir'] = "/full/path/to/files";
 set_time_limit(0);
 
 require './common.php';
-require './include/thread_info.php';
 require './scripts/phorum3_in.php';
 
 // no need to change anything below this line
@@ -190,7 +189,7 @@ foreach($forums as $forumid => $forumdata) {
         while ($newmessage = phorum_convert_getNextMessage($res,$forumdata['table_name'])) {
 
             if(phorum_db_post_message($newmessage, true)) {
-              phorum_update_thread_info($newmessage['thread']);
+              $phorum->thread->update_metadata($newmessage['thread']);
               echo "+";
               flush();
               if ($count == 50) {

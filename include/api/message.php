@@ -30,12 +30,9 @@
 
 if (!defined('PHORUM')) return;
 
-/**
- * Initialize the variables that are used by the message API layer.
- */
-global $PHORUM;
-
 // {{{ Variable definitions
+
+global $PHORUM;
 
 /**
  * The MFLD_* definitions indicate the position of the configation

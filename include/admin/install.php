@@ -502,9 +502,7 @@ switch ($step){
 
             phorum_db_post_message($test_message);
 
-            require_once './include/thread_info.php';
-
-            phorum_update_thread_info($test_message["thread"]);
+            $phorum->thread->update_metadata($test_message["thread"]);
 
             phorum_db_update_forum_stats(true);
 

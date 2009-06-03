@@ -17,8 +17,6 @@ define('PHORUM_ADMIN', 1);
 require_once(dirname(__FILE__).'/../include/api.php');
 $phorum = Phorum::API();
 
-require_once(PHORUM_PATH.'/include/thread_info.php');
-
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();
 
@@ -55,7 +53,7 @@ $size = strlen($count_total);
 $count = 0;
 while ($row = $phorum->db->fetch_row($res, DB_RETURN_ROW)) {
     $PHORUM['forum_id'] = $row[1];
-    phorum_update_thread_info($row[0]);
+    $phorum->thread->update_metadata($row[0]);
 
     $count ++;
 

@@ -1,7 +1,5 @@
 <?php
 
-include './include/thread_info.php';
-
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
     ini_set("memory_limit","64M");
@@ -19,7 +17,7 @@ $res = phorum_db_interact(
 // Update the thread info for each thread.
 while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
     $GLOBALS["PHORUM"]["forum_id"] = $row[1];
-    phorum_update_thread_info($row[0]);
+    Phorum::API()->thread->update_metadata($row[0]);
 }
 
 ?>

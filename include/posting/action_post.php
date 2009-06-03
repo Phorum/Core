@@ -19,7 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/thread_info.php';
 require_once './include/email_functions.php';
 
 // Set some values.
@@ -173,7 +172,7 @@ if ($success)
         }
     }
 
-    phorum_update_thread_info($message["thread"]);
+    $phorum->thread->update_metadata($message["thread"]);
 
     /*
      * [hook]

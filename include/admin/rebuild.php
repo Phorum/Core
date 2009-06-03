@@ -53,8 +53,6 @@ if ( count( $_POST ) ) {
     }
 
     if(isset($_POST['rebuild_metadata']) && !empty($_POST['rebuild_metadata'])) {
-        require_once './include/thread_info.php';
-
         // we need to rebuild the forumstats
         $forums = phorum_api_forums_get(NULL, NULL, NULL, NULL, PHORUM_FLAG_INCLUDE_INACTIVE);
 
@@ -87,7 +85,7 @@ if ( count( $_POST ) ) {
                     if($num_threads) {
 
                         foreach($threads as $tid => $tdata) {
-                            phorum_update_thread_info($tid);
+                            $phorum->thread->update_metadata($tid);
                         }
 
                         $threads_updated+=$num_threads;

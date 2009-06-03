@@ -616,14 +616,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     if($PHORUM["threaded_read"]) {
 
-        // don't move this up.  We want it to be conditional.
-        require_once './include/thread_sort.php';
-
         // run read-threads mods
         if (isset($PHORUM["hooks"]["readthreads"]))
             $messages = $phorum->modules->hook("readthreads", $messages);
 
-        $messages = phorum_sort_threads($messages);
+        $messages = $phorum->thread->sort($messages);
 
         // we have to loop again and create the urls for the Next and Previous links.
         foreach($messages as $key => $row) {

@@ -47,7 +47,6 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 
 // include required files
 require_once('./common.php');
-require_once('./include/thread_info.php');
 
 // Make sure that the output is not buffered.
 $phorum->buffer->clear();
@@ -179,7 +178,7 @@ if ($tcount)
             $parent = $treemsgs[array_rand($treemsgs)];
         }
 
-        phorum_update_thread_info($thread);
+        $phorum->thread->update_metadata($thread);
 
         $tcount --;
     }

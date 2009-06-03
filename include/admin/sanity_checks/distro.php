@@ -94,8 +94,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/javascript/jquery.json-1.3.min.js',
     'include/javascript/jquery-1.2.6.min.js',
     'include/moderation_functions.php',
-    'include/thread_info.php',
-    'include/thread_sort.php',
     'include/upload_functions.php',
     'include/version_functions.php',
 
@@ -211,6 +209,8 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
       'include/feed_functions.php',    // moved to Feed API
       'include/profile_functions.php', // moved to Ban API
       'include/templates.php',         // moved to include/api/template.php
+      'include/thread_info.php',       // moved to include/api/thread.php
+      'include/thread_sort.php',       // moved to include/api/thread.php
     )
 );
 

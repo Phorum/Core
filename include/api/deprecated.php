@@ -237,4 +237,11 @@ function phorum_get_template_file($template) {
     return Phorum::API()->template->resolve($template);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_thread_update_metadata()}.
+ */
+function phorum_update_thread_info($thread_id) {
+    return Phorum::API()->thread->update_metadata($thread_id);
+}
+
 ?>

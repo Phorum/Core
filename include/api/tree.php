@@ -42,7 +42,7 @@ if (!defined('PHORUM')) return;
  * the elements can be sorted by their unique identifier.
  *
  * If a node is encountered for which the provided parent does not exist,
- * then the node is linkd to its branch node instead of its parent.
+ * then the node is linked to its branch node instead of its parent.
  * If the branch node doesn't exist as well, then the node will be
  * linked to the root of the tree. In forum terms, think of the root
  * as a forum, the branch node as a thread and the other nodes as
