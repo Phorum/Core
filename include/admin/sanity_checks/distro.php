@@ -201,6 +201,7 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
       'include/api/file_storage.php',  // renamed to include/api/file.php
       'include/api/custom_profile_fields.php', // Moved to CustomField API
       'include/phorum_get_url.php',    // moved to URL API
+      'include/forum_functions.php',   // moved to Forums API
       'include/format_functions.php',  // moved to Message and Format API
       'include/index_flat.php',        // renamed to include/index/flat.php
       'include/index_classic.php',     // renamed to include/index/flat.php

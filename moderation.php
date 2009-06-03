@@ -379,8 +379,6 @@ switch ($mod_step)
 
    case PHORUM_MOVE_THREAD: // this is the first step of a message move
 
-        include_once './include/forum_functions.php';
-
         $message = phorum_db_get_message($msgthd_id);
 
         $PHORUM['DATA']['URL']["ACTION"]=$phorum->url(PHORUM_MODERATION_ACTION_URL);
@@ -404,7 +402,8 @@ switch ($mod_step)
         // mod should only be able to move to forums he also moderates
 
         // get the forumlist
-        $forums=phorum_build_forum_list();
+        $forums = $phorum->forums->tree();
+
         // ignore the current forum
         unset($forums[$PHORUM["forum_id"]]);
         $PHORUM['DATA']['FORUMS']=$forums;

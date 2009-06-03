@@ -20,8 +20,6 @@
 define('phorum_page','search');
 require_once './common.php';
 
-require_once './include/forum_functions.php';
-
 if(!phorum_check_read_common()) {
   return;
 }

@@ -244,4 +244,11 @@ function phorum_update_thread_info($thread_id) {
     return Phorum::API()->thread->update_metadata($thread_id);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_forums_tree()}.
+ */
+function phorum_build_forum_list() {
+    return Phorum::API()->forums->tree();
+}
+
 ?>
