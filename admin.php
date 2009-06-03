@@ -94,7 +94,7 @@
                 $module = "tokenmissing";
             } else {
                 // update the token time
-                $phorum->user->save_settings(array(
+                phorum_api_user_save_settings(array(
                     'admin_token_time' => time()
                 ));
             }
