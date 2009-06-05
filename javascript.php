@@ -17,7 +17,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-define('phorum_page','javascript');
+define('phorum_page', 'javascript');
 require_once './common.php';
 
 // So we can use {URL->HTTP_PATH} in the templates.
