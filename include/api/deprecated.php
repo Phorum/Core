@@ -257,4 +257,19 @@ function phorum_build_forum_list() {
 function phorum_email_user($addresses, $data) {
     return Phorum::API()->mail($addresses, $data);
 }
+
+/**
+ * @deprecated Replaced by {@link phorum_api_sign()}.
+ */
+function phorum_generate_data_signature($data) {
+    return Phorum::API()->sign($data);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_sign_check()}.
+ */
+function phorum_check_data_signature($data, $signature) {
+    return Phorum::API()->sign_check($data, $signature);
+}
+
 ?>
