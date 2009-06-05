@@ -59,41 +59,11 @@ if(count($_POST) && (!defined("PHORUM_INSTALL") || isset($_POST["do_modules_upda
 // Retrieve a list of available modules.
 $list = phorum_api_modules_list();
 
-// Show module problems to the admin. These are serious issues, which we
-// do not want to stow away like the deprecated hooks reporting below.
+// Show module problems to the admin.
 if (count($list['problems'])) {
     foreach ($list['problems'] as $problem) {
         phorum_admin_error($problem);
     }
-}
-
-// Show module warnings to the admin in a non intrusive way. In a lot
-// of cases, the admin won't be the one to fix the problems, therefore
-// we do not want to display too much noise about warnings here.
-if (count($list['deprecated']))
-{
-    $warn = "One or more deprecated hook names were detected in the
-             installed modules. Although the modules will still work,
-             we advice you to update the hook names in the module
-             info and/or contact the module author.<br/>
-             Deprecated hook(s):
-             <ul><li>".implode('</li><li>',$list['deprecated']).'</li></ul>';?>
-
-    <div id="showmodwarnings" class="PhorumAdminError">
-    One or more module warnings found.
-    <script type="text/javascript">
-    function toggle_module_warnings() {
-        document.getElementById('modwarnings').style.display='block';
-        document.getElementById('showmodwarnings').style.display='none'
-        return false;
-    }
-    </script>
-    <a href="" onclick="return toggle_module_warnings()">Click here to see them</a>
-    </div>
-    <div id="modwarnings" class="PhorumAdminError" style="display:none">
-    <?php print $warn ?>
-    </div>
-    <?php
 }
 
 include_once "./include/admin/PhorumInputForm.php";
