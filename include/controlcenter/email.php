@@ -72,7 +72,7 @@ if ( count( $_POST ) ) {
             'mailcode'      => $conf_code,
             'cc_url'        => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
             );
-            phorum_email_user(array($_POST['email']),$maildata);
+            $phorum->mail($_POST['email'], $maildata);
 
             // Remember this for the template.
             $email_temp_part = $_POST['email'];

@@ -251,4 +251,10 @@ function phorum_build_forum_list() {
     return Phorum::API()->forums->tree();
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_mail()}.
+ */
+function phorum_email_user($addresses, $data) {
+    return Phorum::API()->mail($addresses, $data);
+}
 ?>

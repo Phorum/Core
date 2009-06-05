@@ -43,7 +43,9 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
     'pre_edit'         => 'before_edit',
     'post_post'        => 'after_post',
     'user_check_login' => 'user_authenticate',
-    'hide'             => 'hide_thread'
+    'hide'             => 'hide_thread',
+    'email_user_start' => 'mail_prepare',
+    'send_mail'        => 'mail_send'
 );
 // }}}
 

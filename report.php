@@ -84,7 +84,7 @@ if(is_array($message) && count($message)) {
                 if (isset($PHORUM["hooks"]["report"]))
                     $mail_data = $phorum->modules->hook("report", $mail_data);
 
-                phorum_email_user($mail_users, $mail_data);
+                $phorum->mail($mail_users, $mail_data);
 
                 $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
                 $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];

@@ -217,7 +217,7 @@ function phorum_api_error_database($error)
             );
 
             $adminmail = $PHORUM['system_email_from_address'];
-            phorum_email_user(array($adminmail), $data);
+            $phorum->mail($adminmail, $data);
 
             if (PHP_SAPI != 'cli') {
                 print "The administrator of this forum has been<br/>" .

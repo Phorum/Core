@@ -324,7 +324,7 @@ if (count($_POST)) {
                             ),$lang['VerifyRegEmailBody2']), 72);
                     }
 
-                    phorum_email_user(array($userdata["email"]), $maildata);
+                    $phorum->mail($userdata["email"], $maildata);
                 }
 
                 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];

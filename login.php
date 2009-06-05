@@ -200,7 +200,7 @@ if (count($_POST) > 0) {
                        wordwrap($lang["VerifyRegEmailBody2"], 72);
                 }
 
-                phorum_email_user(array($user["email"]), $maildata);
+                $phorum->mail($user["email"], $maildata);
 
                 $okmsg = $PHORUM['DATA']['LANG']["RegVerifyEmail"];
                 $template="message";
@@ -260,7 +260,7 @@ if (count($_POST) > 0) {
                 }
 
                 $maildata['mailsubject'] = $PHORUM['DATA']['LANG']["LostPassEmailSubject"];
-                phorum_email_user(array( 0 => $user['email'] ), $maildata);
+                $phorum->mail($user['email'], $maildata);
 
                 $okmsg = $PHORUM['DATA']['LANG']["LostPassSent"];
 
