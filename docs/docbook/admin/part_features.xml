@@ -155,29 +155,6 @@
      your webserver probably lacks pathinfo support and you cannot use
      this feature.
    </para>
-   <para>
-     <emphasis role="bold">Phorum PHP extension support:</emphasis>
-     For very busy Phorum web sites, a special PHP extension can be installed
-     for speeding up some time and memory consuming Phorum tasks. This
-     extension needs to be installed in the global PHP extensions directory
-     (<filename>/usr/lib/php/modules</filename>), so you either need to be
-     the system administrator yourself or have to get help from a willing
-     administrator.
-   </para>
-   <para>
-     The extension source can be found in the directory "extension_src" in
-     the Phorum package. See the README file in that directory for
-     compilation and installation instructions.
-   </para>
-   <para>
-     If the extension is successfully installed, then you will see a green
-     square in the option line. If you see a red square, then there is no
-     use in enabling this option, because Phorum was unable to detect a
-     working extension in that case.
-   </para>
-   <para>
-   Most people can keep this option set to disabled.
-   </para>
 
       <para>
        <emphasis role="bold">Phorum HTML Title:</emphasis>

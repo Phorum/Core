@@ -47,26 +47,6 @@ function phorum_sort_threads($rows)
     $cut_indentfactor = isset($PHORUM['TMP']['subject_cut_indentfactor'])
                       ? $PHORUM['TMP']['subject_cut_indentfactor'] : 2;
 
-    // ------------------------------------------------------------------
-    // Use the Phorum PHP extension if it is available
-    // ------------------------------------------------------------------
-
-    if (!empty($PHORUM["php_phorum_extension"]) &&
-        function_exists('phorum_ext_treesort')) {
-
-        phorum_ext_treesort(
-            $rows, "message_id", "parent_id",
-            $indentmultiplier,
-            "subject", $cut_min, $cut_max, $cut_indentfactor
-        );
-
-        return $rows;
-    }
-
-    // ------------------------------------------------------------------
-    // PHP extension not available. Revert to the pure PHP solution.
-    // ------------------------------------------------------------------
-
     $missing_parents = array();
 
     foreach($rows as $row){
@@ -150,61 +130,5 @@ function phorum_sort_threads($rows)
 
     return $order;
 }
-
-
-/*
-// =========================================================================
-//  This is the old recursive tree sorting routine, which was replaced by
-//  the non-recursive code above.
-
-function phorum_recursive_sort_threads($rows)
-{
-    foreach($rows as $row){
-        $rows[$row["parent_id"]]["children"][]=$row["message_id"];
-    }
-
-    $sorted_rows=array(0=>array());
-
-    _phorum_recursive_sort($rows, $sorted_rows);
-
-    unset($sorted_rows[0]);
-
-    return $sorted_rows;
-
-}
-
-
-// not to be called directly.  Call phorum_sort_threads
-
-function _phorum_recursive_sort($rows, &$threads, $seed=0, $indent=0)
-{
-    global $PHORUM;
-    global $x;
-
-    $x++;
-
-    if($seed>0){
-        $threads[$rows[$seed]["message_id"]]=$rows[$seed];
-
-        // new style of indenting by padding-left
-        $threads[$rows[$seed]["message_id"]]["indent_cnt"]=$indent*$PHORUM['TMP']['indentmultiplier'];
-        if($indent < 31) {
-            $wrapnum=80-($indent*2);
-        } else {
-            $wrapnum=20;
-        }
-        $threads[$rows[$seed]["message_id"]]["subject"]=wordwrap($rows[$seed]['subject'],$wrapnum," ",1);
-
-        $indent++;
-
-    }
-    if(isset($rows[$seed]["children"])){
-        foreach($rows[$seed]["children"] as $child){
-            _phorum_recursive_sort($rows, $threads, $child, $indent);
-        }
-    }
-}
-*/
-
 
 ?>

@@ -34,14 +34,6 @@ define( "PHORUM_SCHEMA_VERSION", "2007031400" );
 // our database patch level in format of year-month-day-serial
 define( "PHORUM_SCHEMA_PATCHLEVEL", "2008091900" );
 
-// The required version of the Phorum PHP extension. This version is updated
-// if internal changes of Phorum require the extension library to be upgraded
-// for compatibility. We follow PHP's schema of using the date at which an
-// important internal change  was done as the extension's version number.
-// This version number should match the one in the php_phorum.h header file
-// for the module.
-define( "PHORUM_EXTENSION_VERSION", "20070522" );
-
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
 $PHORUM = array
@@ -210,40 +202,9 @@ if(!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
 $PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
 require_once( "./include/cache/$PHORUM[cache_layer].php" );
 
-// Try to load the Phorum PHP extension, if has been enabled in the admin.
-// As a precaution, never load it from the admin code (so the extension
-// support can be disabled at all time if something unexpected happens).
-if (!defined('PHORUM_ADMIN') && !empty($PHORUM["php_phorum_extension"]))
-{
-    // Load the extension library.
-    if (! extension_loaded('phorum')) {
-        @dl('phorum.so');
-    }
-
-    // Check if the version of the PHP extension matches the
-    // one required by the Phorum installation.
-    if (extension_loaded('phorum')) {
-        $ext_ver = phorum_ext_version();
-        if ($ext_ver != PHORUM_EXTENSION_VERSION) {
-            // The version does not match. Disable the extension support.
-            phorum_db_update_settings(array("php_phorum_extension" => 0));
-            print "<html><head><title>Phorum Extension Error</title></head><body>";
-            print "<h1>Phorum Extension Error</h1>" .
-                  "The Phorum PHP extension was loaded, but its version<br/>" .
-                  "does not match the Phorum version. Therefore, the<br/>" .
-                  "extension has now be disabled. Reload this page to continue.";
-            print "</body></html>";
-            exit(0);
-        }
-    }
-}
-
-// Setup phorum_get_url(): this function is used for generating all Phorum
-// related URL's. It is loaded conditionally, to make it possible to override
-// it from the phorum PHP extension.
-if (!function_exists('phorum_get_url')) {
-    require_once("./include/phorum_get_url.php");
-}
+// Load phorum_get_url().
+// This function is used for generating all Phorum URLs.
+require_once("./include/phorum_get_url.php");
 
 // Setup the template path and http path. These are put in a variable to give
 // module authors a chance to override them. This can be especially useful
