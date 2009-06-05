@@ -20,10 +20,6 @@
 /**
  * This script implements the Phorum mail API.
  *
- * The mail API is used for sending mail messages. It is currently under
- * development. Functions from Phorum's include/email_functions.php file
- * will be tranferred to this API layer.
- *
  * @package    PhorumAPI
  * @subpackage Mail
  * @copyright  2009, Phorum Development Team
@@ -39,6 +35,390 @@ if (!defined('PHORUM')) return;
  * (pathetic, I know).
  */
 define('RFC2045_WRAPLEN', 70);
+
+// {{{ Function: phorum_api_mail()
+/**
+ * Send an mail message to one or more mail addresses.
+ *
+ * This function takes an array of mail addresses and a data array as
+ * its arguments. The fields that can be used in the data array are:
+ *
+ * <ul>
+ *   <li><b>from_address</b> (optional)<br/>
+ *       Used as the From: header for the mail. If this
+ *       field is absent or empty, then a From: header is constructed
+ *       based on Phorum's mail settings. Note: when there are
+ *       special (non-ASCII) characters in the from address, then
+ *       the calling code has to take care of correctly escaping the
+ *       contents (see also {@link phorum_api_mail_encode_header}).</li>
+ *   <li><b>mailsubject</b> (mandatory)<br/>
+ *       Used as the Subject: header for the mail.</li>
+ *   <li><b>mailmessage</b> (mandatory)<br/>
+ *       The body for the mail.
+ *   <li><b>msgid</b> (optional)<br/>
+ *       Used as the Message-ID: header for the mail. A Message-ID header
+ *       value looks like "msgid@hostname". If the "@hostname" part is
+ *       not available in the provided msgid, then that part is added by this
+ *       function automatically. If this field is absent, then a random
+ *       Message-ID will automatically be generated.</li>
+ *   <li><b>custom_headers</b> (optional)<br/>
+ *       This is a string, containing extra mail headers for the mail
+ *       message. Multiple headers must be separated by a single
+ *       newline ("\n") character. The string must not end with a newline.</li>
+ * </ul>
+ *
+ * Some extra fields that are filled by Phorum code for
+ * use by the <literal>mail_prepare</literal> hook:
+ * <ul>
+ *   <li><b>mailmessagetpl</b> (optional)<br/>
+ *     The name of the language string that was used as a template
+ *     for the "mailmessage" field.</li>
+ *   <li><b>mailsubjecttpl</b> (optional)<br/>
+ *     The name of the language string that was used as a template
+ *     for the "mailsubject" field.</li>
+ *   <li><b>language</b> (optional)<br/>
+ *       The name of the language that is used for the mail.
+ *       This information is provided, because different users might
+ *       be using the forums in a different language.</li>
+ * </ul>
+ *
+ * Any other fields that are in the data are used for doing text
+ * replacements in the mail subject and mail message body. For each
+ * key/value pair in the array, a global replacement of "%key%" with
+ * "value" is performed on the subject and body. What exact key/value
+ * pairs are available depends on the calling code.
+ *
+ * <b>Example call:</b>
+ *
+ * <code>
+ * phorum_api_mail(
+ *     'john.doe@example.com',
+ *     array(
+ *         'from_address' => 'jane.doe@example.com',
+ *         'mailsubject'  => 'Get home early today!',
+ *         'mailmessage'  => 'I am baking cookies, so do not let me wait.'
+ *     )
+ * );
+ * </code>
+ *
+ * @param string|array $addresses
+ *     A single recipient mail address or an array containing the
+ *     recipient mail addresses.
+ *
+ * @param array $data
+ *     An array containing data for the mail message. See the description
+ *     of the {@link phorum_api_mail()} function for a description of
+ *     the contents of this array.
+ *
+ * @return integer
+ *     The number of recipients to which the message was sent.
+ */
+function phorum_api_mail($addresses, $data)
+{
+    global $PHORUM;
+    $phorum = Phorum::API();
+
+    // Turn a single $address into an array.
+    if (!is_array($addresses)) {
+        $addresses = array($addresses);
+    }
+
+    // Check mandatory field.
+    if (!isset($data['mailsubject'])) trigger_error(
+        'phorum_api_mail(): The mail function was called without a ' .
+        'mail subject in the "mailsubject" field.',
+        E_USER_ERROR
+    );
+    if (!isset($data['mailmessage'])) trigger_error(
+        'phorum_api_mail(): The mail function was called without a ' .
+        'mail message in the "mailmailmessage" field.',
+        E_USER_ERROR
+    );
+
+    /*
+     * [hook]
+     *     mail_prepare
+     *
+     * [description]
+     *     This hook is run at the very beginning of the function 
+     *     <literal>phorum_api_mail()</literal> and is therefore called for
+     *     <emphasis>every</emphasis> mail that is sent from Phorum.
+     *     Modules can fully change the list of mail addresses and the
+     *     message data. All changes will propagate to the workings of
+     *     the <literal>phorum_api_mail()</literal> function.
+     *
+     * [category]
+     *     Mail
+     *
+     * [when]
+     *     In the file <filename>include/api/mail.php</filename> at the
+     *     start of <literal>phorum_api_mail()</literal>.
+     *
+     * [input]
+     *     An array containing:
+     *     <ul>
+     *     <li>An array of addresses.</li>
+     *     <li>An array containing the data for the message.</li>
+     *     </ul>
+     *
+     * [output]
+     *     Same as input, possibly modified.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_mail_prepare ($addresses, $data) 
+     *     {
+     *         global $PHORUM;
+     *
+     *         // Add a disclaimer to the end of every mail message.
+     *         $data["mailmessage"] .= $PHORUM["mod_foo"]["mail_disclaimer"];
+     *
+     *         return array($addresses, $data);
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM['hooks']['mail_prepare'])) {
+        list ($addresses,$data) = $phorum->modules->hook(
+            'mail_prepare', array($addresses,$data)
+        );
+    }
+
+    // Clear some variables that are only meant as information for
+    // the mail_prepare hook.
+    unset($data['mailmessagetpl']);
+    unset($data['mailsubjecttpl']);
+    unset($data['language']);
+
+    // ----------------------------------------------------------------------
+    // Generate an RFC compliant Message-ID.
+    // ----------------------------------------------------------------------
+
+    # Try to find a useful hostname to use in the Message-ID.
+    $host = '';
+    if (isset($_SERVER['HTTP_HOST'])) {
+        $host = $_SERVER['HTTP_HOST'];
+    } else if (function_exists('posix_uname')) {
+        $sysinfo = @posix_uname();
+        if (!empty($sysinfo['nodename'])) {
+            $host .= $sysinfo['nodename'];
+        }
+        if (!empty($sysinfo['domainname'])) {
+            $host .= $sysinfo['domainname'];
+        }
+    } else if (function_exists('php_uname')) {
+        $host = @php_uname('n');
+    } else if (($envhost = getenv('HOSTNAME')) !== false) {
+        $host = $envhost;
+    }
+    if (empty($host)) {
+        $host = 'webserver';
+    }
+
+    // Use a provided message id. 
+    if (isset($data['msgid']))
+    {
+        $messageid = "<{$data['msgid']}@$host>";
+        unset($data['msgid']);
+    }
+    // Generate a random message id.
+    else
+    {
+        $l = localtime(time());
+        $l[4]++; $l[5]+=1900;
+        $stamp = sprintf(
+            "%d%02d%02d%02d%02d",
+            $l[5], $l[4], $l[3], $l[2], $l[1]
+        );
+        $rand = substr(md5(microtime()), 0, 14);
+        $messageid = "<$stamp.$rand@$host>";
+    }
+    $messageid_header="Message-ID: $messageid";
+
+    // ----------------------------------------------------------------------
+    // Determine the From: header for the mail.
+    // ----------------------------------------------------------------------
+
+    // The "from_address" data field can be used to provide a specific
+    // From: header value. If this field is absent or empty, then the
+    // header value is constructed based on the system_email_* settings.
+    if (!isset($data['from_address']) || trim($data['from_address']) == '')
+    {
+        $from_name = trim($PHORUM['system_email_from_name']);
+        if ($from_name != '')
+        {
+            // Handle (Quoted-Printable) encoding of the from name.
+            // Mail headers can not contain 8-bit data as per RFC821.
+            $from_name = phorum_api_mail_encode_header($from_name, "\t");
+
+            $prefix  = $from_name.' <';
+            $postfix = '>';
+        } else {
+            $prefix = $postfix = '';
+        }
+
+        $data['from_address'] =
+            $prefix . $PHORUM['system_email_from_address'] . $postfix;
+    }
+
+    $from_address = $data['from_address'];
+    unset($data['from_address']);
+
+    // ----------------------------------------------------------------------
+    // Determine the Subject: header and mail body for the mail.
+    // ----------------------------------------------------------------------
+
+    $mailsubject = $data['mailsubject'];
+    unset($data['mailsubject']);
+
+    $mailmessage = $data['mailmessage'];
+    unset($data['mailmessage']);
+
+    // Replace template variables in the subject and message body.
+    if (is_array($data) && count($data)) {
+        foreach ($data as $key => $val) {
+            if ($val === NULL || is_array($val)) continue;
+            $mailmessage = str_replace("%$key%", $val, $mailmessage);
+            $mailsubject = str_replace("%$key%", $val, $mailsubject);
+        }
+    }
+
+    // Handle (Quoted-Printable) encoding of the Subject: header.
+    // Mail headers can not contain 8-bit data as per RFC821.
+    $mailsubject = phorum_api_mail_encode_header($mailsubject, "\t");
+
+    // ----------------------------------------------------------------------
+    // Send the mail message.
+    // ----------------------------------------------------------------------
+
+    /*
+     * [hook]
+     *     mail_send
+     *
+     * [description]
+     *     This hook can be used for implementing an alternative mail sending
+     *     system. The hook should return TRUE if Phorum should still run
+     *     its own mail sending code. If you want to prevent Phorum from
+     *     sending mail, then return FALSE.<sbr/>
+     *     <sbr/>
+     *     The SMTP module is a good example of using this hook to replace
+     *     Phorum's default mail sending system.<sbr/>
+     *     <sbr/>
+     *     Note that due to the fact that a hook function can return
+     *     TRUE or FALSE instead of the original input data, this hook
+     *     is not really feasible for letting multiple modules handle
+     *     mail delivery (the moment that one module returns TRUE or
+     *     FALSE, the following module will get TRUE or FALSE as its
+     *     input, instead of the original message data array).
+     *     When implementing this hook in a module, it might be a
+     *     good idea to beware of this. 
+     *
+     * [category]
+     *     Mail
+     *
+     * [when]
+     *     In the file <filename>include/api/mail.php</filename> in
+     *     <literal>phorum_api_mail()</literal>, right before the
+     *     mail message is sent using <phpfunc>mail</phpfunc>.
+     *
+     * [input]
+     *     An array with mail data (read-only) containing:
+     *     <ul>
+     *       <li><literal>addresses</literal>:
+     *            an array of recpient mail addresses</li>
+     *       <li><literal>from</literal>: the sender's mail address</li>
+     *       <li><literal>subject</literal>: the mail subject</li>
+     *       <li><literal>body</literal>: the mail body</li>
+     *       <li><literal>bcc</literal>:
+     *           whether or not to use Bcc: for mailing
+     *           multiple recipients</li>
+     *     </ul>
+     *
+     * [output]
+     *     TRUE or FALSE - see description.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_mail_send ($addresses, $data) 
+     *     {
+     *         global $PHORUM;
+     *
+     *         // In case another module already handled mail sending.
+     *         // (it's recommended to include this check for "mail_send"). 
+     *         if (!is_array($addresses)) return $addresses;
+     *
+     *         // ... custom code for
+     *         // ... sending the mail
+     *         // ... goes here
+     *
+     *         // Tell Phorum not to run its own mail code.
+     *         return FALSE;
+     *     }
+     *     </hookcode>
+     */
+    $send_messages = TRUE;
+    if (isset($PHORUM['hooks']['mail_send']))
+    {
+        $hook_data = array(
+            'addresses'  => $addresses,
+            'from'       => $from_address,
+            'subject'    => $mailsubject,
+            'body'       => $mailmessage,
+            'bcc'        => $PHORUM['use_bcc'],
+            'messageid'  => $messageid
+        );
+
+        $send_messages = $phorum->modules->hook('mail_send', $hook_data);
+    }
+
+    // Check if we have any recipients and if a module told us to
+    // not run our own mail sending code.
+    if (!$send_messages) return count($addresses);
+    if (empty($addresses)) return 0;
+
+    // Build the message headers.
+    $phorum_major_version = substr(PHORUM, 0, strpos(PHORUM, '.'));
+    $mailer   = 'Phorum' . $phorum_major_version;
+    $encoding = empty($PHORUM['DATA']['MAILENCODING'])
+              ? '8bit' : $PHORUM['DATA']['MAILENCODING'];
+    $charset  = empty($PHORUM['DATA']['CHARSET'])
+              ? 'UTF-8' : $PHORUM['DATA']['CHARSET'];
+    $mailheader =
+        "Content-Type: text/plain; charset=$charset\n" .
+        "Content-Transfer-Encoding: $encoding\n" .
+        "X-Mailer: $mailer\n" .
+        "$messageid_header\n";
+
+    // Add custom headers if defined in the mail data.
+    if (!empty($data['custom_headers'])) {
+        $mailheader .= $data['custom_headers']."\n";
+    }
+        
+    // Send the mail using Bcc:
+    if (!empty($PHORUM['use_bcc']) && count($addresses) > 3)
+    {
+        mail(
+            " ", $mailsubject, $mailmessage,
+            $mailheader .
+            "From: $from_address\n" .
+            "BCC: " . implode(",", $addresses)
+        );
+    }
+    // Sending mail without Bcc:
+    // In this case, a single mail is sent for each recipient.
+    else
+    {
+        foreach ($addresses as $address) {
+            mail(
+                $address, $mailsubject, $mailmessage,
+                $mailheader .
+                "From: $from_address"
+            );
+        }
+    }
+
+    return count($addresses);
+}
+// }}}
 
 // {{{ Function: phorum_api_mail_encode_header()
 /**
