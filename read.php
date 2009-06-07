@@ -253,27 +253,27 @@ if($PHORUM['cache_messages'] &&
         if($page > 1) {
             array_unshift($message_ids_page,$thread);
         }
-        
-        // need to add the forum_id to the message-id keys to make it forum dependant 
+
+        // need to add the forum_id to the message-id keys to make it forum dependant
         foreach($message_ids_page as $key => $value) {
-        	$message_ids_page[$key] = $PHORUM["forum_id"]."-".$value;
+            $message_ids_page[$key] = $PHORUM["forum_id"]."-".$value;
         }
 
 
         $cache_messages = phorum_cache_get('message',$message_ids_page);
-
 
         // check the returned messages if they were found in the cache
         $db_messages=array();
 
         $msg_not_in_cache=0;
 
-        foreach($message_ids_page as $mid) {
-            if(!isset($cache_messages[$mid])) {
+        foreach($message_ids_page as $cache_id) {
+            list($fid, $mid) = explode("-", $cache_id);
+            if(!isset($cache_messages[$cache_id])) {
                 $db_messages[]=$mid;
                 $msg_not_in_cache++;
             } else {
-                $data[$mid]=$cache_messages[$mid];
+                $data[$mid]=$cache_messages[$cache_id];
                 $data['users'][] = $data[$mid]['user_id'];
             }
         }
@@ -475,7 +475,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
         // Keep track of unread messages that we have to mark as read.
         // When we are in thraded mode, then we only have to mark the
-        // currently viewed message as read. While hybrid mode is a 
+        // currently viewed message as read. While hybrid mode is a
         // form of threaded reading too, we have to mark all the messages
         // read since they are all visible.
         if (isset($row['new']) &&
@@ -724,30 +724,30 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // to the editor when clicking a reply link.
     $PHORUM["DATA"]["REPLY_ON_READ"] = !empty($PHORUM["reply_on_read_page"]);
 
-    
+
     if (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
-    
-	    // Never show the reply box if the message is closed.
-	    if($thread_is_closed) {
-	
-	        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
-	        $templates[] = "message";
-	
-	    } else {
-	        // Prepare the arguments for the posting.php script.
-	        $goto_mode = "reply";
-	        if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
-	            $goto_mode = "quote";
-	        }
-	
-	        $PHORUM["postingargs"] = array(
-	            1 => $goto_mode,
-	            2 => $message_id,
-	            "as_include" => true
-	        );
-	
-	        include './posting.php';
-	    }
+
+        // Never show the reply box if the message is closed.
+        if($thread_is_closed) {
+
+            $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
+            $templates[] = "message";
+
+        } else {
+            // Prepare the arguments for the posting.php script.
+            $goto_mode = "reply";
+            if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
+                $goto_mode = "quote";
+            }
+
+            $PHORUM["postingargs"] = array(
+                1 => $goto_mode,
+                2 => $message_id,
+                "as_include" => true
+            );
+
+            include './posting.php';
+        }
     }
 
     $phorum->output($templates);
