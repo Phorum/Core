@@ -28,8 +28,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_dev_profiler_start()
 /**
  * Start a profiling run.

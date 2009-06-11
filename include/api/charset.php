@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_charset_convert_to_utf8()
 /**
  * A helper function that converts a PHP variable from the active

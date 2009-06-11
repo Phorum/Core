@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 /**
  * The wraplength for Quoted-Printable encoded data. The RFC defines
  * a maximum line length of 76 characters. We use a few characters less

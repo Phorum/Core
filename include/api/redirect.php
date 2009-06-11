@@ -27,8 +27,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
+// {{{ Function: phorum_api_redirect()
 /**
  * Redirect the browser to a different page.
  *
@@ -94,5 +93,6 @@ function phorum_api_redirect($url)
 
     exit(0);
 }
+// }}}
 
 ?>

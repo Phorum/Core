@@ -1,8 +1,6 @@
 <?php
 # Handle a user forum login
 
-if (!defined('PHORUM')) return;
-
 require_once './include/api/user.php';
 
 // Check the username and password.

@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 /**
  * The date format to use in HTTP headers.
  */

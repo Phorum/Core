@@ -34,8 +34,6 @@
  *       some smart database updates, but it would be a nice feature to offer.
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Constant definition
 
 /**

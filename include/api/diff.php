@@ -40,8 +40,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined("PHORUM")) return;
-
 /**
  * Calculate the differences between two strings.
  *

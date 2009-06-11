@@ -41,8 +41,6 @@
  *
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Constant and variable definitions
 
 /**

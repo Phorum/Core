@@ -28,8 +28,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined("PHORUM")) return;
-
+// {{{ Function: phorum_api_read_file()
 /**
  * Reads a file from disk and returns the contents of that file.
  *
@@ -78,6 +77,7 @@ function phorum_api_read_file($file)
 
     return $data;
 }
+// }}}
 
 
 ?>

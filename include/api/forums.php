@@ -72,8 +72,6 @@
  * @todo Implement PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS flag.
  */
 
-if (!defined("PHORUM")) return;
-
 require_once PHORUM_PATH.'/include/api/custom_field.php';
 
 // {{{ Constant and variable definitions

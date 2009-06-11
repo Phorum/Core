@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 require_once PHORUM_PATH.'/include/api/format/censor.php';
 require_once PHORUM_PATH.'/include/api/newflags.php';
 

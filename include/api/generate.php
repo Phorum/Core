@@ -27,8 +27,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_generate_password()
 /**
  * Generate a new random password.

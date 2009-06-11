@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 require_once PHORUM_PATH.'/include/api/error/backtrace.php';
 
 // {{{ Function: phorum_api_error_database()

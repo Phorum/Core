@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_request_parse()
 /**
  * Parse a Phorum page request.

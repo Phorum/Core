@@ -26,8 +26,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
+// {{{ Function: phorum_api_buffer_start()
 /**
  * Start a new output buffer.
  */
@@ -35,7 +34,9 @@ function phorum_api_buffer_start()
 {
     ob_start();
 }
+// }}}
 
+// {{{ Function: phorum_api_buffer_flush()
 /**
  * Stop the output buffer and flush the buffered contents to the browser.
  */
@@ -43,7 +44,9 @@ function phorum_api_buffer_flush()
 {
     ob_end_flush();
 }
+// }}}
 
+// {{{ Function: phorum_api_buffer_get()
 /**
  * Stop the output buffer and return the buffered contents.
  *
@@ -55,7 +58,9 @@ function phorum_api_buffer_get()
     ob_end_clean();
     return $content;
 }
+// }}}
 
+// {{{ Function: phorum_api_buffer_clear()
 /**
  * Clear out all output that PHP buffered up to now.
  */
@@ -70,5 +75,6 @@ function phorum_api_buffer_clear()
         ob_end_clean();
     }
 }
+// }}}
 
 ?>

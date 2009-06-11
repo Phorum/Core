@@ -1,8 +1,6 @@
 <?php
 # Store a personal file for a user.
 
-if (!defined('PHORUM')) return;
-
 require_once './include/api/file.php';
 
 $file = array(

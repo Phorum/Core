@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Variable and constant definitions
 
 define("PHORUM_LIST_URL", 1);

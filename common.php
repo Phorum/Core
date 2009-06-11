@@ -29,6 +29,7 @@ if (basename(__FILE__) == basename($_SERVER["PHP_SELF"])) exit();
 require_once dirname(__FILE__).'/include/api.php';
 
 require_once PHORUM_PATH.'/include/api/request.php';
+
 phorum_api_request_parse();
 
 /*
@@ -88,8 +89,6 @@ if (!defined( "PHORUM_ADMIN" ))
 {
     $PHORUM["DATA"]["TITLE"] =
         isset($PHORUM["title"]) ? $PHORUM["title"] : "";
-
-    $PHORUM["DATA"]["DESCRIPTION"] =
         isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
 
     $PHORUM["DATA"]["HTML_TITLE"] = !empty($PHORUM["html_title"])

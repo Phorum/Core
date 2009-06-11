@@ -30,8 +30,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined("PHORUM")) return;
-
 // {{{ Variable definitions
 /**
  * This array describes deprecated module hook names, which have been

@@ -30,8 +30,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 require_once PHORUM_PATH.'/include/api/write_file.php';
 
 // {{{ Function: phorum_api_image_thumbnail()

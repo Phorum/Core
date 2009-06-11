@@ -26,8 +26,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_tree_build()
 /**
  * Build a tree structure, based on a one-dimensional array of tree nodes.

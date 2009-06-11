@@ -29,8 +29,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_format_number()
 /**
  * Format a number according to the specified number format from

@@ -28,8 +28,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-if (!defined('PHORUM')) return;
-
 // {{{ Function: phorum_api_sign()
 /**
  * Generates an MD5 signature for a piece of data using Phorum's secret
