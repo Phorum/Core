@@ -126,7 +126,7 @@ phorum_build_common_urls();
  */
 $module_registrations = array();
 if (isset($PHORUM['hooks']['css_register'])) {
-    $res = $phorum->modules->hook('css_register', array(
+    $res = phorum_api_hook('css_register', array(
         'css'      => $css,
         'register' => $module_registrations)
     );
@@ -137,13 +137,13 @@ if (isset($PHORUM['hooks']['css_register'])) {
 // the cached template file if required. This is the easiest
 // way to make this work correctly for nested template files.
 ob_start();
-include $phorum->template($css);
+include phorum_api_template($css);
 $base = ob_get_contents();
 ob_end_clean();
 
 // Find the modification time for the css file and the settings file.
-list ($css_php, $css_tpl) = $phorum->template->resolve($css);
-list ($settings_php, $settings_tpl) = $phorum->template->resolve('settings');
+list ($css_php, $css_tpl) = phorum_api_template_resolve($css);
+list ($settings_php, $settings_tpl) = phorum_api_template_resolve('settings');
 $css_t = @filemtime($css_php);
 $settings_t = @filemtime($settings_php);
 
@@ -204,14 +204,14 @@ foreach ($module_registrations as $id => $r)
                 // the cached template file if required. This is the easiest
                 // way to make this work correctly for nested template files.
                 ob_start();
-                include $phorum->template($m[2]);
+                include phorum_api_template($m[2]);
                 $module_registrations[$id]['content'] = ob_get_contents();
                 ob_end_clean();
 
                 // We use the mtime of the compiled template as the cache
                 // key if no specific cache key was set.
                 if (!isset($r['cache_key'])) {
-                    list ($php, $tpl) = $phorum->template->resolve($m[2]);
+                    list ($php, $tpl) = phorum_api_template_resolve($m[2]);
                     $mtime = @filemtime($php);
                     $r['cache_key'] = $mtime;
                     $module_registrations[$id]['cache_key'] = $mtime;
@@ -325,11 +325,12 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
      *     The filtered CSS code.
      */
     if (isset($PHORUM['hooks']['css_filter'])) {
-        $content = $phorum->modules->hook('css_filter', $content);
+        $content = phorum_api_hook('css_filter', $content);
     }
 
     if (!empty($PHORUM['cache_css'])) {
-        $phorum->write_file($cache_file, $content);
+        require_once PHORUM_PATH.'/include/api/write_file.php';
+        phorum_api_write_file($cache_file, $content);
     }
 
     // Send the CSS to the browser.
@@ -348,7 +349,7 @@ $last_modified = @filemtime($cache_file);
 // check if the CSS code has changed, based on the filemtime() data from
 // above. If nothing changed, then we return a 304 header, to tell the
 // browser to use the cached data.
-$phorum->output->last_modify_time($last_modified);
+phorum_api_output_last_modify_time($last_modified);
 
 // Send the CSS to the browser.
 header("Content-Type: text/css");
