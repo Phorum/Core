@@ -412,7 +412,7 @@
         "ReceiveModerationMails"=>      "I want to receive moderation emails",
         "Recipients"            =>      "recipients",
         "RegApprovedSubject"    =>      "Your account has been approved.",
-        "RegApprovedEmailBody"  =>      "Your $PHORUM[title] account has been approved.  You can login to $PHORUM[title] at ".Phorum::API()->url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
+        "RegApprovedEmailBody"  =>      "Your $PHORUM[title] account has been approved.  You can login to $PHORUM[title] at ".phorum_api_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
         "RegAcctActive"         =>      "Your account is now active.",
         "RegBack"               =>      "Click here to login.",
         "Register"              =>      "Create A New Profile",

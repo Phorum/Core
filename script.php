@@ -175,7 +175,7 @@ if ($callhook == 'external')
 
 
     // Call the external hook.
-    $phorum->modules->hook("external", $callargs);
+    phorum_api_hook("external", $callargs);
 }
 
 // ----------------------------------------------------------------------
@@ -247,7 +247,7 @@ if ($callhook == 'external')
 
 elseif ($callhook == 'scheduled')
 {
-    $phorum->modules->hook('scheduled');
+    phorum_api_hook('scheduled');
 }
 
 // ----------------------------------------------------------------------

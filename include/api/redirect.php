@@ -38,21 +38,18 @@ if (!defined('PHORUM')) return;
  *
  *     In case an integer is used, then this is treated as one of
  *     the PHORUM_*_URL constants for building a Phorum URL. The API
- *     call phorum_api_url_get() will be called to build the URL using
+ *     call phorum_api_url() will be called to build the URL using
  *     the $url value and any other arguments that are provided to
  *     the function call. After building the URL, the browser is
  *     redirected to that URL.
  */
 function phorum_api_redirect($url)
 {
-    $phorum = Phorum::API();
-
     // Handle building of a Phorum URL in case an integer value was
     // provided as the URL.
     if (is_integer($url)) {
-        $phorum->url; // Make sure the URL API layer is loaded.
         $argv = func_get_args();
-        $url = call_user_func_array('phorum_api_url_get', $argv);
+        $url = call_user_func_array('phorum_api_url', $argv);
     }
 
     // Some browsers strip the anchor from the URL in case we redirect
@@ -62,7 +59,7 @@ function phorum_api_redirect($url)
     // send the URL to redirect to in a request parameter. Then, the
     // redirect.php script will handle the actual redirect.
     if (count($_POST) && strstr($url, "#")) {
-        $url = $phorum->url(
+        $url = phorum_api_url(
             PHORUM_REDIRECT_URL,
             'phorum_redirect_to=' . urlencode($url)
         );
@@ -70,7 +67,7 @@ function phorum_api_redirect($url)
 
     // Check for response splitting and valid http(s) URLs.
     if (preg_match("/\s/", $url) || !preg_match("!^https?://!i", $url)) {
-        $url = $phorum->url(PHORUM_INDEX_URL);
+        $url = phorum_api_url(PHORUM_INDEX_URL);
     }
 
     // An ugly IIS-hack to avoid crashing IIS servers.

@@ -20,7 +20,8 @@
 // don't allow this page to be loaded directly
 if (!defined("PHORUM_ADMIN")) exit();
 
-require_once './include/api/user.php';
+require_once PHORUM_PATH.'/include/api/user.php';
+require_once PHORUM_PATH.'/include/api/sign.php';
 
 if(isset($_POST["username"]) && isset($_POST["password"]))
 {
@@ -36,7 +37,7 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
             // update the token and time
             $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] = time();
             $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
-            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = $phorum->sign($sig_data);
+            $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = phorum_api_sign($sig_data);
             $GLOBALS["PHORUM"]['admin_token']=$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];
             
             $tmp_user = array(
@@ -48,10 +49,10 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
                 
             if(!empty($_POST["target"])){
                 $target_url = phorum_admin_build_url($_POST['target']);
-                $phorum->redirect($target_url);
+                phorum_api_redirect($target_url);
             } else {
                 $redir_url = phorum_admin_build_url('');
-                $phorum->redirect($redir_url);
+                phorum_api_redirect($redir_url);
             }
             exit();
 
@@ -59,7 +60,7 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
         /**
          * TODO Move to User API.
          */
-        $phorum->modules->hook("failed_login", array(
+        phorum_api_hook("failed_login", array(
             "username" => $_POST["username"],
             "password" => $_POST["password"],
             "location" => "admin"

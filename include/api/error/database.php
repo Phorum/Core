@@ -28,6 +28,8 @@
 
 if (!defined('PHORUM')) return;
 
+require_once PHORUM_PATH.'/include/api/error/backtrace.php';
+
 // {{{ Function: phorum_api_error_database()
 /**
  * Database error handling function.
@@ -38,12 +40,11 @@ if (!defined('PHORUM')) return;
 function phorum_api_error_database($error)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
     $hcharset = $PHORUM['DATA']['HCHARSET'];
 
     // Clear any output that we buffered so far (e.g. in the admin interface,
     // we might already have sent the page header).
-    $phorum->buffer->clear();
+    phorum_api_buffer_clear();
 
     /*
      * [hook]
@@ -96,7 +97,7 @@ function phorum_api_error_database($error)
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["database_error"])) {
-        $phorum->modules->hook("database_error", $error);
+        phorum_api_hook("database_error", $error);
     }
 
     // Find out what type of error handling is configured.
@@ -107,7 +108,7 @@ function phorum_api_error_database($error)
 
     // Create a backtrace report, so it's easier to find out where
     // a problem is coming from.
-    $backtrace = $phorum->error->backtrace(2);
+    $backtrace = phorum_api_error_backtrace(2);
 
     // Error page header.
     if (PHP_SAPI != "cli")
@@ -217,7 +218,7 @@ function phorum_api_error_database($error)
             );
 
             $adminmail = $PHORUM['system_email_from_address'];
-            $phorum->mail($adminmail, $data);
+            phorum_api_mail($adminmail, $data);
 
             if (PHP_SAPI != 'cli') {
                 print "The administrator of this forum has been<br/>" .

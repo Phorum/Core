@@ -116,7 +116,6 @@ define('RFC2045_WRAPLEN', 70);
 function phorum_api_mail($addresses, $data)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Turn a single $address into an array.
     if (!is_array($addresses)) {
@@ -178,7 +177,7 @@ function phorum_api_mail($addresses, $data)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['mail_prepare'])) {
-        list ($addresses,$data) = $phorum->modules->hook(
+        list ($addresses,$data) = phorum_api_hook(
             'mail_prepare', array($addresses,$data)
         );
     }
@@ -367,7 +366,7 @@ function phorum_api_mail($addresses, $data)
             'messageid'  => $messageid
         );
 
-        $send_messages = $phorum->modules->hook('mail_send', $hook_data);
+        $send_messages = phorum_api_hook('mail_send', $hook_data);
     }
 
     // Check if we have any recipients and if a module told us to

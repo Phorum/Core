@@ -36,7 +36,7 @@
                    );
                    phorum_api_user_save($tmp_user);  
                                     
-                   $phorum->redirect($PHORUM['http_path']);
+                   phorum_api_redirect($PHORUM['http_path']);
                    
                } elseif(!empty($_POST['continue'])) {
                    
@@ -46,7 +46,7 @@
                        $url = phorum_admin_build_url('');
                    }
                 
-                   $phorum->redirect($url);
+                   phorum_api_redirect($url);
                }
                exit();
            }
@@ -55,13 +55,13 @@
     // We have no token or our token expired.
     // Generate a fresh token.
     $admin_token_time = time();
-    $admin_token = $phorum->sign(
+    $admin_token = phorum_api_sign(
         $PHORUM['user']['user_id'].
         microtime().
         $PHORUM['user']['username'].
         $PHORUM['user']['sessid_st']
     );
-    $phorum->user->save_settings(array(
+    phorum_api_user_save_settings(array(
         'admin_token_time' => $admin_token_time,
         'admin_token'      => $admin_token
     ));
@@ -81,7 +81,7 @@
             $module = basename($_GET['module']);
         }
         $url = phorum_admin_build_url('module='.urlencode($module));
-        $phorum->redirect($url);
+        phorum_api_redirect($url);
     }
 
     $targetargs = $_SERVER['QUERY_STRING'];

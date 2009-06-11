@@ -110,7 +110,7 @@ while (!empty($argv))
 }
 
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 echo "\n";
 echo "Phorum console based database upgrade\n";

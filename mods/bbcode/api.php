@@ -198,7 +198,6 @@ define('BBCODE_INFO_ARGPARSETREE', 14);
 function bbcode_api_initparser($force = FALSE)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     /**
      * [hook]
@@ -237,7 +236,7 @@ function bbcode_api_initparser($force = FALSE)
      */
     $tags = array();
     if (isset($PHORUM['hooks']['bbcode_register'])) {
-        $tags = $phorum->modules->hook('bbcode_register', $tags);
+        $tags = phorum_api_hook('bbcode_register', $tags);
     }
 
     // Build a cache key for the current state of the tag list

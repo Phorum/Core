@@ -19,6 +19,8 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
+require_once PHORUM_PATH.'/include/api/custom_field.php';
+
 $error = "";
 
 if ( count( $_POST ) )
@@ -126,7 +128,7 @@ if ( count( $_POST ) )
 
                 // check user open id field
 
-                $field = $phorum->custom_field->byname("open_id", PHORUM_CUSTOM_FIELD_USER);
+                $field = phorum_api_custom_field_byname("open_id", PHORUM_CUSTOM_FIELD_USER);
                 if($value==true){
                     if(empty($field)){
                         $open_id_field = array(
@@ -165,7 +167,7 @@ if ( count( $_POST ) )
             if ($need_display_name_updates) {
                 $redir = phorum_admin_build_url(array('module=update_display_names'));
             }
-            $phorum->redirect($redir);
+            phorum_api_redirect($redir);
             exit();
         } else {
             $error = "Database error while updating settings.";
@@ -476,7 +478,7 @@ $frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for 
  *     }
  *     </hookcode>
  */
-$frm=$phorum->modules->hook("admin_general", $frm);
+$frm=phorum_api_hook("admin_general", $frm);
 
 $frm->show();
 

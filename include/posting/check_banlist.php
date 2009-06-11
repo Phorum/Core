@@ -19,6 +19,8 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/ban.php';
+
 // Create a list of the bans that we want to check.
 $bans = array();
 
@@ -43,7 +45,7 @@ $bans[] = array($message["body"], PHORUM_BAD_SPAM_WORDS);
 
 
 // Run the checks.
-$msg = $phorum->ban->check_multi($bans);
+$msg = phorum_api_ban_check_multi($bans);
 if (!is_null($msg)) {
     $PHORUM["DATA"]["ERROR"] = $msg;
 }

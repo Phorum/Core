@@ -20,6 +20,7 @@
 if (!defined("PHORUM")) return;
 
 require_once './include/api/file.php';
+require_once PHORUM_PATH.'/include/api/file.php';
 
 if ($do_detach)
 {
@@ -32,8 +33,8 @@ if ($do_detach)
             // can be deleted immediately. Linked attachments should
             // be kept in the db, in case the users clicks "Cancel".
             if (! $info["linked"]) {
-                if ($phorum->file->check_delete_access($info["file_id"])) {
-                    $phorum->file->delete($info["file_id"]);
+                if (phorum_api_file_check_delete_access($info["file_id"])) {
+                    phorum_api_file_delete($info["file_id"]);
                 }
                 unset($message["attachments"][$id]);
             } else {
@@ -87,7 +88,7 @@ if ($do_detach)
              *     </hookcode>
              */
             if (isset($PHORUM["hooks"]["after_detach"])) {
-                list($message,$info) = $phorum->modules->hook(
+                list($message,$info) = phorum_api_hook(
                     "after_detach", array($message,$info)
                 );
             }
@@ -151,12 +152,12 @@ elseif ($do_attach && ! empty($_FILES))
 
         // Let the file storage API run some upload access checks
         // (maximum attachment file size and file type).
-        if (!$phorum->file->check_write_access(array(
+        if (!phorum_api_file_check_write_access(array(
             "link"       => PHORUM_LINK_EDITOR,
             "filename"   => $file["name"],
             "filesize"   => $file["size"]
         ))) {
-            $PHORUM["DATA"]["ERROR"] = $phorum->error->message();
+            $PHORUM["DATA"]["ERROR"] = phorum_api_error_message();
             break;
         }
 
@@ -165,7 +166,7 @@ elseif ($do_attach && ! empty($_FILES))
             ($file["size"] + $attach_totalsize) > $PHORUM["max_totalattachment_size"]*1024) {
             $PHORUM["DATA"]["ERROR"] = str_replace(
                 '%size%',
-                $phorum->format->filesize($PHORUM["max_totalattachment_size"] * 1024),
+                phorum_api_format_filesize($PHORUM["max_totalattachment_size"] * 1024),
                 $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]
             );
             break;
@@ -220,7 +221,7 @@ elseif ($do_attach && ! empty($_FILES))
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["before_attach"])) {
-            list($message, $file) = $phorum->modules->hook(
+            list($message, $file) = phorum_api_hook(
                 "before_attach", array($message, $file)
             );
         }
@@ -230,7 +231,7 @@ elseif ($do_attach && ! empty($_FILES))
         // to link the file to the forum message. This is mainly done so we
         // can support attachments for new messages, which do not yet have
         // a message_id assigned.
-        $file = $phorum->file->store(array(
+        $file = phorum_api_file_store(array(
             "filename"   => $file["name"],
             "file_data"  => $file["data"],
             "filesize"   => $file["size"],
@@ -295,7 +296,7 @@ elseif ($do_attach && ! empty($_FILES))
              *     </hookcode>
              */
             if (isset($PHORUM["hooks"]["after_attach"])) {
-                list($message, $new_attachment) = $phorum->modules->hook(
+                list($message, $new_attachment) = phorum_api_hook(
                     "after_attach", array($message, $new_attachment)
                 );
             }

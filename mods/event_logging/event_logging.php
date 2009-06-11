@@ -139,7 +139,6 @@ function phorum_mod_event_logging_resume() {
 function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
@@ -193,7 +192,8 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     $details = "$type generated at $file:$line\n";
 
     // Construct a backtrace and add it to the details info.
-    $backtrace = $phorum->error->backtrace(2);
+    require_once PHORUM_PATH.'/include/api/error/backtrace.php';
+    $backtrace = phorum_api_error_backtrace(2);
     $details .= $backtrace === NULL ? "" : "\nBack trace:\n\n$backtrace\n";
 
     // Add request info to the details.
@@ -238,7 +238,8 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     if ($loglevel == EVENTLOG_LVL_ALERT)
     {
         // Clear any buffered output so far.
-        $phorum->buffer->clear();
+        require_once PHORUM_PATH.'/include/api/buffer.php';
+        phorum_api_buffer_clear();
 
         // Notify the user and exit.
         print "An error occurred in the application.<br/>" .
@@ -448,7 +449,6 @@ function phorum_mod_event_logging_after_edit($data)
 function phorum_mod_event_logging_database_error($error)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     if (!$PHORUM["mod_event_logging"]["do_log_database_error"])
         return $error;
@@ -465,7 +465,8 @@ function phorum_mod_event_logging_database_error($error)
     $PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"]++;
 
     // Construct a backtrace.
-    $backtrace = $phorum->error->backtrace(3);
+    require_once PHORUM_PATH.'/include/api/error/backtrace.php';
+    $backtrace = phorum_api_error_backtrace(3);
 
     list ($source, $from_module) = event_logging_find_source(4);
 

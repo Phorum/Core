@@ -49,7 +49,7 @@ if(count($_POST))
         }
     }
     print "Finished purging compiled Phorum templates<br/>\n" .
-          "Purged " . $phorum->format->filesize($purged) . "<br/>";
+          "Purged " . phorum_api_format_filesize($purged) . "<br/>";
 
     print "<br/>";
     print "DONE<br/><br/>";

@@ -21,6 +21,8 @@ define('phorum_page','register');
 require_once './common.php';
 
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/mail.php';
+require_once PHORUM_PATH.'/include/api/ban.php';
 
 // set all our URL's
 phorum_build_common_urls();
@@ -32,7 +34,7 @@ if (isset($PHORUM["args"]["approve"])) {
     // Extract registration validation code and user_id.
     $tmp_pass=md5(substr($PHORUM["args"]["approve"], 0, 8));
     $user_id = (int)substr($PHORUM["args"]["approve"], 8);
-    $user_id = $phorum->user->search(
+    $user_id = phorum_api_user_search(
         array("user_id", "password_temp"),
         array($user_id,  $tmp_pass),
         array("=",       "=")
@@ -41,7 +43,7 @@ if (isset($PHORUM["args"]["approve"])) {
     // Validation code correct.
     if ($user_id) {
 
-        $user = $phorum->user->get($user_id);
+        $user = phorum_api_user_get($user_id);
 
         $moduser=array();
 
@@ -66,7 +68,7 @@ if (isset($PHORUM["args"]["approve"])) {
 
             // Save the new user active status.
             $moduser["user_id"] = $user_id;
-            $phorum->user->save($moduser);
+            phorum_api_user_save($moduser);
         }
 
     // Validation code incorrect.
@@ -74,7 +76,7 @@ if (isset($PHORUM["args"]["approve"])) {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["RegVerifyFailed"];
     }
 
-    $phorum->output("message");
+    phorum_api_output("message");
     return;
 
 }
@@ -100,21 +102,21 @@ if (count($_POST)) {
     if (!isset($_POST["username"]) || empty($_POST['username'])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
     } elseif (!isset($_POST["email"]) ||
-              !$phorum->mail->check_address($_POST["email"])) {
+              !phorum_api_mail_check_address($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif (empty($_POST["open_id"]) && (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }
     // Check if the username and email address don't already exist.
-    elseif($phorum->user->search("username", $_POST["username"])) {
+    elseif(phorum_api_user_search("username", $_POST["username"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
-    } elseif ($phorum->user->search("email", $_POST["email"])){
+    } elseif (phorum_api_user_search("email", $_POST["email"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
 
     // Check banlists.
     if (empty($error)) {
-        $error = $phorum->ban->check_multi(array(
+        $error = phorum_api_ban_check_multi(array(
             array($_POST["username"], PHORUM_BAD_NAMES),
             array($_POST["email"],    PHORUM_BAD_EMAILS),
             array(NULL,               PHORUM_BAD_IPS),
@@ -217,7 +219,7 @@ if (count($_POST)) {
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["before_register"]))
-            $userdata = $phorum->modules->hook("before_register", $userdata);
+            $userdata = phorum_api_hook("before_register", $userdata);
 
         // Set $error, in case the before_register hook did set an error.
         if (isset($userdata['error'])) {
@@ -229,9 +231,9 @@ if (count($_POST)) {
         {
             // Add the user to the database.
             $userdata["user_id"] = NULL;
-            $user_id = $phorum->user->save($userdata);
+            $user_id = phorum_api_user_save($userdata);
             // fetch the fresh user
-            $user_new = $phorum->user->get($user_id);
+            $user_new = phorum_api_user_get($user_id);
 
             if ($user_id)
             {
@@ -248,7 +250,7 @@ if (count($_POST)) {
                 // Send a message to the new user in case email verification is required.
                 if ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_BOTH ||
                     $PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL) {
-                    $verify_url = $phorum->url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
+                    $verify_url = phorum_api_url(PHORUM_REGISTER_URL, "approve=".$userdata["password_temp"]."$user_id");
                     // make the link an anchor tag for AOL users
                     if (preg_match("!aol\.com$!i", $userdata["email"])) {
                         $verify_url = "<a href=\"$verify_url\">$verify_url</a>";
@@ -278,7 +280,7 @@ if (count($_POST)) {
                                 $user_new['username'],
                                 $user_new['display_name'],
                                 $verify_url,
-                                $phorum->url(PHORUM_LOGIN_URL)
+                                phorum_api_url(PHORUM_LOGIN_URL)
                             ),
                             $PHORUM['DATA']['LANG']['VerifyRegEmailBody']
                         ), 72);
@@ -304,7 +306,7 @@ if (count($_POST)) {
                                 $user_new['username'],
                                 $user_new['display_name'],
                                 $verify_url,
-                                $phorum->url(PHORUM_LOGIN_URL)
+                                phorum_api_url(PHORUM_LOGIN_URL)
                             ),$lang['VerifyRegEmailBody1']), 72).
                            "\n\n$verify_url\n\n".
                            wordwrap(str_replace(
@@ -320,15 +322,15 @@ if (count($_POST)) {
                                 $user_new['username'],
                                 $user_new['display_name'],
                                 $verify_url,
-                                $phorum->url(PHORUM_LOGIN_URL)
+                                phorum_api_url(PHORUM_LOGIN_URL)
                             ),$lang['VerifyRegEmailBody2']), 72);
                     }
 
-                    $phorum->mail($userdata["email"], $maildata);
+                    phorum_api_mail($userdata["email"], $maildata);
                 }
 
                 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["RegBack"];
-                $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(PHORUM_LOGIN_URL);
+                $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(PHORUM_LOGIN_URL);
 
                 /*
                  * [hook]
@@ -370,10 +372,10 @@ if (count($_POST)) {
                  */
                 if (isset($PHORUM["hooks"]["after_register"])) {
                     $userdata["user_id"] = $user_id;
-                    $phorum->modules->hook("after_register",$userdata);
+                    phorum_api_hook("after_register",$userdata);
                 }
 
-                $phorum->output("message");
+                phorum_api_output("message");
                 return;
 
             // Adding the user to the database failed.
@@ -423,12 +425,12 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
     $PHORUM['DATA']['DESCRIPTION'] = '';
 
     # Setup static template data.
-    $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url( PHORUM_REGISTER_ACTION_URL );
+    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_REGISTER_ACTION_URL );
     $PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
     $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
 
     // Display the registration page.
-    $phorum->output("register");
+    phorum_api_output("register");
 
 } else {
 
@@ -441,7 +443,7 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
     $PHORUM["DATA"]["HTML_DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["OpenIDCompleteExplain"];
     $PHORUM['DATA']['DESCRIPTION'] = '';
 
-    $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url( PHORUM_REGISTER_ACTION_URL );
+    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_REGISTER_ACTION_URL );
 
     $PHORUM["DATA"]["OPENID"]["open_id"] = htmlspecialchars($_SESSION["open_id"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
@@ -457,7 +459,7 @@ if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
         $PHORUM["DATA"]["OPENID"]["email"] = $_POST["email"];
     }
 
-    $phorum->output("openid_register");
+    phorum_api_output("openid_register");
 
 
 }

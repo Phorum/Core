@@ -25,11 +25,10 @@ if(!defined("PHORUM")) return;
 function phorum_return_to_list()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
     if(!empty($PHORUM["forum_id"])){
-        $phorum->redirect(PHORUM_LIST_URL);
+        phorum_api_redirect(PHORUM_LIST_URL);
     }else{
-        $phorum->redirect(PHORUM_INDEX_URL);
+        phorum_api_redirect(PHORUM_INDEX_URL);
     }
     exit();
 }
@@ -101,7 +100,6 @@ function phorum_moderator_data_remove($key)
 function phorum_show_confirmation_form($message, $action, $args)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     ob_start();
 
@@ -139,7 +137,7 @@ function phorum_show_confirmation_form($message, $action, $args)
     <?php
 
     $PHORUM["DATA"]["BLOCK_CONTENT"] = ob_get_clean();
-    $phorum->output("stdblock");
+    phorum_api_output("stdblock");
     exit();
 }
 

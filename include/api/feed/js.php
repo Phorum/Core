@@ -26,6 +26,8 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+require_once PHORUM_PATH.'/include/api/json.php';
+
 /**
  * This function implements the JavaScript output adapter for the Feed API.
  *
@@ -56,19 +58,18 @@
 function phorum_api_feed_js($messages, $forums, $url, $title, $description, $replies)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $feed = array(
         'title'       => $title,
         'description' => $description,
-        'modified'    => $phorum->format->date($PHORUM['short_date'], time())
+        'modified'    => phorum_api_format_date($PHORUM['short_date'], time())
     );
 
     // Lookup the plain text usernames for the authenticated authors.
     $users = $messages['users'];
     unset($messages['users']);
     unset($users[0]);
-    $users = $phorum->user->get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+    $users = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
 
     foreach ($messages as $message)
     {
@@ -77,7 +78,7 @@ function phorum_api_feed_js($messages, $forums, $url, $title, $description, $rep
 
         // Created date.
         $fmt = $PHORUM['short_date'];
-        $created = $phorum->format->date($fmt, $message['datestamp']);
+        $created = phorum_api_format_date($fmt, $message['datestamp']);
 
         // Updated date.
         if ($message['parent_id']) {
@@ -89,10 +90,10 @@ function phorum_api_feed_js($messages, $forums, $url, $title, $description, $rep
         } else {
             $modified = $message['modifystamp'];
         }
-        $modified = $phorum->format->date($fmt, $modified);
+        $modified = phorum_api_format_date($fmt, $modified);
 
 
-        $url = htmlspecialchars($phorum->url(
+        $url = htmlspecialchars(phorum_api_url(
             PHORUM_FOREIGN_READ_URL,
             $message['forum_id'], $message['thread'], $message['message_id']
         ));
@@ -116,7 +117,7 @@ function phorum_api_feed_js($messages, $forums, $url, $title, $description, $rep
     }
 
     // this is where we convert the array into js
-    $buffer = 'phorum_feed = ' . $phorum->json->encode($feed);
+    $buffer = 'phorum_feed = ' . phorum_api_json_encode($feed);
 
     return array($buffer, 'text/javascript');
 }

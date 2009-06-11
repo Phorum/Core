@@ -26,11 +26,10 @@
 // Check that this file is not loaded directly.
 if (basename(__FILE__) == basename($_SERVER["PHP_SELF"])) exit();
 
-// Load and instantiate the Phorum API.
 require_once dirname(__FILE__).'/include/api.php';
-$phorum = Phorum::API();
 
-$phorum->request->parse();
+require_once PHORUM_PATH.'/include/api/request.php';
+phorum_api_request_parse();
 
 /*
  * [hook]
@@ -78,7 +77,7 @@ $phorum->request->parse();
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["common_pre"])) {
-    $phorum->modules->hook("common_pre", "");
+    phorum_api_hook("common_pre", "");
 }
 
 // ----------------------------------------------------------------------
@@ -113,7 +112,7 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM["status"] == PHORUM_MASTER_STATUS_DISABLED) {
 
         if (!empty($PHORUM["disabled_url"])) {
-            $phorum->redirect($PHORUM['disabled_url']);
+            phorum_api_redirect($PHORUM['disabled_url']);
         } else {
             echo "This Phorum is currently administratively disabled. Please " .
                  "contact the web site owner at ".
@@ -138,7 +137,7 @@ if (!defined( "PHORUM_ADMIN" ))
               !isset($PHORUM['internal_patchlevel']) ||
               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL) {
         if(isset($PHORUM["DBCONFIG"]["upgrade_page"])){
-            $phorum->redirect($PHORUM["DBCONFIG"]["upgrade_page"]);
+            phorum_api_redirect($PHORUM["DBCONFIG"]["upgrade_page"]);
         } else {
             echo "<html><head><title>Upgrade notification</title></head><body>
                   It looks like you have installed a new version of
@@ -150,7 +149,7 @@ if (!defined( "PHORUM_ADMIN" ))
     }
 
     // Load the settings for the currently active forum.
-    $forum_settings = $phorum->forums->get(
+    $forum_settings = phorum_api_forums_get(
         $PHORUM["forum_id"],null,null,null,PHORUM_FLAG_INCLUDE_INACTIVE);
 
     if ($forum_settings === NULL)
@@ -198,10 +197,10 @@ if (!defined( "PHORUM_ADMIN" ))
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["common_no_forum"])) {
-            $phorum->modules->hook("common_no_forum", "");
+            phorum_api_hook("common_no_forum", "");
         }
 
-        $phorum->redirect(PHORUM_INDEX_URL);
+        phorum_api_redirect(PHORUM_INDEX_URL);
     }
 
     $PHORUM = array_merge($PHORUM, $forum_settings);
@@ -209,7 +208,7 @@ if (!defined( "PHORUM_ADMIN" ))
     // handling vroots
     if (!empty($PHORUM['vroot']))
     {
-        $vroot_folders = $phorum->db->get_forums($PHORUM['vroot']);
+        $vroot_folders = phorum_db_get_forums($PHORUM['vroot']);
 
         $PHORUM["title"] = $vroot_folders[$PHORUM['vroot']]['name'];
         $PHORUM["DATA"]["TITLE"] = $PHORUM["title"];
@@ -239,7 +238,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
 
     // Try to restore a user session.
-    if (!$skipsession && $phorum->user->session_restore(PHORUM_FORUM_SESSION))
+    if (!$skipsession && phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
     {
         // If the user has overridden thread settings, change it here.
         if (!isset($PHORUM['display_fixed']) || !$PHORUM['display_fixed'])
@@ -262,7 +261,7 @@ if (!defined( "PHORUM_ADMIN" ))
         if (!empty($PHORUM["enable_new_pm_count"]) &&
             !empty($PHORUM["enable_pm"])) {
             $PHORUM['user']['new_private_messages'] =
-                $phorum->db->pm_checknew($PHORUM['user']['user_id']);
+                phorum_db_pm_checknew($PHORUM['user']['user_id']);
         }
     }
 
@@ -310,7 +309,7 @@ if (!defined( "PHORUM_ADMIN" ))
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["common_post_user"])) {
-         $phorum->modules->hook("common_post_user", "");
+         phorum_api_hook("common_post_user", "");
     }
 
     // Some code that only has to be run if the forum isn't set to fixed view.
@@ -378,13 +377,13 @@ if (!defined( "PHORUM_ADMIN" ))
     // Not loaded if we are running an external or scheduled script.
     if (!defined('PHORUM_SCRIPT'))
     {
-        include $phorum->template('settings');
+        include phorum_api_template('settings');
         $PHORUM["DATA"]["TEMPLATE"] = htmlspecialchars($PHORUM['template']);
         $PHORUM["DATA"]["URL"]["TEMPLATE"] = htmlspecialchars("$PHORUM[template_http_path]/$PHORUM[template]");
-        $PHORUM["DATA"]["URL"]["CSS"] = $phorum->url(PHORUM_CSS_URL, "css");
-        $PHORUM["DATA"]["URL"]["CSS_PRINT"] = $phorum->url(PHORUM_CSS_URL, "css_print");
-        $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = $phorum->url(PHORUM_JAVASCRIPT_URL);
-        $PHORUM["DATA"]["URL"]["AJAX"] = $phorum->url(PHORUM_AJAX_URL);
+        $PHORUM["DATA"]["URL"]["CSS"] = phorum_api_url(PHORUM_CSS_URL, "css");
+        $PHORUM["DATA"]["URL"]["CSS_PRINT"] = phorum_api_url(PHORUM_CSS_URL, "css_print");
+        $PHORUM["DATA"]["URL"]["JAVASCRIPT"] = phorum_api_url(PHORUM_JAVASCRIPT_URL);
+        $PHORUM["DATA"]["URL"]["AJAX"] = phorum_api_url(PHORUM_AJAX_URL);
     }
 
     // Load the main language file.
@@ -436,17 +435,17 @@ if (!defined( "PHORUM_ADMIN" ))
 
             phorum_build_common_urls();
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AdminOnlyMessage"];
-            $phorum->user->set_active_user(PHORUM_FORUM_SESSION, NULL);
+            phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
 
             /**
              * @todo Not compatible with portable / embedded Phorum setups.
              */
-            $phorum->output('message');
+            phorum_api_output('message');
             exit();
 
         } elseif ($PHORUM['status'] == PHORUM_MASTER_STATUS_READ_ONLY) {
             $PHORUM['DATA']['GLOBAL_ERROR'] = $PHORUM['DATA']['LANG']['ReadOnlyMessage'];
-            $phorum->user->set_active_user(PHORUM_FORUM_SESSION, NULL);
+            phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
         }
     }
 
@@ -473,21 +472,21 @@ if (!defined( "PHORUM_ADMIN" ))
         if (in_array(phorum_page, $show_notify_for_pages) &&
             !empty($PHORUM['enable_moderator_notifications'])) {
 
-            $forummodlist = $phorum->user->check_access(
+            $forummodlist = phorum_api_user_check_access(
                 PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_LIST
             );
             if (count($forummodlist) > 0 ) {
-                $PHORUM["user"]["NOTICE"]["MESSAGES"] = ($phorum->db->get_unapproved_list($forummodlist, TRUE, 0, TRUE) > 0);
-                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
+                $PHORUM["user"]["NOTICE"]["MESSAGES"] = (phorum_db_get_unapproved_list($forummodlist, TRUE, 0, TRUE) > 0);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
             }
-            if ($phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_USERS)) {
-                $PHORUM["user"]["NOTICE"]["USERS"] = (count($phorum->db->user_get_unapproved()) > 0);
-                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
+            if (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS)) {
+                $PHORUM["user"]["NOTICE"]["USERS"] = (count(phorum_db_user_get_unapproved()) > 0);
+                $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
             }
-            $groups = $phorum->user->check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
+            $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
             if (count($groups) > 0) {
-                $PHORUM["user"]["NOTICE"]["GROUPS"] = count($phorum->db->get_group_members(array_keys($groups), PHORUM_USER_GROUP_UNAPPROVED));
-                $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
+                $PHORUM["user"]["NOTICE"]["GROUPS"] = count(phorum_db_get_group_members(array_keys($groups), PHORUM_USER_GROUP_UNAPPROVED));
+                $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
             }
         }
 
@@ -534,7 +533,7 @@ if (!defined( "PHORUM_ADMIN" ))
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["common"])) {
-        $phorum->modules->hook("common", "");
+        phorum_api_hook("common", "");
     }
 
     /*
@@ -598,10 +597,10 @@ if (!defined( "PHORUM_ADMIN" ))
      */
     $page_hook = 'page_'.phorum_page;
     if (isset($PHORUM["hooks"][$page_hook])) {
-        $phorum->modules->hook($page_hook, "");
+        phorum_api_hook($page_hook, "");
     }
 
-    $formatted = $phorum->format->users(array($PHORUM['user']));
+    $formatted = phorum_api_format_users(array($PHORUM['user']));
     $PHORUM['DATA']['USER'] = $formatted[0];
     $PHORUM['DATA']['PHORUM_PAGE'] = phorum_page;
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
@@ -621,7 +620,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM['DATA']['BREADCRUMBS'] = array();
 
     // Add the current forum path to the breadcrumbs.
-    $index_page_url_template = $phorum->url(PHORUM_INDEX_URL, '%forum_id%');
+    $index_page_url_template = phorum_api_url(PHORUM_INDEX_URL, '%forum_id%');
     if (!empty($PHORUM['forum_path']) && !is_array($PHORUM['forum_path'])) {
         $PHORUM['forum_path'] = unserialize($PHORUM['forum_path']);
     }
@@ -629,7 +628,7 @@ if (!defined( "PHORUM_ADMIN" ))
     {
         $id = $PHORUM['forum_id'];
         $url = empty($id)
-             ? $phorum->url(PHORUM_INDEX_URL)
+             ? phorum_api_url(PHORUM_INDEX_URL)
              : str_replace('%forum_id%',$id,$index_page_url_template);
 
         $PHORUM['DATA']['BREADCRUMBS'][] = array(
@@ -653,7 +652,7 @@ if (!defined( "PHORUM_ADMIN" ))
             }
 
             if(empty($id)) {
-                $url = $phorum->url(PHORUM_INDEX_URL);
+                $url = phorum_api_url(PHORUM_INDEX_URL);
             } else {
                 $url = str_replace('%forum_id%',$id,$index_page_url_template);
             }
@@ -671,7 +670,7 @@ if (!defined( "PHORUM_ADMIN" ))
 
         if (!$PHORUM['folder_flag']) {
             $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
-            $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = $phorum->url(PHORUM_LIST_URL, $track);
+            $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_api_url(PHORUM_LIST_URL, $track);
         }
     }
 }
@@ -690,7 +689,6 @@ else {
         require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
     }
 }
-
 
 // ----------------------------------------------------------------------
 // Functions
@@ -716,13 +714,12 @@ else {
 function phorum_check_read_common()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $retval = TRUE;
 
     if ($PHORUM["forum_id"] > 0 &&
         !$PHORUM["folder_flag"] &&
-        !$phorum->user->check_access(PHORUM_USER_ALLOW_READ)) {
+        !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ)) {
 
         if ( $PHORUM["DATA"]["LOGGEDIN"] ) {
             // if they are logged in and not allowed, they don't have rights
@@ -740,7 +737,7 @@ function phorum_check_read_common()
 
         phorum_build_common_urls();
 
-        $phorum->output("message");
+        phorum_api_output("message");
 
         $retval = FALSE;
     }
@@ -754,20 +751,19 @@ function phorum_check_read_common()
 function phorum_build_common_urls()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = $phorum->url(PHORUM_BASE_URL);
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_api_url(PHORUM_BASE_URL);
     $GLOBALS["PHORUM"]["DATA"]["URL"]["HTTP_PATH"] = $PHORUM['http_path'];
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = $phorum->url(PHORUM_LIST_URL);
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["LIST"] = phorum_api_url(PHORUM_LIST_URL);
 
     // These links are only needed in forums, not in folders.
     if (isset($PHORUM['folder_flag']) && !$PHORUM['folder_flag']) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = $phorum->url(PHORUM_POSTING_URL);
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = $phorum->url(PHORUM_SUBSCRIBE_URL);
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["POST"] = phorum_api_url(PHORUM_POSTING_URL);
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["SUBSCRIBE"] = phorum_api_url(PHORUM_SUBSCRIBE_URL);
     }
 
-    $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = $phorum->url(PHORUM_SEARCH_URL);
+    $GLOBALS["PHORUM"]["DATA"]["URL"]["SEARCH"] = phorum_api_url(PHORUM_SEARCH_URL);
 
     // Find the id for the index.
     $index_id=-1;
@@ -798,19 +794,19 @@ function phorum_build_common_urls()
     if ($index_id > -1) {
         // check if its the full root, avoid adding an id in this case (SE-optimized ;))
         if (!empty($index_id))
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = $phorum->url(PHORUM_INDEX_URL, $index_id);
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_api_url(PHORUM_INDEX_URL, $index_id);
         else
-            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = $phorum->url(PHORUM_INDEX_URL);
+            $GLOBALS["PHORUM"]["DATA"]["URL"]["INDEX"] = phorum_api_url(PHORUM_INDEX_URL);
     }
 
     // these urls depend on the login-status of a user
     if ($GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"]) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = $phorum->url( PHORUM_LOGIN_URL, "logout=1" );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = $phorum->url( PHORUM_CONTROLCENTER_URL );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = $phorum->url( PHORUM_PM_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_api_url( PHORUM_LOGIN_URL, "logout=1" );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_api_url( PHORUM_CONTROLCENTER_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_api_url( PHORUM_PM_URL );
     } else {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = $phorum->url( PHORUM_LOGIN_URL );
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = $phorum->url( PHORUM_REGISTER_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_api_url( PHORUM_LOGIN_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_api_url( PHORUM_REGISTER_URL );
     }
 }
 

@@ -19,12 +19,14 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
+require_once PHORUM_PATH.'/include/api/lang.php';
+require_once PHORUM_PATH.'/include/api/template.php';
+
 function phorum_cc_get_language_info()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
-    $langs = $phorum->lang->list();
+    $langs = phorum_api_lang_list();
     $f_langs = array();
     $profile = $PHORUM['DATA']['PROFILE'];
     if ( !isset( $profile['user_language'] ) )
@@ -46,9 +48,8 @@ function phorum_cc_get_language_info()
 function phorum_cc_get_template_info()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
-    $langs = $phorum->template->list();
+    $langs = phorum_api_template_list();
     $profile = $PHORUM['DATA']['PROFILE'];
 
     $f_langs = array();
@@ -88,7 +89,7 @@ if ( count( $_POST ) ) {
     // reflect the new template.
     if (empty($error) && !empty($_POST["user_template"]) &&
         $oldtemplate != $_POST["user_template"]) {
-        $phorum->redirect($PHORUM['DATA']['URL']['CC6']);
+        phorum_api_redirect($PHORUM['DATA']['URL']['CC6']);
     }
 }
 

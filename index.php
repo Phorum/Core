@@ -19,6 +19,8 @@
 
 define('phorum_page','index');
 require_once './common.php';
+require_once PHORUM_PATH.'/include/api/newflags.php';
+require_once PHORUM_PATH.'/include/api/format/forums.php';
 
 // Check if the user has read permission for the current folder.
 if (!phorum_check_read_common()) { return; }
@@ -32,22 +34,22 @@ if (isset($PHORUM['args'][1]) && $PHORUM['args'][1] === 'markread' &&
     !empty($PHORUM['user']['user_id'])) {
 
     // Mark all posts in the current forum as read.
-    $phorum->newflags->markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
+    phorum_api_newflags_markread($PHORUM['forum_id'], PHORUM_MARKREAD_FORUMS);
 
     // Redirect to a fresh list of the current forums without the mark read
     // parameters in the URL. This way we prevent users from bookmarking
     // the mark read URL.
     if (!empty($PHORUM["args"][2])) {
-        $phorum->redirect(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
+        phorum_api_redirect(PHORUM_INDEX_URL, (int)$PHORUM['args'][2]);
     } else {
-        $phorum->redirect(PHORUM_INDEX_URL);
+        phorum_api_redirect(PHORUM_INDEX_URL);
     }
 }
 
 // Somehow we arrived at a forum instead of a folder.
 // Redirect the user to the message list for that forum.
 if (!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"] == 0) {
-    $phorum->redirect(PHORUM_LIST_URL);
+    phorum_api_redirect(PHORUM_LIST_URL);
 }
 
 // Setup the syndication feed URLs for this folder.
@@ -56,13 +58,13 @@ if (!empty($PHORUM['use_rss']))
 {
     // Add the feed for new threads.
     $PHORUM['DATA']['FEEDS'][] = array(
-        'URL' => $phorum->url(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
+        'URL' => phorum_api_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'type='.$PHORUM['default_feed']),
         'TITLE' => $PHORUM['DATA']['FEED'] . ' ('. strtolower($PHORUM['DATA']['LANG']['Threads']) . ')'
     );
 
     // Add the feed for new threads and their replies.
     $PHORUM['DATA']['FEEDS'][] = array(
-        'URL' => $phorum->url(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
+        'URL' => phorum_api_url(PHORUM_FEED_URL, $PHORUM['vroot'], 'replies=1', 'type='.$PHORUM['default_feed']),
         'TITLE' => $PHORUM['DATA']['FEED'] . ' (' . strtolower($PHORUM['DATA']['LANG']['Threads'].' + '.$PHORUM['DATA']['LANG']['replies']) . ')'
     );
 }

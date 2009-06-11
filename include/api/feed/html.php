@@ -56,7 +56,6 @@
 function phorum_api_feed_html($messages, $forums, $url, $title, $description, $replies)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
     $hcharset    = $PHORUM['DATA']['HCHARSET'];
 
     $url         = htmlspecialchars($url, ENT_COMPAT, $hcharset);
@@ -89,13 +88,13 @@ function phorum_api_feed_html($messages, $forums, $url, $title, $description, $r
 
         }
 
-        $url = htmlspecialchars($phorum->url(
+        $url = htmlspecialchars(phorum_api_url(
             PHORUM_FOREIGN_READ_URL,
             $message["forum_id"], $message["thread"], $message["message_id"]
         ));
 
         $body = substr(htmlspecialchars(
-            $phorum->format->strip($message['body']), ENT_COMPAT, $hcharset
+            phorum_api_format_strip($message['body']), ENT_COMPAT, $hcharset
         ), 0, 200);
 
         $buffer.= "  <li><a href=\"$url\" title=\"$body\">$title</a></li>\n";

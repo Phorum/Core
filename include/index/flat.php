@@ -36,7 +36,7 @@ $folders = array($PHORUM['forum_id'] => array());
 // Get the data for the folder at which we are looking.
 // This initializes our forums storage array, in which we
 // will gather data for forums and folders.
-$forums = $phorum->forums->get(array($PHORUM['forum_id']));
+$forums = phorum_api_forums_get(array($PHORUM['forum_id']));
 
 // If we are in a (v)root folder, then we show the forums that are in the
 // (v)root as separate sections in the flat index view. To be able to do this,
@@ -44,7 +44,7 @@ $forums = $phorum->forums->get(array($PHORUM['forum_id']));
 // those up and extend the $folders array.
 if ($PHORUM['vroot'] == $PHORUM['forum_id'])
 {
-    $child_folders = $phorum->forums->get(
+    $child_folders = phorum_api_forums_get(
         NULL, $PHORUM['forum_id'], NULL, $PHORUM['vroot'],
         PHORUM_FLAG_FOLDERS
     );
@@ -71,7 +71,7 @@ foreach ($folders as $folder_id => $dummy)
     // Retrieve the children for the current folder. For the (v)root folder,
     // we only retrieve the contained forums, since its folders will be shown
     // as separate sections in the flat index view instead.
-    $children = $phorum->forums->get(
+    $children = phorum_api_forums_get(
         NULL, $folder_id, NULL, $PHORUM['vroot'],
         $PHORUM['vroot'] == $folder_id ? PHORUM_FLAG_FORUMS : 0
     );
@@ -81,7 +81,7 @@ foreach ($folders as $folder_id => $dummy)
         // If inaccessible forums should be hidden on the index, then check
         // if the current user has rights to access the current forum.
         if (!$child_forum['folder_flag'] && $PHORUM['hide_forums'] &&
-            !$phorum->user->check_access(PHORUM_USER_ALLOW_READ, $child_forum_id)) {
+            !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $child_forum_id)) {
             continue;
         }
 
@@ -101,7 +101,7 @@ foreach ($folders as $folder_id => $dummy)
 // --------------------------------------------------------------------
 
 // Format the data for the forums and folders that we gathered.
-$forums = $phorum->format->forums($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
+$forums = phorum_api_format_forums($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
 // Build the ordered list of folders and forums for the template.
 // Filter out empty folders.
@@ -127,7 +127,7 @@ phorum_build_common_urls();
 // A message to show if there are no visible forums at all.
 if (empty($PHORUM['DATA']['FORUMS'])) {
     $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['NoForums'];
-    $phorum->output('message');
+    phorum_api_output('message');
     return;
 }
 
@@ -141,7 +141,7 @@ if (!empty($PHORUM['jump_on_single_forum']) &&
     $forum = array_pop($PHORUM['DATA']['FORUMS']);
     $url = $forum['folder_flag']
          ? $forum['URL']['INDEX'] : $forum['URL']['LIST'];
-    $phorum->redirect($url);
+    phorum_api_redirect($url);
     exit;
 }
 
@@ -196,12 +196,12 @@ if (!empty($PHORUM['jump_on_single_forum']) &&
  *     </hookcode>
  */
 if (isset($PHORUM['hooks']['index'])) {
-    $PHORUM['DATA']['FORUMS'] = $phorum->modules->hook(
+    $PHORUM['DATA']['FORUMS'] = phorum_api_hook(
         'index', $PHORUM['DATA']['FORUMS']
     );
 }
 
 // Display the page.
-$phorum->output('index_flat');
+phorum_api_output('index_flat');
 
 ?>

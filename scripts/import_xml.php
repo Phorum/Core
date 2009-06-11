@@ -29,6 +29,7 @@ chdir(dirname(dirname(__FILE__)));
 require_once "./common.php";
 
 include_once "./include/api/forums.php";
+require_once PHORUM_PATH.'/include/api/thread.php';
 
 chdir($pwd);
 
@@ -361,7 +362,7 @@ foreach($xml as $type => $data) {
 
                 }
 
-                $phorum->thread->update_metadata($thread);
+                phorum_api_thread_update_metadata($thread);
 
                 $done++;
                 progress($done, count($data->topic));

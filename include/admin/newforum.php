@@ -89,7 +89,7 @@ if (count($_POST))
             $url = phorum_admin_build_url(array('module=default',"parent_id=$forum[parent_id]"));
         }
 
-        $phorum->redirect($url);
+        phorum_api_redirect($url);
     }
     extract($forum);
 }
@@ -270,9 +270,9 @@ $frm->addbreak("Display Settings");
 
 $frm->addrow("Fixed Display-Settings (user can't override them)", $frm->select_tag("display_fixed", array("No", "Yes"), $display_fixed, $disabled_form_input));
 
-$frm->addrow("Template", $frm->select_tag("template", $phorum->template->list(TRUE), $template, $disabled_form_input));
+$frm->addrow("Template", $frm->select_tag("template", phorum_api_template_list(TRUE), $template, $disabled_form_input));
 
-$frm->addrow("Language", $frm->select_tag("language", $phorum->lang->list(TRUE), $language, $disabled_form_input));
+$frm->addrow("Language", $frm->select_tag("language", phorum_api_lang_list(TRUE), $language, $disabled_form_input));
 
 $frm->addrow("List View", $frm->select_tag("threaded_list", array("Flat", "Threaded"), $threaded_list, $disabled_form_input));
 $frm->addrow("Read View", $frm->select_tag("threaded_read", array("Flat", "Threaded", "Hybrid"), $threaded_read, $disabled_form_input));
@@ -318,7 +318,7 @@ $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", 
 $frm->addrow("Allowed Files (eg: gif;jpg;png, empty for any)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
 $system_max_upload = phorum_get_system_max_upload();
-$max_size = $phorum->format->filesize($system_max_upload[0]);
+$max_size = phorum_api_format_filesize($system_max_upload[0]);
 
 $row=$frm->addrow("Max File Size In KB ($max_size maximum)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 $frm->addhelp($row, "Max File Size", "This is the maximum that one uploaded file can be.  If you see a maximum here, that is the maximum imposed by either your PHP installation, database server or both.  Leaving this field as 0 will use this maximum.");

@@ -24,16 +24,14 @@ require_once './include/api/mail.php';
 
 function phorum_email_pm_notice($message, $langusers)
 {
-    $phorum = Phorum::API();
-
     $mail_data = array(
         // Template variables.
         "pm_message_id"  => $message["pm_message_id"],
         "author"         => phorum_api_user_get_display_name($message["user_id"], $message["from_username"], PHORUM_FLAG_PLAINTEXT),
         "subject"        => $message["subject"],
         "full_body"      => $message["message"],
-        "plain_body"     => wordwrap($phorum->format->strip($message["message"]),72),
-        "read_url"       => $phorum->url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
+        "plain_body"     => wordwrap(phorum_api_format_strip($message["message"]),72),
+        "read_url"       => phorum_api_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
 
         // For email_user_start.
         "mailmessagetpl" => 'PMNotifyMessage',
@@ -74,7 +72,6 @@ function phorum_email_pm_notice($message, $langusers)
 function phorum_email_notice($message)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // do we allow email-notification for that forum?
     if(!$PHORUM['allow_email_notify']) {
@@ -93,11 +90,11 @@ function phorum_email_notice($message)
             "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
-            "plain_body"  => $phorum->format->strip($message['body']),
-            "read_url"    => $phorum->url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
-            "remove_url"  => $phorum->url(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
-            "noemail_url" => $phorum->url(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
-            "followed_threads_url" => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
+            "plain_body"  => phorum_api_format_strip($message['body']),
+            "read_url"    => phorum_api_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
+            "remove_url"  => phorum_api_url(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
+            "noemail_url" => phorum_api_url(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
+            "followed_threads_url" => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
             "msgid"       => $message["msgid"],
 
             // For email_user_start.
@@ -134,7 +131,6 @@ function phorum_email_notice($message)
 function phorum_email_moderators($message)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $moderators = phorum_api_user_list_moderators($PHORUM['forum_id'], $PHORUM['email_ignore_admin'], TRUE);
 
@@ -164,9 +160,9 @@ function phorum_email_moderators($message)
             "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
-            "plain_body"  => $phorum->format->strip($message['body']),
-            "approve_url" => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=messages"),
-            "read_url"    => $phorum->url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
+            "plain_body"  => phorum_api_format_strip($message['body']),
+            "approve_url" => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=messages"),
+            "read_url"    => phorum_api_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
 
             // For email_user_start.
             "mailmessagetpl" => $mailmessagetpl,

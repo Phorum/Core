@@ -28,7 +28,38 @@
 
 if (!defined('PHORUM')) return;
 
-// {{{ Variable definitions
+// {{{ Constant and variable definitions
+
+/**
+ * A general purpose errno value, mostly used for returning a generic
+ * errno with a specific error message.
+ */
+define("PHORUM_ERRNO_ERROR", 1);
+
+/**
+ * An errno value, which indicates a permission problem.
+ */
+define("PHORUM_ERRNO_NOACCESS", 2);
+
+/**
+ * An errno value, which indicates that something was not found.
+ */
+define("PHORUM_ERRNO_NOTFOUND", 3);
+
+/**
+ * An errno value, which indicates a database integrity problem.
+ */
+define("PHORUM_ERRNO_INTEGRITY", 4);
+
+/**
+ * An errno value, which indicates invalid input data.
+ */
+define("PHORUM_ERRNO_INVALIDINPUT", 5);
+
+/**
+ * An errno value, which indicates that a database error occurred.
+ */
+define("PHORUM_ERRNO_DATABASE", 6);
 
 global $PHORUM;
 
@@ -94,7 +125,8 @@ function phorum_api_error($errno, $error = NULL)
     }
 
     if ($errno == PHORUM_ERRNO_DATABASE) {
-        return Phorum::API()->error->database($error);
+        require_once PHORUM_PATH.'/include/api/error/database.php';
+        return phorum_api_error_database($error);
     }
 
     $PHORUM["API"]["errno"] = $errno;

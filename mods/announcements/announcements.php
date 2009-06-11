@@ -5,7 +5,6 @@ if(!defined("PHORUM")) return;
 function phorum_setup_announcements ()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // This variable will be used to store the formatted announcements.
     $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = '';
@@ -107,7 +106,7 @@ function phorum_setup_announcements ()
                 $message["new"] = $new
                                 ? $PHORUM["DATA"]["LANG"]["newflag"]
                                 : NULL;
-                $message["URL"]["NEWPOST"] = $phorum->url(
+                $message["URL"]["NEWPOST"] = phorum_api_url(
                     PHORUM_FOREIGN_READ_URL,
                     $message["forum_id"],
                     $message["thread"],
@@ -122,10 +121,10 @@ function phorum_setup_announcements ()
         }
 
         // Setup template data for the message.
-        $message["lastpost"] = $phorum->format->date($PHORUM["short_date_time"], $message["modifystamp"]);
+        $message["lastpost"] = phorum_api_format_date($PHORUM["short_date_time"], $message["modifystamp"]);
         $message["raw_datestamp"] = $message["datestamp"];
-        $message["datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $message["datestamp"]);
-        $message["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
+        $message["datestamp"] = phorum_api_format_date($PHORUM["short_date_time"], $message["datestamp"]);
+        $message["URL"]["READ"] = phorum_api_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["message_id"]);
         $PHORUM["DATA"]["ANNOUNCEMENTS"][] = $message;
     }
 
@@ -134,15 +133,15 @@ function phorum_setup_announcements ()
 
     // Apply standard formatting to the messages.
     if (isset($PHORUM["hooks"]["format"]))
-        $PHORUM["DATA"]["ANNOUNCEMENTS"] = $phorum->modules->hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
+        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_api_hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
 
     // A hook for module writers for doing post formatting fixups.
     if (isset($PHORUM["hooks"]["format_fixup"]))
-        $PHORUM["DATA"]["ANNOUNCEMENTS"] = $phorum->modules->hook("format_fixup", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
+        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_api_hook("format_fixup", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
 
     // Build the announcements code.
     ob_start();
-    include $phorum->template("announcements::announcements");
+    include phorum_api_template("announcements::announcements");
     $PHORUM['DATA']['MOD_ANNOUNCEMENTS'] = ob_get_contents();
     ob_end_clean();
 }

@@ -50,7 +50,6 @@ if (!defined('PHORUM')) return;
 function phorum_api_request_parse()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Thanks a lot for magic quotes :-/
     // In PHP6, magic quotes are (finally) removed, so we have to check for
@@ -125,7 +124,7 @@ function phorum_api_request_parse()
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["parse_request"])) {
-        $phorum->modules->hook("parse_request");
+        phorum_api_hook("parse_request");
     }
 
     // Get the forum_id if set using a POST or GET parameter.
@@ -262,7 +261,6 @@ function phorum_api_request_stripslashes($array)
 function phorum_api_request_check_token($target_page = NULL)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     if ($target_page === NULL) $target_page = phorum_page;
 
@@ -295,7 +293,7 @@ function phorum_api_request_check_token($target_page = NULL)
                 'Possible hack attempt detected. ' .
                 'The posted form data was rejected.';
             phorum_build_common_urls();
-            $phorum->output("message");
+            phorum_api_output("message");
             exit();
         }
     }
@@ -323,21 +321,20 @@ function phorum_api_request_check_token($target_page = NULL)
 function phorum_api_request_require_login($tight_security = FALSE)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Check if we have an authenticated user.
     if (!$PHORUM['user']['user_id']) {
-        $phorum->redirect(
+        phorum_api_redirect(
             PHORUM_LOGIN_URL,
-            'redir=' . urlencode($phorum->url->current())
+            'redir=' . urlencode(phorum_api_url_current())
         );
     }
 
     // Handle tight security.
     if ($tight_security && !$PHORUM['DATA']['FULLY_LOGGEDIN']) { 
-        $phorum->redirect(
+        phorum_api_redirect(
             PHORUM_LOGIN_URL,
-            'redir=' . urlencode($phorum->url->current())
+            'redir=' . urlencode(phorum_api_url_current())
         );
     }
 }

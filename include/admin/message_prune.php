@@ -218,7 +218,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
 
         // A hook to allow modules to implement extra or different
         // delete functionality.
-        list($handled, $delids, $msgid, $msg, $delmode) = $phorum->modules->hook(
+        list($handled, $delids, $msgid, $msg, $delmode) = phorum_api_hook(
             "before_delete",
             array(false, 0, $msg["message_id"], $msg, $delmode)
         );
@@ -256,7 +256,7 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
         }
 
         // Run a hook for performing custom actions after cleanup.
-        $phorum->modules->hook("delete", $delids);
+        phorum_api_hook("delete", $delids);
 
         // Keep track of deleted messages ids for counting the deleted
         // messages at the end. We can't simply add the number of messages
@@ -1047,7 +1047,7 @@ if (isset($messages) && is_array($messages))
           <td valign="top" style="width:100%;border-bottom:1px dashed #ccc">
             <span style="float:right">
               <?php print htmlspecialchars($data["author"]) ?>
-              <?php print $phorum->format->date($PHORUM['short_date'], $data["datestamp"]) ?>
+              <?php print phorum_api_format_date($PHORUM['short_date'], $data["datestamp"]) ?>
             </span>
             <img align="top"
                  title="<?php print $alt ?>" alt="<?php print $alt ?>"
@@ -1065,7 +1065,7 @@ if (isset($messages) && is_array($messages))
                         htmlspecialchars($data["user_username"]) .
                         "\" (user_id ".$data["user_id"].")<br/>";
               }
-              print "Date and time: " . $phorum->format->date($PHORUM['short_date_time'], $data["datestamp"]) . "<br/>";
+              print "Date and time: " . phorum_api_format_date($PHORUM['short_date_time'], $data["datestamp"]) . "<br/>";
               // Might not be available (for announcements).
               // I won't put a lot of stuff in here for handling announcements,
               // because 5.2 handles them differently than 5.1.
@@ -1076,7 +1076,7 @@ if (isset($messages) && is_array($messages))
                   print "Messages in this thread: {$data["thread_count"]}<br/>";
                   if ($data["thread_count"] > 1) {
                       print "Thread's last post: " .
-                            $phorum->format->date($PHORUM['short_date_time'], $data["thread_modifystamp"]) . "<br/>";
+                            phorum_api_format_date($PHORUM['short_date_time'], $data["thread_modifystamp"]) . "<br/>";
                   }
               }
               ?>

@@ -34,18 +34,18 @@ if(!empty($PHORUM["args"][1])){
 }
 
 if(empty($PHORUM["args"][1]) || empty($profile_id)){
-    $phorum->redirect(PHORUM_INDEX_URL);
+    phorum_api_redirect(PHORUM_INDEX_URL);
 }
 
 $user = phorum_api_user_get($profile_id, TRUE);
 
 if(!is_array($user) || $user["active"]==0) {
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["UnknownUser"];
-    $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_LIST_URL);
+    $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_LIST_URL);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];
 
     // have to include the header here for the Redirect
-    $phorum->output("message");
+    phorum_api_output("message");
     return;
 }
 
@@ -71,13 +71,13 @@ $PHORUM["DATA"]["PROFILE"] = $user;
 $PHORUM["DATA"]["PROFILE"]["forum_id"] = $PHORUM["forum_id"];
 
 $PHORUM["DATA"]["PROFILE"]["raw_date_added"]=$PHORUM["DATA"]["PROFILE"]["date_added"];
-$PHORUM["DATA"]["PROFILE"]["date_added"]=$phorum->format->date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
+$PHORUM["DATA"]["PROFILE"]["date_added"]=phorum_api_format_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_added"]);
 
 if( (empty($PHORUM['hide_email_addr']) && !$user['hide_email']) ||
     !empty($PHORUM["user"]["admin"]) ||
     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW) ||
     (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) ){
-    $PHORUM["DATA"]["PROFILE"]["email"]=$phorum->format->html_encode($user["email"]);
+    $PHORUM["DATA"]["PROFILE"]["email"]=phorum_api_format_html_encode($user["email"]);
 } else {
     $PHORUM["DATA"]["PROFILE"]["email"] = $PHORUM["DATA"]["LANG"]["Hidden"];
 }   
@@ -89,19 +89,19 @@ if( $PHORUM["track_user_activity"] &&
      !$user["hide_activity"])){
 
     $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];
-    $PHORUM["DATA"]["PROFILE"]["date_last_active"]=$phorum->format->date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
+    $PHORUM["DATA"]["PROFILE"]["date_last_active"]=phorum_api_format_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 } else {
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }
 
 $PHORUM["DATA"]["PROFILE"]["posts"] = number_format($PHORUM["DATA"]["PROFILE"]["posts"], 0, "", $PHORUM["thous_sep"]);
 
-$PHORUM["DATA"]["PROFILE"]["URL"]["PM"] = $phorum->url(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
-$PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = $phorum->url(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
+$PHORUM["DATA"]["PROFILE"]["URL"]["PM"] = phorum_api_url(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
+$PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = phorum_api_url(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
 $PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"]);
 // unset($PHORUM["DATA"]["PROFILE"]["signature"]);
 
-$PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = $phorum->url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");
+$PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = phorum_api_url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");
 
 $PHORUM["DATA"]["PROFILE"]["username"] =
     htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
@@ -117,7 +117,7 @@ if (empty($PHORUM["custom_display_name"])) {
 }
 
 if (isset($PHORUM["hooks"]["profile"])) {
-    $PHORUM["DATA"]["PROFILE"] = $phorum->modules->hook(
+    $PHORUM["DATA"]["PROFILE"] = phorum_api_hook(
         "profile", $PHORUM["DATA"]["PROFILE"]
     );
 }
@@ -135,6 +135,6 @@ $PHORUM['DATA']['BREADCRUMBS'][]=array(
 // set all our URL's
 phorum_build_common_urls();
 
-$phorum->output($template);
+phorum_api_output($template);
 
 ?>

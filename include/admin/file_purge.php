@@ -57,7 +57,7 @@ if (count($purge_files))
             $frm->addsubbreak("Reason: " . $file['reason']);
         }
 
-        $frm->addrow(htmlspecialchars($file["filename"]), $phorum->format->filesize($file["filesize"]));
+        $frm->addrow(htmlspecialchars($file["filename"]), phorum_api_format_filesize($file["filesize"]));
     }
 } else {
     $frm->addmessage("There are currently no stale files in the database");

@@ -57,7 +57,7 @@ foreach ($PHORUM["post_fields"] as $var => $spec)
             "Data signing error: field $qvar is missing in the form data.",
             E_USER_ERROR
         );
-        if (! $phorum->sign->check($_POST["$var"], $_POST["$var:signature"]))
+        if (! phorum_api_sign_check($_POST["$var"], $_POST["$var:signature"]))
             trigger_error("Data signing error: signature for field $qvar " .
                           "is wrong; there was probably tampering with the " .
                           "form data", E_USER_ERROR);

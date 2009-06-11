@@ -43,8 +43,6 @@ define('HTTPDATE', 'D, d M Y H:i:s \G\M\T');
  */
 function phorum_api_output($templates)
 {
-    $phorum = Phorum::API();
-
     if (!is_array($templates)) {
         $templates = array($templates);
     }
@@ -92,7 +90,7 @@ function phorum_api_output($templates)
      *     </hookcode>
      */
     if (isset($GLOBALS['PHORUM']['hooks']['start_output'])) {
-        $phorum->modules->hook('start_output');
+        phorum_api_hook('start_output');
     }
 
     // Copy only what we need into the current scope. We do this at
@@ -104,7 +102,7 @@ function phorum_api_output($templates)
         'hooks'  => $GLOBALS['PHORUM']['hooks']
     );
 
-    include $phorum->template('header');
+    include phorum_api_template('header');
 
     /*
      * [hook]
@@ -143,11 +141,11 @@ function phorum_api_output($templates)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['after_header'])) {
-        $phorum->modules->hook('after_header');
+        phorum_api_hook('after_header');
     }
 
     foreach($templates as $template){
-        include $phorum->template($template);
+        include phorum_api_template($template);
     }
 
     /*
@@ -184,10 +182,10 @@ function phorum_api_output($templates)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['before_footer'])) {
-        $phorum->modules->hook('before_footer');
+        phorum_api_hook('before_footer');
     }
 
-    include $phorum->template('footer');
+    include phorum_api_template('footer');
 
     /*
      * [hook]
@@ -223,7 +221,7 @@ function phorum_api_output($templates)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['end_output'])) {
-        $phorum->modules->hook('end_output');
+        phorum_api_hook('end_output');
     }
 }
 // }}}

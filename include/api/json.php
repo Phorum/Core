@@ -33,6 +33,8 @@
 
 if (!defined('PHORUM')) return;
 
+require_once PHORUM_PATH.'/include/api/charset.php';
+
 // {{{ Function: phorum_api_json_encode()
 /**
  * Encode a PHP variable into a JSON structure.
@@ -51,7 +53,7 @@ function phorum_api_json_encode($var)
     global $PHORUM;
 
     if (strtoupper($PHORUM['DATA']['CHARSET']) != 'UTF-8') {
-        $var = Phorum::API()->charset->convert_to_utf8($var);
+        $var = phorum_api_charset_convert_to_utf8($var);
     }
 
     return json_encode($var);
@@ -79,7 +81,7 @@ function phorum_api_json_decode($json)
     $var = json_decode($json, TRUE);
 
     if (strtoupper($PHORUM['DATA']['CHARSET']) != 'UTF-8') {
-        $var = Phorum::API()->charset->convert_from_utf8($var);
+        $var = phorum_api_charset_convert_from_utf8($var);
     }
 
     return $var;

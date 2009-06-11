@@ -19,8 +19,10 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
+require_once PHORUM_PATH.'/include/api/mail.php';
+
 if (!$PHORUM["DATA"]["USER_MODERATOR"]) {
-    $phorum->redirect(PHORUM_CONTROLCENTER_URL);
+    phorum_api_redirect(PHORUM_CONTROLCENTER_URL);
     exit();
 }
 
@@ -51,7 +53,7 @@ if(!empty($_POST["user_ids"])){
                 // send reg approved message
                 $maildata["mailsubject"]=$PHORUM["DATA"]["LANG"]["RegApprovedSubject"];
                 $maildata["mailmessage"]=wordwrap($PHORUM["DATA"]["LANG"]["RegApprovedEmailBody"], 72);
-                $phorum->mail(array($user["email"]), $maildata);
+                phorum_api_mail(array($user["email"]), $maildata);
 
             }
         }
@@ -79,7 +81,7 @@ if(empty($users)){
 
     $PHORUM["DATA"]["USERS"]=$users;
 
-    $PHORUM["DATA"]["ACTION"]=$phorum->url( PHORUM_CONTROLCENTER_ACTION_URL );
+    $PHORUM["DATA"]["ACTION"]=phorum_api_url( PHORUM_CONTROLCENTER_ACTION_URL );
     $PHORUM["DATA"]["FORUM_ID"]=$PHORUM["forum_id"];
 
     $template = "cc_users";

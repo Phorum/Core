@@ -20,6 +20,8 @@
 if (!defined("PHORUM_ADMIN")) return;
 
 require_once './include/api/forums.php';
+require_once PHORUM_PATH.'/include/api/lang.php';
+require_once PHORUM_PATH.'/include/api/template.php';
 
 $errors = array();
 
@@ -95,7 +97,7 @@ if (count($_POST))
         // The URL to redirect to.
         $url = phorum_admin_build_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.urlencode($okmsg)));
 
-        $phorum->redirect($url);
+        phorum_api_redirect($url);
         exit;
     }
 }
@@ -217,11 +219,11 @@ $row = $frm->addrow(
 
 $frm->addbreak("Display Settings");
 
-$frm->addrow("Template", $frm->select_tag("template", $phorum->template->list(TRUE), $template, $disabled_form_input));
+$frm->addrow("Template", $frm->select_tag("template", phorum_api_template_list(TRUE), $template, $disabled_form_input));
 
-$frm->addrow("Language", $frm->select_tag("language", $phorum->lang->list(TRUE), $language, $disabled_form_input));
+$frm->addrow("Language", $frm->select_tag("language", phorum_api_lang_list(TRUE), $language, $disabled_form_input));
 
-$phorum->modules->hook("admin_editfolder_form", $frm, $forum_settings);
+phorum_api_hook("admin_editfolder_form", $frm, $forum_settings);
 
 $frm->show();
 

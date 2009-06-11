@@ -20,6 +20,8 @@
 if (!defined("PHORUM")) return;
 
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/thread.php';
+require_once PHORUM_PATH.'/include/api/file.php';
 
 // Set some values.
 $message["moderator_post"] = $PHORUM["DATA"]["MODERATOR"] ? 1 : 0;
@@ -86,7 +88,7 @@ $message["msgid"] = md5(uniqid(rand())) . ".$suffix";
 // a check is needed to see if the attachments are really in the database.
 $message["meta"]["attachments"] = array();
 foreach ($message["attachments"] as $info) {
-    if ($info["keep"] && $phorum->file->exists($info["file_id"])) {
+    if ($info["keep"] && phorum_api_file_exists($info["file_id"])) {
         $message["meta"]["attachments"][] = array(
             "file_id"   => $info["file_id"],
             "name"      => $info["name"],
@@ -133,7 +135,7 @@ if (!count($message["meta"]["attachments"])) {
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["before_post"])) {
-    $message = $phorum->modules->hook("before_post", $message);
+    $message = phorum_api_hook("before_post", $message);
 }
 
 // Keep a copy of the message we have got now.
@@ -155,8 +157,8 @@ if ($success)
                 PHORUM_LINK_MESSAGE
             );
         } else {
-            if ($phorum->file->check_delete_access($info["file_id"])) {
-                $phorum->file->delete($info["file_id"]);
+            if (phorum_api_file_check_delete_access($info["file_id"])) {
+                phorum_api_file_delete($info["file_id"]);
             }
         }
     }
@@ -172,7 +174,7 @@ if ($success)
         }
     }
 
-    $phorum->thread->update_metadata($message["thread"]);
+    phorum_api_thread_update_metadata($message["thread"]);
 
     /*
      * [hook]
@@ -213,7 +215,7 @@ if ($success)
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["after_message_save"])) {
-        $message = $phorum->modules->hook("after_message_save", $message);
+        $message = phorum_api_hook("after_message_save", $message);
     }
 
 
@@ -245,14 +247,14 @@ if ($success)
     }
 
     if ($subscribe_type !== NULL) {
-        $phorum->user->subscribe(
+        phorum_api_user_subscribe(
             $message["user_id"],
             $message["thread"],
             $PHORUM["forum_id"],
             $subscribe_type
         );
     } elseif ($mode == 'reply') {
-        $phorum->user->unsubscribe(
+        phorum_api_user_unsubscribe(
             $message["user_id"],
             $message["thread"]
         );
@@ -267,7 +269,7 @@ if ($success)
         )));
 
         // Increase the user's post count.
-        $phorum->user->increment_posts();
+        phorum_api_user_increment_posts();
     }
 
     // Actions for messages which are approved.
@@ -314,11 +316,10 @@ if ($success)
      *     function phorum_mod_foo_after_post($message)
      *     {
      *         global $PHORUM;
-     *         $phorum = Phorum::API();
      *
      *         // remove the post count increment for the user in select forums
      *         if (in_array($message["forum_id"], $PHORUM["mod_foo"]["forums_to_ignore"])) {
-     *             $phorum->user->save (
+     *             phorum_api_user_save (
      *                 array (
      *                     "user_id"    => $PHORUM["user"]["user_id"],
      *                     "posts"      => $PHORUM["user"]["posts"]
@@ -331,7 +332,7 @@ if ($success)
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["after_post"])) {
-        $message = $phorum->modules->hook("after_post", $message);
+        $message = phorum_api_hook("after_post", $message);
     }
 
     // Posting is completed. Take the user back to the forum.
@@ -346,7 +347,7 @@ if ($success)
         // or to the thread starter in case the new message is not viewable.
         if (isset($top_parent)) {
             if ($not_viewable) {
-                $redir_url = $phorum->url(
+                $redir_url = phorum_api_url(
                     PHORUM_READ_URL, $message["thread"]
                 );
             } else {
@@ -354,12 +355,12 @@ if ($success)
                 $pages = ceil(($top_parent["thread_count"]+1) / $readlen);
 
                 if ($pages > 1) {
-                    $redir_url = $phorum->url(
+                    $redir_url = phorum_api_url(
                         PHORUM_READ_URL, $message["thread"],
                         $message["message_id"], "page=$pages"
                     );
                 } else {
-                    $redir_url = $phorum->url(
+                    $redir_url = phorum_api_url(
                         PHORUM_READ_URL, $message["thread"],
                         $message["message_id"]
                     );
@@ -370,17 +371,17 @@ if ($success)
         // the forum's message list in case the new message is not viewable.
         } else {
             $redir_url = $not_viewable
-                       ? $phorum->url(PHORUM_LIST_URL)
-                       : $phorum->url(PHORUM_READ_URL, $message["thread"]);
+                       ? phorum_api_url(PHORUM_LIST_URL)
+                       : phorum_api_url(PHORUM_READ_URL, $message["thread"]);
         }
     }
     else
     {
-        $redir_url = $phorum->url(PHORUM_LIST_URL);
+        $redir_url = phorum_api_url(PHORUM_LIST_URL);
     }
 
     if ($message["status"] > 0) {
-        $phorum->redirect($redir_url);
+        phorum_api_redirect($redir_url);
     } else {
         // give a message about this being a moderated forum before redirecting        
         $PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];
@@ -395,7 +396,7 @@ if ($success)
         
         // make it a little bit longer visible
         $PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
-        $phorum->output('message');
+        phorum_api_output('message');
         exit(0);
     }
 

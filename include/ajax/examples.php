@@ -1,8 +1,6 @@
 <?php
 if (! defined("PHORUM")) return;
 
-$phorum = Phorum::API();
-
 phorum_build_common_urls();
 
 $PHORUM['DATA']['HEADING'] = 'Ajax layer example page';
@@ -10,10 +8,9 @@ $PHORUM['DATA']['HTML_DESCRIPTION'] =
     'This page demonstrates some features of ' .
     'the Phorum Ajax layer.';
 
-include $phorum->template('header');
+include phorum_api_template('header');
 
-$phorum = Phorum::API();
-$clientjs = $phorum->url(PHORUM_AJAX_URL, 'client');
+$clientjs = phorum_api_url(PHORUM_AJAX_URL, 'client');
 
 ?>
 <script type="text/javascript">
@@ -81,6 +78,6 @@ viewer.innerHTML = '';
 </script>
 
 <?php
-    include $phorum->template('footer');
+    include phorum_api_template('footer');
 ?>
 

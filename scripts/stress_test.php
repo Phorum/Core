@@ -48,8 +48,11 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 // include required files
 require_once('./common.php');
 
+require_once PHORUM_PATH.'/include/api/thread.php';
+require_once PHORUM_PATH.'/include/api/newflags.php';
+
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 print "\n";
 print "Phorum stress testing tool\n";
@@ -178,7 +181,7 @@ if ($tcount)
             $parent = $treemsgs[array_rand($treemsgs)];
         }
 
-        $phorum->thread->update_metadata($thread);
+        phorum_api_thread_update_metadata($thread);
 
         $tcount --;
     }
@@ -210,7 +213,7 @@ if ($ncount)
     {
         print ".";
         $PHORUM["user"]["user_id"] = $user_id;
-        $phorum->newflags->markread($markread, PHORUM_MARKREAD_MESSAGES);
+        phorum_api_newflags_markread($markread, PHORUM_MARKREAD_MESSAGES);
     }
     print "\n";
 }

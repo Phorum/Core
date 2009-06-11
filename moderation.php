@@ -22,6 +22,7 @@ require_once './common.php';
 
 require_once './include/moderation_functions.php';
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/thread.php';
 
 if(!phorum_check_read_common()) {
   return;
@@ -30,7 +31,7 @@ if(!phorum_check_read_common()) {
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.
-$phorum->request->check_token();
+phorum_api_request_check_token();
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
@@ -46,7 +47,7 @@ if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
 // because moderation action can vary so much, the only safe bet is to send
 // them to the referrer if they are not fully logged in
 if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
-    $phorum->redirect(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]);
+    phorum_api_redirect(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]);
 }
 
 // if we gave the user a confirmation form and they clicked No, send them back to the message
@@ -67,14 +68,14 @@ if(isset($_POST["confirmation"]) && $_POST["confirmation"]==$PHORUM["DATA"]["LAN
         }
 
 
-        $url = $phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+        $url = phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
 
     } else {
         $message = phorum_db_get_message($msgthd_id);
-        $url = $phorum->url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+        $url = phorum_api_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
     }
 
-    $phorum->redirect($url);
+    phorum_api_redirect($url);
 }
 
 
@@ -129,7 +130,7 @@ $is_admin_user=$PHORUM["user"]["admin"];
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["moderation"])) {
-    $phorum->modules->hook("moderation", $mod_step);
+    phorum_api_hook("moderation", $mod_step);
 }
 
 $invalidate_message_cache = array();
@@ -153,7 +154,7 @@ switch ($mod_step)
 
             phorum_show_confirmation_form(
                 $PHORUM["DATA"]["LANG"]["ConfirmDeleteMessage"],
-                $phorum->url(PHORUM_MODERATION_ACTION_URL),
+                phorum_api_url(PHORUM_MODERATION_ACTION_URL),
                 $args
             );
         }
@@ -219,7 +220,7 @@ switch ($mod_step)
          */
         $delete_handled = 0;
         if (isset($PHORUM["hooks"]["before_delete"]))
-            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = $phorum->modules->hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
+            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_api_hook("before_delete", array(0,0,$msgthd_id,$message,PHORUM_DELETE_MESSAGE));
 
         // Handle the delete action, unless a module already handled it.
         if (!$delete_handled) {
@@ -272,7 +273,7 @@ switch ($mod_step)
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["delete"])) {
-            $phorum->modules->hook("delete", array($msgthd_id));
+            phorum_api_hook("delete", array($msgthd_id));
         }
 
         $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgDeletedOk'];
@@ -280,7 +281,7 @@ switch ($mod_step)
             $PHORUM['forum_id']=(int)$PHORUM['args']['old_forum'];
         }
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -303,7 +304,7 @@ switch ($mod_step)
 
             phorum_show_confirmation_form(
                 $PHORUM["DATA"]["LANG"]["ConfirmDeleteThread"],
-                $phorum->url(PHORUM_MODERATION_ACTION_URL),
+                phorum_api_url(PHORUM_MODERATION_ACTION_URL),
                 $args
             );
         }
@@ -316,7 +317,7 @@ switch ($mod_step)
         // delete functionality.
         $delete_handled = 0;
         if (isset($PHORUM["hooks"]["before_delete"]))
-            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = $phorum->modules->hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
+            list($delete_handled,$msg_ids,$msgthd_id,$message,$delete_mode) = phorum_api_hook("before_delete", array(0,array(),$msgthd_id,$message,PHORUM_DELETE_TREE));
 
         if(!$delete_handled) {
 
@@ -352,7 +353,7 @@ switch ($mod_step)
 
         // Run a hook for performing custom actions after cleanup.
         if (isset($PHORUM["hooks"]["delete"])) {
-            $phorum->modules->hook("delete", $msg_ids);
+            phorum_api_hook("delete", $msg_ids);
         }
 
         $PHORUM['DATA']['OKMSG']=$nummsgs." ".$PHORUM["DATA"]["LANG"]['MsgDeletedOk'];
@@ -371,7 +372,7 @@ switch ($mod_step)
 
                 $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
             }
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -381,7 +382,7 @@ switch ($mod_step)
 
         $message = phorum_db_get_message($msgthd_id);
 
-        $PHORUM['DATA']['URL']["ACTION"]=$phorum->url(PHORUM_MODERATION_ACTION_URL);
+        $PHORUM['DATA']['URL']["ACTION"]=phorum_api_url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_MOVE;
@@ -402,7 +403,7 @@ switch ($mod_step)
         // mod should only be able to move to forums he also moderates
 
         // get the forumlist
-        $forums = $phorum->forums->tree();
+        $forums = phorum_api_forums_tree();
 
         // ignore the current forum
         unset($forums[$PHORUM["forum_id"]]);
@@ -496,7 +497,7 @@ switch ($mod_step)
              *     </hookcode>
              */
             if (isset($PHORUM["hooks"]["move_thread"])) {
-                $phorum->modules->hook("move_thread", $msgthd_id);
+                phorum_api_hook("move_thread", $msgthd_id);
             }
 
             foreach ($message['meta']['message_ids'] as $message_id) {
@@ -548,7 +549,7 @@ switch ($mod_step)
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["close_thread"])) {
-            $phorum->modules->hook("close_thread", $msgthd_id);
+            phorum_api_hook("close_thread", $msgthd_id);
         }
 
         $invalidate_message_cache[] = array(
@@ -598,7 +599,7 @@ switch ($mod_step)
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["reopen_thread"])) {
-            $phorum->modules->hook("reopen_thread", $msgthd_id);
+            phorum_api_hook("reopen_thread", $msgthd_id);
         }
 
         $invalidate_message_cache[] = array(
@@ -619,7 +620,7 @@ switch ($mod_step)
         phorum_db_update_message($msgthd_id, $newpost);
 
         // updating the thread-info
-        $phorum->thread->update_metadata($old_message['thread']);
+        phorum_api_thread_update_metadata($old_message['thread']);
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
@@ -676,7 +677,7 @@ switch ($mod_step)
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["after_approve"])) {
-            $phorum->modules->hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
+            phorum_api_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
         }
 
         if($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
@@ -699,7 +700,7 @@ switch ($mod_step)
                     $addcode.=",";
                 $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
             }
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -723,13 +724,13 @@ switch ($mod_step)
         }
 
         // updating the thread-info
-        $phorum->thread->update_metadata($old_message['thread']);
+        phorum_api_thread_update_metadata($old_message['thread']);
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "+$num_approved", $old_message["datestamp"]);
 
         if (isset($PHORUM["hooks"]["after_approve"])) {
-            $phorum->modules->hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
+            phorum_api_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE_TREE));
         }
 
         $PHORUM['DATA']['OKMSG']="$num_approved ".$PHORUM['DATA']['LANG']['MsgApprovedOk'];
@@ -745,7 +746,7 @@ switch ($mod_step)
 
                 $addcode.="onlyunapproved=".$PHORUM['args']['onlyunapproved'];
             }
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED,$addcode);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -802,18 +803,18 @@ switch ($mod_step)
          *     </hookcode>
          */
         if (isset($PHORUM["hooks"]["hide_thread"])) {
-            $phorum->modules->hook("hide_thread", $msgthd_id);
+            phorum_api_hook("hide_thread", $msgthd_id);
         }
 
         // updating the thread-info
-        $phorum->thread->update_metadata($old_message['thread']);
+        phorum_api_thread_update_metadata($old_message['thread']);
 
         // updating the forum-stats
         phorum_db_update_forum_stats(false, "-$num_hidden");
 
         $PHORUM['DATA']['OKMSG']="$num_hidden ".$PHORUM['DATA']['LANG']['MsgHiddenOk'];
         if(isset($PHORUM['args']["prepost"])) {
-            $PHORUM['DATA']["URL"]["REDIRECT"]=$phorum->url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+            $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
@@ -822,7 +823,7 @@ switch ($mod_step)
    case PHORUM_MERGE_THREAD: // this is the first step of a thread merge
 
         $template="merge_form";
-        $PHORUM['DATA']['URL']["ACTION"]     = $phorum->url(PHORUM_MODERATION_ACTION_URL);
+        $PHORUM['DATA']['URL']["ACTION"]     = phorum_api_url(PHORUM_MODERATION_ACTION_URL);
         $PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
         $PHORUM['DATA']["FORM"]["thread_id"] = $msgthd_id;
         $PHORUM['DATA']["FORM"]["mod_step"]  = PHORUM_DO_THREAD_MERGE;
@@ -908,7 +909,7 @@ switch ($mod_step)
             // change forum_id for the following calls to update the right forum
             $PHORUM["forum_id"] =$target['forum_id'];
             // update message count / stats
-            $phorum->thread->update_metadata($target['thread']);
+            phorum_api_thread_update_metadata($target['thread']);
             phorum_db_update_forum_stats(true);
 
             /*
@@ -934,7 +935,7 @@ switch ($mod_step)
              *
              */
 
-            $phorum->modules->hook('after_merge', $msgid_translation);
+            phorum_api_hook('after_merge', $msgid_translation);
 
         } else {
             // Cancel Thread Merge
@@ -949,7 +950,7 @@ switch ($mod_step)
 
    case PHORUM_SPLIT_THREAD: // this is the first step of a thread split
 
-           $PHORUM['DATA']['URL']["ACTION"]=$phorum->url(PHORUM_MODERATION_ACTION_URL);
+           $PHORUM['DATA']['URL']["ACTION"]=phorum_api_url(PHORUM_MODERATION_ACTION_URL);
            $PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
            $message =phorum_db_get_message($msgthd_id);
            $PHORUM['DATA']["FORM"]["thread_id"]=$message["thread"];
@@ -968,8 +969,8 @@ switch ($mod_step)
            settype($_POST['thread'], "int");
            phorum_db_split_thread($_POST['message'],$_POST['forum_id']);
            // update message count / stats
-           $phorum->thread->update_metadata($_POST['thread']);
-           $phorum->thread->update_metadata($_POST['message']);
+           phorum_api_thread_update_metadata($_POST['thread']);
+           phorum_api_thread_update_metadata($_POST['message']);
            phorum_db_update_forum_stats(true);
 
             /*
@@ -994,7 +995,7 @@ switch ($mod_step)
              *     None
              *
              */
-           $phorum->modules->hook('after_split', $_POST['message']);
+           phorum_api_hook('after_split', $_POST['message']);
 
            break;
 
@@ -1017,6 +1018,6 @@ if(!isset($PHORUM['DATA']['BACKMSG'])) {
     $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
 }
 
-$phorum->output($template);
+phorum_api_output($template);
 
 ?>

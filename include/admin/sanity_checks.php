@@ -58,7 +58,7 @@ while ($file = readdir($dh)) {
 }
 
 // Give module writers a possiblity to write custom sanity checks.
-$sanity_checks = $phorum->modules->hook("sanity_checks", $sanity_checks);
+$sanity_checks = phorum_api_hook("sanity_checks", $sanity_checks);
 
 // ========================================================================
 // Run the sanity checks.

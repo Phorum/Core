@@ -87,7 +87,6 @@ function phorum_mod_smileys_format_fixup($data)
 function phorum_mod_smileys_editor_tool_plugin()
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    $phorum = Phorum::API();
 
     $lang = $PHORUM["DATA"]["LANG"]["mod_smileys"];
 
@@ -125,7 +124,7 @@ function phorum_mod_smileys_editor_tool_plugin()
     // Register the smileys help page.
     editor_tools_register_help(
         $description,
-        $phorum->url(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
+        phorum_api_url(PHORUM_ADDON_URL, 'module=smileys', 'action=help')
     );
 }
 
@@ -167,7 +166,7 @@ function phorum_mod_smileys_tpl_editor_disable_smileys()
     if (empty($PHORUM["mod_smileys"]["allow_disable_per_post"]))
         return;
 
-    include(Phorum::API()->template('smileys::disable_option'));
+    include(phorum_api_template('smileys::disable_option'));
 }
 
 // Process "Disable smileys" option from the message form.

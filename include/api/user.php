@@ -43,7 +43,245 @@
 
 if (!defined('PHORUM')) return;
 
-// {{{ Variable definitions
+// {{{ Constant and variable definitions
+
+/**
+ * If a user API is written as a replacement for the standard Phorum
+ * user API, where the replacement API is incompatible with the
+ * standard API, then this define should be set to FALSE. That will
+ * disable the user management functions in the admin interface.
+ *
+ * @todo Maybe we should deprecate this construction. We have other user
+ *       integration options nowadays.
+ */
+define("PHORUM_ORIGINAL_USER_CODE", TRUE);
+
+/**
+ * Used for identifying long term sessions. The value is used as
+ * the name for the session cookie for long term sessions.
+ */
+define( 'PHORUM_SESSION_LONG_TERM' , 'phorum_session_v5' );
+
+/**
+ * Used for identifying short term sessions. The value is used as
+ * the name for the session cookie for short term sessions
+ * (this is used by the tighter authentication scheme).
+ */
+define( 'PHORUM_SESSION_SHORT_TERM', 'phorum_session_st' );
+
+/**
+ * Used for identifying admin sessions. The value is used as
+ * the name for the session cookie for admin sessions.
+ */
+define( 'PHORUM_SESSION_ADMIN', 'phorum_admin_session' );
+
+/**
+ * Function call parameter, which tells various functions that
+ * a front end forum session has to be handled.
+ */
+define('PHORUM_FORUM_SESSION', 1);
+
+/**
+ * Function call parameter, which tells various functions that
+ * an admin back end session has to be handled.
+ */
+define('PHORUM_ADMIN_SESSION', 2);
+
+
+/**
+ * Function call flag that tells {@link phorum_api_user_set_active_user()}
+ * that the short term forum session has to be activated.
+ */
+define('PHORUM_FLAG_SESSION_ST', 1);
+
+/**
+ * Function call flag, which tells {@link phorum_api_user_save()}
+ * that the password field should be stored as is. This can be used
+ * to feed Phorum MD5 encrypted passwords. Normally, the password
+ * field would be MD5 encrypted by the function. This will keep the
+ * phorum_api_user_save() function from double encrypting the password.
+ */
+define('PHORUM_FLAG_RAW_PASSWORD', 1);
+
+/**
+ * Function call flag that tells {@link phorum_api_user_get_display_name()}
+ * that the returned display names have to be HTML formatted, so they can
+ * be used for showing the name in HTML pages.
+ */
+define('PHORUM_FLAG_HTML', 1);
+
+/**
+ * Function call flag that tells {@link phorum_api_user_get_display_name()}
+ * that the returned display names should be stripped down to plain text
+ * format, so they can be used for showing the name in things like mail
+ * messages and message quoting.
+ */
+define('PHORUM_FLAG_PLAINTEXT', 2);
+
+/**
+ * Function call parameter that tells
+ * {@link phorum_api_user_session_create()} that session ids have to be
+ * reset to new values as far as that is sensible for a newly
+ * logged in user.
+ */
+define('PHORUM_SESSID_RESET_LOGIN', 1);
+
+/**
+ * Function call parameter, which tells
+ * {@link phorum_api_user_session_create()} that all session ids have to
+ * be reset to new values. This is for example appropriate after a user
+ * changed the password (so active sessions on other computers or
+ * browsers will be ended).
+ */
+define('PHORUM_SESSID_RESET_ALL', 2);
+
+/**
+ * Function call parameter, which tells {@link phorum_api_user_get_list()}
+ * that all users have to be returned.
+ */
+define('PHORUM_GET_ALL', 0);
+
+/**
+ * Function call parameter, which tells {@link phorum_api_user_get_list()}
+ * that all active users have to be returned.
+ */
+define('PHORUM_GET_ACTIVE', 1);
+
+/**
+ * Function call parameter, which tells {@link phorum_api_user_get_list()}
+ * that all inactive users have to be returned.
+ */
+define('PHORUM_GET_INACTIVE', 2);
+
+/**
+ * Function call parameter that tells {@link phorum_api_user_check_access()}
+ * and {@link phorum_api_user_check_group_access()} to return an array
+ * of respectively forums or groups for which a user is granted access.
+ */
+define('PHORUM_ACCESS_LIST', -1);
+
+/**
+ * Function call parameter that tells {@link phorum_api_user_check_access()}
+ * and {@link phorum_api_user_check_group_access()} to check if the user
+ * is granted access for respectively any forum or group.
+ */
+define('PHORUM_ACCESS_ANY', -2);
+
+/**
+ * User status, indicating that the user has not yet confirmed the
+ * registration by email and that a user moderator will have to approve
+ * the registration as well.
+ */
+define("PHORUM_USER_PENDING_BOTH", -3);
+
+/**
+ * User status, indicating that the user has not yet confirmed the
+ * registration by email.
+ */
+define("PHORUM_USER_PENDING_EMAIL", -2);
+
+/**
+ * User status, indicating that the registration has not yet been approved
+ * by a user moderator.
+ */
+define("PHORUM_USER_PENDING_MOD", -1);
+
+/**
+ * User status, indicating that the user has been deactivated.
+ */
+define("PHORUM_USER_INACTIVE", 0);
+
+/**
+ * User status, indicating that the registration has been completed
+ * and that the user can access the forums.
+ */
+define("PHORUM_USER_ACTIVE", 1);
+
+/**
+ * Permission flag which allows users to read forum messages.
+ */
+define('PHORUM_USER_ALLOW_READ', 1);
+
+/**
+ * Permission flag which allows users to reply to forum messages.
+ */
+define('PHORUM_USER_ALLOW_REPLY', 2);
+
+/**
+ * Permission flag which allows users to edit their own forum messages.
+ */
+define('PHORUM_USER_ALLOW_EDIT', 4);
+
+/**
+ * Permission flag which allows users to start new forum topics.
+ */
+define('PHORUM_USER_ALLOW_NEW_TOPIC', 8);
+
+/**
+ * Permission flag which allows users to attach files
+ * to their forum messages.
+ */
+define('PHORUM_USER_ALLOW_ATTACH', 32);
+
+/**
+ * Permission flag which allows users to edit other users' messages.
+ */
+define('PHORUM_USER_ALLOW_MODERATE_MESSAGES', 64);
+
+/**
+ * Permission flag which allows users to moderate user signup
+ * requests within the vroot.
+ */
+define('PHORUM_USER_ALLOW_MODERATE_USERS', 128);
+
+/**
+ * Group permission flag for users which are suspended by a group moderator.
+ */
+define('PHORUM_USER_GROUP_SUSPENDED', -1);
+
+/**
+ * Group permission flag for users which are not yet approved by
+ * a group moderator.
+ */
+define('PHORUM_USER_GROUP_UNAPPROVED', 0);
+
+/**
+ * Group permission flag for users which are active approved group members.
+ */
+define('PHORUM_USER_GROUP_APPROVED', 1);
+
+/**
+ * Group permission flag for users which are group moderator.
+ */
+define('PHORUM_USER_GROUP_MODERATOR', 2);
+
+/**
+ * Subscription type, which tells Phorum explicitly that the user
+ * does not have a subscription of any kind for the forum or thread.
+ */
+define("PHORUM_SUBSCRIPTION_NONE", -1);
+
+/**
+ * Subscription type, which tells Phorum to send out a mail message for
+ * every new forum or thread that a user is subscribed to.
+ */
+define("PHORUM_SUBSCRIPTION_MESSAGE", 0);
+
+/**
+ * Subscription type, which tells Phorum to periodially send a mail
+ * message, containing a list of new messages in forums or threads
+ * that a user is subscribed to. There is currently no support for
+ * this type of subscription in the Phorum core code.
+ */
+define("PHORUM_SUBSCRIPTION_DIGEST", 1);
+
+/**
+ * Subscription type, which tells Phorum to make the forums or threads
+ * that a user is subscribed to accessible from the followed threads
+ * interface in the control center. No mail is sent for new messages,
+ * but the user can check for new messages using that interface.
+ */
+define("PHORUM_SUBSCRIPTION_BOOKMARK", 2);
 
 global $PHORUM;
 
@@ -166,7 +404,6 @@ $PHORUM['API']['user_fields'] = array
 function phorum_api_user_save($user, $flags = 0)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // $user must be an array.
     if (!is_array($user)) {
@@ -417,7 +654,7 @@ function phorum_api_user_save($user, $flags = 0)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_save'])) {
-        $dbuser = $phorum->modules->hook('user_save', $dbuser);
+        $dbuser = phorum_api_hook('user_save', $dbuser);
     }
 
     /**
@@ -474,7 +711,7 @@ function phorum_api_user_save($user, $flags = 0)
                 $orig_status == PHORUM_USER_PENDING_EMAIL ||
                 $orig_status == PHORUM_USER_PENDING_MOD) {
 
-                $dbuser = $phorum->modules->hook('user_register', $dbuser);
+                $dbuser = phorum_api_hook('user_register', $dbuser);
             }
         }
     }
@@ -530,7 +767,6 @@ function phorum_api_user_save($user, $flags = 0)
 function phorum_api_user_save_raw($user)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     if (empty($user['user_id'])) {
         trigger_error(
@@ -542,7 +778,7 @@ function phorum_api_user_save_raw($user)
 
     // This hook is documented in phorum_api_user_save().
     if (isset($PHORUM['hooks']['user_save'])) {
-        $user = $phorum->modules->hook('user_save', $user);
+        $user = phorum_api_hook('user_save', $user);
     }
 
     // Store the data in the database.
@@ -653,7 +889,6 @@ function phorum_api_user_save_settings($settings)
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     if (!is_array($user_id)) {
         $user_ids = array($user_id);
@@ -805,7 +1040,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_get'])) {
-        $users = $phorum->modules->hook('user_get', $users, $detailed);
+        $users = phorum_api_hook('user_get', $users, $detailed);
     }
 
     // Return the results.
@@ -1078,7 +1313,6 @@ function phorum_api_user_search_custom_profile_field($field_id, $value, $operato
 function phorum_api_user_list($type = PHORUM_GET_ALL)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Retrieve a list of users from the database.
     $list = phorum_db_user_get_list($type);
@@ -1138,7 +1372,7 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_list'])) {
-        $list = $phorum->modules->hook('user_list', $list);
+        $list = phorum_api_hook('user_list', $list);
     }
 
     return $list;
@@ -1177,7 +1411,6 @@ function phorum_api_user_increment_posts($user_id = NULL)
 function phorum_api_user_delete($user_id)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     settype($user_id, "int");
 
@@ -1216,7 +1449,7 @@ function phorum_api_user_delete($user_id)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_delete'])) {
-        $phorum->modules->hook('user_delete', $user_id);
+        phorum_api_hook('user_delete', $user_id);
     }
 
     // If user caching is enabled, we remove the user from the cache.
@@ -1272,7 +1505,6 @@ function phorum_api_user_delete($user_id)
 function phorum_api_user_authenticate($type, $username, $password)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $user_id = NULL;
 
@@ -1352,7 +1584,7 @@ function phorum_api_user_authenticate($type, $username, $password)
     if (isset($PHORUM['hooks']['user_authenticate']))
     {
         // Run the hook.
-        $authinfo = $phorum->modules->hook('user_authenticate', array(
+        $authinfo = phorum_api_hook('user_authenticate', array(
             'type'     => $type,
             'username' => $username,
             'password' => $password,
@@ -1472,7 +1704,6 @@ function phorum_api_user_authenticate($type, $username, $password)
 function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Reset error storage.
     $PHORUM['API']['errno'] = NULL;
@@ -1487,7 +1718,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
             // missing, then we fall back to the anonymous user.
             if (!isset($user['user_id']) ||
                 !isset($user['active'])) {
-                $phorum->error(
+                phorum_api_error(
                     PHORUM_ERRNO_ERROR,
                     'phorum_api_user_set_active_user(): ' .
                     'user record seems incomplete'
@@ -1511,7 +1742,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 
         // Fall back to the anonymous user if the user is not activated.
         if ($user && $user['active'] != PHORUM_USER_ACTIVE) {
-            $phorum->error(
+            phorum_api_error(
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
                 'the user is not active'
@@ -1522,7 +1753,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
         // Fall back to the anonymous user if the user does not have
         // admin rights, while an admin setup was requested.
         if ($type == PHORUM_ADMIN_SESSION && $user && empty($user['admin'])) {
-            $phorum->error(
+            phorum_api_error(
                 PHORUM_ERRNO_ERROR,
                 'phorum_api_user_set_active_user(): ' .
                 'the user is not an administrator'
@@ -1686,7 +1917,6 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 function phorum_api_user_session_create($type, $reset = 0)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     /**
      * [hook]
@@ -1746,7 +1976,7 @@ function phorum_api_user_session_create($type, $reset = 0)
      *     of how to let Phorum pick up this PHP based session.
      */
     if (isset($PHORUM['hooks']['user_session_create'])) {
-        if ($phorum->modules->hook('user_session_create', $type) === NULL) {
+        if (phorum_api_hook('user_session_create', $type) === NULL) {
             return TRUE;
         }
     }
@@ -1778,7 +2008,7 @@ function phorum_api_user_session_create($type, $reset = 0)
 
     // Check if the user is activated.
     if ($PHORUM['user']['active'] != PHORUM_USER_ACTIVE) {
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_NOACCESS,
             'The user is not (yet) activated (user id '.$user['user_id'].')'
         );
@@ -1789,7 +2019,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // one can never be too sure about this.
     if ($type == PHORUM_ADMIN_SESSION &&
         empty($PHORUM['user']['admin'])) {
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_NOACCESS,
             'The user is not an administrator (user id '.$user['user_id'].')'
         );
@@ -1962,7 +2192,6 @@ function phorum_api_user_session_create($type, $reset = 0)
 function phorum_api_user_session_restore($type)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // ----------------------------------------------------------------------
     // Determine which session cookie(s) to check.
@@ -2113,7 +2342,7 @@ function phorum_api_user_session_restore($type)
         PHORUM_SESSION_ADMIN      => NULL
     );
     if (isset($PHORUM['hooks']['user_session_restore'])) {
-        $hook_sessions = $phorum->modules->hook('user_session_restore', $hook_sessions);
+        $hook_sessions = phorum_api_hook('user_session_restore', $hook_sessions);
     }
 
     $real_cookie = FALSE;
@@ -2312,7 +2541,6 @@ function phorum_api_user_session_restore($type)
 function phorum_api_user_session_destroy($type)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     /**
      * [hook]
@@ -2373,7 +2601,7 @@ function phorum_api_user_session_destroy($type)
      */
     $do_phorum_destroy_session = TRUE;
     if (isset($PHORUM['hooks']['user_session_destroy'])) {
-        if ($phorum->modules->hook('user_session_destroy', $type) === NULL) {
+        if (phorum_api_hook('user_session_destroy', $type) === NULL) {
             $do_phorum_destroy_session = FALSE;
         }
     }

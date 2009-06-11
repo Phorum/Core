@@ -20,6 +20,7 @@
 if (!defined("PHORUM")) return;
 
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/mail.php';
 
 $error = false;
 
@@ -29,10 +30,10 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
 {
     if (empty($message["author"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrAuthor"];
-    } elseif ((!defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') || (defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') && PHORUM_ENFORCE_UNREGISTERED_NAMES == true)) && $phorum->user->search(array("username","display_name"),array($message["author"],$message["author"]), array("=","="), FALSE, "OR")) {
+    } elseif ((!defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') || (defined('PHORUM_ENFORCE_UNREGISTERED_NAMES') && PHORUM_ENFORCE_UNREGISTERED_NAMES == true)) && phorum_api_user_search(array("username","display_name"),array($message["author"],$message["author"]), array("=","="), FALSE, "OR")) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
     } elseif (!empty($message["email"]) &&
-              $phorum->user->search("email", $message["email"])) {
+              phorum_api_user_search("email", $message["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
 }
@@ -90,7 +91,7 @@ if (! $PHORUM["DATA"]["LOGGEDIN"] &&
  */
 if (! $error && isset($PHORUM["hooks"]["check_post"])) {
     list($message, $error) =
-        $phorum->modules->hook("check_post", array($message, $error));
+        phorum_api_hook("check_post", array($message, $error));
 }
 
 // Data integrity checks for all messages.
@@ -101,7 +102,7 @@ if (! $error)
     } elseif (!isset($message["body"]) || trim($message["body"]) == '') {
         $error = $PHORUM["DATA"]["LANG"]["ErrBody"];
     } elseif (!empty($message["email"]) &&
-              !$phorum->mail->check_address($message["email"])) {
+              !phorum_api_mail_check_address($message["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif (strlen($message["body"]) > 64000) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBodyTooLarge"];

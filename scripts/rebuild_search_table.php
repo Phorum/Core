@@ -17,10 +17,9 @@ define("phorum_page", "rebuild_search_table");
 define("PHORUM_ADMIN", 1);
 
 require_once(dirname(__FILE__).'/../include/api.php');
-$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
@@ -29,7 +28,7 @@ if (! ini_get('safe_mode')) {
 
 echo "\nRebuilding search-table ...\n";
 
-$phorum->db->rebuild_search_data();
+phorum_db_rebuild_search_data();
 
 echo "If no errors were logged above,\n" .
      "then the search table was successfully rebuilt.\n\n";

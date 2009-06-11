@@ -58,7 +58,6 @@ if (!defined('PHORUM')) return;
 function phorum_api_http_get($url, $method = NULL)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Reset error storage.
     $PHORUM['API']['errno'] = NULL;
@@ -183,7 +182,7 @@ function phorum_api_http_get($url, $method = NULL)
     // Return fatal errors. For non fatal errors, we fall through
     // to the next method.
     if ($error !== NULL && $fatal) {
-        return $phorum->error(PHORUM_ERRNO_ERROR, $error);
+        return phorum_api_error(PHORUM_ERRNO_ERROR, $error);
     }
 
     // -----------------------------------------------------------------
@@ -372,7 +371,7 @@ function phorum_api_http_get($url, $method = NULL)
     // Return fatal errors. For non fatal errors, we fall through
     // to the next method.
     if ($error !== NULL && $fatal) {
-        return $phorum->error(PHORUM_ERRNO_ERROR, $error);
+        return phorum_api_error(PHORUM_ERRNO_ERROR, $error);
     }
 
     // -----------------------------------------------------------------
@@ -400,18 +399,18 @@ function phorum_api_http_get($url, $method = NULL)
 
     // Return errors.
     if ($error !== NULL) {
-        return $phorum->error(PHORUM_ERRNO_ERROR, $error);
+        return phorum_api_error(PHORUM_ERRNO_ERROR, $error);
     }
 
     // Catch illegal methods
     if ($method !== NULL) {
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_ERROR,
             'Illegal method: ' . $method
         );
     }
 
-    return $phorum->error(
+    return phorum_api_error(
         PHORUM_ERRNO_ERROR,
         'No working HTTP request method found'
     );

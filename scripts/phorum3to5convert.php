@@ -110,6 +110,9 @@ set_time_limit(0);
 require './common.php';
 require './scripts/phorum3_in.php';
 
+require_once PHORUM_PATH.'/include/api/thread.php';
+require_once PHORUM_PATH.'/include/api/dev.php';
+
 // no need to change anything below this line
 // establishing the first link to the old database
 $oldlink = mysql_connect($CONVERT['old_dbhost'], $CONVERT['old_dbuser'], $CONVERT['old_dbpass'], true);
@@ -189,7 +192,7 @@ foreach($forums as $forumid => $forumdata) {
         while ($newmessage = phorum_convert_getNextMessage($res,$forumdata['table_name'])) {
 
             if(phorum_db_post_message($newmessage, true)) {
-              $phorum->thread->update_metadata($newmessage['thread']);
+              phorum_api_thread_update_metadata($newmessage['thread']);
               echo "+";
               flush();
               if ($count == 50) {
@@ -207,7 +210,7 @@ foreach($forums as $forumid => $forumdata) {
               $count++;
             } else {
               print "Error in message: ".$CONVERT['lbr'];
-              $phorum->dev->dump($newmessage);
+              phorum_api_dev_dump($newmessage);
               print $CONVERT['lbr'];
             }
         }

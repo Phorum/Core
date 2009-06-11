@@ -56,11 +56,10 @@
 function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $replies)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $hcharset    = $PHORUM['DATA']['HCHARSET'];
 
-    $selfurl     = htmlspecialchars($phorum->url->current(), ENT_COMPAT, $hcharset);
+    $selfurl     = htmlspecialchars(phorum_api_url_current(), ENT_COMPAT, $hcharset);
     $url         = htmlspecialchars($url, ENT_COMPAT, $hcharset);
     $title       = htmlspecialchars($title, ENT_COMPAT, $hcharset);
     $description = htmlspecialchars($description, ENT_COMPAT, $hcharset);
@@ -80,7 +79,7 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
     $users = $messages['users'];
     unset($messages['users']);
     unset($users[0]);
-    $users = $phorum->user->get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
+    $users = phorum_api_user_get_display_name($users, '', PHORUM_FLAG_PLAINTEXT);
 
     foreach ($messages as $message)
     {
@@ -114,7 +113,7 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
         }
 
         // Generate the URL for reading the message.
-        $url = htmlspecialchars($phorum->url(
+        $url = htmlspecialchars(phorum_api_url(
             PHORUM_FOREIGN_READ_URL,
             $message["forum_id"], $message["thread"], $message["message_id"]
         ));

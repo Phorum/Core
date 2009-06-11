@@ -118,7 +118,6 @@ function phorum_api_template_list($include_hidden = FALSE)
 function phorum_api_template_set($template = NULL, $template_path = NULL, $template_http_path = NULL)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     if ($template !== NULL) {
         $PHORUM['template'] = basename($template);
@@ -145,7 +144,7 @@ function phorum_api_template_set($template = NULL, $template_path = NULL, $templ
 
     // Load the settings file for the configured template.
     ob_start();
-    include $phorum->template('settings');
+    include phorum_api_template('settings');
     ob_end_clean();
 }
 // }}}
@@ -171,11 +170,10 @@ function phorum_api_template_set($template = NULL, $template_path = NULL, $templ
  */
 function phorum_api_template($page)
 {
-    $phorum = Phorum::API();
-
     // This might for example happen if a template contains code like
     // {INCLUDE template} instead of {INCLUDE "template"}.
     if ($page === NULL || $page == "") {
+        require_once PHORUM_PATH.'/include/api/error/backtrace.php';
         print "<html><head><title>Phorum Template Error</title><body>";
         print "<h1>Phorum Template Error</h1>";
         print "phorum_api_template() was called with an empty page name.<br/>";
@@ -183,7 +181,7 @@ function phorum_api_template($page)
         if (function_exists('debug_print_backtrace')) {
             print "Here's a backtrace that might help finding the error:";
             print "<pre>";
-            print $phorum->error->backtrace();
+            print phorum_api_error_backtrace();
             print "</pre>";
         }
         print "</body></html>";
@@ -198,7 +196,8 @@ function phorum_api_template($page)
 
     // Compile the template if the output PHP file is not available.
     if (!file_exists($phpfile)) {
-        $phorum->template->compile($page, $tplfile, $phpfile);
+        require_once PHORUM_PATH.'/include/api/template/compile.php';
+        phorum_api_template_compile($page, $tplfile, $phpfile);
     }
 
     return $phpfile;
@@ -223,7 +222,6 @@ function phorum_api_template($page)
 function phorum_api_template_resolve($page)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $page = basename($page);
 
@@ -292,7 +290,7 @@ function phorum_api_template_resolve($page)
     $tplbase = NULL;
     $template = NULL;
     if (isset($GLOBALS["PHORUM"]["hooks"]["get_template_file"])) {
-        $res = $phorum->modules->hook("get_template_file", array(
+        $res = phorum_api_hook("get_template_file", array(
             'page'   => $page,
             'source' => NULL
         ));

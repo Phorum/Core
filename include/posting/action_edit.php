@@ -19,6 +19,11 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/diff.php';
+require_once PHORUM_PATH.'/include/api/file.php';
+require_once PHORUM_PATH.'/include/api/thread.php';
+
+
 // Create a message which can be used by the database library.
 $dbmessage = array(
     "message_id"    => $message["message_id"],
@@ -62,12 +67,12 @@ $dbmessage["meta"]["show_signature"] = $message["show_signature"];
 
 // we are doing the diffs here to know about changes for edit-counts
 // $origmessage loaded in check_permissions
-$diff_body    = $phorum->diff($origmessage["body"], $message["body"]);
-$diff_subject = $phorum->diff($origmessage["subject"], $message["subject"]);
+$diff_body    = phorum_api_diff($origmessage["body"], $message["body"]);
+$diff_subject = phorum_api_diff($origmessage["subject"], $message["subject"]);
 
 if(!empty($diff_body) || !empty($diff_subject))
 {
-    $name = $phorum->user->get_display_name(
+    $name = phorum_api_user_get_display_name(
         $PHORUM["user"]["user_id"], NULL, PHORUM_FLAG_PLAINTEXT
     );
 
@@ -103,7 +108,7 @@ foreach ($message["attachments"] as $info)
         // Because there might be inconsistencies in the list due to going
         // backward in the browser after deleting attachments, a check is
         // needed to see if the attachments are really in the database.
-        if (! $phorum->file->exists($info["file_id"])) continue;
+        if (! phorum_api_file_exists($info["file_id"])) continue;
 
         $dbmessage["meta"]["attachments"][] = array(
             "file_id" => $info["file_id"],
@@ -117,8 +122,8 @@ foreach ($message["attachments"] as $info)
             PHORUM_LINK_MESSAGE
         );
     } else {
-        if ($phorum->file->check_delete_access($info["file_id"])) {
-            $phorum->file->delete($info["file_id"]);
+        if (phorum_api_file_check_delete_access($info["file_id"])) {
+            phorum_api_file_delete($info["file_id"]);
         }
     }
 }
@@ -163,7 +168,7 @@ if (!count($dbmessage["meta"]["attachments"])) {
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["before_edit"])) {
-    $dbmessage = $phorum->modules->hook("before_edit", $dbmessage);
+    $dbmessage = phorum_api_hook("before_edit", $dbmessage);
 }
 
 phorum_db_update_message($message["message_id"], $dbmessage);
@@ -213,7 +218,7 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["after_edit"])) {
-    $phorum->modules->hook("after_edit", $dbmessage);
+    phorum_api_hook("after_edit", $dbmessage);
 }
 
 // remove the message from the cache if caching is enabled
@@ -252,7 +257,7 @@ if (! $message["parent_id"] &&
 }
 
 // Update thread info.
-$phorum->thread->update_metadata($message['thread']);
+phorum_api_thread_update_metadata($message['thread']);
 
 // Update thread subscription.
 if (isset($message["subscription"]))
@@ -283,12 +288,12 @@ if (isset($message["subscription"]))
     }
 
     if ($subscribe_type === NULL) {
-        $phorum->user->unsubscribe(
+        phorum_api_user_unsubscribe(
             $message["user_id"],
             $message["thread"]
         );
     } else {
-        $phorum->user->subscribe(
+        phorum_api_user_subscribe(
             $message["user_id"],
             $message["thread"],
             $PHORUM["forum_id"],
@@ -300,7 +305,7 @@ if (isset($message["subscription"]))
 $PHORUM["posting_template"] = "message";
 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["MsgModEdited"];
 $PHORUM['DATA']["BACKMSG"] = $PHORUM['DATA']["LANG"]["BackToThread"];
-$PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(
+$PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(
     PHORUM_READ_URL,
     $message["thread"],
     $message["message_id"]

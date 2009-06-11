@@ -104,9 +104,8 @@ function phorum_api_format_date($picture, $ts)
 function phorum_api_format_relative_date($time)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
-    $today = strtotime($phorum->format->date('%Y-%m-%d', time()));
+    $today = strtotime(phorum_api_format_date('%Y-%m-%d', time()));
 
     $reldays = ($time - $today)/86400;
 

@@ -19,6 +19,6 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-$phorum->redirect(PHORUM_INDEX_URL);
+phorum_api_redirect(PHORUM_INDEX_URL);
 
 ?>

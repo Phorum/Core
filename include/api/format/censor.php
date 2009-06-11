@@ -28,6 +28,8 @@
 
 if (!defined('PHORUM')) return;
 
+require_once PHORUM_PATH.'/include/api/ban.php';
+
 // {{{ Function: phorum_api_format_censor_compile()
 /**
  * Compile the search and replace arguments that have to be used
@@ -52,7 +54,7 @@ function phorum_api_format_censor_compile()
     
     // Load the badwords and compile the replacement regexp.
     if ($search === '') {
-        $words = Phorum::API()->ban->list(PHORUM_BAD_WORDS);
+        $words = phorum_api_ban_list(PHORUM_BAD_WORDS);
         if (!empty($words)) {
             $parts = array();
             foreach ($words as $word) {

@@ -48,8 +48,7 @@ if (!defined('PHORUM')) return;
  */
 function phorum_api_format_forums($forums, $flags = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
-    $phorum = Phorum::API();
+    global $PHORUM;
 
     // For tracking forums for which we have to check unread messages.
     $forums_to_check = array();
@@ -64,17 +63,17 @@ function phorum_api_format_forums($forums, $flags = 0)
             // was in use.
             $forum['URL']['INDEX'] =
             $forum['URL']['LIST'] =
-                $phorum->url(PHORUM_INDEX_URL, $forum_id);
+                phorum_api_url(PHORUM_INDEX_URL, $forum_id);
         }
         // Setup template data for forums.
         else
         {
             // A URL for the message list for this forum.
-            $forum['URL']['LIST'] = $phorum->url(PHORUM_LIST_URL, $forum_id);
+            $forum['URL']['LIST'] = phorum_api_url(PHORUM_LIST_URL, $forum_id);
 
             // A "mark forum read" URL for authenticated users.
             if ($PHORUM['user']['user_id']) {
-                $forum['URL']['MARK_READ'] = $phorum->url(
+                $forum['URL']['MARK_READ'] = phorum_api_url(
                     PHORUM_INDEX_URL,
                     $forum_id,
                     'markread',
@@ -84,7 +83,7 @@ function phorum_api_format_forums($forums, $flags = 0)
 
             // A URL to the syndication feed.
             if (!empty($PHORUM['use_rss'])) {
-                $forum['URL']['FEED'] = $phorum->url(
+                $forum['URL']['FEED'] = phorum_api_url(
                     PHORUM_FEED_URL,
                     $forum_id,
                     'type='.$PHORUM['default_feed']
@@ -101,7 +100,7 @@ function phorum_api_format_forums($forums, $flags = 0)
             // Format the last post time, unless no messages were posted at all.
             if ($forum['message_count'] > 0)
             {
-                $forum['last_post'] = $phorum->format->date(
+                $forum['last_post'] = phorum_api_format_date(
                     $PHORUM['long_date_time'],
                     $forum['last_post_time']
                 );
@@ -136,7 +135,7 @@ function phorum_api_format_forums($forums, $flags = 0)
         $PHORUM['user']['user_id'] &&
         !empty($forums_to_check)) {
 
-        $forums = $phorum->newflags->apply_to_forums(
+        $forums = phorum_api_newflags_apply_to_forums(
             $forums,
             $PHORUM['show_new_on_index'],
             $forums_to_check

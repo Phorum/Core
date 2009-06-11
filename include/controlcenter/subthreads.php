@@ -19,10 +19,12 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
+require_once PHORUM_PATH.'/include/api/format/messages.php';
+
 // remove threads fromlist
 if(isset($_POST["delthreads"])){
     foreach($_POST["delthreads"] as $thread){
-        $phorum->user->unsubscribe($PHORUM['user']['user_id'], $thread);
+        phorum_api_user_unsubscribe($PHORUM['user']['user_id'], $thread);
     }
 }
 
@@ -30,8 +32,8 @@ if(isset($_POST["delthreads"])){
 if (isset($_POST["sub_type"])) {
     foreach ($_POST["sub_type"] as $thread => $type) {
         if ($type != $_POST["old_sub_type"][$thread]) {
-            $phorum->user->unsubscribe($PHORUM['user']['user_id'], $thread);
-            $phorum->user->subscribe($PHORUM['user']['user_id'], $thread, $_POST["thread_forum_id"][$thread], $type);
+            phorum_api_user_unsubscribe($PHORUM['user']['user_id'], $thread);
+            phorum_api_user_subscribe($PHORUM['user']['user_id'], $thread, $_POST["thread_forum_id"][$thread], $type);
         }
     }
 }
@@ -42,7 +44,7 @@ if (isset($_POST['subdays']) && is_numeric($_POST['subdays'])) {
 } elseif(isset($PHORUM['args']['subdays']) && !empty($PHORUM["args"]['subdays']) && is_numeric($PHORUM["args"]['subdays'])) {
     $subdays = $PHORUM['args']['subdays'];
 } else {
-    $subdays = $phorum->user->get_setting('cc_subscriptions_subdays');
+    $subdays = phorum_api_user_get_setting('cc_subscriptions_subdays');
 }
 if ($subdays === NULL) {
     $subdays = 2;
@@ -50,17 +52,17 @@ if ($subdays === NULL) {
 $PHORUM['DATA']['SELECTED'] = $subdays;
 
 // Store current selection for the user.
-$phorum->user->save_settings(array("cc_subscriptions_subdays" => $subdays));
+phorum_api_user_save_settings(array("cc_subscriptions_subdays" => $subdays));
 
 // reading all forums for the current vroot
-$forums= $phorum->forums->by_vroot($PHORUM['vroot']);
+$forums= phorum_api_forums_by_vroot($PHORUM['vroot']);
 
 // reading all subscriptions to messages in the current vroot.
 $forum_ids = array($PHORUM["vroot"]);
 foreach ($forums as $forum) {
     $forum_ids[] = $forum["forum_id"];
 }
-$subscr_array = $phorum->user->list_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
+$subscr_array = phorum_api_user_list_subscriptions($PHORUM['user']['user_id'], $subdays, $forum_ids);
 
 // storage for newflags
 $PHORUM['user']['newinfo'] = array();
@@ -72,13 +74,13 @@ foreach($subscr_array as $id => $data)
 {
     $data['forum'] = $forums[$data['forum_id']]['name'];
     $data['raw_datestamp'] = $data["modifystamp"];
-    $data['datestamp'] = $phorum->format->date($PHORUM["short_date_time"], $data["modifystamp"]);
+    $data['datestamp'] = phorum_api_format_date($PHORUM["short_date_time"], $data["modifystamp"]);
 
     $data['raw_lastpost'] = $data['modifystamp'];
-    $data['lastpost'] = $phorum->format->date($PHORUM["short_date_time"], $data["modifystamp"]);
+    $data['lastpost'] = phorum_api_format_date($PHORUM["short_date_time"], $data["modifystamp"]);
 
-    $data["URL"]["READ"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
-    $data["URL"]["NEWPOST"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");
+    $data["URL"]["READ"] = phorum_api_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"]);
+    $data["URL"]["NEWPOST"] = phorum_api_url(PHORUM_FOREIGN_READ_URL, $data["forum_id"], $data["thread"], "gotonewpost");
 
     // Check if there are new messages for the current thread.
     if (! isset($PHORUM['user']['newinfo'][$data["forum_id"]])) {
@@ -117,7 +119,7 @@ $recent_author_spec = array(
     "RECENT_AUTHOR_PROFILE"  // target author profile URL field
 );
 
-$subscr_array_final = $phorum->format->messages(
+$subscr_array_final = phorum_api_format_messages(
     $subscr_array_final, array($recent_author_spec));
 
 $count = 0;

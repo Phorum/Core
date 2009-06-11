@@ -19,12 +19,14 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/format/forums.php';
+
 // --------------------------------------------------------------------
 // Retrieve information from the database
 // --------------------------------------------------------------------
 
 // Retrieve the children for the current folder.
-$forums = $phorum->forums->get(
+$forums = phorum_api_forums_get(
     NULL, $PHORUM['forum_id'], NULL, $PHORUM['vroot']
 );
 
@@ -45,7 +47,7 @@ foreach ($forums as $forum_id => $forum)
         // If inaccessible forums should be hidden on the index, then check
         // if the current user has rights to access the current forum.
         if (!$forum['folder_flag'] && $PHORUM['hide_forums'] &&
-            !$phorum->user->check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
+            !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
             continue;
         }
 
@@ -58,7 +60,7 @@ foreach ($forums as $forum_id => $forum)
 // --------------------------------------------------------------------
 
 // Format the data for the forums and folders that we gathered.
-$forums = $phorum->format->forums($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
+$forums = phorum_api_format_forums($forums, PHORUM_FLAG_ADD_UNREAD_INFO);
 
 // If we are at the (v)root index page and if we only have one forum or
 // folder visible there, then directly jump to that one.
@@ -68,7 +70,7 @@ if (!empty($PHORUM['jump_on_single_forum']) &&
     $forum = array_pop($forums);
     $url = $forum['folder_flag']
          ? $forum['URL']['INDEX'] : $forum['URL']['LIST'];
-    $phorum->redirect($url);
+    phorum_api_redirect($url);
 }
 
 // Build all our standard URL's.
@@ -77,13 +79,13 @@ phorum_build_common_urls();
 // A message to show if there are no visible forums or folders at all.
 if (empty($forums)) {
     $PHORUM['DATA']['OKMSG'] = $PHORUM['DATA']['LANG']['NoForums'];
-    $phorum->output('message');
+    phorum_api_output('message');
     return;
 }
 
 // Run the "index" hook. This one is documented in include/index/flat.php.
 if (isset($PHORUM['hooks']['index'])) {
-    $forums = $phorum->modules->hook('index', $forums);
+    $forums = phorum_api_hook('index', $forums);
 }
 
 // Build the template folders array.
@@ -99,6 +101,6 @@ foreach ($forum_ids as $forum_id) {
 }
 
 // Display the page.
-$phorum->output("index_directory");
+phorum_api_output("index_directory");
 
 ?>

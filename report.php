@@ -21,6 +21,8 @@ define('phorum_page','report');
 require_once './common.php';
 
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/mail.php';
+require_once PHORUM_PATH.'/include/api/format/messages.php';
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
@@ -62,13 +64,13 @@ if(is_array($message) && count($message)) {
                 "body"        => wordwrap($message["body"], 72),
                 "ip"          => $message["ip"],
                 "raw_date"    => $message["datestamp"],
-                "date"        => $phorum->format->date($PHORUM["short_date_time"], $message["datestamp"]),
+                "date"        => phorum_api_format_date($PHORUM["short_date_time"], $message["datestamp"]),
                 "explanation" => wordwrap($_POST["explanation"], 72),
-                "url"         => $phorum->url(PHORUM_READ_URL, $message["thread"], $message_id),
-                "delete_url"  => $phorum->url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
-                "hide_url"    => $phorum->url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
-                "edit_url"    => $phorum->url(PHORUM_POSTING_URL, 'moderation', $message_id),
-                "reporter_url"=> $phorum->url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
+                "url"         => phorum_api_url(PHORUM_READ_URL, $message["thread"], $message_id),
+                "delete_url"  => phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
+                "hide_url"    => phorum_api_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
+                "edit_url"    => phorum_api_url(PHORUM_POSTING_URL, 'moderation', $message_id),
+                "reporter_url"=> phorum_api_url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
                 "message"     => $message
                 );
 
@@ -82,11 +84,11 @@ if(is_array($message) && count($message)) {
                 }
 
                 if (isset($PHORUM["hooks"]["report"]))
-                    $mail_data = $phorum->modules->hook("report", $mail_data);
+                    $mail_data = phorum_api_hook("report", $mail_data);
 
-                $phorum->mail($mail_users, $mail_data);
+                phorum_api_mail($mail_users, $mail_data);
 
-                $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
+                $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
                 $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
                 $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["ReportPostSuccess"];
                 $template="message";
@@ -99,14 +101,14 @@ if(is_array($message) && count($message)) {
     }
 
     // format message
-    list($message) = $phorum->format->messages(array($message));
+    list($message) = phorum_api_format_messages(array($message));
 
     $PHORUM["DATA"]["PostSubject"] = $message["subject"];
     $PHORUM["DATA"]["PostAuthor"] = $message["author"];
     $PHORUM["DATA"]["PostBody"] = $message["body"];
     $PHORUM["DATA"]["raw_PostDate"] = $message["datestamp"];
-    $PHORUM["DATA"]["PostDate"] = $phorum->format->date($PHORUM["short_date_time"], $message["datestamp"]);
-    $PHORUM["DATA"]["ReportURL"] = $phorum->url(PHORUM_REPORT_URL, $message_id);
+    $PHORUM["DATA"]["PostDate"] = phorum_api_format_date($PHORUM["short_date_time"], $message["datestamp"]);
+    $PHORUM["DATA"]["ReportURL"] = phorum_api_url(PHORUM_REPORT_URL, $message_id);
 
     // if the report was not successfully sent, keep whatever explanation they gave already
     if (isset($_POST["explanation"]) && !$report) {
@@ -121,6 +123,6 @@ if(is_array($message) && count($message)) {
     $template='message';
 }
 
-$phorum->output($template);
+phorum_api_output($template);
 
 ?>

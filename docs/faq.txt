@@ -136,7 +136,7 @@ Table of contents:
     have the urls of your site be created by Phorum correctly.  Also, you
     will need to create a var called $PHORUM_CUSTOM_QUERY_STRING for Phorum
     to parse instead of the server's query string.  It will need to be
-    formatted in the same way that the standard phorum_api_url_get()
+    formatted in the same way that the standard phorum_api_url()
     would do it.
 
 

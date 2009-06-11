@@ -21,6 +21,7 @@ define('phorum_page','login');
 
 require_once './common.php';
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/generate.php';
 
 // ----------------------------------------------------------------------------
 // Handle logout
@@ -51,17 +52,18 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
      *     None
      */
 
-    if (isset($PHORUM["hooks"]["before_logout"]))
-        $phorum->modules->hook("before_logout");
+    if (isset($PHORUM["hooks"]["before_logout"])) {
+        phorum_hook("before_logout");
+    }
 
-    $phorum->user->session_destroy(PHORUM_FORUM_SESSION);
+    phorum_api_user_session_destroy(PHORUM_FORUM_SESSION);
 
     // Determine the URL to redirect the user to. The hook "after_logout"
     // can be used by module writers to set a custom redirect URL.
     if (isset($_SERVER["HTTP_REFERER"]) && !empty($_SERVER['HTTP_REFERER'])) {
         $url = $_SERVER["HTTP_REFERER"];
     } else {
-        $url = $phorum->url(PHORUM_LIST_URL);
+        $url = phorum_api_url(PHORUM_LIST_URL);
     }
 
     // Strip the session id from the URL in case URI auth is in use.
@@ -107,9 +109,9 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["after_logout"]))
-        $url = $phorum->modules->hook("after_logout", $url);
+        $url = phorum_api_hook("after_logout", $url);
 
-    $phorum->redirect($url);
+    phorum_api_redirect($url);
 }
 
 // ----------------------------------------------------------------------------
@@ -137,11 +139,11 @@ if (count($_POST) > 0) {
         }
 
         // Is the email address available in the database?
-        elseif ($uid = $phorum->user->search("email", $_POST["lostpass"])) {
+        elseif ($uid = phorum_api_user_search("email", $_POST["lostpass"])) {
 
             // An existing user id was found for the entered email
             // address. Retrieve the user.
-            $user = $phorum->user->get($uid);
+            $user = phorum_api_user_get($uid);
 
             $tmp_user=array();
 
@@ -156,10 +158,10 @@ if (count($_POST) > 0) {
                 // Generate and store a new email confirmation code.
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = substr(md5(microtime()), 0, 8);
-                $phorum->user->save($tmp_user);
+                phorum_api_user_save($tmp_user);
 
                 // Mail the new confirmation code to the user.
-                $verify_url = $phorum->url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
+                $verify_url = phorum_api_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
                 $maildata["mailsubject"] = $PHORUM['DATA']['LANG']["VerifyRegEmailSubject"];
 
                 // The mailmessage can be composed in two different ways.
@@ -182,7 +184,7 @@ if (count($_POST) > 0) {
                             $PHORUM['title'],
                             $user['username'],
                             $verify_url,
-                            $phorum->url(PHORUM_LOGIN_URL)
+                            phorum_api_url(PHORUM_LOGIN_URL)
                         ),
                         $PHORUM['DATA']['LANG']['VerifyRegEmailBody']
                     ), 72);
@@ -200,7 +202,7 @@ if (count($_POST) > 0) {
                        wordwrap($lang["VerifyRegEmailBody2"], 72);
                 }
 
-                $phorum->mail($user["email"], $maildata);
+                phorum_api_mail($user["email"], $maildata);
 
                 $okmsg = $PHORUM['DATA']['LANG']["RegVerifyEmail"];
                 $template="message";
@@ -209,13 +211,13 @@ if (count($_POST) > 0) {
             } else {
 
                 // Generate and store a new password for the user.
-                $newpass = $phorum->generate->password();
+                $newpass = phorum_api_generate_password();
                 $tmp_user["user_id"] = $uid;
                 $tmp_user["password_temp"] = $newpass;
-                $phorum->user->save($tmp_user);
+                phorum_api_user_save($tmp_user);
 
                 // Mail the new password.
-                $user = $phorum->user->get($uid);
+                $user = phorum_api_user_get($uid);
                 $maildata = array();
 
                 // The mailmessage can be composed in two different ways.
@@ -238,7 +240,7 @@ if (count($_POST) > 0) {
                             $PHORUM['title'],
                             $user['username'],
                             $newpass,
-                            $phorum->url(PHORUM_LOGIN_URL)
+                            phorum_api_url(PHORUM_LOGIN_URL)
                         ),
                         $PHORUM['DATA']['LANG']["LostPassEmailBody"]
                     ), 72);
@@ -260,7 +262,7 @@ if (count($_POST) > 0) {
                 }
 
                 $maildata['mailsubject'] = $PHORUM['DATA']['LANG']["LostPassEmailSubject"];
-                $phorum->mail($user['email'], $maildata);
+                phorum_api_mail($user['email'], $maildata);
 
                 $okmsg = $PHORUM['DATA']['LANG']["LostPassSent"];
 
@@ -293,7 +295,7 @@ if (count($_POST) > 0) {
             }
 
             // Check if the login credentials are right.
-            $user_id = $phorum->user->authenticate(
+            $user_id = phorum_api_user_authenticate(
                 PHORUM_FORUM_SESSION,
                 trim($_POST["username"]),
                 trim($_POST["password"])
@@ -306,7 +308,7 @@ if (count($_POST) > 0) {
                 // and start a Phorum user session. Because this is a fresh
                 // login, we can enable the short term session and we request
                 // refreshing of the session id(s).
-                if ($phorum->user->set_active_user(PHORUM_FORUM_SESSION, $user_id, PHORUM_FLAG_SESSION_ST) && $phorum->user->session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
+                if (phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, $user_id, PHORUM_FLAG_SESSION_ST) && phorum_api_user_session_create(PHORUM_FORUM_SESSION, PHORUM_SESSID_RESET_LOGIN)) {
 
                     // Destroy the temporary cookie that is used for testing
                     // for cookie compatibility.
@@ -320,7 +322,7 @@ if (count($_POST) > 0) {
                     // Determine the URL to redirect the user to.
                     // If redir is a number, it is a URL constant.
                     if(is_numeric($_POST["redir"])){
-                        $redir = $phorum->url((int)$_POST["redir"]);
+                        $redir = phorum_api_url((int)$_POST["redir"]);
                     }
                     // Redirecting to the registration or login page is a
                     // little weird, so we just go to the list page if we came
@@ -329,7 +331,7 @@ if (count($_POST) > 0) {
                         $redir = $_POST["redir"];
                     // By default, we redirect to the list page.
                     } else {
-                        $redir = $phorum->url( PHORUM_LIST_URL );
+                        $redir = phorum_api_url( PHORUM_LIST_URL );
                     }
                     
                     // checking for redirection url on the same domain, 
@@ -351,7 +353,7 @@ if (count($_POST) > 0) {
                          }
                     }
                     if(!$redir_ok) {
-                        $redir = $phorum->url(PHORUM_LIST_URL);
+                        $redir = phorum_api_url(PHORUM_LIST_URL);
                     }   
 
                     /*
@@ -395,9 +397,9 @@ if (count($_POST) > 0) {
                      *     </hookcode>
                      */
                     if (isset($PHORUM["hooks"]["after_login"]))
-                        $redir = $phorum->modules->hook("after_login", $redir);
+                        $redir = phorum_api_modules_hook("after_login", $redir);
 
-                    $phorum->redirect($redir);
+                    phorum_api_redirect($redir);
                 }
             }
 
@@ -469,7 +471,7 @@ if (count($_POST) > 0) {
              */
             // TODO API: move to user API.
             if (isset($PHORUM["hooks"]["failed_login"]))
-                $phorum->modules->hook("failed_login", array(
+                phorum_api_modules_hook("failed_login", array(
                     "username" => $_POST["username"],
                     "password" => $_POST["password"],
                     "location" => "forum"
@@ -490,14 +492,14 @@ if (!empty( $PHORUM["args"]["redir"])) {
 } elseif (!empty( $_REQUEST["redir"])) {
     $redir = htmlspecialchars($_REQUEST["redir"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 } elseif (!empty( $_SERVER["HTTP_REFERER"])) {
-    $base = strtolower($phorum->url->base());
+    $base = strtolower(phorum_api_url_base());
     $len = strlen($base);
     if (strtolower(substr($_SERVER["HTTP_REFERER"],0,$len)) == $base) {
         $redir = htmlspecialchars($_SERVER["HTTP_REFERER"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }
 }
 if (! isset($redir)) {
-    $redir = $phorum->url(PHORUM_LIST_URL);
+    $redir = phorum_api_url(PHORUM_LIST_URL);
 }
 
 // fill the breadcrumbs-info.
@@ -514,8 +516,8 @@ $PHORUM['DATA']['DESCRIPTION'] = '';
 
 // Setup template data.
 $PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
-$PHORUM["DATA"]["URL"]["REGISTER"] = $phorum->url( PHORUM_REGISTER_URL );
-$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url( PHORUM_LOGIN_ACTION_URL );
+$PHORUM["DATA"]["URL"]["REGISTER"] = phorum_api_url( PHORUM_REGISTER_URL );
+$PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_LOGIN_ACTION_URL );
 $PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
 $PHORUM["DATA"]["LOGIN"]["username"] = (!empty($_POST["username"])) ? htmlspecialchars( $_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ) : "";
 $PHORUM["DATA"]["ERROR"] = $error;
@@ -523,7 +525,7 @@ $PHORUM["DATA"]["OKMSG"] = $okmsg;
 
 $PHORUM["DATA"]["OPENID"] = $PHORUM["open_id"];
 if($PHORUM["open_id"]){
-    $PHORUM["DATA"]["URL"]["open_id"] = $phorum->url(PHORUM_OPENID_URL);
+    $PHORUM["DATA"]["URL"]["open_id"] = phorum_api_url(PHORUM_OPENID_URL);
 }
 
 $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";
@@ -532,6 +534,6 @@ $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$r
 $PHORUM["DATA"]["FOCUS_TO_ID"] = empty($_POST["username"]) ? "username" : "password";
 
 // Display the page.
-$phorum->output($template);
+phorum_api_output($template);
 
 ?>

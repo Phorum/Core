@@ -26,6 +26,7 @@ define('TOKEN_DEBUGGER', 0);
 set_time_limit(600);
 
 require_once './include/admin/PhorumInputForm.php';
+require_once PHORUM_PATH.'/include/api/lang.php';
 
 // Get some form variables.
 $action = isset($_POST['action']) ? $_POST['action'] : 'start';
@@ -52,7 +53,7 @@ if ($action == 'download_lang')
 
 // Handle updating a language.
 if ($action == 'update_lang') {
-    $langinfo = $phorum->lang->list(TRUE);
+    $langinfo = phorum_api_lang_list(TRUE);
     return phorum_generate_language_file($language, $langinfo[$language], false);
 }
 
@@ -103,7 +104,7 @@ $frm->hidden("module", "manage_languages");
 $frm->hidden("action", "update_lang");
 $frm->addbreak("Update existing language file");
 $frm->addrow("Generate updated version of an existing language file",
-    $frm->select_tag("language", $phorum->lang->list(), $language, 0));
+    $frm->select_tag("language", phorum_api_lang_list(), $language, 0));
 $frm->show();
 
 
@@ -559,7 +560,7 @@ function phorum_get_language($lang)
         if (is_array($token))
         {
             if ($token[0] == T_VARIABLE) {
-                list($varname,$endedby) = token_get_string($tokens, $token[1]);
+                list ($varname,$endedby) = token_get_string($tokens, $token[1]);
                 if ($endedby != '=') break; // We want only the assignments.
 
                 // Peek at the following code, to see what type of variable we're
@@ -582,7 +583,7 @@ function phorum_get_language($lang)
                     while (count($tokens))
                     {
                         // Get key
-                        list($key, $endedby) = token_get_string($tokens);
+                        list ($key, $endedby) = token_get_string($tokens);
                         if ($endedby != '=>') trigger_error(
                             "$path: Expected double arrow (=>) for key " .
                             htmlspecialchars($key) . " in array " .
@@ -591,7 +592,7 @@ function phorum_get_language($lang)
                         );
 
                         // Get value
-                        list($val, $endedby) = token_get_string($tokens);
+                        list ($val, $endedby) = token_get_string($tokens);
 
                         if ($endedby != ',' && $endedby != ')') trigger_error(
                             "$path: Expected ending comma or bracket for key " .
@@ -618,7 +619,7 @@ function phorum_get_language($lang)
                         }
                     }
                 } else {
-                    list($varvalue,$endedby) = token_get_string($tokens);
+                    list ($varvalue,$endedby) = token_get_string($tokens);
                     eval("$varname = '" . urlencode($varvalue) . "';");
                 }
             }
@@ -642,7 +643,7 @@ HELP;
     $PHORUM['STORE']['DEPRECATED'] = $DEPRECATED;
 
     if (TOKEN_DEBUGGER){
-        Phorum::API()->dump($PHORUM);
+        phorum_api_dev_dump($PHORUM);
     }
     return $PHORUM;
 }

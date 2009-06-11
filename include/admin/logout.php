@@ -24,7 +24,7 @@ require_once './include/api/user.php';
 phorum_api_user_session_destroy(PHORUM_ADMIN_SESSION);
 
 $redir_url = phorum_admin_build_url('base');
-$phorum->redirect($redir_url);
+phorum_api_redirect($redir_url);
 
 exit();
 

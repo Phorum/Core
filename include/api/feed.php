@@ -30,6 +30,32 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/format/messages.php';
+
+// {{{ Constant definition
+
+/**
+ * Function call flag, which tells {@link phorum_api_feed()} that 
+ * a feed has to be generated for all (readable) forums in the
+ * current (v)root.
+ */
+define('PHORUM_FEED_VROOT', 0);
+
+/**
+ * Function call flag, which tells {@link phorum_api_feed()} that 
+ * a feed has to be generated for a single forum.
+ */
+define('PHORUM_FEED_FORUM', 1);
+
+/**
+ * Function call flag, which tells {@link phorum_api_feed()} that 
+ * a feed has to be generated for a single thread.
+ */
+define('PHORUM_FEED_THREAD', 2);
+
+// }}}
+
+// {{{ Function: phorum_api_feed()
 /**
  * Collect the data that is used for the feed and pass this information
  * on to the requested output adapter.
@@ -63,7 +89,6 @@ if (!defined("PHORUM")) return;
 function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     settype($id, 'int');
     settype($count, 'int');
@@ -91,7 +116,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
     // Prepare data for handling a vroot feed.
     if ($source_type === PHORUM_FEED_VROOT)
     {
-        $forums = $phorum->forums->by_vroot($id);
+        $forums = phorum_api_forums_by_vroot($id);
         $thread_id = NULL;
         $forum_ids = array_keys($forums);
         $cache_part = implode(',', array_keys($forums));
@@ -103,7 +128,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
         if ($PHORUM['forum_id'] == $id) {
             $forum = $PHORUM; // contains all required data already
         } else {
-            $forum = $phorum->forums->by_forum_id($id);
+            $forum = phorum_api_forums_by_forum_id($id);
             if (empty($forum)) trigger_error(
                 "phorum_api_feed(): Forum for forum_id \"$id\" not found.",
                 E_USER_ERROR
@@ -188,11 +213,11 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
 
         // Apply the "read" hook(s) to the messages.
         if (isset($PHORUM['hooks']['read'])) {
-            $messages = $phorum->modules->hook('read', $messages);
+            $messages = phorum_api_hook('read', $messages);
         }
 
         // Apply formatting to the messages.
-        $messages = $phorum->format->messages($messages);
+        $messages = phorum_api_format_messages($messages);
 
         // Put the array of users back in the messages array.
         $messages['users'] = $users;
@@ -204,14 +229,14 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
 
         if ($source_type === PHORUM_FEED_VROOT)
         {
-            $feed_url = $phorum->url(PHORUM_INDEX_URL);
+            $feed_url = phorum_api_url(PHORUM_INDEX_URL);
             $feed_title = strip_tags($PHORUM['DATA']['TITLE']);
             $feed_description = (!empty($PHORUM['description']))
                               ? $PHORUM['description'] : '';
         }
         if ($source_type === PHORUM_FEED_FORUM)
         {
-            $feed_url = $phorum->url(PHORUM_LIST_URL);
+            $feed_url = phorum_api_url(PHORUM_LIST_URL);
             /**
              * @todo The formatting of the forum base feed data should
              *       be based on the data in $forum and not the common.php
@@ -234,7 +259,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
             if ($PHORUM['forum_id'] == $forum_id) {
                 $forum = $PHORUM; // contains all required data already
             } else {
-                $forum = $phorum->forums->by_forum_id($forum_id);
+                $forum = phorum_api_forums_by_forum_id($forum_id);
                 if (empty($forum)) trigger_error(
                     "phorum_api_feed(): Forum for forum_id \"$id\" not found.",
                     E_USER_ERROR
@@ -242,7 +267,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
             }
             $forums = array($forum_id => $forum);
 
-            $feed_url = $phorum->url(
+            $feed_url = phorum_api_url(
                 PHORUM_FOREIGN_READ_URL,
                 $thread['forum_id'], $thread_id, $thread_id
             );
@@ -254,7 +279,9 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
         // All data has been collected. Now the feed is generated.
         // ----------------------------------------------------------------
 
-        list ($data, $content_type) = $phorum->feed->$adapter(
+        require_once PHORUM_PATH.'/include/api/feed/'.$adapter.'.php';
+        $adapter_function = 'phorum_api_feed_'.$adapter;
+        list ($data, $content_type) = $adapter_function(
             $messages, $forums,
             $feed_url, $feed_title, $feed_description, $replies
         );
@@ -279,38 +306,6 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
     // embedded Phorum setups.
     exit(0);
 }
+// }}}
    
-   
-
-  
-   
-//       switch ($feed_type)
-//       {
-#           case 'html':
-#               $data = phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed_description);
-#               $content_type = "text/html";
-#               break;
-//   
-//           case 'js':
-//               $data = phorum_feed_make_js($messages, $forums, $feed_url, $feed_title, $feed_description);
-//               $content_type = "text/javascript";
-//               break;
-//   
-//           case 'atom':
-//               $data = phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed_description);
-//               $content_type = "application/xml";
-//               break;
-//   
-//   }
-//   
-//   // output the proper header and the data
-//   header("Content-type: $content_type;");
-//   echo $data;
-//   
-//   // Exit here explicitly for not giving back control to portable and
-//   // embedded Phorum setups.
-//   exit(0);
-//   
-//
-
 ?>

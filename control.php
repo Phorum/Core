@@ -20,13 +20,15 @@
 define('phorum_page','control');
 require_once './common.php';
 require_once './include/email_functions.php';
+require_once PHORUM_PATH.'/include/api/format/users.php';
+require_once PHORUM_PATH.'/include/api/format/messages.php';
 
-$phorum->request->require_login(TRUE);
+phorum_api_request_require_login(TRUE);
 
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.
-$phorum->request->check_token();
+phorum_api_request_check_token();
 
 define("PHORUM_CONTROL_CENTER", 1);
 
@@ -54,28 +56,28 @@ $panel = htmlspecialchars(
 phorum_build_common_urls();
 
 // Generate the control panel URLs.
-$PHORUM['DATA']['URL']['CC0'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUMMARY);
-$PHORUM['DATA']['URL']['CC1'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS);
-$PHORUM['DATA']['URL']['CC2'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_FORUMS);
-$PHORUM['DATA']['URL']['CC3'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERINFO);
-$PHORUM['DATA']['URL']['CC4'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SIGNATURE);
-$PHORUM['DATA']['URL']['CC5'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL);
-$PHORUM['DATA']['URL']['CC6'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_BOARD);
-$PHORUM['DATA']['URL']['CC7'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PASSWORD);
-$PHORUM['DATA']['URL']['CC8'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
-$PHORUM['DATA']['URL']['CC9'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_FILES);
-$PHORUM['DATA']['URL']['CC10'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
-$PHORUM['DATA']['URL']['CC14'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PRIVACY);
-$PHORUM['DATA']['URL']['CC15'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
-$PHORUM['DATA']['URL']['CC16'] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
+$PHORUM['DATA']['URL']['CC0'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUMMARY);
+$PHORUM['DATA']['URL']['CC1'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS);
+$PHORUM['DATA']['URL']['CC2'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_FORUMS);
+$PHORUM['DATA']['URL']['CC3'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERINFO);
+$PHORUM['DATA']['URL']['CC4'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SIGNATURE);
+$PHORUM['DATA']['URL']['CC5'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL);
+$PHORUM['DATA']['URL']['CC6'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_BOARD);
+$PHORUM['DATA']['URL']['CC7'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PASSWORD);
+$PHORUM['DATA']['URL']['CC8'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
+$PHORUM['DATA']['URL']['CC9'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_FILES);
+$PHORUM['DATA']['URL']['CC10'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
+$PHORUM['DATA']['URL']['CC14'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_PRIVACY);
+$PHORUM['DATA']['URL']['CC15'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
+$PHORUM['DATA']['URL']['CC16'] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
 
 // Determine if the user files functionality is available.
 $PHORUM["DATA"]["MYFILES"] = ($PHORUM["file_uploads"] || $PHORUM["user"]["admin"]);
 
 // Determine if the user is a moderator.
-$PHORUM["DATA"]["MESSAGE_MODERATOR"] = $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANY);
-$PHORUM["DATA"]["USER_MODERATOR"] = $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANY);
-$PHORUM["DATA"]["GROUP_MODERATOR"] = $phorum->user->check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_ANY);
+$PHORUM["DATA"]["MESSAGE_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_ANY);
+$PHORUM["DATA"]["USER_MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS, PHORUM_ACCESS_ANY);
+$PHORUM["DATA"]["GROUP_MODERATOR"] = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_ANY);
 $PHORUM["DATA"]["MODERATOR"] = ($PHORUM["DATA"]["USER_MODERATOR"] + $PHORUM["DATA"]["MESSAGE_MODERATOR"] + $PHORUM["DATA"]["GROUP_MODERATOR"]) > 0;
 
 // If global email hiding is not enabled, then give the user a chance
@@ -87,7 +89,7 @@ $PHORUM['DATA']['SHOW_EMAIL_HIDE'] = empty($PHORUM['hide_email_addr']) ? 1 : 0;
 $PHORUM['DATA']['SHOW_PM_EMAIL_NOTIFY'] = !empty($PHORUM["allow_pm_email_notify"]);
 
 // The form action for the common form.
-$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL);
+$PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL);
 
 // fill the breadcrumbs-info
 $PHORUM['DATA']['BREADCRUMBS'][]=array(
@@ -105,7 +107,7 @@ unset($user["permissions"]);
 
 // Fake a message here so we can run the sig through format_message.
 $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$user["signature"]));
-$fake_messages = $phorum->format->messages($fake_messages);
+$fake_messages = phorum_api_format_messages($fake_messages);
 $user["signature_formatted"] = $fake_messages[0]["body"];
 
 // Format the user signature using standard message body formatting
@@ -129,13 +131,13 @@ $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"panel\" value=\"$pa
 
 // Set the back-URL and -message.
 if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
-    $PHORUM['DATA']['URL']['BACK'] = $phorum->url(PHORUM_LIST_URL);
+    $PHORUM['DATA']['URL']['BACK'] = phorum_api_url(PHORUM_LIST_URL);
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BacktoForum'];
 } else {
     if(isset($PHORUM['forum_id'])) {
-        $PHORUM['DATA']['URL']['BACK'] = $phorum->url(PHORUM_INDEX_URL,$PHORUM['forum_id']);
+        $PHORUM['DATA']['URL']['BACK'] = phorum_api_url(PHORUM_INDEX_URL,$PHORUM['forum_id']);
     } else {
-        $PHORUM['DATA']['URL']['BACK'] = $phorum->url(PHORUM_INDEX_URL);
+        $PHORUM['DATA']['URL']['BACK'] = phorum_api_url(PHORUM_INDEX_URL);
     }
     $PHORUM['DATA']['URL']['BACKTITLE'] = $PHORUM['DATA']['LANG']['BackToForumList'];
 }
@@ -189,7 +191,7 @@ $hook_info = array(
     'okmsg'    => NULL
 );
 if (isset($PHORUM['hooks']['cc_panel'])) {
-    $hook_info = $phorum->modules->hook('cc_panel', $hook_info);
+    $hook_info = phorum_api_hook('cc_panel', $hook_info);
 }
 
 // Retrieve template, error and okmsg info from the module info.
@@ -234,7 +236,7 @@ if ($error_msg) { // Possibly set from the panel include file.
 }
 
 // Display the control panel page.
-$phorum->output($template);
+phorum_api_output($template);
 
 // ============================================================================
 
@@ -246,7 +248,6 @@ $phorum->output($template);
 function phorum_controlcenter_user_save($panel)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $error = "";
     $okmsg = "";
@@ -296,14 +297,14 @@ function phorum_controlcenter_user_save($panel)
 
     // Run a hook, so module writers can update and check the userdata.
     if (isset($PHORUM["hooks"]["cc_save_user"]))
-        $userdata = $phorum->modules->hook("cc_save_user", $userdata);
+        $userdata = phorum_api_hook("cc_save_user", $userdata);
 
     // Set $error, in case the cc_save_user hook did set an error.
     if (isset($userdata['error'])) {
         $error=$userdata['error'];
         unset($userdata['error']);
     // Try to update the userdata in the database.
-    } elseif (!$phorum->user->save($userdata)) {
+    } elseif (!phorum_api_user_save($userdata)) {
         // Updating the user failed.
         $error = $PHORUM["DATA"]["LANG"]["ErrUserAddUpdate"];
     } else {
@@ -311,7 +312,7 @@ function phorum_controlcenter_user_save($panel)
         $okmsg = $PHORUM["DATA"]["LANG"]["ProfileUpdatedOk"];
 
         // Let the userdata be reloaded.
-        $phorum->user->set_active_user(
+        phorum_api_user_set_active_user(
             PHORUM_FORUM_SESSION,
             $userdata["user_id"]
         );
@@ -320,14 +321,14 @@ function phorum_controlcenter_user_save($panel)
         // other computers or browser will lose any active session that
         // they are running.
         if (isset($userdata["password"]) && $userdata["password"] != '') {
-            $phorum->user->session_create(
+            phorum_api_user_session_create(
                 PHORUM_FORUM_SESSION,
                 PHORUM_SESSID_RESET_ALL
             );
         }
 
         // Copy data from the updated user back into the user template data.
-        $formatted = $phorum->format->users(array($PHORUM['user']));
+        $formatted = phorum_api_format_users(array($PHORUM['user']));
         foreach ($formatted[0] as $key => $val) {
             $PHORUM['DATA']['USER'][$key] = $val;
         }

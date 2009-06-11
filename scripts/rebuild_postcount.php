@@ -19,10 +19,9 @@ define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_postcount');
 
 require_once(dirname(__FILE__).'/../include/api.php');
-$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
@@ -30,7 +29,7 @@ if (! ini_get('safe_mode')) {
 }
 
 print "\nCounting the posts for all users ...\n";
-$postcounts = $phorum->db->interact(
+$postcounts = phorum_db_interact(
     DB_RETURN_ROWS,
     "SELECT user_id, count(*)
      FROM   {$PHORUM["message_table"]}
@@ -44,7 +43,7 @@ $count_total = count($postcounts);
 $size = strlen($count_total);
 $count = 0;
 foreach ($postcounts as $row) {
-    $phorum->user->save_raw(array(
+    phorum_api_user_save_raw(array(
         "user_id" => $row[0],
         "posts"   => $row[1]
     ));

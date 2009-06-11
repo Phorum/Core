@@ -19,6 +19,8 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
+require_once PHORUM_PATH.'/include/api/custom_field.php';
+
 $TYPES_ARRAY = array(PHORUM_CUSTOM_FIELD_USER    => 'User',
                      PHORUM_CUSTOM_FIELD_FORUM   => 'Forum',
                      PHORUM_CUSTOM_FIELD_MESSAGE => 'Message');
@@ -36,13 +38,13 @@ if(count($_POST) && $_POST['name'] != '')
     // Check if there is a deleted field with the same name.
     // If this is the case, then we want to give the admin a chance
     // to restore the deleted field.
-    $check = $phorum->custom_field->byname($_POST['name'],$_POST['type']);
+    $check = phorum_api_custom_field_byname($_POST['name'],$_POST['type']);
     if ($check !== FALSE && !empty($check["deleted"]))
     {
       // Handle restoring a deleted field.
       if (isset($_POST["restore"])) {
-        if ($phorum->custom_field->restore($check["id"],$_POST['type']) === FALSE) {
-            phorum_admin_error($phorum->error->message());
+        if (phorum_api_custom_field_restore($check["id"],$_POST['type']) === FALSE) {
+            phorum_admin_error(phorum_api_error_message());
         } else {
             phorum_admin_okmsg("The custom field " .
                                "\"{$check["name"]}\" has been restored.");
@@ -56,7 +58,7 @@ if(count($_POST) && $_POST['name'] != '')
       // Handle hard deleting a deleted field, so a new field with
       // the same name can be created.
       elseif (isset($_POST["create"])) {
-          $phorum->custom_field->delete($check["id"], $_POST['type'], TRUE);
+          phorum_api_custom_field_delete($check["id"], $_POST['type'], TRUE);
       }
 
       // Ask the admin what to do.
@@ -109,10 +111,10 @@ if(count($_POST) && $_POST['name'] != '')
             'html_disabled' => $_POST['html_disabled'],
             'show_in_admin' => $_POST['show_in_admin'],
         );
-        $field = $phorum->custom_field->configure($field);
+        $field = phorum_api_custom_field_configure($field);
 
         if ($field === FALSE) {
-            $error = $phorum->error->message();
+            $error = phorum_api_error_message();
             $action = $_POST['curr'] == 'NEW' ? "create" : "update";
             phorum_admin_error("Failed to $action custom field: ".$error);
         } else {
@@ -145,7 +147,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
 // Delete a custom field after confirmation.
 if (isset($_POST["curr"]) && isset($_POST["delete"]) &&
     $_POST["confirm"] == "Yes") {
-    $phorum->custom_field->delete((int)$_POST["curr"],(int)$_POST['type']);
+    phorum_api_custom_field_delete((int)$_POST["curr"],(int)$_POST['type']);
     phorum_admin_okmsg("Profile field deleted");
 }
 

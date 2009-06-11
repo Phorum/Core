@@ -19,6 +19,9 @@
 
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
+require_once PHORUM_PATH.'/include/api/mail.php';
+require_once PHORUM_PATH.'/include/api/ban.php';
+
 // email-verification
 if($PHORUM['registration_control']) {
     //$PHORUM['DATA']['PROFILE']['email_temp']="email_address@bogus.com|bla";
@@ -33,11 +36,11 @@ if ( count( $_POST ) ) {
 
     if ( empty( $_POST["email"] ) ) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRequired"];
-    } elseif (!$phorum->mail->check_address( $_POST["email"])) {
+    } elseif (!phorum_api_mail_check_address( $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif ($PHORUM['user']['email'] != $_POST["email"] && phorum_api_user_search("email", $_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmailExists"];
-    } elseif (($banerr = $phorum->ban->check($_POST["email"], PHORUM_BAD_EMAILS)) !== NULL) {
+    } elseif (($banerr = phorum_api_ban_check($_POST["email"], PHORUM_BAD_EMAILS)) !== NULL) {
         $error = $banerr;
     } elseif (isset($PHORUM['DATA']['PROFILE']['email_temp_part']) && !empty($_POST['email_verify_code']) && $PHORUM['DATA']['PROFILE']['email_temp_part']."|".$_POST['email_verify_code'] != $PHORUM['DATA']['PROFILE']['email_temp']) {
         $error = $PHORUM['DATA']['LANG']['ErrWrongMailcode'];
@@ -70,9 +73,9 @@ if ( count( $_POST ) ) {
             'username'      => $PHORUM['DATA']['PROFILE']['username'],
             'newmail'       => $_POST['email'],
             'mailcode'      => $conf_code,
-            'cc_url'        => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
+            'cc_url'        => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
             );
-            $phorum->mail($_POST['email'], $maildata);
+            phorum_api_mail($_POST['email'], $maildata);
 
             // Remember this for the template.
             $email_temp_part = $_POST['email'];

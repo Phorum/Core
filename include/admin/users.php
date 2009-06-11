@@ -20,6 +20,7 @@
 if (!defined("PHORUM_ADMIN")) return;
 
 require_once './include/api/forums.php';
+require_once PHORUM_PATH.'/include/api/mail.php';
 
 $user_status_map = array(
     'any'                     => 'Any user status',
@@ -86,7 +87,7 @@ if(count($_POST))
         //check for a valid email
         if (!empty($_POST["email"])) {
             include './include/email_functions.php';
-            $valid_email = $phorum->mail->check_address($_POST["email"]);
+            $valid_email = phorum_api_mail_check_address($_POST["email"]);
             if ($valid_email !== true)
                 $error = 'The email "'.htmlspecialchars($_POST[email]).'" is not valid!';
         }
@@ -228,7 +229,7 @@ if(count($_POST))
         unset($user_data["phorum_admin_token"]); 
 
         if (empty($error)){
-            $user_data = $phorum->modules->hook("admin_users_form_save", $user_data);
+            $user_data = phorum_api_hook("admin_users_form_save", $user_data);
             if (isset($user_data["error"])) {
                 $error = $user_data["error"];
                 unset($user_data["error"]);
@@ -459,7 +460,7 @@ EOT;
             echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";
             echo "    <td class=\"".$ta_class."\">{$status}</td>\n";
             echo "    <td class=\"".$ta_class."\" style=\"text-align:right\">{$posts}</td>\n";
-            echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_last_active']) ? $phorum->format->date($PHORUM['short_date'], intval($user['date_last_active'])) : "&nbsp;")."</td>\n";
+            echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_last_active']) ? phorum_api_format_date($PHORUM['short_date'], intval($user['date_last_active'])) : "&nbsp;")."</td>\n";
             echo "    <td class=\"".$ta_class."\"><input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
             echo "</tr>\n";
         }
@@ -530,9 +531,9 @@ if (isset($_REQUEST["user_id"]))
 
         $frm->addrow("Forum posts",$user["posts"]);
 
-        $frm->addrow("Registration Date", $phorum->format->date($PHORUM['short_date_time'] ,$user['date_added']));
+        $frm->addrow("Registration Date", phorum_api_format_date($PHORUM['short_date_time'] ,$user['date_added']));
 
-        $row=$frm->addrow("Date last active", $phorum->format->date($PHORUM['short_date_time'] ,$user['date_last_active']));
+        $row=$frm->addrow("Date last active", phorum_api_format_date($PHORUM['short_date_time'] ,$user['date_last_active']));
 
         $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $user["admin"]));
 
@@ -554,7 +555,7 @@ if (isset($_REQUEST["user_id"]))
             }
         }
 
-        $phorum->modules->hook("admin_users_form", $frm, $user);
+        phorum_api_hook("admin_users_form", $frm, $user);
 
         $frm->show();
 

@@ -1044,7 +1044,6 @@ function phorum_db_update_message($message_id, $message)
 function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
-    $phorum = Phorum::API();
 
     settype($message_id, 'int');
     settype($mode, 'int');
@@ -1130,7 +1129,8 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     // It kind of sucks to have this here, but it is the best way
     // to ensure that thread info gets updated if messages are deleted.
     // Leave this include down here, so it is included conditionally.
-    $phorum->thread->update_metadata($thread);
+    require_once PHORUM_PATH.'/include/api/thread.php';
+    phorum_api_thread_update_metadata($thread);
 
     // We need to delete the subscriptions for the thread too.
     phorum_db_interact(

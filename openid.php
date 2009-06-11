@@ -22,7 +22,7 @@ require_once './common.php';
 require_once './include/api/user.php';
 
 if(empty($PHORUM["open_id"])){
-    $phorum->redirect(PHORUM_URL_LOGIN);
+    phorum_api_redirect(PHORUM_URL_LOGIN);
 }
 
 define("PHORUM_OPENID_ERROR_INVALID", 1);
@@ -68,7 +68,7 @@ if(isset($_POST["openid"])){
         // form to send a POST request to the server.
         if ($auth_request->shouldSendRedirect()) {
             $redirect_url = $auth_request->redirectURL($PHORUM["http_path"],
-                                                       $phorum->url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]));
+                                                       phorum_api_url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]));
 
             // If the redirect URL can't be built, display an error
             // message.
@@ -85,7 +85,7 @@ if(isset($_POST["openid"])){
             // Generate form markup and render it.
             $form_id = 'openid_message';
             $form_html = $auth_request->formMarkup($PHORUM["http_path"],
-                                                   $phorum->url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]),
+                                                   phorum_api_url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]),
                                                    false, array('id' => $form_id));
 
             // Display an error if the form markup couldn't be generated;
@@ -121,7 +121,7 @@ if(isset($_POST["openid"])){
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["OpenIDUnknown"];
     }
 
-    $phorum->output("message");
+    phorum_api_output("message");
 
 } else {
 
@@ -129,19 +129,19 @@ if(isset($_POST["openid"])){
     $consumer = new Auth_OpenID_Consumer($store);
 
     // Complete the authentication process using the server's response.
-    $response = $consumer->complete($phorum->url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]));
+    $response = $consumer->complete(phorum_api_url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]));
 
     // Check the response status.
     if ($response->status == Auth_OpenID_CANCEL) {
 
         // This means the authentication was cancelled.
-        $phorum->redirect(PHORUM_URL_LOGIN);
+        phorum_api_redirect(PHORUM_URL_LOGIN);
 
     } else if ($response->status == Auth_OpenID_FAILURE) {
 
         // Authentication failed; display the error message.
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["OpenIDUnknown"];
-        $phorum->output("message");
+        phorum_api_output("message");
 
     } else if ($response->status == Auth_OpenID_SUCCESS) {
 
@@ -184,7 +184,7 @@ if(isset($_POST["openid"])){
 
             $PHORUM["DATA"]["HTML_DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["OpenIDCompleteExplain"];
 
-            $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url( PHORUM_REGISTER_ACTION_URL );
+            $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_REGISTER_ACTION_URL );
 
             $PHORUM["DATA"]["OPENID"]["open_id"] = htmlspecialchars($openid, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
@@ -200,7 +200,7 @@ if(isset($_POST["openid"])){
                 $PHORUM["DATA"]["OPENID"]["email"] = $sreg["email"];
             }
 
-            $phorum->output("openid_register");
+            phorum_api_output("openid_register");
 
         } else {
 
@@ -214,7 +214,7 @@ if(isset($_POST["openid"])){
                 );
             }
 
-            $phorum->redirect(PHORUM_URL_INDEX);
+            phorum_api_redirect(PHORUM_URL_INDEX);
 
         }
 

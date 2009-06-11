@@ -20,6 +20,7 @@
 if (!defined("PHORUM_ADMIN")) return;
 
 require_once './include/api/forums.php';
+require_once PHORUM_PATH.'/include/api/thread.php';
 
 $error = "";
 
@@ -85,7 +86,7 @@ if ( count( $_POST ) ) {
                     if($num_threads) {
 
                         foreach($threads as $tid => $tdata) {
-                            $phorum->thread->update_metadata($tid);
+                            phorum_api_thread_update_metadata($tid);
                         }
 
                         $threads_updated+=$num_threads;
@@ -148,7 +149,7 @@ if ( count( $_POST ) ) {
 
     if (isset($_POST['rebuild_display_names']) && !empty($_POST['rebuild_display_names'])) {
         $redir_url = phorum_admin_build_url(array('module=update_display_names','request=integrity'));
-        $phorum->redirect($redir_url);
+        phorum_api_redirect($redir_url);
         exit();
     }
 }

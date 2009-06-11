@@ -67,7 +67,7 @@ function phorum_api_lang_list($include_hidden = FALSE)
             // to eat possible extra output like UTF-8 BOM and whitespace
             // outside PHP tags.
             ob_start();
-            @include $file;
+            include $file;
             ob_end_clean();
 
             if (!$language) trigger_error(

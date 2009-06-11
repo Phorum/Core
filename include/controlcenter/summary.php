@@ -22,7 +22,7 @@ if (!defined("PHORUM_CONTROL_CENTER")) return;
 $template = "cc_start";
 $PHORUM['DATA']['UserPerms'] = phorum_readable_permissions();
 $PHORUM['DATA']['PROFILE']['raw_date_added'] = $PHORUM['DATA']['PROFILE']['date_added'];
-$PHORUM['DATA']['PROFILE']['date_added'] = $phorum->format->date( $PHORUM['short_date_time'], $PHORUM['DATA']['PROFILE']['date_added']);
+$PHORUM['DATA']['PROFILE']['date_added'] = phorum_api_format_date( $PHORUM['short_date_time'], $PHORUM['DATA']['PROFILE']['date_added']);
 if( $PHORUM["track_user_activity"] &&
     (!empty($PHORUM["user"]["admin"])                                  ||
      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) ||
@@ -30,7 +30,7 @@ if( $PHORUM["track_user_activity"] &&
      !$user["hide_activity"])){
 
     $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];
-    $PHORUM["DATA"]["PROFILE"]["date_last_active"]=$phorum->format->date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
+    $PHORUM["DATA"]["PROFILE"]["date_last_active"]=phorum_api_format_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 } else {
     unset($PHORUM["DATA"]["PROFILE"]["date_last_active"]);
 }
@@ -39,7 +39,7 @@ $PHORUM["DATA"]["PROFILE"]["username"] = htmlspecialchars($PHORUM["DATA"]["PROFI
 $PHORUM["DATA"]["PROFILE"]["real_name"] = htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
 if (isset($PHORUM["hooks"]["profile"])) {
-    $PHORUM["DATA"]["PROFILE"] = $phorum->modules->hook(
+    $PHORUM["DATA"]["PROFILE"] = phorum_api_hook(
         "profile", $PHORUM["DATA"]["PROFILE"]
     );
 }
@@ -51,12 +51,11 @@ $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["PersProfile"];
 function phorum_readable_permissions()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
     
     $newperms = array();
 
     if (isset($PHORUM["user"]["permissions"])) {        
-        $forums = $phorum->forums->get(array_keys($PHORUM["user"]["permissions"]));
+        $forums = phorum_api_forums_get(array_keys($PHORUM["user"]["permissions"]));
 
         foreach($PHORUM["user"]["permissions"] as $forum => $perms) {
             if(isset($forums[$forum])) {

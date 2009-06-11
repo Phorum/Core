@@ -26,6 +26,8 @@ define('phorum_page', 'ajax');
 
 require_once './common.php';
 
+require_once PHORUM_PATH.'/include/api/json.php';
+
 // Registration of some language strings that can be used by Ajax clients.
 // We put them in here, so the language tool can find them.
 // $PHORUM['DATA']['LANG']['ActionPending']
@@ -36,7 +38,7 @@ require_once './common.php';
 // ----------------------------------------------------------------------
 
 if (isset($PHORUM['args'][0]) && $PHORUM['args'][0] == 'client') {
-    $phorum->redirect(PHORUM_JAVASCRIPT_URL);
+    phorum_api_redirect(PHORUM_JAVASCRIPT_URL);
 }
 
 // ----------------------------------------------------------------------
@@ -68,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST' || $_SERVER['REQUEST_METHOD']=='PUT')
     if ($body == '') phorum_ajax_error('Ajax POST request misses body');
 
     // Set the Ajax arguments.
-    $PHORUM["ajax_args"] = $phorum->json->decode($body);
+    $PHORUM["ajax_args"] = phorum_api_json_decode($body);
     if ($PHORUM["ajax_args"] == NULL) phorum_ajax_error(
         'Ajax POST request body does not seem to be JSON data'
     );
@@ -153,7 +155,7 @@ $ajax_call = basename($PHORUM['ajax_args']['call']);
  */
 $call_hook = 'ajax_' . $ajax_call;
 if (isset($PHORUM['hooks'][$call_hook])) {
-    $phorum->modules->hook($call_hook, $PHORUM['ajax_args']);
+    phorum_api_hook($call_hook, $PHORUM['ajax_args']);
 }
 
 // Check if the Ajax call has a core handler script.
@@ -191,9 +193,9 @@ function phorum_ajax_error($message)
         header("HTTP/1.1 500 Phorum Ajax error");
         header("Status: 500 Phorum Ajax error");
         header("Content-Type: text/plain; charset=UTF-8");
-        print $phorum->charset->convert_to_utf8($message);
+        print phorum_api_charset_convert_to_utf8($message);
     } else {
-        $return =  $phorum->json->encode(array('error' => $message));
+        $return =  phorum_api_json_encode(array('error' => $message));
         print $PHORUM['ajax_jsonp'] . "($return);";
     }
     exit(1);
@@ -216,7 +218,7 @@ function phorum_ajax_return($data)
     global $PHORUM;
 
     header("Content-Type: text/plain; charset=UTF-8");
-    $return =  $phorum->json->encode($data);
+    $return =  phorum_api_json_encode($data);
 
     if ($PHORUM['ajax_jsonp'] === NULL) {
         print $return;
@@ -280,7 +282,7 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
     // for handling arrays in JSONP call parameters from the
     // Phorum JavaScript library.
     if (strlen($value) > 6 && substr($value, 0, 6) == '$JSON$') {
-        $value = $phorum->json->decode(substr($value, 6));
+        $value = phorum_api_json_decode(substr($value, 6));
     }
 
     // Return immediately, if we don't need to do type checking.

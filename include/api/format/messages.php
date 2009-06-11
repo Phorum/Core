@@ -28,6 +28,9 @@
 
 if (!defined('PHORUM')) return;
 
+require_once PHORUM_PATH.'/include/api/format/censor.php';
+require_once PHORUM_PATH.'/include/api/newflags.php';
+
 // {{{ Function: phorum_api_format_messages()
 /**
  * This function handles preparing message data for use in the templates.
@@ -65,18 +68,17 @@ if (!defined('PHORUM')) return;
 function phorum_api_format_messages($messages, $author_specs = NULL)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Prepare author specs.
     if ($author_specs === NULL) $author_specs = array();
     $author_specs[] = array("user_id","author","email","author","PROFILE");
 
     // Prepare censoring replacements.
-    list ($censor_search, $censor_replace) = $phorum->format->censor->compile();
+    list ($censor_search, $censor_replace) = phorum_api_format_censor_compile();
 
     // Prepare the profile URL template. This is used to prevent
-    // having to call the $phorum->url() function over and over again. 
-    $profile_url_template = $phorum->url(PHORUM_PROFILE_URL, '%spec_data%');
+    // having to call the phorum_api_url() function over and over again. 
+    $profile_url_template = phorum_api_url(PHORUM_PROFILE_URL, '%spec_data%');
 
     // A special <br> tag to keep track of breaks that are added by phorum.
     $phorum_br = '<phorum break>';
@@ -195,7 +197,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
                      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) )
             {
                 $messages[$id][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                $email_url = $phorum->format->html_encode("mailto:".$message[$spec[2]]);
+                $email_url = phorum_api_format_>html_encode("mailto:".$message[$spec[2]]);
                 $messages[$id]["URL"]["PROFILE"] = $email_url;
             }
             // For an anonymous user that did not leave an e-mail address.
@@ -213,12 +215,12 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
 
     // A hook for module writers to apply custom message formatting.
     if (isset($PHORUM["hooks"]["format"])) {
-        $messages = $phorum->modules->hook("format", $messages);
+        $messages = phorum_api_hook("format", $messages);
     }
 
     // A hook for module writers for doing post formatting fixups.
     if (isset($PHORUM["hooks"]["format_fixup"])) {
-        $messages = $phorum->modules->hook("format_fixup", $messages);
+        $messages = phorum_api_hook("format_fixup", $messages);
     }
 
     // Clean up after the mods are done.

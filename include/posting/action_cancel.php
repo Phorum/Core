@@ -19,11 +19,13 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/file.php';
+
 // Clean up unlinked attachments from the database.
 foreach ($message["attachments"] as $info) {
     if (! $info["linked"]) {
-        if ($phorum->file->check_delete_access($info["file_id"])) {
-            $phorum->file->delete($info["file_id"]);
+        if (phorum_api_file_check_delete_access($info["file_id"])) {
+            phorum_api_file_delete($info["file_id"]);
         }
     }
 }
@@ -31,7 +33,7 @@ foreach ($message["attachments"] as $info) {
 $PHORUM["posting_template"] = "message";
 $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["AttachCancel"];
 $PHORUM["DATA"]["BACKMSG"] = $PHORUM["DATA"]["LANG"]["BackToList"];
-$PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(PHORUM_LIST_URL);
+$PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(PHORUM_LIST_URL);
 
 $error_flag = true;
 ?>

@@ -15,10 +15,10 @@ define('phorum_page', 'rebuild_thread_info');
 define('PHORUM_ADMIN', 1);
 
 require_once(dirname(__FILE__).'/../include/api.php');
-$phorum = Phorum::API();
+require_once PHORUM_PATH.'/include/api/thread.php';
 
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
@@ -33,7 +33,7 @@ mysql_query( "SET NAMES 'utf8'", $conn);
 mysql_query( "SET CHARACTER SET utf8", $conn);
 */
 
-$count_total = $phorum->db->interact(
+$count_total = phorum_db_interact(
     DB_RETURN_VALUE,
     "SELECT count(*)
      FROM   {$PHORUM["message_table"]}
@@ -41,7 +41,7 @@ $count_total = $phorum->db->interact(
             message_id = thread"
 );
 
-$res = $phorum->db->interact(
+$res = phorum_db_interact(
     DB_RETURN_RES,
     "SELECT message_id, forum_id
      FROM   {$PHORUM["message_table"]}
@@ -51,9 +51,9 @@ $res = $phorum->db->interact(
 
 $size = strlen($count_total);
 $count = 0;
-while ($row = $phorum->db->fetch_row($res, DB_RETURN_ROW)) {
+while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
     $PHORUM['forum_id'] = $row[1];
-    $phorum->thread->update_metadata($row[0]);
+    phorum_api_thread_update_metadata($row[0]);
 
     $count ++;
 

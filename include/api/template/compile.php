@@ -28,6 +28,9 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/read_file.php';
+require_once PHORUM_PATH.'/include/api/write_file.php';
+
 // {{{ Constant and variable definitions
 
 /**
@@ -76,7 +79,6 @@ define("PHORUM_DEPRECATED", "[Template statement \"%\" has been deprecated]");
 function phorum_api_template_compile($page, $infile, $outfile)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Some backward compatibility for renamed template files.
     // Fall back to the deprecated template file if the new one is
@@ -86,7 +88,7 @@ function phorum_api_template_compile($page, $infile, $outfile)
         if ($page == $new && !file_exists($infile))
         {
             // Rewrite the infile using the old template name.
-            list ($phpfile, $infile) = $phorum->template->resolve($old);
+            list ($phpfile, $infile) = phorum_api_template_resolve($old);
 
             // Just in case a .php file was used, in which case $infile
             // will be NULL. We treat that .php file as a .tpl file here.
@@ -137,16 +139,16 @@ function phorum_api_template_compile($page, $infile, $outfile)
     $stage1 = "<?php
       if (" . implode(" || ", $checks) . ") {
           @unlink (\"$qstage1file\");
-          include Phorum::API()->template(\"$qpage\");
+          include phorum_api_template(\"$qpage\");
           return;
       } else {
           include \"$qstage2file\";
       }
       ?>";
-    $phorum->write_file($stage1file, $stage1);
+    phorum_api_write_file($stage1file, $stage1);
 
     // Output file for stage 2. This file contains the compiled template.
-    $phorum->write_file($stage2file, $template);
+    phorum_api_write_file($stage2file, $template);
 }
 // }}}
 
@@ -169,8 +171,6 @@ function phorum_api_template_compile($page, $infile, $outfile)
  */
 function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = array(), $include_once = array())
 {
-    $phorum = Phorum::API();
-
     $include_depth++;
 
     if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) trigger_error(
@@ -185,7 +185,7 @@ function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = 
 
     $deps[$infile] = filemtime($infile);
 
-    $template = $phorum->read_file($infile);
+    $template = phorum_api_read_file($infile);
 
     // Process {include [once] "page"} statements in the template.
     preg_match_all("/\{include\s+(.+?)\}/is", $template, $matches);
@@ -211,9 +211,9 @@ function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = 
         if ($only_once && isset($include_once[$page])) {
             $replace = '';
         } else {
-            list ($subout, $subin) = $phorum->template->resolve($page);
+            list ($subout, $subin) = phorum_api_template_resolve($page);
             if ($subin == NULL) {
-                $replace = $phorum->read_file($subout);
+                $replace = phorum_api_read_file($subout);
             } else {
                 list ($replace, $deps) = phorum_api_template_compile_pass1(
                     $subin, $include_depth, $deps, $include_once
@@ -349,7 +349,7 @@ function phorum_api_template_compile_pass2($template)
                 list ($value,$type) = phorum_api_template_compile_val2php(
                     $loopvars, $variable
                 );
-                $repl = "<?php $include Phorum::API()->template($value); ?>";
+                $repl = "<?php $include phorum_api_template($value); ?>";
                 break;
 
             case "include_var":
@@ -581,7 +581,7 @@ function phorum_api_template_compile_pass2($template)
                 }
 
                 // Build the replacement string.
-                $repl = "<?php if(isset(\$PHORUM['hooks'][$hook])) Phorum::API()->modules->hook($hook";
+                $repl = "<?php if(isset(\$PHORUM['hooks'][$hook])) phorum_api_hook($hook";
                 if (count($hookargs) == 1) {
                     $repl .= "," . $hookargs[0];
                 } elseif (count($hookargs) > 1) {

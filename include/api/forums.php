@@ -74,7 +74,60 @@
 
 if (!defined("PHORUM")) return;
 
-// {{{ Variable definitions
+require_once PHORUM_PATH.'/include/api/custom_field.php';
+
+// {{{ Constant and variable definitions
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_save()}
+ * that it should not save the settings to the database, but only prepare
+ * the data and return the prepared data array.
+ */
+define('PHORUM_FLAG_PREPARE', 1);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_save()}
+ * that the provided data have to be stored in the default settings.
+ */
+define('PHORUM_FLAG_DEFAULTS', 2);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_get()}
+ * that the return data should only contain forums from which the settings
+ * can be inherited by another forum or folder.
+ */
+define('PHORUM_FLAG_INHERIT_MASTERS', 4);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_get()}
+ * that the return data should only contain folders.
+ */
+define('PHORUM_FLAG_FOLDERS', 8);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_get()}
+ * that the return data should only contain forums.
+ */
+define('PHORUM_FLAG_FORUMS', 16);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_get()}
+ * that the return data should contain inactive forums as well
+ * (for these the "active" field is set to zero).
+ */
+define('PHORUM_FLAG_INCLUDE_INACTIVE', 32);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_tree()}
+ * to include empty folders in the tree.
+ */
+define('PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS', 64);
+
+/**
+ * Function call flag, which tells {@link phorum_api_forums_format()}
+ * to add information about unread messages to the formatted data.
+ */
+define('PHORUM_FLAG_ADD_UNREAD_INFO', 128);
 
 /**
  * The FFLD_* definitions indicate the position of the configation
@@ -226,7 +279,7 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  */
 function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id = NULL, $vroot = NULL, $flags = 0)
 {
-    $phorum = Phorum::API();
+    global $PHORUM;
 
     // We might get an $inherit_id parameter that is NULL or -1, since we
     // present the database value NULL as -1 from this API (because using
@@ -252,64 +305,24 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
         $flags & PHORUM_FLAG_INCLUDE_INACTIVE
     );
 
-    // Filter and process the returned records.
+    // Process the returned records.
     foreach ($forums as $id => $forum)
     {
-        // Find the fields specification to use for this record.
-        $fields = $forum['folder_flag']
-                ? $GLOBALS['PHORUM']['API']['folder_fields']
-                : $GLOBALS['PHORUM']['API']['forum_fields'];
+        $forums[$id]['folder_flag'] = $forum['folder_flag'] ? 1 : 0;
+        $forums[$id]['forum_path']  = unserialize($forum['forum_path']);
 
-        // Initialize the filtered data array.
-        $filtered = array('folder_flag' => $forum['folder_flag'] ? 1 : 0);
-
-        // Add fields to the filtered data.
-        foreach ($fields as $fld => $fldspec)
-        {
-            $spec = explode(":", $fldspec);
-
-            switch ($spec[FFLD_TYPE])
-            {
-                case 'int':
-                    $filtered[$fld] = (int) $forum[$fld];
-                    break;
-
-                case 'inherit_id':
-                    // This is a special one. The database value is NULL or
-                    // a positive integer, but NULL is not an easy value to
-                    // use in HTML forms. Therefore, we provide the value
-                    // -1 to indicate a NULL value here.
-                    $filtered[$fld] = $forum[$fld] === NULL
-                                    ? -1 : (int)$forum[$fld];
-                    break;
-
-                case 'string':
-                    $filtered[$fld] = $forum[$fld];
-                    break;
-
-                case 'bool':
-                    $filtered[$fld] = empty($forum[$fld]) ? FALSE : TRUE;
-                    break;
-
-                case 'array':
-                    $filtered[$fld] = unserialize($forum[$fld]);
-                    break;
-
-                default:
-                    trigger_error(
-                        'phorum_api_forums_get(): Illegal field type used: ' .
-                        htmlspecialchars($spec[FFLD_TYPE]),
-                        E_USER_ERROR
-                    );
-                    break;
-            }
-        }
-
-        $forums[$id] = $filtered;
+        // This is a special one. The database value is NULL or
+        // a positive integer, but NULL is not an easy value to
+        // use in HTML forms. Therefore, we provide the value
+        // -1 to indicate a NULL value here.
+        $forums[$id]['inherit_id'] = $forum['inherit_id'] === NULL
+                                   ? -1 : (int) $forum['inherit_id'];
     }
     
     // retrieve and apply the custom fields for forums
-    $forums = $phorum->custom_field->apply(PHORUM_CUSTOM_FIELD_FORUM,$forums);
+    if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_FORUM])) {
+        $forums = phorum_api_custom_field_apply(PHORUM_CUSTOM_FIELD_FORUM, $forums);
+    }
 
     // If forum_id 0 (zero) is requested, then we create a fake folder
     // record. This is the root folder, which does not correspond to an
@@ -318,7 +331,6 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
         if ((is_array($forum_ids) && in_array(0, $forum_ids)) ||
             (!is_array($forum_ids) && $forum_ids !== NULL && $forum_ids == 0)) {
 
-            $PHORUM = $GLOBALS['PHORUM'];
             $template = $PHORUM['default_forum_options']['template'];
             $language = $PHORUM['default_forum_options']['language'];
 
@@ -513,15 +525,11 @@ function phorum_api_forums_save($data, $flags = 0)
     // Check and format the provided fields.
     foreach ($dbdata as $fld => $val)
     {
-        // Make sure that a valid field name is used. We do a strict check
-        // on this (in the spirit of defensive programming).
+        // Silently remove fields that are not used for the saved
+        // entity from the data.
         if (!array_key_exists($fld, $fields)) {
-            trigger_error(
-                'phorum_api_forums_save(): Illegal field name used in ' .
-                'data: ' . htmlspecialchars($fld),
-                E_USER_ERROR
-            );
-            return NULL;
+            unset($dbdata[$fld]);
+            continue;
         }
 
         $spec = explode(':', $fields[$fld]);
@@ -1138,7 +1146,6 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
 function phorum_api_forums_tree($vroot = NULL, $flags = 0)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     if ($vroot === NULL) {
         $vroot = isset($PHORUM['vroot']) ? $PHORUM['vroot'] : 0;
@@ -1238,9 +1245,9 @@ function phorum_api_forums_tree($vroot = NULL, $flags = 0)
             // Skip empty folders.
             if (empty($forums[$forum['forum_id']]['childcount'])) continue;
 
-            $url = $phorum->url(PHORUM_INDEX_URL, $forum["forum_id"]);
+            $url = phorum_api_url(PHORUM_INDEX_URL, $forum["forum_id"]);
         } else {
-            $url = $phorum->url(PHORUM_LIST_URL, $forum["forum_id"]);
+            $url = phorum_api_url(PHORUM_LIST_URL, $forum["forum_id"]);
         }
 
         // Add the indent level for the node.

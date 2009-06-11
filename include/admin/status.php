@@ -22,7 +22,7 @@ if (!defined("PHORUM_ADMIN")) return;
 phorum_db_update_settings(array("status" => $_POST["status"]));
 
 $redir_url = phorum_admin_build_url('');
-$phorum->redirect($redir_url);
+phorum_api_redirect($redir_url);
 
 exit();
 

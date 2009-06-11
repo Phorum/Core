@@ -13,10 +13,9 @@ define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_display_names');
 
 require_once(dirname(__FILE__).'/../include/api.php');
-$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);

@@ -19,13 +19,15 @@
 
 if (!defined("PHORUM")) return;
 
+require_once PHORUM_PATH.'/include/api/format/messages.php';
+
 $previewmessage = $message;
 
 // Add the message author's signature to the message body.
 if (isset($message["user_id"]) && !empty($message["user_id"])) {
-    $user = $phorum->user->get($message["user_id"]);
+    $user = phorum_api_user_get($message["user_id"]);
     if (isset($PHORUM["hooks"]["read_user_info"])) {
-        $user_info = $phorum->modules->hook("read_user_info", array($user["user_id"] => $user));
+        $user_info = phorum_api_hook("read_user_info", array($user["user_id"] => $user));
         $user = array_shift($user_info);
     }
     if ($user && $message["show_signature"]) {
@@ -42,11 +44,11 @@ if ($attach_count)
     // Create the URL and formatted size for attachment files.
     foreach ($previewmessage["attachments"] as $nr => $data) {
         $previewmessage["attachments"][$nr]["url"] =
-            $phorum->url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']));
+            phorum_api_url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']));
         $previewmessage["attachments"][$nr]["download_url"] =
-            $phorum->url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
+            phorum_api_url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
         $previewmessage["attachments"][$nr]["size"] =
-            $phorum->format->filesize($data["size"]);
+            phorum_api_format_filesize($data["size"]);
     }
 }
 
@@ -61,7 +63,7 @@ if (($mode == "post" || $mode == "reply") &&
 }
 
 // Format the message using the default formatting.
-list($previewmessage) = $phorum->format->messages(array($previewmessage));
+list($previewmessage) = phorum_api_format_messages(array($previewmessage));
 
 // Recount the number of attachments. Formatting mods might have changed
 // the number of attachments we have to display using default formatting.
@@ -100,7 +102,7 @@ if ($mode != "edit") {
 
 // Format datestamp.
 $previewmessage["raw_datestamp"] = $previewmessage["datestamp"];
-$previewmessage["datestamp"] = $phorum->format->date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
+$previewmessage["datestamp"] = phorum_api_format_date($PHORUM["short_date_time"], $previewmessage["datestamp"]);
 
 $PHORUM["DATA"]["PREVIEW"] = $previewmessage;
 

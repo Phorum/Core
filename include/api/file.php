@@ -36,7 +36,35 @@
 
 if (!defined("PHORUM")) return;
 
-// {{{ Variable definitions
+require_once PHORUM_PATH.'/include/api/buffer.php';
+
+// {{{ Constant and variable definitions
+
+/**
+ * Function call flag, which tells {@link phorum_api_file_retrieve()}
+ * that the retrieved Phorum file data has to be returned to the caller.
+ */
+define("PHORUM_FLAG_GET", 1);
+
+/**
+ * Function call flag, which tells {@link phorum_api_file_retrieve()}
+ * that the retrieved Phorum file can be sent to the browser directly.
+ */
+define("PHORUM_FLAG_SEND", 2);
+
+/**
+ * Function call flag, which tells the function to skip any
+ * permission checks.
+ */
+define("PHORUM_FLAG_IGNORE_PERMS", 4);
+
+/**
+ * Function call flag, which tells {@link phorum_api_file_retrieve()}
+ * to force a download by the browser by sending an application/octet-stream
+ * Content-Type header. This flag will only have effect if the
+ * {@link PHORUM_FLAG_SEND} flag is set as well.
+ */
+define("PHORUM_FLAG_FORCE_DOWNLOAD", 8);
 
 /**
  * A mapping of file extensions to their MIME types.
@@ -142,7 +170,6 @@ function phorum_api_file_get_mimetype($filename)
 function phorum_api_file_check_write_access($file)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Reset error storage.
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
@@ -167,7 +194,7 @@ function phorum_api_file_check_write_access($file)
         // If file uploads are enabled, then access is granted. Access
         // is always granted to administrator users.
         if (!$PHORUM["file_uploads"] && !$PHORUM["user"]["admin"]) {
-            return $phorum->error(
+            return phorum_api_error(
                 PHORUM_ERRNO_NOACCESS,
                 $PHORUM["DATA"]["LANG"]["UploadNotAllowed"]
             );
@@ -176,7 +203,7 @@ function phorum_api_file_check_write_access($file)
         // Check if the file doesn't exceed the maximum allowed file size.
         if (isset($file["filesize"]) && $PHORUM["max_file_size"] > 0 &&
             $file["filesize"] > $PHORUM["max_file_size"]*1024) {
-            return $phorum->error(
+            return phorum_api_error(
                 PHORUM_ERRNO_NOACCESS,
                 $PHORUM["DATA"]["LANG"]["FileTooLarge"]
             );
@@ -187,7 +214,7 @@ function phorum_api_file_check_write_access($file)
             $sz = phorum_db_get_user_filesize_total($PHORUM["user"]["user_id"]);
             $sz += $file["filesize"];
             if ($sz > $PHORUM["file_space_quota"]*1024) {
-                return $phorum->error(
+                return phorum_api_error(
                     PHORUM_ERRNO_NOACCESS,
                     $PHORUM["DATA"]["LANG"]["FileOverQuota"]
                 );
@@ -211,7 +238,7 @@ function phorum_api_file_check_write_access($file)
 
             // Check if the extension for the file is an allowed extension.
             if (!in_array($ext, $allowed_exts)) {
-                return $phorum->error(
+                return phorum_api_error(
                     PHORUM_ERRNO_NOACCESS,
                     $PHORUM["DATA"]["LANG"]["FileWrongType"]
                 );
@@ -241,10 +268,10 @@ function phorum_api_file_check_write_access($file)
 
             // Check if the file doesn't exceed the maximum allowed size.
             if ($max_upload > 0 && $file["filesize"] > $max_upload) {
-                return $phorum->error(
+                return phorum_api_error(
                     PHORUM_ERRNO_NOACCESS,
                     str_replace(
-                        '%size%', $phorum->format->filesize($max_upload),
+                        '%size%', phorum_api_format_filesize($max_upload),
                         $PHORUM["DATA"]["LANG"]["AttachFileSize"]
                     )
                 );
@@ -269,7 +296,7 @@ function phorum_api_file_check_write_access($file)
 
             // Check if the extension for the file is an allowed extension.
             if (!in_array($ext, $allowed_exts)) {
-                return $phorum->error(
+                return phorum_api_error(
                     PHORUM_ERRNO_NOACCESS,
                     $PHORUM["DATA"]["LANG"]["AttachInvalidType"] . " ".
                     str_replace(
@@ -332,7 +359,6 @@ function phorum_api_file_check_write_access($file)
 function phorum_api_file_store($file)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $phorum = Phorum::API();
 
     // Check if we really got an array argument for $file.
     if (!is_array($file)) trigger_error(
@@ -473,7 +499,7 @@ function phorum_api_file_store($file)
     // FALSE themselves.
     if (isset($PHORUM["hooks"]["file_store"]))
     {
-        $hook_result = $phorum->modules->hook("file_store", $file);
+        $hook_result = phorum_api_hook("file_store", $file);
 
         // Return if a module returned an error.
         if ($hook_result === FALSE)
@@ -561,7 +587,6 @@ function phorum_api_file_store($file)
 function phorum_api_file_check_read_access($file_id, $flags = 0)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     settype($file_id, "int");
 
@@ -571,7 +596,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
 
     // Check if the active user has read access for the active forum_id.
     if (!($flags & PHORUM_FLAG_IGNORE_PERMS) && !phorum_check_read_common()) {
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_NOACCESS,
             "Read permission for file (id $file_id) denied."
         );
@@ -580,7 +605,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // Retrieve the descriptive file data for the file from the database.
     // Return an error if the file does not exist.
     $file = phorum_db_file_get($file_id, FALSE);
-    if (empty($file)) return $phorum->error(
+    if (empty($file)) return phorum_api_error(
         PHORUM_ERRNO_NOTFOUND,
         "The requested file (id $file_id) was not found."
     );
@@ -596,7 +621,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // FALSE instead, in which case they should immediately return
     // FALSE themselves.
     if (isset($PHORUM["hooks"]["file_check_read_access"])) {
-        $file = $phorum->modules->hook("file_check_read_access", $file, $flags);
+        $file = phorum_api_hook("file_check_read_access", $file, $flags);
         if ($file === FALSE) return FALSE;
     }
 
@@ -611,14 +636,14 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         // or if the forum if of the message is different from the requested
         // forum_id, then return an error.
         $message = phorum_db_get_message($file["message_id"],"message_id",TRUE);
-        if (empty($message)) return $phorum->error(
+        if (empty($message)) return phorum_api_error(
             PHORUM_ERRNO_INTEGRITY,
             "An integrity problem was detected in the database: " .
             "file id $file_id is linked to non existent " .
             "message_id {$file["message_id"]}."
         );
         if ($message["forum_id"] != $PHORUM["forum_id"]) {
-            return $phorum->error(
+            return phorum_api_error(
                 PHORUM_ERRNO_NOACCESS,
                 "Permission denied for reading the file: it does not " .
                 "belong to the requested forum_id {$PHORUM["forum_id"]}."
@@ -639,7 +664,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         preg_match($matchhost, $_SERVER["HTTP_REFERER"])) {
 
         // Generate the base URL for the Phorum.
-        $base = strtolower($phorum->url(PHORUM_BASE_URL));
+        $base = strtolower(phorum_api_url(PHORUM_BASE_URL));
 
         // Strip query string from the base URL. We mainly want to
         // check if the location matches the Phorum location.
@@ -651,7 +676,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         // Check if the referrer URL starts with the base Phorum URL.
         if ($PHORUM["file_offsite"] == PHORUM_OFFSITE_FORUMONLY) {
             $refbase = substr($_SERVER["HTTP_REFERER"], 0, strlen($base));
-            if (strcasecmp($base, $refbase) != 0) return $phorum->error(
+            if (strcasecmp($base, $refbase) != 0) return phorum_api_error(
                 PHORUM_ERRNO_NOACCESS,
                 "Permission denied: links to files in the forum are " .
                 "only allowed from the forum itself."
@@ -662,7 +687,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         elseif ($PHORUM["file_offsite"] == PHORUM_OFFSITE_THISSITE) {
             if (preg_match($matchhost, $_SERVER["HTTP_REFERER"], $rm) &&
                 preg_match($matchhost, $base, $bm) &&
-                strcasecmp($rm[1], $bm[1]) != 0) return $phorum->error(
+                strcasecmp($rm[1], $bm[1]) != 0) return phorum_api_error(
                     PHORUM_ERRNO_NOACCESS,
                     "Permission denied: links to files in the forum are " .
                     "only allowed from this web site."
@@ -717,7 +742,6 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
 function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $phorum = Phorum::API();
 
     // Reset error storage.
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
@@ -781,7 +805,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
     if (isset($PHORUM["hooks"]["file_retrieve"])) {
-        list($file,$flags) = $phorum->modules->hook("file_retrieve", array($file,$flags));
+        list($file,$flags) = phorum_api_hook("file_retrieve", array($file,$flags));
         if ($file === FALSE) return FALSE;
 
         // If a module sent the file data to the browser, then we are done.
@@ -793,7 +817,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     if ($file["file_data"] === NULL)
     {
         $dbfile = phorum_db_file_get($file["file_id"], TRUE);
-        if (empty($dbfile)) return $phorum->error(
+        if (empty($dbfile)) return phorum_api_error(
             PHORUM_ERRNO_NOTFOUND,
             "Phorum file (id {$file["file_id"]}) could not be " .
             "retrieved from the database."
@@ -828,7 +852,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             
             $file["mime_type"] = finfo_buffer($finfo, $file['file_data']);
             finfo_close($finfo);
-            if ($file["mime_type"] === FALSE) return $phorum->error(
+            if ($file["mime_type"] === FALSE) return phorum_api_error(
                 PHORUM_ERRNO_ERROR,
                 "The mime-type of file {$file["file_id"]} couldn't be " .
                 "determined through the fileinfo-extension"
@@ -867,7 +891,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
      * @todo document the file_after_retrieve hook.
      */
     if (!empty($PHORUM['hooks']['file_after_retrieve'])) {
-        list($file, $flags) = $phorum->modules->hook(
+        list($file, $flags) = phorum_api_hook(
             "file_after_retrieve", array($file, $flags)
         );
     }
@@ -880,7 +904,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         ini_set('output_handler', '');
 
         // Get rid of any buffered output so far (there shouldn't be any).
-        $phorum->buffer->clear();
+        phorum_api_buffer_clear();
 
         $time = (int)$file['add_datetime'];
 
@@ -891,13 +915,13 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             // then check if the file has changed, based on the date from
             // the file data. If nothing changed, then we return a 304 header,
             // to tell the browser to use the cached data.
-            $phorum->output->last_modify_time($time);
+            phorum_api_output_last_modify_time($time);
 
             // Send caching headers, so files can be cached by the browser.
-            $phorum->output->cache_max_age(3600 * 24 * 60);
+            phorum_api_output_cache_max_age(3600 * 24 * 60);
         }
         else {
-            $phorum->output->cache_disable();
+            phorum_api_output_cache_disable();
         }
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
@@ -946,7 +970,6 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 function phorum_api_file_check_delete_access($file_id)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     settype($file_id, "int");
 
@@ -975,7 +998,7 @@ function phorum_api_file_check_delete_access($file_id)
     // even have read permission for the file, so delete access would
     // be out of the question too).
     if ($file === FALSE) {
-        if ($phorum->error->code() == PHORUM_ERRNO_NOTFOUND) {
+        if (phorum_api_error_code() == PHORUM_ERRNO_NOTFOUND) {
             return TRUE;
         } else {
             return FALSE;
@@ -1044,7 +1067,6 @@ function phorum_api_file_check_delete_access($file_id)
 function phorum_api_file_delete($file)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $phorum = Phorum::API();
 
     // Find the file_id parameter to use.
     if (is_array($file)) {
@@ -1064,7 +1086,7 @@ function phorum_api_file_delete($file)
     // non existent file. Therefore modules should accept that case
     // as well, without throwing errors.
     if (isset($PHORUM["hooks"]["file_delete"]))
-        $phorum->modules->hook("file_delete", $file_id);
+        phorum_api_hook("file_delete", $file_id);
 
     // Delete the file from the Phorum database.
     phorum_db_file_delete($file_id);
@@ -1122,8 +1144,6 @@ function phorum_api_file_list($link_type = NULL, $user_id = NULL, $message_id = 
  */
 function phorum_api_file_purge_stale($do_purge)
 {
-    $phorum = Phorum::API();
-
     $stale_files = phorum_db_list_stale_files();
 
     /**
@@ -1165,7 +1185,7 @@ function phorum_api_file_purge_stale($do_purge)
      *     considered to be stale.
      */
     if (isset($GLOBALS['PHORUM']['hooks']['file_purge_stale']))
-        $stale_files = $phorum->modules->hook('file_purge_stale', $stale_files);
+        $stale_files = phorum_api_hook('file_purge_stale', $stale_files);
 
     // Delete the files if requested.
     if ($do_purge) {

@@ -31,13 +31,15 @@
 
 define('phorum_page','pm');
 require_once './common.php';
+require_once PHORUM_PATH.'/include/api/format/messages.php';
+require_once PHORUM_PATH.'/include/api/ban.php';
 
-$phorum->request->require_login(TRUE);
+phorum_api_request_require_login(TRUE);
 
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.
-$phorum->request->check_token();
+phorum_api_request_check_token();
 
 // set all our common URL's
 phorum_build_common_urls();
@@ -47,7 +49,7 @@ require_once './include/email_functions.php';
 // If private messages are disabled, just show a simple error message.
 if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];
-    $phorum->output("stdblock");
+    phorum_api_output("stdblock");
     return;
 }
 
@@ -127,7 +129,7 @@ if (isset($_POST["checked"])) {
 $recipients = array();
 if (isset($_POST["recipients"]) && is_array($_POST["recipients"])) {
     foreach ($_POST["recipients"] as $id => $dummy) {
-        $user = $phorum->user->get($id);
+        $user = phorum_api_user_get($id);
         if ($user && $user["active"] == 1) {
             $recipients[$id] = $user;
         }
@@ -144,7 +146,7 @@ $error_msg = "";
 //  Start editor       Post message         Post reply
 if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id)))
 {
-    $error = $phorum->ban->check_multi(array(
+    $error = phorum_api_ban_check_multi(array(
         array($PHORUM["user"]["username"], PHORUM_BAD_NAMES),
         array($PHORUM["user"]["email"],    PHORUM_BAD_EMAILS),
         array($user_id,                    PHORUM_BAD_USERID),
@@ -154,7 +156,7 @@ if ($page == 'send' || $action == 'post' || ($action == 'list' && isset($pm_id))
     // Show an error in case we encountered a ban.
     if (! empty($error)) {
         $PHORUM["DATA"]["ERROR"] = $error;
-        $phorum->output("message");
+        phorum_api_output("message");
         return;
     }
 }
@@ -347,7 +349,7 @@ if (!empty($action))
                         }
 
                         foreach($check_fields as $field){
-                            $to_user_ids = $phorum->user->search($field, $to_name, '=', TRUE);
+                            $to_user_ids = phorum_api_user_search($field, $to_name, '=', TRUE);
                             if(!empty($to_user_ids)){
                                 break;
                             }
@@ -366,7 +368,7 @@ if (!empty($action))
 
                 // Add a recipient by id.
                 if (isset($_POST["to_id"]) && is_numeric($_POST["to_id"])) {
-                    $user = $phorum->user->get($_POST["to_id"]);
+                    $user = phorum_api_user_get($_POST["to_id"]);
                     if ($user && $user["active"] == PHORUM_USER_ACTIVE) {
                         $recipients[$user["user_id"]] = $user;
                     } else {
@@ -456,7 +458,7 @@ if (!empty($action))
 
                                 if (isset($PHORUM["hooks"]["pm_checkmailboxsize"]))
                                     list($user,$current_count,$max_allowed_message_count) =
-                                         $phorum->modules->hook("pm_checkmailboxsize", array($user,$current_count,$max_allowed_message_count));
+                                         phorum_api_hook("pm_checkmailboxsize", array($user,$current_count,$max_allowed_message_count));
 
                                 if ($current_count['total'] >= $max_allowed_message_count) {
                                     if ($user['user_id'] == $PHORUM["user"]["user_id"]) {
@@ -512,7 +514,7 @@ if (!empty($action))
                             }
 
                             if (isset($PHORUM["hooks"]["pm_sent"]))
-                                $phorum->modules->hook("pm_sent", $pm_message, array_keys($recipients));
+                                phorum_api_hook("pm_sent", $pm_message, array_keys($recipients));
                         }
 
                         // Invalidate user cache, to update message counts.
@@ -550,7 +552,7 @@ if (!empty($action))
                 foreach($_POST["checked"] as $buddy_user_id) {
                     phorum_db_pm_buddy_delete($buddy_user_id);
                     if (isset($PHORUM["hooks"]["buddy_delete"]))
-                        $phorum->modules->hook("buddy_delete", $buddy_user_id);
+                        phorum_api_hook("buddy_delete", $buddy_user_id);
                 }
             }
 
@@ -576,7 +578,7 @@ if (!empty($action))
                 if (phorum_db_pm_buddy_add($buddy_user_id)) {
                     $okmsg = $PHORUM["DATA"]["LANG"]["BuddyAddSuccess"];
                     if (isset($PHORUM["hooks"]["buddy_add"]))
-                        $phorum->modules->hook("buddy_add", $buddy_user_id);
+                        phorum_api_hook("buddy_add", $buddy_user_id);
                 } else {
                     $error = $PHORUM["DATA"]["LANG"]["BuddyAddFail"];
                 }
@@ -605,10 +607,9 @@ if (!empty($action))
         if (!empty($pm_id)) $args[]  = "pm_id=" . $pm_id;
         if (!empty($redirect_message)) $args[] = "okmsg=" . $redirect_message;
 
-        $phorum->url; // To make sure the URL API layer is loaded.
-        $redir_url = call_user_func_array('phorum_api_url_get', $args);
+        $redir_url = call_user_func_array('phorum_api_url', $args);
 
-        $phorum->redirect($redir_url);
+        phorum_api_redirect($redir_url);
     }
 }
 
@@ -659,9 +660,9 @@ switch ($page) {
         // Retrieve a list of users that are buddies for the current user.
         $buddy_list = phorum_db_pm_buddy_list(NULL, true);
         if (count($buddy_list)) {
-            $buddy_users = $phorum->user->get(array_keys($buddy_list));
+            $buddy_users = phorum_api_user_get(array_keys($buddy_list));
             if (isset($PHORUM["hooks"]["read_user_info"]))
-                $buddy_users = $phorum->modules->hook("read_user_info", $buddy_users);
+                $buddy_users = phorum_api_hook("read_user_info", $buddy_users);
         } else {
             $buddy_users = array();
         }
@@ -684,11 +685,11 @@ switch ($page) {
             );
 
             $buddy["URL"]["PROFILE"] =
-                $phorum->url(PHORUM_PROFILE_URL, $buddy_user["user_id"]);
+                phorum_api_url(PHORUM_PROFILE_URL, $buddy_user["user_id"]);
 
             if (!$buddy_user['hide_activity']) {
               $buddy["raw_date_last_active"] = $buddy_user["date_last_active"];
-              $buddy["date_last_active"] = $phorum->format->date($PHORUM["short_date_time"], $buddy_user["date_last_active"]);
+              $buddy["date_last_active"] = phorum_api_format_date($PHORUM["short_date_time"], $buddy_user["date_last_active"]);
             } else {
               $buddy["date_last_active"] = "-";
             }
@@ -750,7 +751,7 @@ switch ($page) {
          *     </hookcode>
          */
         if (isset($PHORUM['hooks']['buddy_list'])) {
-            $buddies = $phorum->modules->hook('buddy_list', $buddies);
+            $buddies = phorum_api_hook('buddy_list', $buddies);
         }
 
         $PHORUM["DATA"]["USERTRACK"] = $PHORUM["track_user_activity"];
@@ -820,7 +821,7 @@ switch ($page) {
              *     </hookcode>
              */
             if (isset($PHORUM['hooks']['pm_list'])) {
-                $list = $phorum->modules->hook('pm_list', $list);
+                $list = phorum_api_hook('pm_list', $list);
             }
 
             // Setup template variables.
@@ -895,7 +896,7 @@ switch ($page) {
              *     </hookcode>
              */
             if (isset($PHORUM['hooks']['pm_read'])) {
-                $message = $phorum->modules->hook('pm_read', $message);
+                $message = phorum_api_hook('pm_read', $message);
             }
 
             $PHORUM["DATA"]["MESSAGE"] = $message;
@@ -945,7 +946,7 @@ switch ($page) {
             if (isset($PHORUM["args"]["to_id"])) {
                 foreach (explode(":", $PHORUM["args"]["to_id"]) as $rcpt_id) {
                     settype($rcpt_id, "int");
-                    $user = $phorum->user->get($rcpt_id);
+                    $user = phorum_api_user_get($rcpt_id);
                     if ($user) {
                         $msg["recipients"][$rcpt_id] = array(
                             "display_name" => $user["display_name"],
@@ -987,13 +988,13 @@ switch ($page) {
 
                 $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
 
-                if ($phorum->user->check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
+                if (phorum_api_user_check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
 
                     // get url to the message board thread
-                    $origurl = $phorum->url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
+                    $origurl = phorum_api_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
 
                     // Get the data for the user that we reply to.
-                    $user = $phorum->user->get($message["user_id"]);
+                    $user = phorum_api_user_get($message["user_id"]);
 
                     $msg["subject"] = $message["subject"];
                     $msg["message"] = $message["body"];
@@ -1054,7 +1055,7 @@ switch ($page) {
         if ($PHORUM["DATA"]["SHOW_USERSELECTION"] && $PHORUM["enable_dropdown_userlist"])
         {
             $allusers = array();
-            $userlist = $phorum->user->list(PHORUM_GET_ACTIVE);
+            $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
                 $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
@@ -1107,23 +1108,23 @@ foreach($pm_folders as $id => $data)
     $pm_folders[$id]["is_outgoing"] = $id == PHORUM_PM_OUTBOX;
     $pm_folders[$id]["id"] = $id;
     $pm_folders[$id]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    $pm_folders[$id]["url"] = $phorum->url(PHORUM_PM_URL, "page=list", "folder_id=$id");
+    $pm_folders[$id]["url"] = phorum_api_url(PHORUM_PM_URL, "page=list", "folder_id=$id");
 
     if (!$pm_folders[$id]["is_special"]) {
         $pm_userfolders[$id] = $pm_folders[$id];
     }
 }
 
-$PHORUM["DATA"]["URL"]["PM_FOLDERS"] = $phorum->url(PHORUM_PM_URL, "page=folders");
-$PHORUM["DATA"]["URL"]["PM_SEND"] = $phorum->url(PHORUM_PM_URL, "page=send");
-$PHORUM["DATA"]["URL"]["BUDDIES"] = $phorum->url(PHORUM_PM_URL, "page=buddies");
+$PHORUM["DATA"]["URL"]["PM_FOLDERS"] = phorum_api_url(PHORUM_PM_URL, "page=folders");
+$PHORUM["DATA"]["URL"]["PM_SEND"] = phorum_api_url(PHORUM_PM_URL, "page=send");
+$PHORUM["DATA"]["URL"]["BUDDIES"] = phorum_api_url(PHORUM_PM_URL, "page=buddies");
 
 $PHORUM["DATA"]["PM_FOLDERS"] = $pm_folders;
 $PHORUM["DATA"]["PM_USERFOLDERS"] = count($pm_userfolders) ? $pm_userfolders : 0;
 
 
 // Set some default template data.
-$PHORUM["DATA"]["URL"]["ACTION"]=$phorum->url( PHORUM_PM_ACTION_URL );
+$PHORUM["DATA"]["URL"]["ACTION"]=phorum_api_url( PHORUM_PM_ACTION_URL );
 $PHORUM["DATA"]["FOLDER_ID"] = $folder_id;
 $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
@@ -1133,9 +1134,9 @@ $PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
 if ($error_msg) {
     $PHORUM["DATA"]["ERROR"] = $error_msg;
     unset($PHORUM["DATA"]["MESSAGE"]);
-    $phorum->output("message");
+    phorum_api_output("message");
 } else {
-    $phorum->output("pm");
+    phorum_api_output("pm");
 }
 
 
@@ -1147,7 +1148,6 @@ if ($error_msg) {
 function phorum_pm_format($messages)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Reformat message so it looks like a forum message (so we can run it
     // through phorum_api_message_format()) and do some PM specific formatting.
@@ -1162,13 +1162,13 @@ function phorum_pm_format($messages)
             $folder_id = $message['pm_folder_id']
                        ? $message['pm_folder_id']
                        : $message['special_folder'];
-            $messages[$id]["URL"]["READ"] = $phorum->url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
+            $messages[$id]["URL"]["READ"] = phorum_api_url(PHORUM_PM_URL, "page=read", "folder_id=$folder_id", "pm_id=$id");
         }
 
         // The datestamp is only available for already posted messages.
         if (isset($message['datestamp'])) {
             $messages[$id]["raw_date"] = $message["datestamp"];
-            $messages[$id]["date"] = $phorum->format->date($PHORUM["short_date_time"], $message["datestamp"]);
+            $messages[$id]["date"] = phorum_api_format_date($PHORUM["short_date_time"], $message["datestamp"]);
         }
 
         if (isset($message['meta']) && !is_array($message['meta'])) {
@@ -1178,7 +1178,7 @@ function phorum_pm_format($messages)
         $messages[$id]["body"] = isset($message["message"]) ? $message["message"] : "";
         $messages[$id]["email"] = "";
 
-        $messages[$id]["URL"]["PROFILE"] = $phorum->url(PHORUM_PROFILE_URL, $message["user_id"]);
+        $messages[$id]["URL"]["PROFILE"] = phorum_api_url(PHORUM_PROFILE_URL, $message["user_id"]);
 
         $messages[$id]["recipient_count"] = 0;
         $messages[$id]["receive_count"] = 0;
@@ -1200,7 +1200,7 @@ function phorum_pm_format($messages)
                          ? htmlspecialchars($rcpt["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
                          : $rcpt["display_name"]);
                     $messages[$id]["recipients"][$rcpt_id]["URL"]["PROFILE"] =
-                        $phorum->url(PHORUM_PROFILE_URL, $rcpt_id);
+                        phorum_api_url(PHORUM_PROFILE_URL, $rcpt_id);
                 }
             }
 
@@ -1210,7 +1210,7 @@ function phorum_pm_format($messages)
     }
 
     // Run the messages through the standard formatting code.
-    $messages = $phorum->format->messages($messages);
+    $messages = phorum_api_format_messages($messages);
 
     // Reformat message back to a private message.
     foreach ($messages as $id => $message)
@@ -1226,7 +1226,6 @@ function phorum_pm_format($messages)
 function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreplyto = NULL)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Build the reply subject.
     if (substr($message["subject"], 0, 3) != "Re:") {
@@ -1234,7 +1233,7 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
     }
 
     // Lookup the plain text name that we have to use for the author that we reply to.
-    $author = $phorum->user->get_display_name($orig_author_id, '', PHORUM_FLAG_PLAINTEXT);
+    $author = phorum_api_user_get_display_name($orig_author_id, '', PHORUM_FLAG_PLAINTEXT);
 
     // TODO we'll have to handle anonymous users in the PM box. Those are
     // TODO users which sent a PM to somebody, but signed out afterwards.
@@ -1242,12 +1241,12 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
     // TODO (maybe it's handled already, but that would only be by accident).
 
     if (isset($PHORUM["hooks"]["quote"]))
-        $quote = $phorum->modules->hook("quote", array($author, $message["message"], $orig_author_id));
+        $quote = phorum_api_hook("quote", array($author, $message["message"], $orig_author_id));
 
     if (empty($quote) || is_array($quote))
     {
         // Build a quoted version of the message body.
-        $quote = $phorum->format->strip($message["message"]);
+        $quote = phorum_api_format_strip($message["message"]);
         $quote = str_replace("\n", "\n> ", $quote);
         $quote = wordwrap(trim($quote), 50, "\n> ", true);
         $quote = "$author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .

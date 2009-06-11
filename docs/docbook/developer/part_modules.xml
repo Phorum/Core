@@ -1192,7 +1192,7 @@ function phorum_mod_foo_user_save ($user)
           You might have noticed that all URLs that are used by Phorum
           are full absolute URLs. Phorum does not use relative URLs anywhere.
           and all of the URLs that point to Phorum PHP scripts are generated
-          by the function <literal>phorum_api_url_get()</literal>. This was
+          by the function <literal>phorum_api_url()</literal>. This was
           done for several reasons. Here are some of them, for the curious
           developer:
           <itemizedlist>
@@ -1229,7 +1229,7 @@ function phorum_mod_foo_user_save ($user)
               so only one URL generating function has to be maintained.
             </listitem>
             <listitem>
-              By letting <literal>phorum_api_url_get()</literal> generate all
+              By letting <literal>phorum_api_url()</literal> generate all
               URLs, we are prepared for future changes and new features.
               If changes are needed in the URL schema, we only have to
               update this function and nothing further. All core code and
@@ -1241,9 +1241,9 @@ function phorum_mod_foo_user_save ($user)
       </section> <!-- end of generating urls intro -->
 
       <section id="modules.scripturls">
-        <title>Build URLs for Phorum PHP scripts: phorum_api_url_get()</title>
+        <title>Build URLs for Phorum PHP scripts: phorum_api_url()</title>
         <para>
-          Phorum uses the function <literal>phorum_api_url_get()</literal> to
+          Phorum uses the function <literal>phorum_api_url()</literal> to
           consistenly build URLs that point to Phorum PHP scripts. It is
           recommended that you use this function as well when creating
           URLs to scripts yourself, so special features and future changes
@@ -1254,29 +1254,22 @@ function phorum_mod_foo_user_save ($user)
           profile page for the user with user_id = 17:
           <example>
             <title>
-              Generating a profile URL using phorum_api_url_get()
+              Generating a profile URL using phorum_api_url()
             </title>
             <programlisting><![CDATA[
-$url = phorum_api_url_get(PHORUM_PROFILE_URL, 17); ]]></programlisting>
-          </example>
-          Because of the way in which the API code is organized, you can
-          also use the following method:
-          <example>
-            <programlisting><![CDATA[
-$phorum = Phorum::API();
-$url = $phorum->url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
+$url = phorum_api_url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           </example>
           The argument list that this function takes, depends on the first
           argument which tells Phorum what URL type has to be built.
           When building other URLs, other arguments will be used.
         </para>
         <para>
-          About all URL types that <literal>phorum_api_url_get()</literal>
+          About all URL types that <literal>phorum_api_url()</literal>
           supports are used for building URLs that point to the scripts
           that are bundled with Phorum. Sometimes, you might want to add
           an extra script of your own to the Phorum tree (see
           <xref linkend="modules.addons"/>). For those, you can use
-          <literal>phorum_api_url_get()</literal> as well. The way to go is
+          <literal>phorum_api_url()</literal> as well. The way to go is
           simple. You need to use <literal>PHORUM_CUSTOM_URL</literal> as
           the first argument and add the following parameters to it:
           <itemizedlist>
@@ -1302,11 +1295,11 @@ $url = $phorum->url(PHORUM_PROFILE_URL, 17); ]]></programlisting>
           <filename>baz=foo</filename>:
           <example>
             <title>
-              Generating a custom script URL using phorum_api_url_get()
+              Generating a custom script URL using phorum_api_url()
             </title>
             <programlisting><![CDATA[
 // Build the URL for the add-on script.
-$url = phorum_api_url_get(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar", "baz=foo");
+$url = phorum_api_url(PHORUM_CUSTOM_URL, "myfile", 1, "foo=bar", "baz=foo");
 
 // After this, you could store the URL in the template data, so you
 // can use it from the templates to link to the add-on script.

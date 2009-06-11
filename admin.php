@@ -27,7 +27,10 @@ define("PHORUM_ADMIN", 1);
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 require_once './common.php';
-require_once './include/admin_functions.php';
+require_once PHORUM_PATH.'/include/admin_functions.php';
+require_once PHORUM_PATH.'/include/api/buffer.php';
+require_once PHORUM_PATH.'/include/api/sign.php';
+require_once PHORUM_PATH.'/include/api/lang.php';
 
 // initialized as empty
 $PHORUM['admin_token']="";
@@ -67,7 +70,7 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
 } else {
 
     // Try to restore an admin session.
-    $phorum->user->session_restore(PHORUM_ADMIN_SESSION);
+    phorum_api_user_session_restore(PHORUM_ADMIN_SESSION);
 
     if(!isset($PHORUM["user"]) || !$PHORUM["user"]["admin"]){
         // if not an admin
@@ -115,7 +118,7 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
             $module = "tokenmissing";
         } else {
             // update the token time
-            $phorum->user->save_settings(array(
+            phorum_api_user_save_settings(array(
                 'admin_token_time' => time()
             ));
         }        
@@ -123,12 +126,12 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
     }
 }
 
-$module = $phorum->modules->hook("admin_pre", $module);
+$module = phorum_api_hook("admin_pre", $module);
 
-$phorum->buffer->start();
+phorum_api_buffer_start();
 if ($module!="help") require_once './include/admin/header.php';
 require_once "./include/admin/$module.php";
 if ($module!="help") require_once './include/admin/footer.php';
-$phorum->buffer->flush();
+phorum_api_buffer_flush();
 
 ?>

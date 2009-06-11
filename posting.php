@@ -54,10 +54,12 @@
 if (! defined('phorum_page')) define('phorum_page', 'post');
 require_once './common.php';
 
+require_once PHORUM_PATH.'/include/api/sign.php';
+
 // CSRF protection: we do not accept posting to this script,
 // when the browser does not include a Phorum signed token
 // in the request.
-$phorum->request->check_token('post');
+phorum_api_request_check_token('post');
 
 // Check if the Phorum is in read-only mode.
 if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
@@ -65,7 +67,7 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
     if(!(isset($PHORUM["postingargs"]["as_include"]) && $PHORUM["postingargs"]["as_include"])){
         phorum_build_common_urls();
         // Only show header and footer when not included in another page.
-        $phorum->output("message");
+        phorum_api_output("message");
     }
     return;
 }
@@ -73,12 +75,12 @@ if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY
 
 // No forum id was set. Take the user back to the index.
 if(!isset($PHORUM["forum_id"])){
-    $phorum->redirect(PHORUM_INDEX_URL);
+    phorum_api_redirect(PHORUM_INDEX_URL);
 }
 // Somehow we got to a folder in posting.php. Take the
 // user back to the folder.
 if($PHORUM["folder_flag"]) {
-    $phorum->redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    phorum_api_redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
 }
 
 // ----------------------------------------------------------------------
@@ -222,7 +224,7 @@ define("READONLYFIELDS", true);
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["posting_init"])) {
-    $phorum->modules->hook("posting_init", "");
+    phorum_api_hook("posting_init", "");
 }
 
 // Is this an initial request?
@@ -291,7 +293,7 @@ $do_attach = count($_FILES) ? true : false;
 
 // Set all our URL's
 phorum_build_common_urls();
-$PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_POSTING_ACTION_URL);
+$PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url(PHORUM_POSTING_ACTION_URL);
 
 // Keep track of errors.
 $PHORUM["DATA"]["ERROR"] = null;
@@ -355,19 +357,19 @@ if ($initial || $finish || $preview) {
 // Is the forum running in a moderated state?
 $PHORUM["DATA"]["MODERATED"] =
     $PHORUM["moderation"] == PHORUM_MODERATE_ON &&
-    !$phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+    !phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Does the user have administrator permissions?
 $PHORUM["DATA"]["ADMINISTRATOR"] = $PHORUM["user"]["admin"];
 
 // Does the user have moderator permissions?
 $PHORUM["DATA"]["MODERATOR"] =
-    $phorum->user->check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
+    phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 // Ability: Do we allow attachments?
 $PHORUM["DATA"]["ATTACHMENTS"] =
     $PHORUM["max_attachments"] > 0 &&
-    $phorum->user->check_access(PHORUM_USER_ALLOW_ATTACH);
+    phorum_api_user_check_access(PHORUM_USER_ALLOW_ATTACH);
 
 // What options does this user have for a message?
 $PHORUM["DATA"]["OPTION_ALLOWED"] = array(
@@ -449,7 +451,6 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *     function phorum_mod_foo_posting_permissions ()
  *     {
  *         global $PHORUM;
- *         $phorum = Phorum::API();
  *
  *         // get the previously stored id for the "sticky_allowed" group
  *         $mod_foo_group_id = $PHORUM["mod_foo"]["sticky_allowed_group_id"];
@@ -458,7 +459,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *         // group, if the option has not already been enabled.
  *         if (!$PHORUM["DATA"]["OPTION_ALLOWED"]["sticky"])
  *         {
- *             $is_in_group = $phorum->user->check_group_access(
+ *             $is_in_group = phorum_api_user_check_group_access(
  *                 PHORUM_USER_GROUP_APPROVED,
  *                 $mod_foo_group_id
  *             );
@@ -468,7 +469,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["posting_permissions"])) {
-    $phorum->modules->hook("posting_permissions");
+    phorum_api_hook("posting_permissions");
 }
 
 // Show special sort options in the editor? These only are
@@ -559,7 +560,7 @@ if ($do_attach || $do_detach) {
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["posting_custom_action"])) {
-    $message = $phorum->modules->hook("posting_custom_action", $message);
+    $message = phorum_api_hook("posting_custom_action", $message);
 }
 
 // Only check the integrity of the data on finishing up. During the
@@ -644,12 +645,12 @@ if ($PHORUM["posting_template"] == 'posting')
         }
         if ($PHORUM["max_attachment_size"]) {
             $PHORUM["DATA"]["ATTACH_FILE_SIZE"] = $PHORUM["max_attachment_size"];
-            $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = $phorum->format->filesize($PHORUM["max_attachment_size"] * 1024);
+            $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"] = phorum_api_format_filesize($PHORUM["max_attachment_size"] * 1024);
             $PHORUM["DATA"]["EXPLAIN_ATTACH_FILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_FILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachFileSize"]);
         }
         if ($PHORUM["max_totalattachment_size"] && $PHORUM["max_attachments"]>1) {
             $PHORUM["DATA"]["ATTACH_TOTALFILE_SIZE"] = $PHORUM["max_totalattachment_size"];
-            $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = $phorum->format->filesize($PHORUM["max_totalattachment_size"] * 1024);
+            $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"] = phorum_api_format_filesize($PHORUM["max_totalattachment_size"] * 1024);
             $PHORUM["DATA"]["EXPLAIN_ATTACH_TOTALFILE_SIZE"] = str_replace("%size%", $PHORUM["DATA"]["ATTACH_FORMATTED_TOTALFILE_SIZE"], $PHORUM["DATA"]["LANG"]["AttachTotalFileSize"]);
         }
         if ($PHORUM["max_attachments"] && $PHORUM["max_attachments"]>1) {
@@ -708,7 +709,7 @@ if ($PHORUM["posting_template"] == 'posting')
         }
 
         if ($signval !== NULL) {
-            $signature = $phorum->sign($signval);
+            $signature = phorum_api_sign($signval);
             $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
                        'value="' . htmlspecialchars($signature, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . "\" />\n";
         }
@@ -739,7 +740,7 @@ if ($PHORUM["posting_template"] == 'posting')
                     }
 
                     $message[$var][$nr]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                    $message[$var][$nr]["size"] = $phorum->format->filesize(round($data["size"]));
+                    $message[$var][$nr]["size"] = phorum_api_format_filesize(round($data["size"]));
                 }
             }
         } elseif ($var == "author") {
@@ -824,7 +825,7 @@ if ($PHORUM["posting_template"] == 'posting')
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["before_editor"])) {
-        $message = $phorum->modules->hook("before_editor", $message);
+        $message = phorum_api_hook("before_editor", $message);
     }
 
     // Make the message data available to the template engine.
@@ -844,7 +845,7 @@ if ($PHORUM["posting_template"] == 'posting')
 if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
     $templates[] = $PHORUM["posting_template"];
 } else {
-    $phorum->output( $PHORUM["posting_template"] );
+    phorum_api_output( $PHORUM["posting_template"] );
 }
 
 // ----------------------------------------------------------------------
@@ -857,7 +858,6 @@ if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
 function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // If we have a user linked to the current message, then get the
     // user data from the database, if it has to be applied as
@@ -866,7 +866,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
     if (($PHORUM["post_fields"]["email"][pf_READONLY] ||
          $PHORUM["post_fields"]["author"][pf_READONLY]) &&
          !empty($db["user_id"])) {
-        $user_info = $phorum->user->get($db["user_id"]);
+        $user_info = phorum_api_user_get($db["user_id"]);
         $user_info["author"] = $user_info["display_name"];
     }
 
@@ -885,7 +885,7 @@ function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
                 break;
 
             case "subscription":
-                $type = $phorum->user->get_subscription(
+                $type = phorum_api_user_get_subscription(
                     $db["user_id"], $db["forum_id"], $db["thread"]);
                 switch ($type) {
                     case NULL:

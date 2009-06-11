@@ -184,7 +184,7 @@ function event_logging_writelog($loginfo)
                 $record[$key] = "'" . phorum_db_interact(DB_RETURN_QUOTED, $val) . "'";
                 break;
 
-            default: Phorum::API()->error(
+            default: phorum_api_error(
                 PHORUM_ERRNO_DATABASE,
                 "event_logging_log(): Illegal key " .
                 "field \"$key\" in the \$loginfo argument"

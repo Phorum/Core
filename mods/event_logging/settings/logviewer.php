@@ -341,7 +341,7 @@ foreach ($logs as $loginfo)
     // the URL that points to that message.
     $message_url = NULL;
     if ($loginfo["message_id"] !== NULL && $loginfo["message_id"] > 0) {
-        $message_url = $phorum->url(
+        $message_url = phorum_api_url(
             PHORUM_FOREIGN_READ_URL,
             $loginfo["forum_id"],
             $loginfo["thread_id"],
@@ -361,10 +361,10 @@ foreach ($logs as $loginfo)
           <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'"/>
         </td>
         <td valign="left" style="white-space:nowrap; font-size: 10px">'.
-          $phorum->format->date($PHORUM['short_date'], $loginfo["datestamp"]).
+          phorum_api_format_date($PHORUM['short_date'], $loginfo["datestamp"]).
        '</td>
         <td valign="left" style="white-space:nowrap; font-size: 10px">'.
-          $phorum->format->date($PHORUM['short_time'], $loginfo["datestamp"]).
+          phorum_api_format_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
           <a title="Extend filter using this source" href="'.$filter_base.'&source='.urlencode($loginfo["source"]).'">'.htmlspecialchars($loginfo["source"]).'</a>
@@ -391,7 +391,7 @@ foreach ($logs as $loginfo)
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '') .
-                '&nbsp;[&nbsp;<a target="_new" href="'.$phorum->url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp]'
+                '&nbsp;[&nbsp;<a target="_new" href="'.phorum_api_url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp]'
              : "Anonymous user") . '<br/>' .
             'User IP address = <a title="Extend filter using this IP address" href="'.$filter_base.'&ip='.urlencode($loginfo["ip"]).'">'. $loginfo["ip"] . '</a>' .
             ($loginfo["hostname"] !== NULL

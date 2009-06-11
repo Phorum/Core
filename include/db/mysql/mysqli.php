@@ -110,7 +110,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         );
         if ($conn === FALSE) {
             if ($flags & DB_NOCONNECTOK) return FALSE;
-            Phorum::API()->error(
+            phorum_api_error(
                 PHORUM_ERRNO_DATABASE,
                 'Failed to connect to the database.'
             );
@@ -255,7 +255,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                     if ($return === DB_RETURN_ERROR) return $err;
 
                     // Trigger an error.
-                    Phorum::API()->error(
+                    phorum_api_error(
                         PHORUM_ERRNO_DATABASE,
                         "$err ($errno): $sql"
                     );

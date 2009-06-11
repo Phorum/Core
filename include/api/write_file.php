@@ -54,7 +54,6 @@ if (!defined("PHORUM")) return;
 function phorum_api_write_file($file, $data)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Reset error storage.
     $PHORUM['API']['errno'] = NULL;
@@ -69,7 +68,7 @@ function phorum_api_write_file($file, $data)
     $fp = @fopen($swpfile, 'w');
     if (!$fp) {
         @unlink($swpfile);
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_ERROR,
             "Cannot create swap file \"$swpfile\": $php_errormsg"
         );
@@ -81,7 +80,7 @@ function phorum_api_write_file($file, $data)
     // Close the swap file.
     if (!@fclose($fp)) {
         @unlink($swpfile);
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_ERROR,
             "Error on closing swap file \"$swpfile\": disk full?"
         );
@@ -92,7 +91,7 @@ function phorum_api_write_file($file, $data)
     // the file it just had written :-/
     if (! $fp = @fopen($swpfile, 'r')) {
         @unlink($swpfile);
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_ERROR,
             "Cannot read swap file \"$swpfile\", although it was just " .
             "written to disk. This is probably due to a problem with " .
@@ -104,7 +103,7 @@ function phorum_api_write_file($file, $data)
     // Move the swap file to its final location.
     if (!@rename($swpfile, $file)) {
         @unlink($swpfile);
-        return $phorum->error(
+        return phorum_api_error(
             PHORUM_ERRNO_ERROR,
             "Cannot move swap file \"$swpfile\": $php_errormsg"
         );

@@ -20,8 +20,8 @@
 if (!defined("PHORUM")) return;
 
 // Check if the user is allowed to post a new message or a reply.
-if( ($mode == "post" && !$phorum->user->check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
-    ($mode == "reply" && !$phorum->user->check_access(PHORUM_USER_ALLOW_REPLY)) ) {
+if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
+    ($mode == "reply" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_REPLY)) ) {
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
         // If users are logged in and can't post, they don't have rights to do so.
         $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
@@ -31,7 +31,7 @@ if( ($mode == "post" && !$phorum->user->check_access(PHORUM_USER_ALLOW_NEW_TOPIC
             ($mode == "post" && $PHORUM["reg_perms"] & PHORUM_USER_ALLOW_NEW_TOPIC) ) {
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["PleaseLoginPost"];
             $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
-            $PHORUM["DATA"]["URL"]["CLICKHERE"] = $phorum->url(PHORUM_LOGIN_URL);
+            $PHORUM["DATA"]["URL"]["CLICKHERE"] = phorum_api_url(PHORUM_LOGIN_URL);
         } else {
             $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
         }
@@ -50,9 +50,9 @@ if( ($mode == "post" && !$phorum->user->check_access(PHORUM_USER_ALLOW_NEW_TOPIC
         $args = array(PHORUM_REPLY_URL, $PHORUM["args"][1]);
         if (isset($PHORUM["args"][2])) $args[] = $PHORUM["args"][2];
         if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
-        $phorum->url; // Make sure the URL API layer code is loaded.
-        $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
-        $url = $phorum->url(PHORUM_LOGIN_URL, "redir=$redir");
+        phorum_api_url; // Make sure the URL API layer code is loaded.
+        $redir = urlencode(call_user_func_array('phorum_api_url', $args));
+        $url = phorum_api_url(PHORUM_LOGIN_URL, "redir=$redir");
 
         $PHORUM["DATA"]["URL"]["CLICKHERE"] = $url;
         $PHORUM["DATA"]["CLICKHEREMSG"] = $PHORUM["DATA"]["LANG"]["ClickHereToLogin"];
@@ -69,10 +69,10 @@ if( ($mode == "post" && !$phorum->user->check_access(PHORUM_USER_ALLOW_NEW_TOPIC
         if (isset($PHORUM["args"][1])) $args[] = $PHORUM["args"][1];
         if (isset($PHORUM["args"][2])) $args[] = $PHORUM["args"][2];
         if (isset($PHORUM["args"]["quote"])) $args[] = "quote=1";
-        $phorum->url; // Make sure the URL API layer code is loaded.
-        $redir = urlencode(call_user_func_array('phorum_api_url_get', $args));
+        phorum_api_url; // Make sure the URL API layer code is loaded.
+        $redir = urlencode(call_user_func_array('phorum_api_url', $args));
 
-        $phorum->redirect(PHORUM_LOGIN_URL,"redir=$redir");
+        phorum_api_redirect(PHORUM_LOGIN_URL,"redir=$redir");
     }
 }
 
@@ -111,7 +111,7 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
         }
     }
     if (! $origmessage) {
-        $phorum->redirect(PHORUM_INDEX_URL);
+        phorum_api_redirect(PHORUM_INDEX_URL);
     }
 
     // Copy read-only information for editing messages.
@@ -184,7 +184,7 @@ if ($mode == "reply")
 
         // In other cases, redirect users that are replying to
         // unapproved messages to the message list.
-        $phorum->redirect(PHORUM_LIST_URL);
+        phorum_api_redirect(PHORUM_LIST_URL);
     }
     
     // closed topic, show a message
@@ -203,7 +203,7 @@ if ($mode == "edit")
     $timelim = $PHORUM["user_edit_timelimit"];
     $useredit =
         $message["user_id"] == $PHORUM["user"]["user_id"] &&
-        $phorum->user->check_access(PHORUM_USER_ALLOW_EDIT) &&
+        phorum_api_user_check_access(PHORUM_USER_ALLOW_EDIT) &&
         ! empty($top_parent) &&
         ! $top_parent["closed"] &&
         (! $timelim || $message["datestamp"] + ($timelim * 60) >= time());

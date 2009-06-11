@@ -10,10 +10,9 @@ define("PHORUM_ADMIN", 1);
 define('phorum_page', 'rebuild_forum_stats');
 
 require_once(dirname(__FILE__).'/../include/api.php');
-$phorum = Phorum::API();
 
 // Make sure that the output is not buffered.
-$phorum->buffer->clear();
+phorum_api_buffer_clear();
 
 if (! ini_get('safe_mode')) {
     set_time_limit(0);
@@ -22,7 +21,7 @@ if (! ini_get('safe_mode')) {
 
 print "\nRebuild forum stats ...\n";
 
-$forums = $phorum->forums->get(
+$forums = phorum_api_forums_get(
     NULL, NULL, NULL, NULL,
     PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FORUMS
 );
@@ -34,7 +33,7 @@ $count = 0;
 foreach ($forums as $fid => $fdata)
 {
     $PHORUM['forum_id'] = $fid;
-    $phorum->db->update_forum_stats(true);
+    phorum_db_update_forum_stats(true);
 
     $count ++;
 

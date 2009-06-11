@@ -51,7 +51,7 @@ else{
 }
 
 if (!$perm) {
-    $phorum->redirect(PHORUM_CONTROLCENTER_URL);
+    phorum_api_redirect(PHORUM_CONTROLCENTER_URL);
 }
 
 // figure out what the user is trying to do, in this case we have a group to list (and maybe some commands)
@@ -125,28 +125,28 @@ if (!empty($group_id))
     $PHORUM["DATA"]["GROUP"]["id"] = $group_id;
     $PHORUM["DATA"]["GROUP"]["name"] = $group[$group_id]["name"];
     $PHORUM["DATA"]["USERS"] = array();
-    $PHORUM["DATA"]["GROUP"]["URL"]["VIEW"] = $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id);
+    $PHORUM["DATA"]["GROUP"]["URL"]["VIEW"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id);
 
     $PHORUM["DATA"]["FILTER"] = array();
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowAll"],
         "enable" => $filter == "all",
-        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id),
+        "url" => phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id),
         "id" => "all");
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowApproved"],
         "enable" => $filter == PHORUM_USER_GROUP_APPROVED,
-        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_APPROVED),
+        "url" => phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_APPROVED),
         "id" => PHORUM_USER_GROUP_APPROVED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowGroupModerator"],
         "enable" => $filter == PHORUM_USER_GROUP_MODERATOR,
-        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_MODERATOR),
+        "url" => phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_MODERATOR),
         "id" => PHORUM_USER_GROUP_MODERATOR);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowSuspended"],
         "enable" => $filter == PHORUM_USER_GROUP_SUSPENDED,
-        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_SUSPENDED),
+        "url" => phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_SUSPENDED),
         "id" => PHORUM_USER_GROUP_SUSPENDED);
     $PHORUM["DATA"]["FILTER"][] = array("name" => $PHORUM["DATA"]["LANG"]["ShowUnapproved"],
         "enable" => $filter != "all" && $filter == PHORUM_USER_GROUP_UNAPPROVED,
-        "url" => $phorum->url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
+        "url" => phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $group_id, "filter=" . PHORUM_USER_GROUP_UNAPPROVED),
         "id" => PHORUM_USER_GROUP_UNAPPROVED);
     $PHORUM["DATA"]["STATUS_OPTIONS"] = array();
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => "remove", "name" => "&lt; " . $PHORUM["DATA"]["LANG"]["RemoveFromGroup"] . " &gt;");
@@ -183,12 +183,12 @@ if (!empty($group_id))
             "statustext" => $statustext,
             "disabled" => $disabled,
             "flag" => ($status < PHORUM_USER_GROUP_APPROVED),
-            "url" => $phorum->url(PHORUM_PROFILE_URL, $userid)
+            "url" => phorum_api_url(PHORUM_PROFILE_URL, $userid)
             );
     }
 
     if (isset($PHORUM["hooks"]["user_list"]))
-        $PHORUM["DATA"]["USERS"] = $phorum->modules->hook("user_list", $PHORUM["DATA"]["USERS"]);
+        $PHORUM["DATA"]["USERS"] = phorum_api_hook("user_list", $PHORUM["DATA"]["USERS"]);
 
     // if the option to build a dropdown list is enabled, build the list of members that could be added
     if ($PHORUM["enable_dropdown_userlist"]){
@@ -223,8 +223,8 @@ else{
             "name" => $groupname,
             "unapproved" => count($members),
             "URL" => array(
-                "VIEW" => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
-                "UNAPPROVED" => $phorum->url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
+                "VIEW" => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
+                "UNAPPROVED" => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
             )
         );
     }

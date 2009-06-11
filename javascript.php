@@ -138,7 +138,7 @@ if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
  *     argument, possibly extended with one or more registrations.
  */
 if (isset($PHORUM['hooks']['javascript_register'])) {
-    $module_registrations = $phorum->modules->hook(
+    $module_registrations = phorum_api_hook(
         'javascript_register', $module_registrations
     );
 }
@@ -187,14 +187,14 @@ foreach ($module_registrations as $id => $r)
                 // the cached template file if required. This is the easiest
                 // way to make this work correctly for nested template files.
                 ob_start();
-                include $phorum->template($m[2]);
+                include phorum_api_template($m[2]);
                 $module_registrations[$id]['content'] = ob_get_contents();
                 ob_end_clean();
 
                 // We use the mtime of the compiled template as the cache
                 // key if no specific cache key was set.
                 if (!isset($r['cache_key'])) {
-                    list ($php, $tpl) = $phorum->template->resolve($m[2]);
+                    list ($php, $tpl) = phorum_api_template_resolve($m[2]);
                     $mtime = @filemtime($php);
                     $r['cache_key'] = $mtime;
                     $module_registrations[$id]['cache_key'] = $mtime;
@@ -295,11 +295,12 @@ if (isset($PHORUM['args']['refresh']) ||
      *     The filtered JavaScript code.
      */
     if (isset($PHORUM['hooks']['javascript_filter'])) {
-        $content = $phorum->modules->hook('javascript_filter', $content);
+        $content = phorum_api_hook('javascript_filter', $content);
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-        $phorum->write_file($cache_file, $content);
+        require_once PHORUM_PATH.'/include/api/write_file.php';
+        phorum_api_write_file($cache_file, $content);
     }
 
     // Send the JavaScript to the browser.
@@ -319,7 +320,7 @@ $last_modified = @filemtime($cache_file);
 // check if the JavaScript code has changed, based on the filemtime() data from
 // above. If nothing changed, then we return a 304 header, to tell the
 // browser to use the cached data.
-$phorum->output->last_modify_time($last_modified);
+phorum_api_output_last_modify_time($last_modified);
 
 // Send the JavaScript to the browser.
 header("Content-Type: text/javascript");

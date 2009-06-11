@@ -28,7 +28,50 @@
 
 if (!defined('PHORUM')) return;
 
-// {{{ Variable definitions
+// {{{ Variable and constant definitions
+
+define("PHORUM_LIST_URL", 1);
+define("PHORUM_READ_URL", 2);
+define("PHORUM_FOREIGN_READ_URL", 3);
+define("PHORUM_REPLY_URL", 4);
+define("PHORUM_POSTING_URL", 5);
+define("PHORUM_REDIRECT_URL", 6);
+define("PHORUM_SEARCH_URL", 7);
+define("PHORUM_SEARCH_ACTION_URL", 8);
+define("PHORUM_USER_URL", 9);
+define("PHORUM_INDEX_URL", 10);
+define("PHORUM_LOGIN_URL", 11);
+define("PHORUM_LOGIN_ACTION_URL", 12);
+define("PHORUM_REGISTER_URL", 13);
+define("PHORUM_REGISTER_ACTION_URL", 14);
+define("PHORUM_PROFILE_URL", 15);
+define("PHORUM_SUBSCRIBE_URL", 16);
+define("PHORUM_MODERATION_URL", 17);
+define("PHORUM_MODERATION_ACTION_URL", 18);
+define("PHORUM_CONTROLCENTER_URL", 19);
+define("PHORUM_CONTROLCENTER_ACTION_URL", 20);
+define("PHORUM_PM_URL", 21);
+define("PHORUM_PM_ACTION_URL", 22);
+define("PHORUM_FILE_URL", 23);
+define("PHORUM_GROUP_MODERATION_URL", 24);
+define("PHORUM_FOLLOW_URL", 25);
+define("PHORUM_FOLLOW_ACTION_URL", 26);
+define("PHORUM_REPORT_URL", 27);
+define("PHORUM_FEED_URL", 28);
+define("PHORUM_CUSTOM_URL", 29);
+define("PHORUM_BASE_URL", 30);
+define("PHORUM_ADDON_URL", 31);
+define("PHORUM_CHANGES_URL", 32);
+define("PHORUM_CSS_URL", 33);
+define("PHORUM_POSTING_ACTION_URL", 34);
+define("PHORUM_JAVASCRIPT_URL", 35);
+define("PHORUM_AJAX_URL", 36);
+define("PHORUM_OPENID_URL", 37);
+
+// URL forum_id option
+define("PHORUM_URL_NO_FORUM_ID", 1);
+define("PHORUM_URL_ADD_FORUM_ID", 2);
+define("PHORUM_URL_COND_FORUM_ID", 3);
 
 global $PHORUM;
 
@@ -78,25 +121,11 @@ $PHORUM['API']['url_patterns'] = array
 
 // {{{ Function phorum_api_url()
 /**
- * Shortcut function for pohrum_api_url_get().
- * This makes it possible to do $phorum->url(...) instead of
- * having to write $phorum->url->get(...).
+ * Generate a Phorum URL.
  */
 function phorum_api_url()
 {
-    $argv = func_get_args();
-    return call_user_func_array('phorum_api_url_get', $argv);
-}
-// }}}
-
-// {{{ Function: phorum_api_url_get()
-/**
- * Generate a Phorum URL.
- */
-function phorum_api_url_get()
-{
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $argv = func_get_args();
 
@@ -216,7 +245,7 @@ function phorum_api_url_get()
 
             default:
                 trigger_error(
-                    "phorum_api_url_get(): Illegal URL type " .
+                    "phorum_api_url(): Illegal URL type " .
                     "\"$type\" used",
                     E_USER_ERROR
                 );
@@ -263,7 +292,7 @@ function phorum_api_url_get()
      */
     if (isset($PHORUM['hooks']['url_build'])) {
         $query_items = explode(',', $query_string);
-        $url = $phorum->modules->hook(
+        $url = phorum_api_hook(
             'url_build', NULL,
             $name, $query_items, $suffix, $pathinfo
         );
@@ -303,7 +332,7 @@ function phorum_api_url_get()
  */
 function phorum_api_url_base()
 {
-    return phorum_api_url_get(PHORUM_BASE_URL);
+    return phorum_api_url(PHORUM_BASE_URL);
 }
 // }}}
 

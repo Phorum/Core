@@ -72,8 +72,6 @@ function phorum_mod_editor_tools_javascript_register($data)
  */
 function phorum_mod_editor_tools_common()
 {
-    $phorum = Phorum::API();
-
     $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
 
     // Initialize the tool data array.
@@ -95,7 +93,7 @@ function phorum_mod_editor_tools_common()
     // Give other modules a chance to setup their plugged in
     // editor tools. This is done through a standard hook call.
     if (isset($GLOBALS["PHORUM"]["hooks"]["editor_tool_plugin"]))
-        $phorum->modules->hook('editor_tool_plugin');
+        phorum_api_hook('editor_tool_plugin');
 
     // Keep track that the editor tools have been setup. From here
     // on, the API calls for registering tools, javascript libraries

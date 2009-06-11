@@ -30,6 +30,8 @@
 
 if (!defined('PHORUM')) return;
 
+require_once PHORUM_PATH.'/include/api/tree.php';
+
 // {{{ Function: phorum_api_thread_sort()
 /**
  * Sort an array of forum messages into threads.
@@ -76,7 +78,6 @@ if (!defined('PHORUM')) return;
 function phorum_api_thread_sort($messages)
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     // Quick shortcut if we have no rows at all.
     if(count($messages) == 0) { return $messages; }
@@ -103,7 +104,7 @@ function phorum_api_thread_sort($messages)
         empty($PHORUM['reverse_threading']) ? NULL : 1;
 
     // Use the Tree API to build threads.
-    return $phorum->tree->build(
+    return phorum_api_tree_build(
         $messages,                   // The nodes to put in a tree
         0,                           // The root node id
         'message_id',                // The id field name

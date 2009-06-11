@@ -231,7 +231,6 @@ function phorum_mod_spamhurdles_init($type, $extrafields = NULL)
 function phorum_mod_spamhurdles_build_form($type)
 {
     $PHORUM = $GLOBALS["PHORUM"];
-    $phorum = Phorum::API();
     $conf = $GLOBALS["PHORUM"]["mod_spamhurdles"];
     $spamhurdles = $PHORUM["SPAMHURDLES"];
     $key = $spamhurdles["key"];
@@ -304,14 +303,14 @@ function phorum_mod_spamhurdles_build_form($type)
 
         // Replace SPOKENURL with the URL for the spoken captcha code.
         if ($conf["spoken_captcha"] && file_exists($conf["flite_location"])) {
-            $url = $phorum->url(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
+            $url = phorum_api_url(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
             $captcha = str_replace(
                 "{SPOKENURL}", htmlspecialchars($url), $captcha
             );
         }
 
         // Replace IMAGE with the URL for the captcha image.
-        $url = $phorum->url(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
+        $url = phorum_api_url(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
         $captcha = str_replace(
             "{IMAGEURL}", htmlspecialchars($url), $captcha
         );
@@ -658,18 +657,17 @@ function do_spamhurdle($hurdle)
 function spamhurdle_blockerror()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     phorum_build_common_urls();
 
     $PHORUM["DATA"]["ERROR"] =
         $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["BlockError"];
 
-    include $phorum->template("header");
-    $phorum->modules->hook("after_header");
-    include $phorum->template("message");
-    $phorum->modules->hook("before_footer");
-    include $phorum->template("footer");
+    include phorum_api_template("header");
+    phorum_api_hook("after_header");
+    include phorum_api_template("message");
+    phorum_api_hook("before_footer");
+    include phorum_api_template("footer");
     exit(0);
 }
 

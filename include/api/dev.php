@@ -40,11 +40,11 @@ if (!defined('PHORUM')) return;
  */
 function phorum_api_dev_profiler_start($key="default")
 {
-    global $PHORUM;
-    $PHORUM['API']['profiler_t'][$key] = array(
+    global $PHORUM_PROFILER;
+    $PHORUM_PROFILER['time'][$key] = array(
         'BEGIN' => microtime(TRUE)
     );
-    $PHORUM['API']['profiler_m'][$key] = array(
+    $PHORUM_PROFILER['mem'][$key] = array(
         'BEGIN' => memory_get_usage()
     );
 }
@@ -68,12 +68,12 @@ function phorum_api_dev_profiler_start($key="default")
  */
 function phorum_api_dev_profiler_mark($mark, $key = 'default')
 {
-    global $PHORUM;
-    if (empty($PHORUM['API']['profiler_t'][$key])) {
+    global $PHORUM_PROFILER;
+    if (empty($PHORUM_PROFILER['time'][$key])) {
         phorum_api_dev_profiler_start($key);
     }
-    $PHORUM['API']['profiler_t'][$key][$mark] = microtime(TRUE);
-    $PHORUM['API']['profiler_m'][$key][$mark] = memory_get_usage();
+    $PHORUM_PROFILER['time'][$key][$mark] = microtime(TRUE);
+    $PHORUM_PROFILER['mem'][$key][$mark] = memory_get_usage();
 }
 // }}}
 
@@ -87,7 +87,7 @@ function phorum_api_dev_profiler_mark($mark, $key = 'default')
  */
 function phorum_api_dev_profiler_print($key = 'default')
 {
-    global $PHORUM;
+    global $PHORUM_PROFILER;
 
     phorum_api_dev_profiler_mark('END');
 
@@ -101,10 +101,10 @@ function phorum_api_dev_profiler_print($key = 'default')
           <th>Memory</th>
         </tr>';
 
-    foreach ($PHORUM['API']['profiler_t'][$key] as $mark => $thistime)
+    foreach ($PHORUM_PROFILER['time'][$key] as $mark => $thistime)
     {
         $mark = htmlspecialchars($mark);
-        $thismem = $PHORUM['API']['profiler_m'][$key][$mark];
+        $thismem = $PHORUM_PROFILER['mem'][$key][$mark];
         if (isset($lasttime))
         {
             $elapsed  = round($thistime-$start, 4);

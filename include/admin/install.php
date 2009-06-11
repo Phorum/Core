@@ -20,7 +20,8 @@ if (!defined("PHORUM_ADMIN")) return;
 
 define("PHORUM_INSTALL", 1);
 
-require_once './include/api/user.php';
+require_once PHORUM_PATH.'/include/api/user.php';
+require_once PHORUM_PATH.'/include/api/thread.php';
 
 if (!phorum_db_check_connection()){
     phorum_admin_error(
@@ -502,7 +503,7 @@ switch ($step){
 
             phorum_db_post_message($test_message);
 
-            $phorum->thread->update_metadata($test_message["thread"]);
+            phorum_api_thread_update_metadata($test_message["thread"]);
 
             phorum_db_update_forum_stats(true);
 

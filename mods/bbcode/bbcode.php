@@ -146,7 +146,7 @@ function phorum_mod_bbcode_tpl_editor_disable_bbcode()
     if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"]))
         return;
 
-    include Phorum::API()->template('bbcode::disable_option');
+    include phorum_api_template('bbcode::disable_option');
 }
 
 // Process "Disable BBcode" option from the message form.
@@ -173,7 +173,6 @@ function phorum_mod_bbcode_posting_custom_action($message)
 function phorum_mod_bbcode_editor_tool_plugin()
 {
     global $PHORUM;
-    $phorum = Phorum::API();
 
     $lang = $PHORUM['DATA']['LANG']['mod_bbcode'];
 
@@ -224,7 +223,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
 
         editor_tools_register_help(
             $description,
-            $phorum->url(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
+            phorum_api_url(PHORUM_ADDON_URL, 'module=bbcode', 'action=help')
         );
     }
 

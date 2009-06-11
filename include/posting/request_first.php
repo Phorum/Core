@@ -56,7 +56,7 @@ if ($mode != "post")
         }
     }
     if (! $dbmessage) {
-        $phorum->redirect(PHORUM_LIST_URL);
+        phorum_api_redirect(PHORUM_LIST_URL);
     }
 }
 
@@ -80,13 +80,13 @@ if ($mode == "reply" || $mode == "quote")
         // author is a registered user. The author field could be used
         // directly, but it can contain HTML formatting code, in case
         // some module uses the custom display name functionality.
-        $author = $phorum->user->get_display_name(
+        $author = phorum_api_user_get_display_name(
             $dbmessage["user_id"], $dbmessage['author'], PHORUM_FLAG_PLAINTEXT
         );
 
         $quoted = 0;
         if (isset($PHORUM["hooks"]["quote"])) {
-            $quoted = $phorum->modules->hook(
+            $quoted = phorum_api_hook(
                 "quote",
                 array($author, $dbmessage["body"], $dbmessage["user_id"])
             );
@@ -94,7 +94,7 @@ if ($mode == "reply" || $mode == "quote")
 
         if (empty($quoted) || is_array($quoted))
         {
-            $quoted = $phorum->format->strip($dbmessage["body"]);
+            $quoted = phorum_api_format_strip($dbmessage["body"]);
             $quoted = str_replace("\n", "\n> ", $quoted);
             $quoted = wordwrap(trim($quoted), 50, "\n> ", true);
             $quoted = "$author " .
@@ -141,7 +141,7 @@ if (($mode == "post" || $mode == "reply" || $mode == "quote") && $PHORUM["DATA"]
 // lose the follow mode on posting the reply.
 if ($mode == "reply" && $PHORUM["DATA"]["LOGGEDIN"])
 {
-    $type = $phorum->user->get_subscription(
+    $type = phorum_api_user_get_subscription(
         $PHORUM["user"]["user_id"], $message["forum_id"], $message["thread"]);
 
     switch ($type) {

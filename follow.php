@@ -20,7 +20,9 @@
 define('phorum_page','subscribe');
 require_once './common.php';
 
-$phorum->request->require_login();
+require_once PHORUM_PATH.'/include/api/format/messages.php';
+
+phorum_api_request_require_login();
 
 // checking read-permissions
 if(!phorum_check_read_common()) {
@@ -29,7 +31,7 @@ if(!phorum_check_read_common()) {
 
 // somehow we got to a folder
 if($PHORUM["folder_flag"] || empty($PHORUM["forum_id"])){
-    $phorum->redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    phorum_api_redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
 }
 
 if(isset($PHORUM["args"][1])){
@@ -39,7 +41,7 @@ if(isset($PHORUM["args"][1])){
 }
 
 if(empty($thread)) {
-    $phorum->redirect(PHORUM_LIST_URL);
+    phorum_api_redirect(PHORUM_LIST_URL);
     exit();
 }
 
@@ -52,33 +54,33 @@ $message=phorum_db_get_message($thread);
 # that were sent out before this change.
 if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     // we are removing a message from the follow list
-    $phorum->user->unsubscribe( $PHORUM['user']['user_id'], $thread );
+    phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["RemoveFollowed"];
-    $PHORUM["DATA"]["URL"]["REDIRECT"]=$phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
+    $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_api_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $template="message";
 } elseif(isset($PHORUM["args"]["noemail"])){
     // we are stopping emails for this thread
-    $phorum->user->unsubscribe( $PHORUM['user']['user_id'], $thread );
-    $phorum->user->subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], PHORUM_SUBSCRIPTION_BOOKMARK );
+    phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
+    phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], PHORUM_SUBSCRIPTION_BOOKMARK );
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["NoMoreEmails"];
-    $PHORUM["DATA"]["URL"]["REDIRECT"]=$phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
+    $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_api_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $template="message";
 } elseif(!empty($_POST)) {
     // the user has submitted the form
     $type = (!empty($PHORUM["allow_email_notify"]) && isset($_POST["send_email"])) ? PHORUM_SUBSCRIPTION_MESSAGE : PHORUM_SUBSCRIPTION_BOOKMARK;
-    $phorum->user->subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], $type );
-    $PHORUM["DATA"]["URL"]["REDIRECT"] = $phorum->url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
+    phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], $type );
+    $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["BookmarkedThread"];
     $template="message";
 } else {
     // we are following a new thread
 
-    list($messages) = $phorum->format->messages(array($message));
+    list($messages) = phorum_api_format_messages(array($message));
 
-    $PHORUM["DATA"]["URL"]["ACTION"] = $phorum->url(PHORUM_FOLLOW_ACTION_URL);
+    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url(PHORUM_FOLLOW_ACTION_URL);
     $PHORUM["DATA"]["SUBJECT"]       = $message["subject"];
     $PHORUM["DATA"]["AUTHOR"]        = $message["author"];
     $PHORUM["DATA"]["THREAD"]        = $thread;
@@ -96,7 +98,7 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
 // set all our common URL's
 phorum_build_common_urls();
 
-$phorum->output($template);
+phorum_api_output($template);
 
 
 ?>
