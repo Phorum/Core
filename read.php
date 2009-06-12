@@ -189,7 +189,7 @@ if($PHORUM['cache_messages'] &&
 
     $skip_cache = 0;
 
-    if($message_index == null) {
+    if ($message_index == null) {
         // nothing in the cache, get it from the database and store it in the cache
         $data[$thread] = phorum_db_get_message($thread,"message_id");
 
@@ -228,22 +228,18 @@ if($PHORUM['cache_messages'] &&
     }
 
     // if we errored out in the previous condition we need to skip this whole part!
-    if(!$skip_cache) {
-
-
+    if (!$skip_cache)
+    {
         // we expect this message_index to be ordered by message-id already!
 
         // in this case we need the reversed order
-        if($PHORUM['threaded_read'] &&
-           isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
-
+        if($PHORUM['threaded_read'] && !empty($PHORUM["reverse_threading"])) {
             $message_index=array_reverse($message_index);
-
         }
 
         $start=$PHORUM["read_length"]*($page-1);
 
-        if(!$PHORUM['threaded_read']) {
+        if (!$PHORUM['threaded_read']) {
             // get the message-ids from this page (only in flat mode)
             $message_ids_page = array_slice($message_index, $start,$PHORUM["read_length"]);
         } else {
@@ -252,7 +248,7 @@ if($PHORUM['cache_messages'] &&
         }
 
         // we need the threadstarter too but its not available in the additional pages
-        if($page > 1) {
+        if ($page > 1) {
             array_unshift($message_ids_page,$thread);
         }
 
@@ -262,7 +258,7 @@ if($PHORUM['cache_messages'] &&
         }
 
 
-        $cache_messages = phorum_cache_get('message',$message_ids_page);
+        $cache_messages = phorum_cache_get('message', $message_ids_page);
 
         // check the returned messages if they were found in the cache
         $db_messages=array();
@@ -270,8 +266,8 @@ if($PHORUM['cache_messages'] &&
         $msg_not_in_cache=0;
 
         foreach($message_ids_page as $cache_id) {
-            list($fid, $mid) = explode("-", $cache_id);
-            if(!isset($cache_messages[$cache_id])) {
+            list ($fid, $mid) = explode("-", $cache_id);
+            if (!isset($cache_messages[$cache_id])) {
                 $db_messages[]=$mid;
                 $msg_not_in_cache++;
             } else {

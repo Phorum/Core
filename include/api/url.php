@@ -28,91 +28,99 @@
 
 // {{{ Variable and constant definitions
 
-define("PHORUM_LIST_URL", 1);
-define("PHORUM_READ_URL", 2);
-define("PHORUM_FOREIGN_READ_URL", 3);
-define("PHORUM_REPLY_URL", 4);
-define("PHORUM_POSTING_URL", 5);
-define("PHORUM_REDIRECT_URL", 6);
-define("PHORUM_SEARCH_URL", 7);
-define("PHORUM_SEARCH_ACTION_URL", 8);
-define("PHORUM_USER_URL", 9);
-define("PHORUM_INDEX_URL", 10);
-define("PHORUM_LOGIN_URL", 11);
-define("PHORUM_LOGIN_ACTION_URL", 12);
-define("PHORUM_REGISTER_URL", 13);
-define("PHORUM_REGISTER_ACTION_URL", 14);
-define("PHORUM_PROFILE_URL", 15);
-define("PHORUM_SUBSCRIBE_URL", 16);
-define("PHORUM_MODERATION_URL", 17);
-define("PHORUM_MODERATION_ACTION_URL", 18);
-define("PHORUM_CONTROLCENTER_URL", 19);
-define("PHORUM_CONTROLCENTER_ACTION_URL", 20);
-define("PHORUM_PM_URL", 21);
-define("PHORUM_PM_ACTION_URL", 22);
-define("PHORUM_FILE_URL", 23);
-define("PHORUM_GROUP_MODERATION_URL", 24);
-define("PHORUM_FOLLOW_URL", 25);
-define("PHORUM_FOLLOW_ACTION_URL", 26);
-define("PHORUM_REPORT_URL", 27);
-define("PHORUM_FEED_URL", 28);
-define("PHORUM_CUSTOM_URL", 29);
-define("PHORUM_BASE_URL", 30);
-define("PHORUM_ADDON_URL", 31);
-define("PHORUM_CHANGES_URL", 32);
-define("PHORUM_CSS_URL", 33);
-define("PHORUM_POSTING_ACTION_URL", 34);
-define("PHORUM_JAVASCRIPT_URL", 35);
-define("PHORUM_AJAX_URL", 36);
-define("PHORUM_OPENID_URL", 37);
-
-// URL forum_id option
-define("PHORUM_URL_NO_FORUM_ID", 1);
-define("PHORUM_URL_ADD_FORUM_ID", 2);
-define("PHORUM_URL_COND_FORUM_ID", 3);
+define('PHORUM_LIST_URL',                  1);
+define('PHORUM_READ_URL',                  2);
+define('PHORUM_FOREIGN_READ_URL',          3);
+define('PHORUM_REPLY_URL',                 4);
+define('PHORUM_REDIRECT_URL',              5);
+define('PHORUM_SEARCH_URL',                6);
+define('PHORUM_SEARCH_ACTION_URL',         7);
+define('PHORUM_USER_URL',                  8);
+define('PHORUM_INDEX_URL',                 9);
+define('PHORUM_LOGIN_URL',                10);
+define('PHORUM_LOGIN_ACTION_URL',         11);
+define('PHORUM_REGISTER_URL',             12);
+define('PHORUM_REGISTER_ACTION_URL',      13);
+define('PHORUM_PROFILE_URL',              14);
+define('PHORUM_SUBSCRIBE_URL',            15);
+define('PHORUM_MODERATION_URL',           16);
+define('PHORUM_MODERATION_ACTION_URL',    17);
+define('PHORUM_CONTROLCENTER_URL',        18);
+define('PHORUM_CONTROLCENTER_ACTION_URL', 19);
+define('PHORUM_PM_URL',                   20);
+define('PHORUM_PM_ACTION_URL',            21);
+define('PHORUM_FILE_URL',                 22);
+define('PHORUM_GROUP_MODERATION_URL',     23);
+define('PHORUM_FOLLOW_URL',               24);
+define('PHORUM_FOLLOW_ACTION_URL',        25);
+define('PHORUM_REPORT_URL',               26);
+define('PHORUM_FEED_URL',                 27);
+define('PHORUM_CUSTOM_URL',               28);
+define('PHORUM_BASE_URL',                 29);
+define('PHORUM_ADDON_URL',                30);
+define('PHORUM_CHANGES_URL',              31);
+define('PHORUM_CSS_URL',                  32);
+define('PHORUM_POSTING_URL',              33);
+define('PHORUM_POSTING_ACTION_URL',       34);
+define('PHORUM_JAVASCRIPT_URL',           35);
+define('PHORUM_AJAX_URL',                 36);
+define('PHORUM_OPENID_URL',               37);
 
 global $PHORUM;
 
 /**
  * Descriptions of standard Phorum page URL types and their options.
  * The keys in this array describe the type of Phorum URL.
- * The values are arrays, containing the following three elements:
+ * The values are arrays, containing the following five elements:
+ *
  * - The name of the Phorum page to link to;
- * - A constant, telling whether the forum_id has to be added to the URL;
+ *
+ * - A constant, telling whether the forum_id has to be added to the URL.
+ *   Options for this constant are:
+ *   1 = no
+ *   2 = yes
+ *   3 = conditional (only if there are no other args in $argv)
+ *
  * - A boolean, telling whether the GET vars have to be added to the URL.
+ *
+ * - An URL suffix to add
+ *
+ * - The id of the $argv field to append to the suffix
  */
 $PHORUM['API']['url_patterns'] = array
 (
-    PHORUM_BASE_URL                 => array("",           PHORUM_URL_NO_FORUM_ID,   true),
-    PHORUM_CHANGES_URL              => array("changes",    PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_CONTROLCENTER_ACTION_URL => array("control",    PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_CONTROLCENTER_URL        => array("control",    PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_CSS_URL                  => array("css",        PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_JAVASCRIPT_URL           => array("javascript", PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_FEED_URL                 => array("feed",       PHORUM_URL_NO_FORUM_ID,   true),
-    PHORUM_FOLLOW_ACTION_URL        => array("follow",     PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_FOLLOW_URL               => array("follow",     PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_INDEX_URL                => array("index",      PHORUM_URL_NO_FORUM_ID,   true),
-    PHORUM_LIST_URL                 => array("list",       PHORUM_URL_COND_FORUM_ID, true),
-    PHORUM_LOGIN_ACTION_URL         => array("login",      PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_LOGIN_URL                => array("login",      PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_MODERATION_ACTION_URL    => array("moderation", PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_MODERATION_URL           => array("moderation", PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_PM_ACTION_URL            => array("pm",         PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_PM_URL                   => array("pm",         PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_POSTING_URL              => array("posting",    PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_POSTING_ACTION_URL       => array("posting",    PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_PROFILE_URL              => array("profile",    PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_REDIRECT_URL             => array("redirect",   PHORUM_URL_NO_FORUM_ID,   true),
-    PHORUM_REGISTER_ACTION_URL      => array("register",   PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_REGISTER_URL             => array("register",   PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_REPORT_URL               => array("report",     PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_SEARCH_ACTION_URL        => array("search",     PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_SEARCH_URL               => array("search",     PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_SUBSCRIBE_URL            => array("subscribe",  PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_ADDON_URL                => array("addon",      PHORUM_URL_ADD_FORUM_ID,  true),
-    PHORUM_AJAX_URL                 => array("ajax",       PHORUM_URL_NO_FORUM_ID,   false),
-    PHORUM_OPENID_URL               => array("openid",     PHORUM_URL_NO_FORUM_ID,   false),
+    PHORUM_BASE_URL                 => array('',           1, TRUE,  '', NULL),
+    PHORUM_CHANGES_URL              => array('changes',    2, TRUE,  '', NULL),
+    PHORUM_CONTROLCENTER_ACTION_URL => array('control',    1, FALSE, '', NULL),
+    PHORUM_CONTROLCENTER_URL        => array('control',    2, TRUE,  '', NULL),
+    PHORUM_CSS_URL                  => array('css',        2, TRUE,  '', NULL),
+    PHORUM_JAVASCRIPT_URL           => array('javascript', 2, TRUE,  '', NULL),
+    PHORUM_FEED_URL                 => array('feed',       1, TRUE,  '', NULL),
+    PHORUM_FOLLOW_ACTION_URL        => array('follow',     1, FALSE, '', NULL),
+    PHORUM_FOLLOW_URL               => array('follow',     2, TRUE,  '', NULL),
+    PHORUM_INDEX_URL                => array('index',      1, TRUE,  '', NULL),
+    PHORUM_LIST_URL                 => array('list',       3, TRUE,  '', NULL),
+    PHORUM_LOGIN_ACTION_URL         => array('login',      1, FALSE, '', NULL),
+    PHORUM_LOGIN_URL                => array('login',      2, TRUE,  '', NULL),
+    PHORUM_MODERATION_ACTION_URL    => array('moderation', 1, FALSE, '', NULL),
+    PHORUM_MODERATION_URL           => array('moderation', 2, TRUE,  '', NULL),
+    PHORUM_PM_ACTION_URL            => array('pm',         1, FALSE, '', NULL),
+    PHORUM_PM_URL                   => array('pm',         2, TRUE,  '', NULL),
+    PHORUM_POSTING_URL              => array('posting',    2, TRUE,  '', NULL),
+    PHORUM_POSTING_ACTION_URL       => array('posting',    1, FALSE, '', NULL),
+    PHORUM_PROFILE_URL              => array('profile',    2, TRUE,  '', NULL),
+    PHORUM_REDIRECT_URL             => array('redirect',   1, TRUE,  '', NULL),
+    PHORUM_REGISTER_ACTION_URL      => array('register',   1, FALSE, '', NULL),
+    PHORUM_REGISTER_URL             => array('register',   2, TRUE,  '', NULL),
+    PHORUM_REPORT_URL               => array('report',     2, TRUE,  '', NULL),
+    PHORUM_SEARCH_ACTION_URL        => array('search',     1, FALSE, '', NULL),
+    PHORUM_SEARCH_URL               => array('search',     2, TRUE,  '', NULL),
+    PHORUM_SUBSCRIBE_URL            => array('subscribe',  2, TRUE,  '', NULL),
+    PHORUM_ADDON_URL                => array('addon',      2, TRUE,  '', NULL),
+    PHORUM_AJAX_URL                 => array('ajax',       1, FALSE, '', NULL),
+    PHORUM_OPENID_URL               => array('openid',     1, FALSE, '', NULL),
+    PHORUM_READ_URL                 => array('read',       2, TRUE, '#msg-', 1),
+    PHORUM_FOREIGN_READ_URL         => array('read',       1, TRUE, '#msg-', 2),
 );
 
 // }}}
@@ -125,15 +133,21 @@ function phorum_api_url()
 {
     global $PHORUM;
 
+    // So we do not call function_exists() for each phorum_api_url() call.
+    static $do_custom_url = NULL;
+    if ($do_custom_url === NULL) {
+        $do_custom_url = function_exists('phorum_custom_get_url');
+    }
+
     $argv = func_get_args();
 
-    $url = "";
-    $suffix = "";
-    $pathinfo = NULL;
-    $add_forum_id = false;
-    $add_get_vars = true;
+    $url          = '';
+    $suffix       = '';
+    $pathinfo     = NULL;
+    $add_forum_id = FALSE;
+    $add_get_vars = TRUE;
 
-    $type = (int) array_shift($argv);
+    $type = array_shift($argv);
 
     if (!isset($PHORUM['API']['url_patterns'][$type]))
     {
@@ -142,50 +156,30 @@ function phorum_api_url()
 
         switch($type)
         {
-            case PHORUM_READ_URL:
-                $name = "read";
-                $add_forum_id = true;
-                $add_get_vars = true;
-                if (!empty( $argv[1]) &&
-                    (is_numeric($argv[1]) || $argv[1] == '%message_id%')) {
-                    $suffix = "#msg-$argv[1]";
-                }
-                break;
-
             case PHORUM_REPLY_URL:
-                if (isset($PHORUM["reply_on_read_page"]) &&
-                    $PHORUM["reply_on_read_page"])
+                if (!empty($PHORUM['reply_on_read_page']))
                 {
-                    $name = "read";
-                    $suffix = "#REPLY";
+                    $name = 'read';
+                    $suffix = '#REPLY';
                 }
                 else
                 {
-                    $name = "posting";
+                    $name = 'posting';
                     // For reply on a separate page, we call posting.php on
                     // its own. In that case argv[0] is the editor mode we
                     // want to use (reply in this case). Currently, the thread
                     // id is in argv[0], but we don't need that one for
                     // posting.php. So we simply replace argv[0] with the
                     // correct argument.
-                    $argv[0] = "reply";
+                    $argv[0] = 'reply';
                 }
-                $add_get_vars = true;
-                $add_forum_id = true;
-                break;
-
-            case PHORUM_FOREIGN_READ_URL:
-                $name = "read";
-                $add_forum_id = false;
-                $add_get_vars = true;
-                if (!empty($argv[2]) && is_numeric($argv[2])) {
-                    $suffix = "#msg-$argv[2]";
-                }
+                $add_get_vars = TRUE;
+                $add_forum_id = TRUE;
                 break;
 
             case PHORUM_FILE_URL:
-                $name = "file";
-                $add_forum_id = true;
+                $name = 'file';
+                $add_forum_id = TRUE;
 
                 // If a filename=... parameter is set, then change that
                 // parameter to a URL path, unless this feature is not
@@ -226,7 +220,7 @@ function phorum_api_url()
                     }
                     if ($file_id !== NULL && $filename !== NULL) {
                         foreach ($unset as $id) unset($argv[$id]);
-                        $add_forum_id = false;
+                        $add_forum_id = FALSE;
                         $pathinfo = "/$download{$PHORUM['forum_id']}/" .
                                     "$file_id/$filename";
                     }
@@ -252,12 +246,26 @@ function phorum_api_url()
     }
     else
     {
-        list ($name, $add_forum_id, $add_get_vars) =
+        list ($name, $add_forum_id, $add_get_vars, $suffix_p, $suffix_fld) =
             $PHORUM['API']['url_patterns'][$type];
 
+        if ($suffix_p !== NULL)
+        {
+            $suffix = $suffix_p;
+            
+            if (!empty($suffix_fld)) {
+                $suffix_fld --; // because we shift()ed $argv before.
+                if (!empty($argv[$suffix_fld]) &&
+                    (is_numeric($argv[$suffix_fld]) ||
+                     strpos($argv[$suffix_fld], '%') === 0)) {
+                    $suffix .= $argv[$suffix_fld];
+                }
+            }
+        }
+
         // Add forum id if setting is conditional and there are no params.
-        if ($add_forum_id==PHORUM_URL_COND_FORUM_ID && count($argv) == 0) {
-            $add_forum_id=PHORUM_URL_ADD_FORUM_ID;
+        if ($add_forum_id==3 && count($argv) == 0) {
+            $add_forum_id=2;
         }
     }
 
@@ -269,16 +277,16 @@ function phorum_api_url()
         $url .= $name . '.' . PHORUM_FILE_EXTENSION;
     }
 
-    if ($add_forum_id == PHORUM_URL_ADD_FORUM_ID) {
-        $query_string = $PHORUM["forum_id"] . ",";
+    if ($add_forum_id == 2) {
+        $query_string = $PHORUM['forum_id'] . ',';
     }
 
     if (count($argv) > 0) {
-        $query_string .= implode(",", $argv ) . ",";
+        $query_string .= implode(',', $argv ) . ',';
     }
 
-    if ($add_get_vars && !empty($PHORUM["DATA"]["GET_VARS"])) {
-        $query_string .= implode(",", $PHORUM["DATA"]["GET_VARS"]) . ",";
+    if ($add_get_vars && !empty($PHORUM['DATA']['GET_VARS'])) {
+        $query_string .= implode(',', $PHORUM['DATA']['GET_VARS']) . ',';
     }
 
     if ($query_string) {
@@ -302,7 +310,8 @@ function phorum_api_url()
     // This is a legacy solution (a hook avant la lettre).
     // When writing new code, then please use the "url_build"
     // hook instead.
-    if (function_exists('phorum_custom_get_url')) {
+    if ($do_custom_url) {
+    //if (FALSE) {
         $query_items = $query_string == ''
                      ? array() : explode(',', $query_string);
         $url = phorum_custom_get_url(
@@ -313,7 +322,7 @@ function phorum_api_url()
     else
     {
         if ($pathinfo !== null) $url .= $pathinfo;
-        if ($query_string) $url .= "?" . $query_string;
+        if ($query_string) $url .= '?' . $query_string;
         if (!empty($suffix)) $url .= $suffix;
     }
 
@@ -350,7 +359,7 @@ function phorum_api_url_base()
  */
 function phorum_api_url_current($include_query_string = TRUE)
 {
-    $url = "";
+    $url = '';
 
     if (isset($_SERVER['SCRIPT_URI']))
     {
@@ -370,15 +379,15 @@ function phorum_api_url_current($include_query_string = TRUE)
             $host = $_SERVER['HTTP_HOST'];
         }
 
-        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off")
-                  ? "https" : "http";
-        $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80)
-              ? ':'.$_SERVER["SERVER_PORT"] : "";
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
+                  ? 'https' : 'http';
+        $port = ($_SERVER['SERVER_PORT']!=443 && $_SERVER['SERVER_PORT']!=80)
+              ? ':'.$_SERVER['SERVER_PORT'] : '';
         $url = $protocol.'://'.$host.$port.$_SERVER['PHP_SELF'];
     }
 
-    if ($include_query_string && !empty($_SERVER["QUERY_STRING"])) {
-        $url .= "?" . $_SERVER["QUERY_STRING"];
+    if ($include_query_string && !empty($_SERVER['QUERY_STRING'])) {
+        $url .= '?' . $_SERVER['QUERY_STRING'];
     }
 
     return $url;
