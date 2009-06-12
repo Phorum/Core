@@ -169,7 +169,7 @@ function phorum_api_thread_update_metadata($thread_id)
     foreach ($messages as $id => $message) {
         $threadviewcount += $message['viewcount'];
         if ($message['status'] > 0) {
-            $visible_messages[] = $message;
+            $visible_messages[$message['message_id']] = $message;
         }
     }
     $save['threadviewcount'] = $threadviewcount;
