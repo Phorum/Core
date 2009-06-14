@@ -30,7 +30,13 @@ require_once PHORUM_PATH.'/include/api/mail.php';
 
 // {{{ Function: phorum_api_mail_pm_notify()
 /**
- * Send an PM notification by mail.
+ * Send a PM notification by mail.
+ *
+ * @param array $message
+ *     An array containing the private message data.
+ *
+ * @param array $recipients
+ *     An array of users that have received the PM.
  */
 function phorum_api_mail_pm_notify($message, $recipients)
 {
