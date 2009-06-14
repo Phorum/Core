@@ -33,6 +33,7 @@ define('phorum_page','pm');
 require_once './common.php';
 require_once PHORUM_PATH.'/include/api/format/messages.php';
 require_once PHORUM_PATH.'/include/api/ban.php';
+require_once PHORUM_PATH.'/include/api/mail/pm_notify.php';
 
 phorum_api_request_require_login(TRUE);
 
@@ -494,27 +495,12 @@ if (!empty($action))
 
                             // Do e-mail notifications on successful sending.
                             } elseif (!empty($PHORUM['allow_pm_email_notify'])) {
-
-                                require_once './include/email_functions.php';
-
-                                // Sort all recipients that want a notify by language.
-                                $langrcpts = array();
-                                foreach ($recipients as $rcpt_id => $rcpt) {
-
-                                    if ($rcpt["pm_email_notify"]) {
-                                        if (!isset($langrcpts[$rcpt["user_language"]])) {
-                                            $langrcpts[$rcpt["user_language"]] = array($rcpt);
-                                        } else {
-                                            $langrcpts[$rcpt["user_language"]][] = $rcpt;
-                                        }
-                                    }
-                                }
-
-                                phorum_email_pm_notice($pm_message, $langrcpts);
+                                phorum_api_mail_pm_notify($pm_message, $recipients);
                             }
 
-                            if (isset($PHORUM["hooks"]["pm_sent"]))
+                            if (isset($PHORUM["hooks"]["pm_sent"])) {
                                 phorum_api_hook("pm_sent", $pm_message, array_keys($recipients));
+                            }
                         }
 
                         // Invalidate user cache, to update message counts.

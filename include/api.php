@@ -85,10 +85,9 @@ $PHORUM = array
     )
 );
 
+// Load the files that are used by most scripts.
 require_once dirname(__FILE__).'/api/constants.php';
-
 require_once PHORUM_PATH.'/include/api/deprecated.php';
-
 require_once PHORUM_PATH.'/include/api/error.php';
 require_once PHORUM_PATH.'/include/api/hook.php';
 require_once PHORUM_PATH.'/include/api/url.php';
@@ -417,7 +416,6 @@ $PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
 // ----------------------------------------------------------------------
 // The Phorum API call router class.
 // ----------------------------------------------------------------------
-
 
 /**
  * The Phorum API call router class.

@@ -19,55 +19,7 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/api/user.php';
 require_once './include/api/mail.php';
-
-function phorum_email_pm_notice($message, $langusers)
-{
-    $mail_data = array(
-        // Template variables.
-        "pm_message_id"  => $message["pm_message_id"],
-        "author"         => phorum_api_user_get_display_name($message["user_id"], $message["from_username"], PHORUM_FLAG_PLAINTEXT),
-        "subject"        => $message["subject"],
-        "full_body"      => $message["message"],
-        "plain_body"     => wordwrap(phorum_api_format_strip($message["message"]),72),
-        "read_url"       => phorum_api_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
-
-        // For email_user_start.
-        "mailmessagetpl" => 'PMNotifyMessage',
-        "mailsubjecttpl" => 'PMNotifySubject'
-    );
-
-    if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-        // strip any auth info from the read url
-        $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
-    }
-
-    foreach ($langusers as $language => $users)
-    {
-        global $PHORUM;
-
-        $language = basename($language);
-
-        if ( file_exists( "./include/lang/$language.php" ) ) {
-            $mail_data['language'] = $language;
-            include "./include/lang/$language.php";
-        } else {
-            $mail_data['language'] = $PHORUM['language'];
-            include "./include/lang/{$PHORUM['language']}.php";
-        }
-
-        $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['PMNotifyMessage'];
-        $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"]['PMNotifySubject'];
-
-        $addresses = array();
-        foreach ($users as $user) {
-            $addresses[] = $user["email"];
-        }
-
-        phorum_email_user($addresses, $mail_data);
-    }
-}
 
 function phorum_email_notice($message)
 {
