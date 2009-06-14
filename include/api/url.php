@@ -311,7 +311,6 @@ function phorum_api_url()
     // When writing new code, then please use the "url_build"
     // hook instead.
     if ($do_custom_url) {
-    //if (FALSE) {
         $query_items = $query_string == ''
                      ? array() : explode(',', $query_string);
         $url = phorum_custom_get_url(
@@ -324,6 +323,31 @@ function phorum_api_url()
         if ($pathinfo !== null) $url .= $pathinfo;
         if ($query_string) $url .= '?' . $query_string;
         if (!empty($suffix)) $url .= $suffix;
+    }
+
+    return $url;
+}
+// }}}
+
+// {{{ Function: phorum_api_url_no_uri_auth()
+/**
+ * Generate a Phorum URL, without any URI authentication information in it.
+ */
+function phorum_api_url_no_uri_auth()
+{
+    global $PHORUM;
+
+    $uri_auth = NULL;
+    if (isset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM])) {
+        $uri_auth = $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM];
+    }
+
+    $argv = func_get_args();
+
+    $url = call_user_func_array('phorum_api_url', $argv);
+
+    if ($uri_auth !== NULL) {
+        $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] = $uri_auth;
     }
 
     return $url;

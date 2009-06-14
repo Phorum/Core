@@ -73,24 +73,16 @@ function phorum_api_mail_pm_notify($message, $recipients)
         'subject'        => $message['subject'],
         'full_body'      => $message['message'],
         'plain_body'     => wordwrap(phorum_api_format_strip($message['message']), 72),
-        'read_url'       => phorum_api_url(
+        'read_url'       => phorum_api_url_no_uri_auth(
                                 PHORUM_PM_URL,
                                 'page=read',
                                 'pm_id=' . $message['pm_message_id']
                             ),
+
         // For the "mail_prepare" hook.
         'mailmessagetpl' => 'PMNotifyMessage',
         'mailsubjecttpl' => 'PMNotifySubject'
     );
-
-    // Strip any auth info from the read url.
-    if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-        $mail_data["read_url"] = preg_replace(
-            '!,{0,1}' . PHORUM_SESSION_LONG_TERM . '=' .
-            urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . '!',
-            '', $mail_data["read_url"]
-        );
-    }
 
     foreach ($recipients_by_lang as $language => $users)
     {
