@@ -19,9 +19,10 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/email_functions.php';
 require_once PHORUM_PATH.'/include/api/thread.php';
 require_once PHORUM_PATH.'/include/api/file.php';
+require_once PHORUM_PATH.'/include/api/mail/message_notify.php';
+require_once PHORUM_PATH.'/include/api/mail/message_moderate.php';
 
 // Set some values.
 $message["moderator_post"] = $PHORUM["DATA"]["MODERATOR"] ? 1 : 0;
@@ -284,7 +285,7 @@ if ($success)
 
     // Mail moderators.
     if ($PHORUM["email_moderators"] == PHORUM_EMAIL_MODERATOR_ON) {
-        phorum_email_moderators($message);
+        phorum_api_mail_message_moderate($message);
     }
 
     /*

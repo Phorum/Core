@@ -1422,7 +1422,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    mail_prepare
 
-   Where  : include/email_functions.php
+   Where  : include/api/mail.php
    When   : Right at the beginning of the function, before any modification of data
    Input  : array of addresses and data (which are both an array of their own)
    Return : array of addresses and data
@@ -1891,7 +1891,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    send_mail
 
-   Where  : include/email_functions.php in the function phorum_email_user()
+   Where  : include/api/mail.php in the function phorum_api_mail()
    When   : Right before email is sent using PHP's mail() function.
    Input  : Array with maildata (read-only) containing:
             addresses => Array of e-mail addresses,

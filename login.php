@@ -20,7 +20,6 @@
 define('phorum_page','login');
 
 require_once './common.php';
-require_once './include/email_functions.php';
 require_once PHORUM_PATH.'/include/api/generate.php';
 
 // ----------------------------------------------------------------------------

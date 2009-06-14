@@ -19,7 +19,6 @@
 
 define('phorum_page','control');
 require_once './common.php';
-require_once './include/email_functions.php';
 require_once PHORUM_PATH.'/include/api/format/users.php';
 require_once PHORUM_PATH.'/include/api/format/messages.php';
 

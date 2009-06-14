@@ -21,8 +21,8 @@ define('phorum_page','moderation');
 require_once './common.php';
 
 require_once './include/moderation_functions.php';
-require_once './include/email_functions.php';
 require_once PHORUM_PATH.'/include/api/thread.php';
+require_once PHORUM_PATH.'/include/api/mail/message_notify.php';
 
 if(!phorum_check_read_common()) {
   return;

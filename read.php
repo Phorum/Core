@@ -20,7 +20,6 @@
 define('phorum_page','read');
 require_once './common.php';
 
-require_once './include/email_functions.php';
 require_once './include/api/newflags.php';
 require_once './include/api/format/messages.php';
 require_once './include/api/thread.php';

@@ -193,8 +193,6 @@ function phorum_api_error_database($error)
         case "mail":
         default:
 
-            require_once PHORUM_PATH.'/include/email_functions.php';
-
             $data = array(
               'mailmessage' =>
                   "A database error occured in your Phorum installation\n" .

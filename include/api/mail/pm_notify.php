@@ -52,7 +52,7 @@ function phorum_api_mail_pm_notify($message, $recipients)
             if (!isset($recipients_by_lang[$recipient['user_language']])) {
                 $recipients_by_lang[$recipient['user_language']] = array($recipient);
             } else {
-                $recipients_by_lang[$recipient['user_language']][] = $rcpt;
+                $recipients_by_lang[$recipient['user_language']][] = $recipient;
             }
         }
     }

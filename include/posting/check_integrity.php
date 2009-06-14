@@ -19,7 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/email_functions.php';
 require_once PHORUM_PATH.'/include/api/mail.php';
 
 $error = false;

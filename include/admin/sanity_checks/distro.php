@@ -87,7 +87,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/controlcenter/user.php',
     'include/controlcenter/users.php',
 
-    'include/email_functions.php',
     'include/index/directory.php',
     'include/index/flat.php',
     'include/javascript/phorum-javascript-library.php',
@@ -141,6 +140,9 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/api/template/compile.php',
     'include/api/modules.php',
     'include/api/mail.php',
+    'include/api/mail/pm_notify.php',
+    'include/api/mail/message_notify.php',
+    'include/api/mail/message_moderate.php',
     'include/api/user.php',
     'include/api/tree.php',
     'include/api/feed.php',
@@ -209,9 +211,10 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
       'include/timing.php',            // moved to Profiler API
       'include/feed_functions.php',    // moved to Feed API
       'include/profile_functions.php', // moved to Ban API
-      'include/templates.php',         // moved to include/api/template.php
-      'include/thread_info.php',       // moved to include/api/thread.php
-      'include/thread_sort.php',       // moved to include/api/thread.php
+      'include/templates.php',         // moved to Template API
+      'include/thread_info.php',       // moved to Thread API
+      'include/thread_sort.php',       // moved to Thread API
+      'include/email_functions.php',   // moved to Mail API
     )
 );
 

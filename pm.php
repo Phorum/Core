@@ -45,8 +45,6 @@ phorum_api_request_check_token();
 // set all our common URL's
 phorum_build_common_urls();
 
-require_once './include/email_functions.php';
-
 // If private messages are disabled, just show a simple error message.
 if (! $PHORUM["enable_pm"]) {
     $PHORUM["DATA"]["BLOCK_CONTENT"] = $PHORUM["DATA"]["LANG"]["PMDisabled"];

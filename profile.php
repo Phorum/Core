@@ -20,8 +20,6 @@
 define('phorum_page','profile');
 require_once './common.php';
 
-require_once './include/email_functions.php';
-
 // Build all our URLs
 phorum_build_common_urls();
 
