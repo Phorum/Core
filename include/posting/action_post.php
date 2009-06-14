@@ -279,8 +279,7 @@ if ($success)
         phorum_db_update_forum_stats(false, 1, $message["datestamp"]);
 
         // Mail subscribed users.
-        phorum_email_notice($message);
-
+        phorum_api_mail_message_notify($message);
     }
 
     // Mail moderators.

@@ -680,8 +680,8 @@ switch ($mod_step)
             phorum_api_hook("after_approve", array($old_message, PHORUM_APPROVE_MESSAGE));
         }
 
-        if($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
-          phorum_email_notice($old_message);
+        if ($old_message['status'] != PHORUM_STATUS_HIDDEN ) {
+            phorum_api_mail_message_notify($old_message);
         }
 
         if(isset($PHORUM['args']['old_forum']) && is_numeric($PHORUM['args']['old_forum'])) {

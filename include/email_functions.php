@@ -21,65 +21,6 @@ if (!defined("PHORUM")) return;
 
 require_once './include/api/mail.php';
 
-function phorum_email_notice($message)
-{
-    global $PHORUM;
-
-    // do we allow email-notification for that forum?
-    if(!$PHORUM['allow_email_notify']) {
-        return;
-    }
-
-    $mail_users_full = phorum_api_user_list_subscribers($PHORUM['forum_id'], $message['thread'], PHORUM_SUBSCRIPTION_MESSAGE);
-
-    if (count($mail_users_full)) {
-
-        $mail_data = array(
-            // Template variables.
-            "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
-            "forum_id"    => $PHORUM['forum_id'],
-            "message_id"  => $message['message_id'],
-            "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
-            "subject"     => $message['subject'],
-            "full_body"   => $message['body'],
-            "plain_body"  => phorum_api_format_strip($message['body']),
-            "read_url"    => phorum_api_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
-            "remove_url"  => phorum_api_url(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
-            "noemail_url" => phorum_api_url(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
-            "followed_threads_url" => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
-            "msgid"       => $message["msgid"],
-
-            // For email_user_start.
-            "mailmessagetpl" => 'NewReplyMessage',
-            "mailsubjecttpl" => 'NewReplySubject'
-        );
-        if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-            // strip any auth info from the read url
-            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
-            $mail_data["remove_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["remove_url"]);
-            $mail_data["noemail_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["noemail_url"]);
-            $mail_data["followed_threads_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["followed_threads_url"]);
-        }
-        // go through the user-languages and send mail with their set lang
-        foreach($mail_users_full as $language => $mail_users)
-        {
-            $language = basename($language);
-
-            if ( file_exists( "./include/lang/$language.php" ) ) {
-                $mail_data['language'] = $language;
-                include "./include/lang/$language.php";
-            } else {
-                $mail_data['language'] = $PHORUM['language'];
-                include "./include/lang/{$PHORUM['language']}.php";
-            }
-            $mail_data["mailmessage"] = $PHORUM["DATA"]["LANG"]['NewReplyMessage'];
-            $mail_data["mailsubject"] = $PHORUM["DATA"]["LANG"]['NewReplySubject'];
-            phorum_email_user($mail_users, $mail_data);
-
-        }
-    }
-}
-
 function phorum_email_moderators($message)
 {
     global $PHORUM;
