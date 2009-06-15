@@ -310,6 +310,7 @@ img.question
     overflow: auto;
     background-color: white;
     border: 1px inset #ccc;
+    margin-top: 1em;
 }
 
 </style>
