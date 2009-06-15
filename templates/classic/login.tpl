@@ -62,7 +62,7 @@
       <div class="PhorumStdBlock PhorumNarrowBlock">
         <div class="PhorumFloatingText">{LANG->LostPassInfo}</div>
         <div class="PhorumFloatingText">
-          <input type="text" name="lostpass" size="30" value="" />
+          <input type="text" id="lostpass" name="lostpass" size="30" value="" />
           <input type="submit" class="PhorumSubmit" value="{LANG->Submit}" />
         </div>
       </div>

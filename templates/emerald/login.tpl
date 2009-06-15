@@ -50,7 +50,7 @@
                     {POST_VARS}
                     {LANG->LostPassInfo}<br />
                     <br />
-                    <input type="text" name="lostpass" size="30" value="" /><br />
+                    <input type="text" id="lostpass" name="lostpass" size="30" value="" /><br />
                     <br />
                     <input type="submit" value="{LANG->Submit}" />
                 </form>
