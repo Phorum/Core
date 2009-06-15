@@ -119,8 +119,8 @@ $PHORUM['API']['url_patterns'] = array
     PHORUM_ADDON_URL                => array('addon',      2, TRUE,  '', NULL),
     PHORUM_AJAX_URL                 => array('ajax',       1, FALSE, '', NULL),
     PHORUM_OPENID_URL               => array('openid',     1, FALSE, '', NULL),
-    PHORUM_READ_URL                 => array('read',       2, TRUE, '#msg-', 1),
-    PHORUM_FOREIGN_READ_URL         => array('read',       1, TRUE, '#msg-', 2),
+    PHORUM_READ_URL                 => array('read',       2, TRUE, '#msg-', 2),
+    PHORUM_FOREIGN_READ_URL         => array('read',       1, TRUE, '#msg-', 3),
 );
 
 // }}}
@@ -251,14 +251,14 @@ function phorum_api_url()
 
         if ($suffix_p !== NULL)
         {
-            $suffix = $suffix_p;
-            
-            if (!empty($suffix_fld)) {
+            if (empty($suffix_fld)) {
+                $suffix = $suffix_p;
+            } else {
                 $suffix_fld --; // because we shift()ed $argv before.
                 if (!empty($argv[$suffix_fld]) &&
                     (is_numeric($argv[$suffix_fld]) ||
                      strpos($argv[$suffix_fld], '%') === 0)) {
-                    $suffix .= $argv[$suffix_fld];
+                    $suffix = $suffix_p . $argv[$suffix_fld];
                 }
             }
         }

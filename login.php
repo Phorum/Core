@@ -21,12 +21,13 @@ define('phorum_page','login');
 
 require_once './common.php';
 require_once PHORUM_PATH.'/include/api/generate.php';
+require_once PHORUM_PATH.'/include/api/mail.php';
 
 // ----------------------------------------------------------------------------
 // Handle logout
 // ----------------------------------------------------------------------------
 
-if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
+if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM['args']['logout']))
 {
     /*
      * [hook]
@@ -50,24 +51,18 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
      * [output]
      *     None
      */
-
-    if (isset($PHORUM["hooks"]["before_logout"])) {
-        phorum_hook("before_logout");
+    if (isset($PHORUM['hooks']['before_logout'])) {
+        phorum_hook('before_logout');
     }
 
     phorum_api_user_session_destroy(PHORUM_FORUM_SESSION);
 
     // Determine the URL to redirect the user to. The hook "after_logout"
     // can be used by module writers to set a custom redirect URL.
-    if (isset($_SERVER["HTTP_REFERER"]) && !empty($_SERVER['HTTP_REFERER'])) {
-        $url = $_SERVER["HTTP_REFERER"];
+    if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+        $url = $_SERVER['HTTP_REFERER'];
     } else {
-        $url = phorum_api_url(PHORUM_LIST_URL);
-    }
-
-    // Strip the session id from the URL in case URI auth is in use.
-    if (stristr($url, PHORUM_SESSION_LONG_TERM)){
-        $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"][PHORUM_SESSION_LONG_TERM]), "", $url);
+        $url = phorum_api_url_no_uri_auth(PHORUM_LIST_URL);
     }
 
     /*
@@ -107,8 +102,9 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
      *     }
      *     </hookcode>
      */
-    if (isset($PHORUM["hooks"]["after_logout"]))
-        $url = phorum_api_hook("after_logout", $url);
+    if (isset($PHORUM['hooks']['after_logout'])) {
+        $url = phorum_api_hook('after_logout', $url);
+    }
 
     phorum_api_redirect($url);
 }
@@ -120,25 +116,26 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]))
 // Set all our URLs.
 phorum_build_common_urls();
 
-$template = "login";
-$error = "";
-$okmsg = "";
+$template = 'login';
+$error = '';
+$okmsg = '';
 
 // Handle posted form data.
-if (count($_POST) > 0) {
+if (count($_POST) > 0)
+{
     // The user wants to retrieve a new password.
-    if (isset($_POST["lostpass"])) {
-
+    if (isset($_POST['lostpass']))
+    {
         // Trim the email address.
-        $_POST["lostpass"] = trim($_POST["lostpass"]);
+        $_POST['lostpass'] = trim($_POST['lostpass']);
 
         // Did the user enter an email address?
-        if (empty($_POST["lostpass"])) {
-            $error = $PHORUM['DATA']['LANG']["LostPassError"];
+        if (empty($_POST['lostpass'])) {
+            $error = $PHORUM['DATA']['LANG']['LostPassError'];
         }
 
         // Is the email address available in the database?
-        elseif ($uid = phorum_api_user_search("email", $_POST["lostpass"])) {
+        elseif ($uid = phorum_api_user_search('email', $_POST['lostpass'])) {
 
             // An existing user id was found for the entered email
             // address. Retrieve the user.
@@ -147,21 +144,21 @@ if (count($_POST) > 0) {
             $tmp_user=array();
 
             // User registration not yet approved by a moderator.
-            if($user["active"] == PHORUM_USER_PENDING_MOD) {
-                $template = "message";
-                $okmsg = $PHORUM['DATA']['LANG']["RegVerifyMod"];
+            if($user['active'] == PHORUM_USER_PENDING_MOD) {
+                $template = 'message';
+                $okmsg = $PHORUM['DATA']['LANG']['RegVerifyMod'];
             // User registration still need email verification.
-            } elseif ($user["active"] == PHORUM_USER_PENDING_EMAIL ||
-                      $user["active"] == PHORUM_USER_PENDING_BOTH) {
+            } elseif ($user['active'] == PHORUM_USER_PENDING_EMAIL ||
+                      $user['active'] == PHORUM_USER_PENDING_BOTH) {
 
                 // Generate and store a new email confirmation code.
-                $tmp_user["user_id"] = $uid;
-                $tmp_user["password_temp"] = substr(md5(microtime()), 0, 8);
+                $tmp_user['user_id'] = $uid;
+                $tmp_user['password_temp'] = substr(md5(microtime()), 0, 8);
                 phorum_api_user_save($tmp_user);
 
                 // Mail the new confirmation code to the user.
-                $verify_url = phorum_api_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
-                $maildata["mailsubject"] = $PHORUM['DATA']['LANG']["VerifyRegEmailSubject"];
+                $verify_url = phorum_api_url(PHORUM_REGISTER_URL, 'approve='.$tmp_user['password_temp'].$uid);
+                $maildata['mailsubject'] = $PHORUM['DATA']['LANG']['VerifyRegEmailSubject'];
 
                 // The mailmessage can be composed in two different ways.
                 // This was done for backward compatibility for the language
@@ -170,7 +167,7 @@ if (count($_POST) > 0) {
                 // In 5.3, we switched to a single variable VerifyRegEmailBody.
                 // Eventually, the variable replacements need to be handled
                 // by the mail API layer.
-                if (isset($PHORUM['DATA']['LANG']["VerifyRegEmailBody"]))
+                if (isset($PHORUM['DATA']['LANG']['VerifyRegEmailBody']))
                 {
                     $maildata['mailmessage'] = wordwrap(str_replace(
                         array(
@@ -195,24 +192,24 @@ if (count($_POST) > 0) {
                     // for those.
                     $lang = $PHORUM['DATA']['LANG'];
 
-                    $maildata["mailmessage"] =
-                       wordwrap($lang["VerifyRegEmailBody1"], 72).
+                    $maildata['mailmessage'] =
+                       wordwrap($lang['VerifyRegEmailBody1'], 72).
                        "\n\n$verify_url\n\n".
-                       wordwrap($lang["VerifyRegEmailBody2"], 72);
+                       wordwrap($lang['VerifyRegEmailBody2'], 72);
                 }
 
-                phorum_api_mail($user["email"], $maildata);
+                phorum_api_mail($user['email'], $maildata);
 
-                $okmsg = $PHORUM['DATA']['LANG']["RegVerifyEmail"];
-                $template="message";
+                $okmsg = $PHORUM['DATA']['LANG']['RegVerifyEmail'];
+                $template='message';
 
             // The user is active.
             } else {
 
                 // Generate and store a new password for the user.
                 $newpass = phorum_api_generate_password();
-                $tmp_user["user_id"] = $uid;
-                $tmp_user["password_temp"] = $newpass;
+                $tmp_user['user_id'] = $uid;
+                $tmp_user['password_temp'] = $newpass;
                 phorum_api_user_save($tmp_user);
 
                 // Mail the new password.
@@ -226,7 +223,7 @@ if (count($_POST) > 0) {
                 // In 5.3, we switched to a single variable LostPassEmailBody.
                 // Eventually, the variable replacements need to be handled
                 // by the mail API layer.
-                if (isset($PHORUM['DATA']['LANG']["LostPassEmailBody"]))
+                if (isset($PHORUM['DATA']['LANG']['LostPassEmailBody']))
                 {
                     $maildata['mailmessage'] = wordwrap(str_replace(
                         array(
@@ -241,7 +238,7 @@ if (count($_POST) > 0) {
                             $newpass,
                             phorum_api_url(PHORUM_LOGIN_URL)
                         ),
-                        $PHORUM['DATA']['LANG']["LostPassEmailBody"]
+                        $PHORUM['DATA']['LANG']['LostPassEmailBody']
                     ), 72);
                 }
                 else
@@ -252,52 +249,52 @@ if (count($_POST) > 0) {
                     $lang = $PHORUM['DATA']['LANG'];
 
                     $maildata['mailmessage'] =
-                       wordwrap($lang["LostPassEmailBody1"], 72) .
+                       wordwrap($lang['LostPassEmailBody1'], 72) .
                        "\n\n".
-                       $lang["Username"] .": $user[username]\n".
-                       $lang["Password"] .": $newpass" .
+                       $lang['Username'] .": $user[username]\n".
+                       $lang['Password'] .": $newpass" .
                        "\n\n".
-                       wordwrap($lang["LostPassEmailBody2"], 72);
+                       wordwrap($lang['LostPassEmailBody2'], 72);
                 }
 
-                $maildata['mailsubject'] = $PHORUM['DATA']['LANG']["LostPassEmailSubject"];
+                $maildata['mailsubject'] = $PHORUM['DATA']['LANG']['LostPassEmailSubject'];
                 phorum_api_mail($user['email'], $maildata);
 
-                $okmsg = $PHORUM['DATA']['LANG']["LostPassSent"];
+                $okmsg = $PHORUM['DATA']['LANG']['LostPassSent'];
 
             }
         }
 
         // The entered email address was not found.
         else {
-            $error = $PHORUM['DATA']['LANG']["LostPassError"];
+            $error = $PHORUM['DATA']['LANG']['LostPassError'];
         }
     }
 
     // The user wants to login.
-    else {
-
+    else
+    {
         // Check if the phorum_tmp_cookie was set. If not, the user's
         // browser does not support cookies.
-        if ($PHORUM["use_cookies"] == PHORUM_REQUIRE_COOKIES &&
-            !isset($_COOKIE["phorum_tmp_cookie"])) {
+        if ($PHORUM['use_cookies'] == PHORUM_REQUIRE_COOKIES &&
+            !isset($_COOKIE['phorum_tmp_cookie'])) {
 
-            $error = $PHORUM['DATA']['LANG']["RequireCookies"];
+            $error = $PHORUM['DATA']['LANG']['RequireCookies'];
 
         } else {
 
             // See if the temporary cookie was found. If yes, then the
             // browser does support cookies. If not, then we disable
             // the use of cookies.
-            if (!isset($_COOKIE["phorum_tmp_cookie"])) {
-                $PHORUM["use_cookies"] = PHORUM_NO_COOKIES;
+            if (!isset($_COOKIE['phorum_tmp_cookie'])) {
+                $PHORUM['use_cookies'] = PHORUM_NO_COOKIES;
             }
 
             // Check if the login credentials are right.
             $user_id = phorum_api_user_authenticate(
                 PHORUM_FORUM_SESSION,
-                trim($_POST["username"]),
-                trim($_POST["password"])
+                trim($_POST['username']),
+                trim($_POST['password'])
             );
 
             // They are. Setup the active user and start a Phorum session.
@@ -311,23 +308,23 @@ if (count($_POST) > 0) {
 
                     // Destroy the temporary cookie that is used for testing
                     // for cookie compatibility.
-                    if (isset($_COOKIE["phorum_tmp_cookie"])) {
+                    if (isset($_COOKIE['phorum_tmp_cookie'])) {
                         setcookie(
-                            "phorum_tmp_cookie", "", 0,
-                            $PHORUM["session_path"], $PHORUM["session_domain"]
+                            'phorum_tmp_cookie', '', 0,
+                            $PHORUM['session_path'], $PHORUM['session_domain']
                         );
                     }
 
                     // Determine the URL to redirect the user to.
                     // If redir is a number, it is a URL constant.
-                    if(is_numeric($_POST["redir"])){
-                        $redir = phorum_api_url((int)$_POST["redir"]);
+                    if(is_numeric($_POST['redir'])){
+                        $redir = phorum_api_url((int)$_POST['redir']);
                     }
                     // Redirecting to the registration or login page is a
                     // little weird, so we just go to the list page if we came
                     // from one of those.
-                    elseif (isset($PHORUM['use_cookies']) && $PHORUM["use_cookies"] && !strstr($_POST["redir"], "register." . PHORUM_FILE_EXTENSION) && !strstr($_POST["redir"], "login." . PHORUM_FILE_EXTENSION)) {
-                        $redir = $_POST["redir"];
+                    elseif (isset($PHORUM['use_cookies']) && $PHORUM['use_cookies'] && !strstr($_POST['redir'], 'register.' . PHORUM_FILE_EXTENSION) && !strstr($_POST['redir'], 'login.' . PHORUM_FILE_EXTENSION)) {
+                        $redir = $_POST['redir'];
                     // By default, we redirect to the list page.
                     } else {
                         $redir = phorum_api_url( PHORUM_LIST_URL );
@@ -339,9 +336,9 @@ if (count($_POST) > 0) {
                     $check_urls = array();
                     if(!empty($PHORUM['login_redir_urls'])) {
                         
-                        $check_urls = explode(",",$PHORUM['login_redir_urls']);
+                        $check_urls = explode(',',$PHORUM['login_redir_urls']);
                     }
-                    $check_urls[]="http://localhost";
+                    $check_urls[]='http://localhost';
                     $check_urls[]=$PHORUM['http_path'];
                                         
                     foreach($check_urls as $check_url) {
@@ -395,8 +392,8 @@ if (count($_POST) > 0) {
                      *     }
                      *     </hookcode>
                      */
-                    if (isset($PHORUM["hooks"]["after_login"]))
-                        $redir = phorum_api_modules_hook("after_login", $redir);
+                    if (isset($PHORUM['hooks']['after_login']))
+                        $redir = phorum_api_modules_hook('after_login', $redir);
 
                     phorum_api_redirect($redir);
                 }
@@ -404,7 +401,7 @@ if (count($_POST) > 0) {
 
             // Login failed or session startup failed. For both we show
             // the invalid login error.
-            $error = $PHORUM['DATA']['LANG']["InvalidLogin"];
+            $error = $PHORUM['DATA']['LANG']['InvalidLogin'];
 
             /*
              * [hook]
@@ -459,6 +456,7 @@ if (count($_POST) > 0) {
              *             } else {
              *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
              *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
+             *             }
              *         } else {
              *             // Log the timestamp and IP address of a login failure
              *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
@@ -469,35 +467,44 @@ if (count($_POST) > 0) {
              *     </hookcode>
              */
             // TODO API: move to user API.
-            if (isset($PHORUM["hooks"]["failed_login"]))
-                phorum_api_modules_hook("failed_login", array(
-                    "username" => $_POST["username"],
-                    "password" => $_POST["password"],
-                    "location" => "forum"
+            if (isset($PHORUM['hooks']['failed_login'])) {
+                phorum_api_modules_hook('failed_login', array(
+                    'username' => $_POST['username'],
+                    'password' => $_POST['password'],
+                    'location' => 'forum'
                 ));
+            }
         }
     }
 }
 
 // No data posted, so this is the first request. Here we set a temporary
 // cookie, so we can check if the user's browser supports cookies.
-elseif($PHORUM["use_cookies"] > PHORUM_NO_COOKIES) {
-    setcookie( "phorum_tmp_cookie", "this will be destroyed once logged in", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
+elseif ($PHORUM['use_cookies'] > PHORUM_NO_COOKIES)
+{
+    setcookie(
+        'phorum_tmp_cookie',
+        'this will be destroyed once logged in',
+        0, $PHORUM['session_path'], $PHORUM['session_domain']
+    );
 }
 
 // Determine to what URL the user must be redirected after login.
-if (!empty( $PHORUM["args"]["redir"])) {
-    $redir = htmlspecialchars(urldecode($PHORUM["args"]["redir"]), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-} elseif (!empty( $_REQUEST["redir"])) {
-    $redir = htmlspecialchars($_REQUEST["redir"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-} elseif (!empty( $_SERVER["HTTP_REFERER"])) {
+$redir = NULL;
+if (!empty($PHORUM['args']['redir'])) {
+    $redir = htmlspecialchars(urldecode($PHORUM['args']['redir']), ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+}
+elseif (!empty($_REQUEST['redir'])) {
+    $redir = htmlspecialchars($_REQUEST['redir'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+}
+elseif (!empty($_SERVER['HTTP_REFERER'])) {
     $base = strtolower(phorum_api_url_base());
     $len = strlen($base);
-    if (strtolower(substr($_SERVER["HTTP_REFERER"],0,$len)) == $base) {
-        $redir = htmlspecialchars($_SERVER["HTTP_REFERER"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    if (strtolower(substr($_SERVER['HTTP_REFERER'], 0, $len)) == $base) {
+        $redir = htmlspecialchars($_SERVER['HTTP_REFERER'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
     }
 }
-if (! isset($redir)) {
+if ($redir === NULL) {
     $redir = phorum_api_url(PHORUM_LIST_URL);
 }
 
@@ -514,23 +521,23 @@ $PHORUM['DATA']['HTML_DESCRIPTION'] = '';
 $PHORUM['DATA']['DESCRIPTION'] = '';
 
 // Setup template data.
-$PHORUM["DATA"]["LOGIN"]["redir"] = $redir;
-$PHORUM["DATA"]["URL"]["REGISTER"] = phorum_api_url( PHORUM_REGISTER_URL );
-$PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_LOGIN_ACTION_URL );
-$PHORUM["DATA"]["LOGIN"]["forum_id"] = ( int )$PHORUM["forum_id"];
-$PHORUM["DATA"]["LOGIN"]["username"] = (!empty($_POST["username"])) ? htmlspecialchars( $_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"] ) : "";
-$PHORUM["DATA"]["ERROR"] = $error;
-$PHORUM["DATA"]["OKMSG"] = $okmsg;
+$PHORUM['DATA']['LOGIN']['redir'] = $redir;
+$PHORUM['DATA']['URL']['REGISTER'] = phorum_api_url( PHORUM_REGISTER_URL );
+$PHORUM['DATA']['URL']['ACTION'] = phorum_api_url( PHORUM_LOGIN_ACTION_URL );
+$PHORUM['DATA']['LOGIN']['forum_id'] = ( int )$PHORUM['forum_id'];
+$PHORUM['DATA']['LOGIN']['username'] = (!empty($_POST['username'])) ? htmlspecialchars( $_POST['username'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET'] ) : '';
+$PHORUM['DATA']['ERROR'] = $error;
+$PHORUM['DATA']['OKMSG'] = $okmsg;
 
-$PHORUM["DATA"]["OPENID"] = $PHORUM["open_id"];
-if($PHORUM["open_id"]){
-    $PHORUM["DATA"]["URL"]["open_id"] = phorum_api_url(PHORUM_OPENID_URL);
+$PHORUM['DATA']['OPENID'] = $PHORUM['open_id'];
+if($PHORUM['open_id']){
+    $PHORUM['DATA']['URL']['open_id'] = phorum_api_url(PHORUM_OPENID_URL);
 }
 
-$PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";
+$PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"redir\" value=\"{$redir}\" />\n";
 
 // Set the field to set the focus to after loading.
-$PHORUM["DATA"]["FOCUS_TO_ID"] = empty($_POST["username"]) ? "username" : "password";
+$PHORUM['DATA']['FOCUS_TO_ID'] = empty($_POST['username']) ? 'username' : 'password';
 
 // Display the page.
 phorum_api_output($template);
