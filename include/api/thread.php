@@ -194,7 +194,8 @@ function phorum_api_thread_update_metadata($thread_id)
     $modifystamp = $thread['datestamp'];
     foreach ($visible_messages as $message_id => $message)
     {
-        if ($message['datestamp'] > $modifystamp) {
+        if ($message['datestamp'] > $modifystamp ||
+            ($message['datestamp'] == $modifystamp && $message_id > $recent_message_id)) {
           $modifystamp = $message['datestamp'];
           $recent_message_id = $message_id;
         }
