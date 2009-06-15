@@ -196,6 +196,9 @@ $messages   = null;        // selected messages (based on a filter)
 $filters    = array();     // active filters
 $filtermode = "and";       // active filter mode (and / or)
 
+$read_url_template = phorum_api_url(
+    PHORUM_FOREIGN_READ_URL, '%forum_id%', '%thread_id%','%message_id%');
+
 // If there are messages to delete in the post data, then delete them
 // from the database.
 $delete_count = 0;
@@ -1039,6 +1042,9 @@ if (isset($messages) && is_array($messages))
 
         $strippedbody = nl2br(htmlspecialchars($data["body"]));
 
+        $url = str_replace(array('%forum_id%', '%thread_id%','%message_id%'),
+                           array($data['forum_id'], $data['thread'],$data['message_id']),
+                           $read_url_template);
         ?>
         <tr>
           <td valign="top" style="border-bottom:1px dashed #ccc">
@@ -1063,7 +1069,7 @@ if (isset($messages) && is_array($messages))
               if ($data["user_id"]) {
                   print "Posted by authenticated user \"".
                         htmlspecialchars($data["user_username"]) .
-                        "\" (user_id ".$data["user_id"].")<br/>";
+                        "\" (user_id ".$data["user_id"].") from ".$data['ip']."<br/>";
               }
               print "Date and time: " . phorum_api_format_date($PHORUM['short_date_time'], $data["datestamp"]) . "<br/>";
               // Might not be available (for announcements).
@@ -1080,6 +1086,7 @@ if (isset($messages) && is_array($messages))
                   }
               }
               ?>
+              <a target="_blank" href="<?php print $url ?>">Open this message in a new window</a><br/>
               <div class="message_prune_msginfo_body">
                 <?php print $strippedbody ?>
               </div>
