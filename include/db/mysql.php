@@ -756,7 +756,6 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     // then return an empty array.
     if (empty($allowed_forums)) return array();
 
-    /*
     // We need to differentiate on which key to use.
     // If selecting on a specific thread, then the best index
     // to use would be the thread_message index.
@@ -793,8 +792,6 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
                 break;
         }
     }
-
-    */
 
     // Build the SQL query.
     $sql = "SELECT  *
