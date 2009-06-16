@@ -400,7 +400,7 @@ if (isset($_POST['lostpass']))
 
         // The user registration still needs email verification.
         // For this case, we generate a new confirmation code and
-        // send out a new mail message.
+        // send out a new account verficiation message.
         elseif ($user['active'] == PHORUM_USER_PENDING_EMAIL ||
                 $user['active'] == PHORUM_USER_PENDING_BOTH) {
 
@@ -411,23 +411,23 @@ if (isset($_POST['lostpass']))
                 'password_temp' => $regcode
             ));
 
-            // Mail the new confirmation code to the user.
+            // The URL that the user can visit to confirm the account.
             $verify_url = phorum_api_url(
                 PHORUM_REGISTER_URL,
                 'approve='. $regcode . $uid
             );
 
-            $mail_data = array(
-                'mailsubject' => $PHORUM['DATA']['LANG']['VerifyRegEmailSubject']
-            );
+            // Build the mail data for the phorum_api_mail() call.
+            $mail_data = array();
+
+            $mail_data['mailsubject'] = 
+                $PHORUM['DATA']['LANG']['VerifyRegEmailSubject'];
 
             // The mailmessage can be composed in two different ways.
             // This was done for backward compatibility for the language
             // files. Up to Phorum 5.2, we had VerifyRegEmailBody1 and
             // VerifyRegEmailBody2 for defining the lost password mail body.
             // In 5.3, we switched to a single variable VerifyRegEmailBody.
-            // Eventually, the variable replacements need to be handled
-            // by the mail API layer.
             if (isset($PHORUM['DATA']['LANG']['VerifyRegEmailBody']))
             {
                 $mail_data['mailmessage'] = wordwrap(str_replace(

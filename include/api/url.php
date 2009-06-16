@@ -85,7 +85,11 @@ global $PHORUM;
  *
  * - An URL suffix to add
  *
- * - The id of the $argv field to append to the suffix
+ * - The id of the $argv field to append to the suffix. This is only done
+ *   if the field contents are numerical or starting with a "%" (so we can
+ *   use %template% variables in it). If both the suffix and this id field
+ *   are used, but no matching field contents are found, then no suffix is
+ *   added at all.
  */
 $PHORUM['API']['url_patterns'] = array
 (
@@ -157,24 +161,15 @@ function phorum_api_url()
         switch($type)
         {
             case PHORUM_REPLY_URL:
-                if (!empty($PHORUM['reply_on_read_page']))
-                {
-                    $name = 'read';
-                    $suffix = '#REPLY';
-                }
-                else
-                {
-                    $name = 'posting';
-                    // For reply on a separate page, we call posting.php on
-                    // its own. In that case argv[0] is the editor mode we
-                    // want to use (reply in this case). Currently, the thread
-                    // id is in argv[0], but we don't need that one for
-                    // posting.php. So we simply replace argv[0] with the
-                    // correct argument.
-                    $argv[0] = 'reply';
-                }
                 $add_get_vars = TRUE;
                 $add_forum_id = TRUE;
+                // The reply URL depends on how the reply form is handled.
+                if (!empty($PHORUM['reply_on_read_page'])) {
+                    $name = 'read';
+                    $suffix = '#REPLY';
+                } else {
+                    $name = 'posting';
+                }
                 break;
 
             case PHORUM_FILE_URL:
@@ -269,38 +264,25 @@ function phorum_api_url()
         }
     }
 
-    $query_string = '';
-
+    // Build the URL.
     $url = $PHORUM['http_path'] . '/';
+    if ($name) $url .= $name . '.' . PHORUM_FILE_EXTENSION;
 
-    if ($name) {
-        $url .= $name . '.' . PHORUM_FILE_EXTENSION;
-    }
-
-    if ($add_forum_id == 2) {
-        $query_string = $PHORUM['forum_id'] . ',';
-    }
-
-    if (count($argv) > 0) {
-        $query_string .= implode(',', $argv ) . ',';
-    }
-
-    if ($add_get_vars && !empty($PHORUM['DATA']['GET_VARS'])) {
-        $query_string .= implode(',', $PHORUM['DATA']['GET_VARS']) . ',';
-    }
-
-    if ($query_string) {
-        $query_string = substr($query_string, 0, -1 ); // trim off ending ,
+    // Build the query parameters to add.
+    if ($add_forum_id == 2) array_unshift($argv, $PHORUM['forum_id']);
+    if ($add_get_vars) {
+        $query_params = array_merge($argv, $PHORUM['DATA']['GET_VARS']);
+    } else {
+        $query_params = $argv;
     }
 
     /**
      * @todo document the 'url_build' hook.
      */
     if (isset($PHORUM['hooks']['url_build'])) {
-        $query_items = explode(',', $query_string);
         $url = phorum_api_hook(
             'url_build', NULL,
-            $name, $query_items, $suffix, $pathinfo
+            $name, $query_params, $suffix, $pathinfo
         );
         if ($url) return $url;
     }
@@ -311,18 +293,16 @@ function phorum_api_url()
     // When writing new code, then please use the "url_build"
     // hook instead.
     if ($do_custom_url) {
-        $query_items = $query_string == ''
-                     ? array() : explode(',', $query_string);
         $url = phorum_custom_get_url(
-            $name, $query_items, $suffix, $pathinfo
+            $name, $query_params, $suffix, $pathinfo
         );
     }
     // The default URL construction.
     else
     {
         if ($pathinfo !== null) $url .= $pathinfo;
-        if ($query_string) $url .= '?' . $query_string;
-        if (!empty($suffix)) $url .= $suffix;
+        if (!empty($query_params)) $url .= '?' . implode(',', $query_params);
+        if ($suffix) $url .= $suffix;
     }
 
     return $url;
