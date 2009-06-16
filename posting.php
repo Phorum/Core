@@ -30,6 +30,9 @@
 //    - reply       Reply to a message
 //    - quote       Reply to a message, with quoting of the original message
 //
+//    This parameter can also be numerical. In that case, we asume that it
+//    is a thread id and that the required posting mode is "reply". 
+//
 // 3) If edit, moderation or reply is used: the message id.
 //
 // Examples:
@@ -254,8 +257,17 @@ if (! isset($PHORUM["postingargs"])) {
 $PHORUM["posting_template"] = "posting";
 
 // Find out what editing mode we're running in.
-if ($initial) {
-    $mode = isset($PHORUM["postingargs"][1]) ? $PHORUM["postingargs"][1] : "post";
+if ($initial)
+{
+    $mode = isset($PHORUM["postingargs"][1])
+          ? $PHORUM["postingargs"][1] : "post";
+
+    // To allow for posting.php?<thread_id>,<message_id> to indicate
+    // a message reply, which facilitates our URL building code in
+    // the phorum_api_url() call.
+    if (is_numeric($mode)) {
+        $mode = 'reply';
+    }
 
     // Quote may also be passed as a phorum parameter (quote=1).
     if ($mode == "reply" && isset($PHORUM["postingargs"]["quote"]) && $PHORUM["postingargs"]["quote"]) {
