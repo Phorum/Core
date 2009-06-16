@@ -221,6 +221,7 @@ function phorum_api_format_strip($str)
     $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
 
     // Handle censoring.
+    require_once PHORUM_PATH.'/include/api/format/censor.php';
     $stripped = phorum_api_format_censor($stripped);
 
     return $stripped;
