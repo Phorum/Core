@@ -379,7 +379,7 @@ if (isset($_POST['lostpass']))
     $_POST['lostpass'] = trim($_POST['lostpass']);
 
     // Did the user enter an email address?
-    if (empty($_POST['lostpass'])) {
+    if ($_POST['lostpass'] == '') {
         $error = $PHORUM['DATA']['LANG']['ErrRequired'];
         $focus = 'lostpass';
     }
@@ -391,24 +391,35 @@ if (isset($_POST['lostpass']))
         // address. Retrieve the user.
         $user = phorum_api_user_get($uid);
 
-        $tmp_user=array();
-
         // User registration not yet approved by a moderator.
-        if($user['active'] == PHORUM_USER_PENDING_MOD) {
+        // Tell the user that we are awaiting approval.
+        if ($user['active'] == PHORUM_USER_PENDING_MOD) {
             $template = 'message';
             $okmsg = $PHORUM['DATA']['LANG']['RegVerifyMod'];
-        // User registration still need email verification.
-        } elseif ($user['active'] == PHORUM_USER_PENDING_EMAIL ||
-                  $user['active'] == PHORUM_USER_PENDING_BOTH) {
+        }
 
-            // Generate and store a new email confirmation code.
-            $tmp_user['user_id'] = $uid;
-            $tmp_user['password_temp'] = substr(md5(microtime()), 0, 8);
-            phorum_api_user_save($tmp_user);
+        // The user registration still needs email verification.
+        // For this case, we generate a new confirmation code and
+        // send out a new mail message.
+        elseif ($user['active'] == PHORUM_USER_PENDING_EMAIL ||
+                $user['active'] == PHORUM_USER_PENDING_BOTH) {
+
+            // Generate and store a new registration code.
+            $regcode = substr(md5(microtime()), 0, 8);
+            phorum_api_user_save(array(
+                'user_id'       => $uid,
+                'password_temp' => $regcode
+            ));
 
             // Mail the new confirmation code to the user.
-            $verify_url = phorum_api_url(PHORUM_REGISTER_URL, 'approve='.$tmp_user['password_temp'].$uid);
-            $maildata['mailsubject'] = $PHORUM['DATA']['LANG']['VerifyRegEmailSubject'];
+            $verify_url = phorum_api_url(
+                PHORUM_REGISTER_URL,
+                'approve='. $regcode . $uid
+            );
+
+            $mail_data = array(
+                'mailsubject' => $PHORUM['DATA']['LANG']['VerifyRegEmailSubject']
+            );
 
             // The mailmessage can be composed in two different ways.
             // This was done for backward compatibility for the language
@@ -419,7 +430,7 @@ if (isset($_POST['lostpass']))
             // by the mail API layer.
             if (isset($PHORUM['DATA']['LANG']['VerifyRegEmailBody']))
             {
-                $maildata['mailmessage'] = wordwrap(str_replace(
+                $mail_data['mailmessage'] = wordwrap(str_replace(
                     array(
                         '%title%',
                         '%username%',
@@ -441,30 +452,32 @@ if (isset($_POST['lostpass']))
                 // amin language tool by not using the full syntax
                 // for those.
                 $lang = $PHORUM['DATA']['LANG'];
-
-                $maildata['mailmessage'] =
+                $mail_data['mailmessage'] =
                    wordwrap($lang['VerifyRegEmailBody1'], 72).
                    "\n\n$verify_url\n\n".
                    wordwrap($lang['VerifyRegEmailBody2'], 72);
             }
 
-            phorum_api_mail($user['email'], $maildata);
+            phorum_api_mail($user['email'], $mail_data);
 
             $okmsg = $PHORUM['DATA']['LANG']['RegVerifyEmail'];
             $template='message';
+        }
 
-        // The user is active.
-        } else {
-
+        // The user is active. We generate a new password and send
+        // that one to the user.
+        else
+        {
             // Generate and store a new password for the user.
             $newpass = phorum_api_generate_password();
-            $tmp_user['user_id'] = $uid;
-            $tmp_user['password_temp'] = $newpass;
-            phorum_api_user_save($tmp_user);
+            phorum_api_user_save(array(
+                'user_id'       => $uid,
+                'password_temp' => $newpass
+            ));
 
             // Mail the new password.
             $user = phorum_api_user_get($uid);
-            $maildata = array();
+            $mail_data = array();
 
             // The mailmessage can be composed in two different ways.
             // This was done for backward compatibility for the language
@@ -475,7 +488,7 @@ if (isset($_POST['lostpass']))
             // by the mail API layer.
             if (isset($PHORUM['DATA']['LANG']['LostPassEmailBody']))
             {
-                $maildata['mailmessage'] = wordwrap(str_replace(
+                $mail_data['mailmessage'] = wordwrap(str_replace(
                     array(
                         '%title%',
                         '%username%',
@@ -498,7 +511,7 @@ if (isset($_POST['lostpass']))
                 // for those.
                 $lang = $PHORUM['DATA']['LANG'];
 
-                $maildata['mailmessage'] =
+                $mail_data['mailmessage'] =
                    wordwrap($lang['LostPassEmailBody1'], 72) .
                    "\n\n".
                    $lang['Username'] .": $user[username]\n".
@@ -507,8 +520,8 @@ if (isset($_POST['lostpass']))
                    wordwrap($lang['LostPassEmailBody2'], 72);
             }
 
-            $maildata['mailsubject'] = $PHORUM['DATA']['LANG']['LostPassEmailSubject'];
-            phorum_api_mail($user['email'], $maildata);
+            $mail_data['mailsubject'] = $PHORUM['DATA']['LANG']['LostPassEmailSubject'];
+            phorum_api_mail($user['email'], $mail_data);
 
             $okmsg = $PHORUM['DATA']['LANG']['LostPassSent'];
 
