@@ -145,7 +145,13 @@ function phorum_api_thread_update_metadata($thread_id)
     // We do not need the returned user info.
     unset($messages['users']);
 
-    // Retrieve the thread starter message.
+    // Retrieve the thread starter message. If the starter message does
+    // not exist, then we go back empty handed. This could happen when
+    // a full thread is deleted from the database, in which case the
+    // starter message is gone as well (when only one or more replies
+    // are deleted, then this function is called to update the thread's
+    // meta data).
+    if (!isset($messages[$thread_id])) return;
     $thread = $messages[$thread_id];
 
     // Initialize the data that we will save at the end of this function.
