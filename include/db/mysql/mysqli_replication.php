@@ -197,13 +197,13 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
     $tries = 0;
 
-    $res = false;
+    $res = FALSE;
 
-    while($res === FALSE && $tries < 3){
-
+    while ($res === FALSE && $tries < 3)
+    {
         // Time the query for debug level 2 and up.
         if ($debug > 1) {
-            $t1 = microtime(true);
+            $t1 = microtime(TRUE);
         }
         // For queries where we are going to retrieve multiple rows, we
         // use an unuffered query result.
@@ -220,7 +220,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         if ($debug) {
             $querytrack['count']++;
             if ($debug > 1) {
-                $t2 = microtime(true);
+                $t2 = microtime(TRUE);
                 $time = sprintf("%0.3f", $t2 - $t1);
                 $querytrack['time'] += $time;
                 $querytrack['queries'][] = array(
@@ -240,10 +240,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
             // if we have an error due to a transactional storage engine,
             // retry the query for those errors up to 2 more times
-            if ($tries<3 &&
-            ($errno == 1422 ||  // 1422 Explicit or implicit commit is not allowed in stored function or trigger.
-            $errno == 1213 ||  // 1213 Deadlock found when trying to get lock; try restarting transaction
-            $errno == 1205)) { // 1205 Lock wait timeout
+            if ($tries < 3 &&
+                ($errno == 1422 ||  // 1422 Explicit or implicit commit is not
+                                    // allowed in stored function or trigger.
+                $errno == 1213 ||   // 1213 Deadlock found when trying to get
+                                    // lock; try restarting transaction
+                $errno == 1205)) {  // 1205 Lock wait timeout
 
                 $tries++;
 
