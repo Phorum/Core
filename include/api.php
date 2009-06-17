@@ -335,6 +335,35 @@ phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
 // Load the Phorum settings from the database.
 phorum_db_load_settings();
 
+// Check for an upgrade or a new install.
+if (!defined('PHORUM_ADMIN'))
+{
+    if (!isset($PHORUM['internal_version']))
+    {
+        echo "<html><head><title>Phorum error</title></head><body>
+              No Phorum settings were found. Either this is a brand new
+              installation of Phorum or there is a problem with your
+              database server. If this is a new install, please
+              <a href=\"admin.php\">go to the admin page</a> to complete
+              the installation. If not, then check your database server.
+              </body></html>";
+        exit();
+    } elseif ($PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
+              !isset($PHORUM['internal_patchlevel']) ||
+              $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL) {
+        if (isset($PHORUM["DBCONFIG"]["upgrade_page"])) {
+            phorum_api_redirect($PHORUM["DBCONFIG"]["upgrade_page"]);
+        } else {
+            echo "<html><head><title>Upgrade notification</title></head><body>
+                  It looks like you have installed a new version of
+                  Phorum.<br/>Please visit the admin page to complete
+                  the upgrade!
+                  </body></html>";
+            exit();
+        }
+    }
+}
+
 // For command line scripts, disable caching.
 // The command line user is often different from the web server
 // user, possibly causing permission problems on the cache.
