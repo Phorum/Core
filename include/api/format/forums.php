@@ -48,6 +48,27 @@ function phorum_api_format_forums($forums, $flags = 0)
 {
     global $PHORUM;
 
+    static $index_url_template;
+    static $list_url_template;
+    static $markread_url_template;
+    static $feed_url_template;
+
+    if (empty($feed_url_template))
+    {
+        $index_url_template = phorum_api_url(
+            PHORUM_INDEX_URL, '%forum_id%'
+        );
+        $list_url_template = phorum_api_url(
+            PHORUM_LIST_URL, '%forum_id%'
+        );
+        $markread_url_template = phorum_api_url(
+            PHORUM_INDEX_URL, '%forum_id%', 'markread', '%forum_id%'
+        );
+        $feed_url_template = phorum_api_url(
+            PHORUM_FEED_URL, '%forum_id%', 'type='.$PHORUM['default_feed']
+        );
+    }
+
     // For tracking forums for which we have to check unread messages.
     $forums_to_check = array();
 
@@ -61,31 +82,25 @@ function phorum_api_format_forums($forums, $flags = 0)
             // was in use.
             $forum['URL']['INDEX'] =
             $forum['URL']['LIST'] =
-                phorum_api_url(PHORUM_INDEX_URL, $forum_id);
+                str_replace('%forum_id%', $forum_id, $index_url_template);
         }
         // Setup template data for forums.
         else
         {
             // A URL for the message list for this forum.
-            $forum['URL']['LIST'] = phorum_api_url(PHORUM_LIST_URL, $forum_id);
+            $forum['URL']['LIST'] =
+                str_replace('%forum_id%', $forum_id, $list_url_template);
 
             // A "mark forum read" URL for authenticated users.
             if ($PHORUM['user']['user_id']) {
-                $forum['URL']['MARK_READ'] = phorum_api_url(
-                    PHORUM_INDEX_URL,
-                    $forum_id,
-                    'markread',
-                    $PHORUM['forum_id']
-                );
+                $forum['URL']['MARK_READ'] =
+                    str_replace('%forum_id%',$forum_id,$markread_url_template);
             }
 
             // A URL to the syndication feed.
             if (!empty($PHORUM['use_rss'])) {
-                $forum['URL']['FEED'] = phorum_api_url(
-                    PHORUM_FEED_URL,
-                    $forum_id,
-                    'type='.$PHORUM['default_feed']
-                );
+                $forum['URL']['FEED'] =
+                    str_replace('%forum_id%', $forum_id, $feed_url_template);
             }
 
             // For dates, we store an unmodified version to always have
