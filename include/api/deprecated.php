@@ -58,7 +58,6 @@ function phorum_api_strerror() {
  * @deprecated Replaced by {@link phorum_api_url()}.
  */
 function phorum_get_url() {
-    phorum_api_url; // make sure the URL API layer code is loaded.
     $argv = func_get_args();
     return call_user_func_array('phorum_api_url', $argv);
 }
