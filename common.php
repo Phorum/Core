@@ -62,7 +62,6 @@ require_once( "./include/constants.php" );
 require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
-
 // ----------------------------------------------------------------------
 // Load the database layer and setup a connection
 // ----------------------------------------------------------------------
@@ -155,6 +154,24 @@ if(!phorum_db_check_connection()){
 
 // Load the Phorum settings from the database.
 phorum_db_load_settings();
+
+// checking for upgrade or new install
+if (!defined('PHORUM_ADMIN')) {
+    if (!isset($PHORUM['internal_version']))
+    {
+        echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is a problem with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
+        exit();
+    } elseif ($PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
+              !isset($PHORUM['internal_patchlevel']) ||
+              $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL) {
+        if (isset($PHORUM["DBCONFIG"]["upgrade_page"])) {
+            phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
+            exit();
+        }
+        echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br/>Please visit the admin page to complete the upgrade!</body></html>";
+        exit();
+    }
+}
 
 // For command line scripts, disable caching.
 // The command line user is often different from the web server
@@ -426,21 +443,6 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             echo "This Phorum is currently disabled.  Please contact the web site owner at ".$PHORUM['system_email_from_address']." for more information.\n";
             exit();
         }
-    }
-
-    // checking for upgrade or new install
-    if ( !isset( $PHORUM['internal_version'] ) ) {
-        echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is a problem with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
-        exit();
-    } elseif ( $PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
-               !isset($PHORUM['internal_patchlevel']) ||
-               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
-        if(isset($PHORUM["DBCONFIG"]["upgrade_page"])){
-            phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
-            exit();
-        }
-        echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br/>Please visit the admin page to complete the upgrade!</body></html>";
-        exit();
     }
 
     // load the forum's settings
