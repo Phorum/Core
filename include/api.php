@@ -532,16 +532,16 @@ class Phorum
         $this->func_prefix = $func_prefix;
 
         // Determine the file in which the functions for this node are
-        // defined. For the root level API node, we load a special
-        // bootstrap script which sets up the required environment.
+        // defined. For the root level API node, we do not need to
+        // load a script.
         if ($func_prefix == 'phorum_api_') {
-            $file = $this->getPath('include/api/bootstrap.php');
+            $file = NULL;
         } else {
             $file = $this->getPath($node_path.'.php'); 
         }
 
         // Load the API layer file.
-        if (file_exists($file)) {
+        if ($file !== NULL && file_exists($file)) {
             global $PHORUM;
             $phorum = $this; // So we can reference $phorum from included code
             require_once $file;
