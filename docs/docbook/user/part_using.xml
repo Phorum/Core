@@ -34,5 +34,56 @@
    need to approve your account, or both.
    </para> 
  </section>
-
+ <section>
+  <title>Creating topics, replying and editing posts</title>
+   <para>
+   A topics is the starting point of any conversation on a forum. An 
+   initial poster creates a subject and a post, and then other users 
+   can reply to it. In this way users can converse about specific 
+   'topics' of conversation. 
+   </para>
+   <para>
+   To create a topic, follow these steps:
+   </para>
+   <para>
+   <emphasis role="bold">1.</emphasis> Browse to the forum you want to 
+   post a topic in, then click on the 'New Topic' link above the topic 
+   list.
+   </para>
+   <para>
+   <emphasis role="bold">2.</emphasis> The posting interface will now be 
+   displayed. First, enter the subject of your topic, and then the message
+   section. You can add smilies, formatting, links, pictures and more to 
+   your post by using the editor tools located above the message box, which
+   is present on most Phorum installations. Hover over the buttons for a
+   description of what they do, and for help with BBCode (Bulletin Board
+   Code) and smilies, click on the ? button on the right. 
+   <sbr />
+   <sbr />
+   You can also choose to add your signature to the post, and to 
+   follow the topic. Additionally, you may post attachments by 
+   clicking on 'Attach a file...'. When you are finished, you can click 
+   on 'Preview' to look at your post before submitting it, or post it by 
+   clicking 'Post message'. 
+   </para>
+   <para>
+   To reply to topics, browse to the topic you want to reply to then 
+   click on the Reply link below a post, or fill out the posting form at 
+   the bottom of the topic. Then follow the same procedure described 
+   above.  
+   </para>
+   <para>
+   You can also edit your posts after submitting them by clicking on the 
+   'Edit' link beneath your post. The administrator can set a specific 
+   time limit within which you can edit your post.
+   <important>
+   Some of the actions you can perform are limited by administrative 
+   settings. For example, an administrator can prevent users from 
+   starting new topics, replying to them, editing posts, adding 
+   attachments and following topics within specific forums. 
+   </important>
+   <remark>TODO: Link certain features (e.g. topic follow) with 
+   appropriate sections when written</remark>
+   </para>
+  </section>  
 </chapter>
