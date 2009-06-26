@@ -9,6 +9,7 @@
   <!ENTITY part_preface SYSTEM "../part_preface.xml">
 
   <!ENTITY part_intro SYSTEM "part_intro.xml">
+  <!ENTITY part_using SYSTEM "part_using.xml">
 
   <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
   <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
@@ -18,4 +19,5 @@
 &bookinfo; 
 &part_preface;
 &part_intro; 
+&part_using;
 </book>
