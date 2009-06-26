@@ -513,8 +513,6 @@ class Phorum
      *
      * @param array $node_path
      *     The fileystem path for the constructed API node.
-     *     There is no need to call this parameter directly.
-     *     It is used internally by the Phorum object to create subnodes.
      *
      * @param array $func_prefix
      *     The prefix that is used for functions below this node.
@@ -541,16 +539,18 @@ class Phorum
         }
 
         // Load the API layer file.
-        if ($file !== NULL && file_exists($file)) {
-            global $PHORUM;
-            $phorum = $this; // So we can reference $phorum from included code
-            require_once $file;
-            $this->node_file = $file;
-        } else trigger_error(
-            "Phorum API layer file \"$file\" not available for " .
-            "loading the \"{$this->func_prefix}*\" functions",
-            E_USER_ERROR
-        );
+        if ($file !== NULL) {
+            if (file_exists($file)) {
+                global $PHORUM;
+                $phorum = $this; // to reference $phorum from included code
+                require_once $file;
+                $this->node_file = $file;
+            } else trigger_error(
+                "Phorum API layer file \"$file\" not available for " .
+                "loading the \"{$this->func_prefix}*\" functions",
+                E_USER_ERROR
+            );
+        }
     }
 
     /**
