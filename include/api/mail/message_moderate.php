@@ -91,7 +91,7 @@ function phorum_api_mail_message_moderate($message)
         'fully_body'  => $message['body'],
         'plain_body'  => wordwrap(phorum_api_format_strip($message['body']), 72),
         'approve_url' => phorum_api_url_no_uri_auth(
-                             PHORUM_CONTROLCENTER_URL,,
+                             PHORUM_CONTROLCENTER_URL,
                              'panel=messages'
                          ),
         'read_url'    => phorum_api_url_no_uri_auth(
