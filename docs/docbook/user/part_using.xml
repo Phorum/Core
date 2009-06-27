@@ -34,6 +34,11 @@
    need to approve your account, or both.
    </para> 
  </section>
+
+ <section>
+  <title>Browsing and reading forums</title>
+ </section>
+
  <section>
   <title>Creating topics, replying and editing posts</title>
    <para>
@@ -85,5 +90,14 @@
    <remark>TODO: Link certain features (e.g. topic follow) with 
    appropriate sections when written</remark>
    </para>
-  </section>  
+  </section>
+  
+  <section>
+   <title>Searching forums</title>
+  </section>
+  
+  <section>
+   <title>Private Messages</title>
+  </section>
+    
 </chapter>
