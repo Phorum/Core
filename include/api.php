@@ -318,7 +318,9 @@ function phorum_shutdown()
     // Shutdown the database connection.
     phorum_db_close_connection();
 
-    chdir($working_dir);
+    if ($working_dir !== FALSE) {
+        chdir($working_dir);
+    }
 }
 
 register_shutdown_function('phorum_shutdown');
