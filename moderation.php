@@ -340,12 +340,14 @@ switch ($mod_step)
             $forum_id = $PHORUM["forum_id"];
             $PHORUM["forum_id"] = 0;
             $moved = phorum_db_get_messages($msgthd_id);
-            $PHORUM["forum_id"] = $forum_id;
+            
             foreach ($moved as $id => $data) {
                 if (!empty($data["moved"])) {
+                	$PHORUM["forum_id"] = $data['forum_id'];
                     phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
                 }
             }
+            $PHORUM["forum_id"] = $forum_id;
 
         }
 
