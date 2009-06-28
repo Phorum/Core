@@ -223,7 +223,7 @@ if (empty($GLOBALS['PHORUM_ALT_DBCONFIG']) ||
             } else {
                 fclose($fp); ?>
                 A database configuration file was found in
-                {phorum dir}/include/dbconfig.php,<br/>but it could not be
+                {phorum dir}/include/db/config.php,<br/>but it could not be
                 loaded. It possibly contains one or more syntax errors.<br/>
                 Please check your configuration file. <?php
             }

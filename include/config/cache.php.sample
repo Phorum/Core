@@ -1,0 +1,60 @@
+<?php
+/*
+
+This file holds the cache configuration settings.
+File is the default and should be working at all times.
+Multi-Server installs need a client-server cache system like memcached to make
+sure that the same cache is used and invalidated at all times.
+
+*/
+
+if (!defined('PHORUM')) return;
+
+$PHORUM['CACHECONFIG']=array(
+
+    // cache backend. See the end of this file for a detailed
+    // description of the configuration options.
+    'type'          => 'file',
+    'server'        => '127.0.0.1',
+    'port'          => '11211',
+    'user'          => '',
+    'password'      => '',
+
+);
+
+/*
+
+DETAILED CONFIGURATION FIELD DESCRIPTION
+----------------------------------------
+
+* type:
+
+  The type of caching backend. Typically 'file' as that has to work. 
+  Two more scaleable backends are 
+  memcached, using 
+    * the memcache pecl extension (http://www.php.net/manual/en/book.memcache.php) and 
+    * memcached (http://www.danga.com/memcached/)  
+  apc, using the APC pecl extension (http://www.php.net/manual/en/book.apc.php) 
+
+* server:
+
+  The IP-address of the cache backends server. 
+  Currently only used for the memcached backend.
+
+* port:
+
+  The network port to use for the cache backend. 11211 is the memcached default.
+  Currently only used for the memcached backend.
+  
+* user:
+
+  The username which is used for accessing the cache backends server.
+  Not used in any cache backend yet.
+
+* password:
+
+  The password for the cache backends user.
+
+
+*/
+?>
