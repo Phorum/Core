@@ -144,7 +144,7 @@ function phorum_api_error_database($error)
         // Log the database error to a logfile.
         case "file":
 
-            $cache_dir  = $PHORUM["cache"];
+            $cache_dir  = $PHORUM['CACHECONFIG']['directory'];
             $logfile = $cache_dir . '/phorum-sql-errors.log';
 
             if ($fp = @fopen($logfile, "a")) {

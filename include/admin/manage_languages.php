@@ -687,7 +687,6 @@ function phorum_extract_language_strings_recurse($path)
         if ($f == "lang") continue;            // language files
         if ($f == "mods") continue;            // mods
         if ($f == "docs") continue;            // documentation
-        if ($f == "cache") continue;           // the cache directory
 
 
         if (preg_match('/\.(php|tpl)$/', $file)) {

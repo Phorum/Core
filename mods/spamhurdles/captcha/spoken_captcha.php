@@ -13,7 +13,7 @@
         // Generate the command for building the wav file.
         $say = $PHORUM["SPAMHURDLES"]["captcha"]["spoken_text"];
         $key = $PHORUM["SPAMHURDLES"]["key"];
-        $tmpfile = "{$PHORUM["cache"]}/spokencaptcha_{$key}.wav";
+        $tmpfile = "{$PHORUM['CACHECONFIG']['directory']}/spokencaptcha_{$key}.wav";
         $cmd = escapeshellcmd($conf["flite_location"]);
         $cmd .= " -t " . escapeshellarg($say);
         $cmd .= " -o " . escapeshellarg($tmpfile);

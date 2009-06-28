@@ -37,11 +37,11 @@ if(count($_POST))
 
     // Cleanup compiled templates.
     $purged = 0;
-    $dh = opendir($PHORUM["cache"]);
-    if (! $dh) die ("Can't opendir " . htmlspecialchars($PHORUM["cache"]));
+    $dh = opendir($PHORUM['CACHECONFIG']['directory']);
+    if (! $dh) die ("Can't opendir " . htmlspecialchars($PHORUM['CACHECONFIG']['directory']));
     while ($entry = readdir($dh)) {
         if (preg_match('/^tpl-.*[a-f0-9]{32}\.php(-stage2)?$/', $entry)) {
-            $compiled_tpl = $PHORUM["cache"] . "/$entry";
+            $compiled_tpl = $PHORUM['CACHECONFIG']['directory']. "/$entry";
             $size = filesize($compiled_tpl);
             if (@unlink($compiled_tpl)) {
                 $purged += $size;

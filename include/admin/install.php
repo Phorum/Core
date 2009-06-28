@@ -48,7 +48,7 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
 {
     // Setup some fake environment data for the checks.
     $PHORUM["default_forum_options"]["language"] = PHORUM_DEFAULT_LANGUAGE;
-    $PHORUM["cache"] = $default_cache_dir;
+    $PHORUM['CACHECONFIG']['directory'] = $default_cache_dir;
     $PHORUM["real_cache"] = $default_cache_dir . "/install_tmp_sanity_check_cache_dir";
 
     // Load and run all available checks.
@@ -354,7 +354,6 @@ switch ($step){
             $settings=array(
             "title" => "Phorum 5",
             "description" => "Congratulations!  You have installed Phorum 5!  To change this text, go to your admin, choose General Settings and change the description",
-            "cache" => $default_cache_dir,
             "session_timeout" => "30",
             "short_session_timeout" => "60",
             "tight_security" => "0",
@@ -542,49 +541,6 @@ switch ($step){
     	$cont_url = phorum_admin_build_url('');
         phorum_db_update_settings( array("installed"=>1) );
         echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=settings\">The General Settings page</a><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team's codings standards</a>";
-
-        break;
-
-    case "sanity_checks":
-        // try to figure out if we can write to the cache directory
-        $message = "";
-        error_reporting(0);
-        $err = false;
-        if ($fp = fopen($PHORUM["cache"] . "/phorum-install-test", "w+")) {
-            unlink($PHORUM["cache"] . "/phorum-install-test");
-        }
-        else {
-            // in this case the normal setting is wrong, so try ./cache
-            $PHORUM["cache"] = "./cache";
-            $settings = array("cache" => $PHORUM["cache"]);
-            if (!phorum_db_update_settings($settings)) {
-                $message .= "Database error updating settings.<br />";
-                $err = true;
-            }
-            elseif ($fp = fopen($PHORUM["cache"] . "/phorum-install-test", "w+")) {
-                unlink($PHORUM["cache"] . "/phorum-install-test");
-            }
-            else {
-                $err = true;
-            }
-
-        }
-        error_reporting(E_WARN);
-        if ($message == "") {
-            if($err){
-                $message.="Your cache directory is not writable. Please change the permissions on '/cache' inside the Phorum directory to allow writing. In Unix, you may have to use this command: chmod 777 cache<br /><br />If you want to continue anyway and set a cache directory manually, press continue. Note that you must do this, Phorum will not work without a valid cache.";
-            } else {
-                $message.="Cache directory set.  Next we will create a user with administrator privileges.  Press continue when ready.";
-            }
-        }
-
-        $frm = new PhorumInputForm ("", "post", "Continue ->");
-        $frm->hidden("module", "install");
-        $frm->hidden("sanity_checks_done", "1");
-        $frm->addbreak("Checking cache....");
-        $frm->addmessage($message);
-        $frm->hidden("step", "modules");
-        $frm->show();
 
         break;
 

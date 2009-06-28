@@ -24,12 +24,8 @@
  */
 if (!defined("PHORUM")) return;
 
-/* Only load the caching mechanism if we have a cache directory configured. */
-if(!isset($PHORUM["cache"])) return;
-
-
 /* initializing our real cache-dir */
-$PHORUM['real_cache']=$PHORUM['cache']."/".md5(__FILE__);
+$PHORUM['real_cache']=$PHORUM['CACHECONFIG']['directory']."/".md5(__FILE__);
 
 /**
  * Retrieve an object from the cache.

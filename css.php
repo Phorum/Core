@@ -247,7 +247,7 @@ foreach ($module_registrations as $id => $r)
 $cache_key = md5($cache_key . __FILE__);
 
 // Generate the cache file name.
-$cache_file = "{$PHORUM['cache']}/tpl-{$PHORUM['template']}-css-$css-" .
+$cache_file = "{$PHORUM['CACHECONFIG']['directory']}/tpl-{$PHORUM['template']}-css-$css-" .
               md5($cache_key . __FILE__);
 
 // Create the cache file if it does not exist or if caching is disabled.

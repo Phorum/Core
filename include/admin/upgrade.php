@@ -55,7 +55,7 @@ if ($upgradecount == 0) $step = 2;
 if ($step == 0 && !isset($_POST["sanity_checks_done"]))
 {
     // Setup some fake environment data for the checks.
-    $PHORUM["real_cache"] = $PHORUM["cache"] . "/install_tmp_sanity_check_cache_dir";
+    $PHORUM["real_cache"] = $PHORUM['CACHECONFIG']['directory'] . "/install_tmp_sanity_check_cache_dir";
 
     // Load and run all available checks.
     include "./include/admin/sanity_checks.php";

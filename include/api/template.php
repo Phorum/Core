@@ -367,7 +367,7 @@ function phorum_api_template_resolve($page)
     $safetemplate = str_replace(array("-",":"), array("_","_"), $template);
     if (isset($module)) $page = "$module::$page";
     $safepage = str_replace(array("-",":"), array("_","_"), $page);
-    $phpfile = "{$PHORUM["cache"]}/tpl-$safetemplate-$safepage-" .
+    $phpfile = "{$PHORUM['CACHECONFIG']['directory']}/tpl-$safetemplate-$safepage-" .
            md5(dirname(__FILE__) . $tplfile) . ".php";
 
     return array($phpfile, $tplfile);
