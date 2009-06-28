@@ -38,7 +38,7 @@ $cacheconfig = PHORUM_PATH.'/include/config/cache.php';
 // to avoid parameter injection.
 $PHORUM['CACHECONFIG'] = array(
     'type'      => 'file',
-    'directory' => $PHORUM['cache'],
+    'directory' => NULL, // will be filled with a default later if needed
     'server'    => '127.0.0.1',
     'port'      => '11211',
     'user'      => '',
@@ -81,6 +81,14 @@ if (file_exists($cacheconfig) && ! include_once $cacheconfig)
 
 	print '</body></html>';
 	exit(1);
+}
+
+// Apply default cache directory if no specific directory is set
+// from the cache configuration file.
+if ($PHORUM['CACHECONFIG']['type'] == 'file' &&
+    $PHORUM['CACHECONFIG']['directory'] === NULL) {
+    $PHORUM['CACHECONFIG']['directory'] =
+        substr(__FILE__, 0, 1) == '/' ? '/tmp' : 'C:\\Windows\\Temp';
 }
 
 // Load the caching layer.
